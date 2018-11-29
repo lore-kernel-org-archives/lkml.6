@@ -2,133 +2,105 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8475CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DF7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4730F2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44AE206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="T7lgG7Jd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4730F2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="GYeq+ruh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44AE206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbeK2L22 (ORCPT
+        id S1727104AbeK2Lac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:28:28 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38566 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbeK2L21 (ORCPT
+        Thu, 29 Nov 2018 06:30:32 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:41382 "EHLO
+        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeK2Lac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:28:27 -0500
-Received: by mail-pg1-f193.google.com with SMTP id g189so74695pgc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:25:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y9+nEew+tVf7mKqcMn+dQrg9unnJoCXxGSHcyz/WRKM=;
-        b=T7lgG7JdNuazZcC3IQMTKYUQUIVtYYAEyJwY1lnYdVp8SxR8rIBsMRr/JpWOQh1ga5
-         0PMqiHEDvLbNNpmOQGqpHlfKVeccgrDfhscCEf1U3jXaPtSCnWesHycwo7WBCfKstXbp
-         n6/54RTopgPOgK/NnA94kICootwLnfammWznE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y9+nEew+tVf7mKqcMn+dQrg9unnJoCXxGSHcyz/WRKM=;
-        b=hkQBdipk+k+d3HA4RxDe90F83o8TcfnycsO+anQmoX80vHcwvCR2y8VnncLPTsuvoY
-         g4RN2x+cF3wEkxq4YoVXB+Z678u6h04hal1xU4M+ETYnwbypy7Icxf3RUDL8rBxViAZO
-         Kx03TSSOTg2Hz18SMy/9vtKD46NyiQddgZYtXRaVmFY0O1TN7a5YpnAjNYCEZMj/XVve
-         PXNIaX1Gy6bmxHPLQCzX2iLctGb89Njmmp/iJMIb8t8UmQ5/sGB/YbnMZLOYGtwhGSST
-         IFbTA4Jr9YnLZ5l4GS0o8mSzgtgGf2P5cKht7hBGzG1VifYNQLbTUgnI0FdPhC02NB30
-         UX3A==
-X-Gm-Message-State: AA+aEWaWLXDHm4udCJeMlRN7iUDilFjACN/TZGFcvvCIiLqrl9uafwS0
-        cmk62dNPTCgU4ypal5lMm4L/bQ==
-X-Google-Smtp-Source: AFSGD/Xgth3h6gs10pROeQKN2feu9pZAD5O1myTcgBALjvEj1z0vug5ffkiIG/gsoKo7VcczmRJf/Q==
-X-Received: by 2002:a62:5884:: with SMTP id m126mr20361260pfb.177.1543451100884;
-        Wed, 28 Nov 2018 16:25:00 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t4-v6sm148382pfh.21.2018.11.28.16.24.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 16:24:59 -0800 (PST)
-Date:   Wed, 28 Nov 2018 16:24:57 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>, evgreen@chromium.org,
-        marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
-        rplsssn@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, thierry.reding@gmail.com
-Subject: Re: [RFC v3 2/3] dt-bindings: sdm845-pinctrl: add wakeup interrupt
- parent for GPIO
-Message-ID: <20181129002457.GJ24969@minitux>
-References: <20181121000648.29262-1-ilina@codeaurora.org>
- <20181121000648.29262-3-ilina@codeaurora.org>
- <154283618199.88331.10217252750356423959@swboyd.mtv.corp.google.com>
- <20181126161455.GA28236@codeaurora.org>
- <154330994255.88331.11409511159882116164@swboyd.mtv.corp.google.com>
- <20181127182123.GC28236@codeaurora.org>
- <154335513853.88331.9713562640538396853@swboyd.mtv.corp.google.com>
- <20181128173959.GC18262@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128173959.GC18262@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 29 Nov 2018 06:30:32 -0500
+X-Virus-Scanned: amavisd-new at aussec.com
+Received: from hpdv6.aussec.com.com (c110-21-61-29.farfl4.nsw.optusnet.com.au [110.21.61.29])
+        (authenticated bits=0)
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id wAT0QZ3R025194
+        (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
+        Thu, 29 Nov 2018 11:26:55 +1100
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
+        t=1543451215; bh=XAzu4O8ujMbP04ePHe2TGZD2glGDqDP4mjaTCDWGL8w=;
+        h=From:To:Cc:Subject:Date;
+        b=GYeq+ruhfWe1u0zCwGnk2QXcY0FdqQ/Nxseg/zBM+LKC5uAmIwLNXoPLHrDVIlQkK
+         yymhgjtAUbVGCs1nOslj59m0e8Srre/ldgXggcRvxZnCsCX60J9wBDLlVaT2l6Dk55
+         tilysfmIzbuqev6pW0goqNWVqsiUHqBEbwfN6expV9NQW2sokE8gOyxCn3HflW5g8z
+         6jfEwYt21nLGF9n8DG2twfc/onlwtYU/OcUMo2PZvo1/DgeTwi7H0q344A3mHDMzHb
+         C69zKU20ojqDzHD0NPlwjhYBs7IRthGtvXLfE3Jh3kB2lUEnwSKFQwIdSscgD0nFPy
+         D/0Se7DDI4gMQ==
+From:   Tom Burkart <tom@aussec.com>
+To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Cc:     Tom Burkart <tom@aussec.com>
+Subject: [PATCH v11 0/3] PPS: pps-gpio PPS ECHO implementation
+Date:   Thu, 29 Nov 2018 11:26:23 +1100
+Message-Id: <20181129002626.5410-1-tom@aussec.com>
+X-Mailer: git-send-email 2.12.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 28 Nov 09:39 PST 2018, Lina Iyer wrote:
+Hi all,
+please find attached the PPS-GPIO PPS ECHO implementation patch. The
+driver claims to have echo functionality in the sysfs interface but this
+functionality is not present.  This patch provides this functionality.
 
-> On Tue, Nov 27 2018 at 14:45 -0700, Stephen Boyd wrote:
-> > Quoting Lina Iyer (2018-11-27 10:21:23)
-> > > On Tue, Nov 27 2018 at 02:12 -0700, Stephen Boyd wrote:
-> > > >
-> > > >Two reasons. First, simplicity. The TLMM driver just needs to pass the
-> > > >gpio number up to the PDC gpio domain and then that domain can figure
-> > > >out what hwirq it maps to within the PDC hw irq space. I don't see any
-> > > >reason why we have to know the hwirq of PDC within the TLMM driver
-> > > >besides "let's not be different".
-> > > >
-> > > >And second, it makes it easier for us to implement the MPM case in the
-> > > >TLMM driver by letting the TLMM code just ask "should I mask the irq
-> > > >here or not?" by passing that with a wrapper struct around the fwspec
-> > > >and a dedicated domain in the PDC/MPM driver. Keeping less things in the
-> > > >TLMM driver and not driving the decision from DT but from tables in the
-> > > >PDC driver also keeps things simple and reduces DT parsing code/time.
-> > > >
-> > > Couldn't this be simply achieved by matching the compatible flags for
-> > > PDC/MPM bindings for the wakeup-parent in the TLMM driver?
-> > > 
-> > 
-> > It could be, but then we would be making TLMM highly aware of the wakeup
-> > parent
-> It is is not aware of anything about the wakeup parent, just the
-> compatible that indicates whether it needs to be mask locally or not.
-> 
+Part 1 of the patch change the original driver from the number
+based GPIO ABI to the descriptor based ABI.
 
-But the information related to how the PDC is wired to GPIO pins is a
-property related to the PDC not of the TLMM, so it does make sense to
-represent this information there.
+Parts 2 and 3 then add the PPS ECHO functionality.  This is enabled if a
+"echo-gpios" entry is found in the devicetree.
 
-And iiuc it also makes sense to not encode it in DT because it's
-physical wiring, not configuration.
+Changes in v8:
+Changes requested by Rob Herring and Philipp Zabel:
+DT explanation and don't change the DT entry for the PPS gpio.
 
-> > and have to do compatible string matching in two places, instead
-> > of making TLMM more abstractly aware that it needs to keep things masked
-> > while irq parent deals with the interrupts.
-> > 
-> Your approach seems too complex just to circumvent a simple match node.
-> I think we are stretching too much to support something that is not a
-> priority.
-> 
+Changes in v9:
+Simplify "if" expression by doing echo_active_ms validation earlier.
 
-What "something" are you referring to here?
+Changes in v10:
+Changes requested by Philipp Zabel:
+Mostly cosmetic changes: PATCH 2/4 now reviewed.  Thanks a lot, Philipp!
+(Please note that as of v11 PATCH 1 is gone so this has become PATCH 1)
 
-Regards,
-Bjorn
+Changes in v11:
+Changes requested by Rob Herring:
+All changes in regard to the capture-clear DT entry are gone.
+
+On the linuxpps mailing list it was suggested to use a hrtimer for
+resetting the GPIO ECHO active state to the inactive state.
+Please also comment on whether a hrtimer is necessary/desirable for the
+purpose of resetting the echo pin active state.  I am happy to implement
+it if this is useful/desirable.
+
+Please install, test and comment as it is now a quite major change to
+the driver.
+Suggestions for improvement are welcome.
+
+Tom Burkart
+
+Tom Burkart (3):
+  pps: descriptor-based gpio
+  dt-bindings: pps: pps-gpio PPS ECHO implementation
+  pps: pps-gpio pps-echo implementation
+
+ Documentation/devicetree/bindings/pps/pps-gpio.txt |   9 ++
+ drivers/pps/clients/pps-gpio.c                     | 167 ++++++++++++++++-----
+ include/linux/pps-gpio.h                           |   6 +-
+ 3 files changed, 142 insertions(+), 40 deletions(-)
+
+-- 
+2.12.3
+
