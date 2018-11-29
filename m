@@ -3,104 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0FCC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CDCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F4AD20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4AD20863
+	by mail.kernel.org (Postfix) with ESMTP id EB83020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:29:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB83020834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeK2TdX (ORCPT
+        id S1727666AbeK2Tdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:33:23 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:53032 "EHLO
+        Thu, 29 Nov 2018 14:33:46 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:53044 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbeK2TdW (ORCPT
+        with ESMTP id S1726651AbeK2Tdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:33:22 -0500
+        Thu, 29 Nov 2018 14:33:46 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gSHgl-0008SO-9o; Thu, 29 Nov 2018 16:28:47 +0800
+        id 1gSHh6-0008U6-Rm; Thu, 29 Nov 2018 16:29:08 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gSHgj-00057z-Fs; Thu, 29 Nov 2018 16:28:45 +0800
-Date:   Thu, 29 Nov 2018 16:28:45 +0800
+        id 1gSHh6-00058S-K8; Thu, 29 Nov 2018 16:29:08 +0800
+Date:   Thu, 29 Nov 2018 16:29:08 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     David CARLIER <devnexen@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] crypto: use memzero_explicit instead of memset to clear
- contexts.
-Message-ID: <20181129082845.r3lakg6ckvnkklp7@gondor.apana.org.au>
-References: <CA+XhMqz7ZaGVNpkrRM-t4h2f9UZVQPjLVB5Txco4bKGRm8k=mA@mail.gmail.com>
- <20181129064913.wbudlexjzszpa7dq@gondor.apana.org.au>
- <CA+XhMqzw9pqFw30QD=XpFTAqu+t1v5q24ODR+zynZQJJrS9xZw@mail.gmail.com>
+To:     PanBian <bianpan2016@163.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: do not free algorithm before using
+Message-ID: <20181129082908.ao3uxs4q5bncbctn@gondor.apana.org.au>
+References: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
+ <20181129065711.7renu7xnxzp7sr2d@gondor.apana.org.au>
+ <20181129074756.GA73370@bp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+XhMqzw9pqFw30QD=XpFTAqu+t1v5q24ODR+zynZQJJrS9xZw@mail.gmail.com>
+In-Reply-To: <20181129074756.GA73370@bp>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 06:59:50AM +0000, David CARLIER wrote:
-> Meant regardless how the kernel is compiled (ie optimisation level),
-> the contexts are guaranteed to be wiped because of the memory fences
-> used.
+On Thu, Nov 29, 2018 at 03:47:56PM +0800, PanBian wrote:
+> On Thu, Nov 29, 2018 at 02:57:11PM +0800, Herbert Xu wrote:
+> > On Thu, Nov 22, 2018 at 06:00:16PM +0800, Pan Bian wrote:
+> > > In multiple functions, the algorithm fields are read after its reference
+> > > is dropped through crypto_mod_put. In this case, the algorithm memory
+> > > may be freed, resulting in use-after-free bugs. This patch delays the
+> > > put operation until the algorithm is never used.
+> > > 
+> > > Signed-off-by: Pan Bian <bianpan2016@163.com>
+> > 
+> > Patch applied.  Thanks!
+> > 
+> > BTW, this problem exists in almost every other skcipher template,
+> > e.g., in ctr.  Are you working on a fix for them too?
+> 
+> Probably not. Could you please provide patches to fix them?
 
-Please avoid top-posting.
+OK, I'll work on it then.
 
-> On Thu, 29 Nov 2018 at 06:49, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> >
-> > On Wed, Nov 28, 2018 at 07:36:50PM +0000, David CARLIER wrote:
-> > > There might be a little performance drop but to make sure it stands
-> > > by it comments, we really wipe the whole context after usage.
-> > > ---
-> > >  crypto/chacha20poly1305.c | 3 ++-
-> > >  crypto/md5.c              | 2 +-
-> > >  crypto/rmd128.c           | 3 ++-
-> > >  crypto/rmd160.c           | 3 ++-
-> > >  crypto/rmd256.c           | 3 ++-
-> > >  crypto/rmd320.c           | 3 ++-
-> > >  crypto/sha3_generic.c     | 3 ++-
-> > >  7 files changed, 13 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/crypto/chacha20poly1305.c b/crypto/chacha20poly1305.c
-> > > index 600afa99941f..6e93d998109e 100644
-> > > --- a/crypto/chacha20poly1305.c
-> > > +++ b/crypto/chacha20poly1305.c
-> > > @@ -19,6 +19,7 @@
-> > >  #include <linux/init.h>
-> > >  #include <linux/kernel.h>
-> > >  #include <linux/module.h>
-> > > +#include <linux/string.h>
-> > >
-> > >  #include "internal.h"
-> > >
-> > > @@ -388,7 +389,7 @@ static int poly_genkey(struct aead_request *req)
-> > >         }
-> > >
-> > >         sg_init_table(creq->src, 1);
-> > > -       memset(rctx->key, 0, sizeof(rctx->key));
-> > > +       memzero_explicit(rctx->key, sizeof(rctx->key));
-> >
-> > Please explain the purpose of this patch.  As it stands this
-> > makes no sense.
-
-memzero_explicit is really only useful for stack memory.  You need
-to explain why it makes sense to use it in this context.  For
-example, by providing an example of a miscompile or how it is
-even possible for this to happen.
-
-Thanks,
+Thanks!
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
