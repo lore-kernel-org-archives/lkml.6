@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD488C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B78C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824A92146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEE922145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6ZeDV4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824A92146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vu/ZHuBv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE922145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389221AbeK3BhP (ORCPT
+        id S2389233AbeK3BhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40076 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389206AbeK3BhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:14 -0500
+        id S1729111AbeK3BhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18497213A2;
-        Thu, 29 Nov 2018 14:31:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BF08213A2;
+        Thu, 29 Nov 2018 14:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501901;
-        bh=rwC38LokT2j/t5MyPD8tk08rx2NAheZSSvNKbhmDA+I=;
+        s=default; t=1543501903;
+        bh=6wHH2/a2a2FaIeypfMGmOB1VZGMqlSk9QU4s6nicg1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r6ZeDV4FBairP4QPuZQxSXeb70EAit3zu3b1MYf3GSOibAgqLxhxQ8rCSwO7rfSe9
-         ZY3mxJt95EGuc0FQ4r/AQ1Aafpbm496UZdQ+/ISofRYswyuzEl5QtjEw+wwzCm4+ky
-         l6fU/XggrQDfc8Rdc89pdv0WWNcRPwAdyGPVXKSQ=
+        b=Vu/ZHuBv5GaS8JQPpnwzPZXHOQkFUIObWXeNhGwT0bKWX13W/dErq4I01Wl6MjZ/m
+         rI9ViEV1CFiYl/ZS9aIuUwzzhXKtvmfAjGX6Bu131Q5Xap+7CopLJiF5XSavssrkXA
+         OYyHwPzzZr0bPkI2ipOowgLHLcIAUBaIkvRny0TI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        Jean Delvare <jdelvare@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/110] block: copy ioprio in __bio_clone_fast() and bounce
-Date:   Thu, 29 Nov 2018 15:12:57 +0100
-Message-Id: <20181129135924.729620738@linuxfoundation.org>
+Subject: [PATCH 4.19 087/110] SUNRPC: Fix a bogus get/put in generic_key_to_expire()
+Date:   Thu, 29 Nov 2018 15:12:58 +0100
+Message-Id: <20181129135924.771277151@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -63,48 +63,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ca474b73896bf6e0c1eb8787eb217b0f80221610 ]
+[ Upstream commit e3d5e573a54dabdc0f9f3cb039d799323372b251 ]
 
-We need to copy the io priority, too; otherwise the clone will run
-with a different priority than the original one.
-
-Fixes: 43b62ce3ff0a ("block: move bio io prio to a new field")
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-
-Fixed up subject, and ordered stores.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bio.c    | 1 +
- block/bounce.c | 1 +
- 2 files changed, 2 insertions(+)
+ net/sunrpc/auth_generic.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 41173710430c..c4ef8aa46452 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -605,6 +605,7 @@ void __bio_clone_fast(struct bio *bio, struct bio *bio_src)
- 	if (bio_flagged(bio_src, BIO_THROTTLED))
- 		bio_set_flag(bio, BIO_THROTTLED);
- 	bio->bi_opf = bio_src->bi_opf;
-+	bio->bi_ioprio = bio_src->bi_ioprio;
- 	bio->bi_write_hint = bio_src->bi_write_hint;
- 	bio->bi_iter = bio_src->bi_iter;
- 	bio->bi_io_vec = bio_src->bi_io_vec;
-diff --git a/block/bounce.c b/block/bounce.c
-index 418677dcec60..abb50e7e5fab 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -248,6 +248,7 @@ static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
- 		return NULL;
- 	bio->bi_disk		= bio_src->bi_disk;
- 	bio->bi_opf		= bio_src->bi_opf;
-+	bio->bi_ioprio		= bio_src->bi_ioprio;
- 	bio->bi_write_hint	= bio_src->bi_write_hint;
- 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
- 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
+diff --git a/net/sunrpc/auth_generic.c b/net/sunrpc/auth_generic.c
+index f1df9837f1ac..1ac08dcbf85d 100644
+--- a/net/sunrpc/auth_generic.c
++++ b/net/sunrpc/auth_generic.c
+@@ -281,13 +281,7 @@ static bool generic_key_to_expire(struct rpc_cred *cred)
+ {
+ 	struct auth_cred *acred = &container_of(cred, struct generic_cred,
+ 						gc_base)->acred;
+-	bool ret;
+-
+-	get_rpccred(cred);
+-	ret = test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
+-	put_rpccred(cred);
+-
+-	return ret;
++	return test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
+ }
+ 
+ static const struct rpc_credops generic_credops = {
 -- 
 2.17.1
 
