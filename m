@@ -2,50 +2,51 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D839C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCF8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B919B208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84AAD208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0O/oLtK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B919B208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKPcOpq7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84AAD208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbeK3BVv (ORCPT
+        id S1730004AbeK3BVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:21:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43352 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:21:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbeK3BVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:21:51 -0500
+        id S1728865AbeK3BVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:21:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F339D208E7;
-        Thu, 29 Nov 2018 14:16:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5ABF2205C9;
+        Thu, 29 Nov 2018 14:16:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500981;
-        bh=RHPm3PRQ+RON6QS6lbhgIzpdNMsXcZCoputW7EQb6Gs=;
+        s=default; t=1543500983;
+        bh=55f/FhRSEe1uRiYMk4VG1kxTFumTuz+RqAL5xJhk2aA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J0O/oLtKaiM6ohOz+PMpWMtcc3cxbwrHRzaRTotiA/5xgF891KsONCmnu3X9NkbmW
-         RU7IlNHwRz4nDO3yETUqHxuV84fT+RAd5iI6hXoPIYJK4WoC3ayIUy29WRmkSAHDFt
-         IWEHda3TaBI3TMAkkb/Lpamr7zCXLlzE8aI2LDso=
+        b=UKPcOpq7yBWOsQwe/5FtBK0CsivI7UPZ09l4PyfAxH5glRE3e80jIg+7YKVw4+lAi
+         mn1jS0GfZ1oYonT9OT7oiyPRgV+kxFY1w6VcrYobyV09FFn//ClAGZ1q5Jn1ju77+y
+         9BRYym2FCh6hqt5KKPxotMwJkcUXr/ewJXczn9JQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Rojtberg <rojtberg@gmail.com>,
+        stable@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 32/83] Input: xpad - query wireless controller state at init
-Date:   Thu, 29 Nov 2018 15:11:50 +0100
-Message-Id: <20181129140139.740350139@linuxfoundation.org>
+Subject: [PATCH 3.18 71/83] Input: xpad - avoid using __set_bit() for capabilities
+Date:   Thu, 29 Nov 2018 15:12:29 +0100
+Message-Id: <20181129140141.888856811@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -63,84 +64,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit aba54876bb38dde81abead1ed1936eb04fa30ca9 ]
+[ Upstream commit a01308031c2647ed5f1c845104b73a8820a958a9 ]
 
-When we initialize the driver/device, we really don't know how many
-controllers are connected.  So send a "query presence" command to the
-base-station. (Command discovered by Zachary Lund)
+input_set_capability() and input_set_abs_param() will do it for you.
 
-Presence packet taken from:
-
-https://github.com/computerquip/xpad5
-
-Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 40 +++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/input/joystick/xpad.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 652efb284e09..ff368860a5f9 100644
+index b6e172f22c16..5bf85c43e6d9 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -770,6 +770,33 @@ static void xpad_deinit_output(struct usb_xpad *xpad)
+@@ -1579,8 +1579,6 @@ static void xpad_set_up_abs(struct input_dev *input_dev, signed short abs)
+ {
+ 	struct usb_xpad *xpad = input_get_drvdata(input_dev);
+ 
+-	set_bit(abs, input_dev->absbit);
+-
+ 	switch (abs) {
+ 	case ABS_X:
+ 	case ABS_Y:
+@@ -1599,6 +1597,9 @@ static void xpad_set_up_abs(struct input_dev *input_dev, signed short abs)
+ 	case ABS_HAT0Y:	/* the d-pad (only if dpad is mapped to axes */
+ 		input_set_abs_params(input_dev, abs, -1, 1, 0, 0);
+ 		break;
++	default:
++		input_set_abs_params(input_dev, abs, 0, 0, 0, 0);
++		break;
  	}
  }
  
-+static int xpad_inquiry_pad_presence(struct usb_xpad *xpad)
-+{
-+	int retval;
-+
-+	mutex_lock(&xpad->odata_mutex);
-+
-+	xpad->odata[0] = 0x08;
-+	xpad->odata[1] = 0x00;
-+	xpad->odata[2] = 0x0F;
-+	xpad->odata[3] = 0xC0;
-+	xpad->odata[4] = 0x00;
-+	xpad->odata[5] = 0x00;
-+	xpad->odata[6] = 0x00;
-+	xpad->odata[7] = 0x00;
-+	xpad->odata[8] = 0x00;
-+	xpad->odata[9] = 0x00;
-+	xpad->odata[10] = 0x00;
-+	xpad->odata[11] = 0x00;
-+	xpad->irq_out->transfer_buffer_length = 12;
-+
-+	retval = usb_submit_urb(xpad->irq_out, GFP_KERNEL);
-+
-+	mutex_unlock(&xpad->odata_mutex);
-+
-+	return retval;
-+}
-+
- #ifdef CONFIG_JOYSTICK_XPAD_FF
- static int xpad_play_effect(struct input_dev *dev, void *data, struct ff_effect *effect)
- {
-@@ -1264,9 +1291,22 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
- 		error = usb_submit_urb(xpad->irq_in, GFP_KERNEL);
- 		if (error)
- 			goto err_deinit_input;
-+
-+		/*
-+		 * Send presence packet.
-+		 * This will force the controller to resend connection packets.
-+		 * This is useful in the case we activate the module after the
-+		 * adapter has been plugged in, as it won't automatically
-+		 * send us info about the controllers.
-+		 */
-+		error = xpad_inquiry_pad_presence(xpad);
-+		if (error)
-+			goto err_kill_in_urb;
+@@ -1639,10 +1640,7 @@ static int xpad_init_input(struct usb_xpad *xpad)
+ 		input_dev->close = xpad_close;
  	}
- 	return 0;
  
-+err_kill_in_urb:
-+	usb_kill_urb(xpad->irq_in);
- err_deinit_input:
- 	xpad_deinit_input(xpad);
- err_deinit_output:
+-	__set_bit(EV_KEY, input_dev->evbit);
+-
+ 	if (!(xpad->mapping & MAP_STICKS_TO_NULL)) {
+-		__set_bit(EV_ABS, input_dev->evbit);
+ 		/* set up axes */
+ 		for (i = 0; xpad_abs[i] >= 0; i++)
+ 			xpad_set_up_abs(input_dev, xpad_abs[i]);
+@@ -1650,21 +1648,22 @@ static int xpad_init_input(struct usb_xpad *xpad)
+ 
+ 	/* set up standard buttons */
+ 	for (i = 0; xpad_common_btn[i] >= 0; i++)
+-		__set_bit(xpad_common_btn[i], input_dev->keybit);
++		input_set_capability(input_dev, EV_KEY, xpad_common_btn[i]);
+ 
+ 	/* set up model-specific ones */
+ 	if (xpad->xtype == XTYPE_XBOX360 || xpad->xtype == XTYPE_XBOX360W ||
+ 	    xpad->xtype == XTYPE_XBOXONE) {
+ 		for (i = 0; xpad360_btn[i] >= 0; i++)
+-			__set_bit(xpad360_btn[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY, xpad360_btn[i]);
+ 	} else {
+ 		for (i = 0; xpad_btn[i] >= 0; i++)
+-			__set_bit(xpad_btn[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY, xpad_btn[i]);
+ 	}
+ 
+ 	if (xpad->mapping & MAP_DPAD_TO_BUTTONS) {
+ 		for (i = 0; xpad_btn_pad[i] >= 0; i++)
+-			__set_bit(xpad_btn_pad[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY,
++					     xpad_btn_pad[i]);
+ 	}
+ 
+ 	/*
+@@ -1681,7 +1680,8 @@ static int xpad_init_input(struct usb_xpad *xpad)
+ 
+ 	if (xpad->mapping & MAP_TRIGGERS_TO_BUTTONS) {
+ 		for (i = 0; xpad_btn_triggers[i] >= 0; i++)
+-			__set_bit(xpad_btn_triggers[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY,
++					     xpad_btn_triggers[i]);
+ 	} else {
+ 		for (i = 0; xpad_abs_triggers[i] >= 0; i++)
+ 			xpad_set_up_abs(input_dev, xpad_abs_triggers[i]);
 -- 
 2.17.1
 
