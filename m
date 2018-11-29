@@ -6,66 +6,63 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5221EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947A3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954DA20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5978720863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:57:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="eqQBQSAj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954DA20868
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Gls3K74h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5978720863
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeK2PBH (ORCPT
+        id S1727611AbeK2PBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 10:01:07 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:35511 "EHLO
+        Thu, 29 Nov 2018 10:01:21 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:35915 "EHLO
         conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727098AbeK2PBG (ORCPT
+        with ESMTP id S1727098AbeK2PBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 10:01:06 -0500
+        Thu, 29 Nov 2018 10:01:21 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id wAT3uW9g014059;
-        Thu, 29 Nov 2018 12:56:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wAT3uW9g014059
+        by conuserg-09.nifty.com with ESMTP id wAT3uW9h014059;
+        Thu, 29 Nov 2018 12:56:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wAT3uW9h014059
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
         s=dec2015msa; t=1543463793;
-        bh=C1hzWf0P6ycjbnjTosvtbL7ps9IpR2XwGwVlhQ054q0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eqQBQSAjitC5AfO7C+zE61yDjZWaDlKwP6obMEzDeqWN1c0PW5splXkW3rW8ivY9a
-         YHCbKMaxnqTbLotRumMl2mHT58x3BDgBz7UwCVAkIZESBhV5CL49mbVdU341hVhKiU
-         ALoIs+gsuXxdKbMftvJaPGSOfCMnqOCgVdBZswG/vb1aSn1U/VF6wGbzmhROz0pvmn
-         NR2KitABK5NRDnJ1z9hXaGv3FZZVWc+0i6VL6LkF4aZMx/dTZzbodhxVbUh8UXn0EY
-         Pu2Q3mE0Mf9nLQg0HhnNfaAq4e58Lg7ox5Oy2pyY1vrXGP7DkXpeAIelIP2mtN95T6
-         3P1raVRO6GanA==
+        bh=jenL7MJF+aDHOcehc6CyDTxYWkvnIjepvb/UDlh5RcI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Gls3K74hUYeFBajD/srbmUekOfwyf79oeV0RuqBsogpOgjktRfJpaUWgwNgonYyoY
+         CCiyzQI3NL5MScs24puNrvOyWCDRl41gx1lEfKnraZdfRVOWt5FFmm/YanIbVELqsk
+         bdV0d0HuhiU+pWf8d72e1mDNngFZ3QM2odfId5aYQ8j73eXQ5wpdxfe4YEXIOni4LZ
+         iOc8xoZjLnd9sQ4je6ypicCfsx2Xd4rZQ0W2AwMGBdN0FRP9M3wmNfi4/uG6uDEiHm
+         XY63uoosa+E3nrqR2mQptVbZQLvCFscp+T4iwb3biyM/GfYwo2s2yj24ygdDZBF3SR
+         cHX1ElhOIX7Lg==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
         Emese Revfy <re.emese@gmail.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] kbuild: make 'archprepare' depend on 'scripts'
-Date:   Thu, 29 Nov 2018 12:56:30 +0900
-Message-Id: <1543463791-18391-1-git-send-email-yamada.masahiro@socionext.com>
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH v2 2/2] kbuild: descend into scripts/gcc-plugins/ via scripts/Makefile
+Date:   Thu, 29 Nov 2018 12:56:31 +0900
+Message-Id: <1543463791-18391-2-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543463791-18391-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1543463791-18391-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before start descending, Kbuild needs to run 'prepare' and 'scripts',
-which has been orthogonal to each other.
-
-Going forward, let's consider 'scripts' is a part of the preparation.
-This will allow more cleanups.
-
-Move 'scripts' to the prerequisite of 'archprepare', where UML starts
-compiling target *.c files.
+Now that 'archprepare' depends on 'scripts', Kbuild can descend into
+scripts/gcc-plugins in a more standard way.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
 
 Changes in v2:
@@ -73,98 +70,56 @@ Changes in v2:
     https://patchwork.kernel.org/patch/10703853/
     Rebased on the top of the fix-up
 
- Makefile | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+ Makefile                     | 2 +-
+ scripts/Makefile             | 3 ++-
+ scripts/Makefile.gcc-plugins | 8 --------
+ 3 files changed, 3 insertions(+), 10 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index f7cc3ee..9eb3f4f 100644
+index 9eb3f4f..c1f87cf 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1062,7 +1062,7 @@ $(sort $(vmlinux-deps)): $(vmlinux-dirs) ;
- # Error messages still appears in the original language
- 
- PHONY += $(vmlinux-dirs)
--$(vmlinux-dirs): prepare scripts
-+$(vmlinux-dirs): prepare
- 	$(Q)$(MAKE) $(build)=$@ need-builtin=1
- 
- define filechk_kernel.release
 @@ -1112,7 +1112,7 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
  
  macroprepare: prepare1 archmacros
  
--archprepare: archheaders archscripts macroprepare scripts_basic gcc-plugins
-+archprepare: archheaders archscripts macroprepare scripts gcc-plugins
+-archprepare: archheaders archscripts macroprepare scripts gcc-plugins
++archprepare: archheaders archscripts macroprepare scripts
  
  prepare0: archprepare
  	$(Q)$(MAKE) $(build)=scripts/mod
-@@ -1286,7 +1286,7 @@ modules.builtin: $(vmlinux-dirs:%=%/modules.builtin)
+diff --git a/scripts/Makefile b/scripts/Makefile
+index b48259d..feb1f71 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -36,9 +36,10 @@ PHONY += build_unifdef
+ build_unifdef: $(obj)/unifdef
+ 	@:
  
- # Target to prepare building external modules
- PHONY += modules_prepare
--modules_prepare: prepare scripts
-+modules_prepare: prepare
++subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+ subdir-$(CONFIG_MODVERSIONS) += genksyms
+ subdir-$(CONFIG_SECURITY_SELINUX) += selinux
+ subdir-$(CONFIG_GDB_SCRIPTS) += gdb
  
- # Target to install modules
- PHONY += modules_install
-@@ -1604,11 +1604,9 @@ help:
- 	@echo  '  clean           - remove generated files in module directory only'
- 	@echo  ''
- 
--# Dummies...
--PHONY += prepare scripts
-+PHONY += prepare
- prepare:
- 	$(cmd_crmodverdir)
--scripts: ;
- endif # KBUILD_EXTMOD
- 
- clean: $(clean-dirs)
-@@ -1712,33 +1710,33 @@ else
-         target-dir = $(if $(KBUILD_EXTMOD),$(dir $<),$(dir $@))
- endif
- 
--%.s: %.c prepare scripts FORCE
-+%.s: %.c prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
--%.i: %.c prepare scripts FORCE
-+%.i: %.c prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
--%.o: %.c prepare scripts FORCE
-+%.o: %.c prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
--%.lst: %.c prepare scripts FORCE
-+%.lst: %.c prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
--%.s: %.S prepare scripts FORCE
-+%.s: %.S prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
--%.o: %.S prepare scripts FORCE
-+%.o: %.S prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
--%.symtypes: %.c prepare scripts FORCE
-+%.symtypes: %.c prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
--%.ll: %.c prepare scripts FORCE
-+%.ll: %.c prepare FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
- 
- # Modules
--/: prepare scripts FORCE
-+/: prepare FORCE
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
- 	$(build)=$(build-dir)
- # Make sure the latest headers are built for Documentation
- Documentation/ samples/: headers_install
--%/: prepare scripts FORCE
-+%/: prepare FORCE
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
- 	$(build)=$(build-dir)
--%.ko: prepare scripts FORCE
-+%.ko: prepare FORCE
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1)   \
- 	$(build)=$(build-dir) $(@:.ko=.o)
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
+ # Let clean descend into subdirs
+-subdir-	+= basic dtc kconfig mod package gcc-plugins
++subdir-	+= basic dtc kconfig mod package
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index 46c5c68..c36f199 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -49,11 +49,3 @@ KBUILD_CFLAGS += $(GCC_PLUGINS_CFLAGS)
+ # All enabled GCC plugins are collected here for building below.
+ GCC_PLUGIN := $(gcc-plugin-y)
+ export GCC_PLUGIN
+-
+-# Actually do the build, if requested.
+-PHONY += gcc-plugins
+-gcc-plugins: scripts_basic
+-ifdef CONFIG_GCC_PLUGINS
+-	$(Q)$(MAKE) $(build)=scripts/gcc-plugins
+-endif
+-	@:
 -- 
 2.7.4
 
