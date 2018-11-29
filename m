@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECE0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D7FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9BDD2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 002FC20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZC0NV2H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9BDD2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaTVUC6T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002FC20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731334AbeK3BZz (ORCPT
+        id S1731346AbeK3BZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49412 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728855AbeK3BZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:54 -0500
+        id S1728855AbeK3BZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7B7C208E7;
-        Thu, 29 Nov 2018 14:20:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 416BE205C9;
+        Thu, 29 Nov 2018 14:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501223;
-        bh=9f0NZHIo9B5Jy+TtHbZmk/spTtNCmb2shePnUN3mroE=;
+        s=default; t=1543501225;
+        bh=sJx1rIn8oSWrfYtdyhj6nQEyWLygOqt+i9f9QKDADWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VZC0NV2H5xahhVGTJRKrYVYYo+gcynY73xZ81hqUx5RIFz1Jq4auWIFgznGb6dkgm
-         OvR8lQJwyG7gRzrjHdyOyMAIaa/hbEf8WT08LbHGpnccxLvNS+cJlo4/XFzxSPuFO0
-         AE5dMt8xY+4t7dXfuDmG6ZdVYMFcsQb3BKsaB/rA=
+        b=NaTVUC6TdFPIsaKomsXNQ1Fhye9yKsrlOXVukSy3Y/1iSqNKJHYL7YarvuLv0oPpv
+         R2P4+OMFsoUBvLcc8zLkFBPr8TYCsEwdp94EvAQwAiMRKt5Wf5wPFVpBP6BIGyDVz/
+         tfuMCpA123+E230rZPUhefjyclAukdtt14OzMDh0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 77/86] scsi: qla2xxx: do not queue commands when unloading
-Date:   Thu, 29 Nov 2018 15:12:42 +0100
-Message-Id: <20181129140116.052349217@linuxfoundation.org>
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 4.4 78/86] iwlwifi: mvm: fix regulatory domain update when the firmware starts
+Date:   Thu, 29 Nov 2018 15:12:43 +0100
+Message-Id: <20181129140116.108090887@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -65,48 +63,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 04dfaa53a0b6e66b328a5bc549e3af8f8b6eac02 upstream.
+commit 82715ac71e6b94a2c2136e31f3a8e6748e33aa8c upstream.
 
-When the driver is unloading, in qla2x00_remove_one(), there is a single
-call/point in time to abort ongoing commands, qla2x00_abort_all_cmds(),
-which is still several steps away from the call to scsi_remove_host().
+When the firmware starts, it doesn't have any regulatory
+information, hence it uses the world wide limitations. The
+driver can feed the firmware with previous knowledge that
+was kept in the driver, but the firmware may still not
+update its internal tables.
 
-If more commands continue to arrive and be processed during that
-interval, when the driver is tearing down and releasing its structures,
-it might potentially hit an oops due to invalid memory access:
+This happens when we start a BSS interface, and then the
+firmware can change the regulatory tables based on our
+location and it'll use more lenient, location specific
+rules. Then, if the firmware is shut down (when the
+interface is brought down), and then an AP interface is
+created, the firmware will forget the country specific
+rules.
 
-    Unable to handle kernel paging request for data at address 0x00000138
-    <...>
-    NIP [d000000004700a40] qla2xxx_queuecommand+0x80/0x3f0 [qla2xxx]
-    LR [d000000004700a10] qla2xxx_queuecommand+0x50/0x3f0 [qla2xxx]
+The host will think that we are in a certain country that
+may allow channels and will try to teach the firmware about
+our location, but the firmware may still not allow to drop
+the world wide limitations and apply country specific rules
+because it was just re-started.
 
-So, fail commands in qla2xxx_queuecommand() if the UNLOADING bit is set.
+In this case, the firmware will reply with MCC_RESP_ILLEGAL
+to the MCC_UPDATE_CMD. In that case, iwlwifi needs to let
+the upper layers (cfg80211 / hostapd) know that the channel
+list they know about has been updated.
 
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+This fixes https://bugzilla.kernel.org/show_bug.cgi?id=201105
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/scsi/qla2xxx/qla_os.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -685,6 +685,11 @@ qla2xxx_queuecommand(struct Scsi_Host *h
- 	srb_t *sp;
- 	int rval;
+---
+ drivers/net/wireless/iwlwifi/mvm/mac80211.c |    8 ++++++--
+ drivers/net/wireless/iwlwifi/mvm/nvm.c      |    5 ++---
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+--- a/drivers/net/wireless/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/iwlwifi/mvm/mac80211.c
+@@ -322,8 +322,12 @@ struct ieee80211_regdomain *iwl_mvm_get_
+ 		goto out;
+ 	}
  
-+	if (unlikely(test_bit(UNLOADING, &base_vha->dpc_flags))) {
-+		cmd->result = DID_NO_CONNECT << 16;
-+		goto qc24_fail_command;
-+	}
+-	if (changed)
+-		*changed = (resp->status == MCC_RESP_NEW_CHAN_PROFILE);
++	if (changed) {
++		u32 status = le32_to_cpu(resp->status);
 +
- 	if (ha->flags.eeh_busy) {
- 		if (ha->flags.pci_channel_io_perm_failure) {
- 			ql_dbg(ql_dbg_aer, vha, 0x9010,
++		*changed = (status == MCC_RESP_NEW_CHAN_PROFILE ||
++			    status == MCC_RESP_ILLEGAL);
++	}
+ 
+ 	regd = iwl_parse_nvm_mcc_info(mvm->trans->dev, mvm->cfg,
+ 				      __le32_to_cpu(resp->n_channels),
+--- a/drivers/net/wireless/iwlwifi/mvm/nvm.c
++++ b/drivers/net/wireless/iwlwifi/mvm/nvm.c
+@@ -667,9 +667,8 @@ iwl_mvm_update_mcc(struct iwl_mvm *mvm,
+ 
+ 	n_channels =  __le32_to_cpu(mcc_resp->n_channels);
+ 	IWL_DEBUG_LAR(mvm,
+-		      "MCC response status: 0x%x. new MCC: 0x%x ('%c%c') change: %d n_chans: %d\n",
+-		      status, mcc, mcc >> 8, mcc & 0xff,
+-		      !!(status == MCC_RESP_NEW_CHAN_PROFILE), n_channels);
++		      "MCC response status: 0x%x. new MCC: 0x%x ('%c%c') n_chans: %d\n",
++		      status, mcc, mcc >> 8, mcc & 0xff, n_channels);
+ 
+ 	resp_len = sizeof(*mcc_resp) + n_channels * sizeof(__le32);
+ 	resp_cp = kmemdup(mcc_resp, resp_len, GFP_KERNEL);
 
 
