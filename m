@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49705C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DC2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10AEC205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E2CD21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vwbNPFAZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10AEC205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1oLLvFK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2CD21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732597AbeK3B3s (ORCPT
+        id S1732609AbeK3B3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:29:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56456 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:29:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbeK3B3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:29:47 -0500
+        id S1731464AbeK3B3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:29:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58D0320868;
-        Thu, 29 Nov 2018 14:24:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9F9B21104;
+        Thu, 29 Nov 2018 14:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501455;
-        bh=cWxRcq1wN3+l01X2HjpOxmHZPOs0u8DkyGrIB176xbU=;
+        s=default; t=1543501458;
+        bh=b/hs+YFynVpcg5hnH1mJxHBmNsrq2yNVMZ/EOWwthcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vwbNPFAZhgcK5Rc1uA6kn9vo9wtU/fLucO2A8EmAWoMcx5SVoFUyPchPCKLOW3vc7
-         2R+l16/t3HHU5MRnNPCw1O0IU5ftGb0UAwGiTIdXi+XXQpe1COv4JOVZZPYGti5EU0
-         2AYW0GB3pIOA5z6q62EWwY0/g7f6rfx1nVkf9QVQ=
+        b=Z1oLLvFKD7RHRh3EC4XrWd1+BIwwpTpZmq5pYLWw0DFl5tzJW5dpYe+yR6Nx7HrNi
+         lbqRVF2pNqX4qOqibKjucb/MijHvirdzlygx99xF7R5sCsK5Y/jBG7aViufd7jQKjw
+         g0t4zXVM5vFa8+mzj+Jr7iLjMHdDi8v3doR7jyLY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Sperling <leosperling97@gmail.com>,
+        stable@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 65/92] Input: xpad - fix some coding style issues
-Date:   Thu, 29 Nov 2018 15:12:34 +0100
-Message-Id: <20181129140111.578221830@linuxfoundation.org>
+Subject: [PATCH 4.9 66/92] Input: xpad - avoid using __set_bit() for capabilities
+Date:   Thu, 29 Nov 2018 15:12:35 +0100
+Message-Id: <20181129140111.650471639@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -63,71 +64,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 68c78d0155e37992268664e134996d2b140ddf38 ]
+[ Upstream commit a01308031c2647ed5f1c845104b73a8820a958a9 ]
 
-Fix some coding style issues reported by checkpatch.pl. Mostly brackets
-in macros, spacing and comment style.
+input_set_capability() and input_set_abs_param() will do it for you.
 
-Signed-off-by: Leo Sperling <leosperling97@gmail.com>
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/input/joystick/xpad.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 298581b0f6c1..b6e172f22c16 100644
+index b6e172f22c16..5bf85c43e6d9 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -89,8 +89,10 @@
- 
- #define XPAD_PKT_LEN 64
- 
--/* xbox d-pads should map to buttons, as is required for DDR pads
--   but we map them to axes when possible to simplify things */
-+/*
-+ * xbox d-pads should map to buttons, as is required for DDR pads
-+ * but we map them to axes when possible to simplify things
-+ */
- #define MAP_DPAD_TO_BUTTONS		(1 << 0)
- #define MAP_TRIGGERS_TO_BUTTONS		(1 << 1)
- #define MAP_STICKS_TO_NULL		(1 << 2)
-@@ -390,15 +392,15 @@ static const signed short xpad_abs_triggers[] = {
-  * match against vendor id as well. Wired Xbox 360 devices have protocol 1,
-  * wireless controllers have protocol 129.
-  */
--#define XPAD_XBOX360_VENDOR_PROTOCOL(vend,pr) \
-+#define XPAD_XBOX360_VENDOR_PROTOCOL(vend, pr) \
- 	.match_flags = USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_INT_INFO, \
- 	.idVendor = (vend), \
- 	.bInterfaceClass = USB_CLASS_VENDOR_SPEC, \
- 	.bInterfaceSubClass = 93, \
- 	.bInterfaceProtocol = (pr)
- #define XPAD_XBOX360_VENDOR(vend) \
--	{ XPAD_XBOX360_VENDOR_PROTOCOL(vend,1) }, \
--	{ XPAD_XBOX360_VENDOR_PROTOCOL(vend,129) }
-+	{ XPAD_XBOX360_VENDOR_PROTOCOL((vend), 1) }, \
-+	{ XPAD_XBOX360_VENDOR_PROTOCOL((vend), 129) }
- 
- /* The Xbox One controller uses subclass 71 and protocol 208. */
- #define XPAD_XBOXONE_VENDOR_PROTOCOL(vend, pr) \
-@@ -408,7 +410,7 @@ static const signed short xpad_abs_triggers[] = {
- 	.bInterfaceSubClass = 71, \
- 	.bInterfaceProtocol = (pr)
- #define XPAD_XBOXONE_VENDOR(vend) \
--	{ XPAD_XBOXONE_VENDOR_PROTOCOL(vend, 208) }
-+	{ XPAD_XBOXONE_VENDOR_PROTOCOL((vend), 208) }
- 
- static const struct usb_device_id xpad_table[] = {
- 	{ USB_INTERFACE_INFO('X', 'B', 0) },	/* X-Box USB-IF not approved class */
-@@ -1576,6 +1578,7 @@ static void xpad_close(struct input_dev *dev)
- static void xpad_set_up_abs(struct input_dev *input_dev, signed short abs)
+@@ -1579,8 +1579,6 @@ static void xpad_set_up_abs(struct input_dev *input_dev, signed short abs)
  {
  	struct usb_xpad *xpad = input_get_drvdata(input_dev);
-+
- 	set_bit(abs, input_dev->absbit);
  
+-	set_bit(abs, input_dev->absbit);
+-
  	switch (abs) {
+ 	case ABS_X:
+ 	case ABS_Y:
+@@ -1599,6 +1597,9 @@ static void xpad_set_up_abs(struct input_dev *input_dev, signed short abs)
+ 	case ABS_HAT0Y:	/* the d-pad (only if dpad is mapped to axes */
+ 		input_set_abs_params(input_dev, abs, -1, 1, 0, 0);
+ 		break;
++	default:
++		input_set_abs_params(input_dev, abs, 0, 0, 0, 0);
++		break;
+ 	}
+ }
+ 
+@@ -1639,10 +1640,7 @@ static int xpad_init_input(struct usb_xpad *xpad)
+ 		input_dev->close = xpad_close;
+ 	}
+ 
+-	__set_bit(EV_KEY, input_dev->evbit);
+-
+ 	if (!(xpad->mapping & MAP_STICKS_TO_NULL)) {
+-		__set_bit(EV_ABS, input_dev->evbit);
+ 		/* set up axes */
+ 		for (i = 0; xpad_abs[i] >= 0; i++)
+ 			xpad_set_up_abs(input_dev, xpad_abs[i]);
+@@ -1650,21 +1648,22 @@ static int xpad_init_input(struct usb_xpad *xpad)
+ 
+ 	/* set up standard buttons */
+ 	for (i = 0; xpad_common_btn[i] >= 0; i++)
+-		__set_bit(xpad_common_btn[i], input_dev->keybit);
++		input_set_capability(input_dev, EV_KEY, xpad_common_btn[i]);
+ 
+ 	/* set up model-specific ones */
+ 	if (xpad->xtype == XTYPE_XBOX360 || xpad->xtype == XTYPE_XBOX360W ||
+ 	    xpad->xtype == XTYPE_XBOXONE) {
+ 		for (i = 0; xpad360_btn[i] >= 0; i++)
+-			__set_bit(xpad360_btn[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY, xpad360_btn[i]);
+ 	} else {
+ 		for (i = 0; xpad_btn[i] >= 0; i++)
+-			__set_bit(xpad_btn[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY, xpad_btn[i]);
+ 	}
+ 
+ 	if (xpad->mapping & MAP_DPAD_TO_BUTTONS) {
+ 		for (i = 0; xpad_btn_pad[i] >= 0; i++)
+-			__set_bit(xpad_btn_pad[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY,
++					     xpad_btn_pad[i]);
+ 	}
+ 
+ 	/*
+@@ -1681,7 +1680,8 @@ static int xpad_init_input(struct usb_xpad *xpad)
+ 
+ 	if (xpad->mapping & MAP_TRIGGERS_TO_BUTTONS) {
+ 		for (i = 0; xpad_btn_triggers[i] >= 0; i++)
+-			__set_bit(xpad_btn_triggers[i], input_dev->keybit);
++			input_set_capability(input_dev, EV_KEY,
++					     xpad_btn_triggers[i]);
+ 	} else {
+ 		for (i = 0; xpad_abs_triggers[i] >= 0; i++)
+ 			xpad_set_up_abs(input_dev, xpad_abs_triggers[i]);
 -- 
 2.17.1
 
