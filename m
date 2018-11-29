@@ -2,130 +2,159 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76077C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA16FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A75D2086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A75D2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 665D720989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:33:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wo4WoFgX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 665D720989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbeK3Kkl (ORCPT
+        id S1727050AbeK3Kk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:40:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41250 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbeK3Kkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:40:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6A431AF4A;
-        Thu, 29 Nov 2018 23:33:26 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 30 Nov 2018 10:33:18 +1100
-Cc:     paulmck@linux.vnet.ibm.com, Florian Weimer <fweimer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH - resend*2] VFS: use synchronize_rcu_expedited() in namespace_unlock()
-In-Reply-To: <20181005014002.GS32577@ZenIV.linux.org.uk>
-References: <87y3nyd4pu.fsf@notabene.neil.brown.name> <20171026122743.GX3659@linux.vnet.ibm.com> <b8a1a898-850c-cc7a-2574-1bfd15cc9888@redhat.com> <20171127144125.GF3624@linux.vnet.ibm.com> <87induxd3u.fsf@notabene.neil.brown.name> <87tvm1rxme.fsf@notabene.neil.brown.name> <20181005014002.GS32577@ZenIV.linux.org.uk>
-Message-ID: <87mupro3wh.fsf@notabene.neil.brown.name>
+        Fri, 30 Nov 2018 05:40:56 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:45883 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeK3Kk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:40:56 -0500
+Received: by mail-yw1-f66.google.com with SMTP id d190so1519988ywd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:33:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=icwD0A11Km8vCxTd+qOpF0mw9hR+DOxnr+3u8qTyQzY=;
+        b=Wo4WoFgXSkgIWbJCafjKxpiFoZ0gaLTfP9vYOVtSXYhwynboTnLBNGo43tJ8xMZ4WW
+         yQAoHLL+T0FMoCMKK7zxjy+aZ0vaF+x6ECeSB/Hbz4XQ/qJEbLz1tVlMxwq9/+87jJv6
+         dfQZSTncHUAgji1pnfT6uTnolUTBylk1ZXYRs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=icwD0A11Km8vCxTd+qOpF0mw9hR+DOxnr+3u8qTyQzY=;
+        b=MzLtH1qncYkMElHzvgDnoJz5+ItQSLpna94ZdFetIZgcKzU6pzATLsxLbAgWWHpbPe
+         qo+7l2+4hgAPnmSwcRYWvtD4d/TbFyLl7Ggv6BCy3OmKHzDfOW/fRScxSrtj6INDbGLJ
+         9LJ0UKkYaWyxAFMwdFAq9iK5SK+b9ErMcbZNMCBeYJylCd2aAY8dVltplzdPjYcPA3TN
+         fVh+/HhsY8LsQtr+sF51mvBbOG/D8PgmRq3q3OsiuGNcjwovkVRibMSSY2k6ti2WirA1
+         AGJCzwD43+Zbr7wHuTL18AvqAOgPNTL1H5pNUiljb+XlSM5+Ts1f6qlIYY1aeHY5yD+z
+         fi4Q==
+X-Gm-Message-State: AA+aEWYitPoArdY1dLTTdSy8OHf8Kf+g8g/ryNP+8Pj15JnD1MI3A3DE
+        kg+nh1+EMERR22+DNcc5EQo9imLrPVE=
+X-Google-Smtp-Source: AFSGD/V45YjgBSn6uEjC9XSST9SUIonBbeTN2Uh4ShbEZrqzlawSN25sPwrNpU1RomJMUnFEYNoq4g==
+X-Received: by 2002:a81:1b09:: with SMTP id b9-v6mr3511933ywb.248.1543534421803;
+        Thu, 29 Nov 2018 15:33:41 -0800 (PST)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id h145sm985982ywc.72.2018.11.29.15.33.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 15:33:40 -0800 (PST)
+Received: by mail-yb1-f177.google.com with SMTP id d18-v6so1499020yba.4
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:33:40 -0800 (PST)
+X-Received: by 2002:a25:2349:: with SMTP id j70-v6mr3442478ybj.137.1543534419615;
+ Thu, 29 Nov 2018 15:33:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <1488160439-7140-1-git-send-email-nobuhiro.iwamatsu.kw@hitachi.com>
+In-Reply-To: <1488160439-7140-1-git-send-email-nobuhiro.iwamatsu.kw@hitachi.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 29 Nov 2018 15:33:28 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLEU2n8jUjXhCiOAqfonMKov6rTv5-3KWSt4EmOEUn5Bg@mail.gmail.com>
+Message-ID: <CAGXu5jLEU2n8jUjXhCiOAqfonMKov6rTv5-3KWSt4EmOEUn5Bg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] pstore: ramoops: support multiple pmsg instances
+To:     Nobuhiro Iwamatsu <nobuhiro.iwamatsu.kw@hitachi.com>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Sun, Feb 26, 2017 at 5:54 PM Nobuhiro Iwamatsu
+<nobuhiro.iwamatsu.kw@hitachi.com> wrote:
+> The following series implements multiple pmsg. This feature allows userspace
+> program to control individual content aging or priority.
 
-
-The synchronize_rcu() in namespace_unlock() is called every time
-a filesystem is unmounted.  If a great many filesystems are mounted,
-this can cause a noticable slow-down in, for example, system shutdown.
-
-The sequence:
-  mkdir -p /tmp/Mtest/{0..5000}
-  time for i in /tmp/Mtest/*; do mount -t tmpfs tmpfs $i ; done
-  time umount /tmp/Mtest/*
-
-on a 4-cpu VM can report 8 seconds to mount the tmpfs filesystems, and
-100 seconds to unmount them.
-
-Boot the same VM with 1 CPU and it takes 18 seconds to mount the
-tmpfs filesystems, but only 36 to unmount.
-
-If we change the synchronize_rcu() to synchronize_rcu_expedited()
-the umount time on a 4-cpu VM drop to 0.6 seconds
-
-I think this 200-fold speed up is worth the slightly high system
-impact of using synchronize_rcu_expedited().
-
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com> (from general rcu p=
-erspective)
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
-
-Al Viro says "I can live with this one" but this still hasn't landed.
-Maybe someone else could apply it?
+I'd like to take a look at this series again, if you're still
+interested in upstreaming it. :) There were a lot of things that
+needed refactoring in pstore to sanely deal with this, and I think
+we're there now. Is this still desired?
 
 Thanks,
-NeilBrown
 
-Full quote from Al on 5th Oct:
-> Umm...  IIRC, the last one got sidetracked on the other thing in the seri=
-es...
-> <checks> that was s_anon stuff.  I can live with this one; FWIW, what kind
-> of load would trigger the impact of the change?  Paul?
-which Paul replied to.
+-Kees
 
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> If a pstore backend module(e.g. ramoops) requires the multiple pmsg instances
+> when registering itself to pstore, multiple /dev/pmsg[ID] are created. Writes
+> to each /dev/pmsg[ID] are isolated each other. After reboot, the contents are
+> available in /sys/fs/pstore/pmsg-[backend]-[ID].
+>
+> In addition, we add multiple pmsg support for ramoops. We can specify multiple
+> pmsg area size by its module parameter as follows.
+>
+>  pmsg_size=0x1000,0x2000,...
+>
+> I did check the operation of this feature on CycloneV (socfpga) Helio board.
+>
+> v5:
+>   Add commit: "pstore: Change parameter of ramoops_free_przs()"
+>     - I forgot addition to previous patch series.
+>   Update commit: "pstore: support multiple pmsg instances"
+>     - Fix comment.
+>     - Fix initialization of num_pmsg.
+>
+> v4:
+>   Rebase to 4.10-rc5
+>   The following patches have been removed from this series as similar functions
+>   were modified by other commit.
+>      - pstore: Replace four kzalloc() calls by kcalloc() in ramoops_init_przs()
+>      - pstore: Change parameter of ramoops_free_przs()
+>      - pstore: Rename 'przs' to 'dprzs' in struct ramoops_context
+>      - ramoops: Rename ramoops_init_prz() to ramoops_init_dprzs()
+>
+> v3:
+>   Rebase to v4.8.
+>   Split patch.
+>   merged device_create().
+>   Remove Blank lines.
+>   Update documentiation of DT binding.
+>   Update parsing function of ramoops_pmsg_size, add NULL termination.
+>   Update module parameters for pmsg_size list.
+>
+> Hiraku Toyooka (2):
+>   pstore: support multiple pmsg instances
+>   selftests/pstore: add testcases for multiple pmsg instances
+>
+> Nobuhiro Iwamatsu (3):
+>   pstore: Change parameter of ramoops_free_przs()
+>   ramoops: Add __ramoops_init_prz() as generic function
+>   ramoops: support multiple pmsg instances
+>
+>  Documentation/admin-guide/ramoops.rst              |  22 ++
+>  .../bindings/reserved-memory/ramoops.txt           |   6 +-
+>  fs/pstore/pmsg.c                                   |  23 +-
+>  fs/pstore/ram.c                                    | 317 ++++++++++++++++-----
+>  include/linux/pstore.h                             |   1 +
+>  include/linux/pstore_ram.h                         |   8 +-
+>  tools/testing/selftests/pstore/common_tests        |  21 +-
+>  .../selftests/pstore/pstore_post_reboot_tests      |  27 +-
+>  tools/testing/selftests/pstore/pstore_tests        |  14 +-
+>  9 files changed, 342 insertions(+), 97 deletions(-)
+>
+> --
+> 2.11.0
+>
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a7f91265ea67..43a0d2c7449d 100644
-=2D-- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1360,7 +1360,7 @@ static void namespace_unlock(void)
- 	if (likely(hlist_empty(&head)))
- 		return;
-=20
-=2D	synchronize_rcu();
-+	synchronize_rcu_expedited();
-=20
- 	group_pin_kill(&head);
- }
-=2D-=20
-2.14.0.rc0.dirty
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwAdz4ACgkQOeye3VZi
-gblqLg/+PwPLRxOkRa8exmADt69qsclBqzWP3tAL5qtTl0a3JuH0Tlv04YxeVbct
-FUY/sqt6lG6pWf52eTrRWteCxlnQv22kJy+EO+rKmntuRzaF96R8g5Ri4ijQ66l3
-xZcaQ8gG4313vG9lW2dj+4cGo4TuvJt/SZUmUI4nkthXfB0crChuZe/4f9G9s4Xx
-hcBLnv+xbKS5Uf/ItQVXFx22aviLOCQqGnxEPY1U5jjX/Fkg8oX6lHHJEqdmdr/Q
-S8qoMFbWQQgr2Sky4oN8FN3nMmwYoojukUFeA5ddc46M5hxbWqdTAWh+qk2HL4vB
-5vCLTlzSf7eH6DP0augawbDr7cijzCjXVnQOU0G6nc6hlm7klVqJ3NUXwARtBpZt
-FkMjeBzMRQDq4pXtTNhDueKpXDp9fCn4cKwh7nZIQGp7tyFEC4Dw5Xid7AATuszu
-FpKXY9UY4ihm71Cgs4ZRV4lI8zK4LvAzJFLYBNtsgXzMi8ohIX2KV2JCrXKf9vXs
-FtSsyKvCKxEjT2F7Q1+U8/TSvjxLIRUqC8WbMFqYNcRqcBw/KOQY+Dy6QTSjvH7d
-rGb9gEguAsUlTQtCjFlt6+h+lmxBMPTCd7PGJv96LcP7NvZKK1gOf405m0d68s/c
-KYv1PdmKX8e2Pnj6+prAq1f0lVjJOdJY6Oakw3MtQ203vrBEX/o=
-=M18W
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Kees Cook
