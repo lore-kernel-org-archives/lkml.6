@@ -2,179 +2,136 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDBFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3875BC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976952145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976952145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F37662145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="avRx9ApN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37662145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbeK3EIY (ORCPT
+        id S1730339AbeK3EI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:08:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55242 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729818AbeK3EIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:08:23 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E95272D808;
-        Thu, 29 Nov 2018 17:02:20 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AC51161530;
-        Thu, 29 Nov 2018 17:02:19 +0000 (UTC)
-Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
- reader waiter to nil
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
-        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
-        Davidlohr Bueso <dave@stgolabs.net>
-References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
- <20181129131232.GN2131@hirez.programming.kicks-ass.net>
- <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
- <20181129160627.GU2131@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
-Date:   Thu, 29 Nov 2018 12:02:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181129160627.GU2131@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Nov 2018 17:02:21 +0000 (UTC)
+        Thu, 29 Nov 2018 23:08:29 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39354 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729818AbeK3EI3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:08:29 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w6so1192517pgl.6
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:02:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VJT3Cqw1s+1LfZz1jZVQmfF+EB+6vDsy5FMvUfM+kJc=;
+        b=avRx9ApNjygatqM/IP78x10vo+BDyCP2h1NYOfBFUEjOQJTj+NtKBC2w6ld9dIjEjL
+         VRyj7QPtjBHkLLllohfpqf0a9PSdxwC3BVOvSvHzZ/8dAUZKyZpPIAJDw1jk4kAxLQxj
+         K0kchWQOQm9VKNZPwSTEJXN9Hfvw4agQ8SBHs4WGaYTg+ecz+zyWZMRn2OGdO6a8c4yK
+         aD4zaNnjfFwgZKPvzQKAhBpMtb+0Cj+HbkVg2CdXI9qjqplZcIMEMaoZ3LXItm7U2w9a
+         y9w/TkvewtMTCjXW0CVHlUyTYyjtg6cdTt1++Rwfw/iZ9E7PAgMJma3Ejet7WTPX8XaN
+         syDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VJT3Cqw1s+1LfZz1jZVQmfF+EB+6vDsy5FMvUfM+kJc=;
+        b=RB84+nd4PUJloZDXmKBZxUWKGnZnHMDQGCOViINSDqkN1EzB6x7ayRfIJnvTIU1o7G
+         rIEM9clUg5SkXnThtmut/1BckiH5S9reN8g+5HzVxI1gM/WQU+qLtT9Hj0QqK255YIhc
+         5EyTb5SZz4gRJoGgvTGpmFzZnWgF7ZZ0R8bFw1DnrFgG14z/Wcy2umStA/Fe3Oxdlg4A
+         rGqkBgQFiYJKO46kS8IrwrrO3hJ0U4GO2lZzMOFi3eU4inEubdVWwQ+6zB5V7in+b3ay
+         byAwMfgs3SO4pdiDNPXM8NXeghjBi+Z92yCaYeJDrT2MoiIOsuRhZir4sUr88DJT0k3o
+         Kc+Q==
+X-Gm-Message-State: AA+aEWa/PrMqaR0EbrvtbZcBAuaCpeAnz9KQySi1RBYbDF5zJy5PvmBA
+        pmqy8J1wJavKWs5thrT0qpoZpg==
+X-Google-Smtp-Source: AFSGD/Wcg21guAWFzr7GgnMIRR57MgueaoWWTeYzemDAYmUWPH+gPZ0lldC18OoszB+BjlZPj+TtyA==
+X-Received: by 2002:a62:6d47:: with SMTP id i68mr2116783pfc.185.1543510946287;
+        Thu, 29 Nov 2018 09:02:26 -0800 (PST)
+Received: from ?IPv6:2600:1010:b054:ff26:3849:a65d:14d0:f668? ([2600:1010:b054:ff26:3849:a65d:14d0:f668])
+        by smtp.gmail.com with ESMTPSA id h134sm3853363pfe.27.2018.11.29.09.02.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 09:02:25 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call implementation for x86-64
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
+Date:   Thu, 29 Nov 2018 09:02:23 -0800
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
+        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
+        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
+        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
+References: <20181126160217.GR2113@hirez.programming.kicks-ass.net> <20181126171036.chcbmb35ygpxziub@treble> <20181126175624.bruqfbkngbucpvxr@treble> <20181126200801.GW2113@hirez.programming.kicks-ass.net> <20181126212628.4apztfazichxnt7r@treble> <20181127084330.GX2113@hirez.programming.kicks-ass.net> <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com> <20181129094210.GC2131@hirez.programming.kicks-ass.net> <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net> <20181129143853.GO2131@hirez.programming.kicks-ass.net> <20181129163342.tp5wlfcyiazwwyoh@treble> <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTEvMjkvMjAxOCAxMTowNiBBTSwgUGV0ZXIgWmlqbHN0cmEgd3JvdGU6Cj4gT24gVGh1
-LCBOb3YgMjksIDIwMTggYXQgMTA6MjE6NThBTSAtMDUwMCwgV2FpbWFuIExvbmcgd3JvdGU6
-Cj4KPj4+PiBkaWZmIC0tZ2l0IGEva2VybmVsL2xvY2tpbmcvcndzZW0teGFkZC5jIGIva2Vy
-bmVsL2xvY2tpbmcvcndzZW0teGFkZC5jCj4+Pj4gaW5kZXggMDliMTgwMC4uNTBkOWFmNiAx
-MDA2NDQKPj4+PiAtLS0gYS9rZXJuZWwvbG9ja2luZy9yd3NlbS14YWRkLmMKPj4+PiArKysg
-Yi9rZXJuZWwvbG9ja2luZy9yd3NlbS14YWRkLmMKPj4+PiBAQCAtMTk4LDE1ICsxOTgsMjIg
-QEAgc3RhdGljIHZvaWQgX19yd3NlbV9tYXJrX3dha2Uoc3RydWN0IHJ3X3NlbWFwaG9yZSAq
-c2VtLAo+Pj4+ICAJCXdva2VuKys7Cj4+Pj4gIAkJdHNrID0gd2FpdGVyLT50YXNrOwo+Pj4+
-ICAKPj4+PiAtCQl3YWtlX3FfYWRkKHdha2VfcSwgdHNrKTsKPj4+PiArCQlnZXRfdGFza19z
-dHJ1Y3QodHNrKTsKPj4+PiAgCQlsaXN0X2RlbCgmd2FpdGVyLT5saXN0KTsKPj4+PiAgCQkv
-Kgo+Pj4+IC0JCSAqIEVuc3VyZSB0aGF0IHRoZSBsYXN0IG9wZXJhdGlvbiBpcyBzZXR0aW5n
-IHRoZSByZWFkZXIKPj4+PiArCQkgKiBFbnN1cmUgY2FsbGluZyBnZXRfdGFza19zdHJ1Y3Qo
-KSBiZWZvcmUgc2V0dGluZyB0aGUgcmVhZGVyCj4+Pj4gIAkJICogd2FpdGVyIHRvIG5pbCBz
-dWNoIHRoYXQgcndzZW1fZG93bl9yZWFkX2ZhaWxlZCgpIGNhbm5vdAo+Pj4+ICAJCSAqIHJh
-Y2Ugd2l0aCBkb19leGl0KCkgYnkgYWx3YXlzIGhvbGRpbmcgYSByZWZlcmVuY2UgY291bnQK
-Pj4+PiAgCQkgKiB0byB0aGUgdGFzayB0byB3YWtldXAuCj4+Pj4gIAkJICovCj4+Pj4gIAkJ
-c21wX3N0b3JlX3JlbGVhc2UoJndhaXRlci0+dGFzaywgTlVMTCk7Cj4+Pj4gKwkJLyoKPj4+
-PiArCQkgKiBFbnN1cmUgaXNzdWluZyB0aGUgd2FrZXVwIChlaXRoZXIgYnkgdXMgb3Igc29t
-ZW9uZSBlbHNlKQo+Pj4+ICsJCSAqIGFmdGVyIHNldHRpbmcgdGhlIHJlYWRlciB3YWl0ZXIg
-dG8gbmlsLgo+Pj4+ICsJCSAqLwo+Pj4+ICsJCXdha2VfcV9hZGQod2FrZV9xLCB0c2spOwo+
-Pj4+ICsJCS8qIHdha2VfcV9hZGQoKSBhbHJlYWR5IHRha2UgdGhlIHRhc2sgcmVmICovCj4+
-Pj4gKwkJcHV0X3Rhc2tfc3RydWN0KHRzayk7Cj4+Pj4gIAl9Cj4+Pj4gIAo+Pj4+ICAJYWRq
-dXN0bWVudCA9IHdva2VuICogUldTRU1fQUNUSVZFX1JFQURfQklBUyAtIGFkanVzdG1lbnQ7
-Cj4+IEkgZG91YnQgcHV0dGluZyB3YWtlX3FfYWRkKCkgYWZ0ZXIgY2xlYXJpbmcgd2FpdGVy
-LT50YXNrIGNhbiByZWFsbHkgZml4Cj4gV2h5OyBhdCB0aGF0IHBvaW50IHdlIGtub3cgdGhl
-IHdha2V1cCB3aWxsIGhhcHBlbiBhZnRlciwgd2hpY2ggaXMgYWxsIHdlCj4gcmVxdWlyZS4K
-Pgo+CgpUaHJlYWQgMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBUaHJlYWQgMsKgwqDCoMKgwqAgVGhyZWFkIDMK
-CsKgwqDCoCByd3NlbV9kb3duX3JlYWRfZmFpbGVkKCkKwqByYXdfc3Bpbl9sb2NrX2lycSgm
-c2VtLT53YWl0X2xvY2spOwrCoGxpc3RfYWRkX3RhaWwoJndhaXRlci5saXN0LCAmd2FpdF9s
-aXN0KTsKwqByYXdfc3Bpbl91bmxvY2tfaXJxKCZzZW0tPndhaXRfbG9jayk7CsKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIF9fcndz
-ZW1fbWFya193YWtlKCk7CsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgd2FrZV9xX2FkZCgpOwrCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHdha2VfdXBfcSgpOwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHdhaXRlci0+dGFzayA9Ck5VTEw7IC0tKwrC
-oHdoaWxlICh0cnVlKQp7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfArCoApzZXRfY3VycmVudF9z
-dGF0ZShUQVNLX1VOSU5URVJSVVBUSUJMRSk7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKfArCoCBp
-ZiAoIXdhaXRlci50YXNrKSAvLwpmYWxzZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCB8CsKgwqDCoMKgwqAKYnJlYWs7wqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgfArCoApzY2hlZHVsZSgpO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAp8
-CsKgfcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPC0tLS0tKwrCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3YWtl
-X3VwX3EoJndha2VfcSk7CgpPSywgSSBnb3QgY29uZnVzZWQgYnkgdGhlIHRocmVhZCByYWNp
-bmcgY2hhcnQgc2hvd24gaW4gdGhlIHBhdGNoLiBJdAp3aWxsIGJlIGNsZWFyZXIgaWYgdGhl
-IGNsZWFyaW5nIG9mIHdhaXRlci0+dGFzayBpcyBtb3ZlZCBkb3duIGFzIHNob3duLgpPdGhl
-cndpc2UsIG1vdmluZyB0aGUgY2xlYXJpbmcgb2Ygd2FpdGVyLT50YXNrIGJlZm9yZSB3YWtl
-X3FfYWRkKCkgd29uJ3QKbWFrZSBhIGRpZmZlcmVuY2UuIFNvIHRoZSBwYXRjaCBjYW4gYmUg
-YSBwb3NzaWJsZSBmaXguCgpTdGlsbCB3ZSBhcmUgdGFsa2luZyBhYm91dCAzIHRocmVhZHMg
-cmFjaW5nIHdpdGggZWFjaCBvdGhlci4gVGhlCmNsZWFyaW5nIG9mIHdha2VfcS5uZXh0IGlu
-IHdha2VfdXBfcSgpIGlzIG5vdCBhdG9taWMgYW5kIGl0IGlzIGhhcmQgdG8KcHJlZGljdCB0
-aGUgcmFjaW5nIHJlc3VsdCBvZiB0aGUgY29uY3VycmVudCB3YWtlX3Egb3BlcmF0aW9ucyBi
-ZXR3ZWVuCnRocmVhZHMgMiBhbmQgMy4gVGhlIGVzc2VuY2Ugb2YgbXkgdGVudGF0aXZlIHBh
-dGNoIGlzIHRvIHByZXZlbnQgdGhlCmNvbmN1cnJlbnQgd2FrZV9xIG9wZXJhdGlvbnMgaW4g
-dGhlIGZpcnN0IHBsYWNlLgoKQ2hlZXJzLApMb25nbWFuCgoKClRoZSBzZWNvbmQgd2FrZV9x
-X2FkZCgpIGFib3ZlIHdpbGwgZmFpbCB0byBhZGQgdGhlIHRhc2sgdG8gdGhlIHNlY29uZAp3
-YWtlX3EgYmVjYXVzZSBpdCBpcyBzdGlsbCBpbiB0aGUgZmlyc3Qgd2FrZV9xLiBTbyB0aGUg
-c2Vjb25kCndha2VfdXBfcSgpIHdpbGwgbm90IHdha2UgdXAgdGhlIHRhc2sgYmVjYXVzZSBp
-dCBpcyBub3QgaW4gaXRzIHdha2VfcS4KCkNoZWVycywKTG9uZ21hbgoKCg==
+
+
+> On Nov 29, 2018, at 8:50 AM, Linus Torvalds <torvalds@linux-foundation.org=
+> wrote:
+>=20
+>> On Thu, Nov 29, 2018 at 8:33 AM Josh Poimboeuf <jpoimboe@redhat.com> wrot=
+e:
+>>=20
+>> This seems to work...
+>>=20
+>> +       .if \create_gap =3D=3D 1
+>> +       .rept 6
+>> +       pushq 5*8(%rsp)
+>> +       .endr
+>> +       .endif
+>> +
+>> -idtentry int3                  do_int3                 has_error_code=3D=
+0
+>> +idtentry int3                  do_int3                 has_error_code=3D=
+0        create_gap=3D1
+>=20
+> Ugh. Doesn't this entirely screw up the stack layout, which then
+> screws up  task_pt_regs(), which then breaks ptrace and friends?
+>=20
+> ... and you'd only notice it for users that use int3 in user space,
+> which now writes random locations on the kernel stack, which is then a
+> huge honking security hole.
+>=20
+> It's possible that I'm confused, but let's not play random games with
+> the stack like this. The entry code is sacred, in scary ways.
+>=20
+> So no. Do *not* try to change %rsp on the stack in the bp handler.
+> Instead, I'd suggest:
+>=20
+> - just restart the instruction (with the suggested "ptregs->rip --")
+>=20
+> - to avoid any "oh, we're not making progress" issues, just fix the
+> instruction yourself to be the right call, by looking it up in the
+> "what needs to be fixed" tables.
+>=20
+> No?
+
+I thought that too.  I think it deadlocks. CPU A does text_poke_bp().  CPU B=
+ is waiting for a spinlock with IRQs off.  CPU C holds the spinlock and hits=
+ the int3.  The int3 never goes away because CPU A is waiting for CPU B to h=
+andle the sync_core IPI.
+
+Or do you think we can avoid the IPI while the int3 is there?=
