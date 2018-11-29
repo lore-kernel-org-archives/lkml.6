@@ -2,128 +2,170 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C37C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03452C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4234D2081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:27:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BEEB2081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:27:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="jvQPIite";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rFJJX/At"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4234D2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=who-t.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e70ic9Am"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BEEB2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeK2Pb1 (ORCPT
+        id S1727688AbeK2Pbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 10:31:27 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:43523 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727359AbeK2Pb1 (ORCPT
+        Thu, 29 Nov 2018 10:31:50 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39906 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeK2Pbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 10:31:27 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 806E021DC1;
-        Wed, 28 Nov 2018 23:27:27 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 28 Nov 2018 23:27:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=XV5JpaL2jPItNOMznNTOzEyGffK
-        mwCsnsa74Gk+KUMo=; b=jvQPIitetgm8Cu05cUbXO5h1Ztm6s96/02z9EqNjCH/
-        Nj7wIJ+f5idoAi1CDehCl0XS5YycgwlgsEz24sV3sr9pVZVlteVEZvHpeIgCelOB
-        m1a1n5W59KqkHSEFvfjmL98tpqD5racj3IT1Zfh5Ot8RYlpVS4S7IryvzZxLMgk6
-        UO80yORctZ67/b7M5u1L53bFaNagOScnmTJv95aI91NHz/XOtVBXzVvQFdHJN8bz
-        f1kMcI5ugpWU7AoRoqBeOSyCrBzW7L+0/lqrcn54Pbanvx1XRM34jlr5yj7zzzcS
-        LmMkpcSBs9VNpChuau3gviRTOur7oQefv4TBjAeITcQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=XV5Jpa
-        L2jPItNOMznNTOzEyGffKmwCsnsa74Gk+KUMo=; b=rFJJX/AtPO7WV0HdiDssk6
-        8ve7KG4hI9wS/fyv/b67xgAhCw6JV9Bmpjaq0qk3TVqAglnjsWiLH0N+eYnjlL/l
-        X1rHUQZxidbRBVph3yTsIURFV2493R4cCUaHGxkN60of8yhNIjcrR/7FKYC8/Ea7
-        cvqW/wfYzqLyjxz/fkUDg99tvV+UBo/YrFwQQbpmiIr6w0TZRgCvPytFd1V8mmkz
-        dM5AWUNLl2ceIjq865ghMMgVtxdde5wH8ODUesQhlIfv7sthLvaOSm7/9yfLAA7a
-        C/EvZ0nzYIvDm+MGwXtK7lbHcg9zNxPsvtnY3GFFMDZP5Dn62TbHfZedOoZJSLVg
-        ==
-X-ME-Sender: <xms:rmr_W1UhI_PN8eFQDdcenKUhAAFjzTtHdkQ3XrLmA6KCW4hdPsP3BQ>
-X-ME-Proxy: <xmx:rmr_W6oADQynOYS95Eke-hw3Agg_Z75Q3uLsbl9VguhYQbZB2L32Sg>
-    <xmx:rmr_W1CEuhnsqifp5KqEDghvKnZfVNnpn4xgXkGxh66lyefrvNtk-Q>
-    <xmx:rmr_WzrHxSMaO8JYgERClhJe_27SUKW2Q78czdzGnzgYo224UD1YKA>
-    <xmx:rmr_W4AE4WgfNJ5aLk6zAMPuBNbzmZ9b5JzrJ-UVQfNShjvh4XsEiQ>
-    <xmx:rmr_W2WKoKQf4tCQEHpAGJXb2jsnQEbAkl3k0dYn9hlyM8m6Thnotg>
-    <xmx:r2r_W2H-B2sZASDHSizuZkYUhdkBN1ctmiw6SMfbwoGpeEJJfih_bw>
-Received: from jelly (167-179-166-29.a7b3a6.bne.nbn.aussiebb.net [167.179.166.29])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EF34910409;
-        Wed, 28 Nov 2018 23:27:23 -0500 (EST)
-Date:   Thu, 29 Nov 2018 14:27:22 +1000
-From:   Peter Hutterer <peter.hutterer@who-t.net>
-To:     Harry Cutts <hcutts@chromium.org>
-Cc:     linux-input@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>, jikos@kernel.org,
-        torvalds@linux-foundation.org,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        linux-kernel@vger.kernel.org, benjamin.tissoires@redhat.com
-Subject: Re: [PATCH 0/8] HID: MS and Logitech high-resolution scroll wheel
- support
-Message-ID: <20181129042722.GA5872@jelly>
-References: <20181122063409.15816-1-peter.hutterer@who-t.net>
- <CA+jURcuGGRtyeRXfLK0Or=hDG6KJ1z9eAS8DAuH12-QTNpgs0w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+jURcuGGRtyeRXfLK0Or=hDG6KJ1z9eAS8DAuH12-QTNpgs0w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 29 Nov 2018 10:31:50 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c72so376068pfc.6
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 20:27:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=glFocJvmDJt9uBXTAlN3W1kgDT/Asdeikb/chKzP/Sg=;
+        b=e70ic9AmD8LODVYoWeStMH4rZBNOYEAuj3SsrJ4iV4hyy2s6arxoQ6xmbg2nqwj6jD
+         YOgB53KZi/5qAkdTge7x7OrKSIWO9y34VINfaMIquK0+b/56hVc+2QFRQJRwVQO7ZCtQ
+         RY0xnRqcdnvMtWkzYjxIE/Ls/oAlBUBhrn8MA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=glFocJvmDJt9uBXTAlN3W1kgDT/Asdeikb/chKzP/Sg=;
+        b=S/SsJ0PQrJ/2n9auPK58qbcn4KgCDZivIROPu+l17r90mS6rm6v3fPE6Rdj25Wk7Cl
+         NO7/eHJL4ga1EEnj7UW4BtgftbCsJZM12bGqPleqU9VxP5RSGXmpIx/WPwZw6rUeH9cU
+         R8dP4XzCm7DqmD+B3JgXTDoLpBrmesKfOd81lQ2yrTPuV7lnzh86Ruoyy7X5WTQUCfFh
+         Mkg4NE8PYtiZ34D6OpMOU6/zwpKo5M3U0PKB0/suhTFcUgrWIYqPH4B2FBkb7qU+4ZBk
+         XaBCEnQASS0i9Ody+OfyEIFYDP/m85U4Co2BQkOv/i0IVPyxcssSrT/+oRJ9qX2irvu1
+         GeWw==
+X-Gm-Message-State: AGRZ1gKEksA42Lh0EBkYmSIMLl5/OZYPTwD6fstGRgqARZ1o1/PwuDFs
+        R99sq2C0LhANwuSwzC3xEyyGSg==
+X-Google-Smtp-Source: AJdET5dbaKNc8fvJXS775I4BncW88LTEtgaGkPLncAlNGvBE/jT9FYEM7K8F73jxawJZB3RFFvdT4w==
+X-Received: by 2002:a62:47d9:: with SMTP id p86mr39509518pfi.95.1543465670694;
+        Wed, 28 Nov 2018 20:27:50 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id p2sm770473pfb.28.2018.11.28.20.27.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 28 Nov 2018 20:27:50 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Breno Leitao <leitao@debian.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v3 0/4] powerpc: system call table generation support
+Date:   Thu, 29 Nov 2018 09:56:47 +0530
+Message-Id: <1543465611-17122-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:22:14PM -0800, Harry Cutts wrote:
-> On Wed, 21 Nov 2018 at 22:34, Peter Hutterer <peter.hutterer@who-t.net> wrote:
-> > [snip]
-> > Devices tested:
-> > - Microsoft Comfort Optical Mouse 3000
-> > - Microsoft Sculpt Ergonomic Mouse
-> > - Microsoft Surface mouse
-> > - Logitech MX Anywhere 2S
-> >
-> > The following devices were tested for the HID feature and didn't have it:
-> > - Logitech G500s, G303
-> > - Roccat Kone XTD
-> > - all the cheap Lenovo, HP, Dell, Logitech USB mice that come with a
-> >   workstation that I could find in the local office
-> > - Etekcity something something
-> > - Razer Imperator
-> > - Microsoft Classic IntelliMouse
-> > - Microsoft Surface Mobile Mouse
-> 
-> I just tested the patches with the Microsoft Comfort Optical Mouse
-> 3000. I also tested with the Microsoft Surface Precision mouse [0],
-> and like the Surface Mobile mouse it didn't seem to report the HID
-> feature (at least, it was only reporting REL_WHEEL_HI_RES changes of
-> 120 in evtest).
+The purpose of this patch series is, we can easily
+add/modify/delete system call table support by cha-
+nging entry in syscall.tbl file instead of manually
+changing many files. The other goal is to unify the 
+system call table generation support implementation 
+across all the architectures. 
 
-IIRC that's the same mouse benjamin has and it does have the HID feature, it
-just ends up reporting the same number of clicks anyway so there's no
-visible effect. Which in itself is a good sign for the patch series, I
-guess ;)
+The system call tables are in different format in 
+all architecture. It will be difficult to manually
+add, modify or delete the system calls in the resp-
+ective files manually. To make it easy by keeping a 
+script and which'll generate uapi header file and 
+syscall table file.
 
-> For the series:
-> Acked-by: Harry Cutts <hcutts@chromium.org>
-> Verified-by: Harry Cutts <hcutts@chromium.org>
+syscall.tbl contains the list of available system 
+calls along with system call number and correspond-
+ing entry point. Add a new system call in this arch-
+itecture will be possible by adding new entry in 
+the syscall.tbl file.
 
-thanks, much appreciated.
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
+	- Compat entry name, if required.
+	- spu entry name, if required.
 
-Cheers,
-   Peter
+ARM, s390 and x86 architecuture does exist the sim-
+ilar support. I leverage their implementation to 
+come up with a generic solution.
 
-> Harry Cutts
-> Chrome OS Touch/Input team
-> 
-> [0]: https://microsoft.com/en-us/p/surface-precision-mouse/8qc5p0d8ddjt
+I have done the same support for work for alpha, 
+ia64, m68k, microblaze, mips, parisc, sh, sparc, 
+and xtensa. Below mentioned git repository contains
+more details about the workflow.
+
+https://github.com/frzkhn/system_call_table_generator/
+
+Finally, this is the ground work to solve the Y2038
+issue. We need to add two dozen of system calls to 
+solve Y2038 issue. So this patch series will help to
+add new system calls easily by adding new entry in the
+syscall.tbl.
+
+changes since v2:
+ - modified/optimized the syscall.tbl to avoid duplicate
+   for the spu entries.
+ - updated the syscalltbl.sh to meet the above point.
+
+changes since v1:
+ - optimized/updated the syscall table generation 
+   scripts.
+ - fixed all mixed indentation issues in syscall.tbl.
+ - added "comments" in syscall_*.tbl.
+ - changed from generic-y to generated-y in Kbuild.
+
+Firoz Khan (4):
+  powerpc: add __NR_syscalls along with NR_syscalls
+  powerpc: move macro definition from asm/systbl.h
+  powerpc: add system call table generation support
+  powerpc: generate uapi header and system call table files
+
+ arch/powerpc/Makefile                       |   3 +
+ arch/powerpc/include/asm/Kbuild             |   4 +
+ arch/powerpc/include/asm/systbl.h           | 396 --------------------------
+ arch/powerpc/include/asm/unistd.h           |   3 +-
+ arch/powerpc/include/uapi/asm/Kbuild        |   2 +
+ arch/powerpc/include/uapi/asm/unistd.h      | 389 +------------------------
+ arch/powerpc/kernel/Makefile                |  10 -
+ arch/powerpc/kernel/syscalls/Makefile       |  63 ++++
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 427 ++++++++++++++++++++++++++++
+ arch/powerpc/kernel/syscalls/syscallhdr.sh  |  36 +++
+ arch/powerpc/kernel/syscalls/syscalltbl.sh  |  36 +++
+ arch/powerpc/kernel/systbl.S                |  37 +--
+ arch/powerpc/kernel/systbl_chk.c            |  60 ----
+ arch/powerpc/platforms/cell/spu_callbacks.c |  17 +-
+ 14 files changed, 591 insertions(+), 892 deletions(-)
+ delete mode 100644 arch/powerpc/include/asm/systbl.h
+ create mode 100644 arch/powerpc/kernel/syscalls/Makefile
+ create mode 100644 arch/powerpc/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/powerpc/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/powerpc/kernel/syscalls/syscalltbl.sh
+ delete mode 100644 arch/powerpc/kernel/systbl_chk.c
+
+-- 
+1.9.1
+
