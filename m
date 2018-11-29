@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBF1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73710C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21E08205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B09A21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4VLHiD7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E08205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7Vy2j/L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B09A21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731454AbeK3B0T (ORCPT
+        id S1731468AbeK3B0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50160 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728883AbeK3B0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:18 -0500
+        id S1728883AbeK3B0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA06B2133F;
-        Thu, 29 Nov 2018 14:20:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 371252133F;
+        Thu, 29 Nov 2018 14:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501247;
-        bh=B0y7Nj4HgYD80U8WFOyvsPLdpGJP9VX/FgxrY0/COrQ=;
+        s=default; t=1543501249;
+        bh=R68vtlAaO6Rn99i+Qp84kibhgR0D7QKug0RwaaHYhvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E4VLHiD7al/8tStDEnaXa9lceq7xMMGu84KLZjC0SanPSHDrJ9glnByP9L6FzR4zS
-         SnZTfnQBFpx5UqilEq/QG671sMbqN9Wg2Y3W4ilp215bpuC/RiTdVc7TxFFiIEvVh7
-         jGg8yHlbYQL7IjKqx1tIPDpQp4Pxk+wpiJ0nKXeU=
+        b=C7Vy2j/LI6skLe28VSJ5OUSHTuieaXGSLkYiydm2yX6xsQr5wiZh4eMOOiOqE9RSw
+         nlCty1MMA2mSI+I0UjZfjcAkYWeZHdN9bPfHQvTVfILWV5keeI9ZuHAJyBX/uiKlGu
+         bhhkL+jc5rkQiuuxU5jE4s6diAhtCw1skhkHjiJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+56a40ceee5fb35932f4d@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 13/92] sctp: clear the transport of some out_chunk_list chunks in sctp_assoc_rm_peer
-Date:   Thu, 29 Nov 2018 15:11:42 +0100
-Message-Id: <20181129140107.521767628@linuxfoundation.org>
+        syzbot+dcb8b3587445007f5808@syzkaller.appspotmail.com,
+        Andrew Price <anprice@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Subject: [PATCH 4.9 14/92] gfs2: Dont leave s_fs_info pointing to freed memory in init_sbd
+Date:   Thu, 29 Nov 2018 15:11:43 +0100
+Message-Id: <20181129140107.580505948@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -64,59 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Andrew Price <anprice@redhat.com>
 
-commit df132eff463873e14e019a07f387b4d577d6d1f9 upstream.
+commit 4c62bd9cea7bcf10292f7e4c57a2bca332942697 upstream.
 
-If a transport is removed by asconf but there still are some chunks with
-this transport queuing on out_chunk_list, later an use-after-free issue
-will be caused when accessing this transport from these chunks in
-sctp_outq_flush().
+When alloc_percpu() fails, sdp gets freed but sb->s_fs_info still points
+to the same address. Move the assignment after that error check so that
+s_fs_info can only point to a valid sdp or NULL, which is checked for
+later in the error path, in gfs2_kill_super().
 
-This is an old bug, we fix it by clearing the transport of these chunks
-in out_chunk_list when removing a transport in sctp_assoc_rm_peer().
-
-Reported-by: syzbot+56a40ceee5fb35932f4d@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+dcb8b3587445007f5808@syzkaller.appspotmail.com
+Signed-off-by: Andrew Price <anprice@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sctp/associola.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/gfs2/ops_fstype.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sctp/associola.c
-+++ b/net/sctp/associola.c
-@@ -488,8 +488,9 @@ void sctp_assoc_set_primary(struct sctp_
- void sctp_assoc_rm_peer(struct sctp_association *asoc,
- 			struct sctp_transport *peer)
- {
--	struct list_head	*pos;
--	struct sctp_transport	*transport;
-+	struct sctp_transport *transport;
-+	struct list_head *pos;
-+	struct sctp_chunk *ch;
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -71,13 +71,13 @@ static struct gfs2_sbd *init_sbd(struct
+ 	if (!sdp)
+ 		return NULL;
  
- 	pr_debug("%s: association:%p addr:%pISpc\n",
- 		 __func__, asoc, &peer->ipaddr.sa);
-@@ -547,7 +548,6 @@ void sctp_assoc_rm_peer(struct sctp_asso
- 	 */
- 	if (!list_empty(&peer->transmitted)) {
- 		struct sctp_transport *active = asoc->peer.active_path;
--		struct sctp_chunk *ch;
- 
- 		/* Reset the transport of each chunk on this list */
- 		list_for_each_entry(ch, &peer->transmitted,
-@@ -569,6 +569,10 @@ void sctp_assoc_rm_peer(struct sctp_asso
- 				sctp_transport_hold(active);
+-	sb->s_fs_info = sdp;
+ 	sdp->sd_vfs = sb;
+ 	sdp->sd_lkstats = alloc_percpu(struct gfs2_pcpu_lkstats);
+ 	if (!sdp->sd_lkstats) {
+ 		kfree(sdp);
+ 		return NULL;
  	}
++	sb->s_fs_info = sdp;
  
-+	list_for_each_entry(ch, &asoc->outqueue.out_chunk_list, list)
-+		if (ch->transport == peer)
-+			ch->transport = NULL;
-+
- 	asoc->peer.transport_count--;
- 
- 	sctp_transport_free(peer);
+ 	set_bit(SDF_NOJOURNALID, &sdp->sd_flags);
+ 	gfs2_tune_init(&sdp->sd_tune);
 
 
