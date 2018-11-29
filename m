@@ -2,130 +2,97 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0874DC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FACC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43F620863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:38:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26F1220863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:39:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="FGqPIK9U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43F620863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Hm/OWZXy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F1220863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeK3KpO (ORCPT
+        id S1726958AbeK3Kqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:45:14 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38532 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbeK3KpN (ORCPT
+        Fri, 30 Nov 2018 05:46:30 -0500
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:40462 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeK3Kqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:45:13 -0500
-Received: by mail-ot1-f67.google.com with SMTP id e12so3497109otl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:37:59 -0800 (PST)
+        Fri, 30 Nov 2018 05:46:30 -0500
+Received: by mail-pg1-f171.google.com with SMTP id z10so1636946pgp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:39:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eQrn+Srwf0zuHQUeLfDQuJmZiLKRQB0d3wk46MwrBnM=;
-        b=FGqPIK9U655mw3w98R+fkmqgdVm92JZ3Cngf0mpMXhzOr5nFwhgG3ldP0z7Rzcu6KV
-         xtsJa/A0AsM5XjRg9S5hA9naAVqqx+d2wm12LJPRE3QoDNui4eYPZ0k+c1Jqm80wrgHH
-         yxQi8lH3o2v3e8/lgVHt83nNJavX9XVHRr+hqQMwRcz01SuRVwcMpf0vxRve8N8iiMS/
-         XFpsZ6WWJBuyEMaUeAu8hdSjjxh+bsNA+iI9H81vne8LYhT4OqMMk5FECZ6sR2Fg4GcV
-         3/hOg5vJBRnRIU1FtBV04bT2BpEQWh+cdfCasSv0icmDHxJiihXqvG1R97UOo/k3tVhO
-         fJXg==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Gq+RaHYE+vIpE6U0mIMOGkjeoTdxOyooBu5UtkUngBM=;
+        b=Hm/OWZXyRHl2hxYnP5oP162CG4rhO010cMhNPinXO48mhsuC+42Dekz8k7DMqb6EjA
+         w1uSk7xRXTmrNpMPIPGKK6b0E4JqW8kSd+6NZHHKY8gUVXluu3ZhPMqMUhYR8JkBO1sU
+         NkTfuFQLq64qYo9P5KY94q0MPP38CdKim2TSkNZjzL3Ti058TWQwu8qWt/A4KUO+xLgG
+         P15Q6NTjz/xrVdlsI0FPjq3N2x60Ik/qpvE9pf3wvi5/XsxfEqz5AFutWNLqat+qqWk0
+         OShToZaa5wtkWjYr+sQYQxklbiQCPFZIN9hfVFtmE075IuzjpQztVtOLvSXhapAqx7bV
+         WRyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eQrn+Srwf0zuHQUeLfDQuJmZiLKRQB0d3wk46MwrBnM=;
-        b=sir8/yhOqtToUW6xEwrISFqCUqObIOLlmf0SNdQZ+6zB4ivQApAwviylbtW/vIhNop
-         jtITXlihnLlTtcygWDaSJd103POvMit/6jWXArcEoY3Oq/530wMus0uywh45DgUmj6F/
-         MZDGLTRnO21A3pBwYHtoldBmNkAZBnIeAfPMF3NWTdwmZJ6EXQbQgG0Gq+IGPHyFKImv
-         rNRfQGx4vKf3AYLmoo5bmlA0gbPwTXbOo0zCkHSCkAe0YagivGFmnOny7Uk9MAqF0iWb
-         YAkdNZGyo/a34uOqu+bPgFmiwndTEOM3w0gD59ENpWIU8aekeLwJ/6K2prcGs0R+RCUF
-         mZOg==
-X-Gm-Message-State: AA+aEWbzj5fNTTmlrf/rcdWWsFSJ6aSOxRVwKy+RWAQ835aeVXLvDIuQ
-        d0L2f4Qw7XErTrVT8bcDgbVMw3VmV/cT1I6JWJ0=
-X-Google-Smtp-Source: AFSGD/VZCGMLGl5XAzDB0sU26vZ7NWPkmJVYRT9VDcH0VRYOUcH7uy2vxfgzXJFjh2GgTJP8qxpGUB6Obnq+PyWTTv4=
-X-Received: by 2002:a9d:a48:: with SMTP id 66mr2238865otg.308.1543534679125;
- Thu, 29 Nov 2018 15:37:59 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Gq+RaHYE+vIpE6U0mIMOGkjeoTdxOyooBu5UtkUngBM=;
+        b=sAed/AzCG/qBCb1Gwn0c7iHHm41SOiTV5NpQrDCEDtyyJr8K0821gxPKPvIHwm5xLy
+         hOopSNbnbGuAhgpBXEWYejbAklayIUElBLhdPXbcwCw5/eUE0mbKwxW9IVtTlMgml+bu
+         Q19BnlEA6EYx7UiCCRxlu+0vg+bqVkSpsVqvch7+0Nr6tKpARsSrFENOveGmQUtoNMMq
+         OxWXyIlIdCiVXXU28Or2jYOT7IW7tm6luCLttHbHtk7U6wO8RqeZkDtKARmUhjrI4lWM
+         1KtgwSeR4qr0m7vaece1vhT4QP4t2B/SP/rihL3JIdDhUGS5q6/COmY2ZYkU7POaSWKP
+         JgxQ==
+X-Gm-Message-State: AA+aEWYBgjK9LXGKMP7ivj7jHlFQnZkXt3SERvP2rrYmG5LQNF1v5jMm
+        n4Jhtymit4JhLOv6KgcjWTX8pg==
+X-Google-Smtp-Source: AFSGD/W3ZNRuMy2OtMHsCH/cUHFHCXdM957rt1G8WlJpxxwT44i1KyLuzBY53vkwk7OBQN53W7jHgg==
+X-Received: by 2002:a63:7154:: with SMTP id b20mr2955753pgn.342.1543534755686;
+        Thu, 29 Nov 2018 15:39:15 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id u137sm8427960pfc.140.2018.11.29.15.39.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 15:39:15 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gSVtq-0002xJ-7e; Thu, 29 Nov 2018 16:39:14 -0700
+Date:   Thu, 29 Nov 2018 16:39:14 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Christian Benvenuti <benve@cisco.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/drivers: fix spelling mistake "initalize" ->
+ "initialize"
+Message-ID: <20181129233914.GA11331@ziepe.ca>
+References: <20181128151116.13216-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <20181114230554.4968-1-martin.blumenstingl@googlemail.com>
- <7hh8g0d8tg.fsf@baylibre.com> <CAFBinCBViZgRrZO16FsRKSGNriSw2_D9+_6ri99_zf++_SuuKg@mail.gmail.com>
- <7hk1kv79at.fsf@baylibre.com>
-In-Reply-To: <7hk1kv79at.fsf@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 30 Nov 2018 00:37:48 +0100
-Message-ID: <CAFBinCB8r+5tGKxfsPMapayxmDuWOi=WihvvdxS=UxcnpeYqdQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: switch CONFIG_PWM_MESON to built-in
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128151116.13216-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kevin,
+On Wed, Nov 28, 2018 at 03:11:16PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Fix spelling mistake in usnic_err error message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/infiniband/hw/usnic/usnic_ib_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, Nov 30, 2018 at 12:28 AM Kevin Hilman <khilman@baylibre.com> wrote:
->
-> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->
-> > Hi Kevin,
-> >
-> > On Thu, Nov 29, 2018 at 1:30 AM Kevin Hilman <khilman@baylibre.com> wrote:
-> >>
-> >> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
-> >>
-> >> > Some Meson8b boards (Odroid-C1, EC-100) use a PWM regulator which is the
-> >> > voltage supply of the CPU cores (this regulator is typically called
-> >> > "VCCK").
-> >> > Now that we are preparing support for CPU frequency scaling on Meson8,
-> >> > Meson8b and Meson8m2 we should build the pwm-meson driver into the
-> >> > kernel so we can configure the CPU voltage early in the boot process.
-> >>
-> >> Can you explain a little more why the configuration of CPU voltage
-> >> cannot wait a bit so this could be properly probed?
-> >
-> > I was under the impression that cpufreq-dt would still initialize even
-> > if the regulator is not ready yet. however (after reading the code
-> > again) this is clearly NOT the case.
->
-> Hmm, a quick look at cpufreq-dt suggests that it should -EPROBE_DEFER if
-> the regulator isn't ready yet.  Why doesn't that work?
-sorry for not being clear:
-I was under the impression that cpufreq-dt wouldn't handle -EPROBE_DEFER.
-I'm not sure why I assumed that. As you already said: deferred probing
-of the regulator works fine.
+Applied to for-next
 
-> > there's still a benefit with this change: your Odroid-C1 in your
-> > KernelCI lab would also be able to change the CPU frequency (so in
-> > case something breaks we could spot it there).
-> > will you accept this patch after I updated the description to mention
-> > that it's for KernelCI test coverage?
->
-> Possibly, but I'd still rather see the dependencies worked out correctly
-> so that this can be module, and cpufreq-dt would defer until it's ready.
-KernelCI shows multiple "pwm-regulator regulator-vcck: Failed to get
-PWM: -517" messages on Odroid-C1.
-however, what I failed to notice so far is that there's a
-"pwm-regulator: supplied by regulator-dummy" at the end of the boot
-process. does this mean that the Odroid-C1 in your KernelCI lab can
-load kernel modules? in that case this patch can be ignored.
-
-(I will still send a PWM regulator related patch: that "Failed to get
-PWM: -517" message is very noisy and we typically suppress that in
-other drivers)
-
-
-Regards
-Martin
+Thanks,
+Jason
