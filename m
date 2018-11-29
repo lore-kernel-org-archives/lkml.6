@@ -2,111 +2,107 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10F3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5650C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C818E213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:31:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C818E213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 733E620868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:33:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DNHtGD0u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 733E620868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeK3GiG (ORCPT
+        id S1726369AbeK3Gjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:38:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbeK3GiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:38:06 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91CE220868;
-        Thu, 29 Nov 2018 19:31:34 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 14:31:33 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129143133.2b38bc76@gandalf.local.home>
-In-Reply-To: <CAHk-=whBuSXe1+8HGT23FWDypkAP7TPun3te=fw2aLx+F6WVig@mail.gmail.com>
-References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
-        <20181129094210.GC2131@hirez.programming.kicks-ass.net>
-        <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
-        <20181129143853.GO2131@hirez.programming.kicks-ass.net>
-        <20181129163342.tp5wlfcyiazwwyoh@treble>
-        <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
-        <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
-        <20181129121307.12393c57@gandalf.local.home>
-        <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com>
-        <20181129124404.2fe55dd0@gandalf.local.home>
-        <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
-        <20181129125857.75c55b96@gandalf.local.home>
-        <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
-        <20181129134725.6d86ade6@gandalf.local.home>
-        <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
-        <20181129141648.6ef944a9@gandalf.local.home>
-        <CAHk-=whBuSXe1+8HGT23FWDypkAP7TPun3te=fw2aLx+F6WVig@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 30 Nov 2018 01:39:53 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:60142 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbeK3Gjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 01:39:53 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 2693210C0EAC;
+        Thu, 29 Nov 2018 11:33:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543520003; bh=jeqFqmvTzs2KKfAPX/gAKdDetNQbT3cutvQn8368MOA=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=DNHtGD0uaFshfEL2/dJq2xUUVuw0d1Yp0IRAxVUzIIYXEER6AMA0uqQ+JgbkXiML+
+         XuJDvk8rA/8qgTafKdB8luvID8ePN0TC3R8HHs+ewI15J3IxNbL04FZVFuKAk3PdQE
+         0XbsujkiQN80UsM8F0VkRu3xRiPxgwTefOxshIAUmZXrfzS+639wkiYjpPAAjnDdLH
+         6be3JtXOCX9U9t887TZXG9+DYgOXUR0U6TdqEAD0EiFvMNCsZKi7MShsw9BLLkwSaR
+         7SWxpf9LotssRH2Zz16qnUo5H+ZTOQCJFfcnovJSjx+gciSlTE5YU5qPDTwSBHjTE1
+         iJlhcpHN/2Plw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 159C43E01;
+        Thu, 29 Nov 2018 11:33:22 -0800 (PST)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 29 Nov 2018 11:33:22 -0800
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] ARC: change defconfig defaults to ARCv2
+Thread-Topic: [PATCH] ARC: change defconfig defaults to ARCv2
+Thread-Index: AQHUhp9+KPpwRKkuK0WKMdrVDoAasQ==
+Date:   Thu, 29 Nov 2018 19:33:22 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA230750146419E64@US01WEMBX2.internal.synopsys.com>
+References: <20181127222045.18491-1-khilman@baylibre.com>
+ <C2D7FE5348E1B147BCA15975FBA230750146419633@US01WEMBX2.internal.synopsys.com>
+ <7h36rjae1i.fsf@baylibre.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.104]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 11:24:43 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Thu, Nov 29, 2018 at 11:16 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > But then we need to implement all numbers of parameters.  
-> 
-> Oh, I agree, it's nasty.
-> 
-> But it's actually a nastiness that we've solved before. In particular,
-> with the system call mappings, which have pretty much the exact same
-> issue of "map unknown number of arguments to registers".
-> 
-> Yes, it's different - there you map the unknown number of arguments to
-> a structure access instead. And yes, the macros are unbelievably ugly.
-> See
-> 
->     arch/x86/include/asm/syscall_wrapper.h
-
-Those are not doing inline assembly.
-
-> 
-> and the __MAP() macro from
-> 
->     include/linux/syscalls.h
-> 
-> so it's not pretty. But it would solve all the problems.
-> 
-
-Again, not inline assembly, and those only handle up to 6 parameters.
-
-My POC started down this route, until I notice that there's tracepoints
-that have 13 parameters! And I need to handle all tracepoints.
-
-Yes, we can argue that we need to change those (if that doesn't break
-the API of something using it).
-
--- Steve
-
+On 11/29/18 11:18 AM, Kevin Hilman wrote:=0A=
+> Hi Vineet,=0A=
+>=0A=
+> Vineet Gupta <vineet.gupta1@synopsys.com> writes:=0A=
+>=0A=
+>> On 11/27/18 2:21 PM, Kevin Hilman wrote:=0A=
+>>> Change the default defconfig (used with 'make defconfig') to the ARCv2=
+=0A=
+>>> nsim_hs_defconfig, and also switch the default Kconfig ISA selection to=
+=0A=
+>>> ARCv2.=0A=
+>>>=0A=
+>>> This allows several default defconfigs (e.g. make defconfig, make=0A=
+>>> allnoconfig, make tinyconfig) to all work with ARCv2 by default.=0A=
+>>>=0A=
+>>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>=0A=
+>> Applied to for-curr=0A=
+> If it's not too late, could you tag this for stable?=0A=
+>=0A=
+> Even though this is not technicall a regression, Greg said (in a=0A=
+> different thread) he'd be willing to accept this for stable if it fixes=
+=0A=
+> the builders like kernelCI.=0A=
+=0A=
+Sure thing. But this change actually causes regression in our in-house test=
+ing for=0A=
+the arc700 defconfigs which falter due to missing CONFIG_ISA_ARCOMPACT whic=
+h was=0A=
+the default before. Alexey found this and will post a fixup whcih I plan to=
+ squash=0A=
+into ur patch to keep bisectability (and allow trivial stable backports) an=
+d then=0A=
+regen the relevant defconfigs.=0A=
+=0A=
+-Vineet=0A=
