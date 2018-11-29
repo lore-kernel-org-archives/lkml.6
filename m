@@ -2,129 +2,97 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB620C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA4AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F56620832
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oBl84pv5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F56620832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 10C9A20832
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C9A20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeK2M7l (ORCPT
+        id S1727539AbeK2M7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 07:59:41 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36538 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbeK2M7k (ORCPT
+        Thu, 29 Nov 2018 07:59:48 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:49662 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbeK2M7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 07:59:40 -0500
-Received: by mail-io1-f67.google.com with SMTP id m19so274229ioh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 17:56:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0xlLEq1ulY6epJsDII+p9Ka0heaTLS34lV6yWaj1F0M=;
-        b=oBl84pv5w64W2C8h9mgHrMCVD/c6fzTAcMScHg9WWy2Va1E9IhyNb8dOdm0G9E6/d/
-         l3QX2Z+L6Wj/BpoGKDhqtyJsirVeTCf6hUt0AnBiXpTlYmaRKOVSJZRMVD1s7qMtLemV
-         dAZpUr+Oo0VZs5+GRGQ19L1e5OxVYSgKNdyq4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0xlLEq1ulY6epJsDII+p9Ka0heaTLS34lV6yWaj1F0M=;
-        b=lPUMj5PF/0DFpmbIVxS1uEM5BcWqTxE3qNGVYv5jWBXSsLPxxcdeQgIaFobf85zSjt
-         OO2BqulrPOC6BWan4HdmAZmAqSx7Aa2lPcaUQ4RmoclcxuPqQJayoLljYCeMYA2PgCSi
-         bA8sAV1iJQeJXQx7JKRejzKdd80QlvMVvJ5eDcwkimr75S6quQ2p308GZxvtsX6jhtOs
-         DBI6f9y7obQJBpJVqQNJcLQDoPXTD5gn0nFrnYjiQJlM5LULWyA1TWX9Efj6tJ7Yfzin
-         +lqJU9EZCtJ/64K8NKR0Qy0IbcxpMRpb1VLhBawZZncy7RG+wgy08FB6ce4FKh65IUH/
-         PYIQ==
-X-Gm-Message-State: AA+aEWZj2HkIJVZxcu98HPVICEVDt9LH0/Jz8DanNRB5cQRAqt1aSjw0
-        WfQf/GgS5XyzcVVvG9G6Bk6JlnaFx7Ym8JSDbO2k8A==
-X-Google-Smtp-Source: AFSGD/WXnEvV3tdzp6rgGT+XZxQRCkrAz+12iXHLs2IC3vVyErSo5N4S2D9AJKGiDP71C4TRzLRnskun5RK0SDHd+x0=
-X-Received: by 2002:a6b:c948:: with SMTP id z69mr21312734iof.161.1543456560336;
- Wed, 28 Nov 2018 17:56:00 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128031926.7157-1-ryans.lee@maximintegrated.com>
- <20181128094955.GG6828@sirena.org.uk> <DM6PR11MB3131E267C1EDF9254BC7D313E7D10@DM6PR11MB3131.namprd11.prod.outlook.com>
-In-Reply-To: <DM6PR11MB3131E267C1EDF9254BC7D313E7D10@DM6PR11MB3131.namprd11.prod.outlook.com>
-From:   Grant Grundler <grundler@chromium.org>
-Date:   Wed, 28 Nov 2018 17:55:48 -0800
-Message-ID: <CANEJEGse1DGQE6K=sn=bfJuQW=-gM6zps+kvKd8y=yzXjrsTZQ@mail.gmail.com>
-Subject: Re: [PATCH V2] ASoC: max98373: Added max98373_reset for stable amp reset
-To:     RyanS.Lee@maximintegrated.com
-Cc:     broonie@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        perex@perex.cz, tiwai@suse.com,
-        Grant Grundler <grundler@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Benson Leung <bleung@chromium.org>,
-        alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>,
-        ryan.lee.maxim@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Nov 2018 07:59:47 -0500
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1gSBYl-0008Us-8R; Wed, 28 Nov 2018 20:56:07 -0500
+Message-ID: <0af334ceeb51df7e8bfcd0cfc83ca6372a946cc6.camel@surriel.com>
+Subject: Re: [PATCH 06/29] x86/fpu: Update comment for __raw_xsave_addr()
+From:   Rik van Riel <riel@surriel.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Wed, 28 Nov 2018 20:56:07 -0500
+In-Reply-To: <20181128222035.2996-7-bigeasy@linutronix.de>
+References: <20181128222035.2996-1-bigeasy@linutronix.de>
+         <20181128222035.2996-7-bigeasy@linutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-oDO3NDjZKUhcaC7mJhWX"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 9:07 AM Ryan Lee <RyanS.Lee@maximintegrated.com> wrote:
->
-> >-----Original Message-----
-> >From: Mark Brown <broonie@kernel.org>
-> >Sent: Wednesday, November 28, 2018 1:50 AM
-> >To: Ryan Lee <RyanS.Lee@maximintegrated.com>
-> >Cc: Liam Girdwood <lgirdwood@gmail.com>; Jaroslav Kysela
-> ><perex@perex.cz>; Takashi Iwai <tiwai@suse.com>; Grant Grundler
-> ><grundler@chromium.org>; Kuninori Morimoto
-> ><kuninori.morimoto.gx@renesas.com>; Benson Leung
-> ><bleung@chromium.org>; alsa-devel@alsa-project.org; linux-
-> >kernel@vger.kernel.org; ryan.lee.maxim@gmail.com
-> >Subject: Re: [PATCH V2] ASoC: max98373: Added max98373_reset for stable
-> >amp reset
-> >
-> >On Wed, Nov 28, 2018 at 03:20:16AM +0000, Ryan Lee wrote:
-> >> Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
-> >> ---
-> >
-> >Not seeing a changelog here like I asked for :(
->
-> Actually I added changelog as below. Do you mean this is not sufficient?
 
-The text is probably sufficient but not in a format that Mark can
-directly apply.
-Please take a quick look at Documentation/process/submitting-patches.rst.
+--=-oDO3NDjZKUhcaC7mJhWX
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mark wants the "commit message" to be before the '---' line. So move
-the "Changes:" text up to become the commit message and drop the
-"Changes" line. That should explain why this commit is needed and
-include the S-o-B line.
+On Wed, 2018-11-28 at 23:20 +0100, Sebastian Andrzej Siewior wrote:
+> The comment above __raw_xsave_addr() claims that the function does
+> not
+> work for compacted buffers and was introduced in commit
+>   b8b9b6ba9dec3("x86/fpu: Allow setting of XSAVE state")
 
-cheers,
-grant
+...
 
->
-> Changes since v1 : Removed unusual repeat for amp software reset and verification.
->                    Amp software reset will be performed once and it repeats verification maximum 3 times if it is failed.
->                    Wait 10ms before every verification trial. Maximum 30ms delay will be applied to wait AMP idle state.
->
-> >
-> >> Changes : Created max98373_reset function to minimize code duplication.
-> >>           Changed regmap_write to regmap_update_bits. Other bits except LSB
-> >need to be masked.
-> >>           Added reset verification step to make sure software reset is completed
-> >well. Software reset is done in 10ms in normal case.
-> >>           Revision ID is available when the amp is in the idle state which means
-> >software reset is completed.
-> >>           Software reset will be performed maximum 3 times to avoid amp reset
-> >failure. Generally it is done in the first trial.
-> >>           sleep time after software reset is increased + 30ms for every retrial.
-> >Maximum possible msleep time is 100 ms (initial 10 ms + 30 ms * 3 times).
-> >
-> >This looks like it's supposed to be a changelog but it isn't one?
+> Based on that the function works for compacted buffers as long as the
+> CPU supports it and this what we care about.
+>=20
+> Remove the "Note:" which is not accurate.
+>=20
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Reviewed-by: Rik van Riel <riel@surriel.com>
+
+--=20
+All Rights Reversed.
+
+--=-oDO3NDjZKUhcaC7mJhWX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlv/RzcACgkQznnekoTE
+3oON1QgArCdNQ7ZVHG/mL7IsEU9Y6iXUBSw4lo5bZtaKc7CMudoPLcJs0oAhKA2y
+Kki3INtas1TKI6tytXu30NSyCDKlILpzaKMkyWSVQIWaj6u0IP/Oxo5dmM8wLQgU
+3Tkm6Jeq2e2YZ8iMsUQZDgqjs4L6f68sw7ETmoCvJB3VyNkPcffwz4eI2Cfdyfx/
+vQ56eHTQuWdR+6V7gQW+y6Roj22S9rkXe7muAyTnuu/oY0nGxBiTqTij/+FwvSMI
+XqP4pKBNz2WQtWCd4Q8E08Gxj0rByHd2v/N+GyzD1UMvEcYB0u0S8FNQ7mfHc+aU
+mvqNF8A5xIE9hj51D8sp4USiwpmlnQ==
+=ePOz
+-----END PGP SIGNATURE-----
+
+--=-oDO3NDjZKUhcaC7mJhWX--
+
