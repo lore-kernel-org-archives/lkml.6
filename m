@@ -6,69 +6,68 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC67C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393D6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE2920832
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC5D520645
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:57:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CoAwwA8B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE2920832
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="13YBk+uc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5D520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbeK2LxT (ORCPT
+        id S1726786AbeK2MA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:53:19 -0500
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:41058 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbeK2LxT (ORCPT
+        Thu, 29 Nov 2018 07:00:59 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44924 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbeK2MA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:53:19 -0500
-Received: by mail-pl1-f177.google.com with SMTP id u6so100802plm.8
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:49:49 -0800 (PST)
+        Thu, 29 Nov 2018 07:00:59 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so110013pfh.11
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:57:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=VDsk+R9UcyB7GaXXGjWWR4aS3VEHJ/14IPA2HoPmq/o=;
-        b=CoAwwA8BlLpd8qJFKiiPBniZ1v2L/b1IRqeIOw+Jw7VMmqfJY77k3Ki7XUHgNXHNXj
-         H2apkDSrNo1XIjCvC190xGimjz9lnLC0xBSgVXdrKOf71C5PsbuPdZZVoRP8ffUnfIzU
-         0SKBk8lc+8uUx0Y0vAFDkgYMqnX4S5x6PysSIdw02yxOxcKO8D+rlaWcW0D0q2j2S+jK
-         onRZH2DeUHK7KD01Q6/050g0kG3tQi8GC6aJ2bQVQmKGI52kV94FoemLqS79ck2LdTeI
-         M7kGpzFaNFRGqtm3PEjNL0GnXktd5RKCuVqsLAHVrvjpUEyjSDRQaqPO2hAZnXhzM/wU
-         iZ8g==
+        bh=THBTvBGq/5r8v7mz77f8959rFZORCPCYNlrfbnJ5iD4=;
+        b=13YBk+ucYtoyc51+Ap0JsI6pM4R47eXaQclgr0Pe6OeqE2i/i1VWPhfOYHdKFCMRbT
+         PB62Ap9Snw9H8vDBjZZtA0/TBEVSFw6EloLY8q3lRaud18hM3MyRjlIF6TmAKNyPl8Vt
+         K+kQI7ZaZMR4lUJAIDkWYXDi8eA0eHa1y7ja0sjOsgetssddbdWkv432thtKdOTCPlU4
+         s2bDZOsIWVephuexexP6E0BhFzmNau7GOokJNmWlOsH2eABhSfdK0cyXXSV6amDsZLQE
+         sSPbIFQAan8vCijLcOsQn5TIRGj2l4bWNXWWC7zcqfeTHrGkTnb3a4QbvqI6MOGzEGS8
+         eUzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=VDsk+R9UcyB7GaXXGjWWR4aS3VEHJ/14IPA2HoPmq/o=;
-        b=HgutP9VH4Rn3tIEUBjO1h8dvWMLGeUcMecu6NTIM5rFh8gKdzKpyScBJFtil9R4d1n
-         OHGCa8otyGZRwM8r0a2glRiCKhJGuI2yYebfBD7NPGpALTfbnkxWKHtlFoonF6vO+Jo9
-         X84uKRehm9g50bLvTELGnfTmMFrtvY1Tu2N2XhYtA/DnrLThPiOhtrDQRYr2tnvtGFTL
-         cGImjXoBy0UYbZqmK0fsmSuxSsmYXucHTmQsmWR3wJZZioccUJC28A2C4mRkYsO8aqrU
-         lACeLzV50ctWYyC5PkrfM5dFYWFM5N9HW/Z+LtsDMDshudE77/lm5oFR1xCNqFU8iIKx
-         5OmA==
-X-Gm-Message-State: AA+aEWZor1w+/T0sVHjRBqrepbdF4gmWNujAFgHMZVs1tx07cjf1nOH5
-        yGMJ1LrhIIu6Sxm0Uw4AL55o6A==
-X-Google-Smtp-Source: AFSGD/XxigFP96pEQkmXQ5N5cs9Jq7Gb59zlfI1OWeHq3ocDTPKR9SuKkHe0x/4EiTA67e1cmnPotA==
-X-Received: by 2002:a17:902:bd0a:: with SMTP id p10mr37981199pls.322.1543452588253;
-        Wed, 28 Nov 2018 16:49:48 -0800 (PST)
+        bh=THBTvBGq/5r8v7mz77f8959rFZORCPCYNlrfbnJ5iD4=;
+        b=Uyur3KRq+QH5YDeUWkNWVON7XefhQk2+mQE+QmDFXMv4W13L4xN3lDlkh7pLUFr+Q0
+         weJwN6fPeZL/UgYV4v82+biPbC0pwuroD8leJsPtsUjKwGn7SUQRgDy7d8twFw2oO9ZZ
+         TxV0ZEA0PeEBg3O+tBDgTqZfYehdnZ/MY4zd9Vdxk7fP5MXRg553eQmXr5PKtjTW7WYr
+         LLatkPbo1PQTyyVRFET4hb0lNQ2oeHtxAbUecS+XWF6vN1UtwUH687dc+FSNE0/MgWgZ
+         OIlgXN4lt7siXQ9t8A0LLZZlR4IwQ5CV4kFasJ6NThpjSlUj9LsuZKXSgauTQglJS71n
+         ivjA==
+X-Gm-Message-State: AA+aEWZL9iz5yk7wkI9jS8AXsd4oO296WyD4soKspxo3VAUiWqgC+SMJ
+        mCQpiZLnMaOM3dmtLpI5TopjSw==
+X-Google-Smtp-Source: AFSGD/XElQVP3UUnnX9bIqpoMiRuGJmy9WVSQ+Gh3BxlhABYAfGjhVK9+jXmYah7SIKK3ogvDniSIQ==
+X-Received: by 2002:a63:6cc8:: with SMTP id h191mr33812697pgc.366.1543453047593;
+        Wed, 28 Nov 2018 16:57:27 -0800 (PST)
 Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id x19sm220529pfk.14.2018.11.28.16.49.47
+        by smtp.googlemail.com with ESMTPSA id h10sm168822pgn.11.2018.11.28.16.57.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 16:49:47 -0800 (PST)
+        Wed, 28 Nov 2018 16:57:26 -0800 (PST)
 From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, carlo@caione.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 0/2] ARM: dts: meson: add the timer interrupts and clocks
-In-Reply-To: <20181116204235.3925-1-martin.blumenstingl@googlemail.com>
-References: <20181116204235.3925-1-martin.blumenstingl@googlemail.com>
-Date:   Wed, 28 Nov 2018 16:49:46 -0800
-Message-ID: <7hzhtsbtcl.fsf@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Add Amlogic Meson GX SoC Clock Measure Driver
+In-Reply-To: <20181118135024.30720-1-narmstrong@baylibre.com>
+References: <20181118135024.30720-1-narmstrong@baylibre.com>
+Date:   Wed, 28 Nov 2018 16:57:26 -0800
+Message-ID: <7htvk0bszt.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,21 +75,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> This is a follow-up of my series "meson6_timer: dt-bindings updates"
-> from [0].
-> We were missing the interrupts for timer B, C and D. This is harmless
-> so far because the meson6_timer driver only implements timer A. Timer
-> E doesn't have any interrupt.
+> The Amlogic Meson GX SoCs embeds a clock measurer IP to measure the internal
+> clocks frequencies.
+> The precision is determined by stepping into the duration until the counter
+> overflows.
+> The debugfs shows a pretty summary and each clock can be measured
+> individually aswell.
 >
-> Additionally the timer IP block has two clock inputs. This also adds
-> them.
->
-> NOTE: the alias "timer_abcde" was chosen because there's a second
-> timer instance (F..I which are similar to A..D and J which is
-> similar to E).
+> This patchset includes the dt-bindings, driver and the DT node added to the
+> meson-gx dtsi.
 
-Queued for v4.21 (branch: v4.21/dt)
+Queued for v4.21...
+
+[...]
+
+> Neil Armstrong (3):
+>   dt-bindings: amlogic: Add Internal Clock Measurer bindings
+>   soc: amlogic: Add Meson Clock Measure driver
+
+...on branch v4.21/drivers and...
+
+>   ARM64: dts: meson-gx: Add Internal Clock Measurer node
+
+...on branch v4.21/dt64,
+
+Thanks,
 
 Kevin
