@@ -2,157 +2,93 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD078C07E85
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E91E8C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C1D6213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:37:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gd9+rFws"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C1D6213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B58FD21019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:37:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B58FD21019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeK3Fn1 (ORCPT
+        id S1727534AbeK3Fni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:43:27 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38515 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbeK3FnT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:43:19 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so1449873pfi.5;
-        Thu, 29 Nov 2018 10:37:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BMV86iOUY9CP8xxtOTmF1D1KrYI5IvEZqgAjjuU7nkg=;
-        b=Gd9+rFwsFdLTNWphGiToRtlGAD2UESOaObnBQx+9wexhyX9GZxUyVvNl1WViKjh1uj
-         3chmszJfkITdqF0f7V7/8a7+61C2COkwPk3M/CSBLPpj8REFmQjgl9NftYlTO9wuqa7H
-         vH5N9NmLTgxyOavJ/1Qqb52zUJMl8rjBAF62/A6fvNNAFhrpbCW2pb9NISRfPKLoLTOY
-         1TwpVV4CGJLerDc7RuvwjcO0rBwysUYUp7TRfh/IlOcPcrEA/pOd2d8T5c46TcFPiW0k
-         YqGr2n2gG4x+TK5g19u/NgY8zA1Tyt7D45tdY16oyY5XIv0GeIKX+fNFIs7mLjxg0UqQ
-         /BGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BMV86iOUY9CP8xxtOTmF1D1KrYI5IvEZqgAjjuU7nkg=;
-        b=SU2uysmiAY+07XNxE4TS0f6n7dlDdEMMIdBxBhs+I5a49FJ5Rd1uz2I0cywX16i2O3
-         awHYTJaVfkVFRSnyfht2bANCgkqaH05jDTsos93M4NBmHEbPWP/SSy4U4Coc1H5iwxds
-         ZbjIey5xn4/jHwKnkK+JG2A7/DLpw3yrGo5cWvFKi67r7XPcn1+TA8f3JBpzJoqAMPsj
-         9pp5CuFd3Iu8sCXPeZOkQZP/Xbdy4YwXPBXWLHlVLa4T0kDBSZAB3ZVCM52cRZ3IU7rg
-         kv+3xbgKVXttXK1dIO/HqndWmNzjaXRJ5vhS5zr/0Cl6XXLQtNmt5UkYsEH51wHZtMHh
-         +BdQ==
-X-Gm-Message-State: AA+aEWZXs5gWFmI59gNGiblQWSjjvpzvOndkoYYTZJR5XW/MnDOcF5Ik
-        yoc+BWbXfhskre1GSZXDdDE=
-X-Google-Smtp-Source: AFSGD/UZvr5jp4/0+8mJK4OoHExnjGBdkxwUPipszuStri32CSprZ5aeOFoD9f+1OCwu9H+4GxDGpA==
-X-Received: by 2002:a62:1289:: with SMTP id 9mr2519177pfs.102.1543516620279;
-        Thu, 29 Nov 2018 10:37:00 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id v5sm3552682pgn.5.2018.11.29.10.36.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 10:36:59 -0800 (PST)
-Date:   Thu, 29 Nov 2018 10:36:57 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: i8042 add of_node_put()
-Message-ID: <20181129183657.GD54791@dtor-ws>
-References: <20181121143513.22961-1-tiny.windzz@gmail.com>
+        Fri, 30 Nov 2018 00:43:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60504 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726918AbeK3Fnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:43:37 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A63146EB89;
+        Thu, 29 Nov 2018 18:37:18 +0000 (UTC)
+Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D092D620C8;
+        Thu, 29 Nov 2018 18:37:14 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 12:37:12 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181129183712.s5eocp5hf4ta4zks@treble>
+References: <20181126212628.4apztfazichxnt7r@treble>
+ <20181127084330.GX2113@hirez.programming.kicks-ass.net>
+ <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
+ <20181129094210.GC2131@hirez.programming.kicks-ass.net>
+ <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
+ <20181129143853.GO2131@hirez.programming.kicks-ass.net>
+ <20181129163342.tp5wlfcyiazwwyoh@treble>
+ <20181129164914.GA9027@hirez.programming.kicks-ass.net>
+ <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
+ <20181129171539.GD9027@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181121143513.22961-1-tiny.windzz@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181129171539.GD9027@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 29 Nov 2018 18:37:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yangtao,
-
-On Wed, Nov 21, 2018 at 09:35:13AM -0500, Yangtao Li wrote:
-> use of_node_put() to release the refcount.
+On Thu, Nov 29, 2018 at 06:15:39PM +0100, Peter Zijlstra wrote:
+> On Thu, Nov 29, 2018 at 08:59:31AM -0800, Andy Lutomirski wrote:
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/input/serio/i8042-sparcio.h | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
+> > If you make it conditional on CPL, do it for 32-bit as well, add
+> > comments, 
 > 
-> diff --git a/drivers/input/serio/i8042-sparcio.h b/drivers/input/serio/i8042-sparcio.h
-> index 796289846204..5495bc035518 100644
-> --- a/drivers/input/serio/i8042-sparcio.h
-> +++ b/drivers/input/serio/i8042-sparcio.h
-> @@ -108,18 +108,21 @@ static struct platform_driver sparc_i8042_driver = {
->  
->  static int __init i8042_platform_init(void)
->  {
-> +	int rc;
->  	struct device_node *root = of_find_node_by_path("/");
->  
->  	if (!strcmp(root->name, "SUNW,JavaStation-1")) {
->  		/* Hardcoded values for MrCoffee.  */
->  		i8042_kbd_irq = i8042_aux_irq = 13 | 0x20;
->  		kbd_iobase = ioremap(0x71300060, 8);
-> -		if (!kbd_iobase)
-> -			return -ENODEV;
-> +		if (!kbd_iobase){
-> +			rc = -ENODEV;
-> +			goto out;
-> +		}
->  	} else {
-> -		int err = platform_driver_register(&sparc_i8042_driver);
-> -		if (err)
-> -			return err;
-> +		rc = platform_driver_register(&sparc_i8042_driver);
-> +		if (rc)
-> +			goto out;
->  
->  		if (i8042_kbd_irq == -1 ||
->  		    i8042_aux_irq == -1) {
-> @@ -127,13 +130,18 @@ static int __init i8042_platform_init(void)
->  				of_iounmap(kbd_res, kbd_iobase, 8);
->  				kbd_iobase = (void __iomem *) NULL;
->  			}
-> -			return -ENODEV;
-> +			rc = -ENODEV;
-> +			goto out;
->  		}
->  	}
->  
->  	i8042_reset = I8042_RESET_ALWAYS;
->  
-> -	return 0;
-> +	rc = 0;
-> +out:
-> +	of_node_put(root);
-> +
-> +	return rc;
+> > and convince yourself that there isn’t a better solution
+> > (like pointing IP at a stub that retpolines to the target by reading
+> > the function pointer, a la the unoptimizable version), then okay, I
+> > guess, with only a small amount of grumbling.
+> 
+> Right; so we _could_ grow the trampoline with a retpoline indirect call
+> and ret. It just makes the trampoline a whole lot bigger, but it could
+> work.
 
-Instead of rearranging code like this, can we instead have:
-
-static inline bool i8042_is_mr_coffee(void)
-{
-	struct device_node *root;
-	bool is_mr_coffree;
-
-	root = of_find_node_by_path("/");
-	is_mr_coffree = !strcmp(root->name, "SUNW,JavaStation-1");
-	of_node_put(root);
-
-	return is_mr_coffee;
-}
-
-?
-
-Thanks.
+I'm trying to envision how this would work.  How would the function (or
+stub) know how to return back to the call site?
 
 -- 
-Dmitry
+Josh
