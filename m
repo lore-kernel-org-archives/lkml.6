@@ -7,45 +7,55 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D19CDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D959C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A7282133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65FB1205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Y8zNuJB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7282133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+LWGbDT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FB1205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732879AbeK3Bam (ORCPT
+        id S1732892AbeK3Bao (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:30:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57828 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:30:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731565AbeK3Bal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:30:41 -0500
+        id S1731565AbeK3Ban (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:30:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44C0221104;
-        Thu, 29 Nov 2018 14:25:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 871DD205C9;
+        Thu, 29 Nov 2018 14:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501508;
-        bh=T8Bo6BrfFCLcSLYGmeeAUFtpW9oRrRPInnaKMXJAsIY=;
+        s=default; t=1543501511;
+        bh=glyMymXp4qZVOxjvHuWhLfftmhm9G1Q6Z2kkfzoglXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Y8zNuJBAhfAlk3doI2p4uwCP+Pc4AJ/dZQ2ci5K6T2zD5zzf4wKnANgae3ykktJl
-         tq+TB6FvJ/KAjkmfvpWJGnxdeSCuBYbMMVyUM39UvdYt28EGcbb+nHd7lh1niNVbWp
-         mXNyG9JfeTi6AGxIh38FGdiO+W0TlrImkHo377Q4=
+        b=F+LWGbDTTsl0c/M4Z8gD9Ji69KsDCSj/8gqQptahy6Pld7DE1/O3LnNVn2GNEF+Ae
+         yXlj/xDv6g7DS0wHP6qtAFkzCTIEYUFI3yrX+0IrhRe3xoZ1FXVC9n8SOPwGfPHIOe
+         gfnDpygmV6l8LISSWD3qotJQv8ChtvVO+81TF0FI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 027/100] llc: do not use sk_eat_skb()
-Date:   Thu, 29 Nov 2018 15:11:57 +0100
-Message-Id: <20181129140101.065734859@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        syzbot+87829a10073277282ad1@syzkaller.appspotmail.com,
+        syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com,
+        syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com,
+        syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com,
+        syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com,
+        Christoph Lameter <cl@linux.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 028/100] mm: dont warn about large allocations for slab
+Date:   Thu, 29 Nov 2018 15:11:58 +0100
+Message-Id: <20181129140101.148133119@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -63,164 +73,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-commit 604d415e2bd642b7e02c80e719e0396b9d4a77a6 upstream.
+commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d upstream.
 
-syzkaller triggered a use-after-free [1], caused by a combination of
-skb_get() in llc_conn_state_process() and usage of sk_eat_skb()
+Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
+instead it falls back to kmalloc_large().
 
-sk_eat_skb() is assuming the skb about to be freed is only used by
-the current thread. TCP/DCCP stacks enforce this because current
-thread holds the socket lock.
+For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
+kmalloc_slab() for all allocations relying on NULL return value for
+over-sized allocations.
 
-llc_conn_state_process() wants to make sure skb does not disappear,
-and holds a reference on the skb it manipulates. But as soon as this
-skb is added to socket receive queue, another thread can consume it.
+This inconsistency leads to unwanted warnings from kmalloc_slab() for
+over-sized allocations for slab.  Returning NULL for failed allocations is
+the expected behavior.
 
-This means that llc must use regular skb_unlink() and kfree_skb()
-so that both producer and consumer can safely work on the same skb.
+Make slub and slab code consistent by checking size >
+KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
 
-[1]
-BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:43 [inline]
-BUG: KASAN: use-after-free in skb_unref include/linux/skbuff.h:967 [inline]
-BUG: KASAN: use-after-free in kfree_skb+0xb7/0x580 net/core/skbuff.c:655
-Read of size 4 at addr ffff8801d1f6fba4 by task ksoftirqd/1/18
+While we are here also fix the check in kmalloc_slab().  We should check
+against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
+worked because for slab the constants are the same, and slub always checks
+the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
+get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
+happen.  For example, in case of a newly introduced bug in slub code.
 
-CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.19.0-rc8+ #295
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c4/0x2b6 lib/dump_stack.c:113
- print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
- kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
- atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
- refcount_read include/linux/refcount.h:43 [inline]
- skb_unref include/linux/skbuff.h:967 [inline]
- kfree_skb+0xb7/0x580 net/core/skbuff.c:655
- llc_sap_state_process+0x9b/0x550 net/llc/llc_sap.c:224
- llc_sap_rcv+0x156/0x1f0 net/llc/llc_sap.c:297
- llc_sap_handler+0x65e/0xf80 net/llc/llc_sap.c:438
- llc_rcv+0x79e/0xe20 net/llc/llc_input.c:208
- __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
- process_backlog+0x218/0x6f0 net/core/dev.c:5829
- napi_poll net/core/dev.c:6249 [inline]
- net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
- __do_softirq+0x30c/0xb03 kernel/softirq.c:292
- run_ksoftirqd+0x94/0x100 kernel/softirq.c:653
- smpboot_thread_fn+0x68b/0xa00 kernel/smpboot.c:164
- kthread+0x35a/0x420 kernel/kthread.c:246
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+Also move the check in kmalloc_slab() from function entry to the size >
+192 case.  This partially compensates for the additional check in slab
+code and makes slub code a bit faster (at least theoretically).
 
-Allocated by task 18:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc_node+0x144/0x730 mm/slab.c:3644
- __alloc_skb+0x119/0x770 net/core/skbuff.c:193
- alloc_skb include/linux/skbuff.h:995 [inline]
- llc_alloc_frame+0xbc/0x370 net/llc/llc_sap.c:54
- llc_station_ac_send_xid_r net/llc/llc_station.c:52 [inline]
- llc_station_rcv+0x1dc/0x1420 net/llc/llc_station.c:111
- llc_rcv+0xc32/0xe20 net/llc/llc_input.c:220
- __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
- process_backlog+0x218/0x6f0 net/core/dev.c:5829
- napi_poll net/core/dev.c:6249 [inline]
- net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
- __do_softirq+0x30c/0xb03 kernel/softirq.c:292
+Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
+slab code itself, user-passed flags have nothing to do with it.
 
-Freed by task 16383:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x83/0x290 mm/slab.c:3756
- kfree_skbmem+0x154/0x230 net/core/skbuff.c:582
- __kfree_skb+0x1d/0x20 net/core/skbuff.c:642
- sk_eat_skb include/net/sock.h:2366 [inline]
- llc_ui_recvmsg+0xec2/0x1610 net/llc/af_llc.c:882
- sock_recvmsg_nosec net/socket.c:794 [inline]
- sock_recvmsg+0xd0/0x110 net/socket.c:801
- ___sys_recvmsg+0x2b6/0x680 net/socket.c:2278
- __sys_recvmmsg+0x303/0xb90 net/socket.c:2390
- do_sys_recvmmsg+0x181/0x1a0 net/socket.c:2466
- __do_sys_recvmmsg net/socket.c:2484 [inline]
- __se_sys_recvmmsg net/socket.c:2480 [inline]
- __x64_sys_recvmmsg+0xbe/0x150 net/socket.c:2480
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Nothing of this affects slob.
 
-The buggy address belongs to the object at ffff8801d1f6fac0
- which belongs to the cache skbuff_head_cache of size 232
-The buggy address is located 228 bytes inside of
- 232-byte region [ffff8801d1f6fac0, ffff8801d1f6fba8)
-The buggy address belongs to the page:
-page:ffffea000747dbc0 count:1 mapcount:0 mapping:ffff8801d9be7680 index:0xffff8801d1f6fe80
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea0007346e88 ffffea000705b108 ffff8801d9be7680
-raw: ffff8801d1f6fe80 ffff8801d1f6f0c0 000000010000000b 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8801d1f6fa80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
- ffff8801d1f6fb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8801d1f6fb80: fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc
-                               ^
- ffff8801d1f6fc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8801d1f6fc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
+Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
+Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
+Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
+Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
+Acked-by: Christoph Lameter <cl@linux.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/llc/af_llc.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ mm/slab.c        |    4 ++++
+ mm/slab_common.c |   12 ++++++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -730,7 +730,6 @@ static int llc_ui_recvmsg(struct socket
- 	struct sk_buff *skb = NULL;
- 	struct sock *sk = sock->sk;
- 	struct llc_sock *llc = llc_sk(sk);
--	unsigned long cpu_flags;
- 	size_t copied = 0;
- 	u32 peek_seq = 0;
- 	u32 *seq, skb_len;
-@@ -855,9 +854,8 @@ static int llc_ui_recvmsg(struct socket
- 			goto copy_uaddr;
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3670,6 +3670,8 @@ __do_kmalloc_node(size_t size, gfp_t fla
+ 	struct kmem_cache *cachep;
+ 	void *ret;
  
- 		if (!(flags & MSG_PEEK)) {
--			spin_lock_irqsave(&sk->sk_receive_queue.lock, cpu_flags);
--			sk_eat_skb(sk, skb);
--			spin_unlock_irqrestore(&sk->sk_receive_queue.lock, cpu_flags);
-+			skb_unlink(skb, &sk->sk_receive_queue);
-+			kfree_skb(skb);
- 			*seq = 0;
- 		}
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+@@ -3705,6 +3707,8 @@ static __always_inline void *__do_kmallo
+ 	struct kmem_cache *cachep;
+ 	void *ret;
  
-@@ -878,9 +876,8 @@ copy_uaddr:
- 		llc_cmsg_rcv(msg, skb);
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -971,18 +971,18 @@ struct kmem_cache *kmalloc_slab(size_t s
+ {
+ 	int index;
  
- 	if (!(flags & MSG_PEEK)) {
--		spin_lock_irqsave(&sk->sk_receive_queue.lock, cpu_flags);
--		sk_eat_skb(sk, skb);
--		spin_unlock_irqrestore(&sk->sk_receive_queue.lock, cpu_flags);
-+		skb_unlink(skb, &sk->sk_receive_queue);
-+		kfree_skb(skb);
- 		*seq = 0;
- 	}
+-	if (unlikely(size > KMALLOC_MAX_SIZE)) {
+-		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+-		return NULL;
+-	}
+-
+ 	if (size <= 192) {
+ 		if (!size)
+ 			return ZERO_SIZE_PTR;
  
+ 		index = size_index[size_index_elem(size)];
+-	} else
++	} else {
++		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
++			WARN_ON(1);
++			return NULL;
++		}
+ 		index = fls(size - 1);
++	}
+ 
+ #ifdef CONFIG_ZONE_DMA
+ 	if (unlikely((flags & GFP_DMA)))
 
 
