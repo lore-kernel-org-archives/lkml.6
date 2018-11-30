@@ -6,92 +6,130 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6886FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC98C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23CA620868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4967D20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:20:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="siGyQJlh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23CA620868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FBSlddkv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4967D20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbeK3PVG (ORCPT
+        id S1726509AbeK3P2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 10:21:06 -0500
-Received: from ozlabs.org ([203.11.71.1]:39689 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726161AbeK3PVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 10:21:06 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 435gwg0TTwz9s7T;
-        Fri, 30 Nov 2018 15:13:07 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543551187;
-        bh=Yw/CEdYkBDcjo3piUGdQW78VK7DqtoBNk5m2tHWoug4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=siGyQJlhs+m3rWkB7piIpOqTjpIZ08PDTYdwJwCoOyfzbZfXaiwkk2xD2Fk4MLYW/
-         hEUELIX2MtCbHjgOKtJONulfUSf1ZrICNi5seFlpp/AirkYCi+AX3+TfP7Qw3t5wGF
-         9MYk52eIGsfMYCDtQjHsy2giuK7OZpmfxbGD8be0LJw36Ui46gl4PzMW36vlNePsko
-         TTLV5G796rr+s5PL34QUtUc3MpBZJIc1lDmFDuNrPofLtr1kKFSfIH+lNDjfHyJ3n9
-         ZHMYtoABx0Swr6wL7S4PMuytjLzKW0PzTwE1tMcTIfoQqIjt1QWTPhZNwzYaVdwsGG
-         g13wrB4Zv8Stw==
-Date:   Fri, 30 Nov 2018 15:13:06 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <agross@codeaurora.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>
-Subject: Re: linux-next: build warning after merge of the qcom tree
-Message-ID: <20181130151306.1717c895@canb.auug.org.au>
-In-Reply-To: <154350904879.88331.1156146258217230705@swboyd.mtv.corp.google.com>
-References: <20181116101059.18ad3fc9@canb.auug.org.au>
-        <20181129082540.4ceafca6@canb.auug.org.au>
-        <154350904879.88331.1156146258217230705@swboyd.mtv.corp.google.com>
+        Fri, 30 Nov 2018 10:28:43 -0500
+Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:51168
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726161AbeK3P2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 10:28:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YcosMFrEeTcGFWenCIP+1Oawmbd+SZSNkg1YhZiVQ9Y=;
+ b=FBSlddkvIqptllBt/dh4iBh+Ttr1wcuQet9BkvqyJCOVh9uahkPN8y4ocMW7LNfHbfM/u4jQO3wHcybRLSsPkdw5OD/1TUknCZLwX4OsaIVP+CBFeFJAz5dbmm114BVReSw/OM2ZPjfv1NiYy7+q7SuqN8iflzO4VV5Z6Cqfhrs=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
+ VI1PR04MB6014.eurprd04.prod.outlook.com (20.178.124.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.21; Fri, 30 Nov 2018 04:20:41 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::811d:1992:9a6a:bb3f]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::811d:1992:9a6a:bb3f%4]) with mapi id 15.20.1361.019; Fri, 30 Nov 2018
+ 04:20:41 +0000
+From:   PETER CHEN <peter.chen@nxp.com>
+To:     Felipe Balbi <balbi@kernel.org>, Roger Quadros <rogerq@ti.com>,
+        Pawel Laszczak <pawell@cadence.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        "sureshp@cadence.com" <sureshp@cadence.com>,
+        "pjez@cadence.com" <pjez@cadence.com>,
+        "kurahul@cadence.com" <kurahul@cadence.com>
+Subject: RE: [RFC PATCH v2 07/15] usb:cdns3: Adds Device mode support -
+ initialization.
+Thread-Topic: [RFC PATCH v2 07/15] usb:cdns3: Adds Device mode support -
+ initialization.
+Thread-Index: AQHUfyb9TYgaBDMZGEyHsNrw0Zv4z6VlHjwAgAABzgCAAqgXUA==
+Date:   Fri, 30 Nov 2018 04:20:41 +0000
+Message-ID: <VI1PR04MB5327227A807B92DDA62CF9038BD30@VI1PR04MB5327.eurprd04.prod.outlook.com>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-8-git-send-email-pawell@cadence.com>
+ <5BFE7D2E.7030702@ti.com> <87pnupzaz1.fsf@linux.intel.com>
+In-Reply-To: <87pnupzaz1.fsf@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB6014;6:XRZIrV2qcOqXhrfXF+tcoXna/jeHKG/4y+pC4detuhpuOBCohxRrWjB4jX5SgClJp76IuQCcq64zrgA/nXDwV83m++gGHL2oKypqW4R+w75adWddN+E+SY8u9fNZd4FkHpGOfMND5tZyp1MBn10TmUL1nAuHfUIRoGXeM+WF1LyImozg/DgoD30V/aphzx0jLhNYGOiCjJGDX9biDbAgNojkxCR4yASbNx7a3tNh/XUeQrdHBGiAD7g3lNGDsDRnNdNjnv7CqeD54RZGv2n6iAjDEX5kvLMEvYQtO66oLuOPmW2hurhs/qI510vEaH+Y/o9ZOb/XoXApbMHPNPTQT8OziHoNUgbhylJWsFrBfyTkkXuT7WfbD6mxKHSeh+SQ0Mq7KsPabySq55oXsXQ3c7K2FU6U4w6IzcTbUVTFTZu2DZ5zE/6/wR7X3eTO8Jtieudc813rovIrNjCQgd5R/g==;5:5t1CZOJfpLRskbrsdv3sc7mGxnPrXN+I1e+Wr0THUJgvZchoLJ9tc0Oeb92mUAqHhqzE4+RWjZIsxR86tQ9hmxEvVBJpMdCQEZx0mznb3O3NUI+Ob73OfsDlM7v3DQZ6y35dth3tTvEB4DhErb5+wuql2m+yTItnenCOwmaixfY=;7:ZqYJPVPyPYNxcAUoUjA1qpgkkXhUi+yyngsHfJLUGuAaawxhD0eRhhj2M8uSQX2gTzL2e5QzLS3h8ezbGyqemZ7NFaqXrbPyeFb5FRzL80G9oEw6AaDEUUuRTsVHLo9QhVa4m9MdYQD7THwUV7QYvg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3f500683-7664-4a48-89db-08d6567b306a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB6014;
+x-ms-traffictypediagnostic: VI1PR04MB6014:
+x-microsoft-antispam-prvs: <VI1PR04MB601431293239906E2DC57AD88BD30@VI1PR04MB6014.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231453)(999002)(944501410)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB6014;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB6014;
+x-forefront-prvs: 087223B4DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(39860400002)(376002)(346002)(189003)(199004)(68736007)(229853002)(81166006)(8936002)(81156014)(8676002)(6116002)(3846002)(105586002)(86362001)(106356001)(99286004)(54906003)(33656002)(93886005)(5660300001)(110136005)(186003)(7696005)(76176011)(316002)(6506007)(14454004)(26005)(102836004)(478600001)(71200400001)(71190400001)(217873002)(7416002)(305945005)(7736002)(74316002)(476003)(97736004)(486006)(11346002)(446003)(6246003)(2501003)(53936002)(4326008)(53346004)(6436002)(256004)(25786009)(55016002)(9686003)(66066001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6014;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: xvwy/DZ8RIeq9jjQdNj+FyIAHU6jSmzBbb6AjyKrKLi1Yg33qltzKmFU/igTWbq3wrlDz/5vjcAk4/dtAQggDKPik7/iHal4LFAqM9NAMk8ISjT9b8w4fN4PSla3M/Bad4RTRowP5kEUy2E+IbqiUjJrFvmD1LkDoLWSldxuBYyluORjCknaBljL3uXvFiKhJXMmU4CbS/hRaPHbC8ah9sNYJr1EM5og5qyW2Yu3ZrreeHxB5DvdHV0c44ttaRE7Sk9EVdl1K6vzrLxWJEFZg9jpNhl+k2OIvI3urMJRdSY4CRC/fIuFDmZebJsCmvJSCvSR6iDKa3tkSsUGeSZ7ewfMKnzm8Zao5Urz5JINUM8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/z/WkSQemoU=/nA2hEZ2oFJT"; protocol="application/pgp-signature"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f500683-7664-4a48-89db-08d6567b306a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 04:20:41.1664
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/z/WkSQemoU=/nA2hEZ2oFJT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+=20
+> Roger Quadros <rogerq@ti.com> writes:
+> >> +static void cdns3_gadget_config(struct cdns3_device *priv_dev) {
+> >> +	struct cdns3_usb_regs __iomem *regs =3D priv_dev->regs;
+> >> +
+> >> +	cdns3_ep0_config(priv_dev);
+> >> +
+> >> +	/* enable interrupts for endpoint 0 (in and out) */
+> >> +	writel(EP_IEN_EP_OUT0 | EP_IEN_EP_IN0, &regs->ep_ien);
+> >> +
+> >> +	/* enable generic interrupt*/
+> >> +	writel(USB_IEN_INIT, &regs->usb_ien);
+> >> +	writel(USB_CONF_CLK2OFFDS | USB_CONF_L1DS, &regs->usb_conf);
+> >> +	writel(USB_CONF_DMULT, &regs->usb_conf);
+> >> +	writel(USB_CONF_DEVEN, &regs->usb_conf);
+> >
+> > If you are enabling interrupts in this patch you should handle them in =
+the ISR.
+>=20
+> Frankly, I don't understand why this is a series. It's a single driver an=
+d splitting it into
+> a series just makes it more difficult to review, actually.
+>=20
+> Sure, a single patch will be large, but there's no way to have a function=
+al driver until
+> all patches are applied, anyway.
+>=20
 
-Hi Stephen,
+Yes, I agree with Felipe. Pawel, you could remove the "RFC" prefix, and sen=
+d the whole
+one as one patch. I will test it at my hardware.
 
-On Thu, 29 Nov 2018 08:30:48 -0800 Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Andy's email isn't at codeaurora.org anymore. Not sure if that matters
-> but he may be missing this.
-
-I have updated my contacts list, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/z/WkSQemoU=/nA2hEZ2oFJT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAuNIACgkQAVBC80lX
-0GzS/wf+NhZ10pic2eTqiExF7y9UTdAup2H9W4CaRQydkEuCCaNMIH1EoR4H7WGE
-XoRQG//um+fubd79E16RbfbqdgIeKk10S1PjE7zCwOiqf4jPOveJs8qu/VaNodHy
-rJMcbp0GN3PrTgc/LBQLrWrlDQzorrEhB+tzfvmpT2xePNdafQjCS09zxdA5RSH1
-U8eeBu8U7wqYRAvk6OX9bRTNvhwO0Lit6bCTk5zDzJvD2L9iI6bWGDmO4wx/lv+H
-aUzkXAjhQlWbYCrTtFvgtl0ujtOvz3MSVh13zLP9a5Wt1mqmhKKLIgUXbeHXL/1H
-qn9mQLs3ubEJqyos09et0d9ug4LhSw==
-=3V60
------END PGP SIGNATURE-----
-
---Sig_/z/WkSQemoU=/nA2hEZ2oFJT--
+Peter
