@@ -2,139 +2,153 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83250C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E668BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A0F52082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99DC120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uiu2Kvm4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A0F52082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHS8LBd2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99DC120868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbeLAG3R (ORCPT
+        id S1726666AbeLAGaj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:29:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725861AbeLAG3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:29:17 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AED42082F;
-        Fri, 30 Nov 2018 19:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543605539;
-        bh=98vzZta8KuyWOVxUsIuezQoGNy4OQ4NQiajJUIICRws=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Uiu2Kvm47X02eX7wX3lvW2ZrOGA10cyyQ+6JOfu3R6LQnDfQhODX0lXwD1e/qrRBY
-         DEGSLwKB6+s8Ws36KCgi+A326odqGRgb1/yFLPgZbRNAq3NIg8GaHQVGE/elS06ODT
-         SvBXLiDqmma2yXBVXPVe3uzfFYnH3UTwCl9npHhY=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 1684340BF1; Fri, 30 Nov 2018 16:18:56 -0300 (-03)
-Date:   Fri, 30 Nov 2018 16:18:56 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: Re: [PATCH 7/9] tools/lib/traceevent: traceevent API cleanup
-Message-ID: <20181130191856.GC19230@kernel.org>
-References: <20181130154403.150474900@goodmis.org>
- <20181130154647.891651290@goodmis.org>
+        Sat, 1 Dec 2018 01:30:39 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37935 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbeLAGaj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 01:30:39 -0500
+Received: by mail-io1-f66.google.com with SMTP id l14so5440760ioj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:20:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8oyLivuR6iu3HBUduImb583ldtAsf/AHlenv6DXRn7I=;
+        b=hHS8LBd2YHsWqDkPHzu+JfBTi4G6Rb0rtS5CdBZeGFmxdcDqzUianqzCpVdRfk+R0V
+         ffGKyShmJWinTSqvOT79TUqn3R3ndPV0wbcw9nk8CDb+0PlD8Sv11XxEKJ3+y/OTkxVw
+         6foQDWk1Jk2WJAdJw7Clwgur97sGZv5WUdbXk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8oyLivuR6iu3HBUduImb583ldtAsf/AHlenv6DXRn7I=;
+        b=L50cBg0U9ZkMGbTMTxiHyaZao5YeZutub1lrsDsutA5l0KgMQ5K3ppeR2idtm94rQ4
+         zn+jhkSnc/DjUCIXzGtLUiSrBL0upOpKWMFRcw2Szy4d0nWyj9Z4Vo6uwjF1CAm7NOkg
+         qQh1H42zOXLzmBaEIeapUkTxChcIKZDYIaevhehVSS5FvX5akDjZrA9xgYPrNKo6nI2d
+         DFKdZ7ngfZEeuJumy1APpcwP8tgKgYJK27NwOpzzofV9rA2HcElIksU53haSxh+BszBw
+         ojPA5ZIKxM7D/dYnz5CEwYIPXpLqx0UmeCli5EtHHy/7FbP+I0iDSG7boI/SjrQpjoZe
+         0GXg==
+X-Gm-Message-State: AA+aEWZQBpdQ7Q6NTf6txY/+vR6xyaVW1Hw03evbxJhHfmdf5ryqHczj
+        UIX9XBzDjVDFO7G3vN4lXOS7KMMxmJzvHHfweRqjBQ==
+X-Google-Smtp-Source: AFSGD/VhXBciaLlTOF6kvbc1O2gs0a4+AjyfEH4L6uD4+ox5SdkbFDXw/HS5RJAr4ZvDqaVsVy4+/j2Pm1+JX8ejzo8=
+X-Received: by 2002:a5d:8402:: with SMTP id i2mr5799226ion.173.1543605620911;
+ Fri, 30 Nov 2018 11:20:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181130154647.891651290@goodmis.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181123221804.440-1-ard.biesheuvel@linaro.org>
+ <20181123221804.440-3-ard.biesheuvel@linaro.org> <20181130182629.GA16085@arm.com>
+In-Reply-To: <20181130182629.GA16085@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 30 Nov 2018 20:20:06 +0100
+Message-ID: <CAKv+Gu9QVHLWu5H3Ok1Kbm=vtzd1KaHUn2VEij6oToW5aPR9uA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] arm64/bpf: don't allocate BPF JIT programs in
+ module memory
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Nov 30, 2018 at 10:44:10AM -0500, Steven Rostedt escreveu:
-> From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-> 
-> In order to make libtraceevent into a proper library, its API
-> should be straightforward. This patch hides few API functions,
-> intended for internal usage only:
-> tep_free_event(), tep_free_format_field(), __tep_data2host2(),
-> __tep_data2host4() and __tep_data2host8().
-> The patch also alignes the libtraceevent summary man page with
-> these API changes.
+On Fri, 30 Nov 2018 at 19:26, Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Fri, Nov 23, 2018 at 11:18:04PM +0100, Ard Biesheuvel wrote:
+> > The arm64 module region is a 128 MB region that is kept close to
+> > the core kernel, in order to ensure that relative branches are
+> > always in range. So using the same region for programs that do
+> > not have this restriction is wasteful, and preferably avoided.
+> >
+> > Now that the core BPF JIT code permits the alloc/free routines to
+> > be overridden, implement them by vmalloc()/vfree() calls from a
+> > dedicated 128 MB region set aside for BPF programs. This ensures
+> > that BPF programs are still in branching range of each other, which
+> > is something the JIT currently depends upon (and is not guaranteed
+> > when using module_alloc() on KASLR kernels like we do currently).
+> > It also ensures that placement of BPF programs does not correlate
+> > with the placement of the core kernel or modules, making it less
+> > likely that leaking the former will reveal the latter.
+> >
+> > This also solves an issue under KASAN, where shadow memory is
+> > needlessly allocated for all BPF programs (which don't require KASAN
+> > shadow pages since they are not KASAN instrumented)
+> >
+> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > ---
+> >  arch/arm64/include/asm/memory.h |  5 ++++-
+> >  arch/arm64/net/bpf_jit_comp.c   | 13 +++++++++++++
+> >  2 files changed, 17 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> > index b96442960aea..ee20fc63899c 100644
+> > --- a/arch/arm64/include/asm/memory.h
+> > +++ b/arch/arm64/include/asm/memory.h
+> > @@ -62,8 +62,11 @@
+> >  #define PAGE_OFFSET          (UL(0xffffffffffffffff) - \
+> >       (UL(1) << (VA_BITS - 1)) + 1)
+> >  #define KIMAGE_VADDR         (MODULES_END)
+> > +#define BPF_JIT_REGION_START (VA_START + KASAN_SHADOW_SIZE)
+> > +#define BPF_JIT_REGION_SIZE  (SZ_128M)
+> > +#define BPF_JIT_REGION_END   (BPF_JIT_REGION_START + BPF_JIT_REGION_SIZE)
+> >  #define MODULES_END          (MODULES_VADDR + MODULES_VSIZE)
+> > -#define MODULES_VADDR                (VA_START + KASAN_SHADOW_SIZE)
+> > +#define MODULES_VADDR                (BPF_JIT_REGION_END)
+> >  #define MODULES_VSIZE                (SZ_128M)
+> >  #define VMEMMAP_START                (PAGE_OFFSET - VMEMMAP_SIZE)
+> >  #define PCI_IO_END           (VMEMMAP_START - SZ_2M)
+> > diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+> > index a6fdaea07c63..76c2ab40c02d 100644
+> > --- a/arch/arm64/net/bpf_jit_comp.c
+> > +++ b/arch/arm64/net/bpf_jit_comp.c
+> > @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+> >                                          tmp : orig_prog);
+> >       return prog;
+> >  }
+> > +
+> > +void *bpf_jit_alloc_exec(unsigned long size)
+> > +{
+> > +     return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_START,
+> > +                                 BPF_JIT_REGION_END, GFP_KERNEL,
+> > +                                 PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+> > +                                 __builtin_return_address(0));
+>
+> I guess we'll want VM_IMMEDIATE_UNMAP here if Rich gets that merged.
 
-I applied the previous patches, stopped here as it this one fails with
-the error bellow.
+I think akpm already queued up that patch.
 
-Please resend from this patch onwards.
+> In the
+> meantime, I wonder if it's worth zeroing the region in bpf_jit_free_exec()?
+> (although we'd need the size information...).
+>
 
-BTW, this is what I have right now:
-
-[acme@quaco perf]$ git log --oneline - 6
-9db9efe53c72 (HEAD -> perf/core) tools lib traceevent: Rename tep_free_format() to tep_free_event()
-e58c351e8383 tools lib traceevent, perf tools: Rename 'struct tep_event_format' to 'struct tep_event'
-4237fd0b60d8 tools lib traceevent: Install trace-seq.h API header file
-bb837f2581dc tools lib traceevent: Added support for pkg-config
-a2c167ad70b6 tools lib traceevent: Implement new API tep_get_ref()
-51d0337d0198 (acme.korg/perf/core) tools lib traceevent: Add sanity check to is_timestamp_in_us()
-
-- Arnaldo
-
-[acme@quaco perf]$ m
-make: Entering directory '/home/acme/git/perf/tools/perf'
-  BUILD:   Doing 'make -j8' parallel build
-  CC       /tmp/build/perf/util/trace-event-read.o
-  CC       /tmp/build/perf/util/trace-event-scripting.o
-  CC       /tmp/build/perf/util/trace-event.o
-  CC       /tmp/build/perf/util/sort.o
-  CC       /tmp/build/perf/util/hist.o
-  INSTALL  trace_plugins
-  CC       /tmp/build/perf/util/cgroup.o
-  CC       /tmp/build/perf/util/stat.o
-  CC       /tmp/build/perf/util/stat-shadow.o
-  CC       /tmp/build/perf/util/stat-display.o
-  CC       /tmp/build/perf/util/record.o
-util/trace-event-read.c: In function ‘read4’:
-util/trace-event-read.c:105:9: error: implicit declaration of function ‘__tep_data2host4’; did you mean ‘tep_data_flags’? [-Werror=implicit-function-declaration]
-  return __tep_data2host4(pevent, data);
-         ^~~~~~~~~~~~~~~~
-         tep_data_flags
-util/trace-event-read.c:105:9: error: nested extern declaration of ‘__tep_data2host4’ [-Werror=nested-externs]
-util/trace-event-read.c: In function ‘read8’:
-util/trace-event-read.c:114:9: error: implicit declaration of function ‘__tep_data2host8’; did you mean ‘tep_data_flags’? [-Werror=implicit-function-declaration]
-  return __tep_data2host8(pevent, data);
-         ^~~~~~~~~~~~~~~~
-         tep_data_flags
-util/trace-event-read.c:114:9: error: nested extern declaration of ‘__tep_data2host8’ [-Werror=nested-externs]
-cc1: all warnings being treated as errors
-mv: cannot stat '/tmp/build/perf/util/.trace-event-read.o.tmp': No such file or directory
-make[4]: *** [/home/acme/git/perf/tools/build/Makefile.build:96: /tmp/build/perf/util/trace-event-read.o] Error 1
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: util] Error 2
-make[2]: *** [Makefile.perf:658: /tmp/build/perf/libperf-in.o] Error 2
-make[1]: *** [Makefile.perf:215: sub-make] Error 2
-make: *** [Makefile:110: install-bin] Error 2
-make: Leaving directory '/home/acme/git/perf/tools/perf'
-
- Performance counter stats for 'make -k O=/tmp/build/perf -C tools/perf install-bin':
-
-    20,606,463,070      cycles:u
-    24,937,056,161      instructions:u            #    1.21  insn per cycle
-
-       2.192507189 seconds time elapsed
-
-       5.571323000 seconds user
-       0.994057000 seconds sys
-
-
-[acme@quaco perf]$
+Not sure. What exactly would that achieve?
