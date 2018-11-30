@@ -2,232 +2,130 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA0FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D96C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7FFE20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:38:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzYUmPJi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7FFE20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0D93A20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:38:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D93A20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbeLABsC (ORCPT
+        id S1727073AbeLABsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:48:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 20:48:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42600 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeLABsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:48:02 -0500
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726340AbeLABsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:48:04 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEFDB20868;
-        Fri, 30 Nov 2018 14:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543588710;
-        bh=0X3KCYxp6TbV6XRmsLFwt8E4eJfVXQlt2+h/AHSJdfk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VzYUmPJik3XtuPdKo3gkKVEPR3DHl6fV7VNPOWeSGVaPGOA5wxM2qW0zakXG0u2Mg
-         zaLZnGrY/6FnNZDXwbXcOXAn0Pe0rHAob4ggYtxBirPL07bN6krJ82WA9h7CMLmZz7
-         3WofH7HGrZCQnyeUAFKDNE46eGClD1Y0hWtqT/3k=
-Received: by mail-qt1-f176.google.com with SMTP id r14so6133959qtp.1;
-        Fri, 30 Nov 2018 06:38:29 -0800 (PST)
-X-Gm-Message-State: AA+aEWYqxCpiAHrqHdFFVau9oFTF6lts8hV/RJfXN2zhEe1vf7ad/nfd
-        nD3mjbyJRZRXVNm3Hdyqaw+/PUH35Z+T5M38Mg==
-X-Google-Smtp-Source: AFSGD/U3hhEECMXpj9FCp1lGLL/6bpAJMjnenmm/Yaoouvq5GALtr8WPjnd+7EnYstQsg0IrdOTsvr8S+AHdyJRGN6E=
-X-Received: by 2002:ac8:1712:: with SMTP id w18mr4863665qtj.76.1543588709102;
- Fri, 30 Nov 2018 06:38:29 -0800 (PST)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8DED6637ED;
+        Fri, 30 Nov 2018 14:38:32 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D2E67105705E;
+        Fri, 30 Nov 2018 14:38:31 +0000 (UTC)
+Subject: Re: [PATCH 0/2] locking/lockdep: Track number of zapped classes &
+ report abuse
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <1543531297-18349-1-git-send-email-longman@redhat.com>
+ <20181129224836.GI11632@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <0c6c14e0-2c85-d4b7-bfa6-345cfae0d8b2@redhat.com>
+Date:   Fri, 30 Nov 2018 09:38:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com> <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
- <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
-In-Reply-To: <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 30 Nov 2018 08:38:17 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
-Message-ID: <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color properties
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181129224836.GI11632@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 30 Nov 2018 14:38:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 2:38 PM Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
+On 11/29/2018 05:48 PM, Peter Zijlstra wrote:
+> On Thu, Nov 29, 2018 at 05:41:35PM -0500, Waiman Long wrote:
+>> When a kernel module is repeatedly load and unload, it will eventually
+>> exhaust the lockdep entries resulting in a bug message. This is a use
+>> case that the current lockdep code cannot support.
+>>
+>> This patchset tracks the number of zapped classes and print a warning if
+>> too many lockdep entries are wasted because of too many module unloading.
+>> For example,
+>>
+>> [ 2490.651531] BUG: MAX_LOCKDEP_KEYS too low!
+>> [ 2490.669925] turning off the locking correctness validator.
+>> [ 2490.669925] Please attach the output of /proc/lock_stat to the bug report
+>> [ 2490.669926] ========================================================
+>> [ 2490.669927] WARNING: 6499 out of 8191 locks have been destroyed
+>> [ 2490.669927] through kernel module unload operations.
+>> [ 2490.669928] The corresponding lockdep entries are not reusable.
+>> [ 2490.669928] The system might have run out of lockdep entries because
+>> [ 2490.669929] of repeated kernel module load and unload operations.
+>> [ 2490.669929] Lockdep cannot support this particular use case.
+>> [ 2490.669930] --------------------------------------------------------
+> Have a look here:
 >
-> On 11/13/2018 09:57 PM, Jacek Anaszewski wrote:
-> > On 11/12/2018 07:27 PM, Rob Herring wrote:
-> >> On Tue, Nov 06, 2018 at 11:07:12PM +0100, Jacek Anaszewski wrote:
-> >>> Introduce dedicated properties for conveying information about
-> >>> LED function and color. Mark old "label" property as deprecated.
-> >>>
-> >>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> >>> Cc: Baolin Wang <baolin.wang@linaro.org>
-> >>> Cc: Daniel Mack <daniel@zonque.org>
-> >>> Cc: Dan Murphy <dmurphy@ti.com>
-> >>> Cc: Linus Walleij <linus.walleij@linaro.org>
-> >>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
-> >>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> >>> Cc: Simon Shields <simon@lineageos.org>
-> >>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
-> >>>  1 file changed, 44 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> >>> index aa13998..3efc826 100644
-> >>> --- a/Documentation/devicetree/bindings/leds/common.txt
-> >>> +++ b/Documentation/devicetree/bindings/leds/common.txt
-> >>> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
-> >>>  have to be tightly coupled with the LED device binding. They are represented
-> >>>  by child nodes of the parent LED device binding.
-> >>>
-> >>> +
-> >>>  Optional properties for child nodes:
-> >>>  - led-sources : List of device current outputs the LED is connected to. The
-> >>>             outputs are identified by the numbers that must be defined
-> >>>             in the LED device binding documentation.
-> >>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
-> >>> +       from the header include/dt-bindings/leds/functions.h.
-> >>> +       If there is no matching LED_FUNCTION available, add a new one.
-> >>> +- color : Color of the LED.
-> >>>  - label : The label for this LED. If omitted, the label is taken from the node
-> >>>       name (excluding the unit address). It has to uniquely identify
-> >>>       a device, i.e. no other LED class device can be assigned the same
-> >>> -     label.
-> >>> +     label. This property is deprecated - use 'function' and 'color'
-> >>> +     properties instead.
-> >>
-> >> I don't know if I'd go as far a deprecating.
-> >>
-> >> One thing to consider is how we handle multiple of the same function? Do
-> >> we allow an index on function names? What if an index isn't meaningful
-> >> and we need "front" vs. "rear" for example? Maybe label is still needed
-> >> there.
-> >
-> > I believe that 'label' property with its old semantics must be preserved
-> > for backwards compatibility - it so far has been used inconsistently for
-> > conveying variations of devicename:color:function sections. If provided,
-> > then it's been taken as-is for LED class device name, or concatenated
-> > with the devicename hard-coded in the driver.
-> >
-> > Regarding the differentiation between the LEDs with functions of
-> > same kind - OK, I agree, we will need another section.
-> >
-> > What seems to fits the best is the reference to the device it is
-> > logically associated with.
-> >
-> > The question is whether the devicename should be provided in DT
-> > literally, or by phandle, and then retrieved in runtime, basing on the
-> > sysfs entry, like in case of input-leds bridge which for USB keyboard
-> > creates LEDs named e.g.:
-> >
-> > input5::capslock
-> > input5::numlock
-> > input5::scrolllock
-> >
-> > Probably we will have to allow for some flexibility in this regard,
-> > to allow for providing devicename literally like "rear", "front",
-> > or like above input case.
->
-> I must admit I have a dilemma  with this devicename part.
-> Thinking more of it - the semantics of that section of LED
-> class device name needs to be precise. Currently there seem
-> to be two types of device names considered:
->
-> 1) descriptive name like in case of flash -
->    front-camera::flash, rear-camera::flash, which would allow
->    for providing arbitrary devicenames, i.e. it would not improve
->    LED naming too much, which was the aim of this patch set
-> 2) name representing hardware relation or user-defined relation between
->    some device and the LED class device, like in above keyboard
->    LED case:
->
->    - input5::numlock
->
->    or for hard disk:
->
->    - sda1::hdderr,
->
->    In the hdderr case Pavel mentioned the arrangement where the LED
->    is not a part of the hard disk, so the relation would have to be
->    defined in DT.
->    For the flash case the devicename part would be matching /dev/videoN
->    device.
->
-> I'm in favour of the option 2) since it seems to be more precise.
-> In this case we would need a mechanism for asynchronous LED class
-> device registration which would register a LED only after the
-> associated device has been probed and its name is known.
-> The mechanism would be a simpler form of
-> drivers/media/v4l2-core/v4l2-async.c.
->
-> In the LED DT node we would need a property holding a phandle
-> to the associated device. Then, in the runtime the related device
-> would call led_register_associated_device(struct device_node*,
-> struct device*) which would in turn match the device_node with
-> the phandle assigned to the property in the LED DT node. Having
-> the struct device of the associated device we could retrieve
-> device node name from dev->kobj.
->
-> We would also probably need different DT properties for different
-> types of devices, since e.g. for network case the network interface
-> name would fit better for the LED name, than the phy name,
-> and we would need to know what type of device name we're going
-> to look for.
->
-> Pavel gave following examples:
->
-> eth0:green:link
-> adsl0:green:link
-> adsl0:red:error
->
-> So we would have e.g.:
->
-> associated-vl42-device = <&camera1>;
-> associated-network-device = <&phy1>;
-> associated-block-device = <&phy1>;
+>   https://lkml.kernel.org/r/20181128234325.110011-1-bvanassche@acm.org
 
-Variable property names are kind of a pain to parse.
+Thanks for the pointer, I will take a look at that.
 
-Perhaps when LEDs are associated with a device, we shouldn't care
-within the context of the LED subsystem what the name is. The
-association is more important and if you have that exposed, then you
-don't really need to care what the name is. You still have to deal
-with a device with more than 1 LED, but that becomes a problem local
-to that device.
+Cheers,
+Longman
 
-What I'm getting at is following a more standard binding pattern of
-providers and consumers like we have for gpios, clocks, etc. So we'd
-have something like this:
-
-ethernet {
-  ...
-  leds = <&green_led>, <&red_led>;
-  led-names = "link", "err";
-};
-
-We can still support defining LED names as we've done, but we don't
-have to come up with some elaborate naming convention that covers
-every single case.
-
-Rob
