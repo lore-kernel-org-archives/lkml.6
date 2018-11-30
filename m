@@ -2,147 +2,243 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5211CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13968C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EFD82146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:38:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EFD82146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id C609F20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:39:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C609F20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbeK3Rq7 (ORCPT
+        id S1726824AbeK3RsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:46:59 -0500
-Received: from mx.socionext.com ([202.248.49.38]:17043 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726456AbeK3Rq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:46:59 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 30 Nov 2018 15:38:44 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 2477E60062;
-        Fri, 30 Nov 2018 15:38:44 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 30 Nov 2018 15:38:44 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 95B7A40394;
-        Fri, 30 Nov 2018 15:38:43 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 6EE55120455;
-        Fri, 30 Nov 2018 15:38:43 +0900 (JST)
-Date:   Fri, 30 Nov 2018 15:38:43 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [RFC PATCH net] net: phy: fix the issue that netif always links up after resuming
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <325a028e-ce95-1055-1b59-ed6120eeb229@gmail.com>
-References: <20181130133738.813D.4A936039@socionext.com> <325a028e-ce95-1055-1b59-ed6120eeb229@gmail.com>
-Message-Id: <20181130153842.31FF.4A936039@socionext.com>
+        Fri, 30 Nov 2018 12:48:11 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:21621 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726456AbeK3RsL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 12:48:11 -0500
+X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
+   d="scan'208";a="48862580"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 30 Nov 2018 14:39:48 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 02BF54B7117F;
+        Fri, 30 Nov 2018 14:39:46 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 30 Nov 2018 14:39:47 +0800
+Date:   Fri, 30 Nov 2018 14:39:31 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v12 0/5] x86/boot/KASLR: Parse ACPI table and limit KASLR
+ to choosing immovable memory
+Message-ID: <20181130063931.GC30941@localhost.localdomain>
+References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
+ <20181129173245.etpt52om2b5qpdeq@gabell>
+ <20181130011513.GA1527@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181130011513.GA1527@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 02BF54B7117F.AE248
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiner,
+On Fri, Nov 30, 2018 at 09:15:13AM +0800, Chao Fan wrote:
+>On Thu, Nov 29, 2018 at 12:32:46PM -0500, Masayoshi Mizuma wrote:
+>>Hi Chao,
+>>
+>>Thank you for your continued working.
+>
+>Thanks for your test.
+>
+>>
+>>Could you please build your patches before sending?
+>
+>Sorry for the mistake, I build it with the whole patches.
+>I found there are some problems with the method to splite patch.
+>I will rework on it and build every commit.
+>
+>Thanks,
+>Chao Fan
+>
+>>Your patches depend on the following kconfig,
+>>so please build them under the config combination.
+>>
+>>RANDOMIZE_BASE
+>>MEMORY_HOTREMOVE
+>>EARLY_PARSE_RSDP
+>>KEXEC
+>>EFI
 
-On Fri, 30 Nov 2018 07:20:27 +0100 <hkallweit1@gmail.com> wrote:
+Hi Masa,
 
-> On 30.11.2018 05:37, Kunihiko Hayashi wrote:
-> > Hi Heiner Florian,
-> > 
-> > Thank you for your comments.
-> > 
-> > On Thu, 29 Nov 2018 16:37:48 -0800 <f.fainelli@gmail.com> wrote:
-> > 
-> >>
-> >>
-> >> On 11/29/2018 2:47 PM, Heiner Kallweit wrote:
-> >>> On 29.11.2018 09:12, Kunihiko Hayashi wrote:
-> >>>> Even though the link is down before entering hibernation,
-> >>>> there is an issue that the network interface always links up after resuming
-> >>>> from hibernation.
-> >>>>
-> >>>> The phydev->state is PHY_READY before enabling the network interface, so
-> >>>> the link is down. After resuming from hibernation, the phydev->state is
-> >>>> forcibly set to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
-> >>>>
-> >>>> This patch expects to solve the issue by changing phydev->state to PHY_UP
-> >>>> only when the link is up.
-> >>>>
-> >>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> >>>> ---
-> >>>>  drivers/net/phy/phy_device.c | 6 ++++--
-> >>>>  1 file changed, 4 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> >>>> index ab33d17..d5bba0f 100644
-> >>>> --- a/drivers/net/phy/phy_device.c
-> >>>> +++ b/drivers/net/phy/phy_device.c
-> >>>> @@ -309,8 +309,10 @@ static int mdio_bus_phy_restore(struct device *dev)
-> >>>>  		return ret;
-> >>>>  
-> >>>>  	/* The PHY needs to renegotiate. */
-> >>>> -	phydev->link = 0;
-> >>>> -	phydev->state = PHY_UP;
-> >>>> +	if (phydev->link) {
-> >>>> +		phydev->link = 0;
-> >>>> +		phydev->state = PHY_UP;
-> >>>> +	}
-> >>>>  
-> >>> Thanks for reporting. I agree that it isn't right to unconditionally set
-> >>> PHY_UP, because we don't know whether the PHY was started before
-> >>> hibernation. However I don't think using phydev->link as criteria is
-> >>> right. Example would be: PHY was started before hibernation, but w/o link.
-> >>> In this case we want to set PHY_UP to start an aneg, because a cable may
-> >>> have been plugged in whilst system was sleeping.
-> > 
-> > Indeed. I didn't consider the case that the PHY was started but a cable was
-> > unplugged before hibernation.
-> > 
-> >>> So I think, similar to phy_stop_machine, we should use state >= UP and
-> >>> state != HALTED as criteria, and also phy_start_machine() would need to
-> >>> be called only if this criteria is met.
-> >>>
-> >>> It may make sense to add a helper for checking whether PHY is in a
-> >>> started state (>=UP && !=HALTED), because we need this in more than
-> >>> one place.
-> >>
-> >> Agreed, that would make sense.
-> > 
-> > I agree, too.
-> > I'll try this in v2 patch that changes the PHY state to PHY_UP and calls
-> > phy_start_machine(), only when the PHY was started before hibernation.
-> > If I understand correctly, it will be like that:
-> > 
-> > 	phydev->link = 0;
-> Even this may go into the if clause. If PHY isn't started then
-> phydev->link should be 0 anyway.
+After retest, I make clean and make again.
+I met the problem is the useless #endif issue you mentioned.
+But I found both:
 
-Yes. To clarify more, this will go into the if clause. 
+#ifndef BOOT_STRING
+EXPORT_SYMBOL(kstrtoull);
 
-> 
-> > 	if (phy_is_started(phydev)) {
-> > 		phydev->state = PHY_UP;
-> > 		phy_start_machine(phydev);
-> > 	}
-> > 
-> Yes, this is what was meant. Thanks.
+and
 
-Thank you,
+EXPORT_SYMBOL(kstrtoull);
+#ifndef BOOT_STRING
 
----
-Best Regards,
-Kunihiko Hayashi
+work for me. So I don't know the key problem, cause the config you
+mentioned are y.
+
+Thanks,
+Chao Fan
+
+>>
+>>Thanks,
+>>Masa
+>>
+>>On Thu, Nov 29, 2018 at 04:16:26PM +0800, Chao Fan wrote:
+>>> ***Background:
+>>> People reported that KASLR may randomly choose some positions
+>>> which are located in movable memory regions. This will break memory
+>>> hotplug feature and make the movable memory chosen by KASLR can't be
+>>> removed.
+>>> 
+>>> ***Solutions:
+>>> Get the information of memory hot-remove, then KASLR will know the
+>>> right regions. Information about memory hot-remove is in ACPI
+>>> tables, which will be parsed after start_kernel(), so that KASLR
+>>> can't get the information.
+>>> 
+>>> Somebody suggest to add a kernel parameter to specify the
+>>> immovable memory so that limit KASLR in these regions. Then I make
+>>> a patchset. After several versions, Ingo gave a suggestion:
+>>> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
+>>> Follow Ingo's suggestion, imitate the ACPI code to parse the ACPI
+>>> tables, so that the kaslr can get necessary memory information in
+>>> ACPI tables.
+>>> I think ACPI code is an independent part, so imitate the codes
+>>> and functions to 'compressed/' directory, so that kaslr won't
+>>> influence the initialization of ACPI.
+>>> 
+>>> PATCH 1/5 Add get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+>>> PATCH 2/5 Add efi_get_rsdp_addr() to find RSDP from EFI table when
+>>>           booting from EFI.
+>>> PATCH 3/5 Add bios_get_rsdp_addr() to search RSDP in memory when EFI
+>>>           table not found.
+>>> PATCH 4/5 Compute SRAT table from RSDP and walk SRAT table to store
+>>>           the immovable memory regions.
+>>> PATCH 5/5 Calculate the intersection between memory regions from e820/efi
+>>>           memory table and immovable memory regions. Limit KASLR to
+>>>           choosing these regions for randomization.
+>>> 
+>>> v1->v2:
+>>>  -  Simplify some code.
+>>> Follow Baoquan He's suggestion:
+>>>  - Reuse the head file of acpi code.
+>>> 
+>>> v2->v3:
+>>>  - Test in more conditions, so remove the 'RFC' tag.
+>>>  - Change some comments.
+>>> 
+>>> v3->v4:
+>>> Follow Thomas Gleixner's suggetsion:
+>>>  - Put the whole efi related function into #define CONFIG_EFI and return
+>>>    false in the other stub.
+>>> 
+>>> v4->v5:
+>>> Follow Dou Liyang's suggestion:
+>>>  - Add more comments about some functions based on kernel code.
+>>>  - Change some typo in comments.
+>>>  - Clean useless variable.
+>>>  - Add check for the boundary of array.
+>>>  - Add check for 'movable_node' parameter
+>>> 
+>>> v5->v6:
+>>> Follow Baoquan He's suggestion:
+>>>  - Change some log.
+>>>  - Add the check for acpi_rsdp
+>>>  - Change some code logical to make code clear
+>>> 
+>>> v6->v7:
+>>> Follow Rafael's suggestion:
+>>>  - Add more comments and patch log.
+>>> Follow test robot's suggestion:
+>>>  - Add "static" tag for function
+>>> 
+>>> v7-v8:
+>>> Follow Kees Cook's suggestion:
+>>>  - Use mem_overlaps() to check memory region.
+>>>  - Use #ifdef in the definition of function.
+>>> 
+>>> v8-v9:
+>>> Follow Boris' suggestion:
+>>>  - Change code style.
+>>>  - Splite PATCH 1/3 to more path.
+>>>  - Introduce some new function
+>>>  - Use existing function to rework some code
+>>> Follow Masayoshi's suggetion:
+>>>  - Make code more readable
+>>> 
+>>> v9->v10:
+>>> Follow Baoquan's suggestion:
+>>>  - Change some log
+>>>  - Merge last two patch together.
+>>> 
+>>> v10->v11:
+>>> Follow Boris' suggestion:
+>>>  - Link kstrtoull() instead of copying it.
+>>>  - Drop the useless wrapped function.
+>>> 
+>>> v11->v12:
+>>> Follow Boris' suggestion:
+>>>  - Change patch log and code comments.
+>>>  - Add 'CONFIG_EARLY_PARSE_RSDP' to make code easy to read
+>>>  - Put strtoull() to misc.c
+>>> Follow Masa's suggestion:
+>>>  - Remove the detection for 'movable_node'
+>>>  - Change the code logical about cmdline_find_option()
+>>> 
+>>> Any comments will be welcome.
+>>> 
+>>> 
+>>> Chao Fan (5):
+>>>   x86/boot: Add get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+>>>   x86/boot: Add efi_get_rsdp_addr() to find RSDP from EFI table
+>>>   x86/boot: Add bios_get_rsdp_addr() to search RSDP in memory
+>>>   x86/boot: Parse SRAT table from RSDP and store immovable memory
+>>>   x86/boot/KASLR: Limit KASLR to extracting kernel in immovable memory
+>>> 
+>>>  arch/x86/Kconfig                  |  10 +
+>>>  arch/x86/boot/compressed/Makefile |   2 +
+>>>  arch/x86/boot/compressed/acpitb.c | 322 ++++++++++++++++++++++++++++++
+>>>  arch/x86/boot/compressed/kaslr.c  |  79 ++++++--
+>>>  arch/x86/boot/compressed/misc.c   |   5 +
+>>>  arch/x86/boot/compressed/misc.h   |  24 +++
+>>>  lib/kstrtox.c                     |   5 +
+>>>  7 files changed, 432 insertions(+), 15 deletions(-)
+>>>  create mode 100644 arch/x86/boot/compressed/acpitb.c
+>>> 
+>>> -- 
+>>> 2.19.1
+>>> 
+>>> 
+>>> 
+>>
+>>
 
 
