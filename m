@@ -2,149 +2,173 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEDEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4F5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6AB2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52CC12081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:20:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1EOftzo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6AB2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ofkheRAz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52CC12081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeK3R1J (ORCPT
+        id S1726772AbeK3R2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:27:09 -0500
-Received: from mail-wm1-f43.google.com ([209.85.128.43]:33359 "EHLO
-        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbeK3R1J (ORCPT
+        Fri, 30 Nov 2018 12:28:49 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43021 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbeK3R2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:27:09 -0500
-Received: by mail-wm1-f43.google.com with SMTP id r24so916720wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 22:18:57 -0800 (PST)
+        Fri, 30 Nov 2018 12:28:48 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so4096381wrs.10;
+        Thu, 29 Nov 2018 22:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=D5YaG5x67CPZNZ7De3f1MGD+D9eRgDA2e53WZXUIGiY=;
-        b=G1EOftzodz4tUtWWiGM3spjtKXTRxBMLDEgIsF3FLWcgDmpAHdo7lYZyosuOAYnAFE
-         hAT407zIhZP/gfqAphwD1CrOmWhK1Cc48MDY2Y28g2Ahk4GCAa7LYTduvWx1w5wF7DUL
-         A30BbPkswctYB/omRorv/kUZl7C1uWf3vjOnt1HzEUX7VwO7amGQmezYoTF5GQwPOiu8
-         kawKZkynMtj8OC2kywxwbHu/9HwziVzERMTGEvVz6WPz7Ra0/Jlp8YJVFgMMUBn9Ncag
-         hlkeS88U7Vn+1OHgIN5WcFwRNtcdUn+EmPRLrqomwTUn9wB5rCeS+cJPgQY8XoTRQ1bG
-         CJKg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FXq4hS5QzlV6Jcq+Z0iWOb59RcV1ZR0G+ypEUQ7hOmY=;
+        b=ofkheRAzWmJiO5mga9DMiKQVLN98J+L/2syOr0/YehGwK2Crcb3avHab5i4Kw+eAJU
+         YN+4McxY6xjFqAO3i+9gsLNwd6HLoGSfFoNI0dhumO79MB9M9eJ2fIzXV4MdP5toR1i/
+         dKm9o3l5IJYpI19ix6fvJrl2rM0mhN8gsZ6Lk2R+s5Osfv20WQi2k1nrAX+h6GSmtXl+
+         IMj/Ig8dEYZefle8XB+s+qpZe9b0VSVaT9XJW7JVjVzhkUY5Pf9AsRcRCOHwTrdDs0v2
+         4V++WevsXUXoJGnEqQLsabYpRHeGJCqdvgFJsE60nSjk9eTxWSDE3cA4vQqZPJa1dwHo
+         Qjvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=D5YaG5x67CPZNZ7De3f1MGD+D9eRgDA2e53WZXUIGiY=;
-        b=aED+XXDZgXLv8obE7630JdkhZg8RZ8IchZY87yus/mKb6hHQO6T6PVpPKryYLG5Qdm
-         LlPOHFaDmIrYkmj8cG95kYf6jH3HE+SRgTD/Zx1iryfxaiwCfAhwHXUjeicNU4DVDiJ6
-         lY9p8g7TbhLdoFs7xDRmT6AXShPKxvEiZ8duEFgf7LeEFr/KhaGddaGdrW2qZBSJ9+yD
-         EdE/Hy+RjHI8osDT+Yl8jGJG06Qe0zt+oykurYRkvgGG3BQITY0ijfKLXvs0Hx8W2nnC
-         X8yvDl5SPy1ryuY1E49P+X5FOSNFONA11CYwE8olEffoYCKQZjLkwzJSh7emMkYHrlDr
-         4ihg==
-X-Gm-Message-State: AA+aEWYkZ5TUE2z7fElZofjnvLyWfdGTbCk7Hh4hyIlaa6S0dHOASpkS
-        8tklYyULIag2CYXHV5jZCF0/zZ5G
-X-Google-Smtp-Source: AFSGD/Uci6DAnRWcl23dVG79AiSHSHRGRaUwW61Cssea5Xyy/vGUIbp1KFrDxK1uxc5WE+VcSCYdvQ==
-X-Received: by 2002:a1c:9a46:: with SMTP id c67mr3991701wme.21.1543558736398;
-        Thu, 29 Nov 2018 22:18:56 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id s1sm4815425wro.9.2018.11.29.22.18.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 22:18:55 -0800 (PST)
-Date:   Fri, 30 Nov 2018 07:18:53 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Borislav Petkov <bp@alien8.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] objtool fixes
-Message-ID: <20181130061853.GA19395@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FXq4hS5QzlV6Jcq+Z0iWOb59RcV1ZR0G+ypEUQ7hOmY=;
+        b=MVREAzyK11oyx0pU+aODEOYJAbXHhz2W3hRJfYNrw1OjSwlOcrwPgqF4d09tEJIsmP
+         vXTtRDaE4o46LxH4rmqtiy+K+tktR7HRb/ePIIFHglBNVA/xxKAYq9HtuU/pXM/0F86l
+         TVnRlCxpIfKbyJvoAFmsH9YlqyjiermP7wzXzH5BQy7lj2N4qkdRe/MgOV53ft77bfd6
+         ymEfdHU882lKnsJ5xM/FOA0ExHSYuUe5SQbkJve8Iocttsq/bAGG6/NFB0DmbBPqhK1b
+         wjrZCbDSAsCd6VAvrLYDuZ51sjnsKEKCHg7YHBOEQUIgerqO6Pi+UPH/WuRq/QcBN6u4
+         g30Q==
+X-Gm-Message-State: AA+aEWZ3mbAE3aYxOOLA363/mWHIvvgGHMy3TEObg5cjettv60kRXBqs
+        EzMvlhlBAPdFWd61GzmknLGF6LCI
+X-Google-Smtp-Source: AFSGD/VPcYTdP9U3ckZsrOk6Sj5P5aTR1T+GOGTR19SQXezDB6eikiXgcq43wb9sPXZ6rXOv7m3lFw==
+X-Received: by 2002:adf:ebd0:: with SMTP id v16mr4041750wrn.109.1543558835467;
+        Thu, 29 Nov 2018 22:20:35 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:9a2:5ffe:7427:6680? (p200300EA8BCFE30009A25FFE74276680.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:9a2:5ffe:7427:6680])
+        by smtp.googlemail.com with ESMTPSA id t131sm1385035wmt.1.2018.11.29.22.20.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 22:20:34 -0800 (PST)
+Subject: Re: [RFC PATCH net] net: phy: fix the issue that netif always links
+ up after resuming
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <0499fc01-fce3-26c7-8b42-64788b8bf47b@gmail.com>
+ <d32d2d7e-2c78-425a-4016-0aebbf0828ed@gmail.com>
+ <20181130133738.813D.4A936039@socionext.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <325a028e-ce95-1055-1b59-ed6120eeb229@gmail.com>
+Date:   Fri, 30 Nov 2018 07:20:27 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181130133738.813D.4A936039@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 30.11.2018 05:37, Kunihiko Hayashi wrote:
+> Hi Heiner Florian,
+> 
+> Thank you for your comments.
+> 
+> On Thu, 29 Nov 2018 16:37:48 -0800 <f.fainelli@gmail.com> wrote:
+> 
+>>
+>>
+>> On 11/29/2018 2:47 PM, Heiner Kallweit wrote:
+>>> On 29.11.2018 09:12, Kunihiko Hayashi wrote:
+>>>> Even though the link is down before entering hibernation,
+>>>> there is an issue that the network interface always links up after resuming
+>>>> from hibernation.
+>>>>
+>>>> The phydev->state is PHY_READY before enabling the network interface, so
+>>>> the link is down. After resuming from hibernation, the phydev->state is
+>>>> forcibly set to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
+>>>>
+>>>> This patch expects to solve the issue by changing phydev->state to PHY_UP
+>>>> only when the link is up.
+>>>>
+>>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+>>>> ---
+>>>>  drivers/net/phy/phy_device.c | 6 ++++--
+>>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+>>>> index ab33d17..d5bba0f 100644
+>>>> --- a/drivers/net/phy/phy_device.c
+>>>> +++ b/drivers/net/phy/phy_device.c
+>>>> @@ -309,8 +309,10 @@ static int mdio_bus_phy_restore(struct device *dev)
+>>>>  		return ret;
+>>>>  
+>>>>  	/* The PHY needs to renegotiate. */
+>>>> -	phydev->link = 0;
+>>>> -	phydev->state = PHY_UP;
+>>>> +	if (phydev->link) {
+>>>> +		phydev->link = 0;
+>>>> +		phydev->state = PHY_UP;
+>>>> +	}
+>>>>  
+>>> Thanks for reporting. I agree that it isn't right to unconditionally set
+>>> PHY_UP, because we don't know whether the PHY was started before
+>>> hibernation. However I don't think using phydev->link as criteria is
+>>> right. Example would be: PHY was started before hibernation, but w/o link.
+>>> In this case we want to set PHY_UP to start an aneg, because a cable may
+>>> have been plugged in whilst system was sleeping.
+> 
+> Indeed. I didn't consider the case that the PHY was started but a cable was
+> unplugged before hibernation.
+> 
+>>> So I think, similar to phy_stop_machine, we should use state >= UP and
+>>> state != HALTED as criteria, and also phy_start_machine() would need to
+>>> be called only if this criteria is met.
+>>>
+>>> It may make sense to add a helper for checking whether PHY is in a
+>>> started state (>=UP && !=HALTED), because we need this in more than
+>>> one place.
+>>
+>> Agreed, that would make sense.
+> 
+> I agree, too.
+> I'll try this in v2 patch that changes the PHY state to PHY_UP and calls
+> phy_start_machine(), only when the PHY was started before hibernation.
+> If I understand correctly, it will be like that:
+> 
+> 	phydev->link = 0;
+Even this may go into the if clause. If PHY isn't started then
+phydev->link should be 0 anyway.
 
-Please pull the latest core-urgent-for-linus git tree from:
+> 	if (phy_is_started(phydev)) {
+> 		phydev->state = PHY_UP;
+> 		phy_start_machine(phydev);
+> 	}
+> 
+Yes, this is what was meant. Thanks.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
+> Thank you,
+> 
+> ---
+> Best Regards,
+> Kunihiko Hayashi
+> 
+> 
+> 
 
-   # HEAD: 22566c1603030f0a036ad564634b064ad1a55db2 objtool: Fix segfault in .cold detection with -ffunction-sections
-
-Two fixes for boundary conditions.
-
- Thanks,
-
-	Ingo
-
------------------->
-Artem Savkov (2):
-      objtool: Fix double-free in .cold detection error path
-      objtool: Fix segfault in .cold detection with -ffunction-sections
-
-
- tools/objtool/elf.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 6dbb9fae0f9d..b8f3cca8e58b 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -31,6 +31,8 @@
- #include "elf.h"
- #include "warn.h"
- 
-+#define MAX_NAME_LEN 128
-+
- struct section *find_section_by_name(struct elf *elf, const char *name)
- {
- 	struct section *sec;
-@@ -298,6 +300,8 @@ static int read_symbols(struct elf *elf)
- 	/* Create parent/child links for any cold subfunctions */
- 	list_for_each_entry(sec, &elf->sections, list) {
- 		list_for_each_entry(sym, &sec->symbol_list, list) {
-+			char pname[MAX_NAME_LEN + 1];
-+			size_t pnamelen;
- 			if (sym->type != STT_FUNC)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
-@@ -305,14 +309,21 @@ static int read_symbols(struct elf *elf)
- 			if (!coldstr)
- 				continue;
- 
--			coldstr[0] = '\0';
--			pfunc = find_symbol_by_name(elf, sym->name);
--			coldstr[0] = '.';
-+			pnamelen = coldstr - sym->name;
-+			if (pnamelen > MAX_NAME_LEN) {
-+				WARN("%s(): parent function name exceeds maximum length of %d characters",
-+				     sym->name, MAX_NAME_LEN);
-+				return -1;
-+			}
-+
-+			strncpy(pname, sym->name, pnamelen);
-+			pname[pnamelen] = '\0';
-+			pfunc = find_symbol_by_name(elf, pname);
- 
- 			if (!pfunc) {
- 				WARN("%s(): can't find parent function",
- 				     sym->name);
--				goto err;
-+				return -1;
- 			}
- 
- 			sym->pfunc = pfunc;
