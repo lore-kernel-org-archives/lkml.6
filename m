@@ -2,71 +2,49 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB68C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87099C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39812146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:57:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GuprEAWu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39812146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 547AA20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:58:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 547AA20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbeK3XG4 (ORCPT
+        id S1727048AbeK3XHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:06:56 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39179 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeK3XGx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:06:53 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so5030233wra.6
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 03:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0iW9xOBt9WpVvAp1NOuB+sx1cxkSYq28KOi7fspXZu8=;
-        b=GuprEAWu2Lv0u/c6lV9YTtHmcoUUXE4c5dQqqX+ySrUfOzQRadwXe5ZW0bQmFqDO89
-         2rxnHCpuVYb+aQOPEnrtDpMRD0bWVf1v0RIyhP51olij9PmjEZwV/DwmgwFfk5PjyTJ6
-         eHDNnDCdTt+AifZAzAX0zioTqfPqcxlhdjmPc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0iW9xOBt9WpVvAp1NOuB+sx1cxkSYq28KOi7fspXZu8=;
-        b=acGviZgNjbbecYVJQbKUTrp60JhOUSdBrwBCKy2ipxfkr7o44DHJcyNE0BxEcKtvQq
-         g3SJIwDTNLIKMpW68AFEHXH7ULXps5J+ZW0n1BF4jmircN+fErK0k25tVl28ghI4oQX+
-         EON1KDOVn00sVokVzmcfUjtwXDHcNrNCbaRcyVSKVnIm1CgGntHJ7/7dDV4ernf4iCX4
-         Qjk9ajJC3u/o2X0TAdyqc8Tut4f9CgZDg/BcSbUe5noe887fdl5Qwy7b0jIUL1PtEo+U
-         8ipIyjz+nGpY6Ub6zFzPR5PsxQlkH/Oaji5YaX1m/baiZ654DoNICWNmg/Vg55W4gteC
-         KlVw==
-X-Gm-Message-State: AA+aEWYSBgp8WzbqrwHIyqBNCwMqlchTEiU3cZIuvwYUbySN6hN8wltP
-        p9B44ifqtuFEUmb+tWwg/5hP4A==
-X-Google-Smtp-Source: AFSGD/V/7ChjUH63JcyS6B6SgTsLCv915BTgzr1QWyGk5gTz2VHFOEyO5OPbL7bIMOJghEXlYa501w==
-X-Received: by 2002:a5d:5089:: with SMTP id a9mr4837909wrt.327.1543579069416;
-        Fri, 30 Nov 2018 03:57:49 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id c12sm3861303wrs.82.2018.11.30.03.57.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 03:57:48 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 2/2] slimbus: ngd: fix spelling mistake "exeeds" -> "exceeds"
-Date:   Fri, 30 Nov 2018 11:57:42 +0000
-Message-Id: <20181130115742.16813-3-srinivas.kandagatla@linaro.org>
+        Fri, 30 Nov 2018 18:07:07 -0500
+Received: from mga01.intel.com ([192.55.52.88]:41535 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726744AbeK3XHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 18:07:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 03:58:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,298,1539673200"; 
+   d="scan'208";a="113963764"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 30 Nov 2018 03:58:00 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id D4E1E288; Fri, 30 Nov 2018 13:57:59 +0200 (EET)
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org
+Cc:     boris.ostrovsky@oracle.com, jgross@suse.com, bhe@redhat.com,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 1/2] x86/mm: Fix guard hole handling
+Date:   Fri, 30 Nov 2018 14:57:57 +0300
+Message-Id: <20181130115758.4425-2-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181130115742.16813-1-srinivas.kandagatla@linaro.org>
-References: <20181130115742.16813-1-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20181130115758.4425-1-kirill.shutemov@linux.intel.com>
+References: <20181130115758.4425-1-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,29 +52,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There is a guard hole at the beginning of kernel address space, also
+used by hypervisors. It occupies 16 PGD entries.
 
-There is a spelling mistake in a dev_err message, fix this.
+We do not state the reserved range directly, but calculate it relative
+to other entities: direct mapping and user space ranges.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+The calculation got broken by recent change in kernel memory layout: LDT
+remap range is now mapped before direct mapping and makes the calculation
+invalid.
+
+The breakage leads to crash on Xen dom0 boot[1].
+
+State the reserved range directly. It's part of kernel ABI (hypervisors
+expect it to be stable) and must not depend on changes in the rest of
+kernel memory layout.
+
+[1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
+Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
 ---
- drivers/slimbus/qcom-ngd-ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/pgtable_64_types.h |  5 +++++
+ arch/x86/mm/dump_pagetables.c           |  8 ++++----
+ arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-index ccf33217236c..71f094c9ec68 100644
---- a/drivers/slimbus/qcom-ngd-ctrl.c
-+++ b/drivers/slimbus/qcom-ngd-ctrl.c
-@@ -787,7 +787,7 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 84bd9bdc1987..13aef22cee18 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
+  */
+ #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
  
- 	if (txn->msg->num_bytes > SLIM_MSGQ_BUF_LEN ||
- 			txn->rl > SLIM_MSGQ_BUF_LEN) {
--		dev_err(ctrl->dev, "msg exeeds HW limit\n");
-+		dev_err(ctrl->dev, "msg exceeds HW limit\n");
- 		return -EINVAL;
- 	}
++#define GUARD_HOLE_PGD_ENTRY	-256UL
++#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
++#define GUARD_HOLE_BASE_ADDR	(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define GUARD_HOLE_END_ADDR	(GUARD_HOLE_BASE_ADDR + GUARD_HOLE_SIZE)
++
+ #define LDT_PGD_ENTRY		-240UL
+ #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+ #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index fc37bbd23eb8..dad153e5a427 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -512,11 +512,11 @@ static inline bool is_hypervisor_range(int idx)
+ {
+ #ifdef CONFIG_X86_64
+ 	/*
+-	 * ffff800000000000 - ffff87ffffffffff is reserved for
+-	 * the hypervisor.
++	 * A hole in the beginning of kernel address space reserved
++	 * for a hypervisor.
+ 	 */
+-	return	(idx >= pgd_index(__PAGE_OFFSET) - 16) &&
+-		(idx <  pgd_index(__PAGE_OFFSET));
++	return	(idx >= pgd_index(GUARD_HOLE_BASE_ADDR)) &&
++		(idx <  pgd_index(GUARD_HOLE_END_ADDR));
+ #else
+ 	return false;
+ #endif
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index a5d7ed125337..0f4fe206dcc2 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -648,19 +648,20 @@ static int __xen_pgd_walk(struct mm_struct *mm, pgd_t *pgd,
+ 			  unsigned long limit)
+ {
+ 	int i, nr, flush = 0;
+-	unsigned hole_low, hole_high;
++	unsigned hole_low = 0, hole_high = 0;
  
+ 	/* The limit is the last byte to be touched */
+ 	limit--;
+ 	BUG_ON(limit >= FIXADDR_TOP);
+ 
++#ifdef CONFIG_X86_64
+ 	/*
+ 	 * 64-bit has a great big hole in the middle of the address
+-	 * space, which contains the Xen mappings.  On 32-bit these
+-	 * will end up making a zero-sized hole and so is a no-op.
++	 * space, which contains the Xen mappings.
+ 	 */
+-	hole_low = pgd_index(USER_LIMIT);
+-	hole_high = pgd_index(PAGE_OFFSET);
++	hole_low = pgd_index(GUARD_HOLE_BASE_ADDR);
++	hole_high = pgd_index(GUARD_HOLE_END_ADDR);
++#endif
+ 
+ 	nr = pgd_index(limit) + 1;
+ 	for (i = 0; i < nr; i++) {
 -- 
 2.19.2
 
