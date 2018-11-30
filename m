@@ -2,131 +2,95 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57F1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA53C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8FA42146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FA42146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 22EB22146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:01:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22EB22146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbeLAFKn (ORCPT
+        id S1726870AbeLAFLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:10:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37362 "EHLO mx1.redhat.com"
+        Sat, 1 Dec 2018 00:11:41 -0500
+Received: from mga03.intel.com ([134.134.136.65]:15626 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbeLAFKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:10:43 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CFEBD307D982;
-        Fri, 30 Nov 2018 18:00:37 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-126-156.rdu2.redhat.com [10.10.126.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 26FAB6870A;
-        Fri, 30 Nov 2018 18:00:30 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devel@linuxdriverproject.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, David Hildenbrand <david@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1726159AbeLAFLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:11:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 10:01:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
+   d="scan'208";a="279375944"
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by orsmga005.jf.intel.com with ESMTP; 30 Nov 2018 10:01:34 -0800
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.128]) by
+ ORSMSX102.amr.corp.intel.com ([169.254.3.81]) with mapi id 14.03.0415.000;
+ Fri, 30 Nov 2018 10:01:34 -0800
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     linux-efi <linux-efi@vger.kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Banman <andrew.banman@hpe.com>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>
-Subject: [PATCH RFCv2 4/4] mm/memory_hotplug: Drop MEMORY_TYPE_UNSPECIFIED
-Date:   Fri, 30 Nov 2018 18:59:22 +0100
-Message-Id: <20181130175922.10425-5-david@redhat.com>
-In-Reply-To: <20181130175922.10425-1-david@redhat.com>
-References: <20181130175922.10425-1-david@redhat.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Arend Van Spriel" <arend.vanspriel@broadcom.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Eric Snowberg" <eric.snowberg@oracle.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Joe Perches" <joe@perches.com>, Jon Hunter <jonathanh@nvidia.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Nathan Chancellor" <natechancellor@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        YiFei Zhu <zhuyifei1999@gmail.com>
+Subject: RE: [GIT PULL 00/11] EFI updates
+Thread-Topic: [GIT PULL 00/11] EFI updates
+Thread-Index: AQHUiAbHOvhS3sTUD06cGnW0DdiISqVnEMMAgAGuNoD//95JAA==
+Date:   Fri, 30 Nov 2018 18:01:33 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F485F184E@ORSMSX114.amr.corp.intel.com>
+References: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
+ <FFF73D592F13FD46B8700F0A279B802F485F14B8@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu9wYBoLUsioOvsx+ggg6DanqWd3VKVP8nxZ+=zqOqzM3w@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9wYBoLUsioOvsx+ggg6DanqWd3VKVP8nxZ+=zqOqzM3w@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWM2YTcyNTItYzY1ZS00OTgwLTlhY2MtZmJmM2Q2NzliMzExIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTzUrVjJ3M2p6aUZGUEpOXC9RbENaVUYxNm92R0RqS3RyUGZTVHRka1FYQmhxaU51VVU5V0tiYnk2RHJrZ1JQNUEifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 30 Nov 2018 18:00:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have proper types for all users, we can drop this one.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Banman <andrew.banman@hpe.com>
-Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
-Cc: Oscar Salvador <osalvador@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Michal Suchánek <msuchanek@suse.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- drivers/base/memory.c  | 3 ---
- include/linux/memory.h | 5 -----
- 2 files changed, 8 deletions(-)
-
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index c5fdca7a3009..a6e524f0ea38 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -388,9 +388,6 @@ static ssize_t type_show(struct device *dev, struct device_attribute *attr,
- 	ssize_t len = 0;
- 
- 	switch (mem->type) {
--	case MEMORY_BLOCK_UNSPECIFIED:
--		len = sprintf(buf, "unspecified\n");
--		break;
- 	case MEMORY_BLOCK_BOOT:
- 		len = sprintf(buf, "boot\n");
- 		break;
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index a3a1e9764805..11679622f743 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -50,10 +50,6 @@ int set_memory_block_size_order(unsigned int order);
-  *  No memory block is to be created (e.g. device memory). Not exposed to
-  *  user space.
-  *
-- * MEMORY_BLOCK_UNSPECIFIED:
-- *  The type of memory block was not further specified when adding the
-- *  memory block.
-- *
-  * MEMORY_BLOCK_BOOT:
-  *  This memory block was added during boot by the basic system. No
-  *  specific device driver takes care of this memory block. This memory
-@@ -103,7 +99,6 @@ int set_memory_block_size_order(unsigned int order);
-  */
- enum {
- 	MEMORY_BLOCK_NONE = 0,
--	MEMORY_BLOCK_UNSPECIFIED,
- 	MEMORY_BLOCK_BOOT,
- 	MEMORY_BLOCK_DIMM,
- 	MEMORY_BLOCK_DIMM_UNREMOVABLE,
--- 
-2.17.2
-
+PiBPbiBUaHUsIDI5IE5vdiAyMDE4IGF0IDE5OjI3LCBQcmFraHlhLCBTYWkgUHJhbmVldGgNCj4g
+PHNhaS5wcmFuZWV0aC5wcmFraHlhQGludGVsLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBIaSBBcmQs
+DQo+ID4NCj4gPiBXaGlsZSBidWlsZGluZyBmcm9tIG5leHQgYnJhbmNoIG9mIGVmaSB0cmVlLCBJ
+IG5vdGljZWQgdGhlIGJlbG93IHdhcm5pbmcuIENvdWxkDQo+IHlvdSBwbGVhc2UgY2hlY2sgdGhl
+IHNhbWUgb24geW91ciBzaWRlPw0KPiA+DQo+ID4gICBDQyAgICAgIGxpYi9saXN0X2RlYnVnLm8N
+Cj4gPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9lZmkuYzogSW4gZnVuY3Rpb24gJ2VmaV9tZW1fcmVz
+ZXJ2ZV9wZXJzaXN0ZW50JzoNCj4gPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9lZmkuYzoxMDAwOjY6
+IHdhcm5pbmc6IHVudXNlZCB2YXJpYWJsZSAncnN2c2l6ZScgWy0NCj4gV3VudXNlZC12YXJpYWJs
+ZV0NCj4gPiAgIGludCByc3ZzaXplID0gRUZJX01FTVJFU0VSVkVfU0laRSgxKTsNCj4gPiAgICAg
+ICBefn5+fn5+DQo+ID4gICBDQyAgICAgIGxpYi9iaXRyZXYubw0KPiA+ICAgQ0MgICAgICBuZXQv
+Y29yZS9zb2NrX3JldXNlcG9ydC5vDQo+ID4NCj4gDQo+IFRoYW5rcyBTYWkNCj4gDQo+IEluZ28g
+c3BvdHRlZCBpdCBhcyB3ZWxsIGFuZCBmaXhlZCBpdCB1cCBiZWZvcmUgbWVyZ2luZy4NCg0KR3Jl
+YXQhIDopDQoNClJlZ2FyZHMsDQpTYWkNCg==
