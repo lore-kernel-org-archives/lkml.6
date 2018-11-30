@@ -2,99 +2,86 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1B2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50179C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F16B82146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:02:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CF952147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:03:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKSL3+Y/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16B82146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jjtLYjWS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF952147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeLADMj (ORCPT
+        id S1727529AbeLADNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:12:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42248 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbeLADMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:12:39 -0500
-Received: from [192.168.1.19] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD09E2146D;
-        Fri, 30 Nov 2018 16:02:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543593771;
-        bh=oyEPGPej8LaPnfahPv0MK2mQBuX5j6GPCNjEyFn58Es=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QKSL3+Y/xEOmKnOZxA0mmeamGoFVyh4YatS/r5/Q7S8srf7fDYC/fDOR4FjvX5yvt
-         4n9HVYOII9oieEodYnL4q1XHELYUO7zQcJoEYndcJ75Q6J66HRZXXMUHVUOm2EJwQr
-         UalbtswsOKlj8jQj0Ybb5AC7GmA3YNbbJoerHkqw=
-Subject: Re: [PATCH] ARM: dts: socfpga: remove incorrect 0x leading
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181129125649.4060-1-peron.clem@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a8b55198-ed1d-08d3-c3ea-159dade5d98c@kernel.org>
-Date:   Fri, 30 Nov 2018 10:02:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 30 Nov 2018 22:13:14 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36883 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbeLADNO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:13:14 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j10so5786805wru.4
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 08:03:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e0yU3aF3N5EoBQB8hOIFIONtlSEFhDfgKSrxkNHR24k=;
+        b=jjtLYjWSTx2gDwG+i3D1OKa0cYoJts6t/hwfl/b3b9uaG+OBnAmE23SALBV7MzkM3R
+         QZAsD6ZZKMAfdkdBAIefLPmegcSat9FBDi//eURGPx5HK+NK0kVysNuDIs2co1sE5YsS
+         3Ssl1RTJwt8yWf3x4z6Pqw38nyXWelHM/lwdY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e0yU3aF3N5EoBQB8hOIFIONtlSEFhDfgKSrxkNHR24k=;
+        b=a6FMljDK2yPc0zyrkrp47ZgfxnUWmGFPJoF/TdEgo0z5BmIfGcK+bWzbfC6H4u6wM5
+         6MPR/EohhJysu3vo8gnN27/tf4/AgMuQnfGD8s9oue3L92WXkew43mJAM1PGC6tL11/C
+         X6TAKRy7Mydx5ix9IIwcLkIv7ePPg6jSSGC3CrUiTTKQYov0ZzsYp1r8CMpKl0m3hAk2
+         W9JnTo4V6fEa66Gc5gcRpztb8A9RYufljF34OFOAplyELck3cuDpOR9G8tbWbapvtCm9
+         VbRVsv5xZeuAznm7AuB6AkgxzXzUKdfqPQePNiGpGEfGJf4bezWtOE/gmdzs1Yri2qgi
+         TaBA==
+X-Gm-Message-State: AA+aEWY43SQV73U/sWggbsU9lcT8Ku+CrHw8/uOOX4+ypEerdy+GW1hv
+        n6VFSGdRtln2NFtV6uzwwIt8xw==
+X-Google-Smtp-Source: AFSGD/Url35w2pPkx2dHh7TkhZGrgocplNH8DySZcG8QOoJ4aNdnoIGGEvCQ79qLD81kHlAbRl17fw==
+X-Received: by 2002:adf:8b83:: with SMTP id o3mr5718427wra.81.1543593804462;
+        Fri, 30 Nov 2018 08:03:24 -0800 (PST)
+Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id 125sm7317048wml.35.2018.11.30.08.03.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 08:03:23 -0800 (PST)
+Subject: Re: [RFC PATCH 3/6] char: fastrpc: Add support for context Invoke
+ method
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
+        thierry.escande@linaro.org
+References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
+ <20181130104657.14875-4-srinivas.kandagatla@linaro.org>
+ <CAK8P3a1mFWJyXCn74_Yd_y3Df0JN=qM4nw4-2t_LjRO7yXmXBw@mail.gmail.com>
+ <3c177508-cf6f-1f8d-a324-5bec40fd9a9c@linaro.org>
+ <CAK8P3a0d=VRP+9vZm+eJeJM933PWYL4sruMAYBYzWjg5B_kL2g@mail.gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <633cb111-f5d7-3648-54af-a476f3cbb279@linaro.org>
+Date:   Fri, 30 Nov 2018 16:03:22 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181129125649.4060-1-peron.clem@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAK8P3a0d=VRP+9vZm+eJeJM933PWYL4sruMAYBYzWjg5B_kL2g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -102,16 +89,162 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 11/29/18 6:56 AM, Clément Péron wrote:
-> unit-address does not have a leading "0x" (the number is assumed to be hexadecimal).
+On 30/11/18 15:08, Arnd Bergmann wrote:
+> On Fri, Nov 30, 2018 at 4:01 PM Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
+>> Thanks Arnd for the review comments!
+>> On 30/11/18 13:41, Arnd Bergmann wrote:
+>>> On Fri, Nov 30, 2018 at 11:48 AM Srinivas Kandagatla
+>>> <srinivas.kandagatla@linaro.org> wrote:
 > 
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
-> ---
->  arch/arm/boot/dts/socfpga.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>> +static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
+>>>> +                                unsigned long arg)
+>>>> +{
+>>>> +       struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
+>>>> +       struct fastrpc_channel_ctx *cctx = fl->cctx;
+>>>> +       char __user *argp = (char __user *)arg;
+>>>> +       int err;
+>>>> +
+>>>> +       if (!fl->sctx) {
+>>>> +               fl->sctx = fastrpc_session_alloc(cctx, 0);
+>>>> +               if (!fl->sctx)
+>>>> +                       return -ENOENT;
+>>>> +       }
+>>>
+>>> Shouldn't that session be allocated during open()?
+>>>
+>> Yes, and no, we do not need context in all the cases. In cases like we
+>> just want to allocate dmabuf.
+> 
+> Can you give an example what that would be good for?
 > 
 
-Applied!
+Currently the instance which does not need session is used as simple 
+memory allocator (rpcmem), TBH, this is the side effect of trying to fit 
+in with downstream application infrastructure which uses ion for andriod 
+usecases.
 
-Thanks,
-Dinh
+>>
+>>>> +static void fastrpc_notify_users(struct fastrpc_user *user)
+>>>> +{
+>>>> +       struct fastrpc_invoke_ctx *ctx, *n;will go
+>>>> +
+>>>> +       spin_lock(&user->lock);
+>>>> +       list_for_each_entry_safe(ctx, n, &user->pending, node)
+>>>> +               complete(&ctx->work);
+>>>> +       spin_unlock(&user->lock);
+>>>> +}
+>>>
+>>> Can you explain here what it means to have multiple 'users'
+>>> a 'fastrpc_user' structure? Why are they all done at the same time?
+
+user is allocated on every open(). Having multiple users means that 
+there are more than one compute sessions running on a given dsp.
+
+They reason why all the users are notified here is because the dsp is 
+going down, so all the compute sessions associated with it will not see 
+any response from dsp, so any pending/waiting compute contexts are 
+explicitly notified.
+
+>>>
+>> This is the case where users need to be notified if the dsp goes down
+>> due to crash or shut down!
+> 
+> What is a 'user' then? My point is that it seems to refer to two
+> different things here. I assume 'fastrpc_user' is whoever
+> has opened the file descriptor.
+> 
+>>>
+>>>> +struct fastrpc_ioctl_invoke {
+>>>> +       uint32_t handle;        /* remote handle */
+>>>> +       uint32_t sc;            /* scalars describing the data */
+>>>> +       remote_arg_t *pra;      /* remote arguments list */
+>>>> +       int *fds;               /* fd list */
+>>>> +       unsigned int *attrs;    /* attribute list */
+>>>> +       unsigned int *crc;
+>>>> +};
+>>>
+>>> This seems too complex for an ioctl argument, with
+>>> multiple levels of pointer indirections. I'd normally
+>>> try to make each ioctl argument either a scalar, or a
+>>> structure with only fixed-length members.
+>>>
+>> I totally agree with you and many thanks for your expert inputs,
+>> May be something like below with fixed length members would work?
+>>
+>> struct fastrpc_remote_arg {
+>>          __u64 ptr;      /* buffer ptr */
+>>          __u64 len;      /* length */
+>>          __u32 fd;       /* dmabuf fd */
+>>          __u32 reserved1
+>>          __u64 reserved2
+>> };
+>>
+>> struct fastrpc_remote_fd {
+>>          __u64 fd;
+>>          __u64 reserved1
+>>          __u64 reserved2
+>>          __u64 reserved3
+>> };
+>>
+>> struct fastrpc_remote_attr {
+>>          __u64 attr;
+>>          __u64 reserved1
+>>          __u64 reserved2
+>>          __u64 reserved3
+>> };
+>>
+>> struct fastrpc_remote_crc {
+>>          __u64 crc;
+>>          __u64 reserved1
+>>          __u64 reserved2
+>>          __u64 reserved3
+>> };
+> 
+> I don't see a need to add extra served fields for structures
+> that are already naturally aligned here, e.g. in
+> fastrpc_remote_arg we need the 'reserved1' but not
+> the 'reserved2'.
+Yes, I see, I overdone it!
+Other idea, is, may be I can try to combine these into single structure 
+something like:
+
+struct fastrpc_invoke_arg {
+	__u64 ptr;
+	__u64 len;
+	__u32 fd;
+	__u32 reserved1
+	__u64 attr;
+	__u64 crc;
+};
+
+struct fastrpc_ioctl_invoke {
+	__u32 handle;
+	__u32 sc;
+	/* The minimum size is scalar_length * 32*/
+	struct fastrpc_invoke_args *args;
+};
+
+> 
+>>
+>> struct fastrpc_ioctl_invoke {
+>>          __u32 handle;
+>>          __u32 sc;
+>>          /* The minimum size is scalar_length * 32 */
+>>          struct fastrpc_remote_args *rargs;
+>>          struct fastrpc_remote_fd *fds;
+>>          struct fastrpc_remote_attr *attrs;
+>>          struct fastrpc_remote_crc *crc;
+>> };
+> 
+> Do these really have to be indirect then? Are they all
+> lists of variable length? How do you know how long?
+Yes, they are variable length and will be scalar length long.
+Scalar length is derived from sc variable in this structure.
+
+--srini
+
+
+> 
+>        Arnd
+> 
