@@ -2,140 +2,147 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB742C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB2FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE3A2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:53:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE3A2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=xiaomi.com
+	by mail.kernel.org (Postfix) with ESMTP id A63E92086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:00:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="A0+j/6f4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A63E92086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeK3OBC (ORCPT
+        id S1726719AbeK3OIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 09:01:02 -0500
-Received: from outboundhk.mxmail.xiaomi.com ([207.226.244.126]:63947 "EHLO
-        outboundhk.mxmail.xiaomi.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726401AbeK3OBC (ORCPT
+        Fri, 30 Nov 2018 09:08:10 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11745 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbeK3OIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 09:01:02 -0500
-X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Nov 2018 08:57:16 EST
-X-AuditID: 0a3808ce-4c9ff70000012663-75-5c00a1b6ee6e
-Received: from xiaomi.com (cnbox7.mioffice.cn [10.237.8.147])
-        by outboundhk.mxmail.xiaomi.com (xiaomi.com) with SMTP id A0.3B.09827.6B1A00C5; Fri, 30 Nov 2018 10:34:30 +0800 (HKT)
-Received: from CNBOX5.mioffice.cn (10.237.8.145) by cnbox7.mioffice.cn
- (10.237.8.147) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Fri, 30 Nov
- 2018 10:34:29 +0800
-Received: from CNBOX5.mioffice.cn ([fe80::a441:9906:7f3d:1759]) by
- cnbox5.mioffice.cn ([fe80::a441:9906:7f3d:1759%12]) with mapi id
- 15.00.1365.000; Fri, 30 Nov 2018 10:34:29 +0800
-From:   =?gb2312?B?s8zR8w==?= <chengyang@xiaomi.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        "d17103513@gmail.com" <d17103513@gmail.com>
-CC:     Alexey Dobriyan <adobriyan@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Al Viro" <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: > [PATCH] Security: Handle hidepid option correctly
-Thread-Topic: > [PATCH] Security: Handle hidepid option correctly
-Thread-Index: AdSIUrWe0eC9m9UVRAeNHE6XCQ4Now==
-Date:   Fri, 30 Nov 2018 02:34:28 +0000
-Message-ID: <18d54cd3edbf4fd3a7c01962f41ead58@cnbox5.mioffice.cn>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.235.66.235]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Fri, 30 Nov 2018 09:08:09 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c00a7cd0002>; Thu, 29 Nov 2018 19:00:30 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 29 Nov 2018 19:00:24 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 29 Nov 2018 19:00:24 -0800
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Nov
+ 2018 03:00:24 +0000
+Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
+To:     Tom Talpey <tom@talpey.com>, <john.hubbard@gmail.com>,
+        <linux-mm@kvack.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181110085041.10071-1-jhubbard@nvidia.com>
+ <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
+ <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
+ <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
+ <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
+ <15e4a0c0-cadd-e549-962f-8d9aa9fc033a@talpey.com>
+ <313bf82d-cdeb-8c75-3772-7a124ecdfbd5@nvidia.com>
+ <2aa422df-d5df-5ddb-a2e4-c5e5283653b5@talpey.com>
+ <7a68b7fc-ff9d-381e-2444-909c9c2f6679@nvidia.com>
+ <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
+ <0f093af1-dee9-51b6-0795-2c073a951fed@nvidia.com>
+ <c64387d6-c51d-185a-d2a4-1fedcdac0abe@talpey.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <04c18816-e15d-bffd-e8be-eceefae77197@nvidia.com>
+Date:   Thu, 29 Nov 2018 19:00:23 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMIsWRmVeSWpSXmKPExsXC9ZZjsu62hQwxBpe/SFlMb/SymLN+DZvF
-        +s4bLBbTtkxgtHjX9JvFYvUmX4s9e0+yWFzeNYfN4njvASaL83+PszpweRx+857ZY+esu+we
-        m1doeZyY8ZvF4/2+q2wem09Xe3zeJOex6clbpgCOKC6blNSczLLUIn27BK6MtTd+MhUsUK2Y
-        /fMhcwPjEpUuRg4OCQETiWPvNLoYuTiEBLYySnx8c5YZwlnFKDFl7RZWCGc7o8SlRd/Zuxg5
-        OdgEjCQmz+xlBbFFBGIkdm1ayQJSxCzwjUni6+UNYEXCAjYS7xY/hipylFi8+D2UrSfx4Mc8
-        sBoWAVWJc/MfM4HYvEA1hz6cZwGxGQVkJaY9ug8WZxYQl5g7bRZYr4SAgMSSPeeZIWxRiZeP
-        /0HFDSS2Lt3HAmErSqxceZsVoldLYl7Db6g5ihJTuh+yQ+wSlDg58wnLBEbRWUhWzELSMgtJ
-        yywkLQsYWVYxSmbk56VnA3FxQWKuoV5uZn5aWmZyql5y3iZGUNRacJzbwTjhXeohRgEORiUe
-        3g///kcLsSaWFVfmHmKU4GBWEuE918YQI8SbklhZlVqUH19UmpNafIhRmoNFSZxXZ+H9aCGB
-        9MSS1OzU1ILUIpgsEwenVAPj1h8MC4VaJd/vOabZE/Rwu2OX38SJl8/zbe2MOLVEuqRqc7d6
-        TKzJ4gWXD72Z/3bhzt/b1XKqexQdP128+pGzY0+Z19IW46dbNuy4/5R94o2nKbfKaqMZFy5l
-        nqFWt2GurE75xCcvXijePHSX51dNK5NTWe6XNq1Mp5tN8/rN+LLKmDWlpk7PVmIpzkg01GIu
-        Kk4EABDZmOfWAgAA
+In-Reply-To: <c64387d6-c51d-185a-d2a4-1fedcdac0abe@talpey.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543546830; bh=1A37q553sh7B6EidyLPFEGBjBHcMj7KWdnd11luENxM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=A0+j/6f4bovnRne9vtm4l9LNYnhVhLa9cTK6ZkWFOg+4Ed2/D+HGsKmO9+O+RT0wX
+         DdFxs9CrWKnIxCH7IFLzETtTNajAUQ44oiz77IgqrzFbXsHPhtG2KNgZpSFnywpu79
+         006qcX4kRr+c9C/wQ3LOgMq9fBsxoRHk30eOSAaXNfkbjpg7rL0DF/uX4kjCZodYOS
+         EsBkVDxT1j7RnImf7SI4RvZYMsWVHV09WcTS7b0W38W5qz5Ov3/xkYGDYmrvLlD6pN
+         CblkaCEEpZx7Lb8yc57/sBogeNPg189loPwi6zlAU+6XiWHcb5myMS0J3vVEHDbpdN
+         E+OR91B6dvQmQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVyZSBpcyBhbiBhcnRpY2xlIGlsbHVzdHJhdGVzIHRoZSBkZXRhaWxzLg0KaHR0cHM6Ly9tZWRp
-dW0uY29tL0B0b3Bqb2hud3UvZnJvbS1hbmltZS1nYW1lLXRvLWFuZHJvaWQtc3lzdGVtLXNlY3Vy
-aXR5LXZ1bG5lcmFiaWxpdHktOWI5NTVhMTgyZjIwDQoNCkFuZCBUaGVyZSBpcyBhIHNpbWlsYXIg
-Zml4IG9uIGtlcm5lbC00LjQ6DQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
-a2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvY29tbWl0Lz9pZD05OTY2M2JlNzcyYzgyN2I4
-ZjVmNTk0ZmU4N2ViNDgwN2JlMTk5NGU1DQoNClE6IE90aGVyIGZpbGVzeXN0ZW1zIHBhcnNlIHRo
-ZSBvcHRpb25zIGZyb20gZmlsbF9zdXBlcigpLiAgSXMgcHJvYyBzcGVjaWFsIGluIHNvbWUgZmFz
-aGlvbj8NCkE6IEFjY29yZGluZyB0byBteSByZXNlYXJjaCwgc3RhcnRfa2VybmVsIHdpbGwgY2Fs
-bCBwcm9jX21vdW50IGZpcnN0LCBhbmQgaW5pdGlhbGl6ZSBzYi0+c19yb290IGJlZm9yZSBhbnkg
-dXNlcnNwYWNlIHByb2Nlc3MgcnVucy4gSWYgb3RoZXJzIHdhbnQgdG8gbW91bnQgaXQsIGFsbCBv
-cHRpb25zIHdpbGwgYmUgaWdub3JlZC4NCiAgICAgQU9TUCBjaGFuZ2UgaGVyZTogaHR0cHM6Ly9h
-bmRyb2lkLXJldmlldy5nb29nbGVzb3VyY2UuY29tL2MvcGxhdGZvcm0vc3lzdGVtL2NvcmUvKy8x
-ODEzNDUvNC9pbml0L2luaXQuY3BwDQogICAgIEF0IGZpcnN0IEkgdGhvdWdoIHdlIHNob3VsZCBt
-b3VudCBpdCB3aXRoIE1TX1JFTU9VTlQgZmxhZy4gQnV0IGtlcm5lbCB3aWxsIGNyYXNoIGlmIHdl
-IGRpZCB0aGlzLg0KDQpROiAgV2h5IGlzIHRoaXMgY29uc2lkZXJlZCB0byBiZSBzZWN1cml0eSBz
-ZW5zaXRpdmU/ICBJIGNhbiBndWVzcywgYnV0IEknZCBsaWtlIHRvIGtub3cgeW91ciByZWFzb25p
-bmcuDQpBOiBTZWUgdGhlIGFydGljbGUgYWJvdmUuIEl0J3MgcGFydCBvZiBBbmRyb2lkIHNhbmJv
-eC4NCg0KDQo+IFtQQVRDSF0gU2VjdXJpdHk6IEhhbmRsZSBoaWRlcGlkIG9wdGlvbiBjb3JyZWN0
-bHkNCg0KV2h5IGlzIHRoaXMgY29uc2lkZXJlZCB0byBiZSBzZWN1cml0eSBzZW5zaXRpdmU/ICBJ
-IGNhbiBndWVzcywgYnV0IEknZCBsaWtlIHRvIGtub3cgeW91ciByZWFzb25pbmcuDQoNCk9uIFRo
-dSwgMjkgTm92IDIwMTggMTk6MDg6MjEgKzA4MDAgbWFpbHRvOmQxNzEwMzUxM0BnbWFpbC5jb20g
-d3JvdGU6DQoNCj4gRnJvbTogQ2hlbmcgWWFuZyA8bWFpbHRvOmNoZW5neWFuZ0B4aWFvbWkuY29t
-Pg0KPg0KPiBUaGUgcHJvY19wYXJzZV9vcHRpb25zKCkgY2FsbCBmcm9tIHByb2NfbW91bnQoKSBy
-dW5zIG9ubHkgb25jZSBhdCBib290DQo+IHRpbWUuICBTbyBvbiBhbnkgbGF0ZXIgbW91bnQgYXR0
-ZW1wdCwgYW55IG1vdW50IG9wdGlvbnMgYXJlIGlnbm9yZWQNCj4gYmVjYXVzZSAtPnNfcm9vdCBp
-cyBhbHJlYWR5IGluaXRpYWxpemVkLg0KPiBBcyBhIGNvbnNlcXVlbmNlLCAibW91bnQgLW8gPG9w
-dGlvbnM+IiB3aWxsIGlnbm9yZSB0aGUgb3B0aW9ucy4gIFRoZQ0KPiBvbmx5IHdheSB0byBjaGFu
-Z2UgbW91bnQgb3B0aW9ucyBpcyAibW91bnQgLW8gcmVtb3VudCw8b3B0aW9ucz4iLg0KPiBUbyBm
-aXggdGhpcywgcGFyc2UgdGhlIG1vdW50IG9wdGlvbnMgdW5jb25kaXRpb25hbGx5Lg0KPg0KPiAt
-LS0gYS9mcy9wcm9jL2lub2RlLmMNCj4gKysrIGIvZnMvcHJvYy9pbm9kZS5jDQo+IEBAIC00OTMs
-MTMgKzQ5Myw5IEBAIHN0cnVjdCBpbm9kZSAqcHJvY19nZXRfaW5vZGUoc3RydWN0IHN1cGVyX2Js
-b2NrDQo+ICpzYiwgc3RydWN0IHByb2NfZGlyX2VudHJ5ICpkZSkNCj4NCj4gIGludCBwcm9jX2Zp
-bGxfc3VwZXIoc3RydWN0IHN1cGVyX2Jsb2NrICpzLCB2b2lkICpkYXRhLCBpbnQgc2lsZW50KSAg
-ew0KPiAtc3RydWN0IHBpZF9uYW1lc3BhY2UgKm5zID0gZ2V0X3BpZF9ucyhzLT5zX2ZzX2luZm8p
-Ow0KPiAgc3RydWN0IGlub2RlICpyb290X2lub2RlOw0KPiAgaW50IHJldDsNCj4NCj4gLWlmICgh
-cHJvY19wYXJzZV9vcHRpb25zKGRhdGEsIG5zKSkNCj4gLXJldHVybiAtRUlOVkFMOw0KPiAtDQo+
-ICAvKiBVc2VyIHNwYWNlIHdvdWxkIGJyZWFrIGlmIGV4ZWN1dGFibGVzIG9yIGRldmljZXMgYXBw
-ZWFyIG9uIHByb2MgKi8NCj4gIHMtPnNfaWZsYWdzIHw9IFNCX0lfVVNFUk5TX1ZJU0lCTEUgfCBT
-Ql9JX05PRVhFQyB8IFNCX0lfTk9ERVY7DQo+ICBzLT5zX2ZsYWdzIHw9IFNCX05PRElSQVRJTUUg
-fCBTQl9OT1NVSUQgfCBTQl9OT0VYRUM7IGRpZmYgLS1naXQNCj4gYS9mcy9wcm9jL3Jvb3QuYyBi
-L2ZzL3Byb2Mvcm9vdC5jIGluZGV4IGY0YjFhOWQuLmY1ZjNiZjMgMTAwNjQ0DQo+IC0tLSBhL2Zz
-L3Byb2Mvcm9vdC5jDQo+ICsrKyBiL2ZzL3Byb2Mvcm9vdC5jDQo+IEBAIC05OCw2ICs5OCw5IEBA
-IHN0YXRpYyBzdHJ1Y3QgZGVudHJ5ICpwcm9jX21vdW50KHN0cnVjdCBmaWxlX3N5c3RlbV90eXBl
-ICpmc190eXBlLA0KPiAgbnMgPSB0YXNrX2FjdGl2ZV9waWRfbnMoY3VycmVudCk7DQo+ICB9DQo+
-DQo+ICtpZiAoIXByb2NfcGFyc2Vfb3B0aW9ucyhkYXRhLCBucykpDQo+ICtyZXR1cm4gRVJSX1BU
-UigtRUlOVkFMKTsNCj4gKw0KPiAgcmV0dXJuIG1vdW50X25zKGZzX3R5cGUsIGZsYWdzLCBkYXRh
-LCBucywgbnMtPnVzZXJfbnMsDQo+IHByb2NfZmlsbF9zdXBlcik7ICB9DQoNCk90aGVyIGZpbGVz
-eXN0ZW1zIHBhcnNlIHRoZSBvcHRpb25zIGZyb20gZmlsbF9zdXBlcigpLiAgSXMgcHJvYyBzcGVj
-aWFsIGluIHNvbWUgZmFzaGlvbj8NCg0KIy8qKioqKiqxvtPKvP68sMbkuL28/rqs09DQocPXuavL
-vrXEsaPD3NDFz6KjrL32z97T2reiy824+MnPw+a12Na31tDB0LP2tcS49sjLu/LIutfpoaO9+9a5
-yM66zsbky/vIy9LUyM66ztDOyr3KudPDo6iw/MCotauyu8/e09rIq7K/u/Kyv7fWtdjQucK2oaK4
-tNbGoaK78smit6KjqbG+08q8/tbQtcTQxc+ioaPI57n7xPq07crVwcuxvtPKvP6jrMfrxPrBory0
-tee7sLvy08q8/s2o1qq3orz+yMuyosm+s/2xvtPKvP6joSBUaGlzIGUtbWFpbCBhbmQgaXRzIGF0
-dGFjaG1lbnRzIGNvbnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGZyb20gWElBT01JLCB3
-aGljaCBpcyBpbnRlbmRlZCBvbmx5IGZvciB0aGUgcGVyc29uIG9yIGVudGl0eSB3aG9zZSBhZGRy
-ZXNzIGlzIGxpc3RlZCBhYm92ZS4gQW55IHVzZSBvZiB0aGUgaW5mb3JtYXRpb24gY29udGFpbmVk
-IGhlcmVpbiBpbiBhbnkgd2F5IChpbmNsdWRpbmcsIGJ1dCBub3QgbGltaXRlZCB0bywgdG90YWwg
-b3IgcGFydGlhbCBkaXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIG9yIGRpc3NlbWluYXRpb24pIGJ5
-IHBlcnNvbnMgb3RoZXIgdGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpIGlzIHByb2hpYml0
-ZWQuIElmIHlvdSByZWNlaXZlIHRoaXMgZS1tYWlsIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRo
-ZSBzZW5kZXIgYnkgcGhvbmUgb3IgZW1haWwgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSBpdCEqKioq
-KiovIw0K
+On 11/29/18 6:30 PM, Tom Talpey wrote:
+> On 11/29/2018 9:21 PM, John Hubbard wrote:
+>> On 11/29/18 6:18 PM, Tom Talpey wrote:
+>>> On 11/29/2018 8:39 PM, John Hubbard wrote:
+>>>> On 11/28/18 5:59 AM, Tom Talpey wrote:
+>>>>> On 11/27/2018 9:52 PM, John Hubbard wrote:
+>>>>>> On 11/27/18 5:21 PM, Tom Talpey wrote:
+>>>>>>> On 11/21/2018 5:06 PM, John Hubbard wrote:
+>>>>>>>> On 11/21/18 8:49 AM, Tom Talpey wrote:
+>>>>>>>>> On 11/21/2018 1:09 AM, John Hubbard wrote:
+>>>>>>>>>> On 11/19/18 10:57 AM, Tom Talpey wrote:
+>>>>>> [...]
+>>> Excerpting from below:
+>>>
+>>>> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB=
+/s)(1024MiB/1360msec)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 : usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D7=
+3
+>>>
+>>> vs
+>>>
+>>>> With patches applied:
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB=
+/s)(1024MiB/1360msec)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 : usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D7=
+3
+>>>
+>>> Perfect results, not CPU limited, and full IOPS.
+>>>
+>>> Curiously identical, so I trust you've checked that you measured
+>>> both targets, but if so, I say it's good.
+>>>
+>>
+>> Argh, copy-paste error in the email. The real "before" is ever so slight=
+ly
+>> better, at 194K IOPS and 759 MB/s:
+>=20
+> Definitely better - note the system CPU is lower, which is probably the
+> reason for the increased IOPS.
+>=20
+>>=C2=A0=C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 : usr=3D18.24%, sys=3D44.77%, ctx=3D251527, majf=3D0, minf=3D73
+>=20
+> Good result - a correct implementation, and faster.
+>=20
+
+Thanks, Tom, I really appreciate your experience and help on what performan=
+ce=20
+should look like here. (I'm sure you can guess that this is the first time=
+=20
+I've worked with fio, heh.)
+
+I'll send out a new, non-RFC patchset soon, then.
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
