@@ -2,92 +2,144 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961C3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FB8C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4993120868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247D42146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:09:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AeVdY0ON"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4993120868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dteVGgIS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247D42146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbeK3UQe (ORCPT
+        id S1726939AbeK3URl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:16:34 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45086 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbeK3UQe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:16:34 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so4301445ljd.12
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 01:07:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=msbW71zcVZTDE/vM/KZLZouftnFVpG/GA8aRhA0bQCQ=;
-        b=AeVdY0ONPdd72X3kE/xTImQJC/hRXjlVmYJWPlsNPPAn3jjKC2ONEt2O5BGdJYlAm4
-         zvDJBAQGWa2mSrKgUThj9vucB0VCZSj/90F/gObaMPSc19JFAsuW0PkRQymoOnt9OYWW
-         HAgM40KYLMP7nJUgP44rtWxkPP9aGqdS7m844=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=msbW71zcVZTDE/vM/KZLZouftnFVpG/GA8aRhA0bQCQ=;
-        b=ATMfFWCYmlcVNI8CPvdzenFocFFg3oMz4yKN54QGNkPU80qQPiR6kiUaw9xpiUDUaN
-         uvp+7aNrGNp1ymCbR4xVcez5s2QnNsNNxtoP6ExFg3+GWmMVyXMs/4aKYhhNa+BZj4u4
-         J1pQ1+5Hu0VO54GFc4zb15naU6QULrgQqJK4/1szeR7rYGIcfVTZ5RgN0sj+7BHdxvg8
-         r8USLD+NuOf3UQ3D4iYLCZ6vlnqeQ0oq/rQ6nioxt7j2Gdl240mIi2w8vaRbws3E4P4u
-         Pym3wb8vWXxGmUA9VTEtR9PQNAS9hJqXyC5lnzuIfg2samr9GpwDvSNDatynFaZIE96K
-         rScA==
-X-Gm-Message-State: AA+aEWZCmm33JHHlt5LalS9WuMTJ5QqfEIFwIeGHARmIeD3Esq97ho88
-        WjAJt1ybOrYnJmESIy2cndXLAo7fE1MMlpE2Qptwrg==
-X-Google-Smtp-Source: AFSGD/UvOaZYbIGaXjsfEcxhenBx62xtTXjfO63UXiBmvOCPOnKGEN8KNz+uflyAHFnTOSDTNKXCJwQPfhsc9VGQeBA=
-X-Received: by 2002:a2e:710a:: with SMTP id m10-v6mr3321674ljc.66.1543568874635;
- Fri, 30 Nov 2018 01:07:54 -0800 (PST)
+        Fri, 30 Nov 2018 15:17:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbeK3URl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:17:41 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 384BD20868;
+        Fri, 30 Nov 2018 09:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543568942;
+        bh=c4z90kPgWBsUx4oXIOj7WmhJSMKbWcc9L+/YrgUV8Aw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=dteVGgIS93aRuEtZ8dwFG6HMPIaYdQhz1BNT7FKtwuJVZA/JLYFnbqR39Fo7k1u8U
+         dIOv4VQImvxFn8WCEOoeL2mE6hRkt3njIa6qaXrD0s1/WjP+K2squu0QZVomPvpjNA
+         vIEdCHyp0CLpKVOpadFV4OlxtiTAnl9VqLEUHugo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181128104350.31902-1-linus.walleij@linaro.org>
- <20181128104350.31902-9-linus.walleij@linaro.org> <20181128152423.GW16508@imbe.wolfsonmicro.main>
-In-Reply-To: <20181128152423.GW16508@imbe.wolfsonmicro.main>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 30 Nov 2018 10:07:42 +0100
-Message-ID: <CACRpkdaA2B_dwCr=RRNkMpWWY5cTKhvBH6nEfgGg_eunXY-87w@mail.gmail.com>
-Subject: Re: [PATCH 08/10] regulator: max77686: Let core handle GPIO descriptor
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Russell King <linux@armlinux.org.uk>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181120141445.21378-1-phil.edworthy@renesas.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+References: <20181120141445.21378-1-phil.edworthy@renesas.com>
+Message-ID: <154356894146.88331.4169293505438588293@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v8] clk: Add (devm_)clk_get_optional() functions
+Date:   Fri, 30 Nov 2018 01:09:01 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 4:24 PM Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
-> On Wed, Nov 28, 2018 at 11:43:48AM +0100, Linus Walleij wrote:
+Quoting Phil Edworthy (2018-11-20 06:14:45)
+> This adds clk_get_optional() and devm_clk_get_optional() functions to get
+> optional clocks.
+> They behave the same as (devm_)clk_get except where there is no clock
+> producer. In this case, instead of returning -ENOENT, the function
+> returns NULL. This makes error checking simpler and allows
+> clk_prepare_enable, etc to be called on the returned reference
+> without additional checks.
 
-> > @@ -255,8 +255,7 @@ static int max77686_of_parse_cb(struct device_node *np,
-(...)
-> > +             config->ena_gpiod = gpiod_get_from_of_node(np,
->
-> As this is inside the of_parse_cb, it probably needs some thought
-> on where the GPIO would need to be freed on which error paths, I
-> am not sure it is immediately obvious to me but I suspect it will
-> need to be freed in some cases.
+Ok. I guess that works by virtue of how -ENOENT is returned by various
+functions that are called deeper in the clk_get() path? I'm cautiously
+optimistic. So cautious, we should probably add a comment to these
+optional functions that indicate they rely on the functions they call to
+return -ENOENT under the various conditions that make a clk optional.
 
-I looked it over and came up with a patch making sure that if
-the regulator_of_get_init_data() assigns config->ena_gpiod
-it gets freed unless handled over to the regulator core.
+> =
 
-Thanks for pointing this out, it was a tricky corner case!
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index a7773b5c0b9f..3ea3c78f62dd 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -383,6 +383,17 @@ int __must_check devm_clk_bulk_get_all(struct device=
+ *dev,
+>   */
+>  struct clk *devm_clk_get(struct device *dev, const char *id);
+>  =
 
-Yours,
-Linus Walleij
+> +/**
+> + * devm_clk_get_optional - lookup and obtain a managed reference to an o=
+ptional
+> + *                        clock producer.
+> + * @dev: device for clock "consumer"
+> + * @id: clock consumer ID
+> + *
+> + * Behaves the same as devm_clk_get except where there is no clock produ=
+cer. In
+
+Please add () around devm_clk_get() so we know it's a function.
+
+> + * this case, instead of returning -ENOENT, the function returns NULL.
+> + */
+> +struct clk *devm_clk_get_optional(struct device *dev, const char *id);
+> +
+>  /**
+>   * devm_get_clk_from_child - lookup and obtain a managed reference to a
+>   *                          clock producer from child node.
+> @@ -718,6 +729,12 @@ static inline struct clk *devm_clk_get(struct device=
+ *dev, const char *id)
+>         return NULL;
+>  }
+>  =
+
+> +static inline struct clk *devm_clk_get_optional(struct device *dev,
+> +                                               const char *id)
+> +{
+> +       return NULL;
+> +}
+> +
+>  static inline int __must_check devm_clk_bulk_get(struct device *dev, int=
+ num_clks,
+>                                                  struct clk_bulk_data *cl=
+ks)
+>  {
+> @@ -862,6 +879,16 @@ static inline void clk_bulk_disable_unprepare(int nu=
+m_clks,
+>         clk_bulk_unprepare(num_clks, clks);
+>  }
+>  =
+
+> +static inline struct clk *clk_get_optional(struct device *dev, const cha=
+r *id)
+
+Any kernel doc for this function?
+
+> +{
+> +       struct clk *clk =3D clk_get(dev, id);
+> +
+> +       if (clk =3D=3D ERR_PTR(-ENOENT))
+> +               clk =3D NULL;
+> +
+> +       return clk;
+> +}
+> +
