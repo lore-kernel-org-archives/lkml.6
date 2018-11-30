@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0915C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FFCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE6620867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:47:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE6620867
+	by mail.kernel.org (Postfix) with ESMTP id B46BF20867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:48:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46BF20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbeLAI5s (ORCPT
+        id S1726905AbeLAI6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 03:57:48 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:60518 "EHLO
+        Sat, 1 Dec 2018 03:58:52 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:60570 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbeLAI5r (ORCPT
+        with ESMTP id S1726142AbeLAI6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 03:57:47 -0500
+        Sat, 1 Dec 2018 03:58:52 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7F99A14F245C8;
-        Fri, 30 Nov 2018 13:47:04 -0800 (PST)
-Date:   Fri, 30 Nov 2018 13:47:03 -0800 (PST)
-Message-Id: <20181130.134703.1703684498402097596.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7E21A14F245CB;
+        Fri, 30 Nov 2018 13:48:09 -0800 (PST)
+Date:   Fri, 30 Nov 2018 13:48:08 -0800 (PST)
+Message-Id: <20181130.134808.1785785556132211918.davem@davemloft.net>
 To:     jarkko.sakkinen@linux.intel.com
-Cc:     axboe@kernel.dk, dave@stgolabs.net, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, amir73il@gmail.com,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        dja@axtens.net, linux@dominikbrodowski.net,
-        dri-devel@lists.freedesktop.org, edumazet@google.com,
-        federico.vaga@vaga.pv.it, geert+renesas@glider.be, deller@gmx.de,
-        corbet@lwn.net, kumba@gentoo.org, linux-doc@vger.kernel.org,
+Cc:     James.Bottomley@HansenPartnership.com, dave@stgolabs.net,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        amir73il@gmail.com, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, dja@axtens.net,
+        linux@dominikbrodowski.net, dri-devel@lists.freedesktop.org,
+        edumazet@google.com, federico.vaga@vaga.pv.it,
+        geert+renesas@glider.be, deller@gmx.de, corbet@lwn.net,
+        kumba@gentoo.org, linux-doc@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-media@vger.kernel.org,
         linux-mips@linux-mips.org, linux-mtd@lists.infradead.org,
@@ -53,24 +54,34 @@ Cc:     axboe@kernel.dk, dave@stgolabs.net, keescook@chromium.org,
         yanjun.zhu@oracle.com
 Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181130214233.GF23772@linux.intel.com>
-References: <d7c34289-f03a-b641-cc9c-00395306511d@kernel.dk>
-        <20181130.123507.1940310466680455876.davem@davemloft.net>
-        <20181130214233.GF23772@linux.intel.com>
+In-Reply-To: <20181130214405.GG23772@linux.intel.com>
+References: <20181130205521.GA21006@linux.intel.com>
+        <1543611662.3031.20.camel@HansenPartnership.com>
+        <20181130214405.GG23772@linux.intel.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Nov 2018 13:47:06 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Nov 2018 13:48:11 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Fri, 30 Nov 2018 13:42:33 -0800
+Date: Fri, 30 Nov 2018 13:44:05 -0800
 
-> Can you tell how the CoC should be interpreted then?
+> On Fri, Nov 30, 2018 at 01:01:02PM -0800, James Bottomley wrote:
+>> No because use of what some people consider to be bad language isn't
+>> necessarily abusive, offensive or degrading.  Our most heavily censored
+>> medium is TV and "fuck" is now considered acceptable in certain
+>> contexts on most channels in the UK and EU.
+> 
+> This makes following the CoC extremely hard to a non-native speaker as
+> it is not too explicit on what is OK and what is not. I did through the
+> whole thing with an eye glass and this what I deduced from it.
 
-Regardless of what I think, as others have showen the CoC explicitly
-does not apply to existing code.
+It would be helpful if you could explain what part of the language
+is unclear wrt. explaining how CoC does not apply to existing code.
+
+That part seems very explicit to me.
