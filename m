@@ -2,340 +2,101 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C01C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FA4C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB3620867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD0F720863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gUFvPZMA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB3620867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="M9ep21lm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD0F720863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbeLAAHh (ORCPT
+        id S1726840AbeLAAH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:07:37 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40146 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbeLAAHh (ORCPT
+        Fri, 30 Nov 2018 19:07:59 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38262 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbeLAAH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:07:37 -0500
-Received: by mail-it1-f195.google.com with SMTP id h193so9006850ita.5
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 04:58:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=z1o0tHX0ltNvSQAJmed29mgn/IROdSgmFErNTN/AroA=;
-        b=gUFvPZMAbmHfLFaWN4Lttc0befn9uOiBjjekNcxoZVn42huhPDX/9e2+XvA/gkA4cQ
-         yD6jN1/5zb6nk1+bNcqUPkhoIztd0MYNxPI4o0f3BuO71lrbQCB7KFag3BhnRsbyWrks
-         Hsg05eGOR/NnrEuwTIjRk50pSOorTBFT7/NNI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=z1o0tHX0ltNvSQAJmed29mgn/IROdSgmFErNTN/AroA=;
-        b=AWC3+dgSNbhVap9eimZxxpfB3rsy3A7dDJzcT/M59Mfl3DOkalA18Lq8BTpoZGmwFl
-         RAxRPg9nuDWDzXCnkq0LnFWYTd2hVKlXd7NLzkGRF7UIm8cH+/UVROmQCcKp5Eer0eeW
-         QHThwx50AMEkREvrwAcqXqHiPlizQMxP5qiTo2m/ynkc/UzW1dcvRirSWw+G/O5rV2Pv
-         cbepZWMOcyn/J6xWESjZ0ziyYBzNGi0viGBSmbhOOjm5gSVi1UPo9CeQPaE0d6n0/tAI
-         HiUAOOtLHcqXXmz5IGXLKVMAv/1LR8YHmZtL783XVW1+/6ukSwvRm/hnL0oDtxN1rpRf
-         RfZQ==
-X-Gm-Message-State: AA+aEWYjiqtVcY7zUiM465JeorFYIJbVHTJ02UYPArEdbKUQ8ZKgLAp1
-        eXeOVkcVDnryvNGXFmfXN67tW6wffY7XAMX5pKQDug==
-X-Google-Smtp-Source: AFSGD/XAHTOSD3oGQJjeQpVVbLt5ydp3NSc7Vh1XDBlhmTNf6aYKJ/Bj4WjAwE2QCBvRJZjBmmFsft1XP2kx0IeyKbY=
-X-Received: by 2002:a02:4c9:: with SMTP id 192mr4905516jab.2.1543582702425;
- Fri, 30 Nov 2018 04:58:22 -0800 (PST)
+        Fri, 30 Nov 2018 19:07:59 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAUChWO5129892;
+        Fri, 30 Nov 2018 12:58:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=7UQCXFmOSJhLp4IQ4jPMS1SY3qVM4yzyr3hpfFcqgnQ=;
+ b=M9ep21lmLcOTs41wRKLu/EC30QZDpotkJ2r+Gkm+t1gjViQk3bKf/C4USdT82IuhW5GD
+ 7CEv3rP8cvn5niDkQXFg9p8XvQB2jLl2N1Q1zG6udlIM5UA5UEmLVP6MmGkhx7XDeidx
+ zUwNNqFccmutlw558IL+Z9soL3YFlCdgK/7z5dmM7+lzhWfLCsqIi4Cra2WshhaCjYlj
+ T+thYe4yaXo44aRzi6Zm0faVlSq/d/rew85k2DIVBS2qV3MoI5R3KVbDk436aYf9RmCS
+ w8Lrnv4Zv9DRj5u0OGVubLqb1DugYRtDUymoS0AGLMVlpaYVggiZAQdQEOAKY9aeKEqJ NA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2p2jf0ndvv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Nov 2018 12:58:44 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAUCwh6o007051
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Nov 2018 12:58:43 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAUCwgBR014263;
+        Fri, 30 Nov 2018 12:58:42 GMT
+Received: from kili.mountain (/197.157.34.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 30 Nov 2018 04:58:41 -0800
+Date:   Fri, 30 Nov 2018 15:58:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] ptp: fix an IS_ERR() vs NULL check
+Message-ID: <20181130125834.u42dhxgof66rhya2@kili.mountain>
 MIME-Version: 1.0
-References: <20181129063422.24307-1-ebiggers@kernel.org> <20181129063422.24307-2-ebiggers@kernel.org>
-In-Reply-To: <20181129063422.24307-2-ebiggers@kernel.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 30 Nov 2018 13:58:09 +0100
-Message-ID: <CAKv+Gu_PqnwYGfjEaG8Fh8bgbPWA+ymG27ky1uaScr9OohZUzw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] crypto: arm64/nhpoly1305 - add NEON-accelerated NHPoly1305
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9092 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=900
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811300109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 at 07:35, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Add an ARM64 NEON implementation of NHPoly1305, an =CE=B5-almost-=E2=88=
-=86-universal
-> hash function used in the Adiantum encryption mode.  For now, only the
-> NH portion is actually NEON-accelerated; the Poly1305 part is less
-> performance-critical so is just implemented in C.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  arch/arm64/crypto/Kconfig                |   5 ++
->  arch/arm64/crypto/Makefile               |   3 +
->  arch/arm64/crypto/nh-neon-core.S         | 103 +++++++++++++++++++++++
->  arch/arm64/crypto/nhpoly1305-neon-glue.c |  77 +++++++++++++++++
->  4 files changed, 188 insertions(+)
->  create mode 100644 arch/arm64/crypto/nh-neon-core.S
->  create mode 100644 arch/arm64/crypto/nhpoly1305-neon-glue.c
->
-> diff --git a/arch/arm64/crypto/Kconfig b/arch/arm64/crypto/Kconfig
-> index a5606823ed4da..3f5aeb786192b 100644
-> --- a/arch/arm64/crypto/Kconfig
-> +++ b/arch/arm64/crypto/Kconfig
-> @@ -106,6 +106,11 @@ config CRYPTO_CHACHA20_NEON
->         select CRYPTO_BLKCIPHER
->         select CRYPTO_CHACHA20
->
-> +config CRYPTO_NHPOLY1305_NEON
-> +       tristate "NHPoly1305 hash function using NEON instructions (for A=
-diantum)"
-> +       depends on KERNEL_MODE_NEON
-> +       select CRYPTO_NHPOLY1305
-> +
->  config CRYPTO_AES_ARM64_BS
->         tristate "AES in ECB/CBC/CTR/XTS modes using bit-sliced NEON algo=
-rithm"
->         depends on KERNEL_MODE_NEON
-> diff --git a/arch/arm64/crypto/Makefile b/arch/arm64/crypto/Makefile
-> index f476fede09ba4..125dbb10a93ed 100644
-> --- a/arch/arm64/crypto/Makefile
-> +++ b/arch/arm64/crypto/Makefile
-> @@ -53,6 +53,9 @@ sha512-arm64-y :=3D sha512-glue.o sha512-core.o
->  obj-$(CONFIG_CRYPTO_CHACHA20_NEON) +=3D chacha20-neon.o
->  chacha20-neon-y :=3D chacha20-neon-core.o chacha20-neon-glue.o
->
-> +obj-$(CONFIG_CRYPTO_NHPOLY1305_NEON) +=3D nhpoly1305-neon.o
-> +nhpoly1305-neon-y :=3D nh-neon-core.o nhpoly1305-neon-glue.o
-> +
->  obj-$(CONFIG_CRYPTO_AES_ARM64) +=3D aes-arm64.o
->  aes-arm64-y :=3D aes-cipher-core.o aes-cipher-glue.o
->
-> diff --git a/arch/arm64/crypto/nh-neon-core.S b/arch/arm64/crypto/nh-neon=
--core.S
-> new file mode 100644
-> index 0000000000000..e08d57676127a
-> --- /dev/null
-> +++ b/arch/arm64/crypto/nh-neon-core.S
-> @@ -0,0 +1,103 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * NH - =CE=B5-almost-universal hash function, ARM64 NEON accelerated ve=
-rsion
-> + *
-> + * Copyright 2018 Google LLC
-> + *
-> + * Author: Eric Biggers <ebiggers@google.com>
-> + */
-> +
-> +#include <linux/linkage.h>
-> +
-> +       KEY             .req    x0
-> +       MESSAGE         .req    x1
-> +       MESSAGE_LEN     .req    x2
-> +       HASH            .req    x3
-> +
-> +       PASS0_SUMS      .req    v0
-> +       PASS1_SUMS      .req    v1
-> +       PASS2_SUMS      .req    v2
-> +       PASS3_SUMS      .req    v3
-> +       K0              .req    v4
-> +       K1              .req    v5
-> +       K2              .req    v6
-> +       K3              .req    v7
-> +       T0              .req    v8
-> +       T1              .req    v9
-> +       T2              .req    v10
-> +       T3              .req    v11
-> +       T4              .req    v12
-> +       T5              .req    v13
-> +       T6              .req    v14
-> +       T7              .req    v15
-> +
-> +.macro _nh_stride      k0, k1, k2, k3
-> +
-> +       // Load next message stride
-> +       ld1             {T3.16b}, [MESSAGE], #16
-> +
-> +       // Load next key stride
-> +       ld1             {\k3\().4s}, [KEY], #16
-> +
-> +       // Add message words to key words
-> +       add             T0.4s, T3.4s, \k0\().4s
-> +       add             T1.4s, T3.4s, \k1\().4s
-> +       add             T2.4s, T3.4s, \k2\().4s
-> +       add             T3.4s, T3.4s, \k3\().4s
-> +
-> +       // Multiply 32x32 =3D> 64 and accumulate
-> +       mov             T4.d[0], T0.d[1]
-> +       mov             T5.d[0], T1.d[1]
-> +       mov             T6.d[0], T2.d[1]
-> +       mov             T7.d[0], T3.d[1]
+The pps_register_source() function doesn't return NULL, it returns
+error pointers.
 
-Nit: gmail mangles the whitespace anyway, but in the patch, there is
-some whitespace damage here
+Fixes: d94ba80ebbea ("ptp: Added a brand new class driver for ptp clocks.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/ptp/ptp_clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-With that fixed,
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index 8a81eecc0ecd..48f3594a7458 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 		pps.mode = PTP_PPS_MODE;
+ 		pps.owner = info->owner;
+ 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
+-		if (!ptp->pps_source) {
+-			err = -EINVAL;
++		if (IS_ERR(ptp->pps_source)) {
++			err = PTR_ERR(ptp->pps_source);
+ 			pr_err("failed to register pps source\n");
+ 			goto no_pps;
+ 		}
+-- 
+2.11.0
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org> # big-endian
-
-
-> +       umlal           PASS0_SUMS.2d, T0.2s, T4.2s
-> +       umlal           PASS1_SUMS.2d, T1.2s, T5.2s
-> +       umlal           PASS2_SUMS.2d, T2.2s, T6.2s
-> +       umlal           PASS3_SUMS.2d, T3.2s, T7.2s
-> +.endm
-> +
-> +/*
-> + * void nh_neon(const u32 *key, const u8 *message, size_t message_len,
-> + *             u8 hash[NH_HASH_BYTES])
-> + *
-> + * It's guaranteed that message_len % 16 =3D=3D 0.
-> + */
-> +ENTRY(nh_neon)
-> +
-> +       ld1             {K0.4s,K1.4s}, [KEY], #32
-> +         movi          PASS0_SUMS.2d, #0
-> +         movi          PASS1_SUMS.2d, #0
-> +       ld1             {K2.4s}, [KEY], #16
-> +         movi          PASS2_SUMS.2d, #0
-> +         movi          PASS3_SUMS.2d, #0
-> +
-> +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
-> +       blt             .Lloop4_done
-> +.Lloop4:
-> +       _nh_stride      K0, K1, K2, K3
-> +       _nh_stride      K1, K2, K3, K0
-> +       _nh_stride      K2, K3, K0, K1
-> +       _nh_stride      K3, K0, K1, K2
-> +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
-> +       bge             .Lloop4
-> +
-> +.Lloop4_done:
-> +       ands            MESSAGE_LEN, MESSAGE_LEN, #63
-> +       beq             .Ldone
-> +       _nh_stride      K0, K1, K2, K3
-> +
-> +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
-> +       beq             .Ldone
-> +       _nh_stride      K1, K2, K3, K0
-> +
-> +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
-> +       beq             .Ldone
-> +       _nh_stride      K2, K3, K0, K1
-> +
-> +.Ldone:
-> +       // Sum the accumulators for each pass, then store the sums to 'ha=
-sh'
-> +       addp            T0.2d, PASS0_SUMS.2d, PASS1_SUMS.2d
-> +       addp            T1.2d, PASS2_SUMS.2d, PASS3_SUMS.2d
-> +       st1             {T0.16b,T1.16b}, [HASH]
-> +       ret
-> +ENDPROC(nh_neon)
-> diff --git a/arch/arm64/crypto/nhpoly1305-neon-glue.c b/arch/arm64/crypto=
-/nhpoly1305-neon-glue.c
-> new file mode 100644
-> index 0000000000000..22cc32ac9448d
-> --- /dev/null
-> +++ b/arch/arm64/crypto/nhpoly1305-neon-glue.c
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * NHPoly1305 - =CE=B5-almost-=E2=88=86-universal hash function for Adia=
-ntum
-> + * (ARM64 NEON accelerated version)
-> + *
-> + * Copyright 2018 Google LLC
-> + */
-> +
-> +#include <asm/neon.h>
-> +#include <asm/simd.h>
-> +#include <crypto/internal/hash.h>
-> +#include <crypto/nhpoly1305.h>
-> +#include <linux/module.h>
-> +
-> +asmlinkage void nh_neon(const u32 *key, const u8 *message, size_t messag=
-e_len,
-> +                       u8 hash[NH_HASH_BYTES]);
-> +
-> +/* wrapper to avoid indirect call to assembly, which doesn't work with C=
-FI */
-> +static void _nh_neon(const u32 *key, const u8 *message, size_t message_l=
-en,
-> +                    __le64 hash[NH_NUM_PASSES])
-> +{
-> +       nh_neon(key, message, message_len, (u8 *)hash);
-> +}
-> +
-> +static int nhpoly1305_neon_update(struct shash_desc *desc,
-> +                                 const u8 *src, unsigned int srclen)
-> +{
-> +       if (srclen < 64 || !may_use_simd())
-> +               return crypto_nhpoly1305_update(desc, src, srclen);
-> +
-> +       do {
-> +               unsigned int n =3D min_t(unsigned int, srclen, PAGE_SIZE)=
-;
-> +
-> +               kernel_neon_begin();
-> +               crypto_nhpoly1305_update_helper(desc, src, n, _nh_neon);
-> +               kernel_neon_end();
-> +               src +=3D n;
-> +               srclen -=3D n;
-> +       } while (srclen);
-> +       return 0;
-> +}
-> +
-> +static struct shash_alg nhpoly1305_alg =3D {
-> +       .base.cra_name          =3D "nhpoly1305",
-> +       .base.cra_driver_name   =3D "nhpoly1305-neon",
-> +       .base.cra_priority      =3D 200,
-> +       .base.cra_ctxsize       =3D sizeof(struct nhpoly1305_key),
-> +       .base.cra_module        =3D THIS_MODULE,
-> +       .digestsize             =3D POLY1305_DIGEST_SIZE,
-> +       .init                   =3D crypto_nhpoly1305_init,
-> +       .update                 =3D nhpoly1305_neon_update,
-> +       .final                  =3D crypto_nhpoly1305_final,
-> +       .setkey                 =3D crypto_nhpoly1305_setkey,
-> +       .descsize               =3D sizeof(struct nhpoly1305_state),
-> +};
-> +
-> +static int __init nhpoly1305_mod_init(void)
-> +{
-> +       if (!(elf_hwcap & HWCAP_ASIMD))
-> +               return -ENODEV;
-> +
-> +       return crypto_register_shash(&nhpoly1305_alg);
-> +}
-> +
-> +static void __exit nhpoly1305_mod_exit(void)
-> +{
-> +       crypto_unregister_shash(&nhpoly1305_alg);
-> +}
-> +
-> +module_init(nhpoly1305_mod_init);
-> +module_exit(nhpoly1305_mod_exit);
-> +
-> +MODULE_DESCRIPTION("NHPoly1305 =CE=B5-almost-=E2=88=86-universal hash fu=
-nction (NEON-accelerated)");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_AUTHOR("Eric Biggers <ebiggers@google.com>");
-> +MODULE_ALIAS_CRYPTO("nhpoly1305");
-> +MODULE_ALIAS_CRYPTO("nhpoly1305-neon");
-> --
-> 2.19.2
->
