@@ -2,242 +2,191 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B69C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B384AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9651A2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9651A2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 6A36620834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:03:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A36620834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeK3WKR (ORCPT
+        id S1726801AbeK3WM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:10:17 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:40302 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeK3WKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:10:16 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 899304AC50F8961A0747;
-        Fri, 30 Nov 2018 19:01:19 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wAUB1A8N024240;
-        Fri, 30 Nov 2018 19:01:10 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018113019014935-13968263 ;
-          Fri, 30 Nov 2018 19:01:49 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     boris.ostrovsky@oracle.com, jgross@suse.com, sstabellini@kernel.org
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH v3] pvcalls-front: Avoid __get_free_pages(GFP_KERNEL) under spinlock
-Date:   Fri, 30 Nov 2018 19:01:07 +0800
-Message-Id: <20181130110107.31468-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Fri, 30 Nov 2018 17:12:28 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54488 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbeK3WM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:12:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B17CA80D;
+        Fri, 30 Nov 2018 03:03:32 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C742E3F59C;
+        Fri, 30 Nov 2018 03:03:30 -0800 (PST)
+Subject: Re: [PATCH v6 06/24] arm64: ptrace: Provide definitions for PMR
+ values
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        Oleg Nesterov <oleg@redhat.com>
+References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-7-git-send-email-julien.thierry@arm.com>
+ <20181129164013.qmmwhbygjkh5lwx5@lakrids.cambridge.arm.com>
+ <79145359-3594-3dac-1123-cec552c2b13e@arm.com>
+ <20181130103811.lushdja552xevghm@holly.lan>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <01c117c9-2236-6cb6-d555-09298ef5dfd2@arm.com>
+Date:   Fri, 30 Nov 2018 11:03:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-30 19:01:49,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-30 19:00:54
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wAUB1A8N024240
+In-Reply-To: <20181130103811.lushdja552xevghm@holly.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is that we call this with a spin lock held.
-The call tree is:
-pvcalls=5Ffront=5Faccept() holds bedata->socket=5Flock.
-    -> create=5Factive()
-        -> =5F=5Fget=5Ffree=5Fpages() uses GFP=5FKERNEL
 
-The create=5Factive() function is only called from pvcalls=5Ffront=5Faccept=
-()
-with a spin=5Flock held, The allocation is not allowed to sleep and
-GFP=5FKERNEL is not sufficient.
 
-This issue was detected by using the Coccinelle software.
+On 30/11/18 10:38, Daniel Thompson wrote:
+> On Fri, Nov 30, 2018 at 08:53:47AM +0000, Julien Thierry wrote:
+>>
+>>
+>> On 29/11/18 16:40, Mark Rutland wrote:
+>>> On Mon, Nov 12, 2018 at 11:56:57AM +0000, Julien Thierry wrote:
+>>>> Introduce fixed values for PMR that are going to be used to mask and
+>>>> unmask interrupts by priority. These values are chosent in such a way
+>>>
+>>> Nit: s/chosent/chosen/
+>>>
+>>>> that a single bit (GIC_PMR_UNMASKED_BIT) encodes the information whether
+>>>> interrupts are masked or not.
+>>>
+>>> There's no GIC_PMR_UNMASKED_BIT in this patch. Should that be
+>>> GIC_PRIO_STATUS_BIT?
+>>>
+>>
+>> Yep, forgot to update the commit message when renaming, thanks.
+>>
+>>>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>>>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+>>>> Cc: Oleg Nesterov <oleg@redhat.com>
+>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> ---
+>>>>  arch/arm64/include/asm/ptrace.h | 6 ++++++
+>>>>  1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+>>>> index fce22c4..ce6998c 100644
+>>>> --- a/arch/arm64/include/asm/ptrace.h
+>>>> +++ b/arch/arm64/include/asm/ptrace.h
+>>>> @@ -25,6 +25,12 @@
+>>>>  #define CurrentEL_EL1		(1 << 2)
+>>>>  #define CurrentEL_EL2		(2 << 2)
+>>>>  
+>>>> +/* PMR values used to mask/unmask interrupts */
+>>>> +#define GIC_PRIO_IRQON		0xf0
+>>>> +#define GIC_PRIO_STATUS_SHIFT	6
+>>>> +#define GIC_PRIO_STATUS_BIT	(1 << GIC_PRIO_STATUS_SHIFT)
+>>>> +#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON ^ GIC_PRIO_STATUS_BIT)
+>>>
+>>> Could you elaborate on the GIC priority logic a bit?
+>>>
+>>
+>> Yes, I'll give details below.
+>>
+>>> Are lower numbers higher priority?
+>>>
+>>
+>> Yes, that is the case.
+>>
+>>> Are there restrictions on valid PMR values?
+>>>
+>>
+>> Yes, there are at most 8 priority bits but implementations are free to
+>> implement a number of priority bits:
+>> - between 5 and 8 when GIC runs two security states (bits [7:3] always
+>> being implemented and [2:0] being optional), but non-secure side is
+>> always deprived or the lowest implemented bit
+>> - between 4 and 8 when GIC runs only one security state (bits [7:4]
+>> implemented, bits [3:0] optional)
+>>
+>> This is detailed in section 4.8 "Interrupt prioritization" of the GICv3
+>> architecture specification.
+>>
+>> So Linux should always be able to see bits [7:4].
+>>
+>>> IIUC GIC_PRIO_IRQOFF is 0xb0 (aka 0b10110000), which seems a little
+>>> surprising. I'd have expected that we'd use the most signficant bit.
+>>>
+>>
+>> So, re-reading the GICv3 spec, I believe this sparked from a confusion...
+>>
+>> The idea was that the GICv3 specification would recommend to keep
+>> non-secure group-1 interrupts at a lower priority that group-0 (and
+>> secure group-1 interrupts) interrupts, and to do so the idea was to
+>> always keep bit[7] == 1 for non-secure group-1.
+>>
+>> So, we would need to have priority bit[7] == 1 for both normal
+>> interrupts and pseudo-NMIs, and using the most significant bit to mask
+>> would mean masking pseudo-NMIs as well.
+>>
+>> However, I only find mention of this in the notes of section 4.8.6
+>> "Software accesses of interrupt priority". The section only applies to
+>> GIC with two security states, and the recommendation of writing
+>> non-secure group-1 priorities with bit[7] == 1 is only directed at
+>> writes from the secure side. From the non-secure side, the GIC already
+>> does some magic to enforce that the value kept in the distributor has
+>> bit[7] == 1.
+>>
+>> So, I believe that from the non-secure point of view, we could define
+>> pseudo-NMI priority as e.g. 0x40 (which the GIC will convert to 0xa0)
+>> and use the most significant bit of PMR to mask normal interrupts which
+>> would be more intuitive.
+>>
+>> Marc, as GIC expert do you agree with this? Or is there a reason we
+>> should keep bit[7] == 1 for non-secure group-1 priorities?
+> 
+> I think selecting bit 6 dates back to when I was working on this.
+> 
+> I originally used bit 7 but switched due to problems on the FVP at the
+> time (my memory is a little hazy here but it felt like it wasn't
+> doing the magic shift properly when running in non-secure mode).
+> 
 
-v2: Add a function doing the allocations which is called
-    outside the lock and passing the allocated data to
-    create=5Factive().
-v3: Use the matching deallocators i.e., free=5Fpage()
-    and free=5Fpages(), respectively.
+If you were using boot-wrapper, that might have been the case as
+SCR_EL3.FIQ is not getting set.
 
-Suggested-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/xen/pvcalls-front.c | 71 ++++++++++++++++++++++++++++++-------
- 1 file changed, 59 insertions(+), 12 deletions(-)
+The fun bit is that under this configuration the magic bit still happens
+for non-secure accesses to priorities configured in the
+distributor/redistributor, but it disables the magic for non-secure PMR
+and RPR accesses. So you can easily end up masking too much stuff when
+writting to PMR when SCR_EL1.FIQ is cleared if you don't realize that
+what non-secure sees in the distributor is not aligned with what will be
+masked by PMR or presented in RPR.
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 2f11ca72a281..a26f416daf46 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -335,7 +335,43 @@ int pvcalls=5Ffront=5Fsocket(struct socket *sock)
- 	return ret;
- }
-=20
--static int create=5Factive(struct sock=5Fmapping *map, int *evtchn)
-+struct sock=5Fmapping=5Factive=5Fring {
-+	struct pvcalls=5Fdata=5Fintf *ring;
-+	RING=5FIDX ring=5Forder;
-+	void *bytes;
-+};
-+
-+static int alloc=5Factive=5Fring(struct sock=5Fmapping=5Factive=5Fring *ac=
-tive=5Fring)
-+{
-+	active=5Fring->ring =3D NULL;
-+	active=5Fring->bytes =3D NULL;
-+
-+	active=5Fring->ring =3D (struct pvcalls=5Fdata=5Fintf *)
-+		=5F=5Fget=5Ffree=5Fpage(GFP=5FKERNEL | =5F=5FGFP=5FZERO);
-+	if (active=5Fring->ring =3D=3D NULL)
-+		goto out=5Ferror;
-+	active=5Fring->ring=5Forder =3D PVCALLS=5FRING=5FORDER;
-+	active=5Fring->bytes =3D (void *)=5F=5Fget=5Ffree=5Fpages(GFP=5FKERNEL | =
-=5F=5FGFP=5FZERO,
-+			PVCALLS=5FRING=5FORDER);
-+	if (active=5Fring->bytes =3D=3D NULL)
-+		goto out=5Ferror;
-+
-+	return 0;
-+
-+out=5Ferror:
-+	free=5Fpages((unsigned long)active=5Fring->bytes, active=5Fring->ring=5Fo=
-rder);
-+	free=5Fpage((unsigned long)active=5Fring->ring);
-+	return -ENOMEM;
-+}
-+
-+static void free=5Factive=5Fring(struct sock=5Fmapping=5Factive=5Fring *ac=
-tive=5Fring)
-+{
-+	free=5Fpages((unsigned long)active=5Fring->bytes, active=5Fring->ring=5Fo=
-rder);
-+	free=5Fpage((unsigned long)active=5Fring->ring);
-+}
-+
-+static int create=5Factive(struct sock=5Fmapping *map, int *evtchn,
-+		struct sock=5Fmapping=5Factive=5Fring *active=5Fring)
- {
- 	void *bytes;
- 	int ret =3D -ENOMEM, irq =3D -1, i;
-@@ -343,15 +379,9 @@ static int create=5Factive(struct sock=5Fmapping *map,=
- int *evtchn)
- 	*evtchn =3D -1;
- 	init=5Fwaitqueue=5Fhead(&map->active.inflight=5Fconn=5Freq);
-=20
--	map->active.ring =3D (struct pvcalls=5Fdata=5Fintf *)
--		=5F=5Fget=5Ffree=5Fpage(GFP=5FKERNEL | =5F=5FGFP=5FZERO);
--	if (map->active.ring =3D=3D NULL)
--		goto out=5Ferror;
--	map->active.ring->ring=5Forder =3D PVCALLS=5FRING=5FORDER;
--	bytes =3D (void *)=5F=5Fget=5Ffree=5Fpages(GFP=5FKERNEL | =5F=5FGFP=5FZER=
-O,
--					PVCALLS=5FRING=5FORDER);
--	if (bytes =3D=3D NULL)
--		goto out=5Ferror;
-+	map->active.ring =3D active=5Fring->ring;
-+	map->active.ring->ring=5Forder =3D active=5Fring->ring=5Forder;
-+	bytes =3D active=5Fring->bytes;
- 	for (i =3D 0; i < (1 << PVCALLS=5FRING=5FORDER); i++)
- 		map->active.ring->ref[i] =3D gnttab=5Fgrant=5Fforeign=5Faccess(
- 			pvcalls=5Ffront=5Fdev->otherend=5Fid,
-@@ -397,6 +427,7 @@ int pvcalls=5Ffront=5Fconnect(struct socket *sock, stru=
-ct sockaddr *addr,
- 	struct sock=5Fmapping *map =3D NULL;
- 	struct xen=5Fpvcalls=5Frequest *req;
- 	int notify, req=5Fid, ret, evtchn;
-+	struct sock=5Fmapping=5Factive=5Fring active=5Fring;
-=20
- 	if (addr->sa=5Ffamily !=3D AF=5FINET || sock->type !=3D SOCK=5FSTREAM)
- 		return -EOPNOTSUPP;
-@@ -406,15 +437,21 @@ int pvcalls=5Ffront=5Fconnect(struct socket *sock, st=
-ruct sockaddr *addr,
- 		return PTR=5FERR(map);
-=20
- 	bedata =3D dev=5Fget=5Fdrvdata(&pvcalls=5Ffront=5Fdev->dev);
-+	ret =3D alloc=5Factive=5Fring(&active=5Fring);
-+	if (ret < 0) {
-+		pvcalls=5Fexit=5Fsock(sock);
-+		return ret;
-+	}
-=20
- 	spin=5Flock(&bedata->socket=5Flock);
- 	ret =3D get=5Frequest(bedata, &req=5Fid);
- 	if (ret < 0) {
- 		spin=5Funlock(&bedata->socket=5Flock);
-+		free=5Factive=5Fring(&active=5Fring);
- 		pvcalls=5Fexit=5Fsock(sock);
- 		return ret;
- 	}
--	ret =3D create=5Factive(map, &evtchn);
-+	ret =3D create=5Factive(map, &evtchn, &active=5Fring);
- 	if (ret < 0) {
- 		spin=5Funlock(&bedata->socket=5Flock);
- 		pvcalls=5Fexit=5Fsock(sock);
-@@ -744,6 +781,7 @@ int pvcalls=5Ffront=5Faccept(struct socket *sock, struc=
-t socket *newsock, int flags)
- 	struct sock=5Fmapping *map2 =3D NULL;
- 	struct xen=5Fpvcalls=5Frequest *req;
- 	int notify, req=5Fid, ret, evtchn, nonblock;
-+	struct sock=5Fmapping=5Factive=5Fring active=5Fring;
-=20
- 	map =3D pvcalls=5Fenter=5Fsock(sock);
- 	if (IS=5FERR(map))
-@@ -780,12 +818,20 @@ int pvcalls=5Ffront=5Faccept(struct socket *sock, str=
-uct socket *newsock, int flags)
- 		}
- 	}
-=20
-+	ret =3D alloc=5Factive=5Fring(&active=5Fring);
-+	if (ret < 0) {
-+		clear=5Fbit(PVCALLS=5FFLAG=5FACCEPT=5FINFLIGHT,
-+				(void *)&map->passive.flags);
-+		pvcalls=5Fexit=5Fsock(sock);
-+		return ret;
-+	}
- 	spin=5Flock(&bedata->socket=5Flock);
- 	ret =3D get=5Frequest(bedata, &req=5Fid);
- 	if (ret < 0) {
- 		clear=5Fbit(PVCALLS=5FFLAG=5FACCEPT=5FINFLIGHT,
- 			  (void *)&map->passive.flags);
- 		spin=5Funlock(&bedata->socket=5Flock);
-+		free=5Factive=5Fring(&active=5Fring);
- 		pvcalls=5Fexit=5Fsock(sock);
- 		return ret;
- 	}
-@@ -794,10 +840,11 @@ int pvcalls=5Ffront=5Faccept(struct socket *sock, str=
-uct socket *newsock, int flags)
- 		clear=5Fbit(PVCALLS=5FFLAG=5FACCEPT=5FINFLIGHT,
- 			  (void *)&map->passive.flags);
- 		spin=5Funlock(&bedata->socket=5Flock);
-+		free=5Factive=5Fring(&active=5Fring);
- 		pvcalls=5Fexit=5Fsock(sock);
- 		return -ENOMEM;
- 	}
--	ret =3D create=5Factive(map2, &evtchn);
-+	ret =3D create=5Factive(map2, &evtchn, &active=5Fring);
- 	if (ret < 0) {
- 		kfree(map2);
- 		clear=5Fbit(PVCALLS=5FFLAG=5FACCEPT=5FINFLIGHT,
---=20
-2.19.1
+> Once the patchset was running on real hardware I kept on with bit 6 
+> figuring that, given the magic shift from non-secure mode is a little
+> odd, it would remain furtile soil for future silicon bugs (I was
+> watching a lot of patches go past on the ML working round bugs in
+> non-Arm GIC implementations and ended up feeling rather paranoid
+> about things like that).
+> 
+> 
+> Daniel.
+> 
 
+-- 
+Julien Thierry
