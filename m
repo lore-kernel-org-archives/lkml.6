@@ -2,137 +2,343 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED478C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91151C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B21FD2082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:05:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tKtGzEFc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21FD2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2F71B2147C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:08:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F71B2147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbeK3TOT (ORCPT
+        id S1727047AbeK3TQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:14:19 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40468 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbeK3TOR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:14:17 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so4323720wrt.7;
-        Fri, 30 Nov 2018 00:05:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aKo+gdEJ+yw0zLyjfpkqEWdk787xl66RK3neQbFIi9g=;
-        b=tKtGzEFcNsLU8NUpY71OTx8kmJGs4gO8MjK7oKpFUOH8sGTtBdwSnN+5NM1VGCbZ6d
-         pI0lqbDfMK6PcqwGULkCEap/5AGck7RAs7gm4aJCNkwqt6T7rkgewx1pmt5zjFKQ+fr4
-         qaj9uwL8aF/NiObRnVHO8Hugi1tKGI/rljqQd0hKwBHpbfnlwAf2wVhOUUQdlV6t3hSk
-         hQOQQVNI5RGpjaApVM+uPMTXpkRDzfOUK6OXX1ab72PZ4EkB2+hVG0aeesExm4RB68M/
-         5L1e3ZJKUR9jMcuixYHMJZ241PFohfvZ5FSTlM6tu+4pRy02GthgsihZUfZnnHOiIjzL
-         1bJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aKo+gdEJ+yw0zLyjfpkqEWdk787xl66RK3neQbFIi9g=;
-        b=NL5HkmzUMt1ssB44Bqj5O5zzJd+J5EE98RqjP2bOiZ5Nqg2N+0txjaJhrsJ49lrLny
-         jN9BSK5nGqUInk4QnhGNGkRDMoW5c+HEBmhnz6v6bhGDuSTovauSZ5whrAMwfsH+WYQA
-         dnupiO6pPWL8RH4rEUqVCO3NH/JapE2fcjutBIgs+MLJ62GnbpQHolw/FnG34LHBxVuO
-         E60X8B/3WQDiusepJkqUSjiqQT3GIyiMZ1bJLIOEIHkRenPYzvcBTistHZliiVo8BT8Q
-         Z89B4ORYkxRP3Xu4baBvYnF85tPdBhKWxFM5+VxjywrTGd+XMli3j8TR9zxUhizba+1f
-         MGhQ==
-X-Gm-Message-State: AA+aEWaYJEp1W0l1UwMhEGMRj/ScGDrEoNg4PaY7zBwIdd/+sN8rHnyT
-        uU8DLtBB8XDsiTaus95ZeSc=
-X-Google-Smtp-Source: AFSGD/Xp4Ug86x2nUn7hiyyLkRWbrNFvmKl9pFiJ6xvRj3Xl2psrD1Fe+OTTUgKGoVuXc+fG1L8s9Q==
-X-Received: by 2002:adf:81c4:: with SMTP id 62mr3791400wra.266.1543565147800;
-        Fri, 30 Nov 2018 00:05:47 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j33sm6886205wre.91.2018.11.30.00.05.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 00:05:46 -0800 (PST)
-Date:   Fri, 30 Nov 2018 09:05:44 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        YiFei Zhu <zhuyifei1999@gmail.com>
-Subject: Re: [PATCH 11/11] efi/x86: earlyprintk - Fix infinite loop on some
- screen widths
-Message-ID: <20181130080544.GC16084@gmail.com>
-References: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
- <20181129171230.18699-12-ard.biesheuvel@linaro.org>
+        Fri, 30 Nov 2018 14:16:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:36170 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726551AbeK3TQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 14:16:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 00:08:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,297,1539673200"; 
+   d="scan'208";a="96176417"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 30 Nov 2018 00:08:10 -0800
+Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.128])
+        by linux.intel.com (Postfix) with ESMTP id 15B33580460;
+        Fri, 30 Nov 2018 00:08:07 -0800 (PST)
+From:   Zhang Yi <yi.z.zhang@linux.intel.com>
+To:     pbonzini@redhat.com, mdontu@bitdefender.com, ncitu@bitdefender.com
+Cc:     rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Zhang Yi <yi.z.zhang@linux.intel.com>
+Subject: [RFC PATCH V2 01/11] Documentation: Added EPT Subpage Protection Documentation.
+Date:   Fri, 30 Nov 2018 16:07:52 +0800
+Message-Id: <a8fd64aef788e1fb2ff6df758ffabffcccf53a3f.1543481993.git.yi.z.zhang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129171230.18699-12-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <cover.1543481993.git.yi.z.zhang@linux.intel.com>
+References: <cover.1543481993.git.yi.z.zhang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+---
+ Documentation/virtual/kvm/spp_design_kvm.txt | 275 +++++++++++++++++++++++++++
+ 1 file changed, 275 insertions(+)
+ create mode 100644 Documentation/virtual/kvm/spp_design_kvm.txt
 
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+diff --git a/Documentation/virtual/kvm/spp_design_kvm.txt b/Documentation/virtual/kvm/spp_design_kvm.txt
+new file mode 100644
+index 0000000..8dc4530
+--- /dev/null
++++ b/Documentation/virtual/kvm/spp_design_kvm.txt
+@@ -0,0 +1,275 @@
++DRAFT: EPT-Based Sub-Page Protection (SPP) Design Doc for KVM
++=============================================================
++
++1. Overview
++
++EPT-based Sub-Page Protection (SPP) capability to allow Virtual Machine
++Monitors to specify write-protection for guest physical memory at a
++sub-page (128 byte) granularity. When this capability is utilized, the
++CPU enforces write-access permissions for sub-page regions of 4K pages
++as specified by the VMM.
++
++2. Operation of SPP
++
++Sub-Page Protection Table (SPPT) is introduced to manage sub-page
++write-access.
++
++SPPT is active when the "sub-page write protection" VM-execution control
++is 1. SPPT looks up the guest physical addresses to derive a 64 bit
++"sub-page permission" value containing sub-page write permissions. The
++lookup from guest-physical addresses to the sub-page region permissions
++is determined by a set of SPPT paging structures.
++
++When the "sub-page write protection" VM-execution control is 1, the SPPT
++is used to lookup write permission bits for the 128 byte sub-page regions
++containing in the 4KB guest physical page. EPT specifies the 4KB page
++level privileges that software is allowed when accessing the guest
++physical address, whereas SPPT defines the write permissions for software
++at the 128 byte granularity regions within a 4KB page. Write accesses
++prevented due to sub-page permissions looked up via SPPT are reported as
++EPT violation VM exits. Similar to EPT, a logical processor uses SPPT to
++lookup sub-page region write permissions for guest-physical addresses
++only when those addresses are used to access memory.
++______________________________________________________________________________
++
++How SPP hardware works:
++______________________________________________________________________________
++
++Guest write access --> GPA --> Walk EPT --> EPT leaf entry -┐
++┌-----------------------------------------------------------┘
++└-> if VMexec_control.spp && ept_leaf_entry.spp_bit (bit 61)
++     |
++     └-> <false> --> EPT legacy behavior
++     |
++     |
++     └-> <true>  --> if ept_leaf_entry.writable
++                      |
++                      └-> <true>  --> Ignore SPP
++                      |
++		      └-> <false> --> GPA --> Walk SPP 4-level table--┐
++                                                                      |
++┌------------<----------get-the-SPPT-point-from-VMCS-filed-----<------┘
++|
++Walk SPP L4E table
++|
++└┐--> entry misconfiguration ------------>----------┐<----------------┐
++ |                                                  |                 |
++else                                                |                 |
++ |                                                  |                 |
++ |   ┌------------------SPP VMexit<-----------------┘                 |
++ |   |                                                                |
++ |   └-> exit_qualification & sppt_misconfig --> sppt misconfig       |
++ |   |                                                                |
++ |   └-> exit_qualification & sppt_miss --> sppt miss                 |
++ └--┐                                                                 |
++    |                                                                 |
++walk SPPT L3E--┐--> if-entry-misconfiguration------------>------------┘
++               |                                                      |
++	      else                                                    |
++	       |                                                      |
++	       |                                                      |
++        walk SPPT L2E --┐--> if-entry-misconfiguration-------->-------┘
++                        |                                             |
++                       else                                           |
++			|                                             |
++			|                                             |
++	         walk SPPT L1E --┐-> if-entry-misconfiguration--->----┘
++                                 |
++			        else
++				 |
++                                 └-> if sub-page writable
++                                      └-> <true>  allow, write access
++	                              └-> <false> disallow, EPT violation
++______________________________________________________________________________
++
++3. Interfaces
++
++* Feature enabling
++
++Add "spp=on" to KVM module parameter to enable SPP feature, default is off.
++
++* Get/Set sub-page write access permission
++
++New KVM ioctl:
++
++`KVM_SUBPAGES_GET_ACCESS`:
++Get sub-pages write access bitmap corresponding to given rang of continuous gfn.
++
++`KVM_SUBPAGES_SET_ACCESS`
++Set sub-pages write access bitmap corresponding to given rang of continuous gfn.
++
++```c
++/* for KVM_SUBPAGES_GET_ACCESS and KVM_SUBPAGES_SET_ACCESS */
++struct kvm_subpage_info {
++	__u64 gfn;
++	__u64 npages; /* number of 4K pages */
++	__u64 *access_map; /* sub-page write-access bitmap array */
++};
++
++#define KVM_SUBPAGES_GET_ACCESS   _IOR(KVMIO,  0x49, struct kvm_subpage_info)
++#define KVM_SUBPAGES_SET_ACCESS   _IOW(KVMIO,  0x4a, struct kvm_subpage_info)
++```
++
++4. SPPT initialization
++
++* SPPT root page allocation
++
++  SPPT is referenced via a 64-bit control field called "sub-page
++  protection table pointer" (SPPTP, encoding 0x2030) which contains a
++  4K-align physical address.
++
++  SPPT also has 4 level table as well as EPT. So, as EPT does, when KVM
++  loads mmu, we allocate a root page for SPPT L4 table.
++
++* EPT leaf entry SPP bit
++
++  Set 0 to SPP bit to close SPP by default.
++
++5. Set/Get Sub-Page access bitmap for bunch of guest physical pages
++
++* To utilize SPP feature, system admin should Set a Sub-page access write via
++  SPP KVM ioctl `KVM_SUBPAGES_SET_ACCESS`, which will prepared the flowing things.
++
++   (1.Got the corresponding EPT leaf entry via the guest physical address.
++   (2.If it is a 4K page frame, flag the bit 61 to enable subpage protection on this page.
++   (3.Setup spp page structure, the page structure format is list following.
++
++   Format of the SPPT L4E, L3E, L2E:
++   | Bit    | Contents                                                                 |
++   | :----- | :------------------------------------------------------------------------|
++   | 0      | Valid entry when set; indicates whether the entry is present             |
++   | 11:1   | Reserved (0)                                                             |
++   | N-1:12 | Physical address of 4KB aligned SPPT LX-1 Table referenced by this entry |
++   | 51:N   | Reserved (0)                                                             |
++   | 63:52  | Reserved (0)                                                             |
++   Note: N is the physical address width supported by the processor. X is the page level
++
++   Format of the SPPT L1E:
++   | Bit   | Contents                                                          |
++   | :---- | :---------------------------------------------------------------- |
++   | 0+2i  | Write permission for i-th 128 byte sub-page region.               |
++   | 1+2i  | Reserved (0).                                                     |
++   Note: `0<=i<=31`
++
++   (4.Update the subpage info into memory slot structure.
++
++* Sub-page write access bitmap setting pseudo-code:
++
++```c
++static int kvm_mmu_set_subpages(struct kvm_vcpu *vcpu,
++				struct kvm_subpage_info *spp_info)
++{
++	gfn_t *gfns = spp_info->gfns;
++	u64 *access_map = spp_info->access_map;
++
++	sanity_check();
++
++	/* SPP works when the page is unwritable */
++	if (set_ept_leaf_level_unwritable(gfn) == success)
++
++		if (kvm_mmu_setup_spp_structure(gfn) == success)
++
++			set_subpage_slot_info(access_map);
++
++}
++```
++
++User could get the subpage info via SPP KVM ioctl `KVM_SUBPAGES_GET_ACCESS`,
++which from the memory slot structure corresponding the specify gpa.
++
++* Sub-page get subpage info pseudo-code:
++
++```c
++static int kvm_mmu_get_subpages(struct kvm_vcpu *vcpu,
++				struct kvm_subpage_info *spp_info)
++{
++	gfn_t *gfns = spp_info->gfns;
++
++	sanity_check(gfn);
++	spp_info = get_subpage_slot_info(gfn);
++}
++
++```
++
++5. SPPT-induced vmexits
++
++* SPP VM exits
++
++Accesses using guest physical addresses may cause VM exits due to a SPPT
++Misconfiguration or a SPPT Miss.
++
++A SPPT Misconfiguration vmexit occurs when, in the course of translating
++a guest physical address, the logical processor encounters a leaf EPT
++paging-structure entry mapping a 4KB page, with SPP enabled, during the
++SPPT lookup, a SPPT paging-structure entry contains an unsupported
++value.
++
++A SPPT Miss vmexit occurs during the SPPT lookup there is no SPPT
++misconfiguration but any level of SPPT paging-structure entries are not
++present.
++
++NOTE. SPPT misconfigurations and SPPT miss can occur only due to an
++attempt to write memory with a guest physical address.
++
++* EPT violation vmexits due to SPPT
++
++EPT violations due to memory write accesses disallowed due to sub-page
++protection permissions specified in the SPPT are reported via EPT
++violation VM exits.
++
++6. SPPT-induced vmexits handling
++
++```c
++#define EXIT_REASON_SPP                 66
++
++static int (*const kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
++	...
++	[EXIT_REASON_SPP]                     = handle_spp,
++	...
++};
++```
++
++New exit qualification for SPPT-induced vmexits.
++
++| Bit   | Contents                                                          |
++| :---- | :---------------------------------------------------------------- |
++| 10:0  | Reserved (0).                                                     |
++| 11    | SPPT VM exit type. Set for SPPT Miss, cleared for SPPT Misconfig. |
++| 12    | NMI unblocking due to IRET                                        |
++| 63:13 | Reserved (0)                                                      |
++
++In addition to the exit qualification, Guest Linear Address and Guest
++Physical Address fields will be reported.
++
++* SPPT miss and misconfiguration
++
++Allocate a page for the SPPT entry and set the entry correctly.
++
++
++SPP VMexit handler Pseudo-code:
++```c
++static int handle_spp(kvm_vcpu *vcpu)
++{
++	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
++	if (exit_qualification & SPP_EXIT_TYPE_BIT) {
++		/* SPPT Miss */
++		/* We don't set SPP write access for the corresponding
++		 * GPA, leave it unwritable, so no need to construct
++		 * SPP table here. */
++	} else {
++		/* SPPT Misconfig */
++		vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
++		vcpu->run->hw.hardware_exit_reason = EXIT_REASON_SPP;
++	}
++	return 0;
++}
++```
++
++* EPT violation vmexits due to SPPT
++
++While hardware walking the SPP page table, If the sub-page region write
++permission bit is set, the write is allowed, else the write is disallowed
++and results in an EPT violation.
++
++we need peek this case in EPT volition handler, and trigger a user-space
++exit, return the write protected address(GPA) to user(qemu).
+-- 
+2.7.4
 
-> From: YiFei Zhu <zhuyifei1999@gmail.com>
-> 
-> An affected screen resolution is 1366 x 768, which width is not
-> divisible by 8, the default font width. On such screens, when longer
-> lines are earlyprintk'ed, overflow-to-next-line can never trigger,
-> due to the left-most x-coordinate of the next character always less
-> than the screen width. Earlyprintk will infinite loop in trying to
-> print the rest of the string but unable to, due to the line being
-> full.
-> 
-> This patch makes the trigger consider the right-most x-coordinate,
-> instead of left-most, as the value to compare against the screen
-> width threshold.
-> 
-> Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/x86/platform/efi/early_printk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
-> index 7476b3b097e1..7138bc7a265c 100644
-> --- a/arch/x86/platform/efi/early_printk.c
-> +++ b/arch/x86/platform/efi/early_printk.c
-> @@ -183,7 +183,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
->  			num--;
->  		}
->  
-> -		if (efi_x >= si->lfb_width) {
-> +		if (efi_x + font->width > si->lfb_width) {
->  			efi_x = 0;
->  			efi_y += font->height;
->  		}
-
-Any objections to marking this for -stable and queueing it up in 
-efi/urgent as well?
-
-Thanks,
-
-	Ingo
