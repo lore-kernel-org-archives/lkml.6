@@ -2,296 +2,139 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3131AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E29DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A4820863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:54:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A4820863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D3CAB20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:55:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="QhPvVtgR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CAB20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbeLAADk (ORCPT
+        id S1726566AbeLAAEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:03:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41594 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbeLAADk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:03:40 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D272330024AA;
-        Fri, 30 Nov 2018 12:54:26 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 489835D9CD;
-        Fri, 30 Nov 2018 12:54:24 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2] x86/hyper-v: Mark TLFS structures packed
-Date:   Fri, 30 Nov 2018 13:54:22 +0100
-Message-Id: <20181130125422.21494-1-vkuznets@redhat.com>
+        Fri, 30 Nov 2018 19:04:48 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40702 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeLAAEs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:04:48 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u18so2773014plq.7
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 04:55:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XKds6rNpspkDTr2LIhhuAY5+8Tr4GYAAAU9n31DCOAk=;
+        b=QhPvVtgRFjAavQn4beDykDWAJvtU/BjSEuctDTi+0SEQJe8MZCJkScbnqFDq04JOkY
+         syqm+zdwAsDh+slytPV+5w6gzDfiX6abBZe5b2nnv/TRvsGaWWYNXXWrp1LqCWwVGAai
+         +NVabOmZEmHwb9ma7DnNsNK88qkhfCqVr4ij9vz/vjtIde0EPs99fCIEzhzjZTuPOkiH
+         sLFxakj8aur1J4rREs5+LzGVxZ2yARGD+B/mHyElCHqFTqOfpeIKdlcGo6ydS3hHLMFa
+         2nH+FJD6KbbNYpnEsAVap5kCAUlo62BgUisOK3Azm/2qg08mAqEZElxh9aKmm8BFRb9Q
+         Xh0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XKds6rNpspkDTr2LIhhuAY5+8Tr4GYAAAU9n31DCOAk=;
+        b=Pf/T4IICaM0TA9cpcvoxuPdzUXaxOhdaKsDzJkptw6u4jklVQRFhTBzgBdF14V7yyA
+         LtQk/frJpPuqbZpzelIYfjXvIbV/f6CboPKRylb7vweCEtPoCRcz6vWgXMqqpR3F4Hz9
+         Cdsy88kinlr3krMLcm6UJW7b3CRPEpvrcwVNihv703slZYtuKmsvI5volE1aG9T42fRq
+         ENeZh66uXVZYL6zpuI9lD/NK9qs58dpx2mUozh5SqK2ZNxpJvUQq8ZuaUaTiBkblS3tY
+         lIvS3KzvZNO7hTZilH8H/Q8G2Q6NN5i1YiuVC5pFpasNBOw0aAid9/t5KRg5pScgjzXE
+         dvkg==
+X-Gm-Message-State: AA+aEWbMY/Ir0bt/3b7TBxxTV5tlxWjt4rcluVoYEgrV20+E8CEEetva
+        lJ0H7QI4cvteYHfo3WIN2EROgg==
+X-Google-Smtp-Source: AFSGD/X1T8SvdXDzm/BeeANpbO1rMz8CCz+0jkq1KHLa7+otIm5eq8cDSzHcMM6tNTg2Z9zXkhXQrQ==
+X-Received: by 2002:a17:902:8ec8:: with SMTP id x8mr5636985plo.210.1543582535128;
+        Fri, 30 Nov 2018 04:55:35 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
+        by smtp.gmail.com with ESMTPSA id v13sm7252341pff.20.2018.11.30.04.55.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 04:55:34 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id A6A7B30042C; Fri, 30 Nov 2018 15:55:29 +0300 (+03)
+Date:   Fri, 30 Nov 2018 15:55:29 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jan Stancek <jstancek@redhat.com>, linux-mm@kvack.org,
+        lersek@redhat.com, alex.williamson@redhat.com, aarcange@redhat.com,
+        rientjes@google.com, mgorman@techsingularity.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: page_mapped: don't assume compound page is huge
+ or THP
+Message-ID: <20181130125529.6lw2xqiccnoddrvj@kshutemo-mobl1>
+References: <eabca57aa14f4df723173b24891f4a2d9c501f21.1543526537.git.jstancek@redhat.com>
+ <c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com>
+ <20181130121851.GI6923@dhcp22.suse.cz>
+ <20181130123651.5qrdrw3i5ergbuzl@kshutemo-mobl1>
+ <20181130124546.GJ6923@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 30 Nov 2018 12:54:27 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130124546.GJ6923@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TLFS structures are used for hypervisor-guest communication and must
-exactly meet the specification.
+On Fri, Nov 30, 2018 at 01:45:46PM +0100, Michal Hocko wrote:
+> On Fri 30-11-18 15:36:51, Kirill A. Shutemov wrote:
+> > On Fri, Nov 30, 2018 at 01:18:51PM +0100, Michal Hocko wrote:
+> > > On Fri 30-11-18 13:06:57, Jan Stancek wrote:
+> > > > LTP proc01 testcase has been observed to rarely trigger crashes
+> > > > on arm64:
+> > > >     page_mapped+0x78/0xb4
+> > > >     stable_page_flags+0x27c/0x338
+> > > >     kpageflags_read+0xfc/0x164
+> > > >     proc_reg_read+0x7c/0xb8
+> > > >     __vfs_read+0x58/0x178
+> > > >     vfs_read+0x90/0x14c
+> > > >     SyS_read+0x60/0xc0
+> > > > 
+> > > > Issue is that page_mapped() assumes that if compound page is not
+> > > > huge, then it must be THP. But if this is 'normal' compound page
+> > > > (COMPOUND_PAGE_DTOR), then following loop can keep running
+> > > > (for HPAGE_PMD_NR iterations) until it tries to read from memory
+> > > > that isn't mapped and triggers a panic:
+> > > >         for (i = 0; i < hpage_nr_pages(page); i++) {
+> > > >                 if (atomic_read(&page[i]._mapcount) >= 0)
+> > > >                         return true;
+> > > > 	}
+> > > > 
+> > > > I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
+> > > > with a custom kernel module [1] which:
+> > > > - allocates compound page (PAGEC) of order 1
+> > > > - allocates 2 normal pages (COPY), which are initialized to 0xff
+> > > >   (to satisfy _mapcount >= 0)
+> > > > - 2 PAGEC page structs are copied to address of first COPY page
+> > > > - second page of COPY is marked as not present
+> > > > - call to page_mapped(COPY) now triggers fault on access to 2nd
+> > > >   COPY page at offset 0x30 (_mapcount)
+> > > > 
+> > > > [1] https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
+> > > > 
+> > > > Fix the loop to iterate for "1 << compound_order" pages.
+> > > 
+> > > This is much less magic than the previous version. It is still not clear
+> > > to me how is mapping higher order pages to page tables other than THP
+> > > though. So a more detailed information about the source would bre really
+> > > welcome. Once we know that we can add a Fixes tag and also mark the
+> > > patch for stable because that sounds like a stable material.
+> > 
+> > IIRC, sound subsystem can producuce custom mapped compound pages.
+> 
+> Do I assume correctly that consecutive ptes simply point to subpages?
 
-Compilers can add alignment padding to structures or reorder struct members
-for randomization and optimization, which would break the hypervisor ABI.
+Yes. No huge pages there.
 
-Mark the structures as packed to prevent this.
-
-Suggested-by: Nadav Amit <nadav.amit@gmail.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
----
-- Changes since v1:
- - Re-worded commit message for clarity. [Thomas Gleixner]
-
-- This is a follow-up to my "[PATCH v2 0/4] x86/kvm/hyper-v: Implement
- Direct Mode for synthetic timers" series, as suggested by Thomas I'm
- routing it to KVM tree to avoid merge conflicts.
----
- arch/x86/include/asm/hyperv-tlfs.h | 50 +++++++++++++++---------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
-
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index ebfed56976d2..6a60fa17f6f2 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -271,7 +271,7 @@ union hv_x64_msr_hypercall_contents {
- 		u64 enable:1;
- 		u64 reserved:11;
- 		u64 guest_physical_address:52;
--	};
-+	} __packed;
- };
- 
- /*
-@@ -283,7 +283,7 @@ struct ms_hyperv_tsc_page {
- 	volatile u64 tsc_scale;
- 	volatile s64 tsc_offset;
- 	u64 reserved2[509];
--};
-+}  __packed;
- 
- /*
-  * The guest OS needs to register the guest ID with the hypervisor.
-@@ -324,7 +324,7 @@ struct hv_reenlightenment_control {
- 	__u64 enabled:1;
- 	__u64 reserved2:15;
- 	__u64 target_vp:32;
--};
-+}  __packed;
- 
- #define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
- #define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
-@@ -332,12 +332,12 @@ struct hv_reenlightenment_control {
- struct hv_tsc_emulation_control {
- 	__u64 enabled:1;
- 	__u64 reserved:63;
--};
-+} __packed;
- 
- struct hv_tsc_emulation_status {
- 	__u64 inprogress:1;
- 	__u64 reserved:63;
--};
-+} __packed;
- 
- #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
- #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT	12
-@@ -409,7 +409,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
- 	__u32 res1;
- 	__u64 tsc_scale;
- 	__s64 tsc_offset;
--} HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
-+}  __packed HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
- 
- /* Define the number of synthetic interrupt sources. */
- #define HV_SYNIC_SINT_COUNT		(16)
-@@ -466,7 +466,7 @@ union hv_message_flags {
- 	struct {
- 		__u8 msg_pending:1;
- 		__u8 reserved:7;
--	};
-+	} __packed;
- };
- 
- /* Define port identifier type. */
-@@ -488,7 +488,7 @@ struct hv_message_header {
- 		__u64 sender;
- 		union hv_port_id port;
- 	};
--};
-+} __packed;
- 
- /* Define synthetic interrupt controller message format. */
- struct hv_message {
-@@ -496,12 +496,12 @@ struct hv_message {
- 	union {
- 		__u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
- 	} u;
--};
-+} __packed;
- 
- /* Define the synthetic interrupt message page layout. */
- struct hv_message_page {
- 	struct hv_message sint_message[HV_SYNIC_SINT_COUNT];
--};
-+} __packed;
- 
- /* Define timer message payload structure. */
- struct hv_timer_message_payload {
-@@ -509,7 +509,7 @@ struct hv_timer_message_payload {
- 	__u32 reserved;
- 	__u64 expiration_time;	/* When the timer expired */
- 	__u64 delivery_time;	/* When the message was delivered */
--};
-+} __packed;
- 
- /* Define virtual processor assist page structure. */
- struct hv_vp_assist_page {
-@@ -519,7 +519,7 @@ struct hv_vp_assist_page {
- 	__u64 nested_enlightenments_control[2];
- 	__u32 enlighten_vmentry;
- 	__u64 current_nested_vmcs;
--};
-+} __packed;
- 
- struct hv_enlightened_vmcs {
- 	u32 revision_id;
-@@ -693,7 +693,7 @@ struct hv_enlightened_vmcs {
- 		u32 nested_flush_hypercall:1;
- 		u32 msr_bitmap:1;
- 		u32 reserved:30;
--	} hv_enlightenments_control;
-+	}  __packed hv_enlightenments_control;
- 	u32 hv_vp_id;
- 
- 	u64 hv_vm_id;
-@@ -703,7 +703,7 @@ struct hv_enlightened_vmcs {
- 	u64 padding64_5[7];
- 	u64 xss_exit_bitmap;
- 	u64 padding64_6[7];
--};
-+} __packed;
- 
- #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE			0
- #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP		BIT(0)
-@@ -744,7 +744,7 @@ union hv_stimer_config {
- 		u64 reserved_z0:3;
- 		u64 sintx:4;
- 		u64 reserved_z1:44;
--	};
-+	} __packed;
- };
- 
- 
-@@ -759,7 +759,7 @@ union hv_synic_scontrol {
- 	struct {
- 		u64 enable:1;
- 		u64 reserved:63;
--	};
-+	} __packed;
- };
- 
- /* Define synthetic interrupt source. */
-@@ -771,7 +771,7 @@ union hv_synic_sint {
- 		u64 masked:1;
- 		u64 auto_eoi:1;
- 		u64 reserved2:46;
--	};
-+	} __packed;
- };
- 
- /* Define the format of the SIMP register */
-@@ -781,7 +781,7 @@ union hv_synic_simp {
- 		u64 simp_enabled:1;
- 		u64 preserved:11;
- 		u64 base_simp_gpa:52;
--	};
-+	} __packed;
- };
- 
- /* Define the format of the SIEFP register */
-@@ -791,34 +791,34 @@ union hv_synic_siefp {
- 		u64 siefp_enabled:1;
- 		u64 preserved:11;
- 		u64 base_siefp_gpa:52;
--	};
-+	} __packed;
- };
- 
- struct hv_vpset {
- 	u64 format;
- 	u64 valid_bank_mask;
- 	u64 bank_contents[];
--};
-+} __packed;
- 
- /* HvCallSendSyntheticClusterIpi hypercall */
- struct hv_send_ipi {
- 	u32 vector;
- 	u32 reserved;
- 	u64 cpu_mask;
--};
-+} __packed;
- 
- /* HvCallSendSyntheticClusterIpiEx hypercall */
- struct hv_send_ipi_ex {
- 	u32 vector;
- 	u32 reserved;
- 	struct hv_vpset vp_set;
--};
-+} __packed;
- 
- /* HvFlushGuestPhysicalAddressSpace hypercalls */
- struct hv_guest_mapping_flush {
- 	u64 address_space;
- 	u64 flags;
--};
-+} __packed;
- 
- /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
- struct hv_tlb_flush {
-@@ -826,7 +826,7 @@ struct hv_tlb_flush {
- 	u64 flags;
- 	u64 processor_mask;
- 	u64 gva_list[];
--};
-+} __packed;
- 
- /* HvFlushVirtualAddressSpaceEx, HvFlushVirtualAddressListEx hypercalls */
- struct hv_tlb_flush_ex {
-@@ -834,6 +834,6 @@ struct hv_tlb_flush_ex {
- 	u64 flags;
- 	struct hv_vpset hv_vp_set;
- 	u64 gva_list[];
--};
-+} __packed;
- 
- #endif
 -- 
-2.19.2
-
+ Kirill A. Shutemov
