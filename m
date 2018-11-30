@@ -2,148 +2,94 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA53BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7D8C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADDDB20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8088820867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="gzxTDBT1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADDDB20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IT3naONL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8088820867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbeLAJhW (ORCPT
+        id S1727119AbeLAJh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:37:22 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45620 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbeLAJhV (ORCPT
+        Sat, 1 Dec 2018 04:37:27 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39142 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727101AbeLAJh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:37:21 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CD11F8EE34C;
-        Fri, 30 Nov 2018 14:26:32 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id JHP2IsHEu-jG; Fri, 30 Nov 2018 14:26:32 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id ED8138EE0C3;
-        Fri, 30 Nov 2018 14:26:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1543616792;
-        bh=IgvIJHw97M+pXMiv3WCviWZih6dvoeamuYDxWpdjWYE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=gzxTDBT1SHvcfFM7fJDS0b7AS5fb1xW5RrPb0I9LL32mJflXK+xtnWw0VaWTW5gtl
-         k8SaYaR5SFVH0c6eP5MsZDrSwaVal7jSfV1GL0Bz4LuFBkbBeHnXINYIrqgxD7Pcrr
-         z8RXk6UFMxpbUdZQikaqQu1eaTOFewZxLs3aRLZE=
-Message-ID: <1543616788.3031.38.camel@HansenPartnership.com>
-Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Axtens <dja@axtens.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>, federico.vaga@vaga.pv.it,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Helge Deller <deller@gmx.de>, Jonathan Corbet <corbet@lwn.net>,
-        Joshua Kinard <kumba@gentoo.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Linux mtd <linux-mtd@lists.infradead.org>,
-        linux-parisc <linux-parisc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
-        Network Development <netdev@vger.kernel.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rob Herring <robh@kernel.org>,
-        sean.wang@mediatek.com,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        shannon.nelson@oracle.com, Stefano Brivio <sbrivio@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Tobin C. Harding" <me@tobin.cc>, makita.toshiaki@lab.ntt.co.jp,
-        Willem de Bruijn <willemb@google.com>,
-        Yonghong Song <yhs@fb.com>, yanjun.zhu@oracle.com
-Date:   Fri, 30 Nov 2018 14:26:28 -0800
-In-Reply-To: <20181130221219.GA25537@linux.intel.com>
-References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
-         <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
-         <20181130195652.7syqys76646kpaph@linux-r8p5>
-         <20181130205521.GA21006@linux.intel.com>
-         <1543611662.3031.20.camel@HansenPartnership.com>
-         <20181130214405.GG23772@linux.intel.com>
-         <1543615069.3031.27.camel@HansenPartnership.com>
-         <20181130221219.GA25537@linux.intel.com>
+        Sat, 1 Dec 2018 04:37:26 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so6333151ljh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:26:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hMOB10ie/ApF9p+FJJZhvby9IjUdiBRkT3RDtd9UZkY=;
+        b=IT3naONLMiau8fjFxENHvVUgei3u1NWunAp63MW3nt3160RP2DX6Z/yfypLvdAZEUW
+         VO5e4ucx7bI8hfRldzTtw2HYYY+3cZpg7XZX7UOruGtEIibYC3aTVTGAlFiIIIuofhI3
+         Fc6QCcHZ/EHEi/t40sjt36i+Txgze0ztFDqeo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hMOB10ie/ApF9p+FJJZhvby9IjUdiBRkT3RDtd9UZkY=;
+        b=nCfPQA01vtfu8G3XW65UGp7YGkOVAOUEA/BA5YK1R0JvDDnxU4Z70bOGnIIpuaVlom
+         PK2uDsO1BeZMpeTxKBnRfGr5c/teVJjB1+s+5f9X0UMNNoHRcPii09dH2U7QD6LcN1Tw
+         BHHEufUUq4mg6TjVgm3drtH/RenBxvjAfciLdWB6604YnFlfpiDDtMTzOWHz945ymWag
+         XWdjeRvmTncMXflIkqJWe+xsgiOff3cd6PpDhM70VqPGXn96pfzNqTVBSY2X63hHOV9I
+         t0TuRXt2wTu5qhdv4TjnS0MklFW9a6+HbkPMabAcp9bK3IU56fSMxk48cv/IhQaUfDh1
+         XM+A==
+X-Gm-Message-State: AA+aEWbHkPgJYaWKTZx83NENZ22C3LTdt8mx/Mt6eREvphUqjD8AwRl8
+        ibPMLLGYSkMlFZim44Tr5A/0mhqAd/QNzOOTloeZSg==
+X-Google-Smtp-Source: AFSGD/VyUc2xq2emiQwtzER7TMHmq6/gqqL6cG8jRktUVj6RSGbVzR6P33LZ6+PL6wfXXdjVE4If1nbbjpDqb20aNyQ=
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr4944780ljc.97.1543616797483;
+ Fri, 30 Nov 2018 14:26:37 -0800 (PST)
+MIME-Version: 1.0
+References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
+ <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+ <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
+ <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+In-Reply-To: <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 30 Nov 2018 23:26:25 +0100
+Message-ID: <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-30 at 14:12 -0800, Jarkko Sakkinen wrote:
-[...]
-> I pasted this already to another response and this was probably the
-> part that ignited me to send the patch set (was a few days ago, so
-> had to revisit to find the exact paragraph):
+On Thu, Nov 29, 2018 at 7:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-I replied in to the other thread.
+> Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
+> sharing for userspace") some libgpiod tests are failing because we can
+> no longer depend on reading the value of a dummy GPIO after detecting
+> an interrupt to know the edge of the interrupt. While these interrupts
+> are triggered from debugfs and debugfs is not required to maintain
+> compatibility, I thing having a working test suite for the GPIO
+> subsystem and uAPI is worth applying these two patches and also the
+> previous one[1].
+>
+> Can we have them applied for 4.20 or are there any objections?
 
-> "Maintainers have the right and responsibility to remove, edit, or
-> reject comments, commits, code, wiki edits, issues, and other
-> contributions that are not aligned to this Code of Conduct, or to ban
-> temporarily or permanently any contributor for other behaviors that
-> they deem inappropriate, threatening, offensive, or harmful."
-> 
-> The whole patch set is neither a joke/troll nor something I would
-> necessarily want to be include myself. It does have the RFC tag.
-> 
-> As a maintainer myself (and based on somewhat disturbed feedback from
-> other maintainers) I can only make the conclusion that nobody knows
-> what the responsibility part here means.
-> 
-> I would interpret, if I read it like at lawyer at least, that even
-> for existing code you would need to do the changes postmorterm.
+I'm fine with applying them if I can just get an ACK from one of the IRQ
+maintainers (Thomas, Marc).
 
-That's wrong in the light of the interpretation document, yes.
-
-> Is this wrong interpretation?  Should I conclude that I made a
-> mistake by reading the CoC and trying to understand what it
-> *actually* says?
-
-You can't read it in isolation, you need to read it along with the
-interpretation document.  The latter was created precisely because
-there was a lot of push back on interpretation problems and ambiguities
-with the original CoC and it specifically covers this case (and a lot
-of others).
-
-James
-
-
-> After this discussion, I can say that I understand it less than
-> before.
-> 
-> /Jarkko
-> 
-
+Yours,
+Linus Walleij
