@@ -2,92 +2,92 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E50AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961C3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B952146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4993120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:07:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="c3nP1Ld7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B952146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AeVdY0ON"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4993120868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeK3UOo (ORCPT
+        id S1727088AbeK3UQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:14:44 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45516 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727041AbeK3UOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:14:44 -0500
-Received: from [10.206.160.32] (x2f7f020.dyn.telefonica.de [2.247.240.32])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 473B61EC0229;
-        Fri, 30 Nov 2018 10:06:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1543568764;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YXyub/bQNo+twzgkBA6uGv+W4gRUJq5dMFkmkzgCG54=;
-        b=c3nP1Ld7sLsCExu5lrCfgV/yK4wXs5v7wJW9U0JdzrIkjUSl1jl8BeR4n8JS8s2ZEyY0ma
-        vEbzecFYVu39xrPRPIkqte2s5EPYQ6k9DhjiJCJ1l4/IryeaFrdQtBNuf+74Z8fvMBCWc0
-        hczL4IogqAN8sv3VgoHN1Pwd0li/NfQ=
-Date:   Fri, 30 Nov 2018 10:06:02 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20181129122500.GX23873@gate.crashing.org>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr> <20181009145330.GT29268@gate.crashing.org> <CAK7LNARmrdtyE7JRAdJH_zbfvD_cej+TGLh+5KfT20o538KUcA@mail.gmail.com> <20181129122500.GX23873@gate.crashing.org>
+        Fri, 30 Nov 2018 15:16:34 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45086 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeK3UQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:16:34 -0500
+Received: by mail-lj1-f193.google.com with SMTP id s5-v6so4301445ljd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 01:07:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=msbW71zcVZTDE/vM/KZLZouftnFVpG/GA8aRhA0bQCQ=;
+        b=AeVdY0ONPdd72X3kE/xTImQJC/hRXjlVmYJWPlsNPPAn3jjKC2ONEt2O5BGdJYlAm4
+         zvDJBAQGWa2mSrKgUThj9vucB0VCZSj/90F/gObaMPSc19JFAsuW0PkRQymoOnt9OYWW
+         HAgM40KYLMP7nJUgP44rtWxkPP9aGqdS7m844=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=msbW71zcVZTDE/vM/KZLZouftnFVpG/GA8aRhA0bQCQ=;
+        b=ATMfFWCYmlcVNI8CPvdzenFocFFg3oMz4yKN54QGNkPU80qQPiR6kiUaw9xpiUDUaN
+         uvp+7aNrGNp1ymCbR4xVcez5s2QnNsNNxtoP6ExFg3+GWmMVyXMs/4aKYhhNa+BZj4u4
+         J1pQ1+5Hu0VO54GFc4zb15naU6QULrgQqJK4/1szeR7rYGIcfVTZ5RgN0sj+7BHdxvg8
+         r8USLD+NuOf3UQ3D4iYLCZ6vlnqeQ0oq/rQ6nioxt7j2Gdl240mIi2w8vaRbws3E4P4u
+         Pym3wb8vWXxGmUA9VTEtR9PQNAS9hJqXyC5lnzuIfg2samr9GpwDvSNDatynFaZIE96K
+         rScA==
+X-Gm-Message-State: AA+aEWZCmm33JHHlt5LalS9WuMTJ5QqfEIFwIeGHARmIeD3Esq97ho88
+        WjAJt1ybOrYnJmESIy2cndXLAo7fE1MMlpE2Qptwrg==
+X-Google-Smtp-Source: AFSGD/UvOaZYbIGaXjsfEcxhenBx62xtTXjfO63UXiBmvOCPOnKGEN8KNz+uflyAHFnTOSDTNKXCJwQPfhsc9VGQeBA=
+X-Received: by 2002:a2e:710a:: with SMTP id m10-v6mr3321674ljc.66.1543568874635;
+ Fri, 30 Nov 2018 01:07:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-To:     Segher Boessenkool <segher@kernel.crashing.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-CC:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, rguenther@suse.de, matz@suse.de,
-        gcc@gcc.gnu.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-From:   Boris Petkov <bp@alien8.de>
-Message-ID: <CF26ACBE-500C-47E8-B79D-E1ABE938031D@alien8.de>
+References: <20181128104350.31902-1-linus.walleij@linaro.org>
+ <20181128104350.31902-9-linus.walleij@linaro.org> <20181128152423.GW16508@imbe.wolfsonmicro.main>
+In-Reply-To: <20181128152423.GW16508@imbe.wolfsonmicro.main>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 30 Nov 2018 10:07:42 +0100
+Message-ID: <CACRpkdaA2B_dwCr=RRNkMpWWY5cTKhvBH6nEfgGg_eunXY-87w@mail.gmail.com>
+Subject: Re: [PATCH 08/10] regulator: max77686: Let core handle GPIO descriptor
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On November 29, 2018 1:25:02 PM GMT+01:00, Segher Boessenkool <segher@kerne=
-l=2Ecrashing=2Eorg> wrote:
->This will only be fixed from GCC 9 on, if the compiler adopts it=2E  The
->kernel wants to support ancient GCC, so it will need to have a
->workaround
->for older GCC versions anyway=2E
+On Wed, Nov 28, 2018 at 4:24 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Wed, Nov 28, 2018 at 11:43:48AM +0100, Linus Walleij wrote:
 
-What about backporting it, like Richard says?
+> > @@ -255,8 +255,7 @@ static int max77686_of_parse_cb(struct device_node *np,
+(...)
+> > +             config->ena_gpiod = gpiod_get_from_of_node(np,
+>
+> As this is inside the of_parse_cb, it probably needs some thought
+> on where the GPIO would need to be freed on which error paths, I
+> am not sure it is immediately obvious to me but I suspect it will
+> need to be freed in some cases.
 
+I looked it over and came up with a patch making sure that if
+the regulator_of_get_init_data() assigns config->ena_gpiod
+it gets freed unless handled over to the regulator core.
 
---=20
-Sent from a small device: formatting sux and brevity is inevitable=2E 
+Thanks for pointing this out, it was a tricky corner case!
+
+Yours,
+Linus Walleij
