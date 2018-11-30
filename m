@@ -2,127 +2,122 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBF2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DACCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1400D2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:49:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1400D2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CBF6E20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:52:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="hKuBxhx/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF6E20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbeLAB6y (ORCPT
+        id S1726651AbeLACBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:58:54 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33201 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726660AbeLAB6y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:58:54 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l11so6173566qtp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 06:49:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:content-language
-         :content-transfer-encoding;
-        bh=uxj1TdQ+N/0u/inDjFW7suiF+Rsa0dxGigogQ8qIbDw=;
-        b=LIf23190C/pN5Ew7lk+PNOUK7Y6jZccqDKT+JvPRvI8bftMfSAM9rChiCYKq6UTYpZ
-         9dSybTSOcQwAXHvKPyyX5XFSfMErXTwpB5hUyEICXtjZDxuQBDY4g8YuYGwqvhIn77Se
-         R9XJy7XVqkkuctdPEP0d22ApTB2AYK4WQtMkVobnjU5uxb4+vfaMYSYJP36LHIj0c3EJ
-         fCHaF0UIgykghP5Ioz2BdP9Mo+DibLSwr8yw864JqyvP+C27TEUPPOOQYX4X50QjV3RG
-         +tEywllteOL9wEFmhTwx2Mzj4TGbWSpLwhJUqfGUAczyx5Wrt+NmEZIMum14rJZPpy4h
-         DeKQ==
-X-Gm-Message-State: AA+aEWYVvT9R9KeQO48t4p0PH58nFBBBHDrYQVZIPYx51V4y/dYIy95x
-        Go+5d/Aq8vrojBoWc5ZV6xUv6WZZhVU=
-X-Google-Smtp-Source: AFSGD/VLCW1oBWMTUlDecQYNp4Q1R4RpOY0BR42TDrMusqago5pr/izRfVyzDpSSDCvkAnpHpY1oQg==
-X-Received: by 2002:a0c:e789:: with SMTP id x9mr5838808qvn.245.1543589359673;
-        Fri, 30 Nov 2018 06:49:19 -0800 (PST)
-Received: from laptop.jcline.org ([2605:a601:a204:5901:9ddb:9320:fea9:f5cf])
-        by smtp.gmail.com with ESMTPSA id v57sm3684910qtv.80.2018.11.30.06.49.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 06:49:18 -0800 (PST)
-From:   Jeremy Cline <jcline@redhat.com>
-Subject: Regression: very quiet speakers on Thinkpad T570s
-To:     Kailang Yang <kailang@realtek.com>, Takashi Iwai <tiwai@suse.de>,
-        Jaroslav Kysela <perex@perex.cz>
-Cc:     Tim Van den Eynde <redhat@vdeynde.com>,
-        alsa-devel@alsa-project.org,
+        Fri, 30 Nov 2018 21:01:48 -0500
+Received: from mail-eopbgr150077.outbound.protection.outlook.com ([40.107.15.77]:31292
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726340AbeLACBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 21:01:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ugwha5pj8bUuoM/c+8C39i9Pvi15ZZJR8q6+1BLEf8Y=;
+ b=hKuBxhx/Y82FeFakabWBH3nGcdUAgRvoThpNn0XFg5GU6bAviBvVn1K8JvxW6yrrQrSpfxDalZwLT7xQ/ZBViQldHePn3qhmr+ViGbHB0A28luKHigO0xNnhnosnW98BJQdD5OjClLmg0YuFUx4Tp/+XuqnusIEXvMA8/v8FZT4=
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
+ VI1PR0802MB2429.eurprd08.prod.outlook.com (10.175.26.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.18; Fri, 30 Nov 2018 14:52:10 +0000
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac%11]) with mapi id 15.20.1382.020; Fri, 30 Nov
+ 2018 14:52:10 +0000
+From:   Dave Rodgman <dave.rodgman@arm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jcline@redhat.com; keydata=
- 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
- X/87hZ4pdW/aOXUAgQ==
-Message-ID: <bbba2653-d57b-5fab-8c06-5fd22ae80aa5@redhat.com>
-Date:   Fri, 30 Nov 2018 09:49:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Subject: Re: linux-next: build warning after merge of the akpm tree
+Thread-Topic: linux-next: build warning after merge of the akpm tree
+Thread-Index: AQHUiG830bfhnb2BM0a+P2q17Dn1oKVoZ6uA
+Date:   Fri, 30 Nov 2018 14:52:10 +0000
+Message-ID: <51cdffd4-8e89-0366-a13d-154b2cbfb69a@arm.com>
+References: <20181130164030.3dbeb8b4@canb.auug.org.au>
+In-Reply-To: <20181130164030.3dbeb8b4@canb.auug.org.au>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [217.140.106.53]
+x-clientproxiedby: CWLP265CA0259.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:25::31) To VI1PR0802MB2528.eurprd08.prod.outlook.com
+ (2603:10a6:800:b0::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=dave.rodgman@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2429;6:yZbhslSiu2j3eC1FQwozKdooSD4JtSIGm7w1dYuVgfJjTHi/aYhMDVq6oGmwVAwEXrxBGL54SEVIsDZwihNn8mybrOxsmk5wWkMDJDZxPiSrqOv0TPcaT+zg3tHfBgs3xij3RDPvU33KbetPXEf3qymGc0pX/DbtoD2P3/jtkSyt4T0wZnimzd3y6Ln9WKJJUcQJZco6m63oMJTBVp+0wI6ogBc0T8hZtqBCPM7c8z2hC6mfoDhP+427mAg21kqr3/EoKvkrMKAuAuNi9Y3YQMu2EZrG1USpibjopBEodx4DCJM0iBjYFwM7mqYUvU+2s4FPyPBJDha/PK/Gj4fC6jUC5q5Cn7ZLMjN75r8pRACfdYUg90s45IP3TNhFzG8cxvdIpFuPTilRL+0Z8GSooI9l8ZoleM0Mx4gNUQjyOkGGJkDXifUQ3xT40PsSGsXoKTQNXivPA/TIwUCVxw14BQ==;5:1rGY3OCryr1ylPgqD3VUSP9teJg7J0985h2uvGY2zlchIjHZM8GOjLpXCOQwil2j2u5Fq9Wp8yOlrXR8ZjB6Qu/Et5XJ/r0gltvFHP2BMxKPOhY7aa8o4mb0R3gQCdPYk62Nq8tzyP2cbC1jPxwWluVKgNSi26/bnCmc9zdbtD4=;7:wLnuAcpuieggkg/g7ve4JB03uXyyzwmlIkAmYzZpLAgaBK++NyV+HQjb+EM3ShwP23u4nRZQjL60ocb+fHbuttPDrhWs0C9TQiYjxjpcKKEIZMOny5g0HvTY9gUEMvAGntm0KRNBIxjHv9ITGDCDtw==
+x-ms-office365-filtering-correlation-id: 9476fb2c-318e-48a5-39b9-08d656d36808
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2429;
+x-ms-traffictypediagnostic: VI1PR0802MB2429:
+x-microsoft-antispam-prvs: <VI1PR0802MB242951EA482C0678041FB9498FD30@VI1PR0802MB2429.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231453)(999002)(944501466)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2429;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2429;
+x-forefront-prvs: 087223B4DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(39860400002)(396003)(136003)(40434004)(189003)(199004)(53936002)(36756003)(486006)(6486002)(316002)(7736002)(44832011)(305945005)(5024004)(25786009)(81166006)(110136005)(54906003)(256004)(14444005)(81156014)(102836004)(26005)(476003)(8936002)(8676002)(106356001)(105586002)(53546011)(97736004)(3846002)(5660300001)(6116002)(6506007)(99286004)(52116002)(31686004)(2906002)(186003)(229853002)(11346002)(76176011)(386003)(86362001)(68736007)(966005)(446003)(478600001)(6436002)(4326008)(6306002)(71190400001)(14454004)(6512007)(2616005)(6246003)(71200400001)(31696002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2429;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: hFXTeErimBSE6SPFscCYswUvLdQLj59DMKthSGgP3Ry8UpMNO1yYJHp2l7vhG8LiIe3nXRA3X3GnCucGcx+DLvoXcWAze8lftcQKGmSth8J4eBSfzOc9Mf5UxWavOg/XdGUHPbzGnl5GMR1tVQPAZtIXizmaNlxDSXuE0HlD6e7Q3mBnYhiccyrFEA4waqAyjUArjcYEg2nym/OsbskVrAPWChK4bKF1t+zcI6kSC7JLMbaZOVstWlJ1xqMFvLHYO6ElNQgQGX8TJsBCuBphvkPduAONsxx1mlb3pPoiQpLcpkPDv4N39JuqucHk039T2Rr+jkgOV+7FN/2H6OKHiRSeSV/H7qtgS/VgpF0yQR0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <4B6D5845808F9340B244166314195929@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9476fb2c-318e-48a5-39b9-08d656d36808
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 14:52:10.5853
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2429
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 30/11/2018 5:40 am, Stephen Rothwell wrote:
+> After merging the akpm tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>
+> lib/lzo/lzo1x_compress.c: In function 'lzo1x_1_do_compress':
+> lib/lzo/lzo1x_compress.c:239:14: warning: 'm_pos' may be used uninitializ=
+ed in this function [-Wmaybe-uninitialized]
+>     m_off =3D ip - m_pos;
+>             ~~~^~~~~~~
+> Probably introduced by patch
+>
+>    "lib/lzo: implement run-length encoding"
+> or
+>    "lib/lzo: separate lzo-rle from lzo"
 
-Some folks have reported on the Fedora bug tracker[0] that the laptop
-speaker volume is very low on the Thinkpad T570 when running a kernel
-that includes commit 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad
-Dock device for ALC298 platform").
+Apologies, I didn't spot this (I think it's gcc only - clang, which I
+was testing with, seems smart enough not to report this false positive).
 
-alsa-info.sh from v4.15.4 (just before commit 61fcf8ece9b6 arrived in
-stable) and v4.19.4 with the issue present are attached to the bugzilla.
-I've also Cc'd Tim, who uploaded them and has the laptop in question.
+I've fixed it in the latest patchset (v4):
 
-[0] https://bugzilla.redhat.com/show_bug.cgi?id=1554304
+https://lkml.org/lkml/2018/11/30/972
 
-Regards,
-Jeremy
+Dave
+IMPORTANT NOTICE: The contents of this email and any attachments are confid=
+ential and may also be privileged. If you are not the intended recipient, p=
+lease notify the sender immediately and do not disclose the contents to any=
+ other person, use it for any purpose, or store or copy the information in =
+any medium. Thank you.
