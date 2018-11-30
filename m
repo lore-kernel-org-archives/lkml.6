@@ -2,124 +2,178 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5055C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21575C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63AAE20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:40:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="DZGNmONP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AAE20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id D923B20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:40:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D923B20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeLAKvD (ORCPT
+        id S1726812AbeLAKvl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 05:51:03 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34709 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbeLAKvB (ORCPT
+        Sat, 1 Dec 2018 05:51:41 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43599 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeLAKvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 05:51:01 -0500
-Received: by mail-io1-f67.google.com with SMTP id f6so5946581iob.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 15:40:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=HeybjgHbpJipZ1Il1YROY2kgpa3unntVdKUfLQT23yQ=;
-        b=DZGNmONPcTMUNS0/QPap0woXinmtxEsKXDyvBPpJuvf2K6pRlHCANy18YWwEFJrQ+Z
-         w2Rl6Q7SMUCsz8zK9G4a+of6PoZ/i132QgDfDrgqL/wpSp+Tppj3kvlFqYaHW9jpRZoM
-         tVmxRy8ilp6seRzpSszroXD6ljYBX5jTIPVXKSzmPTNoQU099oLJtrnkoeXo+7Dy8jAd
-         sTbVga5WXtLAOr0XR6fOdMq5rKeW0T/406CTVdIkESWQTR52LJ9pb2uFvfLwgTCP3KMt
-         XlzwnZBQK7rPjpyKuuNYDI4h/Xfff5yMz3Jwue9HUwkCAxB1keVxL/n68+QNMwH9glCs
-         Q8sw==
+        Sat, 1 Dec 2018 05:51:40 -0500
+Received: by mail-pl1-f196.google.com with SMTP id gn14so3519754plb.10;
+        Fri, 30 Nov 2018 15:40:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=HeybjgHbpJipZ1Il1YROY2kgpa3unntVdKUfLQT23yQ=;
-        b=DNaOI9ZPBRjcH9Oc+XCA9qDz7N/ADE6iJtGU5lyfavytAjsWdhBgPdymcRsDB7J4fz
-         GXDjoH45daHVMApq6Cq510necDkqIVg2lWxd5iDP9AFt+DBjxWsyPLmE+ybahsDULE2t
-         4Wo6X0S4UPdVe0AjQ0GRYwAJs/jlcbXVt4BOsxnoFRkGLgm3e/5gukLGyR22hq6qh5Hr
-         lOosAr4S/vKJD3UZBX0ZLipKE2zCNdw4yvlqV/glw/skaWk+8Ktn8yWX8eMXL9GTI0Zb
-         3MoOh0Khp8lSI59m/E68iWag280xalJZ75fQAbiFkn6yiR8WUOjAmEP/Uy/sKQAgXXxI
-         i5Qg==
-X-Gm-Message-State: AA+aEWbmeTOC5wm+es8YeBS2WFikJuww/73J4Xd3z+n0i6kBK83Wi+ht
-        P/37jlV75onERe3+HrliEcX+qQ==
-X-Google-Smtp-Source: AFSGD/XfOzW60BZOGfmDnb36lGUB+TnW/f/5XWJx3rMVp9BEcUWhbgk2uXdYyXWXkikBSWqXblueRA==
-X-Received: by 2002:a6b:3b4f:: with SMTP id i76mr6755815ioa.266.1543621202534;
-        Fri, 30 Nov 2018 15:40:02 -0800 (PST)
-Received: from [26.67.58.27] ([172.56.12.18])
-        by smtp.gmail.com with ESMTPSA id r11sm2463740iog.46.2018.11.30.15.40.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 15:40:01 -0800 (PST)
-Date:   Sat, 01 Dec 2018 12:37:57 +1300
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAK8P3a2x3nQKKvLBSH8G9R6w+sv=09y3h7gWdFYUMNAsB8aj6g@mail.gmail.com>
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com> <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io> <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com> <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net> <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com> <87y39b2lm2.fsf@xmission.com> <20181130065606.kmilbbq46oeycjp5@brauner.io> <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com> <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com> <CAK8P3a1isSRCd-OLJK15C+gSJdpeR=zEXghc8+AMM5QYYw3Tyg@mail.gmail.com> <EC87B1BE-BDD0-414F-85F8-806C3CC4DD07@brauner.io> <CAKOZuesEPFnkd7YGbu82TRQwhR=KPwNW8GpYTw=719_xmJx9FA@mail.gmail.com> <CAK8P3a2x3nQKKvLBSH8G9R6w+sv=09y3h7gWdFYUMNAsB8aj6g@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xhtcqDUtZnEt1PTKMMrCEMSGSWbtqD1Y6fazSQf4ytU=;
+        b=AH7CT/A8DuBnfwgpS5fxEGMR3mPAOFGcoUaln4fBFiJjwrc3v4WIbLa4pYKf/unze3
+         s6GDCJ5f6V1fcjCvMs1V0PMesh9afcwtajhzwZcPKu7c9CElbtNylJMOFlc13lGNjKuQ
+         JXAdjCSK73UwtAkq1Srvmxlz1FUOLcM32Ojm+aHFB2+sk2xhQC4JJPnHoLkgroIh2wn5
+         FRKsHP4CrKBqhWUX6d4nJBBRjVlVkG5kdxT2ZrTx7HpJK6Qj7dCO7I7GVTUePXDrmgFR
+         O5hbQAgJZbG8QeoSLWKiITeakvU8Kuk154ehQFunHNqt6G67Ll3UFufyNryXkql5oM4R
+         ENdA==
+X-Gm-Message-State: AA+aEWZl2efubAJ+OmcQY3NSpq0HRBDSJO+X6z4jtfaXssivH+a67r3b
+        tXbwRYGj157d4EQC+w4oNqs=
+X-Google-Smtp-Source: AFSGD/WXJGHaYjTdmo1R74nMmXE46zh11EQic/5vaSKpDuQPDxEqHjKRrwBk1YZFBxlysoXnzb48gQ==
+X-Received: by 2002:a17:902:2bc5:: with SMTP id l63-v6mr7547004plb.241.1543621241665;
+        Fri, 30 Nov 2018 15:40:41 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id c4sm18132190pfm.151.2018.11.30.15.40.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 15:40:40 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Fri, 30 Nov 2018 15:40:38 -0800
+Date:   Fri, 30 Nov 2018 15:40:38 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org,
+        dmitry.torokhov@gmail.com, brendanhiggins@google.com
+Subject: Re: [driver-core PATCH v7 2/9] driver core: Establish clear order of
+ operations for deferred probe and remove
+Message-ID: <20181130234038.GF28501@garbanzo.do-not-panic.com>
+References: <154345118835.18040.17186161872550839244.stgit@ahduyck-desk1.amr.corp.intel.com>
+ <154345153672.18040.3771035148218843351.stgit@ahduyck-desk1.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Daniel Colascione <dancol@google.com>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <7C5B4CBD-6364-4DCE-9EFD-3657C67DACEB@brauner.io>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154345153672.18040.3771035148218843351.stgit@ahduyck-desk1.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On December 1, 2018 12:12:53 PM GMT+13:00, Arnd Bergmann <arnd@arndb=2Ede> =
-wrote:
->On Sat, Dec 1, 2018 at 12:05 AM Daniel Colascione <dancol@google=2Ecom>
->wrote:
->> On Fri, Nov 30, 2018 at 2:26 PM Christian Brauner
-><christian@brauner=2Eio> wrote:
->> > On December 1, 2018 11:09:58 AM GMT+13:00, Arnd Bergmann
-><arnd@arndb=2Ede> wrote:
->> >
->> > One humble point I would like to make is that what I care about
->most is a sensible way forward without having to redo essential parts
->of how syscalls work=2E
->> > I don't want to introduce a sane, small syscall that ends up
->breaking all over the place because we decided to fix past mistakes
->that technically have nothing to do with the patch itself=2E
->> > However, I do sympathize and understand these concerns=2E
->>
->> IMHO, it's fine to just replicate all the splits we have for the
->> existing signal system calls=2E It's ugly, but once it's done, it'll be
->> done for a long time=2E I can't see a need to add even more signal
->> system calls after this one=2E
->
->We definitely need waitid_time64() and rt_sigtimedwait_time64()
->in the very near future=2E
+On Wed, Nov 28, 2018 at 04:32:16PM -0800, Alexander Duyck wrote:
+> Add an additional bit flag to the device struct named async_probe. This
+> additional flag allows us to guarantee ordering between probe and remove
+> operations.
+> 
+> This allows us to guarantee that if we execute a remove operation on a
+> given interface it will not attempt to update the driver member
+> asynchronously following the earlier operation. Previously this guarantee
+> was not present and could result in us attempting to remove a driver from
+> an interface only to have it attempt to attach the driver later when we
+> finally complete the deferred asynchronous probe call.
+> 
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Right, I remember you pointing this out in a prior mail=2E
-Thanks for working on this for such a long time now, Arnd!
-Can we agree to move on with the procfd syscall given the current constrai=
-nts?
-I just don't want to see the syscall being=20
-blocked by a generic problem whose
-ultimate solution is to get rid of weird
-architectural constraints=2E :)
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
+This is the sort of corner case that is best if we had a test case for
+it, as it is hard to reproduce and -- how do we know we won't regress
+later? Not sure if it helps but we have lib/test_kmod.c and its
+respective tools/testing/selftests/kmod/kmod.sh, a new enum kmod_test_case
+might be in order for device emulation creeping up / disappearing
+during a custom mock driver using async probe.
+
+Yeah.. I know.. "yes this seems good but how about later"? While we're going
+through the motions here and have your attention on this I think it
+would be valuable for this now. This is the sort of code that won't
+change often, but if modified *can* really break things badly.
+
+  Luis
+
+> ---
+>  drivers/base/dd.c      |   16 ++++++++++++++++
+>  include/linux/device.h |    3 +++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 88713f182086..ef3f70a7cb5a 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -774,6 +774,10 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+>  
+>  	device_lock(dev);
+>  
+> +	/* nothing to do if async_probe has been cleared */
+> +	if (!dev->async_probe)
+> +		goto out_unlock;
+> +
+>  	if (dev->parent)
+>  		pm_runtime_get_sync(dev->parent);
+>  
+> @@ -785,6 +789,9 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
+>  	if (dev->parent)
+>  		pm_runtime_put(dev->parent);
+>  
+> +	/* We made our attempt at an async_probe, clear the flag */
+> +	dev->async_probe = false;
+> +out_unlock:
+>  	device_unlock(dev);
+>  
+>  	put_device(dev);
+> @@ -829,6 +836,7 @@ static int __device_attach(struct device *dev, bool allow_async)
+>  			 */
+>  			dev_dbg(dev, "scheduling asynchronous probe\n");
+>  			get_device(dev);
+> +			dev->async_probe = true;
+>  			async_schedule(__device_attach_async_helper, dev);
+>  		} else {
+>  			pm_request_idle(dev);
+> @@ -929,6 +937,14 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+>  {
+>  	struct device_driver *drv;
+>  
+> +	/*
+> +	 * In the event that we are asked to release the driver on an
+> +	 * interface that is still waiting on a probe we can just terminate
+> +	 * the probe by setting async_probe to false. When the async call
+> +	 * is finally completed it will see this state and just exit.
+> +	 */
+> +	dev->async_probe = false;
+> +
+>  	drv = dev->driver;
+>  	if (drv) {
+>  		while (device_links_busy(dev)) {
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 1b25c7a43f4c..4d2eb2c74149 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -957,6 +957,8 @@ struct dev_links_info {
+>   *              device.
+>   * @dma_coherent: this particular device is dma coherent, even if the
+>   *		architecture supports non-coherent devices.
+> + * @async_probe: This device has an asynchronous probe event pending. Should
+> + *		 only be updated while holding device lock.
+>   *
+>   * At the lowest level, every device in a Linux system is represented by an
+>   * instance of struct device. The device structure contains the information
+> @@ -1051,6 +1053,7 @@ struct device {
+>      defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
+>  	bool			dma_coherent:1;
+>  #endif
+> +	bool			async_probe:1;
+>  };
+>  
+>  static inline struct device *kobj_to_dev(struct kobject *kobj)
+> 
