@@ -2,189 +2,128 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35787C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBCAC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD98020863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0B892146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:22:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIAdL4bY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD98020863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUQGknUa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B892146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbeLAJdF (ORCPT
+        id S1726973AbeLAJdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:33:05 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42502 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeLAJdE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:33:04 -0500
-Received: by mail-qk1-f193.google.com with SMTP id m5so4098389qka.9;
-        Fri, 30 Nov 2018 14:22:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=44OpprV4h0nRAiXZ3jQY29UAXQttTMsAEP4d0/lSb48=;
-        b=nIAdL4bYZxwM12bqcs59Y7Dtp6QqhGsjudua2GJ8GxP6Nvb1ajAvqo/lHF37IOxivd
-         w5XGv89B6wFKUYI/q3IvGBT9ioF7YavByFBGXNbfNr6kVUcNee3fgDx6JGcEG6fOTYoL
-         WeVYXioqAYDHBm9O1qATp9UhbXl+0z+YhRRxuk1PrvvHz5jyCmZ2aCWllDBlGusdjNt/
-         9LxF6jCrJqwSIDeETYcuzEzfgEJd0nHBxeCmjBKOnQfAmB3FrHoKbTKqIB91kEUVU+9/
-         LDkPd6GBAjKfGl26t8z7fKhAimJWRzOBjIdUErpoxx1RcRCdge0Oom4yw2/D3DPkPVDm
-         xe0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=44OpprV4h0nRAiXZ3jQY29UAXQttTMsAEP4d0/lSb48=;
-        b=aKV3974cVSeEB//GmLeYtoyrzIRo2yaQN5Sz6iPuWMnhaRzxZ1/yotr94qLX+lXfq5
-         i4Vd0jZ6tmYSQfuYeNFWOevcIwY27YUH4b+ku8xSzn4fcUF+xD8JHmTAuqOVqXUE7r9B
-         pmoPi2Z9hNv1KO+kUjH7S2RMab1Gap3G5ypcSAQtYyk2wbP8SlPUY/JcQJrbIHvleRvd
-         2YX4bgTaLy4FqcMnTINGtZfMXkqedLkH7VjMn6SpNvAh+lSaVTuhteCV5uVa4I1LBLxe
-         v87Vny2l81z+5jyQEE+kfpNHY00m6cc6QMcdvoqzGB+Uu5yeHUqOuVR5Ef3LS/vBANJP
-         ILzg==
-X-Gm-Message-State: AA+aEWYHGTsBzc3Qd8ft3nXnoDZc+V9UjdMNlfgPPvgSM3WTqt2KC5qR
-        imk2jIyr1L9xGEtQdsd8Lqba98GUPXMQdQn80uA=
-X-Google-Smtp-Source: AFSGD/UBvMCxxZpWUkkncP89hZ6QTVg4q0Uiv5MD1NKGyf6FZJEJzjy7jvYGx52mAdlrdaB1Ctw/rdLxXi9a3vH4328=
-X-Received: by 2002:a37:b405:: with SMTP id d5mr6777307qkf.162.1543616536633;
- Fri, 30 Nov 2018 14:22:16 -0800 (PST)
+        Sat, 1 Dec 2018 04:33:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726771AbeLAJdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:33:17 -0500
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC4442146F;
+        Fri, 30 Nov 2018 22:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543616550;
+        bh=k1xNQffQWPandFrKviicPOU9k6KxJ1GoFqxgq3ggYzA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mUQGknUa4g+fcp70Y9faAaLHBP/ykizuy+KQ4buJufF3Zj6Nrf+F1A9XpGp1gLzFR
+         1J5sDoX9am2/eK9oTCSku6mniXKwB3SHbLrflVBmGNQ3JxJOzHfNc7a7PvoIwpmwLY
+         9PeyMwCtNiruR8NvAs8Ymc2taZ3ldbxq2IjDcsWw=
+Received: by mail-qt1-f172.google.com with SMTP id n32so7665474qte.11;
+        Fri, 30 Nov 2018 14:22:29 -0800 (PST)
+X-Gm-Message-State: AA+aEWY4SP/It5Bsu/xKKs85gyaMnI46feZlnMVXh5+nxYWbr3pMENhL
+        S+1mImubthouP0reU/LO0DLuXmKBOueqZklivw==
+X-Google-Smtp-Source: AFSGD/UBeIuCHplLMR89+mMnrwyjn6O0ySCyoSj4r6wLnxo1X039Y0/torLc2WlvsQzkZngYZjXyXKclCiUs1ogWorU=
+X-Received: by 2002:ac8:2d2b:: with SMTP id n40mr6957373qta.38.1543616549098;
+ Fri, 30 Nov 2018 14:22:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20181107085507.26126-1-enric.balletbo@collabora.com>
-In-Reply-To: <20181107085507.26126-1-enric.balletbo@collabora.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Fri, 30 Nov 2018 23:22:05 +0100
-Message-ID: <CAFqH_53NiYULqcc+2fCgbHETJoTc7tWD8BNxOFhPm6kFZ=e6_g@mail.gmail.com>
-Subject: Re: [PATCH v3] backlight: pwm_bl: Fix brightness levels for non-DT case.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        robert.jarzmik@free.fr,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        stable@vger.kernel.org, u.kleine-koenig@pengutronix.de,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Jingoo Han <jingoohan1@gmail.com>
+References: <20181130203232.5743-1-robh@kernel.org> <CAKMK7uGrBnaip1E+vp6foGfvdRb2=bhPNOmmZfjTUt2HZPLQcA@mail.gmail.com>
+In-Reply-To: <CAKMK7uGrBnaip1E+vp6foGfvdRb2=bhPNOmmZfjTUt2HZPLQcA@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 30 Nov 2018 16:22:17 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKwnzA+e6pbfUCzCX5ZCJAYixjJtDV2Dfh9u-bgOBKYHQ@mail.gmail.com>
+Message-ID: <CAL_JsqKwnzA+e6pbfUCzCX5ZCJAYixjJtDV2Dfh9u-bgOBKYHQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] of: Add a GitLab CI config file for unittests
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
-dia dc., 7 de nov. 2018 a les 9:56:
+On Fri, Nov 30, 2018 at 2:53 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
 >
-> Commit '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
-> linearly to human eye")' allows the possibility to compute a default
-> brightness table when there isn't the brightness-levels property in the
-> DT. Unfortunately the changes made broke the pwm backlight for the
-> non-DT boards.
+> On Fri, Nov 30, 2018 at 9:32 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > This adds a GitLab CI config file running the DT unittest in a usermode
+> > Linux build. The corresponding CI job can be found here:
+> >
+> > https://gitlab.com/robherring/linux-dt-unittest/pipelines
+> >
+> > This CI job can be duplicated by others by creating a kernel repo on a
+> > GitLab instance and configuring GitLab CI to use
+> > drivers/of/.gitlab-ci.yml config file.
+> >
+> > Cc: Frank Rowand <frowand.list@gmail.com>
+> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
 >
-> Usually, the non-DT boards don't pass the brightness levels via platform
-> data, instead, it sets the max_brightness in their platform data and the
-> driver calculates the level without a table. The offending patch assumed
-> that when there is no brightness levels table we should create one, but this
-> is clearly wrong for the non-DT case.
+> Adding dri-devel.
 >
-> After this patch the code handles the DT and the non-DT case taking in
-> consideration also if max_brightness is set or not.
+> > ---
+> >  drivers/of/.gitlab-ci.yml | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >  create mode 100644 drivers/of/.gitlab-ci.yml
+> >
+> > diff --git a/drivers/of/.gitlab-ci.yml b/drivers/of/.gitlab-ci.yml
+> > new file mode 100644
+> > index 000000000000..44a4824f5c33
+> > --- /dev/null
+> > +++ b/drivers/of/.gitlab-ci.yml
+> > @@ -0,0 +1,18 @@
+> > +# SPDX-License-Identifier: GPL-2.0+
+> > +
+> > +image: registry.gitlab.com/robherring/docker-images/ubuntu-kernel-build
 >
-> Fixes: 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
+> I think it's better to include the docker recipe too. One because
+> shipping pre-built dockers is a license nightmare, second because
+> better hackability. For a full on example see:
 >
-> Changes in v3:
-> - Fixed some typos in commit message.
-> - Removed ' in Fixes tag.
->
-> Changes in v2:
-> - Rebase on top of mainline
-> - Add Tested-by and Acked-by tags.
->
->  drivers/video/backlight/pwm_bl.c | 41 +++++++++++++++++++++++++++-----
->  1 file changed, 35 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> index 678b27063198..f9ef0673a083 100644
-> --- a/drivers/video/backlight/pwm_bl.c
-> +++ b/drivers/video/backlight/pwm_bl.c
-> @@ -562,7 +562,30 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->                 goto err_alloc;
->         }
->
-> -       if (!data->levels) {
-> +       if (data->levels) {
-> +               /*
-> +                * For the DT case, only when brightness levels is defined
-> +                * data->levels is filled. For the non-DT case, data->levels
-> +                * can come from platform data, however is not usual.
-> +                */
-> +               for (i = 0; i <= data->max_brightness; i++) {
-> +                       if (data->levels[i] > pb->scale)
-> +                               pb->scale = data->levels[i];
-> +
-> +                       pb->levels = data->levels;
-> +               }
-> +       } else if (!data->max_brightness) {
-> +               /*
-> +                * If no brightness levels are provided and max_brightness is
-> +                * not set, use the default brightness table. For the DT case,
-> +                * max_brightness is set to 0 when brightness levels is not
-> +                * specified. For the non-DT case, max_brightness is usually
-> +                * set to some value.
-> +                */
-> +
-> +               /* Get the PWM period (in nanoseconds) */
-> +               pwm_get_state(pb->pwm, &state);
-> +
->                 ret = pwm_backlight_brightness_default(&pdev->dev, data,
->                                                        state.period);
->                 if (ret < 0) {
-> @@ -570,13 +593,19 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->                                 "failed to setup default brightness table\n");
->                         goto err_alloc;
->                 }
-> -       }
->
-> -       for (i = 0; i <= data->max_brightness; i++) {
-> -               if (data->levels[i] > pb->scale)
-> -                       pb->scale = data->levels[i];
-> +               for (i = 0; i <= data->max_brightness; i++) {
-> +                       if (data->levels[i] > pb->scale)
-> +                               pb->scale = data->levels[i];
->
-> -               pb->levels = data->levels;
-> +                       pb->levels = data->levels;
-> +               }
-> +       } else {
-> +               /*
-> +                * That only happens for the non-DT case, where platform data
-> +                * sets the max_brightness value.
-> +                */
-> +               pb->scale = data->max_brightness;
->         }
->
->         pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
-> --
-> 2.19.1
->
+> https://gitlab.freedesktop.org/drm/igt-gpu-tools/blob/master/.gitlab-ci.yml
 
-A gentle ping on this patch.
+Humm, but in the end you are still publishing the docker images either
+way. It's just a difference of publishing across projects and whether
+it's 2 jobs or 1 job with 2 stages.
 
-Best regards,
- Enric
+I do tend to prefer the Travis-CI simplicity of just listing packages
+to install. It seems like the same could be done with docker and some
+magic on the server side. At least for the simple case of 'install
+this list of packages'.
+
+> For the kernel I guess the question is where we should put all the
+> docker files. There's going to be some need for subsystem specific
+> tooling (e.g. we want something that has igt installed eventually for
+> anything drm), so maybe just keeping them in subsystem directories is
+> best. Was at least my plan with drivers/gpu.
+
+My plan (to the extent I have one) was to put the common parts into
+the docker image and leave the small job specific things in the job
+setup. Then I can use the same docker image across jobs. Maybe that's
+a pointless goal in the docker world.
+
+My dockerfile is simple enough, I could probably just create it within
+the .gitlab-ci.yml.
+
+Rob
