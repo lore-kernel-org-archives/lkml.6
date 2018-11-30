@@ -2,296 +2,112 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF27C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EACC04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C1C2081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABA992081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:22:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="g7L6IqiJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C1C2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V11bvIeM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA992081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbeK3N31 (ORCPT
+        id S1727228AbeK3Nae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:29:27 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9623 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbeK3N31 (ORCPT
+        Fri, 30 Nov 2018 08:30:34 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:42431 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeK3Nae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:29:27 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c009e8e0000>; Thu, 29 Nov 2018 18:21:02 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 29 Nov 2018 18:21:47 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 29 Nov 2018 18:21:47 -0800
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Nov
- 2018 02:21:47 +0000
-Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
-To:     Tom Talpey <tom@talpey.com>, <john.hubbard@gmail.com>,
-        <linux-mm@kvack.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181110085041.10071-1-jhubbard@nvidia.com>
- <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
- <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
- <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
- <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
- <15e4a0c0-cadd-e549-962f-8d9aa9fc033a@talpey.com>
- <313bf82d-cdeb-8c75-3772-7a124ecdfbd5@nvidia.com>
- <2aa422df-d5df-5ddb-a2e4-c5e5283653b5@talpey.com>
- <7a68b7fc-ff9d-381e-2444-909c9c2f6679@nvidia.com>
- <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <0f093af1-dee9-51b6-0795-2c073a951fed@nvidia.com>
-Date:   Thu, 29 Nov 2018 18:21:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 30 Nov 2018 08:30:34 -0500
+Received: by mail-vk1-f196.google.com with SMTP id y14so927374vky.9
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 18:22:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GybPNpowQosWEQ8Uz6Fnm0hdyGhsMXH/2kYpCK7AZ8A=;
+        b=V11bvIeMPvxfWjQFyrZnfcEnW7Z9UkP/RrQ5HyOEqG7JZdZyqLwVgIEKmeQXKogNFa
+         Rcy+G2Oah5ZbrD2ss8PTvBg4vEgLlcsijqRuA7CX17uv+mWG/F7765vsWoQ3/5qI3eB0
+         tDqJQbei2uc+iYCX3h+aQbq2ZkrqO03vceZeo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GybPNpowQosWEQ8Uz6Fnm0hdyGhsMXH/2kYpCK7AZ8A=;
+        b=JXyBVziGwuom35yLV8Uik7PfpgcZEKQGbbJxSb/bBOYduo/jg3l9ABNljqkib8syC4
+         TZw0fk61u44JfOk4z4fxoOgdW2bPoJ/OqOmCCce0WqWw+GB9HQU1NHm4H0tD1e5do/Q2
+         gtp5UxzgUIqLRWrE2kWdzy9KLkK1bKtt9CuRZGpKnzHwgr1s8DhbBSmJXA6urWuheSso
+         qYrzzJENkU9hHNOu2MNwrRHuDYaA0V7dNxh4fN5xz1tPfdBxcoHuVuBCsM2FLOSOmnxU
+         KvO9nSoTHJDnnbo6SgYuU1OpwsQHCS3rdnT7Mph88AmdEYkWkiocGVsOSCk4elS+p7eV
+         HAQw==
+X-Gm-Message-State: AA+aEWZXhWAId4l/kJmdaYPGupEWwVWN7ZwrwTBNFsUiFS5RKefrPQPz
+        aAnOtfh2z2M55hIsAZzYW6SVer2XBbU=
+X-Google-Smtp-Source: AFSGD/X4rofZlwT5iiZdtTyaQvmmPDvDAabUTPbGpQRxstI8rI1a5GB/afmxFZ9SLMQEyfhDVbxjJA==
+X-Received: by 2002:a1f:9042:: with SMTP id s63mr1695357vkd.17.1543544574772;
+        Thu, 29 Nov 2018 18:22:54 -0800 (PST)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
+        by smtp.gmail.com with ESMTPSA id n200sm630828vke.44.2018.11.29.18.22.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 18:22:53 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id b18so939082vke.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 18:22:53 -0800 (PST)
+X-Received: by 2002:a1f:1881:: with SMTP id 123mr1748214vky.40.1543544573175;
+ Thu, 29 Nov 2018 18:22:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543544462; bh=E+uR3IdD7Rdrwk5CV65yf/TjEcWPA8cAPAna3TVj22c=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=g7L6IqiJVIeYSGKVznSTyWfxCnPjm9bf4ogR4erHAbyOdcRlwXK1gKDwhXlmXUpND
-         l4BjxQpC44V6tMqCxD/vYY55nkTwqmOQBOiy9qp3cqtDoDntBQ9L00um5CmtiAqrlq
-         hgqv7hsJy2TpJBZYZRkBy1GGb8KWsy+RgIERSEwqHGOhduzmw4nAhF1rIQcADK2ZgI
-         JhsJs2LDRthAB2cZWDSxwYmrgSuUiPIIdLA6XTd4j7LA0VdFNhqQ6yUv8KzLZIFCXD
-         Szo98PPrV6YgN6+2GBu4QlKeCw2ycClnzVxz9iYlN5hSQe2hFwPu59zKYXb9AsppAt
-         tT6qSVzbfCZng==
+References: <20181130021840.75861-1-ryandcase@chromium.org>
+In-Reply-To: <20181130021840.75861-1-ryandcase@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 29 Nov 2018 18:22:41 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WX5Dcs4a1puEf3_DO0x6di48T67buVGoacMneeJG2obw@mail.gmail.com>
+Message-ID: <CAD=FV=WX5Dcs4a1puEf3_DO0x6di48T67buVGoacMneeJG2obw@mail.gmail.com>
+Subject: Re: [PATCH v3] tty: serial: qcom_geni_serial: Fix softlock
+To:     ryandcase@chromium.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Evan Green <evgreen@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 6:18 PM, Tom Talpey wrote:
-> On 11/29/2018 8:39 PM, John Hubbard wrote:
->> On 11/28/18 5:59 AM, Tom Talpey wrote:
->>> On 11/27/2018 9:52 PM, John Hubbard wrote:
->>>> On 11/27/18 5:21 PM, Tom Talpey wrote:
->>>>> On 11/21/2018 5:06 PM, John Hubbard wrote:
->>>>>> On 11/21/18 8:49 AM, Tom Talpey wrote:
->>>>>>> On 11/21/2018 1:09 AM, John Hubbard wrote:
->>>>>>>> On 11/19/18 10:57 AM, Tom Talpey wrote:
->>>> [...]
->>>>> I'm super-limited here this week hardware-wise and have not been able
->>>>> to try testing with the patched kernel.
->>>>>
->>>>> I was able to compare my earlier quick test with a Bionic 4.15 kernel
->>>>> (400K IOPS) against a similar 4.20rc3 kernel, and the rate dropped to
->>>>> ~_375K_ IOPS. Which I found perhaps troubling. But it was only a quic=
-k
->>>>> test, and without your change.
->>>>>
->>>>
->>>> So just to double check (again): you are running fio with these parame=
-ters,
->>>> right?
->>>>
->>>> [reader]
->>>> direct=3D1
->>>> ioengine=3Dlibaio
->>>> blocksize=3D4096
->>>> size=3D1g
->>>> numjobs=3D1
->>>> rw=3Dread
->>>> iodepth=3D64
->>>
->>> Correct, I copy/pasted these directly. I also ran with size=3D10g becau=
-se
->>> the 1g provides a really small sample set.
->>>
->>> There was one other difference, your results indicated fio 3.3 was used=
-.
->>> My Bionic install has fio 3.1. I don't find that relevant because our
->>> goal is to compare before/after, which I haven't done yet.
->>>
->>
->> OK, the 50 MB/s was due to my particular .config. I had some expensive d=
-ebug options
->> set in mm, fs and locking subsystems. Turning those off, I'm back up to =
-the rated
->> speed of the Samsung NVMe device, so now we should have a clearer pictur=
-e of the
->> performance that real users will see.
->=20
-> Oh, good! I'm especially glad because I was having a heck of a time
-> reconfiguring the one machine I have available for this.
->=20
->> Continuing on, then: running a before and after test, I don't see any si=
-gnificant
->> difference in the fio results:
->=20
-> Excerpting from below:
->=20
->> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
->>=C2=A0=C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB/s)(1024M=
-iB/1360msec)
->>=C2=A0=C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 : usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D73
->=20
-> vs
->=20
->> With patches applied:
->>=C2=A0=C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB/s)(1024M=
-iB/1360msec)
->>=C2=A0=C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 : usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D73
->=20
-> Perfect results, not CPU limited, and full IOPS.
->=20
-> Curiously identical, so I trust you've checked that you measured
-> both targets, but if so, I say it's good.
->=20
+Hi,
 
-Argh, copy-paste error in the email. The real "before" is ever so slightly
-better, at 194K IOPS and 759 MB/s:
+On Thu, Nov 29, 2018 at 6:19 PM Ryan Case <ryandcase@chromium.org> wrote:
+>
+> Transfers were being divided into device FIFO sized (64 byte max)
+> operations which would poll for completion within a spin_lock_irqsave /
+> spin_unlock_irqrestore block. This both made things slow by waiting for
+> the FIFO to completely drain before adding further data and would also
+> result in softlocks on large transmissions.
+>
+> This patch allows larger transfers with continuous FIFO additions as
+> space becomes available and removes polling from the interrupt handler.
+>
+> Signed-off-by: Ryan Case <ryandcase@chromium.org>
+> ---
+>
+> Changes in v3:
+> - Reworded comment for clarity
+> - Fixed mips compiler warning
+>
+> Changes in v2:
+> - Addressed nits raised by Stephen
+>
+>  drivers/tty/serial/qcom_geni_serial.c | 56 +++++++++++++++++++--------
+>  1 file changed, 39 insertions(+), 17 deletions(-)
 
- $ fio ./experimental-fio.conf
-reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096=
-B-4096B, ioengine=3Dlibaio, iodepth=3D64
-fio-3.3
-Starting 1 process
-Jobs: 1 (f=3D1)
-reader: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D1715: Thu Nov 29 17:07:09 =
-2018
-   read: IOPS=3D194k, BW=3D759MiB/s (795MB/s)(1024MiB/1350msec)
-    slat (nsec): min=3D1245, max=3D2812.7k, avg=3D1538.03, stdev=3D5519.61
-    clat (usec): min=3D148, max=3D755, avg=3D326.85, stdev=3D18.13
-     lat (usec): min=3D150, max=3D3483, avg=3D328.41, stdev=3D19.53
-    clat percentiles (usec):
-     |  1.00th=3D[  322],  5.00th=3D[  326], 10.00th=3D[  326], 20.00th=3D[=
-  326],
-     | 30.00th=3D[  326], 40.00th=3D[  326], 50.00th=3D[  326], 60.00th=3D[=
-  326],
-     | 70.00th=3D[  326], 80.00th=3D[  326], 90.00th=3D[  326], 95.00th=3D[=
-  326],
-     | 99.00th=3D[  355], 99.50th=3D[  537], 99.90th=3D[  553], 99.95th=3D[=
-  553],
-     | 99.99th=3D[  619]
-   bw (  KiB/s): min=3D767816, max=3D783096, per=3D99.84%, avg=3D775456.00,=
- stdev=3D10804.59, samples=3D2
-   iops        : min=3D191954, max=3D195774, avg=3D193864.00, stdev=3D2701.=
-15, samples=3D2
-  lat (usec)   : 250=3D0.09%, 500=3D99.30%, 750=3D0.61%, 1000=3D0.01%
-  cpu          : usr=3D18.24%, sys=3D44.77%, ctx=3D251527, majf=3D0, minf=
-=3D73
-  IO depths    : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%, 8=3D0.1%, 16=3D0.1%, 32=3D0.=
-1%, >=3D64=3D100.0%
-     submit    : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
-=3D0.0%, >=3D64=3D0.0%
-     complete  : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
-=3D0.1%, >=3D64=3D0.0%
-     issued rwts: total=3D262144,0,0,0 short=3D0,0,0,0 dropped=3D0,0,0,0
-     latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D64
+Looks happy to me now.  Thanks and sorry for misunderstanding how
+"active" worked on v2.
 
-Run status group 0 (all jobs):
-   READ: bw=3D759MiB/s (795MB/s), 759MiB/s-759MiB/s (795MB/s-795MB/s), io=
-=3D1024MiB (1074MB), run=3D1350-1350msec
-
-Disk stats (read/write):
-  nvme0n1: ios=3D222853/0, merge=3D0/0, ticks=3D71410/0, in_queue=3D71935, =
-util=3D100.00%
-
-thanks,
---=20
-John Hubbard
-NVIDIA
->=20
->>
->> fio.conf:
->>
->> [reader]
->> direct=3D1
->> ioengine=3Dlibaio
->> blocksize=3D4096
->> size=3D1g
->> numjobs=3D1
->> rw=3Dread
->> iodepth=3D64
->>
->> ---------------------------------------------------------
->> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
->>
-[deleted with prejudice. See the correction above, instead] --jhubbard
->>
->> ---------------------------------------------------------
->> With patches applied:
->>
->> <redforge> fast_256GB $ fio ./experimental-fio.conf
->> reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4=
-096B-4096B, ioengine=3Dlibaio, iodepth=3D64
->> fio-3.3
->> Starting 1 process
->> Jobs: 1 (f=3D1)
->> reader: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D1738: Thu Nov 29 17:20:=
-07 2018
->> =C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB/s)(1024MiB/13=
-60msec)
->> =C2=A0=C2=A0=C2=A0=C2=A0 slat (nsec): min=3D1381, max=3D46469, avg=3D164=
-9.48, stdev=3D594.46
->> =C2=A0=C2=A0=C2=A0=C2=A0 clat (usec): min=3D162, max=3D12247, avg=3D330.=
-00, stdev=3D185.55
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lat (usec): min=3D165, max=3D12253, avg=
-=3D331.68, stdev=3D185.69
->> =C2=A0=C2=A0=C2=A0=C2=A0 clat percentiles (usec):
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1.00th=3D[=C2=A0 322],=C2=A0 5.00=
-th=3D[=C2=A0 326], 10.00th=3D[=C2=A0 326], 20.00th=3D[=C2=A0 326],
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 30.00th=3D[=C2=A0 326], 40.00th=3D[=C2=
-=A0 326], 50.00th=3D[=C2=A0 326], 60.00th=3D[=C2=A0 326],
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 70.00th=3D[=C2=A0 326], 80.00th=3D[=C2=
-=A0 326], 90.00th=3D[=C2=A0 326], 95.00th=3D[=C2=A0 326],
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 99.00th=3D[=C2=A0 379], 99.50th=3D[=C2=
-=A0 594], 99.90th=3D[=C2=A0 603], 99.95th=3D[=C2=A0 611],
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 99.99th=3D[12125]
->> =C2=A0=C2=A0=C2=A0 bw (=C2=A0 KiB/s): min=3D751640, max=3D782912, per=3D=
-99.52%, avg=3D767276.00, stdev=3D22112.64, samples=3D2
->> =C2=A0=C2=A0=C2=A0 iops=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : min=
-=3D187910, max=3D195728, avg=3D191819.00, stdev=3D5528.16, samples=3D2
->> =C2=A0=C2=A0 lat (usec)=C2=A0=C2=A0 : 250=3D0.08%, 500=3D99.30%, 750=3D0=
-.59%
->> =C2=A0=C2=A0 lat (msec)=C2=A0=C2=A0 : 20=3D0.02%
->> =C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :=
- usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D73
->> =C2=A0=C2=A0 IO depths=C2=A0=C2=A0=C2=A0 : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%,=
- 8=3D0.1%, 16=3D0.1%, 32=3D0.1%, >=3D64=3D100.0%
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 submit=C2=A0=C2=A0=C2=A0 : 0=3D0.0%, 4=3D=
-100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=3D0.0%, >=3D64=3D0.0%
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 complete=C2=A0 : 0=3D0.0%, 4=3D100.0%, 8=
-=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=3D0.1%, >=3D64=3D0.0%
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 issued rwts: total=3D262144,0,0,0 short=
-=3D0,0,0,0 dropped=3D0,0,0,0
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 latency=C2=A0=C2=A0 : target=3D0, window=
-=3D0, percentile=3D100.00%, depth=3D64
->>
->> Run status group 0 (all jobs):
->> =C2=A0=C2=A0=C2=A0 READ: bw=3D753MiB/s (790MB/s), 753MiB/s-753MiB/s (790=
-MB/s-790MB/s), io=3D1024MiB (1074MB), run=3D1360-1360msec
->>
->> Disk stats (read/write):
->> =C2=A0=C2=A0 nvme0n1: ios=3D220798/0, merge=3D0/0, ticks=3D71481/0, in_q=
-ueue=3D71966, util=3D100.00%
->>
->>
->> thanks,
->>
->=20
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
