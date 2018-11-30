@@ -2,117 +2,164 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E6FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E3AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E525F20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:54:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27844213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:57:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SSdCsuiw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E525F20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="JomXrF9U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27844213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeK3NCd (ORCPT
+        id S1727031AbeK3NFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:02:33 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44352 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbeK3NCd (ORCPT
+        Fri, 30 Nov 2018 08:05:13 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:60172 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbeK3NFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:02:33 -0500
-Received: by mail-qk1-f193.google.com with SMTP id n12so2312206qkh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 17:54:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xW9rmFiKf3WY/YyCuyTfToXUagNK8rDkMueS0ALg+1Q=;
-        b=SSdCsuiwg7Ui8uCNQUqifgVnyytUa3W4JdghR5l0M1/SLPlcGY+Ipl/VIMJD8jCRJN
-         6qAWBrjQRdcRuzgKR2R48fo1pkraVEG36RAzvlmi3A+wJNSXWkLfTHFso69+ZbpD6aOE
-         vSfk+5kQGEN4hBT42XA+onouppIanURs/Pw5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xW9rmFiKf3WY/YyCuyTfToXUagNK8rDkMueS0ALg+1Q=;
-        b=Iyk6ftI19BSYD9cKeaNihtjklorydwo4kpKh14hDI7TefnxkCvkQPAf2/VtJNxJSNd
-         bdu8Y94UgtfHw8s1C7SO2JtO1ZifzGPQyZI8x44xuttwuweBH1Ds5v6esR+AGMcSLWs3
-         ErTRJOa5G+EmvGrNAXIpRtIOqmZfZmprXWyCs8mj+RotU2Ge0/qM3nsR75CXRZb6v7Cn
-         DxM5pZW1WYwp7fL7iORYgntW5DsEXCU8g6ws+nM/NvubOs+StK4UmZRT+4z9wjshfsU7
-         cWlVyBZf0yutqSqgQ7NznDep+ic13Dp4RKel4vb2Cs3i+5dwMh5WrAHjVTUVdMoNhv3H
-         +56Q==
-X-Gm-Message-State: AA+aEWZsvHn21yEAs8GXVX6kOwoIy83MyeBLgPHQFkeIAH7AuWXXzWa1
-        xAZQYaLJ8PrZLeHAKMjrjLiM7rZTdavJUL2wGAtgSQ==
-X-Google-Smtp-Source: AFSGD/VeFKQUmo9Yw5tVzRQwTTioksUufrFvMfCrh6ITYZlyyEfC0s77mihAfVVpFT+rmzED14tazg7MudGzbAHYdZA=
-X-Received: by 2002:a37:3388:: with SMTP id z130mr3447838qkz.51.1543542897172;
- Thu, 29 Nov 2018 17:54:57 -0800 (PST)
+        Fri, 30 Nov 2018 08:05:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1543543058; x=1575079058;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=FUgCmVQ2VKNgaCsb1HVvTlj5dWNTY50OFk8kPVfHZIc=;
+  b=JomXrF9UurDFwvs12d9eH8FHKOFjJlVpTyvCVsbLPCuMweD1Z48lkFNy
+   Va+0TyYNpdJhy1xUlZ8CXr+JrvD4KIFs0hYBLNaeSe/sd4XVfrUM2C2v9
+   TMqANhpTogb+N7rTKoAFurtoPn8Ltuefx60HomjZNovfxw4wn3q5rQ9Tq
+   Ef0a1ys5m6dzVXXMk3dCjw21PCxhgBH7B0tEwhBt/AjDjFgRhg/bElO0R
+   YIZuEOhh0CskRyyzJpkcA/WnAVNxR7YlNRLIH6BNLFn9GeezIniC2aspG
+   Ca7si+Zovzf652oIEvDFBgfHn8tSIhTEclmSsTfQSlbmJ4B+W8nqjm+IW
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
+   d="scan'208";a="96654545"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2018 09:57:38 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 29 Nov 2018 17:40:33 -0800
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.72.98]) ([10.111.72.98])
+  by uls-op-cesaip01.wdc.com with ESMTP; 29 Nov 2018 17:57:38 -0800
+Subject: Re: [PATCH v2 3/4] irqchip: sifive-plic: Differentiate between PLIC
+ handler and context
+To:     Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181127100317.12809-1-anup@brainfault.org>
+ <20181127100317.12809-4-anup@brainfault.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <93356e4f-ccd9-39ba-6afe-88dcdc72945d@wdc.com>
+Date:   Thu, 29 Nov 2018 17:57:36 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <1543535954-28073-1-git-send-email-jalee@purestorage.com> <cc7cbad6-0e7d-8328-c602-61d659c3a7de@grimberg.me>
-In-Reply-To: <cc7cbad6-0e7d-8328-c602-61d659c3a7de@grimberg.me>
-From:   Jaesoo Lee <jalee@purestorage.com>
-Date:   Thu, 29 Nov 2018 17:54:45 -0800
-Message-ID: <CAJX3CtiBs6YOjkP5xGb5yPShvOdmhuD7kx-kBAVL7+YsyEGMyw@mail.gmail.com>
-Subject: Re: [PATCH] nvme-rdma: complete requests from ->timeout
-To:     sagi@grimberg.me
-Cc:     keith.busch@intel.com, axboe@fb.com, hch@lst.de,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Prabhath Sajeepa <psajeepa@purestorage.com>,
-        Roland Dreier <roland@purestorage.com>,
-        Ashish Karkare <ashishk@purestorage.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181127100317.12809-4-anup@brainfault.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not the queue, but the RDMA connections.
+On 11/27/18 2:04 AM, Anup Patel wrote:
+> We explicitly differentiate between PLIC handler and context because
+> PLIC context is for given mode of HART whereas PLIC handler is per-CPU
+> software construct meant for handling interrupts from a particular
+> PLIC context.
+> 
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> ---
+>   drivers/irqchip/irq-sifive-plic.c | 21 +++++++++++++--------
+>   1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+> index 95b4b92ca9b8..ffd4deaca057 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -66,8 +66,8 @@ static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
+>   
+>   struct plic_hw {
+>   	u32			nr_irqs;
+> +	u32			nr_contexts;
+>   	u32			nr_handlers;
+> -	u32			nr_mapped;
+>   	void __iomem		*regs;
+>   	struct irq_domain	*irqdomain;
+>   };
+> @@ -191,10 +191,10 @@ static int __init plic_init(struct device_node *node,
+>   	if (WARN_ON(!plic.nr_irqs))
+>   		goto out_iounmap;
+>   
+> -	plic.nr_handlers = of_irq_count(node);
+> -	if (WARN_ON(!plic.nr_handlers))
+> +	plic.nr_contexts = of_irq_count(node);
+> +	if (WARN_ON(!plic.nr_contexts))
+>   		goto out_iounmap;
+> -	if (WARN_ON(plic.nr_handlers < num_possible_cpus()))
+> +	if (WARN_ON(plic.nr_contexts < num_possible_cpus()))
+>   		goto out_iounmap;
+>   
+>   	plic.irqdomain = irq_domain_add_linear(node, plic.nr_irqs + 1,
+> @@ -202,7 +202,7 @@ static int __init plic_init(struct device_node *node,
+>   	if (WARN_ON(!plic.irqdomain))
+>   		goto out_iounmap;
+>   
+> -	for (i = 0; i < plic.nr_handlers; i++) {
+> +	for (i = 0; i < plic.nr_contexts; i++) {
+>   		struct of_phandle_args parent;
+>   		struct plic_handler *handler;
+>   		irq_hw_number_t hwirq;
+> @@ -225,6 +225,11 @@ static int __init plic_init(struct device_node *node,
+>   
+>   		cpu = riscv_hartid_to_cpuid(hartid);
+>   		handler = per_cpu_ptr(&plic_handlers, cpu);
+> +		if (handler->present) {
+> +			pr_warn("handler not available for context %d.\n", i);
+> +			continue;
+> +		}
+> +
 
-Let me describe the scenario.
+Ahh you have the handler->present check here in this patch. This should 
+be in the 2nd patch. This change doesn't match the commit text anyways.
 
-1. connected nvme-rdma target with 500 namespaces
-: this will make the nvme_remove_namespaces() took a long time to
-complete and open the window vulnerable to this bug
-2. host will take below code path for nvme_delete_ctrl_work and send
-normal shutdown in nvme_shutdown_ctrl()
-- nvme_stop_ctrl
-  - nvme_stop_keep_alive --> stopped keep alive
-- nvme_remove_namespaces --> took too long time, over 10~15s
-- nvme_rdma_shutdown_ctrl
-  - nvme_rdma_teardown_io_queues
-  - nvme_shutdown_ctrl
-    - nvmf_reg_write32
-      -__nvme_submit_sync_cmd --> nvme_delete_ctrl_work blocked here
-  - nvme_rdma_teardown_admin_queue
-- nvme_uninit_ctrl
-- nvme_put_ctrl
-3. the rdma connection is disconnected by the nvme-rdma target
-: in our case, this is triggered by the target side timeout mechanism
-: I did not try, but I think this could happen if we lost the RoCE link, too.
-4. the shutdown notification command timed out and the work stuck
-while leaving the controller in NVME_CTRL_DELETING state
-
-Thanks,
-
-Jaesoo Lee.
+Everything else just variable renaming which can be separated.
+nr_handlers->nr_contexts
+nr_mapped->nr_handlers
 
 
-On Thu, Nov 29, 2018 at 5:30 PM Sagi Grimberg <sagi@grimberg.me> wrote:
->
->
-> > This does not hold at least for NVMe RDMA host driver. An example scenario
-> > is when the RDMA connection is gone while the controller is being deleted.
-> > In this case, the nvmf_reg_write32() for sending shutdown admin command by
-> > the delete_work could be hung forever if the command is not completed by
-> > the timeout handler.
->
-> If the queue is gone, this means that the queue has already flushed and
-> any commands that were inflight has completed with a flush error
-> completion...
->
-> Can you describe the scenario that caused this hang? When has the
-> queue became "gone" and when did the shutdown command execute?
+Regards,
+Atish
+>   		handler->present = true;
+>   		handler->hart_base =
+>   			plic.regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
+> @@ -237,11 +242,11 @@ static int __init plic_init(struct device_node *node,
+>   		for (hwirq = 1; hwirq <= plic.nr_irqs; hwirq++)
+>   			plic_toggle(handler, hwirq, 0);
+>   
+> -		plic.nr_mapped++;
+> +		plic.nr_handlers++;
+>   	}
+>   
+> -	pr_info("mapped %d interrupts to %d (out of %d) handlers.\n",
+> -		plic.nr_irqs, plic.nr_mapped, plic.nr_handlers);
+> +	pr_info("mapped %d interrupts with %d handlers for %d contexts.\n",
+> +		plic.nr_irqs, plic.nr_handlers, plic.nr_contexts);
+>   	set_handle_irq(plic_handle_irq);
+>   	return 0;
+>   
+> 
+
