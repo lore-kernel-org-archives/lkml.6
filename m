@@ -2,127 +2,147 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797EAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5211CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324F920863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:38:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="XAX7N2Ct"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324F920863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id 1EFD82146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:38:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EFD82146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbeK3Rqd (ORCPT
+        id S1726800AbeK3Rq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:46:33 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:59604 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726456AbeK3Rqd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:46:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=smY9fYInNrPRz8Qs0Bp24IqgbOP8R39VB1gf/mqxCqE=; b=XAX7N2CtrKqrFsjN95nZHei21
-        ViO40eDJUZX33c8QHZNA+hpUBtwLqaCRqGpxvlPpFVq5Nlay4dzrXfeSrllV91KeKZ1qOY5SehlCn
-        lekOrQDRbSGYOxB9GFOFfQg/EyN5Y+j5Kar2w+mNysA78TzR8l0HgXk+OgK6Lorx35mRk=;
-Received: from hsvpn34.hotsplots.net ([176.74.57.181] helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gScRM-0002Q4-3m; Fri, 30 Nov 2018 07:38:16 +0100
-Received: from localhost ([::1])
-        by localhost with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gScRK-0001Je-1W; Fri, 30 Nov 2018 07:38:14 +0100
-Date:   Fri, 30 Nov 2018 07:38:04 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH RFC 4/5] gnss: sirf: add a separate supply for a lna
-Message-ID: <20181130073804.1e57226f@kemnade.info>
-In-Reply-To: <20181127180356.GA32751@localhost>
-References: <20181118215801.12280-1-andreas@kemnade.info>
-        <20181118215801.12280-5-andreas@kemnade.info>
-        <20181127180356.GA32751@localhost>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        Fri, 30 Nov 2018 12:46:59 -0500
+Received: from mx.socionext.com ([202.248.49.38]:17043 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726456AbeK3Rq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 12:46:59 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 30 Nov 2018 15:38:44 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 2477E60062;
+        Fri, 30 Nov 2018 15:38:44 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 30 Nov 2018 15:38:44 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 95B7A40394;
+        Fri, 30 Nov 2018 15:38:43 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 6EE55120455;
+        Fri, 30 Nov 2018 15:38:43 +0900 (JST)
+Date:   Fri, 30 Nov 2018 15:38:43 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [RFC PATCH net] net: phy: fix the issue that netif always links up after resuming
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <325a028e-ce95-1055-1b59-ed6120eeb229@gmail.com>
+References: <20181130133738.813D.4A936039@socionext.com> <325a028e-ce95-1055-1b59-ed6120eeb229@gmail.com>
+Message-Id: <20181130153842.31FF.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BTjEbUtPs1dNVLJ671peYpD"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BTjEbUtPs1dNVLJ671peYpD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Heiner,
 
-Hi,
+On Fri, 30 Nov 2018 07:20:27 +0100 <hkallweit1@gmail.com> wrote:
 
-On Tue, 27 Nov 2018 19:03:57 +0100
-Pavel Machek <pavel@ucw.cz> wrote:
+> On 30.11.2018 05:37, Kunihiko Hayashi wrote:
+> > Hi Heiner Florian,
+> > 
+> > Thank you for your comments.
+> > 
+> > On Thu, 29 Nov 2018 16:37:48 -0800 <f.fainelli@gmail.com> wrote:
+> > 
+> >>
+> >>
+> >> On 11/29/2018 2:47 PM, Heiner Kallweit wrote:
+> >>> On 29.11.2018 09:12, Kunihiko Hayashi wrote:
+> >>>> Even though the link is down before entering hibernation,
+> >>>> there is an issue that the network interface always links up after resuming
+> >>>> from hibernation.
+> >>>>
+> >>>> The phydev->state is PHY_READY before enabling the network interface, so
+> >>>> the link is down. After resuming from hibernation, the phydev->state is
+> >>>> forcibly set to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
+> >>>>
+> >>>> This patch expects to solve the issue by changing phydev->state to PHY_UP
+> >>>> only when the link is up.
+> >>>>
+> >>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> >>>> ---
+> >>>>  drivers/net/phy/phy_device.c | 6 ++++--
+> >>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> >>>> index ab33d17..d5bba0f 100644
+> >>>> --- a/drivers/net/phy/phy_device.c
+> >>>> +++ b/drivers/net/phy/phy_device.c
+> >>>> @@ -309,8 +309,10 @@ static int mdio_bus_phy_restore(struct device *dev)
+> >>>>  		return ret;
+> >>>>  
+> >>>>  	/* The PHY needs to renegotiate. */
+> >>>> -	phydev->link = 0;
+> >>>> -	phydev->state = PHY_UP;
+> >>>> +	if (phydev->link) {
+> >>>> +		phydev->link = 0;
+> >>>> +		phydev->state = PHY_UP;
+> >>>> +	}
+> >>>>  
+> >>> Thanks for reporting. I agree that it isn't right to unconditionally set
+> >>> PHY_UP, because we don't know whether the PHY was started before
+> >>> hibernation. However I don't think using phydev->link as criteria is
+> >>> right. Example would be: PHY was started before hibernation, but w/o link.
+> >>> In this case we want to set PHY_UP to start an aneg, because a cable may
+> >>> have been plugged in whilst system was sleeping.
+> > 
+> > Indeed. I didn't consider the case that the PHY was started but a cable was
+> > unplugged before hibernation.
+> > 
+> >>> So I think, similar to phy_stop_machine, we should use state >= UP and
+> >>> state != HALTED as criteria, and also phy_start_machine() would need to
+> >>> be called only if this criteria is met.
+> >>>
+> >>> It may make sense to add a helper for checking whether PHY is in a
+> >>> started state (>=UP && !=HALTED), because we need this in more than
+> >>> one place.
+> >>
+> >> Agreed, that would make sense.
+> > 
+> > I agree, too.
+> > I'll try this in v2 patch that changes the PHY state to PHY_UP and calls
+> > phy_start_machine(), only when the PHY was started before hibernation.
+> > If I understand correctly, it will be like that:
+> > 
+> > 	phydev->link = 0;
+> Even this may go into the if clause. If PHY isn't started then
+> phydev->link should be 0 anyway.
 
-> Hi!
->=20
-> > Devices might have a separate lna between antenna output of the gps
-> > chip and the antenna which might have a separate supply =20
->=20
-> Might have.
->=20
-> > @@ -340,6 +349,12 @@ static int sirf_probe(struct serdev_device *serdev)
-> >  		goto err_put_device;
-> >  	}
-> > =20
-> > +	data->lna =3D devm_regulator_get(dev, "lna");
-> > +	if (IS_ERR(data->lna)) {
-> > +		ret =3D PTR_ERR(data->lna);
-> > +		goto err_put_device;
-> > +	}
-> > + =20
->=20
-> But it is not optional in the code. Probably should be?
+Yes. To clarify more, this will go into the if clause. 
 
-well, if it no lna regulator is defined in the dtb, the regulator
-framework will return a dummy regulator. devm_regulator_get_optional()
-would not do that and would require more error checking in the code.
-But if there is some rule which says that devm_regulator_get_optional()
-should be used here, I can of course change that.
-Before sending a v2, is that the only issue here?
+> 
+> > 	if (phy_is_started(phydev)) {
+> > 		phydev->state = PHY_UP;
+> > 		phy_start_machine(phydev);
+> > 	}
+> > 
+> Yes, this is what was meant. Thanks.
 
-Regards,
-Andreas
+Thank you,
 
---Sig_/BTjEbUtPs1dNVLJ671peYpD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+---
+Best Regards,
+Kunihiko Hayashi
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwA2swACgkQfb1qx03i
-kySlihAAgI5DPKdMqJIbrhgXmk5vhH+z5xvplIxqHczGRwSfYt+7JKNRtJbvGhwX
-Pxi4oVEb72fOeNRItULe4/pCsC/G5DY2fYdw5G7iiqbdb1/9PdvXctsop67G0Fvs
-P48doJ5eR3XQi8UFGi/jHJ3sWIqVNz9sHTM4yL8kvtVUpfia4+j6ivFZhXgKm8XX
-0YTCACWdd4a8wbdZCvQT5oNktirTLsuVHlyR/DlTEzrPD6SpR1J8aFUdo5PbQ/yw
-kuwoGZl+vADWcXkW8tyD2ebL1eCu059m652JjNIEtCHz7yihQgRTVpAkIgHL/YXI
-V6HgS8Tz3QVMPMbJA5ffwYlEubwFWrdrYaC20C4d2TbxPuosFTXpdnDXxmYKWqHl
-XMHiV29o25UscGixG+QHIugHfV9tJpzle6Ogiv/p+HGRvJx39j+sXeioLdDlPmAR
-iiORgk2ocZCERYxV+BvzWFX2PRhwQmlhgdEIy9XdC4pQHAKcOV5N3n2+9CSa3ing
-5mapahXMe4p3XiNb0LMFcIJtMaI0x01qgB+PfXVXa35tjW3j2pNSOHoC8lQdXSuQ
-6U6riISyyKg8QJ8MWugci2xipM1z35pZ52oD9YuvLAcsKgsWGGlEvZ24uCpZW7zG
-l8CaQx1YyzChw57BDEWzaUh/+wvtSJqBlFoYnnqDUP+48ST2tR0=
-=gVCe
------END PGP SIGNATURE-----
-
---Sig_/BTjEbUtPs1dNVLJ671peYpD--
