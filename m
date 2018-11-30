@@ -2,137 +2,313 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D382C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5C0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C51172145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:10:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51172145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 6AE872082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:10:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNmRP4Jf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AE872082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbeLAJVC (ORCPT
+        id S1726956AbeLAJVd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:21:02 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33664 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeLAJVC (ORCPT
+        Sat, 1 Dec 2018 04:21:33 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38612 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAJVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:21:02 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l11so7688044qtp.0;
-        Fri, 30 Nov 2018 14:10:16 -0800 (PST)
+        Sat, 1 Dec 2018 04:21:32 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so3444376plb.5;
+        Fri, 30 Nov 2018 14:10:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8GtRRzOY5ATBepJOAl3pdQm5CD35g8XR46WHt4Phzwk=;
+        b=VNmRP4Jf/WUiQArq4cztsnDKdxyg6HK0TOoAiK+VupSjSAj3+/Aa2fY0ebWLOMbrPP
+         7f+8X7rVhKViHbmEWwUrg08hDUkyrXFpg3mWd3DMb7MVo0L432M/WJ3fpCeK0f/1986z
+         xqRJqjv5qE5IEGgwx7ZFj9qW4DqhTFb9DpHXrgqjiqaRPFWOEAjXdd/indg3BM8TVsmd
+         NEpV62XgQi/9D4JLrykijkORTP8PPT8SWPxUlnQszmibdk6mxAOuLrpQfTkzOfbANXFV
+         isF/nwAJWefqlF7S4sAposgZyCxDD1sVzOihL/CU+rj9xl9jQu3wC9TNmlbWfCrV3syy
+         xDeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aGA1VXKrvoTOERg3O+Jz0z4OocXMxN8reAWA8j2jG78=;
-        b=oRA3CLXjXiyigyjWSX3ACCp6JGB32Wr0Fia1xkmbfyPBTWQvqBePsHx5rC/SZ6pjWv
-         0JaSjWFE0o/o6FzvK0hC4PHLI9DxniqhFiCJ0FoKYmYpKl+j7OBBuNO7OMQg+snpnVkk
-         nJR7a6yMqScm3Tz6Ks6TJLVEWruIbpeHKX8y3CMlmwtSILQChiEZQpkq7mPSg/fC2j9G
-         J9GnFcp/394tryEIkqQxIeY41/xrXNut8Vag6dqVoVK+O4/51iH0R4/FV3H7qpyXCXWR
-         sGxHZoV5ZBkho0ApRmgQUycDgml1JaIdrzpTmeMSQ6k/JFTJLhWQQruGLB1ZEhnLLLYt
-         ipRQ==
-X-Gm-Message-State: AA+aEWaZo5Lh1qRiV+tEgZXNlxRS6JgxsL5/kEXOyQkevUBkyR1sqMcL
-        n+se7JVcYMRL86X/1fq/8vleS3CVL+JBprNXxhc=
-X-Google-Smtp-Source: AFSGD/WkbJ78dI27YZsEIMK1t29r2EHecKM1WBek4m5t1AwK3ZZ3nGX9bpqhi5Y+5ikSnNFyxAbAzJJrG2D8GeZ7Fa0=
-X-Received: by 2002:ac8:4141:: with SMTP id e1mr6866210qtm.96.1543615816138;
- Fri, 30 Nov 2018 14:10:16 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8GtRRzOY5ATBepJOAl3pdQm5CD35g8XR46WHt4Phzwk=;
+        b=K4szfSrdQURk65lMeIUpO+I+a1pJpuicQe6qxbcyRxVidysQ++V02xUDw8V5Cnldxd
+         fLb1F6s8u4aSLAP5k4mmeT/r9RJKjhDLZ6I5pI22u9EarjrH8tTQkBS7q10VRA7PxihY
+         iJDrfqASASmn6xiTNqmTO8e2XEs/UbpuEcAFWmrOyyK8imvAxs0t1RN8UYaPq1Lg7tEZ
+         26rIbeJYyrEdvXGyt3jzq6CY5MFDl9T87DvM1YchT1avklZ4RaSeCjcABwAibNZKSKgv
+         dmg/5CaNDqMKRaaZr0ghv7KcHxf5o8wMAkKBmAguaVxNfpbQ64kQGIJOd6dWT5BuGkhJ
+         djjg==
+X-Gm-Message-State: AA+aEWZM6f1vkwd/CLcbhf4foY3JtLglkwQAcxde93bnBQeUtQ3lniER
+        x4tJjSU9m8/EVzkaa+1eHaE=
+X-Google-Smtp-Source: AFSGD/VLPrrukpTH+doI3MggCumkxSIZWSDSxZZESjYDfeefoStFr1UZ/4zdWZUB7nAXWE3NbsccgQ==
+X-Received: by 2002:a17:902:201:: with SMTP id 1mr7244045plc.62.1543615847140;
+        Fri, 30 Nov 2018 14:10:47 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 202sm11973496pfy.87.2018.11.30.14.10.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 14:10:45 -0800 (PST)
+Date:   Fri, 30 Nov 2018 14:10:44 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v3 2/5] bcm2835-pm: Move bcm2835-watchdog's DT probe to
+ an MFD.
+Message-ID: <20181130221044.GA15333@roeck-us.net>
+References: <20181130202743.20585-1-eric@anholt.net>
+ <20181130202743.20585-3-eric@anholt.net>
 MIME-Version: 1.0
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
- <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
- <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
- <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
- <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
- <87y39b2lm2.fsf@xmission.com> <20181130065606.kmilbbq46oeycjp5@brauner.io>
- <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com> <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com>
-In-Reply-To: <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 30 Nov 2018 23:09:58 +0100
-Message-ID: <CAK8P3a1isSRCd-OLJK15C+gSJdpeR=zEXghc8+AMM5QYYw3Tyg@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     christian@brauner.io, "Eric W . Biederman" <ebiederm@xmission.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130202743.20585-3-eric@anholt.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 5:36 PM Andy Lutomirski <luto@kernel.org> wrote:
->
-> On Fri, Nov 30, 2018 at 3:41 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > siginfo_t as it is now still has a number of other downsides, and Andy in
-> > particular didn't like the idea of having three new variants on x86
-> > (depending on how you count). His alternative suggestion of having
-> > a single syscall entry point that takes a 'signfo_t __user *' but interprets
-> > it as compat_siginfo depending on in_compat_syscall()/in_x32_syscall()
-> > should work correctly, but feels wrong to me, or at least inconsistent
-> > with how we do this elsewhere.
->
-> If everyone else is okay with it, I can get on board with three
-> variants on x86.  What I can't get on board with is *five* variants on
-> x86, which would be:
->
-> procfd_signal via int80 / the 32-bit vDSO: the ia32 structure
->
-> syscall64 with nr == 335 (presumably): 64-bit
+On Fri, Nov 30, 2018 at 12:27:40PM -0800, Eric Anholt wrote:
+> The PM block that the wdt driver was binding to actually has multiple
+> features we want to expose (power domains, reset, watchdog).  Move the
+> DT attachment to a MFD driver and make WDT probe against MFD.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-These seem unavoidable
+For watchdog:
 
-> syscall64 with nr == 548 | 0x40000000: x32
->
-> syscall64 with nr == 548: 64-bit entry but in_compat_syscall() ==
-> true, behavior is arbitrary
->
-> syscall64 with nr == 335 | 0x40000000: x32 entry, but
-> in_compat_syscall() == false, behavior is arbitrary
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Am I misreading the code? The way I understand it, setting the
-0x40000000 bit means that both in_compat_syscall() and
-in_x32_syscall become() true, based on
-
-static inline bool in_x32_syscall(void)
-{
-#ifdef CONFIG_X86_X32_ABI
-        if (task_pt_regs(current)->orig_ax & __X32_SYSCALL_BIT)
-                return true;
-#endif
-        return false;
-}
-
-The '548 | 0x40000000' part seems to be the only sensible
-way to handle x32 here. What exactly would you propose to
-avoid defining the other entry points?
-
-> This mess isn't really Christian's fault -- it's been there for a
-> while, but it's awful and I don't think we want to perpetuate it.
-
-I'm not convinced that not assigning an x32 syscall number
-improves the situation, it just means that we now have one
-syscall that behaves completely differently from all others,
-in that the x32 version requires being called through a
-SYSCALL_DEFINE() entry point rather than a
-COMPAT_SYSCALL_DEFINE() one, and we have to
-add more complexity to the copy_siginfo_from_user()
-implementation to duplicate the hack that exists in
-copy_siginfo_from_user32().
-
-Of course, the nicest option would be to completely remove
-x32 so we can stop worrying about it.
-
-      Arnd
+> ---
+> 
+> v3: don't reset bcm2835_power_off_wdt on remove, drop pm driver's
+>     empty remove, sort includes, add a "static".
+> 
+>  arch/arm/mach-bcm/Kconfig      |  1 +
+>  drivers/mfd/Makefile           |  1 +
+>  drivers/mfd/bcm2835-pm.c       | 64 ++++++++++++++++++++++++++++++++++
+>  drivers/watchdog/bcm2835_wdt.c | 26 +++++---------
+>  include/linux/mfd/bcm2835-pm.h | 13 +++++++
+>  5 files changed, 88 insertions(+), 17 deletions(-)
+>  create mode 100644 drivers/mfd/bcm2835-pm.c
+>  create mode 100644 include/linux/mfd/bcm2835-pm.h
+> 
+> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+> index 25aac6ee2ab1..95242c2162a2 100644
+> --- a/arch/arm/mach-bcm/Kconfig
+> +++ b/arch/arm/mach-bcm/Kconfig
+> @@ -167,6 +167,7 @@ config ARCH_BCM2835
+>  	select BCM2835_TIMER
+>  	select PINCTRL
+>  	select PINCTRL_BCM2835
+> +	select MFD_CORE
+>  	help
+>  	  This enables support for the Broadcom BCM2835 and BCM2836 SoCs.
+>  	  This SoC is used in the Raspberry Pi and Roku 2 devices.
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 12980a4ad460..ee6fb6af655e 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_MFD_88PM805)	+= 88pm805.o 88pm80x.o
+>  obj-$(CONFIG_MFD_ACT8945A)	+= act8945a.o
+>  obj-$(CONFIG_MFD_SM501)		+= sm501.o
+>  obj-$(CONFIG_MFD_ASIC3)		+= asic3.o tmio_core.o
+> +obj-$(CONFIG_ARCH_BCM2835)	+= bcm2835-pm.o
+>  obj-$(CONFIG_MFD_BCM590XX)	+= bcm590xx.o
+>  obj-$(CONFIG_MFD_BD9571MWV)	+= bd9571mwv.o
+>  cros_ec_core-objs		:= cros_ec.o
+> diff --git a/drivers/mfd/bcm2835-pm.c b/drivers/mfd/bcm2835-pm.c
+> new file mode 100644
+> index 000000000000..53839e6a81e7
+> --- /dev/null
+> +++ b/drivers/mfd/bcm2835-pm.c
+> @@ -0,0 +1,64 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * PM MFD driver for Broadcom BCM2835
+> + *
+> + * This driver binds to the PM block and creates the MFD device for
+> + * the WDT driver.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/mfd/bcm2835-pm.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/types.h>
+> +#include <linux/watchdog.h>
+> +
+> +static const struct mfd_cell bcm2835_pm_devs[] = {
+> +	{ .name = "bcm2835-wdt" },
+> +};
+> +
+> +static int bcm2835_pm_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res;
+> +	struct device *dev = &pdev->dev;
+> +	struct bcm2835_pm *pm;
+> +
+> +	pm = devm_kzalloc(dev, sizeof(*pm), GFP_KERNEL);
+> +	if (!pm)
+> +		return -ENOMEM;
+> +	platform_set_drvdata(pdev, pm);
+> +
+> +	pm->dev = dev;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	pm->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(pm->base))
+> +		return PTR_ERR(pm->base);
+> +
+> +	return devm_mfd_add_devices(dev, -1,
+> +				    bcm2835_pm_devs, ARRAY_SIZE(bcm2835_pm_devs),
+> +				    NULL, 0, NULL);
+> +}
+> +
+> +static const struct of_device_id bcm2835_pm_of_match[] = {
+> +	{ .compatible = "brcm,bcm2835-pm-wdt", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, bcm2835_pm_of_match);
+> +
+> +static struct platform_driver bcm2835_pm_driver = {
+> +	.probe		= bcm2835_pm_probe,
+> +	.driver = {
+> +		.name =	"bcm2835-pm",
+> +		.of_match_table = bcm2835_pm_of_match,
+> +	},
+> +};
+> +module_platform_driver(bcm2835_pm_driver);
+> +
+> +MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
+> +MODULE_DESCRIPTION("Driver for Broadcom BCM2835 PM MFD");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/watchdog/bcm2835_wdt.c b/drivers/watchdog/bcm2835_wdt.c
+> index ed05514cc2dc..1834524ae373 100644
+> --- a/drivers/watchdog/bcm2835_wdt.c
+> +++ b/drivers/watchdog/bcm2835_wdt.c
+> @@ -12,6 +12,7 @@
+>  
+>  #include <linux/delay.h>
+>  #include <linux/types.h>
+> +#include <linux/mfd/bcm2835-pm.h>
+>  #include <linux/module.h>
+>  #include <linux/io.h>
+>  #include <linux/watchdog.h>
+> @@ -47,6 +48,8 @@ struct bcm2835_wdt {
+>  	spinlock_t		lock;
+>  };
+>  
+> +static struct bcm2835_wdt *bcm2835_power_off_wdt;
+> +
+>  static unsigned int heartbeat;
+>  static bool nowayout = WATCHDOG_NOWAYOUT;
+>  
+> @@ -148,10 +151,7 @@ static struct watchdog_device bcm2835_wdt_wdd = {
+>   */
+>  static void bcm2835_power_off(void)
+>  {
+> -	struct device_node *np =
+> -		of_find_compatible_node(NULL, NULL, "brcm,bcm2835-pm-wdt");
+> -	struct platform_device *pdev = of_find_device_by_node(np);
+> -	struct bcm2835_wdt *wdt = platform_get_drvdata(pdev);
+> +	struct bcm2835_wdt *wdt = bcm2835_power_off_wdt;
+>  	u32 val;
+>  
+>  	/*
+> @@ -169,7 +169,7 @@ static void bcm2835_power_off(void)
+>  
+>  static int bcm2835_wdt_probe(struct platform_device *pdev)
+>  {
+> -	struct resource *res;
+> +	struct bcm2835_pm *pm = dev_get_drvdata(pdev->dev.parent);
+>  	struct device *dev = &pdev->dev;
+>  	struct bcm2835_wdt *wdt;
+>  	int err;
+> @@ -181,10 +181,7 @@ static int bcm2835_wdt_probe(struct platform_device *pdev)
+>  
+>  	spin_lock_init(&wdt->lock);
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	wdt->base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(wdt->base))
+> -		return PTR_ERR(wdt->base);
+> +	wdt->base = pm->base;
+>  
+>  	watchdog_set_drvdata(&bcm2835_wdt_wdd, wdt);
+>  	watchdog_init_timeout(&bcm2835_wdt_wdd, heartbeat, dev);
+> @@ -211,8 +208,10 @@ static int bcm2835_wdt_probe(struct platform_device *pdev)
+>  		return err;
+>  	}
+>  
+> -	if (pm_power_off == NULL)
+> +	if (pm_power_off == NULL) {
+>  		pm_power_off = bcm2835_power_off;
+> +		bcm2835_power_off_wdt = wdt;
+> +	}
+>  
+>  	dev_info(dev, "Broadcom BCM2835 watchdog timer");
+>  	return 0;
+> @@ -226,18 +225,11 @@ static int bcm2835_wdt_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id bcm2835_wdt_of_match[] = {
+> -	{ .compatible = "brcm,bcm2835-pm-wdt", },
+> -	{},
+> -};
+> -MODULE_DEVICE_TABLE(of, bcm2835_wdt_of_match);
+> -
+>  static struct platform_driver bcm2835_wdt_driver = {
+>  	.probe		= bcm2835_wdt_probe,
+>  	.remove		= bcm2835_wdt_remove,
+>  	.driver = {
+>  		.name =		"bcm2835-wdt",
+> -		.of_match_table = bcm2835_wdt_of_match,
+>  	},
+>  };
+>  module_platform_driver(bcm2835_wdt_driver);
+> diff --git a/include/linux/mfd/bcm2835-pm.h b/include/linux/mfd/bcm2835-pm.h
+> new file mode 100644
+> index 000000000000..b7d0ee1feffa
+> --- /dev/null
+> +++ b/include/linux/mfd/bcm2835-pm.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +
+> +#ifndef BCM2835_MFD_PM_H
+> +#define BCM2835_MFD_PM_H
+> +
+> +#include <linux/regmap.h>
+> +
+> +struct bcm2835_pm {
+> +	struct device *dev;
+> +	void __iomem *base;
+> +};
+> +
+> +#endif /* BCM2835_MFD_PM_H */
+> -- 
+> 2.20.0.rc1
+> 
