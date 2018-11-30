@@ -2,346 +2,239 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC73C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C763BC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004632146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:48:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aTomd1IH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004632146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E47D20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:50:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E47D20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeK3V5S (ORCPT
+        id S1726895AbeK3V72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:57:18 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33487 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbeK3V44 (ORCPT
+        Fri, 30 Nov 2018 16:59:28 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42289 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbeK3V71 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:56:56 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so4839145wrr.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 02:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rp460mHVouQdCt0dxaOMsdLua3SS3yYIstuGzJqTGE0=;
-        b=aTomd1IHGP69i4CGKsSu31npbyEHjFKPKJU/HrpFw8xwYs8A4PuHHFULcQaJjKzdhY
-         7HBQMmRg4g6PmyZdCjO7C84WcehLjAigMGDK3o4pPxfL83ngDaZ5ZYwu0i7Cxbx+wzxX
-         DEFq4VpgE2bodMx+ivCZcMUxjX2wdLfN6N9iE=
+        Fri, 30 Nov 2018 16:59:27 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l15-v6so4572926lja.9;
+        Fri, 30 Nov 2018 02:50:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rp460mHVouQdCt0dxaOMsdLua3SS3yYIstuGzJqTGE0=;
-        b=IYlj53yB5RX/6QEgYJwXSBmXNtDO9JmvPoqXDQDjWnUSgOwf0ZF8bLlcwJnUjr02Sm
-         gdSunnG8Np80wFZQ8O1qiXymnFXa4w65/1jmlsXdy8Z6BaVflJHnSbPrE6kizSmOcOmA
-         oIv9YWlZSrdOXR4RHcXM9F/EUxSIx4Ndu9ZkQe8y79mvuBq8W4ENYdcIf1X/RYPjTzwe
-         gbvYf/ynY3xX8hPSr8OZV9t9kHRx9c3E8qGaIg/idVcNrnv8WqZiyzLZKb0hV82X9hHO
-         AzfSHqMdmaV2z8LewE417mij9cJrmaSYgrGcwH3KYgOyjbWJO+VIdjNXN3BoiKomzCWu
-         V4fg==
-X-Gm-Message-State: AA+aEWZXTg2KnrpiFlF5or2PSQ4CbAv7238ThUttzjuZW2463nIltz6D
-        IwWUsgSSXzg5nFt3X7wzPbuv6Q==
-X-Google-Smtp-Source: AFSGD/ULRHiRBkAJ0A9tpWt6aApo3KuKKoCTirrpZpb6rHfN1Ctg/JSl0gyuM+k16NN4PlbAsR5fRw==
-X-Received: by 2002:adf:83e7:: with SMTP id 94mr4530139wre.278.1543574882300;
-        Fri, 30 Nov 2018 02:48:02 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id 18sm6964211wmm.32.2018.11.30.02.48.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 02:48:01 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     robh+dt@kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
-        thierry.escande@linaro.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [RFC PATCH 4/6] char: fastrpc: Add support for create remote init process
-Date:   Fri, 30 Nov 2018 10:46:55 +0000
-Message-Id: <20181130104657.14875-5-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
-References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=daG1XJ3xEPZRYjxjHEIMiZ2KfFhva5k8E7JnZvAC+Oo=;
+        b=t1vOHbKtA6GzLMRWcFKBWXm+ZWfE5Fuc/MjmLs9WMrlcGqH6QALguVNktXYq6AXKwM
+         vK9VHmDH8+SK2xZntDQv+42sawvOzn3x92xjXDwz0T/BkORvQ1U9EQ7IKuaMVAaq3NN0
+         2rXYzPVgx3zvA+rD6Nihz1K2qI+PsVg+LVXvKIIBbWfzpkCpYINJTXVvSdEemiYiNEYv
+         ZK3rb2ETNvvM5lrNS61q/nTW3yWdscjRkw4At6X64V6oIoHQ89mj+m3mbs6vGuI+cXI7
+         7Vch2QSI25+imi2Ko1AmFy6PxgEPdx+G+nNNF+LItfHRWtuh79q5M64tOB6qONTEvzWc
+         E2Vg==
+X-Gm-Message-State: AA+aEWYKg7ykht0n1B7NpK6hWD0Uvp0HsuNlZTflXwgY7pPBz+cM5BHZ
+        XuEtCIyxJxr+WHqVHh+r1wE=
+X-Google-Smtp-Source: AFSGD/XFPJ1MMWBlTqXBpTiP9WCmLCT4QKpGGG+olHyyiMLUAlROfdFfvehxLuxm1UY3PtnHFDGMbQ==
+X-Received: by 2002:a2e:2281:: with SMTP id i123-v6mr3117217lji.154.1543575031301;
+        Fri, 30 Nov 2018 02:50:31 -0800 (PST)
+Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
+        by smtp.gmail.com with ESMTPSA id s127sm753225lfe.8.2018.11.30.02.50.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 02:50:30 -0800 (PST)
+Date:   Fri, 30 Nov 2018 12:50:22 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mazziesaccount@gmail.com, Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
+ provider registrations
+Message-ID: <20181130105022.GA15388@localhost.localdomain>
+References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to create or attach remote shell process.
-The shell process called fastrpc_shell_0 is usually loaded on the DSP
-when a user process is spawned.
+Hello Stephen,
 
-Most of the work is derived from various downstream Qualcomm kernels.
-Credits to various Qualcomm authors who have contributed to this code.
-Specially Tharun Kumar Merugu <mtharu@codeaurora.org>
+Thanks a bunch for taking the time and reviewing this!
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/char/fastrpc.c       | 172 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/fastrpc.h |  18 ++++
- 2 files changed, 190 insertions(+)
+On Fri, Nov 30, 2018 at 12:54:10AM -0800, Stephen Boyd wrote:
+> Quoting Matti Vaittinen (2018-11-13 03:55:58)
+> > With MFD devices the clk properties may be contained in MFD (parent) DT
+> > node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
+> > subdevice not to MFD device (parent). Add
+> > devm_of_clk_add_hw_provider_parent to tackle this issue.
+> > 
+> > Also clkdev registration lacks of managed registration functions and it
+> > seems few drivers do not drop clkdev lookups at exit. Add
+> > devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
+> > releasing at exit.
+> 
+> Please split this into clkdev and non-clkdev devm functionality.
+Allright. I'll split this to two patches.
 
-diff --git a/drivers/char/fastrpc.c b/drivers/char/fastrpc.c
-index 5bb224adc24f..3630e883d3f4 100644
---- a/drivers/char/fastrpc.c
-+++ b/drivers/char/fastrpc.c
-@@ -30,6 +30,8 @@
- #define FASTRPC_PHYS(p)	(p & 0xffffffff)
- #define FASTRPC_CTX_MAX (256)
- #define FASTRPC_CTXID_MASK (0xFF0)
-+#define INIT_FILELEN_MAX (2*1024*1024)
-+#define INIT_MEMLEN_MAX  (8*1024*1024)
- #define FASTRPC_DEVICE_NAME	"fastrpc"
- 
- /* Retrives number of input buffers from the scalars parameter */
-@@ -59,6 +61,14 @@
- 
- #define FASTRPC_SCALARS(method, in, out) \
- 		FASTRPC_BUILD_SCALARS(0, method, in, out, 0, 0)
-+
-+/* Remote Method id table */
-+#define FASTRPC_RMID_INIT_ATTACH	0
-+#define FASTRPC_RMID_INIT_RELEASE	1
-+#define FASTRPC_RMID_INIT_CREATE	6
-+#define FASTRPC_RMID_INIT_CREATE_ATTR	7
-+#define FASTRPC_RMID_INIT_CREATE_STATIC	8
-+
- #define cdev_to_cctx(d) container_of(d, struct fastrpc_channel_ctx, cdev)
- 
- static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
-@@ -735,6 +745,130 @@ static int fastrpc_internal_invoke(struct fastrpc_user *fl,
- 
- 	return err;
- }
-+
-+static int fastrpc_init_process(struct fastrpc_user *fl,
-+				struct fastrpc_ioctl_init *init)
-+{
-+	struct fastrpc_ioctl_invoke *ioctl;
-+	struct fastrpc_phy_page pages[1];
-+	struct fastrpc_map *file = NULL, *mem = NULL;
-+	struct fastrpc_buf *imem = NULL;
-+	int err = 0;
-+
-+	ioctl = kzalloc(sizeof(*ioctl), GFP_KERNEL);
-+	if (!ioctl)
-+		return -ENOMEM;
-+
-+	if (init->flags == FASTRPC_INIT_ATTACH) {
-+		remote_arg_t ra[1];
-+		int tgid = fl->tgid;
-+
-+		ra[0].buf.pv = (void *)&tgid;
-+		ra[0].buf.len = sizeof(tgid);
-+		ioctl->handle = 1;
-+		ioctl->sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
-+		ioctl->pra = ra;
-+		fl->pd = 0;
-+
-+		err = fastrpc_internal_invoke(fl, 1, ioctl);
-+		if (err)
-+			goto bail;
-+	} else if (init->flags == FASTRPC_INIT_CREATE) {
-+		int memlen;
-+		remote_arg_t ra[6];
-+		int fds[6];
-+		struct {
-+			int pgid;
-+			unsigned int namelen;
-+			unsigned int filelen;
-+			unsigned int pageslen;
-+			int attrs;
-+			int siglen;
-+		} inbuf;
-+
-+		inbuf.pgid = fl->tgid;
-+		inbuf.namelen = strlen(current->comm) + 1;
-+		inbuf.filelen = init->filelen;
-+		fl->pd = 1;
-+
-+		if (init->filelen) {
-+			err = fastrpc_map_create(fl, init->filefd,
-+						  init->file, init->filelen,
-+						  &file);
-+			if (err)
-+				goto bail;
-+		}
-+		inbuf.pageslen = 1;
-+
-+		if (init->mem) {
-+			err = -EINVAL;
-+			pr_err("adsprpc: %s: %s: ERROR: donated memory allocated in userspace\n",
-+				current->comm, __func__);
-+			goto bail;
-+		}
-+		memlen = ALIGN(max(INIT_FILELEN_MAX, (int)init->filelen * 4),
-+			       1024 * 1024);
-+		err = fastrpc_buf_alloc(fl, fl->sctx->dev, memlen,
-+					 &imem);
-+		if (err)
-+			goto bail;
-+
-+		fl->init_mem = imem;
-+		inbuf.pageslen = 1;
-+		ra[0].buf.pv = (void *)&inbuf;
-+		ra[0].buf.len = sizeof(inbuf);
-+		fds[0] = 0;
-+
-+		ra[1].buf.pv = (void *)current->comm;
-+		ra[1].buf.len = inbuf.namelen;
-+		fds[1] = 0;
-+
-+		ra[2].buf.pv = (void *)init->file;
-+		ra[2].buf.len = inbuf.filelen;
-+		fds[2] = init->filefd;
-+
-+		pages[0].addr = imem->phys;
-+		pages[0].size = imem->size;
-+
-+		ra[3].buf.pv = (void *)pages;
-+		ra[3].buf.len = 1 * sizeof(*pages);
-+		fds[3] = 0;
-+
-+		inbuf.attrs = init->attrs;
-+		ra[4].buf.pv = (void *)&(inbuf.attrs);
-+		ra[4].buf.len = sizeof(inbuf.attrs);
-+		fds[4] = 0;
-+
-+		inbuf.siglen = init->siglen;
-+		ra[5].buf.pv = (void *)&(inbuf.siglen);
-+		ra[5].buf.len = sizeof(inbuf.siglen);
-+		fds[5] = 0;
-+
-+		ioctl->handle = 1;
-+		ioctl->sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_CREATE, 4, 0);
-+		if (init->attrs)
-+			ioctl->sc = FASTRPC_SCALARS(
-+					FASTRPC_RMID_INIT_CREATE_ATTR, 6, 0);
-+		ioctl->pra = ra;
-+		ioctl->fds = fds;
-+		err = fastrpc_internal_invoke(fl, 1, ioctl);
-+		if (err)
-+			goto bail;
-+	} else {
-+		err = -ENOTTY;
-+	}
-+bail:
-+	kfree(ioctl);
-+
-+	if (mem && err)
-+		fastrpc_map_put(mem);
-+
-+	if (file)
-+		fastrpc_map_put(file);
-+
-+	return err;
-+}
-+
- static struct fastrpc_session_ctx *fastrpc_session_alloc(
- 					struct fastrpc_channel_ctx *cctx,
- 					int secure)
-@@ -769,6 +903,25 @@ static const struct of_device_id fastrpc_match_table[] = {
- 	{}
- };
- 
-+static int fastrpc_release_current_dsp_process(struct fastrpc_user *fl)
-+{
-+	struct fastrpc_ioctl_invoke ioctl;
-+	remote_arg_t ra[1];
-+	int tgid = 0;
-+
-+	tgid = fl->tgid;
-+	ra[0].buf.pv = (void *)&tgid;
-+	ra[0].buf.len = sizeof(tgid);
-+	ioctl.handle = 1;
-+	ioctl.sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_RELEASE, 1, 0);
-+	ioctl.pra = ra;
-+	ioctl.fds = NULL;
-+	ioctl.attrs = NULL;
-+	ioctl.crc = NULL;
-+
-+	return fastrpc_internal_invoke(fl, 1, &ioctl);
-+}
-+
- static int fastrpc_device_release(struct inode *inode, struct file *file)
- {
- 	struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
-@@ -776,6 +929,8 @@ static int fastrpc_device_release(struct inode *inode, struct file *file)
- 	struct fastrpc_invoke_ctx *ctx, *n;
- 	struct fastrpc_map *map, *m;
- 
-+	fastrpc_release_current_dsp_process(fl);
-+
- 	spin_lock(&cctx->lock);
- 	list_del(&fl->user);
- 	spin_unlock(&cctx->lock);
-@@ -855,6 +1010,23 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
- 			goto bail;
- 		break;
- 		}
-+	case FASTRPC_IOCTL_INIT: {
-+		struct fastrpc_ioctl_init init;
-+
-+		init.attrs = 0;
-+		init.siglen = 0;
-+		err = copy_from_user(&init, argp, sizeof(init));
-+		if (err)
-+			goto bail;
-+		if (init.filelen > INIT_FILELEN_MAX)
-+			goto bail;
-+		if (init.memlen > INIT_MEMLEN_MAX)
-+			goto bail;
-+		err = fastrpc_init_process(fl, &init);
-+		if (err)
-+			goto bail;
-+		}
-+		break;
- default:
- 		err = -ENOTTY;
- 		pr_info("bad ioctl: %d\n", cmd);
-diff --git a/include/uapi/linux/fastrpc.h b/include/uapi/linux/fastrpc.h
-index 8fec66601337..6b596fc7ddf3 100644
---- a/include/uapi/linux/fastrpc.h
-+++ b/include/uapi/linux/fastrpc.h
-@@ -6,6 +6,12 @@
- #include <linux/types.h>
- 
- #define FASTRPC_IOCTL_INVOKE	_IOWR('R', 3, struct fastrpc_ioctl_invoke)
-+#define FASTRPC_IOCTL_INIT	_IOWR('R', 4, struct fastrpc_ioctl_init)
-+
-+/* INIT a new process or attach to guestos */
-+#define FASTRPC_INIT_ATTACH      0
-+#define FASTRPC_INIT_CREATE      1
-+#define FASTRPC_INIT_CREATE_STATIC  2
- 
- #define remote_arg64_t    union remote_arg64
- 
-@@ -53,4 +59,16 @@ struct fastrpc_ioctl_invoke {
- 	unsigned int *crc;
- };
- 
-+struct fastrpc_ioctl_init {
-+	uint32_t flags;		/* one of FASTRPC_INIT_* macros */
-+	uintptr_t file;		/* pointer to elf file */
-+	uint32_t filelen;	/* elf file length */
-+	int32_t filefd;		/* ION fd for the file */
-+	uintptr_t mem;		/* mem for the PD */
-+	uint32_t memlen;	/* mem length */
-+	int32_t memfd;		/* fd for the mem */
-+	int attrs;
-+	unsigned int siglen;
-+};
-+
- #endif /* __QCOM_FASTRPC_H__ */
+> > --- a/Documentation/driver-model/devres.txt
+> > +++ b/Documentation/driver-model/devres.txt
+> > @@ -238,6 +238,9 @@ CLOCK
+> >    devm_clk_put()
+> >    devm_clk_hw_register()
+> >    devm_of_clk_add_hw_provider()
+> > +  devm_of_clk_add_parent_hw_provider()
+> > +  devm_clk_hw_register_clkdev()
+> > +  devm_clk_release_clkdev()
+> 
+> The 'release' or non-common functions shouldn't be documented here.
+So I will drop the line mentioning devm_clk_release_clkdev()
+
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index af011974d4ec..9bb921eb90f6 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3893,12 +3893,12 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
+> >         of_clk_del_provider(*(struct device_node **)res);
+> >  }
+> >  
+> > -int devm_of_clk_add_hw_provider(struct device *dev,
+> > +static int __devm_of_clk_add_hw_provider(struct device *dev,
+> >                         struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> >                                               void *data),
+> > -                       void *data)
+> > +                       struct device_node *of_node, void *data)
+> >  {
+> > -       struct device_node **ptr, *np;
+> > +       struct device_node **ptr;
+> >         int ret;
+> >  
+> >         ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
+> > @@ -3906,10 +3906,9 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+> >         if (!ptr)
+> >                 return -ENOMEM;
+> >  
+> > -       np = dev->of_node;
+> > -       ret = of_clk_add_hw_provider(np, get, data);
+> > +       *ptr = of_node;
+> > +       ret = of_clk_add_hw_provider(of_node, get, data);
+> >         if (!ret) {
+> > -               *ptr = np;
+> 
+> Why is this moved outside of the if condition?
+I completely removed the local variable np and just unconditionally set
+the allocated devres to point at the node (if allocation succeeded). We
+could of course only do this if the provider registration succeeded and
+save one assignment - but I guess I intended to remove the curly braces
+and thus decided to go for one liner after if. But apparently I didn't
+remove the braces O_o. Well, I can put the assignment inside the
+condition if you prefer that.
+
+> In fact, why isn't just
+> the first line in this hunk deleted and passed to this function as
+> struct device_node *np?
+
+I am sorry but I don't quite follow your suggestion here. Do you mean we
+could just pass the struct device_node *np in devres_add()? I thought
+the pointer passed to devress_add() should be allocated using
+devres_alloc. Can you please elaborate what you mean?
+
+> 
+> >                 devres_add(dev, ptr);
+> >         } else {
+> >                 devres_free(ptr);
+> > @@ -3917,8 +3916,25 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+> >  
+> >         return ret;
+> >  }
+> 
+> Nitpick: Add a newline here.
+
+Will do.
+
+> 
+> > +int devm_of_clk_add_hw_provider(struct device *dev,
+> > +                       struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> > +                                             void *data),
+> > +                       void *data)
+> > +{
+> > +       return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
+> > +}
+> >  EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
+> >  
+> > +int devm_of_clk_add_parent_hw_provider(struct device *dev,
+> > +                       struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> > +                                             void *data),
+> > +                       void *data)
+> > +{
+> > +       return __devm_of_clk_add_hw_provider(dev, get, dev->parent->of_node,
+> 
+> I'm wondering if we can somehow auto-detect this in
+> devm_of_clk_add_hw_provider() by looking for #clock-cells in the node.
+> If it isn't there, then we go to the parent node and look for a
+> #clock-cells property there in the DT node for that device. Does that
+> make sense? Then there isn't any new API and we can attach the lifetime
+> of the devm registration to the presence of the property indicating this
+> is a clk controller or not.
+
+Huh. I don't know why but building this kind of logic in core is a bit
+scary to me. I guess I can try implementing something like this - but I
+am not really a fan of this. (Accidentally) omit the #clock-cells from
+node and we go to parent node - I am a novice on this area but this
+sounds like a potential hazard to me. I believe the driver should know
+if it's properties should be in own or parent node - and if they are
+not, then there should be no guessing but error. The lifetime is topic
+where I would like to get information from you who know the kernel
+better than I do =) But I guess the parent node is there at least as
+long as the child device is alive. So for me the life time of
+get-callback is more crucial - but as I said, I don't understand the
+kernel in details so you probably know it better than me. But please let
+me know your final take on this and I will follow the guidance =)
+
+> 
+> > +                                            data);
+> > +}
+> > +EXPORT_SYMBOL_GPL(devm_of_clk_add_parent_hw_provider);
+> 
+> Can we get some kernel doc on these functions?
+Sure. I will add the doc. Reason why I didn't do it is that the current
+devm_of_clk_add_hw_provider() did not have doc. But I'll add that in
+next patch.
+
+> > +       rval = devres_release(dev, devm_clkdev_release,
+> > +                             &devm_clk_match_clkdev, cl);
+> 
+> Nitpick: Drop & on functions taken as pointers.
+Ok. Will do.
+
 -- 
-2.19.2
+Matti Vaittinen
+ROHM Semiconductors
 
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
