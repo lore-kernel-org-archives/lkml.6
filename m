@@ -2,103 +2,139 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B47A9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83250C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED132082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A0F52082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3CYwRj5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED132082F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uiu2Kvm4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A0F52082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbeLAG2l (ORCPT
+        id S1726830AbeLAG3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:28:41 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45753 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbeLAG2k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:28:40 -0500
-Received: by mail-qt1-f195.google.com with SMTP id e5so7105629qtr.12;
-        Fri, 30 Nov 2018 11:18:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ilz0/qUmimrUNlOctd7nFeSe4AqHwSXOQZtfxLhHaRo=;
-        b=K3CYwRj5lnidmb/Y0cjckcmJP8BOp88WLKNvydVci0XIi2Ng2pa9GH7iWLGBj8C5Ms
-         Yy/a/NoFQqEft0pv63McyOryQjZMg4DmpLwkjkHVDVEBcBqPJ764E/PaNydli4WEIBg9
-         OkZXtofN8wpxucNADuRrCUD5Lk+99l/EZvALPCSEccxSbacJA85G+qMIY1bngYnzr8AK
-         nXiPwgiSUyhRiVN/xelL3bQTXuGKt+J663XSRr4R7k2W2Tu/N1DkYCrQHmfj4d1KOFi9
-         2nMyZ+FplfWqZhTWgIx7qRwe5S/PDzQ2Uy8vekZGzMIsCeGN1xoCEmlZTr8/iU6+br/H
-         86Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ilz0/qUmimrUNlOctd7nFeSe4AqHwSXOQZtfxLhHaRo=;
-        b=Sxl1dYuFI5fgSpzwkEv+qJzpq2QlC+GOSzlYfL82Ls95JDYXQ8Moo/FAzWmZsNhIDl
-         QIsihR5tVD+qCEywVHJvJ38dTMslrAnmlsca3dK7SXe4jpJ+wTWRT3OSHrgeFLirxWsf
-         7Bl1bzgT3/JssRFeu2ZsDNguOJwcRFUAWsh+Kuk5uvhsl/74li359RFLEe8mS7eu1gsj
-         0IPk5/oCY7mgSIcCFuSIiandiFklbRm914/M4NMKx+A4Oik0gbSJECtOlW7Y/qwcQ+Yg
-         mhZxsi5m0Ya5KtA0zShmvW6HZgZak/k6HMJkv01FPjOqFCRrSwWM3/rR0m9ol/Rw25nm
-         V0NA==
-X-Gm-Message-State: AA+aEWb0e3FWWC7+trf8C7BjNLPvkVPa3EK+Hxb5bjAKGJ9mShiTfEKL
-        PE0sVW0imhilwEK3b2AB5XU=
-X-Google-Smtp-Source: AFSGD/XsK+ulmlZZWPrpS5+2le0B2jhS/yLSSoCgnywfAu0v4z/WJs1g3qA4iF5UeIcN09r3Y+jAHw==
-X-Received: by 2002:a0c:8ae3:: with SMTP id 32mr6705273qvw.27.1543605502738;
-        Fri, 30 Nov 2018 11:18:22 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::5:51cf])
-        by smtp.gmail.com with ESMTPSA id 21sm5461311qkr.89.2018.11.30.11.18.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 11:18:21 -0800 (PST)
-Date:   Fri, 30 Nov 2018 11:18:19 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     linux-mm@kvack.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aarcange@redhat.com,
-        aaron.lu@intel.com, akpm@linux-foundation.org,
-        alex.williamson@redhat.com, bsd@redhat.com,
-        darrick.wong@oracle.com, dave.hansen@linux.intel.com,
-        jgg@mellanox.com, jwadams@google.com, jiangshanlai@gmail.com,
-        mhocko@kernel.org, mike.kravetz@oracle.com,
-        Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
-        rdunlap@infradead.org, steven.sistare@oracle.com,
-        tim.c.chen@intel.com, vbabka@suse.cz
-Subject: Re: [RFC PATCH v4 00/13] ktask: multithread CPU-intensive kernel work
-Message-ID: <20181130191819.GJ2509588@devbig004.ftw2.facebook.com>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
+        Sat, 1 Dec 2018 01:29:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725861AbeLAG3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 01:29:17 -0500
+Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AED42082F;
+        Fri, 30 Nov 2018 19:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543605539;
+        bh=98vzZta8KuyWOVxUsIuezQoGNy4OQ4NQiajJUIICRws=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Uiu2Kvm47X02eX7wX3lvW2ZrOGA10cyyQ+6JOfu3R6LQnDfQhODX0lXwD1e/qrRBY
+         DEGSLwKB6+s8Ws36KCgi+A326odqGRgb1/yFLPgZbRNAq3NIg8GaHQVGE/elS06ODT
+         SvBXLiDqmma2yXBVXPVe3uzfFYnH3UTwCl9npHhY=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 1684340BF1; Fri, 30 Nov 2018 16:18:56 -0300 (-03)
+Date:   Fri, 30 Nov 2018 16:18:56 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Subject: Re: [PATCH 7/9] tools/lib/traceevent: traceevent API cleanup
+Message-ID: <20181130191856.GC19230@kernel.org>
+References: <20181130154403.150474900@goodmis.org>
+ <20181130154647.891651290@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181130154647.891651290@goodmis.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Em Fri, Nov 30, 2018 at 10:44:10AM -0500, Steven Rostedt escreveu:
+> From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+> 
+> In order to make libtraceevent into a proper library, its API
+> should be straightforward. This patch hides few API functions,
+> intended for internal usage only:
+> tep_free_event(), tep_free_format_field(), __tep_data2host2(),
+> __tep_data2host4() and __tep_data2host8().
+> The patch also alignes the libtraceevent summary man page with
+> these API changes.
 
-On Mon, Nov 05, 2018 at 11:55:45AM -0500, Daniel Jordan wrote:
-> Michal, you mentioned that ktask should be sensitive to CPU utilization[1].
-> ktask threads now run at the lowest priority on the system to avoid disturbing
-> busy CPUs (more details in patches 4 and 5).  Does this address your concern?
-> The plan to address your other comments is explained below.
+I applied the previous patches, stopped here as it this one fails with
+the error bellow.
 
-Have you tested what kind of impact this has on bandwidth of a system
-in addition to latency?  The thing is while this would make a better
-use of a system which has idle capacity, it does so by doing more
-total work.  It'd be really interesting to see how this affects
-bandwidth of a system too.
+Please resend from this patch onwards.
 
-Thanks.
+BTW, this is what I have right now:
 
--- 
-tejun
+[acme@quaco perf]$ git log --oneline - 6
+9db9efe53c72 (HEAD -> perf/core) tools lib traceevent: Rename tep_free_format() to tep_free_event()
+e58c351e8383 tools lib traceevent, perf tools: Rename 'struct tep_event_format' to 'struct tep_event'
+4237fd0b60d8 tools lib traceevent: Install trace-seq.h API header file
+bb837f2581dc tools lib traceevent: Added support for pkg-config
+a2c167ad70b6 tools lib traceevent: Implement new API tep_get_ref()
+51d0337d0198 (acme.korg/perf/core) tools lib traceevent: Add sanity check to is_timestamp_in_us()
+
+- Arnaldo
+
+[acme@quaco perf]$ m
+make: Entering directory '/home/acme/git/perf/tools/perf'
+  BUILD:   Doing 'make -j8' parallel build
+  CC       /tmp/build/perf/util/trace-event-read.o
+  CC       /tmp/build/perf/util/trace-event-scripting.o
+  CC       /tmp/build/perf/util/trace-event.o
+  CC       /tmp/build/perf/util/sort.o
+  CC       /tmp/build/perf/util/hist.o
+  INSTALL  trace_plugins
+  CC       /tmp/build/perf/util/cgroup.o
+  CC       /tmp/build/perf/util/stat.o
+  CC       /tmp/build/perf/util/stat-shadow.o
+  CC       /tmp/build/perf/util/stat-display.o
+  CC       /tmp/build/perf/util/record.o
+util/trace-event-read.c: In function ‘read4’:
+util/trace-event-read.c:105:9: error: implicit declaration of function ‘__tep_data2host4’; did you mean ‘tep_data_flags’? [-Werror=implicit-function-declaration]
+  return __tep_data2host4(pevent, data);
+         ^~~~~~~~~~~~~~~~
+         tep_data_flags
+util/trace-event-read.c:105:9: error: nested extern declaration of ‘__tep_data2host4’ [-Werror=nested-externs]
+util/trace-event-read.c: In function ‘read8’:
+util/trace-event-read.c:114:9: error: implicit declaration of function ‘__tep_data2host8’; did you mean ‘tep_data_flags’? [-Werror=implicit-function-declaration]
+  return __tep_data2host8(pevent, data);
+         ^~~~~~~~~~~~~~~~
+         tep_data_flags
+util/trace-event-read.c:114:9: error: nested extern declaration of ‘__tep_data2host8’ [-Werror=nested-externs]
+cc1: all warnings being treated as errors
+mv: cannot stat '/tmp/build/perf/util/.trace-event-read.o.tmp': No such file or directory
+make[4]: *** [/home/acme/git/perf/tools/build/Makefile.build:96: /tmp/build/perf/util/trace-event-read.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: util] Error 2
+make[2]: *** [Makefile.perf:658: /tmp/build/perf/libperf-in.o] Error 2
+make[1]: *** [Makefile.perf:215: sub-make] Error 2
+make: *** [Makefile:110: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf/tools/perf'
+
+ Performance counter stats for 'make -k O=/tmp/build/perf -C tools/perf install-bin':
+
+    20,606,463,070      cycles:u
+    24,937,056,161      instructions:u            #    1.21  insn per cycle
+
+       2.192507189 seconds time elapsed
+
+       5.571323000 seconds user
+       0.994057000 seconds sys
+
+
+[acme@quaco perf]$
