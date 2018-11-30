@@ -2,110 +2,249 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A65BFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0E7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AAB52146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:03:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="06nqnrTf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AAB52146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9DC082082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:05:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC082082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeK3SLr (ORCPT
+        id S1726852AbeK3SNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:11:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48544 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 13:13:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39058 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726410AbeK3SLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:11:47 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726386AbeK3SN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:13:29 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC3A12145D;
-        Fri, 30 Nov 2018 07:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543561408;
-        bh=RkKCI7Pxt7bx3MBwO+HtfwrHSzsfYZtr5xl/nny+qBE=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=06nqnrTff+RccCtByMEXZoCjJlHmqOGCacHXWQ9tPpdybTG4HxGG+vgshuNOta7gX
-         u5Fa1hxGSFZ/qPoDLzve73sou4Sfm28v/Bll6FTyJMiZtkMldq3DsnHUWC+Yfs/+Aw
-         zoqrWbr+zYXyl/kryH3aQphSkNpkJ3QgELI2d9qk=
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B64165871;
+        Fri, 30 Nov 2018 07:05:10 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-125.pek2.redhat.com [10.72.12.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2076183E2;
+        Fri, 30 Nov 2018 07:04:48 +0000 (UTC)
+Subject: Re: [PATCH 1/2 v8] resource: add the new I/O resource descriptor
+ 'IORES_DESC_RESERVED'
+To:     Dave Young <dyoung@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        x86@kernel.org, linux-ia64@vger.kernel.org,
+        linux-efi@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, akpm@linux-foundation.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        ard.biesheuvel@linaro.org, tony.luck@intel.com,
+        fenghua.yu@intel.com, bhe@redhat.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Toshi Kani <toshi.kani@hp.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181129080956.20776-1-lijiang@redhat.com>
+ <20181129080956.20776-2-lijiang@redhat.com>
+ <20181130033703.GA23624@dhcp-128-65.nay.redhat.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <bbf6352b-b060-4cb8-dfd2-99166b0149a7@redhat.com>
+Date:   Fri, 30 Nov 2018 15:04:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAL_JsqJuZAr7ndznrUu0cuM7DpB5A7ixjJ+vZ97s5G4xz0sVow@mail.gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Frank Rowand <frowand.list@gmail.com>
-References: <20181106183609.207702-1-sboyd@kernel.org>
- <20181106183609.207702-2-sboyd@kernel.org>
- <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
- <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
- <154353772392.88331.16937191244549721858@swboyd.mtv.corp.google.com>
- <CAL_JsqJuZAr7ndznrUu0cuM7DpB5A7ixjJ+vZ97s5G4xz0sVow@mail.gmail.com>
-Message-ID: <154356140759.88331.15666344779026803117@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-Date:   Thu, 29 Nov 2018 23:03:27 -0800
+In-Reply-To: <20181130033703.GA23624@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 30 Nov 2018 07:05:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (2018-11-29 17:01:54)
-> On Thu, Nov 29, 2018 at 6:28 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Stephen Boyd (2018-11-07 10:37:31)
-> > > appropriate structure with to_platform_device() or to_i2c_client()?
-> > >
-> > > So the example would become
-> > >
-> > >   struct of_driver_probe_func {
-> > >         int (*probe)(struct device *dev);
-> > >   };
-> > >
-> > >   struct of_driver_probe_func mtk_probes[] =3D {
-> > >         mtk_probe1,
-> > >         mtk_probe2,
-> > >         mtk_probe3,
-> > >   };
-> > >
-> > >   struct platform_driver mtk_driver =3D {
-> > >         .driver =3D {
-> > >                 .name =3D "mtk-foo";
-> > >                 .of_match_table =3D mtk_match_table,
-> > >                 .of_probes =3D &mtk_probes;
-> > >         },
-> > >   };
-> > >
-> > > And the probe functions might need to container_of() the device point=
-er
-> > > to get the struct they know they need. The probe function could also =
-be
-> > > added to of_device_id and then we would have to look and see if that
-> > > pointer is populated when the device is matched in generic device cod=
-e.
-> > >
-> >
-> > I guess I'll go down the path of extending the of_device_id structure?
-> =
+在 2018年11月30日 11:37, Dave Young 写道:
+> + more people
+> 
 
-> Unfortunately, I don't think you can change of_device_id as it's part
-> of the kernel ABI.
+Thank you, Dave.
 
-Ok. Then I'll go down the path of making it a parallel array?
+That would be fine to let more people review this patch.
 
+> On 11/29/18 at 04:09pm, Lianbo Jiang wrote:
+>> When doing kexec_file_load, the first kernel needs to pass the e820
+>> reserved ranges to the second kernel. But kernel can not exactly
+>> match the e820 reserved ranges when walking through the iomem resources
+>> with the descriptor 'IORES_DESC_NONE', because several e820 types(
+>> e.g. E820_TYPE_RESERVED_KERN/E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820
+>> _TYPE_RESERVED) are converted to the descriptor 'IORES_DESC_NONE'. It
+>> may pass these four types to the kdump kernel, that is not desired result.
+>>
+>> So, this patch adds a new I/O resource descriptor 'IORES_DESC_RESERVED'
+>> for the iomem resources search interfaces. It is helpful to exactly
+>> match the reserved resource ranges when walking through iomem resources.
+>>
+>> In addition, since the new descriptor 'IORES_DESC_RESERVED' is introduced,
+>> these code originally related to the descriptor 'IORES_DESC_NONE' need to
+>> be updated. Otherwise, it will be easily confused and also cause some
+>> errors. Because the 'E820_TYPE_RESERVED' type is converted to the new
+>> descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE', it has been
+>> changed.
+>>
+>> Suggested-by: Dave Young <dyoung@redhat.com>
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  arch/ia64/kernel/efi.c |  4 ++++
+>>  arch/x86/kernel/e820.c |  2 +-
+>>  arch/x86/mm/ioremap.c  | 13 ++++++++++++-
+>>  include/linux/ioport.h |  1 +
+>>  kernel/resource.c      |  6 +++---
+>>  5 files changed, 21 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/ia64/kernel/efi.c b/arch/ia64/kernel/efi.c
+>> index 8f106638913c..1841e9b4db30 100644
+>> --- a/arch/ia64/kernel/efi.c
+>> +++ b/arch/ia64/kernel/efi.c
+>> @@ -1231,6 +1231,10 @@ efi_initialize_iomem_resources(struct resource *code_resource,
+>>  				break;
+>>  
+>>  			case EFI_RESERVED_TYPE:
+>> +				name = "reserved";
+> 
+> Ingo updated X86 code to use "Reserved",  I think it would be good to do
+> same for this case as well
+> 
+
+I have noticed the changes on x86, but for IA64, i'm not sure whether it should do the same
+thing, so keep it as before.
+
+If IA64 people would like to give any comment, that will be appreciated.
+
+
+>> +				desc = IORES_DESC_RESERVED;
+>> +				break;
+>> +
+>>  			case EFI_RUNTIME_SERVICES_CODE:
+>>  			case EFI_RUNTIME_SERVICES_DATA:
+>>  			case EFI_ACPI_RECLAIM_MEMORY:
+> 
+> Originally, above 3 are all "reserved", so probably they all should be
+> IORES_DESC_RESERVED.
+> 
+
+This is a good question.
+
+If above 3 types are converted to the new descriptor 'IORES_DESC_RESERVED', how to handle
+the all 'default' case? Because the all 'default' case is also converted to the descriptor
+'IORES_DESC_NONE' and the name 'reserved'.
+
+> Can any IA64 people to review this?
+> 
+>> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+>> index 50895c2f937d..57fafdafb860 100644
+>> --- a/arch/x86/kernel/e820.c
+>> +++ b/arch/x86/kernel/e820.c
+>> @@ -1048,10 +1048,10 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
+>>  	case E820_TYPE_NVS:		return IORES_DESC_ACPI_NV_STORAGE;
+>>  	case E820_TYPE_PMEM:		return IORES_DESC_PERSISTENT_MEMORY;
+>>  	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
+>> +	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
+>>  	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+>>  	case E820_TYPE_RAM:		/* Fall-through: */
+>>  	case E820_TYPE_UNUSABLE:	/* Fall-through: */
+>> -	case E820_TYPE_RESERVED:	/* Fall-through: */
+>>  	default:			return IORES_DESC_NONE;
+>>  	}
+>>  }
+>> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+>> index 5378d10f1d31..fea2ef99415d 100644
+>> --- a/arch/x86/mm/ioremap.c
+>> +++ b/arch/x86/mm/ioremap.c
+>> @@ -83,7 +83,18 @@ static bool __ioremap_check_ram(struct resource *res)
+>>  
+>>  static int __ioremap_check_desc_other(struct resource *res)
+>>  {
+>> -	return (res->desc != IORES_DESC_NONE);
+>> +	/*
+>> +	 * But now, the 'E820_TYPE_RESERVED' type is converted to the new
+>> +	 * descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE',
+>> +	 * it has been changed. And the value of 'mem_flags.desc_other'
+>> +	 * is equal to 'true' if we don't strengthen the condition in this
+>> +	 * function, that is wrong. Because originally it is equal to
+>> +	 * 'false' for the same reserved type.
+>> +	 *
+>> +	 * So, that would be nice to keep it the same as before.
+>> +	 */
+>> +	return ((res->desc != IORES_DESC_NONE) &&
+>> +		(res->desc != IORES_DESC_RESERVED));
+>>  }
+> 
+> Added Tom since he added the check function.  Is it possible to only
+> check explict valid desc types instead of exclude IORES_DESC_NONE?
+> 
+
+So sorry that i forgot to add Tom.
+
+I'm looking forward to Tom's reply. If i made a mistake, please help me
+to point out. Thanks a lot.
+
+Regards,
+Lianbo
+
+>>  
+>>  static int __ioremap_res_check(struct resource *res, void *arg)
+>> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+>> index da0ebaec25f0..6ed59de48bd5 100644
+>> --- a/include/linux/ioport.h
+>> +++ b/include/linux/ioport.h
+>> @@ -133,6 +133,7 @@ enum {
+>>  	IORES_DESC_PERSISTENT_MEMORY_LEGACY	= 5,
+>>  	IORES_DESC_DEVICE_PRIVATE_MEMORY	= 6,
+>>  	IORES_DESC_DEVICE_PUBLIC_MEMORY		= 7,
+>> +	IORES_DESC_RESERVED			= 8,
+>>  };
+>>  
+>>  /* helpers to define resources */
+>> diff --git a/kernel/resource.c b/kernel/resource.c
+>> index b0fbf685c77a..f34a632c4169 100644
+>> --- a/kernel/resource.c
+>> +++ b/kernel/resource.c
+>> @@ -994,7 +994,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+>>  	res->start = start;
+>>  	res->end = end;
+>>  	res->flags = type | IORESOURCE_BUSY;
+>> -	res->desc = IORES_DESC_NONE;
+>> +	res->desc = IORES_DESC_RESERVED;
+>>  
+>>  	while (1) {
+>>  
+>> @@ -1029,7 +1029,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+>>  				next_res->start = conflict->end + 1;
+>>  				next_res->end = end;
+>>  				next_res->flags = type | IORESOURCE_BUSY;
+>> -				next_res->desc = IORES_DESC_NONE;
+>> +				next_res->desc = IORES_DESC_RESERVED;
+>>  			}
+>>  		} else {
+>>  			res->start = conflict->end + 1;
+>> @@ -1477,7 +1477,7 @@ static int __init reserve_setup(char *str)
+>>  			res->start = io_start;
+>>  			res->end = io_start + io_num - 1;
+>>  			res->flags |= IORESOURCE_BUSY;
+>> -			res->desc = IORES_DESC_NONE;
+>> +			res->desc = IORES_DESC_RESERVED;
+>>  			res->child = NULL;
+>>  			if (request_resource(parent, res) == 0)
+>>  				reserved = x+1;
+>> -- 
+>> 2.17.1
+>>
+> 
+> 
+> There are a lot of places call region_intersects which use DESC_NONE,
+> I'm not sure if needed changes accordingly.  Cced Dan and Toshi.
+> 
+> 
+> Thanks
+> Dave
+> 
