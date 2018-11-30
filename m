@@ -2,76 +2,187 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED85C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6A1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0081120868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:25:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWpTCLWr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0081120868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DA31120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA31120868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbeLAGgF (ORCPT
+        id S1726595AbeLAGiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:36:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59554 "EHLO mail.kernel.org"
+        Sat, 1 Dec 2018 01:38:00 -0500
+Received: from mga12.intel.com ([192.55.52.136]:46972 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbeLAGgF (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:36:05 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7204F20868;
-        Fri, 30 Nov 2018 19:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543605946;
-        bh=pZP9k70lbrleRft8mNWFS9MFlZPIdx0DrrwWsqpW5Nk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mWpTCLWrX1ciINSOoUqG/dkUArGYTgPAVu3VieugEyybgWBl1IKCrNWGoXJTl91w8
-         OWmFQuJpjvfeTOlQjdmgKGdXINNJMLna/PqmuwZ3IqfOhZHRTr/dsurjqHTAZpIsC9
-         mJnMtaWs8HjN8O2z9JndS+i6/gtPHaYAMOmkEDTQ=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 2CFBA40BF1; Fri, 30 Nov 2018 16:25:44 -0300 (-03)
-Date:   Fri, 30 Nov 2018 16:25:44 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v5 0/4] perf report/annotate: Support average IPC and IPC
- coverage for function
-Message-ID: <20181130192544.GD19230@kernel.org>
-References: <1543586097-27632-1-git-send-email-yao.jin@linux.intel.com>
+        id S1725749AbeLAGiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 01:38:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 11:27:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
+   d="scan'208";a="279426260"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
+  by orsmga005.jf.intel.com with ESMTP; 30 Nov 2018 11:27:41 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Joshua Kinard <kumba@gentoo.org>,
+        linux-mips@linux-mips.org (open list:MIPS)
+Subject: [PATCH RFC 01/15] MIPS: replace **** with a hug
+Date:   Fri, 30 Nov 2018 11:27:10 -0800
+Message-Id: <20181130192737.15053-2-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543586097-27632-1-git-send-email-yao.jin@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Nov 30, 2018 at 09:54:53PM +0800, Jin Yao escreveu:
-> Add supporting of displaying the average IPC and IPC coverage
-> percentage per function.
+In order to comply with the CoC, replace **** with a hug.
 
-<SNIP>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/mips/pci/ops-bridge.c      | 24 ++++++++++++------------
+ arch/mips/sgi-ip22/ip22-setup.c |  2 +-
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/arch/mips/pci/ops-bridge.c b/arch/mips/pci/ops-bridge.c
+index a1d2c4ae0d1b..c755c4c92fa9 100644
+--- a/arch/mips/pci/ops-bridge.c
++++ b/arch/mips/pci/ops-bridge.c
+@@ -56,7 +56,7 @@ static int pci_conf0_read_config(struct pci_bus *bus, unsigned int devfn,
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
  
-> v5:
-> ---
->     Update documentation according to Ingo's comments.
-> 
->     Only the patch "perf report: Documentation average IPC and
->     IPC coverage" is changed. Others are not changed.
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to look at it for real ...
+ 	 */
+ 	if (cf == (PCI_VENDOR_ID_SGI | (PCI_DEVICE_ID_SGI_IOC3 << 16)))
+@@ -76,7 +76,7 @@ static int pci_conf0_read_config(struct pci_bus *bus, unsigned int devfn,
+ oh_my_gawd:
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to look at the wrong register.
+ 	 */
+ 	if ((where >= 0x14 && where < 0x40) || (where >= 0x48)) {
+@@ -85,7 +85,7 @@ static int pci_conf0_read_config(struct pci_bus *bus, unsigned int devfn,
+ 	}
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't try to access
++	 * IOC3 is hugging hugged beyond belief ...  Don't try to access
+ 	 * anything but 32-bit words ...
+ 	 */
+ 	addr = &bridge->b_type0_cfg_dev[slot].f[fn].l[where >> 2];
+@@ -118,7 +118,7 @@ static int pci_conf1_read_config(struct pci_bus *bus, unsigned int devfn,
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to look at it for real ...
+ 	 */
+ 	if (cf == (PCI_VENDOR_ID_SGI | (PCI_DEVICE_ID_SGI_IOC3 << 16)))
+@@ -139,7 +139,7 @@ static int pci_conf1_read_config(struct pci_bus *bus, unsigned int devfn,
+ oh_my_gawd:
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to look at the wrong register.
+ 	 */
+ 	if ((where >= 0x14 && where < 0x40) || (where >= 0x48)) {
+@@ -148,7 +148,7 @@ static int pci_conf1_read_config(struct pci_bus *bus, unsigned int devfn,
+ 	}
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't try to access
++	 * IOC3 is hugging hugged beyond belief ...  Don't try to access
+ 	 * anything but 32-bit words ...
+ 	 */
+ 	bridge->b_pci_cfg = (busno << 16) | (slot << 11);
+@@ -189,7 +189,7 @@ static int pci_conf0_write_config(struct pci_bus *bus, unsigned int devfn,
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to look at it for real ...
+ 	 */
+ 	if (cf == (PCI_VENDOR_ID_SGI | (PCI_DEVICE_ID_SGI_IOC3 << 16)))
+@@ -213,14 +213,14 @@ static int pci_conf0_write_config(struct pci_bus *bus, unsigned int devfn,
+ oh_my_gawd:
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to touch the wrong register.
+ 	 */
+ 	if ((where >= 0x14 && where < 0x40) || (where >= 0x48))
+ 		return PCIBIOS_SUCCESSFUL;
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't try to access
++	 * IOC3 is hugging hugged beyond belief ...  Don't try to access
+ 	 * anything but 32-bit words ...
+ 	 */
+ 	addr = &bridge->b_type0_cfg_dev[slot].f[fn].l[where >> 2];
+@@ -257,7 +257,7 @@ static int pci_conf1_write_config(struct pci_bus *bus, unsigned int devfn,
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to look at it for real ...
+ 	 */
+ 	if (cf == (PCI_VENDOR_ID_SGI | (PCI_DEVICE_ID_SGI_IOC3 << 16)))
+@@ -281,14 +281,14 @@ static int pci_conf1_write_config(struct pci_bus *bus, unsigned int devfn,
+ oh_my_gawd:
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
++	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
+ 	 * generic PCI code a chance to touch the wrong register.
+ 	 */
+ 	if ((where >= 0x14 && where < 0x40) || (where >= 0x48))
+ 		return PCIBIOS_SUCCESSFUL;
+ 
+ 	/*
+-	 * IOC3 is fucking fucked beyond belief ...  Don't try to access
++	 * IOC3 is hugging hugged beyond belief ...  Don't try to access
+ 	 * anything but 32-bit words ...
+ 	 */
+ 	addr = &bridge->b_type0_cfg_dev[slot].f[fn].l[where >> 2];
+diff --git a/arch/mips/sgi-ip22/ip22-setup.c b/arch/mips/sgi-ip22/ip22-setup.c
+index b69daa02401b..50f04fe491ca 100644
+--- a/arch/mips/sgi-ip22/ip22-setup.c
++++ b/arch/mips/sgi-ip22/ip22-setup.c
+@@ -36,7 +36,7 @@ void __init plat_mem_setup(void)
+ 	board_be_init = ip22_be_init;
+ 
+ 	/* Init the INDY HPC I/O controller.  Need to call this before
+-	 * fucking with the memory controller because it needs to know the
++	 * hugging with the memory controller because it needs to know the
+ 	 * boardID and whether this is a Guiness or a FullHouse machine.
+ 	 */
+ 	sgihpc_init();
+-- 
+2.19.1
 
-Thanks, applied.
-
-- Arnaldo
