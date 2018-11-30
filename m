@@ -2,141 +2,200 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E97DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC4BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D03EC2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D34802145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:47:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="E9TgxpN+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03EC2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="F+2n0I19"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D34802145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeK3Uyw (ORCPT
+        id S1726691AbeK3U41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:54:52 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46788 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeK3Uyv (ORCPT
+        Fri, 30 Nov 2018 15:56:27 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:46192 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeK3U41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:54:51 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so4285556edt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 01:46:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=krpYNKIgyzz5TRFgbe6AV4I5RqquFOb+xLu9kTYm5J4=;
-        b=E9TgxpN+PBKwBOYtNMo0jYtYDS0V8ji8j5i4aGCApDNWCZUKRNf/D2C1pTYGDeOP4F
-         XehIQguFliEDbSSiWNeE8vYndDFdNziQ+jh1ZVsVro4F0kVVzC3R7R0G6jqnNfPeQqqb
-         3+JXJxJj9SdhcoLmmklN8AKIqwWzAvoIZ70yg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=krpYNKIgyzz5TRFgbe6AV4I5RqquFOb+xLu9kTYm5J4=;
-        b=WdzwiAw62j9wOScDriclqcLMpK4lag0Mre+xCv9C3Nalc8UTH/so5TbJMHlNKoyRX2
-         qSACdkxeWNm+TPqj2aKJuaz2wV7zqjEIJ3yx2qBWkE1/i5gVm7YJNmLQcxi0ndGNlnAF
-         YXDEoUbwDQFzSJetoameYNjaG7G6+93VmXkE0tIIisSRsF3mDJUlhKnS3kIa3Z9r6pfb
-         pX9d3uz2rPUWaWYxUjuCwoH3ON3gtRUiemv5xCPUcbeipgaaKvoPpuXaSq1VK1PcF+Xs
-         tZ9I0F6QU9bfo0dm1A3oQi+H1aOMmNadjOEbqt/Ds3KQUoTN0w+8InaCKISuGsljWgAm
-         6IiA==
-X-Gm-Message-State: AA+aEWZIJ+xjO1jxtdR4kmODzLWCBODhoO4r6SYNmvjYD3xOAwvCcDkl
-        Q99YplNxQW5SstCggcEN9a+uEQ==
-X-Google-Smtp-Source: AFSGD/XfdTM46yTyIppL7ONot2OjT0bbul1NCz9vBUDn8oQCKdfH7cEiOeahZU2TOjAFwdQ5f7u0hg==
-X-Received: by 2002:a17:906:314a:: with SMTP id e10-v6mr4148674eje.227.1543571167239;
-        Fri, 30 Nov 2018 01:46:07 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id d7-v6sm719738ejx.68.2018.11.30.01.46.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 01:46:06 -0800 (PST)
-Date:   Fri, 30 Nov 2018 10:46:04 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        "Clark, Rob" <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>, vivek.gautam@codeaurora.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-Message-ID: <20181130094604.GV21184@phenom.ffwll.local>
-Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
-        "Clark, Rob" <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>, Sean Paul <seanpaul@chromium.org>,
-        vivek.gautam@codeaurora.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
- <20181129141429.GA22638@lst.de>
- <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
- <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
- <20181129155758.GC26537@lst.de>
- <20181129162807.GL21184@phenom.ffwll.local>
- <20181129165715.GA27786@lst.de>
- <CAKMK7uECLeTbEjG6=unWZSKakpiYkmBVbCEKKY2xv=vVjF-pBQ@mail.gmail.com>
- <20181129183334.GB30281@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129183334.GB30281@lst.de>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 30 Nov 2018 15:56:27 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id ED84124E204D;
+        Fri, 30 Nov 2018 01:47:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543571263; bh=AQQ/BgUgp5GV5MOoT50HibXrL1H3upummjpjFm9Swx4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F+2n0I19lkhCBlZ3HYF1wnrP7E+OBLMZqU6VjN3L33sCtxd+Wo7CTchtBXt2f6BTo
+         tY3LctAcEWYBa7XLJDSmnwPmr6VQH2eiewUIvmTr0a51ESxY7ZD8ojrPJOKpdyLQur
+         A/cyi3i35KsnV5C2CT+kIkuprJ76l9eoYtPx7QIIyXLi58Is3JRdzXcKkezOuyElsJ
+         XQYEgVXMqKVYfYX2246GG288bCVNDzLIpdJ7g+EeXXkBQ0itveR6AFNdC4Zp9qZUYl
+         MQJvmNh6df3OqYMpYJIQM11pUd6LTxfYJoRsuvtChVYZ7a0391Pgm7TjRvvigu0AfQ
+         zoYEG+CcLhcIQ==
+Received: from joabreu-VirtualBox.internal.synopsys.com (joabreu-e7440.internal.synopsys.com [10.107.19.26])
+        by mailhost.synopsys.com (Postfix) with ESMTP id D5A2C5DF1;
+        Fri, 30 Nov 2018 01:47:41 -0800 (PST)
+From:   Jose Abreu <jose.abreu@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Jose Abreu <jose.abreu@synopsys.com>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Joao Pinto <joao.pinto@synopsys.com>,
+        Vitor Soares <vitor.soares@synopsys.com>,
+        David Laight <David.Laight@ACULAB.COM>
+Subject: [PATCH v3] ARC: io.h: Implement reads{x}()/writes{x}()
+Date:   Fri, 30 Nov 2018 09:47:31 +0000
+Message-Id: <244eba764469e8493f2d0c85a6d965aad6cd8128.1543571088.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 07:33:34PM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 29, 2018 at 06:09:05PM +0100, Daniel Vetter wrote:
-> > What kind of abuse do you expect? It could very well be that gpu folks
-> > call that "standard use case" ... At least on x86 with the i915 driver
-> > we pretty much rely on architectural guarantees for how cache flushes
-> > work very much. Down to userspace doing the cache flushing for
-> > mappings the kernel has set up.
-> 
-> Mostly the usual bypasses of the DMA API because people know better
-> (and with that I don't mean low-level IOMMU API users, but "creative"
-> direct mappings).
+Some ARC CPU's do not support unaligned loads/stores. Currently, generic
+implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
+This can lead to misfunction of some drivers as generic functions do a
+plain dereference of a pointer that can be unaligned.
 
-Ah yes. I think that even gpu folks get behind :-) Best if someone
-bothered to explicitly cast to dma_addr_t to shut up the tools, but not
-fix the bug ...
+Let's use {get/put}_unaligned() helpers instead of plain dereference of
+pointer in order to fix. The helpers allow to get and store data from an
+unaligned address whilst preserving the CPU internal alignment.
+According to [1], the use of these helpers are costly in terms of
+performance so we added an initial check for a buffer already aligned so
+that the usage of the helpers can be avoided, when possible.
 
-> > > As for the buffer sharing: at least for the DMA API side I want to
-> > > move the current buffer sharing users away from dma_alloc_coherent
-> > > (and coherent dma_alloc_attrs users) and the remapping done in there
-> > > required for non-coherent architectures.  Instead I'd like to allocate
-> > > plain old pages, and then just dma map them for each device separately,
-> > > with DMA_ATTR_SKIP_CPU_SYNC passed for all but the first user to map
-> > > or last user to unmap.  On the iommu side it could probably work
-> > > similar.
-> > 
-> > I think this is what's often done. Except then there's also the issue
-> > of how to get at the cma allocator if your device needs something
-> > contiguous. There's a lot of that still going on in graphics/media.
-> 
-> Being able to dip into CMA and mayb iommu coalescing if we want to
-> get fancy is indeed the only reason for this API.  If we just wanted
-> to map pages we could already do that now with just a little bit
-> of boilerplate code (and quite a few drivers do - just adding this
-> new API will remove tons of code).
+[1] Documentation/unaligned-memory-access.txt
 
-Sounds like the future is very bright indeed \o/
--Daniel
+Changes from v2:
+- Rework commit msg (Vineet)
+- Check if count is 0 and return (Vineet)
+- Use two different loops (Vineet)
+
+Changes from v1:
+- Check if buffer is already aligned (David)
+- Remove 64 bit mention (Alexey)
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Tested-by: Vitor Soares <soares@synopsys.com>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: Vitor Soares <soares@synopsys.com>
+Cc: David Laight <David.Laight@ACULAB.COM>
+---
+ arch/arc/include/asm/io.h | 67 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+
+diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
+index c22b181e8206..6c89c31fbe15 100644
+--- a/arch/arc/include/asm/io.h
++++ b/arch/arc/include/asm/io.h
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+ #include <asm/page.h>
++#include <asm/unaligned.h>
+ 
+ #ifdef CONFIG_ISA_ARCV2
+ #include <asm/barrier.h>
+@@ -94,6 +95,37 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
+ 	return w;
+ }
+ 
++#define __raw_readsx(t,f) \
++static inline void __raw_reads##f(const volatile void __iomem *addr, \
++				  void *buffer, unsigned int count) \
++{ \
++	bool is_aligned = ((unsigned long)buffer % ((t) / 8)) == 0; \
++	u##t *buf = buffer; \
++\
++	if (!count) \
++		return; \
++\
++	/* Some ARC CPU's don't support unaligned accesses */ \
++	if (is_aligned) { \
++		do { \
++			u##t x = __raw_read##f(addr); \
++			*buf++ = x; \
++		} while (--count); \
++	} else { \
++		do { \
++			u##t x = __raw_read##f(addr); \
++			put_unaligned(x, buf++); \
++		} while (--count); \
++	} \
++}
++
++#define __raw_readsb __raw_readsb
++__raw_readsx(8, b)
++#define __raw_readsw __raw_readsw
++__raw_readsx(16, w)
++#define __raw_readsl __raw_readsl
++__raw_readsx(32, l)
++
+ #define __raw_writeb __raw_writeb
+ static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
+ {
+@@ -126,6 +158,35 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ 
+ }
+ 
++#define __raw_writesx(t,f) \
++static inline void __raw_writes##f(volatile void __iomem *addr, \
++				   const void *buffer, unsigned int count) \
++{ \
++	bool is_aligned = ((unsigned long)buffer % ((t) / 8)) == 0; \
++	const u##t *buf = buffer; \
++\
++	if (!count) \
++		return; \
++\
++	/* Some ARC CPU's don't support unaligned accesses */ \
++	if (is_aligned) { \
++		do { \
++			__raw_write##f(*buf++, addr); \
++		} while (--count); \
++	} else { \
++		do { \
++			__raw_write##f(get_unaligned(buf++), addr); \
++		} while (--count); \
++	} \
++}
++
++#define __raw_writesb __raw_writesb
++__raw_writesx(8, b)
++#define __raw_writesw __raw_writesw
++__raw_writesx(16, w)
++#define __raw_writesl __raw_writesl
++__raw_writesx(32, l)
++
+ /*
+  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
+  * Based on ARM model for the typical use case
+@@ -141,10 +202,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+ #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+ #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
++#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
++#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
++#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
+ 
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
+ #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
++#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
++#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
++#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
+ 
+ /*
+  * Relaxed API for drivers which can handle barrier ordering themselves
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.4
+
+
