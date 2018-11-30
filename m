@@ -2,149 +2,178 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5238C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28BBC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D7AC20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:52:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7AC20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8647220867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:52:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iU0kIELw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8647220867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeLAABQ (ORCPT
+        id S1726948AbeLAABU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:01:16 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:54572 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbeLAABP (ORCPT
+        Fri, 30 Nov 2018 19:01:20 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:37718 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbeLAABU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:01:15 -0500
-Received: by mail-it1-f199.google.com with SMTP id v3so6664196itf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 04:52:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vssgb/4CDnXQABP1jVuxutFRbcIJfS4WdJ4Hn0L1C5A=;
-        b=YoYvGD9I0cBa1ljAgKfrW1VbPiURcyl+r4Rj1SFZ+K/R+ND6knoFT3/6GNQwXwdShA
-         VyeGksvm32tf/tTW8yRKzgS3JIcPGB8OqGA0nhAGxde4SFI1fsNLGGo5bSQ0SBXCFJzf
-         7QcsTczrTqziZ5ZI/GWjX6nMaI5LQQWlTOaUKkChzC6RTJNpZtkrwhSaGj2G8hRSQSCW
-         LRhCnq9PuJ7XJM59a8MzIDoLzvh6uJVkJHI2HVO9CrPGfWYH0pNhtWxYCuzuChFB+a/n
-         GmvL0Si8WOQ4HT6V2doWcy5rwiLCQBkzHA8JqvYV9bIF7LgftDZgTdh18bd61i8JrTnl
-         LTsA==
-X-Gm-Message-State: AA+aEWbdh3Tt/IqR+xFTSYoJ2hx1Qf1UKEX0bXGOCB5HQ4VAujVZqjuD
-        Ny3kZCT1Ek8OQs3HEjYb6Kg4yKa5Ner9X+zTUawp+iKbkRyp
-X-Google-Smtp-Source: AFSGD/WPJmfRRsuSktjIrZ63tE9uD01HZxHYxxuXG2Dd2bKpsTIP2U8ToaW9mptjxuHaxYfH26CiipgxtL/CpJF4t3LKuLAPHDHp
-MIME-Version: 1.0
-X-Received: by 2002:a24:5dd4:: with SMTP id w203mr4033902ita.8.1543582322812;
- Fri, 30 Nov 2018 04:52:02 -0800 (PST)
-Date:   Fri, 30 Nov 2018 04:52:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000874de057be144e8@google.com>
-Subject: WARNING in fib6_add (2)
-From:   syzbot <syzbot+60cc5bc1296c8afcf739@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Fri, 30 Nov 2018 19:01:20 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 4AFB010C164E;
+        Fri, 30 Nov 2018 04:52:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543582327; bh=FuhQb2lqpSXXlmjXkfczrDAH9W1VHN54RKKoDxU6IOI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iU0kIELwMxOKBmEJXCUMfzfvkXvuIMzegiZVdKG76rf0lw6XYIuTk7GEbXkVNaTHy
+         aiXHlQz5dewiW/foWTrhRZf2Q6ALv+qHJY8ZXcSQUFh4DUQhG7eSvYrqlgwoZwdkZp
+         5DG519sDITiag47VdDO0rBhijQJXwIvI+QI5abjS7aJgiA6WMiQjcjYowBve2q5L2O
+         NsWdRejPndFGLe8bD7ooqMjwnknz/6nMJleuuLWqIoFauOG4Z+DX7IEdNMypN7Bc5X
+         RSnrYipepgYj3mYnE/VZupGhFylRiHxrAbo4McCcsSQCkY7XU5jr0goVl9m5KbhvCI
+         XDF0g2DYM1b1Q==
+Received: from ru20arcgnu1.internal.synopsys.com (ru20arcgnu1.internal.synopsys.com [10.121.9.48])
+        by mailhost.synopsys.com (Postfix) with ESMTP id B8E7032F7;
+        Fri, 30 Nov 2018 04:52:05 -0800 (PST)
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] ARC: change defconfig defaults to ARCv2
+Date:   Fri, 30 Nov 2018 15:51:56 +0300
+Message-Id: <20181130125156.34460-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Kevin Hilman <khilman@baylibre.com>
 
-syzbot found the following crash on:
+Change the default defconfig (used with 'make defconfig') to the ARCv2
+nsim_hs_defconfig, and also switch the default Kconfig ISA selection to
+ARCv2.
 
-HEAD commit:    528bff0cdb66 tools: bpftool: fix a bitfield pretty print i..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f29a93400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
-dashboard link: https://syzkaller.appspot.com/bug?extid=60cc5bc1296c8afcf739
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+This allows several default defconfigs (e.g. make defconfig, make
+allnoconfig, make tinyconfig) to all work with ARCv2 by default.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Note since we change default architecture from ARCompact to ARCv2
+it's required to explicitly mention architecture type in ARCompact
+defconfigs otherwise ARCv2 will be implied and binaries will be
+generated for ARCv2.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+60cc5bc1296c8afcf739@syzkaller.appspotmail.com
-
-IPv6: Can't replace route, no match found
-netlink: 7 bytes leftover after parsing attributes in process  
-`syz-executor1'.
-IPv6: NLM_F_REPLACE set, but no existing node found!
-WARNING: CPU: 1 PID: 28238 at net/ipv6/ip6_fib.c:1360  
-fib6_add+0x1106/0x14c0 net/ipv6/ip6_fib.c:1360
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 28238 Comm: syz-executor5 Not tainted 4.20.0-rc3+ #92
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  panic+0x2ad/0x55c kernel/panic.c:188
-  __warn.cold.8+0x20/0x45 kernel/panic.c:540
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:fib6_add+0x1106/0x14c0 net/ipv6/ip6_fib.c:1360
-Code: 08 49 8d bf a8 0c 00 00 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 8d 03  
-00 00 4d 8b bf a8 0c 00 00 e9 15 fd ff ff e8 6a aa 9f fa <0f> 0b 48 8b 95  
-f0 fc ff ff 48 b8 00 00 00 00 00 fc ff df 48 c1 ea
-RSP: 0018:ffff8881d22cee40 EFLAGS: 00010216
-RAX: 0000000000040000 RBX: ffff8881d22cf590 RCX: ffffc90011a88000
-RDX: 0000000000008f15 RSI: ffffffff86dfe086 RDI: ffff888189100920
-RBP: ffff8881d22cf198 R08: ffff8881d8398580 R09: ffffed103a477e5d
-R10: ffffed103a477e5d R11: ffff8881d23bf2ef R12: 00000000fffffffe
-R13: ffff888189100900 R14: ffff8881b3c54080 R15: 0000000000000000
-  __ip6_ins_rt+0x54/0x80 net/ipv6/route.c:1155
-  ip6_route_multipath_add+0x94f/0x18b0 net/ipv6/route.c:4391
-  inet6_rtm_newroute+0xe3/0x160 net/ipv6/route.c:4521
-  rtnetlink_rcv_msg+0x46a/0xc20 net/core/rtnetlink.c:4947
-kobject: 'loop3' (000000001b475654): kobject_uevent_env
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4965
-kobject: 'loop3' (000000001b475654): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
-kobject: 'loop2' (000000002cda1b69): kobject_uevent_env
-kobject: 'loop2' (000000002cda1b69): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
-  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f9f096ccc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9f096cd6d4
-R13: 00000000004c3f7d R14: 00000000004d6778 R15: 00000000ffffffff
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: <stable@vger.kernel.org> # 4.4.x
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Changes v1 -> v2:
+ * Added CONFIG_ISA_ARCOMPACT to ARCompact defconfigs
+
+ arch/arc/Kconfig                    | 2 +-
+ arch/arc/Makefile                   | 2 +-
+ arch/arc/configs/axs101_defconfig   | 1 +
+ arch/arc/configs/nps_defconfig      | 1 +
+ arch/arc/configs/nsim_700_defconfig | 1 +
+ arch/arc/configs/nsimosci_defconfig | 1 +
+ arch/arc/configs/tb10x_defconfig    | 1 +
+ 7 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index 5fcbda6b37cc..6dd783557330 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -109,7 +109,7 @@ endmenu
+ 
+ choice
+ 	prompt "ARC Instruction Set"
+-	default ISA_ARCOMPACT
++	default ISA_ARCV2
+ 
+ config ISA_ARCOMPACT
+ 	bool "ARCompact ISA"
+diff --git a/arch/arc/Makefile b/arch/arc/Makefile
+index c64c505d966c..df00578c279d 100644
+--- a/arch/arc/Makefile
++++ b/arch/arc/Makefile
+@@ -6,7 +6,7 @@
+ # published by the Free Software Foundation.
+ #
+ 
+-KBUILD_DEFCONFIG := nsim_700_defconfig
++KBUILD_DEFCONFIG := nsim_hs_defconfig
+ 
+ cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
+ cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
+diff --git a/arch/arc/configs/axs101_defconfig b/arch/arc/configs/axs101_defconfig
+index 8c23bd086cd0..020d4493edfd 100644
+--- a/arch/arc/configs/axs101_defconfig
++++ b/arch/arc/configs/axs101_defconfig
+@@ -14,6 +14,7 @@ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_FORCE_LOAD=y
+ CONFIG_MODULE_UNLOAD=y
+diff --git a/arch/arc/configs/nps_defconfig b/arch/arc/configs/nps_defconfig
+index ae7a0d8be98d..6e84060e7c90 100644
+--- a/arch/arc/configs/nps_defconfig
++++ b/arch/arc/configs/nps_defconfig
+@@ -15,6 +15,7 @@ CONFIG_SYSCTL_SYSCALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_FORCE_LOAD=y
+diff --git a/arch/arc/configs/nsim_700_defconfig b/arch/arc/configs/nsim_700_defconfig
+index 8e0b8b134cd9..219c2a65294b 100644
+--- a/arch/arc/configs/nsim_700_defconfig
++++ b/arch/arc/configs/nsim_700_defconfig
+@@ -15,6 +15,7 @@ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ # CONFIG_LBDAF is not set
+diff --git a/arch/arc/configs/nsimosci_defconfig b/arch/arc/configs/nsimosci_defconfig
+index ad77f20e5aa6..35dfc6491a09 100644
+--- a/arch/arc/configs/nsimosci_defconfig
++++ b/arch/arc/configs/nsimosci_defconfig
+@@ -15,6 +15,7 @@ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_SLUB_DEBUG is not set
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_KPROBES=y
+ CONFIG_MODULES=y
+ # CONFIG_LBDAF is not set
+diff --git a/arch/arc/configs/tb10x_defconfig b/arch/arc/configs/tb10x_defconfig
+index a7f65313f84a..e71ade3cf9c8 100644
+--- a/arch/arc/configs/tb10x_defconfig
++++ b/arch/arc/configs/tb10x_defconfig
+@@ -19,6 +19,7 @@ CONFIG_KALLSYMS_ALL=y
+ # CONFIG_AIO is not set
+ CONFIG_EMBEDDED=y
+ # CONFIG_COMPAT_BRK is not set
++CONFIG_ISA_ARCOMPACT=y
+ CONFIG_SLAB=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_FORCE_LOAD=y
+-- 
+2.16.2
+
