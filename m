@@ -2,157 +2,113 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD110C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574B4C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9142082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:26:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A9142082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 12BFC2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:26:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="qgpKVzDI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12BFC2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbeLABfv (ORCPT
+        id S1727115AbeLABfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:35:51 -0500
-Received: from mail-bgr052101130098.outbound.protection.outlook.com ([52.101.130.98]:20454
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        Fri, 30 Nov 2018 20:35:54 -0500
+Received: from mail-eopbgr50073.outbound.protection.outlook.com ([40.107.5.73]:30386
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726988AbeLABfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:35:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
+        id S1726127AbeLABfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:35:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fq58JlRJYA1DCtVPCLkFTeAeAkjobz4LFMLfRLyjdb4=;
- b=BHlAO3t0zJOXHCRVD+XYl3OdEHdMFhY9/czRTp+aFEfC4NYGzYhULZaNSp3Zr5ODfWuPEk/tuqRLA1K4wPnnxZ921IKrJJXEqgM4C9+qq8CIV/SWhqozIhvQ0oosJcDzymHq5JBnJiJfBdZ9jMZVA37JFsf4qPgt4cUylJU7ARI=
-Received: from VI1PR08MB3599.eurprd08.prod.outlook.com (20.177.61.74) by
- VI1PR08MB3374.eurprd08.prod.outlook.com (20.177.58.216) with Microsoft SMTP
+ bh=6YH0/Fy9rkH1beOwQgOrxjhKFEC9fsiKGvkKxFz4qB8=;
+ b=qgpKVzDI32OY8YZTCnAtMp9qBc7QPqcfZxV1yuFiNlorU6hyUQOPla91UE52pp7wLHcULioBij3cUKJ7hotyI/2XciD7T5L1lkRXmSNN1xMpPaySougwXBS4+9KtMNavuBS/LVo6vPn6xY44ZucFNJaAg8JrHm8/khqpZMBJhK8=
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
+ VI1PR0802MB2142.eurprd08.prod.outlook.com (10.172.12.11) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Fri, 30 Nov 2018 14:26:07 +0000
-Received: from VI1PR08MB3599.eurprd08.prod.outlook.com
- ([fe80::5d2c:980a:d77e:34e2]) by VI1PR08MB3599.eurprd08.prod.outlook.com
- ([fe80::5d2c:980a:d77e:34e2%3]) with mapi id 15.20.1361.019; Fri, 30 Nov 2018
- 14:26:07 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] x86/hyper-v: define structures from TLFS as packed
-Thread-Topic: [PATCH] x86/hyper-v: define structures from TLFS as packed
-Thread-Index: AQHUiKZd3jLH2BBgGUSaUQtypGqxhKVofV4A///XFACAAAuAgA==
-Date:   Fri, 30 Nov 2018 14:26:07 +0000
-Message-ID: <20181130142603.GB2358@rkaganb.sw.ru>
-References: <20181130121511.12331-1-vkuznets@redhat.com>
- <20181130131122.GA2358@rkaganb.sw.ru> <87va4ewug9.fsf@vitty.brq.redhat.com>
-In-Reply-To: <87va4ewug9.fsf@vitty.brq.redhat.com>
-Accept-Language: en-US, ru-RU
+ 15.20.1361.19; Fri, 30 Nov 2018 14:26:21 +0000
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac%11]) with mapi id 15.20.1382.020; Fri, 30 Nov
+ 2018 14:26:21 +0000
+From:   Dave Rodgman <dave.rodgman@arm.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "markus@oberhumer.com" <markus@oberhumer.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        "sonnyrao@google.com" <sonnyrao@google.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        nd <nd@arm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+Subject: [PATCH v4 0/7] lib/lzo: performance improvements 
+Thread-Topic: [PATCH v4 0/7] lib/lzo: performance improvements 
+Thread-Index: AQHUiLiqITo/LLyl1EWjCUTAJp49+w==
+Date:   Fri, 30 Nov 2018 14:26:21 +0000
+Message-ID: <20181130142600.13782-1-dave.rodgman@arm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Vitaly_Kuznetsov_<vk?=
- =?iso-8859-2?Q?uznets@redhat.com>,=09"kvm@vger.kernel.org"_<kvm@vger.kern?=
- =?iso-8859-2?Q?el.org>,=09Paolo_Bonzini_<pbonzini@redhat.com>,=09Radim_Kr?=
- =?iso-8859-2?Q?=E8m=E1=F8_<rkrcmar@redhat.com>,=09"linux-kernel@vger.kern?=
- =?iso-8859-2?Q?el.org"_<linux-kernel@vger.kernel.org>,=09"K._Y._Srinivasa?=
- =?iso-8859-2?Q?n"_<kys@microsoft.com>,=09Haiyang_Zhang_<haiyangz@microsof?=
- =?iso-8859-2?Q?t.com>,=09Stephen_Hemminger_<sthemmin@microsoft.com>,=09"x?=
- =?iso-8859-2?Q?86@kernel.org"_<x86@kernel.org>,=09"Michael_Kelley_(EOSG)"?=
- =?iso-8859-2?Q?_<Michael.H.Kelley@microsoft.com>,=09Nadav_Amit_<nadav.ami?=
- =?iso-8859-2?Q?t@gmail.com>,=09Thomas_Gleixner_<tglx@linutronix.de>?=
-x-originating-ip: [185.231.240.5]
-x-clientproxiedby: HE1P18901CA0008.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:3:8b::18) To VI1PR08MB3599.eurprd08.prod.outlook.com
- (2603:10a6:803:85::10)
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [217.140.106.53]
+x-clientproxiedby: CWLP265CA0336.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:57::36) To VI1PR0802MB2528.eurprd08.prod.outlook.com
+ (2603:10a6:800:b0::14)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
+ smtp.mailfrom=dave.rodgman@arm.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR08MB3374;7:uUlAc9hILTnX9jiMG9RcweX3WIsmOJM8zXCyk4gXgSBp1PEMTOpFyCCo6lti1/e8KJFZR85Kdai4OiMTBeW2IaUISkMRm8zZy9kPEult+13Wlb/je7ZYQz30yocPJkeJu326lLs8We9RhvRXZKbNFA==;20:shcHGsl5XElIJFfYR3JtgBFKaWqq+W0ZgPsrcTGHMx9f2xskNj3PTnreJMXtZEhE5D8Mo/db2zngoFXnYnuD7RI0JvF+GQoJSJxKHLiNdTmNlyB7iqLYOm4O3OVDGsZYfOEE2OC/RI2NhRA83cvRyPWAivC+q7rphBlTjnB8SkU=
-x-ms-office365-filtering-correlation-id: 356d328b-6a1f-4152-dcff-08d656cfc468
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3374;
-x-ms-traffictypediagnostic: VI1PR08MB3374:|VI1PR08MB3374:
-x-microsoft-antispam-prvs: <VI1PR08MB3374FC1B14A4F5E2BC0CF6B2C9D30@VI1PR08MB3374.eurprd08.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2142;6:szz1RH8fw/L7ciNcUIhi3TMR6WIGqbnybqENuOokKZiJU0tybBEdyUuUWdwHWx0fOztB3xFs2X1Sgf73PUde6Hz1NakNUqaT2jokDLYvwROC/ZyIeYRUF9ET31Mf8i/NCASkW47NgmomEd3rzCq8yeycBeXAQLM1MZ8d8kMLZ7oSJxkx51tg66g9OFc5QY6K6Qc6MIDqUx/zKA2dS6MAQg9kvw4myOfqQFLRdTeEV0oC4Ej1YvGjkTEOkxykaUu5UW1PJPo0Pk+xlH4t9n66jp0tpbqByChSMBY2aL4BZ4Nri7KpSCxJtl7pZBYp52B1Hqz6KF+po9pyI48fdS/DWUU+5X3sck/xwNBG7CKQyVtPRU/3+ambOBFc/7+8DZRymhS75pKdFUC/nDi4msH0t7e3SY0hDzCaEwM9KuZ7vnbpAZ/kNUbtO3cXM2BjwCuNLpBCGiQXy9Cs4PomreRwqw==;5:uJYLX0e2gWbQVVO6XIgi/xR4PPZSDXwWbgwsOo6pHE3G2Nt/AqHF6FKjM/NGsqXgF4f3xEjxk1spnRclyGfTck816HezClrAkuHmDA6QkqA54tiQiNc9FHmFoaOKKB3pPSMdRTaFZwox3gYxHft356aB6jMkINwHb/5IhSNxudE=;7:f6rO0s5qLsJRaPIvjjeGFPnTuvrCKM8wOEzXvP6kRwDNu8yf/sWDgfH2x/1Ccf5gjfuyaQw2qb9WhMwgZuaDLBXmGvjnF+55lTXW6PorbCvUe6gnQtOeHHreuYVxFm4IUpl0durVu9p3bljRp7AO2Q==
+x-ms-office365-filtering-correlation-id: 2738d15f-015e-438e-982d-08d656cfcc71
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2142;
+x-ms-traffictypediagnostic: VI1PR0802MB2142:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VI1PR0802MB2142F0ECA3100DAC7F24D7008FD30@VI1PR0802MB2142.eurprd08.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231453)(999002)(944501466)(52105112)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR08MB3374;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3374;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231453)(999002)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2142;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2142;
 x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(136003)(346002)(376002)(396003)(366004)(39850400004)(189003)(199004)(6916009)(6486002)(6116002)(1076002)(229853002)(81156014)(3846002)(25786009)(2906002)(8676002)(66066001)(8936002)(81166006)(6436002)(486006)(71190400001)(71200400001)(476003)(11346002)(446003)(58126008)(316002)(97736004)(6512007)(9686003)(68736007)(478600001)(7736002)(305945005)(86362001)(53936002)(33656002)(105586002)(54906003)(14454004)(106356001)(5660300001)(256004)(7416002)(26005)(52116002)(4326008)(39060400002)(186003)(33896004)(14444005)(102836004)(386003)(6506007)(76176011)(99286004)(36756003)(6246003)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:VI1PR08MB3374;H:VI1PR08MB3599.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(346002)(366004)(136003)(189003)(199004)(316002)(4743002)(110136005)(106356001)(105586002)(54906003)(14454004)(486006)(97736004)(476003)(2616005)(2906002)(39060400002)(44832011)(25786009)(305945005)(7736002)(81156014)(66066001)(3846002)(6116002)(478600001)(5660300001)(53936002)(2501003)(4326008)(7416002)(6512007)(1076002)(6486002)(966005)(50226002)(14444005)(256004)(102836004)(86362001)(186003)(36756003)(26005)(8936002)(99286004)(386003)(6436002)(68736007)(6506007)(8676002)(71190400001)(52116002)(71200400001)(6306002)(81166006)(558084003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2142;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 9elumrtCNpfrk+XTia+SIXIlOObfy6mBFB7CcWCTJ9tnUPT0yorflHluZ03kCI3Ywm8Z7qJw6KTer7VMejMwms34WZZoYO52TAFg6g1H14xvndJxpB3UYjM+ipwCBlFNUj0ZPH5705uI/Rm20HpkYY5ZNm0H4S0XU0flmx3p/0XD7+XjJ90J4O+iU6NUbSVUNFn51eDZPP8gb4uNXMFc04boh4zE1+uHXlLFPlYKxZrloWj7AIzqxuSJIaVP4ULRlcjW4pS7iCzB2QEYDY9EKJBECnBOTprALSxEE3FRZbiBT7+sK2LEcfP9g2wqDfYDTqXzx6MZg3vNUPsokGzYXUPjN3gXGY/wpFR7Cx3CX0QKyuZitlYRoZlNB907PAdtK9r4PIWy3eMGPh+xUNEwF2+v0DPmyRc6AvcLfDvtBSHFLQZRz4lawM/otInsZ6974er5fCX/32RBkB6G56tYgjHMAAqynJFvC7/NuhV42NPSXXtSkuUWaV+0uQOEJzLqH897RcA9eQ+E6xR4S1Kh8BjtHBB/Ra51jW3qOaXCKOQ=
-spamdiagnosticoutput: 1:22
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <6FEEFBF866AF5747881DCC47ABA50CE2@eurprd08.prod.outlook.com>
+x-microsoft-antispam-message-info: K9Khrp+YuzKg94CT9N55aeW8E4y5Q4jBt4uLNp0qFJcfD6zlfF6aG5778BPBKErJa3FtV45K5NHqp7fg7j5X6wz8ovUK3CG8uKMI4GcjaYmV5dcIRIy0MDTm/1Gbdguc/BmdVEpTfApEDnkC2o0aj4iK6Oy0azROViCmDU8Ot/E7Y3Pirsa31YkdSxWB5NHNGueBl48LPZqZfJdkmcF6BpSH/cHoMaQWFgJB2MO5WSDz3Vf+ulNAEr/2srVOcGzjyqoh3cSyG33OCrLTbiJGw/jxW6xQniVgALgqD7vlbBDTv06TV0/LAiuEF2FrRaza5HRAzyUeNUM0Xcu/dvQZjeBUqfmY/Vd6uVMGouPcSUY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 356d328b-6a1f-4152-dcff-08d656cfc468
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 14:26:07.6562
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2738d15f-015e-438e-982d-08d656cfcc71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 14:26:21.2073
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3374
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 02:44:54PM +0100, Vitaly Kuznetsov wrote:
-> Roman Kagan <rkagan@virtuozzo.com> writes:
->=20
-> > On Fri, Nov 30, 2018 at 01:15:11PM +0100, Vitaly Kuznetsov wrote:
-> >> Without 'packed' compiler is free to add optimization paddings and re-=
-order
-> >> structure fields for randomization/optimization. And structures from
-> >> hyperv-tlfs.h are used for hypervisor-guest communication, we need to
-> >> ultimately forbid such practices.
-> >
-> > Note that __packed also reduces the structure alignment to 1, which is
-> > not necessarily what you want.
-> >
-> > E.g. some of these structures are passed by pointer to the hypercall,
-> > which requires its arguments to be 8byte-aligned.
->=20
-> Hm,
->=20
-> I thought we always take precautions for Hyper-V hypercall arguments, in
-> particular
->=20
-> PV IPI/TLB flush use pre-allocated hyperv_pcpu_input_arg,
-> hv_post_message() uses pre-allocated message page, other call sites use
-> fast hypercalls where we use registers.
+This patch series introduces performance improvements for lzo.
 
-Looks so indeed.
+The previous version of this patchset is here:
+https://lkml.org/lkml/2018/11/30/807
 
-> I also checked this patch before sending out, WS2016 guest boots without
-> issues. Any particular places you're worried about?
+This version of the patchset fixes a maybe-used-uninitialized warning
+(although the previous version was still safe).
 
-It's Linux guests on Hyper-V that need to be checked.
+Dave
 
-> >  I'm also not sure
-> > that passing unaligned argument to [rw]msr is ok, need to
-> > double-check.
->=20
-> My understanding is that rdmsr/wrmsr instuctions are registers-only.
 
-Indeed.
-
-> We can, of course, just add __aligned(8) to some structures but I'd like
-> to find the reason first.
-
-I guess you're right, in the current code the relevant structures are
-made sufficiently aligned by other means.  False alarm, sorry.
-
-Roman.
