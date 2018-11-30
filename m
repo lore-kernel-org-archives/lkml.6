@@ -2,127 +2,84 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7EEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBC4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A96352146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:07:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96352146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BF762146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:07:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF762146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeK3VQP (ORCPT
+        id S1726831AbeK3VQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:16:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41688 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbeK3VQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:16:15 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8051530820EA;
-        Fri, 30 Nov 2018 10:07:28 +0000 (UTC)
-Received: from [10.36.112.24] (ovpn-112-24.ams2.redhat.com [10.36.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 515B3604CF;
-        Fri, 30 Nov 2018 10:07:23 +0000 (UTC)
-Subject: Re: [RFC PATCH V2 00/11] Intel EPT-Based Sub-page Protection Support
-To:     Zhang Yi <yi.z.zhang@linux.intel.com>, mdontu@bitdefender.com,
-        ncitu@bitdefender.com
-Cc:     rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <cover.1543481993.git.yi.z.zhang@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <1c7e9821-df4b-9b1c-76aa-d1c4c654c952@redhat.com>
-Date:   Fri, 30 Nov 2018 11:07:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 30 Nov 2018 16:16:22 -0500
+Received: from www62.your-server.de ([213.133.104.62]:58880 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeK3VQW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 16:16:22 -0500
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gSfht-0001eZ-0m; Fri, 30 Nov 2018 11:07:33 +0100
+Received: from [2a02:1203:ecb1:b710:c81f:d2d6:50a9:c2d] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gSfhs-000X48-Nu; Fri, 30 Nov 2018 11:07:32 +0100
+Subject: Re: [PATCH] arm64/bpf: use movn/movk/movk sequence to generate kernel
+ addresses
+From:   Daniel Borkmann <daniel@iogearbox.net>
+To:     Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, ast@fb.com
+References: <20181123172902.21480-1-ard.biesheuvel@linaro.org>
+ <20181127182203.GA19721@arm.com>
+ <c8f11ce3-1ab4-5e54-85f6-2431c7eb8a7a@iogearbox.net>
+Message-ID: <adb5d79f-189b-b5b7-ff22-a6c4807e0f25@iogearbox.net>
+Date:   Fri, 30 Nov 2018 11:07:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1543481993.git.yi.z.zhang@linux.intel.com>
+In-Reply-To: <c8f11ce3-1ab4-5e54-85f6-2431c7eb8a7a@iogearbox.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 30 Nov 2018 10:07:28 +0000 (UTC)
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25166/Fri Nov 30 07:15:29 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/11/18 08:52, Zhang Yi wrote:
-> Here is a patch-series which adding EPT-Based Sub-page Write Protection Support.
+On 11/27/2018 07:24 PM, Daniel Borkmann wrote:
+> On 11/27/2018 07:22 PM, Will Deacon wrote:
+>> Hi Ard,
+>>
+>> On Fri, Nov 23, 2018 at 06:29:02PM +0100, Ard Biesheuvel wrote:
+>>> On arm64, all executable code is guaranteed to reside in the vmalloc
+>>> space (or the module space), and so jump targets will only use 48
+>>> bits at most, and the remaining bits are guaranteed to be 0x1.
+>>>
+>>> This means we can generate an immediate jump address using a sequence
+>>> of one MOVN (move wide negated) and two MOVK instructions, where the
+>>> first one sets the lower 16 bits but also sets all top bits to 0x1.
+>>>
+>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>> ---
+>>
+>> Acked-by: Will Deacon <will.deacon@arm.com>
+>>
+>> Denial, Alexei, shall I take this via arm64, or would you rather take
+>> it via davem?
 > 
-> Introduction:
-> 
-> EPT-Based Sub-page Write Protection referred to as SPP, it is a capability which
-> allow Virtual Machine Monitors(VMM) to specify write-permission for guest
-> physical memory at a sub-page(128 byte) granularity.  When this capability is
-> utilized, the CPU enforces write-access permissions for sub-page regions of 4K
-> pages as specified by the VMM. EPT-based sub-page permissions is intended to
-> enable fine-grained memory write enforcement by a VMM for security(guest OS
-> monitoring) and usages such as device virtualization and memory check-point.
-> 
-> SPPT is active when the "sub-page write protection" VM-execution control is 1.
-> SPPT looks up the guest physical addresses to derive a 64 bit "sub-page
-> permission" value containing sub-page write permissions. The lookup from
-> guest-physical addresses to the sub-page region permissions is determined by a
-> set of SPPT paging structures.
-> 
-> When the "sub-page write protection" VM-execution control is 1, the SPPT is used
-> to lookup write permission bits for the 128 byte sub-page regions containing in
-> the 4KB guest physical page. EPT specifies the 4KB page level privileges that
-> software is allowed when accessing the guest physical address, whereas SPPT
-> defines the write permissions for software at the 128 byte granularity regions
-> within a 4KB page. Write accesses prevented due to sub-page permissions looked
-> up via SPPT are reported as EPT violation VM exits. Similar to EPT, a logical
-> processor uses SPPT to lookup sub-page region write permissions for
-> guest-physical addresses only when those addresses are used to access memory.
+> Yeah we can take it via bpf trees, thanks.
 
-Hi,
-
-I think the right thing to do here would be to first get VM
-introspection in KVM, as SPP is mostly an introspection feature and it
-should be controller by the introspector rather than the KVM userspace.
-
-Mihai, if you resubmit, I promise that I will look at it promptly.
-
-Paolo
+And now applied, thanks!
