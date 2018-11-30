@@ -2,134 +2,113 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC98C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7384C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4967D20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 582A220863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:25:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FBSlddkv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4967D20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTiI5Ubb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 582A220863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbeK3P2n (ORCPT
+        id S1726527AbeK3Pc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 10:28:43 -0500
-Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:51168
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726161AbeK3P2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 10:28:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YcosMFrEeTcGFWenCIP+1Oawmbd+SZSNkg1YhZiVQ9Y=;
- b=FBSlddkvIqptllBt/dh4iBh+Ttr1wcuQet9BkvqyJCOVh9uahkPN8y4ocMW7LNfHbfM/u4jQO3wHcybRLSsPkdw5OD/1TUknCZLwX4OsaIVP+CBFeFJAz5dbmm114BVReSw/OM2ZPjfv1NiYy7+q7SuqN8iflzO4VV5Z6Cqfhrs=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
- VI1PR04MB6014.eurprd04.prod.outlook.com (20.178.124.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.21; Fri, 30 Nov 2018 04:20:41 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::811d:1992:9a6a:bb3f]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::811d:1992:9a6a:bb3f%4]) with mapi id 15.20.1361.019; Fri, 30 Nov 2018
- 04:20:41 +0000
-From:   PETER CHEN <peter.chen@nxp.com>
-To:     Felipe Balbi <balbi@kernel.org>, Roger Quadros <rogerq@ti.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "adouglas@cadence.com" <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        "sureshp@cadence.com" <sureshp@cadence.com>,
-        "pjez@cadence.com" <pjez@cadence.com>,
-        "kurahul@cadence.com" <kurahul@cadence.com>
-Subject: RE: [RFC PATCH v2 07/15] usb:cdns3: Adds Device mode support -
- initialization.
-Thread-Topic: [RFC PATCH v2 07/15] usb:cdns3: Adds Device mode support -
- initialization.
-Thread-Index: AQHUfyb9TYgaBDMZGEyHsNrw0Zv4z6VlHjwAgAABzgCAAqgXUA==
-Date:   Fri, 30 Nov 2018 04:20:41 +0000
-Message-ID: <VI1PR04MB5327227A807B92DDA62CF9038BD30@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
- <1542535751-16079-8-git-send-email-pawell@cadence.com>
- <5BFE7D2E.7030702@ti.com> <87pnupzaz1.fsf@linux.intel.com>
-In-Reply-To: <87pnupzaz1.fsf@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB6014;6:XRZIrV2qcOqXhrfXF+tcoXna/jeHKG/4y+pC4detuhpuOBCohxRrWjB4jX5SgClJp76IuQCcq64zrgA/nXDwV83m++gGHL2oKypqW4R+w75adWddN+E+SY8u9fNZd4FkHpGOfMND5tZyp1MBn10TmUL1nAuHfUIRoGXeM+WF1LyImozg/DgoD30V/aphzx0jLhNYGOiCjJGDX9biDbAgNojkxCR4yASbNx7a3tNh/XUeQrdHBGiAD7g3lNGDsDRnNdNjnv7CqeD54RZGv2n6iAjDEX5kvLMEvYQtO66oLuOPmW2hurhs/qI510vEaH+Y/o9ZOb/XoXApbMHPNPTQT8OziHoNUgbhylJWsFrBfyTkkXuT7WfbD6mxKHSeh+SQ0Mq7KsPabySq55oXsXQ3c7K2FU6U4w6IzcTbUVTFTZu2DZ5zE/6/wR7X3eTO8Jtieudc813rovIrNjCQgd5R/g==;5:5t1CZOJfpLRskbrsdv3sc7mGxnPrXN+I1e+Wr0THUJgvZchoLJ9tc0Oeb92mUAqHhqzE4+RWjZIsxR86tQ9hmxEvVBJpMdCQEZx0mznb3O3NUI+Ob73OfsDlM7v3DQZ6y35dth3tTvEB4DhErb5+wuql2m+yTItnenCOwmaixfY=;7:ZqYJPVPyPYNxcAUoUjA1qpgkkXhUi+yyngsHfJLUGuAaawxhD0eRhhj2M8uSQX2gTzL2e5QzLS3h8ezbGyqemZ7NFaqXrbPyeFb5FRzL80G9oEw6AaDEUUuRTsVHLo9QhVa4m9MdYQD7THwUV7QYvg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3f500683-7664-4a48-89db-08d6567b306a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB6014;
-x-ms-traffictypediagnostic: VI1PR04MB6014:
-x-microsoft-antispam-prvs: <VI1PR04MB601431293239906E2DC57AD88BD30@VI1PR04MB6014.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231453)(999002)(944501410)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB6014;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB6014;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(39860400002)(376002)(346002)(189003)(199004)(68736007)(229853002)(81166006)(8936002)(81156014)(8676002)(6116002)(3846002)(105586002)(86362001)(106356001)(99286004)(54906003)(33656002)(93886005)(5660300001)(110136005)(186003)(7696005)(76176011)(316002)(6506007)(14454004)(26005)(102836004)(478600001)(71200400001)(71190400001)(217873002)(7416002)(305945005)(7736002)(74316002)(476003)(97736004)(486006)(11346002)(446003)(6246003)(2501003)(53936002)(4326008)(53346004)(6436002)(256004)(25786009)(55016002)(9686003)(66066001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6014;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: xvwy/DZ8RIeq9jjQdNj+FyIAHU6jSmzBbb6AjyKrKLi1Yg33qltzKmFU/igTWbq3wrlDz/5vjcAk4/dtAQggDKPik7/iHal4LFAqM9NAMk8ISjT9b8w4fN4PSla3M/Bad4RTRowP5kEUy2E+IbqiUjJrFvmD1LkDoLWSldxuBYyluORjCknaBljL3uXvFiKhJXMmU4CbS/hRaPHbC8ah9sNYJr1EM5og5qyW2Yu3ZrreeHxB5DvdHV0c44ttaRE7Sk9EVdl1K6vzrLxWJEFZg9jpNhl+k2OIvI3urMJRdSY4CRC/fIuFDmZebJsCmvJSCvSR6iDKa3tkSsUGeSZ7ewfMKnzm8Zao5Urz5JINUM8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 30 Nov 2018 10:32:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38729 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbeK3Pc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 10:32:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so2149321plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 20:25:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+MfZXo4P0/Qv7y5VDmnZC08uHLDhr+piSz/B3uFnUEE=;
+        b=cTiI5UbbvrdqlWcwzOqevnQh3X4SxqLsfgEVNesynRy2/aWn2yWvD/cbvQYOECL9cX
+         RQV5r034dKrci3Wgfv8+kSaxPbNsqAdgGTM3Z6J3ioXIit6nqWtS2K3SUt1DEB7JJIeu
+         hfLIakLBxKaTOzIykMWjIBIe8jQIU0q6WImPIKTWfxII/6uv/p/YZGqxbiZIbq9B5OJt
+         Xs4Ber2bw2y2DQm2lptamJ8FW8nXxe+nkgxqPhPYYYVPnChlMJLS5rptgBZbEhp7yZ6f
+         6txfcWYMJLX3MrGg11A4Wtut0g/3uwyKsXvrEd1gKgC/OgsYcNGHbmOjZvZGUklk0Nfc
+         tXQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+MfZXo4P0/Qv7y5VDmnZC08uHLDhr+piSz/B3uFnUEE=;
+        b=QESoQoNT3L0tBc8Qyu6cWk3dY2nFUCIR2eMIhe7zXbXxj4GdtwNVASl7G4Pl7XEh6Y
+         cnxQL2p990XZIvSWGcMbP3pb3N0is5BTQsuMyabta50pVAxjHFzZJlSanW/7NVmRiTp1
+         vb/6RK2VZqLXsTe8DVqnQdvWA4OlsKtLIrngcT6YxoqcJTre5D6gYBKSqUPNtCNm35Zh
+         Su8cUXN9IW5tv+qBByKfdYyDBgpLwws7sNJW6N4j0PUm1vB7dWZeLS04LPiJ3s9Htwj1
+         IJi3Zl90fFmVyxvyBGwtiCMVEEsonTiMDF4j+ahYW0bGarJ8cHJNWwfqyLhP06IPGqhV
+         +RDw==
+X-Gm-Message-State: AA+aEWaG6XHbPgbRJyZCJTYGzMXXAqS+l+CWXZVAGjEIZqW1W0eJ0DeW
+        GcrviCGW5I9uDVlGim6hwe0=
+X-Google-Smtp-Source: AFSGD/WmljNx1fu4rwcdMJ7yE1SsJ2P/P5R9S8q8gdIFjlGQy+/AuD1JsP0WV5lAolcTRMGqz1zCoA==
+X-Received: by 2002:a17:902:1126:: with SMTP id d35mr3931952pla.1.1543551900965;
+        Thu, 29 Nov 2018 20:25:00 -0800 (PST)
+Received: from localhost ([175.223.39.43])
+        by smtp.gmail.com with ESMTPSA id 4sm5274089pfq.10.2018.11.29.20.24.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 20:25:00 -0800 (PST)
+Date:   Fri, 30 Nov 2018 13:24:56 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk: don't unconditionally shortcut print_time()
+Message-ID: <20181130042330.GB605@jagdpanzerIV>
+References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f500683-7664-4a48-89db-08d6567b306a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 04:20:41.1664
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6014
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
-> Roger Quadros <rogerq@ti.com> writes:
-> >> +static void cdns3_gadget_config(struct cdns3_device *priv_dev) {
-> >> +	struct cdns3_usb_regs __iomem *regs =3D priv_dev->regs;
-> >> +
-> >> +	cdns3_ep0_config(priv_dev);
-> >> +
-> >> +	/* enable interrupts for endpoint 0 (in and out) */
-> >> +	writel(EP_IEN_EP_OUT0 | EP_IEN_EP_IN0, &regs->ep_ien);
-> >> +
-> >> +	/* enable generic interrupt*/
-> >> +	writel(USB_IEN_INIT, &regs->usb_ien);
-> >> +	writel(USB_CONF_CLK2OFFDS | USB_CONF_L1DS, &regs->usb_conf);
-> >> +	writel(USB_CONF_DMULT, &regs->usb_conf);
-> >> +	writel(USB_CONF_DEVEN, &regs->usb_conf);
-> >
-> > If you are enabling interrupts in this patch you should handle them in =
-the ISR.
->=20
-> Frankly, I don't understand why this is a series. It's a single driver an=
-d splitting it into
-> a series just makes it more difficult to review, actually.
->=20
-> Sure, a single patch will be large, but there's no way to have a function=
-al driver until
-> all patches are applied, anyway.
->=20
+On (11/29/18 15:19), Petr Mladek wrote:
+> This fixes a real problem. It might even avoid a crash.
+> 
+> See syslog_print_all() and kmsg_dump_get_buffer(). They
+> start with calling msg_print_text() many times to calculate
+> how many messages fit into the given buffer. Then they
+> blindly copy the messages into the buffer.
 
-Yes, I agree with Felipe. Pawel, you could remove the "RFC" prefix, and sen=
-d the whole
-one as one patch. I will test it at my hardware.
+Hmm. Interesting find.
 
-Peter
+So can we just use a pessimistic approach then?
+
+If IS_ENABLED(CONFIG_PRINTK_TIME) then always calculate
+buffer size as if printk_time was true; but use the actual
+printk_time when we copy out messages. Yes, the buffer can
+be larger than needed, but at least we don't care about any
+races anymore. And we also don't need to pass printk_time
+snapshot while we copy out messages.
+
+I really don't know who and why would enable CONFIG_PRINTK_TIME
+but then disable printk_time via param. So most of the time that
+pessimistic approach should calculate the right buffer size.
+Probably.
+
+[..]
+> It seems worth supporting the disabled printk_time() properly.
+> I am not sure who is disabling the timestamps.
+
+Yeah, I'm curious as well. Can't see why would anyone switch
+it back and forth. Kconfig and boot param work just fine.
+
+	-ss
