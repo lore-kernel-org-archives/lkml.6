@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC473C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE9EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE5052080A
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:42:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE5052080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 981F020868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:44:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981F020868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbeLAHxC (ORCPT
+        id S1726785AbeLAHyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 02:53:02 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:59268 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbeLAHxC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:53:02 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 649D614F0ADB2;
-        Fri, 30 Nov 2018 12:42:29 -0800 (PST)
-Date:   Fri, 30 Nov 2018 12:42:28 -0800 (PST)
-Message-Id: <20181130.124228.979846577878820546.davem@davemloft.net>
-To:     abuse@2.abuse.bgcomp.co.uk
-Cc:     axboe@kernel.dk, dave@stgolabs.net, keescook@chromium.org,
+        Sat, 1 Dec 2018 02:54:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33042 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725749AbeLAHye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 02:54:34 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41B002080A;
+        Fri, 30 Nov 2018 20:43:59 +0000 (UTC)
+Date:   Fri, 30 Nov 2018 15:43:57 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Abuse <abuse@2.abuse.bgcomp.co.uk>
+Cc:     David Miller <davem@davemloft.net>, axboe@kernel.dk,
+        dave@stgolabs.net, keescook@chromium.org,
         jarkko.sakkinen@linux.intel.com, linux-kernel@vger.kernel.org,
         amir73il@gmail.com, akpm@linux-foundation.org,
         andriy.shevchenko@linux.intel.com, dja@axtens.net,
@@ -49,36 +48,153 @@ Cc:     axboe@kernel.dk, dave@stgolabs.net, keescook@chromium.org,
         pabeni@redhat.com, paul.burton@mips.com, pmladek@suse.com,
         robh@kernel.org, sean.wang@mediatek.com,
         sergey.senozhatsky@gmail.com, shannon.nelson@oracle.com,
-        sbrivio@redhat.com, rostedt@goodmis.org, me@tobin.cc,
-        makita.toshiaki@lab.ntt.co.jp, willemb@google.com, yhs@fb.com,
-        yanjun.zhu@oracle.com
+        sbrivio@redhat.com, me@tobin.cc, makita.toshiaki@lab.ntt.co.jp,
+        willemb@google.com, yhs@fb.com, yanjun.zhu@oracle.com
 Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
-From:   David Miller <davem@davemloft.net>
+Message-ID: <20181130154242.39f59eea@gandalf.local.home>
 In-Reply-To: <2007856.n5V9iKLVsV@eth7>
-References: <d7c34289-f03a-b641-cc9c-00395306511d@kernel.dk>
+References: <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
+        <d7c34289-f03a-b641-cc9c-00395306511d@kernel.dk>
         <20181130.123507.1940310466680455876.davem@davemloft.net>
         <2007856.n5V9iKLVsV@eth7>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Nov 2018 12:42:30 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abuse <abuse@2.abuse.bgcomp.co.uk>
-Date: Fri, 30 Nov 2018 20:39:01 +0000
+On Fri, 30 Nov 2018 20:39:01 +0000
+Abuse <abuse@2.abuse.bgcomp.co.uk> wrote:
 
+> On Friday, 30 November 2018 20:35:07 GMT David Miller wrote:
+> > From: Jens Axboe <axboe@kernel.dk>
+> > Date: Fri, 30 Nov 2018 13:12:26 -0700
+> >   
+> > > On 11/30/18 12:56 PM, Davidlohr Bueso wrote:  
+> > >> On Fri, 30 Nov 2018, Kees Cook wrote:
+> > >>   
+> > >>> On Fri, Nov 30, 2018 at 11:27 AM Jarkko Sakkinen
+> > >>> <jarkko.sakkinen@linux.intel.com> wrote:  
+> > >>>>
+> > >>>> In order to comply with the CoC, replace **** with a hug.  
+> > >> 
+> > >> I hope this is some kind of joke. How would anyone get offended by reading
+> > >> technical comments? This is all beyond me...  
+> > > 
+> > > Agree, this is insanity.  
+> > 
+> > And even worse it is censorship.
+> >   
+> 
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> Hug
+> 
 > I assume I will now be barred.
+> 
 
-Perhaps, but not because you said fuck.  It would be because you're
-intentionally creating a disturbance on the list and making it more
-difficult for developers to get their work done and intentionally
-creating a distraction and a hostile environment for the discussion at
-hand.
+-- Steve
 
-That would not be censorship.
-
-There is a big difference.
