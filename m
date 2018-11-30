@@ -2,103 +2,115 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDE7C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4108C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FC52146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B70552082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:02:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BkcwvF6b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FC52146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="lFKCRrZU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70552082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeK3TJe (ORCPT
+        id S1726963AbeK3TKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:09:34 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:56071 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbeK3TJd (ORCPT
+        Fri, 30 Nov 2018 14:10:41 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35247 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbeK3TKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:09:33 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y139so4740796wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 00:01:06 -0800 (PST)
+        Fri, 30 Nov 2018 14:10:41 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p8so2425317plo.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 00:02:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BULyaOacFd0d+m8z9WucrlU3IR4UOzS/+4lMifUgKf8=;
-        b=BkcwvF6bmwP+b3m7YqvDHCbspSIkZHvy1WElrP/igiMnjI9tkcYwVqxQzmylnl/ctG
-         EEh27BUlsfnPLSnMrN4ua5zN7r+h1VuWCyinCxuFWxhubjdn7b0cIwoGPmThA52dguHe
-         FWbmvTiRMtFk/brObMH7jbGF6nH62qUZDjaJ8=
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=INN3jsKRLwg8ZxL20lAb8hU6CDa49MS7o8/TtSx8NEw=;
+        b=lFKCRrZU0ml5pSywxt3O2/vbWpbCYCSLT2N2K4GZCteoayWLUYR4miV6gs2jSF138F
+         wtEB3MCh8iWfllnURakdBMmdjRoQ3vuoKs4dGA6bUWLYV77NTe937eUf2VeZ0yHXk6Ta
+         Q0qE5Bxd7+1XrHj6wC5lA/Hzg2NCj3OJsn7wBY4uoThcjHvt90wPpgUIRLYkaJXJlRKF
+         pWmx5Nd48xiNR1J1BFn/k2HAcY2JXRxBET1vsEpliLGMq+fSV9InOmRz7CLEDLil4/Wj
+         ioWz1bjW6aWaQ1oEJrpTzVj+dLS84yPwuYAfqdzG25cHoPpWxkHgtpjHkpksO4RTWANG
+         uqrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=BULyaOacFd0d+m8z9WucrlU3IR4UOzS/+4lMifUgKf8=;
-        b=PwF8oKVILcg2ErquMQ/ZO1ydbCRKBtHxOrBShvCbNGpn8CuKPGlxicIO87UMX0h3hF
-         khRfqUO07rnYBv2tnvvezaDuQwoFdHiTT5cZP29spwWP/6Cnqnz/SWox+qt/EcxkBwVz
-         ZAGhoyrnytoS0qE+JEcy6sj2GRCzB2+YntnxCndhAh86sWHrHzqyXT+FcNolD/wwpEdy
-         DUmxuz6w74YDb5GUF4dmhYeNebAVzbnkWP/mTw5SZH47nvWsXrAhGeQpfL7FWe1m9CV7
-         Mvq1KPWvYrb4GWj2fkszin6KnPTHdAdS0JKXxLzMTZbegGgDhEkwFhP5RBeo/dv7U/Bw
-         9L0A==
-X-Gm-Message-State: AA+aEWZYhB/+jsJk1cW6G+VpAqVcabc4k2mixSVwrRmIlMf5aC+GF+Hs
-        wQw/dGdxWgLafLxfhqeOUmlNBw==
-X-Google-Smtp-Source: AFSGD/VqqYRmxInzPfxesU6ZVhqjEEZcGRWykhD5CsPf9WQ+NkwB8QZP93S+rruSyPzbqilnePMEOA==
-X-Received: by 2002:a1c:a84f:: with SMTP id r76mr4354622wme.16.1543564865598;
-        Fri, 30 Nov 2018 00:01:05 -0800 (PST)
-Received: from localhost.localdomain (118.142.136.77.rev.sfr.net. [77.136.142.118])
-        by smtp.gmail.com with ESMTPSA id h16sm6212393wrb.62.2018.11.30.00.01.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 00:01:05 -0800 (PST)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     edubezval@gmail.com, rui.zhang@intel.com
-Cc:     vincent.guittot@linaro.org, john.stultz@linaro.org,
-        linux-pm@vger.kernel.org (open list:THERMAL),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] thermal/drivers/hisi: Fix number of sensors on hi3660
-Date:   Fri, 30 Nov 2018 09:00:32 +0100
-Message-Id: <1543564833-643-2-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543564833-643-1-git-send-email-daniel.lezcano@linaro.org>
-References: <1543564833-643-1-git-send-email-daniel.lezcano@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=INN3jsKRLwg8ZxL20lAb8hU6CDa49MS7o8/TtSx8NEw=;
+        b=ARcbYyDp2YuuwpORTIEXVcXUbKgE03z4/aXHiKPtQm02i+EDn7vLypJn/oxvjlaRbF
+         vnFCYCNHltVyhjRTkbXffmBSboz29CPjv+Qo/QyrRLtZv/ct5GJqAO59Yan6bAh9viri
+         1K9Nj9wX2M26ZyHZwxDzyi0f+NgViUSZmSaxIxaC2phqjN70i6+LAOEmNRO7CU8UvALj
+         uBUj6M/jL1g/E3MQExZzwydx92bdtKw5Yse8R5GTXQ/f3TXM2FMxd6jk5iqpfEkcmt2i
+         XRjj594e9MTUVVfvYgNvTCxv8VfaXd3caKSWUu5ftnQZSeIiH4wClgUDm5BnvrxmZ6FP
+         eKzw==
+X-Gm-Message-State: AA+aEWY/YMF6MnMz2w6ym6iltWHGPBYH1PHrCvCGBelNdiFi+zzi/sp0
+        g3Pi9HmOpE5uCuwBWUYqCWHIBQ==
+X-Google-Smtp-Source: AFSGD/Xv5ZCnP0BwNcJNz2N2KU9FXaJGaQVMlUyZFu0QfEFjelerL8044KOCfEXFtyNo9K/rXcpxNw==
+X-Received: by 2002:a17:902:a710:: with SMTP id w16mr4598243plq.95.1543564934242;
+        Fri, 30 Nov 2018 00:02:14 -0800 (PST)
+Received: from anup-ubuntu64.qualcomm.com ([49.207.52.208])
+        by smtp.googlemail.com with ESMTPSA id q187sm19218333pfq.128.2018.11.30.00.02.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 00:02:13 -0800 (PST)
+From:   Anup Patel <anup@brainfault.org>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anup Patel <anup@brainfault.org>
+Subject: [PATCH v3 0/6] IRQ affinity support in PLIC driver
+Date:   Fri, 30 Nov 2018 13:32:01 +0530
+Message-Id: <20181130080207.20505-1-anup@brainfault.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this patch the thermal driver is broken on hi3660.
+This patchset primarily adds IRQ affinity support in PLIC driver and
+other improvements.
 
-The dual sensors support patchset was partially merged, unfortunately
-the dual thermal zones definition is not available in the DT yet, so
-when the driver tries to register all the sensors that fails.
+The patchset gives mechanism for explicitly routing external interrupts to
+particular CPUs using smp_affinity attribute of each Linux IRQs. Also, we
+can now use IRQ balancer from kernel-space or user-space.
 
-By reducing to 1 the number of sensors on the hi3660, we switch back
-to the previous functionnality.
+The patchset is tested on QEMU virt machine. It is based on Linux-4.20-rc4
+and can be found at riscv_plic_irq_affinity_v3 branch of:
+https://github.com/avpatel/linux.git
 
-Fixes: 8c6c36846f11 (thermal/drivers/hisi: Add the dual clusters sensors for hi3660)
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/hisi_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v2:
+ - Fixed incorrect address of enable registers using sizeof(u32) in PATCH1
+ - Retained comment about need for locking in PATCH1
+ - Split PATCH2 into two patches
+ - Split PATCH3 into two patches
+ - Minor fix in commit description of PATCH4
 
-diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index 50f4d00..2d26ae8 100644
---- a/drivers/thermal/hisi_thermal.c
-+++ b/drivers/thermal/hisi_thermal.c
-@@ -424,7 +424,7 @@ static int hi3660_thermal_probe(struct hisi_thermal_data *data)
- 	struct platform_device *pdev = data->pdev;
- 	struct device *dev = &pdev->dev;
- 
--	data->nr_sensors = 2;
-+	data->nr_sensors = 1;
- 
- 	data->sensor = devm_kzalloc(dev, sizeof(*data->sensor) *
- 				    data->nr_sensors, GFP_KERNEL);
+Changes since v1:
+ - Removed few whitspace changes from PATCH1
+ - Keep use of DEFINE_PER_CPU() as it is
+
+Anup Patel (6):
+  irqchip: sifive-plic: Pre-compute context hart base and enable base
+  irqchip: sifive-plic: Add struct plic_hw for global PLIC HW details
+  irqchip: sifive-plic: More flexible plic_irq_toggle()
+  irqchip: sifive-plic: Add warning in plic_init() if handler already
+    present
+  irqchip: sifive-plic: Differentiate between PLIC handler and context
+  irqchip: sifive-plic: Implement irq_set_affinity() for SMP host
+
+ drivers/irqchip/irq-sifive-plic.c | 143 +++++++++++++++++++-----------
+ 1 file changed, 90 insertions(+), 53 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
