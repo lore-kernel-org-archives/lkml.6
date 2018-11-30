@@ -2,138 +2,146 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E129C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDB9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13020206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:49:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13020206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A2D6D20867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:51:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D6D20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeLAD7V (ORCPT
+        id S1727054AbeLAEBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:59:21 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37562 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726647AbeLAD7V (ORCPT
+        Fri, 30 Nov 2018 23:01:31 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:38483 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbeLAEBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:59:21 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAUGnAQ9096974
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:49:25 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p38uk0pfe-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:49:25 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 30 Nov 2018 16:49:24 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 30 Nov 2018 16:49:21 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAUGnKYr16842868
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 30 Nov 2018 16:49:20 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA04DB205F;
-        Fri, 30 Nov 2018 16:49:20 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B0EFB2065;
-        Fri, 30 Nov 2018 16:49:20 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 30 Nov 2018 16:49:20 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 37DB116C32AB; Fri, 30 Nov 2018 08:49:20 -0800 (PST)
-Date:   Fri, 30 Nov 2018 08:49:20 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "He, Bo" <bo.he@intel.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Zhang, Jun" <jun.zhang@intel.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>
-Subject: Re: rcu_preempt caused oom
-Reply-To: paulmck@linux.ibm.com
-References: <CD6925E8781EFD4D8E11882D20FC406D52A11F61@SHSMSX104.ccr.corp.intel.com>
- <20181129130647.GG4170@linux.ibm.com>
- <20181129142712.GA16607@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A1243D@SHSMSX104.ccr.corp.intel.com>
- <20181130144317.GQ4170@linux.ibm.com>
- <20181130101631.618d955f@gandalf.local.home>
- <CD6925E8781EFD4D8E11882D20FC406D52A1263F@SHSMSX104.ccr.corp.intel.com>
+        Fri, 30 Nov 2018 23:01:31 -0500
+Received: by mail-yb1-f193.google.com with SMTP id u103-v6so2463944ybi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 08:51:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=+4ytZyjxGnnUVuX8gyRJ8RHs3OorQhFvYfjmmFPEaxU=;
+        b=kAqIbb7XYCyDs+AJRTOCd/HQB6Mbtz388keKgWIv6YWIHKdwoBtIWYRO+pTxWpES8n
+         0mF//DyyM/IDDAhh6Lj1oGI0vfg+Z7u4g0ColmyuUn5GrZudQY2pO8JUlmHL6q1AJG7z
+         R1x2qaAcxf65AG2zviGowhI4GWnyVROcFR/C++JoU+VnXo30hA8ZShQyFFd3II8IxXoE
+         pH/QO4fW+x6PsjO8Pqc7cqm4cfYk012EO+EcczjKZDC+5hcgAUqbDZnY0T3v3ySmz8qV
+         zcNn1efolPvVWYG6D40FTWveEfmSuT0beCuysGgSum1bOs+GptsERRPD8CJGwXaXj0CH
+         3tGA==
+X-Gm-Message-State: AA+aEWY15Jb3z7QY05stE+fecvGQUotYpP8dAnSxh85X2E4sRRlMhRpH
+        czY7J9Zzs17SupbL1+XE/NWqi7kJtP8=
+X-Google-Smtp-Source: AFSGD/WRLymXDfUbRiQQhVYq5Og0qlPj0ZVZqr2dG6zzQmCG8ktyeoVfKRxvAmS1YZPO9gk20hUFGw==
+X-Received: by 2002:a25:220a:: with SMTP id i10-v6mr6095788ybi.185.1543596695243;
+        Fri, 30 Nov 2018 08:51:35 -0800 (PST)
+Received: from laptop.jcline.org ([2605:a601:a204:5901:8717:bd34:acd6:5cb7])
+        by smtp.gmail.com with ESMTPSA id o14sm2033362ywo.52.2018.11.30.08.51.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 08:51:34 -0800 (PST)
+Subject: Re: Regression: very quiet speakers on Thinkpad T570s
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Kailang Yang <kailang@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Tim Van den Eynde <redhat@vdeynde.com>,
+        alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <bbba2653-d57b-5fab-8c06-5fd22ae80aa5@redhat.com>
+ <s5h36riy2qh.wl-tiwai@suse.de>
+From:   Jeremy Cline <jcline@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jcline@redhat.com; keydata=
+ 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
+ X/87hZ4pdW/aOXUAgQ==
+Message-ID: <f14c37de-29ce-529b-8b37-40efd29ff1cb@redhat.com>
+Date:   Fri, 30 Nov 2018 11:51:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A1263F@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18113016-0052-0000-0000-0000035F3502
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010148; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01125013; UDB=6.00584149; IPR=6.00905140;
- MB=3.00024399; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-30 16:49:24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18113016-0053-0000-0000-00005EF12646
-Message-Id: <20181130164920.GR4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-30_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811300144
+In-Reply-To: <s5h36riy2qh.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 03:18:58PM +0000, He, Bo wrote:
-> Here is the kernel cmdline:
-
-Thank you!
-
-> Kernel command line: androidboot.acpio_idx=0  androidboot.bootloader=efiwrapper-02_03-userdebug_kernelflinger-06_03-userdebug androidboot.diskbus=00.0 androidboot.verifiedbootstate=green androidboot.bootreason=power-on androidboot.serialno=R1J56L6006a7bb g_ffs.iSerialNumber=R1J56L6006a7bb no_timer_check noxsaves reboot_panic=p,w i915.hpd_sense_invert=0x7 mem=2G nokaslr nopti ftrace_dump_on_oops trace_buf_size=1024K intel_iommu=off gpt loglevel=4 androidboot.hardware=gordon_peak firmware_class.path=/vendor/firmware relative_sleep_states=1 enforcing=0 androidboot.selinux=permissive cpu_init_udelay=10 androidboot.android_dt_dir=/sys/bus/platform/devices/ANDR0001:00/properties/android/ pstore.backend=ramoops memmap=0x1400000$0x50000000 ramoops.mem_address=0x50000000 ramoops.mem_size=0x1400000 ramoops.record_size=0x4000 ramoops.console_size=0x1000000 ramoops.ftrace_size=0x10000 ramoops.dump_oops=1 vga=current 
-> i915.modeset=1 drm.atomic=1 i915.nuclear_pageflip=1 drm.vblankoffdelay=
-
-And no sign of any suppression of RCU CPU stall warnings.  Hmmm...
-It does take more than 21 seconds to OOM?  Or do things happen faster
-than that?  If they do happen faster than that, then on approach would
-be to add something like this to the kernel command line:
-
-	rcupdate.rcu_cpu_stall_timeout=7
-
-This would set the stall timeout to seven seconds.  Note that timeouts
-less than three seconds are silently interpreted as three seconds.
-
-							Thanx, Paul
-
-> -----Original Message-----
-> From: Steven Rostedt <rostedt@goodmis.org> 
-> Sent: Friday, November 30, 2018 11:17 PM
-> To: Paul E. McKenney <paulmck@linux.ibm.com>
-> Cc: He, Bo <bo.he@intel.com>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>
-> Subject: Re: rcu_preempt caused oom
+On 11/30/18 11:00 AM, Takashi Iwai wrote:
+> On Fri, 30 Nov 2018 15:49:17 +0100,
+> Jeremy Cline wrote:
+>>
+>> Hi,
+>>
+>> Some folks have reported on the Fedora bug tracker[0] that the laptop
+>> speaker volume is very low on the Thinkpad T570 when running a kernel
+>> that includes commit 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad
+>> Dock device for ALC298 platform").
+>>
+>> alsa-info.sh from v4.15.4 (just before commit 61fcf8ece9b6 arrived in
+>> stable) and v4.19.4 with the issue present are attached to the bugzilla.
+>> I've also Cc'd Tim, who uploaded them and has the laptop in question.
+>>
+>> [0] https://bugzilla.redhat.com/show_bug.cgi?id=1554304
 > 
-> On Fri, 30 Nov 2018 06:43:17 -0800
-> "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
-> 
-> > Could you please send me your list of kernel boot parameters?  They 
-> > usually appear near the start of your console output.
-> 
-> Or just: cat /proc/cmdline
-> 
-> -- Steve
-> 
+> Could you pinpoint which kernel version started showing the
+> regression, at least?  The diffs are fairly wide between 4.15 and
+> 4.19.
 
+Ah, sorry for not being more clear. The regression appears to be
+introduced by commit 61fcf8ece9b6, which got backported to v4.15.5
+because it addressed a bug with the dock[0]. v4.19.4 with that commit
+reverted works, according to the bug reporter.
+
+[0] https://bugzilla.kernel.org/show_bug.cgi?id=195161
+
+Regards,
+Jeremy
