@@ -2,109 +2,107 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FAAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50B2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2676C20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:32:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ylfcqi0D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2676C20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8515620863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:34:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8515620863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeLAJn3 (ORCPT
+        id S1726631AbeLAJpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:43:29 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45422 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbeLAJn2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:43:28 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so3073525pgc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:32:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eVeEplCi2/ulbHPk4i8e7AdseSAOh5jFFGT7+gYW7vE=;
-        b=Ylfcqi0Dg4VV2WjRbNKTm+2gu8DxD3SmRjva4CtT4RYiqIHgYhGi0BC858ORcC/w4h
-         s3KhwcORIhhHPutyLfzjNR65I34V9CmmmsEaDfD2dS1Qg23hRAUG6IKGg+dEbIOYvAJP
-         SECnBSue811eXbKoJff7rMPEph13VyhyDmNqo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eVeEplCi2/ulbHPk4i8e7AdseSAOh5jFFGT7+gYW7vE=;
-        b=B57vfvkYOX4plGx8MruBFWyHpYZ1r8Jlpk4SEWWxFvE4kpYoIeOsvz9vUA6NoyLXmZ
-         bkkDRaAMTF9wshpFpjGh6k4So/8WZGGigULnNGdi50AcpTTqBmbbxytf0oW4ENp6kadF
-         MMJcnWaNn+Kjrjb3Xh1+1RfxTpvrlMi5EcUAgjTPR4o/n3KropT6kOAOwVuy1Qjo4HKo
-         x0H+fMhje4v1ZOLAygDJwNTR4yGNLCWOMQQWodHJERtK+egprRjNfNoQVKXuSVE9b32H
-         y5XTWCK5E+IGJV527BCmbhYpquA02czQg0NX9kqBwps5jOFNNG8fOoT6jwUmx9J/dRHk
-         1+vA==
-X-Gm-Message-State: AA+aEWb56cq9LkioKWUU4qM2eMNI/vtq9GgRUYDA32+OEay2p9X5d99N
-        cVdtlvIGr0z+0MgL6iUbsTIyLg==
-X-Google-Smtp-Source: AFSGD/VjIeB/OUkYxhDX4oXIhoPHOvP9i3DeEWSEl2napHuLVEYlJ931MRfR9HuzdnYUvWSpTBaB1A==
-X-Received: by 2002:a63:88c7:: with SMTP id l190mr6158687pgd.110.1543617159669;
-        Fri, 30 Nov 2018 14:32:39 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id q199sm18361880pfc.97.2018.11.30.14.32.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 14:32:39 -0800 (PST)
-Date:   Fri, 30 Nov 2018 14:32:38 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/7] drm/msm/dsi: 28nm 8960 PHY: Get ref clock from
- the DT
-Message-ID: <20181130223238.GD22824@google.com>
-References: <20181126231159.122298-1-mka@chromium.org>
- <20181126231159.122298-4-mka@chromium.org>
- <CAD=FV=X5r1CCSeTDXy_cYOBDf4ExNe276pFQSC6T+WWg2=SchA@mail.gmail.com>
+        Sat, 1 Dec 2018 04:45:04 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:45050 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbeLAJpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:45:04 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gSrMO-0005ko-LN; Fri, 30 Nov 2018 15:34:09 -0700
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <154275556908.76910.8966087090637564219.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154275558526.76910.7535251937849268605.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <6875ca04-a36a-89ae-825b-f629ab011d47@deltatee.com>
+ <CAPcyv4i9QXsX9Rjz9E3gi643LQbSzaO_+iFLqLS+QO-GmrS0Eg@mail.gmail.com>
+ <14d6413c-b002-c152-5016-7ed659c08c24@deltatee.com>
+ <CAPcyv4gZisOAE8VJPJChNXrWv0NhUevWuutsPdvNORBTOBXJfA@mail.gmail.com>
+ <43778343-6d43-eb43-0de0-3db6828902d0@deltatee.com>
+ <CAPcyv4hJV71RLhBCKgqc=nQ_D_upySD=ZZk0y=5Qk69kKPHFog@mail.gmail.com>
+ <b8ae55a4-7c1a-cc35-beea-badf35a69b06@deltatee.com>
+ <CAPcyv4iVCMo29SWM2jhnNTZ5ugYaqjeW_LKe9O2YmeNohwQG3A@mail.gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <b55bf34b-9ff2-2c28-afdb-08e20b9ba84e@deltatee.com>
+Date:   Fri, 30 Nov 2018 15:34:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <CAPcyv4iVCMo29SWM2jhnNTZ5ugYaqjeW_LKe9O2YmeNohwQG3A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=X5r1CCSeTDXy_cYOBDf4ExNe276pFQSC6T+WWg2=SchA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: sbates@raithlin.com, bhelgaas@google.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, torvalds@linux-foundation.org, hch@lst.de, jglisse@redhat.com, stable@vger.kernel.org, akpm@linux-foundation.org, dan.j.williams@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v8 3/7] mm, devm_memremap_pages: Fix shutdown handling
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:00:50PM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Nov 26, 2018 at 3:12 PM Matthias Kaehlcke <mka@chromium.org> wrote:
-> > @@ -409,8 +410,9 @@ static void dsi_pll_28nm_destroy(struct msm_dsi_pll *pll)
-> >  static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm)
-> >  {
-> >         char *clk_name, *parent_name, *vco_name;
-> > +       const char *ref_clk_name = __clk_get_name(pll_28nm->vco_ref_clk);
-> 
-> IMO for the 28nm PHY driver you should probably make things work OK
-> even if the "ref" clock wasn't supplied.  In the spirit of the stable
-> device tree it would be nice (even if nobody actually ships device
-> trees separate from kernels).  ...and also it makes the whole thing
-> easier to land.  If you add compatibility here then the code and
-> device tree patch can go in separately.
 
-Ok, I'll make it fall back to the 'default' values if the ref clock is
-not specified.
+
+On 2018-11-30 3:28 p.m., Dan Williams wrote:
+> On Fri, Nov 30, 2018 at 2:19 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+>>
+>> Hey,
+>>
+>> On 2018-11-29 11:51 a.m., Dan Williams wrote:
+>>> Got it, let me see how bad moving arch_remove_memory() turns out,
+>>> sounds like a decent approach to coordinate multiple users of a single
+>>> ref.
+>>
+>> I've put together a patch set[1] that fixes all the users of
+>> devm_memremap_pages() without moving arch_remove_memory(). It's pretty
+>> clean except for the p2pdma case which is fairly tricky but I don't
+>> think there's an easy way around that.
+> 
+> The solution I'm trying is to introduce a devm_memremap_pages_remove()
+> that each user can call after they have called percpu_ref_exit(), it's
+> just crashing for me currently...
+
+Ok, that's probably less of a clean up for other users, but sounds like
+it would be less tricky for p2pdma. I'd have to create a list of all
+pgmaps, but that's not so hard and doesn't create any nasty races to
+consider like my current solution.
+
+>> If you come up with a better solution that's great, otherwise let me
+>> know and I'll do some clean up and more testing and send this set to the
+>> lists. Though, we might need to wait for your patch to land before we
+>> can properly send the fix to it (the first patch in my series)...
+> 
+> I'd say go ahead and send it. We can fix p2pdma as a follow-on. Send
+> it to Andrew as a patch relative to the current -next tree.
+
+Ok, though, how do I reference the current patch in Andrew's tree? Or
+does it matter?
+
+Logan
