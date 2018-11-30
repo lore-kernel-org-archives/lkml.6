@@ -2,113 +2,133 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1483AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056D7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF24820868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:44:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF24820868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id B68982086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:52:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FH6K+/Zk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B68982086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeK3Nvt (ORCPT
+        id S1726653AbeK3OAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:51:49 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:7477 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726161AbeK3Nvt (ORCPT
+        Fri, 30 Nov 2018 09:00:31 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11381 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbeK3OAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:51:49 -0500
-X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
-   d="scan'208";a="48853424"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 30 Nov 2018 10:44:04 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 63B424B734A9;
-        Fri, 30 Nov 2018 10:44:01 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 30 Nov 2018 10:44:02 +0800
-Date:   Fri, 30 Nov 2018 10:43:47 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdline from KEXEC
-Message-ID: <20181130024346.GB30941@localhost.localdomain>
-References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
- <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
- <20181129211003.saxfvyboxpsn5mdr@gabell>
+        Fri, 30 Nov 2018 09:00:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c00a6040000>; Thu, 29 Nov 2018 18:52:52 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 29 Nov 2018 18:52:47 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 29 Nov 2018 18:52:47 -0800
+Received: from [10.19.225.182] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Nov
+ 2018 02:52:44 +0000
+Subject: Re: [PATCH v4 1/3] thermal: tegra: remove unnecessary warnings
+To:     Eduardo Valentin <edubezval@gmail.com>
+CC:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
+        <linux-tegra@vger.kernel.org>, <rui.zhang@intel.com>,
+        <srikars@nvidia.com>, <linux-kernel@vger.kernel.org>
+References: <1543486183-2868-1-git-send-email-wni@nvidia.com>
+ <1543486183-2868-2-git-send-email-wni@nvidia.com>
+ <20181129163938.GA2045@localhost.localdomain>
+From:   Wei Ni <wni@nvidia.com>
+Message-ID: <380eb5fc-ed94-db87-9118-2fa8133d9c78@nvidia.com>
+Date:   Fri, 30 Nov 2018 10:52:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181129211003.saxfvyboxpsn5mdr@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 63B424B734A9.AABE7
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <20181129163938.GA2045@localhost.localdomain>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543546372; bh=xCs+zfARQlZ33YKrbYyDAY6a/EEBJFZxnDMf+Qb3cMg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=FH6K+/Zksuv+V+1rc6PPQMGwl2Rlbz5mn68QgOvUNcLRpSJBv2vjwl/9iOzJr3a6p
+         Kuz/0J6fbYgtasqNFObIPiUvnlrsqOZgeG5JqJbXQzsX5pMw6GrCo9bTQEuTnmj0M7
+         Zw5JWtG3wgdgRoAK3+dQ9K5w/PAKLYJUNy6fEb04/DbHcVA6B4DQlkZ9L5kEx1JORq
+         dNsJ5eK3Wl/uxaBCeBlbdksYLiqRLY591+0YI9vrEDeXawKWki7/ass0gYGqUcCKTr
+         IMYqZho3OZDYqauix2e74xk7YSHSNISFI+8yoMFAGFaK+YpqfF3Pfg4M5Dor50Lw+q
+         LgPYfVqufnOlA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> +
->> +/* acpitb.c */
->> +#define BOOT_STRING
->> +extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
->> diff --git a/lib/kstrtox.c b/lib/kstrtox.c
->> index 1006bf70bf74..a0ac1b2257b8 100644
->> --- a/lib/kstrtox.c
->> +++ b/lib/kstrtox.c
->> @@ -126,6 +126,9 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
->>  }
->>  EXPORT_SYMBOL(kstrtoull);
+
+
+On 30/11/2018 12:39 AM, Eduardo Valentin wrote:
+> Hey,
+> 
+> On Thu, Nov 29, 2018 at 06:09:41PM +0800, Wei Ni wrote:
+>> Convert warnings to info as not all platforms may
+>> have all the thresholds and sensors enabled.
+>>
+>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>> ---
+>>  drivers/thermal/tegra/soctherm.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>> index ed28110a3535..55cc1f2f6a45 100644
+>> --- a/drivers/thermal/tegra/soctherm.c
+>> +++ b/drivers/thermal/tegra/soctherm.c
+>> @@ -550,7 +550,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
 >>  
->> +/* Make compressed period code be able to use kstrtoull(). */
->> +#ifndef BOOT_STRING
->
->I got the following build error.
->
->]$ make arch/x86/boot/compressed/misc.o
->  CALL    scripts/checksyscalls.sh
->  DESCEND  objtool
->  CC      arch/x86/boot/compressed/misc.o
->ld: -r and -pie may not be used together
->make[1]: *** [scripts/Makefile.build:294: arch/x86/boot/compressed/misc.o] Error 1
->make: *** [Makefile:1715: arch/x86/boot/compressed/misc.o] Error 2
->]$
+>>  	ret = tz->ops->get_crit_temp(tz, &temperature);
+>>  	if (ret) {
+>> -		dev_warn(dev, "thermtrip: %s: missing critical temperature\n",
+>> +		dev_info(dev, "thermtrip: %s: missing critical temperature\n",
+> 
+> I am mostly ok with your change in direction. But are you sure this is a
+> good thing? What about in the case that you have a platform that have
+> the crit temp and you really failed to .get_crit_temp()?
 
-Hi Masa,
+If we set the crit temp in DT, but failed to .get_crit_temp(), it mean
+the thermal framework have some problems. Since the critical trip is
+very important, may be we should still keep "dev_warn" in here?
 
-So many thanks for your test.
-
-Could you give me more details about this error? More error message.
-Just on the first commit or the whole PATCHSET?
-Cause I didn't get error both on this commit and on the whole PATCHSET.
-
-Thanks,
-Chao Fan
-
->
->I think this error gets fixed by changing the BOOT_STRING ifndef
->order before the EXPORT_SYMBOL, like this:
->
->#ifndef BOOT_STRING
->EXPORT_SYMBOL(kstrtoull);
->
->I'm not sure this change is a good way...
->
->Thanks,
->Masa
->
->
-
-
+> 
+>>  			 sg->name);
+>>  		goto set_throttle;
+>>  	}
+>> @@ -569,7 +569,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+>>  set_throttle:
+>>  	ret = get_hot_temp(tz, &trip, &temperature);
+>>  	if (ret) {
+>> -		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
+>> +		dev_info(dev, "throttrip: %s: missing hot temperature\n",
+>>  			 sg->name);
+>>  		return 0;
+>>  	}
+>> @@ -600,7 +600,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+>>  	}
+>>  
+>>  	if (i == THROTTLE_SIZE)
+>> -		dev_warn(dev, "throttrip: %s: missing throttle cdev\n",
+>> +		dev_info(dev, "throttrip: %s: missing throttle cdev\n",
+>>  			 sg->name);
+>>  
+>>  	return 0;
+>> -- 
+>> 2.7.4
+>>
