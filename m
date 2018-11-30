@@ -6,130 +6,259 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD01C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A875BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C84902146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:37:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84902146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6226F2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:41:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6226F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbeK3Ppl (ORCPT
+        id S1726644AbeK3PtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 10:45:41 -0500
-Received: from mx.socionext.com ([202.248.49.38]:15436 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726375AbeK3Ppl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 10:45:41 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 30 Nov 2018 13:37:39 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 1AE65180B47;
-        Fri, 30 Nov 2018 13:37:40 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 30 Nov 2018 13:37:40 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 9E11B4036D;
-        Fri, 30 Nov 2018 13:37:39 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 79DA4120455;
-        Fri, 30 Nov 2018 13:37:39 +0900 (JST)
-Date:   Fri, 30 Nov 2018 13:37:39 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [RFC PATCH net] net: phy: fix the issue that netif always links up after resuming
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <d32d2d7e-2c78-425a-4016-0aebbf0828ed@gmail.com>
-References: <0499fc01-fce3-26c7-8b42-64788b8bf47b@gmail.com> <d32d2d7e-2c78-425a-4016-0aebbf0828ed@gmail.com>
-Message-Id: <20181130133738.813D.4A936039@socionext.com>
+        Fri, 30 Nov 2018 10:49:03 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41916 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbeK3PtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 10:49:03 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAU4exv9123600;
+        Thu, 29 Nov 2018 22:40:59 -0600
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAU4exV9107903
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 29 Nov 2018 22:40:59 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
+ Nov 2018 22:40:58 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 29 Nov 2018 22:40:59 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAU4euq8000826;
+        Thu, 29 Nov 2018 22:40:57 -0600
+Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
+ tuning failures (i929)
+To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>
+References: <20181129190503.6040-1-faiz_abbas@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
+Date:   Fri, 30 Nov 2018 10:10:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <20181129190503.6040-1-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiner Florian,
+Hi Faiz,
 
-Thank you for your comments.
-
-On Thu, 29 Nov 2018 16:37:48 -0800 <f.fainelli@gmail.com> wrote:
-
+On 30/11/18 12:35 AM, Faiz Abbas wrote:
+> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
+> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
+> unexpected tuning pattern errors. A small failure band may be present
+> in the tuning range which may be missed by the current algorithm.
+> Furthermore, the failure bands vary with temperature leading to
+> different optimum tuning values for different temperatures.
 > 
+> As suggested in the related Application Report (SPRACA9B - October 2017
+> - Revised July 2018 [2]), tuning should be done in two stages.
+> In stage 1, assign the optimum ratio in the maximum pass window for the
+> current temperature. In stage 2, if the chosen value is close to the
+> small failure band, move away from it in the appropriate direction.
 > 
-> On 11/29/2018 2:47 PM, Heiner Kallweit wrote:
-> > On 29.11.2018 09:12, Kunihiko Hayashi wrote:
-> >> Even though the link is down before entering hibernation,
-> >> there is an issue that the network interface always links up after resuming
-> >> from hibernation.
-> >>
-> >> The phydev->state is PHY_READY before enabling the network interface, so
-> >> the link is down. After resuming from hibernation, the phydev->state is
-> >> forcibly set to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
-> >>
-> >> This patch expects to solve the issue by changing phydev->state to PHY_UP
-> >> only when the link is up.
-> >>
-> >> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> >> ---
-> >>  drivers/net/phy/phy_device.c | 6 ++++--
-> >>  1 file changed, 4 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> >> index ab33d17..d5bba0f 100644
-> >> --- a/drivers/net/phy/phy_device.c
-> >> +++ b/drivers/net/phy/phy_device.c
-> >> @@ -309,8 +309,10 @@ static int mdio_bus_phy_restore(struct device *dev)
-> >>  		return ret;
-> >>  
-> >>  	/* The PHY needs to renegotiate. */
-> >> -	phydev->link = 0;
-> >> -	phydev->state = PHY_UP;
-> >> +	if (phydev->link) {
-> >> +		phydev->link = 0;
-> >> +		phydev->state = PHY_UP;
-> >> +	}
-> >>  
-> > Thanks for reporting. I agree that it isn't right to unconditionally set
-> > PHY_UP, because we don't know whether the PHY was started before
-> > hibernation. However I don't think using phydev->link as criteria is
-> > right. Example would be: PHY was started before hibernation, but w/o link.
-> > In this case we want to set PHY_UP to start an aneg, because a cable may
-> > have been plugged in whilst system was sleeping.
-
-Indeed. I didn't consider the case that the PHY was started but a cable was
-unplugged before hibernation.
-
-> > So I think, similar to phy_stop_machine, we should use state >= UP and
-> > state != HALTED as criteria, and also phy_start_machine() would need to
-> > be called only if this criteria is met.
-> > 
-> > It may make sense to add a helper for checking whether PHY is in a
-> > started state (>=UP && !=HALTED), because we need this in more than
-> > one place.
+> References:
+> [1] http://www.ti.com/lit/pdf/sprz426
+> [2] http://www.ti.com/lit/pdf/SPRACA9
 > 
-> Agreed, that would make sense.
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  drivers/mmc/host/Kconfig      |  2 +
+>  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
+>  2 files changed, 91 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 1b58739d9744..6d3553f06f27 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
+>  config MMC_SDHCI_OMAP
+>  	tristate "TI SDHCI Controller Support"
+>  	depends on MMC_SDHCI_PLTFM && OF
+> +	select THERMAL
+> +	select TI_SOC_THERMAL
+>  	help
+>  	  This selects the Secure Digital Host Controller Interface (SDHCI)
+>  	  support present in TI's DRA7 SOCs. The controller supports
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index b3cb39d0db6f..9ccce7ef3a60 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/sys_soc.h>
+> +#include <linux/thermal.h>
+>  
+>  #include "sdhci-pltfm.h"
+>  
+> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	struct sdhci_host *host = mmc_priv(mmc);
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+> +	struct thermal_zone_device *thermal_dev;
+>  	struct device *dev = omap_host->dev;
+>  	struct mmc_ios *ios = &mmc->ios;
+>  	u32 start_window = 0, max_window = 0;
+> +	bool single_point_failure = false;
+>  	u8 cur_match, prev_match = 0;
+>  	u32 length = 0, max_len = 0;
+>  	u32 phase_delay = 0;
+> +	int temperature;
+>  	int ret = 0;
+>  	u32 reg;
+> +	int i;
+>  
+>  	/* clock tuning is not needed for upto 52MHz */
+>  	if (ios->clock <= 52000000)
+> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
+>  		return 0;
+>  
+> +	thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
+> +	if (IS_ERR(thermal_dev)) {
+> +		dev_err(dev, "Unable to get thermal zone for tuning\n");
+> +		return PTR_ERR(thermal_dev);
+> +	}
 
-I agree, too.
-I'll try this in v2 patch that changes the PHY state to PHY_UP and calls
-phy_start_machine(), only when the PHY was started before hibernation.
-If I understand correctly, it will be like that:
+Can't we get thermal zone once during probe?
 
-	phydev->link = 0;
-	if (phy_is_started(phydev)) {
-		phydev->state = PHY_UP;
-		phy_start_machine(phydev);
-	}
-
-Thank you,
-
----
-Best Regards,
-Kunihiko Hayashi
-
-
+Thanks
+Kishon
+> +
+> +	ret = thermal_zone_get_temp(thermal_dev, &temperature);
+> +	if (ret)
+> +		return ret;
+> +
+>  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
+>  	reg |= DLL_SWT;
+>  	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
+> @@ -317,6 +332,11 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  
+>  	omap_host->is_tuning = true;
+>  
+> +	/*
+> +	 * Stage 1: Search for a maximum pass window ignoring any
+> +	 * any single point failures. If the tuning value ends up
+> +	 * near it, move away from it in stage 2 below
+> +	 */
+>  	while (phase_delay <= MAX_PHASE_DELAY) {
+>  		sdhci_omap_set_dll(omap_host, phase_delay);
+>  
+> @@ -324,10 +344,15 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  		if (cur_match) {
+>  			if (prev_match) {
+>  				length++;
+> +			} else if (single_point_failure) {
+> +				/* ignore single point failure */
+> +				length++;
+>  			} else {
+>  				start_window = phase_delay;
+>  				length = 1;
+>  			}
+> +		} else {
+> +			single_point_failure = prev_match;
+>  		}
+>  
+>  		if (length > max_len) {
+> @@ -345,13 +370,76 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  		goto tuning_error;
+>  	}
+>  
+> +	/*
+> +	 * Assign tuning value as a ratio of maximum pass window based
+> +	 * on temperature
+> +	 */
+> +	if (temperature < -20000)
+> +		phase_delay = min(max_window + 4 * max_len - 24,
+> +				  max_window +
+> +				  DIV_ROUND_UP(13 * max_len, 16) * 4);
+> +	else if (temperature < 20000)
+> +		phase_delay = max_window + DIV_ROUND_UP(9 * max_len, 16) * 4;
+> +	else if (temperature < 40000)
+> +		phase_delay = max_window + DIV_ROUND_UP(8 * max_len, 16) * 4;
+> +	else if (temperature < 70000)
+> +		phase_delay = max_window + DIV_ROUND_UP(7 * max_len, 16) * 4;
+> +	else if (temperature < 90000)
+> +		phase_delay = max_window + DIV_ROUND_UP(5 * max_len, 16) * 4;
+> +	else if (temperature < 120000)
+> +		phase_delay = max_window + DIV_ROUND_UP(4 * max_len, 16) * 4;
+> +	else
+> +		phase_delay = max_window + DIV_ROUND_UP(3 * max_len, 16) * 4;
+> +
+> +	/*
+> +	 * Stage 2: Search for a single point failure near the chosen tuning
+> +	 * value in two steps. First in the +3 to +10 range and then in the
+> +	 * +2 to -10 range. If found, move away from it in the appropriate
+> +	 * direction by the appropriate amount depending on the temperature.
+> +	 */
+> +	for (i = 3; i <= 10; i++) {
+> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
+> +
+> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
+> +			if (temperature < 10000)
+> +				phase_delay += i + 6;
+> +			else if (temperature < 20000)
+> +				phase_delay += i - 12;
+> +			else if (temperature < 70000)
+> +				phase_delay += i - 8;
+> +			else
+> +				phase_delay += i - 6;
+> +
+> +			goto single_failure_found;
+> +		}
+> +	}
+> +
+> +	for (i = 2; i >= -10; i--) {
+> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
+> +
+> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
+> +			if (temperature < 10000)
+> +				phase_delay += i + 12;
+> +			else if (temperature < 20000)
+> +				phase_delay += i + 8;
+> +			else if (temperature < 70000)
+> +				phase_delay += i + 8;
+> +			else if (temperature < 90000)
+> +				phase_delay += i + 10;
+> +			else
+> +				phase_delay += i + 12;
+> +
+> +			goto single_failure_found;
+> +		}
+> +	}
+> +
+> +single_failure_found:
+>  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_AC12);
+>  	if (!(reg & AC12_SCLK_SEL)) {
+>  		ret = -EIO;
+>  		goto tuning_error;
+>  	}
+>  
+> -	phase_delay = max_window + 4 * (max_len >> 1);
+>  	sdhci_omap_set_dll(omap_host, phase_delay);
+>  
+>  	omap_host->is_tuning = false;
+> 
