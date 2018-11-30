@@ -5,71 +5,81 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC398C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C69C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A2E520863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:38:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A2E520863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4714A2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:40:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4714A2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeLAAsA (ORCPT
+        id S1726841AbeLAAtq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:48:00 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37573 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLAAsA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:48:00 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gSj09-0004FD-Ck; Fri, 30 Nov 2018 14:38:37 +0100
-Date:   Fri, 30 Nov 2018 14:38:36 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Roman Kagan <rkagan@virtuozzo.com>
-cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Nadav Amit <nadav.amit@gmail.com>
-Subject: Re: [PATCH] x86/hyper-v: define structures from TLFS as packed
-In-Reply-To: <20181130131122.GA2358@rkaganb.sw.ru>
-Message-ID: <alpine.DEB.2.21.1811301438070.17702@nanos.tec.linutronix.de>
-References: <20181130121511.12331-1-vkuznets@redhat.com> <20181130131122.GA2358@rkaganb.sw.ru>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 30 Nov 2018 19:49:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53442 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726618AbeLAAtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:49:46 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64998C025011;
+        Fri, 30 Nov 2018 13:40:26 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (dhcp-192-212.str.redhat.com [10.33.192.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1CCEB1057065;
+        Fri, 30 Nov 2018 13:40:23 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     =?utf-8?Q?J=C3=BCrg?= Billeter <j@bitron.ch>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] prctl: add PR_{GET,SET}_KILL_DESCENDANTS_ON_EXIT
+References: <20181127225408.7553-2-j@bitron.ch>
+        <20181130080004.23635-1-j@bitron.ch>
+        <20181130080004.23635-2-j@bitron.ch>
+Date:   Fri, 30 Nov 2018 14:40:14 +0100
+In-Reply-To: <20181130080004.23635-2-j@bitron.ch> (=?utf-8?Q?=22J=C3=BCrg?=
+ Billeter"'s message
+        of "Fri, 30 Nov 2018 08:00:04 +0000")
+Message-ID: <87bm66u1j5.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 30 Nov 2018 13:40:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018, Roman Kagan wrote:
+* Jürg Billeter:
 
-> On Fri, Nov 30, 2018 at 01:15:11PM +0100, Vitaly Kuznetsov wrote:
-> > Without 'packed' compiler is free to add optimization paddings and re-order
-> > structure fields for randomization/optimization. And structures from
-> > hyperv-tlfs.h are used for hypervisor-guest communication, we need to
-> > ultimately forbid such practices.
-> 
-> Note that __packed also reduces the structure alignment to 1, which is
-> not necessarily what you want.
-> 
-> E.g. some of these structures are passed by pointer to the hypercall,
-> which requires its arguments to be 8byte-aligned.  I'm also not sure
-> that passing unaligned argument to [rw]msr is ok, need to double-check.
+> This introduces a new thread group flag that can be set by calling
+>
+>     prctl(PR_SET_KILL_DESCENDANTS_ON_EXIT, 1, 0, 0, 0)
+>
+> When a thread group exits with this flag set, it will send SIGKILL to
+> all descendant processes.  This can be used to prevent stray child
+> processes.
+>
+> This flag is cleared on privilege gaining execve(2) to ensure an
+> unprivileged process cannot get a privileged process to send SIGKILL.
 
-If you have alignment requirements then you need to express them too.
+So this is inherited across regular execve?  I'm not sure that's a good
+idea.
+
+> Descendants that are orphaned and reparented to an ancestor of the
+> current process before the current process exits, will not be killed.
+> PR_SET_CHILD_SUBREAPER can be used to contain orphaned processes.
+
+For double- or triple-forking daemons, the reparenting will be racy, if
+I understand things correctly.
 
 Thanks,
-
-	tglx
+Florian
