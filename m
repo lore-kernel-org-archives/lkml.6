@@ -2,107 +2,76 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECA4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A8BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3AA721473
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:03:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AA721473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DF942146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:04:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF942146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbeK3XM5 (ORCPT
+        id S1726980AbeK3XNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:12:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726473AbeK3XM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:12:57 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1825D3001FCB;
-        Fri, 30 Nov 2018 12:03:53 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 50713104C53F;
-        Fri, 30 Nov 2018 12:03:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 30 Nov 2018 13:03:52 +0100 (CET)
-Date:   Fri, 30 Nov 2018 13:03:45 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Enke Chen <enkechen@cisco.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
-        Stefan Strogin <sstrogin@cisco.com>
-Subject: Re: [PATCH v5 1/2] kernel/signal: Signal-based pre-coredump
- notification
-Message-ID: <20181130120344.GA25998@redhat.com>
-References: <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
- <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
- <20181026082812.GA10581@redhat.com>
- <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
- <20181029111804.GA24820@redhat.com>
- <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
- <80e96710-f424-9b39-72ee-9cc7cbe7a5f7@cisco.com>
- <20181128151911.GN3505@e103592.cambridge.arm.com>
- <ad461da7-f0a6-7912-3201-e440dc372f89@cisco.com>
- <20181129115520.GO3505@e103592.cambridge.arm.com>
+        Fri, 30 Nov 2018 18:13:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55270 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbeK3XNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 18:13:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF74E80D;
+        Fri, 30 Nov 2018 04:04:49 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 973903F5A0;
+        Fri, 30 Nov 2018 04:04:48 -0800 (PST)
+Subject: Re: [PATCH] dma-debug: hns_enet_drv could use more DMA entries
+To:     Christoph Hellwig <hch@lst.de>, Qian Cai <cai@gmx.us>
+Cc:     m.szyprowski@samsung.com, yisen.zhuang@huawei.com,
+        salil.mehta@huawei.com, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181130035456.1586-1-cai@gmx.us> <20181130084203.GA19812@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <19e7ac15-a1dc-33ee-d4be-f3433625e836@arm.com>
+Date:   Fri, 30 Nov 2018 12:04:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129115520.GO3505@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 30 Nov 2018 12:03:54 +0000 (UTC)
+In-Reply-To: <20181130084203.GA19812@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29, Dave Martin wrote:
->
-> SIGCHLD + wait() is immune to this problem for other child status
-> notifications (albeit with higher overhead).
->
-> Unless I've missed something fundamental, signals simply aren't a
-> reliable data transport
+On 30/11/2018 08:42, Christoph Hellwig wrote:
+> On Thu, Nov 29, 2018 at 10:54:56PM -0500, Qian Cai wrote:
+>>   /* allow architectures to override this if absolutely required */
+>>   #ifndef PREALLOC_DMA_DEBUG_ENTRIES
+>> +/* amount of DMA mappings on this driver is huge. */
+>> +#ifdef	HNS_ENET
+>> +#define PREALLOC_DMA_DEBUG_ENTRIES (1 << 17)
+>> +#else
+>>   #define PREALLOC_DMA_DEBUG_ENTRIES (1 << 16)
+>>   #endif
+>> +#endif
+> 
+> How would this be defined in a header that leaks into this file?
 
-Yes. But I hope we are not going to implement WCOREDUMP.
+Apparently it wouldn't, because nothing defines that macro anywhere 
+anyway. CONFIG_HNS_ENET, on the other hand, would be available by virtue 
+of autoconf.h which is just about everywhere.
 
-I am not fan of this patch, but at least it is simple.
+> I think we need to turn PREALLOC_DMA_DEBUG_ENTRIES into a user
+> selectable config options, as I really don't want to collect hacks like
+> this.
 
-Oleg.
+Agreed - we already have per-arch overrides scattered about, so growing 
+special cases in yet another place just makes even more of a mess. 
+Rounding all of it up into Kconfig would definitely make sense.
 
+Robin.
