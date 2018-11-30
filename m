@@ -2,162 +2,123 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48318C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AB0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A04920863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:19:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A04920863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 1211F2082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:20:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="iZcukRhR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1211F2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeK3X2u (ORCPT
+        id S1726885AbeK3X34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:28:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44930 "EHLO mx1.suse.de"
+        Fri, 30 Nov 2018 18:29:56 -0500
+Received: from mail-eopbgr30049.outbound.protection.outlook.com ([40.107.3.49]:14841
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726521AbeK3X2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:28:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7EC09AE98;
-        Fri, 30 Nov 2018 12:19:41 +0000 (UTC)
-Subject: Re: [PATCH 1/2] x86/mm: Fix guard hole handling
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, bhe@redhat.com, x86@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20181130115758.4425-1-kirill.shutemov@linux.intel.com>
- <20181130115758.4425-2-kirill.shutemov@linux.intel.com>
- <76b8ca15-405a-055f-41b3-532b116c3a8b@suse.com>
- <20181130121131.g3xvlvixv7mvlr7b@black.fi.intel.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <de576537-d524-aa2e-adc0-3fa969e4ffe2@suse.com>
-Date:   Fri, 30 Nov 2018 13:19:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1726512AbeK3X3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 18:29:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s3pwa42tz6Z4GqLS1cchSXPEevcZVJEfwpSacUOfOlM=;
+ b=iZcukRhRXFTY1UCvxOxZdjtVblORHU9GQEkT7oGikBE7zXtSRPdyOeFnGG8boo12MPyBa6c40MkcWwWmh/DxDQXGVVUDXqYkIPEayPmV224w2xpPTSvZ/QwnGFXeMm3AlspyvAnc/GB7oNF4j2TWMOtdFQIjf7QqklfHi3MlFG4=
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
+ VI1PR0802MB2271.eurprd08.prod.outlook.com (10.172.13.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Fri, 30 Nov 2018 12:20:45 +0000
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac%11]) with mapi id 15.20.1382.020; Fri, 30 Nov
+ 2018 12:20:45 +0000
+From:   Dave Rodgman <dave.rodgman@arm.com>
+To:     Yueyi Li <liyueyi@live.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "w@1wt.eu" <w@1wt.eu>,
+        "donb@securitymouse.com" <donb@securitymouse.com>,
+        "markus@oberhumer.com" <markus@oberhumer.com>, nd <nd@arm.com>
+Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
+Thread-Topic: [PATCH v2] lzo: fix ip overrun during compress.
+Thread-Index: AQHUhuxfhCM/itRkZUmE23ES7mjh0qVlNWoAgAHDqgCAAKwqAIAAmyGA
+Date:   Fri, 30 Nov 2018 12:20:44 +0000
+Message-ID: <3bde9678-ac05-62f1-bfc3-434832adda11@arm.com>
+References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
+ <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
+ <c03227b3-1c79-d214-5880-19f2f1ea0491@arm.com>
+ <SN1PR13MB030426DBA527C725AE28B5A9DFD30@SN1PR13MB0304.namprd13.prod.outlook.com>
+In-Reply-To: <SN1PR13MB030426DBA527C725AE28B5A9DFD30@SN1PR13MB0304.namprd13.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [217.140.106.53]
+x-clientproxiedby: CWXP265CA0073.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:39::13) To VI1PR0802MB2528.eurprd08.prod.outlook.com
+ (2603:10a6:800:b0::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=dave.rodgman@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2271;6:w2pPbUV9ybiQvKmp2XEvsHRVhM4TXQMVTgoehQKScmmykD/ltflx5XaKbBFX+ELhINwYs/WHY1uRMzdgmLBo+Qmc90cj01dlVi9XKK/iZQXQBd+tGFhlYQr8i1BDtM/rtW3vVPb94F37BXa13E1cBtCMDsPZltdmPLrOoU/D7ZgJr9Kc+UmiU5pBfJeqlAa/3yN+h8mxh0wdP21oQnFieyIy5X+HGrOkujNHoOKh94VIBj3C7pgcd8Bf3qCgElFCKH2dUjjwqeN9+gZiqk4xNARkKnWBnWz/R+pSdJB6sf1X8HtdacwGkwbA4GZl6T/OLhe+gzT0rc2T3ngZQ1/cG9JmmPodnLQwtGS7v6t4J9NLixbuj+ByaOCGoZedizXigoIc9UIoiKfi8qJEeWo5v6GTRCdYqdntpTV0s87SLUhsjqNDJi7b46CSYERRA1raaEKiE6QkgxDO+RfCCL+2Qw==;5:P6W577EJdET/GbMmgGRXCHwfGDt45BcGkEbQwT1b3nPp/MSn05K/hURs/lkPrwqPh3ZUgtwDjH0cW1z49cmBIthLweEM2Lz9ApsMHzZiEtBlBiDlBtWCuED1gnkem7h0lqBmFU1S43NXXL1Y/SrYui75krlv/rjnMhpuSgb5MBQ=;7:/tqOnlsOvztuXsP3mldm/pII/YFBHxo7+SNLDOgter5JQXeDdF8UA3AKNLBq2djFQMvQW+dc5f+sQmDcO6P457KIAIA/R6kfkHalotVkf4YIXVEFvLry/3STwmS8FGaCCFErLGL2qCskzhXrYV63+A==
+x-ms-office365-filtering-correlation-id: 05df6ed0-bd21-4bc0-38c8-08d656be4087
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2271;
+x-ms-traffictypediagnostic: VI1PR0802MB2271:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VI1PR0802MB227177B35CA534C5FEBBCA938FD30@VI1PR0802MB2271.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231453)(999002)(944501466)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2271;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2271;
+x-forefront-prvs: 087223B4DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(366004)(346002)(39860400002)(189003)(199004)(386003)(11346002)(99286004)(68736007)(6486002)(36756003)(71190400001)(486006)(6506007)(81156014)(8676002)(66066001)(7736002)(44832011)(5660300001)(71200400001)(476003)(6116002)(3846002)(966005)(97736004)(25786009)(31686004)(2906002)(6246003)(31696002)(53546011)(76176011)(39060400002)(86362001)(256004)(6512007)(81166006)(14454004)(6306002)(305945005)(446003)(26005)(106356001)(229853002)(105586002)(186003)(2501003)(110136005)(4326008)(102836004)(6436002)(2616005)(53936002)(52116002)(478600001)(93886005)(54906003)(8936002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2271;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: k5EbpXpEZcDz30rMVAd57ykMeSTMOefzBNEtta3uvQqGoAEPitHIg+ApK8O+IOeT3tP+B3KbLQANu4Ef0mcSF6s5+3PYpd/FszUdJkE4Ug2pXjLvLKEerv2kj5prBEDJoQhVdyyrMRltIiJKGSxV0WUVMI7s6QAPfiQua3fyTsFN0MjC0fLt50UQGQu3wMpEvhRkNf6sqT6zd2J5hKbti/6WuGnOHtydXFa/VP6nKMYJf0JLa6pPsYXlVH9pA1k9uG3nighuC3AN6Hm+gKtj+v48XnwT+J5QP6j7PQIhQ7vp79yvuz+85Z6cx8OfLms4QsvFm99Em1VcMwakuPEs4KESAsL5bT/d2PnclmKOe/E=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3481CF33154C8045B17EC0C8A0746FA7@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20181130121131.g3xvlvixv7mvlr7b@black.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05df6ed0-bd21-4bc0-38c8-08d656be4087
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 12:20:44.9605
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2271
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/11/2018 13:11, Kirill A. Shutemov wrote:
-> On Fri, Nov 30, 2018 at 12:03:33PM +0000, Juergen Gross wrote:
->> On 30/11/2018 12:57, Kirill A. Shutemov wrote:
->>> There is a guard hole at the beginning of kernel address space, also
->>> used by hypervisors. It occupies 16 PGD entries.
->>>
->>> We do not state the reserved range directly, but calculate it relative
->>> to other entities: direct mapping and user space ranges.
->>>
->>> The calculation got broken by recent change in kernel memory layout: LDT
->>> remap range is now mapped before direct mapping and makes the calculation
->>> invalid.
->>>
->>> The breakage leads to crash on Xen dom0 boot[1].
->>>
->>> State the reserved range directly. It's part of kernel ABI (hypervisors
->>> expect it to be stable) and must not depend on changes in the rest of
->>> kernel memory layout.
->>>
->>> [1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
->>>
->>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>> Reported-by: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
->>> Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
->>> ---
->>>  arch/x86/include/asm/pgtable_64_types.h |  5 +++++
->>>  arch/x86/mm/dump_pagetables.c           |  8 ++++----
->>>  arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
->>>  3 files changed, 15 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
->>> index 84bd9bdc1987..13aef22cee18 100644
->>> --- a/arch/x86/include/asm/pgtable_64_types.h
->>> +++ b/arch/x86/include/asm/pgtable_64_types.h
->>> @@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
->>>   */
->>>  #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
->>>  
->>> +#define GUARD_HOLE_PGD_ENTRY	-256UL
->>> +#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
->>> +#define GUARD_HOLE_BASE_ADDR	(LDT_PGD_ENTRY << PGDIR_SHIFT)
->>
->> s/LDT_PGD_ENTRY/GUARD_HOLE_PGD_ENTRY/
-> 
-> Ughh..
-> 
->>From 4308d560cc2874a9f596512bcb4c601b2450653d Mon Sep 17 00:00:00 2001
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Date: Fri, 30 Nov 2018 14:29:42 +0300
-> Subject: [PATCH 1/2] x86/mm: Fix guard hole handling
-> 
-> There is a guard hole at the beginning of kernel address space, also
-> used by hypervisors. It occupies 16 PGD entries.
-> 
-> We do not state the reserved range directly, but calculate it relative
-> to other entities: direct mapping and user space ranges.
-> 
-> The calculation got broken by recent change in kernel memory layout: LDT
-> remap range is now mapped before direct mapping and makes the calculation
-> invalid.
-> 
-> The breakage leads to crash on Xen dom0 boot[1].
-> 
-> State the reserved range directly. It's part of kernel ABI (hypervisors
-> expect it to be stable) and must not depend on changes in the rest of
-> kernel memory layout.
-> 
-> [1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
-> Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
-Reviewed-by: Juergen Gross <jgross@suse.com>
-
-
-Juergen
+PiBPbiAyMDE4LzExLzMwIDA6NDksIERhdmUgUm9kZ21hbiB3cm90ZToNCj4+IE9uIDI4LzExLzIw
+MTggMTo1MiBwbSwgRGF2aWQgU3RlcmJhIHdyb3RlOg0KPj4NCj4+PiBUaGUgZml4IGlzIGFkZGlu
+ZyBhIGZldyBicmFuY2hlcyB0byBjb2RlIHRoYXQncyBzdXBwb3NlZCB0byBiZSBhcyBmYXN0DQo+
+Pj4gYXMgcG9zc2libGUuIFRoZSBicmFuY2hlcyB3b3VsZCBiZSBldmFsdWF0ZWQgYWxsIHRoZSB0
+aW1lIHdoaWxlDQo+Pj4gcHJvdGVjdGluZyBhZ2FpbnN0IG9uZSBzaWdubGUgYmFkIHBhZ2UgYWRk
+cmVzcy4gVGhpcyBkb2VzIG5vdCBsb29rIGxpa2UNCj4+PiBhIGdvb2QgcGVyZm9ybWFuY2UgdHJh
+ZGVvZmYuDQo+PiBBcyBhbiBhbHRlcm5hdGl2ZSwgZm9yIGFsbCBidXQgdGhlIGZpcnN0IGNhc2Us
+IGluc3RlYWQgb2Y6DQo+Pg0KPj4gaWYgKHVubGlrZWx5KE9WRVJGTE9XX0FERF9DSEVDSyhpcCwg
+bV9sZW4pIHx8IChpcCArIG1fbGVuID49IGlwX2VuZCkpKQ0KPj4NCj4+IEknZCBzdWdnZXN0IHdl
+IGRvOg0KPj4NCj4+IGlmICh1bmxpa2VseSgoaXBfZW5kIC0gaXApIDw9IG1fbGVuKSkNCj4+DQo+
+PiB3aGljaCB3aWxsIGJlIGFib3V0IGFzIGVmZmljaWVudCBhcyB3aGF0J3MgY3VycmVudGx5IHRo
+ZXJlLCBidXQgZG9lc24ndA0KPj4gaGF2ZSBpc3N1ZXMgd2l0aCBvdmVyZmxvdy4NCj4gDQo+IE9v
+aCwgeWVzLCBwcmV0dHkgZ29vZCBzb2x1dGlvbiB0byB0aGlzLCB0aGFua3MuDQoNCk5wIDotKQ0K
+DQpBY3R1YWxseSwgbG9va2luZyBtb3JlIGNsb3NlbHkgYXQgdGhlIGZpcnN0IGNhc2UsIHNvbWV0
+aGluZyBsaWtlIHRoaXMgDQp3b3JrcyBxdWl0ZSB3ZWxsOg0KDQpzaXplX3QgaW5jID0gMSArICgo
+aXAgLSBpaSkgPj4gNSk7DQppZiAodW5saWtlbHkoKGlwX2VuZCAtIGlwKSA8PSBpbmMpKQ0KCWJy
+ZWFrOw0KaXAgKz0gaW5jOw0KDQpPbiBhcm02NCwgdGhpcyBnZW5lcmF0ZXMgb25seSBhIHNpbmds
+ZSBicmFuY2ggaW5zdHJ1Y3Rpb24sIHNvIGl0J3Mgb25seSANCnR3byBleHRyYSBhcml0aG1ldGlj
+IG9wZXJhdGlvbnMgbW9yZSB0aGFuIHRoZSBvcmlnaW5hbCBjb2RlICh1c2luZyB0aGUgDQptYWNy
+byByZXN1bHRzIGluIGFuIGFkZGl0aW9uYWwgY29tcGFyZSAmIGJyYW5jaCkuDQoNCkkgdXNlZCB0
+aGlzIHRvIGV4cGxvcmUgdGhlIGNvbXBpbGVyIG91dHB1dDoNCg0KaHR0cHM6Ly9nb2Rib2x0Lm9y
+Zy96L25nMnFHWg0KDQpEYXZlDQo=
