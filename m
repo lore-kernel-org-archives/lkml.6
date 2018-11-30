@@ -2,690 +2,678 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8C6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68B3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48BBC2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:24:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48BBC2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=polymtl.ca
+	by mail.kernel.org (Postfix) with ESMTP id 7B8212146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:25:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4mU5TU5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8212146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbeK3Rcl (ORCPT
+        id S1726765AbeK3Rd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:32:41 -0500
-Received: from smtp.polymtl.ca ([132.207.4.11]:46659 "EHLO smtp.polymtl.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726386AbeK3Rcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:32:41 -0500
-X-Greylist: delayed 626 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Nov 2018 12:32:38 EST
-Received: from horde5.polymtl.ca (horde5.polymtl.ca [132.207.4.156])
-        by smtp.polymtl.ca (8.14.7/8.14.7) with ESMTP id wAU6DNvJ025134;
-        Fri, 30 Nov 2018 01:13:24 -0500
-Received: from c-67-170-74-158.hsd1.wa.comcast.net
- (c-67-170-74-158.hsd1.wa.comcast.net [67.170.74.158]) by www.imp.polymtl.ca
- (Horde Framework) with HTTP; Fri, 30 Nov 2018 06:13:23 +0000
-Date:   Fri, 30 Nov 2018 06:13:23 +0000
-Message-ID: <20181130061323.Horde.E0o4EXm6PULA9wXQNLPxqMn@www.imp.polymtl.ca>
-From:   Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-To:     rostedt@goodmis.org
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, mathieu.desnoyers@efficios.com,
-        paul.pal@microsoft.com, feng.liang@microsoft.com,
-        eddie.kong@microsoft.com, abderb@microsoft.com
-Subject: Re: [RFC PATCH v3] ftrace: support very early function tracing
-In-Reply-To: <20181024192230.Horde.jyOd6XtJHX9UpT8_PPWxjfa@www.imp.polymtl.ca>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        Fri, 30 Nov 2018 12:33:26 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51976 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeK3Rd0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 12:33:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id s14so4579360wmh.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 22:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=BuIYsPC7Rf2LxpbkR7Q5FGIlgGl3uiRfCTfA8hCgWH8=;
+        b=c4mU5TU5ExMaB2PsdcxABNt1gmMjdGs/WGNo+3/o9mL5wfiz9syKpvIVm6MRyjx1WL
+         Y6scyHNFJ5T3p0/SkswLqAGAT274bqmwLuxli9Uiymza2H8LQudqnfMdg/89mWr3t9gZ
+         z8m0CLMB3OPRV8zjs5jK9sNtkCAmuvc0hf9wLVe2y2B1wmjXFb7X8f7Wc+EgroUrNi4C
+         501HhQhc8NYii/AV+cA5cPy8WgX7k/HqGyHE0iWo8K41CORCjQu3Y1IX+7v16XG3gnhM
+         8pI3QP/Re66k2XQc7Pq2Ckr+Dl4qN62n8rDsG5ctoT8Lnjr5+oToRn2ohiyAKtqfzyDL
+         hVKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=BuIYsPC7Rf2LxpbkR7Q5FGIlgGl3uiRfCTfA8hCgWH8=;
+        b=XF+mdNk1JhFGkhjLe1nCfU04kiD3Alqv5JkzRwpxIu+wFtg2HJnBh5X2clMZTT5nxg
+         zm0D3q2N+gJT96IOOHHWwPQe25BC9Ge580O+h7XQUprbOEgWkJS24+l/LLq6U6iaEA62
+         XQZ36PG2xdPnomsPiXHupYYKjBYcNJPYIe2afUHtf6MD0YUbZsnyPHndEpLh6Zw6OMZ/
+         PIUG4ulmnh1pNISRnyNQOGX++SZObaA4zg8bB35abx55nZQmhVAGMsAY9zWxHUiOLVOQ
+         t1H7QS9VdNvkUtlXRoaj887XlubICeP7h4Nyixc+F/hVe6OnUKJN5lJVWNERrPdxQEyN
+         WDUw==
+X-Gm-Message-State: AA+aEWbGFupU6YVjO3OTgiqTr5ReEGpQ/eDnm/jg37lGWCqjpzb58T3r
+        uYWxa4LNVFwY8kgBl8fhKJk=
+X-Google-Smtp-Source: AFSGD/Vg/eEQmPTGxUMsF/Nvh4+p4p0JsNHftOTweAknRx4eZ5dVFr8rQy0s1PnTzWKsj/4GL6rM0A==
+X-Received: by 2002:a1c:a755:: with SMTP id q82mr4459306wme.6.1543559110593;
+        Thu, 29 Nov 2018 22:25:10 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id l2sm7826929wma.33.2018.11.29.22.25.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 22:25:10 -0800 (PST)
+Date:   Fri, 30 Nov 2018 07:25:07 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] perf fixes
+Message-ID: <20181130062507.GA77228@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Poly-FromMTA: (horde5.polymtl.ca [132.207.4.156]) at Fri, 30 Nov 2018 06:13:23 +0000
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
-+Paul, +Eddie and +Feng.
+Please pull the latest perf-urgent-for-linus git tree from:
 
-Hi Steven, any update regarding this patch. I'm including some folks  
-from server performance analysis team in microsoft, they are currently  
-investigating early boot-up latencies using ftrace.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
+   # HEAD: 09d3f015d1e1b4fee7e9bbdcf54201d239393391 uprobes: Fix handle_swbp() vs. unregister() + register() race once more
 
-Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca> a écrit :
+Misc fixes:
 
-> Hi Steve,
-> I believe this patch is quite stable. I know some folks that were using
-> it to debug early VM/KVM handshak and seemed very helpful for them.
->
->
-> Previous changes:
->
-> PATCH v1: Initial patch
->
-> PATCH v2:
->
->   Removed arch specific code and use the default clock.
->   Add more code re-usability
->   Add HAVE_VERY_EARLY_FTRACE config option which is disabled by default
->
->
-> PATCH v3 starts here :
-> ---------------------------------------------------------------------
->
-> The very early tracing will start from the beginning of start_kernel()
-> and will stop at ftrace_init()
->
-> start_kernel()
-> {
->   ftrace_early_init() <--- start early function tracing
->   ...
->   (calls)
->   ...
->   ftrace_init()       <--- stop early function tracing
->   early_trace_init(); <--- fill ring buffer, before starting function tracer
->   ...
-> }
->
-> The events are placed in a temporary buffer, which will be copied to
-> the trace buffer after memory setup.
->
-> Dynamic tracing is not implemented with live patching, we use
-> ftrace_filter and ftrace_notrace to find which functions to be
-> filtered (traced / not traced), then during the callback from
-> mcount hook, we do binary search lookup to decide which function
-> to be save or not.
->
-> Signed-off-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/x86/Kconfig            |   1 +
->  arch/x86/kernel/ftrace_32.S |  45 ++++--
->  arch/x86/kernel/ftrace_64.S |  14 ++
->  include/linux/ftrace.h      |  16 +-
->  init/main.c                 |   1 +
->  kernel/trace/Kconfig        |  51 +++++++
->  kernel/trace/ftrace.c       | 289 +++++++++++++++++++++++++++++++++++-
->  kernel/trace/trace.c        |   3 +
->  8 files changed, 408 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 1a0be022f91d..3d5b89061a51 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -148,6 +148,7 @@ config X86
->  	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
->  	select HAVE_FTRACE_MCOUNT_RECORD
->  	select HAVE_FUNCTION_GRAPH_TRACER
-> +	select HAVE_VERY_EARLY_FTRACE
->  	select HAVE_FUNCTION_TRACER
->  	select HAVE_GCC_PLUGINS
->  	select HAVE_HW_BREAKPOINT
-> diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-> index 4c8440de3355..1f2889d9e37e 100644
-> --- a/arch/x86/kernel/ftrace_32.S
-> +++ b/arch/x86/kernel/ftrace_32.S
-> @@ -31,12 +31,8 @@ EXPORT_SYMBOL(mcount)
->  # define MCOUNT_FRAME			0	/* using frame = false */
->  #endif
->
-> -ENTRY(function_hook)
-> -	ret
-> -END(function_hook)
-> -
-> -ENTRY(ftrace_caller)
->
-> +.macro save_mcount_regs
->  #ifdef USING_FRAME_POINTER
->  # ifdef CC_USING_FENTRY
->  	/*
-> @@ -73,11 +69,9 @@ ENTRY(ftrace_caller)
->
->  	movl	function_trace_op, %ecx
->  	subl	$MCOUNT_INSN_SIZE, %eax
-> +	.endm
->
-> -.globl ftrace_call
-> -ftrace_call:
-> -	call	ftrace_stub
-> -
-> +.macro restore_mcount_regs
->  	addl	$4, %esp			/* skip NULL pointer */
->  	popl	%edx
->  	popl	%ecx
-> @@ -90,6 +84,39 @@ ftrace_call:
->  	addl	$4, %esp			/* skip parent ip */
->  # endif
->  #endif
-> +	.endm
-> +
-> +ENTRY(function_hook)
-> +#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-> +	cmpl	$__PAGE_OFFSET, %esp
-> +	jb	vearly_stub			/* Paging not enabled yet? */
-> +
-> +	cmpl	$ftrace_stub, ftrace_vearly_trace_function
-> +	jnz vearly_trace
-> +
-> +vearly_stub:
-> +	ret
-> +
-> +vearly_trace:
-> +	save_mcount_regs
-> +	call	*ftrace_vearly_trace_function
-> +	restore_mcount_regs
-> +
-> +	jmp vearly_stub
-> +#else
-> +	ret
-> +#endif
-> +END(function_hook)
-> +
-> +ENTRY(ftrace_caller)
-> +	save_mcount_regs
-> +
-> +.globl ftrace_call
-> +ftrace_call:
-> +	call	ftrace_stub
-> +
-> +	restore_mcount_regs
-> +
->  .Lftrace_ret:
->  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
->  .globl ftrace_graph_call
-> diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-> index 91b2cff4b79a..879db2c759e3 100644
-> --- a/arch/x86/kernel/ftrace_64.S
-> +++ b/arch/x86/kernel/ftrace_64.S
-> @@ -151,7 +151,21 @@ EXPORT_SYMBOL(mcount)
->  #ifdef CONFIG_DYNAMIC_FTRACE
->
->  ENTRY(function_hook)
-> +#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-> +	cmpq $ftrace_stub, ftrace_vearly_trace_function
-> +	jnz vearly_trace
-> +
-> +vearly_stub:
->  	retq
-> +
-> +vearly_trace:
-> +	save_mcount_regs
-> +	call *ftrace_vearly_trace_function
-> +	restore_mcount_regs
-> +	jmp vearly_stub
-> +#else
-> +	retq
-> +#endif
->  ENDPROC(function_hook)
->
->  ENTRY(ftrace_caller)
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index a397907e8d72..78e023c61289 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -239,6 +239,16 @@ static inline void ftrace_free_init_mem(void) { }
->  static inline void ftrace_free_mem(struct module *mod, void *start,  
-> void *end) { }
->  #endif /* CONFIG_FUNCTION_TRACER */
->
-> +#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-> +extern void ftrace_early_init(char *command_line);
-> +extern void ftrace_early_shutdown(void);
-> +extern void ftrace_early_fill_ringbuffer(void *data);
-> +#else
-> +static inline void ftrace_early_init(char *command_line) { }
-> +static inline void ftrace_early_shutdown(void) { }
-> +static inline void ftrace_early_fill_ringbuffer(void *data) { }
-> +#endif
-> +
->  #ifdef CONFIG_STACK_TRACER
->
->  #define STACK_TRACE_ENTRIES 500
-> @@ -443,6 +453,10 @@ unsigned long ftrace_get_addr_curr(struct  
-> dyn_ftrace *rec);
->
->  extern ftrace_func_t ftrace_trace_function;
->
-> +#if defined(CONFIG_VERY_EARLY_FUNCTION_TRACER) &&  
-> defined(CONFIG_DYNAMIC_FTRACE)
-> +extern ftrace_func_t ftrace_vearly_trace_function;
-> +#endif
-> +
->  int ftrace_regex_open(struct ftrace_ops *ops, int flag,
->  		  struct inode *inode, struct file *file);
->  ssize_t ftrace_filter_write(struct file *file, const char __user *ubuf,
-> @@ -716,7 +730,7 @@ static inline unsigned long get_lock_parent_ip(void)
->  #ifdef CONFIG_FTRACE_MCOUNT_RECORD
->  extern void ftrace_init(void);
->  #else
-> -static inline void ftrace_init(void) { }
-> +static inline void ftrace_init(void) { ftrace_early_shutdown(); }
->  #endif
->
->  /*
-> diff --git a/init/main.c b/init/main.c
-> index 18f8f0140fa0..1b289325223f 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -533,6 +533,7 @@ asmlinkage __visible void __init start_kernel(void)
->  	char *command_line;
->  	char *after_dashes;
->
-> +	ftrace_early_init(boot_command_line);
->  	set_task_stack_end_magic(&init_task);
->  	smp_setup_processor_id();
->  	debug_objects_early_init();
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index 5e3de28c7677..4b358bf6abb0 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -19,6 +19,11 @@ config HAVE_FUNCTION_TRACER
->  	help
->  	  See Documentation/trace/ftrace-design.rst
->
-> +config HAVE_VERY_EARLY_FTRACE
-> +	bool
-> +	help
-> +	  See Documentation/trace/ftrace-design.txt
-> +
->  config HAVE_FUNCTION_GRAPH_TRACER
->  	bool
->  	help
-> @@ -155,6 +160,52 @@ config FUNCTION_TRACER
->  	  (the bootup default), then the overhead of the instructions is very
->  	  small and not measurable even in micro-benchmarks.
->
-> +config VERY_EARLY_FUNCTION_TRACER
-> +	bool "Very Early Kernel Function Tracer"
-> +	depends on FUNCTION_TRACER
-> +	depends on HAVE_VERY_EARLY_FTRACE
-> +	help
-> +	  Normally, function tracing can only start after memory has been
-> +	  initialized early in boot. If "ftrace=function" is added to the
-> +	  command line, then function tracing will start after memory setup.
-> +	  In order to trace functions before that, this option will
-> +	  have function tracing starts before memory setup is complete, by
-> +	  placing the trace in a temporary buffer, which will be copied to
-> +	  the trace buffer after memory setup. The size of this temporary
-> +	  buffer is defined by VERY_EARLY_FTRACE_BUF_SHIFT.
-> +
-> +config VERY_EARLY_FTRACE_BUF_SHIFT
-> +	int "Temporary buffer size (17 => 128 KB, 24 => 16 MB)"
-> +	depends on VERY_EARLY_FUNCTION_TRACER
-> +	range 8 24
-> +	default 19
-> +	help
-> +	  Select the size of the buffer to be used for storing function calls at
-> +	  very early stage.
-> +	  The value defines the size as a power of 2.
-> +	  Examples:
-> +	    20 =>   1 MB
-> +	    19 => 512 KB
-> +	    17 => 128 KB
-> +
-> +config VERY_EARLY_FTRACE_FILTER_SHIFT
-> +	int "Temporary filter size (filter/notrace) (17 => 128 KB, 19 => 512 KB)"
-> +	depends on VERY_EARLY_FUNCTION_TRACER
-> +	depends on FTRACE_MCOUNT_RECORD
-> +	range 0 19
-> +	default 17
-> +	help
-> +	  Select the size of the filter buffer to be used for filtering (trace/
-> +	  no trace) functions at very early stage.
-> +	  Two buffers (trace/no_trace) will be created using by this option.
-> +	  These following kernel parameters control filtering during bootup :
-> +	  "ftrace_filter", "ftrace_notrace".
-> +	  The value defines the size as a power of 2.
-> +	  Examples:
-> +	    19 => 512 KB for each buffer
-> +	    18 => 256 KB for each buffer
-> +	    17 => 128 KB for each buffer
-> +
->  config FUNCTION_GRAPH_TRACER
->  	bool "Kernel Function Graph Tracer"
->  	depends on HAVE_FUNCTION_GRAPH_TRACER
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index f536f601bd46..45d575ae2056 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -65,6 +65,11 @@
->  #define FTRACE_HASH_DEFAULT_BITS 10
->  #define FTRACE_HASH_MAX_BITS 12
->
-> +#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-> +extern unsigned long __start_mcount_loc[];
-> +extern unsigned long __stop_mcount_loc[];
-> +#endif
-> +
->  #ifdef CONFIG_DYNAMIC_FTRACE
->  #define INIT_OPS_HASH(opsname)	\
->  	.func_hash		= &opsname.local_hash,			\
-> @@ -6126,11 +6131,11 @@ void __init ftrace_free_init_mem(void)
->
->  void __init ftrace_init(void)
->  {
-> -	extern unsigned long __start_mcount_loc[];
-> -	extern unsigned long __stop_mcount_loc[];
->  	unsigned long count, flags;
->  	int ret;
->
-> +	ftrace_early_shutdown();
-> +
->  	local_irq_save(flags);
->  	ret = ftrace_dyn_arch_init();
->  	local_irq_restore(flags);
-> @@ -7092,3 +7097,283 @@ void ftrace_graph_exit_task(struct task_struct *t)
->  	kfree(ret_stack);
->  }
->  #endif
-> +
-> +
-> +#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-> +
-> +#define VEARLY_BUFF_LEN ((1 << CONFIG_VERY_EARLY_FTRACE_BUF_SHIFT) / \
-> +					sizeof(struct ftrace_vearly_entry))
-> +
-> +struct ftrace_vearly_entry {
-> +	unsigned long ip;
-> +	unsigned long parent_ip;
-> +	unsigned long long clock;
-> +};
-> +/*
-> + * Only CPU0 is running in early stage, no need to have per-cpu buffer
-> + */
-> +static struct ftrace_vearly_entry  
-> ftrace_vearly_entries[VEARLY_BUFF_LEN] __initdata;
-> +static const unsigned long VEARLY_BUFF_MAX __initconst = VEARLY_BUFF_LEN;
-> +static unsigned long vearly_entries_count __initdata;
-> +static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
-> +
-> +
-> +#ifdef CONFIG_DYNAMIC_FTRACE
-> +ftrace_func_t ftrace_vearly_trace_function __read_mostly = ftrace_stub;
-> +#else
-> +# define ftrace_vearly_trace_function ftrace_trace_function
-> +#endif
-> +
-> +static inline __init void ftrace_vearly_disable(void)
-> +{
-> +	ftrace_vearly_trace_function = ftrace_stub;
-> +}
-> +
-> +#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-> +#define VEARLY_FILTER_LEN ((1 << CONFIG_VERY_EARLY_FTRACE_FILTER_SHIFT) / \
-> +					sizeof(unsigned long))
-> +struct ftrace_vearly_filtering {
-> +	unsigned long list[VEARLY_FILTER_LEN];
-> +	char buf[COMMAND_LINE_SIZE];
-> +	int size;
-> +};
-> +static const unsigned long VEARLY_FILTER_MAX __initconst =  
-> VEARLY_FILTER_LEN;
-> +static struct ftrace_vearly_filtering ftrace_data_notrace __initdata;
-> +static struct ftrace_vearly_filtering ftrace_data_filter __initdata;
-> +
-> +static __init int ftrace_vearly_filter_has_addr(unsigned long addr,
-> +	unsigned long *filter, int *size)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < *size; i++) {
-> +		if (filter[i] == addr)
-> +			return 1;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static __init int
-> +ftrace_vearly_match_record(unsigned long ip, struct ftrace_glob *func_g)
-> +{
-> +	char str[KSYM_SYMBOL_LEN];
-> +	char *modname;
-> +
-> +	kallsyms_lookup(ip, NULL, NULL, &modname, str);
-> +	return ftrace_match(str, func_g);
-> +}
-> +
-> +static __init void
-> +ftrace_vearly_regex(char *func, unsigned long *filter, int *size)
-> +{
-> +	struct ftrace_glob func_g = { .type = MATCH_FULL };
-> +	unsigned long *start = __start_mcount_loc;
-> +	unsigned long *end = __stop_mcount_loc;
-> +	unsigned long count;
-> +	unsigned long addr;
-> +	unsigned long *p;
-> +	int clear_filter = 0;
-> +
-> +	count = end - start;
-> +
-> +	if (!count)
-> +		return;
-> +
-> +	if (func) {
-> +		func_g.type = filter_parse_regex(func, strlen(func), &func_g.search,
-> +						 &clear_filter);
-> +		func_g.len = strlen(func_g.search);
-> +	}
-> +
-> +	p = start;
-> +	while (p < end) {
-> +		addr = ftrace_call_adjust(*p++);
-> +		if (!addr)
-> +			continue;
-> +
-> +		if ((*size) > VEARLY_FILTER_MAX)
-> +			return;
-> +
-> +		if (ftrace_vearly_match_record(addr, &func_g)) {
-> +			if (!ftrace_vearly_filter_has_addr(addr, filter, size))
-> +				filter[(*size)++] = addr;
-> +		}
-> +	}
-> +}
-> +
-> +static int __init ftrace_addr_compare(const void *a, const void *b)
-> +{
-> +	if (*(unsigned long *)a > *(unsigned long *)b)
-> +		return 1;
-> +	if (*(unsigned long *)a < *(unsigned long *)b)
-> +		return -1;
-> +
-> +	return 0;
-> +}
-> +
-> +static void __init ftrace_addr_swap(void *a, void *b, int size)
-> +{
-> +	unsigned long t = *(unsigned long *)a;
-> +	*(unsigned long *)a = *(unsigned long *)b;
-> +	*(unsigned long *)b = t;
-> +}
-> +
-> +static __init int set_ftrace_vearly_filtering(void *data, char *str)
-> +{
-> +	struct ftrace_vearly_filtering *ftrace_data = data;
-> +	char *func;
-> +	char *buf;
-> +
-> +	if (!ftrace_data)
-> +		return 0;
-> +	buf = ftrace_data->buf;
-> +	strlcpy(buf, str, COMMAND_LINE_SIZE);
-> +
-> +	while (buf) {
-> +		func = strsep(&buf, ",");
-> +		ftrace_vearly_regex(func, ftrace_data->list, &ftrace_data->size);
-> +	}
-> +	/* sort filter to use binary search on it */
-> +	sort(ftrace_data->list, ftrace_data->size,
-> +		sizeof(unsigned long), ftrace_addr_compare, ftrace_addr_swap);
-> +
-> +	return 1;
-> +}
-> +
-> +#define ftrace_vearly_bsearch_addr(addr, data) bsearch(&addr, data.list,\
-> +	data.size, sizeof(unsigned long), ftrace_addr_compare)
-> +
-> +#endif /* CONFIG_FTRACE_MCOUNT_RECORD */
-> +
-> +
-> +static __init void
-> +ftrace_function_vearly_trace_call(unsigned long ip, unsigned long parent_ip,
-> +			struct ftrace_ops *op, struct pt_regs *regs)
-> +{
-> +	struct ftrace_vearly_entry *entry;
-> +
-> +#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-> +	if (ftrace_data_notrace.size &&
-> +			ftrace_vearly_bsearch_addr(ip, ftrace_data_notrace))
-> +		return;
-> +
-> +	if (ftrace_data_filter.size &&
-> +			!ftrace_vearly_bsearch_addr(ip, ftrace_data_filter))
-> +		return;
-> +#endif
-> +
-> +	if (vearly_entries_count >= VEARLY_BUFF_MAX) {
-> +		/* stop tracing when buffer is full */
-> +		ftrace_vearly_disable();
-> +		return;
-> +	}
-> +
-> +	entry = &ftrace_vearly_entries[vearly_entries_count++];
-> +	entry->ip = ip;
-> +	entry->parent_ip = parent_ip;
-> +	entry->clock = trace_clock_local();
-> +}
-> +
-> +/*
-> + * Will be passed to ringbuffer by early_trace_clock
-> + */
-> +static u64 early_timestamp __initdata;
-> +
-> +static __init u64 early_trace_clock(void)
-> +{
-> +	return early_timestamp;
-> +}
-> +
-> +void __init ftrace_early_fill_ringbuffer(void *data)
-> +{
-> +	struct ftrace_vearly_entry *entry;
-> +	struct trace_array *tr = data;
-> +	int i;
-> +
-> +	if (ftrace_vearly_entries <= 0)
-> +		return;
-> +
-> +	ring_buffer_set_clock(tr->trace_buffer.buffer, early_trace_clock);
-> +	preempt_disable_notrace();
-> +	for (i = 0; i < vearly_entries_count; i++) {
-> +		entry = &ftrace_vearly_entries[i];
-> +		early_timestamp = entry->clock;
-> +		trace_function(tr, entry->ip, entry->parent_ip, 0, 0);
-> +	}
-> +	preempt_enable_notrace();
-> +	ring_buffer_set_clock(tr->trace_buffer.buffer, trace_clock_local);
-> +}
-> +
-> +/*
-> + * this will be used as __setup_param
-> + */
-> +struct ftrace_vearly_obs_param {
-> +	int (*setup_func)(void *, char*);
-> +	const char *str;
-> +	void *data;
-> +};
-> +static struct ftrace_vearly_obs_param ftrace_vearly_params[] __initdata = {
-> +#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-> +	{
-> +		.str = "ftrace_notrace",
-> +		.data = &ftrace_data_notrace,
-> +		.setup_func = set_ftrace_vearly_filtering,
-> +	},
-> +	{
-> +		.str = "ftrace_filter",
-> +		.data = &ftrace_data_filter,
-> +		.setup_func = set_ftrace_vearly_filtering,
-> +	},
-> +#endif
-> +};
-> +
-> +static int __init ftrace_do_very_early_param(char *param, char *val,
-> +				 const char *unused, void *arg)
-> +{
-> +	int size = ARRAY_SIZE(ftrace_vearly_params);
-> +	struct ftrace_vearly_obs_param *p;
-> +	int i;
-> +
-> +	for (i = 0; i < size; i++) {
-> +		p = &ftrace_vearly_params[i];
-> +		if (strcmp(param, p->str) == 0) {
-> +			p->setup_func(p->data, val);
-> +			return 0;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +void __init ftrace_early_init(char *command_line)
-> +{
-> +	/* proceed only if function tracing was enabled */
-> +	if (!strstr(command_line, "ftrace=function "))
-> +		return;
-> +
-> +	strlcpy(tmp_cmdline, command_line, COMMAND_LINE_SIZE);
-> +	parse_args("ftrace vearly options", tmp_cmdline, NULL, 0, 0, 0, NULL,
-> +		ftrace_do_very_early_param);
-> +
-> +	// After this point, we enable early function tracing
-> +	ftrace_vearly_trace_function = ftrace_function_vearly_trace_call;
-> +}
-> +
-> +void __init ftrace_early_shutdown(void)
-> +{
-> +	if (ftrace_vearly_trace_function == ftrace_stub)
-> +		return;
-> +
-> +	// Disable early tracing
-> +	ftrace_vearly_disable();
-> +
-> +#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-> +	pr_info("ftrace: vearly %lu entries, notrace=%d, filter=%d",
-> +		vearly_entries_count,
-> +		ftrace_data_notrace.size,
-> +		ftrace_data_filter.size);
-> +#else
-> +	pr_info("ftrace: vearly %lu recorded entries", vearly_entries_count);
-> +#endif
-> +}
-> +
-> +#endif /* CONFIG_VERY_EARLY_FUNCTION_TRACER */
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index bf6f1d70484d..08763c380a3e 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -8551,6 +8551,9 @@ __init static int tracer_alloc_buffers(void)
->  	/* Function tracing may start here (via kernel command line) */
->  	init_function_trace();
->
-> +	/* Pre-fill the ring buffer with very early events */
-> +	ftrace_early_fill_ringbuffer(&global_trace);
-> +
->  	/* All seems OK, enable tracing */
->  	tracing_disabled = 0;
->
-> -- 
-> 2.17.1
+ - a counter freezing related regression fix,
+ - an uprobes race fix,
+ - an Intel PMU unusual event combination fix,
+ - and diverse tooling fixes.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Andrea Parri (1):
+      uprobes: Fix handle_swbp() vs. unregister() + register() race once more
+
+Arnaldo Carvalho de Melo (5):
+      tools build feature: Check if get_current_dir_name() is available
+      tools headers uapi: Synchronize i915_drm.h
+      tools arch x86: Update tools's copy of cpufeatures.h
+      tools uapi asm-generic: Synchronize ioctls.h
+      perf tools beauty ioctl: Support new ISO7816 commands
+
+Jiri Olsa (5):
+      perf tools: Fix crash on synthesizing the unit
+      perf tools: Restore proper cwd on return from mnt namespace
+      perf/x86/intel: Move branch tracing setup to the Intel-specific source file
+      perf/x86/intel: Add generic branch tracing check to intel_pmu_has_bts()
+      perf/x86/intel: Disallow precise_ip on BTS events
+
+Peter Zijlstra (1):
+      perf/x86/intel: Fix regression by default disabling perfmon v4 interrupt handling
 
 
+ Documentation/admin-guide/kernel-parameters.txt |  3 +-
+ arch/x86/events/core.c                          | 20 --------
+ arch/x86/events/intel/core.c                    | 68 +++++++++++++++++++------
+ arch/x86/events/perf_event.h                    | 13 +++--
+ kernel/events/uprobes.c                         | 12 ++++-
+ tools/arch/x86/include/asm/cpufeatures.h        |  2 +
+ tools/build/Makefile.feature                    |  1 +
+ tools/build/feature/Makefile                    |  4 ++
+ tools/build/feature/test-all.c                  |  5 ++
+ tools/build/feature/test-get_current_dir_name.c | 10 ++++
+ tools/include/uapi/asm-generic/ioctls.h         |  2 +
+ tools/include/uapi/drm/i915_drm.h               | 22 ++++++++
+ tools/perf/Makefile.config                      |  5 ++
+ tools/perf/tests/attr/base-record               |  2 +-
+ tools/perf/trace/beauty/ioctl.c                 |  1 +
+ tools/perf/util/Build                           |  1 +
+ tools/perf/util/evsel.c                         |  2 +-
+ tools/perf/util/get_current_dir_name.c          | 18 +++++++
+ tools/perf/util/namespaces.c                    | 17 ++++++-
+ tools/perf/util/namespaces.h                    |  1 +
+ tools/perf/util/util.h                          |  4 ++
+ 21 files changed, 166 insertions(+), 47 deletions(-)
+ create mode 100644 tools/build/feature/test-get_current_dir_name.c
+ create mode 100644 tools/perf/util/get_current_dir_name.c
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 81d1d5a74728..5463d5a4d85c 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -856,7 +856,8 @@
+ 			causing system reset or hang due to sending
+ 			INIT from AP to BSP.
+ 
+-	disable_counter_freezing [HW]
++	perf_v4_pmi=	[X86,INTEL]
++			Format: <bool>
+ 			Disable Intel PMU counter freezing feature.
+ 			The feature only exists starting from
+ 			Arch Perfmon v4 (Skylake and newer).
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 106911b603bd..374a19712e20 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -438,26 +438,6 @@ int x86_setup_perfctr(struct perf_event *event)
+ 	if (config == -1LL)
+ 		return -EINVAL;
+ 
+-	/*
+-	 * Branch tracing:
+-	 */
+-	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
+-	    !attr->freq && hwc->sample_period == 1) {
+-		/* BTS is not supported by this architecture. */
+-		if (!x86_pmu.bts_active)
+-			return -EOPNOTSUPP;
+-
+-		/* BTS is currently only allowed for user-mode. */
+-		if (!attr->exclude_kernel)
+-			return -EOPNOTSUPP;
+-
+-		/* disallow bts if conflicting events are present */
+-		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
+-			return -EBUSY;
+-
+-		event->destroy = hw_perf_lbr_event_destroy;
+-	}
+-
+ 	hwc->config |= config;
+ 
+ 	return 0;
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 273c62e81546..ecc3e34ca955 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2306,14 +2306,18 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
+ 	return handled;
+ }
+ 
+-static bool disable_counter_freezing;
++static bool disable_counter_freezing = true;
+ static int __init intel_perf_counter_freezing_setup(char *s)
+ {
+-	disable_counter_freezing = true;
+-	pr_info("Intel PMU Counter freezing feature disabled\n");
++	bool res;
++
++	if (kstrtobool(s, &res))
++		return -EINVAL;
++
++	disable_counter_freezing = !res;
+ 	return 1;
+ }
+-__setup("disable_counter_freezing", intel_perf_counter_freezing_setup);
++__setup("perf_v4_pmi=", intel_perf_counter_freezing_setup);
+ 
+ /*
+  * Simplified handler for Arch Perfmon v4:
+@@ -2470,16 +2474,7 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
+ static struct event_constraint *
+ intel_bts_constraints(struct perf_event *event)
+ {
+-	struct hw_perf_event *hwc = &event->hw;
+-	unsigned int hw_event, bts_event;
+-
+-	if (event->attr.freq)
+-		return NULL;
+-
+-	hw_event = hwc->config & INTEL_ARCH_EVENT_MASK;
+-	bts_event = x86_pmu.event_map(PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
+-
+-	if (unlikely(hw_event == bts_event && hwc->sample_period == 1))
++	if (unlikely(intel_pmu_has_bts(event)))
+ 		return &bts_constraint;
+ 
+ 	return NULL;
+@@ -3098,10 +3093,51 @@ static unsigned long intel_pmu_large_pebs_flags(struct perf_event *event)
+ 	return flags;
+ }
+ 
++static int intel_pmu_bts_config(struct perf_event *event)
++{
++	struct perf_event_attr *attr = &event->attr;
++
++	if (unlikely(intel_pmu_has_bts(event))) {
++		/* BTS is not supported by this architecture. */
++		if (!x86_pmu.bts_active)
++			return -EOPNOTSUPP;
++
++		/* BTS is currently only allowed for user-mode. */
++		if (!attr->exclude_kernel)
++			return -EOPNOTSUPP;
++
++		/* BTS is not allowed for precise events. */
++		if (attr->precise_ip)
++			return -EOPNOTSUPP;
++
++		/* disallow bts if conflicting events are present */
++		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
++			return -EBUSY;
++
++		event->destroy = hw_perf_lbr_event_destroy;
++	}
++
++	return 0;
++}
++
++static int core_pmu_hw_config(struct perf_event *event)
++{
++	int ret = x86_pmu_hw_config(event);
++
++	if (ret)
++		return ret;
++
++	return intel_pmu_bts_config(event);
++}
++
+ static int intel_pmu_hw_config(struct perf_event *event)
+ {
+ 	int ret = x86_pmu_hw_config(event);
+ 
++	if (ret)
++		return ret;
++
++	ret = intel_pmu_bts_config(event);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -3127,7 +3163,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 		/*
+ 		 * BTS is set up earlier in this path, so don't account twice
+ 		 */
+-		if (!intel_pmu_has_bts(event)) {
++		if (!unlikely(intel_pmu_has_bts(event))) {
+ 			/* disallow lbr if conflicting events are present */
+ 			if (x86_add_exclusive(x86_lbr_exclusive_lbr))
+ 				return -EBUSY;
+@@ -3596,7 +3632,7 @@ static __initconst const struct x86_pmu core_pmu = {
+ 	.enable_all		= core_pmu_enable_all,
+ 	.enable			= core_pmu_enable_event,
+ 	.disable		= x86_pmu_disable_event,
+-	.hw_config		= x86_pmu_hw_config,
++	.hw_config		= core_pmu_hw_config,
+ 	.schedule_events	= x86_schedule_events,
+ 	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
+ 	.perfctr		= MSR_ARCH_PERFMON_PERFCTR0,
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index adae087cecdd..78d7b7031bfc 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -859,11 +859,16 @@ static inline int amd_pmu_init(void)
+ 
+ static inline bool intel_pmu_has_bts(struct perf_event *event)
+ {
+-	if (event->attr.config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
+-	    !event->attr.freq && event->hw.sample_period == 1)
+-		return true;
++	struct hw_perf_event *hwc = &event->hw;
++	unsigned int hw_event, bts_event;
++
++	if (event->attr.freq)
++		return false;
++
++	hw_event = hwc->config & INTEL_ARCH_EVENT_MASK;
++	bts_event = x86_pmu.event_map(PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
+ 
+-	return false;
++	return hw_event == bts_event && hwc->sample_period == 1;
+ }
+ 
+ int intel_pmu_save_and_restart(struct perf_event *event);
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 96d4bee83489..322e97bbb437 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -829,7 +829,7 @@ static int prepare_uprobe(struct uprobe *uprobe, struct file *file,
+ 	BUG_ON((uprobe->offset & ~PAGE_MASK) +
+ 			UPROBE_SWBP_INSN_SIZE > PAGE_SIZE);
+ 
+-	smp_wmb(); /* pairs with rmb() in find_active_uprobe() */
++	smp_wmb(); /* pairs with the smp_rmb() in handle_swbp() */
+ 	set_bit(UPROBE_COPY_INSN, &uprobe->flags);
+ 
+  out:
+@@ -2178,10 +2178,18 @@ static void handle_swbp(struct pt_regs *regs)
+ 	 * After we hit the bp, _unregister + _register can install the
+ 	 * new and not-yet-analyzed uprobe at the same address, restart.
+ 	 */
+-	smp_rmb(); /* pairs with wmb() in install_breakpoint() */
+ 	if (unlikely(!test_bit(UPROBE_COPY_INSN, &uprobe->flags)))
+ 		goto out;
+ 
++	/*
++	 * Pairs with the smp_wmb() in prepare_uprobe().
++	 *
++	 * Guarantees that if we see the UPROBE_COPY_INSN bit set, then
++	 * we must also see the stores to &uprobe->arch performed by the
++	 * prepare_uprobe() call.
++	 */
++	smp_rmb();
++
+ 	/* Tracing handlers use ->utask to communicate with fetch methods */
+ 	if (!get_utask())
+ 		goto out;
+diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+index 89a048c2faec..28c4a502b419 100644
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -331,6 +331,8 @@
+ #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
+ #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+ #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
++#define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
++#define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
+ 
+ /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
+ #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index f216b2f5c3d7..d74bb9414d7c 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -33,6 +33,7 @@ FEATURE_TESTS_BASIC :=                  \
+         dwarf_getlocations              \
+         fortify-source                  \
+         sync-compare-and-swap           \
++        get_current_dir_name            \
+         glibc                           \
+         gtk2                            \
+         gtk2-infobar                    \
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 0516259be70f..304b984f11b9 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -7,6 +7,7 @@ FILES=                                          \
+          test-dwarf_getlocations.bin            \
+          test-fortify-source.bin                \
+          test-sync-compare-and-swap.bin         \
++         test-get_current_dir_name.bin          \
+          test-glibc.bin                         \
+          test-gtk2.bin                          \
+          test-gtk2-infobar.bin                  \
+@@ -101,6 +102,9 @@ $(OUTPUT)test-bionic.bin:
+ $(OUTPUT)test-libelf.bin:
+ 	$(BUILD) -lelf
+ 
++$(OUTPUT)test-get_current_dir_name.bin:
++	$(BUILD)
++
+ $(OUTPUT)test-glibc.bin:
+ 	$(BUILD)
+ 
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index 8dc20a61341f..56722bfe6bdd 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -34,6 +34,10 @@
+ # include "test-libelf-mmap.c"
+ #undef main
+ 
++#define main main_test_get_current_dir_name
++# include "test-get_current_dir_name.c"
++#undef main
++
+ #define main main_test_glibc
+ # include "test-glibc.c"
+ #undef main
+@@ -174,6 +178,7 @@ int main(int argc, char *argv[])
+ 	main_test_hello();
+ 	main_test_libelf();
+ 	main_test_libelf_mmap();
++	main_test_get_current_dir_name();
+ 	main_test_glibc();
+ 	main_test_dwarf();
+ 	main_test_dwarf_getlocations();
+diff --git a/tools/build/feature/test-get_current_dir_name.c b/tools/build/feature/test-get_current_dir_name.c
+new file mode 100644
+index 000000000000..573000f93212
+--- /dev/null
++++ b/tools/build/feature/test-get_current_dir_name.c
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++#include <unistd.h>
++#include <stdlib.h>
++
++int main(void)
++{
++	free(get_current_dir_name());
++	return 0;
++}
+diff --git a/tools/include/uapi/asm-generic/ioctls.h b/tools/include/uapi/asm-generic/ioctls.h
+index 040651735662..cdc9f4ca8c27 100644
+--- a/tools/include/uapi/asm-generic/ioctls.h
++++ b/tools/include/uapi/asm-generic/ioctls.h
+@@ -79,6 +79,8 @@
+ #define TIOCGPTLCK	_IOR('T', 0x39, int) /* Get Pty lock state */
+ #define TIOCGEXCL	_IOR('T', 0x40, int) /* Get exclusive mode state */
+ #define TIOCGPTPEER	_IO('T', 0x41) /* Safely open the slave */
++#define TIOCGISO7816	_IOR('T', 0x42, struct serial_iso7816)
++#define TIOCSISO7816	_IOWR('T', 0x43, struct serial_iso7816)
+ 
+ #define FIONCLEX	0x5450
+ #define FIOCLEX		0x5451
+diff --git a/tools/include/uapi/drm/i915_drm.h b/tools/include/uapi/drm/i915_drm.h
+index 7f5634ce8e88..a4446f452040 100644
+--- a/tools/include/uapi/drm/i915_drm.h
++++ b/tools/include/uapi/drm/i915_drm.h
+@@ -529,6 +529,28 @@ typedef struct drm_i915_irq_wait {
+  */
+ #define I915_PARAM_CS_TIMESTAMP_FREQUENCY 51
+ 
++/*
++ * Once upon a time we supposed that writes through the GGTT would be
++ * immediately in physical memory (once flushed out of the CPU path). However,
++ * on a few different processors and chipsets, this is not necessarily the case
++ * as the writes appear to be buffered internally. Thus a read of the backing
++ * storage (physical memory) via a different path (with different physical tags
++ * to the indirect write via the GGTT) will see stale values from before
++ * the GGTT write. Inside the kernel, we can for the most part keep track of
++ * the different read/write domains in use (e.g. set-domain), but the assumption
++ * of coherency is baked into the ABI, hence reporting its true state in this
++ * parameter.
++ *
++ * Reports true when writes via mmap_gtt are immediately visible following an
++ * lfence to flush the WCB.
++ *
++ * Reports false when writes via mmap_gtt are indeterminately delayed in an in
++ * internal buffer and are _not_ immediately visible to third parties accessing
++ * directly via mmap_cpu/mmap_wc. Use of mmap_gtt as part of an IPC
++ * communications channel when reporting false is strongly disadvised.
++ */
++#define I915_PARAM_MMAP_GTT_COHERENT	52
++
+ typedef struct drm_i915_getparam {
+ 	__s32 param;
+ 	/*
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index e30d20fb482d..a0e8c23f9125 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -299,6 +299,11 @@ ifndef NO_BIONIC
+   endif
+ endif
+ 
++ifeq ($(feature-get_current_dir_name), 1)
++  CFLAGS += -DHAVE_GET_CURRENT_DIR_NAME
++endif
++
++
+ ifdef NO_LIBELF
+   NO_DWARF := 1
+   NO_DEMANGLE := 1
+diff --git a/tools/perf/tests/attr/base-record b/tools/perf/tests/attr/base-record
+index 37940665f736..efd0157b9d22 100644
+--- a/tools/perf/tests/attr/base-record
++++ b/tools/perf/tests/attr/base-record
+@@ -9,7 +9,7 @@ size=112
+ config=0
+ sample_period=*
+ sample_type=263
+-read_format=0
++read_format=0|4
+ disabled=1
+ inherit=1
+ pinned=0
+diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
+index 5d2a7fd8d407..eae59ad15ce3 100644
+--- a/tools/perf/trace/beauty/ioctl.c
++++ b/tools/perf/trace/beauty/ioctl.c
+@@ -31,6 +31,7 @@ static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
+ 	"TCSETSW2", "TCSETSF2", "TIOCGRS48", "TIOCSRS485", "TIOCGPTN", "TIOCSPTLCK",
+ 	"TIOCGDEV", "TCSETX", "TCSETXF", "TCSETXW", "TIOCSIG", "TIOCVHANGUP", "TIOCGPKT",
+ 	"TIOCGPTLCK", [_IOC_NR(TIOCGEXCL)] = "TIOCGEXCL", "TIOCGPTPEER",
++	"TIOCGISO7816", "TIOCSISO7816",
+ 	[_IOC_NR(FIONCLEX)] = "FIONCLEX", "FIOCLEX", "FIOASYNC", "TIOCSERCONFIG",
+ 	"TIOCSERGWILD", "TIOCSERSWILD", "TIOCGLCKTRMIOS", "TIOCSLCKTRMIOS",
+ 	"TIOCSERGSTRUCT", "TIOCSERGETLSR", "TIOCSERGETMULTI", "TIOCSERSETMULTI",
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index ecd9f9ceda77..b7bf201fe8a8 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -10,6 +10,7 @@ libperf-y += evlist.o
+ libperf-y += evsel.o
+ libperf-y += evsel_fprintf.o
+ libperf-y += find_bit.o
++libperf-y += get_current_dir_name.o
+ libperf-y += kallsyms.o
+ libperf-y += levenshtein.o
+ libperf-y += llvm-utils.o
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index d37bb1566cd9..dbc0466db368 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1092,7 +1092,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+ 		attr->exclude_user   = 1;
+ 	}
+ 
+-	if (evsel->own_cpus)
++	if (evsel->own_cpus || evsel->unit)
+ 		evsel->attr.read_format |= PERF_FORMAT_ID;
+ 
+ 	/*
+diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
+new file mode 100644
+index 000000000000..267aa609a582
+--- /dev/null
++++ b/tools/perf/util/get_current_dir_name.c
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
++//
++#ifndef HAVE_GET_CURRENT_DIR_NAME
++#include "util.h"
++#include <unistd.h>
++#include <stdlib.h>
++#include <stdlib.h>
++
++/* Android's 'bionic' library, for one, doesn't have this */
++
++char *get_current_dir_name(void)
++{
++	char pwd[PATH_MAX];
++
++	return getcwd(pwd, sizeof(pwd)) == NULL ? NULL : strdup(pwd);
++}
++#endif // HAVE_GET_CURRENT_DIR_NAME
+diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+index cf8bd123cf73..aed170bd4384 100644
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -18,6 +18,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <asm/bug.h>
+ 
+ struct namespaces *namespaces__new(struct namespaces_event *event)
+ {
+@@ -186,6 +187,7 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	char curpath[PATH_MAX];
+ 	int oldns = -1;
+ 	int newns = -1;
++	char *oldcwd = NULL;
+ 
+ 	if (nc == NULL)
+ 		return;
+@@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
+ 		return;
+ 
++	oldcwd = get_current_dir_name();
++	if (!oldcwd)
++		return;
++
+ 	oldns = open(curpath, O_RDONLY);
+ 	if (oldns < 0)
+-		return;
++		goto errout;
+ 
+ 	newns = open(nsi->mntns_path, O_RDONLY);
+ 	if (newns < 0)
+@@ -210,11 +216,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (setns(newns, CLONE_NEWNS) < 0)
+ 		goto errout;
+ 
++	nc->oldcwd = oldcwd;
+ 	nc->oldns = oldns;
+ 	nc->newns = newns;
+ 	return;
+ 
+ errout:
++	free(oldcwd);
+ 	if (oldns > -1)
+ 		close(oldns);
+ 	if (newns > -1)
+@@ -223,11 +231,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 
+ void nsinfo__mountns_exit(struct nscookie *nc)
+ {
+-	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
++	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
+ 		return;
+ 
+ 	setns(nc->oldns, CLONE_NEWNS);
+ 
++	if (nc->oldcwd) {
++		WARN_ON_ONCE(chdir(nc->oldcwd));
++		zfree(&nc->oldcwd);
++	}
++
+ 	if (nc->oldns > -1) {
+ 		close(nc->oldns);
+ 		nc->oldns = -1;
+diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
+index cae1a9a39722..d5f46c09ea31 100644
+--- a/tools/perf/util/namespaces.h
++++ b/tools/perf/util/namespaces.h
+@@ -38,6 +38,7 @@ struct nsinfo {
+ struct nscookie {
+ 	int			oldns;
+ 	int			newns;
++	char			*oldcwd;
+ };
+ 
+ int nsinfo__init(struct nsinfo *nsi);
+diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+index 14508ee7707a..ece040b799f6 100644
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -59,6 +59,10 @@ int fetch_kernel_version(unsigned int *puint,
+ 
+ const char *perf_tip(const char *dirpath);
+ 
++#ifndef HAVE_GET_CURRENT_DIR_NAME
++char *get_current_dir_name(void);
++#endif
++
+ #ifndef HAVE_SCHED_GETCPU_SUPPORT
+ int sched_getcpu(void);
+ #endif
