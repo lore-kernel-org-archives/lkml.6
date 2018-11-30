@@ -6,111 +6,91 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696F4C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE430C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9F12146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B9F12146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id A92792145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:45:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92792145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbeLAAxx (ORCPT
+        id S1727057AbeLAAy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:53:53 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37089 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbeLAAxw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:53:52 -0500
-Received: by mail-qt1-f196.google.com with SMTP id z16so5917650qtq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:44:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LvCNnwTCIErvOoJQOcvV750sKrkF6TtyT01sFAzs1Yk=;
-        b=We+Mm5bxUylNdP6humxigx9rfaz8wPksey6aftUYoTzsAmVo+zXWASrziZLYzhOa0U
-         52cJZO9j5G2o5v4Qe0LdBnuIvge368MprfzYoqvT0RoOFva7gPayHM8NfnsVI912PPJn
-         vIgvfwKpcNjB9ZeJ1+swMbsdXYOUgCLBiqJbxtX3BBoYRtCD7A5rDxh75v4YAARiSMKh
-         qxYmwdsLQbuuk2GkFllwfqdFnVrGvGjiFOeFZSdEfNaOx2EhTrEMyXnvCVWTjZTp7LOG
-         6FbYNstSmr5gIzO7ZZvt7JfTy7xB9oPQMGjK8BLsm+oyyAzQL4ABRzJnIsUjFfnDxJ5z
-         8jOA==
-X-Gm-Message-State: AA+aEWZ7RltHpgLeumbrMjlmQFkWMvd7GTsQMV+9Yyk+aOgN8saisNY2
-        DsKqJtC2W5Yg3kId5tRea2sY+BZGtKkj8kR7NsY=
-X-Google-Smtp-Source: AFSGD/Wf1UJHgAw+SoirwwvrfQSIDDV3ampaiXa591gwtLvU6LsCy1FKy8aNzBAdzH2UgweuUug8kUFHjJDaVZHmFaM=
-X-Received: by 2002:a0c:e202:: with SMTP id q2mr5415765qvl.180.1543585470428;
- Fri, 30 Nov 2018 05:44:30 -0800 (PST)
+        Fri, 30 Nov 2018 19:54:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36512 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726070AbeLAAy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:54:27 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 70F173154849;
+        Fri, 30 Nov 2018 13:45:06 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54498165FA;
+        Fri, 30 Nov 2018 13:44:56 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Roman Kagan <rkagan@virtuozzo.com>
+Cc:     "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] x86/hyper-v: define structures from TLFS as packed
+In-Reply-To: <20181130131122.GA2358@rkaganb.sw.ru>
+References: <20181130121511.12331-1-vkuznets@redhat.com> <20181130131122.GA2358@rkaganb.sw.ru>
+Date:   Fri, 30 Nov 2018 14:44:54 +0100
+Message-ID: <87va4ewug9.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <19fb2e394afcb073bbc109e432417fbbc03323f6.1543499759.git.joabreu@synopsys.com>
- <ff1e11923e92405d883474d715008c0a@AcuMS.aculab.com> <89122bd8-bca2-2ae1-0dd0-160abbebcace@synopsys.com>
- <d2d133e5-267c-c42a-7329-22892bbbdee4@synopsys.com> <CAK8P3a2U3ft3crF2SiAuc=PQdDooEUaVAN9gQDyxsxvBn5+xRw@mail.gmail.com>
- <57437493-31bb-eced-032c-1f54470b030e@synopsys.com>
-In-Reply-To: <57437493-31bb-eced-032c-1f54470b030e@synopsys.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 30 Nov 2018 14:44:13 +0100
-Message-ID: <CAK8P3a2mqEb4_F4wB1DvL5jJJobLhOg6-bW3ZDNGhvbv-_qW3A@mail.gmail.com>
-Subject: Re: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
-To:     jose.abreu@synopsys.com
-Cc:     David Laight <David.Laight@aculab.com>,
-        "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        alexey.brodkin@synopsys.com, Joao Pinto <joao.pinto@synopsys.com>,
-        Vitor Soares <vitor.soares@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 30 Nov 2018 13:45:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 9:57 AM Jose Abreu <jose.abreu@synopsys.com> wrote:
-> On 29-11-2018 21:20, Arnd Bergmann wrote:
-> > On Thu, Nov 29, 2018 at 5:14 PM Jose Abreu <jose.abreu@synopsys.com> wrote:
-> >> See how the if condition added in this version is checked in
-> >> <test_readsl+0xe92> and then it takes two different loops.
-> > This looks good to me. I wonder what the result is for CPUs
-> > that /do/ support unaligned accesses. Normally put_unaligned()
-> > should fall back to a simple store in that case, but I'm not
-> > sure it can fold the two stores back into one and skip the
-> > alignment check. Probably not worth overoptimizing for that
-> > case (the MMIO access latency should be much higher than
-> > anything you could gain here), but I'm still curious about
-> > how well our get/put_unaligned macros work.
->
-> Here is disassembly for an ARC CPU that supports unaligned accesses:
->
-> -->8---
-> 00000d48 <test_readsl>:
->  d48:    breq_s r1,0,28            /* if (count) */
->  d4a:    tst    r0,0x3
->  d4e:    bne_s 32                /* if (bptr % ((t) / 8)) */
->
->  d50:    ld r2,[0xdeadbeef]        /* first loop */
->  d58:    sub_s r1,r1,0x1
->  d5a:    tst_s r1,r1
->  d5c:    bne.d -12
->  d60:    st.ab r2,[r0,4]
->
->  d64:    dmb    0x1                    /* common exit point */
->  d68:    j_s    [blink]
->  d6a:    nop_s
->
->  d6c:    ld r2,[0xdeadbeef]        /* second loop */
->  d74:    sub_s r1,r1,0x1
->  d76:    tst_s r1,r1
->  d78:    bne.d -12
->  d7c:    st.ab r2,[r0,4]
->
->  d80:    b_s -28                    /* jmp to 0xd64 */
->  d82:    nop_s
-> --->8---
->
-> Notice how first and second loop are exactly equal ...
+Roman Kagan <rkagan@virtuozzo.com> writes:
 
-Ok, so it's halfway there: it managed to optimize the the unaligned
-case correctly, but it failed to notice that both sides are
-identical now.
+> On Fri, Nov 30, 2018 at 01:15:11PM +0100, Vitaly Kuznetsov wrote:
+>> Without 'packed' compiler is free to add optimization paddings and re-order
+>> structure fields for randomization/optimization. And structures from
+>> hyperv-tlfs.h are used for hypervisor-guest communication, we need to
+>> ultimately forbid such practices.
+>
+> Note that __packed also reduces the structure alignment to 1, which is
+> not necessarily what you want.
+>
+> E.g. some of these structures are passed by pointer to the hypercall,
+> which requires its arguments to be 8byte-aligned.
 
-      Arnd
+Hm,
+
+I thought we always take precautions for Hyper-V hypercall arguments, in
+particular
+
+PV IPI/TLB flush use pre-allocated hyperv_pcpu_input_arg,
+hv_post_message() uses pre-allocated message page, other call sites use
+fast hypercalls where we use registers.
+
+I also checked this patch before sending out, WS2016 guest boots without
+issues. Any particular places you're worried about?
+
+>  I'm also not sure
+> that passing unaligned argument to [rw]msr is ok, need to
+> double-check.
+
+My understanding is that rdmsr/wrmsr instuctions are registers-only.
+
+We can, of course, just add __aligned(8) to some structures but I'd like
+to find the reason first.
+
+-- 
+Vitaly
