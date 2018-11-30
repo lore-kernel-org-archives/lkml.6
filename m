@@ -2,114 +2,87 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0046AC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF39AC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF592146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF592146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 954A62145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:55:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z3LyYkJ3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954A62145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbeK3R6b (ORCPT
+        id S1726838AbeK3SD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:58:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54518 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeK3R6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:58:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3C5FDAFE6;
-        Fri, 30 Nov 2018 06:50:12 +0000 (UTC)
-Subject: Re: [Xen-devel][PATCH 1/3] xen: Introduce shared buffer helpers for
- page directory...
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        boris.ostrovsky@oracle.com
-Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20181122100230.14976-1-andr2000@gmail.com>
- <133b948f-fc31-4505-0b85-5fc7a7beb559@gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f802385f-3c78-2804-9e47-b590a9580955@suse.com>
-Date:   Fri, 30 Nov 2018 07:50:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <133b948f-fc31-4505-0b85-5fc7a7beb559@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        Fri, 30 Nov 2018 13:03:26 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40432 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeK3SD0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:03:26 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z10so2079583pgp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 22:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=W2WRzoA1lng3HhEM9HJNkyXzf+k3zuNVW/6U4xRIx3s=;
+        b=Z3LyYkJ3U/V79arrEveQ3i/soQa4xMItd8mBx2QpriSmb8gqmOFaU1OMBFyoNw03GD
+         uoYIKAm6kPFKDebF9mitSaC9I/mPxlJfnfRsBFyvLiklzeFGeabiZ//0qAEvTaqIzZCa
+         Fi1cWcbou8TQDvC9W8st0XeIBBY08DSOt7BQk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=W2WRzoA1lng3HhEM9HJNkyXzf+k3zuNVW/6U4xRIx3s=;
+        b=RRgwmoqIgqY390rOTThTPRXepOWWC+q+qEe5c8zPF3sCP98ThCnjhPLTXtn41vQ4V8
+         U4NvF54nrV2VpLc1oldh81T0KhvDEChOi3KzijSFzO3FmS6L/7AIqBsBiZJsnIwNNlZL
+         CtTw/w8sNrxGx+QbzTmy4T4NeZ5uCkz3tPhR1SgzmbPljGuOwesG5iLmNCi5ZcMm2v0N
+         MLryY5HAT4fZ13uUZxYxlE4VHDOr6Isdg6yiEHMZhF7DohasnO/uk5siSUR0+65tLsYN
+         AUpXh4EENUQtRdISlc0Yd5/iVXL+AHm+yZa9fiYfj7KmQq+AdnA5wCumBYrtgpvHEre7
+         EKgQ==
+X-Gm-Message-State: AA+aEWbSZ+ZVFeaZNcjbCzQaCZQwHO8z3HxmX9XcU8Id7LqrJGImelNv
+        ATcSgY0i9+8T5EWED3P440u1/A==
+X-Google-Smtp-Source: AFSGD/V4RDLdsNKV6Te6Z6OjotT3lwvrpAYrJheSinqBEBBquvzE8CgXsbMPhYp09xbk3FimwnMt+A==
+X-Received: by 2002:a63:1321:: with SMTP id i33mr3957739pgl.380.1543560908783;
+        Thu, 29 Nov 2018 22:55:08 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id w128sm5859175pfw.79.2018.11.29.22.55.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 22:55:08 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: [PATCH 0/3] clk: qcom: gcc-msm8998: Fixes and clkref clocks
+Date:   Thu, 29 Nov 2018 22:52:56 -0800
+Message-Id: <20181130065259.26497-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/2018 12:22, Oleksandr Andrushchenko wrote:
-> ping
-> 
-> On 11/22/18 12:02 PM, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> based frontends. Currently the frontends which implement
->> similar code for sharing big buffers between frontend and
->> backend are para-virtualized DRM and sound drivers.
->> Both define the same way to share grant references of a
->> data buffer with the corresponding backend with little
->> differences.
->>
->> Move shared code into a helper module, so there is a single
->> implementation of the same functionality for all.
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Mark critical clocks critical, don't halt-check UFS clocks and add clkref
+branches.
 
-In general I'm fine with this approach.
+Bjorn Andersson (3):
+  clk: qcom: gcc-msm8998: Mark hmss_dvm and lpass_at critical
+  clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
+  clk: qcom: gcc-msm8998: Add clkref clocks
 
-With the concerns raised for one of the other patches I wanted to wait
-for V2 of the series. Or won't the resulting change require a
-modification of this patch?
+ drivers/clk/qcom/gcc-msm8998.c               | 83 +++++++++++++++++++-
+ include/dt-bindings/clock/qcom,gcc-msm8998.h |  5 ++
+ 2 files changed, 85 insertions(+), 3 deletions(-)
 
-It would be nice if you could point out in the commit message whether
-you are doing code movement (with some renames) only, or if there are
-any functional changes involved (and which ones). This would make the
-review much easier and less time consuming.
+-- 
+2.18.0
 
-
-Juergen
