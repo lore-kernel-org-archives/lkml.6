@@ -2,201 +2,199 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9C9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7BBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1EA32082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AA2620863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:05:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zh8DW7cY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1EA32082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="jBFi5Toc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA2620863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeLAHKG (ORCPT
+        id S1726800AbeLAHPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 02:10:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeLAHKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:10:06 -0500
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7ADD2082F
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 19:59:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543607981;
-        bh=mtupHFf2LFA1JWPiIbPkldnsJEog70DgFKNAScssUAM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Zh8DW7cYmn8Mu1dK02leBM6GBWMFhGTU6zrVM31rhXbc7xJ0SYDbrlc9ZHqk+JeW8
-         G5kGFCB2LRYEIf1M+fF4EVJgvdxZNEBW7ht2nqG8VEY9AxJRV1/mnZXX10hSN08D5i
-         OF71dHeArUMFjn1YvdIt9VNPxNudHuyv23mdWikw=
-Received: by mail-qt1-f178.google.com with SMTP id r14so7306847qtp.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:59:41 -0800 (PST)
-X-Gm-Message-State: AA+aEWaccEpF/xklHjek41rTT7YfjZwdhKdFrGdUKZSpz5rOBxNHLz2q
-        7XRgBYQO6HSV/BMFLjDDFLJX41r97nyBy1hjhg==
-X-Google-Smtp-Source: AFSGD/XO/pyxkdBRuSlz42CERxt5B94alUuw0SegW+cwzlyyvhU1YMvw1ofKGKdjt35SiIpcybWKqhu1RlY1TZ18l5Q=
-X-Received: by 2002:a0c:c389:: with SMTP id o9mr6906861qvi.90.1543607980981;
- Fri, 30 Nov 2018 11:59:40 -0800 (PST)
+        Sat, 1 Dec 2018 02:15:50 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36046 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeLAHPu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 02:15:50 -0500
+Received: by mail-oi1-f195.google.com with SMTP id x23so5790447oix.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 12:05:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=auRJjxgFKRUumgs1HFAYZdef6cDAa1PN6/b9q/vsKP8=;
+        b=jBFi5TocuvSOPBlhex3LAC/DksxVPooyg/Lu6HP+gZ8p4i6yecJD9qRj1syylHddO+
+         5GuSEXEdk3AvHFHCnRQU6ADRTgCuRtzuwUaTTLU/MgcLnOGLwtE37C4ZB+M/9vc9dxhw
+         4enjxNmENzODnXlm9BZ9L2CqqC8eGqUUfVXwhvzWj/F2hLEoQimjEza8C3+UYmDzsglx
+         S15HMANwjVoXVSnIDd0JbLgtT6sPRZhNh9ZHcggpmUUxZq2XW5K9iq/mNJ6dmxpSGpqw
+         S1s1OGu2OqcBiH58QPGgGv16xFmAryVxJha4T/4fp+GY/dkNPEbdCyXqW8+zz6nAC0So
+         Gasw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=auRJjxgFKRUumgs1HFAYZdef6cDAa1PN6/b9q/vsKP8=;
+        b=tumhqF8APeh0su/liP9CaA5ducs2HJ8MZj0FeugPpD6nRtJRX6iEZQMqo1XBHOF1hy
+         StReYcKtN3oIsqqS0ecrmyaWcYLhBdVwHtXWm/eNjWcswSPcQT0Ndf+1+6OO6xbPQMfO
+         oZmXM7HvtS8OSIYSanO8+wMaSazCOYfT/k8QlwP6OOXjQ9EQ4kwdU1ZPHCDFOJjo5RX4
+         zrywIa8JP7Jzw3ozPyQ3UPao44K10gLvlKpSbM8necKFzLhBV9vy9gSM9PRZGLodeZZ5
+         fdbBXdrn4riKGOb/DiUzfjcWF4TeMSBG4QLlQ1N3fztKHb2c/Y9ioshrJ+kXs6TlNZ7Y
+         lSfA==
+X-Gm-Message-State: AA+aEWZ5bbjD824dbG2n5SUpweAa77MdQFYOYmVPt3S/+PkwhCRxkmRe
+        Gx26XCGXpe0ahLNIbfqAyX6pk7EexS1FLm8/UHYkgw==
+X-Google-Smtp-Source: AFSGD/VWHwzq+6WX6lJZLAe5GSo629PH6zaiRajMOJKScK68xBsRzx7mN0T7NWzBKEZKAAjP2zrHVEuD5DaNYffXmdQ=
+X-Received: by 2002:aca:f4c2:: with SMTP id s185mr4343488oih.244.1543608324786;
+ Fri, 30 Nov 2018 12:05:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20181130170754.346-1-TheSven73@googlemail.com> <20181130170754.346-3-TheSven73@googlemail.com>
-In-Reply-To: <20181130170754.346-3-TheSven73@googlemail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 30 Nov 2018 13:59:29 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJjqUZRhGsnW4C+-DRLb-XWzYRj+S0R_siGyDBq-LNY8w@mail.gmail.com>
-Message-ID: <CAL_JsqJjqUZRhGsnW4C+-DRLb-XWzYRj+S0R_siGyDBq-LNY8w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] bus: imx-weim: guard against timing configuration conflicts
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     TheSven73@googlemail.com, Shawn Guo <shawnguo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <154353682674.1676897.15440708268545845062.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181130154902.GL10377@bombadil.infradead.org> <CAPcyv4iE375mP7eJP4nb76shWNaATy6FcZYi800wZ3iAJE8G8g@mail.gmail.com>
+ <20181130162435.GM10377@bombadil.infradead.org> <CAPcyv4gBwtCxN4xTncsyShMwMzNiLG3SxKA-frYh9Fn-f6QV=g@mail.gmail.com>
+ <CAPcyv4gDO7sUJgE5kKe=VC5uUG36QaUrkb6tCrtnaFMkgdSYGw@mail.gmail.com> <20181130195021.GN10377@bombadil.infradead.org>
+In-Reply-To: <20181130195021.GN10377@bombadil.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 30 Nov 2018 12:05:13 -0800
+Message-ID: <CAPcyv4iqA84WbE8pE=Yi15Q0T8JUXnPZss27HqhQTP08F9sTrQ@mail.gmail.com>
+Subject: Re: [PATCH] dax: Fix Xarray conversion of dax_unlock_mapping_entry()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:08 AM <thesven73@gmail.com> wrote:
+On Fri, Nov 30, 2018 at 11:50 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> From: Sven Van Asbroeck <TheSven73@googlemail.com>
+> On Fri, Nov 30, 2018 at 09:01:07AM -0800, Dan Williams wrote:
+> > On Fri, Nov 30, 2018 at 8:33 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > >
+> > > On Fri, Nov 30, 2018 at 8:24 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > > >
+> > > > On Fri, Nov 30, 2018 at 07:54:49AM -0800, Dan Williams wrote:
+> > > > > Looks good to me, although can we make that cookie an actual type? I
+> > > > > think it's mostly ok to pass around (void *) for 'entry' inside of
+> > > > > fs/dax.c, but once an entry leaves that file I'd like it to have an
+> > > > > explicit type to catch people that might accidentally pass a (struct
+> > > > > page *) to the unlock routine.
+> > > >
+> > > > That's a really good idea.  Something like this?
+> > > >
+> > > > typedef struct {
+> > > >         void *v;
+> > > > } dax_entry_t;
+> > >
+> > > Yes, please.
 >
-> When adding weim child devices, there is a risk that the developer will
-> (by mistake) specify more than one timing setting for the same chip select.
+> Oh.  The caller needs to interpret it to see if the entry was successfully
+> locked, so it needs to be an integer type (or we need a comparison
+> function ... bleh).
 >
-> The driver cannot support such a configuration.
+> > > > I could see us making good use of that within dax.c.
+> >
+> > I'm now thinking that this is a nice improvement for 4.21. For 4.20-rc
+> > lets do the localized fix.
 >
-> In case of conflict, this patch will print a warning to the log,
-> and will ignore the child node in question.
->
-> In this example, node acme@1 will be ignored, as it tries to modify
-> timing settings for CS0:
->
-> &weim {
->         acme@0 {
+> I think both patches are equally risky.  I admit this patch crosses a
+> file boundary, but the other patch changes dax_make_entry() which is
+> used by several functions which aren't part of this path, whereas this
+> patch only changes functions used in the path which is known to be buggy.
 
-This should be '@0,0'
+I'm almost buying this argument... but I'd feel better knowing that
+all dax_make_entry() usages are safe against this bug pattern. I
+didn't audit the other occurrences of dax_make_entry() for this bug,
+did you build some confidence here?
 
->                 compatible = "acme,whatever";
->                 reg = <0 0 0x100>;
->                 fsl,weim-cs-timing = <something>;
->         };
->         acme@1 {
+>
+> This patch has the advantage of getting us closer to where we want to be
+> sooner.
 
-And '@0,500'
+One comment below...
 
->                 compatible = "acme,whatnot";
->                 reg = <0 0x500 0x100>;
->                 fsl,weim-cs-timing = <something else>;
->         };
-> };
 >
-> However in this example, the driver will be happy:
 >
-> &weim {
->         acme@0 {
->                 compatible = "acme,whatever";
->                 reg = <0 0 0x100>;
->                 fsl,weim-cs-timing = <something>;
->         };
->         acme@1 {
->                 compatible = "acme,whatnot";
->                 reg = <0 0x500 0x100>;
->                 fsl,weim-cs-timing = <something>;
->         };
-> };
+> From 1135b8d08f23ab4f5b28261535a817f3de9297c9 Mon Sep 17 00:00:00 2001
+> From: Matthew Wilcox <willy@infradead.org>
+> Date: Fri, 30 Nov 2018 11:05:06 -0500
+> Subject: [PATCH] dax: Change lock/unlock API
 >
-> Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+> Return the unlock cookie from dax_lock_mapping_entry() and
+> pass it to dax_unlock_mapping_entry().  This fixes a bug where
+> dax_unlock_mapping_entry() was assuming that the page was PMD-aligned
+> if the entry was a PMD entry.
+>
+> Debugged-by: Dan Williams <dan.j.williams@intel.com>
+> Fixes: 9f32d221301c ("dax: Convert dax_lock_mapping_entry to XArray")
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
 > ---
->  drivers/bus/imx-weim.c | 33 ++++++++++++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
+>  fs/dax.c            | 21 ++++++++-------------
+>  include/linux/dax.h | 15 +++++++++------
+>  mm/memory-failure.c |  6 ++++--
+>  3 files changed, 21 insertions(+), 21 deletions(-)
 >
-> diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-> index 24f22285395d..114e503ec785 100644
-> --- a/drivers/bus/imx-weim.c
-> +++ b/drivers/bus/imx-weim.c
-> @@ -46,8 +46,18 @@ static const struct imx_weim_devtype imx51_weim_devtype = {
->  };
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 9bcce89ea18e..d2c04e802978 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -351,20 +351,20 @@ static struct page *dax_busy_page(void *entry)
+>   * @page: The page whose entry we want to lock
+>   *
+>   * Context: Process context.
+> - * Return: %true if the entry was locked or does not need to be locked.
+> + * Return: A cookie to pass to dax_unlock_mapping_entry() or 0 if the
+> + * entry could not be locked.
+>   */
+> -bool dax_lock_mapping_entry(struct page *page)
+> +dax_entry_t dax_lock_mapping_entry(struct page *page)
+>  {
+>         XA_STATE(xas, NULL, 0);
+>         void *entry;
+> -       bool locked;
 >
->  #define MAX_CS_REGS_COUNT      6
-> +#define MAX_CS_REGS            6
->  #define OF_REG_SIZE            3
+>         /* Ensure page->mapping isn't freed while we look at it */
+>         rcu_read_lock();
+>         for (;;) {
+>                 struct address_space *mapping = READ_ONCE(page->mapping);
 >
-> +struct cs_timing {
-> +       bool is_applied;
-> +       u32 regs[MAX_CS_REGS_COUNT];
-> +};
-> +
-> +struct cs_timing_state {
-> +       struct cs_timing cs[MAX_CS_REGS];
-> +};
-> +
->  static const struct of_device_id weim_id_table[] = {
->         /* i.MX1/21 */
->         { .compatible = "fsl,imx1-weim", .data = &imx1_weim_devtype, },
-> @@ -112,11 +122,14 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
+> -               locked = false;
+> +               entry = NULL;
+>                 if (!dax_mapping(mapping))
+>                         break;
+>
+> @@ -375,7 +375,7 @@ bool dax_lock_mapping_entry(struct page *page)
+>                  * otherwise we would not have a valid pfn_to_page()
+>                  * translation.
+>                  */
+> -               locked = true;
+> +               entry = (void *)~0UL;
+>                 if (S_ISCHR(mapping->host->i_mode))
+>                         break;
+>
+> @@ -400,23 +400,18 @@ bool dax_lock_mapping_entry(struct page *page)
+>                 break;
+>         }
+>         rcu_read_unlock();
+> -       return locked;
+> +       return (dax_entry_t)entry;
 >  }
 >
->  /* Parse and set the timing for this device. */
-> -static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
-> -                                   const struct imx_weim_devtype *devtype)
-> +static int __init weim_timing_setup(struct device *dev,
-> +                                   struct device_node *np, void __iomem *base,
-> +                                   const struct imx_weim_devtype *devtype,
-> +                                   struct cs_timing_state *ts)
->  {
->         u32 cs_idx, value[MAX_CS_REGS_COUNT];
->         int i, ret, reg_idx, num_regs;
-> +       struct cs_timing *cst;
->
->         if (WARN_ON(devtype->cs_regs_count > MAX_CS_REGS_COUNT))
->                 return -EINVAL;
-> @@ -145,10 +158,23 @@ static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
->                 if (cs_idx >= devtype->cs_count)
->                         return -EINVAL;
->
-> +               /* prevent re-configuring a CS that's already been configured */
-> +               cst = &ts->cs[cs_idx];
-> +               if (cst->is_applied && memcmp(value, cst->regs,
-> +                                       devtype->cs_regs_count*sizeof(u32))) {
-> +                       dev_err(dev, "fsl,weim-cs-timing conflict on %pOF", np);
-> +                       return -EINVAL;
-> +               }
-> +
->                 /* set the timing for WEIM */
->                 for (i = 0; i < devtype->cs_regs_count; i++)
->                         writel(value[i],
->                                 base + cs_idx * devtype->cs_stride + i * 4);
-> +               if (!cst->is_applied) {
-> +                       cst->is_applied = true;
-> +                       memcpy(cst->regs, value,
-> +                               devtype->cs_regs_count*sizeof(u32));
-> +               }
->         }
->
->         return 0;
-> @@ -165,6 +191,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
->         const struct imx_weim_devtype *devtype = of_id->data;
->         struct device_node *child;
->         int ret, have_child = 0;
-> +       struct cs_timing_state ts = {};
->
->         if (devtype == &imx50_weim_devtype) {
->                 ret = imx_weim_gpr_setup(pdev);
-> @@ -179,7 +206,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
->         }
->
->         for_each_available_child_of_node(pdev->dev.of_node, child) {
-> -               ret = weim_timing_setup(child, base, devtype);
-> +               ret = weim_timing_setup(&pdev->dev, child, base, devtype, &ts);
->                 if (ret)
->                         dev_warn(&pdev->dev, "%pOF set timing failed.\n",
->                                 child);
-> --
-> 2.17.1
->
+> -void dax_unlock_mapping_entry(struct page *page)
+> +void dax_unlock_mapping_entry(struct page *page, dax_entry_t entry)
+
+Let's not require the page to be passed back, it can be derived:
+
+    page = pfn_to_page(dax_to_pfn((void*) entry));
+
+A bit more symmetric that way and canonical with other locking schemes
+that return a cookie.
