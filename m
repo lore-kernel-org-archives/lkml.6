@@ -2,199 +2,174 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CF3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85182C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8195D20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39E6E20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:20:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IlDGbAzF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8195D20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="XYU41ssU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E6E20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeK3V1k (ORCPT
+        id S1726771AbeK3V2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:27:40 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44614 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeK3V1j (ORCPT
+        Fri, 30 Nov 2018 16:28:47 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34175 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbeK3V2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:27:39 -0500
-Received: by mail-vs1-f68.google.com with SMTP id g68so2996164vsd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 02:18:51 -0800 (PST)
+        Fri, 30 Nov 2018 16:28:47 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w4so2596674plz.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 02:19:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tK1jaZ6vKaWYxzt1HtCazqRt64MsjqvVDHoaX2x3+7Q=;
-        b=IlDGbAzFts+u2bC53bK+sNhmcxUddRYO8bJMquUjDYtTghGDzfCn43SsrV5WI0ogbn
-         /jm4RoHeK6GxPcQNqsBcGGNgwCo3f9UlauzABfjX6LW1KZnSPQvLt69E6AwZH7cpM4Ev
-         SHBOBeuOQmqSI01b4iyW1fODogpI2p/rIKue0=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+YWiKKUgLodwOXkLIOrsJw0vbFaB8rOlRN4as8zZsNo=;
+        b=XYU41ssUMqcMo4z5OxV7SXLEWoZtNaViopfCbGICP72b6GxkWYQrxISt5+wfJlOuM3
+         eZxQuP4ft7fXRfoFkaeT6s9dfymCVufWXDMVfksO57rKnZB/eHm5x9Eu89FYJqwC6Npf
+         vvdcc2oArr4gC9Ra40x14t4ZMftxzZiLwV8i4G2zdbKxcYYdDL94f0NB87x3/MoUq7RH
+         j4txyG8NrxqI4AfgIvQ2jaZVGmc5Y/cNBMgOnyqeoEeLNb8qIIVkc4P3vQWmfBqJjh+g
+         JUlBSh6fx+0qCPZHI71HlzbEq+RoD6chmnuBdkoAImscZsggxtg6Y4oEu70N5/CW+4u2
+         8tvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tK1jaZ6vKaWYxzt1HtCazqRt64MsjqvVDHoaX2x3+7Q=;
-        b=iJ0p5svr3fNarz1dvLh5Ri0ps6LIVU2bxsRrGMq3H6B9cKKV9J2KGs0jKm/xHTY6SC
-         GJ6Mu5eATRcNddzb1Hsc6Q1dYGAC7Y6mS6gKkPMjlKUYxFk8c6cuj7JzIlavj7zUaI1g
-         +Sanq0c+LYI8yICgf1llTnx1F7mpTVX95VL/ahGsD1Q2X9YtIjVljQssh93vKMra+4Qd
-         cTzOMZm6g5644iEMx/7vKTOZQcx3cZ02VoJC3YMcAvG7cVt/A4Q7VIHjLzQ8FFFSwv5G
-         bUbx4xrBonGn4ZZN4ad0WE2iNMq+bIIsot+IhTtDaAExfv4vPaVQX/N98E41MCqSl/VD
-         mDBQ==
-X-Gm-Message-State: AA+aEWYMdL/xDikYHqxsxEJKb2bb/DEZTjA38G0A1+8gRVFRcPJG3kxO
-        LEyTT+v93oKJ1FWfbr5HPpevV/GH9M5tvI1G8YloUg==
-X-Google-Smtp-Source: AFSGD/UGi7sLInvlsh26oAkMeLqKC9x9iURTXYUKQqNrvuc/kkMmkWnGyShW7R2J3ATurpC+ksJq/W97wTUNvSYL4Ko=
-X-Received: by 2002:a67:e002:: with SMTP id c2mr2325909vsl.34.1543573130495;
- Fri, 30 Nov 2018 02:18:50 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+YWiKKUgLodwOXkLIOrsJw0vbFaB8rOlRN4as8zZsNo=;
+        b=j1VQ4jrPzKQVtZnGWGHK8om9y1kZiM5Jppng5b9+HpXKGiTk4HgBOlmZQfPllozYNx
+         b009WuZIc+/4quE6Qh4WzY8JQGegV7jX95DRnCUdGwp1UUDHNZlABt5Qq3AZathtH5vs
+         mhB38RmF/Mi7T/iuzOCJ41MUf2y/4Gbw7TMF1HP9aB6f2tPIcpdNlIuZ5AYDxzmOImNH
+         Hr/e/qBGCnJ4FgI/cWzDPRd3rJMmoldDRSuRQLpD2dKdPJNms4tq7wzsOv6dFaruPU8r
+         ut3UyjeUpOPqSjbVTnY1uRjQK73WUd7BCjLGvEotr/+g0SRhwvZEA1FH/606oPtmiQYC
+         22qg==
+X-Gm-Message-State: AA+aEWaTJbeNlaKBi2/U30hOGd7ivfukgkYUO4qKUvI4Fiv+S5gdY4He
+        T6aKkKudr7D6F6BZ75dQU0K7aQ==
+X-Google-Smtp-Source: AFSGD/U4Ybf7UP3rv+snaICV1180DlgzIsnam5/CcIQ0PuWHTOmSuVnMDiIKX6D0MKe4MRXTPizVNg==
+X-Received: by 2002:a17:902:e002:: with SMTP id ca2mr5193544plb.103.1543573198720;
+        Fri, 30 Nov 2018 02:19:58 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
+        by smtp.gmail.com with ESMTPSA id k14sm11277530pgs.52.2018.11.30.02.19.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 02:19:57 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 8A83D30042C; Fri, 30 Nov 2018 13:19:53 +0300 (+03)
+Date:   Fri, 30 Nov 2018 13:19:53 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Jan Stancek <jstancek@redhat.com>
+Cc:     linux-mm@kvack.org, lersek@redhat.com, alex.williamson@redhat.com,
+        aarcange@redhat.com, rientjes@google.com,
+        mgorman@techsingularity.net, mhocko@suse.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: page_mapped: don't assume compound page is huge or
+ THP
+Message-ID: <20181130101953.u4owfaqmaq2osuod@kshutemo-mobl1>
+References: <eabca57aa14f4df723173b24891f4a2d9c501f21.1543526537.git.jstancek@redhat.com>
 MIME-Version: 1.0
-References: <cover.1543219386.git.viresh.kumar@linaro.org> <5a29ceb2704239a8efb4db2e47ca155a422a6e57.1543219386.git.viresh.kumar@linaro.org>
- <CAPDyKFpp1iPQ08QQjoi9b4RGUo2Zw_L_vjy8xtnSpg34gn--eA@mail.gmail.com> <20181130095912.7hutbsrihpg4gez4@vireshk-i7>
-In-Reply-To: <20181130095912.7hutbsrihpg4gez4@vireshk-i7>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 30 Nov 2018 11:18:14 +0100
-Message-ID: <CAPDyKFocp63hUOYOJ3HUXBj2CcHZGXMQ6n873SmMSfpDhRjB7g@mail.gmail.com>
-Subject: Re: [PATCH V2 5/5] PM / Domains: Propagate performance state updates
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eabca57aa14f4df723173b24891f4a2d9c501f21.1543526537.git.jstancek@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 at 10:59, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 30-11-18, 10:44, Ulf Hansson wrote:
-> > On Mon, 26 Nov 2018 at 09:10, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > This commit updates genpd core to start propagating performance state
-> > > updates to master domains that have their set_performance_state()
-> > > callback set.
-> > >
-> > > A genpd handles two type of performance states now. The first one is the
-> > > performance state requirement put on the genpd by the devices and
-> > > sub-domains under it, which is already represented by
-> > > genpd->performance_state.
-> >
-> > This isn't correct.
-> >
-> > Currently genpd->performance_state reflects the aggregation of the
-> > state requirements from each device that is attached to it. Not from
-> > subdomains.
->
-> Okay, will improve the changelog.
->
-> > > The second type, introduced in this commit, is
-> > > the performance state requirement(s) put by the genpd on its master
-> > > domain(s). There is a separate value required for each master that the
-> > > genpd has and so a new field is added to the struct gpd_link
-> > > (link->performance_state), which represents the link between a genpd and
-> > > its master. The struct gpd_link also got another field
-> > > prev_performance_state, which is used by genpd core as a temporary
-> > > variable during transitions.
-> > >
-> > > We need to propagate setting performance state while powering-on a genpd
-> > > as well, as we ignore performance state requirements from sub-domains
-> > > which are powered-off. For this reason _genpd_power_on() also received
-> > > the additional parameter, depth, which is used for hierarchical locking
-> > > within genpd.
-> > >
-> > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > ---
-> > >  drivers/base/power/domain.c | 113 ++++++++++++++++++++++++++++++------
-> > >  include/linux/pm_domain.h   |   4 ++
-> > >  2 files changed, 98 insertions(+), 19 deletions(-)
-> > >
-> > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > > index d6b389a9f678..206e263abe90 100644
-> > > --- a/drivers/base/power/domain.c
-> > > +++ b/drivers/base/power/domain.c
-> > > @@ -239,24 +239,88 @@ static void genpd_update_accounting(struct generic_pm_domain *genpd)
-> > >  static inline void genpd_update_accounting(struct generic_pm_domain *genpd) {}
-> > >  #endif
-> > >
-> > > +static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
-> > > +                                          unsigned int state, int depth);
-> > > +
-> >
-> > I don't like forward declarations like these, as in most cases it
-> > means that the code can be re-worked and improved.
-> >
-> > However, because of the recursiveness code in genpd, I understand that
-> > it may be needed for some cases. Anyway, please have look and see if
-> > you can rid of it.
->
-> Will see if I can do it any better, though I really doubt it :)
->
-> > >  static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
-> > > -                                       unsigned int state)
-> > > +                                       unsigned int state, int depth)
->
->
-> > > -static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
-> > > +static int
-> > > +_genpd_power_on(struct generic_pm_domain *genpd, bool timed, int depth)
-> >
-> > Cosmetics, but please move the new parameter below instead of moving
-> > "static int" above.
-> >
-> > >  {
-> > >         unsigned int state_idx = genpd->state_idx;
-> > >         ktime_t time_start;
-> > > @@ -368,7 +442,8 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
-> > >         elapsed_ns = ktime_to_ns(ktime_sub(ktime_get(), time_start));
-> > >
-> > >         if (unlikely(genpd->set_performance_state)) {
-> > > -               ret = genpd->set_performance_state(genpd, genpd->performance_state);
-> > > +               ret = _genpd_set_performance_state(genpd,
-> > > +                                       genpd->performance_state, depth);
-> >
-> > This is going to be a problem for genpd_sync_power_on() as in some
-> > cases we can't allow to use locks.
->
-> So we pass the use_lock parameter to this routine as well ?
+On Thu, Nov 29, 2018 at 10:53:48PM +0100, Jan Stancek wrote:
+> LTP proc01 testcase has been observed to rarely trigger crashes
+> on arm64:
+>     page_mapped+0x78/0xb4
+>     stable_page_flags+0x27c/0x338
+>     kpageflags_read+0xfc/0x164
+>     proc_reg_read+0x7c/0xb8
+>     __vfs_read+0x58/0x178
+>     vfs_read+0x90/0x14c
+>     SyS_read+0x60/0xc0
+> 
+> Issue is that page_mapped() assumes that if compound page is not
+> huge, then it must be THP. But if this is 'normal' compound page
+> (COMPOUND_PAGE_DTOR), then following loop can keep running until
+> it tries to read from memory that isn't mapped and triggers a panic:
+>         for (i = 0; i < hpage_nr_pages(page); i++) {
+>                 if (atomic_read(&page[i]._mapcount) >= 0)
+>                         return true;
+> 	}
+> 
+> I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
+> with a custom kernel module [1] which:
+> - allocates compound page (PAGEC) of order 1
+> - allocates 2 normal pages (COPY), which are initialized to 0xff
+>   (to satisfy _mapcount >= 0)
+> - 2 PAGEC page structs are copied to address of first COPY page
+> - second page of COPY is marked as not present
+> - call to page_mapped(COPY) now triggers fault on access to 2nd COPY
+>   page at offset 0x30 (_mapcount)
+> 
+> [1] https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
+> 
+> This patch modifies page_mapped() to check for 'normal'
+> compound pages (COMPOUND_PAGE_DTOR).
+> 
+> Debugged-by: Laszlo Ersek <lersek@redhat.com>
+> Signed-off-by: Jan Stancek <jstancek@redhat.com>
+> ---
+>  include/linux/mm.h | 9 +++++++++
+>  mm/util.c          | 2 ++
+>  2 files changed, 11 insertions(+)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 5411de93a363..18b0bb953f92 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -700,6 +700,15 @@ static inline compound_page_dtor *get_compound_page_dtor(struct page *page)
+>  	return compound_page_dtors[page[1].compound_dtor];
+>  }
+>  
+> +static inline int PageNormalCompound(struct page *page)
+> +{
+> +	if (!PageCompound(page))
+> +		return 0;
+> +
+> +	page = compound_head(page);
+> +	return page[1].compound_dtor == COMPOUND_PAGE_DTOR;
+> +}
+> +
+>  static inline unsigned int compound_order(struct page *page)
+>  {
+>  	if (!PageHead(page))
+> diff --git a/mm/util.c b/mm/util.c
+> index 8bf08b5b5760..06c1640cb7b3 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -478,6 +478,8 @@ bool page_mapped(struct page *page)
+>  		return true;
+>  	if (PageHuge(page))
+>  		return false;
+> +	if (PageNormalCompound(page))
+> +		return false;
+>  	for (i = 0; i < hpage_nr_pages(page); i++) {
+>  		if (atomic_read(&page[i]._mapcount) >= 0)
+>  			return true;
 
-Maybe.
+Thanks for catching this.
 
->
-> > Moreover I am wondering how this plays with genpd_power_on(), as when
-> > it calls _genpd_power_on() the first time, that is done by holding the
-> > top-level master's lock - and all locks in that hierarchy. In other
-> > words we are always powering on the top most master first, then step
-> > by step we move down in the hierarchy to power on the genpds.
->
-> Sure, but the ordering of locks is always subdomain first and then master.
-> Considering the case of Qcom, we have two domains Cx (sub-domain) and Mx (master).
->
-> On first genpd_power_on(Cx) call, we will first call genpd_power_on(Mx) which
-> will just power it on as none of its master will have perf-state support. We
-> then call _genpd_power_on(Cx) which will also not do anything with Mx as its own
-> (Cx's) pstate would be 0 at that time. But even if it had a valid value, it will
-> propagate just fine with all proper locking in place.
+But I think the right fix would be to change the loop condition:
 
-Can you explain that, it's not super easy to follow the flow.
+	for (i = 0; i < (1 << compund_order(page)); i++) {
 
-So what will happen if Cx has a value that needs to be propagated?
-What locks will be taken, and in what order?
+Non-THP compound page also can be mapped and we need to check mapcount of
+subpages.
 
-Following, what if we had a Bx domain, being the subdomain of Cx, and
-it too had a value that needs to be propagated. It sounds like we will
-do the propagation one time per level. Is that really necessary,
-couldn't we just do it once, after the power on sequence have been
-completed?
+Any objections?
 
-Kind regards
-Uffe
+If not, please update the patch.
+
+-- 
+ Kirill A. Shutemov
