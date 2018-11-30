@@ -3,136 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 527C9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06151C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDBCC20989
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8E5E20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:57:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WJS3e6AV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDBCC20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TrBpvCcB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E5E20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeK3L6j (ORCPT
+        id S1727031AbeK3MEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 06:58:39 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40471 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeK3L6j (ORCPT
+        Fri, 30 Nov 2018 07:04:53 -0500
+Received: from sonic308-18.consmr.mail.ne1.yahoo.com ([66.163.187.41]:38065
+        "EHLO sonic308-18.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726446AbeK3MEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 06:58:39 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so1894519plq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 16:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=3qvdcJZ8PmRKbLEtfm59ggyyqKNvacVBja+BjrAt068=;
-        b=WJS3e6AVEzrj2cNpHm8MlAx/K1Lv5wEha+ApFYew9Bvs+1Akii+dzTgWZ9BbQUCkWV
-         y5y4PA8NJvMfqaqLZuhV8zutLSyWv78JxpzQSsaoIM9FmLWAP/VhSg9xTg9TbZ7yATHA
-         opOnw31UXZPj25JGgXm174OWTW2U8Q6+UmQ22kN/OYkYuTaeq8PlVeEegBDOo8mFR0AD
-         w14EujUcNJrxjQxWx1tYmBU7M7Y+zvvRTeWV/V+/vqlcDUBJEjjm1VuTIgTlh3eoMj/P
-         y1VoW/IDW8mUb7+OWIT3iG7MNnAic6yrLXLKQPoPZOlJGpG5F3BzTqW6tn5JL4enJeM6
-         8TVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=3qvdcJZ8PmRKbLEtfm59ggyyqKNvacVBja+BjrAt068=;
-        b=IwepStt2KVf0dtpFwxigxRczEnxjJ7vSZVe5uGZt2tR4ilUlZ/7jM2SipoJx4tRHZn
-         BWQcpclmhGHGmVD4Kru5cTleZqXotyN8DRHAEmrPZVo64rRw7yz7CeH8awb72yx2g36X
-         lLaCLn1bSTeDlPmwIQvlyfAXungyWh7CiCuOHpGabsaZwZKwDX0Xzlhlwa8lnjh2TH5W
-         UQI4x70Fuf9dUXbIdvQdusKkQu4RvMwrlRg+NBMELj/74AVz8aB6leTvaug3ZZGG0QNw
-         6Ace7seLyqKbmtHBBq/G7HB99TwbeKJNPPZvE+5eEqzKD7cFi0EkRFmHD0Hlrl3FyQyJ
-         Fv8g==
-X-Gm-Message-State: AA+aEWYSlEX8kXBFtUL5RqBfLXiDHbJ8PyPSUC+VkHTw8TUMd7NliTS1
-        vaKnh1ETVbhuDJydSbE7KcYS6Q==
-X-Google-Smtp-Source: AFSGD/X9wmudIEKf+M0xp2qRrZW5YYkX6+DVaoYHlNiJQZtYuP0oHnlFoXVsE/JPb47cb1qJi8b8Lw==
-X-Received: by 2002:a17:902:27a8:: with SMTP id d37mr3709000plb.182.1543539072726;
-        Thu, 29 Nov 2018 16:51:12 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id q75sm5257657pfa.38.2018.11.29.16.51.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 16:51:11 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: switch CONFIG_PWM_MESON to built-in
-In-Reply-To: <CAFBinCB8r+5tGKxfsPMapayxmDuWOi=WihvvdxS=UxcnpeYqdQ@mail.gmail.com>
-References: <20181114230554.4968-1-martin.blumenstingl@googlemail.com> <7hh8g0d8tg.fsf@baylibre.com> <CAFBinCBViZgRrZO16FsRKSGNriSw2_D9+_6ri99_zf++_SuuKg@mail.gmail.com> <7hk1kv79at.fsf@baylibre.com> <CAFBinCB8r+5tGKxfsPMapayxmDuWOi=WihvvdxS=UxcnpeYqdQ@mail.gmail.com>
-Date:   Thu, 29 Nov 2018 16:51:10 -0800
-Message-ID: <7hefb375hd.fsf@baylibre.com>
+        Fri, 30 Nov 2018 07:04:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543539445; bh=J4nLeP95WbfL0BkTFk9z/3qeuEz3I6HjDn4j+/BheUU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=TrBpvCcBF0hTexebC8KH1EkfEk4bKSvevtkvz8JLTtG+pWIGkTMGJfBN909A+yV/tc0pZGHEnAsQvkQz2HxhEKhoqa0d0xEqo2lhoMKYZvIsezJ3uX0A3xIj5Z1u47v0sQBGfrqdwn4NNWBIJzqQ/NbihnJZR76NdtiF4wsaSRiQMh9ttkwAHa5asWv06vML4bDPz8yMCkLWAyG269o4POvv57If6OvHiJoMhb1XOelOoWJjv2h0XNL/iluVOW1QUf3hfVSEWF1iIDhUhj9m0hCywhqIN5NAHKbiu/sJFeoHCItWGwzAFH25QYCl6vHb/jpCfjXHuZwBFGadXK8Tsg==
+X-YMail-OSG: owO.R9UVM1lcYXeKJccy0lRaug4m5xb.SHeVvP63ufn1eD8Pl7vxy5TiU5NKXwi
+ SXi1d.WUU5wR7WpH5yudlTLv3quiQ6yvgSeME3Ecb_EIk9.T2dMs5RYiSGLEeb0U9wbFTZCB9mQW
+ V0bK4XDbRxFTE_XEHWEKgc4cE6UFMg8TYQj7bL5H8Z14zC0kYsGPGEkg1qz5mAU9HhasuD6VL7Os
+ q6e8t7jug29L89O1iA.BYx5wJ7zRNYU6huNu289LXCIeXink13ohUuDidZmTEI0xMaBK8nKJY6CH
+ qLIuR2T6rCOTONsAqGYE59iYPiD4KkbeP9mwEoqjTO4shzDuAF_8o4iuna.XR.Yvr7WSIktJTwqv
+ JcWenaixAlWOL.sW83y5I5Hv7IsNxHNVLAmK0YJXfKpCDXYact00DsvbXy6s0s37hmC4x4nB2tXe
+ zQl38sKFuwiA7aNJagWFbUU.JW1EKNR2.3dUvs65dShGermRq0WPRHacvsDakgRRdAnSOEIOtnWC
+ 8CEzvGhboiqHDcLucnFs8gQRzPVF8RwV4c9PvScPs6uEladQ7NMxIV5GRsYSIE1qtGB_6wCM8VVH
+ cRvsNSKY5NlKDh5j5va1n00mPwl8t3NjkTnW94K340yssRp3fbZFdFptczkXLlmD8cNmmv9aFEIt
+ 4sbqBHZGpyHu6j1hgPYVd1HwfkSwtQ3tYKhL7jlgg.i5EXC3x6avOO5txZ75gO7GAxjZV3KFhvhs
+ 7HAqHJA9NcP3tRe0gP__8D3Cfrw1d8KmmyPebOkJGs7p5JmUrTEIqr_9nGRTE7QMsj.OTP2DJh0X
+ fN8eZ9hQr9Fs02X0yTRrUuwmaG12rDqpNNLE0lZR_UKVwZeiVv0uhbJLbJFvQmYqqubMRGztXKrJ
+ fq.DYpm_lP3vTT0YOcC.jWliXhNV4mjCVKk7nWdN7zbap_VrSRnkLQtIBAQB47o9Uvlq8kSsaHa3
+ tDKFSalLhuDn4FfO9lgE3V4U9Ci3p75vs1AoacrY7f5qYevx_xXQDdtYYJl0ubWSaBBC6R_DapPr
+ wxBDzUm6.bloc_mn2fqKXNHXXjeheYMn3J.EVHXVDQH8oYvON5dw3Z79WntH3S8y7aFrD77aobvS
+ htmL.uAlgZz.g
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 Nov 2018 00:57:25 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp416.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 971edec8246d7cdd23c63d2138fa27d5;
+          Fri, 30 Nov 2018 00:57:24 +0000 (UTC)
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+To:     Al Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>
+Cc:     omosnace@redhat.com, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, selinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>
+References: <20181127115246.00967523@canb.auug.org.au>
+ <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+ <20181127225013.133adc7d@canb.auug.org.au>
+ <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+ <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
+ <CAHC9VhRthWKfgYenGq6Az+jVQ+76wCeBhBcMyo9zZwv+nBhy3A@mail.gmail.com>
+ <20181129235130.GI2217@ZenIV.linux.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <84796ec6-2603-7957-b159-e4c8b1e7362c@schaufler-ca.com>
+Date:   Thu, 29 Nov 2018 16:57:20 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181129235130.GI2217@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+On 11/29/2018 3:51 PM, Al Viro wrote:
 
-> Hi Kevin,
+I've added linux-security-module to the CC list.
+
+> On Thu, Nov 29, 2018 at 05:23:24PM -0500, Paul Moore wrote:
 >
-> On Fri, Nov 30, 2018 at 12:28 AM Kevin Hilman <khilman@baylibre.com> wrote:
+>>> OK, I will verify that the SELinux submount fix rebased on top of
+>>> vfs/work.mount in the way I suggested above passes the same testing
+>>> (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
+>>> kernels (vfs/work.mount with and without the fix) to test. Let me know
+>>> if there is anything more to do.
+>> Thanks.
 >>
->> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->>
->> > Hi Kevin,
->> >
->> > On Thu, Nov 29, 2018 at 1:30 AM Kevin Hilman <khilman@baylibre.com> wrote:
->> >>
->> >> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->> >>
->> >> > Some Meson8b boards (Odroid-C1, EC-100) use a PWM regulator which is the
->> >> > voltage supply of the CPU cores (this regulator is typically called
->> >> > "VCCK").
->> >> > Now that we are preparing support for CPU frequency scaling on Meson8,
->> >> > Meson8b and Meson8m2 we should build the pwm-meson driver into the
->> >> > kernel so we can configure the CPU voltage early in the boot process.
->> >>
->> >> Can you explain a little more why the configuration of CPU voltage
->> >> cannot wait a bit so this could be properly probed?
->> >
->> > I was under the impression that cpufreq-dt would still initialize even
->> > if the regulator is not ready yet. however (after reading the code
->> > again) this is clearly NOT the case.
->>
->> Hmm, a quick look at cpufreq-dt suggests that it should -EPROBE_DEFER if
->> the regulator isn't ready yet.  Why doesn't that work?
-> sorry for not being clear:
-> I was under the impression that cpufreq-dt wouldn't handle -EPROBE_DEFER.
-> I'm not sure why I assumed that. As you already said: deferred probing
-> of the regulator works fine.
+>> The big thing is just making sure that we don't regress on the fix in
+>> selinux/next if/when David's mount rework hits Linus' tree.
+> FWIW, the whole thing is getting massaged/reordered/etc. and I would
+> like some input from you guys at some point - assuming that I recover
+> the ability to talk about LSM without obscenities...
 >
->> > there's still a benefit with this change: your Odroid-C1 in your
->> > KernelCI lab would also be able to change the CPU frequency (so in
->> > case something breaks we could spot it there).
->> > will you accept this patch after I updated the description to mention
->> > that it's for KernelCI test coverage?
->>
->> Possibly, but I'd still rather see the dependencies worked out correctly
->> so that this can be module, and cpufreq-dt would defer until it's ready.
-> KernelCI shows multiple "pwm-regulator regulator-vcck: Failed to get
-> PWM: -517" messages on Odroid-C1.
-> however, what I failed to notice so far is that there's a
-> "pwm-regulator: supplied by regulator-dummy" at the end of the boot
-> process. does this mean that the Odroid-C1 in your KernelCI lab can
-> load kernel modules? in that case this patch can be ignored.
+> Question: what *should* happen if we try to cross into a submount and find
+> that the thing on the other side is already mounted elsewhere, with incompatible
+> LSM options?  Ditto for referrals, with an extra twist - what if we are given
+> 3 alternatives, the first two already mounted elsewhere with incompatible
+> options, the third one not mounted anywhere yet?
 
-All boards in my lab can load modules.  The boot with a minimal
-buildroot-based ramdisk that uses eudev, so any drivers that are present
-in DT will be loaded (if they're modules) or probed.
+I fear that the safe answer and the containers answer are likely
+to differ. The safe answer has to be to refuse the mount.
 
-> (I will still send a PWM regulator related patch: that "Failed to get
-> PWM: -517" message is very noisy and we typically suppress that in
-> other drivers)
+> Incidentally, should smack have ->sb_clone_mnt_opts()?
 
-Sure, no objections to that one.
+Probably, but I could never figure out what it was for,
+and haven't identified a problem with not using it.
 
-Kevin
