@@ -2,109 +2,152 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06151C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4A5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E5E20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:57:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TrBpvCcB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E5E20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id A33F820868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:59:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33F820868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeK3MEx (ORCPT
+        id S1727147AbeK3MHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 07:04:53 -0500
-Received: from sonic308-18.consmr.mail.ne1.yahoo.com ([66.163.187.41]:38065
-        "EHLO sonic308-18.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726446AbeK3MEx (ORCPT
+        Fri, 30 Nov 2018 07:07:15 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38726 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeK3MHP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 07:04:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543539445; bh=J4nLeP95WbfL0BkTFk9z/3qeuEz3I6HjDn4j+/BheUU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=TrBpvCcBF0hTexebC8KH1EkfEk4bKSvevtkvz8JLTtG+pWIGkTMGJfBN909A+yV/tc0pZGHEnAsQvkQz2HxhEKhoqa0d0xEqo2lhoMKYZvIsezJ3uX0A3xIj5Z1u47v0sQBGfrqdwn4NNWBIJzqQ/NbihnJZR76NdtiF4wsaSRiQMh9ttkwAHa5asWv06vML4bDPz8yMCkLWAyG269o4POvv57If6OvHiJoMhb1XOelOoWJjv2h0XNL/iluVOW1QUf3hfVSEWF1iIDhUhj9m0hCywhqIN5NAHKbiu/sJFeoHCItWGwzAFH25QYCl6vHb/jpCfjXHuZwBFGadXK8Tsg==
-X-YMail-OSG: owO.R9UVM1lcYXeKJccy0lRaug4m5xb.SHeVvP63ufn1eD8Pl7vxy5TiU5NKXwi
- SXi1d.WUU5wR7WpH5yudlTLv3quiQ6yvgSeME3Ecb_EIk9.T2dMs5RYiSGLEeb0U9wbFTZCB9mQW
- V0bK4XDbRxFTE_XEHWEKgc4cE6UFMg8TYQj7bL5H8Z14zC0kYsGPGEkg1qz5mAU9HhasuD6VL7Os
- q6e8t7jug29L89O1iA.BYx5wJ7zRNYU6huNu289LXCIeXink13ohUuDidZmTEI0xMaBK8nKJY6CH
- qLIuR2T6rCOTONsAqGYE59iYPiD4KkbeP9mwEoqjTO4shzDuAF_8o4iuna.XR.Yvr7WSIktJTwqv
- JcWenaixAlWOL.sW83y5I5Hv7IsNxHNVLAmK0YJXfKpCDXYact00DsvbXy6s0s37hmC4x4nB2tXe
- zQl38sKFuwiA7aNJagWFbUU.JW1EKNR2.3dUvs65dShGermRq0WPRHacvsDakgRRdAnSOEIOtnWC
- 8CEzvGhboiqHDcLucnFs8gQRzPVF8RwV4c9PvScPs6uEladQ7NMxIV5GRsYSIE1qtGB_6wCM8VVH
- cRvsNSKY5NlKDh5j5va1n00mPwl8t3NjkTnW94K340yssRp3fbZFdFptczkXLlmD8cNmmv9aFEIt
- 4sbqBHZGpyHu6j1hgPYVd1HwfkSwtQ3tYKhL7jlgg.i5EXC3x6avOO5txZ75gO7GAxjZV3KFhvhs
- 7HAqHJA9NcP3tRe0gP__8D3Cfrw1d8KmmyPebOkJGs7p5JmUrTEIqr_9nGRTE7QMsj.OTP2DJh0X
- fN8eZ9hQr9Fs02X0yTRrUuwmaG12rDqpNNLE0lZR_UKVwZeiVv0uhbJLbJFvQmYqqubMRGztXKrJ
- fq.DYpm_lP3vTT0YOcC.jWliXhNV4mjCVKk7nWdN7zbap_VrSRnkLQtIBAQB47o9Uvlq8kSsaHa3
- tDKFSalLhuDn4FfO9lgE3V4U9Ci3p75vs1AoacrY7f5qYevx_xXQDdtYYJl0ubWSaBBC6R_DapPr
- wxBDzUm6.bloc_mn2fqKXNHXXjeheYMn3J.EVHXVDQH8oYvON5dw3Z79WntH3S8y7aFrD77aobvS
- htmL.uAlgZz.g
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 Nov 2018 00:57:25 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp416.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 971edec8246d7cdd23c63d2138fa27d5;
-          Fri, 30 Nov 2018 00:57:24 +0000 (UTC)
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-To:     Al Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>
-Cc:     omosnace@redhat.com, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>
-References: <20181127115246.00967523@canb.auug.org.au>
- <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au>
- <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
- <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
- <CAHC9VhRthWKfgYenGq6Az+jVQ+76wCeBhBcMyo9zZwv+nBhy3A@mail.gmail.com>
- <20181129235130.GI2217@ZenIV.linux.org.uk>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <84796ec6-2603-7957-b159-e4c8b1e7362c@schaufler-ca.com>
-Date:   Thu, 29 Nov 2018 16:57:20 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 30 Nov 2018 07:07:15 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q1so1904755pfi.5;
+        Thu, 29 Nov 2018 16:59:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kfVXRjRZrPPrdiUZuAjzCn7iej00UTf1A9WV8y58yxE=;
+        b=ub6//Qs13Jyn8WEyLwwYj7QtZEnhe/as0TS66+gB2MqJoRsf2go1FP9BTdmLl+oM7D
+         hm3c7AHvoF2qhWIwEtaM+qZ1Jf/ioBcQDy9AiYJ5I9xNk7c51MWgRExhGFYxlI+NT35p
+         bFTqWcyA8MSgPP3GxY30Xlus0FLUX9ZHM/1TO+ptMVtLoMLthx+gQtlZjuOekkj8CjOX
+         459s0oHaPuaxtVjRmHrV/TmSnSbPMrGH4TecHcr4khnPv2s+QYe6Uc0jokWxsNZtXwwZ
+         MdzbdeIg0dhC9Iz4C+IgfjhBzZ6iYXT+8p+D7x1kytoNtKT/0t6ZVrM1B3nJFYbsX540
+         yHcw==
+X-Gm-Message-State: AA+aEWZ/UcczsD1el/CjozolBKT5hgl2lG3EET507Af1d0VwXxGWarA1
+        Lf9ABdo9+HTfVdtxQOt5cf8=
+X-Google-Smtp-Source: AFSGD/WkG17m4Hd4xPw53F7EoAyeaaih9T+4HLo7jtIryNyNisTwTTpdVeKlVKfyCVf+5mqXQpfw5w==
+X-Received: by 2002:a62:29c3:: with SMTP id p186mr3656331pfp.117.1543539587563;
+        Thu, 29 Nov 2018 16:59:47 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id p2sm4915230pfp.125.2018.11.29.16.59.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 16:59:45 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 29 Nov 2018 16:59:42 -0800
+Date:   Thu, 29 Nov 2018 16:59:42 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     shuah <shuah@kernel.org>
+Cc:     Knut Omang <knut.omang@oracle.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, brakmo@fb.com, richard@nod.at,
+        dri-devel@lists.freedesktop.org, linux-nvdimm@lists.01.org,
+        mpe@ellerman.id.au, Tim.Bird@sony.com,
+        linux-um@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rostedt@goodmis.org, kieran.bingham@ideasonboard.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Joel Stanley <joel@jms.id.au>, linux-kselftest@vger.kernel.org,
+        khilman@baylibre.com, joe@perches.com, dan.j.williams@intel.com,
+        jdike@addtoit.com, kunit-dev@googlegroups.com,
+        hidenori.yamaji@sony.com, alan.maguire@oracle.com
+Subject: Re: [RFC v2 00/14] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20181130005942.GL4922@garbanzo.do-not-panic.com>
+References: <20181023235750.103146-1-brendanhiggins@google.com>
+ <1543036529.4680.655.camel@oracle.com>
+ <CAFd5g45oPSp870hJLDSHiMfU7Mh-EvpYcFdAaOQxecXNde5PSw@mail.gmail.com>
+ <1543434888.4680.862.camel@oracle.com>
+ <abf3aff0-dfb3-717e-f14f-02dbe5574f49@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181129235130.GI2217@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abf3aff0-dfb3-717e-f14f-02dbe5574f49@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/2018 3:51 PM, Al Viro wrote:
+On Wed, Nov 28, 2018 at 01:50:01PM -0700, shuah wrote:
+> On 11/28/18 12:54 PM, Knut Omang wrote:
+> > On Mon, 2018-11-26 at 17:41 -0800, Brendan Higgins wrote:
+> > Both approaches provide assertion macros for running tests inside the kernel,
+> > I doubt the kernel community would like to see yet two such sets of macros,
+> > with differing syntax merged. One of the good reasons to have a *framework*
+> > is that it is widely used and understood, so that people coming from one part of the
+> > kernel can easily run, understand and relate to selected tests from another part.
+> > 
+> > The goal with KTF is to allow this for any kernel, old or new, not just kernels
+> > built specifically for testing purposes. We felt that providing it as a separate git
+> > module (still open source, for anyone to contribute to) is a more efficient approach
+> > until we have more examples and experience with using it in different parts
+> > of the kernel. We can definitely post the kernel side of KTF as a patch series fairly soon
+> > if the community wants us to. Except for hybrid tests, the ktf.ko module works fine
+> > independently of any user side support, just using the debugfs interface to run and
+> > examine tests.
+> > 
+> 
+> Having test framework in the kernel sources tree has benefits. It allows
+> us (kernel developers) to do co-development of kernel features and tests
+> for these features.
 
-I've added linux-security-module to the CC list.
+Agreed!
 
-> On Thu, Nov 29, 2018 at 05:23:24PM -0500, Paul Moore wrote:
->
->>> OK, I will verify that the SELinux submount fix rebased on top of
->>> vfs/work.mount in the way I suggested above passes the same testing
->>> (seliinux-testsuite + NFS crossmnt reproducer). I am now building two
->>> kernels (vfs/work.mount with and without the fix) to test. Let me know
->>> if there is anything more to do.
->> Thanks.
->>
->> The big thing is just making sure that we don't regress on the fix in
->> selinux/next if/when David's mount rework hits Linus' tree.
-> FWIW, the whole thing is getting massaged/reordered/etc. and I would
-> like some input from you guys at some point - assuming that I recover
-> the ability to talk about LSM without obscenities...
->
-> Question: what *should* happen if we try to cross into a submount and find
-> that the thing on the other side is already mounted elsewhere, with incompatible
-> LSM options?  Ditto for referrals, with an extra twist - what if we are given
-> 3 alternatives, the first two already mounted elsewhere with incompatible
-> options, the third one not mounted anywhere yet?
+> It encourages developers to write regression tests. More importantly,
+> kernel features and tests for these features are included in the same
+> release in most cases and/or allows us freedom to do so if test framework
+> and tests are part of the kernel sources.
+> 
+> We have seen this with our experience with kselftest. It would not have
+> see the same level of attention and growth if it stayed outside the
+> kernel sources.
+> 
+> Most kernel developers would not want to include a externally maintained
+> module for testing. As a general rule, it has to be easy to run tests.
+> 
+> > I think there are good uses cases for having the ability to maintain a
+> > single source for tests that can be run against multiple kernels,
+> > also distro kernels that the test framework cannot expect to be able to modify,
+> > except from using the module interfaces.
+> 
+> Same reasons as above. Having the tests included in the kernel sources
+> makes it easier for distros to run those tests and include running them
+> during their qualification.
 
-I fear that the safe answer and the containers answer are likely
-to differ. The safe answer has to be to refuse the mount.
+Also... selftests are an example of tests which *are* upstream and yet
+there are teams out there using them to test these tests on older
+kernels. So the scripts for instance are supposed to work with older
+kernels. So if you expand on a feature your selftest script should
+detect if the new mechanism is present or not, and also be backward
+compatible with older kernels.
 
-> Incidentally, should smack have ->sb_clone_mnt_opts()?
+> > And there are good arguments for having (at least parts of)
+> > the test framework easily available within the kernel under test.
+> > 
+> 
+> When Kernel unit, functional, and regressions tests reside in the kernel
+> sources, they evolve quicker as kernel developers contribute tests as
+> part of their kernel work-flow. Maintaining tests and framework
+> separately will make it harder to maintain them and keep them updated
+> for us the kernel community.
 
-Probably, but I could never figure out what it was for,
-and haven't identified a problem with not using it.
+Agreed!
 
+Also, I actually see no issue with having *both* kunit / ktest merged
+upstream. IMHO we should not be forcing people to pick one or the other
+but rather we should: let the best test framework win. Similar as we
+did with LSMs. Each test framework has its own gains / advantages.
+
+  Luis
