@@ -2,72 +2,76 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC20C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFDAC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 517602145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 739CB2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qCHLXK7+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517602145D
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1nf6iPuU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739CB2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbeLAAwa (ORCPT
+        id S1727038AbeLAAwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:52:30 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34643 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726409AbeLAAw3 (ORCPT
+        Fri, 30 Nov 2018 19:52:32 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36806 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbeLAAwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:52:29 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j2so5358907wrw.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:43:07 -0800 (PST)
+        Fri, 30 Nov 2018 19:52:31 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u3so5337557wrs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:43:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qJ/wHCT9A5Hgbiug3pEAgTUcxhEEU46YzYDd7i4hsM8=;
-        b=qCHLXK7+E/G9sKCBzSLooSbpPG1k1hW8xhw6NAPD7Pv3Wvz2yqOxbxb6ynFo/HmemP
-         r4rzaxsEFE9L6qsN18xP+SgDJu0PwuZm+L8Mg1d0IFlyMunNBWE6XS0KjHMcQJl4lY5N
-         C+66WJyzWBdjEPWc8zTAbWYPOCsNop9F3IuuBddo9gGanbEFPVdZhWST00P8NIjlGCVz
-         EN3S8Ymm+gHpotTvUGEXB3z38/EMA1dgdQQIJHN37LmG1RQv8T66fckZK1DIWi/PerDZ
-         Lfk2OQsW/eN/Qd6dKVTW6rRux6bnPplQ/6rfJvH4GJ2C6bkGBd0euuY5632sC6krMwL4
-         p1sA==
+        bh=gyebw/EI077PXzjcmm/oCYFx4PvbCD+M6lZz10KG+WU=;
+        b=1nf6iPuU+OMti4OPU4Mgq4GLgftxYRFhZMkbRY35GSB3l6VCAa8wEtcLy7wfR6qmtI
+         ra4BidzI2IvcmIgfBxK49At5qgzN1L9SrheHEOmWe9zThPkP0G9+nE60zjz11aD0acIv
+         6XjRHG95qK+rOS43XYnGamqJebqwRintYi6igSvbPSD7AKa7wXNKpWfSVy7TvD3/p4Oa
+         DApExTQfrAM42n8W3JdEO2oXglD/WYSLkANip7C984Ppuis4IroTBuGuy75UDa5BuWGd
+         zBNDErS9WQUEVDklsFM8T9iklJDE2Cc96dfhZ1hGN20UO7Hn6zNRqE4/qDPQVoe+iSNX
+         BaXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qJ/wHCT9A5Hgbiug3pEAgTUcxhEEU46YzYDd7i4hsM8=;
-        b=Wpqyw+gTNrLANgy3SIR7b19fiv8TDw2ed9VsDwn0he0nK7koo9KrTJlJvpZgncHnVt
-         6/ol3TxsXlXa6UV9HWAlf89z/2zC2gR/xzjYDiYFxN+Zc2GUnU8RiKzlcStSE6IxLT46
-         KcYJAGy0qRSV2By9Qmb1ZVau6Ilt7/VKGFkYsL2qT1pwUWinwz+upeXykXhUyNdGMFGN
-         BtYCNEyxX4E6I/dQOo0lgxKHYs1zy5OmzuPMUuVQYd4cj2VfFB1A4FC59XUMbk0ukRIS
-         PTAtk9cV1rcLriDF9PBxC/SUbTGSpJ4aD6qQPgLwAvfuKYZ5AhU/VOgsm67r9Z3rGKHz
-         rPSw==
-X-Gm-Message-State: AA+aEWbPE5ffwsIEH+NkRdn0d5I0PaH2ejBeZJ+/OOifB9tQTCFW1Xou
-        h4kjCZBkeWEQzhCRa6nWRv1b5Q==
-X-Google-Smtp-Source: AFSGD/WaDGIQ6dCxjaD5ILlgxzIzVOcfWabOeivthI7kQleo43mesCmXERcmhsdKS04Q/+ThGHHNnw==
-X-Received: by 2002:adf:83e7:: with SMTP id 94mr5040067wre.278.1543585386694;
-        Fri, 30 Nov 2018 05:43:06 -0800 (PST)
+        bh=gyebw/EI077PXzjcmm/oCYFx4PvbCD+M6lZz10KG+WU=;
+        b=CtCwMq+a6nMtA+gfD4dV02/gGBYa7CSd2Slb+DosUa435KkTQh1IzgN3vn3h2G5E31
+         1pie5IN3f8nRmO/kXGuS0FMZTwAE3YxggzBChaePpmKVNaf7EJhD7UWuPxHCkCzUhcve
+         mtwRIALM4CvVqj70jnslUtA+BeAnOOu5yCE52GUI9M0IXBsPQ2RNmUNT3RAAvrM3lnFo
+         zXpYicNpIWmeqnsJbgKJf0q3hDGX3QZc6St51IQGv2rfef0oVc7lNGfjQp6b1ZPUhCiZ
+         VmlBBbxQ0QLyIgXiQUXD8Ux6lf8CzCT5KzvICAcaEQY70KSdRsauiBr4HktUOOXgzBTB
+         U/Yg==
+X-Gm-Message-State: AA+aEWblrsIyW4SqoXrw00LAsDidenYV1GqkEAiZTBfxRv497c+pEfI9
+        uVwXHAIntfSdI/Lkd7j+AOZ3UMYiP4i1Yg==
+X-Google-Smtp-Source: AFSGD/W1wWdj6sMnwgPoBoRb3O1xCMLMLycnaXW4nFAesnJyh8OuWm0L1gPMUXCRluuD9xFcg3jW2Q==
+X-Received: by 2002:adf:ef0d:: with SMTP id e13mr4935471wro.29.1543585388974;
+        Fri, 30 Nov 2018 05:43:08 -0800 (PST)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 125sm6864898wml.35.2018.11.30.05.43.05
+        by smtp.gmail.com with ESMTPSA id 125sm6864898wml.35.2018.11.30.05.43.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 05:43:06 -0800 (PST)
+        Fri, 30 Nov 2018 05:43:08 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com
+        Laurent.pinchart@ideasonboard.com,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        maxime.ripard@bootlin.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 2/8] drm/meson: add HDMI div40 TMDS mode
-Date:   Fri, 30 Nov 2018 14:42:55 +0100
-Message-Id: <20181130134301.17963-3-narmstrong@baylibre.com>
+        linux-kernel@vger.kernel.org, Zheng Yang <zhengyang@rock-chips.com>
+Subject: [PATCH RFC v2 4/8] drm/bridge: dw-hdmi: add support for YUV420 output
+Date:   Fri, 30 Nov 2018 14:42:57 +0100
+Message-Id: <20181130134301.17963-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181130134301.17963-1-narmstrong@baylibre.com>
 References: <20181130134301.17963-1-narmstrong@baylibre.com>
@@ -78,69 +82,227 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for TMDS Clock > 3.4GHz for HDMI2.0 display modes.
+In order to support the HDMI2.0 YUV420 display modes, this patch
+adds support for the YUV420 TMDS Clock divided by 2 and the controller
+passthrough mode.
 
+YUV420 Synopsys PHY support will need some specific configuration table
+to support theses modes.
+
+This patch is based on work from Zheng Yang <zhengyang@rock-chips.com> in
+the Rockchip Linux 4.4 BSP at [1]
+
+[1] https://github.com/rockchip-linux/kernel/tree/release-4.4
+
+Cc: Zheng Yang <zhengyang@rock-chips.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/meson/meson_dw_hdmi.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 68 ++++++++++++++++++-----
+ 1 file changed, 54 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index 807111ebfdd9..b8775102b100 100644
---- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -365,7 +365,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
- 	unsigned int wr_clk =
- 		readl_relaxed(priv->io_base + _REG(VPU_HDMI_SETTING));
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index fcd941d52753..4a9a24e854db 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -99,6 +99,7 @@ struct hdmi_vmode {
+ 	unsigned int mpixelclock;
+ 	unsigned int mpixelrepetitioninput;
+ 	unsigned int mpixelrepetitionoutput;
++	unsigned int mtmdsclock;
+ };
  
--	DRM_DEBUG_DRIVER("%d:\"%s\"\n", mode->base.id, mode->name);
-+	DRM_DEBUG_DRIVER("%d:\"%s\" div%d\n", mode->base.id, mode->name,
-+			 mode->clock > 340000 ? 40 : 10);
+ struct hdmi_data_info {
+@@ -543,7 +544,7 @@ static void hdmi_init_clk_regenerator(struct dw_hdmi *hdmi)
+ static void hdmi_clk_regenerator_update_pixel_clock(struct dw_hdmi *hdmi)
+ {
+ 	mutex_lock(&hdmi->audio_mutex);
+-	hdmi_set_clk_regenerator(hdmi, hdmi->hdmi_data.video_mode.mpixelclock,
++	hdmi_set_clk_regenerator(hdmi, hdmi->hdmi_data.video_mode.mtmdsclock,
+ 				 hdmi->sample_rate);
+ 	mutex_unlock(&hdmi->audio_mutex);
+ }
+@@ -552,7 +553,7 @@ void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate)
+ {
+ 	mutex_lock(&hdmi->audio_mutex);
+ 	hdmi->sample_rate = rate;
+-	hdmi_set_clk_regenerator(hdmi, hdmi->hdmi_data.video_mode.mpixelclock,
++	hdmi_set_clk_regenerator(hdmi, hdmi->hdmi_data.video_mode.mtmdsclock,
+ 				 hdmi->sample_rate);
+ 	mutex_unlock(&hdmi->audio_mutex);
+ }
+@@ -653,6 +654,20 @@ static bool hdmi_bus_fmt_is_yuv422(unsigned int bus_format)
+ 	}
+ }
  
- 	/* Enable clocks */
- 	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL, 0xffff, 0x100);
-@@ -385,9 +386,17 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
- 	/* Enable normal output to PHY */
- 	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_BIST_CNTL, BIT(12));
- 
--	/* TMDS pattern setup (TOFIX pattern for 4k2k scrambling) */
--	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0x001f001f);
--	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23, 0x001f001f);
-+	/* TMDS pattern setup (TOFIX Handle the YUV420 case) */
-+	if (mode->clock > 340000) {
-+		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0);
-+		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
-+				  0x03ff03ff);
-+	} else {
-+		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01,
-+				  0x001f001f);
-+		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
-+				  0x001f001f);
++static bool hdmi_bus_fmt_is_yuv420(unsigned int bus_format)
++{
++	switch (bus_format) {
++	case MEDIA_BUS_FMT_UYYVYY8_0_5X24:
++	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
++	case MEDIA_BUS_FMT_UYYVYY12_0_5X36:
++	case MEDIA_BUS_FMT_UYYVYY16_0_5X48:
++		return true;
++
++	default:
++		return false;
 +	}
- 
- 	/* Load TMDS pattern */
- 	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_CNTL, 0x1);
-@@ -413,6 +422,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
- 	/* Disable clock, fifo, fifo_wr */
- 	regmap_update_bits(priv->hhi, HHI_HDMI_PHY_CNTL1, 0xf, 0);
- 
-+	dw_hdmi_set_high_tmds_clock_ratio(hdmi);
++}
 +
- 	msleep(100);
+ static int hdmi_bus_fmt_color_depth(unsigned int bus_format)
+ {
+ 	switch (bus_format) {
+@@ -882,7 +897,8 @@ static void hdmi_video_packetize(struct dw_hdmi *hdmi)
+ 	u8 val, vp_conf;
  
- 	/* Reset PHY 3 times in a row */
-@@ -562,6 +573,11 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 		mode->vdisplay, mode->vsync_start,
- 		mode->vsync_end, mode->vtotal, mode->type, mode->flags);
+ 	if (hdmi_bus_fmt_is_rgb(hdmi->hdmi_data.enc_out_bus_format) ||
+-	    hdmi_bus_fmt_is_yuv444(hdmi->hdmi_data.enc_out_bus_format)) {
++	    hdmi_bus_fmt_is_yuv444(hdmi->hdmi_data.enc_out_bus_format) ||
++	    hdmi_bus_fmt_is_yuv420(hdmi->hdmi_data.enc_out_bus_format)) {
+ 		switch (hdmi_bus_fmt_color_depth(
+ 					hdmi->hdmi_data.enc_out_bus_format)) {
+ 		case 8:
+@@ -1036,7 +1052,7 @@ EXPORT_SYMBOL_GPL(dw_hdmi_phy_i2c_write);
+  */
+ void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi)
+ {
+-	unsigned long mtmdsclock = hdmi->hdmi_data.video_mode.mpixelclock;
++	unsigned long mtmdsclock = hdmi->hdmi_data.video_mode.mtmdsclock;
  
-+	/* If sink max TMDS clock < 340MHz, we reject the HDMI2.0 modes */
-+	if (mode->clock > 340000 &&
-+	    connector->display_info.max_tmds_clock < 340000)
-+		return MODE_BAD;
+ 	/* Control for TMDS Bit Period/TMDS Clock-Period Ratio */
+ 	if (hdmi->connector.display_info.hdmi.scdc.supported) {
+@@ -1198,6 +1214,8 @@ static int hdmi_phy_configure_dwc_hdmi_3d_tx(struct dw_hdmi *hdmi,
+ 	const struct dw_hdmi_curr_ctrl *curr_ctrl = pdata->cur_ctr;
+ 	const struct dw_hdmi_phy_config *phy_config = pdata->phy_config;
+ 
++	/* TOFIX Will need 420 specific PHY configuration tables */
 +
- 	/* Check against non-VIC supported modes */
- 	if (!vic) {
- 		status = meson_venc_hdmi_supported_mode(mode);
+ 	/* PLL/MPLL Cfg - always match on final entry */
+ 	for (; mpll_config->mpixelclock != ~0UL; mpll_config++)
+ 		if (mpixelclock <= mpll_config->mpixelclock)
+@@ -1245,6 +1263,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ 	const struct dw_hdmi_phy_data *phy = hdmi->phy.data;
+ 	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+ 	unsigned long mpixelclock = hdmi->hdmi_data.video_mode.mpixelclock;
++	unsigned long mtmdsclock = hdmi->hdmi_data.video_mode.mtmdsclock;
+ 	int ret;
+ 
+ 	dw_hdmi_phy_power_off(hdmi);
+@@ -1273,7 +1292,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+ 	}
+ 
+ 	/* Wait for resuming transmission of TMDS clock and data */
+-	if (mpixelclock > HDMI14_MAX_TMDSCLK)
++	if (mtmdsclock > HDMI14_MAX_TMDSCLK)
+ 		msleep(100);
+ 
+ 	return dw_hdmi_phy_power_on(hdmi);
+@@ -1383,6 +1402,9 @@ static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 	struct hdmi_avi_infoframe frame;
+ 	u8 val;
+ 
++	if (hdmi_bus_fmt_is_yuv420(hdmi->hdmi_data.enc_out_bus_format))
++		is_hdmi2_sink = true;
++
+ 	/* Initialise info frame from DRM mode */
+ 	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, is_hdmi2_sink);
+ 
+@@ -1390,6 +1412,8 @@ static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 		frame.colorspace = HDMI_COLORSPACE_YUV444;
+ 	else if (hdmi_bus_fmt_is_yuv422(hdmi->hdmi_data.enc_out_bus_format))
+ 		frame.colorspace = HDMI_COLORSPACE_YUV422;
++	else if (hdmi_bus_fmt_is_yuv420(hdmi->hdmi_data.enc_out_bus_format))
++		frame.colorspace = HDMI_COLORSPACE_YUV420;
+ 	else
+ 		frame.colorspace = HDMI_COLORSPACE_RGB;
+ 
+@@ -1547,15 +1571,18 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 	struct drm_hdmi_info *hdmi_info = &hdmi->connector.display_info.hdmi;
+ 	struct hdmi_vmode *vmode = &hdmi->hdmi_data.video_mode;
+ 	int hblank, vblank, h_de_hs, v_de_vs, hsync_len, vsync_len;
+-	unsigned int vdisplay;
++	unsigned int vdisplay, hdisplay;
+ 
+-	vmode->mpixelclock = mode->clock * 1000;
++	vmode->mtmdsclock = vmode->mpixelclock = mode->clock * 1000;
+ 
+ 	dev_dbg(hdmi->dev, "final pixclk = %d\n", vmode->mpixelclock);
+ 
++	if (hdmi_bus_fmt_is_yuv420(hdmi->hdmi_data.enc_out_bus_format))
++		vmode->mtmdsclock /= 2;
++
+ 	/* Set up HDMI_FC_INVIDCONF */
+ 	inv_val = (hdmi->hdmi_data.hdcp_enable ||
+-		   vmode->mpixelclock > HDMI14_MAX_TMDSCLK ||
++		   vmode->mtmdsclock > HDMI14_MAX_TMDSCLK ||
+ 		   hdmi_info->scdc.scrambling.low_rates ?
+ 		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_ACTIVE :
+ 		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_INACTIVE);
+@@ -1589,6 +1616,22 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 
+ 	hdmi_writeb(hdmi, inv_val, HDMI_FC_INVIDCONF);
+ 
++	hdisplay = mode->hdisplay;
++	hblank = mode->htotal - mode->hdisplay;
++	h_de_hs = mode->hsync_start - mode->hdisplay;
++	hsync_len = mode->hsync_end - mode->hsync_start;
++
++	/*
++	 * When we're setting a YCbCr420 mode, we need
++	 * to adjust the horizontal timing to suit.
++	 */
++	if (hdmi_bus_fmt_is_yuv420(hdmi->hdmi_data.enc_out_bus_format)) {
++		hdisplay /= 2;
++		hblank /= 2;
++		h_de_hs /= 2;
++		hsync_len /= 2;
++	}
++
+ 	vdisplay = mode->vdisplay;
+ 	vblank = mode->vtotal - mode->vdisplay;
+ 	v_de_vs = mode->vsync_start - mode->vdisplay;
+@@ -1607,7 +1650,7 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 
+ 	/* Scrambling Control */
+ 	if (hdmi_info->scdc.supported) {
+-		if (vmode->mpixelclock > HDMI14_MAX_TMDSCLK ||
++		if (vmode->mtmdsclock > HDMI14_MAX_TMDSCLK ||
+ 		    hdmi_info->scdc.scrambling.low_rates) {
+ 			/*
+ 			 * HDMI2.0 Specifies the following procedure:
+@@ -1645,15 +1688,14 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 	}
+ 
+ 	/* Set up horizontal active pixel width */
+-	hdmi_writeb(hdmi, mode->hdisplay >> 8, HDMI_FC_INHACTV1);
+-	hdmi_writeb(hdmi, mode->hdisplay, HDMI_FC_INHACTV0);
++	hdmi_writeb(hdmi, hdisplay >> 8, HDMI_FC_INHACTV1);
++	hdmi_writeb(hdmi, hdisplay, HDMI_FC_INHACTV0);
+ 
+ 	/* Set up vertical active lines */
+ 	hdmi_writeb(hdmi, vdisplay >> 8, HDMI_FC_INVACTV1);
+ 	hdmi_writeb(hdmi, vdisplay, HDMI_FC_INVACTV0);
+ 
+ 	/* Set up horizontal blanking pixel region width */
+-	hblank = mode->htotal - mode->hdisplay;
+ 	hdmi_writeb(hdmi, hblank >> 8, HDMI_FC_INHBLANK1);
+ 	hdmi_writeb(hdmi, hblank, HDMI_FC_INHBLANK0);
+ 
+@@ -1661,7 +1703,6 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 	hdmi_writeb(hdmi, vblank, HDMI_FC_INVBLANK);
+ 
+ 	/* Set up HSYNC active edge delay width (in pixel clks) */
+-	h_de_hs = mode->hsync_start - mode->hdisplay;
+ 	hdmi_writeb(hdmi, h_de_hs >> 8, HDMI_FC_HSYNCINDELAY1);
+ 	hdmi_writeb(hdmi, h_de_hs, HDMI_FC_HSYNCINDELAY0);
+ 
+@@ -1669,7 +1710,6 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 	hdmi_writeb(hdmi, v_de_vs, HDMI_FC_VSYNCINDELAY);
+ 
+ 	/* Set up HSYNC active pulse width (in pixel clks) */
+-	hsync_len = mode->hsync_end - mode->hsync_start;
+ 	hdmi_writeb(hdmi, hsync_len >> 8, HDMI_FC_HSYNCINWIDTH1);
+ 	hdmi_writeb(hdmi, hsync_len, HDMI_FC_HSYNCINWIDTH0);
+ 
 -- 
 2.19.2
 
