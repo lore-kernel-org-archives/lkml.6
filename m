@@ -7,63 +7,65 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C8CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FB4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E7B2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A93120834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:38:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IT5RmY0s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E7B2145D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxNT4eYk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A93120834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbeLAKpd (ORCPT
+        id S1726759AbeLAKtL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 05:45:33 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45491 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeLAKpc (ORCPT
+        Sat, 1 Dec 2018 05:49:11 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33437 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAKtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 05:45:32 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d39so6138504edb.12;
-        Fri, 30 Nov 2018 15:34:33 -0800 (PST)
+        Sat, 1 Dec 2018 05:49:10 -0500
+Received: by mail-ed1-f65.google.com with SMTP id r27so6201151eda.0;
+        Fri, 30 Nov 2018 15:38:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hRQQqjwzZGR6mtX+Vtx/c1svOrNUmlfPUpeX9+9RBbc=;
-        b=IT5RmY0ssKdNcOS9g7QX9G+8OMWU/nKYjhD/bRvphzACrQkuOW5fAOY2xZKNdoRaA/
-         rk0gR9a4uiIlNdST3L0Wn89+TW8yIe2Q6bDiinjlbar0DdPglXuncba+gTGukA8skypn
-         GeQI8zZCsdYfXHtLnxAWA3hfNBJ4jmy+pm1b2cqL/jr2TSlx1rknCcFIB5vy33sqQRAD
-         87hkVuW7PXc/k3KaRVghuuhv3plqCP1FlkYOWv60p0F30XXEdOG9MCKZUHA2NFPE4d3D
-         b3SyFUQvRf11cDd/j/ciG6k8x0lgd6T/iw7P/dORQ0wBGURsPMMllZNW2A6dZ5sSiaut
-         AzfQ==
+        bh=GuFX6rglq4ceWhwuWwI+isGe1TSvsKi3G75Rbi60msc=;
+        b=YxNT4eYkITtVsxh4F0OWbbHq5KEcCLIhMUgmw1ngdpZQxqJSrM+GI3ueWv4XXQcSKZ
+         m+6BCHhU3saepBlEUajsn17QAvwbN9XgrIkpPiB44mPw/1sltL3nPYsroc5gOCy9JIE1
+         +YU+PzVl/7SOCUZ4TfU5cXGKZs0jo/GZVk23Z8Grj0rAB5daq2hx2rd1omuh2AmrNDUS
+         JQtBmNNV/0mMEsQxFOZ3PMl7PQ9MVzVJMq7pCYi9npuOVwGQVB1WUeAUwcE85m/r5zzj
+         WM1IYbSZ5Z9Ar6y1PdKgv3mTL/nsVgvzE9Kh80xZMAzEFvtk6ADySFWe/Lmwlvji71Co
+         j0bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hRQQqjwzZGR6mtX+Vtx/c1svOrNUmlfPUpeX9+9RBbc=;
-        b=oO1kzJ+BzrevAu7K6LNeYCyctAMRA7vHn/T+8v8sdO6VnDlZRMcvnMxmfY3Wxjm1qF
-         NCg9BaH4c5bWBZavetBKhqfqRJVNF6ycsZwFDBLK4O3OUOQbsmW060JBCYUdXPi7qnkC
-         vUaVGLcoQrtGqGNofM6TdhXm6lQQzaD8X+Tfa2MRb2roQGk36qITXSg5O9CszeirKWX6
-         eBgR362Giqupb77qAHqv55+RXxOJEBCzdBDDoSetJJuyZBskEVlvWxrjwtiJqLpC1hRV
-         yON7ooSoU6ywntS89FgwzkL4VJ6AwpjNSm+i7nb5J0yjZw4sHLAm8gYX+WXb800wj7dK
-         sQxg==
-X-Gm-Message-State: AA+aEWbQ7LCfeMXZm6KACk1yJR048IWUFp/BsLEdwGEv+StzGe1kkJFJ
-        oHfQm5/ko0aiRPLzgcqaTNWYdLCG8u/0MqA1tAI=
-X-Google-Smtp-Source: AFSGD/V7zedB+Gj7jkugGHFb2ur850hbGFmVi0WxyvAcMK9SiEksoJSS/NdkA+cKPs+0vfflfMd1nER7S8v+8mTUL4Q=
-X-Received: by 2002:a17:906:2313:: with SMTP id l19-v6mr5817919eja.204.1543620873166;
- Fri, 30 Nov 2018 15:34:33 -0800 (PST)
+        bh=GuFX6rglq4ceWhwuWwI+isGe1TSvsKi3G75Rbi60msc=;
+        b=WYK0QKzXWzZl8cdcvTEk3pQfnOuOdIsNDEwCcS8iIr0kqlwzHJ1zOQhuCcrZFwInEl
+         QeVgNCWIZW1Vux5kKiu0h0LkaK4ZREIm7JKmX9NAe2sQE7YK3W/hRcCkqVOPWfUrFSY1
+         1mK7jv3u6kIdhMnW9uSArAFRk4HQgY6E4DwfuMFRlrdCPXyzPQh9ANbl8iKVnDM41k3L
+         70DwiseAn57KTZ3gfoO35eP4fXuRWXj2zK0sT/0b+q//9dzetf1/2XCTPNFCv9nrQreF
+         PDv0RkWHKrIbBNixVpK2+Aw7DbXbRRm/f1x00Dq+q7KxcZwbNW2AkaOtSlPRS0EVDopo
+         wnLQ==
+X-Gm-Message-State: AA+aEWbQBYgv2aLZr7/fZi4mgigHdPjR3Lh66j0ISoLg1D+SeGlJ0LfX
+        OEVw8oNnO5D6GRMEcYzxXd86MkbjAb/x0MWPRHQ=
+X-Google-Smtp-Source: AFSGD/XRqeRqY6ArZRU/0d+CNiwMLxKrL1xBkQkryo1D4X/k4rQnWt8o1h8CvEyZecqNO+jhqpmwhMap2aP8eYszq40=
+X-Received: by 2002:a17:906:860a:: with SMTP id o10-v6mr5892177ejx.1.1543621090554;
+ Fri, 30 Nov 2018 15:38:10 -0800 (PST)
 MIME-Version: 1.0
 References: <20181124022035.17519-1-deepa.kernel@gmail.com>
- <20181124022035.17519-3-deepa.kernel@gmail.com> <CAF=yD-KfxXK=Ta=+a8UYMcmUYzN=UokotfzSno2-xi=JeS6=0g@mail.gmail.com>
- <CABeXuvr7M4z6-7qsnBZqnXQEcGxfgVddGmsoV=iLwA-n=S5VkQ@mail.gmail.com>
-In-Reply-To: <CABeXuvr7M4z6-7qsnBZqnXQEcGxfgVddGmsoV=iLwA-n=S5VkQ@mail.gmail.com>
+ <20181124022035.17519-8-deepa.kernel@gmail.com> <CAF=yD-K=ZLZ_S=Y6YnhvvkfKQS=21ujwiGd7+JB9yDMtiX_9hg@mail.gmail.com>
+ <CAF=yD-K3Ga8qojSh5Epa6m4EYn-Lvdo=e38MnFqOKch1128VHw@mail.gmail.com>
+ <CABeXuvoDPvT45CCt2L0TReqtb1Q_-E8+toYu6qjiP0cxfdQNdA@mail.gmail.com>
+ <CAF=yD-LngkYq23Q2TCJv_0PRiAryznYRWRbqYFaQkNO=U0w9gQ@mail.gmail.com> <CABeXuvp5OaVetzJJf2L5ZE1BP_KOO2FvvG8EWn5t29eCe-=dtg@mail.gmail.com>
+In-Reply-To: <CABeXuvp5OaVetzJJf2L5ZE1BP_KOO2FvvG8EWn5t29eCe-=dtg@mail.gmail.com>
 From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Fri, 30 Nov 2018 18:33:57 -0500
-Message-ID: <CAF=yD-+DNdGpitd9TABeHjnBFRPcrN4E-AcQNmGMD-Lt9th7mw@mail.gmail.com>
-Subject: Re: [PATCH 2/8] sockopt: Rename SO_TIMESTAMP* to SO_TIMESTAMP*_OLD
+Date:   Fri, 30 Nov 2018 18:37:34 -0500
+Message-ID: <CAF=yD-J=yTunQr279x8qb5B0xdAcdmcBj6utyM1gE8QfgorQPw@mail.gmail.com>
+Subject: Re: [PATCH 7/8] socket: Add SO_TIMESTAMP[NS]_NEW
 To:     Deepa Dinamani <deepa.kernel@gmail.com>
 Cc:     David Miller <davem@davemloft.net>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -71,11 +73,8 @@ Cc:     David Miller <davem@davemloft.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Arnd Bergmann <arnd@arndb.de>,
         y2038 Mailman List <y2038@lists.linaro.org>,
-        Helge Deller <deller@gmx.de>,
-        David Howells <dhowells@redhat.com>, jejb@parisc-linux.org,
-        ralf@linux-mips.org, rth@twiddle.net,
-        linux-afs@lists.infradead.org, linux-alpha@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mips@linux-mips.org,
+        jejb@parisc-linux.org, ralf@linux-mips.org, rth@twiddle.net,
+        linux-alpha@vger.kernel.org, linux-mips@linux-mips.org,
         linux-parisc@vger.kernel.org, linux-rdma@vger.kernel.org,
         sparclinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
@@ -84,30 +83,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 5:38 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+On Fri, Nov 30, 2018 at 5:43 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
 >
-> On Sat, Nov 24, 2018 at 7:59 PM Willem de Bruijn
+> On Sun, Nov 25, 2018 at 6:33 AM Willem de Bruijn
 > <willemdebruijn.kernel@gmail.com> wrote:
 > >
-> > On Sat, Nov 24, 2018 at 3:58 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > On Sun, Nov 25, 2018 at 12:28 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
 > > >
-> > > SO_TIMESTAMP, SO_TIMESTAMPNS and SO_TIMESTAMPING options, the
-> > > way they are currently defined, are not y2038 safe.
-> > > Subsequent patches in the series add new y2038 safe versions
-> > > of these options which provide 64 bit timestamps on all
-> > > architectures uniformly.
-> > > Hence, rename existing options with OLD tag suffixes.
+> > > > > > +       if (type == SO_TIMESTAMP_NEW || type == SO_TIMESTAMPNS_NEW)
+> > > > > > +               sock_set_flag(sk, SOCK_TSTAMP_NEW);
+> > > > > > +       else
+> > > > > > +               sock_reset_flag(sk, SOCK_TSTAMP_NEW);
+> > > > > > +
+> > > > >
+> > > > > if adding a boolean whether the socket uses new or old-style
+> > > > > timestamps, perhaps fail hard if a process tries to set a new-style
+> > > > > option while an old-style is already set and vice versa. Also include
+> > > > > SO_TIMESTAMPING_NEW as it toggles the same option.
+> > >
+> > > I do not think this is a problem.
+> > > Consider this example, if there is a user application with updated
+> > > socket timestamps is linking into a library that is yet to be updated.
 > >
-> > Why do the existing interfaces have to be renamed when new interfaces are added?
+> > Also consider applications that do not use libraries.
 >
-> Existing options need to be renamed because of the macro below:
->
-> #define SO_TIMESTAMP (sizeof(time_t) == sizeof(__kernel_long_t) ? \
->             SO_TIMESTAMP_OLD : SO_TIMESTAMP_NEW)
->
-> SO_TIMESTAMP is now dependent on size of time_t because of the libc flag.
+> Arnd and I talked about this.
+> We thought that the new options should behave like the already
+> existing options. The patch already does this.
+> Eg: Today if we set SO_TIMESTAMP and then try to switch to
+> SO_TIMESTAMPNS then there is no fail.
 
-Yes, I understand the mechanism based on libc's definition of time_t
-after Arnd's explanation. Please do capture that in the commit
-message, for possible future readers who stumble upon the code with
-git blame.
+> Do you still want a hard fail?
+
+I do think that it is preferable. In general, and in this specific case.
+
+We have had had many bug reports from syzkaller where the fuzzer
+manages to trigger unexpected behavior by combining two APIs
+that were never intended to be used together.
+
+However inane the combination may be, once an API is published,
+we cannot simply add an EINVAL and stop supporting it. So it is safer
+to explicitly block unsafe combinations from the start. If there is a
+legitimate use it is always possible to loosen that restriction later.
+
+I don't see any sensible use for mixing both the old and the new
+interface on the same socket.
+
+That said, just a suggestion.
