@@ -2,156 +2,195 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7854CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8361FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3733E2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:36:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLoQF32h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3733E2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 46BE02082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:41:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BE02082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeK3WpF (ORCPT
+        id S1726724AbeK3Wuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:45:05 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50232 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeK3WpF (ORCPT
+        Fri, 30 Nov 2018 17:50:50 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:38348 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeK3Wuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:45:05 -0500
-Received: by mail-wm1-f67.google.com with SMTP id 125so5476656wmh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 03:36:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2DrRwlNhWmcexXHUFa6mLLJUB8elF/12TyOVEW08kM4=;
-        b=TLoQF32hR6MENnF9NLW/wA6P7TTyThwtxte6UePfPsozjdaakL9CRsG0sdAY/uI9US
-         zO1jbujBRtunInp3UY+EvWSj9kmBVPJFRWsVJZO/vqn4Y9SpAwCnE1ikFPE9I4wUkQ0L
-         OaQlFDHJDwUEFetDyLz5oiVl2RDwuVrbZCu4M=
+        Fri, 30 Nov 2018 17:50:50 -0500
+Received: by mail-qk1-f194.google.com with SMTP id d19so2955859qkg.5;
+        Fri, 30 Nov 2018 03:41:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2DrRwlNhWmcexXHUFa6mLLJUB8elF/12TyOVEW08kM4=;
-        b=UZ41mM7ZZJN/znBVyGml0YU7B0FsXDi4OV5igQFhlzwbkMI9r/3M6bUorDuxFqC/6J
-         /AMprQLvhxyX3lO2DDKASh4/HN7I6d0k136R2JazQlBzMII1kb8Ql491mLPO1VrHj3I5
-         XXH2n3dzjlZjd9JZcuxnEncI4qloX8Wgrqy8Sawpoi8zLaF0BBZTsLk0mVj5sasm54yx
-         NdkdYqA+ITzrx9oFg9qycrBngyJ92eImzjcyfC6EsbM2iwTnMFWvkelE33I6dxAYZpIA
-         5ixXIrPmzKqfZFaoffGJdGZwh6xSiKaznXHw/VejKOPt1E7ksgraTL1mgli0aby0jl0t
-         oZFA==
-X-Gm-Message-State: AA+aEWaC/QZzD30Om9JzskEpw9c9pz8e7kWRhTyB7Q80kVzBPkscfAEv
-        5Q2vNwP/q9tYhmVaLz3Fcyvz5g==
-X-Google-Smtp-Source: AFSGD/Wi9e4MH+kxqmhOlfAFXYN23J45T2khTsFC6ni0zW7dj0Og914SjwE6KZAHcxQgjooZakkDEg==
-X-Received: by 2002:a1c:aa92:: with SMTP id t140mr5144570wme.36.1543577763727;
-        Fri, 30 Nov 2018 03:36:03 -0800 (PST)
-Received: from harold.home ([2a01:cb1d:112:6f00:f070:d240:312e:9f99])
-        by smtp.gmail.com with ESMTPSA id a12sm4390887wro.18.2018.11.30.03.36.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 03:36:02 -0800 (PST)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        catalin.marinas@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH] arm64: drop linker script hack to hide __efistub_ symbols
-Date:   Fri, 30 Nov 2018 12:35:58 +0100
-Message-Id: <20181130113558.15198-1-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nZQHKiZnV9bH/l6eyhiWqAq+vzH9+nbM90oA3cnkcJE=;
+        b=HL5AzEmCmYUFuerpT02ODuC3QFjRk7GmaHaOZFDYYNxLjTNNWl0vIoH+3w1G5R3RDC
+         qE8y65QDGi0AyzDroZ96guCsGjk9lgXQls6Uy9HSsL6GeSwjH9ZekPTHVDETB+T2ZuCT
+         eoMvWAPYhYm5IzuL8miTJaZAx5qEFCxbe99DEN8YBm57ElZ76ENcgdJu534UOrGqBRt6
+         Ii48568lz33xPWaGQqrnfHUnC4GrEp2p016ust+Iu1P3e2o0/Qe/D8l3+Fd+iJ4aVXjI
+         IEQ4w39PpmMla0R61jfU37QNmeuVF5VuM9bRaqMxKRBYnLcd8clNBAIA7WI/AESFYWUc
+         3krA==
+X-Gm-Message-State: AA+aEWb9qiqLyl0CSn/lIVv9VXUlJAWL0va7j/xcFoRUenYOI6h1Q56g
+        eNybNgGqYkfEL+3Y+3kH9uEAVkO4xJ/Rvnn93Ow=
+X-Google-Smtp-Source: AFSGD/W2Ag7ZKN8Yo/eug3aP0ShV5cYy54AlR7JsGBuclCFMA0CVL0nYP5RNiO90mGH3zj/WbNc3HsX2ktfGSj893wE=
+X-Received: by 2002:ae9:e102:: with SMTP id g2mr4591998qkm.343.1543578109004;
+ Fri, 30 Nov 2018 03:41:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+ <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
+ <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
+ <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
+ <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
+ <87y39b2lm2.fsf@xmission.com> <20181130065606.kmilbbq46oeycjp5@brauner.io>
+In-Reply-To: <20181130065606.kmilbbq46oeycjp5@brauner.io>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 30 Nov 2018 12:41:28 +0100
+Message-ID: <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+To:     christian@brauner.io
+Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 1212f7a16af4 ("scripts/kallsyms: filter arm64's __efistub_
-symbols") updated the kallsyms code to filter out symbols with
-the __efistub_ prefix explicitly, so we no longer require the
-hack in our linker script to emit them as absolute symbols.
+On Fri, Nov 30, 2018 at 7:56 AM Christian Brauner <christian@brauner.io> wrote:
+> On Thu, Nov 29, 2018 at 11:13:57PM -0600, Eric W. Biederman wrote:
+> > Arnd Bergmann <arnd@arndb.de> writes:
+> > > On Thu, Nov 29, 2018 at 9:14 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> > >
+> > > It looks like we already have a 'struct signalfd_siginfo' that is defined in a
+> > > sane architecture-independent way, so I'd suggest we use that.
+> >
+> > Unfortunately it isn't maintained very well.  What you can
+> > express with signalfd_siginfo is a subset what you can express with
+> > siginfo.  Many of the linux extensions to siginfo for exception
+> > information add pointers and have integers right after those pointers.
+> > Not all of those linux specific extentions for exceptions are handled
+> > by signalfd_siginfo (it needs new fields).
 
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm64/kernel/image.h | 46 +++++++++++++++------------------------
- 1 file changed, 18 insertions(+), 28 deletions(-)
+Would those fit in the 30 remaining padding bytes?
 
-diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
-index a820ed07fb80..8da289dc843a 100644
---- a/arch/arm64/kernel/image.h
-+++ b/arch/arm64/kernel/image.h
-@@ -75,16 +75,6 @@
- 
- __efistub_stext_offset = stext - _text;
- 
--/*
-- * Prevent the symbol aliases below from being emitted into the kallsyms
-- * table, by forcing them to be absolute symbols (which are conveniently
-- * ignored by scripts/kallsyms) rather than section relative symbols.
-- * The distinction is only relevant for partial linking, and only for symbols
-- * that are defined within a section declaration (which is not the case for
-- * the definitions below) so the resulting values will be identical.
-- */
--#define KALLSYMS_HIDE(sym)	ABSOLUTE(sym)
--
- /*
-  * The EFI stub has its own symbol namespace prefixed by __efistub_, to
-  * isolate it from the kernel proper. The following symbols are legally
-@@ -94,28 +84,28 @@ __efistub_stext_offset = stext - _text;
-  * linked at. The routines below are all implemented in assembler in a
-  * position independent manner
-  */
--__efistub_memcmp		= KALLSYMS_HIDE(__pi_memcmp);
--__efistub_memchr		= KALLSYMS_HIDE(__pi_memchr);
--__efistub_memcpy		= KALLSYMS_HIDE(__pi_memcpy);
--__efistub_memmove		= KALLSYMS_HIDE(__pi_memmove);
--__efistub_memset		= KALLSYMS_HIDE(__pi_memset);
--__efistub_strlen		= KALLSYMS_HIDE(__pi_strlen);
--__efistub_strnlen		= KALLSYMS_HIDE(__pi_strnlen);
--__efistub_strcmp		= KALLSYMS_HIDE(__pi_strcmp);
--__efistub_strncmp		= KALLSYMS_HIDE(__pi_strncmp);
--__efistub_strrchr		= KALLSYMS_HIDE(__pi_strrchr);
--__efistub___flush_dcache_area	= KALLSYMS_HIDE(__pi___flush_dcache_area);
-+__efistub_memcmp		= __pi_memcmp;
-+__efistub_memchr		= __pi_memchr;
-+__efistub_memcpy		= __pi_memcpy;
-+__efistub_memmove		= __pi_memmove;
-+__efistub_memset		= __pi_memset;
-+__efistub_strlen		= __pi_strlen;
-+__efistub_strnlen		= __pi_strnlen;
-+__efistub_strcmp		= __pi_strcmp;
-+__efistub_strncmp		= __pi_strncmp;
-+__efistub_strrchr		= __pi_strrchr;
-+__efistub___flush_dcache_area	= __pi___flush_dcache_area;
- 
- #ifdef CONFIG_KASAN
--__efistub___memcpy		= KALLSYMS_HIDE(__pi_memcpy);
--__efistub___memmove		= KALLSYMS_HIDE(__pi_memmove);
--__efistub___memset		= KALLSYMS_HIDE(__pi_memset);
-+__efistub___memcpy		= __pi_memcpy;
-+__efistub___memmove		= __pi_memmove;
-+__efistub___memset		= __pi_memset;
- #endif
- 
--__efistub__text			= KALLSYMS_HIDE(_text);
--__efistub__end			= KALLSYMS_HIDE(_end);
--__efistub__edata		= KALLSYMS_HIDE(_edata);
--__efistub_screen_info		= KALLSYMS_HIDE(screen_info);
-+__efistub__text			= _text;
-+__efistub__end			= _end;
-+__efistub__edata		= _edata;
-+__efistub_screen_info		= screen_info;
- 
- #endif
- 
--- 
-2.19.1
+> > As originally defined siginfo had the sigval_t union at the end so it
+> > was perfectly fine on both 32bit and 64bit as it only had a single
+> > pointer in the structure and the other fields were 32bits in size.
 
+The problem with sigval_t of course is that it is incompatible between
+32-bit and 64-bit. We can add the same information, but at least on
+the syscall level that would have to be a __u64.
+
+> > Although I do feel the pain as x86_64 has to deal with 3 versions
+> > of siginfo.  A 64bit one.  A 32bit one for ia32.  A 32bit one for x32
+> > with a 64bit si_clock_t.
+
+At least you and Al have managed to get it down to a single source-level
+definition across all architectures, but there is also the (lesser) problem
+that the structure has a slightly different binary layout on each of the
+classic architectures.
+
+If we go with Andy's suggestion of having only a single binary layout
+on x86 for the new call, I'd argue that we should also make it have
+the exact same layout on all other architectures.
+
+> > > We may then also want to make sure that any system call that takes a
+> > > siginfo has a replacement that takes a signalfd_siginfo, and that this
+> > > replacement can be used to implement the old version purely in
+> > > user space.
+> >
+> > If you are not implementing CRIU and reinserting exceptions to yourself.
+> > At most user space wants the ability to implement sigqueue:
+> >
+> > AKA:
+> > sigqueue(pid_t pid, int sig, const union sigval value);
+> >
+> > Well sigqueue with it's own si_codes so the following would cover all
+> > the use cases I know of:
+> > int sendnewsig(pid_t pid, int sig, int si_code, const union sigval value);
+> >
+> > The si_code could even be set to SI_USER to request that the normal
+> > trusted SI_USER values be filled in.  si_code values of < 0 if not
+> > recognized could reasonably safely be treated as the _rt member of
+> > the siginfo union.  Or perhaps better we error out in such a case.
+> >
+> > If we want to be flexible and not have N kinds of system calls that
+> > is the direction I would go.  That is simple, and you don't need any of
+> > the rest.
+
+I'm not sure I understand what you are suggesting here. Would the
+low-level implementation of this be based on procfd, or do you
+mean that would be done for pid_t at the kernel level, plus another
+syscall for procfd?
+
+> > Alternatively we abandon the mistake of sigqueueinfo and not allow
+> > a signal number in the arguments that differs from the si_signo in the
+> > siginfo and allow passing the entire thing unchanged from sender to
+> > receiver.  That is maximum flexibility.
+
+This would be regardless of which flavor of siginfo (today's arch
+specific one, signalfd_siginfo, or a new one) we pass, right?
+
+> > signalfd_siginfo just sucks in practice.  It is larger that siginfo 104
+> > bytes versus 48.  We must deliver it to userspace as a siginfo so it
+> > must be translated.  Because of the translation signalfd_siginfo adds
+> > no flexiblity in practice, because it can not just be passed through.
+> > Finallay signalfd_siginfo does not have encodings for all of the
+> > siginfo union members, so it fails to be fully general.
+> >
+> > Personally if I was to define signalfd_siginfo today I would make it:
+> > struct siginfo_subset {
+> >       __u32 sis_signo;
+> >       __s32 sis_errno;
+> >       __s32 sis_code;
+> >         __u32 sis_pad;
+> >       __u32 sis_pid;
+> >       __u32 sis_uid;
+> >       __u64 sis_data (A pointer or integer data field);
+> > };
+> >
+> > That is just 32bytes, and is all that is needed for everything
+> > except for synchronous exceptions.  Oh and that happens to be a proper
+> > subset of a any sane siginfo layout, on both 32bit and 64bit.
+
+And that would work for signalfd and waitid_time64, but not for
+procfd_signal/kill/sendsiginfo?
+
+> > This is one of those rare times where POSIX is sane and what linux
+> > has implemented is not.
+>
+> Thanks for the in-depth explanation. So your point is that we are better
+> off if we stick with siginfo_t instead of struct signalfd_siginfo in
+> procfd_signal()?
+
+I think it means we still need more discussion. Using signalfd_siginfo
+without further changes doesn't seem sufficient because of the missing
+sigval and the excessive length adds some cost.
+
+siginfo_t as it is now still has a number of other downsides, and Andy in
+particular didn't like the idea of having three new variants on x86
+(depending on how you count). His alternative suggestion of having
+a single syscall entry point that takes a 'signfo_t __user *' but interprets
+it as compat_siginfo depending on in_compat_syscall()/in_x32_syscall()
+should work correctly, but feels wrong to me, or at least inconsistent
+with how we do this elsewhere.
+
+        Arnd
