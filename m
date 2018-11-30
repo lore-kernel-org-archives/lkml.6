@@ -2,111 +2,115 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E847AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA068C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD34720868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:14:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eea+h0pd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD34720868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A562A2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:16:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A562A2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbeLAHY2 (ORCPT
+        id S1726814AbeLAH1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 02:24:28 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:36598 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeLAHY2 (ORCPT
+        Sat, 1 Dec 2018 02:27:20 -0500
+Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:36920 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725941AbeLAH1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:24:28 -0500
-Received: by mail-yw1-f66.google.com with SMTP id y194so2802796ywg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 12:14:02 -0800 (PST)
+        Sat, 1 Dec 2018 02:27:20 -0500
+Received: from pps.filterd (m0098779.ppops.net [127.0.0.1])
+        by mx0b-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAUKFrJk013023;
+        Fri, 30 Nov 2018 14:16:50 -0600
+Authentication-Results: ppops.net;
+        dkim=pass header.d=nio365.onmicrosoft.com header.s=selector1-ni-com
+Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp2051.outbound.protection.outlook.com [104.47.49.51])
+        by mx0b-00010702.pphosted.com with ESMTP id 2p2q3dbqyg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Nov 2018 14:16:50 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=q3S5Pic8NtYPq/wIop2r0+pCeXOwXoxVoxdyrK4c+4g=;
-        b=eea+h0pdrQuuYivxgDW6Jqa0Llin2+c3V9nerXwEXt71y3Tig4Wkg8sTPwSDDIczaF
-         /C+DKanFBlAsxyPOMtanmXp81NsatwXN5cJrmRqEj3kwo0W/Ym6PLdauAge/9OovqOd5
-         gV2RhBd9vMOywPfFqIADk0fKXBXL9hgrqN1wMlzRS04Uh2Z6K0GjQC7qf9CO3WOwIQGV
-         hTlKnTW5AvUN6YRLv8LXI+PVJQ6sFurQ6GUnGRwRuSSDvmqw9602EhsiXJ053eZLHzDl
-         biDnQqnYWmpsmJIBIaJtfuHxqToUYTlQoqQ9RP43pq4b8co57qrRIG0oVFHa2pa7RKpR
-         I3EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=q3S5Pic8NtYPq/wIop2r0+pCeXOwXoxVoxdyrK4c+4g=;
-        b=AA5LfRIr6DsFiKR1gbtB6xWjMAoGy7vu7qTkasirN+vPk7BfZ7VfcQ3OXFGlVeWp9I
-         ajj4AlGmNoQrNA4bWapfaHrc2n/R/soS8fFQlKSyiB5ByRUiAZO4X2Y5YwcPlWkEhdf1
-         S8jF6/qIjLBg8dd/vuJOxC/BDG4YBfQKXjQvAfA3STCZnIBxv3xdqjBPF8k7aeN1keez
-         a5I245bO81hbX7T7+emvZWA4ClZ8gEzny5GM7dzJkiuXLRqsMp2vUbDlY5FjcvmUho0K
-         w0RGxUx9EEnV0t4rC5PsD2U0s+/Kdc+5bUYzesgK7oe7Yx47W+c0qyVjuDQ92DSq+6MO
-         8T6Q==
-X-Gm-Message-State: AA+aEWbU0V0gepE4g4SCmzr7rfd57v+3Mu3o5alBrulOpBVetgci263P
-        7s8lPeQGhn7raXnBESo0Tc7zovA12YUybnGEKB8=
-X-Google-Smtp-Source: AFSGD/XjhFZNzJQv1MxsfoZqLJFmmZQTAmmDbkMG7BoeL7hHdhjZLNmnTOUYP9B7ooY8NmjHfiKISTSed69MAQaxvN0=
-X-Received: by 2002:a81:e30b:: with SMTP id q11mr7265961ywl.490.1543608841666;
- Fri, 30 Nov 2018 12:14:01 -0800 (PST)
+ d=nio365.onmicrosoft.com; s=selector1-ni-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b2NzQrtoxOiW1uAm5xnvy9nZA9ds2SmwUDBYSp0ceJk=;
+ b=TE5Pp9y/8POTsj1D7LLBXXWjW0Wyy0HwQd1b0DtgUuXlPKlEeYgkhkHxpYCbYdwDZxArXRdf1aaaGcHKYZmoxdDAZLBo3WMhR/+ppTo08NyNHfTpBYUJcX7VVEQ5OjnV5RXTUZ9x7aBj1sS9W3JrBb6yncSO1paMATHBbrPoIKI=
+Received: from SN6PR04MB5343.namprd04.prod.outlook.com (20.177.255.221) by
+ SN6PR04MB5296.namprd04.prod.outlook.com (20.177.254.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.18; Fri, 30 Nov 2018 20:16:48 +0000
+Received: from SN6PR04MB5343.namprd04.prod.outlook.com
+ ([fe80::909f:3f84:b758:c843]) by SN6PR04MB5343.namprd04.prod.outlook.com
+ ([fe80::909f:3f84:b758:c843%2]) with mapi id 15.20.1382.020; Fri, 30 Nov 2018
+ 20:16:48 +0000
+From:   Kyle Roeschley <kyle.roeschley@ni.com>
+To:     Kalle Valo <kvalo@codeaurora.org>
+CC:     "David S . Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] ath6kl: Only use match sets when firmware supports it
+Thread-Topic: [PATCH 1/3] ath6kl: Only use match sets when firmware supports
+ it
+Thread-Index: AQHUd4FLMMXTWwhUh0Odo1dUEe1jaaVo5DkA
+Date:   Fri, 30 Nov 2018 20:16:48 +0000
+Message-ID: <20181130201646.GA16998@senary>
+References: <20181108163659.19535-1-kyle.roeschley@ni.com>
+In-Reply-To: <20181108163659.19535-1-kyle.roeschley@ni.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR16CA0060.namprd16.prod.outlook.com
+ (2603:10b6:805:ca::37) To SN6PR04MB5343.namprd04.prod.outlook.com
+ (2603:10b6:805:fd::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [130.164.62.249]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR04MB5296;6:VgodGTVCM64AT3isjNFTgARV2skFhMXSKpvnYLkZ6uvBVCUxxBo23qFrIbvAkMF6vPP+keavaZMT02wQHyYfg8E7mYL6N9sMOaKD6bZWeiWM1etl5bS1OKcjsy40iTcJPX4GMJj1DU8IHT75QF+LKQh+t9joyRU7JCCBrClzdYunBGR/C4TzFEWRoLorX3/xj2jMMzp7rH2GE1EJwVH7DxJuBkQJW0/DtYBDsl976SjeUjh0XkosFHG6MOtsBPo0E4fClc5xWBqmLC7c2eojFc5CGcYoqi9Ko2rkziUSXMmqIkpLnGu6dbNubvPk/iHx6hrJFhiE5+9iocEYIMtcyNiD8DO1ZP2GIUq4AupHdeTPiuZHO8/vOtwxgNtPu6+Nq9icjp3BloYSRH8MC57230iocC130NL71qDZTOP2B8pp2U6ArOoW5YwKUvZjC3LdCIr0M/D6/srLTLcr5j2pJQ==;5:F0c2kMb6cYeHu0Ueej1+PUTirVMpHw7gVc+dJ1xo6+4/bzknMjZhSc92d3ovv8A+u87iSRwzzCYIArK1PllfJh50NQt0zK0YppM0Jacra78KM10xGl9sryCa3yxWr2idtioB4UqLU17psSUqOkwTCiyDzO94M3dq1SF4M41ZB2M=;7:Vu9xhfNuRQI88yN9ah05qbBGaiK6+5BZXt9uBpWiaOk2VwHHPhVTN4BvhBFTNUfwAtAQCiPI7TiUhOWzbW+B67wZZZLuabiAOqlr6yv9pznmAyT7f0JQ16iEfN77Hfg8SgV/KGQCLp+qTnRzWz19Kg==
+x-ms-office365-filtering-correlation-id: f7097d64-ebc3-44d0-ed87-08d65700c1e8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR04MB5296;
+x-ms-traffictypediagnostic: SN6PR04MB5296:
+x-microsoft-antispam-prvs: <SN6PR04MB5296DB24B44BE7E2BC47DAF2F7D30@SN6PR04MB5296.namprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231453)(999002)(944501410)(52105112)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:SN6PR04MB5296;BCL:0;PCL:0;RULEID:;SRVR:SN6PR04MB5296;
+x-forefront-prvs: 087223B4DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(39850400004)(396003)(376002)(346002)(366004)(189003)(199004)(558084003)(3846002)(6116002)(478600001)(386003)(33896004)(14454004)(486006)(476003)(6506007)(186003)(102836004)(11346002)(44832011)(446003)(33716001)(305945005)(66066001)(86362001)(6512007)(9686003)(25786009)(7736002)(2906002)(1076002)(99286004)(52116002)(53936002)(8936002)(81166006)(81156014)(4326008)(6246003)(5660300001)(8676002)(68736007)(33656002)(6436002)(316002)(54906003)(97736004)(106356001)(76176011)(105586002)(6916009)(71190400001)(71200400001)(229853002)(6486002)(256004)(26005)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB5296;H:SN6PR04MB5343.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: ni.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 2chKSVtDRidmrh+s0j9vUPQLCmuUyk4FkdesRxeFG1thuDjD2ngSAkahqRNaI/skLz2HMpJs18spkHsdw4kzKBUMCpzzHT98KieP3FFFEez3l3Tf2wUzsc2dZL4/mJpP0uNozE4BplINr8R2eghWabGINZZFjYGFDks7eXRNNsQ7QinBpc4FYRU+wmvzDiJjcNzTWXV0TRA9Ws1I6GYVSoBJQfgrh9T1pr0vJuoSw5FHCfAG3knKzDCVe+NTPECDihCYadrtB5/ezFAPbOA7zFeyRsGz09kY1j6578ffBm8vughWszuskkT/nepcoV1lt/ytlPCjh8jwEPBqw7CaahO+PCdfPjaW7/AWfG7tzlE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <125A1693D3196441AB5FC3EFF6816373@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com> <20181130192737.15053-4-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181130192737.15053-4-jarkko.sakkinen@linux.intel.com>
-From:   Diego Viola <diego.viola@gmail.com>
-Date:   Fri, 30 Nov 2018 18:13:50 -0200
-Message-ID: <CA+ToGPHBNg7k3uT8yrgWuPgD113Sd44TZamYd7j=f_X2idej6Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 03/15] drm/nouveau: replace **** with a hug
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org, bskeggs@redhat.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: ni.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7097d64-ebc3-44d0-ed87-08d65700c1e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 20:16:48.7610
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5296
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-30_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=909 adultscore=0 classifier=spam adjust=30 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811300172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 5:30 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> In order to comply with the CoC, replace **** with a hug.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c        | 2 +-
->  drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-> index 9cc10e438b3d..55a0060881ea 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
-> @@ -446,7 +446,7 @@ init_ram_restrict(struct nvbios_init *init)
->  {
->         /* This appears to be the behaviour of the VBIOS parser, and *is*
->          * important to cache the NV_PEXTDEV_BOOT0 on later chipsets to
-> -        * avoid fucking up the memory controller (somehow) by reading it
-> +        * avoid hugging up the memory controller (somehow) by reading it
->          * on every INIT_RAM_RESTRICT_ZM_GROUP opcode.
->          *
->          * Preserving the non-caching behaviour on earlier chipsets just
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc
-> index 3737bd27f74e..ee364c71cc2e 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc
-> @@ -46,7 +46,7 @@
->  #define NV_PPWR_INTR_EN_SET_SUBINTR                                  0x00000800
->  #define NV_PPWR_INTR_EN_SET_WATCHDOG                                 0x00000002
->  #define NV_PPWR_INTR_EN_CLR                                              0x0014
-> -#define NV_PPWR_INTR_EN_CLR_MASK                    /* fuck i hate envyas */ -1
-> +#define NV_PPWR_INTR_EN_CLR_MASK                    /* hug i hate envyas */ -1
+Hi Kalle,
 
-Can you also capitalize the "i" please?
+Have you had a chance to check out these patches yet?
 
-Thanks,
-Diego
+--=20
+Kyle Roeschley
+Software Engineer
+National Instruments
