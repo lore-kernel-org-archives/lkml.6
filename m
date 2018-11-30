@@ -2,99 +2,148 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,
-	URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D31C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA53BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BACD20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADDDB20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BnAO76fH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BACD20863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="gzxTDBT1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADDDB20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbeLAJhJ (ORCPT
+        id S1727100AbeLAJhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:37:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33247 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeLAJhI (ORCPT
+        Sat, 1 Dec 2018 04:37:22 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45620 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725867AbeLAJhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:37:08 -0500
-Received: by mail-pl1-f193.google.com with SMTP id z23so3469503plo.0;
-        Fri, 30 Nov 2018 14:26:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9e91PKNRMLKFidBS+X7Faz89jaCCS1mf0/KRxJnJv7w=;
-        b=BnAO76fH2ImIM9NPGhjqMW3Uq5fufIRHo5AA/XncslwQ8TF0Yc4myBwHnoYOKAp5Iu
-         ppVMbQ8bXSH7uytCow/7Mg52jaH4wyeHYD5YMbGWUysadl1m56NXptQAHtH6Z4BXEYxw
-         gg8hIWPvPwpaVCn9iCoeFIiEpLj79qbvc4sG/krgDxyXxrBAH1cJn+niA6IpFGu5beXH
-         fZpFwmauibS2py4QQMz2d86HHa8AaP4Zu/PQQc6brgaZqnhF/YP15vGABPSgrSL3smBW
-         jJq4hAJMTKXkzgghAmaOExEjMAemwh0r3uuQe/O6kmy3HEYbjvzRFCgZQeLz/GGcuxzQ
-         CZVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9e91PKNRMLKFidBS+X7Faz89jaCCS1mf0/KRxJnJv7w=;
-        b=r1WwjoSOeOh0/zGymgu2rD2EKJ8byptGZIwuOGZnOgQi5xGJU3o4vIiWTIIWa/D92u
-         xEpicv+GC7maJdskpmQUNC0Ci2I4HP+N6wxFjchp07FbVer+ZBQ3C+uzHS5zvtEV7Kjg
-         /3T+IhsiqTB7y7jXmfQ6BhnFt1wWH7QGUTMTpWOoVI05Bh4/usMuLKhRJN6Fp+JpZd61
-         a6meA0/mieMizdNMa3Fp17No9KNVxuBs+sR2Sg02zQKyHQIPZ9pPEbrE6dNYYTwP2g70
-         LtFwIidNkp1JrqN20IzNyetu/pQhCaNRvVgnZQ8wnroYso0Z8xMdToQ5hA6Et4bgQJuW
-         uhzQ==
-X-Gm-Message-State: AA+aEWZMJ3hdXFX8nJ2Kh5T0zAxHmlLjEtrSgFyQaj8JhKeyFBRei1PX
-        HE2Hphz0XThW3PoWlFAfXfvJA7tH
-X-Google-Smtp-Source: AFSGD/VKrwdhs178dix9995WMsDjSuQCFSndxRd25VuYMHZiLHlLLIGPWG4rDG1tdjvpJUEg/A5ZNQ==
-X-Received: by 2002:a17:902:f83:: with SMTP id 3-v6mr7450520plz.254.1543616781360;
-        Fri, 30 Nov 2018 14:26:21 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m198sm6979855pga.10.2018.11.30.14.26.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 14:26:20 -0800 (PST)
-Date:   Fri, 30 Nov 2018 14:26:19 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 3.18 00/83] 3.18.128-stable review
-Message-ID: <20181130222619.GA13361@roeck-us.net>
-References: <20181129140138.002176596@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Sat, 1 Dec 2018 04:37:21 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CD11F8EE34C;
+        Fri, 30 Nov 2018 14:26:32 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id JHP2IsHEu-jG; Fri, 30 Nov 2018 14:26:32 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id ED8138EE0C3;
+        Fri, 30 Nov 2018 14:26:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1543616792;
+        bh=IgvIJHw97M+pXMiv3WCviWZih6dvoeamuYDxWpdjWYE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=gzxTDBT1SHvcfFM7fJDS0b7AS5fb1xW5RrPb0I9LL32mJflXK+xtnWw0VaWTW5gtl
+         k8SaYaR5SFVH0c6eP5MsZDrSwaVal7jSfV1GL0Bz4LuFBkbBeHnXINYIrqgxD7Pcrr
+         z8RXk6UFMxpbUdZQikaqQu1eaTOFewZxLs3aRLZE=
+Message-ID: <1543616788.3031.38.camel@HansenPartnership.com>
+Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Axtens <dja@axtens.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Eric Dumazet <edumazet@google.com>, federico.vaga@vaga.pv.it,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Helge Deller <deller@gmx.de>, Jonathan Corbet <corbet@lwn.net>,
+        Joshua Kinard <kumba@gentoo.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        Linux mtd <linux-mtd@lists.infradead.org>,
+        linux-parisc <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
+        Network Development <netdev@vger.kernel.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rob Herring <robh@kernel.org>,
+        sean.wang@mediatek.com,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        shannon.nelson@oracle.com, Stefano Brivio <sbrivio@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Tobin C. Harding" <me@tobin.cc>, makita.toshiaki@lab.ntt.co.jp,
+        Willem de Bruijn <willemb@google.com>,
+        Yonghong Song <yhs@fb.com>, yanjun.zhu@oracle.com
+Date:   Fri, 30 Nov 2018 14:26:28 -0800
+In-Reply-To: <20181130221219.GA25537@linux.intel.com>
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+         <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
+         <20181130195652.7syqys76646kpaph@linux-r8p5>
+         <20181130205521.GA21006@linux.intel.com>
+         <1543611662.3031.20.camel@HansenPartnership.com>
+         <20181130214405.GG23772@linux.intel.com>
+         <1543615069.3031.27.camel@HansenPartnership.com>
+         <20181130221219.GA25537@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:11:18PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.128 release.
-> There are 83 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, 2018-11-30 at 14:12 -0800, Jarkko Sakkinen wrote:
+[...]
+> I pasted this already to another response and this was probably the
+> part that ignited me to send the patch set (was a few days ago, so
+> had to revisit to find the exact paragraph):
+
+I replied in to the other thread.
+
+> "Maintainers have the right and responsibility to remove, edit, or
+> reject comments, commits, code, wiki edits, issues, and other
+> contributions that are not aligned to this Code of Conduct, or to ban
+> temporarily or permanently any contributor for other behaviors that
+> they deem inappropriate, threatening, offensive, or harmful."
 > 
-> Responses should be made by Sat Dec  1 14:01:23 UTC 2018.
-> Anything received after that time might be too late.
+> The whole patch set is neither a joke/troll nor something I would
+> necessarily want to be include myself. It does have the RFC tag.
+> 
+> As a maintainer myself (and based on somewhat disturbed feedback from
+> other maintainers) I can only make the conclusion that nobody knows
+> what the responsibility part here means.
+> 
+> I would interpret, if I read it like at lawyer at least, that even
+> for existing code you would need to do the changes postmorterm.
+
+That's wrong in the light of the interpretation document, yes.
+
+> Is this wrong interpretation?  Should I conclude that I made a
+> mistake by reading the CoC and trying to understand what it
+> *actually* says?
+
+You can't read it in isolation, you need to read it along with the
+interpretation document.  The latter was created precisely because
+there was a lot of push back on interpretation problems and ambiguities
+with the original CoC and it specifically covers this case (and a lot
+of others).
+
+James
+
+
+> After this discussion, I can say that I understand it less than
+> before.
+> 
+> /Jarkko
 > 
 
-For v3.18.127-83-gc3953c334bf6:
-
-Build results:
-	total: 160 pass: 160 fail: 0
-Qemu test results:
-	total: 223 pass: 223 fail: 0
-
-Details are available at https://kerneltests.org/builders/.
-
-Guenter
