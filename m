@@ -2,139 +2,116 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EAFC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D25C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEAC62082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:20:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEAC62082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FAF52082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:21:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SHRNoSP/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FAF52082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbeLAAaM (ORCPT
+        id S1727004AbeLAAaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:30:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:56262 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbeLAAaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:30:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 771351596;
-        Fri, 30 Nov 2018 05:20:55 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4755E3F5A0;
-        Fri, 30 Nov 2018 05:20:55 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 175601AE12D3; Fri, 30 Nov 2018 13:21:14 +0000 (GMT)
-Date:   Fri, 30 Nov 2018 13:21:14 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     catalin.marinas@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v16 15/16] arm64: kexec_file: add kernel signature
- verification support
-Message-ID: <20181130132113.GE9000@arm.com>
-References: <20181115055254.2812-1-takahiro.akashi@linaro.org>
- <20181115055254.2812-16-takahiro.akashi@linaro.org>
+        Fri, 30 Nov 2018 19:30:17 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36616 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeLAAaR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:30:17 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u3so5271029wrs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:20:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hii4n1E6S/MF9SivjoI8WUmkMeANsv0F7OC+UYYEM00=;
+        b=SHRNoSP/ZGeICILnyHd+3j9nnwOfRsb9VHSqLUlXpUEpt8d+2EcTQXX111un46V5us
+         OzfJMDspDZKry22bIEltdVa9Lcl/dyIER8H4DHGkWlzTmCBboVdS8uJ7VEIDqeY/BrEi
+         cds0w9yPhwb68+nMWokw4kp0WcyFwdFGoP8pg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hii4n1E6S/MF9SivjoI8WUmkMeANsv0F7OC+UYYEM00=;
+        b=JPS4rFupnNKfUwyWcNj7z5C01Ey1nPUJyxO1lJ65rQSZyunTZwj9J1m0qMSa8BKvhQ
+         NmK2QTFRsW4+RsB7JJNTPn7swh6dRKVDvqlSMpBDhJWb22OE0DVopPfRObdlTGc6onQE
+         OWE147zuytH6bIUDDHQp3rFv8tUsnRfMEpE0+3csc+MwpjOV43HN0AabVEiUkptAAONQ
+         0HUO0KBIvD2zTB7kDB0ojTpDXIOU9ou5WXifLab3TfUpdM7hrWp7osC7MHz7wbj4TKHs
+         oWWmzqrcyxp0b283SswJSQAgDpXywc1m1cO0+3e4qhdVHAyXA5DkfCgJ6s6hPzeX/Q5X
+         Lm1w==
+X-Gm-Message-State: AA+aEWa0/J7VSgXF/tNeeFsstuONQqy+Eet3lr0YVvHJ7nCn85ms3nTV
+        uRJNG7OfP2AdpgK3ZiN7RU+ZVw==
+X-Google-Smtp-Source: AFSGD/V92aHUVMbBYp3fz6RcF2RoqyL9tHhVdRwno+8bU0bsJwNiF2CFBYYABZXrirCywpHW3BZBEg==
+X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr5145011wrx.298.1543584058606;
+        Fri, 30 Nov 2018 05:20:58 -0800 (PST)
+Received: from ?IPv6:2a01:e35:8a7e:4790:488f:ca49:e154:1ce0? ([2a01:e35:8a7e:4790:488f:ca49:e154:1ce0])
+        by smtp.gmail.com with ESMTPSA id q3sm4281843wrn.84.2018.11.30.05.20.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 05:20:57 -0800 (PST)
+Subject: Re: [RFC PATCH 6/6] char: fastrpc: Add support for compat ioctls
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com
+References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
+ <20181130104657.14875-7-srinivas.kandagatla@linaro.org>
+ <CAK8P3a1XaGHu3NrAeLn0OEg0nL1uae_MyrP7EgadJpfeeXtR2Q@mail.gmail.com>
+From:   Thierry Escande <thierry.escande@linaro.org>
+Message-ID: <2dbd06c5-d094-6d16-2983-131d3ae24c8d@linaro.org>
+Date:   Fri, 30 Nov 2018 14:20:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115055254.2812-16-takahiro.akashi@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAK8P3a1XaGHu3NrAeLn0OEg0nL1uae_MyrP7EgadJpfeeXtR2Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 02:52:54PM +0900, AKASHI Takahiro wrote:
-> With this patch, kernel verification can be done without IMA security
-> subsystem enabled. Turn on CONFIG_KEXEC_VERIFY_SIG instead.
-> 
-> On x86, a signature is embedded into a PE file (Microsoft's format) header
-> of binary. Since arm64's "Image" can also be seen as a PE file as far as
-> CONFIG_EFI is enabled, we adopt this format for kernel signing.
-> 
-> You can create a signed kernel image with:
->     $ sbsign --key ${KEY} --cert ${CERT} Image
-> 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Reviewed-by: James Morse <james.morse@arm.com>
-> ---
->  arch/arm64/Kconfig              | 24 ++++++++++++++++++++++++
->  arch/arm64/kernel/kexec_image.c | 17 +++++++++++++++++
->  2 files changed, 41 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 93dc4d36d6db..11f3e1a00588 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -867,6 +867,30 @@ config KEXEC_FILE
->  	  for kernel and initramfs as opposed to list of segments as
->  	  accepted by previous system call.
->  
-> +config KEXEC_VERIFY_SIG
-> +	bool "Verify kernel signature during kexec_file_load() syscall"
-> +	depends on KEXEC_FILE
-> +	help
-> +	  Select this option to verify a signature with loaded kernel
-> +	  image. If configured, any attempt of loading a image without
-> +	  valid signature will fail.
-> +
-> +	  In addition to that option, you need to enable signature
-> +	  verification for the corresponding kernel image type being
-> +	  loaded in order for this to work.
-> +
-> +config KEXEC_IMAGE_VERIFY_SIG
-> +	bool "Enable Image signature verification support"
-> +	default y
-> +	depends on KEXEC_VERIFY_SIG
-> +	depends on EFI && SIGNED_PE_FILE_VERIFICATION
-> +	help
-> +	  Enable Image signature verification support.
-> +
-> +comment "Support for PE file signature verification disabled"
-> +	depends on KEXEC_VERIFY_SIG
-> +	depends on !EFI || !SIGNED_PE_FILE_VERIFICATION
-> +
->  config CRASH_DUMP
->  	bool "Build kdump crash kernel"
->  	help
-> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-> index 9f0d8b5d62d3..d1c6c54c22e3 100644
-> --- a/arch/arm64/kernel/kexec_image.c
-> +++ b/arch/arm64/kernel/kexec_image.c
-> @@ -12,7 +12,9 @@
->  #include <linux/errno.h>
->  #include <linux/kernel.h>
->  #include <linux/kexec.h>
-> +#include <linux/pe.h>
->  #include <linux/string.h>
-> +#include <linux/verification.h>
->  #include <asm/byteorder.h>
->  #include <asm/cpufeature.h>
->  #include <asm/image.h>
-> @@ -29,6 +31,10 @@ static int image_probe(const char *kernel_buf, unsigned long kernel_len)
->  				sizeof(h->magic)))
->  		return -EINVAL;
->  
-> +	pr_debug("PE format: %s\n",
-> +			memcmp(&((struct mz_hdr *)h)->magic, "MZ", 2) ?
-> +							"no" : "yes");
-> 
+Hi Arnd,
 
-Is this hunk really necessary? I'd prefer not to commit pr_debug()
-invocations.
+On 30/11/2018 13:58, Arnd Bergmann wrote:
+> On Fri, Nov 30, 2018 at 11:48 AM Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
+>>
+>> From: Thierry Escande <thierry.escande@linaro.org>
+>>
+>> This patch adds support for compat ioctl from 32 bits userland to
+>> Qualcomm fastrpc driver.
+>>
+>> Supported ioctls in this change are INIT, INVOKE, and ALLOC/FREE_DMA.
+>>
+>> Most of the work is derived from various downstream Qualcomm kernels.
+>> Credits to various Qualcomm authors who have contributed to this code.
+>> Specially Tharun Kumar Merugu <mtharu@codeaurora.org>
+>>
+>> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> Can't you just define the native ioctls so that you don't need this.
 
-Will
+There are long time defined structures that are passed as argument to 
+these ioctls and their sizes vary between 32 and 64 bits userlands, so 
+the ioctl command values.
+
+Unless I'm missing something here this also has the advantage not to be 
+compiled if CONFIG_COMPAT is not set.
+
+Regards,
+Thierry
