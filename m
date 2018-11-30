@@ -2,132 +2,111 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E626C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E847AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E593320863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD34720868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:14:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="tdDiomT7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E593320863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eea+h0pd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD34720868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeLAHXB (ORCPT
+        id S1726769AbeLAHY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 02:23:01 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51177 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbeLAHW4 (ORCPT
+        Sat, 1 Dec 2018 02:24:28 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:36598 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbeLAHY2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:22:56 -0500
-Received: by mail-it1-f196.google.com with SMTP id z7so347416iti.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 12:12:30 -0800 (PST)
+        Sat, 1 Dec 2018 02:24:28 -0500
+Received: by mail-yw1-f66.google.com with SMTP id y194so2802796ywg.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 12:14:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ObRXf9mLyt/NuESAeifDaKyQ68nJIRiXxB5ZAt6h7kw=;
-        b=tdDiomT7AQykxyaYTpRPUaiKHfc9JsfZdgs8+T2Bl10Fwcc2JDzZy7U4/u8ubsMHhr
-         UfR/asNtDTCRlUN3ukA5qDI7BWVdvHCUyKEohLCp+OA6ut80JT/DZoiXHsLJJej/alpE
-         gL9Bp8KYnFCLSihEgl8Zora8Wt2UycjXu4qFS+elzEwZlisg2N8YlfeOvi7aLlvAtMD8
-         +WDc/z/8NLxGVTcUHQwPxvRG2A7EORXysxbR5dR+TSY9Dakqh9gH2SbFp1PLRO+gEYc7
-         SFKrmgCdPkfRa4Uz9s24ISiPcJ/tvT0oaKF/LIQohia5NzfdKvrRmACnBvoDQW3rXmFv
-         uT6A==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q3S5Pic8NtYPq/wIop2r0+pCeXOwXoxVoxdyrK4c+4g=;
+        b=eea+h0pdrQuuYivxgDW6Jqa0Llin2+c3V9nerXwEXt71y3Tig4Wkg8sTPwSDDIczaF
+         /C+DKanFBlAsxyPOMtanmXp81NsatwXN5cJrmRqEj3kwo0W/Ym6PLdauAge/9OovqOd5
+         gV2RhBd9vMOywPfFqIADk0fKXBXL9hgrqN1wMlzRS04Uh2Z6K0GjQC7qf9CO3WOwIQGV
+         hTlKnTW5AvUN6YRLv8LXI+PVJQ6sFurQ6GUnGRwRuSSDvmqw9602EhsiXJ053eZLHzDl
+         biDnQqnYWmpsmJIBIaJtfuHxqToUYTlQoqQ9RP43pq4b8co57qrRIG0oVFHa2pa7RKpR
+         I3EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ObRXf9mLyt/NuESAeifDaKyQ68nJIRiXxB5ZAt6h7kw=;
-        b=RjkCdFnB4ocoLLBgbldz88XbMUwAteiaLn2/bA3BrmYnVYue/libOKDxleU8A37Rjm
-         fOSeA40Xq5rubxCyCl8oMfaAjoPnpZCSHbsb1v9VVa7OnIe5zO7rJNxPp6wQ3KLP6PZ5
-         gRE5bSiC3WLPPEn2TVQsRKq8vlej42jZu1kRym7vzw/Y3UzQCZWT8I5BH19Oc3XFm87f
-         AufQBGjIbMzgcoOzVp6w29Xc/gxbrgGW4iTi46W3gwDhklShmN3d26/60Cd4xHKFRBXT
-         /6Pg7D1TF8Dcrk8TpiPaN0KNdVbfCnW/8C7IQZHwszjMfZ8gSV4kE7Soj02Dx0rmKGhx
-         EarQ==
-X-Gm-Message-State: AA+aEWbx8YIexBRJA7SJyrLCPRN+VPlRaZCl18CGfVKm/ENGDRhRL5+M
-        8IjBvH68zw3tKAamH+paSB2ujQ==
-X-Google-Smtp-Source: AFSGD/V8lt2aypKwunPc9JsTJIRbycqRD7gHDtKE1g8rGDLqQBHdo93H+xwp6c/t3PypNID6lvgBcQ==
-X-Received: by 2002:a02:6c90:: with SMTP id w138mr6303762jab.60.1543608750409;
-        Fri, 30 Nov 2018 12:12:30 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id t124sm101335ita.3.2018.11.30.12.12.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 12:12:29 -0800 (PST)
-Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
-To:     Davidlohr Bueso <dave@stgolabs.net>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Axtens <dja@axtens.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>, federico.vaga@vaga.pv.it,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Helge Deller <deller@gmx.de>, Jonathan Corbet <corbet@lwn.net>,
-        Joshua Kinard <kumba@gentoo.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Linux mtd <linux-mtd@lists.infradead.org>,
-        linux-parisc <linux-parisc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
-        Network Development <netdev@vger.kernel.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rob Herring <robh@kernel.org>,
-        sean.wang@mediatek.com,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        shannon.nelson@oracle.com, Stefano Brivio <sbrivio@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Tobin C. Harding" <me@tobin.cc>, makita.toshiaki@lab.ntt.co.jp,
-        Willem de Bruijn <willemb@google.com>,
-        Yonghong Song <yhs@fb.com>, yanjun.zhu@oracle.com
-References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
- <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
- <20181130195652.7syqys76646kpaph@linux-r8p5>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d7c34289-f03a-b641-cc9c-00395306511d@kernel.dk>
-Date:   Fri, 30 Nov 2018 13:12:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q3S5Pic8NtYPq/wIop2r0+pCeXOwXoxVoxdyrK4c+4g=;
+        b=AA5LfRIr6DsFiKR1gbtB6xWjMAoGy7vu7qTkasirN+vPk7BfZ7VfcQ3OXFGlVeWp9I
+         ajj4AlGmNoQrNA4bWapfaHrc2n/R/soS8fFQlKSyiB5ByRUiAZO4X2Y5YwcPlWkEhdf1
+         S8jF6/qIjLBg8dd/vuJOxC/BDG4YBfQKXjQvAfA3STCZnIBxv3xdqjBPF8k7aeN1keez
+         a5I245bO81hbX7T7+emvZWA4ClZ8gEzny5GM7dzJkiuXLRqsMp2vUbDlY5FjcvmUho0K
+         w0RGxUx9EEnV0t4rC5PsD2U0s+/Kdc+5bUYzesgK7oe7Yx47W+c0qyVjuDQ92DSq+6MO
+         8T6Q==
+X-Gm-Message-State: AA+aEWbU0V0gepE4g4SCmzr7rfd57v+3Mu3o5alBrulOpBVetgci263P
+        7s8lPeQGhn7raXnBESo0Tc7zovA12YUybnGEKB8=
+X-Google-Smtp-Source: AFSGD/XjhFZNzJQv1MxsfoZqLJFmmZQTAmmDbkMG7BoeL7hHdhjZLNmnTOUYP9B7ooY8NmjHfiKISTSed69MAQaxvN0=
+X-Received: by 2002:a81:e30b:: with SMTP id q11mr7265961ywl.490.1543608841666;
+ Fri, 30 Nov 2018 12:14:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181130195652.7syqys76646kpaph@linux-r8p5>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com> <20181130192737.15053-4-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181130192737.15053-4-jarkko.sakkinen@linux.intel.com>
+From:   Diego Viola <diego.viola@gmail.com>
+Date:   Fri, 30 Nov 2018 18:13:50 -0200
+Message-ID: <CA+ToGPHBNg7k3uT8yrgWuPgD113Sd44TZamYd7j=f_X2idej6Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 03/15] drm/nouveau: replace **** with a hug
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     linux-kernel@vger.kernel.org, bskeggs@redhat.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/18 12:56 PM, Davidlohr Bueso wrote:
-> On Fri, 30 Nov 2018, Kees Cook wrote:
-> 
->> On Fri, Nov 30, 2018 at 11:27 AM Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com> wrote:
->>>
->>> In order to comply with the CoC, replace **** with a hug.
-> 
-> I hope this is some kind of joke. How would anyone get offended by reading
-> technical comments? This is all beyond me...
+On Fri, Nov 30, 2018 at 5:30 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> In order to comply with the CoC, replace **** with a hug.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c        | 2 +-
+>  drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+> index 9cc10e438b3d..55a0060881ea 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c
+> @@ -446,7 +446,7 @@ init_ram_restrict(struct nvbios_init *init)
+>  {
+>         /* This appears to be the behaviour of the VBIOS parser, and *is*
+>          * important to cache the NV_PEXTDEV_BOOT0 on later chipsets to
+> -        * avoid fucking up the memory controller (somehow) by reading it
+> +        * avoid hugging up the memory controller (somehow) by reading it
+>          * on every INIT_RAM_RESTRICT_ZM_GROUP opcode.
+>          *
+>          * Preserving the non-caching behaviour on earlier chipsets just
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc
+> index 3737bd27f74e..ee364c71cc2e 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc
+> @@ -46,7 +46,7 @@
+>  #define NV_PPWR_INTR_EN_SET_SUBINTR                                  0x00000800
+>  #define NV_PPWR_INTR_EN_SET_WATCHDOG                                 0x00000002
+>  #define NV_PPWR_INTR_EN_CLR                                              0x0014
+> -#define NV_PPWR_INTR_EN_CLR_MASK                    /* fuck i hate envyas */ -1
+> +#define NV_PPWR_INTR_EN_CLR_MASK                    /* hug i hate envyas */ -1
 
-Agree, this is insanity.
+Can you also capitalize the "i" please?
 
--- 
-Jens Axboe
-
+Thanks,
+Diego
