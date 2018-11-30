@@ -2,152 +2,171 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42721C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B47DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 058B020863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:13:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpGGzU/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058B020863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C05D42146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05D42146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbeK3QVx (ORCPT
+        id S1726693AbeK3QWJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 11:21:53 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34904 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbeK3QVw (ORCPT
+        Fri, 30 Nov 2018 11:22:09 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:44153 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbeK3QWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 11:21:52 -0500
-Received: by mail-it1-f194.google.com with SMTP id p197so7477237itp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 21:13:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mmo2hKAV4jn2oX+2Bz4e22r9nBzpV0vdm9tze62b+HA=;
-        b=hpGGzU/u7PfYM1VnObh0+9oBriyoH2mjS0JQQe4Qig3CO+dObRB5a+aYq2eD8CHY2l
-         +oyXrImgXWa2bwQGodDcEzrPc6DfJbnxNRmA+7Sgs6iz9OsDa8w3didHc09u0iXNrERj
-         DcnSOSChyirZ8sQBkKyi55vkCQkL6fm9+S3Ok=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mmo2hKAV4jn2oX+2Bz4e22r9nBzpV0vdm9tze62b+HA=;
-        b=WII4AAcvGVY7S1XvPctBYNXNqqmJ7hUcX6wLETgwSgG6fFumFfJRmfQ4wt1hsQdMbu
-         Op8frjLLpMEZ5brRFB+pwWHZam09f1Ja72Pg7YlGn1sQuz7Gm5/VfxhvEf5t0kCHGMYe
-         s96yb7h7XLpUDI6Qu15kLhEsiIBykEYaevxjOO3VlNKFhtuKartTLu+jLgggLvemWXFb
-         FAXc3nBIoxObTfQqI2FoN50hFhN4ldDFbNCVR2t1qe/I92df342g/q9HmkMTFHSdTENP
-         bQTyzEqJHSa2FMWj6mP1Q5Oh5pyv5wxWvpILrQ128N7sQH81uVXR64uS+r317+TXxQkE
-         EwLQ==
-X-Gm-Message-State: AA+aEWYHm/zsYDWQNtt3d02te6/gbSPLE3z+TGdwkhYJKlaWS3hOJFAD
-        nXWuD/HQATJzrtVP1ieyAhSS5R6hMj42Z08OXn7K/A==
-X-Google-Smtp-Source: AFSGD/UT3ygBFYlKlGEqgjU/8qShMsQdIcuOqBWrAbUZIk5dzJ5UmupaZQojQxLBFdFpm5CEWxnpsPJHm8p8+d1tIBM=
-X-Received: by 2002:a02:f42:: with SMTP id h63mr3942243jad.133.1543554827820;
- Thu, 29 Nov 2018 21:13:47 -0800 (PST)
-MIME-Version: 1.0
-References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org>
- <1543481016-18500-7-git-send-email-firoz.khan@linaro.org> <CAK8P3a0rTwm_pCtQXyn_fyJttihKJ6Gpq97mw-r5ySUNBksCig@mail.gmail.com>
-In-Reply-To: <CAK8P3a0rTwm_pCtQXyn_fyJttihKJ6Gpq97mw-r5ySUNBksCig@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Fri, 30 Nov 2018 10:43:36 +0530
-Message-ID: <CALxhOnhkQo-qx54E-sbhQG=LiZcJS549sxYpzmGbiMn2YJVhkA@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] mips: generate uapi header and system call table files
+        Fri, 30 Nov 2018 11:22:09 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gSb7q-0008Hq-OC; Thu, 29 Nov 2018 22:14:02 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gSb7p-0005dP-Ss; Thu, 29 Nov 2018 22:14:02 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+Cc:     Andy Lutomirski <luto@amacapital.net>, christian@brauner.io,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20181120105124.14733-1-christian@brauner.io>
+        <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+        <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net>
+        <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
+        <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
+        <20181129195551.woe2bl3z3yaysqb6@brauner.io>
+        <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
+        <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
+Date:   Thu, 29 Nov 2018 23:13:57 -0600
+In-Reply-To: <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
+        (Arnd Bergmann's message of "Thu, 29 Nov 2018 22:02:13 +0100")
+Message-ID: <87y39b2lm2.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1gSb7p-0005dP-Ss;;;mid=<87y39b2lm2.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+mMyLYLK4Aao5mgpRBDubB9Qyld7uZuk0=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Thanks for the email,
-
-On Thu, 29 Nov 2018 at 19:52, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thu, Nov 29, 2018 at 9:14 PM Andy Lutomirski <luto@amacapital.net> wrote:
+>> > On Nov 29, 2018, at 11:55 AM, Christian Brauner <christian@brauner.io> wrote:
+>> >> On Thu, Nov 29, 2018 at 11:22:58AM -0800, Andy Lutomirski wrote:
+>> >>> On Thu, Nov 29, 2018 at 11:17 AM Christian Brauner <christian@brauner.io> wrote:
+>> >>>> On November 30, 2018 5:54:18 AM GMT+13:00, Andy Lutomirski <luto@amacapital.net> wrote:
+>> >>
+>> >> The #1 fix would add a copy_siginfo_from_user64() or similar.
+>> >
+>> > Thanks very much! That all helped a bunch already! I'll try to go the
+>> > copy_siginfo_from_user64() way first and see if I can make this work. If
+>> > we do this I would however only want to use it for the new syscall first
+>> > and not change all other signal syscalls over to it too. I'd rather keep
+>> > this patchset focussed and small and do such conversions caused by the
+>> > new approach later. Does that sound reasonable?
+>>
+>> Absolutely. I don’t think we can change old syscalls — the ABI is set in stone.
+>> But for new syscalls, I think the always-64-bit behavior makes sense.
 >
-> On Thu, Nov 29, 2018 at 9:45 AM Firoz Khan <firoz.khan@linaro.org> wrote:
->
-> > diff --git a/arch/mips/include/uapi/asm/Kbuild b/arch/mips/include/uapi/asm/Kbuild
-> > index 7a4becd..ed4bd03 100644
-> > --- a/arch/mips/include/uapi/asm/Kbuild
-> > +++ b/arch/mips/include/uapi/asm/Kbuild
-> > @@ -1,5 +1,11 @@
-> >  # UAPI Header export list
-> >  include include/uapi/asm-generic/Kbuild.asm
-> >
-> > +generated-y += unistd_n32.h
-> > +generated-y += unistd_n64.h
-> > +generated-y += unistd_o32.h
-> > +generated-y += unistd_nr_n32.h
-> > +generated-y += unistd_nr_n64.h
-> > +generated-y += unistd_nr_o32.h
-> >  generic-y += bpf_perf_event.h
-> >  generic-y += ipcbuf.h
->
-> I'd argue that the unistd_nr_*.h headers should not be in the uapi directory
-> but instead be included only from the in-kernel header.
+> It looks like we already have a 'struct signalfd_siginfo' that is defined in a
+> sane architecture-independent way, so I'd suggest we use that.
 
-That is also fine. I can update in v4.
-Paul, Do you have any comment on this and could you confirm user
-space doesn't need this macros - __NR_N32/N64/O32_Linux,
-__NR_N32/N64/O32_Linux_syscalls ?
+Unfortunately it isn't maintained very well.  What you can
+express with signalfd_siginfo is a subset what you can express with
+siginfo.  Many of the linux extensions to siginfo for exception
+information add pointers and have integers right after those pointers.
+Not all of those linux specific extentions for exceptions are handled
+by signalfd_siginfo (it needs new fields).
 
->
->
-> > diff --git a/arch/mips/kernel/scall64-n64.S b/arch/mips/kernel/scall64-n64.S
-> > new file mode 100644
-> > index 0000000..402a085
-> > --- /dev/null
-> > +++ b/arch/mips/kernel/scall64-n64.S
-> > @@ -0,0 +1,117 @@
-> > +/*
-> > + * This file is subject to the terms and conditions of the GNU General Public
-> > + * License.  See the file "COPYING" in the main directory of this archive
-> > + * for more details.
-> > + *
-> > + * Copyright (C) 1995, 96, 97, 98, 99, 2000, 01, 02 by Ralf Baechle
-> > + * Copyright (C) 1999, 2000 Silicon Graphics, Inc.
-> > + * Copyright (C) 2001 MIPS Technologies, Inc.
-> > + */
-> > +#include <linux/errno.h>
-> > +#include <asm/asm.h>
-> > +#include <asm/asmmacro.h>
-> > +#include <asm/irqflags.h>
->
-> It looks like you change and rename this file at the same time.
-> Generally speaking, I would not do that in one patch. Either
-> leave the slightly inconsistent name unchanged, or rename
-> it in a separate patch.
+As originally defined siginfo had the sigval_t union at the end so it
+was perfectly fine on both 32bit and 64bit as it only had a single
+pointer in the structure and the other fields were 32bits in size.
 
-Ah, you catch this one.I thought it will go with out notice.
-Ok, I create one more patch in my v4.
+Although I do feel the pain as x86_64 has to deal with 3 versions
+of siginfo.  A 64bit one.  A 32bit one for ia32.  A 32bit one for x32
+with a 64bit si_clock_t.
 
-Paul, FYI, you asked me to convert 64 to n64. Here I'm changing file
-name - scall64-n64.S (previously it was scall64-64.S) also.
+> We may then also want to make sure that any system call that takes a
+> siginfo has a replacement that takes a signalfd_siginfo, and that this
+> replacement can be used to implement the old version purely in
+> user space.
 
-Thanks
-Firoz
+If you are not implementing CRIU and reinserting exceptions to yourself.
+At most user space wants the ability to implement sigqueue:
+
+AKA:
+sigqueue(pid_t pid, int sig, const union sigval value);
+
+Well sigqueue with it's own si_codes so the following would cover all
+the use cases I know of:
+int sendnewsig(pid_t pid, int sig, int si_code, const union sigval value);
+
+The si_code could even be set to SI_USER to request that the normal
+trusted SI_USER values be filled in.  si_code values of < 0 if not
+recognized could reasonably safely be treated as the _rt member of
+the siginfo union.  Or perhaps better we error out in such a case.
+
+If we want to be flexible and not have N kinds of system calls that
+is the direction I would go.  That is simple, and you don't need any of
+the rest.
 
 
->
->          Arnd
+Alternatively we abandon the mistake of sigqueueinfo and not allow
+a signal number in the arguments that differs from the si_signo in the
+siginfo and allow passing the entire thing unchanged from sender to
+receiver.  That is maximum flexibility.
+
+signalfd_siginfo just sucks in practice.  It is larger that siginfo 104
+bytes versus 48.  We must deliver it to userspace as a siginfo so it
+must be translated.  Because of the translation signalfd_siginfo adds
+no flexiblity in practice, because it can not just be passed through.
+Finallay signalfd_siginfo does not have encodings for all of the
+siginfo union members, so it fails to be fully general.
+
+Personally if I was to define signalfd_siginfo today I would make it:
+struct siginfo_subset {
+	__u32 sis_signo;
+	__s32 sis_errno;
+	__s32 sis_code;
+        __u32 sis_pad;
+	__u32 sis_pid;
+	__u32 sis_uid;
+	__u64 sis_data (A pointer or integer data field);
+};
+
+That is just 32bytes, and is all that is needed for everything
+except for synchronous exceptions.  Oh and that happens to be a proper
+subset of a any sane siginfo layout, on both 32bit and 64bit.
+
+This is one of those rare times where POSIX is sane and what linux
+has implemented is not.
+
+Eric
