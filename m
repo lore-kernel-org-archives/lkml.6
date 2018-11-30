@@ -2,147 +2,195 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38845C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2286FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36D320867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:11:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QW0W3/jl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F36D320867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B8E3C20867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:11:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E3C20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeLADUx (ORCPT
+        id S1727498AbeLADVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:20:53 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36274 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbeLADUx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:20:53 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g9so3036442plo.3;
-        Fri, 30 Nov 2018 08:11:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Rr/Hq9KzXdJ4IDycJi5BYWufMJuCHtFtIvdftRharWQ=;
-        b=QW0W3/jljDoxeuScOaaD9QtxwGr1qzPVmLGEML1xjDvRIOf8JCk8HwjwSLZ/iLjlL7
-         K6VrTG381QoeyJA0v+S7SWAgQx0bBtKJlrYxG8MB4G2iPfN0f7wLtYSmk2rfCwEeb9tu
-         QOYZ/KBYC3A3wYF8+WKIdfvh/gcR+Jr9Owi22Ykvv7qdBval1wwUdPkLtSNEjQWPzUnV
-         GC0qhF3bsuX2N9jVGX053GxdPY2z8wq5Lx3kAiPOXwxFWxbDq8DNqWyh6UaeJHnRWqjS
-         n+kKbzfPln6zovKf1VihkrgbLtC+GxBRgvJ+PREhbnmN+nPQL+hWOAfbly6fZFjeMqra
-         ZB2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Rr/Hq9KzXdJ4IDycJi5BYWufMJuCHtFtIvdftRharWQ=;
-        b=RIH6GfFaLDG2WWPjXZiKTFJbK9Kql5tdjFoF/XAR01vhVBaFWONJ7jHD7L7DlcqFvf
-         pCoG4H7hWq65jxUbZOomWUg9cgKiBvr6f6yPbNV7okYu74BCavsIoP6JF5d4CDwlieAV
-         kNkVyqEjhp5897rgaqiojNakYmF2LUdTHMDjGXNSC/L/CAG9UHuJOVqC7ZNN7Z8VQa8q
-         NjSFzhShQjpdBWCRfWcX5UqHSi5xJdM7ezo6khanpub/6yanm316CB35LPDBUXqxCQKS
-         j5bEo2YCzZSZT8bB554QfzCf5hpTMFdqjRBJBISnx/RVZrhT2ybn8b7Tmo8v8xRBmQ2N
-         CbTw==
-X-Gm-Message-State: AA+aEWZa7ByKrDB3VMbj+NdmT1g/1LcRmIhSM1MlFnpM2ZQQgu78XJuQ
-        euJ17iupgByQAC1UolbMehM=
-X-Google-Smtp-Source: AFSGD/W7VoxPLKHy3//JHb4UjAowC6/6RiiGZj+63b65PXp4dn4bXhNLFV8WDV3apFSguDtdDrgVBw==
-X-Received: by 2002:a17:902:31a4:: with SMTP id x33mr6124336plb.41.1543594264531;
-        Fri, 30 Nov 2018 08:11:04 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id z62sm8365223pfl.33.2018.11.30.08.11.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 08:11:03 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     sumit.semwal@linaro.org, gustavo@padovan.org
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] dma-buf: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Fri, 30 Nov 2018 11:11:01 -0500
-Message-Id: <20181130161101.3413-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 30 Nov 2018 22:21:17 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59512 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726659AbeLADVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:21:17 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4BEEC20701; Fri, 30 Nov 2018 17:11:27 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E1E1D206D8;
+        Fri, 30 Nov 2018 17:11:26 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2] drm/vc4: Add a debugfs entry to disable/enable the load tracker
+Date:   Fri, 30 Nov 2018 17:11:04 +0100
+Message-Id: <20181130161104.16352-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+In order to test whether the load tracker is working as expected, we
+need the ability to compare the commit result with the underrun
+indication. With the load tracker always enabled, commits that are
+expected to trigger an underrun are always rejected, so userspace
+cannot get the actual underrun indication from the hardware.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Add a debugfs entry to disable/enable the load tracker, so that a DRM
+commit expected to trigger an underrun can go through with the load
+tracker disabled. The underrun indication is then available to
+userspace and can be checked against the commit result with the load
+tracker enabled.
+
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/dma-buf/dma-buf.c    | 12 +-----------
- drivers/dma-buf/sync_debug.c | 16 +++-------------
- 2 files changed, 4 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 02f7f9a89979..7c858020d14b 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -1093,17 +1093,7 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
- 	return 0;
- }
+Changes since v1:
+* Moved all the debugfs-related functions and structure to vc4_debugfs.c.
+
+ drivers/gpu/drm/vc4/vc4_debugfs.c | 58 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/vc4/vc4_drv.c     |  2 ++
+ drivers/gpu/drm/vc4/vc4_drv.h     |  2 ++
+ drivers/gpu/drm/vc4/vc4_kms.c     |  6 +++-
+ 4 files changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_debugfs.c b/drivers/gpu/drm/vc4/vc4_debugfs.c
+index 7a0003de71ab..8f4d7fadb226 100644
+--- a/drivers/gpu/drm/vc4/vc4_debugfs.c
++++ b/drivers/gpu/drm/vc4/vc4_debugfs.c
+@@ -32,9 +32,67 @@ static const struct drm_info_list vc4_debugfs_list[] = {
  
--static int dma_buf_debug_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, dma_buf_debug_show, NULL);
--}
--
--static const struct file_operations dma_buf_debug_fops = {
--	.open           = dma_buf_debug_open,
--	.read           = seq_read,
--	.llseek         = seq_lseek,
--	.release        = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(dma_buf_debug);
+ #define VC4_DEBUGFS_ENTRIES ARRAY_SIZE(vc4_debugfs_list)
  
- static struct dentry *dma_buf_debugfs_dir;
- 
-diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
-index c4c8ecb24aa9..c0abf37df88b 100644
---- a/drivers/dma-buf/sync_debug.c
-+++ b/drivers/dma-buf/sync_debug.c
-@@ -147,7 +147,7 @@ static void sync_print_sync_file(struct seq_file *s,
- 	}
- }
- 
--static int sync_debugfs_show(struct seq_file *s, void *unused)
-+static int sync_info_debugfs_show(struct seq_file *s, void *unused)
++static int vc4_debugfs_load_tracker_get(struct seq_file *m, void *data)
++{
++	struct drm_device *dev = m->private;
++	struct vc4_dev *vc4 = to_vc4_dev(dev);
++
++	if (vc4->load_tracker_enabled)
++		seq_printf(m, "enabled\n");
++	else
++		seq_printf(m, "disabled\n");
++
++	return 0;
++}
++
++static ssize_t vc4_debugfs_load_tracker_set(struct file *file,
++					    const char __user *ubuf,
++					    size_t len, loff_t *offp)
++{
++	struct seq_file *m = file->private_data;
++	struct drm_device *dev = m->private;
++	struct vc4_dev *vc4 = to_vc4_dev(dev);
++	char buf[32] = {};
++
++	if (len >= sizeof(buf))
++		return -EINVAL;
++
++	if (copy_from_user(buf, ubuf, len))
++		return -EFAULT;
++
++	if (!strncasecmp(buf, "enable", 6))
++		vc4->load_tracker_enabled = true;
++	else if (!strncasecmp(buf, "disable", 7))
++		vc4->load_tracker_enabled = false;
++	else
++		return -EINVAL;
++
++	return len;
++}
++
++static int vc4_debugfs_load_tracker_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, vc4_debugfs_load_tracker_get, inode->i_private);
++}
++
++static const struct file_operations vc4_debugfs_load_tracker_fops = {
++	.owner = THIS_MODULE,
++	.open = vc4_debugfs_load_tracker_open,
++	.read = seq_read,
++	.write = vc4_debugfs_load_tracker_set,
++};
++
+ int
+ vc4_debugfs_init(struct drm_minor *minor)
  {
- 	struct list_head *pos;
++	struct dentry *dentry;
++
++	dentry = debugfs_create_file("load_tracker", S_IRUGO | S_IWUSR,
++				     minor->debugfs_root, minor->dev,
++				     &vc4_debugfs_load_tracker_fops);
++	if (!dentry)
++		return -ENOMEM;
++
+ 	return drm_debugfs_create_files(vc4_debugfs_list, VC4_DEBUGFS_ENTRIES,
+ 					minor->debugfs_root, minor);
+ }
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+index 7195a0bcceb3..12ac971d24d6 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.c
++++ b/drivers/gpu/drm/vc4/vc4_drv.c
+@@ -290,6 +290,8 @@ static int vc4_drm_bind(struct device *dev)
  
-@@ -178,17 +178,7 @@ static int sync_debugfs_show(struct seq_file *s, void *unused)
+ 	drm_fbdev_generic_setup(drm, 32);
+ 
++	vc4->load_tracker_enabled = true;
++
  	return 0;
+ 
+ unbind_all:
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+index 11369da944b6..8d0f2f16a9e8 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.h
++++ b/drivers/gpu/drm/vc4/vc4_drv.h
+@@ -188,6 +188,8 @@ struct vc4_dev {
+ 
+ 	int power_refcount;
+ 
++	bool load_tracker_enabled;
++
+ 	/* Mutex controlling the power refcount. */
+ 	struct mutex power_lock;
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
+index b905a19c1470..4b2509b1b8ed 100644
+--- a/drivers/gpu/drm/vc4/vc4_kms.c
++++ b/drivers/gpu/drm/vc4/vc4_kms.c
+@@ -473,6 +473,7 @@ static const struct drm_private_state_funcs vc4_load_tracker_state_funcs = {
+ static int
+ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
+ {
++	struct vc4_dev *vc4 = to_vc4_dev(dev);
+ 	int ret;
+ 
+ 	ret = vc4_ctm_atomic_check(dev, state);
+@@ -483,7 +484,10 @@ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
+ 	if (ret)
+ 		return ret;
+ 
+-	return vc4_load_tracker_atomic_check(state);
++	if (vc4->load_tracker_enabled)
++		return vc4_load_tracker_atomic_check(state);
++
++	return 0;
  }
  
--static int sync_info_debugfs_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, sync_debugfs_show, inode->i_private);
--}
--
--static const struct file_operations sync_info_debugfs_fops = {
--	.open           = sync_info_debugfs_open,
--	.read           = seq_read,
--	.llseek         = seq_lseek,
--	.release        = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(sync_info_debugfs);
- 
- static __init int sync_debugfs_init(void)
- {
-@@ -218,7 +208,7 @@ void sync_dump(void)
- 	};
- 	int i;
- 
--	sync_debugfs_show(&s, NULL);
-+	sync_info_debugfs_show(&s, NULL);
- 
- 	for (i = 0; i < s.count; i += DUMP_CHUNK) {
- 		if ((s.count - i) > DUMP_CHUNK) {
+ static const struct drm_mode_config_funcs vc4_mode_funcs = {
 -- 
-2.17.0
+2.19.1
 
