@@ -2,105 +2,83 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7443C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862FDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 804AD20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32F8721479
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:29:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHtThs6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 804AD20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CfCD72PY";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V5GbNlXN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F8721479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbeK3Sfv (ORCPT
+        id S1726788AbeK3Shu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:35:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35956 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbeK3Sfv (ORCPT
+        Fri, 30 Nov 2018 13:37:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54364 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeK3Shu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:35:51 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so2370797pfc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 23:27:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6czgDvtOK84cQiH27gj58EcxjHCyIgKR400QoIHUptw=;
-        b=FHtThs6UpCZbBKJ/ExPsF7EqkZMjHKczQyqT7U7YG2kia5CN8tvZ9DzQeia6y8L3Is
-         xovFphAWiCZGw8+odr6RdGMLHv4HYTHarYmbNJAzOKSG5oU2J7LsExWPhF2ojo5AmStP
-         tfdGn1NChoLEn/rRn4rFN5yCyhNuCuRTqTwEM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6czgDvtOK84cQiH27gj58EcxjHCyIgKR400QoIHUptw=;
-        b=cO52wc+9wO/bH3IjSx8JrCvDPs4D+0rXvah4x1D8i0OprGu9w4mJhWANehBOhELE24
-         rZyDJbhYqGHjrE51tAAusF6Dy1Hz3WBh1il6sm78L4w52gd5WZ1Vf7FfnU/JnI8fGuWa
-         RxtTkj7zzrpL0fczAAzRZSwXEMnegbmdi7mYYh88aS8C6YOB5rAcxdrwQvGaWkWq4cAH
-         9rWvqe1YK2THkWJJsz57UQOsYkJzWenl0FaGmLSEg7aoajfCwbK/I8dPIxtxMRG9rsfs
-         hHcZuKenD1ajYDKLNNClqWidKYrV6Vkhywwuf/B+qTNcDZsqamr7dWZuZE6r9UISixDI
-         vqWQ==
-X-Gm-Message-State: AA+aEWZ51gbe2pFUzDAB9M24Q7tt6bLN5M+dXSOP1HtnXHzU7zkdLTUI
-        tYckWzW0arRYrdmsn3GQCjraGQ==
-X-Google-Smtp-Source: AFSGD/VtmeqXwejpd/jSmZwn1a6DZlBSXlyrjlndOrmS7Sp566bbI/Ugk+vywZP0OYTsSfmwYkAscg==
-X-Received: by 2002:a63:4b25:: with SMTP id y37mr4076905pga.181.1543562849166;
-        Thu, 29 Nov 2018 23:27:29 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b10sm8897824pfj.183.2018.11.29.23.27.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 23:27:28 -0800 (PST)
-Date:   Thu, 29 Nov 2018 23:27:25 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS
- clocks
-Message-ID: <20181130072725.GH5278@tuxbook-pro>
-References: <20181130065259.26497-1-bjorn.andersson@linaro.org>
- <20181130065259.26497-3-bjorn.andersson@linaro.org>
- <154356160607.88331.15203631970252933137@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154356160607.88331.15203631970252933137@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 30 Nov 2018 13:37:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6AC5C6079C; Fri, 30 Nov 2018 07:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543562968;
+        bh=rW0iKAE/RMiEwTs4dj9cdKKF0bx5IiNP3mzcVSkkXUg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CfCD72PYptFVhOXuTQLAWTHYAlsfu8BUpHX6787Oj3vrgeosRmjJ0dIMkHoXCy9cw
+         OoTf3gm/mVaWLL+siWZSHt7RrkhT+zNobpZgtJhNcWXXYfuhKeUwpfk2m6iDFbEILH
+         xt+MG86ITvYOaaepA8+LT9UZGzSjkcjKt1JiH6vM=
+Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9BBE26079C;
+        Fri, 30 Nov 2018 07:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543562967;
+        bh=rW0iKAE/RMiEwTs4dj9cdKKF0bx5IiNP3mzcVSkkXUg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=V5GbNlXNObHbuSVr/LjhJUCXA9Jzvjf1FyiBrUV+TCoKYfkXNpIrq42XxoSZ6cBzO
+         r/o9Cfl+5M9yFPZC1taUb+VqNuGiuvbFE8WQsj3z4323UMRPWrGQOP8YQyPeWwdIer
+         oX978GeTl7V7TISttICZYunijL5KtPvD1lo+AJ9k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9BBE26079C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+From:   Rohit kumar <rohitkr@codeaurora.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, bgoswami@codeaurora.org
+Cc:     Rohit kumar <rohitkr@codeaurora.org>
+Subject: [PATCH 0/2] qcom_adsp_pil: Remove voting for lpass_aon clock
+Date:   Fri, 30 Nov 2018 12:59:08 +0530
+Message-Id: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 29 Nov 23:06 PST 2018, Stephen Boyd wrote:
+LPASS Audio Wrapper AON clock is on by default. Remove
+voting for it.
 
-> Quoting Bjorn Andersson (2018-11-29 22:52:58)
-> > Drop the halt check of the UFS symbol clocks, in accordance with other
-> > platforms. This makes clk_disable_unused() happy and makes it possible
-> > to turn the clocks on again without an error.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> Someone was supposed to figure out why we needed to SKIP here instead of
-> doing things in the proper order. Is anyone attempting to figure that
-> out?
-> 
+Rohit kumar (2):
+  dt-binding: remoteproc: Remove lpass_aon clock from adsp pil clock
+    list
+  remoteproc: q6v5_adsp: Remove voting for lpass_aon clock
 
-I'm not aware of any such efforts, but looping in Vivek here.
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt | 5 ++---
+ drivers/remoteproc/qcom_q6v5_adsp.c                            | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-I would be happy to revert this change in 8996, 8998 and 845 once such
-fix arrives. But as this is needed to make progress on getting UFS up on
-8998 it would be nice to get it merged for now...
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Regards,
-Bjorn
