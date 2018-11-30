@@ -3,46 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D69E0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC2BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A640520868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A640520868
+	by mail.kernel.org (Postfix) with ESMTP id 5DA6620868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DA6620868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbeLADuV (ORCPT
+        id S1727643AbeLADu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:50:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45280 "EHLO mx1.redhat.com"
+        Fri, 30 Nov 2018 22:50:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45390 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeLADuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:50:21 -0500
+        id S1726663AbeLADu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:50:29 -0500
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7A4E43D95C;
-        Fri, 30 Nov 2018 16:40:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 546874E937;
+        Fri, 30 Nov 2018 16:40:36 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 59BB261530;
-        Fri, 30 Nov 2018 16:40:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 769C65EE03;
+        Fri, 30 Nov 2018 16:40:34 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 2/7] fscache: Fix race in fscache_op_complete() due to split
- atomic_sub & read
+Subject: [PATCH 3/7] cachefiles: Fix page leak in
+ cachefiles_read_backing_file while vmscan is active
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org
-Cc:     Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 30 Nov 2018 16:40:16 +0000
-Message-ID: <154359601645.18703.16410473531194112220.stgit@warthog.procyon.org.uk>
+Cc:     Daniel Axtens <dja@axtens.net>, Shantanu Goel <sgoel01@yahoo.com>,
+        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        Daniel Axtens <dja@axtens.net>, dhowells@redhat.com,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 30 Nov 2018 16:40:33 +0000
+Message-ID: <154359603369.18703.763590641473461495.stgit@warthog.procyon.org.uk>
 In-Reply-To: <154359597927.18703.424445427183570230.stgit@warthog.procyon.org.uk>
 References: <154359597927.18703.424445427183570230.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
@@ -50,75 +52,88 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 30 Nov 2018 16:40:28 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 30 Nov 2018 16:40:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kiran.modukuri <kiran.modukuri@gmail.com>
+From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
 
-The code in fscache_retrieval_complete is using atomic_sub followed by an
-atomic_read:
+[Description]
 
-        atomic_sub(n_pages, &op->n_pages);
-        if (atomic_read(&op->n_pages) <= 0)
-                fscache_op_complete(&op->op, true);
+In a heavily loaded system where the system pagecache is nearing memory
+limits and fscache is enabled, pages can be leaked by fscache while trying
+read pages from cachefiles backend.  This can happen because two
+applications can be reading same page from a single mount, two threads can
+be trying to read the backing page at same time.  This results in one of
+the threads finding that a page for the backing file or netfs file is
+already in the radix tree.  During the error handling cachefiles does not
+clean up the reference on backing page, leading to page leak.
 
-This causes two threads doing a decrement of n_pages to race with each
-other seeing the op->refcount 0 at same time - and they end up calling
-fscache_op_complete() in both the threads leading to an assertion failure.
+[Fix]
+The fix is straightforward, to decrement the reference when error is
+encountered.
 
-Fix this by using atomic_sub_return_relaxed() instead of two calls.  Note
-that I'm using 'relaxed' rather than, say, 'release' as there aren't
-multiple variables that appear to need ordering across the release.
+  [dhowells: Note that I've removed the clearance and put of newpage as
+   they aren't attested in the commit message and don't appear to actually
+   achieve anything since a new page is only allocated is newpage!=NULL and
+   any residual new page is cleared before returning.]
 
-The oops looks something like:
+[Testing]
+I have tested the fix using following method for 12+ hrs.
 
-FS-Cache: Assertion failed
-FS-Cache: 0 > 0 is false
-...
-kernel BUG at /usr/src/linux-4.4.0/fs/fscache/operation.c:449!
-...
-Workqueue: fscache_operation fscache_op_work_func [fscache]
-...
-RIP: 0010:[<ffffffffc037eacd>] fscache_op_complete+0x10d/0x180 [fscache]
-...
-Call Trace:
- [<ffffffffc1464cf9>] cachefiles_read_copier+0x3a9/0x410 [cachefiles]
- [<ffffffffc037e272>] fscache_op_work_func+0x22/0x50 [fscache]
- [<ffffffff81096da0>] process_one_work+0x150/0x3f0
- [<ffffffff8109751a>] worker_thread+0x11a/0x470
- [<ffffffff81808e59>] ? __schedule+0x359/0x980
- [<ffffffff81097400>] ? rescuer_thread+0x310/0x310
- [<ffffffff8109cdd6>] kthread+0xd6/0xf0
- [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
- [<ffffffff8180d0cf>] ret_from_fork+0x3f/0x70
- [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
+1) mkdir -p /mnt/nfs ; mount -o vers=3,fsc <server_ip>:/export /mnt/nfs
+2) create 10000 files of 2.8MB in a NFS mount.
+3) start a thread to simulate heavy VM presssure
+   (while true ; do echo 3 > /proc/sys/vm/drop_caches ; sleep 1 ; done)&
+4) start multiple parallel reader for data set at same time
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   ..
+   ..
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+5) finally check using cat /proc/fs/fscache/stats | grep -i pages ;
+   free -h , cat /proc/meminfo and page-types -r -b lru
+   to ensure all pages are freed.
 
-This seen this in 4.4.x kernels and the same bug affects fscache in latest
-upstreams kernels.
-
-Fixes: 1bb4b7f98f36 ("FS-Cache: The retrieval remaining-pages counter needs to be atomic_t")
+Reviewed-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Shantanu Goel <sgoel01@yahoo.com>
 Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+[dja: forward ported to current upstream]
+Signed-off-by: Daniel Axtens <dja@axtens.net>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- include/linux/fscache-cache.h |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/cachefiles/rdwr.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 34cf0fdd7dc7..610815e3f1aa 100644
---- a/include/linux/fscache-cache.h
-+++ b/include/linux/fscache-cache.h
-@@ -196,8 +196,7 @@ static inline void fscache_enqueue_retrieval(struct fscache_retrieval *op)
- static inline void fscache_retrieval_complete(struct fscache_retrieval *op,
- 					      int n_pages)
- {
--	atomic_sub(n_pages, &op->n_pages);
--	if (atomic_read(&op->n_pages) <= 0)
-+	if (atomic_sub_return_relaxed(n_pages, &op->n_pages) <= 0)
- 		fscache_op_complete(&op->op, false);
- }
- 
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 40f7595aad10..db233588a69a 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -535,7 +535,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
+ 					    netpage->index, cachefiles_gfp);
+ 		if (ret < 0) {
+ 			if (ret == -EEXIST) {
++				put_page(backpage);
++				backpage = NULL;
+ 				put_page(netpage);
++				netpage = NULL;
+ 				fscache_retrieval_complete(op, 1);
+ 				continue;
+ 			}
+@@ -608,7 +611,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
+ 					    netpage->index, cachefiles_gfp);
+ 		if (ret < 0) {
+ 			if (ret == -EEXIST) {
++				put_page(backpage);
++				backpage = NULL;
+ 				put_page(netpage);
++				netpage = NULL;
+ 				fscache_retrieval_complete(op, 1);
+ 				continue;
+ 			}
 
