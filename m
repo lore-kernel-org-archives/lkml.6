@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D114C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E69B2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0149420863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F5142146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:37:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="RsAPHWwK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0149420863
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="OaFf64Iz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F5142146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbeK3To6 (ORCPT
+        id S1727208AbeK3Tpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:44:58 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44775 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbeK3To6 (ORCPT
+        Fri, 30 Nov 2018 14:45:41 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34654 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeK3Tpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:44:58 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k19-v6so4219790lji.11
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 00:36:24 -0800 (PST)
+        Fri, 30 Nov 2018 14:45:41 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p6so3502315lfc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 00:37:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ioXF4bCL8BuwqWo5CCjgjpGdZH7diIK4hexxj1Nvf8o=;
-        b=RsAPHWwKdpngwQoodtjN35xFxp6L4Ne2axZleCQscGRB1vuT9Aw65WogQB0cJZ/bn5
-         KrZ4Gu5Yw0xz3E0mPzCyv4jwMo70yGzqVA3k9Xr4pSwWC0ueteybKeZ88m1wuke+oD/3
-         12hgrzzCwGQV1dmTLxjEvm+oM22RJ9pWrhNoe+vKdPYCiH6qaVfXNQr+pimM4qy+HzqW
-         wtzRDeg9ODyDCntGvTtPjWWP6LBJa0MtREyek8ULqdIgtlpZLnHw8Ly+1DGisEiAjEpX
-         H5YdyMr1mbf9zP0BoAbUBjA/2lr5RHH54B+140YNVMK610nM7OJQdEqdXL6QQaATCxiZ
-         z7LQ==
+        bh=CAvqsZpS6OQFISdgtji9uWxaRAmXcs1JEW/cE337ioI=;
+        b=OaFf64Izcs+UQzM0z0XNhEHMIqeApTIN1pnYavupbyp/HbzFZ3ZrP4gdevB9tCVIM3
+         yVnLjDgEuTKpkm6iZoFpBE+Mq5MqfNjDD5tzuwWuKvdR7o+m2T5CH8jnz3gYJFg+L3uz
+         7zJ9Wdm98ssgmMvlSwhYklWkE2k0D11YKSgrLgcdcWkVlUCiu+4kaUPCx0qlZwiUhV/h
+         uilE6OaZE48jer58Q84lyDBlY1A/HhuonI7U7A6+g/ELrkYqRd6Ae8q5/dvhPyNFtX7g
+         7QWRUk0PwZna1DWMuZb3+a3Qb5p/VgSb6MyJUCifIZhJatkihlPNlSTmIxFZDmOa9mX5
+         5Qfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ioXF4bCL8BuwqWo5CCjgjpGdZH7diIK4hexxj1Nvf8o=;
-        b=mOssDx7/7sgd5nFQtxFPDqSenNXS6pChGhXiiTSeGJjk+AJa8E7knVDkURreAQAKfN
-         Qiyo+uHdM0ajORkrSAZd0Vnkj6XkPJMjrfu7YlvZXs0IgBIEIoLdr14FxyEe+1eadWAv
-         1DtanxLKuvW7HUf+SUEsC9XsbWKPQXt7/NSkMCRhuhlzXrq+t8KCFZQFoIvNDbWsql9h
-         3YA1GWQmbf/CgPSk07bFUvR7TAO9v/aG9+5yRDp0bNOMis8tDHMeidSDF+0aPbfKKL1S
-         fQWukpTSBChCK2Uoti6HJor7H2ob0O7UKmUfb1bJV0atog3mDUgt/9Fu48yQljIUoPTy
-         iD4A==
-X-Gm-Message-State: AA+aEWYsmbE6NSB9wcyjfKRlHUZFu90uRwuCCYYLU7IT3p4Xf5w8pn9H
-        DlGVrlc3olVe9h79l5DmfZJWpg==
-X-Google-Smtp-Source: AFSGD/XgpXETfsbcHjHD99lFbDWo72gPOJYrLxfDJzqpY9aEGui4EEUN+IWI3h744LW7Z4YzHwbvVg==
-X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr2903040ljj.120.1543566983755;
-        Fri, 30 Nov 2018 00:36:23 -0800 (PST)
+        bh=CAvqsZpS6OQFISdgtji9uWxaRAmXcs1JEW/cE337ioI=;
+        b=U6/KzXCdbxBHqe2xCY2bhtyzbN5cn+Uy2QsM1LECn0i1+JoaJNL7VoF/lnO+IrjgH2
+         RP0KxZUwALmtvPvAyBNAWUjXAEn1bOnKYsOYGcBF+OkYSIN5AtLIMcSXsK15IlG3RQrt
+         WURAlOzNNH94AzamS2V3Br0fna+Oj+h9GwsgiMhfwqKFe0ZngmB3c5a+jKUMHLixeLJj
+         +jV1alIST7FzFsXrbfRfwUXcwUEHdYbxCNm0I2AtTrLv2/8+OSjknN+WZkLlzZ97wHCH
+         /OBGzVYEqP2X5uad9DZeTTdCER8t9WZHBjAZ9Wc6dLibz49jSJpoPFLx5ohYoT5Y50WY
+         MuGg==
+X-Gm-Message-State: AA+aEWbi4Q6XDBuHJx9RuEGP7PkaxC8nV92ns2fDp5btPikby7RQzo1o
+        5+KcTg1ZwcJJ2xO9iunex6a4Kf1bE50=
+X-Google-Smtp-Source: AFSGD/U1nzNTvGBm6p6dGGu8Ne0yHDg/aKnL2TCEXVhqaNUNCOVoac7mpG1U5lcgZL2JUoZz83mJqg==
+X-Received: by 2002:a19:ced3:: with SMTP id e202mr3025468lfg.13.1543567026063;
+        Fri, 30 Nov 2018 00:37:06 -0800 (PST)
 Received: from [192.168.0.36] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id j138sm692946lfg.64.2018.11.30.00.36.22
+        by smtp.googlemail.com with ESMTPSA id q67sm697828lfe.19.2018.11.30.00.37.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 00:36:23 -0800 (PST)
-Subject: Re: [PATCH] lightnvm: pblk: avoid ref warning on cache creation
-To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>
-Cc:     Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Javier Gonzalez <javier@cnexlabs.com>
-References: <1542894410-14047-1-git-send-email-javier@cnexlabs.com>
- <1542894410-14047-2-git-send-email-javier@cnexlabs.com>
- <CANr-nt2XMzZnd309pY7QJxYXWMSuXXrcWMt8F=pa49BzARb5dg@mail.gmail.com>
+        Fri, 30 Nov 2018 00:37:05 -0800 (PST)
+Subject: Re: [PATCH] lightnvm: simplify geometry enumeration
+To:     Javier Gonzalez <javier@cnexlabs.com>
+Cc:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+References: <20181129142738.9567-1-mb@lightnvm.io>
+ <6FEED0D7-5064-464A-B522-412CEE2A1C7A@cnexlabs.com>
 From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <a0bacf2c-1405-b70b-828a-f2bbe0ecb271@lightnvm.io>
-Date:   Fri, 30 Nov 2018 09:36:22 +0100
+Message-ID: <e27cef79-efde-fd08-f85a-be7226f66757@lightnvm.io>
+Date:   Fri, 30 Nov 2018 09:37:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CANr-nt2XMzZnd309pY7QJxYXWMSuXXrcWMt8F=pa49BzARb5dg@mail.gmail.com>
+In-Reply-To: <6FEED0D7-5064-464A-B522-412CEE2A1C7A@cnexlabs.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
@@ -85,60 +84,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23/2018 11:04 AM, Hans Holmberg wrote:
-> Great catch Javier! Nice refactoring work too.
-> 
-> Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> On Thu, Nov 22, 2018 at 2:47 PM Javier González <javier@javigon.com> wrote:
+On 11/30/2018 08:17 AM, Javier Gonzalez wrote:
+>> On 29 Nov 2018, at 15.27, Matias Bjørling <mb@lightnvm.io> wrote:
 >>
->> The current kref implementation around pblk global caches triggers a
->> false positive on refcount_inc_checked() (when called) as the kref is
->> initialized to 0. Instead of usint kref_inc() on a 0 reference, which is
->> in principle correct, use kref_init() to avoid the check. This is also
->> more explicit about what actually happens on cache creation.
+>> Currently the geometry of an OCSSD is enumerated using a two step
+>> approach:
 >>
->> In the process, do a small refactoring to use kref helpers.
+>> First, nvm_register is called, the OCSSD identify command is issued,
+>> and second the geometry sos and csecs values are read either from the
+>> OCSSD identify if it is a 1.2 drive, or from the NVMe namespace data
+>> structure if it is a 2.0 device.
 >>
->> Signed-off-by: Javier González <javier@cnexlabs.com>
+>> This patch recombines it into a single step, such that nvm_register can
+>> use the csecs and sos fields independent of which version is used. This
+>> enables one to dynamically size the lightnvm subsystem dma pool.
+>>
+>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 >> ---
->>   drivers/lightnvm/pblk-init.c | 14 +++++---------
->>   1 file changed, 5 insertions(+), 9 deletions(-)
+>> drivers/lightnvm/core.c      | 12 +++++-------
+>> drivers/nvme/host/core.c     | 18 +++++++++---------
+>> drivers/nvme/host/lightnvm.c | 18 ++++++------------
+>> drivers/nvme/host/nvme.h     |  2 --
+>> 4 files changed, 20 insertions(+), 30 deletions(-)
 >>
->> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
->> index 13822594647c..e225bd60cbb4 100644
->> --- a/drivers/lightnvm/pblk-init.c
->> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -350,23 +350,19 @@ static int pblk_create_global_caches(void)
+>> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+>> index 73ab3cf26868..a1d52e934ce4 100644
+>> --- a/drivers/lightnvm/core.c
+>> +++ b/drivers/lightnvm/core.c
+>> @@ -1145,25 +1145,23 @@ int nvm_register(struct nvm_dev *dev)
+>> 	if (!dev->q || !dev->ops)
+>> 		return -EINVAL;
 >>
->>   static int pblk_get_global_caches(void)
->>   {
->> -       int ret;
->> +       int ret = 0;
+>> +	ret = nvm_init(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> 	dev->dma_pool = dev->ops->create_dma_pool(dev, "ppalist");
+>> 	if (!dev->dma_pool) {
+>> 		pr_err("nvm: could not create dma pool\n");
+>> +		nvm_free(dev);
+>> 		return -ENOMEM;
+>> 	}
 >>
->>          mutex_lock(&pblk_caches.mutex);
->>
->> -       if (kref_read(&pblk_caches.kref) > 0) {
->> -               kref_get(&pblk_caches.kref);
->> -               mutex_unlock(&pblk_caches.mutex);
->> -               return 0;
->> -       }
->> +       if (kref_get_unless_zero(&pblk_caches.kref))
->> +               goto out;
->>
->>          ret = pblk_create_global_caches();
+>> -	ret = nvm_init(dev);
+>> -	if (ret)
+>> -		goto err_init;
 >> -
->>          if (!ret)
->> -               kref_get(&pblk_caches.kref);
->> +               kref_init(&pblk_caches.kref);
+>> 	/* register device with a supported media manager */
+>> 	down_write(&nvm_lock);
+>> 	list_add(&dev->devices, &nvm_devices);
+>> 	up_write(&nvm_lock);
 >>
->> +out:
->>          mutex_unlock(&pblk_caches.mutex);
+>> 	return 0;
+>> -err_init:
+>> -	dev->ops->destroy_dma_pool(dev->dma_pool);
+>> -	return ret;
+>> }
+>> EXPORT_SYMBOL(nvm_register);
+>>
+>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+>> index 65c42448e904..387833b37e38 100644
+>> --- a/drivers/nvme/host/core.c
+>> +++ b/drivers/nvme/host/core.c
+>> @@ -1516,8 +1516,6 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
+>> 	if (ns->noiob)
+>> 		nvme_set_chunk_size(ns);
+>> 	nvme_update_disk_info(disk, ns, id);
+>> -	if (ns->ndev)
+>> -		nvme_nvm_update_nvm_info(ns);
+>> #ifdef CONFIG_NVME_MULTIPATH
+>> 	if (ns->head->disk)
+>> 		nvme_update_disk_info(ns->head->disk, ns, id);
+>> @@ -3086,13 +3084,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+>> 	nvme_setup_streams_ns(ctrl, ns);
+>> 	nvme_set_disk_name(disk_name, ns, ctrl, &flags);
+>>
+>> -	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
+>> -		if (nvme_nvm_register(ns, disk_name, node)) {
+>> -			dev_warn(ctrl->device, "LightNVM init failure\n");
+>> -			goto out_unlink_ns;
+>> -		}
+>> -	}
 >> -
->>          return ret;
->>   }
+>> 	disk = alloc_disk_node(0, node);
+>> 	if (!disk)
+>> 		goto out_unlink_ns;
+>> @@ -3106,6 +3097,13 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
 >>
+>> 	__nvme_revalidate_disk(disk, id);
+>>
+>> +	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
+>> +		if (nvme_nvm_register(ns, disk_name, node)) {
+>> +			dev_warn(ctrl->device, "LightNVM init failure\n");
+>> +			goto out_put_disk;
+>> +		}
+>> +	}
+>> +
+>> 	down_write(&ctrl->namespaces_rwsem);
+>> 	list_add_tail(&ns->list, &ctrl->namespaces);
+>> 	up_write(&ctrl->namespaces_rwsem);
+>> @@ -3119,6 +3117,8 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+>> 	kfree(id);
+>>
+>> 	return;
+>> + out_put_disk:
+>> +	put_disk(ns->disk);
+>>   out_unlink_ns:
+>> 	mutex_lock(&ctrl->subsys->lock);
+>> 	list_del_rcu(&ns->siblings);
+>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+>> index d64805dc8efb..51d957ccf328 100644
+>> --- a/drivers/nvme/host/lightnvm.c
+>> +++ b/drivers/nvme/host/lightnvm.c
+>> @@ -973,22 +973,11 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
+>> 	}
+>> }
+>>
+>> -void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
+>> -{
+>> -	struct nvm_dev *ndev = ns->ndev;
+>> -	struct nvm_geo *geo = &ndev->geo;
+>> -
+>> -	if (geo->version == NVM_OCSSD_SPEC_12)
+>> -		return;
+>> -
+>> -	geo->csecs = 1 << ns->lba_shift;
+>> -	geo->sos = ns->ms;
+>> -}
+>> -
+>> int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
+>> {
+>> 	struct request_queue *q = ns->queue;
+>> 	struct nvm_dev *dev;
+>> +	struct nvm_geo *geo;
+>>
+>> 	_nvme_nvm_check_size();
+>>
+>> @@ -996,6 +985,11 @@ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
+>> 	if (!dev)
+>> 		return -ENOMEM;
+>>
+>> +	/* Note that csecs and sos will be overridden if it is a 1.2 drive. */
+>> +	geo = &dev->geo;
+>> +	geo->csecs = 1 << ns->lba_shift;
+>> +	geo->sos = ns->ms;
+>> +
+>> 	dev->q = q;
+>> 	memcpy(dev->name, disk_name, DISK_NAME_LEN);
+>> 	dev->ops = &nvme_nvm_dev_ops;
+>> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+>> index 9fefba039d1e..4f5399c8808b 100644
+>> --- a/drivers/nvme/host/nvme.h
+>> +++ b/drivers/nvme/host/nvme.h
+>> @@ -541,13 +541,11 @@ static inline void nvme_mpath_stop(struct nvme_ctrl *ctrl)
+>> #endif /* CONFIG_NVME_MULTIPATH */
+>>
+>> #ifdef CONFIG_NVM
+>> -void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
+>> int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
+>> void nvme_nvm_unregister(struct nvme_ns *ns);
+>> extern const struct attribute_group nvme_nvm_attr_group;
+>> int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
+>> #else
+>> -static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
+>> static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
+>> 				    int node)
+>> {
 >> --
->> 2.7.4
+>> 2.17.1
 >>
+>>
+>> _______________________________________________
+>> Linux-nvme mailing list
+>> Linux-nvme@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-nvme
+> 
+> Good refactor; much better to do initialization on a single step.
+> 
+> Reviewed-by: Javier González <javier@cnexlabs.com>
+> 
 
-Picked up for 4.21.
+Thanks. Picked up for 4.21.
