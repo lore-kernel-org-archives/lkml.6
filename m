@@ -2,178 +2,296 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28BBC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3131AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8647220867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:52:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iU0kIELw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8647220867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id E4A4820863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A4820863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbeLAABU (ORCPT
+        id S1726819AbeLAADk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:01:20 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:37718 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbeLAABU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:01:20 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 4AFB010C164E;
-        Fri, 30 Nov 2018 04:52:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1543582327; bh=FuhQb2lqpSXXlmjXkfczrDAH9W1VHN54RKKoDxU6IOI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iU0kIELwMxOKBmEJXCUMfzfvkXvuIMzegiZVdKG76rf0lw6XYIuTk7GEbXkVNaTHy
-         aiXHlQz5dewiW/foWTrhRZf2Q6ALv+qHJY8ZXcSQUFh4DUQhG7eSvYrqlgwoZwdkZp
-         5DG519sDITiag47VdDO0rBhijQJXwIvI+QI5abjS7aJgiA6WMiQjcjYowBve2q5L2O
-         NsWdRejPndFGLe8bD7ooqMjwnknz/6nMJleuuLWqIoFauOG4Z+DX7IEdNMypN7Bc5X
-         RSnrYipepgYj3mYnE/VZupGhFylRiHxrAbo4McCcsSQCkY7XU5jr0goVl9m5KbhvCI
-         XDF0g2DYM1b1Q==
-Received: from ru20arcgnu1.internal.synopsys.com (ru20arcgnu1.internal.synopsys.com [10.121.9.48])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B8E7032F7;
-        Fri, 30 Nov 2018 04:52:05 -0800 (PST)
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] ARC: change defconfig defaults to ARCv2
-Date:   Fri, 30 Nov 2018 15:51:56 +0300
-Message-Id: <20181130125156.34460-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.16.2
+        Fri, 30 Nov 2018 19:03:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41594 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbeLAADk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:03:40 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D272330024AA;
+        Fri, 30 Nov 2018 12:54:26 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 489835D9CD;
+        Fri, 30 Nov 2018 12:54:24 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2] x86/hyper-v: Mark TLFS structures packed
+Date:   Fri, 30 Nov 2018 13:54:22 +0100
+Message-Id: <20181130125422.21494-1-vkuznets@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 30 Nov 2018 12:54:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kevin Hilman <khilman@baylibre.com>
+The TLFS structures are used for hypervisor-guest communication and must
+exactly meet the specification.
 
-Change the default defconfig (used with 'make defconfig') to the ARCv2
-nsim_hs_defconfig, and also switch the default Kconfig ISA selection to
-ARCv2.
+Compilers can add alignment padding to structures or reorder struct members
+for randomization and optimization, which would break the hypervisor ABI.
 
-This allows several default defconfigs (e.g. make defconfig, make
-allnoconfig, make tinyconfig) to all work with ARCv2 by default.
+Mark the structures as packed to prevent this.
 
-Note since we change default architecture from ARCompact to ARCv2
-it's required to explicitly mention architecture type in ARCompact
-defconfigs otherwise ARCv2 will be implied and binaries will be
-generated for ARCv2.
-
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: <stable@vger.kernel.org> # 4.4.x
+Suggested-by: Nadav Amit <nadav.amit@gmail.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 ---
+- Changes since v1:
+ - Re-worded commit message for clarity. [Thomas Gleixner]
 
-Changes v1 -> v2:
- * Added CONFIG_ISA_ARCOMPACT to ARCompact defconfigs
+- This is a follow-up to my "[PATCH v2 0/4] x86/kvm/hyper-v: Implement
+ Direct Mode for synthetic timers" series, as suggested by Thomas I'm
+ routing it to KVM tree to avoid merge conflicts.
+---
+ arch/x86/include/asm/hyperv-tlfs.h | 50 +++++++++++++++---------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
- arch/arc/Kconfig                    | 2 +-
- arch/arc/Makefile                   | 2 +-
- arch/arc/configs/axs101_defconfig   | 1 +
- arch/arc/configs/nps_defconfig      | 1 +
- arch/arc/configs/nsim_700_defconfig | 1 +
- arch/arc/configs/nsimosci_defconfig | 1 +
- arch/arc/configs/tb10x_defconfig    | 1 +
- 7 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 5fcbda6b37cc..6dd783557330 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -109,7 +109,7 @@ endmenu
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index ebfed56976d2..6a60fa17f6f2 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -271,7 +271,7 @@ union hv_x64_msr_hypercall_contents {
+ 		u64 enable:1;
+ 		u64 reserved:11;
+ 		u64 guest_physical_address:52;
+-	};
++	} __packed;
+ };
  
- choice
- 	prompt "ARC Instruction Set"
--	default ISA_ARCOMPACT
-+	default ISA_ARCV2
+ /*
+@@ -283,7 +283,7 @@ struct ms_hyperv_tsc_page {
+ 	volatile u64 tsc_scale;
+ 	volatile s64 tsc_offset;
+ 	u64 reserved2[509];
+-};
++}  __packed;
  
- config ISA_ARCOMPACT
- 	bool "ARCompact ISA"
-diff --git a/arch/arc/Makefile b/arch/arc/Makefile
-index c64c505d966c..df00578c279d 100644
---- a/arch/arc/Makefile
-+++ b/arch/arc/Makefile
-@@ -6,7 +6,7 @@
- # published by the Free Software Foundation.
- #
+ /*
+  * The guest OS needs to register the guest ID with the hypervisor.
+@@ -324,7 +324,7 @@ struct hv_reenlightenment_control {
+ 	__u64 enabled:1;
+ 	__u64 reserved2:15;
+ 	__u64 target_vp:32;
+-};
++}  __packed;
  
--KBUILD_DEFCONFIG := nsim_700_defconfig
-+KBUILD_DEFCONFIG := nsim_hs_defconfig
+ #define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
+ #define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
+@@ -332,12 +332,12 @@ struct hv_reenlightenment_control {
+ struct hv_tsc_emulation_control {
+ 	__u64 enabled:1;
+ 	__u64 reserved:63;
+-};
++} __packed;
  
- cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
- cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
-diff --git a/arch/arc/configs/axs101_defconfig b/arch/arc/configs/axs101_defconfig
-index 8c23bd086cd0..020d4493edfd 100644
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -14,6 +14,7 @@ CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
- # CONFIG_SLUB_DEBUG is not set
- # CONFIG_COMPAT_BRK is not set
-+CONFIG_ISA_ARCOMPACT=y
- CONFIG_MODULES=y
- CONFIG_MODULE_FORCE_LOAD=y
- CONFIG_MODULE_UNLOAD=y
-diff --git a/arch/arc/configs/nps_defconfig b/arch/arc/configs/nps_defconfig
-index ae7a0d8be98d..6e84060e7c90 100644
---- a/arch/arc/configs/nps_defconfig
-+++ b/arch/arc/configs/nps_defconfig
-@@ -15,6 +15,7 @@ CONFIG_SYSCTL_SYSCALL=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_COMPAT_BRK is not set
-+CONFIG_ISA_ARCOMPACT=y
- CONFIG_KPROBES=y
- CONFIG_MODULES=y
- CONFIG_MODULE_FORCE_LOAD=y
-diff --git a/arch/arc/configs/nsim_700_defconfig b/arch/arc/configs/nsim_700_defconfig
-index 8e0b8b134cd9..219c2a65294b 100644
---- a/arch/arc/configs/nsim_700_defconfig
-+++ b/arch/arc/configs/nsim_700_defconfig
-@@ -15,6 +15,7 @@ CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_SLUB_DEBUG is not set
- # CONFIG_COMPAT_BRK is not set
-+CONFIG_ISA_ARCOMPACT=y
- CONFIG_KPROBES=y
- CONFIG_MODULES=y
- # CONFIG_LBDAF is not set
-diff --git a/arch/arc/configs/nsimosci_defconfig b/arch/arc/configs/nsimosci_defconfig
-index ad77f20e5aa6..35dfc6491a09 100644
---- a/arch/arc/configs/nsimosci_defconfig
-+++ b/arch/arc/configs/nsimosci_defconfig
-@@ -15,6 +15,7 @@ CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_SLUB_DEBUG is not set
- # CONFIG_COMPAT_BRK is not set
-+CONFIG_ISA_ARCOMPACT=y
- CONFIG_KPROBES=y
- CONFIG_MODULES=y
- # CONFIG_LBDAF is not set
-diff --git a/arch/arc/configs/tb10x_defconfig b/arch/arc/configs/tb10x_defconfig
-index a7f65313f84a..e71ade3cf9c8 100644
---- a/arch/arc/configs/tb10x_defconfig
-+++ b/arch/arc/configs/tb10x_defconfig
-@@ -19,6 +19,7 @@ CONFIG_KALLSYMS_ALL=y
- # CONFIG_AIO is not set
- CONFIG_EMBEDDED=y
- # CONFIG_COMPAT_BRK is not set
-+CONFIG_ISA_ARCOMPACT=y
- CONFIG_SLAB=y
- CONFIG_MODULES=y
- CONFIG_MODULE_FORCE_LOAD=y
+ struct hv_tsc_emulation_status {
+ 	__u64 inprogress:1;
+ 	__u64 reserved:63;
+-};
++} __packed;
+ 
+ #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
+ #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT	12
+@@ -409,7 +409,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
+ 	__u32 res1;
+ 	__u64 tsc_scale;
+ 	__s64 tsc_offset;
+-} HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
++}  __packed HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
+ 
+ /* Define the number of synthetic interrupt sources. */
+ #define HV_SYNIC_SINT_COUNT		(16)
+@@ -466,7 +466,7 @@ union hv_message_flags {
+ 	struct {
+ 		__u8 msg_pending:1;
+ 		__u8 reserved:7;
+-	};
++	} __packed;
+ };
+ 
+ /* Define port identifier type. */
+@@ -488,7 +488,7 @@ struct hv_message_header {
+ 		__u64 sender;
+ 		union hv_port_id port;
+ 	};
+-};
++} __packed;
+ 
+ /* Define synthetic interrupt controller message format. */
+ struct hv_message {
+@@ -496,12 +496,12 @@ struct hv_message {
+ 	union {
+ 		__u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
+ 	} u;
+-};
++} __packed;
+ 
+ /* Define the synthetic interrupt message page layout. */
+ struct hv_message_page {
+ 	struct hv_message sint_message[HV_SYNIC_SINT_COUNT];
+-};
++} __packed;
+ 
+ /* Define timer message payload structure. */
+ struct hv_timer_message_payload {
+@@ -509,7 +509,7 @@ struct hv_timer_message_payload {
+ 	__u32 reserved;
+ 	__u64 expiration_time;	/* When the timer expired */
+ 	__u64 delivery_time;	/* When the message was delivered */
+-};
++} __packed;
+ 
+ /* Define virtual processor assist page structure. */
+ struct hv_vp_assist_page {
+@@ -519,7 +519,7 @@ struct hv_vp_assist_page {
+ 	__u64 nested_enlightenments_control[2];
+ 	__u32 enlighten_vmentry;
+ 	__u64 current_nested_vmcs;
+-};
++} __packed;
+ 
+ struct hv_enlightened_vmcs {
+ 	u32 revision_id;
+@@ -693,7 +693,7 @@ struct hv_enlightened_vmcs {
+ 		u32 nested_flush_hypercall:1;
+ 		u32 msr_bitmap:1;
+ 		u32 reserved:30;
+-	} hv_enlightenments_control;
++	}  __packed hv_enlightenments_control;
+ 	u32 hv_vp_id;
+ 
+ 	u64 hv_vm_id;
+@@ -703,7 +703,7 @@ struct hv_enlightened_vmcs {
+ 	u64 padding64_5[7];
+ 	u64 xss_exit_bitmap;
+ 	u64 padding64_6[7];
+-};
++} __packed;
+ 
+ #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE			0
+ #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP		BIT(0)
+@@ -744,7 +744,7 @@ union hv_stimer_config {
+ 		u64 reserved_z0:3;
+ 		u64 sintx:4;
+ 		u64 reserved_z1:44;
+-	};
++	} __packed;
+ };
+ 
+ 
+@@ -759,7 +759,7 @@ union hv_synic_scontrol {
+ 	struct {
+ 		u64 enable:1;
+ 		u64 reserved:63;
+-	};
++	} __packed;
+ };
+ 
+ /* Define synthetic interrupt source. */
+@@ -771,7 +771,7 @@ union hv_synic_sint {
+ 		u64 masked:1;
+ 		u64 auto_eoi:1;
+ 		u64 reserved2:46;
+-	};
++	} __packed;
+ };
+ 
+ /* Define the format of the SIMP register */
+@@ -781,7 +781,7 @@ union hv_synic_simp {
+ 		u64 simp_enabled:1;
+ 		u64 preserved:11;
+ 		u64 base_simp_gpa:52;
+-	};
++	} __packed;
+ };
+ 
+ /* Define the format of the SIEFP register */
+@@ -791,34 +791,34 @@ union hv_synic_siefp {
+ 		u64 siefp_enabled:1;
+ 		u64 preserved:11;
+ 		u64 base_siefp_gpa:52;
+-	};
++	} __packed;
+ };
+ 
+ struct hv_vpset {
+ 	u64 format;
+ 	u64 valid_bank_mask;
+ 	u64 bank_contents[];
+-};
++} __packed;
+ 
+ /* HvCallSendSyntheticClusterIpi hypercall */
+ struct hv_send_ipi {
+ 	u32 vector;
+ 	u32 reserved;
+ 	u64 cpu_mask;
+-};
++} __packed;
+ 
+ /* HvCallSendSyntheticClusterIpiEx hypercall */
+ struct hv_send_ipi_ex {
+ 	u32 vector;
+ 	u32 reserved;
+ 	struct hv_vpset vp_set;
+-};
++} __packed;
+ 
+ /* HvFlushGuestPhysicalAddressSpace hypercalls */
+ struct hv_guest_mapping_flush {
+ 	u64 address_space;
+ 	u64 flags;
+-};
++} __packed;
+ 
+ /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
+ struct hv_tlb_flush {
+@@ -826,7 +826,7 @@ struct hv_tlb_flush {
+ 	u64 flags;
+ 	u64 processor_mask;
+ 	u64 gva_list[];
+-};
++} __packed;
+ 
+ /* HvFlushVirtualAddressSpaceEx, HvFlushVirtualAddressListEx hypercalls */
+ struct hv_tlb_flush_ex {
+@@ -834,6 +834,6 @@ struct hv_tlb_flush_ex {
+ 	u64 flags;
+ 	struct hv_vpset hv_vp_set;
+ 	u64 gva_list[];
+-};
++} __packed;
+ 
+ #endif
 -- 
-2.16.2
+2.19.2
 
