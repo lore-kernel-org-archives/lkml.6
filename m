@@ -2,34 +2,34 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 088C9C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F797C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB9B20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB9B20834
+	by mail.kernel.org (Postfix) with ESMTP id 4302820834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:06:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4302820834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbeLAEQK (ORCPT
+        id S1727724AbeLAEQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 23:16:10 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:41080 "EHLO ale.deltatee.com"
+        Fri, 30 Nov 2018 23:16:34 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:41070 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeLAEQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726840AbeLAEQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Nov 2018 23:16:10 -0500
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gSmEz-0000qm-P2; Fri, 30 Nov 2018 10:06:12 -0700
+        id 1gSmEz-0000ql-3E; Fri, 30 Nov 2018 10:06:10 -0700
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1gSmEx-0004V6-El; Fri, 30 Nov 2018 10:06:07 -0700
+        id 1gSmEx-0004V4-9z; Fri, 30 Nov 2018 10:06:07 -0700
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
@@ -38,21 +38,16 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Date:   Fri, 30 Nov 2018 10:06:01 -0700
-Message-Id: <20181130170606.17252-2-logang@deltatee.com>
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Fri, 30 Nov 2018 10:06:00 -0700
+Message-Id: <20181130170606.17252-1-logang@deltatee.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181130170606.17252-1-logang@deltatee.com>
-References: <20181130170606.17252-1-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, tglx@linutronix.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, pombredanne@nexb.com
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v24 1/6] iomap: Use non-raw io functions for io{read|write}XXbe
+Subject: [PATCH v24 0/6] Add io{read|write}64 to io-64-atomic headers
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,63 +55,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix an asymmetry in the io{read|write}XXbe functions in that the
-big-endian variants make use of the raw io accessors while the
-little-endian variants use the regular accessors. Some architectures
-implement barriers to order against both spinlocks and DMA accesses
-and for these case, the big-endian variant of the API would not be
-protected.
+This is resend number 5. In June, Andrew picked this up and it was in
+linux-next for a couple weeks. There were a couple problems that were
+identified and solved back then and I'd like to get the ball rolling
+again.
 
-Thus, change the mmio_XXXXbe macros to use the appropriate swab() function
-wrapping the regular accessor. This is similar to what was done for PIO.
+Andrew, can you please pick this set up again so it can get into
+linux-next? Or let me know if there's something else I should do.
 
-When this code was originally written, barriers in the IO accessors were
-not common and the accessors simply wrapped the raw functions in a
-conversion to CPU endianness. Since then, barriers have been added in
-some architectures and are now missing in the big endian variant of the
-API.
+I've been try to get this in for 15 months and I'm getting a bit tired of
+submitting it repeatedly with no responses.
 
-This also manages to silence a few sparse warnings that check
-for using the correct endian types which the original code did
-not annotate correctly.
+Thanks,
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Link: http://lkml.kernel.org/r/CAK8P3a25zQDxyaY3iVv+JmSSzs7F6ssGc+HdBkGs54ZfViX+Fg@mail.gmail.com
----
- lib/iomap.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Logan
 
-diff --git a/lib/iomap.c b/lib/iomap.c
-index 541d926da95e..2c293b22569f 100644
---- a/lib/iomap.c
-+++ b/lib/iomap.c
-@@ -65,8 +65,8 @@ static void bad_io_access(unsigned long port, const char *access)
- #endif
- 
- #ifndef mmio_read16be
--#define mmio_read16be(addr) be16_to_cpu(__raw_readw(addr))
--#define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
-+#define mmio_read16be(addr) swab16(readw(addr))
-+#define mmio_read32be(addr) swab32(readl(addr))
- #endif
- 
- unsigned int ioread8(void __iomem *addr)
-@@ -106,8 +106,8 @@ EXPORT_SYMBOL(ioread32be);
- #endif
- 
- #ifndef mmio_write16be
--#define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
--#define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
-+#define mmio_write16be(val,port) writew(swab16(val),port)
-+#define mmio_write32be(val,port) writel(swab32(val),port)
- #endif
- 
- void iowrite8(u8 val, void __iomem *addr)
--- 
+--
+
+Changes since v23:
+- Rebased onto v4.20-rc4 (No Changes)
+
+Changes since v22:
+- Rebased onto v4.20-rc1 (No Changes)
+
+Changes since v21:
+- Rebased onto v4.19-rc6 (No Changes)
+
+Changes since v20:
+- Rebased onto v4.19-rc3 (No Changes)
+
+Changes since v19:
+- Rebased onto v4.19-rc1 (No Changes)
+
+Changes since v18:
+- Dropped the CAAM patch as it was subtly wrong and broke when people
+  tested it in linux-next. Seeing the code is much trickier than it
+  appears, we'll leave it to its maintainers to clean it up,
+  should they chose.
+- Restored the ioread64/iowrite64 extern prototypes as despite
+  appearing to be unusued, they are in fact used in a rare corner case
+  by the caam driver on 64bit powerpc. This was reported by Guenter testing
+  on linux-next.
+- Rebased onto v4.18-rc4 (No Changes)
+
+Changes since v17:
+- Rebased onto v4.18-rc1 (No Changes)
+
+Changes since v16:
+- Rebased onto v4.17-rc4 (No Changes)
+
+Changes since v15:
+- Rebased onto v4.17-rc1, dropping the powerpc patches which were
+  picked up by Michael
+
+Changes since v14:
+- Rebased onto v4.16-rc7
+- Replace the first two patches so that instead of correcting the
+  endianness annotations we change to using writeX() and readX() with
+  swabX() calls. This makes the big-endian functions more symmetric
+  with the little-endian versions (with respect to barriers that are
+  not included in the raw functions). As a side effect, it also fixes
+  the kbuild warnings that the first two patches tried to address.
+
+Changes since v13:
+- Changed the subject of patch 0001 to correct a nit pointed out by Luc
+
+Changes since v12:
+- Rebased onto v4.16-rc6
+- Split patch 0001 into two and reworked the commit log as requested
+  by Luc Van Oostenryck
+
+Changes since v11:
+- Rebased onto v4.16-rc5
+- Added a patch (0001) to fix some old and new sparse warnings
+  that the kbuild robot warned about this cycle. The latest version
+  of sparse was required to reproduce these.
+- Added a patch (0002) to add io{read|write}64 to parisc which the kbuild
+  robot also found errors for this cycle
+
+Changes since v10:
+- Rebased onto v4.16-rc4, this droped the drm/tilcdc patch which was
+  picked up by that tree and is already in 4.16.
+
+Changes since v9:
+- Rebased onto v4.15-rc6
+- Fixed a couple of issues in the new version of the CAAM patch as
+  pointed out by Horia
+
+Changes since v8:
+- Rebased onto v4.15-rc2, as a result rewrote patch 7 seeing someone did
+  some similar cleanup in that area.
+- Added a patch to clean up the Switchtec NTB driver which landed in
+  v4.15-rc1
+
+Changes since v7:
+- Fix minor nits from Andy Shevchenko
+- Rebased onto v4.14-rc1
+
+Changes since v6:
+ ** none **
+
+Changes since v5:
+- Added a fix to the tilcdc driver to ensure it doesn't use the
+  non-atomic operation. (This includes adding io{read|write}64[be]_is_nonatomic
+  defines).
+
+Changes since v4:
+- Add functions so the powerpc implementation of iomap.c compiles. (As
+  noticed by Horia)
+
+Changes since v3:
+
+- I noticed powerpc didn't use the appropriate functions seeing
+  readq/writeq were not defined when iomap.h was included. Thus I've
+  included a patch to adjust this
+- Fixed some mistakes with a couple of the defines in io-64-nonatomic*
+  headers
+- Fixed a typo noticed by Horia.
+
+(earlier versions were drastically different)
+
+--
+
+Logan Gunthorpe (6):
+  iomap: Use non-raw io functions for io{read|write}XXbe
+  parisc: iomap: introduce io{read|write}64
+  iomap: introduce io{read|write}64_{lo_hi|hi_lo}
+  io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
+  ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
+  ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common
+    header
+
+ arch/parisc/include/asm/io.h           |   9 ++
+ arch/parisc/lib/iomap.c                |  64 +++++++++++
+ arch/powerpc/include/asm/io.h          |   2 +
+ drivers/ntb/hw/intel/ntb_hw_intel.h    |  30 +-----
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  36 +------
+ include/asm-generic/iomap.h            |  22 ++++
+ include/linux/io-64-nonatomic-hi-lo.h  |  64 +++++++++++
+ include/linux/io-64-nonatomic-lo-hi.h  |  64 +++++++++++
+ lib/iomap.c                            | 140 ++++++++++++++++++++++++-
+ 9 files changed, 366 insertions(+), 65 deletions(-)
+
+--
 2.19.0
-
