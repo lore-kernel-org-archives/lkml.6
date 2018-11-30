@@ -2,164 +2,232 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E3AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FF5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27844213A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:57:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="JomXrF9U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27844213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id D61EA2086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:06:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61EA2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeK3NFN (ORCPT
+        id S1727036AbeK3NNn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:05:13 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:60172 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbeK3NFN (ORCPT
+        Fri, 30 Nov 2018 08:13:43 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:33538 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726549AbeK3NNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:05:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1543543058; x=1575079058;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=FUgCmVQ2VKNgaCsb1HVvTlj5dWNTY50OFk8kPVfHZIc=;
-  b=JomXrF9UurDFwvs12d9eH8FHKOFjJlVpTyvCVsbLPCuMweD1Z48lkFNy
-   Va+0TyYNpdJhy1xUlZ8CXr+JrvD4KIFs0hYBLNaeSe/sd4XVfrUM2C2v9
-   TMqANhpTogb+N7rTKoAFurtoPn8Ltuefx60HomjZNovfxw4wn3q5rQ9Tq
-   Ef0a1ys5m6dzVXXMk3dCjw21PCxhgBH7B0tEwhBt/AjDjFgRhg/bElO0R
-   YIZuEOhh0CskRyyzJpkcA/WnAVNxR7YlNRLIH6BNLFn9GeezIniC2aspG
-   Ca7si+Zovzf652oIEvDFBgfHn8tSIhTEclmSsTfQSlbmJ4B+W8nqjm+IW
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
-   d="scan'208";a="96654545"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2018 09:57:38 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 29 Nov 2018 17:40:33 -0800
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.72.98]) ([10.111.72.98])
-  by uls-op-cesaip01.wdc.com with ESMTP; 29 Nov 2018 17:57:38 -0800
-Subject: Re: [PATCH v2 3/4] irqchip: sifive-plic: Differentiate between PLIC
- handler and context
-To:     Anup Patel <anup@brainfault.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Fri, 30 Nov 2018 08:13:43 -0500
+X-ASG-Debug-ID: 1543543512-093b7e197b40dc0001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id JWexhe6Z75Qv3iup (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 30 Nov 2018 10:05:12 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Nov 2018 10:04:26 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Fri, 30 Nov 2018 10:04:26 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     Kees Cook <keescook@chromium.org>
+CC:     David Howells <dhowells@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181127100317.12809-1-anup@brainfault.org>
- <20181127100317.12809-4-anup@brainfault.org>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <93356e4f-ccd9-39ba-6afe-88dcdc72945d@wdc.com>
-Date:   Thu, 29 Nov 2018 17:57:36 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181127100317.12809-4-anup@brainfault.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Topic: [PATCH 1/1] sched/headers: fix thread_info.<first> is
+ overwritten by STACK_END_MAGIC
+X-ASG-Orig-Subj: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Index: AQHUgwHXQvH51CSg9UWtTixRCjaq8A==
+Date:   Fri, 30 Nov 2018 02:04:26 +0000
+Message-ID: <810b0ad91d5547c5bbbec1b61c119bdc@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <e7952089a66db4e5d59d2af230a324155bb018a0.1542955914.git.dongsheng.wang@hxt-semitech.com>
+ <CAGXu5jKTQK2BGYefNXkW=-=svzhnqP4Pho3jK+mORAjDxgnsRA@mail.gmail.com>
+ <19391812db6444f3bd260546acded9b7@HXTBJIDCEMVIW02.hxtcorp.net>
+ <CAGXu5jJg+rfDi1VuiaevPSkaZidjmEC2au9yJR6n6rWJR-qcsg@mail.gmail.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.6.159]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1543543512
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.62724
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 2:04 AM, Anup Patel wrote:
-> We explicitly differentiate between PLIC handler and context because
-> PLIC context is for given mode of HART whereas PLIC handler is per-CPU
-> software construct meant for handling interrupts from a particular
-> PLIC context.
-> 
-> Signed-off-by: Anup Patel <anup@brainfault.org>
-> ---
->   drivers/irqchip/irq-sifive-plic.c | 21 +++++++++++++--------
->   1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-> index 95b4b92ca9b8..ffd4deaca057 100644
-> --- a/drivers/irqchip/irq-sifive-plic.c
-> +++ b/drivers/irqchip/irq-sifive-plic.c
-> @@ -66,8 +66,8 @@ static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
->   
->   struct plic_hw {
->   	u32			nr_irqs;
-> +	u32			nr_contexts;
->   	u32			nr_handlers;
-> -	u32			nr_mapped;
->   	void __iomem		*regs;
->   	struct irq_domain	*irqdomain;
->   };
-> @@ -191,10 +191,10 @@ static int __init plic_init(struct device_node *node,
->   	if (WARN_ON(!plic.nr_irqs))
->   		goto out_iounmap;
->   
-> -	plic.nr_handlers = of_irq_count(node);
-> -	if (WARN_ON(!plic.nr_handlers))
-> +	plic.nr_contexts = of_irq_count(node);
-> +	if (WARN_ON(!plic.nr_contexts))
->   		goto out_iounmap;
-> -	if (WARN_ON(plic.nr_handlers < num_possible_cpus()))
-> +	if (WARN_ON(plic.nr_contexts < num_possible_cpus()))
->   		goto out_iounmap;
->   
->   	plic.irqdomain = irq_domain_add_linear(node, plic.nr_irqs + 1,
-> @@ -202,7 +202,7 @@ static int __init plic_init(struct device_node *node,
->   	if (WARN_ON(!plic.irqdomain))
->   		goto out_iounmap;
->   
-> -	for (i = 0; i < plic.nr_handlers; i++) {
-> +	for (i = 0; i < plic.nr_contexts; i++) {
->   		struct of_phandle_args parent;
->   		struct plic_handler *handler;
->   		irq_hw_number_t hwirq;
-> @@ -225,6 +225,11 @@ static int __init plic_init(struct device_node *node,
->   
->   		cpu = riscv_hartid_to_cpuid(hartid);
->   		handler = per_cpu_ptr(&plic_handlers, cpu);
-> +		if (handler->present) {
-> +			pr_warn("handler not available for context %d.\n", i);
-> +			continue;
-> +		}
-> +
+On 2018/11/30 5:22, Kees Cook wrote:
+> On Tue, Nov 27, 2018 at 8:38 PM Wang, Dongsheng
+> <dongsheng.wang@hxt-semitech.com> wrote:
+>> Hello Kees,
+>>
+>> On 2018/11/28 6:38, Kees Cook wrote:
+>>> On Thu, Nov 22, 2018 at 11:54 PM, Wang Dongsheng
+>>> <dongsheng.wang@hxt-semitech.com> wrote:
+>>>> When select ARCH_TASK_STRUCT_ON_STACK the first of thread_info variable
+>>>> is overwritten by STACK_END_MAGIC. In fact, the ARCH_TASK_STRUCT_ON_STACK
+>>>> is not a real task on stack, it's only init_task on init_stack.
+>>>>
+>>>> Commit 0500871f21b2 ("Construct init thread stack in the linker script
+>>>> rather than by union") added this macro and put task_strcut into
+>>>> thread_union. This brings us the following possibilities:
+>>>>     TASK_ON_STACK    THREAD_INFO_IN_TASK    STACK
+>>>>                                             ----- <-- thread_info & stack
+>>>>         N                    N             |     |     --- <-- task
+>>>>                                            |     |    |   |
+>>>>                                             -----      ---
+>>>>
+>>>>                                             ----- <-- stack
+>>>>         N                    Y             |     |     --- <-- task(Including thread_info)
+>>>>                                            |     |    |   |
+>>>>                                             -----      ---
+>>>>
+>>>>                                             ----- <-- stack & task & thread_info
+>>>>         Y                    N             |     |
+>>>>                                            |     |
+>>>>                                             -----
+>>>>
+>>>>                                             ----- <-- stack & task(Including thread_info)
+>>>>         Y                    Y             |     |
+>>>>                                            |     |
+>>>>                                             -----
+>>>> The kernel has handled the first two cases correctly.
+>>>>
+>>>> For the third case:
+>>>> TASK_ON_STACK: Y. THREAD_INFO_IN_TASK: N. this case
+>>>> should never happen, because the task and thread_info will overlap. So
+>>>> when TASK_ON_STACK is selected, THREAD_INFO_IN_TASK must be selected too.
+>>>>
+>>>> For the fourth case:
+>>>> When task on stack, the end of stack should add a sizeof(task_struct) offset.
+>>>>
+>>>> This patch handled with the third and fourth case.
+>>>>
+>>>> Fixes: 0500871f21b2 ("Construct init thread stack in the linker ...")
+>>>>
+>>>> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>>> ---
+>>>>  arch/Kconfig                     | 1 +
+>>>>  include/linux/sched/task_stack.h | 5 ++++-
+>>>>  2 files changed, 5 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/Kconfig b/arch/Kconfig
+>>>> index e1e540ffa979..0a2c73e73195 100644
+>>>> --- a/arch/Kconfig
+>>>> +++ b/arch/Kconfig
+>>>> @@ -251,6 +251,7 @@ config ARCH_HAS_SET_MEMORY
+>>>>  # Select if arch init_task must go in the __init_task_data section
+>>>>  config ARCH_TASK_STRUCT_ON_STACK
+>>>>         bool
+>>>> +       depends on THREAD_INFO_IN_TASK || IA64
+>>> The "IA64" part shouldn't be needed since IA64 already selects it.
+>>>
+>>> Since it's selected, it also can't have a depends, IIUC.
+>> Since the IA64 thread_info including task_struct, it doesn't need to
+>> select THREAD_INFO_IN_TASK.
+>> So we need to allow IA64 select ARCH_TASK_STRUCT_ON_STACK without
+>> THREAD_INFO.
+> Okay.
+>
+>>>>  # Select if arch has its private alloc_task_struct() function
+>>>>  config ARCH_TASK_STRUCT_ALLOCATOR
+>>>> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+>>>> index 6a841929073f..624c48defb9e 100644
+>>>> --- a/include/linux/sched/task_stack.h
+>>>> +++ b/include/linux/sched/task_stack.h
+>>>> @@ -7,6 +7,7 @@
+>>>>   */
+>>>>
+>>>>  #include <linux/sched.h>
+>>>> +#include <linux/sched/task.h>
+>>>>  #include <linux/magic.h>
+>>>>
+>>>>  #ifdef CONFIG_THREAD_INFO_IN_TASK
+>>>> @@ -25,7 +26,9 @@ static inline void *task_stack_page(const struct task_struct *task)
+>>>>
+>>>>  static inline unsigned long *end_of_stack(const struct task_struct *task)
+>>>>  {
+>>>> -       return task->stack;
+>>>> +       if (!IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) || task != &init_task)
+>>>> +               return task->stack;
+>>>> +       return (unsigned long *)(task + 1);
+>>>>  }
+>>> This seems like a strange place for the change. It feels more like
+>>> init_task has been defined incorrectly.
+>> The init_task will put into init_stack when ARCH_TASK_STRUCT_ON_STACK is
+>> selected.
+>> include/asm-generic/vmlinux.lds.h:
+>> #define INIT_TASK_DATA(align)                        \
+>>     . = ALIGN(align);                        \
+>>     __start_init_task = .;                        \
+>>     init_thread_union = .;                        \
+>>     init_stack = .;                            \
+>>     KEEP(*(.data..init_task))                    \
+>>     KEEP(*(.data..init_thread_info))                \
+>>     . = __start_init_task + THREAD_SIZE;                \
+>>     __end_init_task = .;
+>>
+>> So we need end_of_stack to offset sizeof(task_struct).
+> Well, I guess I mean I'd rather the end_of_stack() code not be
+> special-cased in the if. The default should be how it was. Perhaps:
+>
+> if (IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) && task == &init_task)
+>     return (unsigned long *)(task + 1);
+> return task->stack;
+>
+> But it still feels strange: why can't task->stack point to the correct
+> place in this special case?
 
-Ahh you have the handler->present check here in this patch. This should 
-be in the 2nd patch. This change doesn't match the commit text anyways.
+Normally, task->stack is the bottom of the stack, the end_of_stack just
+need to return task->stack.
+The task->stack always represents the bottom of the stack, and it cannot
+be changed, so what
+happens here is we have some data(task or thread info)that we want to
+put at the bottom of the
+stack. The end_of_stack just refers to the size of the stack available
+to us.
+In ARCH_TASK_STRUCT_ON_STACK case, the init_task has been placed in a
+fixed location, the task
+is placed at the bottom of the stack. Current end_of_stack doesn't
+handle this situation, so we need
+add a if condition to handle it. And this is just like
+!THREAD_INFO_IN_TASK(the thead_info on stack),
+the thread_info is placed at the bottom of the stack, the end_of_stack =
+the bottom of stack + sizeof(*thread_info).
 
-Everything else just variable renaming which can be separated.
-nr_handlers->nr_contexts
-nr_mapped->nr_handlers
 
-
-Regards,
-Atish
->   		handler->present = true;
->   		handler->hart_base =
->   			plic.regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
-> @@ -237,11 +242,11 @@ static int __init plic_init(struct device_node *node,
->   		for (hwirq = 1; hwirq <= plic.nr_irqs; hwirq++)
->   			plic_toggle(handler, hwirq, 0);
->   
-> -		plic.nr_mapped++;
-> +		plic.nr_handlers++;
->   	}
->   
-> -	pr_info("mapped %d interrupts to %d (out of %d) handlers.\n",
-> -		plic.nr_irqs, plic.nr_mapped, plic.nr_handlers);
-> +	pr_info("mapped %d interrupts with %d handlers for %d contexts.\n",
-> +		plic.nr_irqs, plic.nr_handlers, plic.nr_contexts);
->   	set_handle_irq(plic_handle_irq);
->   	return 0;
->   
-> 
+Cheers,
+Dongsheng
 
