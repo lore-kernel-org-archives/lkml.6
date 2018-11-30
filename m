@@ -2,221 +2,650 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F1EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52197C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A3020863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6A3020863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E90B120863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:32:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjXIZhPI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90B120863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeK3SjM (ORCPT
+        id S1726877AbeK3Skm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:39:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43751 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726386AbeK3SjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:39:11 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CCBBC207B0; Fri, 30 Nov 2018 08:30:47 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 939BD20742;
-        Fri, 30 Nov 2018 08:30:47 +0100 (CET)
-Date:   Fri, 30 Nov 2018 08:30:47 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     linux-sunxi@googlegroups.com, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [linux-sunxi] [PATCH v2 2/2] media: cedrus: Add H264 decoding
- support
-Message-ID: <20181130073047.auafqe3rzdqfs32d@flea>
-References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
- <2826880.kP3DS59ZBy@jernej-laptop>
- <20181127155028.5ukw3g6zjbnvarbp@flea>
- <6005903.5qHflpuMbl@jernej-laptop>
+        Fri, 30 Nov 2018 13:40:42 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34885 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeK3Skm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:40:42 -0500
+Received: by mail-it1-f196.google.com with SMTP id p197so7861603itp.0;
+        Thu, 29 Nov 2018 23:32:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9ivgfWZtKKl8aBeM4LjxLK+/na4oWSfcXH4OctdNUD8=;
+        b=EjXIZhPI3e1ePhuyIJkXQ2+IxMJeRbcdotrOexOI0cSt1bY0cbTus9MBXsEhqEV1Eo
+         xXpOKfD0bkEba4lXotSsm6IwxZ1Rys+rHnZbgYiEGsxTe3uCajT1Yz/chS6PT7Aem/bQ
+         VLRReP66knBtMqBPoJHHVuGGXgP7O9uXHTfAJn9BDBaVAwkw+/GdoamVY1jvhEyaCujV
+         V277ow0DFRrXPONEhh/n5haAHgQY0v61gQ0HjNUd3N52hVVK1EtmvXr3XQqtvdMRNh1/
+         UG2VtHl16/BDL95wuqskZsVKpA3XHlv5WHMPa38etfn6FALTprGaBpU6AcT+/XY9T5fh
+         3k2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9ivgfWZtKKl8aBeM4LjxLK+/na4oWSfcXH4OctdNUD8=;
+        b=NPfVEhiV2+wkSnuKRHTBelxU1sIEyvs4qESQPsqZtdERAj0y3h55y9g17PxgkfGj6j
+         BBNHT3cHFo7BIyg/klmhg0sBi8O7nk3xmDqwRDk2xkwCLdxUue2Qsj5ICsJIT3a2fig5
+         WYNpwn/J2VGB/qVACbjJ+nGArpi7mhOb8lVTEEZbUgt1mPDYLq67Oby9mSy8ykLjGkAt
+         +vkErSFB3um6U1+YaDn2zBs5BdjC8wiRucORA3RpypuredYRf1HBOAlF/Zo3+93jdGs9
+         JaWfrlMxiAEm7hVz6dC3LRpT12qvOR0x5TStdikUfZKoY/ViKi3jfZ9on3k/NPYSXQRj
+         7AxA==
+X-Gm-Message-State: AA+aEWayNa/SvjZ5g2ke27ouBvDTgPLgeQdyubOjLEiqlGfkzryI8VYC
+        cn+U1iyYVPnjZCC4OSwN08rRJ/BXuNS3n6MR8PM=
+X-Google-Smtp-Source: AFSGD/X9goZey1O4p3+keDPg9az1OrtXc/JFxcMnqqQSctWhsy4sMMmT6dq4qyxnNyvcirGv5oezNe2rtJQ0Wf6HTx0=
+X-Received: by 2002:a02:1217:: with SMTP id i23mr4293318jad.53.1543563138659;
+ Thu, 29 Nov 2018 23:32:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cc6r7wwwz2glmnhj"
-Content-Disposition: inline
-In-Reply-To: <6005903.5qHflpuMbl@jernej-laptop>
-User-Agent: NeoMutt/20180716
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com> <1542535751-16079-5-git-send-email-pawell@cadence.com>
+In-Reply-To: <1542535751-16079-5-git-send-email-pawell@cadence.com>
+From:   Peter Chen <hzpeterchen@gmail.com>
+Date:   Fri, 30 Nov 2018 15:32:07 +0800
+Message-ID: <CAL411-rWbQ6yj1r_aaLP8UagVRJhsn7xdznQwXS9enkxXTs2LA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/15] usb:cdns3: Driver initialization code.
+To:     pawell@cadence.com
+Cc:     devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, rogerq@ti.com,
+        lkml <linux-kernel@vger.kernel.org>, adouglas@cadence.com,
+        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
+        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Nov 18, 2018 at 6:16 PM Pawel Laszczak <pawell@cadence.com> wrote:
+>
+> Patch adds core.c and core.h file that implements initialization
+> of platform driver and adds function responsible for selecting,
+> switching and running appropriate Device/Host mode.
+>
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/cdns3/Makefile |   2 +
+>  drivers/usb/cdns3/core.c   | 413 +++++++++++++++++++++++++++++++++++++
+>  drivers/usb/cdns3/core.h   | 100 +++++++++
+>  3 files changed, 515 insertions(+)
+>  create mode 100644 drivers/usb/cdns3/core.c
+>  create mode 100644 drivers/usb/cdns3/core.h
+>
+> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+> index dcdd62003c6a..02d25b23c5d3 100644
+> --- a/drivers/usb/cdns3/Makefile
+> +++ b/drivers/usb/cdns3/Makefile
+> @@ -1,3 +1,5 @@
+> +obj-$(CONFIG_USB_CDNS3)                        += cdns3.o
+>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)       += cdns3-pci.o
+>
+> +cdns3-y                                        := core.o
+>  cdns3-pci-y                            := cdns3-pci-wrap.o
+> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+> new file mode 100644
+> index 000000000000..f9055d4da67f
+> --- /dev/null
+> +++ b/drivers/usb/cdns3/core.c
+> @@ -0,0 +1,413 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Cadence USBSS DRD Driver.
+> + *
+> + * Copyright (C) 2018 Cadence.
+> + *
 
---cc6r7wwwz2glmnhj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please add NXP copyright too.
 
-On Tue, Nov 27, 2018 at 05:30:00PM +0100, Jernej =C5=A0krabec wrote:
-> > > > +static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
-> > > > +				   struct cedrus_run *run,
-> > > > +				   const u8 *ref_list, u8 num_ref,
-> > > > +				   enum cedrus_h264_sram_off sram)
-> > > > +{
-> > > > +	const struct v4l2_ctrl_h264_decode_param *decode =3D
-> > > > run->h264.decode_param; +	struct vb2_queue *cap_q =3D
-> > > > &ctx->fh.m2m_ctx->cap_q_ctx.q;
-> > > > +	struct cedrus_dev *dev =3D ctx->dev;
-> > > > +	u32 sram_array[CEDRUS_MAX_REF_IDX / sizeof(u32)];
-> > > > +	unsigned int size, i;
-> > > > +
-> > > > +	memset(sram_array, 0, sizeof(sram_array));
-> > > > +
-> > > > +	for (i =3D 0; i < num_ref; i +=3D 4) {
-> > > > +		unsigned int j;
-> > > > +
-> > > > +		for (j =3D 0; j < 4; j++) {
-> > >=20
-> > > I don't think you have to complicate with two loops here.
-> > > cedrus_h264_write_sram() takes void* and it aligns to 4 anyway. So as=
- long
-> > > input buffer is multiple of 4 (u8[CEDRUS_MAX_REF_IDX] qualifies for t=
-hat),
-> > > you can use single for loop with "u8 sram_array[CEDRUS_MAX_REF_IDX]".
-> > > This should make code much more readable.
-> >=20
-> > This wasn't really about the alignment, but in order to get the
-> > offsets in the u32 and the array more easily.
-> >=20
-> > Breaking out the loop will make that computation less easy on the eye,
-> > so I guess it's very subjective.
-> >=20
->=20
-> For some strange reason, code below fixes decoding issue from one of my t=
-est=20
-> samples. This is what I actually meant with 1 loop approach:
+> + * Author: Peter Chen <peter.chen@nxp.com>
+> + *         Pawel Laszczak <pawell@cadence.com>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include "gadget.h"
+> +#include "core.h"
+> +
+> +static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
+> +{
+> +       WARN_ON(cdns->role >= CDNS3_ROLE_END || !cdns->roles[cdns->role]);
+> +       return cdns->roles[cdns->role];
+> +}
+> +
 
-Do you have that test sample somewhere accessible?
+Can we delete "current", and use cdns3_get_role_driver directly?
 
-> static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
-> 				   struct cedrus_run *run,
-> 				   const u8 *ref_list, u8 num_ref,
-> 				   enum cedrus_h264_sram_off sram)
-> {
-> 	const struct v4l2_ctrl_h264_decode_param *decode =3D run->h264.decode_pa=
-ram;
-> 	struct vb2_queue *cap_q =3D &ctx->fh.m2m_ctx->cap_q_ctx.q;
-> 	struct cedrus_dev *dev =3D ctx->dev;
-> 	u8 sram_array[CEDRUS_MAX_REF_IDX];
-> 	unsigned int i;
->=20
-> 	memset(sram_array, 0, sizeof(sram_array));
-> 	num_ref =3D min(num_ref, (u8)CEDRUS_MAX_REF_IDX);
->=20
-> 	for (i =3D 0; i < num_ref; i++) {
-> 		const struct v4l2_h264_dpb_entry *dpb;
-> 		const struct cedrus_buffer *cedrus_buf;
-> 		const struct vb2_v4l2_buffer *ref_buf;
-> 		unsigned int position;
-> 		int buf_idx;
-> 		u8 dpb_idx;
->=20
-> 		dpb_idx =3D ref_list[i];
-> 		dpb =3D &decode->dpb[dpb_idx];
->=20
-> 		if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
-> 			continue;
->=20
-> 		buf_idx =3D vb2_find_tag(cap_q, dpb->tag, 0);
-> 		if (buf_idx < 0)
-> 			continue;
->=20
-> 		ref_buf =3D to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
-> 		cedrus_buf =3D vb2_v4l2_to_cedrus_buffer(ref_buf);
-> 		position =3D cedrus_buf->codec.h264.position;
->=20
-> 		sram_array[i] |=3D position << 1;
-> 		if (ref_buf->field =3D=3D V4L2_FIELD_BOTTOM)
-> 			sram_array[i] |=3D BIT(0);
-> 	}
->=20
-> 	cedrus_h264_write_sram(dev, sram, &sram_array, num_ref);
-> }
->=20
-> IMO this code is easier to read.
+> +static inline int cdns3_role_start(struct cdns3 *cdns, enum cdns3_roles role)
+> +{
+> +       int ret;
+> +
+> +       if (role >= CDNS3_ROLE_END)
+> +               return 0;
+> +
+> +       if (!cdns->roles[role])
+> +               return -ENXIO;
+> +
+> +       mutex_lock(&cdns->mutex);
+> +       cdns->role = role;
+> +       ret = cdns->roles[role]->start(cdns);
+> +       mutex_unlock(&cdns->mutex);
+> +       return ret;
+> +}
+> +
+> +static inline void cdns3_role_stop(struct cdns3 *cdns)
+> +{
+> +       enum cdns3_roles role = cdns->role;
+> +
+> +       if (role == CDNS3_ROLE_END)
+> +               return;
+> +
+> +       mutex_lock(&cdns->mutex);
+> +       cdns->roles[role]->stop(cdns);
+> +       cdns->role = CDNS3_ROLE_END;
+> +       mutex_unlock(&cdns->mutex);
+> +}
+> +
+> +static enum cdns3_roles cdns3_get_role(struct cdns3 *cdns)
+> +{
+> +       if (cdns->roles[CDNS3_ROLE_HOST] && cdns->roles[CDNS3_ROLE_GADGET]) {
+> +               //TODO: implements selecting device/host mode
+> +               return CDNS3_ROLE_HOST;
+> +       }
+> +       return cdns->roles[CDNS3_ROLE_HOST]
+> +               ? CDNS3_ROLE_HOST
+> +               : CDNS3_ROLE_GADGET;
+> +}
+> +
+> +/**
+> + * cdns3_core_init_role - initialize role of operation
+> + * @cdns: Pointer to cdns3 structure
+> + *
+> + * Returns 0 on success otherwise negative errno
+> + */
+> +static int cdns3_core_init_role(struct cdns3 *cdns)
+> +{
+> +       struct device *dev = cdns->dev;
+> +       enum usb_dr_mode dr_mode;
+> +
+> +       dr_mode = usb_get_dr_mode(dev);
+> +       cdns->role = CDNS3_ROLE_END;
+> +
+> +       /*
+> +        * If driver can't read mode by means of usb_get_dr_mdoe function then
+> +        * chooses mode according with Kernel configuration. This setting
+> +        * can be restricted later depending on strap pin configuration.
+> +        */
+> +       if (dr_mode == USB_DR_MODE_UNKNOWN) {
+> +               if (IS_ENABLED(CONFIG_USB_CDNS3_HOST) &&
+> +                   IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+> +                       dr_mode = USB_DR_MODE_OTG;
+> +               else if (IS_ENABLED(CONFIG_USB_CDNS3_HOST))
+> +                       dr_mode = USB_DR_MODE_HOST;
+> +               else if (IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+> +                       dr_mode = USB_DR_MODE_PERIPHERAL;
+> +       }
+> +
+> +       if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
+> +               //TODO: implements host initialization
+> +       }
+> +
+> +       if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
+> +               //TODO: implements device initialization
+> +       }
+> +
+> +       if (!cdns->roles[CDNS3_ROLE_HOST] && !cdns->roles[CDNS3_ROLE_GADGET]) {
+> +               dev_err(dev, "no supported roles\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       cdns->dr_mode = dr_mode;
+> +       return 0;
+> +}
+> +
+> +/**
+> + * cdns3_irq - interrupt handler for cdns3 core device
+> + *
+> + * @irq: irq number for cdns3 core device
+> + * @data: structure of cdns3
+> + *
+> + * Returns IRQ_HANDLED or IRQ_NONE
+> + */
+> +static irqreturn_t cdns3_irq(int irq, void *data)
+> +{
+> +       struct cdns3 *cdns = data;
+> +       irqreturn_t ret = IRQ_NONE;
+> +
+> +       /* Handle device/host interrupt */
+> +       if (cdns->role != CDNS3_ROLE_END)
+> +               ret = cdns3_get_current_role_driver(cdns)->irq(cdns);
+> +
+> +       return ret;
+> +}
+> +
+> +static void cdns3_remove_roles(struct cdns3 *cdns)
+> +{
+> +       //TODO: implements this function
+> +}
+> +
+> +static int cdns3_do_role_switch(struct cdns3 *cdns, enum cdns3_roles role)
+> +{
+> +       enum cdns3_roles current_role;
+> +       int ret = 0;
+> +
+> +       current_role = cdns->role;
+> +
+> +       if (role == CDNS3_ROLE_END)
+> +               return 0;
+> +
+> +       dev_dbg(cdns->dev, "Switching role");
+> +
+> +       ret = cdns3_role_start(cdns, role);
+> +       if (ret) {
+> +               /* Back to current role */
+> +               dev_err(cdns->dev, "set %d has failed, back to %d\n",
+> +                       role, current_role);
+> +               ret = cdns3_role_start(cdns, current_role);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +/**
+> + * cdns3_role_switch - work queue handler for role switch
+> + *
+> + * @work: work queue item structure
+> + *
+> + * Handles below events:
+> + * - Role switch for dual-role devices
+> + * - CDNS3_ROLE_GADGET <--> CDNS3_ROLE_END for peripheral-only devices
+> + */
+> +static void cdns3_role_switch(struct work_struct *work)
+> +{
+> +       enum cdns3_roles role = CDNS3_ROLE_END;
+> +       struct cdns3 *cdns;
+> +       bool device, host;
+> +
+> +       cdns = container_of(work, struct cdns3, role_switch_wq);
+> +
+> +       //TODO: implements this functions.
+> +       //host = cdns3_is_host(cdns);
+> +       //device = cdns3_is_device(cdns);
 
-INdeed, thanks!
+You may improve use C comment.
 
-> > > > +			const struct v4l2_h264_dpb_entry *dpb;
-> > > > +			const struct cedrus_buffer *cedrus_buf;
-> > > > +			const struct vb2_v4l2_buffer *ref_buf;
-> > > > +			unsigned int position;
-> > > > +			int buf_idx;
-> > > > +			u8 ref_idx =3D i + j;
-> > > > +			u8 dpb_idx;
-> > > > +
-> > > > +			if (ref_idx >=3D num_ref)
-> > > > +				break;
-> > > > +
-> > > > +			dpb_idx =3D ref_list[ref_idx];
-> > > > +			dpb =3D &decode->dpb[dpb_idx];
-> > > > +
-> > > > +			if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
-> > > > +				continue;
-> > > > +
-> > > > +			buf_idx =3D vb2_find_tag(cap_q, dpb->tag, 0);
-> > > > +			if (buf_idx < 0)
-> > > > +				continue;
-> > > > +
-> > > > +			ref_buf =3D to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
-> > > > +			cedrus_buf =3D vb2_v4l2_to_cedrus_buffer(ref_buf);
-> > > > +			position =3D cedrus_buf->codec.h264.position;
-> > > > +
-> > > > +			sram_array[i] |=3D position << (j * 8 + 1);
-> > > > +			if (ref_buf->field =3D=3D V4L2_FIELD_BOTTOM)
-> > >=20
-> > > You newer set above flag to buffer so this will be always false.
-> >=20
-> > As far as I know, the field is supposed to be set by the userspace.
->=20
-> How? I thought that only flags at queueing buffers can be set and there i=
-s no=20
-> bottom/top flag.
+> +       host = 1;
+> +       device = 0;
+> +
+> +       if (host)
+> +               role = CDNS3_ROLE_HOST;
+> +       else if (device)
+> +               role = CDNS3_ROLE_GADGET;
+> +
+> +       if (cdns->desired_dr_mode == cdns->current_dr_mode &&
+> +           cdns->role == role)
+> +               return;
+> +
+> +       pm_runtime_get_sync(cdns->dev);
+> +       cdns3_role_stop(cdns);
+> +
+> +       if (host) {
+> +               if (cdns->roles[CDNS3_ROLE_HOST])
+> +                       cdns3_do_role_switch(cdns, CDNS3_ROLE_HOST);
+> +               pm_runtime_put_sync(cdns->dev);
+> +               return;
+> +       }
+> +
+> +       if (device)
+> +               cdns3_do_role_switch(cdns, CDNS3_ROLE_GADGET);
+> +       else
+> +               cdns3_do_role_switch(cdns, CDNS3_ROLE_END);
+> +
+> +       pm_runtime_put_sync(cdns->dev);
+> +}
+> +
+> +/**
+> + * cdns3_probe - probe for cdns3 core device
+> + * @pdev: Pointer to cdns3 core platform device
+> + *
+> + * Returns 0 on success otherwise negative errno
+> + */
+> +static int cdns3_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct resource *res;
+> +       struct cdns3 *cdns;
+> +       void __iomem *regs;
+> +       int ret;
+> +
+> +       cdns = devm_kzalloc(dev, sizeof(*cdns), GFP_KERNEL);
+> +       if (!cdns)
+> +               return -ENOMEM;
+> +
+> +       cdns->dev = dev;
+> +
+> +       platform_set_drvdata(pdev, cdns);
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> +       if (!res) {
+> +               dev_err(dev, "missing IRQ\n");
+> +               return -ENODEV;
+> +       }
+> +       cdns->irq = res->start;
+> +
+> +       /*
+> +        * Request memory region
+> +        * region-0: xHCI
+> +        * region-1: Peripheral
+> +        * region-2: OTG registers
+> +        */
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       regs = devm_ioremap_resource(dev, res);
+> +
+> +       if (IS_ERR(regs))
+> +               return PTR_ERR(regs);
+> +       cdns->xhci_regs = regs;
+> +       cdns->xhci_res = res;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +       regs = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(regs))
+> +               return PTR_ERR(regs);
+> +       cdns->dev_regs  = regs;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> +       regs = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(regs))
+> +               return PTR_ERR(regs);
+> +       cdns->otg_regs = regs;
+> +
+> +       mutex_init(&cdns->mutex);
+> +
+> +       cdns->phy = devm_phy_get(dev, "cdns3,usbphy");
+> +       if (IS_ERR(cdns->phy)) {
+> +               dev_info(dev, "no generic phy found\n");
+> +               cdns->phy = NULL;
+> +               /*
+> +                * fall through here!
+> +                * if no generic phy found, phy init
+> +                * should be done under boot!
+> +                */
 
-https://linuxtv.org/downloads/v4l-dvb-apis/uapi/v4l/buffer.html#c.v4l2_buff=
-er
+If the phy driver is defer-probed, it will be here, it is not an error.
+I think you could have a generic phy driver or usb generic phy driver
+(drivers/usb/phy/phy-generic.c) even you don't need any operations for
+PHY. It will be easy for other platforms.
 
-"Indicates the field order of the image in the buffer, see
-v4l2_field. This field is not used when the buffer contains VBI
-data. Drivers must set it when type refers to a capture stream,
-applications when it refers to an output stream."
+> +       } else {
+> +               phy_init(cdns->phy);
+> +       }
+> +
+> +       ret = cdns3_core_init_role(cdns);
+> +       if (ret)
+> +               goto err1;
+> +
+> +       INIT_WORK(&cdns->role_switch_wq, cdns3_role_switch);
+> +       if (ret)
+> +               goto err2;
+> +
+> +       if (ret)
+> +               goto err2;
+> +
+> +       cdns->role = cdns3_get_role(cdns);
+> +
+> +       ret = devm_request_irq(dev, cdns->irq, cdns3_irq, IRQF_SHARED,
+> +                              dev_name(dev), cdns);
+> +
+> +       if (ret)
+> +               goto err2;
+> +
+> +       ret = cdns3_role_start(cdns, cdns->role);
+> +       if (ret) {
+> +               dev_err(dev, "can't start %s role\n",
+> +                       cdns3_get_current_role_driver(cdns)->name);
+> +               goto err2;
+> +       }
+> +
+> +       device_set_wakeup_capable(dev, true);
+> +       pm_runtime_set_active(dev);
+> +       pm_runtime_enable(dev);
+> +
+> +       /*
+> +        * The controller needs less time between bus and controller suspend,
+> +        * and we also needs a small delay to avoid frequently entering low
+> +        * power mode.
+> +        */
+> +       pm_runtime_set_autosuspend_delay(dev, 20);
+> +       pm_runtime_mark_last_busy(dev);
+> +       pm_runtime_use_autosuspend(dev);
+> +       dev_dbg(dev, "Cadence USB3 core: probe succeed\n");
+> +
+> +       return 0;
+> +
+> +err2:
+> +       cdns3_remove_roles(cdns);
+> +err1:
+> +       return ret;
+> +}
+> +
+> +/**
+> + * cdns3_remove - unbind drd driver and clean up
+> + * @pdev: Pointer to Linux platform device
+> + *
+> + * Returns 0 on success otherwise negative errno
+> + */
+> +static int cdns3_remove(struct platform_device *pdev)
+> +{
+> +       struct cdns3 *cdns = platform_get_drvdata(pdev);
+> +
+> +       pm_runtime_get_sync(&pdev->dev);
+> +       pm_runtime_disable(&pdev->dev);
+> +       pm_runtime_put_noidle(&pdev->dev);
+> +       cdns3_remove_roles(cdns);
+> +
+> +       return 0;
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id of_cdns3_match[] = {
+> +       { .compatible = "cdns,usb3" },
+> +       { },
+> +};
+> +MODULE_DEVICE_TABLE(of, of_cdns3_match);
+> +#endif
+> +
+> +#ifdef CONFIG_PM
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int cdns3_suspend(struct device *dev)
+> +{
+> +       //TODO: implements this function
+> +       return 0;
+> +}
+> +
+> +static int cdns3_resume(struct device *dev)
+> +{
+> +       //TODO: implements this function
+> +       return 0;
+> +}
+> +#endif /* CONFIG_PM_SLEEP */
+> +static int cdns3_runtime_suspend(struct device *dev)
+> +{      //TODO: implements this function
+> +       return 0;
+> +}
+> +
+> +static int cdns3_runtime_resume(struct device *dev)
+> +{
+> +       //TODO: implements this function
+> +       return 0;
+> +}
+> +#endif /* CONFIG_PM */
+> +
+> +static const struct dev_pm_ops cdns3_pm_ops = {
+> +       SET_SYSTEM_SLEEP_PM_OPS(cdns3_suspend, cdns3_resume)
+> +       SET_RUNTIME_PM_OPS(cdns3_runtime_suspend, cdns3_runtime_resume, NULL)
+> +};
+> +
+> +static struct platform_driver cdns3_driver = {
+> +       .probe          = cdns3_probe,
+> +       .remove         = cdns3_remove,
+> +       .driver         = {
+> +               .name   = "cdns-usb3",
+> +               .of_match_table = of_match_ptr(of_cdns3_match),
+> +               .pm     = &cdns3_pm_ops,
+> +       },
+> +};
+> +
+> +static int __init cdns3_driver_platform_register(void)
+> +{
+> +       return platform_driver_register(&cdns3_driver);
+> +}
+> +module_init(cdns3_driver_platform_register);
+> +
+> +static void __exit cdns3_driver_platform_unregister(void)
+> +{
+> +       platform_driver_unregister(&cdns3_driver);
+> +}
+> +module_exit(cdns3_driver_platform_unregister);
+> +
+> +MODULE_ALIAS("platform:cdns3");
+> +MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("Cadence USB3 DRD Controller Driver");
+> diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
+> new file mode 100644
+> index 000000000000..7c8204fe4d3d
+> --- /dev/null
+> +++ b/drivers/usb/cdns3/core.h
+> @@ -0,0 +1,100 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Cadence USBSS DRD Driver.
+> + *
 
-My understanding is that the application should set it, since we'll
-use the output stream's buffer here. But I might very well be wrong
-about it :/
+Header file
 
-Maxime
+> + * Copyright (C) 2017 NXP
+> + * Copyright (C) 2018 Cadence.
+> + *
+> + * Authors: Peter Chen <peter.chen@nxp.com>
+> + *          Pawel Laszczak <pawell@cadence.com>
+> + */
+> +#include <linux/usb/otg.h>
+> +
+> +#ifndef __LINUX_CDNS3_CORE_H
+> +#define __LINUX_CDNS3_CORE_H
+> +
+> +struct cdns3;
+> +enum cdns3_roles {
+> +       CDNS3_ROLE_HOST = 0,
+> +       CDNS3_ROLE_GADGET,
+> +       CDNS3_ROLE_END,
+> +};
+> +
+> +/**
+> + * struct cdns3_role_driver - host/gadget role driver
+> + * @start: start this role
+> + * @stop: stop this role
+> + * @suspend: suspend callback for this role
+> + * @resume: resume callback for this role
+> + * @irq: irq handler for this role
+> + * @name: role name string (host/gadget)
+> + */
+> +struct cdns3_role_driver {
+> +       int (*start)(struct cdns3 *cdns);
+> +       void (*stop)(struct cdns3 *cdns);
+> +       int (*suspend)(struct cdns3 *cdns, bool do_wakeup);
+> +       int (*resume)(struct cdns3 *cdns, bool hibernated);
+> +       irqreturn_t (*irq)(struct cdns3 *cdns);
+> +       const char *name;
+> +};
+> +
+> +#define CDNS3_NUM_OF_CLKS      5
+> +/**
+> + * struct cdns3 - Representation of Cadence USB3 DRD controller.
+> + * @dev: pointer to Cadence device struct
+> + * @xhci_regs: pointer to base of xhci registers
+> + * @xhci_res: the resource for xhci
+> + * @dev_regs: pointer to base of dev registers
+> + * @otg_regs: pointer to base of otg registers
+> + * @irq: irq number for controller
+> + * @roles: array of supported roles for this controller
+> + * @role: current role
+> + * @host_dev: the child host device pointer for cdns3 core
+> + * @gadget_dev: the child gadget device pointer for cdns3 core
+> + * @usb: phy for this controller
+> + * @role_switch_wq: work queue item for role switch
+> + * @in_lpm: the controller in low power mode
+> + * @wakeup_int: the wakeup interrupt
+> + * @mutex: the mutex for concurrent code at driver
+> + * @dr_mode: supported mode of operation it can be only Host, only Device
+> + *           or OTG mode that allow to switch between Device and Host mode.
+> + *           This field based on hardware configuration and cant't be changed.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Based on firmware setting, kernel configuration and hardware configuration.
 
---cc6r7wwwz2glmnhj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXADnJwAKCRDj7w1vZxhR
-xTuYAQCEtGfmiUuTm93fk/hrPJWU/f/FFB088sTduq+8++H61wEA5anWdMhWub1M
-AWZzg6ZguMdHkZkIT/ArhF3hHekzrwM=
-=oxTm
------END PGP SIGNATURE-----
-
---cc6r7wwwz2glmnhj--
+> + * @current_dr_role: current mode of operation when in dual-role mode
+> + * @desired_dr_role: desired mode of operation when in dual-role mode.
+> + *           This value can be changed during runtime.
+> + *           Available options depends on  dr_mode:
+> + *           dr_mode                 |  desired_dr_role and current_dr_role
+> + *           ----------------------------------------------------------------
+> + *           USB_DR_MODE_HOST        | only USB_DR_MODE_HOST
+> + *           USB_DR_MODE_PERIPHERAL  | only USB_DR_MODE_PERIPHERAL
+> + *           USB_DR_MODE_OTG         | only USB_DR_MODE_HOST
+> + *           USB_DR_MODE_OTG         | only USB_DR_MODE_PERIPHERAL
+> + *           USB_DR_MODE_OTG         | USB_DR_MODE_OTG
+> + *
+> + *           Desired_dr_role can be changed by means of debugfs.
+> + * @root: debugfs root folder pointer
+> + */
+> +struct cdns3 {
+> +       struct device                   *dev;
+> +       void __iomem                    *xhci_regs;
+> +       struct resource                 *xhci_res;
+> +       struct cdns3_usb_regs __iomem   *dev_regs;
+> +       struct cdns3_otg_regs           *otg_regs;
+> +       int irq;
+> +       struct cdns3_role_driver        *roles[CDNS3_ROLE_END];
+> +       enum cdns3_roles                role;
+> +       struct device                   *host_dev;
+> +       struct device                   *gadget_dev;
+> +       struct phy                      *phy;
+> +       struct work_struct              role_switch_wq;
+> +       int                             in_lpm:1;
+> +       int                             wakeup_int:1;
+> +       /* mutext used in workqueue*/
+> +       struct mutex                    mutex;
+> +       enum usb_dr_mode                dr_mode;
+> +       enum usb_dr_mode                current_dr_mode;
+> +       enum usb_dr_mode                desired_dr_mode;
+> +       struct dentry                   *root;
+> +};
+> +
+> +#endif /* __LINUX_CDNS3_CORE_H */
+> --
+> 2.17.1
+>
