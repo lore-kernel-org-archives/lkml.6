@@ -2,113 +2,138 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC993C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1154FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAEC2082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CAEC2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CC77020868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="fEy2NaYe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC77020868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbeLAHIW (ORCPT
+        id S1726989AbeLAHIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 02:08:22 -0500
-Received: from mga06.intel.com ([134.134.136.31]:44543 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbeLAHIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:08:21 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 11:57:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
-   d="scan'208";a="114367290"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
-  by orsmga001.jf.intel.com with ESMTP; 30 Nov 2018 11:57:58 -0800
-Date:   Fri, 30 Nov 2018 11:57:58 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Joshua Kinard <kumba@gentoo.org>,
-        "open list:MIPS" <linux-mips@linux-mips.org>
-Subject: Re: [PATCH RFC 01/15] MIPS: replace **** with a hug
-Message-ID: <20181130195758.GA20328@linux.intel.com>
-References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
- <20181130192737.15053-2-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130192737.15053-2-jarkko.sakkinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 1 Dec 2018 02:08:39 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:33337 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726629AbeLAHIi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 02:08:38 -0500
+Received: by mail-yb1-f194.google.com with SMTP id i78-v6so2717031ybg.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:58:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=PSn0bxnnPw1G6B2a7cVzIfLJVlFidqA8+Pvk6v+1aiU=;
+        b=fEy2NaYeMxMp1Hq2S7PhoxSh/LDDhDKvP8zB3Ay4gdoNmcGr/6dbHB29QyFPZEzimV
+         HuOnJ7LskXah/9WQTv8RA7PiIYIizvu90YJvz7X8ixder70S2hh4KUUAraP3ritYHo9s
+         aotbttHU4BGLaaGz2Xu/XYjRQrd1keQKVclG4RRB6nScr2o0VO4K1lU7z4RHC5rnNqMk
+         15Gm72ymcOvWYyaWBYz9mUB38XCdujjWr5GU/2jYOUekBqpSNJZwqQXMAL00kIcFfH6j
+         AYZXxugRkgD+SAgjxr6UEYP9R/HF2iK6/oYXY1TYyE4kj3rdB7iH2mdHHKz4U7gpiuFk
+         XcHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=PSn0bxnnPw1G6B2a7cVzIfLJVlFidqA8+Pvk6v+1aiU=;
+        b=cLRbMS8Rbw7VpNGWjFc2c1r4RPmpr79yOk0GtEZqj2w//Pw40rp1fKOJYsEpMD8ZlD
+         r2mOdgPc6vXdfJKtBPIjX3Od5jybDvUH+wX4vsWgisSdO2/38dY7Vu6/DZW07kM6+qs7
+         cQAB2K78ZY3n1ZcriZALn0q2FB9QZ5KICw4tDo224gl1EKlwk4URMvW1rFsjbawQodQs
+         WRTEQGnp+CcnrCVwKWs1vEBZQOwt5qBXa9deL3EcReIC8bfnCOTinMDkJA7VRU18E8v5
+         0kXjS1qeCt4lmHwb2CNJTdxDjONna3tNrMER7RV6rnMh/hM+F0FJNGtv7Qlr1AMLj4Fr
+         bViQ==
+X-Gm-Message-State: AA+aEWbKK5sy/OdoqvYs9QxvTp6ybzuYeMP4tNMLTLs66eWmz8+xwHnU
+        MvEq2NOuEQ3+fG0gpFxJ/3N3IQ==
+X-Google-Smtp-Source: AFSGD/VYUsl2xVUvkGxx4jdNiTF2u/FWco0LPBBw3S6Limd4QOomlBu0SvVfkGyqLl2fy0XYdgdLWA==
+X-Received: by 2002:a25:844e:: with SMTP id r14-v6mr6679151ybm.298.1543607894605;
+        Fri, 30 Nov 2018 11:58:14 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id z74sm3209138ywz.51.2018.11.30.11.58.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 11:58:13 -0800 (PST)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
+Subject: [PATCH 0/4][V4] drop the mmap_sem when doing IO in the fault path
+Date:   Fri, 30 Nov 2018 14:58:08 -0500
+Message-Id: <20181130195812.19536-1-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:27:10AM -0800, Jarkko Sakkinen wrote:
-> In order to comply with the CoC, replace **** with a hug.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+v3->v4:
+- dropped the ->page_mkwrite portion of these patches, we don't actually see
+  issues with mkwrite in production, and I kept running into corner cases where
+  I missed something important.  I want to wait on that part until I have a real
+  reason to do the work so I can have a solid test in place.
+- completely reworked how we drop the mmap_sem in filemap_fault and cleaned it
+  up a bit.  Once I started actually testing this with our horrifying reproducer
+  I saw a bunch of places where we still ended up doing IO under the mmap_sem
+  because I had missed a few corner cases.  Fixed this by reworking
+  filemap_fault to only return RETRY once it has a completely uptodate page
+  ready to be used.
+- lots more testing, including production testing.
 
-Since v17 of the SGX patch set, my cover letters get cut for some
-reason. I receive them myself but they don't appear on kernel
-lists. I don't what the hug is going on :-/
+v2->v3:
+- dropped the RFC, ready for a real review.
+- fixed a kbuild error for !MMU configs.
+- dropped the swapcache patches since Johannes is still working on those parts.
 
-Here's the cover letter for this patch set:
+v1->v2:
+- reworked so it only affects x86, since its the only arch I can build and test.
+- fixed the fact that do_page_mkwrite wasn't actually sending ALLOW_RETRY down
+  to ->page_mkwrite.
+- fixed error handling in do_page_mkwrite/callers to explicitly catch
+  VM_FAULT_RETRY.
+- fixed btrfs to set ->cached_page properly.
 
-From 386420215a93d2eb5bbcb061e914cfb16f456de8 Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Fri, 30 Nov 2018 11:25:40 -0800
-Subject: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
+-- Original message --
 
-In order to comply with the CoC, replace **** with a hug.
+Now that we have proper isolation in place with cgroups2 we have started going
+through and fixing the various priority inversions.  Most are all gone now, but
+this one is sort of weird since it's not necessarily a priority inversion that
+happens within the kernel, but rather because of something userspace does.
 
-Jarkko Sakkinen (15):
-  MIPS: replace **** with a hug
-  Documentation: replace **** with a hug
-  drm/nouveau: replace **** with a hug
-  m68k: replace **** with a hug
-  parisc: replace **** with a hug
-  cpufreq: replace **** with a hug
-  ide: replace **** with a hug
-  media: replace **** with a hug
-  mtd: replace **** with a hug
-  net/sunhme: replace **** with a hug
-  scsi: replace **** with a hug
-  inotify: replace **** with a hug
-  irq: replace **** with a hug
-  lib: replace **** with a hug
-  net: replace **** with a hug
+We have giant applications that we want to protect, and parts of these giant
+applications do things like watch the system state to determine how healthy the
+box is for load balancing and such.  This involves running 'ps' or other such
+utilities.  These utilities will often walk /proc/<pid>/whatever, and these
+files can sometimes need to down_read(&task->mmap_sem).  Not usually a big deal,
+but we noticed when we are stress testing that sometimes our protected
+application has latency spikes trying to get the mmap_sem for tasks that are in
+lower priority cgroups.
 
- Documentation/kernel-hacking/locking.rst      |  2 +-
- arch/m68k/include/asm/sun3ints.h              |  2 +-
- arch/mips/pci/ops-bridge.c                    | 24 +++++++++----------
- arch/mips/sgi-ip22/ip22-setup.c               |  2 +-
- arch/parisc/kernel/sys_parisc.c               |  2 +-
- drivers/cpufreq/powernow-k7.c                 |  2 +-
- .../gpu/drm/nouveau/nvkm/subdev/bios/init.c   |  2 +-
- .../nouveau/nvkm/subdev/pmu/fuc/macros.fuc    |  2 +-
- drivers/ide/cmd640.c                          |  2 +-
- drivers/media/i2c/bt819.c                     |  8 ++++---
- drivers/mtd/mtd_blkdevs.c                     |  2 +-
- drivers/net/ethernet/sun/sunhme.c             |  4 ++--
- drivers/scsi/qlogicpti.h                      |  2 +-
- fs/notify/inotify/inotify_user.c              |  2 +-
- kernel/irq/timings.c                          |  2 +-
- lib/vsprintf.c                                |  2 +-
- net/core/skbuff.c                             |  2 +-
- 17 files changed, 33 insertions(+), 31 deletions(-)
+This is because any down_write() on a semaphore essentially turns it into a
+mutex, so even if we currently have it held for reading, any new readers will
+not be allowed on to keep from starving the writer.  This is fine, except a
+lower priority task could be stuck doing IO because it has been throttled to the
+point that its IO is taking much longer than normal.  But because a higher
+priority group depends on this completing it is now stuck behind lower priority
+work.
 
--- 
-2.19.1
+In order to avoid this particular priority inversion we want to use the existing
+retry mechanism to stop from holding the mmap_sem at all if we are going to do
+IO.  This already exists in the read case sort of, but needed to be extended for
+more than just grabbing the page lock.  With io.latency we throttle at
+submit_bio() time, so the readahead stuff can block and even page_cache_read can
+block, so all these paths need to have the mmap_sem dropped.
 
-/Jarkko
+The other big thing is ->page_mkwrite.  btrfs is particularly shitty here
+because we have to reserve space for the dirty page, which can be a very
+expensive operation.  We use the same retry method as the read path, and simply
+cache the page and verify the page is still setup properly the next pass through
+->page_mkwrite().
+
+I've tested these patches with xfstests and there are no regressions.  Let me
+know what you think.  Thanks,
+
+Josef
