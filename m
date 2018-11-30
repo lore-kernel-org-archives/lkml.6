@@ -2,112 +2,82 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7CBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD44C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02DAF20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02DAF20863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 0A64A20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LozelMFP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A64A20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeK3WFG (ORCPT
+        id S1726987AbeK3WFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:05:06 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:5471 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbeK3WFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:05:06 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id CA0F313F8CF;
-        Fri, 30 Nov 2018 11:55:49 +0100 (CET)
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS
- clocks
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
-References: <20181130065259.26497-1-bjorn.andersson@linaro.org>
- <20181130065259.26497-3-bjorn.andersson@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <273c0544-bf33-fe66-ac42-ad17ea3038d1@free.fr>
-Date:   Fri, 30 Nov 2018 11:55:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 30 Nov 2018 17:05:50 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36169 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeK3WFt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:05:49 -0500
+Received: by mail-lf1-f67.google.com with SMTP id a16so3785569lfg.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 02:56:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5Et1b/qyS83Tt3+WZK9m0GQyvQi7hqAuYI1kow5m6Cw=;
+        b=LozelMFPCyOeQdR3Vlq/V3KUuSi9qqLIOnYniybEg0bv1VcpfrH/ZIlg7stZbNg8Hx
+         jb86Id1Di6utDZYoqEE806A+ppn1USCY3M81FFPJzDZxxYSE/A9yc79PW9WdMXAwA7FZ
+         E9RkPk5NHQizltAzGguPycZsRl2FrVunhKAGg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5Et1b/qyS83Tt3+WZK9m0GQyvQi7hqAuYI1kow5m6Cw=;
+        b=ljlbFazPN1KDms7qW0vibWJaRQFT+lh9tkKB5Zk90LPKGuBIWyCidMRbgAjSBqp4+m
+         Yn9vZWMznH9PXHDwP96n79Gz0U2wXG+Uh+cy5fnUAviehuOVKLsqvyen52MP5+BgC5Vf
+         gptxjKKkLwxsSbLPTCYt+8FoiHGE8d70S7l0F2dsaXrwGZg3WOu+vx8XAKphhHAvY+m6
+         C6VWn29T2+NDEjMVbmic2HCQQS560i9AbkyRb8CQ4uoLabZRfFVXSn3DlwFopNoM9N6V
+         ChazciLrbLLUgBtUdjzPgeBhhnTV9CHd1+MdgBrkK9fUaAjmUpKfYDnbVhxCWgdk5xlB
+         jDeA==
+X-Gm-Message-State: AA+aEWbd9YCa/PdWhgOpUwbiDqguy/Ia2Uc1flVzXJNp0eOjIVF/UBzc
+        xwmy5iDxA3zSbCT9C+7DmE+urye5LGTRaipyd2rghg==
+X-Google-Smtp-Source: AFSGD/XOkt9VCwlPA7+DM9fNRiz/AlO0mHwWFJaOZykKlEAx9x/tnrkHJXRo4JFta2tukWGLc+5JWIYrMLQ1SIbHuWI=
+X-Received: by 2002:a19:f813:: with SMTP id a19mr3232655lff.67.1543575414328;
+ Fri, 30 Nov 2018 02:56:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181130065259.26497-3-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181128104350.31902-1-linus.walleij@linaro.org>
+ <CAMpxmJUsAccSKELNxn6DEWO6_3aCbzM=hZyaXUCr30S0-Eh0mA@mail.gmail.com>
+ <20181129190132.GM2089@sirena.org.uk> <CAMRc=McApz-8qUo9SiqZgYXor4_DkBRY61nMhiFQ2QSSBj6gWg@mail.gmail.com>
+In-Reply-To: <CAMRc=McApz-8qUo9SiqZgYXor4_DkBRY61nMhiFQ2QSSBj6gWg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 30 Nov 2018 11:56:41 +0100
+Message-ID: <CACRpkdbmruqLOwRLikUq2RiY927W_Evq83zdMtGY9S1A_i4E_Q@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Regulator ena_gpiod fixups
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/11/2018 07:52, Bjorn Andersson wrote:
+On Fri, Nov 30, 2018 at 9:35 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> Drop the halt check of the UFS symbol clocks, in accordance with other
-> platforms. This makes clk_disable_unused() happy and makes it possible
-> to turn the clocks on again without an error.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-msm8998.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-> index d89f8e7c2a59..3d232d266d72 100644
-> --- a/drivers/clk/qcom/gcc-msm8998.c
-> +++ b/drivers/clk/qcom/gcc-msm8998.c
-> @@ -2403,7 +2403,7 @@ static struct clk_branch gcc_ufs_phy_aux_clk = {
->  
->  static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
->  	.halt_reg = 0x75014,
-> -	.halt_check = BRANCH_HALT,
-> +	.halt_check = BRANCH_HALT_SKIP,
->  	.clkr = {
->  		.enable_reg = 0x75014,
->  		.enable_mask = BIT(0),
-> @@ -2416,7 +2416,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
->  
->  static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
->  	.halt_reg = 0x7605c,
-> -	.halt_check = BRANCH_HALT,
-> +	.halt_check = BRANCH_HALT_SKIP,
->  	.clkr = {
->  		.enable_reg = 0x7605c,
->  		.enable_mask = BIT(0),
-> @@ -2429,7 +2429,7 @@ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
->  
->  static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
->  	.halt_reg = 0x75010,
-> -	.halt_check = BRANCH_HALT,
-> +	.halt_check = BRANCH_HALT_SKIP,
->  	.clkr = {
->  		.enable_reg = 0x75010,
->  		.enable_mask = BIT(0),
+> At least we could document it in the code.
 
-FWIW, before applying your patch, the kernel printed the following
-warnings at boot:
+I've put some comments in my patch set, I will check if I can add some
+more in the less-than-obvious spots.
 
-[    1.820756] gcc_ufs_rx_symbol_1_clk status stuck at 'on'
-[    1.992977] gcc_ufs_rx_symbol_0_clk status stuck at 'on'
-[    2.165113] gcc_gpu_bimc_gfx_clk status stuck at 'on'
-
-https://lore.kernel.org/linux-clk/f4271471-b60a-f056-b453-1cfa593a0fc4@free.fr/
-
-(NB: gcc_ufs_tx_symbol_0_clk not mentioned)
-
-Your patch makes the two ufs_rx warnings go away.
-
-Regards.
+Yours,
+Linus Walleij
