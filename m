@@ -2,140 +2,114 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40978C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333CEC65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0759220863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:04:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d65ntuwN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0759220863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0270120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:09:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0270120868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeLAANa (ORCPT
+        id S1726641AbeLAASR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:13:30 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52082 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbeLAANa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:13:30 -0500
-Received: by mail-it1-f196.google.com with SMTP id x19so9031053itl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:04:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hFVPVykKhhf/x8jT0ihL71hfqREGdZP+wppfzLDZltk=;
-        b=d65ntuwNy0VyYxZbcWQyCo1fUH65lihcIeKG3KZ0bMrpgmxASd+GC7G3VMMFGl2YFV
-         dX70Q1jfbiaY3aL3Hyyr59GL2tXKn1P+UA1Ojh8JllqyI5EI03/rPCgy3GKiK8UatJj5
-         uerETN08Oz/ZtDWPXEIO+fpthA+3CpTsPgWHY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hFVPVykKhhf/x8jT0ihL71hfqREGdZP+wppfzLDZltk=;
-        b=PT1UhxmbNuetSo5uvGGehX0d6XZsvuwqz8RCUpgSNZX8UzBQWeSiylFxAXswpjRD3j
-         sKSW4CYJHQIHrxdfh0IaM19TAwndtuWa1c+MihXgub5QPvm50pcVrvLSoO1TCZfUZ1W4
-         8LA3mheuka5BPvEFkX6z2ZE4NbuN7NU7wxY9d8XXWOmbMeHLVv92Aq9rFw7S3jlyQ47c
-         1nwDW14MwaV55zc0XtntYwfxg7/MYuPC+GBV/m5uJXaLHVF+9jz6YjAEbM+hzdAb1z0A
-         XG/iN0/wQKubK5Evmi6Iy0yFXOlNpPpzcatGjD+Wi2DeXuPfLjNB/R4G1ycUMo58k1un
-         rY5A==
-X-Gm-Message-State: AA+aEWYeHGnYIFV0bHd3KYIlI6L9NjvonJC9JBsPTSRmgiYMWNWSF+HW
-        VXBx+rQiistGzguCOmAKop2dKJzO53pmbdqhcdhrPQ==
-X-Google-Smtp-Source: AFSGD/XyzF5330+oMqKSAVRc0LfmX828V/W+hC6wWtMuIlydUC1FVX6rWZM4THuqW3K3uwbJjgQ5bk6RpkQgyrlLOgI=
-X-Received: by 2002:a02:8449:: with SMTP id l9-v6mr5043419jah.130.1543583054564;
- Fri, 30 Nov 2018 05:04:14 -0800 (PST)
+        Fri, 30 Nov 2018 19:18:17 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:22609 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725928AbeLAASQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:18:16 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 4A9F913F866;
+        Fri, 30 Nov 2018 14:08:38 +0100 (CET)
+Subject: Re: [PATCH 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS
+ clocks
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Kucheria <amit.kucheria@linaro.org>
+References: <20181130065259.26497-1-bjorn.andersson@linaro.org>
+ <20181130065259.26497-3-bjorn.andersson@linaro.org>
+ <273c0544-bf33-fe66-ac42-ad17ea3038d1@free.fr>
+Message-ID: <e78881f5-1ea3-e828-7683-6e2a7acf5c50@free.fr>
+Date:   Fri, 30 Nov 2018 14:08:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181129063422.24307-1-ebiggers@kernel.org> <20181129063422.24307-5-ebiggers@kernel.org>
-In-Reply-To: <20181129063422.24307-5-ebiggers@kernel.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 30 Nov 2018 14:04:03 +0100
-Message-ID: <CAKv+Gu_Hu7+_0cec7CkPkONYXjmJ2az2XEpuzLv12FT7=0Tpaw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] crypto: arm64/chacha - add XChaCha12 support
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <273c0544-bf33-fe66-ac42-ad17ea3038d1@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 at 07:35, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Now that the ARM64 NEON implementation of ChaCha20 and XChaCha20 has
-> been refactored to support varying the number of rounds, add support for
-> XChaCha12.  This is identical to XChaCha20 except for the number of
-> rounds, which is 12 instead of 20.  This can be used by Adiantum.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On 30/11/2018 11:55, Marc Gonzalez wrote:
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> On 30/11/2018 07:52, Bjorn Andersson wrote:
+> 
+>> Drop the halt check of the UFS symbol clocks, in accordance with other
+>> platforms. This makes clk_disable_unused() happy and makes it possible
+>> to turn the clocks on again without an error.
+>>
+>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> ---
+>>  drivers/clk/qcom/gcc-msm8998.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+>> index d89f8e7c2a59..3d232d266d72 100644
+>> --- a/drivers/clk/qcom/gcc-msm8998.c
+>> +++ b/drivers/clk/qcom/gcc-msm8998.c
+>> @@ -2403,7 +2403,7 @@ static struct clk_branch gcc_ufs_phy_aux_clk = {
+>>  
+>>  static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
+>>  	.halt_reg = 0x75014,
+>> -	.halt_check = BRANCH_HALT,
+>> +	.halt_check = BRANCH_HALT_SKIP,
+>>  	.clkr = {
+>>  		.enable_reg = 0x75014,
+>>  		.enable_mask = BIT(0),
+>> @@ -2416,7 +2416,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
+>>  
+>>  static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
+>>  	.halt_reg = 0x7605c,
+>> -	.halt_check = BRANCH_HALT,
+>> +	.halt_check = BRANCH_HALT_SKIP,
+>>  	.clkr = {
+>>  		.enable_reg = 0x7605c,
+>>  		.enable_mask = BIT(0),
+>> @@ -2429,7 +2429,7 @@ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
+>>  
+>>  static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
+>>  	.halt_reg = 0x75010,
+>> -	.halt_check = BRANCH_HALT,
+>> +	.halt_check = BRANCH_HALT_SKIP,
+>>  	.clkr = {
+>>  		.enable_reg = 0x75010,
+>>  		.enable_mask = BIT(0),
+> 
+> FWIW, before applying your patch, the kernel printed the following
+> warnings at boot:
+> 
+> [    1.820756] gcc_ufs_rx_symbol_1_clk status stuck at 'on'
+> [    1.992977] gcc_ufs_rx_symbol_0_clk status stuck at 'on'
+> [    2.165113] gcc_gpu_bimc_gfx_clk status stuck at 'on'
+> 
+> https://lore.kernel.org/linux-clk/f4271471-b60a-f056-b453-1cfa593a0fc4@free.fr/
 
-> ---
->  arch/arm64/crypto/Kconfig            |  2 +-
->  arch/arm64/crypto/chacha-neon-glue.c | 18 ++++++++++++++++++
->  2 files changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/crypto/Kconfig b/arch/arm64/crypto/Kconfig
-> index d54ddb8468ef5..d9a523ecdd836 100644
-> --- a/arch/arm64/crypto/Kconfig
-> +++ b/arch/arm64/crypto/Kconfig
-> @@ -101,7 +101,7 @@ config CRYPTO_AES_ARM64_NEON_BLK
->         select CRYPTO_SIMD
->
->  config CRYPTO_CHACHA20_NEON
-> -       tristate "ChaCha20 and XChaCha20 stream ciphers using NEON instructions"
-> +       tristate "ChaCha20, XChaCha20, and XChaCha12 stream ciphers using NEON instructions"
->         depends on KERNEL_MODE_NEON
->         select CRYPTO_BLKCIPHER
->         select CRYPTO_CHACHA20
-> diff --git a/arch/arm64/crypto/chacha-neon-glue.c b/arch/arm64/crypto/chacha-neon-glue.c
-> index 4d992029b9121..346eb85498a1e 100644
-> --- a/arch/arm64/crypto/chacha-neon-glue.c
-> +++ b/arch/arm64/crypto/chacha-neon-glue.c
-> @@ -161,6 +161,22 @@ static struct skcipher_alg algs[] = {
->                 .setkey                 = crypto_chacha20_setkey,
->                 .encrypt                = xchacha_neon,
->                 .decrypt                = xchacha_neon,
-> +       }, {
-> +               .base.cra_name          = "xchacha12",
-> +               .base.cra_driver_name   = "xchacha12-neon",
-> +               .base.cra_priority      = 300,
-> +               .base.cra_blocksize     = 1,
-> +               .base.cra_ctxsize       = sizeof(struct chacha_ctx),
-> +               .base.cra_module        = THIS_MODULE,
-> +
-> +               .min_keysize            = CHACHA_KEY_SIZE,
-> +               .max_keysize            = CHACHA_KEY_SIZE,
-> +               .ivsize                 = XCHACHA_IV_SIZE,
-> +               .chunksize              = CHACHA_BLOCK_SIZE,
-> +               .walksize               = 4 * CHACHA_BLOCK_SIZE,
-> +               .setkey                 = crypto_chacha12_setkey,
-> +               .encrypt                = xchacha_neon,
-> +               .decrypt                = xchacha_neon,
->         }
->  };
->
-> @@ -187,3 +203,5 @@ MODULE_ALIAS_CRYPTO("chacha20");
->  MODULE_ALIAS_CRYPTO("chacha20-neon");
->  MODULE_ALIAS_CRYPTO("xchacha20");
->  MODULE_ALIAS_CRYPTO("xchacha20-neon");
-> +MODULE_ALIAS_CRYPTO("xchacha12");
-> +MODULE_ALIAS_CRYPTO("xchacha12-neon");
-> --
-> 2.19.2
->
+As far as gcc_gpu_bimc_gfx_clk is concerned, downstream flags it as
+"no_halt_check_on_disable", and sets CLKFLAG_RETAIN_MEM.
+
+Regards.
