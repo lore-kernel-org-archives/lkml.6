@@ -2,340 +2,149 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F1CC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B28C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6A221473
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8461820834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:24:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dV6LAhZD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6A221473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GPNtAuUY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8461820834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeK3LbT (ORCPT
+        id S1727147AbeK3Lbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 06:31:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeK3LbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 06:31:19 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42F6820834;
-        Fri, 30 Nov 2018 00:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543537436;
-        bh=yqFUDKxdhkCSdoOfGf067LjqLpeskD0HSr6L5zeDJfM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=dV6LAhZDIyJyrOkjlnQiGvXRjslhitcnHMh2uwwiHVuG8gU8OYmlrfTAMjf9XwQJL
-         tTW5d14SoMOgxMCs3LAGra8dm29zs4yl9f7IrsB/PwW7nqC631E8fYNgmlzkrN/0QD
-         p45JtECm476vcRdf++duOP8d2ipnizwykBQiniSI=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 30 Nov 2018 06:31:36 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:35584 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeK3Lbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 06:31:36 -0500
+Received: by mail-yw1-f66.google.com with SMTP id h32so1577661ywk.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 16:24:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TZylQ/hWyEAhNA0KXYWVy47MzdY+50fVwQX7DiLcZOg=;
+        b=GPNtAuUYOcY+IqJ5gtP7D4RxuU0ngkxLGcr27qcpk6jz6po1Q6QszXURMkzwoEiakg
+         21wNA/F3IYlcCrGGs2tVfww4kJ+jWTX7VqVS5fGFBx/MXbYdURRy1EkX+09CBI2QyE2r
+         5nhwOUcnPeTiet+qP/fSAmRYYfUbOx6GpqACY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TZylQ/hWyEAhNA0KXYWVy47MzdY+50fVwQX7DiLcZOg=;
+        b=GOzYVjSmVENPYOOBa42AxUhZTeaFSK2P2MGNiUe+vAg2DtSZj01mWUSsCy7WH/8exM
+         ljozrNR2J6pqDqwYXIcihao27viZkKsluGBl71nB6JctYmhwWbe1GnK3QmztozeBWHd2
+         wrXi53iz5F1oVf94Yq71FDf8cIcL6MrruNoc0Ntcr8aTzrIiIjdoqW3B3Ld4hXlgLIJ3
+         lYbYvC1DeNiHyvMUpoFfnK2+1SnyVN/ke7qPaujjgLg67DfxZwXRcUgA6ucdWtcemDDU
+         yWp1Q8X5MIJr5m4GVDutOBvs0a6WbqVJjovjsRd/lq0cRgTQwH+TCdab5IcaqCyBPdgt
+         j6GA==
+X-Gm-Message-State: AA+aEWZQ900nqFaWHNbjnzaDi4onu4CdN1Uzqocfvy8JXD0NQcigs/9S
+        arD6MWsubaxcm1NDE5+Aes3lZ2+g67Q=
+X-Google-Smtp-Source: AFSGD/Xq90Qqj0mYU498uJZGBQS05xiKBNm0FIGyDOHDXOMVW0XpNXa4dxPOvmxyE8qus78MwmS8qw==
+X-Received: by 2002:a81:1781:: with SMTP id 123mr3875076ywx.229.1543537453080;
+        Thu, 29 Nov 2018 16:24:13 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id i21sm3711749ywg.5.2018.11.29.16.24.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 16:24:12 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id h187-v6so1529423ybg.10
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 16:24:12 -0800 (PST)
+X-Received: by 2002:a25:618a:: with SMTP id v132-v6mr3570547ybb.293.1543537451720;
+ Thu, 29 Nov 2018 16:24:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     avifishman70@gmail.com, brendanhiggins@google.com,
-        linux@armlinux.org.uk, mark.rutland@arm.com,
-        mturquette@baylibre.com, raltherr@google.com, robh+dt@kernel.org,
-        sboyd@codeaurora.org, tali.perry1@gmail.com, tmaimon77@gmail.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181111134712.318321-2-tali.perry1@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-References: <20181111134712.318321-1-tali.perry1@gmail.com>
- <20181111134712.318321-2-tali.perry1@gmail.com>
-Message-ID: <154353743563.88331.13076671872913666949@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v1 1/1] clk: npcm7xx: get fixed clocks from DT
-Date:   Thu, 29 Nov 2018 16:23:55 -0800
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
+ <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
+ <CAF6AEGu65Vvzpy6K7eF+Kk4YdYBPEKFX5ct8GxG0pw-KNwM5eA@mail.gmail.com>
+ <20181129155418.GB26537@lst.de> <CAF6AEGufdp5jRtUZ_+VRQg3ZXH36hNHvbWZQeJDArp8N5SZ3Lg@mail.gmail.com>
+ <20181129194029.GE17663@jcrouse-lnx.qualcomm.com> <CAAFQd5D139pNx9aEpO8745R4kfVYCBDyqyJNR_HDDXvKt7NZjw@mail.gmail.com>
+ <06747338-b0fb-eef6-634a-0641e81ed3c1@arm.com>
+In-Reply-To: <06747338-b0fb-eef6-634a-0641e81ed3c1@arm.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 29 Nov 2018 16:23:59 -0800
+X-Gmail-Original-Message-ID: <CAAFQd5CEXZU5x+Fi5kRHZFfBwPkUbpo=-UBTARiaAoLqV-tMww@mail.gmail.com>
+Message-ID: <CAAFQd5CEXZU5x+Fi5kRHZFfBwPkUbpo=-UBTARiaAoLqV-tMww@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Rob Clark <robdclark@gmail.com>, Christoph Hellwig <hch@lst.de>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting tali.perry1@gmail.com (2018-11-11 05:47:12)
-> From: Tali Perry <tali.perry1@gmail.com>
-> =
+On Thu, Nov 29, 2018 at 12:03 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> On 29/11/2018 19:57, Tomasz Figa wrote:
+> > On Thu, Nov 29, 2018 at 11:40 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> >>
+> >> On Thu, Nov 29, 2018 at 01:48:15PM -0500, Rob Clark wrote:
+> >>> On Thu, Nov 29, 2018 at 10:54 AM Christoph Hellwig <hch@lst.de> wrote:
+> >>>>
+> >>>> On Thu, Nov 29, 2018 at 09:42:50AM -0500, Rob Clark wrote:
+> >>>>> Maybe the thing we need to do is just implement a blacklist of
+> >>>>> compatible strings for devices which should skip the automatic
+> >>>>> iommu/dma hookup.  Maybe a bit ugly, but it would also solve a problem
+> >>>>> preventing us from enabling per-process pagetables for a5xx (where we
+> >>>>> need to control the domain/context-bank that is allocated by the dma
+> >>>>> api).
+> >>>>
+> >>>> You can detach from the dma map attachment using arm_iommu_detach_device,
+> >>>> which a few drm drivers do, but I don't think this is the problem.
+> >>>
+> >>> I think even with detach, we wouldn't end up with the context-bank
+> >>> that the gpu firmware was hard-coded to expect, and so it would
+> >>> overwrite the incorrect page table address register.  (I could be
+> >>> mis-remembering that, Jordan spent more time looking at that.  But it
+> >>> was something along those lines.)
+> >>
+> >> Right - basically the DMA domain steals context bank 0 and the GPU is hard coded
+> >> to use that context bank for pagetable switching.
+> >>
+> >> I believe the Tegra guys also had a similar problem with a hard coded context
+> >> bank.
+>
+> AIUI, they don't need a specific hardware context, they just need to
+> know which one they're actually using, which the domain abstraction hides.
+>
+> > Wait, if we detach the GPU/display struct device from the default
+> > domain and attach it to a newly allocated domain, wouldn't the newly
+> > allocated domain use the context bank we need? Note that we're already
+>
+> The arm-smmu driver doesn't, but there's no fundamental reason it
+> couldn't. That should just need code to refcount domain users and
+> release hardware contexts for domains with no devices currently attached.
+>
+> Robin.
+>
+> > doing that, except that we're doing it behind the back of the DMA
+> > mapping subsystem, so that it keeps using the IOMMU version of the DMA
+> > ops for the device and doing any mapping operations on the default
+> > domain. If we ask the DMA mapping to detach, wouldn't it essentially
+> > solve the problem?
 
-> Nuvoton NPCM7XX Clock Controller
-> fix base address and of_clk_get_by_name error handling.
->     Also update error messages to be more informative.
->     =
+Thanks Robin.
 
->     In case clk_base allocation is erronoeous the return value is null.
->     Also fix handling of of_clk_get_by_name returns an error. =
+Still, my point is that the MSM DRM driver attaches the GPU struct
+device to a new domain it allocates using iommu_domain_alloc() and it
+seems to work fine, so I believe it's not the problem we're looking
+into with this patch.
 
->     Print a better error message pointing to the dt-binding documention.
-> =
-
-> This patch is re-submitted since it was already pushed to main =
-
-> (just the diff, without the full driver which is already in =
-
-> master branch.)
-> =
-
-> =
-
-> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> =
-
-
-I don't know what's going on with this patch. Is it something new? Can
-you break it up into logical changes and submit them with proper commit
-text? The signoff chain is also odd. Can you follow
-Documentation/process/submitting-patches.rst?
-
-> ---
->  drivers/clk/clk-npcm7xx.c | 99 +++++++++++++++++++++++++++++++++++------=
-------
->  1 file changed, 75 insertions(+), 24 deletions(-)
-> =
-
-> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-> index 740af90a9508..91a937720f4e 100644
-> --- a/drivers/clk/clk-npcm7xx.c
-> +++ b/drivers/clk/clk-npcm7xx.c
-> @@ -7,17 +7,26 @@
->   * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
->   */
->  =
-
-> -#include <linux/module.h>
-> -#include <linux/clk-provider.h>
-> -#include <linux/io.h>
-> -#include <linux/kernel.h>
-> -#include <linux/of.h>
-> -#include <linux/of_address.h>
-> -#include <linux/slab.h>
-> -#include <linux/err.h>
-> -#include <linux/bitfield.h>
-> -
-> -#include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
-> +
-> +
-> +
-> + #include <linux/module.h>
-> + #include <linux/clk.h>
-> + #include <linux/clk-provider.h>
-> + #include <linux/device.h>
-> + #include <linux/io.h>
-> + #include <linux/kernel.h>
-> + #include <linux/of.h>
-> + #include <linux/of_device.h>
-> + #include <linux/of_platform.h>
-> + #include <linux/of_address.h>
-> + #include <linux/platform_device.h>
-> + #include <linux/slab.h>
-> + #include <linux/err.h>
-> + #include <linux/rational.h>
-> + #include <linux/bitfield.h>
-> + #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
-
-Is any of this hunk necessary or relevant to the subject of this patch?
-
-> +
->  =
-
->  struct npcm7xx_clk_pll {
-> @@ -44,7 +56,8 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct=
- clk_hw *hw,
->         u64 ret;
->  =
-
->         if (parent_rate =3D=3D 0) {
-> -               pr_err("%s: parent rate is zero", __func__);
-> +               pr_err("%s: parent rate is zero. reg=3D%x\n", __func__,
-> +                       (u32)(pll->pllcon));
-
-Maybe you should print clk name instead of register?
-
->                 return 0;
->         }
->  =
-
-> @@ -61,13 +74,12 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(stru=
-ct clk_hw *hw,
->         return ret;
->  }
->  =
-
-> -static const struct clk_ops npcm7xx_clk_pll_ops =3D {
-> +const struct clk_ops npcm7xx_clk_pll_ops =3D {
-
-Why?
-
->         .recalc_rate =3D npcm7xx_clk_pll_recalc_rate,
->  };
->  =
-
-> -static struct clk_hw *
-> -npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
-> -                        const char *parent_name, unsigned long flags)
-> +static struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon,
-> +               const char *name, const char *parent_name, unsigned long =
-flags)
->  {
->         struct npcm7xx_clk_pll *pll;
->         struct clk_init_data init;
-> @@ -78,7 +90,8 @@ npcm7xx_clk_register_pll(void __iomem *pllcon, const ch=
-ar *name,
->         if (!pll)
->                 return ERR_PTR(-ENOMEM);
->  =
-
-> -       pr_debug("%s reg, name=3D%s, p=3D%s\n", __func__, name, parent_na=
-me);
-> +       pr_debug("%s reg, reg=3D0x%x, name=3D%s, p=3D%s\n",
-> +               __func__, (unsigned int)pllcon, name, parent_name);
-
-What's going on here? Why cast?
-
->  =
-
->         init.name =3D name;
->         init.ops =3D &npcm7xx_clk_pll_ops;
-> @@ -544,9 +557,11 @@ static void __init npcm7xx_clk_init(struct device_no=
-de *clk_np)
->         void __iomem *clk_base;
->         struct resource res;
->         struct clk_hw *hw;
-> +       struct clk *clk;
->         int ret;
->         int i;
->  =
-
-> +       clk_base =3D NULL;
-
-Why?
-
->         ret =3D of_address_to_resource(clk_np, 0, &res);
->         if (ret) {
->                 pr_err("%s: failed to get resource, ret %d\n", clk_np->na=
-me,
-> @@ -560,14 +575,44 @@ static void __init npcm7xx_clk_init(struct device_n=
-ode *clk_np)
->  =
-
->         npcm7xx_clk_data =3D kzalloc(sizeof(*npcm7xx_clk_data->hws) *
->                 NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL=
-);
-> -       if (!npcm7xx_clk_data)
-> +
-> +       npcm7xx_clk_data->num =3D 0;
-
-kzalloc already does that initialization to 0 for you.
-
-> +
-> +       if (!npcm7xx_clk_data->hws) {
-> +               pr_err("Can't alloc npcm7xx_clk_data\n");
-
-We don't need allocation error messages.
-
->                 goto npcm7xx_init_np_err;
-> +       }
->  =
-
->         npcm7xx_clk_data->num =3D NPCM7XX_NUM_CLOCKS;
->  =
-
->         for (i =3D 0; i < NPCM7XX_NUM_CLOCKS; i++)
->                 npcm7xx_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
->  =
-
-> +       /* Read fixed clocks. These 3 clocks must be defined in DT */
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external REFCLK on device tree, er=
-r=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-> +
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external SYSBYPCK on device tree, =
-err=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-> +
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external MCBYPCK on device tree, e=
-rr=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-
-I assume the DTS is not shipped?
-
-> +
->         /* Register plls */
->         for (i =3D 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
->                 const struct npcm7xx_clk_pll_data *pll_data =3D &npcm7xx_=
-plls[i];
-> @@ -584,16 +629,16 @@ static void __init npcm7xx_clk_init(struct device_n=
-ode *clk_np)
->         }
->  =
-
->         /* Register fixed dividers */
-> -       hw =3D clk_hw_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
-> +       clk =3D clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
-
-This is going backwards. Please use clk_hw APIs.
-
->                         NPCM7XX_CLK_S_PLL1, 0, 1, 2);
-> -       if (IS_ERR(hw)) {
-> +       if (IS_ERR(clk)) {
->                 pr_err("npcm7xx_clk: Can't register fixed div\n");
->                 goto npcm7xx_init_fail;
->         }
->  =
-
-> -       hw =3D clk_hw_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
-> +       clk =3D clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
->                         NPCM7XX_CLK_S_PLL2, 0, 1, 2);
-> -       if (IS_ERR(hw)) {
-> +       if (IS_ERR(clk)) {
->                 pr_err("npcm7xx_clk: Can't register div2\n");
->                 goto npcm7xx_init_fail;
->         }
-> @@ -646,11 +691,17 @@ static void __init npcm7xx_clk_init(struct device_n=
-ode *clk_np)
->  =
-
->         return;
->  =
-
-> +npcm7xx_init_fail_no_clk_on_dt:
-> +       pr_err("see Documentation/devicetree/bindings/clock/");
-> +       pr_err("nuvoton,npcm750-clk.txt  for details\n");
->  npcm7xx_init_fail:
-> -       kfree(npcm7xx_clk_data->hws);
-> +       if (npcm7xx_clk_data->num)
-> +               kfree(npcm7xx_clk_data->hws);
->  npcm7xx_init_np_err:
-> -       iounmap(clk_base);
-> +       if (clk_base !=3D NULL)
-> +               iounmap(clk_base);
->  npcm7xx_init_error:
->         of_node_put(clk_np);
-> +       pr_err("clk setup fail\n");
-
-Is this hunk of changes related to the subject of this patch? I don't
-think it is, so it just leads to more confusion.
-
+Best regards,
+Tomasz
