@@ -2,149 +2,101 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D71EBC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A6DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5BFB2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:48:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5BFB2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A30E2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:49:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A30E2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeK3W5R (ORCPT
+        id S1727054AbeK3W6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:57:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53440 "EHLO mx1.redhat.com"
+        Fri, 30 Nov 2018 17:58:53 -0500
+Received: from sauhun.de ([88.99.104.3]:57782 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbeK3W5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:57:17 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64A0D1F8EE;
-        Fri, 30 Nov 2018 11:48:16 +0000 (UTC)
-Received: from krava (unknown [10.43.17.17])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4FBC05C729;
-        Fri, 30 Nov 2018 11:48:11 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 12:48:09 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        ldv@altlinux.org, esyr@redhat.com,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: Rough idea of implementing blocking perf calls for system call
- tracepoints
-Message-ID: <20181130114809.GC3617@krava>
-References: <20181128134700.212ed035@gandalf.local.home>
- <20181128141808.4b047976@gandalf.local.home>
- <20181130104044.GB3617@krava>
+        id S1726512AbeK3W6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:58:53 -0500
+Received: from localhost (p54B334EC.dip0.t-ipconnect.de [84.179.52.236])
+        by pokefinder.org (Postfix) with ESMTPSA id 9B6D12E3542;
+        Fri, 30 Nov 2018 12:49:50 +0100 (CET)
+Date:   Fri, 30 Nov 2018 12:49:50 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 09/15] i2c: acpi: Introduce
+ i2c_acpi_get_i2c_resource() helper
+Message-ID: <20181130114950.av6pnedcqu27jyjc@ninjato>
+References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+ <20181128114535.80223-10-andriy.shevchenko@linux.intel.com>
+ <20181130095533.GC1079@kunai>
+ <20181130105759.GK10650@smile.fi.intel.com>
+ <20181130110652.ckj75wrxxaez2sq2@ninjato>
+ <20181130114543.GM10650@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6gjjnir427zmfyyw"
 Content-Disposition: inline
-In-Reply-To: <20181130104044.GB3617@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 30 Nov 2018 11:48:16 +0000 (UTC)
+In-Reply-To: <20181130114543.GM10650@smile.fi.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:40:44AM +0100, Jiri Olsa wrote:
-> On Wed, Nov 28, 2018 at 02:18:08PM -0500, Steven Rostedt wrote:
-> > 
-> > Adding Masami and Namhyung to this as well.
-> > 
-> > -- Steve
-> > 
-> > 
-> > On Wed, 28 Nov 2018 13:47:00 -0500
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > [
-> > >  Sorry for the late reply on this, when I got back from Plumbers, my
-> > >  work was really piled up, and then Turkey day came and just added more
-> > >  to the chaos.
-> > > ]
-> > > 
-> > > From our discussion at the Linux Plumbers strace talk about
-> > > implementing strace with perf. As strace requires to be lossless, it
-> > > currently can not be implemented with perf because there's always a
-> > > chance to lose events. The idea here is to have a way to instrument a
-> > > way to record system calls from perf but also block when the perf ring
-> > > buffer is full.
-> > > 
-> > > Below is a patch I wrote that gives an idea of what needs to be done.
-> > > It is by no means a real patch (wont even compile). And I left out the
-> > > wake up part, as I'm not familiar enough with how perf works to
-> > > implement it. But hopefully someone on this list can :-)
-> > > 
-> > > The idea here is that we set the tracepoints sys_enter and sys_exit
-> > > with a new flag called TRACE_EVENT_FL_BLOCK. When the perf code records
-> > > the event, if the buffer is full, it will set a "perf_block" field in
-> > > the current task structure to point to the tp_event, if the tp_event
-> > > has the BLOCK flag set.
-> > > 
-> > > Then on the exit of the syscall tracepoints, the perf_block field is
-> > > checked, and if it is set, it knows that the event was dropped, and
-> > > will add itself to a wait queue. When the reader reads the perf buffer
-> > > and hits a water mark, it can wake whatever is on the queue (not sure
-> > > where to put this queue, but someone can figure it out).
-> > > 
-> > > Once woken, it will try to write to the perf system call tracepoint
-> > > again (notice that it only tries perf and doesn't call the generic
-> > > tracepoint code, as only perf requires a repeat).
-> > > 
-> > > This is just a basic idea patch, to hopefully give someone else an idea
-> > > of what I envision. I think it can work, and if it does, I can imagine
-> > > that it would greatly improve the performance of strace!
-> > > 
-> > > Thoughts?
-> > > 
-> > > -- Steve
-> > > 
-> > > diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-> > > index 3b2490b81918..57fe95950a24 100644
-> > > --- a/arch/x86/entry/common.c
-> > > +++ b/arch/x86/entry/common.c
-> > > @@ -123,8 +123,22 @@ static long syscall_trace_enter(struct pt_regs *regs)
-> > >  	}
-> > >  #endif
-> > >  
-> > > -	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-> > > +	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT))) {
-> > > +		current->perf_block = NULL;
-> > >  		trace_sys_enter(regs, regs->orig_ax);
-> > > +		while (current->perf_block) {
-> > > +			DECLARE_WAITQUEUE(wait, current);
-> > > +			struct trace_event_call *tp_event = current->perf_block;
-> > > +
-> > > +			current->perf_block = NULL;
-> > > +
-> > > +			set_current_state(TASK_INTERRUPTIBLE);
-> > > +			add_wait_queue(&tp_event->block_queue, &wait);
-> > > +			perf_trace_sys_enter(tp_event, regs, regs->orig_ax);
-> > > +			if (current->perf_block)
-> > > +				schedule();
-> 
-> the space gets freed up by user space moving the tail pointer
-> so I wonder we need actualy to do some polling in here
-> 
-> also how about making this ring buffer feature so it's not specific
-> just to sys_enter/sys_exit.. I'll check
 
-or perhaps just tracepoints.. does not seem to make much
-sense for he events
+--6gjjnir427zmfyyw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-jirka
+
+> > Is this something we have to live with or which can be cleaned up
+> > somewhen?
+>=20
+> My opinion that we might need something like
+> drivers/acpi/acpi_i2c_lib.c
+> drivers/acpi/acpi_gpio_lib.c
+> etc.
+>
+
+Collect all of them in drivers/acpi/acpi_libs.c?
+
+> But better to ask Rafael and Mika what they think about this.
+
+Sure!
+
+
+--6gjjnir427zmfyyw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwBI90ACgkQFA3kzBSg
+KbY75RAAg+ixCqXr69OL6aIb6Ji3HNoXn8t/ztlQsaYfvgulytbqf6/ux7S/6bk3
+3rkDWINLSyTT/lxAQuZncFLBqqqkoRNF9jACaqOiX7tHc/tPOjaoGKRLc0cvQz+C
+gvDCGVHi3Dx8vysXvX3/WAADa+2rEvrg1OjWBlR0bLh+Y0ONfqEnbWRnAj7TDA0x
+m1PDTFkshdArH6y2Qx/HDctKPA279ZPaVojLLpQJJ1ResABa+4tpYgRR55ED/3R1
+vwZU+KVSVIQhexjUmqW+gfKYT3MLJYHD3uKB5bU+k11gpbRp3c6Odozb3d2xvY9k
+5LoAYZ38Jd7lgoaHl2pQJzpm3KzU5OvPcz3p5IvpUHf0E37rrnfBHjigTYqixVGr
+czVTxxJvbn0gKRaB51XBJoynG3hFXj5LOAOHKlLe+xOcHgLqAj3K3Axr1Iqfh0tn
+O9G3EwKT6o5AgxnaP3AL14sZ8v5CGfd+LH2OIf4gfddgM7mON1HwXZSXqFD1qFqO
+hUsnfAu/ewi/wF0aWuo8i0eQkfYgVxxZwmdgqDFEFzcRUOaT0K92Dd3uQ1H7/1Ic
+czQafctql4NBi/w0h1VLJIxOeW4Cp8kKslWNyb9CFDRXRvIf3GAt/lvoorF1LOCB
+tHB25A37P+6x89RwRYts3UnXE0VYvAx/1PBmYlvh4H7gOLXQ9h4=
+=bd2p
+-----END PGP SIGNATURE-----
+
+--6gjjnir427zmfyyw--
