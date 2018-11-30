@@ -2,95 +2,345 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56392C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5142C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18CD22145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:31:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kp7UmdOi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18CD22145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 96D4E20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:32:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D4E20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbeLAClN (ORCPT
+        id S1727006AbeLACmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:41:13 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:36362 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbeLAClN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:41:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8y1i/0D1pNsLQm2/2jZX3n78ngQx7goYbP1rqCaG2M4=; b=kp7UmdOi/B2YM5+CXM6rrH/uO
-        mYgMAOj00uEzHskVbauNdA+/Kt6MuSsFbMO+D3NIHMZzVTb709wnYice/bWJDpwzJ1EhIC+VwlyTW
-        BgewAM1NPTOtDR6P58MUQsbYvqAfnRlnUZjR9WqLk3JxNnpewxqS9YJx8EfEeuZPehmgn4P/7FfCC
-        3tBlhsM3rXWtr1MSpiUoqxCJtrnXPJGzsOokFigNbQvqDNvB2J9PKpF5YmhE9Ho/plq8Jfbt/oIOo
-        W9NYNMgplSgg9MiWDof3OLyhmRCX5yNymkzE2BIgGbfKJShSck6j9cTg50X77S6M9Nc109TQobixD
-        wmgqONxog==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSklN-0004Wi-Cb; Fri, 30 Nov 2018 15:31:29 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1D15A2029FD58; Fri, 30 Nov 2018 16:31:28 +0100 (CET)
-Date:   Fri, 30 Nov 2018 16:31:28 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "StDenis, Tom" <Tom.StDenis@amd.com>
-Cc:     "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Subject: Re: [PATCH 0/4] x86/mm/cpa: Fix cpa-array TLB invalidation
-Message-ID: <20181130153128.GB11650@hirez.programming.kicks-ass.net>
-References: <20181130134455.490139778@infradead.org>
- <d1e4cb48-1952-fb61-bd2b-db9efe3b5f1a@amd.com>
- <20181130150959.GA11614@hirez.programming.kicks-ass.net>
- <9b172efa-0279-0a39-0b6b-7cf3492d326d@amd.com>
- <20181130152347.GB11614@hirez.programming.kicks-ass.net>
+        Fri, 30 Nov 2018 21:42:18 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57795 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726572AbeLACmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 21:42:18 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9D30120CFC; Fri, 30 Nov 2018 16:32:34 +0100 (CET)
+Received: from localhost.localdomain (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D11E520714;
+        Fri, 30 Nov 2018 16:32:23 +0100 (CET)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 0/4] Add device links to clocks
+Date:   Fri, 30 Nov 2018 16:32:10 +0100
+Message-Id: <20181130153214.9058-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130152347.GB11614@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 04:23:47PM +0100, Peter Zijlstra wrote:
+Hello,
 
-> Hurm.. no. They apply cleanly to Linus' tree here.
-> 
-> linux-2.6$ git describe
-> v4.20-rc4-156-g94f371cb7394
-> linux-2.6$ quilt push 4
-> Applying patch patches/peterz-cpa-addr.patch
-> patching file arch/x86/mm/pageattr.c
-> Applying patch patches/peterz-cpa-fix-flush_array.patch
-> patching file arch/x86/mm/mm_internal.h
-> patching file arch/x86/mm/pageattr.c
-> patching file arch/x86/mm/tlb.c
-> Applying patch patches/peterz-cpa-fold-cpa_flush.patch
-> patching file arch/x86/mm/pageattr.c
-> Applying patch patches/peterz-cpa-clflush_opt.patch
-> patching file arch/x86/mm/pageattr.c
-> Now at patch patches/peterz-cpa-clflush_opt.patch
-> 
-> Weird.
+While working on suspend to RAM feature, I ran into troubles multiple
+times when clocks where not suspending/resuming at the desired time. I
+had a look at the core and I think the same logic as in the
+regulator's core may be applied here to (very easily) fix this issue:
+using device links.
 
-I pushed them out to:
+The only additional change I had to do was to always (when available)
+populate the device entry of the core clock structure so that it could
+be used later. This is the purpose of patch 1. Patch 2 actually adds
+support for device links.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git x86/mm
+Here is a step-by-step explanation of how links are managed, following
+Maxime Ripard's suggestion.
 
-I hope that works; I'm out for a few hours, but should check on email
-again tonight.
+
+The order of probe has no importance because the framework already
+handles orphaned clocks so let's be simple and say there are two root
+clocks, not depending on anything, that are probed first: xtal0 and
+xtal1. None of these clocks have a parent, there is no device link in
+the game, yet.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +----------------+
+
+Then, a peripheral clock periph0 is probed. His parent is xtal1. The
+clock_register_*() call will run __clk_init_parent() and a link between
+periph0's core and xtal1's core will be created and stored in
+periph0's core->parent_clk_link entry.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +-------^--------+
+                                         |
+                                         |
+                          +--------------+
+                          |   ->parent_clk_link
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                |
+                  |                |
+                  +-------^^-------+
+                          ||
+                          ||
+                  +----------------+
+                  |                |
+                  |  periph0 clk 0 |
+                  |                |
+                  +----------------+
+
+Then, device0 is probed and "get" the periph0 clock. clk_get() will be
+called and a struct clk will be instantiated for device0 (called in
+the figure clk 1). A link between device0 and the new clk 1 instance of
+periph0 will be created and stored in the clk->consumer_link entry.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +-------^--------+
+                                         |
+                                         |
+                          +--------------+
+                          |   ->parent_clk_link
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                <-------------+
+                  |                <-------------|
+                  +-------^^-------+            ||
+                          ||                    ||
+                          ||                    ||
+                  +----------------+    +----------------+
+                  |                |    |                |
+                  |  periph0 clk 0 |    |  periph0 clk 1 |
+                  |                |    |                |
+                  +----------------+    +----------------+
+                                                |
+                                                | ->consumer_link
+                                                |
+                                                |
+                                                |
+                                        +-------v--------+
+                                        |    device0     |
+                                        +----------------+
+
+Right now, device0 is linked to periph0, itself linked to xtal1 so
+everything is fine.
+
+Now let's get some fun: the new parent of periph0 is xtal1. The process
+will call clk_reparent(), periph0's core->parent_clk_link will be
+destroyed and a new link to xtal1 will be setup and stored. The
+situation is now that device0 is linked to periph0 and periph0 is
+linked to xtal1, so the dependency between device0 and xtal1 is still
+clear.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +-------^--------+            +----------------+
+           |
+           |                           \ /
+           +----------------------------x
+      ->parent_clk_link   |            / \
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                <-------------+
+                  |                <-------------|
+                  +-------^^-------+            ||
+                          ||                    ||
+                          ||                    ||
+                  +----------------+    +----------------+
+                  |                |    |                |
+                  |  periph0 clk 0 |    |  periph0 clk 1 |
+                  |                |    |                |
+                  +----------------+    +----------------+
+                                                |
+                                                | ->consumer_link
+                                                |
+                                                |
+                                                |
+                                        +-------v--------+
+                                        |    device0     |
+                                        +----------------+
+
+I assume periph0 cannot be removed while there are devices using it,
+same for xtal0.
+
+What can happen is that device0 'put' the clock periph0. The relevant
+link is deleted and the clk instance dropped.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +-------^--------+            +----------------+
+           |
+           |                           \ /
+           +----------------------------x
+      ->parent_clk_link   |            / \
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                |
+                  |                |
+                  +-------^^-------+
+                          ||
+                          ||
+                  +----------------+
+                  |                |
+                  |  periph0 clk 0 |
+                  |                |
+                  +----------------+
+
+Now we can unregister periph0: link with the parent will be destroyed
+and the clock may be safely removed.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +----------------+
+
+
+This is my understanding of the common clock framework and how links
+can be added to it.
+
+As a result, here are the links created during the boot of an
+ESPRESSObin:
+
+----->8-----
+marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-tbg-clock d0013200.tbg: Dropping the link to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013200.tbg
+marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-periph-clock d0018000.sb-periph-clk: Linked as a consumer to d0013200.tbg
+mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
+xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
+mvebu-uart d0012000.serial: Linked as a consumer to d0013800.pinctrl:xtal-clk
+advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
+cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+cpu cpu0: Dropping the link to d0013000.nb-periph-clk
+cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+-----8<-----
+
+Thanks,
+Miquèl
+
+Changes since v1:
+=================
+* Add clock->clock links, not only device->clock links.
+* Helpers renamed:
+  > clk_{link,unlink}_hierarchy()
+  > clk_{link,unlink}_consumer()
+* Add two patches to pass a "struct device" to the clock registration
+  helper. This way device links may work between clocks themselves
+  (otherwise the link is not created).
+
+
+Miquel Raynal (4):
+  clk: core: clarify the check for runtime PM
+  clk: core: link consumer with clock driver
+  clk: mvebu: armada-37xx-tbg: fill the device entry when registering
+    the clocks
+  clk: mvebu: armada-37xx-xtal: fill the device entry when registering
+    the clock
+
+ drivers/clk/clk.c                    | 64 ++++++++++++++++++++++++----
+ drivers/clk/clkdev.c                 | 16 +++++--
+ drivers/clk/mvebu/armada-37xx-tbg.c  |  6 ++-
+ drivers/clk/mvebu/armada-37xx-xtal.c |  3 +-
+ include/linux/clk-provider.h         |  2 +
+ 5 files changed, 77 insertions(+), 14 deletions(-)
+
+-- 
+2.19.1
+
