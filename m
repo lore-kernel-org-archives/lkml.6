@@ -2,109 +2,121 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E23C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6769C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2FF920863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94B0B20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:45:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vZEc/CGR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2FF920863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CP0PFPHV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94B0B20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbeLABxY (ORCPT
+        id S1726945AbeLABys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:53:24 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40650 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726685AbeLABxY (ORCPT
+        Fri, 30 Nov 2018 20:54:48 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37297 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbeLABys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:53:24 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u18so2908873plq.7
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 06:43:52 -0800 (PST)
+        Fri, 30 Nov 2018 20:54:48 -0500
+Received: by mail-oi1-f194.google.com with SMTP id y23so4910947oia.4
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 06:45:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6w/LWjvzd5ziwQooD9fOXYUVsB/B7XtRyy2LAn4jSO8=;
-        b=vZEc/CGRe5wPZQ8Dxu/uTXKDZ/MEsbSlkpXECCUDTnlGMPbMFBOPPMcLDoxjDMmj4Z
-         MVz3w2lHk7MzAnmMaXBtpOIhGoOhPSmnCRR9Meb6OKlCH3eWeLfkS5GznwZHNKtq4FyC
-         2QhhM2mvevmtwRHfNB1FU6M/V/PCa8cwpT7wFPlrVM/XqzJq7tz0/LesEK8ePxbbKzUS
-         1Xl4SHIseOr0MzZQh6adrClAi9TwetrxWD/viI5FaDDldeNtBi8MX1DvPjrIWbDOMsYL
-         zITwYcMjon0v3Wwp8vsr4Yk7eyLXahvQvQzYFGbUuGGl74l7Ik8qft6KFop9Izdnb9Ya
-         gqQA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+Xz2i0f4yjctFsVxdGJgYXpJUnPK4IN7smwaPVnsCeE=;
+        b=CP0PFPHV+sIBUxo/tUHa+fgrUk6l6txNRKBOybSM9o+keff4+kuCo4BpaUIexZ2Qrf
+         CboxWtSNZxKjgaMT22dS/NX3PylvCsg+vxcDbuCFHO28wlV4tsE+6IymOuCzmbQp5Ep9
+         phj5qA4n1DN5AmkshZi4mlHq4KgImqg1BAagA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6w/LWjvzd5ziwQooD9fOXYUVsB/B7XtRyy2LAn4jSO8=;
-        b=k1byr71TOvp3Qdho/q5zdgKiScldP8zUZdvxMvS3jF3mMHsuahJYcqkZ5cF/hFq4zM
-         5qGA4bjx2kYyGKLBF59aZ6knXLFDGwYYkWDsdIcaMEmWPlrLI8Y0oRvGtksx1JhJG0d8
-         PuBZUQ4GNLQ50oyvRbCTUNqFm7On8okG42VRDEvZaUBRlzZE7dW5vplxgsIRvdtgOubk
-         RNI8tU+Jmtc3LD6oNAXznSHPBUAPdRLk5G7Hr9ChDmnp9uuouk2x9EuI+YLQdmc3ONA2
-         V6ksqWrYdNqy2NF5+cuJBPF0kRA4M2CAas55OM0VxWKIFIbBTqgTDI7/o0ctcBp2fJ8D
-         jIZw==
-X-Gm-Message-State: AA+aEWbR5KkkKwrPuXGaPvEpOtqIQ9VpgLXl5pe5FvxONxHMyXh9gFEa
-        bux4YEWxSiwdTVushNn9N+Y=
-X-Google-Smtp-Source: AFSGD/WXl2U8zZ8gu/miHsQTJlhTGgRrpZV7o3nb8JR6Lfx47REHinKcBqXfNqYoTisBZd5crbQ0Ww==
-X-Received: by 2002:a17:902:128c:: with SMTP id g12mr5712834pla.146.1543589032009;
-        Fri, 30 Nov 2018 06:43:52 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id j6sm7976452pfg.126.2018.11.30.06.43.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 06:43:51 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     labbott@redhat.com, sumit.semwal@linaro.org,
-        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org
-Cc:     devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] staging: android: ion: Remove unused header files
-Date:   Fri, 30 Nov 2018 09:43:48 -0500
-Message-Id: <20181130144348.2877-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+Xz2i0f4yjctFsVxdGJgYXpJUnPK4IN7smwaPVnsCeE=;
+        b=cC9tFoWze0M4YcP07cHYg7tHK/uayrKO8jmdYolZfm+HSvtOIGzlpO4CzEvmEakM5L
+         hLVrLRpKYyqvQw5nyUhLA8FTlLG4OOtXOunoYt56IFSW2gK8DSI9yupgI99/2sclxXHB
+         n0m8h1kJExHnc7CCAQTlscbUaPGQlVWmcnT22mz9IP9mTFb/MO0HDHMVtG1qpoF8N5Pj
+         A21gp4QEJ7+xBq9mJ8AIOyVfwL42SHt/Kkal/9fU06vlJWOxpx2a6PRk2hytIK9VFLsK
+         zMhzGAC+BGW2qd66KMgCPSLLl3/e1LT03OmL/0et6R6Yd5OixZZnW9iG5CqS9oLQArkI
+         Dy/Q==
+X-Gm-Message-State: AA+aEWZ27IeJ+A286O3o/7RzMRbCYWTsQJkMa1D3aYluLDZY8pkn7Bqd
+        xaIl5AXQer0qnjm4TYOLWSJO012SZTT7dhAdOzf4ng==
+X-Google-Smtp-Source: AFSGD/UULX1jl9aq9vD0gtv/38NomqdoxhkUZslP3DU5zxHPDJ8GT6/SyyrfJohnQSK5zHt9xA2GeJOLPavH6gI4BDY=
+X-Received: by 2002:aca:4282:: with SMTP id p124mr3337279oia.327.1543589114916;
+ Fri, 30 Nov 2018 06:45:14 -0800 (PST)
+MIME-Version: 1.0
+References: <20181114090027.7580-1-benjamin.gaignard@linaro.org>
+In-Reply-To: <20181114090027.7580-1-benjamin.gaignard@linaro.org>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Fri, 30 Nov 2018 15:45:03 +0100
+Message-ID: <CA+M3ks5m1=gsGqB55T4xSGtAQW9Ct3Fxqx-gbYg=GoNwoX6B-w@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] Add support of STM32 hwspinlock
+To:     Ohad Ben Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-seq_file.h does not need to be included,so remove it.
+Le mer. 14 nov. 2018 =C3=A0 10:00, Benjamin Gaignard
+<benjamin.gaignard@linaro.org> a =C3=A9crit :
+>
+> This serie adds the support of the hardware semaphore block for stm32mp1 =
+SoC.
+>
+> version 4:
+> - add Linaro SoB
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/staging/android/ion/ion.c             | 1 -
- drivers/staging/android/ion/ion_system_heap.c | 1 -
- 2 files changed, 2 deletions(-)
+Gentle ping on this series
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 99073325b0c0..0d61e9cd0887 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -23,7 +23,6 @@
- #include <linux/mm_types.h>
- #include <linux/rbtree.h>
- #include <linux/sched/task.h>
--#include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <linux/vmalloc.h>
-diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
-index 548bb02c0ca6..9ce2c0d7ac17 100644
---- a/drivers/staging/android/ion/ion_system_heap.c
-+++ b/drivers/staging/android/ion/ion_system_heap.c
-@@ -11,7 +11,6 @@
- #include <linux/highmem.h>
- #include <linux/mm.h>
- #include <linux/scatterlist.h>
--#include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include "ion.h"
--- 
-2.17.0
+Regards,
+Benjamin
 
+>
+> version 3:
+> - fix clock name in properties description.
+> - use postcore_initcall() instead of module_platform_driver()
+>
+> version 2:
+> - fix comments done by Bjorn about clock naming, license terms in header,
+>   alphabetic ordering in Makefile and Kconfig and remove function
+> - Do not push test module in this version while waiting for feedbacks abo=
+ut it
+>
+> Benjamin Gaignard (4):
+>   dt-bindings: hwlock: Document STM32 hwspinlock bindings
+>   hwspinlock: add STM32 hwspinlock device
+>   ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
+>   ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
+>
+>  .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 +++
+>  arch/arm/boot/dts/stm32mp157c-ed1.dts              |   4 +
+>  arch/arm/boot/dts/stm32mp157c.dtsi                 |   9 ++
+>  drivers/hwspinlock/Kconfig                         |   9 ++
+>  drivers/hwspinlock/Makefile                        |   1 +
+>  drivers/hwspinlock/stm32_hwspinlock.c              | 156 +++++++++++++++=
+++++++
+>  6 files changed, 202 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hws=
+pinlock.txt
+>  create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+>
+> --
+> 2.15.0
+>
