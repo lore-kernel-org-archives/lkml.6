@@ -2,158 +2,88 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A76C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0823C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63F27204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:58:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F27204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C1F22146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:58:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1F22146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbeK3VHE (ORCPT
+        id S1726759AbeK3VH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:07:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52181 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeK3VHE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:07:04 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAU9vUYx3261741
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 30 Nov 2018 01:57:30 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAU9vUdX3261738;
-        Fri, 30 Nov 2018 01:57:30 -0800
-Date:   Fri, 30 Nov 2018 01:57:30 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Julien Thierry <tipbot@zytor.com>
-Message-ID: <tip-8c25db0a5a67986106aa3da7ce165ff961aa7847@git.kernel.org>
-Cc:     arend.vanspriel@broadcom.com, luto@kernel.org, bp@alien8.de,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        dave.hansen@intel.com, zhuyifei1999@gmail.com,
-        natechancellor@gmail.com, jonathanh@nvidia.com,
-        bhsharma@redhat.com, julien.thierry@arm.com, hdegoede@redhat.com,
-        marc.zyngier@arm.com, sai.praneeth.prakhya@intel.com,
-        peterz@infradead.org, eric.snowberg@oracle.com,
-        ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, matt@codeblueprint.co.uk,
-        joe@perches.com, sedat.dilek@gmail.com
-Reply-To: hdegoede@redhat.com, bhsharma@redhat.com, jonathanh@nvidia.com,
-          julien.thierry@arm.com, mingo@kernel.org,
-          torvalds@linux-foundation.org, dave.hansen@intel.com,
-          natechancellor@gmail.com, zhuyifei1999@gmail.com,
-          arend.vanspriel@broadcom.com, luto@kernel.org, bp@alien8.de,
-          sedat.dilek@gmail.com, tglx@linutronix.de, hpa@zytor.com,
-          matt@codeblueprint.co.uk, joe@perches.com,
-          eric.snowberg@oracle.com, ard.biesheuvel@linaro.org,
-          linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-          sai.praneeth.prakhya@intel.com, peterz@infradead.org
-In-Reply-To: <20181129171230.18699-4-ard.biesheuvel@linaro.org>
-References: <20181129171230.18699-4-ard.biesheuvel@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/core] efi/fdt: Simplify the get_fdt() flow
-Git-Commit-ID: 8c25db0a5a67986106aa3da7ce165ff961aa7847
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 30 Nov 2018 16:07:27 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48238 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726499AbeK3VH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 16:07:26 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 488BC20CFB; Fri, 30 Nov 2018 10:58:40 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0754C206FF;
+        Fri, 30 Nov 2018 10:58:30 +0100 (CET)
+Date:   Fri, 30 Nov 2018 10:58:29 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Marek Vasut <marex@denx.de>
+Subject: [GIT PULL] mtd: Fixes for 4.20-rc5
+Message-ID: <20181130105829.0bbefe10@bbrezillon>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8c25db0a5a67986106aa3da7ce165ff961aa7847
-Gitweb:     https://git.kernel.org/tip/8c25db0a5a67986106aa3da7ce165ff961aa7847
-Author:     Julien Thierry <julien.thierry@arm.com>
-AuthorDate: Thu, 29 Nov 2018 18:12:22 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 30 Nov 2018 09:10:30 +0100
+Hello Linus,
 
-efi/fdt: Simplify the get_fdt() flow
+Here is the MTD fixes PR for 4.20-rc5.
 
-Reorganize the get_fdt() lookup loop, clearly showing that:
+Regards,
 
-- Nothing is done for table entries that do not have fdt_guid
-- Once an entry with fdt_guid is found, break out of the loop
+Boris
 
-No functional changes.
+The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436:
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: YiFei Zhu <zhuyifei1999@gmail.com>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-4-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- drivers/firmware/efi/libstub/fdt.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
 
-diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
-index a3614f9b5f75..0dc7b4987cc2 100644
---- a/drivers/firmware/efi/libstub/fdt.c
-+++ b/drivers/firmware/efi/libstub/fdt.c
-@@ -370,23 +370,24 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
- {
- 	efi_guid_t fdt_guid = DEVICE_TREE_GUID;
- 	efi_config_table_t *tables;
--	void *fdt;
- 	int i;
- 
--	tables = (efi_config_table_t *) sys_table->tables;
--	fdt = NULL;
-+	tables = (efi_config_table_t *)sys_table->tables;
- 
- 	for (i = 0; i < sys_table->nr_tables; i++) {
--		if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
--			fdt = (void *) tables[i].table;
--			if (fdt_check_header(fdt) != 0) {
--				pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
--				return NULL;
--			}
--			*fdt_size = fdt_totalsize(fdt);
--			break;
-+		void *fdt;
-+
-+		if (efi_guidcmp(tables[i].guid, fdt_guid) != 0)
-+			continue;
-+
-+		fdt = (void *)tables[i].table;
-+		if (fdt_check_header(fdt) != 0) {
-+			pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
-+			return NULL;
- 		}
-+		*fdt_size = fdt_totalsize(fdt);
-+		return fdt;
- 	}
- 
--	return fdt;
-+	return NULL;
- }
+are available in the Git repository at:
+
+  git://git.infradead.org/linux-mtd.git tags/mtd/fixes-for-4.20-rc5
+
+for you to fetch changes up to 40b412897ccb4b98b2cfb2a0aaabed58dd9e2086:
+
+  mtd: nand: Fix memory allocation in nanddev_bbt_init() (2018-11-28 15:41:50 +0100)
+
+----------------------------------------------------------------
+NAND fixes:
+- Fix BBT cache allocation done in nanddev_bbt_init()
+
+SPI NOR fixes:
+- Fix the erase type selection logic
+
+----------------------------------------------------------------
+Frieder Schrempf (1):
+      mtd: nand: Fix memory allocation in nanddev_bbt_init()
+
+Tudor Ambarus (1):
+      mtd: spi-nor: fix erase_type array to indicate current map conf
+
+ drivers/mtd/nand/bbt.c        |  3 ++-
+ drivers/mtd/spi-nor/spi-nor.c | 31 +++++++++++++++++++++++++++++--
+ 2 files changed, 31 insertions(+), 3 deletions(-)	
