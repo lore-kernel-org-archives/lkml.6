@@ -2,130 +2,180 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D96C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8128CC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D93A20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:38:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D93A20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CCB220868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:41:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CCB220868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbeLABsF (ORCPT
+        id S1726932AbeLABvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:48:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42600 "EHLO mx1.redhat.com"
+        Fri, 30 Nov 2018 20:51:14 -0500
+Received: from mga17.intel.com ([192.55.52.151]:44118 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeLABsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:48:04 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8DED6637ED;
-        Fri, 30 Nov 2018 14:38:32 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D2E67105705E;
-        Fri, 30 Nov 2018 14:38:31 +0000 (UTC)
-Subject: Re: [PATCH 0/2] locking/lockdep: Track number of zapped classes &
- report abuse
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-References: <1543531297-18349-1-git-send-email-longman@redhat.com>
- <20181129224836.GI11632@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <0c6c14e0-2c85-d4b7-bfa6-345cfae0d8b2@redhat.com>
-Date:   Fri, 30 Nov 2018 09:38:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726398AbeLABvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:51:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 06:41:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,298,1539673200"; 
+   d="scan'208";a="96315664"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by orsmga006.jf.intel.com with ESMTP; 30 Nov 2018 06:41:40 -0800
+Subject: Re: [PATCH] sdhci: fix the fake timeout bug
+To:     "Du, Alek" <alek.du@intel.com>
+Cc:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+        linux-kernel@vger.kernel.org
+References: <20181130150028.732896d8@xdu1-mobl>
+ <81ba3745-8277-d16e-3aad-48324f51dc8a@intel.com>
+ <20181130221300.4ef2956c@xdu1-mobl>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c580be57-8a49-59f3-791e-c605d892266b@intel.com>
+Date:   Fri, 30 Nov 2018 16:40:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181129224836.GI11632@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181130221300.4ef2956c@xdu1-mobl>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 30 Nov 2018 14:38:32 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/2018 05:48 PM, Peter Zijlstra wrote:
-> On Thu, Nov 29, 2018 at 05:41:35PM -0500, Waiman Long wrote:
->> When a kernel module is repeatedly load and unload, it will eventually
->> exhaust the lockdep entries resulting in a bug message. This is a use
->> case that the current lockdep code cannot support.
->>
->> This patchset tracks the number of zapped classes and print a warning if
->> too many lockdep entries are wasted because of too many module unloading.
->> For example,
->>
->> [ 2490.651531] BUG: MAX_LOCKDEP_KEYS too low!
->> [ 2490.669925] turning off the locking correctness validator.
->> [ 2490.669925] Please attach the output of /proc/lock_stat to the bug report
->> [ 2490.669926] ========================================================
->> [ 2490.669927] WARNING: 6499 out of 8191 locks have been destroyed
->> [ 2490.669927] through kernel module unload operations.
->> [ 2490.669928] The corresponding lockdep entries are not reusable.
->> [ 2490.669928] The system might have run out of lockdep entries because
->> [ 2490.669929] of repeated kernel module load and unload operations.
->> [ 2490.669929] Lockdep cannot support this particular use case.
->> [ 2490.669930] --------------------------------------------------------
-> Have a look here:
->
->   https://lkml.kernel.org/r/20181128234325.110011-1-bvanassche@acm.org
+On 30/11/18 4:13 PM, Du, Alek wrote:
+> On Fri, 30 Nov 2018 11:19:03 +0200
+> Adrian Hunter <adrian.hunter@intel.com> wrote:
+> 
+>> Commands and resets are under spin lock, so no possibility for
+>> preemption, and certainly a few microseconds isn't going to make any
+>> difference to these timeouts, so I don't see how this patch could
+>> help.
+> 
+> Thanks for your review.
+> 
+> I believe my case the scheduling out delay sometime can reach 10~20
+> milliseconds... This may be due to the hypervisor...
 
-Thanks for the pointer, I will take a look at that.
+So you are saying this only happens under virtualization?
 
-Cheers,
-Longman
+> 
+> Please look at the sdhci_enable_clk() below, there is a window in clock
+> stabilization check. The first check is to check status register, the
+> second check is to check if time passed. That's why I can capture a
+> case that after time passed, the actually clock control register
+> indicated that clock is stable. So the error handling is wrong...
+
+Sure, but "Internal clock never stabilised." is not one of the  errors you
+listed.
+
+> 
+> Also the sdhci_send_command commands is not in spin lock There is a
+> windows between mod_timer and real command send...
+
+What code path does not have a spin lock?
+
+> 
+> Thanks,
+> Alek
+> 
+>>
+>> I recently sent a patch for GLK laptops that had BIOS issues:
+>>
+>> 	https://marc.info/?l=linux-mmc&m=154270005901609
+>>
+>> And also some improvements to error handling:
+>>
+>> 	https://marc.info/?l=linux-mmc&m=154229013900437
+>>
+>> If those don't help, please share more details of the actual problem.
+> 
+> Sorry, I can't see how this patches could fix my problem.
+> 
+> 
+> 
+>>
+>>>
+>>> Signed-off-by: Alek Du <alek.du@intel.com>
+>>> ---
+>>>  drivers/mmc/host/sdhci.c | 19 ++++++++++++++++---
+>>>  1 file changed, 16 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 99bdae53fa2e..f88c49fc574e 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -218,12 +218,17 @@ void sdhci_reset(struct sdhci_host *host, u8
+>>> mask) /* hw clears the bit when it's done */
+>>>  	while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
+>>>  		if (ktime_after(ktime_get(), timeout)) {
+>>> +			/* check it again, since there is a window
+>>> between
+>>> +			   bit check and time check */
+>>> +			if (!(sdhci_readb(host,
+>>> SDHCI_SOFTWARE_RESET) & mask))
+>>> +				break;
+>>>  			pr_err("%s: Reset 0x%x never completed.\n",
+>>>  				mmc_hostname(host->mmc),
+>>> (int)mask); sdhci_dumpregs(host);
+>>>  			return;
+>>> +		} else {
+>>> +			udelay(10);
+>>>  		}
+>>> -		udelay(10);
+>>>  	}
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(sdhci_reset);
+>>> @@ -1395,9 +1400,10 @@ void sdhci_send_command(struct sdhci_host
+>>> *host, struct mmc_command *cmd) timeout +=
+>>> DIV_ROUND_UP(cmd->busy_timeout, 1000) * HZ + HZ; else
+>>>  		timeout += 10 * HZ;
+>>> -	sdhci_mod_timer(host, cmd->mrq, timeout);
+>>>  
+>>>  	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags),
+>>> SDHCI_COMMAND);
+>>> +	/* setup timer after command to avoid fake timeout */
+>>> +	sdhci_mod_timer(host, cmd->mrq, timeout);
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(sdhci_send_command);
+>>>  
+>>> @@ -1611,12 +1617,19 @@ void sdhci_enable_clk(struct sdhci_host
+>>> *host, u16 clk) while (!((clk = sdhci_readw(host,
+>>> SDHCI_CLOCK_CONTROL)) & SDHCI_CLOCK_INT_STABLE)) {
+>>>  		if (ktime_after(ktime_get(), timeout)) {
+>>> +			/* check it again since there is a window
+>>> between
+>>> +			   status check and time check */
+>>> +			if ((clk = sdhci_readw(host,
+>>> SDHCI_CLOCK_CONTROL))
+>>> +					& SDHCI_CLOCK_INT_STABLE)
+>>> +				break;
+>>>  			pr_err("%s: Internal clock never
+>>> stabilised.\n", mmc_hostname(host->mmc));
+>>>  			sdhci_dumpregs(host);
+>>>  			return;
+>>>  		}
+>>> -		udelay(10);
+>>> +		else {
+>>> +			udelay(10);
+>>> +		}
+>>>  	}
+>>>  
+>>>  	clk |= SDHCI_CLOCK_CARD_EN;
+>>>   
+>>
+> 
+> 
 
