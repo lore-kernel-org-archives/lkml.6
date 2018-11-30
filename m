@@ -2,112 +2,99 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C292CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8575FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975CA20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:15:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975CA20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4927120834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:17:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MTCsC24s";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Eoth7C+E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4927120834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbeLAFZ0 (ORCPT
+        id S1726424AbeLAF1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:25:26 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34176 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbeLAFZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:25:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1CD0165C;
-        Fri, 30 Nov 2018 10:15:18 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7E8AA3F575;
-        Fri, 30 Nov 2018 10:15:18 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 5D94B1AE0FA2; Fri, 30 Nov 2018 18:15:37 +0000 (GMT)
-Date:   Fri, 30 Nov 2018 18:15:37 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>, sboyd@kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, robh+dt <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-Subject: Re: [PATCH v18 1/5] iommu/arm-smmu: Add pm_runtime/sleep ops
-Message-ID: <20181130181536.GA15274@arm.com>
-References: <20181127101145.7682-1-vivek.gautam@codeaurora.org>
- <20181127101145.7682-2-vivek.gautam@codeaurora.org>
- <154342225921.88331.14467967828250776155@swboyd.mtv.corp.google.com>
- <0d76b669-6c4f-7c3b-50a1-084201f2c07a@arm.com>
- <CAFp+6iEC8hobAdVF5nLdhQdCUqbi1xa4Vi-NLugGshV=dg+h1A@mail.gmail.com>
+        Sat, 1 Dec 2018 00:27:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35808 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbeLAF1x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:27:53 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EF95260BE8; Fri, 30 Nov 2018 18:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543601866;
+        bh=CB/MbCwOy0SasSzHqLli3TQdsb100tpLqBqRcoSFjmk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MTCsC24sfmoQIShzo4WwNu6YIN3MRySRD3NNpoFJ8BjkrF8ZAqrANlh0amaqcf+Fz
+         c78dHj4odTvv7IQpls71XcBlwBavLZlLUDPSRiFJ78YBikITDCKn1ZCkZw99rL2nGs
+         HVkbMRUMgSyMe0LiIhFdsx1QJqvdhiqxxeohniFo=
+Received: from [192.168.225.247] (unknown [49.33.181.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 35F4A60B19;
+        Fri, 30 Nov 2018 18:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543601864;
+        bh=CB/MbCwOy0SasSzHqLli3TQdsb100tpLqBqRcoSFjmk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Eoth7C+EDgfRjvmJ4wrAxLEz1F2A24q64VYdaybOm0ZONKdIXKJEe1ODH5DE2q+YK
+         TXLQxjdJUhM8HuStRthlB7Gu6UyfjIbxJrdqt5OdJ1KuL0edxGAT8GTkcrtoR+KrWx
+         wDK0a9+87s6eeJRcjbmLxxuqb34m/KMFrvTeFJmg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35F4A60B19
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v10 3/3] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org
+References: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
+ <1542873221-13693-4-git-send-email-tdas@codeaurora.org>
+ <154331006901.88331.9760589510991406736@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <0691834a-e2bf-20bb-fa5c-081ee6668250@codeaurora.org>
+Date:   Fri, 30 Nov 2018 23:47:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iEC8hobAdVF5nLdhQdCUqbi1xa4Vi-NLugGshV=dg+h1A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <154331006901.88331.9760589510991406736@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 08:25:20PM +0530, Vivek Gautam wrote:
-> On Wed, Nov 28, 2018 at 10:07 PM Robin Murphy <robin.murphy@arm.com> wrote:
-> >
-> > On 28/11/2018 16:24, Stephen Boyd wrote:
-> > > Quoting Vivek Gautam (2018-11-27 02:11:41)
-> > >> @@ -1966,6 +1970,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
-> > >>   };
-> > >>   MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
-> > >>
-> > >> +static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
-> > >> +                                  const char * const *clks)
-> > >> +{
-> > >> +       int i;
-> > >> +
-> > >> +       if (smmu->num_clks < 1)
-> > >> +               return;
-> > >> +
-> > >> +       smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
-> > >> +                                 sizeof(*smmu->clks), GFP_KERNEL);
-> > >> +       if (!smmu->clks)
-> > >> +               return;
-> > >> +
-> > >> +       for (i = 0; i < smmu->num_clks; i++)
-> > >> +               smmu->clks[i].id = clks[i];
-> > >
-> > > Is this clk_bulk_get_all()?
-> 
-> From what I remember, and now I could go back to v7 and check [1], we parked
-> clk_bulk_get out of OF's sole purview as we also have
-> arm_smmu_device_acpi_probe() besides arm_smmu_device_dt_probe().
-> 
-> arm_smmu_device_dt_probe() could get the clocks from dt and fill in
-> the clock bulk data, and
-> similarly, arm_smmu_device_acpi_probe() could fill the clock bulk data
-> by getting it from ACPI.
-> 
-> clk_bulk_get_all() seems like going only the OF way.
-> Is there another way here to have something common between ACPI
-> and OF, and then do the clk_bulk_get?
+Hello Stephen,
 
-I'd say just go with clk_bulk_get_all() and if somebody really wants to
-mess with the SMMU clocks on a system booted via ACPI, then it's their
-problem to solve. My understanding is that the design of IORT makes this
-next to impossible to solve anyway, because a static table is used and
-therefore we're unable to run whatever ASL methods need to be invoked to
-mess with the clocks.
+On 11/27/2018 2:44 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-11-21 23:53:41)
+>> +
+>> +static struct clk_branch lpass_qdsp6ss_core_clk = {
+>> +       .halt_reg = 0x20,
+>> +       /* CLK_OFF would not toggle until LPASS is not out of reset */
+> 
+> Is this really "CLK_OFF won't toggle until LPASS it out of reset"?
+> 
 
-Will
+Would take care of it, in the next series.
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
