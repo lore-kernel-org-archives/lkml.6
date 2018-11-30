@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1652C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CDCC65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D5020868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7985120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:53:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dvl/HPIx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D5020868
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGi6bGe9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7985120868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbeK3XCr (ORCPT
+        id S1727159AbeK3XCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:02:47 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43678 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbeK3XCq (ORCPT
+        Fri, 30 Nov 2018 18:02:48 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37013 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeK3XCr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:02:46 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f4so4591401edq.10
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 03:53:43 -0800 (PST)
+        Fri, 30 Nov 2018 18:02:47 -0500
+Received: by mail-ed1-f67.google.com with SMTP id h15so4617823edb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 03:53:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=S2XBbpoddUxn8L0Ic4aH0nP9i4f9kF4ywqyELelq9lw=;
-        b=Dvl/HPIxXglomNtTFiIuB3/vcmwltDNHsYyq2wT0HAf7NbL0u3FkwCajzVLbiCKM2i
-         1aYYZXp46RO81oTqw4nZWlSsG4t+SRAiRumx7zGI5OVSixx9CHXHskuCbSk967jkdtvD
-         epFSWXDnjwHp6jRk27RAujEoWBw1spMpGsveA=
+        bh=Uj1/fNKFSJQYG76kuDm1FhuBMKBVCAd9YSvKr8WrTa4=;
+        b=iGi6bGe9CChIjYcRzSpisHvA43kjJnB48BH0bQ/6M4hwHFGilDwB9KPDp3etl5AVpu
+         9nakJgnDfy9X2r86z9ncUSuhKONAlFwARHER2mF0UFxI0+wkv4li56tGRR1ixi9tN0Nr
+         kEulfebILV24arikfS4nhFXI7AqsjqP4I1i54=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=S2XBbpoddUxn8L0Ic4aH0nP9i4f9kF4ywqyELelq9lw=;
-        b=oyQaFERvedIT6c9VwkKAFX3NUWcOwaV+JXz00K6YfrVy/naCHu320O/5HSGVMyvCQU
-         S3rWGuq2SnfMhEXcTcG81XwnycXRMJO1NUJ9SAoy1AGeUQ6t1zPFDr96yWIO3CR+JtYH
-         gpiM+UTIgGmtnils6zq00hcY1+qBwmQRdeJGOO/XUacFFKW1MbVeQ+oVAnjAPk2IPCTI
-         4rxhN6gzPwKwsBR6OaAxrsvAqdy3h7KeEcE/tSWHKzM3E+UJI66e/z4eNk3iingh+0UG
-         cevcMjsUVWxRPByAisEnk380y8zqJEllxm4zt602uCisKwKZHkox4fE9shk9CHdd1ZUA
-         f9DA==
-X-Gm-Message-State: AA+aEWaMJl9T8TB4NN8Hzn+QC2qaaF5AuFrMD2sxsmmaiFQN1rAXzDWG
-        86PlGflKZp1AGjGBMlNjzdMlNhWQH+k=
-X-Google-Smtp-Source: AFSGD/UrvQmYfBPDNp8H1+HdKA0Kq4JR2/gdJkXD+8tY+/8cr1suq1QGrA8TyZrzJDCSCVVGBFR1CA==
-X-Received: by 2002:aa7:dc51:: with SMTP id g17mr4882519edu.115.1543578822887;
-        Fri, 30 Nov 2018 03:53:42 -0800 (PST)
+        bh=Uj1/fNKFSJQYG76kuDm1FhuBMKBVCAd9YSvKr8WrTa4=;
+        b=KydOMvz5MNGgVMEnOVXDlfiXOSgUNPMgoxPZ9pTQ+dHs1ncGIpLLWJFNsGJS8rRfnN
+         4H1WT6Gb8CwByf7VEZXZyUiRX+u1HoELTGnUgE9GpL3GlBw1uCMyHUqPds+BxmDTAE3h
+         wZfpNIy+FXDNlmlDGlnot151dk2D5lxiMiPig3A52tQKtikgDIw+ea+Ws4l/L21+L9HW
+         lT8k3F3OjltfSRBoH9D2DXPIcmZo9uhZsjxDNyp/A/YcIY8wY+DxsYwW1suk99iAvwqK
+         zvkgJKHzXikDHxcart6WKFigMDNUSJGz0LmTpl0Xv+RHdQBtfnorBkuywnxRcVa8631E
+         R0FQ==
+X-Gm-Message-State: AA+aEWbMgaALYvAzFBiIBX68tBwLIwqP7mVMLbKZ1ZZn6hqUnd2QP9Be
+        cVjX+HaSVSgAG78G9JS7kihU4g==
+X-Google-Smtp-Source: AFSGD/UJb6+p/mX98bK4XTMPikT/XgQhJcSXSgbRZ4NjhTuylLDgYeHCH6CKocEZrBupcaMi6kiXZA==
+X-Received: by 2002:a17:906:154c:: with SMTP id c12-v6mr4477480ejd.69.1543578824107;
+        Fri, 30 Nov 2018 03:53:44 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id t10-v6sm767932ejg.41.2018.11.30.03.53.41
+        by smtp.gmail.com with ESMTPSA id t10-v6sm767932ejg.41.2018.11.30.03.53.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 03:53:42 -0800 (PST)
+        Fri, 30 Nov 2018 03:53:43 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 5/6] nvmem: Move nvmem_type_str array to its only user
-Date:   Fri, 30 Nov 2018 11:53:24 +0000
-Message-Id: <20181130115325.16539-6-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 6/6] nvmem: add new config option
+Date:   Fri, 30 Nov 2018 11:53:25 +0000
+Message-Id: <20181130115325.16539-7-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181130115325.16539-1-srinivas.kandagatla@linaro.org>
 References: <20181130115325.16539-1-srinivas.kandagatla@linaro.org>
@@ -74,66 +74,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Since we put static variable to a header file it's copied to each module
-that includes the header. But not all of them are actually using it.
+We want to add nvmem support for MTD. TI DaVinci is the first platform
+that will be using it, but only in non-DT mode. In order not to
+introduce any new interface to supporting of which we would have to
+commit - add a new config option that tells nvmem not to use the DT
+node of the parent device.
 
-Move nvmem_type_str array to its only user to make a compiler happy:
+This way we won't be creating nvmem devices corresponding with MTD
+partitions defined in device tree. By default MTD will set this new
+field to true.
 
-In file included from include/linux/rtc.h:18,
-                 from drivers/rtc/rtc-proc.c:15:
-include/linux/nvmem-provider.h:29:27: warning: 'nvmem_type_str'
-defined but not used [-Wunused-const-variable=]
- static const char * const nvmem_type_str[] = {
-                           ^~~~~~~~~~~~~~
+Once a set of bindings for MTD nvmem cells is agreed upon, we'll be
+able to remove this option.
 
-Suggested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Suggested-by: Joe Perches <joe@perches.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/core.c           | 7 +++++++
- include/linux/nvmem-provider.h | 7 -------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/nvmem/core.c           | 3 ++-
+ include/linux/nvmem-provider.h | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index d9fd11033c1c..22345e65a301 100644
+index 22345e65a301..f7301bb4ef3b 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -61,6 +61,13 @@ static LIST_HEAD(nvmem_lookup_list);
+@@ -635,7 +635,8 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 	nvmem->type = config->type;
+ 	nvmem->reg_read = config->reg_read;
+ 	nvmem->reg_write = config->reg_write;
+-	nvmem->dev.of_node = config->dev->of_node;
++	if (!config->no_of_node)
++		nvmem->dev.of_node = config->dev->of_node;
  
- static BLOCKING_NOTIFIER_HEAD(nvmem_notifier);
- 
-+static const char * const nvmem_type_str[] = {
-+	[NVMEM_TYPE_UNKNOWN] = "Unknown",
-+	[NVMEM_TYPE_EEPROM] = "EEPROM",
-+	[NVMEM_TYPE_OTP] = "OTP",
-+	[NVMEM_TYPE_BATTERY_BACKED] = "Battery backed",
-+};
-+
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- static struct lock_class_key eeprom_lock_key;
- #endif
+ 	if (config->id == -1 && config->name) {
+ 		dev_set_name(&nvmem->dev, "%s", config->name);
 diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 00ff92571683..5b2dd0a987d2 100644
+index 5b2dd0a987d2..fe051323be0a 100644
 --- a/include/linux/nvmem-provider.h
 +++ b/include/linux/nvmem-provider.h
-@@ -26,13 +26,6 @@ enum nvmem_type {
- 	NVMEM_TYPE_BATTERY_BACKED,
- };
- 
--static const char * const nvmem_type_str[] = {
--	[NVMEM_TYPE_UNKNOWN] = "Unknown",
--	[NVMEM_TYPE_EEPROM] = "EEPROM",
--	[NVMEM_TYPE_OTP] = "OTP",
--	[NVMEM_TYPE_BATTERY_BACKED] = "Battery backed",
--};
--
- /**
-  * struct nvmem_config - NVMEM device configuration
-  *
+@@ -38,6 +38,7 @@ enum nvmem_type {
+  * @type:	Type of the nvmem storage
+  * @read_only:	Device is read-only.
+  * @root_only:	Device is accessibly to root only.
++ * @no_of_node:	Device should not use the parent's of_node even if it's !NULL.
+  * @reg_read:	Callback to read data.
+  * @reg_write:	Callback to write data.
+  * @size:	Device size.
+@@ -62,6 +63,7 @@ struct nvmem_config {
+ 	enum nvmem_type		type;
+ 	bool			read_only;
+ 	bool			root_only;
++	bool			no_of_node;
+ 	nvmem_reg_read_t	reg_read;
+ 	nvmem_reg_write_t	reg_write;
+ 	int	size;
 -- 
 2.19.2
 
