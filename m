@@ -6,146 +6,285 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8164DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A91C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13A6E20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:15:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13A6E20863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 470E9214DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:15:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470E9214DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbeK3XYK (ORCPT
+        id S1726840AbeK3XYW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:24:10 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37302 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbeK3XYK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:24:10 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gShhC-00038v-Ct; Fri, 30 Nov 2018 13:14:58 +0100
-Date:   Fri, 30 Nov 2018 13:14:57 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Norbert Manthey <nmanthey@amazon.de>
-cc:     linux-kernel@vger.kernel.org, David Woodhouse <dwmw@amazon.co.uk>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Baoquan He <bhe@redhat.com>, Nicolai Stange <nstange@suse.de>,
-        Jan Beulich <JBeulich@suse.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>
-Subject: Re: [PATCH] io_apic: initialize irq with -EINVAL
-In-Reply-To: <1543403393-6004-1-git-send-email-nmanthey@amazon.de>
-Message-ID: <alpine.DEB.2.21.1811301239460.17702@nanos.tec.linutronix.de>
-References: <1543403393-6004-1-git-send-email-nmanthey@amazon.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 30 Nov 2018 18:24:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:26864 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726512AbeK3XYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 18:24:22 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58B60C050009;
+        Fri, 30 Nov 2018 12:15:16 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4DA8F17DCC;
+        Fri, 30 Nov 2018 12:15:13 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] x86/hyper-v: define structures from TLFS as packed
+Date:   Fri, 30 Nov 2018 13:15:11 +0100
+Message-Id: <20181130121511.12331-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 30 Nov 2018 12:15:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Norbert,
+Without 'packed' compiler is free to add optimization paddings and re-order
+structure fields for randomization/optimization. And structures from
+hyperv-tlfs.h are used for hypervisor-guest communication, we need to
+ultimately forbid such practices.
 
-On Wed, 28 Nov 2018, Norbert Manthey wrote:
+Suggested-by: Nadav Amit <nadav.amit@gmail.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+- This is a follow-up to my "[PATCH v2 0/4] x86/kvm/hyper-v: Implement
+ Direct Mode for synthetic timers" series, as suggested by Thomas I'm
+ routing it to KVM tree to avoid merge conflicts.
+---
+ arch/x86/include/asm/hyperv-tlfs.h | 50 +++++++++++++++---------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-thanks for the patch.
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index ebfed56976d2..6a60fa17f6f2 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -271,7 +271,7 @@ union hv_x64_msr_hypercall_contents {
+ 		u64 enable:1;
+ 		u64 reserved:11;
+ 		u64 guest_physical_address:52;
+-	};
++	} __packed;
+ };
+ 
+ /*
+@@ -283,7 +283,7 @@ struct ms_hyperv_tsc_page {
+ 	volatile u64 tsc_scale;
+ 	volatile s64 tsc_offset;
+ 	u64 reserved2[509];
+-};
++}  __packed;
+ 
+ /*
+  * The guest OS needs to register the guest ID with the hypervisor.
+@@ -324,7 +324,7 @@ struct hv_reenlightenment_control {
+ 	__u64 enabled:1;
+ 	__u64 reserved2:15;
+ 	__u64 target_vp:32;
+-};
++}  __packed;
+ 
+ #define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
+ #define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
+@@ -332,12 +332,12 @@ struct hv_reenlightenment_control {
+ struct hv_tsc_emulation_control {
+ 	__u64 enabled:1;
+ 	__u64 reserved:63;
+-};
++} __packed;
+ 
+ struct hv_tsc_emulation_status {
+ 	__u64 inprogress:1;
+ 	__u64 reserved:63;
+-};
++} __packed;
+ 
+ #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
+ #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT	12
+@@ -409,7 +409,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
+ 	__u32 res1;
+ 	__u64 tsc_scale;
+ 	__s64 tsc_offset;
+-} HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
++}  __packed HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
+ 
+ /* Define the number of synthetic interrupt sources. */
+ #define HV_SYNIC_SINT_COUNT		(16)
+@@ -466,7 +466,7 @@ union hv_message_flags {
+ 	struct {
+ 		__u8 msg_pending:1;
+ 		__u8 reserved:7;
+-	};
++	} __packed;
+ };
+ 
+ /* Define port identifier type. */
+@@ -488,7 +488,7 @@ struct hv_message_header {
+ 		__u64 sender;
+ 		union hv_port_id port;
+ 	};
+-};
++} __packed;
+ 
+ /* Define synthetic interrupt controller message format. */
+ struct hv_message {
+@@ -496,12 +496,12 @@ struct hv_message {
+ 	union {
+ 		__u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
+ 	} u;
+-};
++} __packed;
+ 
+ /* Define the synthetic interrupt message page layout. */
+ struct hv_message_page {
+ 	struct hv_message sint_message[HV_SYNIC_SINT_COUNT];
+-};
++} __packed;
+ 
+ /* Define timer message payload structure. */
+ struct hv_timer_message_payload {
+@@ -509,7 +509,7 @@ struct hv_timer_message_payload {
+ 	__u32 reserved;
+ 	__u64 expiration_time;	/* When the timer expired */
+ 	__u64 delivery_time;	/* When the message was delivered */
+-};
++} __packed;
+ 
+ /* Define virtual processor assist page structure. */
+ struct hv_vp_assist_page {
+@@ -519,7 +519,7 @@ struct hv_vp_assist_page {
+ 	__u64 nested_enlightenments_control[2];
+ 	__u32 enlighten_vmentry;
+ 	__u64 current_nested_vmcs;
+-};
++} __packed;
+ 
+ struct hv_enlightened_vmcs {
+ 	u32 revision_id;
+@@ -693,7 +693,7 @@ struct hv_enlightened_vmcs {
+ 		u32 nested_flush_hypercall:1;
+ 		u32 msr_bitmap:1;
+ 		u32 reserved:30;
+-	} hv_enlightenments_control;
++	}  __packed hv_enlightenments_control;
+ 	u32 hv_vp_id;
+ 
+ 	u64 hv_vm_id;
+@@ -703,7 +703,7 @@ struct hv_enlightened_vmcs {
+ 	u64 padding64_5[7];
+ 	u64 xss_exit_bitmap;
+ 	u64 padding64_6[7];
+-};
++} __packed;
+ 
+ #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE			0
+ #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP		BIT(0)
+@@ -744,7 +744,7 @@ union hv_stimer_config {
+ 		u64 reserved_z0:3;
+ 		u64 sintx:4;
+ 		u64 reserved_z1:44;
+-	};
++	} __packed;
+ };
+ 
+ 
+@@ -759,7 +759,7 @@ union hv_synic_scontrol {
+ 	struct {
+ 		u64 enable:1;
+ 		u64 reserved:63;
+-	};
++	} __packed;
+ };
+ 
+ /* Define synthetic interrupt source. */
+@@ -771,7 +771,7 @@ union hv_synic_sint {
+ 		u64 masked:1;
+ 		u64 auto_eoi:1;
+ 		u64 reserved2:46;
+-	};
++	} __packed;
+ };
+ 
+ /* Define the format of the SIMP register */
+@@ -781,7 +781,7 @@ union hv_synic_simp {
+ 		u64 simp_enabled:1;
+ 		u64 preserved:11;
+ 		u64 base_simp_gpa:52;
+-	};
++	} __packed;
+ };
+ 
+ /* Define the format of the SIEFP register */
+@@ -791,34 +791,34 @@ union hv_synic_siefp {
+ 		u64 siefp_enabled:1;
+ 		u64 preserved:11;
+ 		u64 base_siefp_gpa:52;
+-	};
++	} __packed;
+ };
+ 
+ struct hv_vpset {
+ 	u64 format;
+ 	u64 valid_bank_mask;
+ 	u64 bank_contents[];
+-};
++} __packed;
+ 
+ /* HvCallSendSyntheticClusterIpi hypercall */
+ struct hv_send_ipi {
+ 	u32 vector;
+ 	u32 reserved;
+ 	u64 cpu_mask;
+-};
++} __packed;
+ 
+ /* HvCallSendSyntheticClusterIpiEx hypercall */
+ struct hv_send_ipi_ex {
+ 	u32 vector;
+ 	u32 reserved;
+ 	struct hv_vpset vp_set;
+-};
++} __packed;
+ 
+ /* HvFlushGuestPhysicalAddressSpace hypercalls */
+ struct hv_guest_mapping_flush {
+ 	u64 address_space;
+ 	u64 flags;
+-};
++} __packed;
+ 
+ /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
+ struct hv_tlb_flush {
+@@ -826,7 +826,7 @@ struct hv_tlb_flush {
+ 	u64 flags;
+ 	u64 processor_mask;
+ 	u64 gva_list[];
+-};
++} __packed;
+ 
+ /* HvFlushVirtualAddressSpaceEx, HvFlushVirtualAddressListEx hypercalls */
+ struct hv_tlb_flush_ex {
+@@ -834,6 +834,6 @@ struct hv_tlb_flush_ex {
+ 	u64 flags;
+ 	struct hv_vpset hv_vp_set;
+ 	u64 gva_list[];
+-};
++} __packed;
+ 
+ #endif
+-- 
+2.19.2
 
-> Subject: [PATCH] io_apic: initialize irq with -EINVAL
-
-io_apic is not a proper subsystem prefix. git log should give you a hint:
-
-   x86/ioapic: ....
-
-Also please start the first word after the colon with an uppercase letter.
-
-Now 'Initialize irq with -EINVAL' is not really informative. It tells what
-the patch does, but does not give a consise hint, what this is about and
-why you want to do it. Something like:
-
-   x86/ioapic: Prevent uninitialized return value
-
-provides precise information about the scope of the patch.
-
-> To catch the case where the uninitialized variable irq might be
-> returned.
-
-I had to read this incomplete sentence 3 times until I discovered that this
-is the second part of the subject line. Please don't do that.
-
-> As the path that might lead to this situation can only
-> occur based on invalid arguments, we initialize this variable with
-> the value -EINVAL, so that callers are notified accordingly, and no
-> uninitialized value is returned.
-> 
-> The path that would allow to return an uninitialized value for the
-> variable irq would require legacy IRQs without the ALLOC flag.
-
-Ideally you describe the problem first and not elaborate lengthy on the
-solution, because the solution is obvious once the problem is
-clear. Something like this:
-
-  mp_map_pin_to_irq() has an exit path which returns an uninitialized
-  variable. This is reached, when  called with arguments ......
-
-  Initialize 'irq' with -EINVAL to prevent that.
-
-> Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-
-This SOB chain is wrong. How is David involved in this? If he co-developed
-the patch, then a 'Co-Developed-by: David...' tag is missing. If not, then
-his SOB is just wrong here.
-
-> ---
->  arch/x86/kernel/apic/io_apic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-> index 2953bbf..219dbc1 100644
-> --- a/arch/x86/kernel/apic/io_apic.c
-> +++ b/arch/x86/kernel/apic/io_apic.c
-> @@ -1031,7 +1031,7 @@ static int alloc_isa_irq_from_domain(struct irq_domain *domain,
->  static int mp_map_pin_to_irq(u32 gsi, int idx, int ioapic, int pin,
->  			     unsigned int flags, struct irq_alloc_info *info)
->  {
-> -	int irq;
-> +	int irq = -EINVAL;
->  	bool legacy = false;
->  	struct irq_alloc_info tmp;
->  	struct mp_chip_data *data;
-
-Now, lets look at the actual error path:
-
-        if (!(flags & IOAPIC_MAP_ALLOC)) {
-                if (!legacy) {
-                        irq = irq_find_mapping(domain, pin);
-                        if (irq == 0)
-                                irq = -ENOENT;
-                }
-		 <----------- (i.e. if legacy == true)
-	}
-
-That looks about right, but to get there something must set legacy to
-'true' and the only code path which does so is:
-
-        if (idx >= 0 && test_bit(mp_irqs[idx].srcbus, mp_bus_not_pci)) {
-                irq = mp_irqs[idx].srcbusirq;
-                legacy = mp_is_legacy_irq(irq);
-        }
-
-and this code path actually initializes 'irq'. So returning uninitialized
-'irq' cannot happen.
-
-How did you find that? Code inspection, static checker, ... ?
-
-Thanks,
-
-	tglx
