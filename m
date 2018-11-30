@@ -2,163 +2,123 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7DFC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFF4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5314C2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:16:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C327420867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:16:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Cj5468or"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5314C2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HP4/DIyr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C327420867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeLAJ1Y (ORCPT
+        id S1727021AbeLAJ1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:27:24 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36274 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeLAJ1X (ORCPT
+        Sat, 1 Dec 2018 04:27:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33892 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbeLAJ1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:27:23 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f23so6077209edb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:16:37 -0800 (PST)
+        Sat, 1 Dec 2018 04:27:37 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so3468633pfg.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:16:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TgkXkZY9erwZj2thsjzh4ReMx12HiXtWD0UhwrUgdZE=;
-        b=Cj5468oraizKDKgTiISlsPqnO7wbH6tn1As9lPDdwkvSbaVu8s9NkFAVR+VdQ5pHll
-         WMIc+TVAhsy4TdFPCNOyr0BID21JXmHPvqNp0/sUWgSDAC+1lkBq2BOZ7NwtRO0OPetL
-         grq0NF52K0Wyf8YAc+vEKpWPPcRbMiEua67u0=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9wVYqc8o/e2G1H2IPtIHLrZVxL0b+56hC6izUO5Mrdc=;
+        b=HP4/DIyrRXfNpL3VXPo4MReUj0h/z+ISfGea2VyEm1o9T5jwNr+GjsmHnohMgVpGCS
+         oEp0WQpBqYthiHwASlU5jsvKq00sKNGrn5XAV+uO5hG0bNhiA9SzFHxymsAD3z5wH74e
+         xzf1mcH3E1Ex7MBzPkf0Vv+mJFdb/0fXoH28M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TgkXkZY9erwZj2thsjzh4ReMx12HiXtWD0UhwrUgdZE=;
-        b=s3gf6LCOmr6AN7jvUXmB4VXFBH3k/RqVPqjds9qp15tOSgrdNhAQ43Y6SQPRVAyhue
-         SVU7O/iiKmfpTVFqfq5TiGEKGyUtL3VUivN7qJkeOx7PwsCH+BQBHY6CnUMv4HzyowbR
-         UZ7ghsSETrM4dr4gf29G8mRfdpl/tL3M4iyhxzrglIcpJw0WNTJwXUKBMie6CErXKtsP
-         /1DWNU9V5Anl8yberfNT9FPN59FlugDpQ9TG9XCb6581fDk3MCEDP5lSIMoPecDz2ZRF
-         LdT7q95CCpHoDQNttZ8K43hVE00aAtjIbzjj1o9T22NwTTKwQI71GddMniNlpWcUw/Wv
-         Xj9Q==
-X-Gm-Message-State: AA+aEWYuKJ4rmt0vJtztvwrPuYFlBUk4fBnHpjvGdQhJ/wzSsaygUGYE
-        2vRk7n2RMtVZza+MgLOR85dFOA==
-X-Google-Smtp-Source: AFSGD/WnG+4G+mOxVLbXSIPxlHaDznFeYoc6XFI1SgXH6AukMxuWmXsREmXX4QgY+a1i1JWgado9Yw==
-X-Received: by 2002:a50:b172:: with SMTP id l47mr6510989edd.225.1543616196410;
-        Fri, 30 Nov 2018 14:16:36 -0800 (PST)
-Received: from [192.168.0.189] (ip-5-186-114-252.cgn.fibianet.dk. [5.186.114.252])
-        by smtp.gmail.com with ESMTPSA id 97sm1717861edq.45.2018.11.30.14.16.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 14:16:35 -0800 (PST)
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-References: <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
- <20181129121307.12393c57@gandalf.local.home>
- <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com>
- <20181129124404.2fe55dd0@gandalf.local.home>
- <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
- <20181129125857.75c55b96@gandalf.local.home>
- <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
- <20181129134725.6d86ade6@gandalf.local.home>
- <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
- <20181129141648.6ef944a9@gandalf.local.home>
- <20181129192211.ndzj2ltzx5t6x2qe@treble>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <eb15f2dd-92f3-423d-e22f-3d1528fb7b6e@rasmusvillemoes.dk>
-Date:   Fri, 30 Nov 2018 23:16:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9wVYqc8o/e2G1H2IPtIHLrZVxL0b+56hC6izUO5Mrdc=;
+        b=NDkPM0Xb2/GaA/j60lcC/x/ol69f6jCksRKtccLs9oVUOCEVgGz9iymp58BkgrDHYx
+         PRz0YR7mWyF3RLcDbrumZyZHk8n83qiy9Xbm0OVNdfv0+4e25a3UayZ+v227la7MjmC7
+         euKNdpLEQSZq+RbiGirqnydukY1sh5pS/L7dN/Pzasx/78HKO4y++RLugoLdEuzVS7pK
+         9M7ID6yu54bo4wvwm3I8BZSmtHXwRPSSk2xnhy3wXu+haDmyLcK8pc6Uv9bV93Glr+Gc
+         4/1QHd9ieHTxefO6fDDN6JCMJrN0n1mqkatASr+3DCjZUR0y/4MKsiG81/LZ3m3Ud3K8
+         1KBw==
+X-Gm-Message-State: AA+aEWaGlAZ4XgL3AahpOsDtYxkwBWkQLbHYCzRDeLgeNvPQyPXJpAJF
+        5sWuDhTBaXC63K48R47ju5nU+A==
+X-Google-Smtp-Source: AFSGD/X1yk3RJCA/+LYxoqBPASWBanT9bokBWLsaF9M6r/EgGBojn5Z3cY6DuyE/N4g9mRB+jXs8wQ==
+X-Received: by 2002:a63:a35c:: with SMTP id v28mr6220516pgn.205.1543616211329;
+        Fri, 30 Nov 2018 14:16:51 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id r130sm10605534pfr.48.2018.11.30.14.16.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 14:16:50 -0800 (PST)
+Date:   Fri, 30 Nov 2018 14:16:50 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/7] dt-bindings: msm/dsi: Add ref clock for PHYs
+Message-ID: <20181130221650.GB22824@google.com>
+References: <20181126231159.122298-1-mka@chromium.org>
+ <20181126231159.122298-2-mka@chromium.org>
+ <CAD=FV=WvXFpZDJGbdvvY=HL_=tDWyhKpTg7zu8s=gUuJgK1ebg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181129192211.ndzj2ltzx5t6x2qe@treble>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WvXFpZDJGbdvvY=HL_=tDWyhKpTg7zu8s=gUuJgK1ebg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/2018 20.22, Josh Poimboeuf wrote:
-> On Thu, Nov 29, 2018 at 02:16:48PM -0500, Steven Rostedt wrote:
->>> and honestly, the way "static_call()" works now, can you guarantee
->>> that the call-site doesn't end up doing that, and calling the
->>> trampoline function for two different static calls from one indirect
->>> call?
->>>
->>> See what I'm talking about? Saying "callers are wrapped in macros"
->>> doesn't actually protect you from the compiler doing things like that.
->>>
->>> In contrast, if the call was wrapped in an inline asm, we'd *know* the
->>> compiler couldn't turn a "call wrapper(%rip)" into anything else.
->>
->> But then we need to implement all numbers of parameters.
+On Tue, Nov 27, 2018 at 09:41:39PM -0800, Doug Anderson wrote:
+> Hi,
 > 
-> I actually have an old unfinished patch which (ab)used C macros to
-> detect the number of parameters and then setup the asm constraints
-> accordingly.  At the time, the goal was to optimize the BUG code.
+> On Mon, Nov 26, 2018 at 3:12 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> > Allow the PHY drivers to get the ref clock from the DT.
+> >
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > Changes in v2:
+> > - add the ref clock for all PHYs, not only the 10nm one
+> > - updated commit message
+> > ---
+> >  Documentation/devicetree/bindings/display/msm/dsi.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/msm/dsi.txt b/Documentation/devicetree/bindings/display/msm/dsi.txt
+> > index dfc743219bd88..b0485559a719c 100644
+> > --- a/Documentation/devicetree/bindings/display/msm/dsi.txt
+> > +++ b/Documentation/devicetree/bindings/display/msm/dsi.txt
+> > @@ -106,6 +106,7 @@ Required properties:
+> >  - clocks: Phandles to device clocks. See [1] for details on clock bindings.
+> >  - clock-names: the following clocks are required:
+> >    * "iface"
+> > +  * "ref"
 > 
-> I had wanted to avoid this kind of approach for static calls, because
-> "ugh", but now it's starting to look much more appealing.
-> 
-> Behold:
-> 
-> diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-> index aa6b2023d8f8..d63e9240da77 100644
-> --- a/arch/x86/include/asm/bug.h
-> +++ b/arch/x86/include/asm/bug.h
-> @@ -32,10 +32,59 @@
->  
->  #ifdef CONFIG_DEBUG_BUGVERBOSE
->  
-> -#define _BUG_FLAGS(ins, flags)						\
-> +#define __BUG_ARGS_0(ins, ...) \
-> +({\
-> +	asm volatile("1:\t" ins "\n"); \
-> +})
-> +#define __BUG_ARGS_1(ins, ...) \
-> +({\
-> +	asm volatile("1:\t" ins "\n" \
-> +		     : : "D" (ARG1(__VA_ARGS__))); \
-> +})
-> +#define __BUG_ARGS_2(ins, ...) \
-> +({\
-> +	asm volatile("1:\t" ins "\n" \
-> +		     : : "D" (ARG1(__VA_ARGS__)), \
-> +			 "S" (ARG2(__VA_ARGS__))); \
-> +})
-> +#define __BUG_ARGS_3(ins, ...) \
-> +({\
-> +	asm volatile("1:\t" ins "\n" \
-> +		     : : "D" (ARG1(__VA_ARGS__)), \
-> +			 "S" (ARG2(__VA_ARGS__)), \
-> +			 "d" (ARG3(__VA_ARGS__))); \
-> +})
+> We can't quite make ref "required" because there are some old device
+> tree files dating back to 2016 that would be broken.  It could be
+> listed as optional, but I _think_ Rob is OK with it being listed as
+> "required" for all new device tree files with the footnote that if
+> it's not present then the code will still work.
 
-wouldn't you need to tie all these to (unused) outputs as well as adding
-the remaining caller-saved registers to the clobber list? Maybe not for
-the WARN machinery(?), but at least for stuff that should look like a
-normal call to gcc? Then there's %rax which is either a clobber or an
-output, and if there's not to be a separate static_call_void(), one
-would need to do some __builtin_choose_expr(__same_type(void, f(...)), ...).
-
-Rasmus
+Ok, will update the code to keep supporting old DT files and update
+the description.
