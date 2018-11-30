@@ -2,116 +2,112 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D25C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88AC7C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FAF52082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D7612082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SHRNoSP/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FAF52082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JOf9fiGG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7612082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbeLAAaR (ORCPT
+        id S1726808AbeLAAc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:30:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36616 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbeLAAaR (ORCPT
+        Fri, 30 Nov 2018 19:32:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45746 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbeLAAc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:30:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u3so5271029wrs.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:20:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hii4n1E6S/MF9SivjoI8WUmkMeANsv0F7OC+UYYEM00=;
-        b=SHRNoSP/ZGeICILnyHd+3j9nnwOfRsb9VHSqLUlXpUEpt8d+2EcTQXX111un46V5us
-         OzfJMDspDZKry22bIEltdVa9Lcl/dyIER8H4DHGkWlzTmCBboVdS8uJ7VEIDqeY/BrEi
-         cds0w9yPhwb68+nMWokw4kp0WcyFwdFGoP8pg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hii4n1E6S/MF9SivjoI8WUmkMeANsv0F7OC+UYYEM00=;
-        b=JPS4rFupnNKfUwyWcNj7z5C01Ey1nPUJyxO1lJ65rQSZyunTZwj9J1m0qMSa8BKvhQ
-         NmK2QTFRsW4+RsB7JJNTPn7swh6dRKVDvqlSMpBDhJWb22OE0DVopPfRObdlTGc6onQE
-         OWE147zuytH6bIUDDHQp3rFv8tUsnRfMEpE0+3csc+MwpjOV43HN0AabVEiUkptAAONQ
-         0HUO0KBIvD2zTB7kDB0ojTpDXIOU9ou5WXifLab3TfUpdM7hrWp7osC7MHz7wbj4TKHs
-         oWWmzqrcyxp0b283SswJSQAgDpXywc1m1cO0+3e4qhdVHAyXA5DkfCgJ6s6hPzeX/Q5X
-         Lm1w==
-X-Gm-Message-State: AA+aEWa0/J7VSgXF/tNeeFsstuONQqy+Eet3lr0YVvHJ7nCn85ms3nTV
-        uRJNG7OfP2AdpgK3ZiN7RU+ZVw==
-X-Google-Smtp-Source: AFSGD/V92aHUVMbBYp3fz6RcF2RoqyL9tHhVdRwno+8bU0bsJwNiF2CFBYYABZXrirCywpHW3BZBEg==
-X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr5145011wrx.298.1543584058606;
-        Fri, 30 Nov 2018 05:20:58 -0800 (PST)
-Received: from ?IPv6:2a01:e35:8a7e:4790:488f:ca49:e154:1ce0? ([2a01:e35:8a7e:4790:488f:ca49:e154:1ce0])
-        by smtp.gmail.com with ESMTPSA id q3sm4281843wrn.84.2018.11.30.05.20.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 05:20:57 -0800 (PST)
-Subject: Re: [RFC PATCH 6/6] char: fastrpc: Add support for compat ioctls
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com
-References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
- <20181130104657.14875-7-srinivas.kandagatla@linaro.org>
- <CAK8P3a1XaGHu3NrAeLn0OEg0nL1uae_MyrP7EgadJpfeeXtR2Q@mail.gmail.com>
-From:   Thierry Escande <thierry.escande@linaro.org>
-Message-ID: <2dbd06c5-d094-6d16-2983-131d3ae24c8d@linaro.org>
-Date:   Fri, 30 Nov 2018 14:20:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 30 Nov 2018 19:32:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A/J16M6FpKMXGkalsHGNWwyWuLoovXiruopq0QWan0w=; b=JOf9fiGGeEzv7Mt/zHkUdvbTB
+        zHtAa1SoRX05GKpGnE5qIzzxnlalDkQqgyT3ju5lZXgn6hkJDaFUkcnQquhPA2Qp0C1TcCTvPKI8h
+        T/tRDgywtXeZ2rMJ4vS476aCCZ4wGTVJXFdNW6eRvbw0VJ2mILvgUf5jz1sskmxkB64jjxnlI+Shs
+        SVrgLZu0rGaEqTan6jjh1lcnfGVdoC2pK3I7Mve6SHSQvFrWmjqvL3+JCORLuM29LMF9DUPZAFtAE
+        tNpZlq5wvBmSeFKhBoOsmssSFKlBLL8RR95oxAY4kJs8bbvrXOJeNt+uiPEFbc0VQChsbSkz99+S5
+        fdx5C6l1w==;
+Received: from 089144206221.atnat0015.highway.bob.at ([89.144.206.221] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSil1-0004Ge-1e; Fri, 30 Nov 2018 13:22:59 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jon Mason <jdmason@kudzu.us>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: remove the ->mapping_error method from dma_map_ops V3
+Date:   Fri, 30 Nov 2018 14:22:08 +0100
+Message-Id: <20181130132231.16512-1-hch@lst.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1XaGHu3NrAeLn0OEg0nL1uae_MyrP7EgadJpfeeXtR2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Error reporting for the dma_map_single and dma_map_page operations is
+currently a mess.  Both APIs directly return the dma_addr_t to be used for
+the DMA, with a magic error escape that is specific to the instance and
+checked by another method provided.  This has a few downsides:
 
-On 30/11/2018 13:58, Arnd Bergmann wrote:
-> On Fri, Nov 30, 2018 at 11:48 AM Srinivas Kandagatla
-> <srinivas.kandagatla@linaro.org> wrote:
->>
->> From: Thierry Escande <thierry.escande@linaro.org>
->>
->> This patch adds support for compat ioctl from 32 bits userland to
->> Qualcomm fastrpc driver.
->>
->> Supported ioctls in this change are INIT, INVOKE, and ALLOC/FREE_DMA.
->>
->> Most of the work is derived from various downstream Qualcomm kernels.
->> Credits to various Qualcomm authors who have contributed to this code.
->> Specially Tharun Kumar Merugu <mtharu@codeaurora.org>
->>
->> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> Can't you just define the native ioctls so that you don't need this.
+ - the error check is easily forgotten and a __must_check marker doesn't
+   help as the value always is consumed anyway
+ - the error checking requires another indirect call, which have gotten
+   incredibly expensive
+ - a lot of code is wasted on implementing these methods
 
-There are long time defined structures that are passed as argument to 
-these ioctls and their sizes vary between 32 and 64 bits userlands, so 
-the ioctl command values.
+The historical reason for this is that people thought DMA mappings would
+not fail when the API was created, which sounds like a really bad
+assumption in retrospective, and then we tried to cram error handling
+onto it later on.
 
-Unless I'm missing something here this also has the advantage not to be 
-compiled if CONFIG_COMPAT is not set.
+There basically are two variants:  the error code is 0 because the
+implementation will never return 0 as a valid DMA address, or the error
+code is all-F as the implementation won't ever return an address that
+high.  The old AMD GART is the only one not falling into these two camps
+as it picks sort of a relative zero relative to where it is mapped.
 
-Regards,
-Thierry
+The 0 return doesn't work for direct mappings that have ram at address
+zero and a lot of IOMMUs that start allocating bus space from address
+zero, so we can't consolidate on that, but I think we can move everyone
+to all-Fs, which the patch here does.  The reason for that is that
+there is only one way to ever get this address: by doing a 1-byte long,
+1-byte aligned mapping, but all our mappings are not only longer but
+generally aligned, and the mappings have to keep at least the basic
+alignment.
+
+A git tree is also available here:
+
+    git://git.infradead.org/users/hch/misc.git dma-mapping-error.3
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-mapping-error.3
+
+Changes since v2:
+ - fix a compile error in the ia64 sba_iommu driver
+ - return an errno value from dma_mapping_error
+
+Changes since v1:
+ - dropped the signature change
+ - split into multiple patches
+ - fixed the iova allocator return check in amd-iommu
+ - remove EMERGENCY_PAGES in amd_gart and calgary
