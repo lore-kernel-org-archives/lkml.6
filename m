@@ -2,156 +2,276 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2AEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE13C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733302146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3FA521473
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSoj/fI1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 733302146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OA7l+PDN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3FA521473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbeK3Vus (ORCPT
+        id S1726877AbeK3VvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:50:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbeK3Vus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:50:48 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47FAF206B7;
-        Fri, 30 Nov 2018 10:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543574516;
-        bh=rBV7QyEig0CVPQfYlMWyaHmDC0pTWAwaI4pafH4PoJM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tSoj/fI1A8bSAM+1zQpb/xRwmroNhITFihkgldTaxn+RK7remtE36n+VuPtwcaXft
-         DhlsI4+DLMrFMEuaW3mYKImZ52g1zsA7WJg1BX4PS3QWOH3u+9xelk91MecuV1obpe
-         IKav8SJ7a2c07O77C36iVabQTChZalaQCm5+R6zQ=
-Date:   Fri, 30 Nov 2018 11:41:54 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Jan Glauber <Jan.Glauber@cavium.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jslaby@suse.com" <jslaby@suse.com>
-Subject: Re: dcache_readdir NULL inode oops
-Message-ID: <20181130104154.GA11991@kroah.com>
-References: <20181109143744.GA12128@hc>
- <20181109155856.GC2091@brain-police>
- <20181110111656.GA16667@hc>
- <20181120182854.GC28838@arm.com>
- <20181120190317.GA29161@arm.com>
- <20181121131900.GA18931@hc>
- <20181123180525.GA21017@arm.com>
- <20181128200806.GC32668@arm.com>
- <20181129184950.GA7290@hc>
+        Fri, 30 Nov 2018 16:51:13 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36994 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeK3VvN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 16:51:13 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAUAgGjP039588;
+        Fri, 30 Nov 2018 04:42:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543574536;
+        bh=U91mKi6HoNFNTcHtM73VB2MusvpwNeLdfmx2NJ6ePTU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=OA7l+PDNruM4LVc3fdEydpQzzGKeJCbIJS/1wHx9vUEqQ+cP55ZuiV6TmMPCwsDC/
+         IHNaSIjWySbtfuKi9Np5I/vfmmLwIpzyDWwtVInxqb3b/l0/i/A70/gILokD9EgMeM
+         ufSFaL8WcfYmT1M9XYAZ2wymbGlg4Iq0y/xURmzY=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAUAgFwG057105
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 30 Nov 2018 04:42:16 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 30
+ Nov 2018 04:42:15 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 30 Nov 2018 04:42:15 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAUAgDQ3003671;
+        Fri, 30 Nov 2018 04:42:14 -0600
+Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
+ tuning failures (i929)
+To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <kishon@ti.com>
+References: <20181129190503.6040-1-faiz_abbas@ti.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <0ede4e5c-0447-87ef-440e-871d076232eb@ti.com>
+Date:   Fri, 30 Nov 2018 16:14:59 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129184950.GA7290@hc>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <20181129190503.6040-1-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Eric as he touched this code last :)
+Hi,
 
-On Thu, Nov 29, 2018 at 07:25:48PM +0000, Jan Glauber wrote:
-> On Wed, Nov 28, 2018 at 08:08:06PM +0000, Will Deacon wrote:
-> > I spent some more time looking at this today...
-> > 
-> > On Fri, Nov 23, 2018 at 06:05:25PM +0000, Will Deacon wrote:
-> > > Doing some more debugging, it looks like the usual failure case is where
-> > > one CPU clears the inode field in the dentry via:
-> > >
-> > >       devpts_pty_kill()
-> > >               -> d_delete()   // dentry->d_lockref.count == 1
-> > >                       -> dentry_unlink_inode()
-> > >
-> > > whilst another CPU gets a pointer to the dentry via:
-> > >
-> > >       sys_getdents64()
-> > >               -> iterate_dir()
-> > >                       -> dcache_readdir()
-> > >                               -> next_positive()
-> > >
-> > > and explodes on the subsequent inode dereference when trying to pass the
-> > > inode number to dir_emit():
-> > >
-> > >       if (!dir_emit(..., d_inode(next)->i_ino, ...))
-> > >
-> > > Indeed, the hack below triggers a warning, indicating that the inode
-> > > is being cleared concurrently.
-> > >
-> > > I can't work out whether the getdents64() path should hold a refcount
-> > > to stop d_delete() in its tracks, or whether devpts_pty_kill() shouldn't
-> > > be calling d_delete() like this at all.
-> > 
-> > So the issue is that opening /dev/pts/ptmx creates a new pty in /dev/pts,
-> > which disappears when you close /dev/pts/ptmx. Consequently, when we tear
-> > down the dentry for the magic new file, we have to take the i_node rwsem of
-> > the *parent* so that concurrent path walkers don't trip over it whilst its
-> > being freed. I wrote a simple concurrent program to getdents(/dev/pts/) in
-> > one thread, whilst another opens and closes /dev/pts/ptmx: it crashes the
-> > kernel in seconds.
+I forgot to mention that this patch goes on top of my series "Tuning
+Fixes for sdhci-omap" series.
+
+https://patchwork.kernel.org/project/linux-mmc/list/?series=44725
+
+Thanks,
+Faiz
+
+On 30/11/18 12:35 AM, Faiz Abbas wrote:
+> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
+> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
+> unexpected tuning pattern errors. A small failure band may be present
+> in the tuning range which may be missed by the current algorithm.
+> Furthermore, the failure bands vary with temperature leading to
+> different optimum tuning values for different temperatures.
 > 
-> I also made a testcase and verified that your fix is fine. I also tried
-> replacing open-close on /dev/ptmx with mkdir-rmdir but that does not
-> trigger the error.
+> As suggested in the related Application Report (SPRACA9B - October 2017
+> - Revised July 2018 [2]), tuning should be done in two stages.
+> In stage 1, assign the optimum ratio in the maximum pass window for the
+> current temperature. In stage 2, if the chosen value is close to the
+> small failure band, move away from it in the appropriate direction.
 > 
-> > Patch below, but I'd still like somebody else to look at this, please.
+> References:
+> [1] http://www.ti.com/lit/pdf/sprz426
+> [2] http://www.ti.com/lit/pdf/SPRACA9
 > 
-> I wonder why no inode_lock on parent is needed for devpts_pty_new(), but
-> I'm obviously not a VFS expert... So your patch looks good to me and
-> clearly solves the issue.
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  drivers/mmc/host/Kconfig      |  2 +
+>  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
+>  2 files changed, 91 insertions(+), 1 deletion(-)
 > 
-> thanks,
-> Jan
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 1b58739d9744..6d3553f06f27 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
+>  config MMC_SDHCI_OMAP
+>  	tristate "TI SDHCI Controller Support"
+>  	depends on MMC_SDHCI_PLTFM && OF
+> +	select THERMAL
+> +	select TI_SOC_THERMAL
+>  	help
+>  	  This selects the Secure Digital Host Controller Interface (SDHCI)
+>  	  support present in TI's DRA7 SOCs. The controller supports
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index b3cb39d0db6f..9ccce7ef3a60 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/sys_soc.h>
+> +#include <linux/thermal.h>
+>  
+>  #include "sdhci-pltfm.h"
+>  
+> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	struct sdhci_host *host = mmc_priv(mmc);
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+> +	struct thermal_zone_device *thermal_dev;
+>  	struct device *dev = omap_host->dev;
+>  	struct mmc_ios *ios = &mmc->ios;
+>  	u32 start_window = 0, max_window = 0;
+> +	bool single_point_failure = false;
+>  	u8 cur_match, prev_match = 0;
+>  	u32 length = 0, max_len = 0;
+>  	u32 phase_delay = 0;
+> +	int temperature;
+>  	int ret = 0;
+>  	u32 reg;
+> +	int i;
+>  
+>  	/* clock tuning is not needed for upto 52MHz */
+>  	if (ios->clock <= 52000000)
+> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
+>  		return 0;
+>  
+> +	thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
+> +	if (IS_ERR(thermal_dev)) {
+> +		dev_err(dev, "Unable to get thermal zone for tuning\n");
+> +		return PTR_ERR(thermal_dev);
+> +	}
+> +
+> +	ret = thermal_zone_get_temp(thermal_dev, &temperature);
+> +	if (ret)
+> +		return ret;
+> +
+>  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
+>  	reg |= DLL_SWT;
+>  	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
+> @@ -317,6 +332,11 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  
+>  	omap_host->is_tuning = true;
+>  
+> +	/*
+> +	 * Stage 1: Search for a maximum pass window ignoring any
+> +	 * any single point failures. If the tuning value ends up
+> +	 * near it, move away from it in stage 2 below
+> +	 */
+>  	while (phase_delay <= MAX_PHASE_DELAY) {
+>  		sdhci_omap_set_dll(omap_host, phase_delay);
+>  
+> @@ -324,10 +344,15 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  		if (cur_match) {
+>  			if (prev_match) {
+>  				length++;
+> +			} else if (single_point_failure) {
+> +				/* ignore single point failure */
+> +				length++;
+>  			} else {
+>  				start_window = phase_delay;
+>  				length = 1;
+>  			}
+> +		} else {
+> +			single_point_failure = prev_match;
+>  		}
+>  
+>  		if (length > max_len) {
+> @@ -345,13 +370,76 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  		goto tuning_error;
+>  	}
+>  
+> +	/*
+> +	 * Assign tuning value as a ratio of maximum pass window based
+> +	 * on temperature
+> +	 */
+> +	if (temperature < -20000)
+> +		phase_delay = min(max_window + 4 * max_len - 24,
+> +				  max_window +
+> +				  DIV_ROUND_UP(13 * max_len, 16) * 4);
+> +	else if (temperature < 20000)
+> +		phase_delay = max_window + DIV_ROUND_UP(9 * max_len, 16) * 4;
+> +	else if (temperature < 40000)
+> +		phase_delay = max_window + DIV_ROUND_UP(8 * max_len, 16) * 4;
+> +	else if (temperature < 70000)
+> +		phase_delay = max_window + DIV_ROUND_UP(7 * max_len, 16) * 4;
+> +	else if (temperature < 90000)
+> +		phase_delay = max_window + DIV_ROUND_UP(5 * max_len, 16) * 4;
+> +	else if (temperature < 120000)
+> +		phase_delay = max_window + DIV_ROUND_UP(4 * max_len, 16) * 4;
+> +	else
+> +		phase_delay = max_window + DIV_ROUND_UP(3 * max_len, 16) * 4;
+> +
+> +	/*
+> +	 * Stage 2: Search for a single point failure near the chosen tuning
+> +	 * value in two steps. First in the +3 to +10 range and then in the
+> +	 * +2 to -10 range. If found, move away from it in the appropriate
+> +	 * direction by the appropriate amount depending on the temperature.
+> +	 */
+> +	for (i = 3; i <= 10; i++) {
+> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
+> +
+> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
+> +			if (temperature < 10000)
+> +				phase_delay += i + 6;
+> +			else if (temperature < 20000)
+> +				phase_delay += i - 12;
+> +			else if (temperature < 70000)
+> +				phase_delay += i - 8;
+> +			else
+> +				phase_delay += i - 6;
+> +
+> +			goto single_failure_found;
+> +		}
+> +	}
+> +
+> +	for (i = 2; i >= -10; i--) {
+> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
+> +
+> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
+> +			if (temperature < 10000)
+> +				phase_delay += i + 12;
+> +			else if (temperature < 20000)
+> +				phase_delay += i + 8;
+> +			else if (temperature < 70000)
+> +				phase_delay += i + 8;
+> +			else if (temperature < 90000)
+> +				phase_delay += i + 10;
+> +			else
+> +				phase_delay += i + 12;
+> +
+> +			goto single_failure_found;
+> +		}
+> +	}
+> +
+> +single_failure_found:
+>  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_AC12);
+>  	if (!(reg & AC12_SCLK_SEL)) {
+>  		ret = -EIO;
+>  		goto tuning_error;
+>  	}
+>  
+> -	phase_delay = max_window + 4 * (max_len >> 1);
+>  	sdhci_omap_set_dll(omap_host, phase_delay);
+>  
+>  	omap_host->is_tuning = false;
 > 
-> > Will
-> > 
-> > --->8
-> > 
-> > diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-> > index c53814539070..50ddb95ff84c 100644
-> > --- a/fs/devpts/inode.c
-> > +++ b/fs/devpts/inode.c
-> > @@ -619,11 +619,17 @@ void *devpts_get_priv(struct dentry *dentry)
-> >   */
-> >  void devpts_pty_kill(struct dentry *dentry)
-> >  {
-> > -       WARN_ON_ONCE(dentry->d_sb->s_magic != DEVPTS_SUPER_MAGIC);
-> > +       struct super_block *sb = dentry->d_sb;
-> > +       struct dentry *parent = sb->s_root;
-> > 
-> > +       WARN_ON_ONCE(sb->s_magic != DEVPTS_SUPER_MAGIC);
-
-Side note, I wonder if this is even needed anymore...
-
-> > +
-> > +       inode_lock(parent->d_inode);
-> >         dentry->d_fsdata = NULL;
-> >         drop_nlink(dentry->d_inode);
-> >         d_delete(dentry);
-> > +       inode_unlock(parent->d_inode);
-> > +
-> >         dput(dentry);   /* d_alloc_name() in devpts_pty_new() */
-> >  }
-
-This feels right but getting some feedback from others would be good.
-
-thanks,
-
-greg k-h
