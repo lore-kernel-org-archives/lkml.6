@@ -2,217 +2,224 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1A4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C78C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0AA20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:52:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B0AA20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2552720863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:55:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="coYYrFFM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2552720863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbeLABCI (ORCPT
+        id S1726765AbeLABEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:02:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34856 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbeLABCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:02:08 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9020D308212A;
-        Fri, 30 Nov 2018 13:52:45 +0000 (UTC)
-Received: from redhat.com (ovpn-120-67.rdu2.redhat.com [10.10.120.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 778C060924;
-        Fri, 30 Nov 2018 13:52:42 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 08:52:42 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc:     Tiwei Bie <tiwei.bie@intel.com>, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v3 01/13] virtio: add packed ring types and
- macros
-Message-ID: <20181130084722-mutt-send-email-mst@kernel.org>
-References: <20181121100330.24846-1-tiwei.bie@intel.com>
- <20181121100330.24846-2-tiwei.bie@intel.com>
- <1928ac96-3684-45c4-1e8c-09dff03bf308@redhat.com>
- <20181130095339.GA11984@debian>
- <20181130074720-mutt-send-email-mst@kernel.org>
- <13593b5c-c1dc-3ab3-a843-d62908e0c7e0@redhat.com>
+        Fri, 30 Nov 2018 20:04:46 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46950 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeLABEq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:04:46 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v15-v6so5037891ljh.13
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:55:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=5/C1a4u1mY4bbjhai9XzRxkzR68AsDJhM3CX2sE3MSg=;
+        b=coYYrFFMLvNbUhkc0EhGrrqZCm8yBtOQBpw98EVRhCWDSLF9bUwcs2CeLxRH/TYxcq
+         x5Vll0k7vk2rZGBdd+hcyO4I1SVuUaZS70tJi8haeSo/V+KjO2Qi5io+ZJbeRO3fjRi8
+         rGNi4rVdLJlEaXN8DUNuzn6RKqJW/DvMEHtWE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=5/C1a4u1mY4bbjhai9XzRxkzR68AsDJhM3CX2sE3MSg=;
+        b=ecK1dvixIxDg8++XFaR6LwvxpTSnM8Ydh8wnqT1LjuKLkeZoZu9X5quAHUMHzksNFN
+         g0mXsUAnnfkSZjUV/YIT9SlffSG9p0iJaGJ/pJuR6Szw2DQe8/DSyKpU3/tpjJcDVVuc
+         T3eSu1LhnAfeMVb1Jf/ee4iN2fMdMhJwydcM2eKPMGaTIgchJplwBTh4OjqiZ8IP3r3o
+         U5e0f34q5eH2HKPJO4LjftGL6Su+yB4PayTy3o1p2c6pF4fMp+AXG25pyt350T7xRvSH
+         P5VWAOFkjQxy5VokaL9S5UFjB+R4Sh0wjIUmKJvTGLgOqUNu61Xfunbw2eulZZUa9Bx+
+         Xoxw==
+X-Gm-Message-State: AA+aEWbeTnyPaFwPaZnYLjl6ZQVxQa2nRk1NvVZcAVgvvwIS49Iz02Rr
+        v5toy3xF5Ord7ipFKlrFXWLSYAvUrwyENg==
+X-Google-Smtp-Source: AFSGD/WDkI8AcJz0xnncAlk72AbB+ZoGuRS36GlmUfgaKHyuE7FcymEWIZauRPfZlrHk6wBBTg4VVA==
+X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr3915494ljd.45.1543586120315;
+        Fri, 30 Nov 2018 05:55:20 -0800 (PST)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id a20-v6sm800851ljf.28.2018.11.30.05.55.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 05:55:19 -0800 (PST)
+Date:   Fri, 30 Nov 2018 15:55:17 +0200
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: drop vid0
+ configuration in dual_mac modey
+Message-ID: <20181130135516.GE23230@khorivan>
+Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20181125234626.28474-1-grygorii.strashko@ti.com>
+ <20181126162644.GA23230@khorivan>
+ <7f2c5e66-3b42-f921-c52d-236f5adc44bf@ti.com>
+ <20181126200757.GB23230@khorivan>
+ <fcc8efa1-1f19-baa3-872d-5c76a1b7dce0@ti.com>
+ <20181129152646.GC23230@khorivan>
+ <473759d1-09c4-ebc0-8b31-cc5c8bb85faa@ti.com>
+ <20181130134228.GD23230@khorivan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <13593b5c-c1dc-3ab3-a843-d62908e0c7e0@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 30 Nov 2018 13:52:45 +0000 (UTC)
+In-Reply-To: <20181130134228.GD23230@khorivan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 02:01:06PM +0100, Maxime Coquelin wrote:
-> 
-> 
-> On 11/30/18 1:47 PM, Michael S. Tsirkin wrote:
-> > On Fri, Nov 30, 2018 at 05:53:40PM +0800, Tiwei Bie wrote:
-> > > On Fri, Nov 30, 2018 at 04:10:55PM +0800, Jason Wang wrote:
-> > > > 
-> > > > On 2018/11/21 ä¸‹åˆ6:03, Tiwei Bie wrote:
-> > > > > Add types and macros for packed ring.
-> > > > > 
-> > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > ---
-> > > > >    include/uapi/linux/virtio_config.h |  3 +++
-> > > > >    include/uapi/linux/virtio_ring.h   | 52 ++++++++++++++++++++++++++++++++++++++
-> > > > >    2 files changed, 55 insertions(+)
-> > > > > 
-> > > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > > > > index 449132c76b1c..1196e1c1d4f6 100644
-> > > > > --- a/include/uapi/linux/virtio_config.h
-> > > > > +++ b/include/uapi/linux/virtio_config.h
-> > > > > @@ -75,6 +75,9 @@
-> > > > >     */
-> > > > >    #define VIRTIO_F_IOMMU_PLATFORM		33
-> > > > > +/* This feature indicates support for the packed virtqueue layout. */
-> > > > > +#define VIRTIO_F_RING_PACKED		34
-> > > > > +
-> > > > >    /*
-> > > > >     * Does the device support Single Root I/O Virtualization?
-> > > > >     */
-> > > > > diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-> > > > > index 6d5d5faa989b..2414f8af26b3 100644
-> > > > > --- a/include/uapi/linux/virtio_ring.h
-> > > > > +++ b/include/uapi/linux/virtio_ring.h
-> > > > > @@ -44,6 +44,13 @@
-> > > > >    /* This means the buffer contains a list of buffer descriptors. */
-> > > > >    #define VRING_DESC_F_INDIRECT	4
-> > > > > +/*
-> > > > > + * Mark a descriptor as available or used in packed ring.
-> > > > > + * Notice: they are defined as shifts instead of shifted values.
-> > > > 
-> > > > 
-> > > > This looks inconsistent to previous flags, any reason for using shifts?
-> > > 
-> > > Yeah, it was suggested to use shifts, as _F_ should be a bit
-> > > number, not a shifted value:
-> > > 
-> > > https://patchwork.ozlabs.org/patch/942296/#1989390
-> > 
-> > But let's add a _SPLIT_ variant that uses shifts consistently.
-> 
-> Maybe we could avoid adding SPLIT and PACKED, but define as follow:
-> 
-> #define VRING_DESC_F_INDIRECT_SHIFT 2
-> #define VRING_DESC_F_INDIRECT (1ull <<  VRING_DESC_F_INDIRECT_SHIFT)
-> 
-> #define VRING_DESC_F_AVAIL_SHIFT 7
-> #define VRING_DESC_F_AVAIL (1ull << VRING_DESC_F_AVAIL_SHIFT)
-> 
-> I think it would be better for consistency.
+On Fri, Nov 30, 2018 at 03:42:29PM +0200, Ivan Khoronzhuk wrote:
+>On Thu, Nov 29, 2018 at 05:23:09PM -0600, Grygorii Strashko wrote:
+>>
+>>
+>>On 11/29/18 9:26 AM, Ivan Khoronzhuk wrote:
+>>>On Wed, Nov 28, 2018 at 03:15:46PM -0600, Grygorii Strashko wrote:
+>>>>
+>>>>
+>>>>On 11/26/18 2:07 PM, Ivan Khoronzhuk wrote:
+>>>>>On Mon, Nov 26, 2018 at 12:57:20PM -0600, Grygorii Strashko wrote:
+>>>>>>
+>>>>>>
+>>>>>>On 11/26/18 10:26 AM, Ivan Khoronzhuk wrote:
+>>>>>>>On Sun, Nov 25, 2018 at 05:46:26PM -0600, Grygorii Strashko wrote:
+>>>>>>>>In dual_mac mode CPSW driver uses vid1 and vid2 by default to implement
+>>>>>>>>dual mac mode wich are used to configure pvids for each external ports.
+>>>>>>>>But, historicaly, it also adds vid0 to ALE table and sets "untag" bits for both
+>>>>>>>>ext. ports. As result, it's imposible to use priority tagged packets in
+>>>>>>>>dual mac mode.
+>>>>>>>>
+>>>>>>>>Hence, drop vid0 configuration in dual mac mode as it's not required for dual
+>>>>>>>>mac mode functionality and, this way, make it possible to use priority
+>>>>>>>>tagged packet in dual mac mode.
+>>>>>>>So, now it's enabled to be added via regular ndo.
+>>>>>>>I have similar change in mind, but was going to send it after
+>>>>>>>mcast/ucast, and - enabling same vlans patch...
+>>>>>>>
+>>>>>>>2 things stopped me to add this:
+>>>>>>>
+>>>>>>>1) Moving it to be enabled via regular call is Ok, but in dual mac mode
+>>>>>>>it causes overlaps, at least while vid deletion. So decided to wait till
+>>>>>>>same vlans series is applied.
+>>>>>>
+>>>>>>TI driver documentation mentions this restriction
+>>>>>>"While adding VLAN id to the eth interfaces,
+>>>>>>same VLAN id should not be added in both interfaces which will lead to VLAN
+>>>>>>forwarding and act as switch"
+>>>>>It's not accurate now.
+>>>>>This sw bug "acting like a switch" was fixed indirectly in LKML ).
+>>>>>And at least for upstream version, not TISDK, desc should be updated,
+>>>>>but better do this when it fixed completely and merged with TISDK.
+>>>>>
+>>>>>I know about this "written" restriction
+>>>>>(for tiSDK, and it's not TRM after all ...),
+>>>>>it can be avoided and it's partly avoided now ...
+>>>>
+>>>>I'd like to clarify point about supporting same VLANs in dual_mac mode,
+>>>>to avoid future misunderstanding, overall: it's *not* supported as
+>>>>adding same VLAN to both netdevices will cause unknown unicast packets
+>>>>leaking between interfaces and it can't be avoided - hw limitation.
+>>>
+>>>Simple test shows no issues with ucast leaking.
+>>>But for current buggy ucast vlan implementation it's not possible to verify,
+>>>not sure but probably leaking in your case cuased by hidden toggling of
+>>>interface to promisc while added ucast to vlans or other reason or so.
+>>>Anyway I just decided to check specifically ucasts
+>>>(macst as you know are not normal now).
+>>>
+>>>For verification you need to apply ucast fix (including vlans) first:
+>>>https://git.linaro.org/people/ivan.khoronzhuk/tsn_kernel.git/log/?h=vlan_addr_flt_fix
+>>>
+>>>This is generic fix (not sure it will be approved, need try RFC) but implement
+>>>the same as local fix for vlan ucasts:
+>>>https://git.linaro.org/people/ivan.khoronzhuk/tsn_kernel.git/log/?h=ucast_vlan_fix
+>>>
+>>>Any of those are correct. I've used generic one.
+>>>Applied the following scheme:
+>>>
+>>>                     +--------------------------+
+>>>                     | host 74:DA:EA:47:7D:9C   |
+>>>                     +--------------------------+
+>>>
+>>>                        +---------------------+
+>>>             |       am572 evm     |
+>>>                        |    eth0      eth1   |
+>>>                        +----------+----------+
+>>>                        | eth0.400 | eth1.400 |
+>>>                        +----------+----------+
+>>>                            ^          |
+>>>                            |          |  +-----------+
+>>>+-----------------+        |          |  |     PC    |
+>>>| BBB eth0.400    |--------+          +->| Wireshark |
+>>>+-----------------+                      +-----------+
+>>>
+>>>
+>>>1) Configure vlans on am572x evm
+>>>ip link add link eth0 name eth0.400 type vlan id 400
+>>>ip link add link eth1 name eth1.400 type vlan id 400
+>>>
+>>>2) On BBB side:
+>>># ip link add link eth0 name eth0.400 type vlan id 400
+>>>Send ucast vlan traffic to the am572 evm, vlan ucast address is unreq on am572.
+>>># ./plget -i eth0.400 -t ptpl2 -m tx-lat -n 160 -s 10 -a 74:DA:EA:47:7D:66
+>>># ./plget -i eth0.400 -t ptpl2 -m tx-lat -n 160 -s 10 -a 18:03:73:66:87:42
+>>>
+>>>3) Observe silence on PC wireshark.
+>>>
+>>>Thus, no see issues with this.
+>>>
+>>>PS: I'm sure in plget tool, you can use your own.
+>>
+>>I'm using packeth to generate udp packets (vlan) src=PC dst=unknown
+>>if there is record in ALE table which looks like:
+>>type: vlan , vid = 100, untag_force = 0x0, reg_mcast = 0x7, unreg_mcast = 0x0, member_list = 0x7
+>>then above udp packet will be forwarded to BBB.
+>Agree, seems no normal way to avoid ucast leak.
 
-I don't think that will help. the problem is that
-most of the existing virtio code consistently uses _F_ as shifts.
-So we just need to do something about these 5 being inconsistent:
+One of the ways could be removing end ports as memembers, leaving only port0:
 
-include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_NEXT      1
-include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_WRITE     2
-include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_INDIRECT  4
-include/uapi/linux/virtio_ring.h:#define VRING_USED_F_NO_NOTIFY 1
-include/uapi/linux/virtio_ring.h:#define VRING_AVAIL_F_NO_INTERRUPT     1
+type: vlan , vid = 100, untag_force = 0x0, reg_mcast = 0x7, unreg_mcast = 0x0, member_list = 0x1
 
-I do not want all of virtio to become verbose with _SHIFT, ergo
-we need to change the above 5 to have names which are with _F_ and
-have the bit number.
+and allow tagged packets to be received by ports beeing non memebers of a vlan:
 
+       cpsw_ale_control_set(cpsw->ale, slave_port,
+			    ALE_PORT_DROP_UNKNOWN_VLAN, 0);
 
+So that only unknown vlans are dropped...
 
-> > 
-> > 
-> > > > 
-> > > > 
-> > > > > + */
-> > > > > +#define VRING_PACKED_DESC_F_AVAIL	7
-> > > > > +#define VRING_PACKED_DESC_F_USED	15
-> > > > > +
-> > > > >    /* The Host uses this in used->flags to advise the Guest: don't kick me when
-> > > > >     * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
-> > > > >     * will still kick if it's out of buffers. */
-> > > > > @@ -53,6 +60,23 @@
-> > > > >     * optimization.  */
-> > > > >    #define VRING_AVAIL_F_NO_INTERRUPT	1
-> > > > > +/* Enable events in packed ring. */
-> > > > > +#define VRING_PACKED_EVENT_FLAG_ENABLE	0x0
-> > > > > +/* Disable events in packed ring. */
-> > > > > +#define VRING_PACKED_EVENT_FLAG_DISABLE	0x1
-> > > > > +/*
-> > > > > + * Enable events for a specific descriptor in packed ring.
-> > > > > + * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
-> > > > > + * Only valid if VIRTIO_RING_F_EVENT_IDX has been negotiated.
-> > > > > + */
-> > > > > +#define VRING_PACKED_EVENT_FLAG_DESC	0x2
-> > > > 
-> > > > 
-> > > > Any reason for using _FLAG_ instead of _F_?
-> > > 
-> > > Yeah, it was suggested to not use _F_, as these are values,
-> > > should not have _F_:
-> > > 
-> > > https://patchwork.ozlabs.org/patch/942296/#1989390
-> > > 
-> > > Regards,
-> > > Tiwei
-> > > 
-> > > > 
-> > > > Thanks
-> > > > 
-> > > > 
-> > > > > +
-> > > > > +/*
-> > > > > + * Wrap counter bit shift in event suppression structure
-> > > > > + * of packed ring.
-> > > > > + */
-> > > > > +#define VRING_PACKED_EVENT_F_WRAP_CTR	15
-> > > > > +
-> > > > >    /* We support indirect buffer descriptors */
-> > > > >    #define VIRTIO_RING_F_INDIRECT_DESC	28
-> > > > > @@ -171,4 +195,32 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
-> > > > >    	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
-> > > > >    }
-> > > > > +struct vring_packed_desc_event {
-> > > > > +	/* Descriptor Ring Change Event Offset/Wrap Counter. */
-> > > > > +	__le16 off_wrap;
-> > > > > +	/* Descriptor Ring Change Event Flags. */
-> > > > > +	__le16 flags;
-> > > > > +};
-> > > > > +
-> > > > > +struct vring_packed_desc {
-> > > > > +	/* Buffer Address. */
-> > > > > +	__le64 addr;
-> > > > > +	/* Buffer Length. */
-> > > > > +	__le32 len;
-> > > > > +	/* Buffer ID. */
-> > > > > +	__le16 id;
-> > > > > +	/* The flags depending on descriptor type. */
-> > > > > +	__le16 flags;
-> > > > > +};
-> > > > > +
-> > > > > +struct vring_packed {
-> > > > > +	unsigned int num;
-> > > > > +
-> > > > > +	struct vring_packed_desc *desc;
-> > > > > +
-> > > > > +	struct vring_packed_desc_event *driver;
-> > > > > +
-> > > > > +	struct vring_packed_desc_event *device;
-> > > > > +};
-> > > > > +
-> > > > >    #endif /* _UAPI_LINUX_VIRTIO_RING_H */
+>
+>>
+>>
+>>
+>>-- 
+>>regards,
+>>-grygorii
+>
+>-- 
+>Regards,
+>Ivan Khoronzhuk
+
+-- 
+Regards,
+Ivan Khoronzhuk
