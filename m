@@ -2,195 +2,147 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2286FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F299DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E3C20867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:11:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E3C20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id ACCDD2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:13:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I84HEa/6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACCDD2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeLADVR (ORCPT
+        id S1727103AbeLADXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:21:17 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59512 "EHLO mail.bootlin.com"
+        Fri, 30 Nov 2018 22:23:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726659AbeLADVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:21:17 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4BEEC20701; Fri, 30 Nov 2018 17:11:27 +0100 (CET)
-Received: from localhost.localdomain (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E1E1D206D8;
-        Fri, 30 Nov 2018 17:11:26 +0100 (CET)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2] drm/vc4: Add a debugfs entry to disable/enable the load tracker
-Date:   Fri, 30 Nov 2018 17:11:04 +0100
-Message-Id: <20181130161104.16352-1-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.19.1
+        id S1726659AbeLADXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:23:15 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E259620867;
+        Fri, 30 Nov 2018 16:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543594406;
+        bh=0TMm+YuxAQj6SLqp9O4eKuFfuk3UdTULTJYQIdgusLM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I84HEa/6tija6bCML0DDRSlZI93lpZGFp67UWpz7zmBHaTfqOMVSo4maG8lAbQui7
+         UqVcC3lEJfIYMD+5+6XWefSk8A/tQeV9uN6psIxwlfjA4RBGMcu/qWmzxpPdAuJgoY
+         p5TUolxrmOvOmuHBLdO5/wikt/e+lmhF6pvYwuSE=
+Date:   Fri, 30 Nov 2018 17:13:24 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     robh+dt@kernel.org, arnd@arndb.de, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        bkumar@qti.qualcomm.com, thierry.escande@linaro.org
+Subject: Re: [RFC PATCH 2/6] char: fastrpc: Add Qualcomm fastrpc basic driver
+ model
+Message-ID: <20181130161324.GA8031@kroah.com>
+References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
+ <20181130104657.14875-3-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130104657.14875-3-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to test whether the load tracker is working as expected, we
-need the ability to compare the commit result with the underrun
-indication. With the load tracker always enabled, commits that are
-expected to trigger an underrun are always rejected, so userspace
-cannot get the actual underrun indication from the hardware.
+On Fri, Nov 30, 2018 at 10:46:53AM +0000, Srinivas Kandagatla wrote:
+> This patch adds basic driver model for qualcomm fastrpc.
+> Each DSP rpmsg channel is represented as fastrpc channel context and
+> is exposed as a character driver for userspace interface.
+> Each compute context bank is represented as fastrpc-session-context,
+> which are dynamically managed by the channel context char device.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/char/Kconfig   |  10 ++
+>  drivers/char/Makefile  |   1 +
+>  drivers/char/fastrpc.c | 337 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 348 insertions(+)
+>  create mode 100644 drivers/char/fastrpc.c
+> 
+> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+> index 9d03b2ff5df6..75fd274c67df 100644
+> --- a/drivers/char/Kconfig
+> +++ b/drivers/char/Kconfig
+> @@ -552,6 +552,16 @@ config ADI
+>  	  and SSM (Silicon Secured Memory).  Intended consumers of this
+>  	  driver include crash and makedumpfile.
+>  
+> +config QCOM_FASTRPC
+> +	tristate "Qualcomm FastRPC"
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	depends on RPMSG
+> +	help
+> +	  Provides a communication mechanism that allows for clients to
+> +	  make remote method invocations across processor boundary to
+> +	  applications DSP processor. Say M if you want to enable this
+> +	  module.
+> +
+>  endmenu
+>  
+>  config RANDOM_TRUST_CPU
+> diff --git a/drivers/char/Makefile b/drivers/char/Makefile
+> index b8d42b4e979b..30ec9187350e 100644
+> --- a/drivers/char/Makefile
+> +++ b/drivers/char/Makefile
+> @@ -58,3 +58,4 @@ js-rtc-y = rtc.o
+>  obj-$(CONFIG_XILLYBUS)		+= xillybus/
+>  obj-$(CONFIG_POWERNV_OP_PANEL)	+= powernv-op-panel.o
+>  obj-$(CONFIG_ADI)		+= adi.o
+> +obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
+> diff --git a/drivers/char/fastrpc.c b/drivers/char/fastrpc.c
+> new file mode 100644
+> index 000000000000..97d8062eb3e1
+> --- /dev/null
+> +++ b/drivers/char/fastrpc.c
+> @@ -0,0 +1,337 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2011-2018, The Linux Foundation. All rights reserved.
+> +// Copyright (c) 2018, Linaro Limited
+> +
+> +#include <linux/cdev.h>
+> +#include <linux/device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/idr.h>
+> +#include <linux/list.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/rpmsg.h>
+> +#include <linux/scatterlist.h>
+> +#include <linux/slab.h>
+> +
+> +#define ADSP_DOMAIN_ID (0)
+> +#define MDSP_DOMAIN_ID (1)
+> +#define SDSP_DOMAIN_ID (2)
+> +#define CDSP_DOMAIN_ID (3)
+> +#define FASTRPC_DEV_MAX		4 /* adsp, mdsp, slpi, cdsp*/
+> +#define FASTRPC_MAX_SESSIONS	9 /*8 compute, 1 cpz*/
+> +#define FASTRPC_CTX_MAX (256)
+> +#define FASTRPC_CTXID_MASK (0xFF0)
+> +#define FASTRPC_DEVICE_NAME	"fastrpc"
+> +
+> +#define cdev_to_cctx(d) container_of(d, struct fastrpc_channel_ctx, cdev)
+> +
+> +static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
+> +						"sdsp", "cdsp"};
+> +static dev_t fastrpc_major;
 
-Add a debugfs entry to disable/enable the load tracker, so that a DRM
-commit expected to trigger an underrun can go through with the load
-tracker disabled. The underrun indication is then available to
-userspace and can be checked against the commit result with the load
-tracker enabled.
-
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
-
-Changes since v1:
-* Moved all the debugfs-related functions and structure to vc4_debugfs.c.
-
- drivers/gpu/drm/vc4/vc4_debugfs.c | 58 +++++++++++++++++++++++++++++++
- drivers/gpu/drm/vc4/vc4_drv.c     |  2 ++
- drivers/gpu/drm/vc4/vc4_drv.h     |  2 ++
- drivers/gpu/drm/vc4/vc4_kms.c     |  6 +++-
- 4 files changed, 67 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_debugfs.c b/drivers/gpu/drm/vc4/vc4_debugfs.c
-index 7a0003de71ab..8f4d7fadb226 100644
---- a/drivers/gpu/drm/vc4/vc4_debugfs.c
-+++ b/drivers/gpu/drm/vc4/vc4_debugfs.c
-@@ -32,9 +32,67 @@ static const struct drm_info_list vc4_debugfs_list[] = {
- 
- #define VC4_DEBUGFS_ENTRIES ARRAY_SIZE(vc4_debugfs_list)
- 
-+static int vc4_debugfs_load_tracker_get(struct seq_file *m, void *data)
-+{
-+	struct drm_device *dev = m->private;
-+	struct vc4_dev *vc4 = to_vc4_dev(dev);
-+
-+	if (vc4->load_tracker_enabled)
-+		seq_printf(m, "enabled\n");
-+	else
-+		seq_printf(m, "disabled\n");
-+
-+	return 0;
-+}
-+
-+static ssize_t vc4_debugfs_load_tracker_set(struct file *file,
-+					    const char __user *ubuf,
-+					    size_t len, loff_t *offp)
-+{
-+	struct seq_file *m = file->private_data;
-+	struct drm_device *dev = m->private;
-+	struct vc4_dev *vc4 = to_vc4_dev(dev);
-+	char buf[32] = {};
-+
-+	if (len >= sizeof(buf))
-+		return -EINVAL;
-+
-+	if (copy_from_user(buf, ubuf, len))
-+		return -EFAULT;
-+
-+	if (!strncasecmp(buf, "enable", 6))
-+		vc4->load_tracker_enabled = true;
-+	else if (!strncasecmp(buf, "disable", 7))
-+		vc4->load_tracker_enabled = false;
-+	else
-+		return -EINVAL;
-+
-+	return len;
-+}
-+
-+static int vc4_debugfs_load_tracker_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, vc4_debugfs_load_tracker_get, inode->i_private);
-+}
-+
-+static const struct file_operations vc4_debugfs_load_tracker_fops = {
-+	.owner = THIS_MODULE,
-+	.open = vc4_debugfs_load_tracker_open,
-+	.read = seq_read,
-+	.write = vc4_debugfs_load_tracker_set,
-+};
-+
- int
- vc4_debugfs_init(struct drm_minor *minor)
- {
-+	struct dentry *dentry;
-+
-+	dentry = debugfs_create_file("load_tracker", S_IRUGO | S_IWUSR,
-+				     minor->debugfs_root, minor->dev,
-+				     &vc4_debugfs_load_tracker_fops);
-+	if (!dentry)
-+		return -ENOMEM;
-+
- 	return drm_debugfs_create_files(vc4_debugfs_list, VC4_DEBUGFS_ENTRIES,
- 					minor->debugfs_root, minor);
- }
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 7195a0bcceb3..12ac971d24d6 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -290,6 +290,8 @@ static int vc4_drm_bind(struct device *dev)
- 
- 	drm_fbdev_generic_setup(drm, 32);
- 
-+	vc4->load_tracker_enabled = true;
-+
- 	return 0;
- 
- unbind_all:
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-index 11369da944b6..8d0f2f16a9e8 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.h
-+++ b/drivers/gpu/drm/vc4/vc4_drv.h
-@@ -188,6 +188,8 @@ struct vc4_dev {
- 
- 	int power_refcount;
- 
-+	bool load_tracker_enabled;
-+
- 	/* Mutex controlling the power refcount. */
- 	struct mutex power_lock;
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index b905a19c1470..4b2509b1b8ed 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -473,6 +473,7 @@ static const struct drm_private_state_funcs vc4_load_tracker_state_funcs = {
- static int
- vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
- {
-+	struct vc4_dev *vc4 = to_vc4_dev(dev);
- 	int ret;
- 
- 	ret = vc4_ctm_atomic_check(dev, state);
-@@ -483,7 +484,10 @@ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
- 	if (ret)
- 		return ret;
- 
--	return vc4_load_tracker_atomic_check(state);
-+	if (vc4->load_tracker_enabled)
-+		return vc4_load_tracker_atomic_check(state);
-+
-+	return 0;
- }
- 
- static const struct drm_mode_config_funcs vc4_mode_funcs = {
--- 
-2.19.1
+Why do you need a whole major number for this?  Why not just use the
+misc interface instead?
 
