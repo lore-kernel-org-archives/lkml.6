@@ -6,179 +6,143 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2676C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBBDC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A908520863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:08:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A908520863
+	by mail.kernel.org (Postfix) with ESMTP id 98832206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:09:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98832206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbeK3TRZ (ORCPT
+        id S1727297AbeK3TRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:17:25 -0500
-Received: from mga18.intel.com ([134.134.136.126]:64867 "EHLO mga18.intel.com"
+        Fri, 30 Nov 2018 14:17:34 -0500
+Received: from mga17.intel.com ([192.55.52.151]:5240 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726992AbeK3TRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:17:25 -0500
+        id S1726551AbeK3TRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 14:17:34 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 00:08:57 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 00:09:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,297,1539673200"; 
-   d="scan'208";a="117411994"
+   d="scan'208";a="96176535"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Nov 2018 00:08:56 -0800
+  by orsmga006.jf.intel.com with ESMTP; 30 Nov 2018 00:09:06 -0800
 Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.128])
-        by linux.intel.com (Postfix) with ESMTP id 51BA4580213;
-        Fri, 30 Nov 2018 00:08:55 -0800 (PST)
+        by linux.intel.com (Postfix) with ESMTP id 0CA42580460;
+        Fri, 30 Nov 2018 00:09:03 -0800 (PST)
 From:   Zhang Yi <yi.z.zhang@linux.intel.com>
 To:     pbonzini@redhat.com, mdontu@bitdefender.com, ncitu@bitdefender.com
 Cc:     rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [RFC PATCH V2 06/11] KVM: VMX: Introduce SPP-Induced vm exit and it's handle.
-Date:   Fri, 30 Nov 2018 16:08:40 +0800
-Message-Id: <da6c12fec56cf995948325a1497c47b90b326e48.1543481993.git.yi.z.zhang@linux.intel.com>
+Subject: [RFC PATCH V2 07/11] KVM: VMX: Added handle of SPP write protection fault.
+Date:   Fri, 30 Nov 2018 16:08:48 +0800
+Message-Id: <b77f9e8df8c587d78c680ee49d447f56f206de70.1543481993.git.yi.z.zhang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543481993.git.yi.z.zhang@linux.intel.com>
 References: <cover.1543481993.git.yi.z.zhang@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Accesses using guest-physical addresses may cause SPP-induced VM exits
-due to an SPPT misconfiguration or an
-SPPT miss. The basic VM exit reason code reported for SPP-induced VM
-exits is 66.
+A control bit in EPT leaf paging-structure entries is defined as
+“Sub-Page Permission” (SPP bit). The bit position is 61
 
-An SPPT misconfiguration VM exit occurs when, in the course of
-translating a guest-physical address, the logical processor encounters
-a leaf EPT paging-structure entry mapping a 4KB page for which the
-sub-page write permission control bit is set and during the SPPT lookup
-an SPPT paging-structure entry contains an unsupported value.
+While hardware walking the SPP page table, If the sub-page
+region write permission bit is set, the write is allowed,
+else the write is disallowed and results in an EPT violation.
 
-An SPPT miss VM exit occurs when, in the course of translation a
-guest-physical address, the logical processor encounters a leaf
-EPT paging-structure entry for which the sub-page write permission
-control bit is set and during the SPPT lookup there is no SPPT
-misconfiguration but any level of SPPT paging-structure entries
-are not-present.
-
-SPPT misconfigurations and SPPT misses can occur only due to an attempt
-to write memory with a guest-physical address.
+we need peek this case in EPT violation handler, and trigger
+a user-space exit, return the write protected address(GPA)
+to user(qemu).
 
 Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
 Signed-off-by: He Chen <he.chen@linux.intel.com>
 ---
- arch/x86/include/asm/vmx.h      |  7 +++++++
- arch/x86/include/uapi/asm/vmx.h |  2 ++
- arch/x86/kvm/vmx.c              | 45 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 54 insertions(+)
+ arch/x86/kvm/mmu.c       | 19 +++++++++++++++++++
+ arch/x86/kvm/mmu.h       |  1 +
+ include/uapi/linux/kvm.h |  5 +++++
+ 3 files changed, 25 insertions(+)
 
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index bd4ec8a..ee24eb2 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -539,6 +539,13 @@ struct vmx_msr_entry {
- #define EPT_VIOLATION_GVA_TRANSLATED	(1 << EPT_VIOLATION_GVA_TRANSLATED_BIT)
- 
- /*
-+ * Exit Qualifications for SPPT-Induced VM Exits
-+ */
-+#define SPPT_INDUCED_EXIT_TYPE_BIT	11
-+#define SPPT_INDUCED_EXIT_TYPE		(1 << SPPT_INDUCED_EXIT_TYPE_BIT)
-+#define SPPT_INTR_INFO_UNBLOCK_NMI	INTR_INFO_UNBLOCK_NMI
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index d1f1fe1..d077693 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3378,6 +3378,21 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gva_t gva, int level,
+ 		if ((error_code & PFERR_WRITE_MASK) &&
+ 		    spte_can_locklessly_be_made_writable(spte))
+ 		{
++			/*
++			 * Record write protect fault caused by
++			 * Sub-page Protection
++			 */
++			if (spte & PT_SPP_MASK) {
++				fault_handled = true;
 +
-+/*
-  * VM-instruction error numbers
-  */
- enum vm_instruction_error_number {
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index f0b0c90..ac67622 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -85,6 +85,7 @@
- #define EXIT_REASON_PML_FULL            62
- #define EXIT_REASON_XSAVES              63
- #define EXIT_REASON_XRSTORS             64
-+#define EXIT_REASON_SPP                 66
++				vcpu->run->exit_reason = KVM_EXIT_SPP;
++				vcpu->run->spp.addr = gva;
++				kvm_skip_emulated_instruction(vcpu);
++
++				/* Let QEMU decide how to handle this. */
++				break;
++			}
++
+ 			new_spte |= PT_WRITABLE_MASK;
  
- #define VMX_EXIT_REASONS \
- 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
-@@ -141,6 +142,7 @@
- 	{ EXIT_REASON_ENCLS,                 "ENCLS" }, \
- 	{ EXIT_REASON_RDSEED,                "RDSEED" }, \
- 	{ EXIT_REASON_PML_FULL,              "PML_FULL" }, \
-+	{ EXIT_REASON_SPP,                   "SPP" }, \
- 	{ EXIT_REASON_XSAVES,                "XSAVES" }, \
- 	{ EXIT_REASON_XRSTORS,               "XRSTORS" }
- 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index e96b4c7..6634098 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9698,6 +9698,50 @@ static int handle_invpcid(struct kvm_vcpu *vcpu)
+ 			/*
+@@ -5343,6 +5358,10 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gva_t cr2, u64 error_code,
+ 		r = vcpu->arch.mmu->page_fault(vcpu, cr2,
+ 					       lower_32_bits(error_code),
+ 					       false);
++
++		if (vcpu->run->exit_reason == KVM_EXIT_SPP)
++			return 0;
++
+ 		WARN_ON(r == RET_PF_INVALID);
  	}
- }
  
-+static int handle_spp(struct kvm_vcpu *vcpu)
-+{
-+	unsigned long exit_qualification;
-+
-+	exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
-+
-+	/*
-+	 * SPP VM exit happened while executing iret from NMI,
-+	 * "blocked by NMI" bit has to be set before next VM entry.
-+	 * There are errata that may cause this bit to not be set:
-+	 * AAK134, BY25.
-+	 */
-+	if (!(to_vmx(vcpu)->idt_vectoring_info & VECTORING_INFO_VALID_MASK) &&
-+	    (exit_qualification & SPPT_INTR_INFO_UNBLOCK_NMI))
-+		vmcs_set_bits(GUEST_INTERRUPTIBILITY_INFO,
-+			      GUEST_INTR_STATE_NMI);
-+
-+	pr_debug("SPP: SPP exit_qualification=%lx\n", exit_qualification);
-+
-+	vcpu->arch.exit_qualification = exit_qualification;
-+
-+	if (exit_qualification & SPPT_INDUCED_EXIT_TYPE) {
-+		/*
-+		 * SPPT Miss
-+		 * We don't set SPP write access for the corresponding
-+		 * GPA, if we haven't setup, we need to construct
-+		 * SPP table here.
-+		 */
-+		pr_debug("SPP: %s: SPPT Miss!!!\n", __func__);
-+		return 1;
-+	}
-+
-+	/*
-+	 * SPPT Misconfig
-+	 * This is probably possible that your sppt table
-+	 * set as a incorrect format
-+	 */
-+	WARN_ON(1);
-+	vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
-+	vcpu->run->hw.hardware_exit_reason = EXIT_REASON_SPP;
-+	pr_alert("SPP: %s: SPPT Misconfiguration!!!\n", __func__);
-+	return 0;
-+}
-+
- static int handle_pml_full(struct kvm_vcpu *vcpu)
- {
- 	unsigned long exit_qualification;
-@@ -9910,6 +9954,7 @@ static int (*const kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
- 	[EXIT_REASON_INVVPID]                 = handle_invvpid,
- 	[EXIT_REASON_RDRAND]                  = handle_invalid_op,
- 	[EXIT_REASON_RDSEED]                  = handle_invalid_op,
-+	[EXIT_REASON_SPP]                     = handle_spp,
- 	[EXIT_REASON_XSAVES]                  = handle_xsaves,
- 	[EXIT_REASON_XRSTORS]                 = handle_xrstors,
- 	[EXIT_REASON_PML_FULL]		      = handle_pml_full,
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index c7b3331..b41e9e9 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -26,6 +26,7 @@
+ #define PT_PAGE_SIZE_MASK (1ULL << PT_PAGE_SIZE_SHIFT)
+ #define PT_PAT_MASK (1ULL << 7)
+ #define PT_GLOBAL_MASK (1ULL << 8)
++#define PT_SPP_MASK (1ULL << 61)
+ #define PT64_NX_SHIFT 63
+ #define PT64_NX_MASK (1ULL << PT64_NX_SHIFT)
+ 
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 2b7a652..01174f8 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -235,6 +235,7 @@ struct kvm_hyperv_exit {
+ #define KVM_EXIT_S390_STSI        25
+ #define KVM_EXIT_IOAPIC_EOI       26
+ #define KVM_EXIT_HYPERV           27
++#define KVM_EXIT_SPP              28
+ 
+ /* For KVM_EXIT_INTERNAL_ERROR */
+ /* Emulate instruction failed. */
+@@ -390,6 +391,10 @@ struct kvm_run {
+ 		struct {
+ 			__u8 vector;
+ 		} eoi;
++		/* KVM_EXIT_SPP */
++		struct {
++			__u64 addr;
++		} spp;
+ 		/* KVM_EXIT_HYPERV */
+ 		struct kvm_hyperv_exit hyperv;
+ 		/* Fix the size of the union. */
 -- 
 2.7.4
 
