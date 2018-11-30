@@ -2,103 +2,138 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B41C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3FCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 497DE2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:18:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLPCRkCJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 497DE2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D8282206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8282206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeLAH3O (ORCPT
+        id S1726660AbeLAHbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 02:29:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725993AbeLAH3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:29:13 -0500
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAB472148E
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 20:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543609127;
-        bh=Cs7BDISB1ieiLt7d4jp2Ven9syRA+nggJ3jKZ0LD1UI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vLPCRkCJkMYS20CuLF4O9fD4Fh3MwXOgfombV2e1c8HcM6JNTd+MfWVx3wChPbda6
-         JdOmsVGlJ0gRcp/La9M8jXnAfR48rAO6dX/q1TAgLiTSbMaw2rBspUIGemOUMy7MZj
-         j9lXoLoEhlE9M1r0PfKwlaoYqFG7tNT1DCYTUofs=
-Received: by mail-wr1-f41.google.com with SMTP id c14so6469358wrr.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 12:18:46 -0800 (PST)
-X-Gm-Message-State: AA+aEWbePzVdFNUOgFtbWGSJksgxBH/FAlN8eAKkPOsNhjvJuFQso9As
-        w2KW0pzj6tz7ah8Q1YohVRWNzX9Cpe78yYTqmz2aOg==
-X-Google-Smtp-Source: AFSGD/WI9k75Fi9ma2umv8keGTs6KdPjBXGnEdcuHCm5Q6ebozEfwoC26AWzDh1WZGf4qCnvXcmBMo5Q4akO64cIWt8=
-X-Received: by 2002:adf:f0c5:: with SMTP id x5mr5887210wro.77.1543609125274;
- Fri, 30 Nov 2018 12:18:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20181129124404.2fe55dd0@gandalf.local.home> <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
- <20181129125857.75c55b96@gandalf.local.home> <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
- <20181129134725.6d86ade6@gandalf.local.home> <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
- <CAHk-=wjN=sow0F-UtA6DtHHT_CNUV7wYVe3cQ4E8GPp4LN32+Q@mail.gmail.com>
- <CALCETrVzFk2Yv8q54Xh6qOb45AKKrQhD5OkAuTsw9HaR3Wvy4Q@mail.gmail.com>
- <20181129202452.56f4j2wdct6qbaqo@treble> <CALCETrW1ju40hFrM3sr21tDTZ-m1=swHfD2cMiyYFJkgbb3cug@mail.gmail.com>
- <20181130183917.hxmti5josgq4clti@treble> <CAHk-=whx=Dme9q0k0pK7S_3YwuvdMw1yKxESSUhS+eEce8HTOQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whx=Dme9q0k0pK7S_3YwuvdMw1yKxESSUhS+eEce8HTOQ@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 30 Nov 2018 12:18:33 -0800
-X-Gmail-Original-Message-ID: <CALCETrVwdtLnnLR7Qb3LVCHDRpJ-cgU28jiGOQdaPFLVSvvZXA@mail.gmail.com>
-Message-ID: <CALCETrVwdtLnnLR7Qb3LVCHDRpJ-cgU28jiGOQdaPFLVSvvZXA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
+        Sat, 1 Dec 2018 02:31:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38906 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725749AbeLAHbo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 02:31:44 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAUKEERI006944
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 15:21:16 -0500
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p3bcvj0yw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 15:21:16 -0500
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
+        Fri, 30 Nov 2018 20:21:15 -0000
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 30 Nov 2018 20:21:11 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAUKLBb222282258
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 30 Nov 2018 20:21:11 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB86D7805E;
+        Fri, 30 Nov 2018 20:21:10 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F55B7805F;
+        Fri, 30 Nov 2018 20:21:09 +0000 (GMT)
+Received: from [153.66.254.194] (unknown [9.85.139.109])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 30 Nov 2018 20:21:09 +0000 (GMT)
+Subject: Re: [PATCH RFC 11/15] scsi: replace **** with a hug
+From:   James Bottomley <jejb@linux.vnet.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "open list:SCSI SUBSYSTEM" <linux-scsi@vger.kernel.org>
+Date:   Fri, 30 Nov 2018 12:21:07 -0800
+In-Reply-To: <20181130192737.15053-12-jarkko.sakkinen@linux.intel.com>
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+         <20181130192737.15053-12-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18113020-0016-0000-0000-0000095D9731
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010148; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01125083; UDB=6.00584191; IPR=6.00905211;
+ MB=3.00024399; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-30 20:21:13
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18113020-0017-0000-0000-0000413F2D1C
+Message-Id: <1543609267.3031.14.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-30_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811300172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:51 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, Nov 30, 2018 at 10:39 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > AFAICT, all the other proposed options seem to have major issues.
->
-> I still absolutely detest this patch, and in fact it got worse from
-> the test of the config variable.
->
-> Honestly, the entry code being legible and simple is more important
-> than the extra cycle from branching to a trampoline for static calls.
->
-> Just don't do the inline case if it causes this much confusion.
+On Fri, 2018-11-30 at 11:27 -0800, Jarkko Sakkinen wrote:
+> In order to comply with the CoC, replace **** with a hug.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/scsi/qlogicpti.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/qlogicpti.h b/drivers/scsi/qlogicpti.h
+> index 884ad72ade57..f1785154061c 100644
+> --- a/drivers/scsi/qlogicpti.h
+> +++ b/drivers/scsi/qlogicpti.h
+> @@ -62,7 +62,7 @@
+>  #define REQUEST_QUEUE_WAKEUP		0x8005
+>  #define EXECUTION_TIMEOUT_RESET		0x8006
+>  
+> -/* Am I fucking pedantic or what? */
+> +/* Am I hugging pedantic or what? */
 
-With my entry maintainer hat on, I don't mind it so much, although the
-implementation needs some work.  The #ifdef should just go away, and
-there should be another sanity check in the sanity check section.
+I really don't think this is either necessary or a good idea.  The code
+of conduct explicitly doesn't require this.  It says:
 
-Or we could replace that IPI with x86's bona fide serialize-all-cpus
-primitive and then we can just retry instead of emulating.  It's a
-piece of cake -- we just trigger an SMI :)  /me runs away.
+   Contributions submitted for the kernel should use appropriate
+   language.
+   Content that already exists predating the Code of Conduct will not
+   be
+   addressed now as a violation.
 
---Andy
+However, I assume you're thinking about the next sentence:
+
+   Inappropriate language can be seen as a bug, though; such bugs will
+   be fixed more quickly if any interested parties submit patches to
+   that effect.
+
+?
+
+I would interpret the above comment as simply an expression of
+frustration directed by the author at some of the endian problems
+drivers like this bring.  Since it's not directed at anything other
+than hardware I don't think it could be seen as threatening or abusive
+or contributing to a negative environment even if submitted today.
+
+For better or for worse, the word "fuck", which was once seen as so
+beyond the pale that only loose tongued individuals like monty python
+could get away with it (The great John Cleese use of the word fuck at a
+funeral [Eric Chapman's] springing immediately to mind), has now moved
+into the TV primetime mainstream and it's not our job to try and
+reimpose language decency on the world.
+
+James
+
