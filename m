@@ -2,82 +2,90 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD44C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 646C1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A64A20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LozelMFP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A64A20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E99E2147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:58:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E99E2147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeK3WFu (ORCPT
+        id S1726963AbeK3WG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:05:50 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36169 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbeK3WFt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:05:49 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a16so3785569lfg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 02:56:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5Et1b/qyS83Tt3+WZK9m0GQyvQi7hqAuYI1kow5m6Cw=;
-        b=LozelMFPCyOeQdR3Vlq/V3KUuSi9qqLIOnYniybEg0bv1VcpfrH/ZIlg7stZbNg8Hx
-         jb86Id1Di6utDZYoqEE806A+ppn1USCY3M81FFPJzDZxxYSE/A9yc79PW9WdMXAwA7FZ
-         E9RkPk5NHQizltAzGguPycZsRl2FrVunhKAGg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5Et1b/qyS83Tt3+WZK9m0GQyvQi7hqAuYI1kow5m6Cw=;
-        b=ljlbFazPN1KDms7qW0vibWJaRQFT+lh9tkKB5Zk90LPKGuBIWyCidMRbgAjSBqp4+m
-         Yn9vZWMznH9PXHDwP96n79Gz0U2wXG+Uh+cy5fnUAviehuOVKLsqvyen52MP5+BgC5Vf
-         gptxjKKkLwxsSbLPTCYt+8FoiHGE8d70S7l0F2dsaXrwGZg3WOu+vx8XAKphhHAvY+m6
-         C6VWn29T2+NDEjMVbmic2HCQQS560i9AbkyRb8CQ4uoLabZRfFVXSn3DlwFopNoM9N6V
-         ChazciLrbLLUgBtUdjzPgeBhhnTV9CHd1+MdgBrkK9fUaAjmUpKfYDnbVhxCWgdk5xlB
-         jDeA==
-X-Gm-Message-State: AA+aEWbd9YCa/PdWhgOpUwbiDqguy/Ia2Uc1flVzXJNp0eOjIVF/UBzc
-        xwmy5iDxA3zSbCT9C+7DmE+urye5LGTRaipyd2rghg==
-X-Google-Smtp-Source: AFSGD/XOkt9VCwlPA7+DM9fNRiz/AlO0mHwWFJaOZykKlEAx9x/tnrkHJXRo4JFta2tukWGLc+5JWIYrMLQ1SIbHuWI=
-X-Received: by 2002:a19:f813:: with SMTP id a19mr3232655lff.67.1543575414328;
- Fri, 30 Nov 2018 02:56:54 -0800 (PST)
+        Fri, 30 Nov 2018 17:06:58 -0500
+Received: from mga02.intel.com ([134.134.136.20]:58443 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbeK3WG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:06:58 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 02:58:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,298,1539673200"; 
+   d="scan'208";a="254918942"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga004.jf.intel.com with ESMTP; 30 Nov 2018 02:58:01 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gSgUh-0002T7-RU; Fri, 30 Nov 2018 12:57:59 +0200
+Date:   Fri, 30 Nov 2018 12:57:59 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 09/15] i2c: acpi: Introduce
+ i2c_acpi_get_i2c_resource() helper
+Message-ID: <20181130105759.GK10650@smile.fi.intel.com>
+References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+ <20181128114535.80223-10-andriy.shevchenko@linux.intel.com>
+ <20181130095533.GC1079@kunai>
 MIME-Version: 1.0
-References: <20181128104350.31902-1-linus.walleij@linaro.org>
- <CAMpxmJUsAccSKELNxn6DEWO6_3aCbzM=hZyaXUCr30S0-Eh0mA@mail.gmail.com>
- <20181129190132.GM2089@sirena.org.uk> <CAMRc=McApz-8qUo9SiqZgYXor4_DkBRY61nMhiFQ2QSSBj6gWg@mail.gmail.com>
-In-Reply-To: <CAMRc=McApz-8qUo9SiqZgYXor4_DkBRY61nMhiFQ2QSSBj6gWg@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 30 Nov 2018 11:56:41 +0100
-Message-ID: <CACRpkdbmruqLOwRLikUq2RiY927W_Evq83zdMtGY9S1A_i4E_Q@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Regulator ena_gpiod fixups
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130095533.GC1079@kunai>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 9:35 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Fri, Nov 30, 2018 at 10:55:33AM +0100, Wolfram Sang wrote:
+> On Wed, Nov 28, 2018 at 01:45:29PM +0200, Andy Shevchenko wrote:
+> > Besides current two users one more is coming. Definitely makes sense to
+> > introduce a helper.
+> > 
+> > No functional change intended.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> > ---
+> >  drivers/i2c/i2c-core-acpi.c | 41 ++++++++++++++++++++++++++-----------
+> >  include/linux/acpi.h        | 11 ++++++++++
+> 
+> Any reason this is not in i2c.h?
 
-> At least we could document it in the code.
+Yes. As I explained earlier to some people there are facts affecting this:
+- the function is operate on top of solely ACPI structures
+- there is already similar function for GPIO and it stays like that
 
-I've put some comments in my patch set, I will check if I can add some
-more in the less-than-obvious spots.
+On top of this recently I've discovered, that i2c.h has separate #ifdef for I2C
+and ACPI which theoretically might produce a linker error in some cases.
 
-Yours,
-Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
