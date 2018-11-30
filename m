@@ -7,53 +7,50 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D65CC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67882C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485D321473
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 345242145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ej0OBI+t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 485D321473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2UlklWTQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 345242145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbeLAFhq (ORCPT
+        id S1727112AbeLAFht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:37:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55444 "EHLO mail.kernel.org"
+        Sat, 1 Dec 2018 00:37:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbeLAFhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:37:46 -0500
+        id S1727027AbeLAFhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:37:48 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9709B20673;
-        Fri, 30 Nov 2018 18:27:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 562AF21479;
+        Fri, 30 Nov 2018 18:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543602456;
-        bh=II1kES6SFe+IdG3bQtA6I5KRr2FSBi2LcdwyF7KCpeQ=;
+        s=default; t=1543602459;
+        bh=MHboawBt6bCi6twbdlLoxEDiq0vE8uyGMdXIKppJo04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ej0OBI+trNh0dKV3+l55RyUSxKSGqJPZCxxSmRwfsEqQeXqW3ig0xCkNZYYhu44u9
-         kYXRTelvxayU7+r/ZSKZ6sIcG7RDTuVN9ITJDwto0F+d5gFVZgVjBZitRNkwEmQD39
-         TLSm9bzAsEoV9sF3XEj+dclX4Y6kguKpb/L814rk=
+        b=2UlklWTQt89leuFfDW2DwaZ6QzG5sYeSmTCkSh0xfx0mwcx85XG0nvCIAbW9+Bd2B
+         OWL6N35mY1CF4l8CPv6V9pVbHzfnjPE7VDjkWN3OzZn2ugLjQl2SYFWC0h1jpG0C9a
+         92ke9dwgeT8La5zjYRzG0uJ1Tq/ZDVyCyiz1ViOs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 10/22] tools lib traceevent: Fix compile warnings in tools/lib/traceevent/event-parse.c
-Date:   Fri, 30 Nov 2018 15:26:40 -0300
-Message-Id: <20181130182652.23620-11-acme@kernel.org>
+Subject: [PATCH 11/22] perf tests record: Allow for 'sleep' being 'coreutils'
+Date:   Fri, 30 Nov 2018 15:26:41 -0300
+Message-Id: <20181130182652.23620-12-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181130182652.23620-1-acme@kernel.org>
 References: <20181130182652.23620-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,94 +59,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Fix following warnings:
-
-  event-parse.c: In function ‘tep_find_event_by_name’:
-  event-parse.c:3521:21: warning: ‘event’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-    pevent->last_event = event;
-    ~~~~~~~~~~~~~~~~~~~^~~~~~~
-    CC       ui/gtk/hists.o
-    LINK     plugin_mac80211.so
-    CC       nlattr.o
-  event-parse.c: In function ‘tep_data_lat_fmt’:
-  event-parse.c:5200:4: warning: ‘migrate_disable’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-      trace_seq_printf(s, "%d", migrate_disable);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  event-parse.c:5207:4: warning: ‘lock_depth’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-      trace_seq_printf(s, "%d", lock_depth);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    LINK     plugin_sched_switch.so
-    LINK     plugin_function.so
-    LINK     plugin_xen.so
-  event-parse.c: In function ‘tep_event_info’:
-  event-parse.c:5047:7: warning: ‘len_arg’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-         trace_seq_printf(s, format, len_arg, (char)val);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  event-parse.c:4884:6: note: ‘len_arg’ was declared here
-    int len_arg;
-        ^~~~~~~
-  event-parse.c:4338:11: warning: ‘vsize’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-       val = tep_read_number(pevent, bptr, vsize);
-             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  event-parse.c:4224:6: note: ‘vsize’ was declared here
-    int vsize;
-        ^~~~~
-
-$ gcc --version
-  gcc (Clear Linux OS for Intel Architecture) 8.2.1 20180502
+If the 'sleep' command is provided by coreutils, then the "PERF_RECORD_*
+events & perf_sample fields" test will fail because the MMAP name is
+'coreutils' not 'sleep', and there is an extra COMM event. Fix the test
+to detect that case.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Link: http://lkml.kernel.org/r/20181122112937.10582-1-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181122135545.16295-1-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ tools/perf/tests/perf-record.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 3692f29fee46..fbd6d6813fab 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -3498,7 +3498,7 @@ struct tep_event_format *
- tep_find_event_by_name(struct tep_handle *pevent,
- 		       const char *sys, const char *name)
- {
--	struct tep_event_format *event;
-+	struct tep_event_format *event = NULL;
- 	int i;
+diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+index 34394cc05077..07f6bd8ed719 100644
+--- a/tools/perf/tests/perf-record.c
++++ b/tools/perf/tests/perf-record.c
+@@ -58,6 +58,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 	char *bname, *mmap_filename;
+ 	u64 prev_time = 0;
+ 	bool found_cmd_mmap = false,
++	     found_coreutils_mmap = false,
+ 	     found_libc_mmap = false,
+ 	     found_vdso_mmap = false,
+ 	     found_ld_mmap = false;
+@@ -254,6 +255,8 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 					if (bname != NULL) {
+ 						if (!found_cmd_mmap)
+ 							found_cmd_mmap = !strcmp(bname + 1, cmd);
++						if (!found_coreutils_mmap)
++							found_coreutils_mmap = !strcmp(bname + 1, "coreutils");
+ 						if (!found_libc_mmap)
+ 							found_libc_mmap = !strncmp(bname + 1, "libc", 4);
+ 						if (!found_ld_mmap)
+@@ -292,7 +295,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 	}
  
- 	if (pevent->last_event &&
-@@ -4221,7 +4221,7 @@ static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, s
- 	unsigned long long ip, val;
- 	char *ptr;
- 	void *bptr;
--	int vsize;
-+	int vsize = 0;
+ found_exit:
+-	if (nr_events[PERF_RECORD_COMM] > 1) {
++	if (nr_events[PERF_RECORD_COMM] > 1 + !!found_coreutils_mmap) {
+ 		pr_debug("Excessive number of PERF_RECORD_COMM events!\n");
+ 		++errs;
+ 	}
+@@ -302,7 +305,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 		++errs;
+ 	}
  
- 	field = pevent->bprint_buf_field;
- 	ip_field = pevent->bprint_ip_field;
-@@ -4881,7 +4881,7 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
- 	char format[32];
- 	int show_func;
- 	int len_as_arg;
--	int len_arg;
-+	int len_arg = 0;
- 	int len;
- 	int ls;
- 
-@@ -5146,8 +5146,8 @@ void tep_data_lat_fmt(struct tep_handle *pevent,
- 	static int migrate_disable_exists;
- 	unsigned int lat_flags;
- 	unsigned int pc;
--	int lock_depth;
--	int migrate_disable;
-+	int lock_depth = 0;
-+	int migrate_disable = 0;
- 	int hardirq;
- 	int softirq;
- 	void *data = record->data;
+-	if (!found_cmd_mmap) {
++	if (!found_cmd_mmap && !found_coreutils_mmap) {
+ 		pr_debug("PERF_RECORD_MMAP for %s missing!\n", cmd);
+ 		++errs;
+ 	}
 -- 
 2.19.1
 
