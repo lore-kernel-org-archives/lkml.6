@@ -2,159 +2,261 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 234FFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 194E9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF803213A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:10:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maximintegrated.onmicrosoft.com header.i=@maximintegrated.onmicrosoft.com header.b="SITTc4rd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF803213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maximintegrated.com
+	by mail.kernel.org (Postfix) with ESMTP id CE0382081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:10:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0382081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeK3OSS (ORCPT
+        id S1727284AbeK3OSg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 09:18:18 -0500
-Received: from mail-eopbgr720124.outbound.protection.outlook.com ([40.107.72.124]:46886
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        Fri, 30 Nov 2018 09:18:36 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38416 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeK3OSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 09:18:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=maximintegrated.onmicrosoft.com; s=selector1-maximintegrated-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q6O1fTq7E63GXTlEVKz4tEx1bo754umfwYnPDGvrrPQ=;
- b=SITTc4rd2Uk5hyig+eQ3xc60js+dNOdF5kQGGptO7nwMLaxICkzz12FIshhRJGfeXcPs30gWyc0/exMS/gbnmb8HmfTC7PRA/dyc/3ObFTyO8qCsJJEQfmvpVMCyuKHvYhi5jnlSQgz8wu7QHwTKfoQ9gfW5PsGvap02Hv0zn2k=
-Received: from DM6PR11MB3131.namprd11.prod.outlook.com (20.177.219.96) by
- DM6PR11MB2811.namprd11.prod.outlook.com (20.176.100.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.20; Fri, 30 Nov 2018 03:10:24 +0000
-Received: from DM6PR11MB3131.namprd11.prod.outlook.com
- ([fe80::2dfb:d623:d7cb:cbe1]) by DM6PR11MB3131.namprd11.prod.outlook.com
- ([fe80::2dfb:d623:d7cb:cbe1%3]) with mapi id 15.20.1361.018; Fri, 30 Nov 2018
- 03:10:24 +0000
-From:   Ryan Lee <RyanS.Lee@maximintegrated.com>
-To:     Grant Grundler <grundler@chromium.org>
-CC:     "broonie@kernel.org" <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Benson Leung <bleung@chromium.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "ryan.lee.maxim@gmail.com" <ryan.lee.maxim@gmail.com>
-Subject: RE: [PATCH V2] ASoC: max98373: Added max98373_reset for stable amp
- reset
-Thread-Topic: [PATCH V2] ASoC: max98373: Added max98373_reset for stable amp
- reset
-Thread-Index: AQHUhslIRSLmSIj6XkCUBOoX3Wedt6Vk8duAgAB6IMCAAJO+AIABlQPw
-Date:   Fri, 30 Nov 2018 03:10:24 +0000
-Message-ID: <DM6PR11MB313188E9EECC884D2A874FEBE7D30@DM6PR11MB3131.namprd11.prod.outlook.com>
-References: <20181128031926.7157-1-ryans.lee@maximintegrated.com>
- <20181128094955.GG6828@sirena.org.uk>
- <DM6PR11MB3131E267C1EDF9254BC7D313E7D10@DM6PR11MB3131.namprd11.prod.outlook.com>
- <CANEJEGse1DGQE6K=sn=bfJuQW=-gM6zps+kvKd8y=yzXjrsTZQ@mail.gmail.com>
-In-Reply-To: <CANEJEGse1DGQE6K=sn=bfJuQW=-gM6zps+kvKd8y=yzXjrsTZQ@mail.gmail.com>
-Accept-Language: en-US, ko-KR
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=RyanS.Lee@maximintegrated.com; 
-x-originating-ip: [204.17.143.20]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR11MB2811;6:DL/Ijt4hcOIZqbunyTTw8XhVQYJe7ClrbbJrM/tP4d0GeicMpqrSI2JUsog3hbR37xbdPEvuOVx2EQEWVvIm/KrfoducPiD/kZVGBwPJ9e2BERPulwxiSbpRBZl6Wc2xUs1ZIorVJSUsPvpV44yv1EsUOloFywZZpwFKOCuyJOpEJ7i1zqQSATcQSHLKsaeZ/S4g/Hn89ZzOLjor+CyyOXXmXuCSaGjR9+wTt50Nf39EI0ODfLuVIcZ5jolvk8COa7bcMFxznnEZKw/7jxtRxSyjYpbP63s9k2LE4Fjkv58nrap5EV3n5u9d6gmQdVqZOEFemuW1eBtLe1eizuUo9gacKfxvpATcLsfjHVzvoPNJwr60OV2pZ+UDFM10cxitSG6kPUVyv7/ZUC8kJwgMXt92cvUFRHigoVuIq3f4vhY7z4t7TnOkJQZ7Nl1voFvLgSdPaX2oazUe9x9BgeH3BA==;5:amCX0HZ7ZBvSEl7+Rt7+zxaO/296tlZQUeSYdI+VGgbjVyhur1YBo/5D/8H7xgqnGgbOtFRJLViyMYtwmZJohsvZyUkfoejBi7DLoIOvELI5yjrd0Mfhu+fHD+CMnHNJYk6pbbCw+R3yG4RkmiBWIWMGtlLX7BzEjAqZBxg8QaM=;7:XxqL3FfWvCLzQkAkfZ7XSwYgE1vB/FqR9OSIYwyLTzfQJiyMPsGhm8pCRHBHNXU6iI2eNw6HK5my418M/rDPhXjzQXrosrqx5HJg/WHjv7WMawwQThavM/05hrHKWmXkPkhKT4b1gev5uDzgHeCieg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 82602a94-6c5e-4085-3aae-08d656715ed0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM6PR11MB2811;
-x-ms-traffictypediagnostic: DM6PR11MB2811:
-x-microsoft-antispam-prvs: <DM6PR11MB28117CEF082269F9AFEEC2A6E7D30@DM6PR11MB2811.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231453)(999002)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM6PR11MB2811;BCL:0;PCL:0;RULEID:;SRVR:DM6PR11MB2811;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39860400002)(376002)(366004)(346002)(199004)(189003)(13464003)(54534003)(40764003)(71190400001)(71200400001)(3846002)(6116002)(72206003)(53936002)(66066001)(7736002)(99286004)(316002)(14454004)(305945005)(74316002)(55016002)(86362001)(9686003)(106356001)(105586002)(229853002)(5660300001)(6436002)(14444005)(256004)(6246003)(478600001)(6916009)(25786009)(4326008)(81156014)(486006)(11346002)(76176011)(81166006)(7416002)(97736004)(8676002)(39060400002)(476003)(446003)(93886005)(8936002)(2906002)(33656002)(7696005)(102836004)(54906003)(68736007)(186003)(26005)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR11MB2811;H:DM6PR11MB3131.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: maximintegrated.com does not
- designate permitted sender hosts)
-x-microsoft-antispam-message-info: JE+WGkACNYhHpdA1FZwh+j3KPbErTAyInqPr/+2l3xt+73Ii6Clu4h9WT2CFkY1nS13+mTI//ct6LE6m5N7EHwOWZmyjy15h/+zLJqhZ7QXj225JR/1ruPbnh+yLSwyDjGYDvEW03aFaBfmUPN4Qd6r/OAOC1I70dzDHEdvZ3olwWKmySCXIcC9bCUGUGTN14Wofpl3aYfJa8sGhS+AJrrTxvzWs2OL4GQg7TubMO4PEVZ08i9cWbRfMGSlE55TWMD2LWcTy4rJirKzqrYFYh7Km+K62BBR5Sr+51WdAo+53JpF0dAl2IE8OpafLD+Q0KZN3nqkfeuaa7pcxE2WjCZ1OIVnvOmOEJg6p9NcJ11o=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726386AbeK3OSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 09:18:36 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3F7C9AD00A3A5;
+        Fri, 30 Nov 2018 11:10:47 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Fri, 30 Nov 2018
+ 11:10:39 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid frequent costly fsck triggers
+To:     Sheng Yong <shengyong1@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20181128073125.39102-1-jaegeuk@kernel.org>
+ <724de929-6ee1-3ad7-cfa7-6e80d4e7a3da@huawei.com>
+ <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
+ <4f43735a-d01f-f194-18ce-4fbbe10ad8d4@huawei.com>
+ <20181128174805.GB41969@jaegeuk-macbookpro.roam.corp.google.com>
+ <234cabcd-a1c1-9fb6-13aa-94fe681731dc@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <afaee7a9-162a-b157-f0bc-de366cbb7b53@huawei.com>
+Date:   Fri, 30 Nov 2018 11:10:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: maximintegrated.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82602a94-6c5e-4085-3aae-08d656715ed0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 03:10:24.0564
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fbd909df-ea69-4788-a554-f24b7854ad03
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2811
+In-Reply-To: <234cabcd-a1c1-9fb6-13aa-94fe681731dc@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogR3JhbnQgR3J1bmRsZXIgPGdydW5k
-bGVyQGNocm9taXVtLm9yZz4NCj5TZW50OiBXZWRuZXNkYXksIE5vdmVtYmVyIDI4LCAyMDE4IDU6
-NTYgUE0NCj5UbzogUnlhbiBMZWUgPFJ5YW5TLkxlZUBtYXhpbWludGVncmF0ZWQuY29tPg0KPkNj
-OiBicm9vbmllQGtlcm5lbC5vcmc7IExpYW0gR2lyZHdvb2QgPGxnaXJkd29vZEBnbWFpbC5jb20+
-Ow0KPnBlcmV4QHBlcmV4LmN6OyB0aXdhaUBzdXNlLmNvbTsgR3JhbnQgR3J1bmRsZXINCj48Z3J1
-bmRsZXJAY2hyb21pdW0ub3JnPjsgS3VuaW5vcmkgTW9yaW1vdG8NCj48a3VuaW5vcmkubW9yaW1v
-dG8uZ3hAcmVuZXNhcy5jb20+OyBCZW5zb24gTGV1bmcNCj48YmxldW5nQGNocm9taXVtLm9yZz47
-IGFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZzsgTEtNTCA8bGludXgtDQo+a2VybmVsQHZnZXIu
-a2VybmVsLm9yZz47IHJ5YW4ubGVlLm1heGltQGdtYWlsLmNvbQ0KPlN1YmplY3Q6IFJlOiBbUEFU
-Q0ggVjJdIEFTb0M6IG1heDk4MzczOiBBZGRlZCBtYXg5ODM3M19yZXNldCBmb3Igc3RhYmxlDQo+
-YW1wIHJlc2V0DQo+DQo+RVhURVJOQUwgRU1BSUwNCj4NCj4NCj4NCj5PbiBXZWQsIE5vdiAyOCwg
-MjAxOCBhdCA5OjA3IEFNIFJ5YW4gTGVlDQo+PFJ5YW5TLkxlZUBtYXhpbWludGVncmF0ZWQuY29t
-PiB3cm90ZToNCj4+DQo+PiA+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4+ID5Gcm9tOiBN
-YXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+DQo+PiA+U2VudDogV2VkbmVzZGF5LCBOb3Zl
-bWJlciAyOCwgMjAxOCAxOjUwIEFNDQo+PiA+VG86IFJ5YW4gTGVlIDxSeWFuUy5MZWVAbWF4aW1p
-bnRlZ3JhdGVkLmNvbT4NCj4+ID5DYzogTGlhbSBHaXJkd29vZCA8bGdpcmR3b29kQGdtYWlsLmNv
-bT47IEphcm9zbGF2IEt5c2VsYQ0KPj4gPjxwZXJleEBwZXJleC5jej47IFRha2FzaGkgSXdhaSA8
-dGl3YWlAc3VzZS5jb20+OyBHcmFudCBHcnVuZGxlcg0KPj4gPjxncnVuZGxlckBjaHJvbWl1bS5v
-cmc+OyBLdW5pbm9yaSBNb3JpbW90bw0KPj4gPjxrdW5pbm9yaS5tb3JpbW90by5neEByZW5lc2Fz
-LmNvbT47IEJlbnNvbiBMZXVuZw0KPj4gPjxibGV1bmdAY2hyb21pdW0ub3JnPjsgYWxzYS1kZXZl
-bEBhbHNhLXByb2plY3Qub3JnOyBsaW51eC0NCj4+ID5rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBy
-eWFuLmxlZS5tYXhpbUBnbWFpbC5jb20NCj4+ID5TdWJqZWN0OiBSZTogW1BBVENIIFYyXSBBU29D
-OiBtYXg5ODM3MzogQWRkZWQgbWF4OTgzNzNfcmVzZXQgZm9yDQo+PiA+c3RhYmxlIGFtcCByZXNl
-dA0KPj4gPg0KPj4gPk9uIFdlZCwgTm92IDI4LCAyMDE4IGF0IDAzOjIwOjE2QU0gKzAwMDAsIFJ5
-YW4gTGVlIHdyb3RlOg0KPj4gPj4gU2lnbmVkLW9mZi1ieTogUnlhbiBMZWUgPHJ5YW5zLmxlZUBt
-YXhpbWludGVncmF0ZWQuY29tPg0KPj4gPj4gLS0tDQo+PiA+DQo+PiA+Tm90IHNlZWluZyBhIGNo
-YW5nZWxvZyBoZXJlIGxpa2UgSSBhc2tlZCBmb3IgOigNCj4+DQo+PiBBY3R1YWxseSBJIGFkZGVk
-IGNoYW5nZWxvZyBhcyBiZWxvdy4gRG8geW91IG1lYW4gdGhpcyBpcyBub3Qgc3VmZmljaWVudD8N
-Cj4NCj5UaGUgdGV4dCBpcyBwcm9iYWJseSBzdWZmaWNpZW50IGJ1dCBub3QgaW4gYSBmb3JtYXQg
-dGhhdCBNYXJrIGNhbiBkaXJlY3RseSBhcHBseS4NCj5QbGVhc2UgdGFrZSBhIHF1aWNrIGxvb2sg
-YXQgRG9jdW1lbnRhdGlvbi9wcm9jZXNzL3N1Ym1pdHRpbmctcGF0Y2hlcy5yc3QuDQo+DQo+TWFy
-ayB3YW50cyB0aGUgImNvbW1pdCBtZXNzYWdlIiB0byBiZSBiZWZvcmUgdGhlICctLS0nIGxpbmUu
-IFNvIG1vdmUgdGhlDQo+IkNoYW5nZXM6IiB0ZXh0IHVwIHRvIGJlY29tZSB0aGUgY29tbWl0IG1l
-c3NhZ2UgYW5kIGRyb3AgdGhlICJDaGFuZ2VzIg0KPmxpbmUuIFRoYXQgc2hvdWxkIGV4cGxhaW4g
-d2h5IHRoaXMgY29tbWl0IGlzIG5lZWRlZCBhbmQgaW5jbHVkZSB0aGUgUy1vLUIgbGluZS4NClRo
-YW5rcyBmb3IgeW91ciBoZWxwLiBJIHdpbGwgZml4IGl0Lg0KPg0KPmNoZWVycywNCj5ncmFudA0K
-Pg0KPj4NCj4+IENoYW5nZXMgc2luY2UgdjEgOiBSZW1vdmVkIHVudXN1YWwgcmVwZWF0IGZvciBh
-bXAgc29mdHdhcmUgcmVzZXQgYW5kDQo+dmVyaWZpY2F0aW9uLg0KPj4gICAgICAgICAgICAgICAg
-ICAgIEFtcCBzb2Z0d2FyZSByZXNldCB3aWxsIGJlIHBlcmZvcm1lZCBvbmNlIGFuZCBpdCByZXBl
-YXRzDQo+dmVyaWZpY2F0aW9uIG1heGltdW0gMyB0aW1lcyBpZiBpdCBpcyBmYWlsZWQuDQo+PiAg
-ICAgICAgICAgICAgICAgICAgV2FpdCAxMG1zIGJlZm9yZSBldmVyeSB2ZXJpZmljYXRpb24gdHJp
-YWwuIE1heGltdW0gMzBtcyBkZWxheSB3aWxsDQo+YmUgYXBwbGllZCB0byB3YWl0IEFNUCBpZGxl
-IHN0YXRlLg0KPj4NCj4+ID4NCj4+ID4+IENoYW5nZXMgOiBDcmVhdGVkIG1heDk4MzczX3Jlc2V0
-IGZ1bmN0aW9uIHRvIG1pbmltaXplIGNvZGUgZHVwbGljYXRpb24uDQo+PiA+PiAgICAgICAgICAg
-Q2hhbmdlZCByZWdtYXBfd3JpdGUgdG8gcmVnbWFwX3VwZGF0ZV9iaXRzLiBPdGhlciBiaXRzDQo+
-PiA+PiBleGNlcHQgTFNCDQo+PiA+bmVlZCB0byBiZSBtYXNrZWQuDQo+PiA+PiAgICAgICAgICAg
-QWRkZWQgcmVzZXQgdmVyaWZpY2F0aW9uIHN0ZXAgdG8gbWFrZSBzdXJlIHNvZnR3YXJlIHJlc2V0
-DQo+PiA+PiBpcyBjb21wbGV0ZWQNCj4+ID53ZWxsLiBTb2Z0d2FyZSByZXNldCBpcyBkb25lIGlu
-IDEwbXMgaW4gbm9ybWFsIGNhc2UuDQo+PiA+PiAgICAgICAgICAgUmV2aXNpb24gSUQgaXMgYXZh
-aWxhYmxlIHdoZW4gdGhlIGFtcCBpcyBpbiB0aGUgaWRsZQ0KPj4gPj4gc3RhdGUgd2hpY2ggbWVh
-bnMNCj4+ID5zb2Z0d2FyZSByZXNldCBpcyBjb21wbGV0ZWQuDQo+PiA+PiAgICAgICAgICAgU29m
-dHdhcmUgcmVzZXQgd2lsbCBiZSBwZXJmb3JtZWQgbWF4aW11bSAzIHRpbWVzIHRvIGF2b2lkDQo+
-PiA+PiBhbXAgcmVzZXQNCj4+ID5mYWlsdXJlLiBHZW5lcmFsbHkgaXQgaXMgZG9uZSBpbiB0aGUg
-Zmlyc3QgdHJpYWwuDQo+PiA+PiAgICAgICAgICAgc2xlZXAgdGltZSBhZnRlciBzb2Z0d2FyZSBy
-ZXNldCBpcyBpbmNyZWFzZWQgKyAzMG1zIGZvciBldmVyeSByZXRyaWFsLg0KPj4gPk1heGltdW0g
-cG9zc2libGUgbXNsZWVwIHRpbWUgaXMgMTAwIG1zIChpbml0aWFsIDEwIG1zICsgMzAgbXMgKiAz
-IHRpbWVzKS4NCj4+ID4NCj4+ID5UaGlzIGxvb2tzIGxpa2UgaXQncyBzdXBwb3NlZCB0byBiZSBh
-IGNoYW5nZWxvZyBidXQgaXQgaXNuJ3Qgb25lPw0K
+On 2018/11/30 10:35, Sheng Yong wrote:
+> Hi, Jaegeuk and Chao,
+> 
+> On 2018/11/29 1:48, Jaegeuk Kim wrote:
+>> On 11/28, Chao Yu wrote:
+>>> On 2018/11/28 16:10, Jaegeuk Kim wrote:
+>>>> On 11/28, Chao Yu wrote:
+>>>>> Hi Jaeguek,
+>>>>>
+>>>>> On 2018/11/28 15:31, Jaegeuk Kim wrote:
+>>>>>> If we want to re-enable nat_bits, we rely on fsck which requires full scan
+>>>>>> of directory tree. Let's do that by regular fsck or unclean shutdown.
+>>>>>
+>>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>>>
+>>>>> BTW, I have patch made some month ago...
+>>>>>
+>>>>> In order to detect nat_bits disabling, could we introduce one more flag for
+>>>>> fsck?
+>>>>
+>>>> Do we have a way to enable nat_bits very quickly in fsck?
+>>>
+>>> For image with SBI_NATBIT_NEED_REPAIR flag, can we just check metadata and
+>>> rebuild nat_bits based on verified nat blocks/journals?
+>>
+>> I'm leaning to rely on full scan to enable nat_bits again. We may add a mount
+>> count or timer to trigger fsck regularly?
+> 
+> I'm afraid regular full fsck would give us bad experience of booting time.
+> FYI, 256GB storage, which is filled with small files, costs almost 10 min
+> to do a full fsck. And it seems larger capacity storages are on the way.
+
+Agreed.
+
+> So, is it worth doing that only to enable nat_bits (plus checking f2fs
+> consistent not that necessarily)?
+
+In android environment, I think it may be too expensive for adding nat_bits
+by triggering full scan by fsck during boot time.
+
+If we can update all nat bitmap in free time after mount, maybe we can
+rebuild nat_bits based on full nat bitmap during umount, which can be
+cheaper than rebuiding in userspace.
+
+Thanks,
+
+> 
+> Thanks
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>>>
+>>>>> >From 86e8bdb2faeec904944bb6621073f4f7de51cc2d Mon Sep 17 00:00:00 2001
+>>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>>> Date: Sun, 9 Sep 2018 05:40:20 +0800
+>>>>> Subject: [PATCH] f2fs: set specified flag after invalidating nat_bits
+>>>>>
+>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>> ---
+>>>>>   fs/f2fs/checkpoint.c    | 12 +++++++++++-
+>>>>>   fs/f2fs/f2fs.h          |  3 ++-
+>>>>>   fs/f2fs/node.c          |  3 +++
+>>>>>   include/linux/f2fs_fs.h |  1 +
+>>>>>   4 files changed, 17 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>>>> index 7e17bb3dfcb1..f7fb14e0f5f9 100644
+>>>>> --- a/fs/f2fs/checkpoint.c
+>>>>> +++ b/fs/f2fs/checkpoint.c
+>>>>> @@ -1226,13 +1226,16 @@ static void update_ckpt_flags(struct f2fs_sb_info
+>>>>> *sbi, struct cp_control *cpc)
+>>>>>   	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
+>>>>>   	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+>>>>>   	unsigned long flags;
+>>>>> +	bool disable_natbits = false;
+>>>>>
+>>>>>   	spin_lock_irqsave(&sbi->cp_lock, flags);
+>>>>>
+>>>>>   	if ((cpc->reason & CP_UMOUNT) &&
+>>>>>   			le32_to_cpu(ckpt->cp_pack_total_block_count) >
+>>>>> -			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
+>>>>> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
+>>>>>   		disable_nat_bits(sbi, false);
+>>>>> +		disable_natbits = true;
+>>>>> +	}
+>>>>>
+>>>>>   	if (cpc->reason & CP_TRIMMED)
+>>>>>   		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
+>>>>> @@ -1270,11 +1273,18 @@ static void update_ckpt_flags(struct f2fs_sb_info
+>>>>> *sbi, struct cp_control *cpc)
+>>>>>   	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+>>>>>   		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>>
+>>>>> +	if (is_sbi_flag_set(sbi, SBI_NATBIT_NEED_REPAIR))
+>>>>> +		__set_ckpt_flags(ckpt, CP_NATBIT_NEED_FSCK_FLAG);
+>>>>> +
+>>>>>   	/* set this flag to activate crc|cp_ver for recovery */
+>>>>>   	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+>>>>>   	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+>>>>>
+>>>>>   	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+>>>>> +
+>>>>> +	if (disable_natbits)
+>>>>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
+>>>>> +			"No enough space in CP area, disable nat_bits.");
+>>>>>   }
+>>>>>
+>>>>>   static void commit_checkpoint(struct f2fs_sb_info *sbi,
+>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>> index f0cedbe0c536..b55341c269b2 100644
+>>>>> --- a/fs/f2fs/f2fs.h
+>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>> @@ -1107,6 +1107,7 @@ enum {
+>>>>>   	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+>>>>>   	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+>>>>>   	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+>>>>> +	SBI_NATBIT_NEED_REPAIR,			/* nat full/empty bitmaps need repair */
+>>>>>   };
+>>>>>
+>>>>>   enum {
+>>>>> @@ -1628,7 +1629,7 @@ static inline void disable_nat_bits(struct
+>>>>> f2fs_sb_info *sbi, bool lock)
+>>>>>   {
+>>>>>   	unsigned long flags;
+>>>>>
+>>>>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>>> +	set_sbi_flag(sbi, SBI_NATBIT_NEED_REPAIR);
+>>>>>
+>>>>>   	if (lock)
+>>>>>   		spin_lock_irqsave(&sbi->cp_lock, flags);
+>>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>>>>> index e57add1e8966..0c6f8312a087 100644
+>>>>> --- a/fs/f2fs/node.c
+>>>>> +++ b/fs/f2fs/node.c
+>>>>> @@ -2902,6 +2902,9 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+>>>>>
+>>>>>   	cp_ver |= (cur_cp_crc(ckpt) << 32);
+>>>>>   	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
+>>>>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
+>>>>> +			"Disable nat_bits due to incorrect cp_ver (%llu, %llu)",
+>>>>> +			cp_ver, le64_to_cpu(*(__le64 *)nm_i->nat_bits));
+>>>>>   		disable_nat_bits(sbi, true);
+>>>>>   		return 0;
+>>>>>   	}
+>>>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>>>>> index 7196653833fa..1f3ae1504573 100644
+>>>>> --- a/include/linux/f2fs_fs.h
+>>>>> +++ b/include/linux/f2fs_fs.h
+>>>>> @@ -117,6 +117,7 @@ struct f2fs_super_block {
+>>>>>   /*
+>>>>>    * For checkpoint
+>>>>>    */
+>>>>> +#define CP_NATBIT_NEED_FSCK_FLAG	0X00002000
+>>>>>   #define CP_DISABLED_FLAG		0x00001000
+>>>>>   #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+>>>>>   #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+>>>>> -- 
+>>>>> 2.18.0.rc1
+>>>>>
+>>>>>
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>> ---
+>>>>>>   fs/f2fs/f2fs.h | 6 +++++-
+>>>>>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>> index c28a9d1cb278..aa500239baf2 100644
+>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>> @@ -1621,7 +1621,11 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
+>>>>>>   {
+>>>>>>   	unsigned long flags;
+>>>>>>   
+>>>>>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>>>> +	/*
+>>>>>> +	 * In order to re-enable nat_bits we need to call fsck.f2fs by
+>>>>>> +	 * set_sbi_flag(sbi, SBI_NEED_FSCK). But it may give huge cost,
+>>>>>> +	 * so let's rely on regular fsck or unclean shutdown.
+>>>>>> +	 */
+>>>>>>   
+>>>>>>   	if (lock)
+>>>>>>   		spin_lock_irqsave(&sbi->cp_lock, flags);
+>>>>>>
+>>>>
+>>>> .
+>>>>
+>>
+>>
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
+
