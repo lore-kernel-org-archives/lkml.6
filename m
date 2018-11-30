@@ -2,146 +2,92 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA03C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58E2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7FFA20867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:19:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZCNC4k5w";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T2nzPXhy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7FFA20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A4D5720834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:19:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4D5720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbeLAF3b (ORCPT
+        id S1726593AbeLAF34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:29:31 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37830 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725754AbeLAF3b (ORCPT
+        Sat, 1 Dec 2018 00:29:56 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36226 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725754AbeLAF34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:29:31 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 29F5060B13; Fri, 30 Nov 2018 18:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543601963;
-        bh=smBoCsiIiy8PAWOULwRH82fVryuhvNoMF/mFvis5m8k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZCNC4k5wnimL4cS92fwO0bpRTMrD6TFNGg6k9nLvvWqPjMkIxDvQbvLm9iu2QjpK1
-         nxdGmQlfIvBwOwIqk+3reGKcY7KgYPX7ixxJdXiiUVw/Ai7Qt7YSwRFSkkCyrtMrGg
-         Pk9LcH8pfaEsmwVdgjRsQoApkpn4DA2XwVPSXAYg=
-Received: from [192.168.225.247] (unknown [49.33.181.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 25FC76021A;
-        Fri, 30 Nov 2018 18:19:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543601962;
-        bh=smBoCsiIiy8PAWOULwRH82fVryuhvNoMF/mFvis5m8k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=T2nzPXhyWwMAzygX0DBZoY2NNwalR1MwjBZo8Y4hh6lcBkDZ6Up+w1XstHcDkb17s
-         wxEv2MxnUMw2OYHU6Z6XsOTs7iVtfbSoiwEb219CzPq+cRXEPhjOwAyVvX1jSXsWZH
-         eh8KTJCbi95+sSRE5CjhZa58XdpyScR1CS4uGfoI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25FC76021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v10 3/3] clk: qcom: Add lpass clock controller driver for
- SDM845
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org
-References: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
- <1542873221-13693-4-git-send-email-tdas@codeaurora.org>
- <154343944180.88331.8662440760190505722@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <700cd5de-d826-4315-d879-d2ae7ed08262@codeaurora.org>
-Date:   Fri, 30 Nov 2018 23:49:15 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 1 Dec 2018 00:29:56 -0500
+Received: by mail-pg1-f194.google.com with SMTP id n2so2847573pgm.3;
+        Fri, 30 Nov 2018 10:19:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1WqnWyUidrdmKZlFoULb0ASi02Ebvxr7V6EWBACfkz8=;
+        b=Iz9YjwYxeqiKJXtMIAS7pDvflIzlyhx/tfc1gw4Ktsak52gFfGHTlq9vjBHKmvjLVt
+         n3uET5tiM50l4RmDu3Us7I7wRa7Rap6WvyO64sJzERTQqXjje/Ure+eeEBYhIOcAJqrm
+         plqi6x5KHH+OQDBYhHou9CWJtXxi33PHzYhXIHHH3qM/L+PjnK+7ETcrcgPFmi8aMgmD
+         oyotOp7LLkl99cDJqYUFurzQWkbzzxsrUoSCJvhpaFcP49RW34asUsvN0KdbaZbRN3M9
+         8jDPWaBpptoRJKFBstlNf813eEA0dWK+EEEuVoZdqoBeRkz9yAV98iQmYvAESmYjefRr
+         KoTQ==
+X-Gm-Message-State: AA+aEWbu2/218bpB4hvxTbciD0Mtcfbnd+eVejpnimtmE40SsqlEJVRQ
+        EVNiVxsAemOglWuoY+EkfTY=
+X-Google-Smtp-Source: AFSGD/XU6zeyyZZxWfBrdFvtbuJQ3O48h6Oz64QFF3nucU+NlEoUiZMD5V/+kknK01UwtdhMwGMfgw==
+X-Received: by 2002:a62:ca05:: with SMTP id n5mr6624873pfg.154.1543601988115;
+        Fri, 30 Nov 2018 10:19:48 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id q195sm5822062pgq.7.2018.11.30.10.19.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 10:19:46 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Fri, 30 Nov 2018 10:19:43 -0800
+Date:   Fri, 30 Nov 2018 10:19:43 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Radoslaw Burny <rburny@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jsperbeck@google.com
+Subject: Re: [PATCH] fs: Make /proc/sys inodes be owned by global root.
+Message-ID: <20181130181943.GR18410@garbanzo.do-not-panic.com>
+References: <20181126172607.125782-1-rburny@google.com>
+ <20181127011627.GI4922@garbanzo.do-not-panic.com>
+ <87k1kzjdff.fsf@xmission.com>
+ <20181130010928.GM4922@garbanzo.do-not-panic.com>
+ <87k1ku39lg.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <154343944180.88331.8662440760190505722@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1ku39lg.fsf@xmission.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
-
-On 11/29/2018 2:40 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-11-21 23:53:41)
->> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->> index f133b7f..ba8ff99 100644
->> --- a/drivers/clk/qcom/gcc-sdm845.c
->> +++ b/drivers/clk/qcom/gcc-sdm845.c
->> @@ -3153,6 +3153,34 @@ enum {
->>          },
->>   };
->>
->> +static struct clk_branch gcc_lpass_q6_axi_clk = {
->> +       .halt_reg = 0x47000,
->> +       .halt_check = BRANCH_HALT,
->> +       .clkr = {
->> +               .enable_reg = 0x47000,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "gcc_lpass_q6_axi_clk",
->> +                       .flags = CLK_IS_CRITICAL,
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch gcc_lpass_sway_clk = {
->> +       .halt_reg = 0x47008,
->> +       .halt_check = BRANCH_HALT,
->> +       .clkr = {
->> +               .enable_reg = 0x47008,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "gcc_lpass_sway_clk",
->> +                       .flags = CLK_IS_CRITICAL,
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->>   static struct gdsc pcie_0_gdsc = {
->>          .gdscr = 0x6b004,
->>          .pd = {
->> @@ -3453,6 +3481,8 @@ enum {
->>          [GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
->>          [GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
->>          [GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
->> +       [GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
->> +       [GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
+On Fri, Nov 30, 2018 at 08:48:11AM -0600, Eric W. Biederman wrote:
+> Luis Chamberlain <mcgrof@kernel.org> writes:
 > 
-> I have one single idea to avoid the integration nightmare with dts
-> needing another update for this on platforms where these can't be
-> touched. It's not perfect, but we can throw these clks and usage of the
-> clks behind an #ifdef CONFIG_SDM_LPASSCC_845 and then let the dts parts
-> match up with the clk driver parts in linux-next. After everything is
-> merged together, someone can turn on the knobs for LPASS clk controller
-> and make sure they have the right dts bits to mark them as protected.
+> > The logic seems sensible then, but are we implicating what a container
+> > does with its sysctl values onto the entire system? If so, sure, it
+> > seems you want this for networking purposes as there are a series of
+> > sysctl values a container may want to muck with, but are we sure we
+> > want the same for *all* sysctl entries?
 > 
+> No.  Please look at the patch again.  It sets the default uid and gid
+> for sysctl entries to 0.  AKA GLOBAL_ROOT_UID and GLOBAL_ROOT_GID
+> because there is a bug and they were not set to that value.
+> 
+> Those are the uids and gids that are tested agasint.  It just happens
+> you have to be in a weird configuration for this bug to become a problem.
 
-Sure, would keep it under the ifdefer and would clean it up later.
+Thanks, then provided the commit lot is modified:
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 
---
+  Luis
