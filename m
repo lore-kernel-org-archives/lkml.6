@@ -2,152 +2,119 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56B7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4FDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A13C120863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:24:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A13C120863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EEE622145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:26:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE622145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbeLAJfj (ORCPT
+        id S1727011AbeLAJgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:35:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39282 "EHLO mx1.redhat.com"
+        Sat, 1 Dec 2018 04:36:54 -0500
+Received: from mga17.intel.com ([192.55.52.151]:28702 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726702AbeLAJfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:35:38 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 990333002509;
-        Fri, 30 Nov 2018 22:24:51 +0000 (UTC)
-Received: from treble (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6328B19C7D;
-        Fri, 30 Nov 2018 22:24:49 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 16:24:47 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181130222447.u5yxnsvxg7zqibie@treble>
-References: <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com>
- <20181129124404.2fe55dd0@gandalf.local.home>
- <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
- <20181129125857.75c55b96@gandalf.local.home>
- <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
- <20181129134725.6d86ade6@gandalf.local.home>
- <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
- <20181129141648.6ef944a9@gandalf.local.home>
- <20181129192211.ndzj2ltzx5t6x2qe@treble>
- <eb15f2dd-92f3-423d-e22f-3d1528fb7b6e@rasmusvillemoes.dk>
+        id S1725867AbeLAJgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:36:54 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 14:26:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
+   d="scan'208";a="294225326"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
+  by fmsmga006.fm.intel.com with ESMTP; 30 Nov 2018 14:26:05 -0800
+Date:   Fri, 30 Nov 2018 14:26:05 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Axtens <dja@axtens.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Eric Dumazet <edumazet@google.com>, federico.vaga@vaga.pv.it,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Helge Deller <deller@gmx.de>, Joshua Kinard <kumba@gentoo.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        Linux mtd <linux-mtd@lists.infradead.org>,
+        linux-parisc <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
+        Network Development <netdev@vger.kernel.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rob Herring <robh@kernel.org>,
+        sean.wang@mediatek.com,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        shannon.nelson@oracle.com, Stefano Brivio <sbrivio@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Tobin C. Harding" <me@tobin.cc>, makita.toshiaki@lab.ntt.co.jp,
+        Willem de Bruijn <willemb@google.com>,
+        Yonghong Song <yhs@fb.com>, yanjun.zhu@oracle.com
+Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
+Message-ID: <20181130222605.GA26261@linux.intel.com>
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+ <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
+ <20181130195652.7syqys76646kpaph@linux-r8p5>
+ <20181130205521.GA21006@linux.intel.com>
+ <1543611662.3031.20.camel@HansenPartnership.com>
+ <20181130214405.GG23772@linux.intel.com>
+ <1543615069.3031.27.camel@HansenPartnership.com>
+ <20181130221219.GA25537@linux.intel.com>
+ <20181130151459.3ca2f5c8@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eb15f2dd-92f3-423d-e22f-3d1528fb7b6e@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 30 Nov 2018 22:24:52 +0000 (UTC)
+In-Reply-To: <20181130151459.3ca2f5c8@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:16:34PM +0100, Rasmus Villemoes wrote:
-> On 29/11/2018 20.22, Josh Poimboeuf wrote:
-> > On Thu, Nov 29, 2018 at 02:16:48PM -0500, Steven Rostedt wrote:
-> >>> and honestly, the way "static_call()" works now, can you guarantee
-> >>> that the call-site doesn't end up doing that, and calling the
-> >>> trampoline function for two different static calls from one indirect
-> >>> call?
-> >>>
-> >>> See what I'm talking about? Saying "callers are wrapped in macros"
-> >>> doesn't actually protect you from the compiler doing things like that.
-> >>>
-> >>> In contrast, if the call was wrapped in an inline asm, we'd *know* the
-> >>> compiler couldn't turn a "call wrapper(%rip)" into anything else.
-> >>
-> >> But then we need to implement all numbers of parameters.
-> > 
-> > I actually have an old unfinished patch which (ab)used C macros to
-> > detect the number of parameters and then setup the asm constraints
-> > accordingly.  At the time, the goal was to optimize the BUG code.
-> > 
-> > I had wanted to avoid this kind of approach for static calls, because
-> > "ugh", but now it's starting to look much more appealing.
-> > 
-> > Behold:
-> > 
-> > diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-> > index aa6b2023d8f8..d63e9240da77 100644
-> > --- a/arch/x86/include/asm/bug.h
-> > +++ b/arch/x86/include/asm/bug.h
-> > @@ -32,10 +32,59 @@
-> >  
-> >  #ifdef CONFIG_DEBUG_BUGVERBOSE
-> >  
-> > -#define _BUG_FLAGS(ins, flags)						\
-> > +#define __BUG_ARGS_0(ins, ...) \
-> > +({\
-> > +	asm volatile("1:\t" ins "\n"); \
-> > +})
-> > +#define __BUG_ARGS_1(ins, ...) \
-> > +({\
-> > +	asm volatile("1:\t" ins "\n" \
-> > +		     : : "D" (ARG1(__VA_ARGS__))); \
-> > +})
-> > +#define __BUG_ARGS_2(ins, ...) \
-> > +({\
-> > +	asm volatile("1:\t" ins "\n" \
-> > +		     : : "D" (ARG1(__VA_ARGS__)), \
-> > +			 "S" (ARG2(__VA_ARGS__))); \
-> > +})
-> > +#define __BUG_ARGS_3(ins, ...) \
-> > +({\
-> > +	asm volatile("1:\t" ins "\n" \
-> > +		     : : "D" (ARG1(__VA_ARGS__)), \
-> > +			 "S" (ARG2(__VA_ARGS__)), \
-> > +			 "d" (ARG3(__VA_ARGS__))); \
-> > +})
+On Fri, Nov 30, 2018 at 03:14:59PM -0700, Jonathan Corbet wrote:
+> On Fri, 30 Nov 2018 14:12:19 -0800
+> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
 > 
-> wouldn't you need to tie all these to (unused) outputs as well as adding
-> the remaining caller-saved registers to the clobber list? Maybe not for
-> the WARN machinery(?), but at least for stuff that should look like a
-> normal call to gcc? Then there's %rax which is either a clobber or an
-> output, and if there's not to be a separate static_call_void(), one
-> would need to do some __builtin_choose_expr(__same_type(void, f(...)), ...).
+> > As a maintainer myself (and based on somewhat disturbed feedback from
+> > other maintainers) I can only make the conclusion that nobody knows what
+> > the responsibility part here means.
+> > 
+> > I would interpret, if I read it like at lawyer at least, that even for
+> > existing code you would need to do the changes postmorterm.
+> > 
+> > Is this wrong interpretation?  Should I conclude that I made a mistake
+> > by reading the CoC and trying to understand what it *actually* says?
+> > After this discussion, I can say that I understand it less than before.
+> 
+> Have you read Documentation/process/code-of-conduct-interpretation.rst?
+> As has been pointed out, it contains a clear answer to how things should
+> be interpreted here.
 
-Yes, this is a crappy unfinished patch.  It should be ignored, and
-perhaps even mercilessly mocked :-)
+Ugh, was not aware that there two documents.
 
-paravirt_types.h already does something similar today, and it's at least
-more correct than this.
+Yeah, definitely sheds light. Why the documents could not be merged to
+single common sense code of conduct?
 
-What I was trying to show was that you can use macros to count
-arguments, like this:
-
-  _BUG_ARGS(ins, NUM_ARGS(__VA_ARGS__), __VA_ARGS__);
-
-which can make a macro look and act like a function call.  Though as
-Steven pointed out, the concept falls apart after 6 arguments.
-
--- 
-Josh
+/Jarkko
