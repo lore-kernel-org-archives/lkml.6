@@ -2,144 +2,109 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FB8C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11A2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247D42146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DDC12146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:10:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dteVGgIS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247D42146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="oomGLXdX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDC12146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbeK3URl (ORCPT
+        id S1726564AbeK3UTK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:17:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbeK3URl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:17:41 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 384BD20868;
-        Fri, 30 Nov 2018 09:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543568942;
-        bh=c4z90kPgWBsUx4oXIOj7WmhJSMKbWcc9L+/YrgUV8Aw=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=dteVGgIS93aRuEtZ8dwFG6HMPIaYdQhz1BNT7FKtwuJVZA/JLYFnbqR39Fo7k1u8U
-         dIOv4VQImvxFn8WCEOoeL2mE6hRkt3njIa6qaXrD0s1/WjP+K2squu0QZVomPvpjNA
-         vIEdCHyp0CLpKVOpadFV4OlxtiTAnl9VqLEUHugo=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 30 Nov 2018 15:19:10 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11111 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbeK3UTK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:19:10 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c00fe890000>; Fri, 30 Nov 2018 01:10:33 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 30 Nov 2018 01:10:31 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 30 Nov 2018 01:10:31 -0800
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Nov
+ 2018 09:10:29 +0000
+Subject: Re: [PATCH 4.9 00/92] 4.9.142-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181129140106.520639693@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <cef73be8-b2d1-dda1-ff57-d39fd15baa03@nvidia.com>
+Date:   Fri, 30 Nov 2018 09:10:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Russell King <linux@armlinux.org.uk>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181120141445.21378-1-phil.edworthy@renesas.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-References: <20181120141445.21378-1-phil.edworthy@renesas.com>
-Message-ID: <154356894146.88331.4169293505438588293@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v8] clk: Add (devm_)clk_get_optional() functions
-Date:   Fri, 30 Nov 2018 01:09:01 -0800
+In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543569033; bh=72pb9hw/08LXV0blEyYZFBu8sQZ8Tk4biTBEAg7UJT8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=oomGLXdX5AHvz7TfO/RLkP4YoVZPvj9MRYVWe/DND78F4eRaBG7sWCXKn/ah/RtLf
+         ulBVNgtCXFOmKrWm6RavRBTuNKjab51Cawxgh4UBp8hUQQisuLj2qH19Bk5e5ngUIQ
+         3JJPFdVi80aVKt7iTN/5gL1KVB54Vy8trrD/OPD84AH+VRs1g7vmjdcf+772H7pi6v
+         OQW5lWspVSb0Iuiv49qeF1C2KPVk/aq5yCpUS0731LsA8XVTWi5jrnoGNujBQLvK4q
+         Yh7pZqRXKF5bRm4Ad3okRjJLcMWJrcxE8o1G/WUepQGtuOG8jLSDMT2gcXUFZ/PiXc
+         VSN9k59qDoHvA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Phil Edworthy (2018-11-20 06:14:45)
-> This adds clk_get_optional() and devm_clk_get_optional() functions to get
-> optional clocks.
-> They behave the same as (devm_)clk_get except where there is no clock
-> producer. In this case, instead of returning -ENOENT, the function
-> returns NULL. This makes error checking simpler and allows
-> clk_prepare_enable, etc to be called on the returned reference
-> without additional checks.
 
-Ok. I guess that works by virtue of how -ENOENT is returned by various
-functions that are called deeper in the clk_get() path? I'm cautiously
-optimistic. So cautious, we should probably add a comment to these
-optional functions that indicate they rely on the functions they call to
-return -ENOENT under the various conditions that make a clk optional.
+On 29/11/2018 14:11, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.142 release.
+> There are 92 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Dec  1 14:00:37 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.142-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-> =
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index a7773b5c0b9f..3ea3c78f62dd 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -383,6 +383,17 @@ int __must_check devm_clk_bulk_get_all(struct device=
- *dev,
->   */
->  struct clk *devm_clk_get(struct device *dev, const char *id);
->  =
+Linux version:	4.9.142-rc1-gf46aebe
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-> +/**
-> + * devm_clk_get_optional - lookup and obtain a managed reference to an o=
-ptional
-> + *                        clock producer.
-> + * @dev: device for clock "consumer"
-> + * @id: clock consumer ID
-> + *
-> + * Behaves the same as devm_clk_get except where there is no clock produ=
-cer. In
+Cheers
+Jon
 
-Please add () around devm_clk_get() so we know it's a function.
-
-> + * this case, instead of returning -ENOENT, the function returns NULL.
-> + */
-> +struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-> +
->  /**
->   * devm_get_clk_from_child - lookup and obtain a managed reference to a
->   *                          clock producer from child node.
-> @@ -718,6 +729,12 @@ static inline struct clk *devm_clk_get(struct device=
- *dev, const char *id)
->         return NULL;
->  }
->  =
-
-> +static inline struct clk *devm_clk_get_optional(struct device *dev,
-> +                                               const char *id)
-> +{
-> +       return NULL;
-> +}
-> +
->  static inline int __must_check devm_clk_bulk_get(struct device *dev, int=
- num_clks,
->                                                  struct clk_bulk_data *cl=
-ks)
->  {
-> @@ -862,6 +879,16 @@ static inline void clk_bulk_disable_unprepare(int nu=
-m_clks,
->         clk_bulk_unprepare(num_clks, clks);
->  }
->  =
-
-> +static inline struct clk *clk_get_optional(struct device *dev, const cha=
-r *id)
-
-Any kernel doc for this function?
-
-> +{
-> +       struct clk *clk =3D clk_get(dev, id);
-> +
-> +       if (clk =3D=3D ERR_PTR(-ENOENT))
-> +               clk =3D NULL;
-> +
-> +       return clk;
-> +}
-> +
+-- 
+nvpublic
