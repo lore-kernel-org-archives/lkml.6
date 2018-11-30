@@ -2,208 +2,180 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B28F3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 514BA2081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:29:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514BA2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 5682A213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:30:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5682A213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbeK3NhL (ORCPT
+        id S1727147AbeK3Nhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:37:11 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:35406 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726161AbeK3NhL (ORCPT
+        Fri, 30 Nov 2018 08:37:54 -0500
+Received: from p3plsmtpa11-10.prod.phx3.secureserver.net ([68.178.252.111]:49392
+        "EHLO p3plsmtpa11-10.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726161AbeK3Nhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:37:11 -0500
-X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
-   d="scan'208";a="48852784"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 30 Nov 2018 10:29:29 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 11F114B734C6;
-        Fri, 30 Nov 2018 10:29:29 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 30 Nov 2018 10:29:30 +0800
-Date:   Fri, 30 Nov 2018 10:29:14 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdline from KEXEC
-Message-ID: <20181130022914.GA30941@localhost.localdomain>
-References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
- <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
- <20181129162012.hcknuu256trdwnfc@gabell>
+        Fri, 30 Nov 2018 08:37:54 -0500
+Received: from [192.168.0.55] ([24.218.182.144])
+        by :SMTPAUTH: with ESMTPSA
+        id SYZIg7le3I3uvSYZJgXKIo; Thu, 29 Nov 2018 19:30:13 -0700
+Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
+To:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
+        linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20181110085041.10071-1-jhubbard@nvidia.com>
+ <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
+ <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
+ <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
+ <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
+ <15e4a0c0-cadd-e549-962f-8d9aa9fc033a@talpey.com>
+ <313bf82d-cdeb-8c75-3772-7a124ecdfbd5@nvidia.com>
+ <2aa422df-d5df-5ddb-a2e4-c5e5283653b5@talpey.com>
+ <7a68b7fc-ff9d-381e-2444-909c9c2f6679@nvidia.com>
+ <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
+ <0f093af1-dee9-51b6-0795-2c073a951fed@nvidia.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <c64387d6-c51d-185a-d2a4-1fedcdac0abe@talpey.com>
+Date:   Thu, 29 Nov 2018 21:30:13 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181129162012.hcknuu256trdwnfc@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 11F114B734C6.AB9DF
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <0f093af1-dee9-51b6-0795-2c073a951fed@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfNaOIwP2vQj/MxmiXnbiroz7GQX/UEECTv0N/Y5bI3RiqS1Uft6t8WCgppystTqS9LxJzwGn0vo+rU3GtniNq0NoNirVswjKA4WbHReqyh9wVE+rGMjU
+ PWLf6Du7dcKlHdVTms+5zB+fLtcV3bF2xFTnEl2vOPg0ao0jAMluS609A4uCbm4gbAYsvR4UhGicgJJXkBCxmtnG6iOaACd6bxIeiwJCIfkWgJUE/d1IJFzz
+ p1B55ke78tJRnvuMVAaEVvGQi9OJ2L/EeL360yfe71t8bbfICO6deuhiaZp51f1VNJDIdixE6nT3y4yzZvRf3LbM2iw3xKK5+XOlkT0UrvzbjSUCIVPD0GOK
+ oQrXY6ZkCnzyedh6t/ZOgJ5lhvg4UdAz7mUSKOSglST0EHhE5/4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 11:20:13AM -0500, Masayoshi Mizuma wrote:
->On Thu, Nov 29, 2018 at 04:16:27PM +0800, Chao Fan wrote:
->> To fix the conflict between KASLR and memory-hotremove, memory
->> information in SRAT table is necessary.
->> 
->> ACPI SRAT (System/Static Resource Affinity Table) can show the details
->> about memory ranges, including ranges of memory provided by hot-added
->> memory devices. SRAT table must be introduced by RSDP pointer (Root
->> System Description Pointer). So RSDP should be found firstly.
->> 
->> When booting form KEXEC/EFI/BIOS, the methods to find RSDP pointer
->> are different. When booting from KEXEC, 'acpi_rsdp' may have been
->> added to cmdline, so parse the cmdline and find the RSDP pointer.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/acpitb.c | 33 +++++++++++++++++++++++++++++++
->>  arch/x86/boot/compressed/misc.c   |  5 +++++
->>  arch/x86/boot/compressed/misc.h   |  4 ++++
->>  lib/kstrtox.c                     |  5 +++++
->>  4 files changed, 47 insertions(+)
->>  create mode 100644 arch/x86/boot/compressed/acpitb.c
->> 
->> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
->> new file mode 100644
->> index 000000000000..614c45655cff
->> --- /dev/null
->> +++ b/arch/x86/boot/compressed/acpitb.c
->> @@ -0,0 +1,33 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +#define BOOT_CTYPE_H
->> +#include "misc.h"
->> +#include "error.h"
->> +
->> +#include <linux/efi.h>
->> +#include <asm/efi.h>
->> +#include <linux/numa.h>
->> +#include <linux/acpi.h>
->> +
->> +#define STATIC
->> +#include <linux/decompress/mm.h>
->> +
->> +/* Store the immovable memory regions. */
->> +struct mem_vector immovable_mem[MAX_NUMNODES*2];
->> +#endif
->> +
->> +static acpi_physical_address get_acpi_rsdp(void)
->> +{
->> +#ifdef CONFIG_KEXEC
->> +	unsigned long long res;
->> +	int len = 0;
->
->> +	char *val;
->> +
->> +	val = malloc(19);
->> +	len = cmdline_find_option("acpi_rsdp", val, 19);
->> +	if (len > 0) {
->> +		val[len] = 0;
->
->		val[len] = '\0';
->
->> +		return (acpi_physical_address)kstrtoull(val, 16, &res);
->> +	}
->
->I think free() is needed. Or why don't you use stack?
+On 11/29/2018 9:21 PM, John Hubbard wrote:
+> On 11/29/18 6:18 PM, Tom Talpey wrote:
+>> On 11/29/2018 8:39 PM, John Hubbard wrote:
+>>> On 11/28/18 5:59 AM, Tom Talpey wrote:
+>>>> On 11/27/2018 9:52 PM, John Hubbard wrote:
+>>>>> On 11/27/18 5:21 PM, Tom Talpey wrote:
+>>>>>> On 11/21/2018 5:06 PM, John Hubbard wrote:
+>>>>>>> On 11/21/18 8:49 AM, Tom Talpey wrote:
+>>>>>>>> On 11/21/2018 1:09 AM, John Hubbard wrote:
+>>>>>>>>> On 11/19/18 10:57 AM, Tom Talpey wrote:
+>>>>> [...]
+>>>>>> I'm super-limited here this week hardware-wise and have not been able
+>>>>>> to try testing with the patched kernel.
+>>>>>>
+>>>>>> I was able to compare my earlier quick test with a Bionic 4.15 kernel
+>>>>>> (400K IOPS) against a similar 4.20rc3 kernel, and the rate dropped to
+>>>>>> ~_375K_ IOPS. Which I found perhaps troubling. But it was only a quick
+>>>>>> test, and without your change.
+>>>>>>
+>>>>>
+>>>>> So just to double check (again): you are running fio with these parameters,
+>>>>> right?
+>>>>>
+>>>>> [reader]
+>>>>> direct=1
+>>>>> ioengine=libaio
+>>>>> blocksize=4096
+>>>>> size=1g
+>>>>> numjobs=1
+>>>>> rw=read
+>>>>> iodepth=64
+>>>>
+>>>> Correct, I copy/pasted these directly. I also ran with size=10g because
+>>>> the 1g provides a really small sample set.
+>>>>
+>>>> There was one other difference, your results indicated fio 3.3 was used.
+>>>> My Bionic install has fio 3.1. I don't find that relevant because our
+>>>> goal is to compare before/after, which I haven't done yet.
+>>>>
+>>>
+>>> OK, the 50 MB/s was due to my particular .config. I had some expensive debug options
+>>> set in mm, fs and locking subsystems. Turning those off, I'm back up to the rated
+>>> speed of the Samsung NVMe device, so now we should have a clearer picture of the
+>>> performance that real users will see.
+>>
+>> Oh, good! I'm especially glad because I was having a heck of a time
+>> reconfiguring the one machine I have available for this.
+>>
+>>> Continuing on, then: running a before and after test, I don't see any significant
+>>> difference in the fio results:
+>>
+>> Excerpting from below:
+>>
+>>> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
+>>>       read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
+>>>      cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
+>>
+>> vs
+>>
+>>> With patches applied:
+>>>       read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
+>>>      cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
+>>
+>> Perfect results, not CPU limited, and full IOPS.
+>>
+>> Curiously identical, so I trust you've checked that you measured
+>> both targets, but if so, I say it's good.
+>>
+> 
+> Argh, copy-paste error in the email. The real "before" is ever so slightly
+> better, at 194K IOPS and 759 MB/s:
 
-Oh, thanks, will change it
-char val[19];
+Definitely better - note the system CPU is lower, which is probably the
+reason for the increased IOPS.
 
-Thanks,
-Chao Fan
->
->	char val[19];
->
->	len = cmdline_find_option("acpi_rsdp", val, sizeof(val));
->	if (len > 0) {
->		val[len] = '\0';
->		return (acpi_physical_address)kstrtoull(val, 16, &res);
->	}
->
->Thanks,
->Masa
->
->> +	return 0;
->> +#endif
->> +}
->> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
->> index 8dd1d5ccae58..e51713fe3add 100644
->> --- a/arch/x86/boot/compressed/misc.c
->> +++ b/arch/x86/boot/compressed/misc.c
->> @@ -12,6 +12,7 @@
->>   * High loaded stuff by Hans Lermen & Werner Almesberger, Feb. 1996
->>   */
->>  
->> +#define BOOT_CTYPE_H
->>  #include "misc.h"
->>  #include "error.h"
->>  #include "pgtable.h"
->> @@ -426,3 +427,7 @@ void fortify_panic(const char *name)
->>  {
->>  	error("detected buffer overflow");
->>  }
->> +
->> +#ifdef BOOT_STRING
->> +#include "../../../../lib/kstrtox.c"
->> +#endif
->> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
->> index a1d5918765f3..809c31effa4b 100644
->> --- a/arch/x86/boot/compressed/misc.h
->> +++ b/arch/x86/boot/compressed/misc.h
->> @@ -116,3 +116,7 @@ static inline void console_init(void)
->>  void set_sev_encryption_mask(void);
->>  
->>  #endif
->> +
->> +/* acpitb.c */
->> +#define BOOT_STRING
->> +extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
->> diff --git a/lib/kstrtox.c b/lib/kstrtox.c
->> index 1006bf70bf74..a0ac1b2257b8 100644
->> --- a/lib/kstrtox.c
->> +++ b/lib/kstrtox.c
->> @@ -126,6 +126,9 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
->>  }
->>  EXPORT_SYMBOL(kstrtoull);
->>  
->> +/* Make compressed period code be able to use kstrtoull(). */
->> +#ifndef BOOT_STRING
->> +
->>  /**
->>   * kstrtoll - convert a string to a long long
->>   * @s: The start of the string. The string must be null-terminated, and may also
->> @@ -408,3 +411,5 @@ kstrto_from_user(kstrtou16_from_user,	kstrtou16,	u16);
->>  kstrto_from_user(kstrtos16_from_user,	kstrtos16,	s16);
->>  kstrto_from_user(kstrtou8_from_user,	kstrtou8,	u8);
->>  kstrto_from_user(kstrtos8_from_user,	kstrtos8,	s8);
->> +
->> +#endif /* BOOT_STRING */
->> -- 
->> 2.19.1
->> 
->> 
->> 
->
->
+ >    cpu          : usr=18.24%, sys=44.77%, ctx=251527, majf=0, minf=73
+
+Good result - a correct implementation, and faster.
+
+Tom.
 
 
+> 
+>   $ fio ./experimental-fio.conf
+> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
+> fio-3.3
+> Starting 1 process
+> Jobs: 1 (f=1)
+> reader: (groupid=0, jobs=1): err= 0: pid=1715: Thu Nov 29 17:07:09 2018
+>     read: IOPS=194k, BW=759MiB/s (795MB/s)(1024MiB/1350msec)
+>      slat (nsec): min=1245, max=2812.7k, avg=1538.03, stdev=5519.61
+>      clat (usec): min=148, max=755, avg=326.85, stdev=18.13
+>       lat (usec): min=150, max=3483, avg=328.41, stdev=19.53
+>      clat percentiles (usec):
+>       |  1.00th=[  322],  5.00th=[  326], 10.00th=[  326], 20.00th=[  326],
+>       | 30.00th=[  326], 40.00th=[  326], 50.00th=[  326], 60.00th=[  326],
+>       | 70.00th=[  326], 80.00th=[  326], 90.00th=[  326], 95.00th=[  326],
+>       | 99.00th=[  355], 99.50th=[  537], 99.90th=[  553], 99.95th=[  553],
+>       | 99.99th=[  619]
+>     bw (  KiB/s): min=767816, max=783096, per=99.84%, avg=775456.00, stdev=10804.59, samples=2
+>     iops        : min=191954, max=195774, avg=193864.00, stdev=2701.15, samples=2
+>    lat (usec)   : 250=0.09%, 500=99.30%, 750=0.61%, 1000=0.01%
+>    cpu          : usr=18.24%, sys=44.77%, ctx=251527, majf=0, minf=73
+>    IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=100.0%
+>       submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+>       complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, >=64=0.0%
+>       issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+>       latency   : target=0, window=0, percentile=100.00%, depth=64
+> 
+> Run status group 0 (all jobs):
+>     READ: bw=759MiB/s (795MB/s), 759MiB/s-759MiB/s (795MB/s-795MB/s), io=1024MiB (1074MB), run=1350-1350msec
+> 
+> Disk stats (read/write):
+>    nvme0n1: ios=222853/0, merge=0/0, ticks=71410/0, in_queue=71935, util=100.00%
+> 
+> thanks,
+> 
