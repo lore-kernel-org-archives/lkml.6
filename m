@@ -2,93 +2,98 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EFEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93849C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E152145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59A622146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:18:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBsAhDLH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E152145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vXWPOtVw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A622146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeLAC2Z (ORCPT
+        id S1727462AbeLAC20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:28:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49896 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 21:28:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S1726564AbeLAC2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Nov 2018 21:28:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFC4D2146D;
-        Fri, 30 Nov 2018 15:18:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B17121473
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 15:18:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543591125;
-        bh=bbVyKOAH0JGHUKe9uMIp+Tvg2TLNJkwDSJcfJm3c6+U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oBsAhDLHwX/eK7kz0Dk0MRR8+ZIB57xkZhOdYL4umtSFWCIlqDLoxY1iWf1yb5/CB
-         CaRgww16f9mdxoXRl8JzR96nmJNrdbyEf7KeEgjt6oet0cntjKd07Y+WEdeW28kRjR
-         kA3Dnkmyvv8coUDNBN2X8M+c/NTJK1hm9x61Hm+g=
-Date:   Fri, 30 Nov 2018 16:18:43 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Julien Thierry <julien.thierry@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 3.18 14/83] ARM: make lookup_processor_type() non-__init
-Message-ID: <20181130151843.GB29005@kroah.com>
-References: <20181129140138.002176596@linuxfoundation.org>
- <20181129140138.869602566@linuxfoundation.org>
- <20181129142817.GW30658@n2100.armlinux.org.uk>
- <20181130151554.GA29005@kroah.com>
+        s=default; t=1543591126;
+        bh=QCW8ckCIFFEcd0zf2KZidZdQjbGAkx/mgX7p6oQzpSE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vXWPOtVw1cCWDc/iwmtqW3yxVxm4UIEk+NqpPh9I+r44Wi1Yq+CokBtErmrUhtjvy
+         INqdBPsZ0mD+JD8NlqFeYZlcq5Mz9Hpohq9yEXhK5u56xbsd4nRiHb3EcSrHnGRKXS
+         HmNCQloXTyDHHEngpusjTkQx1T0EeZDRDMqrwnsA=
+Received: by mail-qt1-f182.google.com with SMTP id v11so6274842qtc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 07:18:46 -0800 (PST)
+X-Gm-Message-State: AA+aEWZnmhE0RYdEbMW6E0h7wTN6Sooz0yuB9nHgrZxAMMlilInSUVUI
+        XrnsNeyKcVMFNJy41GfF0y7wq4MYlr5WaDtNKQ==
+X-Google-Smtp-Source: AFSGD/UJeAX9yfrb/mzIcU++PZZzonDdREYayVLPHmHujQle0jOTWhI7iEiBYo20x4pfg0mcJ51BGgIUWazb+rqbm0U=
+X-Received: by 2002:ac8:1712:: with SMTP id w18mr5017205qtj.76.1543591125348;
+ Fri, 30 Nov 2018 07:18:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130151554.GA29005@kroah.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+References: <1539854253-4784-1-git-send-email-chunyan.zhang@unisoc.com> <20181102183246.r5xxwsic2mxwihsi@localhost>
+In-Reply-To: <20181102183246.r5xxwsic2mxwihsi@localhost>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 30 Nov 2018 09:18:34 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+HFPnzw4Fo3rLRMxber8_itGZ=LjnUeyvvDOt4_txm3g@mail.gmail.com>
+Message-ID: <CAL_Jsq+HFPnzw4Fo3rLRMxber8_itGZ=LjnUeyvvDOt4_txm3g@mail.gmail.com>
+Subject: Re: [GIT PULL] sprd dts for kernel v4.20-rc1
+To:     Olof Johansson <olof@lixom.net>
+Cc:     chunyan.zhang@unisoc.com, Lyra Zhang <zhang.lyra@gmail.com>,
+        ARM-SoC Maintainers <arm@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 04:15:54PM +0100, Greg Kroah-Hartman wrote:
-> On Thu, Nov 29, 2018 at 02:28:18PM +0000, Russell King - ARM Linux wrote:
-> > Hi,
-> > 
-> > As I've already fed back to Sascha about this, this patch on its own
-> > does not fix anything, and is not a stable kernel candidate without
-> > a patch that makes use of it (iow, the spectre fixes.)  It is a
-> > preparatory patch for mainline commit 383fb3ee8024.
-> > 
-> > Every commit in:
-> > 
-> > $ git rev-list v4.16..383fb3ee8024
-> > 
-> > are the ARM spectre fixes, which are being back-ported by David Long.
-> > 
-> > Please do not cherry-pick commits from within this series for _any_
-> > stable kernel, but please wait for David to send you the back-ported
-> > patches.
-> 
-> Ugh, ok, that's a bunch here.
+On Fri, Nov 2, 2018 at 1:50 PM Olof Johansson <olof@lixom.net> wrote:
+>
+> On Thu, Oct 18, 2018 at 05:17:33PM +0800, Chunyan Zhang wrote:
+> > Hi Arnd,
+> >
+> > For 4.20-rc1 there's one patch only for sprd devicetree, please pull from my git tree:
+> >
+> > https://github.com/lyrazhang/linux.git m-v4.19-rc1
+> >
+> > Please let me know if there's some problem.
+> >
+> > Thanks,
+> > Chunyan
+> >
+> > ----------------------------------------------------------------
+> >
+> > Suzuki K Poulose (1):
+> >   arm64: dts: sc9836/sc9860: Update coresight bindings for hardware
+> >     ports
+> >
+> >  arch/arm64/boot/dts/sprd/sc9836.dtsi |  78 +++++++------
+> >  arch/arm64/boot/dts/sprd/sc9860.dtsi | 215 ++++++++++++++++++-----------------
+> >  2 files changed, 151 insertions(+), 142 deletions(-)
+>
+> Hi,
+>
+> This came in right before the merge window so it wasn't included since
+> it's more of a cleanup. Please resend it after -rc1 is out and we'll be
+> happy to queue it up for 4.21.
 
-Ok, not that bad, only 4:
-	383fb3ee8024 ("ARM: spectre-v2: per-CPU vtables to work around big.Little systems")
-	e209950fdd06 ("ARM: add PROC_VTABLE and PROC_TABLE macros")
-	945aceb1db88 ("ARM: clean up per-processor check_bugs method call")
-	899a42f83667 ("ARM: make lookup_processor_type() non-__init")
+I'm enabling by default the DT warnings that this fixes, so please pull it in.
 
-I'll go drop them all from the trees now.  Turns out for 4.14 one of
-these patches broke the build anyway.  Sasha, how did that past your
-builder tests?
-
-thanks,
-
-greg k-h
+Rob
