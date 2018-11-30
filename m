@@ -2,228 +2,125 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82AAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D618C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA3120863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:25:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA3120863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C5C4214DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5C4214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbeK3Udx (ORCPT
+        id S1726789AbeK3UeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:33:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:53036 "EHLO foss.arm.com"
+        Fri, 30 Nov 2018 15:34:14 -0500
+Received: from mx.socionext.com ([202.248.49.38]:19593 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbeK3Udx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:33:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC17115AB;
-        Fri, 30 Nov 2018 01:25:12 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CBCAA3F73F;
-        Fri, 30 Nov 2018 01:25:10 -0800 (PST)
-Subject: Re: [PATCH v6 07/24] arm64: Make PMR part of task context
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org, joel@joelfernandes.org,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        james.morse@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        Dave Martin <Dave.Martin@arm.com>
-References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
- <1542023835-21446-8-git-send-email-julien.thierry@arm.com>
- <20181129164600.ddr2ja5p7vc3qikb@lakrids.cambridge.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <92b85c6c-029d-d1d6-f299-32129c81009e@arm.com>
-Date:   Fri, 30 Nov 2018 09:25:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20181129164600.ddr2ja5p7vc3qikb@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726467AbeK3UeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:34:14 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 30 Nov 2018 18:25:32 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 8C281180B47;
+        Fri, 30 Nov 2018 18:25:32 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 30 Nov 2018 18:25:32 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id CFCFB1A1210;
+        Fri, 30 Nov 2018 18:25:31 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [RFC PATCH net v2] net: phy: Fix the issue that netif always links up after resuming
+Date:   Fri, 30 Nov 2018 18:25:16 +0900
+Message-Id: <1543569916-8714-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Even though the link is down before entering hibernation,
+there is an issue that the network interface always links up after resuming
+from hibernation.
 
+The phydev->state is PHY_READY before enabling the network interface, so
+the link is down. After resuming from hibernation, the phydev->state is
+forcibly set to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
 
-On 29/11/18 16:46, Mark Rutland wrote:
-> On Mon, Nov 12, 2018 at 11:56:58AM +0000, Julien Thierry wrote:
->> If ICC_PMR_EL1 is used to mask interrupts, its value should be
->> saved/restored whenever a task is context switched out/in or
->> gets an exception.
->>
->> Add PMR to the registers to save in the pt_regs struct upon kernel entry,
->> and restore it before ERET. Also, initialize it to a sane value when
->> creating new tasks.
-> 
-> Could you please elaborate on when this matters?
-> 
-> Does this actually matter for context-switch? Can we do that in a
-> pseudo-NMI handler?
-> 
-> Or does this only matter for exception entry/return, and not
-> context-switch?
-> 
+This patch adds a new convenient function to check whether the PHY is in
+a started state, and expects to solve the issue by changing phydev->state
+to PHY_UP and calling phy_start_machine() only when the PHY is started.
 
-Yes, PMR becomes an equivalent of PSR.I and in the same way it will need
-to be saved/restored on exception entry/return (except this is not done
-by the architecture for PMR).
+Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/net/phy/phy.c        |  2 +-
+ drivers/net/phy/phy_device.c |  9 +++++----
+ include/linux/phy.h          | 10 ++++++++++
+ 3 files changed, 16 insertions(+), 5 deletions(-)
 
-It is also necessary when context switching to a task that was preempted
-in exception context (el1_preempt, return from syscall, ...). In the
-same way as spsr_el1.
-
-I'll update the commit message.
-
-Thanks,
-
-Julien
-
-> 
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Dave Martin <Dave.Martin@arm.com>
->> ---
->>  arch/arm64/include/asm/processor.h |  3 +++
->>  arch/arm64/include/asm/ptrace.h    | 14 +++++++++++---
->>  arch/arm64/kernel/asm-offsets.c    |  1 +
->>  arch/arm64/kernel/entry.S          | 13 +++++++++++++
->>  arch/arm64/kernel/process.c        |  6 ++++++
->>  5 files changed, 34 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
->> index 6b0d4df..b2315ef 100644
->> --- a/arch/arm64/include/asm/processor.h
->> +++ b/arch/arm64/include/asm/processor.h
->> @@ -168,6 +168,9 @@ static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
->>  	memset(regs, 0, sizeof(*regs));
->>  	forget_syscall(regs);
->>  	regs->pc = pc;
->> +
->> +	if (system_supports_irq_prio_masking())
->> +		regs->pmr_save = GIC_PRIO_IRQON;
->>  }
->>  
->>  static inline void start_thread(struct pt_regs *regs, unsigned long pc,
->> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
->> index ce6998c..0ad46f5 100644
->> --- a/arch/arm64/include/asm/ptrace.h
->> +++ b/arch/arm64/include/asm/ptrace.h
->> @@ -19,6 +19,8 @@
->>  #ifndef __ASM_PTRACE_H
->>  #define __ASM_PTRACE_H
->>  
->> +#include <asm/cpufeature.h>
->> +
->>  #include <uapi/asm/ptrace.h>
->>  
->>  /* Current Exception Level values, as contained in CurrentEL */
->> @@ -173,7 +175,8 @@ struct pt_regs {
->>  #endif
->>  
->>  	u64 orig_addr_limit;
->> -	u64 unused;	// maintain 16 byte alignment
->> +	/* Only valid when ARM64_HAS_IRQ_PRIO_MASKING is enabled. */
->> +	u64 pmr_save;
->>  	u64 stackframe[2];
->>  };
->>  
->> @@ -208,8 +211,13 @@ static inline void forget_syscall(struct pt_regs *regs)
->>  #define processor_mode(regs) \
->>  	((regs)->pstate & PSR_MODE_MASK)
->>  
->> -#define interrupts_enabled(regs) \
->> -	(!((regs)->pstate & PSR_I_BIT))
->> +#define irqs_priority_unmasked(regs)					\
->> +	(system_supports_irq_prio_masking() ?				\
->> +		(regs)->pmr_save & GIC_PRIO_STATUS_BIT :		\
->> +		true)
->> +
->> +#define interrupts_enabled(regs)			\
->> +	(!((regs)->pstate & PSR_I_BIT) && irqs_priority_unmasked(regs))
->>  
->>  #define fast_interrupts_enabled(regs) \
->>  	(!((regs)->pstate & PSR_F_BIT))
->> diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
->> index 323aeb5..bab4122 100644
->> --- a/arch/arm64/kernel/asm-offsets.c
->> +++ b/arch/arm64/kernel/asm-offsets.c
->> @@ -78,6 +78,7 @@ int main(void)
->>    DEFINE(S_ORIG_X0,		offsetof(struct pt_regs, orig_x0));
->>    DEFINE(S_SYSCALLNO,		offsetof(struct pt_regs, syscallno));
->>    DEFINE(S_ORIG_ADDR_LIMIT,	offsetof(struct pt_regs, orig_addr_limit));
->> +  DEFINE(S_PMR_SAVE,		offsetof(struct pt_regs, pmr_save));
->>    DEFINE(S_STACKFRAME,		offsetof(struct pt_regs, stackframe));
->>    DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
->>    BLANK();
->> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
->> index 039144e..eb8120e 100644
->> --- a/arch/arm64/kernel/entry.S
->> +++ b/arch/arm64/kernel/entry.S
->> @@ -249,6 +249,12 @@ alternative_else_nop_endif
->>  	msr	sp_el0, tsk
->>  	.endif
->>  
->> +	/* Save pmr */
->> +alternative_if ARM64_HAS_IRQ_PRIO_MASKING
->> +	mrs_s	x20, SYS_ICC_PMR_EL1
->> +	str	x20, [sp, #S_PMR_SAVE]
->> +alternative_else_nop_endif
->> +
->>  	/*
->>  	 * Registers that may be useful after this macro is invoked:
->>  	 *
->> @@ -269,6 +275,13 @@ alternative_else_nop_endif
->>  	/* No need to restore UAO, it will be restored from SPSR_EL1 */
->>  	.endif
->>  
->> +	/* Restore pmr */
->> +alternative_if ARM64_HAS_IRQ_PRIO_MASKING
->> +	ldr	x20, [sp, #S_PMR_SAVE]
->> +	msr_s	SYS_ICC_PMR_EL1, x20
->> +	dsb	sy
->> +alternative_else_nop_endif
->> +
->>  	ldp	x21, x22, [sp, #S_PC]		// load ELR, SPSR
->>  	.if	\el == 0
->>  	ct_user_enter
->> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
->> index d9a4c2d..71e8850 100644
->> --- a/arch/arm64/kernel/process.c
->> +++ b/arch/arm64/kernel/process.c
->> @@ -231,6 +231,9 @@ void __show_regs(struct pt_regs *regs)
->>  
->>  	printk("sp : %016llx\n", sp);
->>  
->> +	if (system_supports_irq_prio_masking())
->> +		printk("pmr_save: %08llx\n", regs->pmr_save);
->> +
->>  	i = top_reg;
->>  
->>  	while (i >= 0) {
->> @@ -362,6 +365,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
->>  		if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
->>  			childregs->pstate |= PSR_SSBS_BIT;
->>  
->> +		if (system_supports_irq_prio_masking())
->> +			childregs->pmr_save = GIC_PRIO_IRQON;
->> +
->>  		p->thread.cpu_context.x19 = stack_start;
->>  		p->thread.cpu_context.x20 = stk_sz;
->>  	}
->> -- 
->> 1.9.1
->>
-
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 1d73ac3..f484d03 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -670,7 +670,7 @@ void phy_stop_machine(struct phy_device *phydev)
+ 	cancel_delayed_work_sync(&phydev->state_queue);
+ 
+ 	mutex_lock(&phydev->lock);
+-	if (phydev->state > PHY_UP && phydev->state != PHY_HALTED)
++	if (phy_is_started(phydev))
+ 		phydev->state = PHY_UP;
+ 	mutex_unlock(&phydev->lock);
+ }
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index ab33d17..2c39717 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -309,10 +309,11 @@ static int mdio_bus_phy_restore(struct device *dev)
+ 		return ret;
+ 
+ 	/* The PHY needs to renegotiate. */
+-	phydev->link = 0;
+-	phydev->state = PHY_UP;
+-
+-	phy_start_machine(phydev);
++	if (phy_is_started(phydev)) {
++		phydev->link = 0;
++		phydev->state = PHY_UP;
++		phy_start_machine(phydev);
++	}
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 3ea87f7..c194b45 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -898,6 +898,16 @@ static inline bool phy_is_pseudo_fixed_link(struct phy_device *phydev)
+ }
+ 
+ /**
++ * phy_is_started - Convenience function for testing whether a PHY is in
++ * a started state
++ * @phydev: the phy_device struct
++ */
++static inline bool phy_is_started(struct phy_device *phydev)
++{
++	return phydev->state >= PHY_UP && phydev->state != PHY_HALTED;
++}
++
++/**
+  * phy_write_mmd - Convenience function for writing a register
+  * on an MMD on a given PHY.
+  * @phydev: The phy_device struct
 -- 
-Julien Thierry
+2.7.4
+
