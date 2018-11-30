@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B874C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D69E0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8572146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D8572146D
+	by mail.kernel.org (Postfix) with ESMTP id A640520868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A640520868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeLADuE (ORCPT
+        id S1727609AbeLADuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:50:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53184 "EHLO mx1.redhat.com"
+        Fri, 30 Nov 2018 22:50:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45280 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727195AbeLADuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:50:04 -0500
+        id S1726663AbeLADuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:50:21 -0500
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3ADD9300127F;
-        Fri, 30 Nov 2018 16:40:11 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A4E43D95C;
+        Fri, 30 Nov 2018 16:40:28 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 804BD5EE03;
-        Fri, 30 Nov 2018 16:39:53 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 59BB261530;
+        Fri, 30 Nov 2018 16:40:22 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 1/7] cachefiles: Fix an assertion failure when trying to
- update a failed object
+Subject: [PATCH 2/7] fscache: Fix race in fscache_op_complete() due to split
+ atomic_sub & read
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org
-Cc:     Zhibin Li <zhibli@redhat.com>, dhowells@redhat.com,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 30 Nov 2018 16:39:53 +0000
-Message-ID: <154359599280.18703.15983385548712952353.stgit@warthog.procyon.org.uk>
+Cc:     Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        dhowells@redhat.com, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 30 Nov 2018 16:40:16 +0000
+Message-ID: <154359601645.18703.16410473531194112220.stgit@warthog.procyon.org.uk>
 In-Reply-To: <154359597927.18703.424445427183570230.stgit@warthog.procyon.org.uk>
 References: <154359597927.18703.424445427183570230.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
@@ -50,79 +50,75 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 30 Nov 2018 16:40:11 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 30 Nov 2018 16:40:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If cachefiles gets an error other then ENOENT when trying to look up an
-object in the cache (in this case, EACCES), the object state machine will
-eventually transition to the DROP_OBJECT state.
+From: kiran.modukuri <kiran.modukuri@gmail.com>
 
-This state invokes fscache_drop_object() which tries to sync the auxiliary
-data with the cache (this is done lazily since commit 402cb8dda949d) on an
-incomplete cache object struct.
+The code in fscache_retrieval_complete is using atomic_sub followed by an
+atomic_read:
 
-The problem comes when cachefiles_update_object_xattr() is called to
-rewrite the xattr holding the data.  There's an assertion there that the
-cache object points to a dentry as we're going to update its xattr.  The
-assertion trips, however, as dentry didn't get set.
+        atomic_sub(n_pages, &op->n_pages);
+        if (atomic_read(&op->n_pages) <= 0)
+                fscache_op_complete(&op->op, true);
 
-Fix the problem by skipping the update in cachefiles if the object doesn't
-refer to a dentry.  A better way to do it could be to skip the update from
-the DROP_OBJECT state handler in fscache, but that might deny the cache the
-opportunity to update intermediate state.
+This causes two threads doing a decrement of n_pages to race with each
+other seeing the op->refcount 0 at same time - and they end up calling
+fscache_op_complete() in both the threads leading to an assertion failure.
 
-If this error occurs, the kernel log includes lines that look like the
-following:
+Fix this by using atomic_sub_return_relaxed() instead of two calls.  Note
+that I'm using 'relaxed' rather than, say, 'release' as there aren't
+multiple variables that appear to need ordering across the release.
 
- CacheFiles: Lookup failed error -13
- CacheFiles:
- CacheFiles: Assertion failed
- ------------[ cut here ]------------
- kernel BUG at fs/cachefiles/xattr.c:138!
- ...
- Workqueue: fscache_object fscache_object_work_func [fscache]
- RIP: 0010:cachefiles_update_object_xattr.cold.4+0x18/0x1a [cachefiles]
- ...
- Call Trace:
-  cachefiles_update_object+0xdd/0x1c0 [cachefiles]
-  fscache_update_aux_data+0x23/0x30 [fscache]
-  fscache_drop_object+0x18e/0x1c0 [fscache]
-  fscache_object_work_func+0x74/0x2b0 [fscache]
-  process_one_work+0x18d/0x340
-  worker_thread+0x2e/0x390
-  ? pwq_unbound_release_workfn+0xd0/0xd0
-  kthread+0x112/0x130
-  ? kthread_bind+0x30/0x30
-  ret_from_fork+0x35/0x40
+The oops looks something like:
 
-Note that there are actually two issues here: (1) EACCES happened on a
-cache object and (2) an oops occurred.  I think that the second is a
-consequence of the first (it certainly looks like it ought to be).  This
-patch only deals with the second.
+FS-Cache: Assertion failed
+FS-Cache: 0 > 0 is false
+...
+kernel BUG at /usr/src/linux-4.4.0/fs/fscache/operation.c:449!
+...
+Workqueue: fscache_operation fscache_op_work_func [fscache]
+...
+RIP: 0010:[<ffffffffc037eacd>] fscache_op_complete+0x10d/0x180 [fscache]
+...
+Call Trace:
+ [<ffffffffc1464cf9>] cachefiles_read_copier+0x3a9/0x410 [cachefiles]
+ [<ffffffffc037e272>] fscache_op_work_func+0x22/0x50 [fscache]
+ [<ffffffff81096da0>] process_one_work+0x150/0x3f0
+ [<ffffffff8109751a>] worker_thread+0x11a/0x470
+ [<ffffffff81808e59>] ? __schedule+0x359/0x980
+ [<ffffffff81097400>] ? rescuer_thread+0x310/0x310
+ [<ffffffff8109cdd6>] kthread+0xd6/0xf0
+ [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
+ [<ffffffff8180d0cf>] ret_from_fork+0x3f/0x70
+ [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
 
-Fixes: 402cb8dda949 ("fscache: Attach the index key and aux data to the cookie")
-Reported-by: Zhibin Li <zhibli@redhat.com>
+This seen this in 4.4.x kernels and the same bug affects fscache in latest
+upstreams kernels.
+
+Fixes: 1bb4b7f98f36 ("FS-Cache: The retrieval remaining-pages counter needs to be atomic_t")
+Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cachefiles/xattr.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/fscache-cache.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
-index 0a29a00aed2e..511e6c68156a 100644
---- a/fs/cachefiles/xattr.c
-+++ b/fs/cachefiles/xattr.c
-@@ -135,7 +135,8 @@ int cachefiles_update_object_xattr(struct cachefiles_object *object,
- 	struct dentry *dentry = object->dentry;
- 	int ret;
- 
--	ASSERT(dentry);
-+	if (!dentry)
-+		return -ESTALE;
- 
- 	_enter("%p,#%d", object, auxdata->len);
+diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
+index 34cf0fdd7dc7..610815e3f1aa 100644
+--- a/include/linux/fscache-cache.h
++++ b/include/linux/fscache-cache.h
+@@ -196,8 +196,7 @@ static inline void fscache_enqueue_retrieval(struct fscache_retrieval *op)
+ static inline void fscache_retrieval_complete(struct fscache_retrieval *op,
+ 					      int n_pages)
+ {
+-	atomic_sub(n_pages, &op->n_pages);
+-	if (atomic_read(&op->n_pages) <= 0)
++	if (atomic_sub_return_relaxed(n_pages, &op->n_pages) <= 0)
+ 		fscache_op_complete(&op->op, false);
+ }
  
 
