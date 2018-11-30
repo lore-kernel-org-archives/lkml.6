@@ -2,113 +2,520 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2609AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525CAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D963120863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:59:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="jdnwChF2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D963120863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	by mail.kernel.org (Postfix) with ESMTP id F036B20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:02:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F036B20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeLABIx (ORCPT
+        id S1726725AbeLABLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:08:53 -0500
-Received: from onstation.org ([52.200.56.107]:36392 "EHLO onstation.org"
+        Fri, 30 Nov 2018 20:11:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49860 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbeLABIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:08:52 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726340AbeLABLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:11:30 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id C776417A;
-        Fri, 30 Nov 2018 13:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1543586368;
-        bh=VszxlV3PLbCwlZ94qvm69eC/GenPRr+20OAvuD312nw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jdnwChF2f9IsmtNZUCCn5+JI8bgRAP7udBk4DPsvo2fzYUAjrjjkvgLSlahSx/PCe
-         pDeZpcCEdvMmm3/CIDq0kFYVz8tkVsMp0S9hvnpUUthtOeONxxBz2bqmT/VZHZMRP7
-         7s8BuunyXml3z4POgGN7SQMXyINmDIW6xbFov2GQ=
-Date:   Fri, 30 Nov 2018 08:59:27 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathan@marek.ca, ctatlor97@gmail.com
-Subject: Re: [PATCH 1/2] dt-bindings: trivial: add ti,lm3630a binding
-Message-ID: <20181130135927.GA27500@basecamp>
-References: <20181124141703.29232-1-masneyb@onstation.org>
- <20181127105642.uu56phxjfl7bjl2p@holly.lan>
+        by mx1.redhat.com (Postfix) with ESMTPS id CCFA73082B4F;
+        Fri, 30 Nov 2018 14:02:05 +0000 (UTC)
+Received: from krava (unknown [10.43.17.17])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E7D431057065;
+        Fri, 30 Nov 2018 14:01:59 +0000 (UTC)
+Date:   Fri, 30 Nov 2018 15:01:58 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        ldv@altlinux.org, esyr@redhat.com,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: Rough idea of implementing blocking perf calls for system call
+ tracepoints
+Message-ID: <20181130140158.GD3617@krava>
+References: <20181128134700.212ed035@gandalf.local.home>
+ <20181128141808.4b047976@gandalf.local.home>
+ <20181130104044.GB3617@krava>
+ <20181130114809.GC3617@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181127105642.uu56phxjfl7bjl2p@holly.lan>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181130114809.GC3617@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 30 Nov 2018 14:02:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:56:42AM +0000, Daniel Thompson wrote:
-> On Sat, Nov 24, 2018 at 09:17:02AM -0500, Brian Masney wrote:
-> > Add a trivial binding for the Texas Instruments LM3630A Backlight Chip.
+On Fri, Nov 30, 2018 at 12:48:09PM +0100, Jiri Olsa wrote:
+> On Fri, Nov 30, 2018 at 11:40:44AM +0100, Jiri Olsa wrote:
+> > On Wed, Nov 28, 2018 at 02:18:08PM -0500, Steven Rostedt wrote:
+> > > 
+> > > Adding Masami and Namhyung to this as well.
+> > > 
+> > > -- Steve
+> > > 
+> > > 
+> > > On Wed, 28 Nov 2018 13:47:00 -0500
+> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > 
+> > > > [
+> > > >  Sorry for the late reply on this, when I got back from Plumbers, my
+> > > >  work was really piled up, and then Turkey day came and just added more
+> > > >  to the chaos.
+> > > > ]
+> > > > 
+> > > > From our discussion at the Linux Plumbers strace talk about
+> > > > implementing strace with perf. As strace requires to be lossless, it
+> > > > currently can not be implemented with perf because there's always a
+> > > > chance to lose events. The idea here is to have a way to instrument a
+> > > > way to record system calls from perf but also block when the perf ring
+> > > > buffer is full.
+> > > > 
+> > > > Below is a patch I wrote that gives an idea of what needs to be done.
+> > > > It is by no means a real patch (wont even compile). And I left out the
+> > > > wake up part, as I'm not familiar enough with how perf works to
+> > > > implement it. But hopefully someone on this list can :-)
+> > > > 
+> > > > The idea here is that we set the tracepoints sys_enter and sys_exit
+> > > > with a new flag called TRACE_EVENT_FL_BLOCK. When the perf code records
+> > > > the event, if the buffer is full, it will set a "perf_block" field in
+> > > > the current task structure to point to the tp_event, if the tp_event
+> > > > has the BLOCK flag set.
+> > > > 
+> > > > Then on the exit of the syscall tracepoints, the perf_block field is
+> > > > checked, and if it is set, it knows that the event was dropped, and
+> > > > will add itself to a wait queue. When the reader reads the perf buffer
+> > > > and hits a water mark, it can wake whatever is on the queue (not sure
+> > > > where to put this queue, but someone can figure it out).
+> > > > 
+> > > > Once woken, it will try to write to the perf system call tracepoint
+> > > > again (notice that it only tries perf and doesn't call the generic
+> > > > tracepoint code, as only perf requires a repeat).
+> > > > 
+> > > > This is just a basic idea patch, to hopefully give someone else an idea
+> > > > of what I envision. I think it can work, and if it does, I can imagine
+> > > > that it would greatly improve the performance of strace!
+> > > > 
+> > > > Thoughts?
+> > > > 
+> > > > -- Steve
+> > > > 
+> > > > diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+> > > > index 3b2490b81918..57fe95950a24 100644
+> > > > --- a/arch/x86/entry/common.c
+> > > > +++ b/arch/x86/entry/common.c
+> > > > @@ -123,8 +123,22 @@ static long syscall_trace_enter(struct pt_regs *regs)
+> > > >  	}
+> > > >  #endif
+> > > >  
+> > > > -	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
+> > > > +	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT))) {
+> > > > +		current->perf_block = NULL;
+> > > >  		trace_sys_enter(regs, regs->orig_ax);
+> > > > +		while (current->perf_block) {
+> > > > +			DECLARE_WAITQUEUE(wait, current);
+> > > > +			struct trace_event_call *tp_event = current->perf_block;
+> > > > +
+> > > > +			current->perf_block = NULL;
+> > > > +
+> > > > +			set_current_state(TASK_INTERRUPTIBLE);
+> > > > +			add_wait_queue(&tp_event->block_queue, &wait);
+> > > > +			perf_trace_sys_enter(tp_event, regs, regs->orig_ax);
+> > > > +			if (current->perf_block)
+> > > > +				schedule();
+> > 
+> > the space gets freed up by user space moving the tail pointer
+> > so I wonder we need actualy to do some polling in here
+> > 
+> > also how about making this ring buffer feature so it's not specific
+> > just to sys_enter/sys_exit.. I'll check
 > 
-> It's quite unusual for a backlight device to have a trivial binding.
-> 
-> The driver supports fairly extensive parametrization via struct
-> lm3530a_platform_data. It is really the case that none of these
-> properties should ever be set via DT?
+> or perhaps just tracepoints.. does not seem to make much
+> sense for he events
 
-Hi Daniel,
+actualy the syscalls seems to be enough for now ;-) I tried
+something and ended up with hack below
 
-I initially assumed that we would let user space configure these values
-once the system has booted, but you are right that these should be
-available in device tree.
+to test you can take user change from my perf/sys_block branch
+and run something like:
+
+  # perf record -e syscalls:sys_enter_close/block/ -p <ex-pid>
+
+with ex prog being:
+
+	#include <stdio.h>
+	#include <unistd.h>
+
+	int main(int argc, char **argv)
+	{
+		unsigned int i = 0;
+
+		while (1) {
+			close(-1);
+			if (i++ % 100000 == 0) {
+				printf(".");
+				fflush(NULL);
+			}
+		}
+	}
+
+when I stop perf record I can see ex being stopped as well
+
+there's probably better way to do the polling, I'll need
+to check on that.. among other things ;-)
+
+jirka
+
+
+---
+ arch/x86/entry/common.c         | 16 ++++++++++++++--
+ include/linux/perf_event.h      |  4 +++-
+ include/linux/sched.h           |  1 +
+ include/linux/syscalls.h        |  2 ++
+ include/linux/trace_events.h    |  6 +++---
+ include/trace/perf.h            |  2 +-
+ include/uapi/linux/perf_event.h |  3 ++-
+ kernel/events/core.c            | 28 ++++++++++++++++++++++++----
+ kernel/trace/trace_event_perf.c |  2 +-
+ kernel/trace/trace_kprobe.c     |  4 ++--
+ kernel/trace/trace_syscalls.c   | 28 ++++++++++++++++++++++++----
+ kernel/trace/trace_uprobe.c     |  2 +-
+ 12 files changed, 78 insertions(+), 20 deletions(-)
+
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 3b2490b81918..139f857a2cce 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -123,8 +123,14 @@ static long syscall_trace_enter(struct pt_regs *regs)
+ 	}
+ #endif
  
-The driver has two different LED banks that can be configured
-independently. How do you feel about having a single property in
-device tree populate the initial values for both banks? I propose that
-we could use the property default-brightness-level for leda_init_brt
-and ledb_init_brt in struct lm3630a_platform_data. The max-brightness
-property can populate leda_max_brt and ledb_max_brt.
+-	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
++	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT))) {
+ 		trace_sys_enter(regs, regs->orig_ax);
++		while (current->perf_block) {
++			schedule_timeout(100 * HZ);
++			current->perf_block = false;
++			perf_trace_sys_enter_blocked(regs, regs->orig_ax);
++		}
++	}
+ 
+ 	do_audit_syscall_entry(regs, arch);
+ 
+@@ -224,8 +230,14 @@ static void syscall_slow_exit_work(struct pt_regs *regs, u32 cached_flags)
+ 
+ 	audit_syscall_exit(regs);
+ 
+-	if (cached_flags & _TIF_SYSCALL_TRACEPOINT)
++	if (cached_flags & _TIF_SYSCALL_TRACEPOINT) {
+ 		trace_sys_exit(regs, regs->ax);
++		while (current->perf_block) {
++			schedule_timeout(100 * HZ);
++			current->perf_block = false;
++			perf_trace_sys_exit_blocked(regs, regs->ax);
++		}
++	}
+ 
+ 	/*
+ 	 * If TIF_SYSCALL_EMU is set, we only get here because of
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 47a31d01df5a..af722b95135e 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -695,6 +695,8 @@ struct perf_event {
+ #endif
+ 
+ 	struct list_head		sb_list;
++
++	bool				blocked;
+ #endif /* CONFIG_PERF_EVENTS */
+ };
+ 
+@@ -1200,7 +1202,7 @@ extern void perf_event_init(void);
+ extern void perf_tp_event(u16 event_type, u64 count, void *record,
+ 			  int entry_size, struct pt_regs *regs,
+ 			  struct hlist_head *head, int rctx,
+-			  struct task_struct *task);
++			  struct task_struct *task, bool blocked);
+ extern void perf_bp_event(struct perf_event *event, void *data);
+ 
+ #ifndef perf_misc_flags
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a51c13c2b1a0..60463fcfe795 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1009,6 +1009,7 @@ struct task_struct {
+ 	struct perf_event_context	*perf_event_ctxp[perf_nr_task_contexts];
+ 	struct mutex			perf_event_mutex;
+ 	struct list_head		perf_event_list;
++	bool				perf_block;
+ #endif
+ #ifdef CONFIG_DEBUG_PREEMPT
+ 	unsigned long			preempt_disable_ip;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 2ac3d13a915b..9ae11151e861 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1296,4 +1296,6 @@ static inline unsigned int ksys_personality(unsigned int personality)
+ 	return old;
+ }
+ 
++void perf_trace_sys_enter_blocked(struct pt_regs *regs, long id);
++void perf_trace_sys_exit_blocked(struct pt_regs *regs, long ret);
+ #endif
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 4130a5497d40..d8d0289c955c 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -618,14 +618,14 @@ void bpf_trace_run12(struct bpf_prog *prog, u64 arg1, u64 arg2,
+ void perf_trace_run_bpf_submit(void *raw_data, int size, int rctx,
+ 			       struct trace_event_call *call, u64 count,
+ 			       struct pt_regs *regs, struct hlist_head *head,
+-			       struct task_struct *task);
++			       struct task_struct *task, bool blocked);
+ 
+ static inline void
+ perf_trace_buf_submit(void *raw_data, int size, int rctx, u16 type,
+ 		       u64 count, struct pt_regs *regs, void *head,
+-		       struct task_struct *task)
++		       struct task_struct *task, bool blocked)
+ {
+-	perf_tp_event(type, count, raw_data, size, regs, head, rctx, task);
++	perf_tp_event(type, count, raw_data, size, regs, head, rctx, task, blocked);
+ }
+ 
+ #endif
+diff --git a/include/trace/perf.h b/include/trace/perf.h
+index dbc6c74defc3..ac9a18fa54b4 100644
+--- a/include/trace/perf.h
++++ b/include/trace/perf.h
+@@ -67,7 +67,7 @@ perf_trace_##call(void *__data, proto)					\
+ 									\
+ 	perf_trace_run_bpf_submit(entry, __entry_size, rctx,		\
+ 				  event_call, __count, __regs,		\
+-				  head, __task);			\
++				  head, __task, false);			\
+ }
+ 
+ /*
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 9de8780ac8d9..92bae4cf279c 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -372,7 +372,8 @@ struct perf_event_attr {
+ 				context_switch :  1, /* context switch data */
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+-				__reserved_1   : 35;
++				block          :  1, /* block process if there's no space in RB (syscall tracepoints only) */
++				__reserved_1   : 34;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 7403a27363f8..889e95e9de0e 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6505,8 +6505,11 @@ __perf_event_output(struct perf_event *event,
+ 
+ 	perf_prepare_sample(&header, data, event, regs);
+ 
+-	if (output_begin(&handle, event, header.size))
++	if (output_begin(&handle, event, header.size)) {
++		if (event->attr.block)
++			event->blocked = current->perf_block = true;
+ 		goto exit;
++	}
+ 
+ 	perf_output_sample(&handle, &header, data, event);
+ 
+@@ -8262,7 +8265,7 @@ static int perf_tp_event_match(struct perf_event *event,
+ void perf_trace_run_bpf_submit(void *raw_data, int size, int rctx,
+ 			       struct trace_event_call *call, u64 count,
+ 			       struct pt_regs *regs, struct hlist_head *head,
+-			       struct task_struct *task)
++			       struct task_struct *task, bool blocked)
+ {
+ 	if (bpf_prog_array_valid(call)) {
+ 		*(struct pt_regs **)raw_data = regs;
+@@ -8272,13 +8275,22 @@ void perf_trace_run_bpf_submit(void *raw_data, int size, int rctx,
+ 		}
+ 	}
+ 	perf_tp_event(call->event.type, count, raw_data, size, regs, head,
+-		      rctx, task);
++		      rctx, task, blocked);
+ }
+ EXPORT_SYMBOL_GPL(perf_trace_run_bpf_submit);
+ 
++static bool perf_event_blocked(struct perf_event *event)
++{
++	bool blocked = event->attr.block && event->blocked;
++
++	if (blocked)
++		event->blocked = false;
++	return blocked;
++}
++
+ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 		   struct pt_regs *regs, struct hlist_head *head, int rctx,
+-		   struct task_struct *task)
++		   struct task_struct *task, bool blocked)
+ {
+ 	struct perf_sample_data data;
+ 	struct perf_event *event;
+@@ -8296,6 +8308,9 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 	perf_trace_buf_update(record, event_type);
+ 
+ 	hlist_for_each_entry_rcu(event, head, hlist_entry) {
++		if (blocked && !perf_event_blocked(event))
++			continue;
++
+ 		if (perf_tp_event_match(event, &data, regs))
+ 			perf_swevent_event(event, count, &data, regs);
+ 	}
+@@ -8314,6 +8329,8 @@ void perf_tp_event(u16 event_type, u64 count, void *record, int entry_size,
+ 			goto unlock;
+ 
+ 		list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
++			if (blocked && !perf_event_blocked(event))
++				continue;
+ 			if (event->cpu != smp_processor_id())
+ 				continue;
+ 			if (event->attr.type != PERF_TYPE_TRACEPOINT)
+@@ -10461,6 +10478,9 @@ SYSCALL_DEFINE5(perf_event_open,
+ 			return -EINVAL;
+ 	}
+ 
++	if (attr.block && attr.type != PERF_TYPE_TRACEPOINT)
++		return -EINVAL;
++
+ 	/* Only privileged users can get physical addresses */
+ 	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
+ 	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 76217bbef815..fb0d00000ff2 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -462,7 +462,7 @@ perf_ftrace_function_call(unsigned long ip, unsigned long parent_ip,
+ 	entry->ip = ip;
+ 	entry->parent_ip = parent_ip;
+ 	perf_trace_buf_submit(entry, ENTRY_SIZE, rctx, TRACE_FN,
+-			      1, &regs, &head, NULL);
++			      1, &regs, &head, NULL, false);
+ 
+ #undef ENTRY_SIZE
+ }
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index fec67188c4d2..0f740e87c3f6 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -1200,7 +1200,7 @@ kprobe_perf_func(struct trace_kprobe *tk, struct pt_regs *regs)
+ 	memset(&entry[1], 0, dsize);
+ 	store_trace_args(&entry[1], &tk->tp, regs, sizeof(*entry), dsize);
+ 	perf_trace_buf_submit(entry, size, rctx, call->event.type, 1, regs,
+-			      head, NULL);
++			      head, NULL, false);
+ 	return 0;
+ }
+ NOKPROBE_SYMBOL(kprobe_perf_func);
+@@ -1236,7 +1236,7 @@ kretprobe_perf_func(struct trace_kprobe *tk, struct kretprobe_instance *ri,
+ 	entry->ret_ip = (unsigned long)ri->ret_addr;
+ 	store_trace_args(&entry[1], &tk->tp, regs, sizeof(*entry), dsize);
+ 	perf_trace_buf_submit(entry, size, rctx, call->event.type, 1, regs,
+-			      head, NULL);
++			      head, NULL, false);
+ }
+ NOKPROBE_SYMBOL(kretprobe_perf_func);
+ 
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index f93a56d2db27..87db553bf681 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -578,7 +578,7 @@ static int perf_call_bpf_enter(struct trace_event_call *call, struct pt_regs *re
+ 	return trace_call_bpf(call, &param);
+ }
+ 
+-static void perf_syscall_enter(void *ignore, struct pt_regs *regs, long id)
++static void __perf_syscall_enter(struct pt_regs *regs, long id, bool blocked)
+ {
+ 	struct syscall_metadata *sys_data;
+ 	struct syscall_trace_enter *rec;
+@@ -625,7 +625,17 @@ static void perf_syscall_enter(void *ignore, struct pt_regs *regs, long id)
+ 
+ 	perf_trace_buf_submit(rec, size, rctx,
+ 			      sys_data->enter_event->event.type, 1, regs,
+-			      head, NULL);
++			      head, NULL, blocked);
++}
++
++static void perf_syscall_enter(void *ignore, struct pt_regs *regs, long id)
++{
++	__perf_syscall_enter(regs, id, false);
++}
++
++void perf_trace_sys_enter_blocked(struct pt_regs *regs, long id)
++{
++	__perf_syscall_enter(regs, id, true);
+ }
+ 
+ static int perf_sysenter_enable(struct trace_event_call *call)
+@@ -677,7 +687,7 @@ static int perf_call_bpf_exit(struct trace_event_call *call, struct pt_regs *reg
+ 	return trace_call_bpf(call, &param);
+ }
+ 
+-static void perf_syscall_exit(void *ignore, struct pt_regs *regs, long ret)
++static void __perf_syscall_exit(struct pt_regs *regs, long ret, bool blocked)
+ {
+ 	struct syscall_metadata *sys_data;
+ 	struct syscall_trace_exit *rec;
+@@ -721,7 +731,17 @@ static void perf_syscall_exit(void *ignore, struct pt_regs *regs, long ret)
+ 	}
+ 
+ 	perf_trace_buf_submit(rec, size, rctx, sys_data->exit_event->event.type,
+-			      1, regs, head, NULL);
++			      1, regs, head, NULL, blocked);
++}
++
++static void perf_syscall_exit(void *ignore, struct pt_regs *regs, long ret)
++{
++	__perf_syscall_exit(regs, ret, false);
++}
++
++void perf_trace_sys_exit_blocked(struct pt_regs *regs, long ret)
++{
++	__perf_syscall_exit(regs, ret, true);
+ }
+ 
+ static int perf_sysexit_enable(struct trace_event_call *call)
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 31ea48eceda1..228c444d1598 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -1153,7 +1153,7 @@ static void __uprobe_perf_func(struct trace_uprobe *tu,
+ 	}
+ 
+ 	perf_trace_buf_submit(entry, size, rctx, call->event.type, 1, regs,
+-			      head, NULL);
++			      head, NULL, false);
+  out:
+ 	preempt_enable();
+ }
+-- 
+2.17.2
 
-I need to look at other bindings this weekend to see if there are any
-standard properties that I can use for leda_ctrl/ledb_ctrl, pwm_ctrl,
-and pwm_period.
-
-Brian
-
-
-> 
-> > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > ---
-> >  Documentation/devicetree/bindings/trivial-devices.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
-> > index 6ab001fa1ed4..86486368dc35 100644
-> > --- a/Documentation/devicetree/bindings/trivial-devices.txt
-> > +++ b/Documentation/devicetree/bindings/trivial-devices.txt
-> > @@ -182,6 +182,7 @@ taos,tsl2550		Ambient Light Sensor with SMBUS/Two Wire Serial Interface
-> >  ti,ads7828		8-Channels, 12-bit ADC
-> >  ti,ads7830		8-Channels, 8-bit ADC
-> >  ti,amc6821		Temperature Monitoring and Fan Control
-> > +ti,lm3630a		Texas Instruments LM3630A Backlight Chip
-> >  ti,tsc2003		I2C Touch-Screen Controller
-> >  ti,tmp102		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
-> >  ti,tmp103		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
-> > -- 
-> > 2.17.2
-> > 
