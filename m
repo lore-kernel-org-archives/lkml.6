@@ -2,221 +2,208 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19031C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28F3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7EE12145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:27:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/JqyJXa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7EE12145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 514BA2081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:29:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514BA2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeK3Nep (ORCPT
+        id S1726910AbeK3NhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:34:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbeK3Nep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:34:45 -0500
-Received: from devnote (p35161-mobac01.tokyo.ocn.ne.jp [153.233.26.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 801892081C;
-        Fri, 30 Nov 2018 02:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543544824;
-        bh=Vs73a5tdNjvytXo30yVfUHBKOA9Fb1+lWCgI7AvduBQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=a/JqyJXa0CQ7GWBKPp/Nlmjro6eW2JSwfj8AhqcYGndq0YzUVWb0SL2BnC5he5yHt
-         Lu+ZD+BoFWUScKc+WkFlAqF19n+7tCjSA2uqnZROGc9zOWB5/xwAyTOJLaW7rrTXxM
-         hbu6qv8TDRbnBbyCkMkIeG5EkhTNj9SRtUF47pj0=
-Date:   Fri, 30 Nov 2018 11:26:58 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, systemtap@sourceware.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [RFC][PATCH 00/14] function_graph: Rewrite to allow multiple
- users
-Message-Id: <20181130112658.337e92b79e243034973b6997@kernel.org>
-In-Reply-To: <20181129114652.3696d6d7@gandalf.local.home>
-References: <20181122012708.491151844@goodmis.org>
-        <20181126182112.422b914dd00ecb36e15f7b07@kernel.org>
-        <20181126113215.4259d473@gandalf.local.home>
-        <20181129232927.74ca5f294e97fc58b15bf8c6@kernel.org>
-        <20181129114652.3696d6d7@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 30 Nov 2018 08:37:11 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:35406 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726161AbeK3NhL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 08:37:11 -0500
+X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
+   d="scan'208";a="48852784"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 30 Nov 2018 10:29:29 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 11F114B734C6;
+        Fri, 30 Nov 2018 10:29:29 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 30 Nov 2018 10:29:30 +0800
+Date:   Fri, 30 Nov 2018 10:29:14 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
+ cmdline from KEXEC
+Message-ID: <20181130022914.GA30941@localhost.localdomain>
+References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
+ <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
+ <20181129162012.hcknuu256trdwnfc@gabell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181129162012.hcknuu256trdwnfc@gabell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 11F114B734C6.AB9DF
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 11:46:52 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Nov 29, 2018 at 11:20:13AM -0500, Masayoshi Mizuma wrote:
+>On Thu, Nov 29, 2018 at 04:16:27PM +0800, Chao Fan wrote:
+>> To fix the conflict between KASLR and memory-hotremove, memory
+>> information in SRAT table is necessary.
+>> 
+>> ACPI SRAT (System/Static Resource Affinity Table) can show the details
+>> about memory ranges, including ranges of memory provided by hot-added
+>> memory devices. SRAT table must be introduced by RSDP pointer (Root
+>> System Description Pointer). So RSDP should be found firstly.
+>> 
+>> When booting form KEXEC/EFI/BIOS, the methods to find RSDP pointer
+>> are different. When booting from KEXEC, 'acpi_rsdp' may have been
+>> added to cmdline, so parse the cmdline and find the RSDP pointer.
+>> 
+>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/acpitb.c | 33 +++++++++++++++++++++++++++++++
+>>  arch/x86/boot/compressed/misc.c   |  5 +++++
+>>  arch/x86/boot/compressed/misc.h   |  4 ++++
+>>  lib/kstrtox.c                     |  5 +++++
+>>  4 files changed, 47 insertions(+)
+>>  create mode 100644 arch/x86/boot/compressed/acpitb.c
+>> 
+>> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+>> new file mode 100644
+>> index 000000000000..614c45655cff
+>> --- /dev/null
+>> +++ b/arch/x86/boot/compressed/acpitb.c
+>> @@ -0,0 +1,33 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +#define BOOT_CTYPE_H
+>> +#include "misc.h"
+>> +#include "error.h"
+>> +
+>> +#include <linux/efi.h>
+>> +#include <asm/efi.h>
+>> +#include <linux/numa.h>
+>> +#include <linux/acpi.h>
+>> +
+>> +#define STATIC
+>> +#include <linux/decompress/mm.h>
+>> +
+>> +/* Store the immovable memory regions. */
+>> +struct mem_vector immovable_mem[MAX_NUMNODES*2];
+>> +#endif
+>> +
+>> +static acpi_physical_address get_acpi_rsdp(void)
+>> +{
+>> +#ifdef CONFIG_KEXEC
+>> +	unsigned long long res;
+>> +	int len = 0;
+>
+>> +	char *val;
+>> +
+>> +	val = malloc(19);
+>> +	len = cmdline_find_option("acpi_rsdp", val, 19);
+>> +	if (len > 0) {
+>> +		val[len] = 0;
+>
+>		val[len] = '\0';
+>
+>> +		return (acpi_physical_address)kstrtoull(val, 16, &res);
+>> +	}
+>
+>I think free() is needed. Or why don't you use stack?
 
-> On Thu, 29 Nov 2018 23:29:27 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > > One way to solve this is to also have a counter array that gets updated
-> > > every time the index array gets updated. And save the counter to the
-> > > shadow stack index as well. This way, we only call the return if the
-> > > counter on the stack matches what's in the counter on the counter array
-> > > for the index.  
-> > 
-> > Hmm, but we already know the current stack "header" entry when calling
-> > handlers, don't we? I thought we just calcurate out from curr_ret_stack.
-> 
-> Basically we have this:
-> 
->  array: | &fgraph_ops_1 | &fgraph_ops_2 | &fgraph_ops_stub | ...
-> 
-> On entry of function we do:
-> 
-	push header(including original ret_addr) onto ret_stack
+Oh, thanks, will change it
+char val[19];
 
-> 	for (i = 0; i < array_entries; i++) {
-> 		if (array[i]->entryfunc(...)) {
-> 			push i onto ret_stack;
-> 		}
-> 	}
-> 
-> On the return side, we do:
-> 
-> 	idx = pop ret_stack;
-> 
-> 	array[idx]->retfunc(...);
+Thanks,
+Chao Fan
+>
+>	char val[19];
+>
+>	len = cmdline_find_option("acpi_rsdp", val, sizeof(val));
+>	if (len > 0) {
+>		val[len] = '\0';
+>		return (acpi_physical_address)kstrtoull(val, 16, &res);
+>	}
+>
+>Thanks,
+>Masa
+>
+>> +	return 0;
+>> +#endif
+>> +}
+>> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+>> index 8dd1d5ccae58..e51713fe3add 100644
+>> --- a/arch/x86/boot/compressed/misc.c
+>> +++ b/arch/x86/boot/compressed/misc.c
+>> @@ -12,6 +12,7 @@
+>>   * High loaded stuff by Hans Lermen & Werner Almesberger, Feb. 1996
+>>   */
+>>  
+>> +#define BOOT_CTYPE_H
+>>  #include "misc.h"
+>>  #include "error.h"
+>>  #include "pgtable.h"
+>> @@ -426,3 +427,7 @@ void fortify_panic(const char *name)
+>>  {
+>>  	error("detected buffer overflow");
+>>  }
+>> +
+>> +#ifdef BOOT_STRING
+>> +#include "../../../../lib/kstrtox.c"
+>> +#endif
+>> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+>> index a1d5918765f3..809c31effa4b 100644
+>> --- a/arch/x86/boot/compressed/misc.h
+>> +++ b/arch/x86/boot/compressed/misc.h
+>> @@ -116,3 +116,7 @@ static inline void console_init(void)
+>>  void set_sev_encryption_mask(void);
+>>  
+>>  #endif
+>> +
+>> +/* acpitb.c */
+>> +#define BOOT_STRING
+>> +extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
+>> diff --git a/lib/kstrtox.c b/lib/kstrtox.c
+>> index 1006bf70bf74..a0ac1b2257b8 100644
+>> --- a/lib/kstrtox.c
+>> +++ b/lib/kstrtox.c
+>> @@ -126,6 +126,9 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
+>>  }
+>>  EXPORT_SYMBOL(kstrtoull);
+>>  
+>> +/* Make compressed period code be able to use kstrtoull(). */
+>> +#ifndef BOOT_STRING
+>> +
+>>  /**
+>>   * kstrtoll - convert a string to a long long
+>>   * @s: The start of the string. The string must be null-terminated, and may also
+>> @@ -408,3 +411,5 @@ kstrto_from_user(kstrtou16_from_user,	kstrtou16,	u16);
+>>  kstrto_from_user(kstrtos16_from_user,	kstrtos16,	s16);
+>>  kstrto_from_user(kstrtou8_from_user,	kstrtou8,	u8);
+>>  kstrto_from_user(kstrtos8_from_user,	kstrtos8,	s8);
+>> +
+>> +#endif /* BOOT_STRING */
+>> -- 
+>> 2.19.1
+>> 
+>> 
+>> 
+>
+>
 
-So at this point we have the header on ret_stack, don't we? :)
 
-Anyway, I think we may provide an API for unwinder to find correct
-original return address form ret_stack. That is OK for me.
-
-
-> 
-> We only call the retfunc of a fgraph_ops if it returned non-zero from
-> its entryfunc(). The return can happen a long time from now (which is
-> why I don't save the &fgraph_ops on the ret_stack, because then we would
-> never be able to free it).
-> 
-> In the mean time, lets say we unregistered (and freed) fgraph_ops_2 and
-> then added fgraph_ops_3, so the array looks like:
-> 
->  array: | &fgraph_ops_1 | &fgraph_ops_3 | &fgraph_ops_stub | ...
-> 
-> Then a function that was called when fgraph_ops_2 was on the stack
-> returns, it will call array[1]->retfunc() which now belongs to
-> fgraph_ops_3 and not fgraph_ops_2.
-> 
-> But if we add a counter array that gets updated when new ops are added
-> to the array, we have this:
-> 
->  cnt_array: |       4       |     2         |       0          |
->      array: | &fgraph_ops_1 | &fgraph_ops_2 | &fgraph_ops_stub | ...
-> 
-> And do:
-> 
-> 	for (i = 0; i < array_entries; i++) {
-> 		if (array[i]->entryfunc(...)) {
-> 			idx = cnt_array[i] << 8 | i;
-> 			push idx onto ret_stack;
-> 		}
-> 	}
-> 
-> Then on return we have:
-> 
-> 	idx = pop ret_stack;
-> 
-> 	if (idx >> 8 == cnt_array[idx & 0xff])
-> 		array[idx & 0xff]->retfunc(...);
-> 
-> It wouldn't call fgraph_ops_3 because we would change the cnt_array
-> when we remove fgraph_ops_2 and the return would not match, as
-> cnt_array[1] would then be "3".
-> 
-> > 
-> > > > By the way, are there any way to hold a private data on each ret_stack entry?
-> > > > Since kretprobe supports "entry data" passed from entry_handler to
-> > > > return handler, we have to store the data or data-instance on the ret_stack.
-> > > > 
-> > > > This feature is used by systemtap to save the function entry data, like
-> > > > function parameters etc., so that return handler analyzes the parameters
-> > > > with return value.  
-> > > 
-> > > Yes, I remember you telling me about this at plumbers, and while I was
-> > > writing this code I had that in mind. It wouldn't be too hard to
-> > > implement, I just left it off for now. I also left it off because I
-> > > have some questions about what exactly is needed. What size do you
-> > > require to be stored. Especially if we want to keep the shadow stack
-> > > smaller. I was going to find a way to implement some of the data that
-> > > is already stored via the ret_stack with this instead, and make the
-> > > ret_stack entry smaller. Should we allow just sizeof(long)*3? or just
-> > > let user choose any size and if they run out of stack, then too bad. We
-> > > just wont let it crash.  
-> > 
-> > I need only sizeof(unsigned long). If the kretprobe user requires more,
-> > it will be fall back to current method -- get an "instance" and store
-> > its address to the entry :-)
-> 
-> Awesome, then this shouldn't be too hard to implement.
-
-Oops, anyway I noticed that I must store a value on each area so that we can
-identify which kretprobe is using that if there are several kretprobes on same
-function. So, kretprobe implementation will be something like below.
-
-kretprobe_retfunc(trace, regs)
-{
-	kp = get_kprobe(trace->func);
-
-	if (private == to_kretprobe(kp)) // this is directly mapped to current kprobe
-		goto found_kretprobe;
-
-	if (!list_empty(&kp->list)) {	// we need to find from multiple kretprobes
-		list_for_each_entry(kp, &kp->list, list)
-			if (private == kp)
-				goto found_kretprobe;
-	}
-
-	// Or this must be an instance
-	struct kretprobe_instance *ri = trace->private;
-	rp = ri->rp;
-	if (valid_kretprobe(rp))
-		rp->handler(ri, regs);
-	kretprobe_recycle_instance(ri);
-	goto out;
-
-found_kretprobe:
-	struct kretprobe_instance rii = {.rp = to_kretprobe(kp),
-		.ret_addr=trace->ret, .task = current}
-	rp->handler(&rii, regs);
-
-out:
-	return 0;
-}
-
-I think we talked about pt_regs, which is redundant for return probe, so it should
-be just a return value. (but how we pass it? trace->retval?)
-That is OK for ftrace (but the transition needs more code).
-And I would like to ask ebpf and systemtap people that is OK since it will change
-the kernel ABI.
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
