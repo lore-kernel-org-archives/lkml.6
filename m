@@ -2,110 +2,103 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C300C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D987C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009752082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:09:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009752082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A8E12082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8E12082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeK3MQ6 (ORCPT
+        id S1727228AbeK3MRC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 07:16:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50316 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbeK3MQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 07:16:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5E84EB0DD;
-        Fri, 30 Nov 2018 01:09:28 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Date:   Fri, 30 Nov 2018 12:09:20 +1100
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        paulmck@linux.vnet.ibm.com, Florian Weimer <fweimer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH - resend*2] VFS: use synchronize_rcu_expedited() in namespace_unlock()
-In-Reply-To: <20181129235222.GJ2217@ZenIV.linux.org.uk>
-References: <87y3nyd4pu.fsf@notabene.neil.brown.name> <20171026122743.GX3659@linux.vnet.ibm.com> <b8a1a898-850c-cc7a-2574-1bfd15cc9888@redhat.com> <20171127144125.GF3624@linux.vnet.ibm.com> <87induxd3u.fsf@notabene.neil.brown.name> <87tvm1rxme.fsf@notabene.neil.brown.name> <20181005014002.GS32577@ZenIV.linux.org.uk> <87mupro3wh.fsf@notabene.neil.brown.name> <20181129235222.GJ2217@ZenIV.linux.org.uk>
-Message-ID: <87k1kvnzgf.fsf@notabene.neil.brown.name>
+        Fri, 30 Nov 2018 07:17:02 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39793 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeK3MRB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 07:17:01 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so1917250pld.6;
+        Thu, 29 Nov 2018 17:09:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XLYG3LVFQNBTC8lBR+0H/CHsBDoOnb+dCtmQYcLJ0HQ=;
+        b=F5Hnhpf7wY4hbVS3zQqP0l2vhgmlrVDg6BqWFwaCxG3M09n+7zheAuWtCVNJuBhYDI
+         KyDLXtDtpDICDtJmnfMh2s3OBY4x3wY72FF0Y3KYuBnQQFQJztGip0p6WbsEKXK4Rmcn
+         QhzIzHVHpfmFawUuZ2/QWFn+5q+YFr8thELR7wSmJr9wMVhbBcuGWa4KK1Pf3ICGUXq+
+         xta1MgEL0GyZvyqENifv0wdst3/JWLlPrSetedz8YMHf70Rs64wniir+jw/0IUWcJ54L
+         zwdYAc7V4AJIgwj/98ngGC6+Um/PbJUx3F5h0PiI4B6Y/ZJeVI8g+VkasGYCLCgLExBE
+         nMwQ==
+X-Gm-Message-State: AA+aEWYUxkgsdukm4cLv4OJ8Oj2kI1V3aJRU6Nx1VfBPLsAsC3uRdLV3
+        HRQUJv22gMiqkLpne8Dc7tk=
+X-Google-Smtp-Source: AFSGD/VRnG+shIXeXY6DYmg0p6C3u9wF9E5Uampq6Rl+6Jez7OmeJ18NhVNd9NF0FXIG9HzzvZFY6A==
+X-Received: by 2002:a17:902:887:: with SMTP id 7mr3669887pll.164.1543540172337;
+        Thu, 29 Nov 2018 17:09:32 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id b7sm4585047pfa.52.2018.11.29.17.09.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 17:09:31 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 29 Nov 2018 17:09:28 -0800
+Date:   Thu, 29 Nov 2018 17:09:28 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Radoslaw Burny <rburny@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jsperbeck@google.com
+Subject: Re: [PATCH] fs: Make /proc/sys inodes be owned by global root.
+Message-ID: <20181130010928.GM4922@garbanzo.do-not-panic.com>
+References: <20181126172607.125782-1-rburny@google.com>
+ <20181127011627.GI4922@garbanzo.do-not-panic.com>
+ <87k1kzjdff.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1kzjdff.fsf@xmission.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 26, 2018 at 11:29:40PM -0600, Eric W. Biederman wrote:
+> Luis Chamberlain <mcgrof@kernel.org> writes:
+> > Thanks for the description of how to run into the issue described but
+> > is there also a practical use case today where this is happening? I ask
+> > as it would be good to know the severity of the issue in the real world
+> > today.
+> 
+> People trying to run containers without a root user in the container.
+> It atypical but something doable.  
 
-On Thu, Nov 29 2018, Al Viro wrote:
+My question was if there are generic tools / propreitary tools which are
+doing this widely *today*. Or is this just a custom setup some folks
+use?
 
-> On Fri, Nov 30, 2018 at 10:33:18AM +1100, NeilBrown wrote:
->>=20
->> The synchronize_rcu() in namespace_unlock() is called every time
->> a filesystem is unmounted.  If a great many filesystems are mounted,
->> this can cause a noticable slow-down in, for example, system shutdown.
->>=20
->> The sequence:
->>   mkdir -p /tmp/Mtest/{0..5000}
->>   time for i in /tmp/Mtest/*; do mount -t tmpfs tmpfs $i ; done
->>   time umount /tmp/Mtest/*
->>=20
->> on a 4-cpu VM can report 8 seconds to mount the tmpfs filesystems, and
->> 100 seconds to unmount them.
->>=20
->> Boot the same VM with 1 CPU and it takes 18 seconds to mount the
->> tmpfs filesystems, but only 36 to unmount.
->>=20
->> If we change the synchronize_rcu() to synchronize_rcu_expedited()
->> the umount time on a 4-cpu VM drop to 0.6 seconds
->>=20
->> I think this 200-fold speed up is worth the slightly high system
->> impact of using synchronize_rcu_expedited().
->>=20
->> Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com> (from general rc=
-u perspective)
->> Signed-off-by: NeilBrown <neilb@suse.com>
->> ---
->>=20
->> Al Viro says "I can live with this one" but this still hasn't landed.
->> Maybe someone else could apply it?
->
-> Applied (in work.misc, once I push it out)
+> We spoke about this at LPC.  And this is the correct behavioral change.
+> 
+> The problem is there is a default value for i_uid and i_gid that is
+> correct in the general case.  That default value is not corect for
+> sysctl, because proc is weird.  As the sysctl permission check in
+> test_perm are all against GLOBAL_ROOT_UID and GLOBAL_ROOT_GID we did not
+> notice that i_uid and i_gid were being set wrong.
+> 
+> So all this patch does is fix the default values i_uid and i_gid.
+> 
+> The commit comment seems worth cleaning up.  But for the
+> content of the code.
 
-Excellent - thanks a lot :-)
+The logic seems sensible then, but are we implicating what a container
+does with its sysctl values onto the entire system? If so, sure, it
+seems you want this for networking purposes as there are a series of
+sysctl values a container may want to muck with, but are we sure we
+want the same for *all* sysctl entries?
 
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwAjcEACgkQOeye3VZi
-gbko4g//XLXF+VP16o6Qh5aV6rw8fHBklFGwVnI0Xp6w64oyxDqsdt+he9D40zYO
-pek2Q/Brwaqjbrs1NE0YfJ2ZmH4PLQTGI3xWBLW7Bx7EnUvEpbFap2gM9E7efLz3
-U0ZSgI/m795vesaRW5GV0xJOEHL/I7fpZsY78lg+p7vwQmvG9AKHzxFXDdXHu5bn
-DcjLm47i2fykdyt/5SbmoeWKgMIiQimfgRUFgO/fvbRsiFmjUx+zCHxzkGeixFfn
-8UyvE7zxDAQAEGKVJ1JwrfikUlLm9TssEhzRgYdtqaWaA80IjpDXSG/O856K1F2Q
-O5auYawp3D/+J+ZXC/pEsYuqwUp//sWeDQ3IoNbqqWg/+lufto/5dROLg9jdp6o9
-vInPbZzVgtFJzYXxJY0ybf0CiQAz2yuID098Gydx5RTHV+GMx6XPBbYmkdOn0MsS
-CMKan+a7D8wQfnmvCK8XiiZWQjx45yw2oPpr9mdpDME2fXAPpngFCL4GEAgYVNrL
-RiT9MzjbanVM0VznjSbpIeyvv2loLCwhdUmK6mD+ECmEWZ4FgVpman8G/1CTczHV
-x3Kw9tANoZjd0jXJhqdlJuE9BKwZ4kHUgTQSgGCYrIy7UIo1RWNHZq6gMiVtTFm8
-zCU1VputwDWbJtFtP7xc8f2jIyanselRT9cK+KcZfqw/U4z00vM=
-=McWo
------END PGP SIGNATURE-----
---=-=-=--
+  Luis
