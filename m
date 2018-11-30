@@ -2,485 +2,129 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A095C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602ECC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D5F20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:27:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C29D20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:29:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WazdIVwm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D5F20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="uGxy2Waq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C29D20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbeK3PfB (ORCPT
+        id S1726637AbeK3PhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 10:35:01 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:36122 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbeK3PfA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 10:35:00 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAU4QuP3128091;
-        Thu, 29 Nov 2018 22:26:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543552016;
-        bh=Kk0gHYjKZPuNSeKOnVQpwf1U81VKKWMKHnkqg+gkb0A=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=WazdIVwmZvqhU+ZCXlk7thE1evjyXoJtnFm92RF8MHuVDWz5z5PbvgMBOk1s2jtdX
-         OwMuUyYPBMJlog9wDZqoeg/cvLZ6lYlvfy3w0t/xUZ6y04XBkjtbG335d4aokYmGM1
-         KOdCFD/7J+JxC1yCypwuhVtyNC7C3rt8dCMfdrDg=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAU4QuNL064532
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 22:26:56 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
- Nov 2018 22:26:56 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 29 Nov 2018 22:26:55 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAU4QrC3016047;
-        Thu, 29 Nov 2018 22:26:54 -0600
-Subject: Re: [PATCH 2/3] phy: sr-usb: Add stingray usb phy driver
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>
-References: <1542082418-16675-1-git-send-email-srinath.mannam@broadcom.com>
- <1542082418-16675-3-git-send-email-srinath.mannam@broadcom.com>
- <b626bff7-9228-b53f-b16a-7f6fb1f27100@ti.com>
- <CABe79T4r-20DmQoHX5HXFU0O7KXid=JuhKVtA7+yzkrb4vafkA@mail.gmail.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <46144237-8069-2cf5-a298-14a7ff0bd634@ti.com>
-Date:   Fri, 30 Nov 2018 09:56:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CABe79T4r-20DmQoHX5HXFU0O7KXid=JuhKVtA7+yzkrb4vafkA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 30 Nov 2018 10:37:06 -0500
+Received: from mail-eopbgr140052.outbound.protection.outlook.com ([40.107.14.52]:52709
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726375AbeK3PhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 10:37:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FAvejjhDz+c9BmzTOIxrncxFQRQuWVci8zc5DQcDY14=;
+ b=uGxy2Waql+eJY0nU5QAhBDP9X2DGP6uC0e0TBx11tydUt5oIHaJ2z5oCJjTZGOYtzmrjijJ593anQWhNJIKBFGpYDmFDGcQMKfwIADB5PZo6y/XjetNE+p7Ti37MNwdHWR909D7zpA3oTyx/hH/hPkYsI/61uDirZP/O/HBCKkc=
+Received: from VI1PR04MB5021.eurprd04.prod.outlook.com (20.177.50.90) by
+ VI1PR04MB4413.eurprd04.prod.outlook.com (20.177.55.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Fri, 30 Nov 2018 04:29:03 +0000
+Received: from VI1PR04MB5021.eurprd04.prod.outlook.com
+ ([fe80::d07c:4dc2:d18:c359]) by VI1PR04MB5021.eurprd04.prod.outlook.com
+ ([fe80::d07c:4dc2:d18:c359%2]) with mapi id 15.20.1339.031; Fri, 30 Nov 2018
+ 04:29:03 +0000
+From:   Clark Wang <xiaoning.wang@nxp.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Clark Wang <xiaoning.wang@nxp.com>
+Subject: [PATCH V2 0/4] spi: lpspi: Add Slave Mode support for LPSPI
+Thread-Topic: [PATCH V2 0/4] spi: lpspi: Add Slave Mode support for LPSPI
+Thread-Index: AQHUiGU5bPSGI+k3ukm6x9sv4SqCTg==
+Date:   Fri, 30 Nov 2018 04:29:03 +0000
+Message-ID: <20181130042753.28756-1-xiaoning.wang@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SG2PR06CA0220.apcprd06.prod.outlook.com
+ (2603:1096:4:68::28) To VI1PR04MB5021.eurprd04.prod.outlook.com
+ (2603:10a6:803:59::26)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xiaoning.wang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4413;6:5MczZP1KyVpZ19vh0quewGS9WFQNhcpEbqB9pq+BsdSRAgU5F8uUCvxydlY58IX5eVCJnQhIZLN7VFbwXPVD0GD4+m0BCdEKOrcwUhP/I0jRft6wooxh3APb2A1mshuQd498MPOgtdXs3y9k+nS10boYkOrCIFNbYF6pGaZKSaY1OvI3rP89bfhUklvYnqUYkyFK7rrsanebpZokbxUQntDw9LSFgv+F/L7BSxwv1T4KZXW+INVDGqOgD+OzeEToWlG91kCAaZpoOSdZfcvR5FL0xY58o58l+c8ost0aRuQodqFkKl0V7X1EO21b6wUOAHPF54up9SbEVv5Jm++JXVZ839iNL21g/vsKdz/3nMTqSKu32rs00Ceahg8/qgP0jUY+7SL7M28PUOsG81YANiOMHzPwLJr7jv/Rv7AVDcMsltaHQMR80+2vvjcr+cFXcRm/JW9SNDh6reR7GNa0tw==;5:Q34VSD+fV0ejG47Dr8sfVwkVCuiXLnm15t15zs3/W5iCf5RspD8m3yOJs0LdT6uinDLnUmV932k9eoy9QjrHNE3iL83XbMGKsXIwFCItq5oLhDb/l5sGb+Ufo0NtQDIfUWBEMPpt02QCZoJD1vhahbCYhtzrOrF7Ts5jwGU/XHo=;7:5ja+QKorjmp8weyG2NpZVw0OyO2c45boTpR/4age1hgwa/cY8C5D1/3tsCvINul+6hmIsnoTt412E5MNUiUImn/gI9wYnNCZt5qRwRMAET5kIlbbJlWJZfKyHCPFGAMooH8wzRvXISKqhpja8jFw2Q==
+x-ms-office365-filtering-correlation-id: 6155e55f-56d0-47dd-5637-08d6567c5b33
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4413;
+x-ms-traffictypediagnostic: VI1PR04MB4413:
+x-microsoft-antispam-prvs: <VI1PR04MB4413514958C6E1C518709388F3D30@VI1PR04MB4413.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231453)(999002)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4413;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4413;
+x-forefront-prvs: 087223B4DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(346002)(39860400002)(396003)(54534003)(199004)(189003)(81156014)(6436002)(53936002)(186003)(6506007)(81166006)(256004)(8676002)(6486002)(386003)(26005)(8936002)(14444005)(99286004)(52116002)(7736002)(316002)(36756003)(2616005)(54906003)(86362001)(305945005)(102836004)(71200400001)(2351001)(14454004)(478600001)(2501003)(71190400001)(68736007)(476003)(1730700003)(6512007)(5640700003)(6916009)(105586002)(3846002)(486006)(66066001)(25786009)(106356001)(2906002)(6116002)(97736004)(5660300001)(4326008)(1076002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4413;H:VI1PR04MB5021.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: k7oP0uKaIdtwSOIsmrHgmEirFkc5cXEv4UDWdKChUddG25CSpBJREqfFKvue/cM/3pCCCskJ86K6XoHca0vbA4IlHMf4JsI54gwKWndRzX8KqyHhBA0fMHaHVUCqRb2i5q+zVopWW1kcUxaxfg/83mYitJmimhuCD0rmYJSi251rIeRr2BIJHTDp7ArLAbrKBxxVQsOq5nSq/1Z9TjpocZxrLdTNbghq7RwYqCXG8QYURM3jxQ0Znxtse2qDFCHE0H40VQrv76aW8ghG/wccsbp2V9q9zlE6KFkx4OdZrsxmDJg4eE9RGEf6BYh6oA4IWI1SXWwMRfESz/50kxOvho4IEJ+sBuVkbZUUI64Vciw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6155e55f-56d0-47dd-5637-08d6567c5b33
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 04:29:03.2559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4413
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Mark,
 
-On 29/11/18 6:31 PM, Srinath Mannam wrote:
-> Hi Kishon,
-> 
-> Thank you for review.. Please find my answers below in line.
-> 
-> 
-> On Thu, Nov 29, 2018 at 3:55 PM Kishon Vijay Abraham I <kishon@ti.com> wrote:
->>
->> Hi,
->>
->> On 13/11/18 9:43 AM, Srinath Mannam wrote:
->>> This driver supports all versions of stingray SS and HS
->>> USB phys.
->>> In version 1 is combo phy contain both SS and HS phys
->>> in a common IO space.
->>> In version 2 a single HS phy.
->>> These phys support both xHCI host driver and
->>> BDC Broadcom device controller driver.
->>>
->>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
->>> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
->>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>> ---
->>>  drivers/phy/broadcom/Kconfig          |  11 +
->>>  drivers/phy/broadcom/Makefile         |   1 +
->>>  drivers/phy/broadcom/phy-bcm-sr-usb.c | 367 ++++++++++++++++++++++++++++++++++
->>>  3 files changed, 379 insertions(+)
->>>  create mode 100644 drivers/phy/broadcom/phy-bcm-sr-usb.c
->>>
->>> diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
->>> index 8786a96..c1e4dd5 100644
->>> --- a/drivers/phy/broadcom/Kconfig
->>> +++ b/drivers/phy/broadcom/Kconfig
->>> @@ -10,6 +10,17 @@ config PHY_CYGNUS_PCIE
->>>         Enable this to support the Broadcom Cygnus PCIe PHY.
->>>         If unsure, say N.
->>>
->>> +config PHY_BCM_SR_USB
->>> +     tristate "Broadcom Stingray USB PHY driver"
->>> +     depends on OF && (ARCH_BCM_IPROC || COMPILE_TEST)
->>> +     select GENERIC_PHY
->>> +     default ARCH_BCM_IPROC
->>> +     help
->>> +       Enable this to support the Broadcom Stingray USB PHY
->>> +       driver. It supports all versions of Superspeed and
->>> +       Highspeed PHYs.
->>> +       If unsure, say N.
->>> +
->>>  config BCM_KONA_USB2_PHY
->>>       tristate "Broadcom Kona USB2 PHY Driver"
->>>       depends on HAS_IOMEM
->>> diff --git a/drivers/phy/broadcom/Makefile b/drivers/phy/broadcom/Makefile
->>> index 0f60184..f453c7d 100644
->>> --- a/drivers/phy/broadcom/Makefile
->>> +++ b/drivers/phy/broadcom/Makefile
->>> @@ -11,3 +11,4 @@ obj-$(CONFIG_PHY_BRCM_USB)          += phy-brcm-usb-dvr.o
->>>  phy-brcm-usb-dvr-objs := phy-brcm-usb.o phy-brcm-usb-init.o
->>>
->>>  obj-$(CONFIG_PHY_BCM_SR_PCIE)                += phy-bcm-sr-pcie.o
->>> +obj-$(CONFIG_PHY_BCM_SR_USB)         += phy-bcm-sr-usb.o
->>> diff --git a/drivers/phy/broadcom/phy-bcm-sr-usb.c b/drivers/phy/broadcom/phy-bcm-sr-usb.c
->>> new file mode 100644
->>> index 0000000..99de49f
->>> --- /dev/null
->>> +++ b/drivers/phy/broadcom/phy-bcm-sr-usb.c
->>> @@ -0,0 +1,367 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Copyright (C) 2016-2018 Broadcom
->>> + */
->>> +
->>> +#include <linux/delay.h>
->>> +#include <linux/io.h>
->>> +#include <linux/module.h>
->>> +#include <linux/of.h>
->>> +#include <linux/phy/phy.h>
->>> +#include <linux/platform_device.h>
->>> +
->>> +enum bcm_usb_phy_version {
->>> +     BCM_USB_PHY_V1,
->>> +     BCM_USB_PHY_V2,
->>> +};
->>> +
->>> +enum bcm_usb_phy_reg {
->>> +     PLL_NDIV_FRAC,
->>> +     PLL_NDIV_INT,
->>> +     PLL_CTRL,
->>> +     PHY_CTRL,
->>> +     PHY_PLL_CTRL,
->>> +};
->>> +
->>> +/* USB PHY registers */
->>> +
->>> +static const u8 bcm_usb_u3phy_v1[] = {
->>> +     [PLL_CTRL]              = 0x18,
->>> +     [PHY_CTRL]              = 0x14,
->>> +};
->>> +
->>> +static const u8 bcm_usb_u2phy_v1[] = {
->>> +     [PLL_NDIV_FRAC] = 0x04,
->>> +     [PLL_NDIV_INT]  = 0x08,
->>> +     [PLL_CTRL]      = 0x0c,
->>> +     [PHY_CTRL]      = 0x10,
->>> +};
->>> +
->>> +#define HSPLL_NDIV_INT_VAL   0x13
->>> +#define HSPLL_NDIV_FRAC_VAL  0x1005
->>> +
->>> +static const u8 bcm_usb_u2phy_v2[] = {
->>> +     [PLL_NDIV_FRAC] = 0x0,
->>> +     [PLL_NDIV_INT]  = 0x4,
->>> +     [PLL_CTRL]      = 0x8,
->>> +     [PHY_CTRL]      = 0xc,
->>> +};
->>> +
->>> +enum pll_ctrl_bits {
->>> +     PLL_RESETB,
->>> +     SSPLL_SUSPEND_EN,
->>> +     PLL_SEQ_START,
->>> +     PLL_LOCK,
->>> +     PLL_PDIV,
->>> +};
->>> +
->>> +static const u8 u3pll_ctrl[] = {
->>> +     [PLL_RESETB]            = 0,
->>> +     [SSPLL_SUSPEND_EN]      = 1,
->>> +     [PLL_SEQ_START]         = 2,
->>> +     [PLL_LOCK]              = 3,
->>> +};
->>> +
->>> +#define HSPLL_PDIV_MASK              0xF
->>> +#define HSPLL_PDIV_VAL               0x1
->>> +
->>> +static const u8 u2pll_ctrl[] = {
->>> +     [PLL_PDIV]      = 1,
->>> +     [PLL_RESETB]    = 5,
->>> +     [PLL_LOCK]      = 6,
->>> +};
->>> +
->>> +enum bcm_usb_phy_ctrl_bits {
->>> +     CORERDY,
->>> +     AFE_LDO_PWRDWNB,
->>> +     AFE_PLL_PWRDWNB,
->>> +     AFE_BG_PWRDWNB,
->>> +     PHY_ISO,
->>> +     PHY_RESETB,
->>> +     PHY_PCTL,
->>> +};
->>> +
->>> +#define PHY_PCTL_MASK        0xffff
->>> +/*
->>> + * 0x0806 of PCTL_VAL has below bits set
->>> + * BIT-8 : refclk divider 1
->>> + * BIT-3:2: device mode; mode is not effect
->>> + * BIT-1: soft reset active low
->>> + */
->>> +#define HSPHY_PCTL_VAL       0x0806
->>> +#define SSPHY_PCTL_VAL       0x0006
->>> +
->>> +static const u8 u3phy_ctrl[] = {
->>> +     [PHY_RESETB]    = 1,
->>> +     [PHY_PCTL]      = 2,
->>> +};
->>> +
->>> +static const u8 u2phy_ctrl[] = {
->>> +     [CORERDY]               = 0,
->>> +     [AFE_LDO_PWRDWNB]       = 1,
->>> +     [AFE_PLL_PWRDWNB]       = 2,
->>> +     [AFE_BG_PWRDWNB]        = 3,
->>> +     [PHY_ISO]               = 4,
->>> +     [PHY_RESETB]            = 5,
->>> +     [PHY_PCTL]              = 6,
->>> +};
->>> +
->>> +struct bcm_usb_phy_cfg {
->>> +     uint32_t type;
->>> +     uint32_t ver;
->>> +     void __iomem *regs;
->>> +     struct phy *phy;
->>> +     const u8 *offset;
->>> +};
->>> +
->>> +#define PLL_LOCK_RETRY_COUNT 1000
->>> +
->>> +enum bcm_usb_phy_type {
->>> +     USB_HS_PHY,
->>> +     USB_SS_PHY,
->>> +};
->>> +
->>> +static inline void bcm_usb_reg32_clrbits(void __iomem *addr, uint32_t clear)
->>> +{
->>> +     writel(readl(addr) & ~clear, addr);
->>> +}
->>> +
->>> +static inline void bcm_usb_reg32_setbits(void __iomem *addr, uint32_t set)
->>> +{
->>> +     writel(readl(addr) | set, addr);
->>> +}
->>> +
->>> +static int bcm_usb_pll_lock_check(void __iomem *addr, u32 bit)
->>> +{
->>> +     int retry;
->>> +     u32 rd_data;
->>> +
->>> +     retry = PLL_LOCK_RETRY_COUNT;
->>> +     do {
->>> +             rd_data = readl(addr);
->>> +             if (rd_data & bit)
->>> +                     return 0;
->>> +             udelay(1);
->>> +     } while (--retry > 0);
->>> +
->>> +     pr_err("%s: FAIL\n", __func__);
->>> +     return -ETIMEDOUT;
->>> +}
->>> +
->>> +static int bcm_usb_ss_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
->>> +{
->>> +     int ret = 0;
->>> +     void __iomem *regs = phy_cfg->regs;
->>> +     const u8 *offset;
->>> +     u32 rd_data;
->>> +
->>> +     offset = phy_cfg->offset;
->>> +
->>> +     /* Set pctl with mode and soft reset */
->>> +     rd_data = readl(regs + offset[PHY_CTRL]);
->>> +     rd_data &= ~(PHY_PCTL_MASK << u3phy_ctrl[PHY_PCTL]);
->>> +     rd_data |= (SSPHY_PCTL_VAL << u3phy_ctrl[PHY_PCTL]);
->>> +     writel(rd_data, regs + offset[PHY_CTRL]);
->>> +
->>> +     bcm_usb_reg32_clrbits(regs + offset[PLL_CTRL],
->>> +                           BIT(u3pll_ctrl[SSPLL_SUSPEND_EN]));
->>> +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
->>> +                           BIT(u3pll_ctrl[PLL_SEQ_START]));
->>> +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
->>> +                           BIT(u3pll_ctrl[PLL_RESETB]));
->>> +
->>> +     msleep(30);
+i.MX LPSPI controller only works in Master mode previously. This patch
+series adds support slave mode to LPSPI controller, including:
+ - Replace all related structure names and object names which is named
+   "master" with "controller",
+ - adds SPI slave mode support for i.MX7ulp and i.MX8qm/qxp in PIO mode,
+ - DT binding updates for slave mode.
 
-Please add a comment for each of the delay added to mention if it's documented
-in the data manual or was a result of experiment etc..
->>> +
->>> +     ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
->>> +                                  BIT(u3pll_ctrl[PLL_LOCK]));
->>> +
->>> +     return ret;
->>> +}
->>> +
->>> +static int bcm_usb_hs_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
->>> +{
->>> +     int ret = 0;
->>> +     void __iomem *regs = phy_cfg->regs;
->>> +     const u8 *offset;
->>> +     u32 rd_data;
->>> +
->>> +     offset = phy_cfg->offset;
->>> +
->>> +     writel(HSPLL_NDIV_INT_VAL, regs + offset[PLL_NDIV_INT]);
->>> +     writel(HSPLL_NDIV_FRAC_VAL, regs + offset[PLL_NDIV_FRAC]);
->>> +
->>> +     rd_data = readl(regs + offset[PLL_CTRL]);
->>> +     rd_data &= ~(HSPLL_PDIV_MASK << u2pll_ctrl[PLL_PDIV]);
->>> +     rd_data |= (HSPLL_PDIV_VAL << u2pll_ctrl[PLL_PDIV]);
->>> +     writel(rd_data, regs + offset[PLL_CTRL]);
->>> +
->>> +     /* Set Core Ready high */
->>> +     bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
->>> +                           BIT(u2phy_ctrl[CORERDY]));
->>> +
->>> +     msleep(100);
->>> +
->>> +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
->>> +                           BIT(u2pll_ctrl[PLL_RESETB]));
->>> +     bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
->>> +                           BIT(u2phy_ctrl[PHY_RESETB]));
->>> +
->>> +
->>> +     rd_data = readl(regs + offset[PHY_CTRL]);
->>> +     rd_data &= ~(PHY_PCTL_MASK << u2phy_ctrl[PHY_PCTL]);
->>> +     rd_data |= (HSPHY_PCTL_VAL << u2phy_ctrl[PHY_PCTL]);
->>> +     writel(rd_data, regs + offset[PHY_CTRL]);
->>> +
->>> +     ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
->>> +                                  BIT(u2pll_ctrl[PLL_LOCK]));
->>> +
->>> +     return ret;
->>> +}
->>> +
->>> +static int bcm_usb_phy_reset(struct phy *phy)
->>> +{
->>> +     struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
->>> +     void __iomem *regs = phy_cfg->regs;
->>> +     const u8 *offset;
->>> +
->>> +     offset = phy_cfg->offset;
->>> +
->>> +     if (phy_cfg->type == USB_HS_PHY) {
->>> +             bcm_usb_reg32_clrbits(regs + offset[PHY_CTRL],
->>> +                                   BIT(u2phy_ctrl[CORERDY]));
->>> +             bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
->>> +                                   BIT(u2phy_ctrl[CORERDY]));
->>> +     }
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static int bcm_usb_phy_init(struct phy *phy)
->>> +{
->>> +     struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
->>> +
->>> +     if (phy_cfg->type == USB_SS_PHY)
->>> +             bcm_usb_ss_phy_init(phy_cfg);
->>> +     if (phy_cfg->type == USB_HS_PHY)
->>> +             bcm_usb_hs_phy_init(phy_cfg);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static struct phy_ops sr_phy_ops = {
->>> +     .init           = bcm_usb_phy_init,
->>> +     .reset          = bcm_usb_phy_reset,
->>> +     .owner          = THIS_MODULE,
->>> +};
->>> +
->>> +static int bcm_usb_phy_create(struct device *dev, struct device_node *node,
->>> +                          void __iomem *regs, uint32_t version)
->>> +{
->>> +     struct bcm_usb_phy_cfg *phy_cfg;
->>> +     struct phy_provider *phy_provider;
->>> +
->>> +     phy_cfg = devm_kzalloc(dev, sizeof(struct bcm_usb_phy_cfg), GFP_KERNEL);
->>> +     if (!phy_cfg)
->>> +             return -ENOMEM;
->>> +
->>> +     phy_cfg->regs = regs;
->>
->> Are there any registers shared by all the PHYs?
-> No registers shared between phys. All phys have same type of registers
-> but at different address offset.
-> In the same way few bits in registers are same but at different
-> position in registers.
->>> +     phy_cfg->ver = version;
->>> +
->>> +     if (phy_cfg->ver == BCM_USB_PHY_V1) {
->>> +             unsigned int id;
->>> +
->>> +             if (of_property_read_u32(node, "reg", &id)) {
->>> +                     dev_err(dev, "missing reg property in node %s\n",
->>> +                             node->name);
->>> +                     return -EINVAL;
->>> +             }
->>> +
->>> +             if (id == 0) {
->>> +                     phy_cfg->offset = bcm_usb_u2phy_v1;
->>
->> The reg space can come from the dt itself.
-> This driver supports two different phys. one is combo phy which has
-> both USB3 and USB2 phy.
-> other is single phy it has only USB2 phy.
-> So that, from DT we passed address of either combo phy address or
-> single phy address.
-> In combo phy, USB3 phy and USB2 phy registers are at different offsets
-> from the base address passed through DT.
->>> +                     phy_cfg->type = USB_HS_PHY;
->>> +             } else if (id == 1) {
->>> +                     phy_cfg->offset = bcm_usb_u3phy_v1;
->>> +                     phy_cfg->type = USB_SS_PHY;
->>> +             } else {
->>> +                     return -ENODEV;
->>> +             }
->>> +     } else if (phy_cfg->ver == BCM_USB_PHY_V2) {
->>> +             phy_cfg->offset = bcm_usb_u2phy_v2;
->>> +             phy_cfg->type = USB_HS_PHY;
->>> +     }
->>> +
->>> +     phy_cfg->phy = devm_phy_create(dev, node, &sr_phy_ops);
->>> +     if (IS_ERR(phy_cfg->phy))
->>> +             return PTR_ERR(phy_cfg->phy);
->>> +
->>> +     phy_set_drvdata(phy_cfg->phy, phy_cfg);
->>> +     phy_provider = devm_of_phy_provider_register(&phy_cfg->phy->dev,
->>> +                                                  of_phy_simple_xlate);
->>> +     if (IS_ERR(phy_provider)) {
->>> +             dev_err(dev, "Failed to register phy provider\n");
->>> +             return PTR_ERR(phy_provider);
->>> +     }
->>
->> No need for a separate PHY provider.
-> Could you please provide more details?
-> I thought to get phy device in the upper layer we need to register
-> provider. can we skip this?
-> In this driver, combo phy provides two usb ports to host controller,
-> so that I need to add separate phandlers
-> in host controller DT node and need to create two separate phy
-> devices. also phy_init and reset handlers need
-> to call for both phy devices separately.
+Currently SPI Slave mode support patch has the following limitations:
+1. The stale data in RXFIFO will be dropped when the Slave does any new
+   transfer.
+2. One transfer can be finished only after all transfer->len data been
+   transferred to master device
+3. Slave device only accepts transfer->len data. Any data longer than this
+   from master device will be dropped. Any data shorter than this from
+   master will cause LPSPI to stuck due to mentioned limitation 2.
+4. Only PIO transfer is supported in Slave Mode.
 
-A single phy_provider can create multiple PHY's. Here anyways you have subnodes
-for each of the PHY's. So host controller DT node can have a phandle to the
-subnodes directly.
+Wire connection:
+GND, SCK, MISO(to MISO of slave), MOSI(to MOSI of slave), SCS
 
-Thanks
-Kishon
+Change log:
+V2:=20
+ - Split last version patch into 3 patches, and add the doc update.
+
+Clark Wang (4):
+  spi: lpspi: Replace all "master" with "controller"
+  spi: lpspi: Add slave mode support
+  spi: lpspi: Let watermark change with send data length
+  doc: lpspi: Document DT bindings for LPSPI slave mode
+
+ .../devicetree/bindings/spi/spi-fsl-lpspi.txt |   5 +-
+ drivers/spi/spi-fsl-lpspi.c                   | 202 ++++++++++++------
+ 2 files changed, 138 insertions(+), 69 deletions(-)
+
+--=20
+2.17.1
+
