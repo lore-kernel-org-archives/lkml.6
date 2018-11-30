@@ -2,102 +2,82 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C30DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5816C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2158D20660
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:15:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="KgIZy+9t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2158D20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
+	by mail.kernel.org (Postfix) with ESMTP id ABE1720834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE1720834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbeLAI0c (ORCPT
+        id S1726800AbeLAI1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 03:26:32 -0500
-Received: from mail-qk1-f227.google.com ([209.85.222.227]:44168 "EHLO
-        mail-qk1-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeLAI0c (ORCPT
+        Sat, 1 Dec 2018 03:27:25 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:59950 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAI1Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 03:26:32 -0500
-Received: by mail-qk1-f227.google.com with SMTP id n12so3999981qkh.11
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 13:15:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/GL+vMwLEIx6YDK73nJMetbGD8d1zqFOPKI/7jt3NQk=;
-        b=KgIZy+9tT+i7CRlxDSpmevqvb5hOzzAGGtSt630tiSG5GWXAg+Igk5RwTIqlbRJqpF
-         MCjpvRuwW65f+ChecqqQDKPMX3v2s7PdXNqAFDp0feLpNolEspChYH4doA/DyRTCrJJr
-         B6fv4x8cn6k0U6ctr13njCHIX2xCvFMo0VEqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/GL+vMwLEIx6YDK73nJMetbGD8d1zqFOPKI/7jt3NQk=;
-        b=eYrPfmDRWhjte6mZPHaIW47b+PWxfdALQFuLC9DrdbtsqEiksYa1sZt9vSJGC9uOl2
-         M5k+WEcnHfWyP2HzoL9tKqADd7kR6quAqdIKzwHjOl81Ytxno0bfDY7Mbcka0PcqfV1j
-         YlLvOVyNtiAsn2u3a2L+FJ6k1sHM1o55qietAReHrsVZ2stiQ9KybxNDTYi5lBtnyDxK
-         7265hksVGy+imYWmz12Pxqv2rcpQ7n7cheUAha9rOBULom7zZNMfL0LPwQJ4M9ja17IO
-         hpKLl2EAmXO2ZbY0ds+0BLJB0865d6aPB/qEt09dlt2mxbvowuYja9EuMFuMmmaWyn3U
-         DeaA==
-X-Gm-Message-State: AA+aEWbmKYh+n5mtLMEPWKirQuAGbRDQ+4wYPt8wlBwH/efUjOLpUrHK
-        B435+j11oqveizuiP9T3Q04f07e+RV3BEIZASSZQ75tOaOGdkA==
-X-Google-Smtp-Source: AFSGD/V3rh2gprbZGHlBnGABRuJs6fcglYLreFmaeWERf5YqH4/j23cDyJ5yG3piSvJwtqeAQDAlXiIlgZFf
-X-Received: by 2002:a37:484c:: with SMTP id v73mr6585358qka.196.1543612555734;
-        Fri, 30 Nov 2018 13:15:55 -0800 (PST)
-Received: from c7-smtp.dev.purestorage.com ([192.30.188.252])
-        by smtp-relay.gmail.com with ESMTPS id h21sm513995qkj.9.2018.11.30.13.15.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 13:15:55 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from roland-x1-yoga.digitalvampire.org (roland-x1-yoga.purestorage.com [10.202.102.176])
-        by c7-smtp.dev.purestorage.com (Postfix) with ESMTPS id 5378D2191E;
-        Fri, 30 Nov 2018 14:15:54 -0700 (MST)
-From:   Roland Dreier <roland@purestorage.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/hpet: Remove unused FSEC_PER_NSEC define
-Date:   Fri, 30 Nov 2018 13:15:53 -0800
-Message-Id: <20181130211553.5450-1-roland@purestorage.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 1 Dec 2018 03:27:25 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id CFB3714E0EF4B;
+        Fri, 30 Nov 2018 13:16:48 -0800 (PST)
+Date:   Fri, 30 Nov 2018 13:16:48 -0800 (PST)
+Message-Id: <20181130.131648.1001002082761494151.davem@davemloft.net>
+To:     thierry.reding@gmail.com
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, netdev@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: stmmac: Move debugfs init/exit to
+ ->probe()/->remove()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181127132143.10473-1-thierry.reding@gmail.com>
+References: <20181123122122.18957-1-thierry.reding@gmail.com>
+        <20181127132143.10473-1-thierry.reding@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Nov 2018 13:16:49 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The FSEC_PER_NSEC macro has had zero users since commit ab0e08f15d23
-("x86: hpet: Cleanup the clockevents init and register code").
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 27 Nov 2018 14:21:43 +0100
 
-Signed-off-by: Roland Dreier <roland@purestorage.com>
----
- arch/x86/kernel/hpet.c | 4 ----
- 1 file changed, 4 deletions(-)
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Setting up and tearing down debugfs is current unbalanced, as seen by
+> this error during resume from suspend:
+> 
+>     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
+>     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
+> 
+> The imbalance happens because the driver creates the debugfs hierarchy
+> when the device is opened and tears it down when the device is closed.
+> There's little gain in that, and it could be argued that it is even
+> surprising because it's not usually done for other devices. Fix the
+> imbalance by moving the debugfs creation and teardown to the driver's
+> ->probe() and ->remove() implementations instead.
+> 
+> Note that the ring descriptors cannot be read while the interface is
+> down, so make sure to return an empty file when the descriptors_status
+> debugfs file is read.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> This applies on top of net-next.
+> 
+> Changes in v2:
+> - avoid access to ring descriptors when interface is down
 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index b0acb22e5a46..dfd3aca82c61 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -21,10 +21,6 @@
- 
- #define HPET_MASK			CLOCKSOURCE_MASK(32)
- 
--/* FSEC = 10^-15
--   NSEC = 10^-9 */
--#define FSEC_PER_NSEC			1000000L
--
- #define HPET_DEV_USED_BIT		2
- #define HPET_DEV_USED			(1 << HPET_DEV_USED_BIT)
- #define HPET_DEV_VALID			0x8
--- 
-2.19.1
-
+Applied, thanks.
