@@ -2,74 +2,107 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94B1C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB71C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D8A720868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8A720868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 156E620834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:46:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FWxq6XEN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 156E620834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeLAGzt (ORCPT
+        id S1726753AbeLAG4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:55:49 -0500
-Received: from mga07.intel.com ([134.134.136.100]:35692 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeLAGzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:55:49 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 11:45:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
-   d="scan'208";a="114151013"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
-  by orsmga002.jf.intel.com with ESMTP; 30 Nov 2018 11:45:27 -0800
-Date:   Fri, 30 Nov 2018 11:45:27 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-Message-ID: <20181130194527.GB18584@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
- <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
- <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
- <20181130194149.GA18584@linux.intel.com>
+        Sat, 1 Dec 2018 01:56:36 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33952 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAG4g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 01:56:36 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p6so4962480lfc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:46:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WtlTgtUilYOBKnXnQRdlG+93Y6itvwnqZXTEFM9dxfA=;
+        b=FWxq6XEN1FdQQd65gUuJGXvqkihiZELIBtl9VG3CH2Vdx+YXWfw8mDm1rzQPI7sDTF
+         sPbYlZxQEl/b/SEHlk/t68laoPCBkr9+ah1ig1xBbAWsAHBJc6ffVLNmNMh4ONPBpnkE
+         7rKSs1LUjQB2H3A1y9NNopUuOxUTzN216LZcM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WtlTgtUilYOBKnXnQRdlG+93Y6itvwnqZXTEFM9dxfA=;
+        b=YNN42rd5Sl+pmvdcdp9XPMe9J+BHEzIMPCfFXxMxLB+xsYkUQe/oZIaNy22yDoTu5O
+         SXApBVjUUeudhdGthiNS/gZdCjLYUJi0rqfsTbW4xRL8QgYoLaIkAw7R9lZEZpC/j4ha
+         0Yz0psQUQi5xeFGqd7O5gxFQ935mQG62CX8gxUeocWxe8bP0/O4pfkYyxIaSkRbzDoFt
+         Ee48EBfwuA9bGKUxFJXYRZVIv7vZUYcBntS0uVHuB3dVlhqn4KmWWDyDM7JlUP30KhdD
+         kLQXHHSFGiUFQHiXQ7q/8QRK2odKYbVI6QsYweMtfzlqZuI0vZbtM2rpyVlZggcGRldQ
+         I86Q==
+X-Gm-Message-State: AA+aEWaGSpEEbfsmJD3FwMRk94mCa2nvlEhVESijRIQR0kvnWy+nEN/N
+        25Kppaok2uayKcAWhOjCe7tdm+2c0sY=
+X-Google-Smtp-Source: AFSGD/XoOY+l5hFdw+RteprBMm33XvR4BLWmB+uwEBd2YEMfE94v6he7U/Ygnk7JMGqlhE2B6hxZfw==
+X-Received: by 2002:a19:c995:: with SMTP id z143mr3871710lff.79.1543607172585;
+        Fri, 30 Nov 2018 11:46:12 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id k3-v6sm939197lja.8.2018.11.30.11.46.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 11:46:11 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id p6so4962399lfc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:46:11 -0800 (PST)
+X-Received: by 2002:a19:982:: with SMTP id 124mr4282052lfj.138.1543607170629;
+ Fri, 30 Nov 2018 11:46:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130194149.GA18584@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181129124404.2fe55dd0@gandalf.local.home> <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
+ <20181129125857.75c55b96@gandalf.local.home> <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
+ <20181129134725.6d86ade6@gandalf.local.home> <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
+ <CAHk-=wjN=sow0F-UtA6DtHHT_CNUV7wYVe3cQ4E8GPp4LN32+Q@mail.gmail.com>
+ <CALCETrVzFk2Yv8q54Xh6qOb45AKKrQhD5OkAuTsw9HaR3Wvy4Q@mail.gmail.com>
+ <20181129202452.56f4j2wdct6qbaqo@treble> <CALCETrW1ju40hFrM3sr21tDTZ-m1=swHfD2cMiyYFJkgbb3cug@mail.gmail.com>
+ <20181130183917.hxmti5josgq4clti@treble>
+In-Reply-To: <20181130183917.hxmti5josgq4clti@treble>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 30 Nov 2018 11:45:53 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whx=Dme9q0k0pK7S_3YwuvdMw1yKxESSUhS+eEce8HTOQ@mail.gmail.com>
+Message-ID: <CAHk-=whx=Dme9q0k0pK7S_3YwuvdMw1yKxESSUhS+eEce8HTOQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
+        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
+        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
+        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
-> Even after looking at the spec the last field does not make sense as the
-> event after digests and digests are not in union. It is just not right.
-> 
-> The comment does not fix that.
+On Fri, Nov 30, 2018 at 10:39 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> AFAICT, all the other proposed options seem to have major issues.
 
-You should remove the last field and rename the struct as maybe
-struct tcg_pcr_event2_head. If we ever need the very last field
-we can create struct *_tail.
+I still absolutely detest this patch, and in fact it got worse from
+the test of the config variable.
 
-Not your fault but there is clear bug in the struct definition
-that should be fixed in a commit of its own.
+Honestly, the entry code being legible and simple is more important
+than the extra cycle from branching to a trampoline for static calls.
 
-No new comments are needed.
+Just don't do the inline case if it causes this much confusion.
 
-/Jarkko
+             Linus
