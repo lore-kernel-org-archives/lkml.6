@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11818C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006F8C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEAF82145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4B732082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:58:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="qE17nE2J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAF82145D
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="pGqfh1b/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B732082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbeLAHIp (ORCPT
+        id S1727080AbeLAHIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 1 Dec 2018 02:08:45 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:42956 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeLAHIo (ORCPT
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:38727 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbeLAHIn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:08:44 -0500
-Received: by mail-yb1-f193.google.com with SMTP id s8so545643ybe.9
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:58:21 -0800 (PST)
+        Sat, 1 Dec 2018 02:08:43 -0500
+Received: by mail-yw1-f67.google.com with SMTP id i20so2777031ywc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 11:58:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=ZiSWalXRo2lAHNoxFcnCBmYqM80BUgBK6TZ//qlBoW0=;
-        b=qE17nE2Jo3x4abm13SJxAAIFGmnZyoF8C/6nu8aRpvS4rDGOAT+NB7nFb5qR/q9r0W
-         wyEq3cqlr+cDklN/eobicAnmyPZ5O00B6CLcEWwkMfbaQv2f1e/zarf+qIW/wPERWt9z
-         QGzxh3p+tv3y8zML5KreAJ0J0fdK1gQiiTp1jNjrMW9vgTdx5CDjGysHbm7NtzHtqj2z
-         G48SlfhBIGMBXljirIlfet56WObqccekan4prBch/7ywFpwIc9gEWxYUBnEKPj4xUmnP
-         p7oYI1XwYAfhLaNWOYg0r74CjigClE0qUNLmKqCBjSEdRHgY4p9ac7AqgtmRfyHOfhUM
-         7DqA==
+        bh=nUZutRNzquUqiT8YQe9ytPV/656PUstfyd8NxlX/hPI=;
+        b=pGqfh1b/nsbK/ZbCXMPcYm87vbT8EJixts8PxW5qh/PS62xI0lfhXgstg/SfXmcgKx
+         QL8eZ/eIwVWknS6P3BhLvtDQdWszrYyJ1QwEt94N/dKXdv2geai/8blz0IKRlaedV9a3
+         kTTXnVh6UVcSBASSiHhFEJ/XCNZ0i9pc8m87rH/W68Yqp/GhcX/uyHvsmhBMlQeJ+IMm
+         nJzEv1nMrwT8VbQFp6GqCt4JSUMGfTDEbIdakFPs2kJcdTQfrMWq4lURis0hDKJXfhnq
+         Te6J3KoAQ4jU9tgqDrcyIcSSHxaSDvRoVHvuDbyQj8YPy/lq7/kuL8g4zlM4OIEmaQWV
+         BZQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=ZiSWalXRo2lAHNoxFcnCBmYqM80BUgBK6TZ//qlBoW0=;
-        b=EMNKU4LZlTOcLDkWsiLDVXZUrnYkO86YRlKw4KAs3LpECLqwMU9Qb+O+qEkeYctzEd
-         UwJY7Aj7l2bcpKUMtS5MPKTfGl/JN82Z8JaPIfSZej49q9oi8pVgCe7XvWiqQDPthtdq
-         h6NikmdYgFnYGIx2thQ/5sWpADWraS96CuQetqED0kEvvD3wToY58faw3w1tfGEsz7Ub
-         EjmUWHlLeP6/9ic4z6BM9aChLLRMNy/SnTloDEYlYfl4yk+RTpe1dI/lkFs2U3lc992H
-         yLv9X9Kt+RzariQLYs6B+bhSAj45jqsCDmjVIKhjp38EtlHEsvwNx8i7s80wzq3hgtkR
-         cd3w==
-X-Gm-Message-State: AA+aEWYjdH2QcNt/pKEn6tQE2L6von/qkOhEUGXgoWr574IKoMP6N9lg
-        utO1O7YNK6lWoL07Pdi2y+EZpw==
-X-Google-Smtp-Source: AFSGD/WUySeblOm5lO6iEZroC7YfnS5osaYyKXSy7/i64tvWyXdByqa0y4VKPk5GYCaEeI3VijK3IQ==
-X-Received: by 2002:a5b:b09:: with SMTP id z9-v6mr6591976ybp.483.1543607900825;
-        Fri, 30 Nov 2018 11:58:20 -0800 (PST)
+        bh=nUZutRNzquUqiT8YQe9ytPV/656PUstfyd8NxlX/hPI=;
+        b=n4bULaYOo5bqv9uUuINKPjerb9kSBIsdlr7hLwF3MnafWqyNXTwWszZIx9Dn4XI5DO
+         skhjLzgLKU+3Zpp+N0RgcwofPuuym/7gJtbNgmFsFnCNPOzWw+brcXYi4nbbwkqHxBFH
+         88aqnDCotYW7ADid2OiZ9CYBa0OuwbzAHP/6Qv5a5whGqcINzlg7UJKPgcCkThGzpOJm
+         dMyuPiJYG3tRiEsulKjYbTmGgC2io6xWSiPTuE9RB1CZQkKK9gzjyGMQYH7C6OWuZnfT
+         WzzohLiBV8a2icIz/VgHWsrnBDEh+wwRTzZPDFYKHy3msdJhh2Lb0psO2w/mu46z/8SU
+         dkYw==
+X-Gm-Message-State: AA+aEWbUOSlfNnukOAN6W6vWk/DueBfYfkKx1odIUWEDWg8f7RxfPF2G
+        YQiI0H0YDYC/s4z/O23UiLEg8g==
+X-Google-Smtp-Source: AFSGD/UTW3BkBMXkE9PGFk0hChnQLXXRjoCPzae6goRhgMpcuc2F0LFE+t5itICdCj2HY6SpfuWGxg==
+X-Received: by 2002:a81:3402:: with SMTP id b2mr7025741ywa.12.1543607899303;
+        Fri, 30 Nov 2018 11:58:19 -0800 (PST)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id z74sm3209536ywz.51.2018.11.30.11.58.19
+        by smtp.gmail.com with ESMTPSA id p201sm2705356ywe.45.2018.11.30.11.58.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 11:58:20 -0800 (PST)
+        Fri, 30 Nov 2018 11:58:18 -0800 (PST)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     kernel-team@fb.com, hannes@cmpxchg.org,
         linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
         akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
-Subject: [PATCH 4/4] mm: use the cached page for filemap_fault
-Date:   Fri, 30 Nov 2018 14:58:12 -0500
-Message-Id: <20181130195812.19536-5-josef@toxicpanda.com>
+Subject: [PATCH 3/4] filemap: drop the mmap_sem for all blocking operations
+Date:   Fri, 30 Nov 2018 14:58:11 -0500
+Message-Id: <20181130195812.19536-4-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20181130195812.19536-1-josef@toxicpanda.com>
 References: <20181130195812.19536-1-josef@toxicpanda.com>
@@ -74,99 +74,246 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we drop the mmap_sem we have to redo the vma lookup which requires
-redoing the fault handler.  Chances are we will just come back to the
-same page, so save this page in our vmf->cached_page and reuse it in the
-next loop through the fault handler.
+Currently we only drop the mmap_sem if there is contention on the page
+lock.  The idea is that we issue readahead and then go to lock the page
+while it is under IO and we want to not hold the mmap_sem during the IO.
+
+The problem with this is the assumption that the readahead does
+anything.  In the case that the box is under extreme memory or IO
+pressure we may end up not reading anything at all for readahead, which
+means we will end up reading in the page under the mmap_sem.
+
+Instead rework filemap fault path to drop the mmap sem at any point that
+we may do IO or block for an extended period of time.  This includes
+while issuing readahead, locking the page, or needing to call ->readpage
+because readahead did not occur.  Then once we have a fully uptodate
+page we can return with VM_FAULT_RETRY and come back again to find our
+nicely in-cache page that was gotten outside of the mmap_sem.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- mm/filemap.c | 45 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 2 deletions(-)
+ mm/filemap.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 93 insertions(+), 20 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 5e76b24b2a0f..d4385b704e04 100644
+index f068712c2525..5e76b24b2a0f 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2392,6 +2392,35 @@ static struct file *do_async_mmap_readahead(struct vm_area_struct *vma,
- 	return fpin;
+@@ -2304,28 +2304,44 @@ EXPORT_SYMBOL(generic_file_read_iter);
+ 
+ #ifdef CONFIG_MMU
+ #define MMAP_LOTSAMISS  (100)
++static struct file *maybe_unlock_mmap_for_io(struct file *fpin,
++					     struct vm_area_struct *vma,
++					     int flags)
++{
++	if (fpin)
++		return fpin;
++	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) ==
++	    FAULT_FLAG_ALLOW_RETRY) {
++		fpin = get_file(vma->vm_file);
++		up_read(&vma->vm_mm->mmap_sem);
++	}
++	return fpin;
++}
+ 
+ /*
+  * Synchronous readahead happens when we don't even find
+  * a page in the page cache at all.
+  */
+-static void do_sync_mmap_readahead(struct vm_area_struct *vma,
+-				   struct file_ra_state *ra,
+-				   struct file *file,
+-				   pgoff_t offset)
++static struct file *do_sync_mmap_readahead(struct vm_area_struct *vma,
++					   struct file_ra_state *ra,
++					   struct file *file,
++					   pgoff_t offset,
++					   int flags)
+ {
+ 	struct address_space *mapping = file->f_mapping;
++	struct file *fpin = NULL;
+ 
+ 	/* If we don't want any read-ahead, don't bother */
+ 	if (vma->vm_flags & VM_RAND_READ)
+-		return;
++		return fpin;
+ 	if (!ra->ra_pages)
+-		return;
++		return fpin;
+ 
+ 	if (vma->vm_flags & VM_SEQ_READ) {
++		fpin = maybe_unlock_mmap_for_io(fpin, vma, flags);
+ 		page_cache_sync_readahead(mapping, ra, file, offset,
+ 					  ra->ra_pages);
+-		return;
++		return fpin;
+ 	}
+ 
+ 	/* Avoid banging the cache line if not needed */
+@@ -2337,37 +2353,43 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
+ 	 * stop bothering with read-ahead. It will only hurt.
+ 	 */
+ 	if (ra->mmap_miss > MMAP_LOTSAMISS)
+-		return;
++		return fpin;
+ 
+ 	/*
+ 	 * mmap read-around
+ 	 */
++	fpin = maybe_unlock_mmap_for_io(fpin, vma, flags);
+ 	ra->start = max_t(long, 0, offset - ra->ra_pages / 2);
+ 	ra->size = ra->ra_pages;
+ 	ra->async_size = ra->ra_pages / 4;
+ 	ra_submit(ra, mapping, file);
++	return fpin;
  }
  
-+static int vmf_has_cached_page(struct vm_fault *vmf, struct page **page)
-+{
-+	struct page *cached_page = vmf->cached_page;
-+	struct mm_struct *mm = vmf->vma->vm_mm;
-+	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
-+	pgoff_t offset = vmf->pgoff;
-+
-+	if (!cached_page)
-+		return 0;
-+
-+	if (vmf->flags & FAULT_FLAG_KILLABLE) {
-+		int ret = lock_page_killable(cached_page);
-+		if (ret) {
-+			up_read(&mm->mmap_sem);
-+			return ret;
-+		}
-+	} else
-+		lock_page(cached_page);
-+	vmf->cached_page = NULL;
-+	if (cached_page->mapping == mapping &&
-+	    cached_page->index == offset) {
-+		*page = cached_page;
-+	} else {
-+		unlock_page(cached_page);
-+		put_page(cached_page);
-+	}
-+	return 0;
-+}
-+
- /**
-  * filemap_fault - read in file data for page fault handling
-  * @vmf:	struct vm_fault containing details of the fault
-@@ -2425,13 +2454,24 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	struct inode *inode = mapping->host;
- 	pgoff_t offset = vmf->pgoff;
- 	pgoff_t max_off;
--	struct page *page;
-+	struct page *page = NULL;
- 	vm_fault_t ret = 0;
+ /*
+  * Asynchronous readahead happens when we find the page and PG_readahead,
+  * so we want to possibly extend the readahead further..
+  */
+-static void do_async_mmap_readahead(struct vm_area_struct *vma,
+-				    struct file_ra_state *ra,
+-				    struct file *file,
+-				    struct page *page,
+-				    pgoff_t offset)
++static struct file *do_async_mmap_readahead(struct vm_area_struct *vma,
++					    struct file_ra_state *ra,
++					    struct file *file,
++					    struct page *page,
++					    pgoff_t offset, int flags)
+ {
+ 	struct address_space *mapping = file->f_mapping;
++	struct file *fpin = NULL;
  
- 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
- 	if (unlikely(offset >= max_off))
- 		return VM_FAULT_SIGBUS;
+ 	/* If we don't want any read-ahead, don't bother */
+ 	if (vma->vm_flags & VM_RAND_READ)
+-		return;
++		return fpin;
+ 	if (ra->mmap_miss > 0)
+ 		ra->mmap_miss--;
+-	if (PageReadahead(page))
++	if (PageReadahead(page)) {
++		fpin = maybe_unlock_mmap_for_io(fpin, vma, flags);
+ 		page_cache_async_readahead(mapping, ra, file,
+ 					   page, offset, ra->ra_pages);
++	}
++	return fpin;
+ }
+ 
+ /**
+@@ -2397,6 +2419,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ {
+ 	int error;
+ 	struct file *file = vmf->vma->vm_file;
++	struct file *fpin = NULL;
+ 	struct address_space *mapping = file->f_mapping;
+ 	struct file_ra_state *ra = &file->f_ra;
+ 	struct inode *inode = mapping->host;
+@@ -2418,10 +2441,12 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 		 * We found the page, so try async readahead before
+ 		 * waiting for the lock.
+ 		 */
+-		do_async_mmap_readahead(vmf->vma, ra, file, page, offset);
++		fpin = do_async_mmap_readahead(vmf->vma, ra, file, page, offset,
++					       vmf->flags);
+ 	} else if (!page) {
+ 		/* No page in the page cache at all */
+-		do_sync_mmap_readahead(vmf->vma, ra, file, offset);
++		fpin = do_sync_mmap_readahead(vmf->vma, ra, file, offset,
++					      vmf->flags);
+ 		count_vm_event(PGMAJFAULT);
+ 		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+ 		ret = VM_FAULT_MAJOR;
+@@ -2433,9 +2458,32 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 			return vmf_error(-ENOMEM);
+ 	}
+ 
+-	if (!lock_page_or_retry(page, vmf->vma->vm_mm, vmf->flags)) {
+-		put_page(page);
+-		return ret | VM_FAULT_RETRY;
++	/*
++	 * We are open-coding lock_page_or_retry here because we want to do the
++	 * readpage if necessary while the mmap_sem is dropped.  If there
++	 * happens to be a lock on the page but it wasn't being faulted in we'd
++	 * come back around without ALLOW_RETRY set and then have to do the IO
++	 * under the mmap_sem, which would be a bummer.
++	 */
++	if (!trylock_page(page)) {
++		fpin = maybe_unlock_mmap_for_io(fpin, vmf->vma, vmf->flags);
++		if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
++			goto out_retry;
++		if (vmf->flags & FAULT_FLAG_KILLABLE) {
++			if (__lock_page_killable(page)) {
++				/*
++				 * If we don't have the right flags for
++				 * maybe_unlock_mmap_for_io to do it's thing we
++				 * still need to drop the sem and return
++				 * VM_FAULT_RETRY so the upper layer checks the
++				 * signal and takes the appropriate action.
++				 */
++				if (!fpin)
++					up_read(&vmf->vma->vm_mm->mmap_sem);
++				goto out_retry;
++			}
++		} else
++			__lock_page(page);
+ 	}
+ 
+ 	/* Did it get truncated? */
+@@ -2453,6 +2501,16 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	if (unlikely(!PageUptodate(page)))
+ 		goto page_not_uptodate;
  
 +	/*
-+	 * We may have read in the page already and have a page from an earlier
-+	 * loop.  If so we need to see if this page is still valid, and if not
-+	 * do the whole dance over again.
++	 * We've made it this far and we had to drop our mmap_sem, now is the
++	 * time to return to the upper layer and have it re-find the vma and
++	 * redo the fault.
 +	 */
-+	error = vmf_has_cached_page(vmf, &page);
-+	if (error)
++	if (fpin) {
++		unlock_page(page);
 +		goto out_retry;
-+	if (page)
-+		goto have_cached_page;
++	}
 +
  	/*
- 	 * Do we have something in the page cache already?
+ 	 * Found the page and have a reference on it.
+ 	 * We must recheck i_size under page lock.
+@@ -2475,12 +2533,15 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	 * and we need to check for errors.
  	 */
-@@ -2492,6 +2532,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 		put_page(page);
- 		goto retry_find;
+ 	ClearPageError(page);
++	fpin = maybe_unlock_mmap_for_io(fpin, vmf->vma, vmf->flags);
+ 	error = mapping->a_ops->readpage(file, page);
+ 	if (!error) {
+ 		wait_on_page_locked(page);
+ 		if (!PageUptodate(page))
+ 			error = -EIO;
  	}
-+have_cached_page:
- 	VM_BUG_ON_PAGE(page->index != offset, page);
++	if (fpin)
++		goto out_retry;
+ 	put_page(page);
  
- 	/*
-@@ -2558,7 +2599,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	 * page.
- 	 */
- 	if (page)
--		put_page(page);
-+		vmf->cached_page = page;
- 	if (fpin)
- 		fput(fpin);
- 	return ret | VM_FAULT_RETRY;
+ 	if (!error || error == AOP_TRUNCATED_PAGE)
+@@ -2489,6 +2550,18 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	/* Things didn't work out. Return zero to tell the mm layer so. */
+ 	shrink_readahead_size_eio(file, ra);
+ 	return VM_FAULT_SIGBUS;
++
++out_retry:
++	/*
++	 * We dropped the mmap_sem, we need to return to the fault handler to
++	 * re-find the vma and come back and find our hopefully still populated
++	 * page.
++	 */
++	if (page)
++		put_page(page);
++	if (fpin)
++		fput(fpin);
++	return ret | VM_FAULT_RETRY;
+ }
+ EXPORT_SYMBOL(filemap_fault);
+ 
 -- 
 2.14.3
 
