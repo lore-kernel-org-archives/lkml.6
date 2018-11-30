@@ -2,382 +2,105 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A54C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1407DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68032081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:26:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68032081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id B1DBB2081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:26:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="cEwNvFCY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DBB2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbeK3Nd4 (ORCPT
+        id S1727086AbeK3NeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:33:56 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:34565 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbeK3Nd4 (ORCPT
+        Fri, 30 Nov 2018 08:34:19 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36422 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbeK3NeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:33:56 -0500
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wAU2Q3U5060394;
-        Fri, 30 Nov 2018 11:26:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Fri, 30 Nov 2018 11:26:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wAU2Q2tP060389;
-        Fri, 30 Nov 2018 11:26:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id wAU2Q2JG060388;
-        Fri, 30 Nov 2018 11:26:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201811300226.wAU2Q2JG060388@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH] printk: don't unconditionally shortcut
- =?ISO-2022-JP?B?cHJpbnRfdGltZSgp?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
+        Fri, 30 Nov 2018 08:34:19 -0500
+Received: by mail-pg1-f193.google.com with SMTP id n2so1819156pgm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 18:26:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+7FHqAtEydKJAtAOErtYI4+AY7Co+y9p0FlLZPqwO7Q=;
+        b=cEwNvFCYsU0oej7QnkVWSOSM6/pdl1HLyfETlKqcC8eQKbilp6HJJvD9aWmmcZhBC1
+         7mUQW0EE93yn7ewQMl+1ZpBGzrNM9OYS8p08KTEUiGf3/zr3rBpt+oFfVUls/4cW1V3n
+         1GQEktRtZzpMakMQXgtwBNepe/CgiFIjIyoRw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+7FHqAtEydKJAtAOErtYI4+AY7Co+y9p0FlLZPqwO7Q=;
+        b=s8yI/64eN3WkDuGTgJYmsefha8/L4yY9fce5fUhpqS7xbsfTtSTuTmhTdq1dGm3HBf
+         +46Sl/1QC4ijnLC0WqmM5QZw0jyfPR08BqYoq9bR0B5oYfHhMTXXodfB22jOJIFZECgw
+         8BplUMAd4H5gLW567gkbALcgf6IZRFGSV51oqEdB5hKs9e7YHB7EnZlzsaftb3IQ8KWp
+         5JoYF43iSu0rj24/kXlBVIzVUhCVc3qtCcaWe6TEi3hTJMqGh14c67pvL1MbC0GuIh8V
+         +Xq/86s20+Cq0CaRdx+KYAgGYVb/oEsXCMuMRLCj8OdsHHWixtGtsurdENHqsbqIRmE1
+         eGog==
+X-Gm-Message-State: AA+aEWYE10GgYCXTeWtlvg/06MAib74EPr6w8GU8AxKLs6bPUgJavh4G
+        WSoieod3p6f1aqeiEs0z7HW2p4Pov2Y=
+X-Google-Smtp-Source: AFSGD/X/OIrukSY9t4ozwUKduDr4OPbgfliwjCpja1/sG5sBCiM94aI6gcP1FxsxU8MacxKk8TSbMw==
+X-Received: by 2002:a63:8441:: with SMTP id k62mr3307027pgd.392.1543544799137;
+        Thu, 29 Nov 2018 18:26:39 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id g2sm4727234pfi.95.2018.11.29.18.26.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 18:26:38 -0800 (PST)
+Date:   Thu, 29 Nov 2018 18:26:37 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH 2/8] pstore: Do not use crash buffer for decompression
+Message-ID: <20181130022637.GA105443@google.com>
+References: <20181101235200.28584-1-keescook@chromium.org>
+ <20181101235200.28584-3-keescook@chromium.org>
+ <20181102182454.GB14942@google.com>
+ <CAGXu5jKdO8icx63YDkqDsYP4_pNxRe5zUiVUg2+0mhbHj10zTg@mail.gmail.com>
+ <CAGXu5jJdPz70kHUmTxOEo3Kp20HCOpGEX3_ECqN6TV3qBwxjEA@mail.gmail.com>
 MIME-Version: 1.0
-Date:   Fri, 30 Nov 2018 11:26:02 +0900
-References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp> <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
-In-Reply-To: <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJdPz70kHUmTxOEo3Kp20HCOpGEX3_ECqN6TV3qBwxjEA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Petr Mladek wrote:
-> See syslog_print_all() and kmsg_dump_get_buffer(). They
-> start with calling msg_print_text() many times to calculate
-> how many messages fit into the given buffer. Then they
-> blindly copy the messages into the buffer.
+On Thu, Nov 29, 2018 at 02:06:39PM -0800, Kees Cook wrote:
+> On Tue, Nov 13, 2018 at 11:56 PM Kees Cook <keescook@chromium.org> wrote:
+> > On Fri, Nov 2, 2018 at 1:24 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > > On Thu, Nov 01, 2018 at 04:51:54PM -0700, Kees Cook wrote:
+> > >> +     workspace = kmalloc(unzipped_len + record->ecc_notice_size,
+> > >
+> > > Should tihs be unzipped_len + record->ecc_notice_size + 1. The extra byte
+> > > being for the NULL character of the ecc notice?
+> > >
+> > > This occurred to me when I saw the + 1 in ram.c. It could be better to just
+> > > abstract the size as a macro.
+> >
+> > Ooh, yes, good catch. I'll get this fixed.
 > 
-> Now, the buffer might overflow if the size is calculated
-> with printk_time disabled and the messages are copied with
-> printk_time enabled.
-> 
+> I spent more time looking at this, and it seems that only the initial
+> creation of this string needs the +1, since all other operations are
+> byte-based not NUL-terminated string based. It's a big odd, and I
+> might try to clean it up differently, but as it stands, this is okay.
+> (See inode.c which doesn't include the trailing NUL byte.)
 
-Indeed, SYSLOG_ACTION_READ_ALL case can write more bytes than userspace
-has supplied, resulting in possible memory corruption in userpsace. And
-obtaining a snapshot of printk_time under logbuf_lock won't help, for we
-need to drop logbuf_lock before calling copy_to_user().
+Ok. Yes it does seem a bit inconsistent but I agree its not an issue for this
+particular patch. Sorry to waste your time, thanks!
 
-----------
-@@ -1365,6 +1365,7 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	if (!text)
- 		return -ENOMEM;
- 
-+	printk_time = false;
- 	logbuf_lock_irq();
- 	/*
- 	 * Find first record that fits, including all following records,
-@@ -1409,6 +1410,7 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 		seq++;
- 
- 		logbuf_unlock_irq();
-+		printk_time = true;
- 		if (copy_to_user(buf + len, text, textlen))
- 			len = -EFAULT;
- 		else
-----------
+ - Joel
 
-----------
-#include <sys/klog.h>
-#define SYSLOG_ACTION_READ_ALL 3
-
-int main(int argc, char *argv[])
-{
-        char buffer[4096];
-        int i;
-        for (i = 0; i < sizeof(buffer); i++)
-                if (klogctl(SYSLOG_ACTION_READ_ALL, buffer, i) > i)
-                        return 1;
-        return 0;
-}
-----------
-
-----------
-syslog(SYSLOG_ACTION_READ_ALL, "", 0)   = 0
-(...snipped...)
-syslog(SYSLOG_ACTION_READ_ALL, "", 59)  = 0
-syslog(SYSLOG_ACTION_READ_ALL, "<6>IPv6: ADDRCONF(NETDEV_CHANGE): ens32: link becomes ready\n", 60) = 60
-(...snipped...)
-syslog(SYSLOG_ACTION_READ_ALL, "<6>IPv6: ADDRCONF(NETDEV_CHANGE): ens32: link becomes ready\n", 114) = 60
-syslog(SYSLOG_ACTION_READ_ALL, "<6>IPv6: ADDRCONF(NETDEV_UP): ens32: link is not ready\n<6>[   10.517132] IPv6: ADDRCONF(NETDEV_CHANGE): ens32: link becomes ready\n", 115) = 130
-----------
-
-> IMHO, passing it as parameter to msg_print_text(), print_prefix(),
-> and print_time() looks acceptable.
-
-Below is a patch for passing a snapshot of printk_time to msg_print_text(),
-but we are still failing to close a race explained at bottom.
-
- kernel/printk/printk.c | 59 ++++++++++++++++++++++++--------------------------
- 1 file changed, 28 insertions(+), 31 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1b2a029..3838a6b 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1215,12 +1215,7 @@ static inline void boot_delay_msec(int level)
- 
- static size_t print_time(u64 ts, char *buf)
- {
--	unsigned long rem_nsec;
--
--	if (!printk_time)
--		return 0;
--
--	rem_nsec = do_div(ts, 1000000000);
-+	unsigned long rem_nsec = do_div(ts, 1000000000);
- 
- 	if (!buf)
- 		return snprintf(NULL, 0, "[%5lu.000000] ", (unsigned long)ts);
-@@ -1229,7 +1224,8 @@ static size_t print_time(u64 ts, char *buf)
- 		       (unsigned long)ts, rem_nsec / 1000);
- }
- 
--static size_t print_prefix(const struct printk_log *msg, bool syslog, char *buf)
-+static size_t print_prefix(const struct printk_log *msg, bool syslog,
-+			   bool time, char *buf)
- {
- 	size_t len = 0;
- 	unsigned int prefix = (msg->facility << 3) | msg->level;
-@@ -1248,11 +1244,13 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog, char *buf)
- 		}
- 	}
- 
--	len += print_time(msg->ts_nsec, buf ? buf + len : NULL);
-+	if (time)
-+		len += print_time(msg->ts_nsec, buf ? buf + len : NULL);
- 	return len;
- }
- 
--static size_t msg_print_text(const struct printk_log *msg, bool syslog, char *buf, size_t size)
-+static size_t msg_print_text(const struct printk_log *msg, bool syslog,
-+			     bool time, char *buf, size_t size)
- {
- 	const char *text = log_text(msg);
- 	size_t text_size = msg->text_len;
-@@ -1271,17 +1269,17 @@ static size_t msg_print_text(const struct printk_log *msg, bool syslog, char *bu
- 		}
- 
- 		if (buf) {
--			if (print_prefix(msg, syslog, NULL) +
-+			if (print_prefix(msg, syslog, time, NULL) +
- 			    text_len + 1 >= size - len)
- 				break;
- 
--			len += print_prefix(msg, syslog, buf + len);
-+			len += print_prefix(msg, syslog, time, buf + len);
- 			memcpy(buf + len, text, text_len);
- 			len += text_len;
- 			buf[len++] = '\n';
- 		} else {
- 			/* SYSLOG_ACTION_* buffer size only calculation */
--			len += print_prefix(msg, syslog, NULL);
-+			len += print_prefix(msg, syslog, time, NULL);
- 			len += text_len;
- 			len++;
- 		}
-@@ -1320,7 +1318,8 @@ static int syslog_print(char __user *buf, int size)
- 
- 		skip = syslog_partial;
- 		msg = log_from_idx(syslog_idx);
--		n = msg_print_text(msg, true, text, LOG_LINE_MAX + PREFIX_MAX);
-+		n = msg_print_text(msg, true, printk_time, text,
-+				   LOG_LINE_MAX + PREFIX_MAX);
- 		if (n - syslog_partial <= size) {
- 			/* message fits into buffer, move forward */
- 			syslog_idx = log_next(syslog_idx);
-@@ -1360,11 +1359,13 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	u64 next_seq;
- 	u64 seq;
- 	u32 idx;
-+	bool time;
- 
- 	text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
- 	if (!text)
- 		return -ENOMEM;
- 
-+	time = printk_time;
- 	logbuf_lock_irq();
- 	/*
- 	 * Find first record that fits, including all following records,
-@@ -1375,7 +1376,7 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	while (seq < log_next_seq) {
- 		struct printk_log *msg = log_from_idx(idx);
- 
--		len += msg_print_text(msg, true, NULL, 0);
-+		len += msg_print_text(msg, true, time, NULL, 0);
- 		idx = log_next(idx);
- 		seq++;
- 	}
-@@ -1386,7 +1387,7 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	while (len > size && seq < log_next_seq) {
- 		struct printk_log *msg = log_from_idx(idx);
- 
--		len -= msg_print_text(msg, true, NULL, 0);
-+		len -= msg_print_text(msg, true, time, NULL, 0);
- 		idx = log_next(idx);
- 		seq++;
- 	}
-@@ -1397,14 +1398,9 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- 	len = 0;
- 	while (len >= 0 && seq < next_seq) {
- 		struct printk_log *msg = log_from_idx(idx);
--		int textlen;
-+		int textlen = msg_print_text(msg, true, time, text,
-+					     LOG_LINE_MAX + PREFIX_MAX);
- 
--		textlen = msg_print_text(msg, true, text,
--					 LOG_LINE_MAX + PREFIX_MAX);
--		if (textlen < 0) {
--			len = textlen;
--			break;
--		}
- 		idx = log_next(idx);
- 		seq++;
- 
-@@ -1532,7 +1528,8 @@ int do_syslog(int type, char __user *buf, int len, int source)
- 			while (seq < log_next_seq) {
- 				struct printk_log *msg = log_from_idx(idx);
- 
--				error += msg_print_text(msg, true, NULL, 0);
-+				error += msg_print_text(msg, true, printk_time,
-+							NULL, 0);
- 				idx = log_next(idx);
- 				seq++;
- 			}
-@@ -2028,8 +2025,8 @@ static void console_lock_spinning_enable(void) { }
- static int console_lock_spinning_disable_and_check(void) { return 0; }
- static void call_console_drivers(const char *ext_text, size_t ext_len,
- 				 const char *text, size_t len) {}
--static size_t msg_print_text(const struct printk_log *msg,
--			     bool syslog, char *buf, size_t size) { return 0; }
-+static size_t msg_print_text(const struct printk_log *msg, bool syslog,
-+			     bool time, char *buf, size_t size) { return 0; }
- static bool suppress_message_printing(int level) { return false; }
- 
- #endif /* CONFIG_PRINTK */
-@@ -2387,8 +2384,7 @@ void console_unlock(void)
- 
- 		len += msg_print_text(msg,
- 				console_msg_format & MSG_FORMAT_SYSLOG,
--				text + len,
--				sizeof(text) - len);
-+				printk_time, text + len, sizeof(text) - len);
- 		if (nr_ext_console_drivers) {
- 			ext_len = msg_print_ext_header(ext_text,
- 						sizeof(ext_text),
-@@ -3112,7 +3108,7 @@ bool kmsg_dump_get_line_nolock(struct kmsg_dumper *dumper, bool syslog,
- 		goto out;
- 
- 	msg = log_from_idx(dumper->cur_idx);
--	l = msg_print_text(msg, syslog, line, size);
-+	l = msg_print_text(msg, syslog, printk_time, line, size);
- 
- 	dumper->cur_idx = log_next(dumper->cur_idx);
- 	dumper->cur_seq++;
-@@ -3183,6 +3179,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
- 	u32 next_idx;
- 	size_t l = 0;
- 	bool ret = false;
-+	bool time = printk_time;
- 
- 	if (!dumper->active)
- 		goto out;
-@@ -3206,7 +3203,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
- 	while (seq < dumper->next_seq) {
- 		struct printk_log *msg = log_from_idx(idx);
- 
--		l += msg_print_text(msg, true, NULL, 0);
-+		l += msg_print_text(msg, true, time, NULL, 0);
- 		idx = log_next(idx);
- 		seq++;
- 	}
-@@ -3217,7 +3214,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
- 	while (l > size && seq < dumper->next_seq) {
- 		struct printk_log *msg = log_from_idx(idx);
- 
--		l -= msg_print_text(msg, true, NULL, 0);
-+		l -= msg_print_text(msg, true, time, NULL, 0);
- 		idx = log_next(idx);
- 		seq++;
- 	}
-@@ -3230,7 +3227,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
- 	while (seq < dumper->next_seq) {
- 		struct printk_log *msg = log_from_idx(idx);
- 
--		l += msg_print_text(msg, syslog, buf + l, size - l);
-+		l += msg_print_text(msg, syslog, time, buf + l, size - l);
- 		idx = log_next(idx);
- 		seq++;
- 	}
--- 
-1.8.3.1
-
-The remaining race is that klogctl(SYSLOG_ACTION_SIZE_UNREAD) after klogctl(SYSLOG_ACTION_READ)
-can return negative value upon success, for SYSLOG_ACTION_SIZE_UNREAD depends that printk_time
-did not change (from true to false) after SYSLOG_ACTION_READ updated syslog_partial. To close
-this race, we need to make sure that printk_time is evaluated only once for each record.
-That is, evaluate printk_time upon e.g. log_store() rather than upon msg_print_text().
-
- kernel/printk/printk.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1b2a029..c692fbc 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -421,6 +421,8 @@ __packed __aligned(4)
- static u64 clear_seq;
- static u32 clear_idx;
- 
-+static bool printk_time = IS_ENABLED(CONFIG_PRINTK_TIME);
-+
- #define PREFIX_MAX		32
- #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
- 
-@@ -620,7 +622,9 @@ static int log_store(int facility, int level,
- 	msg->facility = facility;
- 	msg->level = level & 7;
- 	msg->flags = flags & 0x1f;
--	if (ts_nsec > 0)
-+	if (!printk_time)
-+		msg->ts_nsec = (u64) -1ULL;
-+	else if (ts_nsec > 0)
- 		msg->ts_nsec = ts_nsec;
- 	else
- 		msg->ts_nsec = local_clock();
-@@ -1210,14 +1214,13 @@ static inline void boot_delay_msec(int level)
- }
- #endif
- 
--static bool printk_time = IS_ENABLED(CONFIG_PRINTK_TIME);
- module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
- 
- static size_t print_time(u64 ts, char *buf)
- {
- 	unsigned long rem_nsec;
- 
--	if (!printk_time)
-+	if (ts == (u64) -1ULL)
- 		return 0;
- 
- 	rem_nsec = do_div(ts, 1000000000);
--- 
-1.8.3.1
