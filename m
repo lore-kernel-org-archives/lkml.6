@@ -2,108 +2,93 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A2EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F61EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC1CF2082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:15:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC1CF2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 495162082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:15:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d9eIlTkH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495162082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbeLAJZs (ORCPT
+        id S1726936AbeLAJ0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:25:48 -0500
-Received: from ms.lwn.net ([45.79.88.28]:44048 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbeLAJZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:25:48 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 47EEA30D;
-        Fri, 30 Nov 2018 22:15:00 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 15:14:59 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Axtens <dja@axtens.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>, federico.vaga@vaga.pv.it,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Helge Deller <deller@gmx.de>, Joshua Kinard <kumba@gentoo.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Linux mtd <linux-mtd@lists.infradead.org>,
-        linux-parisc <linux-parisc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
-        Network Development <netdev@vger.kernel.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rob Herring <robh@kernel.org>,
-        sean.wang@mediatek.com,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        shannon.nelson@oracle.com, Stefano Brivio <sbrivio@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Tobin C. Harding" <me@tobin.cc>, makita.toshiaki@lab.ntt.co.jp,
-        Willem de Bruijn <willemb@google.com>,
-        Yonghong Song <yhs@fb.com>, yanjun.zhu@oracle.com
-Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
-Message-ID: <20181130151459.3ca2f5c8@lwn.net>
-In-Reply-To: <20181130221219.GA25537@linux.intel.com>
-References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
-        <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
-        <20181130195652.7syqys76646kpaph@linux-r8p5>
-        <20181130205521.GA21006@linux.intel.com>
-        <1543611662.3031.20.camel@HansenPartnership.com>
-        <20181130214405.GG23772@linux.intel.com>
-        <1543615069.3031.27.camel@HansenPartnership.com>
-        <20181130221219.GA25537@linux.intel.com>
-Organization: LWN.net
+        Sat, 1 Dec 2018 04:26:39 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37609 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAJ0j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:26:39 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p17so5217586lfh.4
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:15:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wC9ZKEvzEze3qYC4AB5mfujvI54Rr1+VViVcCt3YLBo=;
+        b=d9eIlTkHByKse018F6Mp5XH5oa6NzgUttLJ2OgdgogauSOGhUfQL8quvEaKMTPo3p/
+         jDcTAXmanJYSMtBgLglq6VLnm0SxB0xUB8y9+wP/Kn4Lt876+3G85kgs14DSTBTCbicQ
+         POr9kZ+mcQnz+lZzenUb3LwwaY9VbZrtKCaF4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wC9ZKEvzEze3qYC4AB5mfujvI54Rr1+VViVcCt3YLBo=;
+        b=LcTTuFLuoRu6U/i0nmGgu4t46TWunjM+wEu+h+dhCjBdh6MYabhGTx9X5KGHVrrUXF
+         e7XMNCpOAUXPE7HOPMb9wfS+b7zC8gtkteLLTKemJrdAx9MEXTwNtTQ2sEt9mjH6dqd0
+         vlzlC5m+Q5foIryiCCRhw+oqKgFIa/aQAGxj0Nd1OO+KZB8zADoXE6jjQiGfHBijAava
+         zOvpX5nQuqUEwERdT2lzmUWwoKMdTLTqdz+WLRbVjeC7LTYcnvDm6UJDTL2jTphebyj/
+         CmJkKluUwLBx5OEkfZ++Hdsuf+WK/to3q5nhQi209hRgEUxMymnL6NvMgvluCk19ubO2
+         DrOw==
+X-Gm-Message-State: AA+aEWY7SJifeLKiAJgRc8e1Y7OGEFojC4nqojDU3ZMtSf7tEO2t4IWE
+        IQBr6ijDRrmvLadxJJme1tShe8YM30zTdwrvmF2qfw==
+X-Google-Smtp-Source: AFSGD/XDPTE8YHWFsFnCe7l0xR1/LSGDTbhs5JQjKnhlelZCBR0Cp217HWhsrZsi7oLvTe1/vqQSr3vQreZ2aOMhVl0=
+X-Received: by 2002:a19:c801:: with SMTP id y1mr4473095lff.53.1543616151391;
+ Fri, 30 Nov 2018 14:15:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
+ <20181122173015.23905-2-ckeepax@opensource.cirrus.com> <20181123142544.GI2089@sirena.org.uk>
+In-Reply-To: <20181123142544.GI2089@sirena.org.uk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 30 Nov 2018 23:15:39 +0100
+Message-ID: <CACRpkdaoFVFKAEiXkMX2-E2qaaZmoTLWwXfei-Mf0LdGSReBxw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] regulator: Only free GPIOs if the core requested them
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 14:12:19 -0800
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+On Fri, Nov 23, 2018 at 3:25 PM Mark Brown <broonie@kernel.org> wrote:
 
-> As a maintainer myself (and based on somewhat disturbed feedback from
-> other maintainers) I can only make the conclusion that nobody knows what
-> the responsibility part here means.
-> 
-> I would interpret, if I read it like at lawyer at least, that even for
-> existing code you would need to do the changes postmorterm.
-> 
-> Is this wrong interpretation?  Should I conclude that I made a mistake
-> by reading the CoC and trying to understand what it *actually* says?
-> After this discussion, I can say that I understand it less than before.
+> However even with patch 3 I think it'd be better to base this off the
+> rest of Linus' series for converting to descriptors (which is currently
+> sitting waiting for some more testing) since that will convert
+> everything to descriptors and so remove the code that's doing requests
+> in the core entirely.
 
-Have you read Documentation/process/code-of-conduct-interpretation.rst?
-As has been pointed out, it contains a clear answer to how things should
-be interpreted here.
+I have made the "real" (or so I think) solution to this problem which
+essentially hardens the core so that it very explicitly takes over the
+descriptor from the driver.
 
-Thanks,
+I'm just having it spin a bit around the 0day build servers (they
+don't seem to respond right now). I built all patched drivers
+I could easily configure in locally.
 
-jon
+I am planning to respin the rest of the cleanups making the core only
+handle descriptors on top of it.
+
+Yours,
+Linus Walleij
