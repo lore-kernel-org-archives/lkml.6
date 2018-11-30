@@ -7,317 +7,183 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3931DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9E5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D53DC21473
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53C2B2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:19:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="hpKXwA+n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D53DC21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Uz6WGI5C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C2B2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeK3S0T (ORCPT
+        id S1726891AbeK3S1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:26:19 -0500
-Received: from mail-eopbgr750048.outbound.protection.outlook.com ([40.107.75.48]:47840
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Fri, 30 Nov 2018 13:27:35 -0500
+Received: from mail-eopbgr770079.outbound.protection.outlook.com ([40.107.77.79]:18880
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeK3S0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:26:19 -0500
+        id S1726386AbeK3S1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:27:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cc6cW5WfQG/9Q0SOksKz57uPCRR8gWpILsvKVNZXLUA=;
- b=hpKXwA+nRCjzIeIqLfIOsNUh+ZvUN+7oKxiGowFg5c4+Bv8hkvZYKUIkgvLZfZ07hPNJ5X/v4wb/R/k2n/uzlOgcVRhQTp36sB1IRyvrMjKBoqYeumEF7IipOahmUj4geLNITucYGAOcVRUrGGvXfvw3Nm7f1/IDDBH5prIEYJM=
-Received: from DM6PR06MB5178.namprd06.prod.outlook.com (20.178.25.19) by
- DM6PR06MB5210.namprd06.prod.outlook.com (20.178.25.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18; Fri, 30 Nov 2018 07:17:54 +0000
-Received: from DM6PR06MB5178.namprd06.prod.outlook.com
- ([fe80::c450:96ae:b322:78c7]) by DM6PR06MB5178.namprd06.prod.outlook.com
- ([fe80::c450:96ae:b322:78c7%4]) with mapi id 15.20.1361.019; Fri, 30 Nov 2018
- 07:17:54 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
-        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Subject: Re: [PATCH] lightnvm: simplify geometry enumeration
-Thread-Topic: [PATCH] lightnvm: simplify geometry enumeration
-Thread-Index: AQHUh+/AxF+u6YXd40KvE3EuBX7KZaVn6b6A
-Date:   Fri, 30 Nov 2018 07:17:54 +0000
-Message-ID: <6FEED0D7-5064-464A-B522-412CEE2A1C7A@cnexlabs.com>
-References: <20181129142738.9567-1-mb@lightnvm.io>
-In-Reply-To: <20181129142738.9567-1-mb@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR06MB5210;6:PujDCk83PKYj0CtQkrBKBxH/aZu/EFGygGmgM21aSr2pUsH6KLwezGbyNgXLzN2RIU2U+eBDzBujs4NPZJdoQJaBZPJOvOZdWEeShNsoJ4LPuI0JeZhw7x44MKQCxV7fIliX9VJ78CjiaDTWwGY1wvAjB7N8TQI2RNrP/kaIv/MuwoNILn0JvmVz+sZ5jtsBQ8aj83Y0MBLD+8fD1rf+AXOIXZdFggk7f6vMecoBeX9giZkUEL+lwh9mrLDhndgOm5LTmHg4182bm1inmI3FL0J7wXStOUQA+mHLYuOlIwjNuYxMG3lQn/jMB5Q6+r6466HmTFulwYml/XHNZ++rf/OnOW6EFzOL2X3BmCLrtFgXMqfzvzdHXhzF/G1eydbLwwRmZziGTs6wIU6mFNFB1zijgnI+PG7sJrOxpAnwQDVn35BycnK8fGzYY6aEtZEUeZC5EGfZ5U6t+yAySqIFUA==;5:f2a9lcQSH91Hi6u2DkXCK3vMSrhMlDPSWTIk+WvpWRFW14zlPsDsQDDzaeInvWSl3OPUsAkE0cr1Fhazcp5V0QYfNeqDmESHVmetL2xT8/eFLY6ZDcGsoiTKFjsQBOwIPzPdj7fSiBZVjm8fydNi5qQNmZ7bbSFi5adMtR8YeVU=;7:Dr1eca7phe6V7opYYFeGwcEmiFQrYSPCyGhSwejGwwjD9tm999z4KG43/TIeHbOHOmxvCH/gmryFIgfttnOX5D44SLADpJevacvYpGYtxjWkX7ItyyIY1FfuKFXTPZ3QBUbWD35PP0i2l5pZC/l4JA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 15d8eb01-b169-4f60-2c63-08d65693f285
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(49563074)(7193020);SRVR:DM6PR06MB5210;
-x-ms-traffictypediagnostic: DM6PR06MB5210:
-x-microsoft-antispam-prvs: <DM6PR06MB5210813A3AC4E46789F305B6BAD30@DM6PR06MB5210.namprd06.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(3231453)(999002)(944501410)(4983020)(4982022)(52105112)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM6PR06MB5210;BCL:0;PCL:0;RULEID:;SRVR:DM6PR06MB5210;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(346002)(39840400004)(136003)(199004)(189003)(99286004)(4326008)(305945005)(106356001)(486006)(7736002)(97736004)(25786009)(82746002)(105586002)(14444005)(6506007)(3846002)(6116002)(76176011)(256004)(6512007)(102836004)(6306002)(478600001)(229853002)(53936002)(186003)(81166006)(68736007)(81156014)(5660300001)(36756003)(6486002)(99936001)(6436002)(966005)(86362001)(66066001)(2906002)(54906003)(14454004)(8676002)(11346002)(446003)(66574009)(71200400001)(26005)(8936002)(6246003)(2616005)(476003)(33656002)(71190400001)(83716004)(316002)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR06MB5210;H:DM6PR06MB5178.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: WHbcnPzMLczDMMpo6Qu9hoP7UIYzDjuK8xfSR7YliBJWipd0DqbJe4qLjjcq9XQZvEn6sTRFX9Bj3DW0CfOJDQnIRNN7I0Gi9ff5m7CLJCRLHDrjSwqYA7GOCJiX+ow4AgEL83CPp/1R+PSiX7c5WGopixpJ61hjfDlwxh83+TgHyCysPPZF/LufH0m05odTgZWA6vbNCuL8UVMDvHAs0JVe+gkqd9xHVfMQpMsmBIVZNFCnAg091WtyUbT4v4SEZYwhtDZInd5lJ9unAWxlmBtZ77/JO9yXQ8qHyDEhP/P6IO7vYitvpQmEW+WZTaO58BIHh5WcSxtTzhwp8Hu9rqBRZJbHJAhmZKSOiSYJg+Y=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_8CC13221-B825-4BDC-BFC5-4075621773DC";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
+ bh=TcdFL53JFcGe+qV3q9TqOiGQFdrUYbGoMfsOezww+3E=;
+ b=Uz6WGI5CmOU7MOpqMvWlFyMkmhviHfZ6vsntv/k+nmGmQjt1cJyxgvcufrMyLs0Ii1m8gfRYOnx9l2zyXzHMV+J9pEHlS5UfscbmO3CSmyj+Bk7bsuoPu0SDi9ONFG4GAGSsPhIJEgesNqufFEJ5otIH+WFzSGd0m6zPYyEZGWY=
+Received: from SN6PR02CA0002.namprd02.prod.outlook.com (2603:10b6:805:a2::15)
+ by MWHPR0201MB3514.namprd02.prod.outlook.com (2603:10b6:301:77::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.18; Fri, 30 Nov
+ 2018 07:19:10 +0000
+Received: from CY1NAM02FT011.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::200) by SN6PR02CA0002.outlook.office365.com
+ (2603:10b6:805:a2::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.18 via Frontend
+ Transport; Fri, 30 Nov 2018 07:19:10 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ smtp.mailfrom=xilinx.com; ti.com; dkim=none (message not signed)
+ header.d=none;ti.com; dmarc=bestguesspass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ CY1NAM02FT011.mail.protection.outlook.com (10.152.75.156) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1382.18
+ via Frontend Transport; Fri, 30 Nov 2018 07:19:09 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:36890 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1gSd4v-0001qL-CY; Thu, 29 Nov 2018 23:19:09 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1gSd4p-0004eC-Vd; Thu, 29 Nov 2018 23:19:04 -0800
+Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAU7J29M001512;
+        Thu, 29 Nov 2018 23:19:02 -0800
+Received: from [172.30.17.111]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1gSd4o-0004ce-8C; Thu, 29 Nov 2018 23:19:02 -0800
+Subject: Re: [PATCH 2/3] dt-bindings: mmc: sdhci-of-arasan: Add deprecated
+ message for am654
+To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <adrian.hunter@intel.com>,
+        <michal.simek@xilinx.com>, <kishon@ti.com>
+References: <20181129161513.31734-1-faiz_abbas@ti.com>
+ <20181129161513.31734-3-faiz_abbas@ti.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <6f4734e6-8238-2e14-ae11-114e396df75c@xilinx.com>
+Date:   Fri, 30 Nov 2018 08:18:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15d8eb01-b169-4f60-2c63-08d65693f285
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 07:17:54.7558
+In-Reply-To: <20181129161513.31734-3-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(39850400004)(396003)(346002)(2980300002)(438002)(189003)(199004)(106466001)(36386004)(63266004)(106002)(31686004)(8936002)(81166006)(81156014)(7416002)(229853002)(65826007)(4326008)(316002)(58126008)(110136005)(54906003)(5660300001)(8676002)(9786002)(64126003)(126002)(356004)(186003)(31696002)(77096007)(478600001)(26005)(2486003)(23676004)(230700001)(6666004)(2201001)(336012)(6246003)(426003)(76176011)(36756003)(47776003)(65806001)(50466002)(305945005)(65956001)(44832011)(486006)(2906002)(11346002)(446003)(476003)(2616005)(15650500001)(107986001)(5001870100001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0201MB3514;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT011;1:L71/3uMHzd55wYO8ll51MCAl/x1V6qXQgAaNibiGhY0ERvpzlH7BB5cnFr/fK7USEyZwTrfonEJzCRoA9GwVwittpIKz2Np97h6eoJZGn2PU5PnV5km6CvLN30jrKRVK
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8b232f70-01e7-44fa-9dcb-08d656941fa6
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:MWHPR0201MB3514;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;3:72elRX1xnGIwHSIFqlujrIXobXBeNXOuVI9g1zuT8asc5qDJmVkYMTUksL1+THUca6J7k2hINxhYLSbUgohMmCJ4Wz1czXubFOykmmDd5i7qQ+V0tMqs94AW2Gsxea5q3z4KzlPmWltUHDNa3gKFM4NMtKKj1Lqb2pIdqXZTI5LoTz6zc/ofZY63LN71/NpOLLk6ZWacpZL8rhFLHh+OTAb9cQjBu502L7NyPTJR8U26OKJya7F2+WlnVCOOFb+ngGi6s1UKZsxJYeg5bUS1+8PJNq59NwvTNL3zDIsbp88pJCfLRxS0zr7V14xmCUa0vFKpwOmft0Z/0QQHhe+1btmT9De2tJsq9jFYxdRE/cM=;25:DEk7uzaVNYcsB5f+puxpyC3sJ07NwWBckI3FbC3C5ndGZK2TW32ajRAtwjvFRdQK7A2oyFKJZyWXmCyjBy+b5SU7lCNZqjVdVtsab5Bd8oPuqZDPZ4yHokhYcBnO0lvnnOoW2vXVpDq5zsezVxo1XKlgSHCxLBa/J1M6B2ppJd6H0r9D/o7qCROs4hbF9bzmYSXx0+AYS2S+232St8ppyDb+rxCQOPuSkGGNyASpBtQ+xiLIiAOglicRPDIufwoolmkORejXyGLiRBCj7Dfhceg3FIS+WHARjbK/u+Pv5DeekqUyIdYDPEDaVu19M3HkB25Rc/lyR/efwtlb+oVCjw==
+X-MS-TrafficTypeDiagnostic: MWHPR0201MB3514:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;31:2UxWDznPjbekiYzsV1/nQEWViDQKvrW1uc0yNmgcxsm+utM6LKfnYtXgtIgDQ/V41IaRqWiiUTO4/fb+qZuFbZHP8xzl1S5FaW5dWDgsSaV/GzXYzowswDaYlw+FNm0dVvLlvYCgWwvjqCfe4LPG+d5OJwUBfa7cEvEOmAl9mYrOJKZ9s3hbbL4Ig9Fkjr0tH9cxWctPlS8aqhVBYnSi8SS/tGUb1TKfbwofW7uWIp0=;20:FklqbzMStvx7ntEqTOu0SWUEnMioJOMsx6PqmTTf3JRSjvzfv71Nmvm2U9jZA2G4ZT6N0faxzoiubXJaLFoBpw9nAD9dVXoLHXpb4CMsNwyz59fpsWqF/V7NUodgVsIf1LPqFlNMzUzv0Yv/HG+g3RqXx/WIju1acO4G6QX/edM4LIYKoKUGKGklGZ2la3UimJ9WDcVaNh9ulBMuDXNBVnU8TynKmW17eazkPIKLP71BRVNDGlykkHPVQeIeUuexr/wdi8ebmj/QLx0/syNzMafz2H7lHBqLKUwxFWu+FwEZZJCcZY4XxEyl0ZTbi2TFb4w62Pu0bnbwRiYoaPlsCQG24bQUi0zKlP0mRvp8tWVqpRg8sUPrnQmqfZxX6Rz4BpHlj7fdqftH86K73iu/HJVYUpnCNyCv8NjjDCPxk5TMokw2mM7feFd0/RCVs27zn8lSNUYglzmsTwWyMfDAWWS/vNsTLL4aiUfYsCWEGGeT5k2e9WBTIzNDhygm82hG
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <MWHPR0201MB3514DAB384A20BC92ABF4696C6D30@MWHPR0201MB3514.namprd02.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93004095)(3231453)(999002)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR0201MB3514;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0201MB3514;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;4:RdCdJMJGHe+TpsLUXz6hTb7YY03cfxNn1h+3QCyhbaO2lY9flUGW4oZALrwUJ+x9DtBZnJ30jrKeIj+6/LF8qIx1092BS2lS6TqIvU535Yrkh3ywS5eMXq+SVEWf7XPIdMLqMPIfPqW+3JxCTqVjjRNq45fpI4OJFQNHIu1bTR9Hh/rGsBRhvt7tyASPeIjL0pEVQoccUBXoOAdsSr//xbVNGrGEYTK2dAm4M3oFnpgL365DFSFh06AwSfP7dOCmvwiyvgHwbpqHfA5NnCpJAw==
+X-Forefront-PRVS: 087223B4DA
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjAyMDFNQjM1MTQ7MjM6QitYTUxLUjdDNVlieTJ2TjFDbGdYZXgr?=
+ =?utf-8?B?alNndEhRQ0p0RUxUdzJEb0hSbXppSU1HMnJraUhLZU1lMzlyeXAxQ0FsVUNY?=
+ =?utf-8?B?cm5kU1RMcklYVDJ2em14cFc2VEtiT1o4YUVueElBUk0zS2J6RXZaWmI4M2J6?=
+ =?utf-8?B?ZnVhNzBEdmtRNjJDUmFNS0NsT1VKaE9aWmZtRHZPdWVSNzVQM0trWkJTMkox?=
+ =?utf-8?B?VlVOb1NWbTFtb3dYakpEWEZCUTNObFhVTXpMNnNsaTg4QkwxWXR4MzlRVFAx?=
+ =?utf-8?B?YTI5T293cHNLQzRsSG9MclhqNVYvaEtEa0dOdkozdkdrclNXT1pMTldTdEhk?=
+ =?utf-8?B?cG9hQXBHSjNOVjJncGhiQ2hYcnJncUduQWZ2TGtjcXR2SzFNdVFOL3laSWpu?=
+ =?utf-8?B?K1RIeE9sQVRDcGp4L3BZMXowZ0t1dkRjLzh4NytUbVo0bE4xTkVyeGk2bTk2?=
+ =?utf-8?B?ZXBSNVl1Z2pXb3RzMnNMOUdPRjhOamhiWmdBVEhSMlFxcVBFMmxRRld4Rmsy?=
+ =?utf-8?B?QkQxdDJJUnhRUHZETGdUVms0UndWZ1MwYm1oc1NwNUdZeFlJcUp4V2JqVjVm?=
+ =?utf-8?B?ck9tT1kvZ3d4dlF4a0F5UWdrcWU0WEFDVjdVdmtUT3hHTmRhbU1ubk03ZTJ2?=
+ =?utf-8?B?NWt1MEhBZWhrN1d1L2VNeVMzUjZpNDRHcEhkVHZFUi81MURiUlBjRzJMank5?=
+ =?utf-8?B?aGJWQVBoT0ZCc0kyRGxwZFY0SUdobUNWR09uU3RsZUhPelBzUUJ0UUdOVmRp?=
+ =?utf-8?B?UFNRdG9vYVdNTDh6TytVN0VxUi96cFg3TWx3bXVWMkx2bTVwaVZrWGN5S0hF?=
+ =?utf-8?B?SllDZmRhZ1lKK3BDOFM3ZzdDa21qMVQrU2JXWENlUkdpcWppelhDcy9MRCs3?=
+ =?utf-8?B?M0VLcnpkVmJMMjlwUkZ5NEVaVTlHd2pvUDY3REhOdkJCOHR4QlN0TTEwOGZX?=
+ =?utf-8?B?UWhYUnJQYjZHMXNVWUVQQ3hiSmg5cVp5QTZSZnc4K0FSdUtvbHFlTURFYUtm?=
+ =?utf-8?B?N2s5TmVUbTF0S3Z2TnRpcFJkZmU1Y0x6WWs0ZERXMG9XZ1F0OGt4c2F2ekc1?=
+ =?utf-8?B?U3dpVG9nWkRXV3YzTDJIVHBCTkdJdmlSR3VJRGF5L1oxMm1RTmQvZTB1Ukt3?=
+ =?utf-8?B?cTM4L3BNR1Y4aU9ZWkpMeHdvTGhiZWFEZEpmL01iNFArRDUvZ01EMEhCWVd6?=
+ =?utf-8?B?dkw5OXp0YjlrMFc2NUdWa1RhY0ZQV3R1RS9adDB2WjQrVGlJMFBzV3ZLV2J2?=
+ =?utf-8?B?VDlNVHlueTdPM1RaazFITFUxODVZR01mVkxYQ1JxVE9XU3AySlh6L3FFOFdX?=
+ =?utf-8?B?eHM5S0FXQ25jQ1Qxb0xDakJkV0diRE5uSWJyWUlEeklEdkFwSDNqeGhkbFph?=
+ =?utf-8?B?U2dIeHpDY2NKdjR5RzlTWHZ6cGpxRlR4UVU1c0hzc0Rxa016WFpzRHppeU9Z?=
+ =?utf-8?B?SGJXYjhlUHZsYU1kRU1NWXRVUXgvK0E5YTNZd01lNDcwVmhUOGQ4Mm83ZWFV?=
+ =?utf-8?B?d2xhSGo4TUlPQ3lERmtrSTVzM3o5RFlJVVJuNnJpemZackZ1UjJBem9JQlVz?=
+ =?utf-8?B?TFduWlpGYWZyWTJncXVBU0phNktQR1drZk43dS9jcWozVXJsNkVxbnZHM2NW?=
+ =?utf-8?B?YXlRcExTRXh4ZEVHUVFPV2l4cU1ncEV0VjJ5N3RUN3JxWENxY3BMZjJ3SGo2?=
+ =?utf-8?B?U2dycnY3T1FpdDZVcCtNc3FXQjkraStDaGlBM3BvYTlwM2hJOGU0RUxyYkpJ?=
+ =?utf-8?B?WnBnalNiZWtIK0k5bGE2VWxzZXRuRVdsa1Q0UVRTakUyM0t4M3UzTU9kWkJt?=
+ =?utf-8?B?WkhoZ05JNzNUTVVTSmUxYUdDRk0vc2YyVUVBWDNXTzFxRzRteWhNUmN0dGxD?=
+ =?utf-8?Q?+xU9eL+iKzPlE=3D?=
+X-Microsoft-Antispam-Message-Info: 6c3fInVQsxWgUIY3Ws6d96PIpAMzAajzXoFXypZMYhA8faJCRr2qz/XMpe3IJDGJuN79kBB29aHD/17lkuvKvxD3rLBCC9gKm7Wg7rIGVT1c2mFVvb+VXIZYVszXVHU0rOZH4v3ksQ3Wzf88O02mta6YwXlEAxPsq+29u4IFsStFUgLjfjsXE5X2VDQgojCBAb8Kv7f5U0cGtUNTXBl/nsEj0CJjiqazTfQKkgQ2sjl3WH4XfE3fiCsuvXFdjNoQEgnl5dJyJlsgW0SrxgFOETb7QpJMRjSILtfrJIsmFuP1XzTWI5lxnY+SpSHpennRdyGV8pgVkTexSE0+XrVBrMY0tUcHyvDWrLMcM+R84Jg=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3514;6:jR55nDbYhWwoCKLBuIvHnxf5PIhtPTs2LeYfNlS2D99Ih7K9v/NWYTb8zkVN02D45n7jBjwC8EtzV9yNghQnYvKUHfpBSeO4g0lgYDE7MWXqnGvovLCVfpFbt5s75sro4KB/UulOruH/19/UZsHMidEJnCy9SP73ThBNKDny9og1NfkF3iNU7IZbY8p+z6QD5Ly98/bk6AEHU+oZU6EDOONK//4rONR1qDUokKc4y3FN2SL17oGw1B7fQ3hEcv7vIW2XEqbCCQHWok2yDo1gG0xbEua+EAgiU5hdLwX5AdKTGfEzPyg/UohgntHYn1jDbtYYc3pgA5vC7P9f9YRmH/+xSd7J2PeldXDmjZenSAIvtjAertun+kXy+O7hUDNRUK9ohuU3bLAZFdMOgZkP4YZoCQoZS5oRgYA7lzZCDmeEHxNXKjU9/GIpdSydlgO6e6DErdtu/KzlRGi2vfRRdw==;5:rp8+f9ccRrSP9OgxvQZf0QJ06dkL4FjFRgELDoRUz2DuhRGri471AVIe4x2HBxvu5ixpbr7GsMVI2s22lZYdwxoIDArS1Yi7CnXOKQrbmHxRChJhlqkuF7ImwSkcOnG/Yd9o6iECEKpstaFgoZ5Wx3pNijR2liwFGc8Nvx2Y8Z8=;7:vh8tYxLGYw4PETNJKyBPLx20bg7zar0Kh5EN6CDF9N05NTNDf5YqDkAZO5lQlO4Ar66Vf+omURy2L4Gdy6km88VLDpazq7VyKZUVfrsIy7tprQ/4dpgc4TRE0s6qNguwApbsJRGHP8MI1Dc/BnpM2Q==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2018 07:19:09.9884
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR06MB5210
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b232f70-01e7-44fa-9dcb-08d656941fa6
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0201MB3514
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_8CC13221-B825-4BDC-BFC5-4075621773DC
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
-
-> On 29 Nov 2018, at 15.27, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> Currently the geometry of an OCSSD is enumerated using a two step
-> approach:
->=20
-> First, nvm_register is called, the OCSSD identify command is issued,
-> and second the geometry sos and csecs values are read either from the
-> OCSSD identify if it is a 1.2 drive, or from the NVMe namespace data
-> structure if it is a 2.0 device.
->=20
-> This patch recombines it into a single step, such that nvm_register =
-can
-> use the csecs and sos fields independent of which version is used. =
-This
-> enables one to dynamically size the lightnvm subsystem dma pool.
->=20
-> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
+On 29. 11. 18 17:15, Faiz Abbas wrote:
+> The "ti,am654-sdhci-5.1" binding has been moved to a new driver. Indicate
+> this by a deprecated message.
+> 
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 > ---
-> drivers/lightnvm/core.c      | 12 +++++-------
-> drivers/nvme/host/core.c     | 18 +++++++++---------
-> drivers/nvme/host/lightnvm.c | 18 ++++++------------
-> drivers/nvme/host/nvme.h     |  2 --
-> 4 files changed, 20 insertions(+), 30 deletions(-)
->=20
-> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-> index 73ab3cf26868..a1d52e934ce4 100644
-> --- a/drivers/lightnvm/core.c
-> +++ b/drivers/lightnvm/core.c
-> @@ -1145,25 +1145,23 @@ int nvm_register(struct nvm_dev *dev)
-> 	if (!dev->q || !dev->ops)
-> 		return -EINVAL;
->=20
-> +	ret =3D nvm_init(dev);
-> +	if (ret)
-> +		return ret;
+>  Documentation/devicetree/bindings/mmc/arasan,sdhci.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> index e2effe17f05e..1edbb049cccb 100644
+> --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> @@ -16,6 +16,10 @@ Required Properties:
+>      - "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1": rk3399 eMMC PHY
+>        For this device it is strongly suggested to include arasan,soc-ctl-syscon.
+>      - "ti,am654-sdhci-5.1", "arasan,sdhci-5.1": TI AM654 MMC PHY
+> +	Note: This binding has been deprecated and moved to [5].
 > +
-> 	dev->dma_pool =3D dev->ops->create_dma_pool(dev, "ppalist");
-> 	if (!dev->dma_pool) {
-> 		pr_err("nvm: could not create dma pool\n");
-> +		nvm_free(dev);
-> 		return -ENOMEM;
-> 	}
->=20
-> -	ret =3D nvm_init(dev);
-> -	if (ret)
-> -		goto err_init;
-> -
-> 	/* register device with a supported media manager */
-> 	down_write(&nvm_lock);
-> 	list_add(&dev->devices, &nvm_devices);
-> 	up_write(&nvm_lock);
->=20
-> 	return 0;
-> -err_init:
-> -	dev->ops->destroy_dma_pool(dev->dma_pool);
-> -	return ret;
-> }
-> EXPORT_SYMBOL(nvm_register);
->=20
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 65c42448e904..387833b37e38 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -1516,8 +1516,6 @@ static void __nvme_revalidate_disk(struct =
-gendisk *disk, struct nvme_id_ns *id)
-> 	if (ns->noiob)
-> 		nvme_set_chunk_size(ns);
-> 	nvme_update_disk_info(disk, ns, id);
-> -	if (ns->ndev)
-> -		nvme_nvm_update_nvm_info(ns);
-> #ifdef CONFIG_NVME_MULTIPATH
-> 	if (ns->head->disk)
-> 		nvme_update_disk_info(ns->head->disk, ns, id);
-> @@ -3086,13 +3084,6 @@ static void nvme_alloc_ns(struct nvme_ctrl =
-*ctrl, unsigned nsid)
-> 	nvme_setup_streams_ns(ctrl, ns);
-> 	nvme_set_disk_name(disk_name, ns, ctrl, &flags);
->=20
-> -	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] =3D=3D =
-0x1) {
-> -		if (nvme_nvm_register(ns, disk_name, node)) {
-> -			dev_warn(ctrl->device, "LightNVM init =
-failure\n");
-> -			goto out_unlink_ns;
-> -		}
-> -	}
-> -
-> 	disk =3D alloc_disk_node(0, node);
-> 	if (!disk)
-> 		goto out_unlink_ns;
-> @@ -3106,6 +3097,13 @@ static void nvme_alloc_ns(struct nvme_ctrl =
-*ctrl, unsigned nsid)
->=20
-> 	__nvme_revalidate_disk(disk, id);
->=20
-> +	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] =3D=3D =
-0x1) {
-> +		if (nvme_nvm_register(ns, disk_name, node)) {
-> +			dev_warn(ctrl->device, "LightNVM init =
-failure\n");
-> +			goto out_put_disk;
-> +		}
-> +	}
+> +  [5] Documentation/devicetree/bindings/mmc/sdhci-am654.txt
 > +
-> 	down_write(&ctrl->namespaces_rwsem);
-> 	list_add_tail(&ns->list, &ctrl->namespaces);
-> 	up_write(&ctrl->namespaces_rwsem);
-> @@ -3119,6 +3117,8 @@ static void nvme_alloc_ns(struct nvme_ctrl =
-*ctrl, unsigned nsid)
-> 	kfree(id);
->=20
-> 	return;
-> + out_put_disk:
-> +	put_disk(ns->disk);
->  out_unlink_ns:
-> 	mutex_lock(&ctrl->subsys->lock);
-> 	list_del_rcu(&ns->siblings);
-> diff --git a/drivers/nvme/host/lightnvm.c =
-b/drivers/nvme/host/lightnvm.c
-> index d64805dc8efb..51d957ccf328 100644
-> --- a/drivers/nvme/host/lightnvm.c
-> +++ b/drivers/nvme/host/lightnvm.c
-> @@ -973,22 +973,11 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned =
-int cmd, unsigned long arg)
-> 	}
-> }
->=20
-> -void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
-> -{
-> -	struct nvm_dev *ndev =3D ns->ndev;
-> -	struct nvm_geo *geo =3D &ndev->geo;
-> -
-> -	if (geo->version =3D=3D NVM_OCSSD_SPEC_12)
-> -		return;
-> -
-> -	geo->csecs =3D 1 << ns->lba_shift;
-> -	geo->sos =3D ns->ms;
-> -}
-> -
-> int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
-> {
-> 	struct request_queue *q =3D ns->queue;
-> 	struct nvm_dev *dev;
-> +	struct nvm_geo *geo;
->=20
-> 	_nvme_nvm_check_size();
->=20
-> @@ -996,6 +985,11 @@ int nvme_nvm_register(struct nvme_ns *ns, char =
-*disk_name, int node)
-> 	if (!dev)
-> 		return -ENOMEM;
->=20
-> +	/* Note that csecs and sos will be overridden if it is a 1.2 =
-drive. */
-> +	geo =3D &dev->geo;
-> +	geo->csecs =3D 1 << ns->lba_shift;
-> +	geo->sos =3D ns->ms;
-> +
-> 	dev->q =3D q;
-> 	memcpy(dev->name, disk_name, DISK_NAME_LEN);
-> 	dev->ops =3D &nvme_nvm_dev_ops;
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index 9fefba039d1e..4f5399c8808b 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -541,13 +541,11 @@ static inline void nvme_mpath_stop(struct =
-nvme_ctrl *ctrl)
-> #endif /* CONFIG_NVME_MULTIPATH */
->=20
-> #ifdef CONFIG_NVM
-> -void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
-> int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
-> void nvme_nvm_unregister(struct nvme_ns *ns);
-> extern const struct attribute_group nvme_nvm_attr_group;
-> int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long =
-arg);
-> #else
-> -static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
-> static inline int nvme_nvm_register(struct nvme_ns *ns, char =
-*disk_name,
-> 				    int node)
-> {
-> --
-> 2.17.1
->=20
->=20
-> _______________________________________________
-> Linux-nvme mailing list
-> Linux-nvme@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-nvme
+>    - reg: From mmc bindings: Register location and length.
+>    - clocks: From clock bindings: Handles to clock inputs.
+>    - clock-names: From clock bindings: Tuple including "clk_xin" and "clk_ahb"
+> 
 
-Good refactor; much better to do initialization on a single step.
+I would prefer if you can extend commit message by description you have
+in cover letter which explains reasons. When this is applied and someone
+look at git history none will understand from first read why you have
+done that.
 
-Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
-
-
---Apple-Mail=_8CC13221-B825-4BDC-BFC5-4075621773DC
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlwA5CEACgkQIX4xUKFR
-nnTNAg/+If42ZquryLgdIeq5uXcr6icmtLkPKGLYbimbcKyue+D6kEVC88gGwk4i
-kd60Q6afKyYFNYHay83QlryFjepTJqh/LrVxhnuVHODLYfe89Ei1zm0HtsBXyEym
-IYqS26+KiYyv9LE+eJbWoicPPKKgYR2IWF3i0fAm2IzebftHp4G+wLiWOVrswq6r
-aMNugBp2YI+lCyh9qNtnFT2u81pgkjIzcXe08v705+rDNJBvPNp0sYT8un+3/rqP
-o8ztY9v9DUOVbff1reFO/Xg0FV0PjtPqUSbrfDIo39sZXWGbXkDs4YnafkM902d1
-IXWeHGGRzCZzh7vfRb4glksTNh0aa22eyVU1n9Am8gWXpC5/d9d/xrUje45E1sDA
-jH4MnmQ41c/467pbIbLMnwPqJ6+IgIsL9/mcupmORyeFaH+qyWG8drmwTaz7ZATU
-TDsbcuErlIHt/oK5ffJ82doUAS1BPX+/8V9P5EHdkruxZx+zakmJEUC26Mnn63Ba
-9uqRc+kE9Lc6dqTTYhRzAJkGfedrJxdzsBK/gepeQjxUSmv+IMnm1R+B3d/9NDAu
-pwDJyZzN7LssALqfXmvaICeUYG5hXKKKdoXRhR/pFEnRx9qNvTEBpczXJ60X5YHZ
-Hk8c17N1Jrwqz6fg5/4tb/gF0ELbuadAXrb5r2EgXGkMUP3NFmQ=
-=tbRG
------END PGP SIGNATURE-----
-
---Apple-Mail=_8CC13221-B825-4BDC-BFC5-4075621773DC--
+Thanks,
+Michal
