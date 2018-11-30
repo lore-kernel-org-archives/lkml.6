@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FF1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27B9C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA39F20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89E2E2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:27:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqG6CiaB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA39F20673
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSOZ/BU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89E2E2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbeLAFhi (ORCPT
+        id S1727023AbeLAFhk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:37:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55198 "EHLO mail.kernel.org"
+        Sat, 1 Dec 2018 00:37:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725817AbeLAFhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:37:37 -0500
+        id S1725817AbeLAFhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:37:40 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B16E2145D;
-        Fri, 30 Nov 2018 18:27:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 926252146F;
+        Fri, 30 Nov 2018 18:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543602447;
-        bh=muPsFlAKYdYPXhHCk/10yISZATJ5C+i3fHlhTF45GU0=;
+        s=default; t=1543602450;
+        bh=EE0285MEUlRaRIq27Dioi7N081JwIvEZiEZC6/C0Llk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BqG6CiaBYyIquLBsaC3pa84/GdG+sI+YdysKKbMUNU8X9wbD78DkmYUN9pilwEzx2
-         nhyK28O3I/Gx9ajqgSeavTn7/DwGkh8dlGXOvzYFgzFP5yUHsLepiShoFujW8lTYzC
-         5zsRwSwQlGmLBZ/A07+udESiaXOyycYwpX/U4uBk=
+        b=tSOZ/BU24xQdEWVTr7xrgLJX1V9GtbQg+wXJqoxnhEo6yukx9SD379gZco/SdnG8D
+         gkVPKDkylYLqzC7hCAQWaHNqAKt9TYCc7pVGxO84+Tk0A+A6Y1joIdjYdKi8uva+9M
+         msZS78UN/g1dzJmjHb+vaBey+XL0iyPJTuvI7G1g=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Jiri Olsa <jolsa@redhat.com>, Leo Yan <leo.yan@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 07/22] perf thread: Add fallback functions for cases where cpumode is insufficient
-Date:   Fri, 30 Nov 2018 15:26:37 -0300
-Message-Id: <20181130182652.23620-8-acme@kernel.org>
+Subject: [PATCH 08/22] perf tools: Use fallback for sample_addr_correlates_sym() cases
+Date:   Fri, 30 Nov 2018 15:26:38 -0300
+Message-Id: <20181130182652.23620-9-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181130182652.23620-1-acme@kernel.org>
 References: <20181130182652.23620-1-acme@kernel.org>
@@ -62,10 +62,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-For branch stacks or branch samples, the sample cpumode might not be
-correct because it applies only to the sample 'ip' and not necessary to
-'addr' or branch stack addresses. Add fallback functions that can be
-used to deal with those cases
+thread__resolve() is used in the sample_addr_correlates_sym() cases
+where 'addr' is a destination of a branch which does not necessarily
+have the same cpumode as the 'ip'. Use the fallback function in that
+case.
+
+This patch depends on patch "perf tools: Add fallback functions for
+cases where cpumode is insufficient".
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -74,129 +77,25 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181106210712.12098-2-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181106210712.12098-3-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/event.c   | 27 +++++++++++++++++++++++++++
- tools/perf/util/machine.c | 27 +++++++++++++++++++++++++++
- tools/perf/util/machine.h |  2 ++
- tools/perf/util/thread.h  |  4 ++++
- 4 files changed, 60 insertions(+)
+ tools/perf/util/event.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index e9c108a6b1c3..9431b20c1337 100644
+index 9431b20c1337..24493200cf80 100644
 --- a/tools/perf/util/event.c
 +++ b/tools/perf/util/event.c
-@@ -1577,6 +1577,24 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 	return al->map;
- }
- 
-+/*
-+ * For branch stacks or branch samples, the sample cpumode might not be correct
-+ * because it applies only to the sample 'ip' and not necessary to 'addr' or
-+ * branch stack addresses. If possible, use a fallback to deal with those cases.
-+ */
-+struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-+				struct addr_location *al)
-+{
-+	struct map *map = thread__find_map(thread, cpumode, addr, al);
-+	struct machine *machine = thread->mg->machine;
-+	u8 addr_cpumode = machine__addr_cpumode(machine, cpumode, addr);
-+
-+	if (map || addr_cpumode == cpumode)
-+		return map;
-+
-+	return thread__find_map(thread, addr_cpumode, addr, al);
-+}
-+
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al)
+@@ -1706,7 +1706,7 @@ bool sample_addr_correlates_sym(struct perf_event_attr *attr)
+ void thread__resolve(struct thread *thread, struct addr_location *al,
+ 		     struct perf_sample *sample)
  {
-@@ -1586,6 +1604,15 @@ struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 	return al->sym;
- }
+-	thread__find_map(thread, sample->cpumode, sample->addr, al);
++	thread__find_map_fb(thread, sample->cpumode, sample->addr, al);
  
-+struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-+				      u64 addr, struct addr_location *al)
-+{
-+	al->sym = NULL;
-+	if (thread__find_map_fb(thread, cpumode, addr, al))
-+		al->sym = map__find_symbol(al->map, al->addr);
-+	return al->sym;
-+}
-+
- /*
-  * Callers need to drop the reference to al->thread, obtained in
-  * machine__findnew_thread()
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 8f36ce813bc5..9397e3f2444d 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2592,6 +2592,33 @@ int machine__get_kernel_start(struct machine *machine)
- 	return err;
- }
- 
-+u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr)
-+{
-+	u8 addr_cpumode = cpumode;
-+	bool kernel_ip;
-+
-+	if (!machine->single_address_space)
-+		goto out;
-+
-+	kernel_ip = machine__kernel_ip(machine, addr);
-+	switch (cpumode) {
-+	case PERF_RECORD_MISC_KERNEL:
-+	case PERF_RECORD_MISC_USER:
-+		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_KERNEL :
-+					   PERF_RECORD_MISC_USER;
-+		break;
-+	case PERF_RECORD_MISC_GUEST_KERNEL:
-+	case PERF_RECORD_MISC_GUEST_USER:
-+		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_GUEST_KERNEL :
-+					   PERF_RECORD_MISC_GUEST_USER;
-+		break;
-+	default:
-+		break;
-+	}
-+out:
-+	return addr_cpumode;
-+}
-+
- struct dso *machine__findnew_dso(struct machine *machine, const char *filename)
- {
- 	return dsos__findnew(&machine->dsos, filename);
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index ca897a73014c..ebde3ea70225 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -100,6 +100,8 @@ static inline bool machine__kernel_ip(struct machine *machine, u64 ip)
- 	return ip >= kernel_start;
- }
- 
-+u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr);
-+
- struct thread *machine__find_thread(struct machine *machine, pid_t pid,
- 				    pid_t tid);
- struct comm *machine__thread_exec_comm(struct machine *machine,
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 30e2b4c165fe..5920c3bb8ffe 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -96,9 +96,13 @@ struct thread *thread__main_thread(struct machine *machine, struct thread *threa
- 
- struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 			     struct addr_location *al);
-+struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-+				struct addr_location *al);
- 
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al);
-+struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-+				      u64 addr, struct addr_location *al);
- 
- void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
- 					struct addr_location *al);
+ 	al->cpu = sample->cpu;
+ 	al->sym = NULL;
 -- 
 2.19.1
 
