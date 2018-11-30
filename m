@@ -2,290 +2,206 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B04AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21088C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9DB52145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:41:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9DB52145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id CF59F2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:42:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DdWcoSqq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF59F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeLAAuo (ORCPT
+        id S1726808AbeLAAvz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:50:44 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34593 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeLAAun (ORCPT
+        Fri, 30 Nov 2018 19:51:55 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40321 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeLAAvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:50:43 -0500
-Received: by mail-qk1-f195.google.com with SMTP id a132so3169542qkg.1;
-        Fri, 30 Nov 2018 05:41:22 -0800 (PST)
+        Fri, 30 Nov 2018 19:51:55 -0500
+Received: by mail-lf1-f66.google.com with SMTP id v5so4127160lfe.7
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:42:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=d4PHDB8sODolE3zRjnN2bvfGLVRwKc5RGdgZe6Uiw0s=;
+        b=DdWcoSqqVjU4l1rZmOJmGAMN/ijDrApKWQnkwBCux4iuhh9xU0lQ9YI8V4adbMpF4Q
+         zdAxGMTJhvxzty0tMV6xMphJeqXJUSOE96eWh6xVvu6pbhLYa/JFnLbenfkOnrdPCpV/
+         PcuMYlFQRu8ZKFpNL/BsQ/AoONgB/Q2YpvLqY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9pNR9+RascCaVGKyof6gXm2knuHvoSa+D5yn46hoyjs=;
-        b=XhjMqpdh1fkrizyMA64qpsF/ZbYUWpUPaaEmU9k/YSE7aDZC6EpuoDYKYmL8rEoM4e
-         sb/KTFElmNKxo/LV7nNybd1OCtgwgZue8d6STcJ5h/H/QCxY/74dHvZaP9kWUZWwkB0Z
-         Zz7brVLN910EwjJEPAqyZNJ2hmJlEfjLT0F0UHjSg4OwR0id+xCJARVGYKM6rL3RxPzH
-         OcPvW6/s1n2BSyeVR5q6doSoJ3VfYi9PIewm2O2S2TWQNt06xXnZscxX/pu6xWOd5rIx
-         K+yCTO4J/Hqubk43ICE18/o2PBsarqVUnfPoVukvB75IX4O3rr8iZ6XWLIaL9W6VyCEl
-         5fFg==
-X-Gm-Message-State: AA+aEWb1r1oNq/rbtmDLnnHbYnkg9FCXXnNADSSSg+xBwKQM+Ljnjsmb
-        OBjQjx1JgOIl0kBi2gByDt+8i8A+K4WkFTjYm3Q=
-X-Google-Smtp-Source: AFSGD/UGq7/Rpl1GDNnvKUaSvyRIBWeQWY8B30hG76yfWhe6zXHaBfhmpeuv+mTf2D0pHbKAKSMpqV8K1aYefTPNgq0=
-X-Received: by 2002:a37:a3c6:: with SMTP id m189mr5263467qke.173.1543585282080;
- Fri, 30 Nov 2018 05:41:22 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=d4PHDB8sODolE3zRjnN2bvfGLVRwKc5RGdgZe6Uiw0s=;
+        b=i6eABtZS0Z6sfec51ywqcBJ6peHCwUQgBveLUT5gI08XZzwswvCKdqu6Su58sHYifV
+         BFm+wSFPuRk8iNObVeSx2mvqgOMJN1pV+5FW57//g3+aUuksb2H7w4Uf9Et0+vb0UhAo
+         A/IdrY86x6qtAnSEQcOw888L0u7lseeK9K1/s2/WtdN9MLQN/ULEem1Y0JzyVDhm2GE7
+         zLUv5AQvaXKNw88k0X0rBmdTaTnl/YPf+nKM/BP/cZFvAwXTlfZRRSYTrlwVxHiXEs7V
+         nQveEIITvO5ykRX3//0V+agFIxKnKYhZPAzjfSIBwBX3HOXtzIjILcKmW98m+eaXqjRJ
+         r2YA==
+X-Gm-Message-State: AA+aEWY2cqsudZnBlyAD+G8H8HVRPzhZkck6MYIDtTI2a0WL9erwxYeu
+        HgUJcQlGWOSYQQCTD+M9BCl/qQ==
+X-Google-Smtp-Source: AFSGD/WkityAtEsFlBU3faJqQlKa9ASnsgmr+GdVNPHkwdyU1F5TER+2a82RmDFivkWO1Wesfmr8QA==
+X-Received: by 2002:a19:4e59:: with SMTP id c86mr3864405lfb.132.1543585352345;
+        Fri, 30 Nov 2018 05:42:32 -0800 (PST)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id j12-v6sm802047ljh.66.2018.11.30.05.42.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 05:42:31 -0800 (PST)
+Date:   Fri, 30 Nov 2018 15:42:29 +0200
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: drop vid0
+ configuration in dual_mac modey
+Message-ID: <20181130134228.GD23230@khorivan>
+Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+References: <20181125234626.28474-1-grygorii.strashko@ti.com>
+ <20181126162644.GA23230@khorivan>
+ <7f2c5e66-3b42-f921-c52d-236f5adc44bf@ti.com>
+ <20181126200757.GB23230@khorivan>
+ <fcc8efa1-1f19-baa3-872d-5c76a1b7dce0@ti.com>
+ <20181129152646.GC23230@khorivan>
+ <473759d1-09c4-ebc0-8b31-cc5c8bb85faa@ti.com>
 MIME-Version: 1.0
-References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org> <20181130104657.14875-4-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20181130104657.14875-4-srinivas.kandagatla@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 30 Nov 2018 14:41:04 +0100
-Message-ID: <CAK8P3a1mFWJyXCn74_Yd_y3Df0JN=qM4nw4-2t_LjRO7yXmXBw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/6] char: fastrpc: Add support for context Invoke method
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
-        thierry.escande@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <473759d1-09c4-ebc0-8b31-cc5c8bb85faa@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:48 AM Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
+On Thu, Nov 29, 2018 at 05:23:09PM -0600, Grygorii Strashko wrote:
 >
-> This patch adds support to compute context invoke method
-> on the remote processor (DSP).
-> This involves setting up the functions input and output arguments,
-> input and output handles and mapping the dmabuf fd for the
-> argument/handle buffers.
 >
-> Most of the work is derived from various downstream Qualcomm kernels.
-> Credits to various Qualcomm authors who have contributed to this code.
-> Specially Tharun Kumar Merugu <mtharu@codeaurora.org>
+>On 11/29/18 9:26 AM, Ivan Khoronzhuk wrote:
+>> On Wed, Nov 28, 2018 at 03:15:46PM -0600, Grygorii Strashko wrote:
+>>>
+>>>
+>>> On 11/26/18 2:07 PM, Ivan Khoronzhuk wrote:
+>>>> On Mon, Nov 26, 2018 at 12:57:20PM -0600, Grygorii Strashko wrote:
+>>>>>
+>>>>>
+>>>>> On 11/26/18 10:26 AM, Ivan Khoronzhuk wrote:
+>>>>>> On Sun, Nov 25, 2018 at 05:46:26PM -0600, Grygorii Strashko wrote:
+>>>>>>> In dual_mac mode CPSW driver uses vid1 and vid2 by default to implement
+>>>>>>> dual mac mode wich are used to configure pvids for each external ports.
+>>>>>>> But, historicaly, it also adds vid0 to ALE table and sets "untag" bits for both
+>>>>>>> ext. ports. As result, it's imposible to use priority tagged packets in
+>>>>>>> dual mac mode.
+>>>>>>>
+>>>>>>> Hence, drop vid0 configuration in dual mac mode as it's not required for dual
+>>>>>>> mac mode functionality and, this way, make it possible to use priority
+>>>>>>> tagged packet in dual mac mode.
+>>>>>> So, now it's enabled to be added via regular ndo.
+>>>>>> I have similar change in mind, but was going to send it after
+>>>>>> mcast/ucast, and - enabling same vlans patch...
+>>>>>>
+>>>>>> 2 things stopped me to add this:
+>>>>>>
+>>>>>> 1) Moving it to be enabled via regular call is Ok, but in dual mac mode
+>>>>>> it causes overlaps, at least while vid deletion. So decided to wait till
+>>>>>> same vlans series is applied.
+>>>>>
+>>>>> TI driver documentation mentions this restriction
+>>>>> "While adding VLAN id to the eth interfaces,
+>>>>> same VLAN id should not be added in both interfaces which will lead to VLAN
+>>>>> forwarding and act as switch"
+>>>> It's not accurate now.
+>>>> This sw bug "acting like a switch" was fixed indirectly in LKML ).
+>>>> And at least for upstream version, not TISDK, desc should be updated,
+>>>> but better do this when it fixed completely and merged with TISDK.
+>>>>
+>>>> I know about this "written" restriction
+>>>> (for tiSDK, and it's not TRM after all ...),
+>>>> it can be avoided and it's partly avoided now ...
+>>>
+>>> I'd like to clarify point about supporting same VLANs in dual_mac mode,
+>>> to avoid future misunderstanding, overall: it's *not* supported as
+>>> adding same VLAN to both netdevices will cause unknown unicast packets
+>>> leaking between interfaces and it can't be avoided - hw limitation.
+>>
+>> Simple test shows no issues with ucast leaking.
+>> But for current buggy ucast vlan implementation it's not possible to verify,
+>> not sure but probably leaking in your case cuased by hidden toggling of
+>> interface to promisc while added ucast to vlans or other reason or so.
+>> Anyway I just decided to check specifically ucasts
+>> (macst as you know are not normal now).
+>>
+>> For verification you need to apply ucast fix (including vlans) first:
+>> https://git.linaro.org/people/ivan.khoronzhuk/tsn_kernel.git/log/?h=vlan_addr_flt_fix
+>>
+>> This is generic fix (not sure it will be approved, need try RFC) but implement
+>> the same as local fix for vlan ucasts:
+>> https://git.linaro.org/people/ivan.khoronzhuk/tsn_kernel.git/log/?h=ucast_vlan_fix
+>>
+>> Any of those are correct. I've used generic one.
+>> Applied the following scheme:
+>>
+>>                      +--------------------------+
+>>                      | host 74:DA:EA:47:7D:9C   |
+>>                      +--------------------------+
+>>
+>>                         +---------------------+
+>>              |       am572 evm     |
+>>                         |    eth0      eth1   |
+>>                         +----------+----------+
+>>                         | eth0.400 | eth1.400 |
+>>                         +----------+----------+
+>>                             ^          |
+>>                             |          |  +-----------+
+>> +-----------------+        |          |  |     PC    |
+>> | BBB eth0.400    |--------+          +->| Wireshark |
+>> +-----------------+                      +-----------+
+>>
+>>
+>> 1) Configure vlans on am572x evm
+>> ip link add link eth0 name eth0.400 type vlan id 400
+>> ip link add link eth1 name eth1.400 type vlan id 400
+>>
+>> 2) On BBB side:
+>> # ip link add link eth0 name eth0.400 type vlan id 400
+>> Send ucast vlan traffic to the am572 evm, vlan ucast address is unreq on am572.
+>> # ./plget -i eth0.400 -t ptpl2 -m tx-lat -n 160 -s 10 -a 74:DA:EA:47:7D:66
+>> # ./plget -i eth0.400 -t ptpl2 -m tx-lat -n 160 -s 10 -a 18:03:73:66:87:42
+>>
+>> 3) Observe silence on PC wireshark.
+>>
+>> Thus, no see issues with this.
+>>
+>> PS: I'm sure in plget tool, you can use your own.
 >
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>I'm using packeth to generate udp packets (vlan) src=PC dst=unknown
+>if there is record in ALE table which looks like:
+>type: vlan , vid = 100, untag_force = 0x0, reg_mcast = 0x7, unreg_mcast = 0x0, member_list = 0x7
+>then above udp packet will be forwarded to BBB.
+Agree, seems no normal way to avoid ucast leak.
 
-> +
-> +       INIT_LIST_HEAD(&ctx->node);
-> +       ctx->fl = user;
-> +       ctx->maps = (struct fastrpc_map **)(&ctx[1]);
-> +       ctx->lpra = (remote_arg_t *)(&ctx->maps[bufs]);
-> +       ctx->fds = (int *)(&ctx->lpra[bufs]);
-> +       ctx->attrs = (unsigned int *)(&ctx->fds[bufs]);
-> +
-> +       if (!kernel) {
-> +               if (copy_from_user(ctx->lpra,
-> +                                    (void const __user *)inv->pra,
-> +                                    bufs * sizeof(*ctx->lpra))) {
-> +                       err = -EFAULT;
-> +                       goto err;
-> +               }
-> +
-> +               if (inv->fds) {
-> +                       if (copy_from_user(ctx->fds,
-> +                                            (void const __user *)inv->fds,
-> +                                            bufs * sizeof(*ctx->fds))) {
-> +                               err = -EFAULT;
-> +                               goto err;
-> +                       }
-> +               }
-> +               if (inv->attrs) {
-> +                       if (copy_from_user(
-> +                                       ctx->attrs,
-> +                                       (void const __user *)inv->attrs,
-> +                                       bufs * sizeof(*ctx->attrs))) {
-> +                               err = -EFAULT;
-> +                               goto err;
-> +                       }
-> +               }
-> +       } else {
-> +               memcpy(ctx->lpra, inv->pra, bufs * sizeof(*ctx->lpra));
-> +               if (inv->fds)
-> +                       memcpy(ctx->fds, inv->fds,
-> +                              bufs * sizeof(*ctx->fds));
-> +               if (inv->attrs)
-> +                       memcpy(ctx->attrs, inv->attrs,
-> +                              bufs * sizeof(*ctx->attrs));
-> +       }
+>
+>
+>
+>-- 
+>regards,
+>-grygorii
 
-I'd split this function into multiple pieces: the internal one that
-just takes kernel pointers, and a wrapper for the ioctl
-that copies the user space data into the kernel before calling
-the second one.
-
-> +static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
-> +                           uint32_t kernel, remote_arg_t *upra)
-> +{
-> +       remote_arg64_t *rpra = ctx->rpra;
-> +       int i, inbufs, outbufs, handles;
-> +       struct fastrpc_invoke_buf *list;
-> +       struct fastrpc_phy_page *pages;
-> +       struct fastrpc_map *mmap;
-> +       uint32_t sc = ctx->sc;
-> +       uint64_t *fdlist;
-> +       uint32_t *crclist;
-> +       int err = 0;
-> +
-> +       inbufs = REMOTE_SCALARS_INBUFS(sc);
-> +       outbufs = REMOTE_SCALARS_OUTBUFS(sc);
-> +       handles = REMOTE_SCALARS_INHANDLES(sc) + REMOTE_SCALARS_OUTHANDLES(sc);
-> +       list = fastrpc_invoke_buf_start(ctx->rpra, sc);
-> +       pages = fastrpc_phy_page_start(sc, list);
-> +       fdlist = (uint64_t *)(pages + inbufs + outbufs + handles);
-> +       crclist = (uint32_t *)(fdlist + FASTRPC_MAX_FDLIST);
-> +
-> +       for (i = inbufs; i < inbufs + outbufs; ++i) {
-> +               if (!ctx->maps[i]) {
-> +                       if (!kernel)
-> +                               err =
-> +                               copy_to_user((void __user *)ctx->lpra[i].buf.pv,
-> +                                      (void *)rpra[i].buf.pv, rpra[i].buf.len);
-> +                       else
-> +                               memcpy(ctx->lpra[i].buf.pv,
-> +                                      (void *)rpra[i].buf.pv, rpra[i].buf.len);
-> +
-> +                       if (err)
-> +                               goto bail;
-> +               } else {
-> +                       fastrpc_map_put(ctx->maps[i]);
-> +                       ctx->maps[i] = NULL;
-> +               }
-> +       }
-
-Same here.
-
-> +static int fastrpc_internal_invoke(struct fastrpc_user *fl,
-> +                                  uint32_t kernel,
-> +                                  struct fastrpc_ioctl_invoke *inv)
-> +{
-> +       struct fastrpc_invoke_ctx *ctx = NULL;
-> +       int err = 0;
-> +
-> +       if (!fl->sctx)
-> +               return -EINVAL;
-> +
-> +       ctx = fastrpc_context_alloc(fl, kernel, inv);
-> +       if (IS_ERR(ctx))
-> +               return PTR_ERR(ctx);
-> +
-> +       if (REMOTE_SCALARS_LENGTH(ctx->sc)) {
-> +               err = fastrpc_get_args(kernel, ctx);
-> +               if (err)
-> +                       goto bail;
-> +       }
-> +
-> +       err = fastrpc_invoke_send(fl->sctx, ctx, kernel, inv->handle);
-> +       if (err)
-> +               goto bail;
-> +
-> +       err = wait_for_completion_interruptible(&ctx->work);
-> +       if (err)
-> +               goto bail;
-
-Can you add comments here to explain the control flow?
-What exactly are we waiting for here? Does the completion
-indicate that the remote side is done executing the code
-and ready to do something else?
-
-> +static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
-> +                                unsigned long arg)
-> +{
-> +       struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
-> +       struct fastrpc_channel_ctx *cctx = fl->cctx;
-> +       char __user *argp = (char __user *)arg;
-> +       int err;
-> +
-> +       if (!fl->sctx) {
-> +               fl->sctx = fastrpc_session_alloc(cctx, 0);
-> +               if (!fl->sctx)
-> +                       return -ENOENT;
-> +       }
-
-Shouldn't that session be allocated during open()?
-
-> +static void fastrpc_notify_users(struct fastrpc_user *user)
-> +{
-> +       struct fastrpc_invoke_ctx *ctx, *n;
-> +
-> +       spin_lock(&user->lock);
-> +       list_for_each_entry_safe(ctx, n, &user->pending, node)
-> +               complete(&ctx->work);
-> +       spin_unlock(&user->lock);
-> +}
-
-Can you explain here what it means to have multiple 'users' for
-a 'fastrpc_user' structure? Why are they all done at the same time?
-
-> +struct remote_dma_handle64 {
-> +       int fd;
-> +       uint32_t offset;
-> +       uint32_t len;
-> +};
-
-Maybe always make the offset/len fields and others 64 bit?
-
-> +union remote_arg64 {
-> +       struct remote_buf64     buf;
-> +       struct remote_dma_handle64 dma;
-> +       uint32_t h;
-> +};
-> +
-> +#define remote_arg_t    union remote_arg
-> +
-> +struct remote_buf {
-> +       void *pv;               /* buffer pointer */
-> +       size_t len;             /* length of buffer */
-> +};
-> +
-> +struct remote_dma_handle {
-> +       int fd;
-> +       uint32_t offset;
-> +};
-> +
-> +union remote_arg {
-> +       struct remote_buf buf;  /* buffer info */
-> +       struct remote_dma_handle dma;
-> +       uint32_t h;             /* remote handle */
-> +};
-
-Try to avoid the padding at the end of the structure,
-if you can't, then add a __reserved member.
-
-I'd also recommend avoiding nested structures and
-unions. Add more commands if necessary.
-
-> +struct fastrpc_ioctl_invoke {
-> +       uint32_t handle;        /* remote handle */
-> +       uint32_t sc;            /* scalars describing the data */
-> +       remote_arg_t *pra;      /* remote arguments list */
-> +       int *fds;               /* fd list */
-> +       unsigned int *attrs;    /* attribute list */
-> +       unsigned int *crc;
-> +};
-
-This seems too complex for an ioctl argument, with
-multiple levels of pointer indirections. I'd normally
-try to make each ioctl argument either a scalar, or a
-structure with only fixed-length members.
-
-The way we did this in spufs was to set up a context
-first with all the information it needed, and make the
-actual context switch from host CPU to remote a very
-simple operation that took as few arguments as possible,
-in case of spu_run() only the instruction pointer and
-the location of the return status.
-
-      Arnd
+-- 
+Regards,
+Ivan Khoronzhuk
