@@ -2,119 +2,790 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A7FC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5410CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0432145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E100120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AMQT3Vi1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0432145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AF8wSBhp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E100120868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbeK3Sqs (ORCPT
+        id S1726924AbeK3Suk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:46:48 -0500
-Received: from mail-eopbgr10072.outbound.protection.outlook.com ([40.107.1.72]:48137
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeK3Sqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:46:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JS9M2PXZFUcg1IPsMM2TKYx4pko+MX7oC/KjZEUy25E=;
- b=AMQT3Vi126TlYcgw/MCjNJ61AQooQFPiKnZe2kXAb/Y8Q094sXSCNqaaCHjGDFdOCbqBE/Tu4aol4EQQ9X8VM8UDoH7OZCUe3C50Yjbe7rdExTnu6/2On9jjhjUgM/zcM+/nbySnFCTrmkH0ItJQDHCQjoHp9acboFfSXni4GAg=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3724.eurprd04.prod.outlook.com (52.134.66.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.21; Fri, 30 Nov 2018 07:38:20 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd%2]) with mapi id 15.20.1361.019; Fri, 30 Nov 2018
- 07:38:20 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Thread-Topic: [PATCH] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Thread-Index: AQHUiH2hWlHF6oLZCESale1T/3ahbqVn6qkAgAAB0CA=
-Date:   Fri, 30 Nov 2018 07:37:14 +0000
-Message-ID: <DB3PR0402MB3916F9DC4C054747211EB90FF5D30@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1543562288-28638-1-git-send-email-Anson.Huang@nxp.com>
- <154356270811.88331.17520386069332746427@swboyd.mtv.corp.google.com>
-In-Reply-To: <154356270811.88331.17520386069332746427@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3724;6:EHFgUGF65GQdb5KPEnmV2UdpbEoJwNLYxuzerhQnmJrGMX8TLPCI3A7hhFylX5I0Ozq9+NteyyXxxUB9aZW0LgRJWeNhbYYPRgJFGJQF+OelqiCYOKH6LpC8+l7dcWPsOHwN4yy2xQ3GY1Zw526WIT1d43yIoHDvC+08MqFEb+cpohIA6xwucqN2eQW3MPOU9PI3TY4foT7a1i2DCb3zgrwLO1VyfYCHVbbUP6iJ2I69i92sLMbGNMP9x6gB0gse3lwP0DqNZPacHbJ/hWUwcdfOnGXlpdq2WGXpzfmRkFPzXNdTjgLiB5JPV10xfWgnghIadN3ASJIsaKK6bH4Z0TZ3kdYT0E42zHk8SjkDyuEzpsNpiVyKNcdI5afWW4yDADaH9z20jj+JFrpmYcBvWLfQ+sTa0scv5b3V5nniVThVahpXrOhIZQp26ofxyP93DNMa9/WtaZFuUCpbfeJ4Yw==;5:0gefIf/kInzy28O8aNrZSBbUeTCbxhva/36WA6EUf9fUwiC0iCts6Bu7YfsY9irDyaGGCo6td8/+HJlEGmQikbA4Ozf25S6yMIzhQ+oXEkEIYQkzRD4hzuAJnSE4ZPGLNwgwi6+hBAcmyzFwwP3zwTr2TMy0tji1GR4TWCicHWw=;7:C3wDr7Sxjv+wsF3olYDhqaeRNb8aaE4fhNd/AUWGFmLvYX9lvhrD5ml9QgzTOS70Z+C6l+Sz4MWccKlQK9mWbbhfKuFBs1WI62jB0E8XKZelq3Q6EwjB2o+3mj/lAZ7Pxw7cFhnZPpDFfX7MPWYmdg==
-x-ms-office365-filtering-correlation-id: 67c7cb12-5dab-4f38-60f7-08d65696cd22
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3724;
-x-ms-traffictypediagnostic: DB3PR0402MB3724:
-x-microsoft-antispam-prvs: <DB3PR0402MB3724704BB5657020DDAFA2EAF5D30@DB3PR0402MB3724.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231453)(999002)(944501463)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3724;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3724;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(366004)(39860400002)(199004)(189003)(13464003)(11346002)(44832011)(446003)(476003)(486006)(5660300001)(71190400001)(71200400001)(6666004)(256004)(14444005)(81156014)(81166006)(8676002)(8936002)(478600001)(86362001)(2201001)(6506007)(25786009)(14454004)(33656002)(68736007)(3846002)(6116002)(26005)(186003)(106356001)(105586002)(7696005)(99286004)(53546011)(316002)(2906002)(76176011)(102836004)(2501003)(97736004)(4001150100001)(7736002)(74316002)(305945005)(53936002)(6246003)(4326008)(6436002)(6636002)(229853002)(55016002)(9686003)(110136005)(66066001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3724;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: q6wpoqofUmt2wO63WaHN3qeiYI6NyTwqvHuQxgBCGQxTaMwoc0LxcEqbHh30G+XwzEmpXTIBPY6W9h4ZmI1t1+3RGL2hGv1gDy2JfrsGPjcjTt4KoYGf1VMpN4AED5YsWyyW6XuJ5qEG7OHTqwfwzivNPTImp/K6jadvZFarBY6KHfPL07IBfW0sY35vTWAIEOI8FBHQ9jAHGPdPTKkaoyzUiumQTbpvTChbHs800IRuQXhkA8IVxrTurBGAPzvJKMoRyvild+DNedl+IQV1igGS8Zk3ZaVVdMDnZAl5lWhhUc4V7/LPv8/ZTn+FEjD8kXZiAzHSwA2RWff6OhpDrMxpEHr+Du0I1AWH6cBCzBc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 30 Nov 2018 13:50:40 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33979 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726629AbeK3Suk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:50:40 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u6-v6so4137727ljd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 23:42:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=e6SsBQoYabouEOjOIwMh14aiNj7QYmiAimfIvHSzC2o=;
+        b=AF8wSBhp2nZJMsic9wiok0+GrtnnwZFqCUH6h23rRH1kfNIutO3WQsBACpTrDDfnk3
+         2HYoYMLDPfD61EHNMYRyataF/l0M2Rq75Gh1hu1tHwHwZVkN8b6YtfEMzXxIjC0uL24v
+         pH9nF3I5IHLTqVpvRc2qZlekr1irLrC4DBZZYUrX9MyoC81ImFt0l9wKs5byW3rmwuJ1
+         2neUahBUAL1Yje8cFwEwSVWmOOV/urBG5mD7F5xUNia+fj7gJK+RWEec3pbJw8gWn77j
+         /nVRSrW+5M0bayWkrDDZFP0U32CF1f+7y/WXh2RbTKnD6ySP9Kv3WA4g6LfANeWRHgXa
+         Mkpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=e6SsBQoYabouEOjOIwMh14aiNj7QYmiAimfIvHSzC2o=;
+        b=CvXTzZIgNL9hwwIBppuQvNL7ioVjx1tKAv+0c0EWIq5GZbqtegur+rzRXGpdd1FduS
+         gP8yxrhEQ3NyCVG/nOeSrpuwTZ8mmDrG7Vkv5iCwYD4pAxEhc+Cwrxyc97Q489+mv9fD
+         0d+DNIpHdMgQ8I9MIq34kTUac5AEckk7FFJhllN71VNQUUkI0vZ+EtU+qSSb+gHPvfPY
+         VyyKjq93BHNGq6TuiA5P7Kqvme1i4jwa+rjFgLh/YZNbmIGMzodbV/MgalgUoVXWk7Ok
+         r1o62XlhVQtugLhIGYnWfyqCT8ryyUD+a83yRWPYNhLXQsEE/rdv4lAzxbowyeVZ1r6e
+         wEOg==
+X-Gm-Message-State: AA+aEWb7zZvkrMfwOp5wFZ0yOrfbk7H9IoUCWcdzVF56ir73HLtw+gNA
+        v+vLHzFJqMe84mLoelQr23M=
+X-Google-Smtp-Source: AFSGD/VPOsdZ6Z/t6z2xZafmkv5oJhP5tFMXnUZ1ZDGfxnN2VFleDHB1+M/Ql869u50El/NEeAxDng==
+X-Received: by 2002:a2e:84ca:: with SMTP id q10-v6mr3041151ljh.65.1543563733463;
+        Thu, 29 Nov 2018 23:42:13 -0800 (PST)
+Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id s3-v6sm656317lje.73.2018.11.29.23.42.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 29 Nov 2018 23:42:12 -0800 (PST)
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com
+Cc:     andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [Xen-devel][PATCH v2 2/3] drm/xen-front: Use Xen common shared buffer implementation
+Date:   Fri, 30 Nov 2018 09:42:04 +0200
+Message-Id: <20181130074205.20496-2-andr2000@gmail.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181130074205.20496-1-andr2000@gmail.com>
+References: <20181130074205.20496-1-andr2000@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67c7cb12-5dab-4f38-60f7-08d65696cd22
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 07:37:14.6629
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3724
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFN0ZXBoZW4NCg0KQmVzdCBSZWdhcmRzIQ0KQW5zb24gSHVhbmcNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJu
-ZWwub3JnXQ0KPiBTZW50OiAyMDE45bm0MTHmnIgzMOaXpSAxNToyNQ0KPiBUbzoga2VybmVsQHBl
-bmd1dHJvbml4LmRlOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IGxp
-bnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+
-IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzLmhhdWVyQHBlbmd1dHJvbml4LmRlOyBzaGF3bmd1
-b0BrZXJuZWwub3JnOw0KPiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IEZhYmlv
-IEVzdGV2YW0NCj4gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT4NCj4gQ2M6IGRsLWxpbnV4LWlteCA8
-bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIGNsazogaW14NnNsOiBl
-bnN1cmUgTU1EQyBDSDAgaGFuZHNoYWtlIGlzIGJ5cGFzc2VkDQo+IA0KPiBRdW90aW5nIEFuc29u
-IEh1YW5nICgyMDE4LTExLTI5IDIzOjIzOjQ3KQ0KPiA+IFNhbWUgYXMgb3RoZXIgaS5NWDYgU29D
-cywgZW5zdXJlIHVudXNlZCBNTURDIGNoYW5uZWwncyBoYW5kc2hha2UgaXMNCj4gPiBieXBhc3Nl
-ZCwgdGhpcyBpcyB0byBtYWtlIHN1cmUgbm8gcmVxdWVzdCBzaWduYWwgd2lsbCBiZSBnZW5lcmF0
-ZWQNCj4gPiB3aGVuIHBlcmlwaGVfY2xrX3NlbCBpcyBjaGFuZ2VkIG9yIFNSQyB3YXJtIHJlc2V0
-IGlzIHRyaWdnZXJlZC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNv
-bi5IdWFuZ0BueHAuY29tPg0KPiANCj4gRG9lcyB0aGlzIG5lZWQgYSBmaXhlcyB0YWc/DQoNCk5v
-cm1hbGx5IHRoaXMgYml0IGlzIDFiJzEgYnkgcmVzZXQsIGJ1dCBkdXJpbmcgb3VyIGRldmVsb3Bt
-ZW50LCBpdCB1c2VkIHRvIGJlDQpvdmVyd3JpdHRlbiBpbiB1LWJvb3QgYW5kIGxlYWQgdG8gc29t
-ZSBjbG9jayBvcGVyYXRpb24gZmFpbCBpbiBMaW51eCBrZXJuZWwsIHRoYXQgaXMgd2h5IHdlIGVu
-c3VyZSBpdA0KaW4gY2xvY2sgZHJpdmVyIGVhcmx5IHBoYXNlLiBJTU8sIGl0IHNob3VsZCBiZSBP
-SyB0byBub3QgYWRkIGEgZml4IHRhZywgc2luY2UgaXQgaXMganVzdA0KdG8gbWFrZSBzdXJlIHRo
-ZSBzZXR0aW5nIGlzIGNvcnJlY3QgYW5kIE5PVCBkZXBlbmRzIG9uIHRoZSBoYXJkd2FyZSByZXNl
-dCB2YWx1ZSB3aGljaA0KY291bGQgYmUgY2hhbmdlZCBpbiB1LWJvb3QuDQoNCkFuc29uLg0KDQo=
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+
+Use page directory based shared buffer implementation
+now available as common code for Xen frontend drivers.
+
+Remove flushing of shared buffer on page flip as this
+workaround needs a proper fix.
+
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+---
+ drivers/gpu/drm/xen/Kconfig               |   1 +
+ drivers/gpu/drm/xen/Makefile              |   1 -
+ drivers/gpu/drm/xen/xen_drm_front.c       |  65 ++--
+ drivers/gpu/drm/xen/xen_drm_front_gem.c   |   1 -
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.c | 414 ----------------------
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.h |  64 ----
+ 6 files changed, 26 insertions(+), 520 deletions(-)
+ delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+ delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+
+diff --git a/drivers/gpu/drm/xen/Kconfig b/drivers/gpu/drm/xen/Kconfig
+index 4cca160782ab..f969d486855d 100644
+--- a/drivers/gpu/drm/xen/Kconfig
++++ b/drivers/gpu/drm/xen/Kconfig
+@@ -12,6 +12,7 @@ config DRM_XEN_FRONTEND
+ 	select DRM_KMS_HELPER
+ 	select VIDEOMODE_HELPERS
+ 	select XEN_XENBUS_FRONTEND
++	select XEN_FRONT_PGDIR_SHBUF
+ 	help
+ 	  Choose this option if you want to enable a para-virtualized
+ 	  frontend DRM/KMS driver for Xen guest OSes.
+diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
+index 712afff5ffc3..825905f67faa 100644
+--- a/drivers/gpu/drm/xen/Makefile
++++ b/drivers/gpu/drm/xen/Makefile
+@@ -4,7 +4,6 @@ drm_xen_front-objs := xen_drm_front.o \
+ 		      xen_drm_front_kms.o \
+ 		      xen_drm_front_conn.o \
+ 		      xen_drm_front_evtchnl.o \
+-		      xen_drm_front_shbuf.o \
+ 		      xen_drm_front_cfg.o \
+ 		      xen_drm_front_gem.o
+ 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
+index 6b6d5ab82ec3..4d3d36fc3a5d 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.c
++++ b/drivers/gpu/drm/xen/xen_drm_front.c
+@@ -19,6 +19,7 @@
+ #include <xen/xen.h>
+ #include <xen/xenbus.h>
+ 
++#include <xen/xen-front-pgdir-shbuf.h>
+ #include <xen/interface/io/displif.h>
+ 
+ #include "xen_drm_front.h"
+@@ -26,28 +27,20 @@
+ #include "xen_drm_front_evtchnl.h"
+ #include "xen_drm_front_gem.h"
+ #include "xen_drm_front_kms.h"
+-#include "xen_drm_front_shbuf.h"
+ 
+ struct xen_drm_front_dbuf {
+ 	struct list_head list;
+ 	u64 dbuf_cookie;
+ 	u64 fb_cookie;
+-	struct xen_drm_front_shbuf *shbuf;
++
++	struct xen_front_pgdir_shbuf shbuf;
+ };
+ 
+-static int dbuf_add_to_list(struct xen_drm_front_info *front_info,
+-			    struct xen_drm_front_shbuf *shbuf, u64 dbuf_cookie)
++static void dbuf_add_to_list(struct xen_drm_front_info *front_info,
++			     struct xen_drm_front_dbuf *dbuf, u64 dbuf_cookie)
+ {
+-	struct xen_drm_front_dbuf *dbuf;
+-
+-	dbuf = kzalloc(sizeof(*dbuf), GFP_KERNEL);
+-	if (!dbuf)
+-		return -ENOMEM;
+-
+ 	dbuf->dbuf_cookie = dbuf_cookie;
+-	dbuf->shbuf = shbuf;
+ 	list_add(&dbuf->list, &front_info->dbuf_list);
+-	return 0;
+ }
+ 
+ static struct xen_drm_front_dbuf *dbuf_get(struct list_head *dbuf_list,
+@@ -62,15 +55,6 @@ static struct xen_drm_front_dbuf *dbuf_get(struct list_head *dbuf_list,
+ 	return NULL;
+ }
+ 
+-static void dbuf_flush_fb(struct list_head *dbuf_list, u64 fb_cookie)
+-{
+-	struct xen_drm_front_dbuf *buf, *q;
+-
+-	list_for_each_entry_safe(buf, q, dbuf_list, list)
+-		if (buf->fb_cookie == fb_cookie)
+-			xen_drm_front_shbuf_flush(buf->shbuf);
+-}
+-
+ static void dbuf_free(struct list_head *dbuf_list, u64 dbuf_cookie)
+ {
+ 	struct xen_drm_front_dbuf *buf, *q;
+@@ -78,8 +62,8 @@ static void dbuf_free(struct list_head *dbuf_list, u64 dbuf_cookie)
+ 	list_for_each_entry_safe(buf, q, dbuf_list, list)
+ 		if (buf->dbuf_cookie == dbuf_cookie) {
+ 			list_del(&buf->list);
+-			xen_drm_front_shbuf_unmap(buf->shbuf);
+-			xen_drm_front_shbuf_free(buf->shbuf);
++			xen_front_pgdir_shbuf_unmap(&buf->shbuf);
++			xen_front_pgdir_shbuf_free(&buf->shbuf);
+ 			kfree(buf);
+ 			break;
+ 		}
+@@ -91,8 +75,8 @@ static void dbuf_free_all(struct list_head *dbuf_list)
+ 
+ 	list_for_each_entry_safe(buf, q, dbuf_list, list) {
+ 		list_del(&buf->list);
+-		xen_drm_front_shbuf_unmap(buf->shbuf);
+-		xen_drm_front_shbuf_free(buf->shbuf);
++		xen_front_pgdir_shbuf_unmap(&buf->shbuf);
++		xen_front_pgdir_shbuf_free(&buf->shbuf);
+ 		kfree(buf);
+ 	}
+ }
+@@ -171,9 +155,9 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
+ 			      u32 bpp, u64 size, struct page **pages)
+ {
+ 	struct xen_drm_front_evtchnl *evtchnl;
+-	struct xen_drm_front_shbuf *shbuf;
++	struct xen_drm_front_dbuf *dbuf;
+ 	struct xendispl_req *req;
+-	struct xen_drm_front_shbuf_cfg buf_cfg;
++	struct xen_front_pgdir_shbuf_cfg buf_cfg;
+ 	unsigned long flags;
+ 	int ret;
+ 
+@@ -181,28 +165,29 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
+ 	if (unlikely(!evtchnl))
+ 		return -EIO;
+ 
++	dbuf = kzalloc(sizeof(*dbuf), GFP_KERNEL);
++	if (!dbuf)
++		return -ENOMEM;
++
++	dbuf_add_to_list(front_info, dbuf, dbuf_cookie);
++
+ 	memset(&buf_cfg, 0, sizeof(buf_cfg));
+ 	buf_cfg.xb_dev = front_info->xb_dev;
++	buf_cfg.num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
+ 	buf_cfg.pages = pages;
+-	buf_cfg.size = size;
++	buf_cfg.pgdir = &dbuf->shbuf;
+ 	buf_cfg.be_alloc = front_info->cfg.be_alloc;
+ 
+-	shbuf = xen_drm_front_shbuf_alloc(&buf_cfg);
+-	if (IS_ERR(shbuf))
+-		return PTR_ERR(shbuf);
+-
+-	ret = dbuf_add_to_list(front_info, shbuf, dbuf_cookie);
+-	if (ret < 0) {
+-		xen_drm_front_shbuf_free(shbuf);
+-		return ret;
+-	}
++	ret = xen_front_pgdir_shbuf_alloc(&buf_cfg);
++	if (ret < 0)
++		goto fail_shbuf_alloc;
+ 
+ 	mutex_lock(&evtchnl->u.req.req_io_lock);
+ 
+ 	spin_lock_irqsave(&front_info->io_lock, flags);
+ 	req = be_prepare_req(evtchnl, XENDISPL_OP_DBUF_CREATE);
+ 	req->op.dbuf_create.gref_directory =
+-			xen_drm_front_shbuf_get_dir_start(shbuf);
++			xen_front_pgdir_shbuf_get_dir_start(&dbuf->shbuf);
+ 	req->op.dbuf_create.buffer_sz = size;
+ 	req->op.dbuf_create.dbuf_cookie = dbuf_cookie;
+ 	req->op.dbuf_create.width = width;
+@@ -221,7 +206,7 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
+ 	if (ret < 0)
+ 		goto fail;
+ 
+-	ret = xen_drm_front_shbuf_map(shbuf);
++	ret = xen_front_pgdir_shbuf_map(&dbuf->shbuf);
+ 	if (ret < 0)
+ 		goto fail;
+ 
+@@ -230,6 +215,7 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
+ 
+ fail:
+ 	mutex_unlock(&evtchnl->u.req.req_io_lock);
++fail_shbuf_alloc:
+ 	dbuf_free(&front_info->dbuf_list, dbuf_cookie);
+ 	return ret;
+ }
+@@ -358,7 +344,6 @@ int xen_drm_front_page_flip(struct xen_drm_front_info *front_info,
+ 	if (unlikely(conn_idx >= front_info->num_evt_pairs))
+ 		return -EINVAL;
+ 
+-	dbuf_flush_fb(&front_info->dbuf_list, fb_cookie);
+ 	evtchnl = &front_info->evt_pairs[conn_idx].req;
+ 
+ 	mutex_lock(&evtchnl->u.req.req_io_lock);
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+index c85bfe7571cb..53be4c7dc0a4 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -22,7 +22,6 @@
+ #include <xen/balloon.h>
+ 
+ #include "xen_drm_front.h"
+-#include "xen_drm_front_shbuf.h"
+ 
+ struct xen_gem_object {
+ 	struct drm_gem_object base;
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+deleted file mode 100644
+index d333b67cc1a0..000000000000
+--- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
++++ /dev/null
+@@ -1,414 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0 OR MIT
+-
+-/*
+- *  Xen para-virtual DRM device
+- *
+- * Copyright (C) 2016-2018 EPAM Systems Inc.
+- *
+- * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+- */
+-
+-#include <drm/drmP.h>
+-
+-#if defined(CONFIG_X86)
+-#include <drm/drm_cache.h>
+-#endif
+-#include <linux/errno.h>
+-#include <linux/mm.h>
+-
+-#include <asm/xen/hypervisor.h>
+-#include <xen/balloon.h>
+-#include <xen/xen.h>
+-#include <xen/xenbus.h>
+-#include <xen/interface/io/ring.h>
+-#include <xen/interface/io/displif.h>
+-
+-#include "xen_drm_front.h"
+-#include "xen_drm_front_shbuf.h"
+-
+-struct xen_drm_front_shbuf_ops {
+-	/*
+-	 * Calculate number of grefs required to handle this buffer,
+-	 * e.g. if grefs are required for page directory only or the buffer
+-	 * pages as well.
+-	 */
+-	void (*calc_num_grefs)(struct xen_drm_front_shbuf *buf);
+-	/* Fill page directory according to para-virtual display protocol. */
+-	void (*fill_page_dir)(struct xen_drm_front_shbuf *buf);
+-	/* Claim grant references for the pages of the buffer. */
+-	int (*grant_refs_for_buffer)(struct xen_drm_front_shbuf *buf,
+-				     grant_ref_t *priv_gref_head, int gref_idx);
+-	/* Map grant references of the buffer. */
+-	int (*map)(struct xen_drm_front_shbuf *buf);
+-	/* Unmap grant references of the buffer. */
+-	int (*unmap)(struct xen_drm_front_shbuf *buf);
+-};
+-
+-grant_ref_t xen_drm_front_shbuf_get_dir_start(struct xen_drm_front_shbuf *buf)
+-{
+-	if (!buf->grefs)
+-		return GRANT_INVALID_REF;
+-
+-	return buf->grefs[0];
+-}
+-
+-int xen_drm_front_shbuf_map(struct xen_drm_front_shbuf *buf)
+-{
+-	if (buf->ops->map)
+-		return buf->ops->map(buf);
+-
+-	/* no need to map own grant references */
+-	return 0;
+-}
+-
+-int xen_drm_front_shbuf_unmap(struct xen_drm_front_shbuf *buf)
+-{
+-	if (buf->ops->unmap)
+-		return buf->ops->unmap(buf);
+-
+-	/* no need to unmap own grant references */
+-	return 0;
+-}
+-
+-void xen_drm_front_shbuf_flush(struct xen_drm_front_shbuf *buf)
+-{
+-#if defined(CONFIG_X86)
+-	drm_clflush_pages(buf->pages, buf->num_pages);
+-#endif
+-}
+-
+-void xen_drm_front_shbuf_free(struct xen_drm_front_shbuf *buf)
+-{
+-	if (buf->grefs) {
+-		int i;
+-
+-		for (i = 0; i < buf->num_grefs; i++)
+-			if (buf->grefs[i] != GRANT_INVALID_REF)
+-				gnttab_end_foreign_access(buf->grefs[i],
+-							  0, 0UL);
+-	}
+-	kfree(buf->grefs);
+-	kfree(buf->directory);
+-	kfree(buf);
+-}
+-
+-/*
+- * number of grefs a page can hold with respect to the
+- * struct xendispl_page_directory header
+- */
+-#define XEN_DRM_NUM_GREFS_PER_PAGE ((PAGE_SIZE - \
+-		offsetof(struct xendispl_page_directory, gref)) / \
+-		sizeof(grant_ref_t))
+-
+-static int get_num_pages_dir(struct xen_drm_front_shbuf *buf)
+-{
+-	/* number of pages the page directory consumes itself */
+-	return DIV_ROUND_UP(buf->num_pages, XEN_DRM_NUM_GREFS_PER_PAGE);
+-}
+-
+-static void backend_calc_num_grefs(struct xen_drm_front_shbuf *buf)
+-{
+-	/* only for pages the page directory consumes itself */
+-	buf->num_grefs = get_num_pages_dir(buf);
+-}
+-
+-static void guest_calc_num_grefs(struct xen_drm_front_shbuf *buf)
+-{
+-	/*
+-	 * number of pages the page directory consumes itself
+-	 * plus grefs for the buffer pages
+-	 */
+-	buf->num_grefs = get_num_pages_dir(buf) + buf->num_pages;
+-}
+-
+-#define xen_page_to_vaddr(page) \
+-		((uintptr_t)pfn_to_kaddr(page_to_xen_pfn(page)))
+-
+-static int backend_unmap(struct xen_drm_front_shbuf *buf)
+-{
+-	struct gnttab_unmap_grant_ref *unmap_ops;
+-	int i, ret;
+-
+-	if (!buf->pages || !buf->backend_map_handles || !buf->grefs)
+-		return 0;
+-
+-	unmap_ops = kcalloc(buf->num_pages, sizeof(*unmap_ops),
+-			    GFP_KERNEL);
+-	if (!unmap_ops) {
+-		DRM_ERROR("Failed to get memory while unmapping\n");
+-		return -ENOMEM;
+-	}
+-
+-	for (i = 0; i < buf->num_pages; i++) {
+-		phys_addr_t addr;
+-
+-		addr = xen_page_to_vaddr(buf->pages[i]);
+-		gnttab_set_unmap_op(&unmap_ops[i], addr, GNTMAP_host_map,
+-				    buf->backend_map_handles[i]);
+-	}
+-
+-	ret = gnttab_unmap_refs(unmap_ops, NULL, buf->pages,
+-				buf->num_pages);
+-
+-	for (i = 0; i < buf->num_pages; i++) {
+-		if (unlikely(unmap_ops[i].status != GNTST_okay))
+-			DRM_ERROR("Failed to unmap page %d: %d\n",
+-				  i, unmap_ops[i].status);
+-	}
+-
+-	if (ret)
+-		DRM_ERROR("Failed to unmap grant references, ret %d", ret);
+-
+-	kfree(unmap_ops);
+-	kfree(buf->backend_map_handles);
+-	buf->backend_map_handles = NULL;
+-	return ret;
+-}
+-
+-static int backend_map(struct xen_drm_front_shbuf *buf)
+-{
+-	struct gnttab_map_grant_ref *map_ops = NULL;
+-	unsigned char *ptr;
+-	int ret, cur_gref, cur_dir_page, cur_page, grefs_left;
+-
+-	map_ops = kcalloc(buf->num_pages, sizeof(*map_ops), GFP_KERNEL);
+-	if (!map_ops)
+-		return -ENOMEM;
+-
+-	buf->backend_map_handles = kcalloc(buf->num_pages,
+-					   sizeof(*buf->backend_map_handles),
+-					   GFP_KERNEL);
+-	if (!buf->backend_map_handles) {
+-		kfree(map_ops);
+-		return -ENOMEM;
+-	}
+-
+-	/*
+-	 * read page directory to get grefs from the backend: for external
+-	 * buffer we only allocate buf->grefs for the page directory,
+-	 * so buf->num_grefs has number of pages in the page directory itself
+-	 */
+-	ptr = buf->directory;
+-	grefs_left = buf->num_pages;
+-	cur_page = 0;
+-	for (cur_dir_page = 0; cur_dir_page < buf->num_grefs; cur_dir_page++) {
+-		struct xendispl_page_directory *page_dir =
+-				(struct xendispl_page_directory *)ptr;
+-		int to_copy = XEN_DRM_NUM_GREFS_PER_PAGE;
+-
+-		if (to_copy > grefs_left)
+-			to_copy = grefs_left;
+-
+-		for (cur_gref = 0; cur_gref < to_copy; cur_gref++) {
+-			phys_addr_t addr;
+-
+-			addr = xen_page_to_vaddr(buf->pages[cur_page]);
+-			gnttab_set_map_op(&map_ops[cur_page], addr,
+-					  GNTMAP_host_map,
+-					  page_dir->gref[cur_gref],
+-					  buf->xb_dev->otherend_id);
+-			cur_page++;
+-		}
+-
+-		grefs_left -= to_copy;
+-		ptr += PAGE_SIZE;
+-	}
+-	ret = gnttab_map_refs(map_ops, NULL, buf->pages, buf->num_pages);
+-
+-	/* save handles even if error, so we can unmap */
+-	for (cur_page = 0; cur_page < buf->num_pages; cur_page++) {
+-		buf->backend_map_handles[cur_page] = map_ops[cur_page].handle;
+-		if (unlikely(map_ops[cur_page].status != GNTST_okay))
+-			DRM_ERROR("Failed to map page %d: %d\n",
+-				  cur_page, map_ops[cur_page].status);
+-	}
+-
+-	if (ret) {
+-		DRM_ERROR("Failed to map grant references, ret %d", ret);
+-		backend_unmap(buf);
+-	}
+-
+-	kfree(map_ops);
+-	return ret;
+-}
+-
+-static void backend_fill_page_dir(struct xen_drm_front_shbuf *buf)
+-{
+-	struct xendispl_page_directory *page_dir;
+-	unsigned char *ptr;
+-	int i, num_pages_dir;
+-
+-	ptr = buf->directory;
+-	num_pages_dir = get_num_pages_dir(buf);
+-
+-	/* fill only grefs for the page directory itself */
+-	for (i = 0; i < num_pages_dir - 1; i++) {
+-		page_dir = (struct xendispl_page_directory *)ptr;
+-
+-		page_dir->gref_dir_next_page = buf->grefs[i + 1];
+-		ptr += PAGE_SIZE;
+-	}
+-	/* last page must say there is no more pages */
+-	page_dir = (struct xendispl_page_directory *)ptr;
+-	page_dir->gref_dir_next_page = GRANT_INVALID_REF;
+-}
+-
+-static void guest_fill_page_dir(struct xen_drm_front_shbuf *buf)
+-{
+-	unsigned char *ptr;
+-	int cur_gref, grefs_left, to_copy, i, num_pages_dir;
+-
+-	ptr = buf->directory;
+-	num_pages_dir = get_num_pages_dir(buf);
+-
+-	/*
+-	 * while copying, skip grefs at start, they are for pages
+-	 * granted for the page directory itself
+-	 */
+-	cur_gref = num_pages_dir;
+-	grefs_left = buf->num_pages;
+-	for (i = 0; i < num_pages_dir; i++) {
+-		struct xendispl_page_directory *page_dir =
+-				(struct xendispl_page_directory *)ptr;
+-
+-		if (grefs_left <= XEN_DRM_NUM_GREFS_PER_PAGE) {
+-			to_copy = grefs_left;
+-			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
+-		} else {
+-			to_copy = XEN_DRM_NUM_GREFS_PER_PAGE;
+-			page_dir->gref_dir_next_page = buf->grefs[i + 1];
+-		}
+-		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
+-		       to_copy * sizeof(grant_ref_t));
+-		ptr += PAGE_SIZE;
+-		grefs_left -= to_copy;
+-		cur_gref += to_copy;
+-	}
+-}
+-
+-static int guest_grant_refs_for_buffer(struct xen_drm_front_shbuf *buf,
+-				       grant_ref_t *priv_gref_head,
+-				       int gref_idx)
+-{
+-	int i, cur_ref, otherend_id;
+-
+-	otherend_id = buf->xb_dev->otherend_id;
+-	for (i = 0; i < buf->num_pages; i++) {
+-		cur_ref = gnttab_claim_grant_reference(priv_gref_head);
+-		if (cur_ref < 0)
+-			return cur_ref;
+-
+-		gnttab_grant_foreign_access_ref(cur_ref, otherend_id,
+-						xen_page_to_gfn(buf->pages[i]),
+-						0);
+-		buf->grefs[gref_idx++] = cur_ref;
+-	}
+-	return 0;
+-}
+-
+-static int grant_references(struct xen_drm_front_shbuf *buf)
+-{
+-	grant_ref_t priv_gref_head;
+-	int ret, i, j, cur_ref;
+-	int otherend_id, num_pages_dir;
+-
+-	ret = gnttab_alloc_grant_references(buf->num_grefs, &priv_gref_head);
+-	if (ret < 0) {
+-		DRM_ERROR("Cannot allocate grant references\n");
+-		return ret;
+-	}
+-
+-	otherend_id = buf->xb_dev->otherend_id;
+-	j = 0;
+-	num_pages_dir = get_num_pages_dir(buf);
+-	for (i = 0; i < num_pages_dir; i++) {
+-		unsigned long frame;
+-
+-		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
+-		if (cur_ref < 0)
+-			return cur_ref;
+-
+-		frame = xen_page_to_gfn(virt_to_page(buf->directory +
+-					PAGE_SIZE * i));
+-		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
+-		buf->grefs[j++] = cur_ref;
+-	}
+-
+-	if (buf->ops->grant_refs_for_buffer) {
+-		ret = buf->ops->grant_refs_for_buffer(buf, &priv_gref_head, j);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	gnttab_free_grant_references(priv_gref_head);
+-	return 0;
+-}
+-
+-static int alloc_storage(struct xen_drm_front_shbuf *buf)
+-{
+-	buf->grefs = kcalloc(buf->num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
+-	if (!buf->grefs)
+-		return -ENOMEM;
+-
+-	buf->directory = kcalloc(get_num_pages_dir(buf), PAGE_SIZE, GFP_KERNEL);
+-	if (!buf->directory)
+-		return -ENOMEM;
+-
+-	return 0;
+-}
+-
+-/*
+- * For be allocated buffers we don't need grant_refs_for_buffer as those
+- * grant references are allocated at backend side
+- */
+-static const struct xen_drm_front_shbuf_ops backend_ops = {
+-	.calc_num_grefs = backend_calc_num_grefs,
+-	.fill_page_dir = backend_fill_page_dir,
+-	.map = backend_map,
+-	.unmap = backend_unmap
+-};
+-
+-/* For locally granted references we do not need to map/unmap the references */
+-static const struct xen_drm_front_shbuf_ops local_ops = {
+-	.calc_num_grefs = guest_calc_num_grefs,
+-	.fill_page_dir = guest_fill_page_dir,
+-	.grant_refs_for_buffer = guest_grant_refs_for_buffer,
+-};
+-
+-struct xen_drm_front_shbuf *
+-xen_drm_front_shbuf_alloc(struct xen_drm_front_shbuf_cfg *cfg)
+-{
+-	struct xen_drm_front_shbuf *buf;
+-	int ret;
+-
+-	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+-	if (!buf)
+-		return ERR_PTR(-ENOMEM);
+-
+-	if (cfg->be_alloc)
+-		buf->ops = &backend_ops;
+-	else
+-		buf->ops = &local_ops;
+-
+-	buf->xb_dev = cfg->xb_dev;
+-	buf->num_pages = DIV_ROUND_UP(cfg->size, PAGE_SIZE);
+-	buf->pages = cfg->pages;
+-
+-	buf->ops->calc_num_grefs(buf);
+-
+-	ret = alloc_storage(buf);
+-	if (ret)
+-		goto fail;
+-
+-	ret = grant_references(buf);
+-	if (ret)
+-		goto fail;
+-
+-	buf->ops->fill_page_dir(buf);
+-
+-	return buf;
+-
+-fail:
+-	xen_drm_front_shbuf_free(buf);
+-	return ERR_PTR(ret);
+-}
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h b/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+deleted file mode 100644
+index 7545c692539e..000000000000
+--- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
++++ /dev/null
+@@ -1,64 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+-
+-/*
+- *  Xen para-virtual DRM device
+- *
+- * Copyright (C) 2016-2018 EPAM Systems Inc.
+- *
+- * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+- */
+-
+-#ifndef __XEN_DRM_FRONT_SHBUF_H_
+-#define __XEN_DRM_FRONT_SHBUF_H_
+-
+-#include <linux/kernel.h>
+-#include <linux/scatterlist.h>
+-
+-#include <xen/grant_table.h>
+-
+-struct xen_drm_front_shbuf {
+-	/*
+-	 * number of references granted for the backend use:
+-	 *  - for allocated/imported dma-buf's this holds number of grant
+-	 *    references for the page directory and pages of the buffer
+-	 *  - for the buffer provided by the backend this holds number of
+-	 *    grant references for the page directory as grant references for
+-	 *    the buffer will be provided by the backend
+-	 */
+-	int num_grefs;
+-	grant_ref_t *grefs;
+-	unsigned char *directory;
+-
+-	int num_pages;
+-	struct page **pages;
+-
+-	struct xenbus_device *xb_dev;
+-
+-	/* these are the ops used internally depending on be_alloc mode */
+-	const struct xen_drm_front_shbuf_ops *ops;
+-
+-	/* Xen map handles for the buffer allocated by the backend */
+-	grant_handle_t *backend_map_handles;
+-};
+-
+-struct xen_drm_front_shbuf_cfg {
+-	struct xenbus_device *xb_dev;
+-	size_t size;
+-	struct page **pages;
+-	bool be_alloc;
+-};
+-
+-struct xen_drm_front_shbuf *
+-xen_drm_front_shbuf_alloc(struct xen_drm_front_shbuf_cfg *cfg);
+-
+-grant_ref_t xen_drm_front_shbuf_get_dir_start(struct xen_drm_front_shbuf *buf);
+-
+-int xen_drm_front_shbuf_map(struct xen_drm_front_shbuf *buf);
+-
+-int xen_drm_front_shbuf_unmap(struct xen_drm_front_shbuf *buf);
+-
+-void xen_drm_front_shbuf_flush(struct xen_drm_front_shbuf *buf);
+-
+-void xen_drm_front_shbuf_free(struct xen_drm_front_shbuf *buf);
+-
+-#endif /* __XEN_DRM_FRONT_SHBUF_H_ */
+-- 
+2.19.1
+
