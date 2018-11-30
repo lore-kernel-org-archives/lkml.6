@@ -2,100 +2,103 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49993C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D17C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D4532145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:57:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DwRLqOCf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4532145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 434CB2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:57:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 434CB2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeK3SFW (ORCPT
+        id S1727132AbeK3SFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:05:22 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38590 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbeK3SFW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:05:22 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e5so2332696plb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 22:57:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=LF71b13fgHPUHtTaiyfpFN0HFsoifOk7GMClP6Pim6M=;
-        b=DwRLqOCfpAVYJps1zp8SYE8f89V3+uASAxRMngDArrSPT7Yupa8PVK+ZwhA2lQ4qvz
-         2yAoWZVXpmgLyJgttOdozstTiy4Trnmav5JVPe0Ubld/KT1m/PGWD+12RpjKSGv6ofrW
-         hYSzsNtMwGpA243VGnSpL5xZ87XNpYO3i6KNA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LF71b13fgHPUHtTaiyfpFN0HFsoifOk7GMClP6Pim6M=;
-        b=X2haIQ+hGq8ZGvnx6FSbG1IhrZyEm8XN1m9adeZqV/TwiFqI8LzHnOP8WEKLgjI2FN
-         9vI9pf81bTUbl1Ux3rq9F1hwaDHO8SLTxz1xBSjvsXu56Mh5YzN0wjdWV+4EJeUz3lY5
-         KOyCL15MxNjX6ahYQpkk4M120/byhHdd2GVXIMf8EhvVpINytCTlwzjm3997yS36b12T
-         Eug9O2INeSsmy1nVWphJust/MSK47BhOmMpjZTlxr6+DH6nkFKYjzqtmF2NbMaHGMHcv
-         ErfZ3j8isoaerw9xOSdkpMhPKtHFC1fKkPz/WVZLHWhzuHH3OoBI9yNhnRjcGd716XLO
-         HGSQ==
-X-Gm-Message-State: AA+aEWa+oaw03akI8hK01/+1JykCxzuDNajaxAYvDmolm+etHw6NbhWN
-        LrgL+7zN6i3/FH929+xC9HF5AQ==
-X-Google-Smtp-Source: AFSGD/X4EFFyZzm9grDUXkAYDjUiKAgWI6uYWzBLaWgwgC9B48+GkYcy9lKT57pK1H/e3eiSg+vmJA==
-X-Received: by 2002:a17:902:5ac7:: with SMTP id g7mr4616497plm.212.1543561024868;
-        Thu, 29 Nov 2018 22:57:04 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m3sm3950596pgl.69.2018.11.29.22.57.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 22:57:04 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH] arm64: defconfig: Enable GCC and PINCTRL for MSM8998
-Date:   Thu, 29 Nov 2018 22:54:56 -0800
-Message-Id: <20181130065456.26605-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Fri, 30 Nov 2018 13:05:50 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:45350 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726826AbeK3SFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:05:49 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 31C33D718A6C74EAF65A;
+        Fri, 30 Nov 2018 14:57:30 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wAU6vKDZ086462;
+        Fri, 30 Nov 2018 14:57:20 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from localhost.localdomain ([10.75.9.60])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018113014575815-13904801 ;
+          Fri, 30 Nov 2018 14:57:58 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
+        davem@davemloft.net
+Cc:     netdev@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        wen.yang99@zte.com.cn
+Subject: [PATCH] batman-adv: fix null pointer dereference in batadv_gw_election
+Date:   Fri, 30 Nov 2018 15:00:02 +0800
+Message-Id: <1543561202-614-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-30 14:57:58,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-30 14:57:04,
+        Serialize complete at 2018-11-30 14:57:04
+X-MAIL: mse01.zte.com.cn wAU6vKDZ086462
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the GCC and PINCTRL for MSM8998 to make upstream boot to console.
+This patch fixes a possible null pointer dereference in
+batadv_gw_election, detected by the semantic patch
+deref_null.cocci, with the following warning:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+./net/batman-adv/gateway_client.c:289:15-24: ERROR: next_gw is NULL but dereferenced.
+./net/batman-adv/gateway_client.c:290:15-29: ERROR: next_gw is NULL but dereferenced.
+./net/batman-adv/gateway_client.c:291:15-29: ERROR: next_gw is NULL but dereferenced.
+./net/batman-adv/gateway_client.c:292:15-27: ERROR: next_gw is NULL but dereferenced.
+./net/batman-adv/gateway_client.c:293:15-27: ERROR: next_gw is NULL but dereferenced.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Tan Hu <tan.hu@zte.com.cn>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ net/batman-adv/gateway_client.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 1f1f4eab89df..206f50d121ba 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -348,6 +348,7 @@ CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
- CONFIG_PINCTRL_MSM8996=y
-+CONFIG_PINCTRL_MSM8998=y
- CONFIG_PINCTRL_QDF2XXX=y
- CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
- CONFIG_PINCTRL_MT7622=y
-@@ -605,6 +606,7 @@ CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
-+CONFIG_MSM_GCC_8998=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_ARM_MHU=y
+diff --git a/net/batman-adv/gateway_client.c b/net/batman-adv/gateway_client.c
+index 140c61a..d80ef1c 100644
+--- a/net/batman-adv/gateway_client.c
++++ b/net/batman-adv/gateway_client.c
+@@ -284,14 +284,16 @@ void batadv_gw_election(struct batadv_priv *bat_priv)
+ 		batadv_throw_uevent(bat_priv, BATADV_UEV_GW, BATADV_UEV_ADD,
+ 				    gw_addr);
+ 	} else {
+-		batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
+-			   "Changing route to gateway %pM (bandwidth: %u.%u/%u.%u MBit, tq: %i)\n",
+-			   next_gw->orig_node->orig,
+-			   next_gw->bandwidth_down / 10,
+-			   next_gw->bandwidth_down % 10,
+-			   next_gw->bandwidth_up / 10,
+-			   next_gw->bandwidth_up % 10,
+-			   router_ifinfo->bat_iv.tq_avg);
++		if (next_gw) {
++			batadv_dbg(BATADV_DBG_BATMAN, bat_priv,
++				   "Changing route to gateway %pM (bandwidth: %u.%u/%u.%u MBit, tq: %i)\n",
++				    next_gw->orig_node->orig,
++				    next_gw->bandwidth_down / 10,
++				    next_gw->bandwidth_down % 10,
++				    next_gw->bandwidth_up / 10,
++				    next_gw->bandwidth_up % 10,
++				    router_ifinfo->bat_iv.tq_avg);
++		}
+ 		batadv_throw_uevent(bat_priv, BATADV_UEV_GW, BATADV_UEV_CHANGE,
+ 				    gw_addr);
+ 	}
 -- 
-2.18.0
+2.9.5
 
