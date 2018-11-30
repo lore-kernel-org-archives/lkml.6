@@ -6,84 +6,111 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C26CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 696F4C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F962145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:44:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F962145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B9F12146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:44:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B9F12146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbeLAAxo (ORCPT
+        id S1727226AbeLAAxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:53:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36182 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbeLAAxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:53:44 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 69C543164669;
-        Fri, 30 Nov 2018 13:44:22 +0000 (UTC)
-Received: from redhat.com (ovpn-120-67.rdu2.redhat.com [10.10.120.67])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CECBE1057075;
-        Fri, 30 Nov 2018 13:44:16 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 08:44:16 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        bijan.mottahedeh@oracle.com, gedwards@ddn.com, joe@perches.com,
-        lenaic@lhuard.fr, liang.z.li@intel.com, mhocko@kernel.org,
-        mhocko@suse.com, stefanha@redhat.com, wei.w.wang@intel.com
-Subject: Re: [PULL] vhost: cleanups and fixes
-Message-ID: <20181130084227-mutt-send-email-mst@kernel.org>
-References: <20181101171938-mutt-send-email-mst@kernel.org>
- <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
- <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
+        Fri, 30 Nov 2018 19:53:53 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37089 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeLAAxw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:53:52 -0500
+Received: by mail-qt1-f196.google.com with SMTP id z16so5917650qtq.4
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:44:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LvCNnwTCIErvOoJQOcvV750sKrkF6TtyT01sFAzs1Yk=;
+        b=We+Mm5bxUylNdP6humxigx9rfaz8wPksey6aftUYoTzsAmVo+zXWASrziZLYzhOa0U
+         52cJZO9j5G2o5v4Qe0LdBnuIvge368MprfzYoqvT0RoOFva7gPayHM8NfnsVI912PPJn
+         vIgvfwKpcNjB9ZeJ1+swMbsdXYOUgCLBiqJbxtX3BBoYRtCD7A5rDxh75v4YAARiSMKh
+         qxYmwdsLQbuuk2GkFllwfqdFnVrGvGjiFOeFZSdEfNaOx2EhTrEMyXnvCVWTjZTp7LOG
+         6FbYNstSmr5gIzO7ZZvt7JfTy7xB9oPQMGjK8BLsm+oyyAzQL4ABRzJnIsUjFfnDxJ5z
+         8jOA==
+X-Gm-Message-State: AA+aEWZ7RltHpgLeumbrMjlmQFkWMvd7GTsQMV+9Yyk+aOgN8saisNY2
+        DsKqJtC2W5Yg3kId5tRea2sY+BZGtKkj8kR7NsY=
+X-Google-Smtp-Source: AFSGD/Wf1UJHgAw+SoirwwvrfQSIDDV3ampaiXa591gwtLvU6LsCy1FKy8aNzBAdzH2UgweuUug8kUFHjJDaVZHmFaM=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr5415765qvl.180.1543585470428;
+ Fri, 30 Nov 2018 05:44:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 30 Nov 2018 13:44:23 +0000 (UTC)
+References: <19fb2e394afcb073bbc109e432417fbbc03323f6.1543499759.git.joabreu@synopsys.com>
+ <ff1e11923e92405d883474d715008c0a@AcuMS.aculab.com> <89122bd8-bca2-2ae1-0dd0-160abbebcace@synopsys.com>
+ <d2d133e5-267c-c42a-7329-22892bbbdee4@synopsys.com> <CAK8P3a2U3ft3crF2SiAuc=PQdDooEUaVAN9gQDyxsxvBn5+xRw@mail.gmail.com>
+ <57437493-31bb-eced-032c-1f54470b030e@synopsys.com>
+In-Reply-To: <57437493-31bb-eced-032c-1f54470b030e@synopsys.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 30 Nov 2018 14:44:13 +0100
+Message-ID: <CAK8P3a2mqEb4_F4wB1DvL5jJJobLhOg6-bW3ZDNGhvbv-_qW3A@mail.gmail.com>
+Subject: Re: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
+To:     jose.abreu@synopsys.com
+Cc:     David Laight <David.Laight@aculab.com>,
+        "open list:SYNOPSYS ARC ARCHITECTURE" 
+        <linux-snps-arc@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        alexey.brodkin@synopsys.com, Joao Pinto <joao.pinto@synopsys.com>,
+        Vitor Soares <vitor.soares@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 01, 2018 at 04:06:19PM -0700, Linus Torvalds wrote:
-> On Thu, Nov 1, 2018 at 4:00 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > +       memset(&rsp, 0, sizeof(rsp));
-> > +       rsp.response = VIRTIO_SCSI_S_FUNCTION_REJECTED;
-> > +       resp = vq->iov[out].iov_base;
-> > +       ret = __copy_to_user(resp, &rsp, sizeof(rsp));
-> >
-> > Is it actually safe to trust that iov_base has passed an earlier
-> > access_ok() check here? Why not just use copy_to_user() instead?
-> 
-> Good point.
-> 
-> We really should have removed those double-underscore things ages ago.
-> 
-> Also, apart from the address, what about the size? Wouldn't it be
-> better to use copy_to_iter() rather than implement it badly by hand?
-> 
->                Linus
+On Fri, Nov 30, 2018 at 9:57 AM Jose Abreu <jose.abreu@synopsys.com> wrote:
+> On 29-11-2018 21:20, Arnd Bergmann wrote:
+> > On Thu, Nov 29, 2018 at 5:14 PM Jose Abreu <jose.abreu@synopsys.com> wrote:
+> >> See how the if condition added in this version is checked in
+> >> <test_readsl+0xe92> and then it takes two different loops.
+> > This looks good to me. I wonder what the result is for CPUs
+> > that /do/ support unaligned accesses. Normally put_unaligned()
+> > should fall back to a simple store in that case, but I'm not
+> > sure it can fold the two stores back into one and skip the
+> > alignment check. Probably not worth overoptimizing for that
+> > case (the MMIO access latency should be much higher than
+> > anything you could gain here), but I'm still curious about
+> > how well our get/put_unaligned macros work.
+>
+> Here is disassembly for an ARC CPU that supports unaligned accesses:
+>
+> -->8---
+> 00000d48 <test_readsl>:
+>  d48:    breq_s r1,0,28            /* if (count) */
+>  d4a:    tst    r0,0x3
+>  d4e:    bne_s 32                /* if (bptr % ((t) / 8)) */
+>
+>  d50:    ld r2,[0xdeadbeef]        /* first loop */
+>  d58:    sub_s r1,r1,0x1
+>  d5a:    tst_s r1,r1
+>  d5c:    bne.d -12
+>  d60:    st.ab r2,[r0,4]
+>
+>  d64:    dmb    0x1                    /* common exit point */
+>  d68:    j_s    [blink]
+>  d6a:    nop_s
+>
+>  d6c:    ld r2,[0xdeadbeef]        /* second loop */
+>  d74:    sub_s r1,r1,0x1
+>  d76:    tst_s r1,r1
+>  d78:    bne.d -12
+>  d7c:    st.ab r2,[r0,4]
+>
+>  d80:    b_s -28                    /* jmp to 0xd64 */
+>  d82:    nop_s
+> --->8---
+>
+> Notice how first and second loop are exactly equal ...
 
-Bijan can you respond please?
-Are you going to look into this and convert code to copy_to_iter?
-I don't think we should release Linux like this, so if you don't
-have the time I'd rather revert for now and you can look
-into reposting for the next release.
+Ok, so it's halfway there: it managed to optimize the the unaligned
+case correctly, but it failed to notice that both sides are
+identical now.
 
-Thanks,
-
--- 
-MST
-
+      Arnd
