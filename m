@@ -4,39 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A8CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC58C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAF8C2146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AB992146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:28:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhwL6nUZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAF8C2146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="geoDI+68"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB992146F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbeLAFiI (ORCPT
+        id S1727323AbeLAFiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:38:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56070 "EHLO mail.kernel.org"
+        Sat, 1 Dec 2018 00:38:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbeLAFiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:38:07 -0500
+        id S1726640AbeLAFiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:38:10 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6690F2147D;
-        Fri, 30 Nov 2018 18:27:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17EF42146D;
+        Fri, 30 Nov 2018 18:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543602477;
-        bh=L/ezcR/CLJUdKwIxslFXoqN5KIW0Yp0gfaOLWmPcHjI=;
+        s=default; t=1543602480;
+        bh=7tfiM3ke36qHUFLOiOew7lAtdW5NsoEqtRES2EFtx1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XhwL6nUZe3vkjbtUYJFeZfLHxTCU4dcxNbVQuSebf/1pA7Egb3vE8FIPiOClLzIzV
-         1rtJpD3y6zpqoqANxLuXbq5DMX1EPXPpHHYRiujjkvxLBiR7AWKWpvdIkyu9szJ7cl
-         dL3VmAPuuqD7UYZfncsz0Lmz95qCZDZ8wa/P528U=
+        b=geoDI+68X496ySxBUwJU5xlxhVBOdz0LO191g78z6rALJPLOuFrHWgLuElbwkPO7o
+         x+lHqrOMYTja/dlPdyUM/xSz86TXAynfhC5lILxau8wPJB3gNjbxv0NeeNo4WSFHhW
+         emf8uGdnr9YaR5ecqIpMzbCoo6YG3SIw9PzyxjRc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +45,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 17/22] tools build feature: Check if libaio is available
-Date:   Fri, 30 Nov 2018 15:26:47 -0300
-Message-Id: <20181130182652.23620-18-acme@kernel.org>
+Subject: [PATCH 18/22] perf mmap: Map data buffer for preserving collected data
+Date:   Fri, 30 Nov 2018 15:26:48 -0300
+Message-Id: <20181130182652.23620-19-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181130182652.23620-1-acme@kernel.org>
 References: <20181130182652.23620-1-acme@kernel.org>
@@ -61,195 +60,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexey Budankov <alexey.budankov@linux.intel.com>
 
-This will be used by 'perf record' to speed up reading the perf ring
-buffer.
-
-Committer testing:
-
-  $ make -C tools/perf O=/tmp/build/perf
-  make: Entering directory '/home/acme/git/perf/tools/perf'
-    BUILD:   Doing 'make -j8' parallel build
-
-  Auto-detecting system features:
-  ...                         dwarf: [ on  ]
-  ...            dwarf_getlocations: [ on  ]
-  ...                         glibc: [ on  ]
-  ...                          gtk2: [ OFF ]
-  ...                      libaudit: [ OFF ]
-  ...                        libbfd: [ OFF ]
-  ...                        libelf: [ on  ]
-  ...                       libnuma: [ OFF ]
-  ...        numa_num_possible_cpus: [ OFF ]
-  ...                       libperl: [ OFF ]
-  ...                     libpython: [ OFF ]
-  ...                      libslang: [ on  ]
-  ...                     libcrypto: [ on  ]
-  ...                     libunwind: [ on  ]
-  ...            libdw-dwarf-unwind: [ on  ]
-  ...                          zlib: [ on  ]
-  ...                          lzma: [ on  ]
-  ...                     get_cpuid: [ on  ]
-  ...                           bpf: [ on  ]
-  ...                        libaio: [ on  ]
-
-  $ ls -la /tmp/build/perf/feature/test-libaio.*
-  -rwxrwxr-x. 1 acme acme 18296 Nov 26 08:49 /tmp/build/perf/feature/test-libaio.bin
-  -rw-rw-r--. 1 acme acme  1165 Nov 26 08:49 /tmp/build/perf/feature/test-libaio.d
-  -rw-rw-r--. 1 acme acme     0 Nov 26 08:49 /tmp/build/perf/feature/test-libaio.make.output
-  $
-  $ grep -i aio /tmp/build/perf/FEATURE-DUMP
-  feature-libaio=1
-  $
+The map->data buffer is used to preserve map->base profiling data for
+writing to disk. AIO map->cblock is used to queue corresponding
+map->data buffer for asynchronous writing.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Reviewed-by: Jiri Olsa <jolsa@redhat.com>
 Acked-by: Namhyung Kim <namhyung@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Link: http://lkml.kernel.org/r/5fcda10c-6c63-68df-383a-c6d9e5d1f918@linux.intel.com
-[ split from a larger patch ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/build/Makefile.feature      |  6 ++++--
- tools/build/feature/Makefile      |  6 +++++-
- tools/build/feature/test-all.c    |  5 +++++
- tools/build/feature/test-libaio.c | 16 ++++++++++++++++
- tools/perf/Makefile.config        |  6 ++++++
- tools/perf/Makefile.perf          |  7 ++++++-
- 6 files changed, 42 insertions(+), 4 deletions(-)
- create mode 100644 tools/build/feature/test-libaio.c
+ tools/perf/util/evlist.c |  2 +-
+ tools/perf/util/mmap.c   | 49 +++++++++++++++++++++++++++++++++++++++-
+ tools/perf/util/mmap.h   | 11 ++++++++-
+ 3 files changed, 59 insertions(+), 3 deletions(-)
 
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 8a123834a2a3..d47b8f73e2e7 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -70,7 +70,8 @@ FEATURE_TESTS_BASIC :=                  \
-         sched_getcpu			\
-         sdt				\
-         setns				\
--        libopencsd
-+        libopencsd			\
-+        libaio
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 36526d229315..6f010b9f0a81 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * Its value is decided by evsel's write_backward.
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+-	struct mmap_params mp;
++	struct mmap_params mp = { .nr_cblocks = 0 };
  
- # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
- # of all feature tests
-@@ -116,7 +117,8 @@ FEATURE_DISPLAY ?=              \
-          zlib                   \
-          lzma                   \
-          get_cpuid              \
--         bpf
-+         bpf			\
-+         libaio
- 
- # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
- # If in the future we need per-feature checks/flags for features not
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index 38c22e122cb0..2dbcc0d00f52 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -61,7 +61,8 @@ FILES=                                          \
-          test-libopencsd.bin			\
-          test-clang.bin				\
-          test-llvm.bin				\
--         test-llvm-version.bin
-+         test-llvm-version.bin			\
-+         test-libaio.bin
- 
- FILES := $(addprefix $(OUTPUT),$(FILES))
- 
-@@ -297,6 +298,9 @@ $(OUTPUT)test-clang.bin:
- 
- -include $(OUTPUT)*.d
- 
-+$(OUTPUT)test-libaio.bin:
-+	$(BUILD) -lrt
-+
- ###############################
- 
- clean:
-diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-index 58f01b950195..20cdaa4fc112 100644
---- a/tools/build/feature/test-all.c
-+++ b/tools/build/feature/test-all.c
-@@ -174,6 +174,10 @@
- # include "test-libopencsd.c"
- #undef main
- 
-+#define main main_test_libaio
-+# include "test-libaio.c"
-+#undef main
-+
- int main(int argc, char *argv[])
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index cdb95b3a1213..47cdc3ad6546 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -153,8 +153,55 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
  {
- 	main_test_libpython();
-@@ -214,6 +218,7 @@ int main(int argc, char *argv[])
- 	main_test_sdt();
- 	main_test_setns();
- 	main_test_libopencsd();
-+	main_test_libaio();
- 
- 	return 0;
  }
-diff --git a/tools/build/feature/test-libaio.c b/tools/build/feature/test-libaio.c
-new file mode 100644
-index 000000000000..932133c9a265
---- /dev/null
-+++ b/tools/build/feature/test-libaio.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <aio.h>
-+
-+int main(void)
+ 
++#ifdef HAVE_AIO_SUPPORT
++static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
 +{
-+	struct aiocb aiocb;
++	int delta_max;
 +
-+	aiocb.aio_fildes  = 0;
-+	aiocb.aio_offset  = 0;
-+	aiocb.aio_buf     = 0;
-+	aiocb.aio_nbytes  = 0;
-+	aiocb.aio_reqprio = 0;
-+	aiocb.aio_sigevent.sigev_notify = 1 /*SIGEV_NONE*/;
++	if (mp->nr_cblocks) {
++		map->aio.data = malloc(perf_mmap__mmap_len(map));
++		if (!map->aio.data) {
++			pr_debug2("failed to allocate data buffer, error %m\n");
++			return -1;
++		}
++		/*
++		 * Use cblock.aio_fildes value different from -1
++		 * to denote started aio write operation on the
++		 * cblock so it requires explicit record__aio_sync()
++		 * call prior the cblock may be reused again.
++		 */
++		map->aio.cblock.aio_fildes = -1;
++		/*
++		 * Allocate cblock with max priority delta to
++		 * have faster aio write system calls.
++		 */
++		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
++		map->aio.cblock.aio_reqprio = delta_max;
++	}
 +
-+	return (int)aio_return(&aiocb);
++	return 0;
 +}
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index c643d5e0c26b..b66f97a04b12 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -365,6 +365,12 @@ ifeq ($(feature-glibc), 1)
-   CFLAGS += -DHAVE_GLIBC_SUPPORT
- endif
- 
-+ifeq ($(feature-libaio), 1)
-+  ifndef NO_AIO
-+    CFLAGS += -DHAVE_AIO_SUPPORT
-+  endif
-+endif
 +
- ifdef NO_DWARF
-   NO_LIBDW_DWARF_UNWIND := 1
- endif
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 239e7b3270f4..67e9adbe6ee8 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -101,8 +101,13 @@ include ../scripts/utilities.mak
- # Define LIBCLANGLLVM if you DO want builtin clang and llvm support.
- # When selected, pass LLVM_CONFIG=/path/to/llvm-config to `make' if
- # llvm-config is not in $PATH.
--
-+#
- # Define NO_CORESIGHT if you do not want support for CoreSight trace decoding.
-+#
-+# Define NO_AIO if you do not want support of Posix AIO based trace
-+# streaming for record mode. Currently Posix AIO trace streaming is
-+# supported only when linking with glibc.
-+#
++static void perf_mmap__aio_munmap(struct perf_mmap *map)
++{
++	if (map->aio.data)
++		zfree(&map->aio.data);
++}
++#else
++static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
++			       struct mmap_params *mp __maybe_unused)
++{
++	return 0;
++}
++
++static void perf_mmap__aio_munmap(struct perf_mmap *map __maybe_unused)
++{
++}
++#endif
++
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++	perf_mmap__aio_munmap(map);
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -197,7 +244,7 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+ 				&mp->auxtrace_mp, map->base, fd))
+ 		return -1;
  
- # As per kernel Makefile, avoid funny character set dependencies
- unexport LC_ALL
+-	return 0;
++	return perf_mmap__aio_mmap(map, mp);
+ }
+ 
+ static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index cc5e2d6d17a9..3f10ad030c5e 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,9 @@
+ #include <linux/types.h>
+ #include <linux/ring_buffer.h>
+ #include <stdbool.h>
++#ifdef HAVE_AIO_SUPPORT
++#include <aio.h>
++#endif
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -26,6 +29,12 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++#ifdef HAVE_AIO_SUPPORT
++	struct {
++		void 		 *data;
++		struct aiocb	 cblock;
++	} aio;
++#endif
+ };
+ 
+ /*
+@@ -57,7 +66,7 @@ enum bkw_mmap_state {
+ };
+ 
+ struct mmap_params {
+-	int			    prot, mask;
++	int			    prot, mask, nr_cblocks;
+ 	struct auxtrace_mmap_params auxtrace_mp;
+ };
+ 
 -- 
 2.19.1
 
