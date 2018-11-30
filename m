@@ -2,188 +2,104 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F07C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BF2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDBFD20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBFD20834
+	by mail.kernel.org (Postfix) with ESMTP id 0DE7F20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE7F20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbeLAC4u (ORCPT
+        id S1727460AbeLAC4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:56:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35548 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 21:56:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeLAC4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:56:34 -0500
+        id S1726127AbeLAC4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 21:56:32 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A4EE21508;
-        Fri, 30 Nov 2018 15:46:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4D5320834;
+        Fri, 30 Nov 2018 15:46:47 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gSl0C-00061q-4W; Fri, 30 Nov 2018 10:46:48 -0500
-Message-Id: <20181130154648.038915912@goodmis.org>
+        id 1gSl0A-0005xT-Qm; Fri, 30 Nov 2018 10:46:46 -0500
+Message-Id: <20181130154403.150474900@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 30 Nov 2018 10:44:11 -0500
+Date:   Fri, 30 Nov 2018 10:44:03 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: [PATCH 8/9] tools/lib/traceevent: Introduce new libtracevent API:
- tep_override_comm()
-References: <20181130154403.150474900@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 0/9] tools/lib/traceevent: More udpates to make libtraceevent into a library
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-This patch adds a new API of tracevent library: tep_override_comm()
-It registers a pid / command mapping. If a mapping with the same
-pid already exists, the entry is updated with the new command.
+Arnaldo and Jiri,
 
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- tools/lib/traceevent/event-parse.c | 69 +++++++++++++++++++++++-------
- tools/lib/traceevent/event-parse.h |  1 +
- 2 files changed, 55 insertions(+), 15 deletions(-)
+Here's more patches to get us a step closer to having a legitimate
+standalone library for libtraceevent. I'm currently reviewing man
+pages, which I want finished before we call it done.
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 8863de9f8869..892cf032a096 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -232,11 +232,13 @@ int tep_pid_is_registered(struct tep_handle *pevent, int pid)
-  * we must add this pid. This is much slower than when cmdlines
-  * are added before the array is initialized.
-  */
--static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
-+static int add_new_comm(struct tep_handle *pevent,
-+			const char *comm, int pid, bool override)
- {
- 	struct cmdline *cmdlines = pevent->cmdlines;
--	const struct cmdline *cmdline;
-+	struct cmdline *cmdline;
- 	struct cmdline key;
-+	char *new_comm;
- 
- 	if (!pid)
- 		return 0;
-@@ -247,8 +249,19 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
- 	cmdline = bsearch(&key, pevent->cmdlines, pevent->cmdline_count,
- 		       sizeof(*pevent->cmdlines), cmdline_cmp);
- 	if (cmdline) {
--		errno = EEXIST;
--		return -1;
-+		if (!override) {
-+			errno = EEXIST;
-+			return -1;
-+		}
-+		new_comm = strdup(comm);
-+		if (!new_comm) {
-+			errno = ENOMEM;
-+			return -1;
-+		}
-+		free(cmdline->comm);
-+		cmdline->comm = new_comm;
-+
-+		return 0;
- 	}
- 
- 	cmdlines = realloc(cmdlines, sizeof(*cmdlines) * (pevent->cmdline_count + 1));
-@@ -275,21 +288,13 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
- 	return 0;
- }
- 
--/**
-- * tep_register_comm - register a pid / comm mapping
-- * @pevent: handle for the pevent
-- * @comm: the command line to register
-- * @pid: the pid to map the command line to
-- *
-- * This adds a mapping to search for command line names with
-- * a given pid. The comm is duplicated.
-- */
--int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
-+static int _tep_register_comm(struct tep_handle *pevent,
-+			      const char *comm, int pid, bool override)
- {
- 	struct cmdline_list *item;
- 
- 	if (pevent->cmdlines)
--		return add_new_comm(pevent, comm, pid);
-+		return add_new_comm(pevent, comm, pid, override);
- 
- 	item = malloc(sizeof(*item));
- 	if (!item)
-@@ -312,6 +317,40 @@ int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
- 	return 0;
- }
- 
-+/**
-+ * tep_register_comm - register a pid / comm mapping
-+ * @pevent: handle for the pevent
-+ * @comm: the command line to register
-+ * @pid: the pid to map the command line to
-+ *
-+ * This adds a mapping to search for command line names with
-+ * a given pid. The comm is duplicated. If a command with the same pid
-+ * already exist, -1 is returned and errno is set to EEXIST
-+ */
-+int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
-+{
-+	return _tep_register_comm(pevent, comm, pid, false);
-+}
-+
-+/**
-+ * tep_override_comm - register a pid / comm mapping
-+ * @pevent: handle for the pevent
-+ * @comm: the command line to register
-+ * @pid: the pid to map the command line to
-+ *
-+ * This adds a mapping to search for command line names with
-+ * a given pid. The comm is duplicated. If a command with the same pid
-+ * already exist, the command string is udapted with the new one
-+ */
-+int tep_override_comm(struct tep_handle *pevent, const char *comm, int pid)
-+{
-+	if (!pevent->cmdlines && cmdline_init(pevent)) {
-+		errno = ENOMEM;
-+		return -1;
-+	}
-+	return _tep_register_comm(pevent, comm, pid, true);
-+}
-+
- int tep_register_trace_clock(struct tep_handle *pevent, const char *trace_clock)
- {
- 	pevent->trace_clock = strdup(trace_clock);
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 35d37087d3c5..e6f4249910e6 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -432,6 +432,7 @@ int tep_set_function_resolver(struct tep_handle *pevent,
- 			      tep_func_resolver_t *func, void *priv);
- void tep_reset_function_resolver(struct tep_handle *pevent);
- int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid);
-+int tep_override_comm(struct tep_handle *pevent, const char *comm, int pid);
- int tep_register_trace_clock(struct tep_handle *pevent, const char *trace_clock);
- int tep_register_function(struct tep_handle *pevent, char *name,
- 			  unsigned long long addr, char *mod);
--- 
-2.19.1
+Please pull this tree (based on current tip/perf/core) or apply
+the patches.
+
+Thanks!
+
+-- Steve
 
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+tip/perf/core
+
+Head SHA1: 1a1dbb61ee77226e9097bfe307219abf5df8e4cd
+
+
+Tzvetomir Stoyanov (9):
+      tools/lib/traceevent: Implemented new API tep_get_ref()
+      tools/lib/traceevent: Added support for pkg-config
+      tools/lib/traceevent: Install trace-seq.h API header file
+      tools/lib/traceevent, tools/perf: Rename struct tep_event_format to struct tep_event
+      tools/lib/traceevent: Rename tep_free_format() to tep_free_event()
+      tools/perf: traceevent API cleanup, remove __tep_data2host*()
+      tools/lib/traceevent: traceevent API cleanup
+      tools/lib/traceevent: Introduce new libtracevent API: tep_override_comm()
+      tools/lib/traceevent: Add sanity check to is_timestamp_in_us()
+
+----
+ tools/lib/traceevent/Makefile                      |  27 +-
+ tools/lib/traceevent/event-parse-api.c             |   8 +-
+ tools/lib/traceevent/event-parse-local.h           |  13 +-
+ tools/lib/traceevent/event-parse.c                 | 283 ++++++++++++---------
+ tools/lib/traceevent/event-parse.h                 |  78 +++---
+ tools/lib/traceevent/libtraceevent.pc.template     |  10 +
+ tools/lib/traceevent/parse-filter.c                |  42 +--
+ tools/lib/traceevent/plugin_function.c             |   2 +-
+ tools/lib/traceevent/plugin_hrtimer.c              |   4 +-
+ tools/lib/traceevent/plugin_kmem.c                 |   2 +-
+ tools/lib/traceevent/plugin_kvm.c                  |  14 +-
+ tools/lib/traceevent/plugin_mac80211.c             |   4 +-
+ tools/lib/traceevent/plugin_sched_switch.c         |   4 +-
+ tools/perf/builtin-trace.c                         |   2 +-
+ tools/perf/util/evsel.h                            |   4 +-
+ tools/perf/util/header.c                           |   2 +-
+ tools/perf/util/python.c                           |   4 +-
+ .../perf/util/scripting-engines/trace-event-perl.c |   6 +-
+ .../util/scripting-engines/trace-event-python.c    |   8 +-
+ tools/perf/util/trace-event-parse.c                |  16 +-
+ tools/perf/util/trace-event-read.c                 |   4 +-
+ tools/perf/util/trace-event.c                      |   8 +-
+ tools/perf/util/trace-event.h                      |  16 +-
+ 23 files changed, 317 insertions(+), 244 deletions(-)
+ create mode 100644 tools/lib/traceevent/libtraceevent.pc.template
