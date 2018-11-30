@@ -2,170 +2,135 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A2DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD628C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8623020868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8187F20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:49:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="r6zHgA+f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8623020868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="xDDkWFvK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8187F20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=narfation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbeK3S5c (ORCPT
+        id S1726913AbeK3S5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:57:32 -0500
-Received: from cmta20.telus.net ([209.171.16.93]:36582 "EHLO cmta20.telus.net"
+        Fri, 30 Nov 2018 13:57:55 -0500
+Received: from narfation.org ([79.140.41.39]:48204 "EHLO v3-1039.vlinux.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeK3S5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:57:32 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id SdXngsaE2VltLSdXogRWJn; Fri, 30 Nov 2018 00:49:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1543564145; bh=GIFLzX05brnp7VCzWztVkNUPlce89SEzJycOr9HjSW4=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=r6zHgA+fr8HNj7W5Bw034vPDBV/pJ1U1OWilaA77xaCZlmGnoA0TfbP8iJJIlFmd0
-         w2vi9yktj4QumLdrL+eigDYrxqhQYlS7Z93EGBXCTZv0aTvE2Op7MHmbwSid325NZh
-         xDiT+7rLpZ05opqYKZpKpMZ34oslzY/zS0Fc6DhXBqFXmHFeK5EwCmUxU/0+uX48hc
-         Ut47EsR6szkq9O4k/m7xKHg5J6NoFd6XdKK9Iu/njlG8s0mFknyu7W3+Oez9jCnD3M
-         YCnqxFSkSQSr2++WJVww6hzP/ryywkRoeKM8jRfXLszpn/ZBYCWxZCbP5J6tnt2aSa
-         8p9GaR9xjhS6Q==
-X-Authority-Analysis: v=2.3 cv=d60kNirE c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=6kd9dKSLDcPQKLEMpDgA:9
- a=CjuIK1q_8ugA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc:     "'Giovanni Gherdovich'" <ggherdovich@suse.cz>,
-        "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Frederic Weisbecker'" <frederic@kernel.org>,
-        "'Mel Gorman'" <mgorman@suse.de>,
-        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: Q8oEgsq1aDhAwQ8oJg8ZUI
-In-Reply-To: Q8oEgsq1aDhAwQ8oJg8ZUI
-Subject: RE: [RFC/RFT][PATCH v6] cpuidle: New timer events oriented governor for tickless systems
-Date:   Thu, 29 Nov 2018 23:48:57 -0800
-Message-ID: <001901d48881$29ea59d0$7dbf0d70$@net>
+        id S1726551AbeK3S5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:57:54 -0500
+X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Nov 2018 13:57:53 EST
+Received: from bentobox.localnet (unknown [92.117.99.95])
+        by v3-1039.vlinux.de (Postfix) with ESMTPSA id 931D81100D8;
+        Fri, 30 Nov 2018 08:41:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=narfation.org;
+        s=20121; t=1543563699;
+        bh=WdDazkSFA1AZHwC+jWd2Oj0Gfmrki60u7iMe+J1W1v4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xDDkWFvKI7M+YtYJyjL9vnel0JtBWFdvY62/Ip3EcbOQJM5XLKx0+tuPsFG2J9XeR
+         HFD5ZvnpipxHObB5D9DzEV7vRBNzmCNHeGrnCW0R/7p0ImZ2OIBvyaFPBoFwQo2TjN
+         /83ShLyhyorSg6uffTz/Cx+4vr2MJxOj2A1O9ncU=
+From:   Sven Eckelmann <sven@narfation.org>
+To:     b.a.t.m.a.n@lists.open-mesh.org
+Cc:     Wen Yang <wen.yang99@zte.com.cn>, mareklindner@neomailbox.ch,
+        sw@simonwunderlich.de, a@unstable.cc, davem@davemloft.net,
+        netdev@vger.kernel.org, zhong.weidong@zte.com.cn,
+        linux-kernel@vger.kernel.org
+Subject: Re: [B.A.T.M.A.N.] [PATCH] batman-adv: fix null pointer dereference in batadv_gw_election
+Date:   Fri, 30 Nov 2018 08:41:35 +0100
+Message-ID: <2508553.amZRsud9Hk@bentobox>
+User-Agent: KMail/5.2.3 (Linux/4.18.0-0.bpo.1-amd64; KDE/5.28.0; x86_64; ; )
+In-Reply-To: <1543561202-614-1-git-send-email-wen.yang99@zte.com.cn>
+References: <1543561202-614-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdSDGEuEn5NKr78+TzWlxEKC0bSkgwFSVtCg
-X-CMAE-Envelope: MS4wfPXplEbacC4x0niDUe36RKbBPgGzMfZ4OSB4ZxRJBNejFAZ1GhpC4995n12ifK9j9mt0KYNNwjZZKIp8nZj8mm0yPpQINgTqtumeBk3shAvA9elIGhO4
- F0YJ8H25ZB+42oRQB/Xuo+Xj97FstQlgLoVWRjj8uibQIOztmyjMFmbg/gZo24EhHLCCqdgJrS4EZeriejjHULNYoAN7tz/YxxolD544Jfs08k746j1LuRUC
- sUaH7izZ0Nv4+dAARF869o73PXAXG8omrT8bsrub8e60xagUMsAK+g+B3mDGZzzzxD3LlYrMa6tY43aXqI88bTezQ8LAugv+ByC8ZkBUlQfYSD54w4/XEu3q
- FeFKYOEC3c9F0tIHzaGy529n3Kk570QpbxGHRClR5FrLxoSQ2QxNPsIhTKoYmjNCLDGQNsVc0ZW/hdhEasiEdUK9hF/84u6/ienwSuoCMX7rbsnqJG41Bs9e
- 5jYJ2IZEfZVca+7j
+Content-Type: multipart/signed; boundary="nextPart3029363.zrB592PKAl"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+--nextPart3029363.zrB592PKAl
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 2018.11.23 02:36 Rafael J. Wysocki wrote:
+On Friday, 30 November 2018 15:00:02 CET Wen Yang wrote:
+> This patch fixes a possible null pointer dereference in
+> batadv_gw_election, detected by the semantic patch
+> deref_null.cocci, with the following warning:
+> 
+> ./net/batman-adv/gateway_client.c:289:15-24: ERROR: next_gw is NULL but dereferenced.
+> ./net/batman-adv/gateway_client.c:290:15-29: ERROR: next_gw is NULL but dereferenced.
+> ./net/batman-adv/gateway_client.c:291:15-29: ERROR: next_gw is NULL but dereferenced.
+> ./net/batman-adv/gateway_client.c:292:15-27: ERROR: next_gw is NULL but dereferenced.
+> ./net/batman-adv/gateway_client.c:293:15-27: ERROR: next_gw is NULL but dereferenced.
 
-... [snip]...
+This patch is seems to be nonsensical. next_gw cannot be NULL at this point 
+(let us call this location in the code "4."). Let us go through the code
 
-> +/**
-> + * teo_find_shallower_state - Find shallower idle state matching given duration.
-> + * @drv: cpuidle driver containing state data.
-> + * @dev: Target CPU.
-> + * @state_idx: Index of the capping idle state.
-> + * @duration_us: Idle duration value to match.
-> + */
-> +static int teo_find_shallower_state(struct cpuidle_driver *drv,
-> +				    struct cpuidle_device *dev, int state_idx,
-> +				    unsigned int duration_us)
-> +{
-> +	int i;
-> +
-> +	for (i = state_idx - 1; i > 0; i--) {
-> +		if (drv->states[i].disabled || dev->states_usage[i].disable)
-> +			continue;
-> +
-> +		if (drv->states[i].target_residency <= duration_us)
-> +			break;
-> +	}
-> +	return i;
-> +}
+    // 1. when both are NULL then it would jump out of the the function.
+	if (curr_gw == next_gw)
+		goto out;
 
-I think this subroutine has a problem when idle state 0
-is disabled.
+    [...]
 
-Perhaps something like this might help:
+    if (curr_gw && !next_gw) {
+        [...]
+        // 2. this handles the only valid case when next_gw is NULL
+    }  else if (!curr_gw && next_gw) {
+        // 3. here we know that next_gw is not NULL and curr_gw is NULL
+        // we can therefore infer that 
+        [...]
+    } else {
+        // 4. here you try to add an ugly patch to handle a non-existing 
+        // next_gw == NULL case
+        [...]
+    }
 
-diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-index bc1c9a2..5b97639 100644
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -196,7 +196,8 @@ static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
- }
+Let us go through all possible combinations:
 
- /**
-- * teo_find_shallower_state - Find shallower idle state matching given duration.
-+ * teo_find_shallower_state - Find shallower idle state matching given
-+ * duration, if possible.
-  * @drv: cpuidle driver containing state data.
-  * @dev: Target CPU.
-  * @state_idx: Index of the capping idle state.
-@@ -208,13 +209,15 @@ static int teo_find_shallower_state(struct cpuidle_driver *drv,
- {
-        int i;
+        curr_gw  next_gw
+    I   0        0
+    II  x        0
+    III 0        y
+    IV  x        y
 
--       for (i = state_idx - 1; i > 0; i--) {
-+       for (i = state_idx - 1; i >= 0; i--) {
-                if (drv->states[i].disabled || dev->states_usage[i].disable)
-                        continue;
+For I:   we would leave the function even at 1. and never reach 4.
+For II:  would be handled by 2. and thus never reach 4.
+For III: would be handled by 3. and thus never reach 4.
+For IV:  This can be handled by 1. (when x == y). Or otherwise it would be
+         handled by 4. but is not the next_gw == NULL case.
 
-                if (drv->states[i].target_residency <= duration_us)
-                        break;
-        }
-+       if (i < 0)
-+               i = state_idx;
-        return i;
- }
+Please correct me (in case I missed something) but it looks to me that this 
+patch should be rejected.
 
-@@ -264,7 +267,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-                        if (max_early_idx >= 0 &&
-                            count < cpu_data->states[i].early_hits)
-                                count = cpu_data->states[i].early_hits;
--
-                        continue;
-                }
+Kind regards,
+	Sven
+--nextPart3029363.zrB592PKAl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-There is an additional issue where if idle state 0 is disabled (with the above suggested code patch),
-idle state usage seems to fall to deeper states than idle state 1.
-This is not the expected behaviour.
-Kernel 4.20-rc3 works as expected.
-I have not figured this issue out yet, in the code.
+-----BEGIN PGP SIGNATURE-----
 
-Example (1 minute per sample. Number of entries/exits per state):
-    State 0     State 1     State 2     State 3     State 4    Watts
-   28235143,         83,         26,         17,        837,  64.900
-    5583238,     657079,    5884941,    8498552,   30986831,  62.433 << Transition sample, after idle state 0 disabled
-          0,     793517,    7186099,   10559878,   38485721,  61.900 << ?? should have all gone into Idle state 1
-          0,     795414,    7340703,   10553117,   38513456,  62.050
-          0,     807028,    7288195,   10574113,   38523524,  62.167
-          0,     814983,    7403534,   10575108,   38571228,  62.167
-          0,     838302,    7747127,   10552289,   38556054,  62.183
-    9664999,     544473,    4914512,    6942037,   25295361,  63.633 << Transition sample, after idle state 0 enabled
-   27893504,         96,         40,          9,        912,  66.500
-   26556343,         83,         29,          7,        814,  66.683
-   27929227,         64,         20,         10,        931,  66.683
- 
-... Doug
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlwA6a8ACgkQXYcKB8Em
+e0ZMiw//abzOV72YH6n3yUp00BPlx2pZmZgzxrAV09jzFebl+HskKMBYN/PL4opu
+xqu9Rimo5787LRBOT2gsTok3Xo0gfNUa43DsHxP1+XHByRKTHIbDLlOia3kmIE8w
+5XZ4CO/RW5c0Oix9HTz2Shjuc/w4HjYJDiqZaVP19lhFv2Y+hx+ybT+CLdU7dm5S
+n9SFY/QSWVEYpGR4SKM4BtS7UW1ph+yntja61JkC4lwh2VnQIblzy5OHzLHmmdB+
+iQ7FAI6pvUjcXbOSoowM6Z9Xxty3m9ZppEvEZ5DllpVpO+mWV02Lcln+ePxY/NVI
+lOlxJBg5+9uuWtmvOVdygKp+51MgrGYNgvoYZJfbf/AOpamNgB78t81EOt4tMquV
+VRij3jgE4vxB2Ee0Lk3MP3SVd2ECH2HbHkfv+UulBEAXmeMbqkZjRnDQWfkWzMd2
+dIbNzKIvH13quxu3WgzoNQHco5pmdFT+FXpX57mYybvTUlweCUCubZo1MyvO5kM3
+GrU/7EGpzKWORi13v+I+LUDOqprXZ9d8c6xqHNmucHlsdE22r6sqG/1rfjPnjGUw
+MFzGgH+mq1LOZz6eNQIp7o4CUxYv2719EAhKBOCZE0+EQw3W2eoq/4SBvJB+j9im
+bBkSbec80kUU6SxophKOJZDb/En5pxx9i45g3N7UwYZvnCzzudE=
+=aQHz
+-----END PGP SIGNATURE-----
 
+--nextPart3029363.zrB592PKAl--
 
