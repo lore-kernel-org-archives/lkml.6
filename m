@@ -2,274 +2,442 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5D3C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CA9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 210902081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:25:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBC152081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:29:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hcaL8ZBL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210902081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKEh62fr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC152081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbeK3Rda (ORCPT
+        id S1726616AbeK3RhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:33:30 -0500
-Received: from mail-eopbgr10062.outbound.protection.outlook.com ([40.107.1.62]:33214
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726355AbeK3Rda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:33:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bftpL/X1ZgcDq0OOSEZEGYR7uOafftmNDbMwKT+6YPA=;
- b=hcaL8ZBLFSZ0Jz2s3Vz4AsseMMCNEqQHFxYDFD1Xy6xq/bnEcsHsqcnHg2XgfCmmaB8O0WvPmcdcGvFtXZAVI8vW/xlxBrnzURNJkw4i8a0O0bTr4HjEdPeW86LyoLmXlEOJUWQSPTJ4ii3NBhLovxoe3Euk26O4lcKOoGkwgJY=
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com (20.177.49.14) by
- VI1PR04MB3120.eurprd04.prod.outlook.com (10.170.229.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Fri, 30 Nov 2018 06:24:16 +0000
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a]) by VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a%2]) with mapi id 15.20.1339.032; Fri, 30 Nov 2018
- 06:24:16 +0000
-From:   Bharat Bhushan <bharat.bhushan@nxp.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        David Daney <david.daney@cavium.com>,
-        "jglauber@cavium.com" <jglauber@cavium.com>,
-        "mbroemme@libmpq.org" <mbroemme@libmpq.org>,
-        "chrisrblake93@gmail.com" <chrisrblake93@gmail.com>
-Subject: RE: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Topic: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Index: AQHUhi2yh4+Qm28J50ixacdSn4eZIqVjwNwAgAAJqACAALvmYIABG3kAgACEALCAAbCFAIAAAq1g
-Date:   Fri, 30 Nov 2018 06:24:16 +0000
-Message-ID: <VI1PR04MB48458DF3A1EBB73A4E2CDCD19AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
-References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
-        <20181127153356.GA112381@google.com>    <20181127090830.084fedf1@x1.home>
-        <VI1PR04MB48457E23AA3354316C7782D69AD10@VI1PR04MB4845.eurprd04.prod.outlook.com>
-        <CAErSpo7By1t5X=M=x_+Fs8TeROACBnS3f5ujsi=Ewiogh=-wRg@mail.gmail.com>
-        <VI1PR04MB4845D4ED02E38246E71DD1A49AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
- <20181129225606.328f7386@x1.home>
-In-Reply-To: <20181129225606.328f7386@x1.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharat.bhushan@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB3120;6:YPtPcjjiiyfixJ63XHrwQKaX8Xz/Z++bLyNhg5guRw2fzVxigF7Vouyclzc4hdG5xRlmoo9y1ayMHXr9RsDVjh2J82XN8lT/Lg4eghUndfk1FmGE4lrs7INEkKbFqgubj0WIIkrOUC9BoO5gWSORkr9jI/cIlneD0FApQFCn3TzsMh2dTOpFVXrOK4sAGoREWTJXy5H5Njj3tNI2SDTIlluIb60c2Z492ycvhg81ZkAb0qyUqoNOVpJg3Ea9sXswx2BZQjGk7HwHRut6lIjfUD1A7eqaFQODxI04+xmeOpb/42jZwnAsgvgD12zEd4oXoq1qvGFqiujPiweEnnw0vCtBAEs4O/OKWYQN0KqOOjSf+dOzve9BzIBN0aXT5IRmBBBK9qjjgwkw8OPQey3DoOfZ3Mw7qKlAEBpbO6G9TtXQ5OIsnttuouHsuhrQK6pAK9B7BOjtArOzJsy3Y8OfhA==;5:NW6GyBAyh0iH15n5etxkFXPwXNAMWiUJgLzxozbOP4ObUGd11+DwZZm16OT/3nlgjVFIDmX5gHbK+aQeliuYTR9aWSB1sVwaXt5XIipnVJqTp6z0e/qSLow1+GXrma4THkGOw17KVo7/8MD85shoPz6Px5/fZ12CE3gu0AGwen0=;7:v1JXv/AlA+HdbHA6LbT2GydLaVr9AuwTtCn8/xTHlSp2OWue9WEkaFBUEMpYQNcvoQRelq9Uot0S7eS4vbXKFTtmBsVSVpCJiyg8rCGy2bF0doEEtLEodAy1IhJHQPflxFtlncfgFNMnfynevye7QA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 02a14762-c6ae-463f-5665-08d6568c7422
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3120;
-x-ms-traffictypediagnostic: VI1PR04MB3120:
-x-microsoft-antispam-prvs: <VI1PR04MB312016F1A4C9F2524A1258AD9AD30@VI1PR04MB3120.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231453)(999002)(944501462)(52105112)(10201501046)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3120;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3120;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(136003)(39860400002)(376002)(396003)(189003)(199004)(13464003)(14454004)(26005)(7696005)(76176011)(316002)(99286004)(186003)(102836004)(53546011)(6506007)(55236004)(93886005)(81156014)(74316002)(8676002)(81166006)(6116002)(54906003)(8936002)(2906002)(6916009)(86362001)(305945005)(97736004)(71190400001)(78486014)(3846002)(5660300001)(7416002)(6246003)(105586002)(33656002)(486006)(4326008)(476003)(44832011)(66066001)(71200400001)(106356001)(25786009)(478600001)(39060400002)(9686003)(229853002)(53936002)(11346002)(7736002)(6436002)(14444005)(55016002)(256004)(68736007)(446003)(505234006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3120;H:VI1PR04MB4845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: +y3MFcsnbNI1YxSPWm0r/bycIIIcYs0t4FbqrmCuMEtaTWdp2ziY4LuWYTTFRoNGu38oPkR9LNqFB6ZKLPfgdZhScoLbG6vkiLP+LgDIXaTifu8P+s6sdkSHIWAci+RkugBqDXrV8py0jzKoMV/jkicxZkOv+yf4nfjX7yd3hHLW6stAksczXsGTkZZ/BesQdiP8QbLTRjfcOGKcN0odWdYGy/JYJvwvOHy2WeUZhiVdR+a4EwUL/o39iWRvjyUai+nBnRoGKLezwfi/LnRTkX9tFKaTAZZbyvQ9ut/6kr583yPTNH7JJpKu/Y3dgd59WrqbbO3XJkUXVzhu4Gz4p7iLPEaUikayuXwQ1OK61ho=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 30 Nov 2018 12:37:25 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32984 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeK3RhY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 12:37:24 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c14so4147177wrr.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 22:29:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=gM00MDhgQklZaZWezzK6ngjmaYBWFbyqmF7GmheqEQg=;
+        b=TKEh62frnscGyFp6YZBLcruTT1SvD6fHW8EwEzwM+oDcFWUImyYuMU+DZC5tGAVCHk
+         mWbiothphEpa6a9gr/PtTA3Q6OVP4gAmZ2hePeL7MNEFD4FPYa4GwIkjXCvknNK9CN+r
+         Vf2u6TDej3uW8gacT6TRk577keaCWSXjYAZj1YaR+KlYLQGjuF0Wg/94lS1kt9+GcyzB
+         8FIyZciUo6P2y+3v0iqEe8I7HjVIEYWKWoDwtW2TqRPuz+xEz1EtA30B6xXvXGO2li23
+         RXgyekPyCc1NJVW9/LcvnvDsXshA8T9BnWWkM3pfiGdYgM+FJngqvro3WdSeK+IdFZDZ
+         nXLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=gM00MDhgQklZaZWezzK6ngjmaYBWFbyqmF7GmheqEQg=;
+        b=oGBSSnnK+QeH3B0augmal2lCUI071edDTUKLdPE02tC/9VtYuprGRoyyKi4bYfsbdt
+         BOXEDrBcDMK7q+KJD6NTBy84e5N8cAYYsHi7gF6qyNWKpg2nGNCgaI9yHWVTG97kUDTL
+         2UX4GMmx2X5n+MllXfTI1MVFB66BaPjoFyPKYwaCGa1vWc2VXbuwiA3QKQfPpwVEFGLk
+         49IBfbnkWI45OX4GODuCiK2RwOxumy1kw2SMQlHCHEZZyKLjnPv9WvkTJE5iUHHRryw7
+         da37X/2iS1O5WWcBMjPMOe8WJn3ALsh/PPNtzEsslTiUkpHs+dAVFUSFgTxXTNGbGTz9
+         5tsQ==
+X-Gm-Message-State: AA+aEWZMKegsnAauINioe4hslRNMgJQPVc4/KgACvSY5CUdIFNlrutqV
+        LP6dgMCJ9zgU7HrIWVNkhN4=
+X-Google-Smtp-Source: AFSGD/US6uKS94FcmRbRwW0mfzP0CswHHCfMcf9OGGNaPhEfw6hPMxPwyHr1NPyeu0fpsI1WgtLS+Q==
+X-Received: by 2002:adf:b716:: with SMTP id l22mr4011091wre.186.1543559349283;
+        Thu, 29 Nov 2018 22:29:09 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id j33sm6378285wre.91.2018.11.29.22.29.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 22:29:08 -0800 (PST)
+Date:   Fri, 30 Nov 2018 07:29:06 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86 fixes
+Message-ID: <20181130062906.GA112090@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02a14762-c6ae-463f-5665-08d6568c7422
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 06:24:16.1915
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3120
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+Linus,
 
-> -----Original Message-----
-> From: Alex Williamson <alex.williamson@redhat.com>
-> Sent: Friday, November 30, 2018 11:26 AM
-> To: Bharat Bhushan <bharat.bhushan@nxp.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>; Bjorn Helgaas
-> <helgaas@kernel.org>; linux-pci@vger.kernel.org; Linux Kernel Mailing Lis=
-t
-> <linux-kernel@vger.kernel.org>; bharatb.yadav@gmail.com; David Daney
-> <david.daney@cavium.com>; jglauber@cavium.com;
-> mbroemme@libmpq.org; chrisrblake93@gmail.com
-> Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
->=20
-> On Fri, 30 Nov 2018 05:29:47 +0000
-> Bharat Bhushan <bharat.bhushan@nxp.com> wrote:
->=20
-> > Hi,
-> >
-> > > -----Original Message-----
-> > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > > Sent: Thursday, November 29, 2018 1:46 AM
-> > > To: Bharat Bhushan <bharat.bhushan@nxp.com>
-> > > Cc: alex.williamson@redhat.com; Bjorn Helgaas <helgaas@kernel.org>;
-> > > linux- pci@vger.kernel.org; Linux Kernel Mailing List <linux-
-> > > kernel@vger.kernel.org>; bharatb.yadav@gmail.com; David Daney
-> > > <david.daney@cavium.com>; jglauber@cavium.com;
-> mbroemme@libmpq.org;
-> > > chrisrblake93@gmail.com
-> > > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-> > >
-> > > On Tue, Nov 27, 2018 at 10:32 PM Bharat Bhushan
-> > > <bharat.bhushan@nxp.com> wrote:
-> > >
-> > > > > -----Original Message-----
-> > > > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > > > Sent: Tuesday, November 27, 2018 9:39 PM
-> > > > > To: Bjorn Helgaas <helgaas@kernel.org>
-> > > > > Cc: Bharat Bhushan <bharat.bhushan@nxp.com>;
-> > > > > linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > > bharatb.yadav@gmail.com; David Daney
-> <david.daney@cavium.com>;
-> > > Jan
-> > > > > Glauber <jglauber@cavium.com>; Maik Broemme
-> > > <mbroemme@libmpq.org>;
-> > > > > Chris Blake <chrisrblake93@gmail.com>
-> > > > > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-> > > > >
-> > > > > On Tue, 27 Nov 2018 09:33:56 -0600 Bjorn Helgaas
-> > > > > <helgaas@kernel.org> wrote:
-> > >
-> > > > > > 4) Is there a hardware erratum for this?  If so, please
-> > > > > > include the URL here.
-> > > >
-> > > > No h/w errata as of now.
-> > >
-> > > Does that mean (a) the HW folks agree this is a hardware problem but
-> > > they haven't written an erratum, (b) there is an erratum but it
-> > > isn't public, (c) we don't have any concrete evidence of a hardware
-> > > problem, but things just don't work if we do a bus reset, (d) somethi=
-ng
-> else?
-> >
-> > I will say it is (c) - not concluded to be hardware h/w issue.
-> >
-> > >
-> > > > In pci_reset_secondary_bus() I have tried to increase the delay
-> > > > after reset
-> > > but not helped.
-> > > > Do I need to add delay at some other place as well?
-> > >
-> > > No, I think the place you tried should be enough.
-> > >
-> > > You should also be able to exercise this from user-space by using
-> > > "setpci" to set and clear the Secondary Bus Reset bit in the Bridge
-> > > Control register.  Then you can also use setpci to read/write config
-> > > space of the NIC.  The kernel would normally read the Vendor and
-> > > Device IDs as the first access to the device during enumeration.
-> > > You also might be able to learn something by using "lspci -vv" on
-> > > the bridge before and after the reset to see if it logs any AER bits =
-(if it
-> supports AER) or the other standard error logging bits.
-> >
-> > I tried below sequence for Secondary bus reset and device config space
-> > show 0xff
-> >
-> > root@localhost:~# lspci -x
-> > 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0 (rev
-> > 10)
-> > 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> > 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> > 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> > 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
-> >
-> > 0002:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit
-> > Network Connection
-> > 00: 86 80 d3 10 06 04 10 00 00 00 00 02 10 00 00 00
-> > 10: 00 00 0c 40 00 00 00 40 01 00 00 00 00 00 0e 40
-> > 20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 1f a0
-> > 30: 00 00 24 40 c8 00 00 00 00 00 00 00 63 01 00 00
-> >
-> > root@localhost:~#  setpci -s 0002:00:00.0 0x3e.b=3D0x40
-> > root@localhost:~#  setpci -s 0002:00:00.0 0x3e.b=3D0x00
-> >
-> > root@localhost:~# lspci -x
-> > 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0 (rev
-> > 10)
-> > 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> > 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> > 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> > 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
->=20
-> Just for curiosity sake, what if you re-write the secondary and subordina=
-te
-> bus registers here:
->=20
-> # setpci -s 0002:00:00.0 0x19.b=3D0x01
-> # setpci -s 0002:00:00.0 0x1a.b=3D0xff
+Please pull the latest x86-urgent-for-linus git tree from:
 
-Result is same, here are logs
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
-root@localhost:~# setpci -s 0002:00:00.0 0x3e.b=3D0x40
-root@localhost:~# setpci -s 0002:00:00.0 0x3e.b=3D0x00
-root@localhost:~# setpci -s 0002:00:00.0 0x19.b=3D0x01
-root@localhost:~# setpci -s 0002:00:00.0 0x1a.b=3D0xff
-root@localhost:~# lspci -x
-0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0 (rev 10)
-00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
+   # HEAD: 60c8144afc287ef09ce8c1230c6aa972659ba1bb x86/MCE/AMD: Fix the thresholding machinery initialization order
 
-0002:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit Network =
-Connection (rev ff)
-00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-10: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-20: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-30: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+Misc fixes:
+
+ - an MCE related boot crash fix on certain AMD systems
+ - an FPU exception handling fix
+ - an FPU handling race fix
+ - a revert+rewrite of the RSDP boot protocol extension, use boot_params 
+   instead
+ - a documentation fix
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Borislav Petkov (1):
+      x86/MCE/AMD: Fix the thresholding machinery initialization order
+
+Elvira Khabirova (1):
+      x86/ptrace: Fix documentation for tracehook_report_syscall_entry()
+
+Jann Horn (1):
+      x86/fpu: Use the correct exception table macro in the XSTATE_OP wrapper
+
+Juergen Gross (2):
+      x86/boot: Mostly revert commit ae7e1238e68f2a ("Add ACPI RSDP address to setup_header")
+      x86/acpi, x86/boot: Take RSDP address from boot params if available
+
+Sebastian Andrzej Siewior (1):
+      x86/fpu: Disable bottom halves while loading FPU registers
 
 
->=20
-> IIRC the users that debugged the AMD bus reset issue re-wrote the entire =
-64
-> bytes of the bridge config header and then further narrowed the issue dow=
-n
-> to the two registers above.  If one bridge implementation can have such a=
-n
-> issue, maybe others do too.  Perhaps there's common IP in use.
+ Documentation/x86/boot.txt            | 32 +-------------------------------
+ arch/x86/boot/header.S                |  6 +-----
+ arch/x86/include/asm/fpu/internal.h   |  2 +-
+ arch/x86/include/asm/x86_init.h       |  2 --
+ arch/x86/include/uapi/asm/bootparam.h |  7 ++-----
+ arch/x86/kernel/acpi/boot.c           |  2 +-
+ arch/x86/kernel/cpu/mcheck/mce_amd.c  | 19 ++++++-------------
+ arch/x86/kernel/fpu/signal.c          |  4 ++--
+ arch/x86/kernel/head32.c              |  1 -
+ arch/x86/kernel/head64.c              |  2 --
+ arch/x86/kernel/setup.c               | 17 -----------------
+ include/linux/tracehook.h             |  4 ++--
+ 12 files changed, 16 insertions(+), 82 deletions(-)
 
->  Are you able
-> to test other endpoints besides this e1000e device with this setpci
-> technique?  Thanks,
-
-I tried  with " Broadcom Limited NetXtreme BCM5722 Gigabit Ethernet PCI Exp=
-ress" I observe same issue.
-
-Thanks
--Bharat
-
->=20
-> Alex
->=20
-> > 0002:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit
-> > Network Connection (rev ff)
-> > 00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > 10: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > 20: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > 30: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> >
-> > Thanks
-> > -Bharat
-> >
-> >
-
+diff --git a/Documentation/x86/boot.txt b/Documentation/x86/boot.txt
+index 7727db8f94bc..5e9b826b5f62 100644
+--- a/Documentation/x86/boot.txt
++++ b/Documentation/x86/boot.txt
+@@ -61,18 +61,6 @@ Protocol 2.12:	(Kernel 3.8) Added the xloadflags field and extension fields
+ 	 	to struct boot_params for loading bzImage and ramdisk
+ 		above 4G in 64bit.
+ 
+-Protocol 2.13:	(Kernel 3.14) Support 32- and 64-bit flags being set in
+-		xloadflags to support booting a 64-bit kernel from 32-bit
+-		EFI
+-
+-Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
+-		address of the ACPI RSDP table.
+-		The bootloader updates version with:
+-		0x8000 | min(kernel-version, bootloader-version)
+-		kernel-version being the protocol version supported by
+-		the kernel and bootloader-version the protocol version
+-		supported by the bootloader.
+-
+ **** MEMORY LAYOUT
+ 
+ The traditional memory map for the kernel loader, used for Image or
+@@ -209,7 +197,6 @@ Offset	Proto	Name		Meaning
+ 0258/8	2.10+	pref_address	Preferred loading address
+ 0260/4	2.10+	init_size	Linear memory required during initialization
+ 0264/4	2.11+	handover_offset	Offset of handover entry point
+-0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
+ 
+ (1) For backwards compatibility, if the setup_sects field contains 0, the
+     real value is 4.
+@@ -322,7 +309,7 @@ Protocol:	2.00+
+   Contains the magic number "HdrS" (0x53726448).
+ 
+ Field name:	version
+-Type:		modify
++Type:		read
+ Offset/size:	0x206/2
+ Protocol:	2.00+
+ 
+@@ -330,12 +317,6 @@ Protocol:	2.00+
+   e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
+   10.17.
+ 
+-  Up to protocol version 2.13 this information is only read by the
+-  bootloader. From protocol version 2.14 onwards the bootloader will
+-  write the used protocol version or-ed with 0x8000 to the field. The
+-  used protocol version will be the minimum of the supported protocol
+-  versions of the bootloader and the kernel.
+-
+ Field name:	realmode_swtch
+ Type:		modify (optional)
+ Offset/size:	0x208/4
+@@ -763,17 +744,6 @@ Offset/size:	0x264/4
+ 
+   See EFI HANDOVER PROTOCOL below for more details.
+ 
+-Field name:	acpi_rsdp_addr
+-Type:		write
+-Offset/size:	0x268/8
+-Protocol:	2.14+
+-
+-  This field can be set by the boot loader to tell the kernel the
+-  physical address of the ACPI RSDP table.
+-
+-  A value of 0 indicates the kernel should fall back to the standard
+-  methods to locate the RSDP.
+-
+ 
+ **** THE IMAGE CHECKSUM
+ 
+diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+index 4c881c850125..850b8762e889 100644
+--- a/arch/x86/boot/header.S
++++ b/arch/x86/boot/header.S
+@@ -300,7 +300,7 @@ _start:
+ 	# Part 2 of the header, from the old setup.S
+ 
+ 		.ascii	"HdrS"		# header signature
+-		.word	0x020e		# header version number (>= 0x0105)
++		.word	0x020d		# header version number (>= 0x0105)
+ 					# or else old loadlin-1.5 will fail)
+ 		.globl realmode_swtch
+ realmode_swtch:	.word	0, 0		# default_switch, SETUPSEG
+@@ -558,10 +558,6 @@ pref_address:		.quad LOAD_PHYSICAL_ADDR	# preferred load addr
+ init_size:		.long INIT_SIZE		# kernel initialization size
+ handover_offset:	.long 0			# Filled in by build.c
+ 
+-acpi_rsdp_addr:		.quad 0			# 64-bit physical pointer to the
+-						# ACPI RSDP table, added with
+-						# version 2.14
+-
+ # End of setup header #####################################################
+ 
+ 	.section ".entrytext", "ax"
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 5f7290e6e954..69dcdf195b61 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -226,7 +226,7 @@ static inline void copy_fxregs_to_kernel(struct fpu *fpu)
+ 		     "3: movl $-2,%[err]\n\t"				\
+ 		     "jmp 2b\n\t"					\
+ 		     ".popsection\n\t"					\
+-		     _ASM_EXTABLE_UA(1b, 3b)				\
++		     _ASM_EXTABLE(1b, 3b)				\
+ 		     : [err] "=r" (err)					\
+ 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
+ 		     : "memory")
+diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
+index 0f842104862c..b85a7c54c6a1 100644
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -303,6 +303,4 @@ extern void x86_init_noop(void);
+ extern void x86_init_uint_noop(unsigned int unused);
+ extern bool x86_pnpbios_disabled(void);
+ 
+-void x86_verify_bootdata_version(void);
+-
+ #endif
+diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+index 22f89d040ddd..60733f137e9a 100644
+--- a/arch/x86/include/uapi/asm/bootparam.h
++++ b/arch/x86/include/uapi/asm/bootparam.h
+@@ -16,9 +16,6 @@
+ #define RAMDISK_PROMPT_FLAG		0x8000
+ #define RAMDISK_LOAD_FLAG		0x4000
+ 
+-/* version flags */
+-#define VERSION_WRITTEN	0x8000
+-
+ /* loadflags */
+ #define LOADED_HIGH	(1<<0)
+ #define KASLR_FLAG	(1<<1)
+@@ -89,7 +86,6 @@ struct setup_header {
+ 	__u64	pref_address;
+ 	__u32	init_size;
+ 	__u32	handover_offset;
+-	__u64	acpi_rsdp_addr;
+ } __attribute__((packed));
+ 
+ struct sys_desc_table {
+@@ -159,7 +155,8 @@ struct boot_params {
+ 	__u8  _pad2[4];					/* 0x054 */
+ 	__u64  tboot_addr;				/* 0x058 */
+ 	struct ist_info ist_info;			/* 0x060 */
+-	__u8  _pad3[16];				/* 0x070 */
++	__u64 acpi_rsdp_addr;				/* 0x070 */
++	__u8  _pad3[8];					/* 0x078 */
+ 	__u8  hd0_info[16];	/* obsolete! */		/* 0x080 */
+ 	__u8  hd1_info[16];	/* obsolete! */		/* 0x090 */
+ 	struct sys_desc_table sys_desc_table; /* obsolete! */	/* 0x0a0 */
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 92c76bf97ad8..06635fbca81c 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -1776,5 +1776,5 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+ 
+ u64 x86_default_get_root_pointer(void)
+ {
+-	return boot_params.hdr.acpi_rsdp_addr;
++	return boot_params.acpi_rsdp_addr;
+ }
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index dd33c357548f..e12454e21b8a 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -56,7 +56,7 @@
+ /* Threshold LVT offset is at MSR0xC0000410[15:12] */
+ #define SMCA_THR_LVT_OFF	0xF000
+ 
+-static bool thresholding_en;
++static bool thresholding_irq_en;
+ 
+ static const char * const th_names[] = {
+ 	"load_store",
+@@ -534,9 +534,8 @@ prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
+ 
+ set_offset:
+ 	offset = setup_APIC_mce_threshold(offset, new);
+-
+-	if ((offset == new) && (mce_threshold_vector != amd_threshold_interrupt))
+-		mce_threshold_vector = amd_threshold_interrupt;
++	if (offset == new)
++		thresholding_irq_en = true;
+ 
+ done:
+ 	mce_threshold_block_init(&b, offset);
+@@ -1357,9 +1356,6 @@ int mce_threshold_remove_device(unsigned int cpu)
+ {
+ 	unsigned int bank;
+ 
+-	if (!thresholding_en)
+-		return 0;
+-
+ 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
+ 		if (!(per_cpu(bank_map, cpu) & (1 << bank)))
+ 			continue;
+@@ -1377,9 +1373,6 @@ int mce_threshold_create_device(unsigned int cpu)
+ 	struct threshold_bank **bp;
+ 	int err = 0;
+ 
+-	if (!thresholding_en)
+-		return 0;
+-
+ 	bp = per_cpu(threshold_banks, cpu);
+ 	if (bp)
+ 		return 0;
+@@ -1408,9 +1401,6 @@ static __init int threshold_init_device(void)
+ {
+ 	unsigned lcpu = 0;
+ 
+-	if (mce_threshold_vector == amd_threshold_interrupt)
+-		thresholding_en = true;
+-
+ 	/* to hit CPUs online before the notifier is up */
+ 	for_each_online_cpu(lcpu) {
+ 		int err = mce_threshold_create_device(lcpu);
+@@ -1419,6 +1409,9 @@ static __init int threshold_init_device(void)
+ 			return err;
+ 	}
+ 
++	if (thresholding_irq_en)
++		mce_threshold_vector = amd_threshold_interrupt;
++
+ 	return 0;
+ }
+ /*
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 61a949d84dfa..d99a8ee9e185 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -344,10 +344,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+ 		}
+ 
++		local_bh_disable();
+ 		fpu->initialized = 1;
+-		preempt_disable();
+ 		fpu__restore(fpu);
+-		preempt_enable();
++		local_bh_enable();
+ 
+ 		return err;
+ 	} else {
+diff --git a/arch/x86/kernel/head32.c b/arch/x86/kernel/head32.c
+index 76fa3b836598..ec6fefbfd3c0 100644
+--- a/arch/x86/kernel/head32.c
++++ b/arch/x86/kernel/head32.c
+@@ -37,7 +37,6 @@ asmlinkage __visible void __init i386_start_kernel(void)
+ 	cr4_init_shadow();
+ 
+ 	sanitize_boot_params(&boot_params);
+-	x86_verify_bootdata_version();
+ 
+ 	x86_early_init_platform_quirks();
+ 
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 7663a8eb602b..16b1cbd3a61e 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -457,8 +457,6 @@ void __init x86_64_start_reservations(char *real_mode_data)
+ 	if (!boot_params.hdr.version)
+ 		copy_bootdata(__va(real_mode_data));
+ 
+-	x86_verify_bootdata_version();
+-
+ 	x86_early_init_platform_quirks();
+ 
+ 	switch (boot_params.hdr.hardware_subarch) {
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index b74e7bfed6ab..d494b9bfe618 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1280,23 +1280,6 @@ void __init setup_arch(char **cmdline_p)
+ 	unwind_init();
+ }
+ 
+-/*
+- * From boot protocol 2.14 onwards we expect the bootloader to set the
+- * version to "0x8000 | <used version>". In case we find a version >= 2.14
+- * without the 0x8000 we assume the boot loader supports 2.13 only and
+- * reset the version accordingly. The 0x8000 flag is removed in any case.
+- */
+-void __init x86_verify_bootdata_version(void)
+-{
+-	if (boot_params.hdr.version & VERSION_WRITTEN)
+-		boot_params.hdr.version &= ~VERSION_WRITTEN;
+-	else if (boot_params.hdr.version >= 0x020e)
+-		boot_params.hdr.version = 0x020d;
+-
+-	if (boot_params.hdr.version < 0x020e)
+-		boot_params.hdr.acpi_rsdp_addr = 0;
+-}
+-
+ #ifdef CONFIG_X86_32
+ 
+ static struct resource video_ram_resource = {
+diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
+index 40b0b4c1bf7b..df20f8bdbfa3 100644
+--- a/include/linux/tracehook.h
++++ b/include/linux/tracehook.h
+@@ -83,8 +83,8 @@ static inline int ptrace_report_syscall(struct pt_regs *regs)
+  * tracehook_report_syscall_entry - task is about to attempt a system call
+  * @regs:		user register state of current task
+  *
+- * This will be called if %TIF_SYSCALL_TRACE has been set, when the
+- * current task has just entered the kernel for a system call.
++ * This will be called if %TIF_SYSCALL_TRACE or %TIF_SYSCALL_EMU have been set,
++ * when the current task has just entered the kernel for a system call.
+  * Full user register state is available here.  Changing the values
+  * in @regs can affect the system call number and arguments to be tried.
+  * It is safe to block here, preventing the system call from beginning.
