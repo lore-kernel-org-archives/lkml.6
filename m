@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E76C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B4CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A76820834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:49:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A76820834
+	by mail.kernel.org (Postfix) with ESMTP id 887B220867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:50:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887B220867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbeLAC7Y (ORCPT
+        id S1727550AbeLAC76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:59:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15618 "EHLO huawei.com"
+        Fri, 30 Nov 2018 21:59:58 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15181 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727518AbeLAC7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:59:23 -0500
+        id S1727521AbeLAC76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 21:59:58 -0500
 Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 669EEC1AC3C97;
-        Fri, 30 Nov 2018 23:49:34 +0800 (CST)
+        by Forcepoint Email with ESMTP id 87FE59AF47056;
+        Fri, 30 Nov 2018 23:49:24 +0800 (CST)
 Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 30 Nov 2018 23:49:28 +0800
+ 14.3.408.0; Fri, 30 Nov 2018 23:49:16 +0800
 From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 To:     <lorenzo.pieralisi@arm.com>, <robin.murphy@arm.com>
 CC:     <jean-philippe.brucker@arm.com>, <will.deacon@arm.com>,
@@ -37,9 +37,9 @@ CC:     <jean-philippe.brucker@arm.com>, <will.deacon@arm.com>,
         <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
         <neil.m.leeder@gmail.com>
-Subject: [PATCH v5 4/4] perf/smmuv3_pmu: Enable HiSilicon Erratum 162001800 quirk
-Date:   Fri, 30 Nov 2018 15:47:51 +0000
-Message-ID: <20181130154751.28580-5-shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v5 1/4] acpi: arm64: add iort support for PMCG
+Date:   Fri, 30 Nov 2018 15:47:48 +0000
+Message-ID: <20181130154751.28580-2-shameerali.kolothum.thodi@huawei.com>
 X-Mailer: git-send-email 2.12.0.windows.1
 In-Reply-To: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
 References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
@@ -52,177 +52,211 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HiSilicon erratum 162001800 describes the limitation of
-SMMUv3 PMCG implementation on HiSilicon Hip08 platforms.
+From: Neil Leeder <nleeder@codeaurora.org>
 
-On these platforms, the PMCG event counter registers
-(SMMU_PMCG_EVCNTRn) are read only and as a result it
-is not possible to set the initial counter period value
-on event monitor start.
+Add support for the SMMU Performance Monitor Counter Group
+information from ACPI. This is in preparation for its use
+in the SMMUv3 PMU driver.
 
-To work around this, the current value of the counter
-is read and used for delta calculations. OEM information
-from ACPI header is used to identify the affected hardware
-platforms.
-
+Signed-off-by: Neil Leeder <nleeder@codeaurora.org>
+Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
 Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 ---
- drivers/acpi/arm64/iort.c     | 30 +++++++++++++++++++++++++++---
- drivers/perf/arm_smmuv3_pmu.c | 35 +++++++++++++++++++++++++++++------
- include/linux/acpi_iort.h     |  3 +++
- 3 files changed, 59 insertions(+), 9 deletions(-)
+ drivers/acpi/arm64/iort.c | 97 +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 76 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 2da08e1..d174379 100644
+index 2a361e2..2da08e1 100644
 --- a/drivers/acpi/arm64/iort.c
 +++ b/drivers/acpi/arm64/iort.c
-@@ -1364,6 +1364,22 @@ static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
- 				       ACPI_EDGE_SENSITIVE, &res[2]);
+@@ -356,7 +356,8 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
+ 	if (map->flags & ACPI_IORT_ID_SINGLE_MAPPING) {
+ 		if (node->type == ACPI_IORT_NODE_NAMED_COMPONENT ||
+ 		    node->type == ACPI_IORT_NODE_PCI_ROOT_COMPLEX ||
+-		    node->type == ACPI_IORT_NODE_SMMU_V3) {
++		    node->type == ACPI_IORT_NODE_SMMU_V3 ||
++		    node->type == ACPI_IORT_NODE_PMCG) {
+ 			*id_out = map->output_base;
+ 			return parent;
+ 		}
+@@ -394,6 +395,8 @@ static int iort_get_id_mapping_index(struct acpi_iort_node *node)
+ 		}
+ 
+ 		return smmu->id_mapping_index;
++	case ACPI_IORT_NODE_PMCG:
++		return 0;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -1216,14 +1219,23 @@ static void __init arm_smmu_v3_init_resources(struct resource *res,
+ 	}
  }
  
-+static struct acpi_platform_list pmcg_evcntr_rdonly_list[] __initdata = {
-+	/* HiSilicon Erratum 162001800 */
-+	{"HISI  ", "HIP08   ", 0, ACPI_SIG_IORT, greater_than_or_equal},
-+	{ }
-+};
+-static bool __init arm_smmu_v3_is_coherent(struct acpi_iort_node *node)
++static void __init arm_smmu_v3_dma_configure(struct device *dev,
++					     struct acpi_iort_node *node)
+ {
+ 	struct acpi_iort_smmu_v3 *smmu;
++	enum dev_dma_attr attr;
+ 
+ 	/* Retrieve SMMUv3 specific data */
+ 	smmu = (struct acpi_iort_smmu_v3 *)node->node_data;
+ 
+-	return smmu->flags & ACPI_IORT_SMMU_V3_COHACC_OVERRIDE;
++	attr = (smmu->flags & ACPI_IORT_SMMU_V3_COHACC_OVERRIDE) ?
++			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
 +
-+static int __init arm_smmu_v3_pmcg_add_platdata(struct platform_device *pdev)
-+{
-+	u32 options = 0;
++	/* We expect the dma masks to be equivalent for all SMMUv3 set-ups */
++	dev->dma_mask = &dev->coherent_dma_mask;
 +
-+	if (acpi_match_platform_list(pmcg_evcntr_rdonly_list) >= 0)
-+		options |= IORT_PMCG_EVCNTR_RDONLY;
++	/* Configure DMA for the page table walker */
++	acpi_dma_configure(dev, attr);
+ }
+ 
+ #if defined(CONFIG_ACPI_NUMA)
+@@ -1299,20 +1311,64 @@ static void __init arm_smmu_init_resources(struct resource *res,
+ 	}
+ }
+ 
+-static bool __init arm_smmu_is_coherent(struct acpi_iort_node *node)
++static void __init arm_smmu_dma_configure(struct device *dev,
++					  struct acpi_iort_node *node)
+ {
+ 	struct acpi_iort_smmu *smmu;
++	enum dev_dma_attr attr;
+ 
+ 	/* Retrieve SMMU specific data */
+ 	smmu = (struct acpi_iort_smmu *)node->node_data;
+ 
+-	return smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK;
++	attr = (smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK) ?
++			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
 +
-+	return platform_device_add_data(pdev, &options, sizeof(options));
++	/* We expect the dma masks to be equivalent for SMMU set-ups */
++	dev->dma_mask = &dev->coherent_dma_mask;
++
++	/* Configure DMA for the page table walker */
++	acpi_dma_configure(dev, attr);
 +}
 +
++static int __init arm_smmu_v3_pmcg_count_resources(struct acpi_iort_node *node)
++{
++	struct acpi_iort_pmcg *pmcg;
++
++	/* Retrieve PMCG specific data */
++	pmcg = (struct acpi_iort_pmcg *)node->node_data;
++
++	/*
++	 * There are always 2 memory resources.
++	 * If the overflow_gsiv is present then add that for a total of 3.
++	 */
++	return pmcg->overflow_gsiv ? 3 : 2;
++}
++
++static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
++					       struct acpi_iort_node *node)
++{
++	struct acpi_iort_pmcg *pmcg;
++
++	/* Retrieve PMCG specific data */
++	pmcg = (struct acpi_iort_pmcg *)node->node_data;
++
++	res[0].start = pmcg->page0_base_address;
++	res[0].end = pmcg->page0_base_address + SZ_4K - 1;
++	res[0].flags = IORESOURCE_MEM;
++	res[1].start = pmcg->page1_base_address;
++	res[1].end = pmcg->page1_base_address + SZ_4K - 1;
++	res[1].flags = IORESOURCE_MEM;
++
++	if (pmcg->overflow_gsiv)
++		acpi_iort_register_irq(pmcg->overflow_gsiv, "overflow",
++				       ACPI_EDGE_SENSITIVE, &res[2]);
+ }
+ 
  struct iort_dev_config {
  	const char *name;
  	int (*dev_init)(struct acpi_iort_node *node);
-@@ -1374,6 +1390,7 @@ struct iort_dev_config {
+-	bool (*dev_is_coherent)(struct acpi_iort_node *node);
++	void (*dev_dma_configure)(struct device *dev,
++				    struct acpi_iort_node *node);
+ 	int (*dev_count_resources)(struct acpi_iort_node *node);
+ 	void (*dev_init_resources)(struct resource *res,
  				     struct acpi_iort_node *node);
- 	void (*dev_set_proximity)(struct device *dev,
- 				    struct acpi_iort_node *node);
-+	int (*dev_add_platdata)(struct platform_device *pdev);
- };
+@@ -1322,7 +1378,7 @@ struct iort_dev_config {
  
  static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
-@@ -1395,6 +1412,7 @@ static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
- 	.name = "arm-smmu-v3-pmu",
- 	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
- 	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
-+	.dev_add_platdata	= arm_smmu_v3_pmcg_add_platdata,
+ 	.name = "arm-smmu-v3",
+-	.dev_is_coherent = arm_smmu_v3_is_coherent,
++	.dev_dma_configure = arm_smmu_v3_dma_configure,
+ 	.dev_count_resources = arm_smmu_v3_count_resources,
+ 	.dev_init_resources = arm_smmu_v3_init_resources,
+ 	.dev_set_proximity = arm_smmu_v3_set_proximity,
+@@ -1330,19 +1386,28 @@ static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
+ 
+ static const struct iort_dev_config iort_arm_smmu_cfg __initconst = {
+ 	.name = "arm-smmu",
+-	.dev_is_coherent = arm_smmu_is_coherent,
++	.dev_dma_configure = arm_smmu_dma_configure,
+ 	.dev_count_resources = arm_smmu_count_resources,
+-	.dev_init_resources = arm_smmu_init_resources
++	.dev_init_resources = arm_smmu_init_resources,
++};
++
++static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
++	.name = "arm-smmu-v3-pmu",
++	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
++	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
  };
  
  static __init const struct iort_dev_config *iort_get_dev_cfg(
-@@ -1455,10 +1473,16 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 		goto dev_put;
- 
- 	/*
--	 * Add a copy of IORT node pointer to platform_data to
--	 * be used to retrieve IORT data information.
-+	 * Platform devices based on PMCG nodes uses platform_data to
-+	 * pass quirk flags to the driver. For others, add a copy of
-+	 * IORT node pointer to platform_data to be used to retrieve
-+	 * IORT data information.
- 	 */
--	ret = platform_device_add_data(pdev, &node, sizeof(node));
-+	if (ops->dev_add_platdata)
-+		ret = ops->dev_add_platdata(pdev);
-+	else
-+		ret = platform_device_add_data(pdev, &node, sizeof(node));
+ 			struct acpi_iort_node *node)
+ {
 +
+ 	switch (node->type) {
+ 	case ACPI_IORT_NODE_SMMU_V3:
+ 		return &iort_arm_smmu_v3_cfg;
+ 	case ACPI_IORT_NODE_SMMU:
+ 		return &iort_arm_smmu_cfg;
++	case ACPI_IORT_NODE_PMCG:
++		return &iort_arm_smmu_v3_pmcg_cfg;
+ 	default:
+ 		return NULL;
+ 	}
+@@ -1360,7 +1425,6 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+ 	struct fwnode_handle *fwnode;
+ 	struct platform_device *pdev;
+ 	struct resource *r;
+-	enum dev_dma_attr attr;
+ 	int ret, count;
+ 
+ 	pdev = platform_device_alloc(ops->name, PLATFORM_DEVID_AUTO);
+@@ -1398,12 +1462,6 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
  	if (ret)
  		goto dev_put;
  
-diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
-index 71d10a0..02107a1 100644
---- a/drivers/perf/arm_smmuv3_pmu.c
-+++ b/drivers/perf/arm_smmuv3_pmu.c
-@@ -35,6 +35,7 @@
-  */
- 
- #include <linux/acpi.h>
-+#include <linux/acpi_iort.h>
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
- #include <linux/cpuhotplug.h>
-@@ -111,6 +112,7 @@ struct smmu_pmu {
- 	struct device *dev;
- 	void __iomem *reg_base;
- 	void __iomem *reloc_base;
-+	u32 options;
- 	u64 counter_present_mask;
- 	u64 counter_mask;
- };
-@@ -224,12 +226,25 @@ static void smmu_pmu_set_period(struct smmu_pmu *smmu_pmu,
- 	u32 idx = hwc->idx;
- 	u64 new;
- 
 -	/*
--	 * We limit the max period to half the max counter value of the counter
--	 * size, so that even in the case of extreme interrupt latency the
--	 * counter will (hopefully) not wrap past its initial value.
+-	 * We expect the dma masks to be equivalent for
+-	 * all SMMUs set-ups
 -	 */
--	new = smmu_pmu->counter_mask >> 1;
-+	if (smmu_pmu->options & IORT_PMCG_EVCNTR_RDONLY) {
-+		/*
-+		 * On platforms that require this quirk, if the counter starts
-+		 * at < half_counter value and wraps, the current logic of
-+		 * handling the overflow may not work. It is expected that,
-+		 * those platforms will have full 64 counter bits implemented
-+		 * so that such a possibility is remote(eg: HiSilicon HIP08).
-+		 */
-+		new = smmu_pmu_counter_get_value(smmu_pmu, idx);
-+	} else {
-+		/*
-+		 * We limit the max period to half the max counter value
-+		 * of the counter size, so that even in the case of extreme
-+		 * interrupt latency the counter will (hopefully) not wrap
-+		 * past its initial value.
-+		 */
-+		new = smmu_pmu->counter_mask >> 1;
-+		smmu_pmu_counter_set_value(smmu_pmu, idx, new);
-+	}
+-	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+-
+ 	fwnode = iort_get_fwnode(node);
  
- 	local64_set(&hwc->prev_count, new);
- 	smmu_pmu_counter_set_value(smmu_pmu, idx, new);
-@@ -670,6 +685,12 @@ static void smmu_pmu_reset(struct smmu_pmu *smmu_pmu)
- 		       smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
- }
+ 	if (!fwnode) {
+@@ -1413,11 +1471,8 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
  
-+static void smmu_pmu_get_acpi_options(struct smmu_pmu *smmu_pmu)
-+{
-+	smmu_pmu->options = *(u32 *)dev_get_platdata(smmu_pmu->dev);
-+	dev_notice(smmu_pmu->dev, "option mask 0x%x\n", smmu_pmu->options);
-+}
-+
- static int smmu_pmu_probe(struct platform_device *pdev)
- {
- 	struct smmu_pmu *smmu_pmu;
-@@ -749,6 +770,8 @@ static int smmu_pmu_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+ 	pdev->dev.fwnode = fwnode;
  
-+	smmu_pmu_get_acpi_options(smmu_pmu);
-+
- 	/* Pick one CPU to be the preferred one to use */
- 	smmu_pmu->on_cpu = get_cpu();
- 	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(smmu_pmu->on_cpu)));
-diff --git a/include/linux/acpi_iort.h b/include/linux/acpi_iort.h
-index 38cd77b..4a7ae69 100644
---- a/include/linux/acpi_iort.h
-+++ b/include/linux/acpi_iort.h
-@@ -26,6 +26,9 @@
- #define IORT_IRQ_MASK(irq)		(irq & 0xffffffffULL)
- #define IORT_IRQ_TRIGGER_MASK(irq)	((irq >> 32) & 0xffffffffULL)
+-	attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
+-			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
+-
+-	/* Configure DMA for the page table walker */
+-	acpi_dma_configure(&pdev->dev, attr);
++	if (ops->dev_dma_configure)
++		ops->dev_dma_configure(&pdev->dev, node);
  
-+/* PMCG node option or quirk flags */
-+#define IORT_PMCG_EVCNTR_RDONLY		(1 << 0)
-+
- int iort_register_domain_token(int trans_id, phys_addr_t base,
- 			       struct fwnode_handle *fw_node);
- void iort_deregister_domain_token(int trans_id);
+ 	iort_set_device_domain(&pdev->dev, node);
+ 
 -- 
 2.7.4
 
