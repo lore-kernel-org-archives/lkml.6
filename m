@@ -2,101 +2,84 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FA4C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A478C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD0F720863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="M9ep21lm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD0F720863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B8CA20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B8CA20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbeLAAH7 (ORCPT
+        id S1726968AbeLAAIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:07:59 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38262 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbeLAAH7 (ORCPT
+        Fri, 30 Nov 2018 19:08:09 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34882 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbeLAAIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:07:59 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAUChWO5129892;
-        Fri, 30 Nov 2018 12:58:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=7UQCXFmOSJhLp4IQ4jPMS1SY3qVM4yzyr3hpfFcqgnQ=;
- b=M9ep21lmLcOTs41wRKLu/EC30QZDpotkJ2r+Gkm+t1gjViQk3bKf/C4USdT82IuhW5GD
- 7CEv3rP8cvn5niDkQXFg9p8XvQB2jLl2N1Q1zG6udlIM5UA5UEmLVP6MmGkhx7XDeidx
- zUwNNqFccmutlw558IL+Z9soL3YFlCdgK/7z5dmM7+lzhWfLCsqIi4Cra2WshhaCjYlj
- T+thYe4yaXo44aRzi6Zm0faVlSq/d/rew85k2DIVBS2qV3MoI5R3KVbDk436aYf9RmCS
- w8Lrnv4Zv9DRj5u0OGVubLqb1DugYRtDUymoS0AGLMVlpaYVggiZAQdQEOAKY9aeKEqJ NA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2p2jf0ndvv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Nov 2018 12:58:44 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAUCwh6o007051
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Nov 2018 12:58:43 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAUCwgBR014263;
-        Fri, 30 Nov 2018 12:58:42 GMT
-Received: from kili.mountain (/197.157.34.169)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 30 Nov 2018 04:58:41 -0800
-Date:   Fri, 30 Nov 2018 15:58:34 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] ptp: fix an IS_ERR() vs NULL check
-Message-ID: <20181130125834.u42dhxgof66rhya2@kili.mountain>
+        Fri, 30 Nov 2018 19:08:09 -0500
+Received: by mail-qt1-f195.google.com with SMTP id v11so5767231qtc.2;
+        Fri, 30 Nov 2018 04:58:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3aerBP6lm7kFFV67ilmw6qMvPj/6mK7eECFqwlSngiE=;
+        b=azWlsSAsSQpd3u8ZLFouesv4AHcEXbahtJYFA05O4OS8PqCzovDYl/gOy69mgN2Kv+
+         slxT2rR/HGo3ZhE99R8cQIT8mJS3FsP1SCB6eJVPL8KQp2F9f4Ak9BwhRM+kNM6SwcUj
+         zFs38z8eB8kXAvp4vVdCbSiJPmSOXc+x5/o+0Qgvw9FmxzwSEJrvRSsKjBV5yyO+0y62
+         Yye6hjggLId5FhzGGK6FWViZPxeU1noX9B9xJ6r0gU+BtnoxrBwgB48eUdrge2gP7RDP
+         Yo7Cs7ZUyOUNj44ozZKx/2crk7o6WmmXv7t0fuGtg28yrecrH7PiD2ShI9vBWfyz3Qsk
+         qN1A==
+X-Gm-Message-State: AA+aEWZZcsBPA/Wwu43kMht4wcEfAUJUVfHA2gvesRIQRC+qVBUn0hU7
+        brU5f8jbhfTx1Pdq8WfnmUwD2UpKgBlNpZzW7c2CCQ==
+X-Google-Smtp-Source: AFSGD/UDaTyRxRMJAkhIW+lMIo8kL46AO7xTn8g8t0J9xtPjhZabfp3LtOX3Z7gvMtjBXRW0F7koYbQytBbE0U6ilKA=
+X-Received: by 2002:ac8:4141:: with SMTP id e1mr5120850qtm.96.1543582734532;
+ Fri, 30 Nov 2018 04:58:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9092 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=900
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811300109
+References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org> <20181130104657.14875-7-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20181130104657.14875-7-srinivas.kandagatla@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 30 Nov 2018 13:58:36 +0100
+Message-ID: <CAK8P3a1XaGHu3NrAeLn0OEg0nL1uae_MyrP7EgadJpfeeXtR2Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/6] char: fastrpc: Add support for compat ioctls
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
+        thierry.escande@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pps_register_source() function doesn't return NULL, it returns
-error pointers.
+On Fri, Nov 30, 2018 at 11:48 AM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+> From: Thierry Escande <thierry.escande@linaro.org>
+>
+> This patch adds support for compat ioctl from 32 bits userland to
+> Qualcomm fastrpc driver.
+>
+> Supported ioctls in this change are INIT, INVOKE, and ALLOC/FREE_DMA.
+>
+> Most of the work is derived from various downstream Qualcomm kernels.
+> Credits to various Qualcomm authors who have contributed to this code.
+> Specially Tharun Kumar Merugu <mtharu@codeaurora.org>
+>
+> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Fixes: d94ba80ebbea ("ptp: Added a brand new class driver for ptp clocks.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/ptp/ptp_clock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Can't you just define the native ioctls so that you don't need this.
 
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index 8a81eecc0ecd..48f3594a7458 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 		pps.mode = PTP_PPS_MODE;
- 		pps.owner = info->owner;
- 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
--		if (!ptp->pps_source) {
--			err = -EINVAL;
-+		if (IS_ERR(ptp->pps_source)) {
-+			err = PTR_ERR(ptp->pps_source);
- 			pr_err("failed to register pps source\n");
- 			goto no_pps;
- 		}
--- 
-2.11.0
-
+     Arnd
