@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33D2C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE269C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCEB20660
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:53:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCEB20660
+	by mail.kernel.org (Postfix) with ESMTP id 939E42145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:53:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 939E42145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbeLAJDw (ORCPT
+        id S1726955AbeLAJD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:03:52 -0500
-Received: from mga18.intel.com ([134.134.136.126]:21745 "EHLO mga18.intel.com"
+        Sat, 1 Dec 2018 04:03:56 -0500
+Received: from mga05.intel.com ([192.55.52.43]:60167 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeLAJDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:03:51 -0500
+        id S1725867AbeLAJD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:03:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 13:53:08 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 13:53:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
-   d="scan'208";a="96500641"
+   d="scan'208";a="114393781"
 Received: from ahduyck-desk1.jf.intel.com (HELO ahduyck-desk1.amr.corp.intel.com) ([10.7.198.76])
-  by orsmga006.jf.intel.com with ESMTP; 30 Nov 2018 13:53:08 -0800
-Subject: [mm PATCH v6 4/7] mm: Initialize MAX_ORDER_NR_PAGES at a time
- instead of doing larger sections
+  by orsmga001.jf.intel.com with ESMTP; 30 Nov 2018 13:53:13 -0800
+Subject: [mm PATCH v6 5/7] mm: Move hot-plug specific memory init into
+ separate functions and optimize
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     akpm@linux-foundation.org, linux-mm@kvack.org
 Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -44,8 +44,8 @@ Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
         mgorman@techsingularity.net, yi.z.zhang@linux.intel.com,
         alexander.h.duyck@linux.intel.com
-Date:   Fri, 30 Nov 2018 13:53:08 -0800
-Message-ID: <154361478854.7497.15456929701404283744.stgit@ahduyck-desk1.amr.corp.intel.com>
+Date:   Fri, 30 Nov 2018 13:53:13 -0800
+Message-ID: <154361479366.7497.13916678539146224699.stgit@ahduyck-desk1.amr.corp.intel.com>
 In-Reply-To: <154361452447.7497.1348692079883153517.stgit@ahduyck-desk1.amr.corp.intel.com>
 References: <154361452447.7497.1348692079883153517.stgit@ahduyck-desk1.amr.corp.intel.com>
 User-Agent: StGit/unknown-version
@@ -57,261 +57,299 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add yet another iterator, for_each_free_mem_range_in_zone_from, and then
-use it to support initializing and freeing pages in groups no larger than
-MAX_ORDER_NR_PAGES. By doing this we can greatly improve the cache locality
-of the pages while we do several loops over them in the init and freeing
-process.
+Combine the bits in memmap_init_zone and memmap_init_zone_device that are
+related to hotplug into a single function called __memmap_init_hotplug.
 
-We are able to tighten the loops further as a result of the "from" iterator
-as we can perform the initial checks for first_init_pfn in our first call
-to the iterator, and continue without the need for those checks via the
-"from" iterator. I have added this functionality in the function called
-deferred_init_mem_pfn_range_in_zone that primes the iterator and causes us
-to exit if we encounter any failure.
-
-On my x86_64 test system with 384GB of memory per node I saw a reduction in
-initialization time from 1.85s to 1.38s as a result of this patch.
+Also take the opportunity to integrate __init_single_page's functionality
+into this function. In doing so we can get rid of some of the redundancy
+such as the LRU pointers versus the pgmap.
 
 Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- include/linux/memblock.h |   16 +++++
- mm/page_alloc.c          |  160 +++++++++++++++++++++++++++++++++-------------
- 2 files changed, 132 insertions(+), 44 deletions(-)
+ mm/page_alloc.c |  208 ++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 135 insertions(+), 73 deletions(-)
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 95d1aaa3f412..60e100fe5922 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -270,6 +270,22 @@ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
- 	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end);	\
- 	     i != U64_MAX;					\
- 	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
-+
-+/**
-+ * for_each_free_mem_range_in_zone_from - iterate through zone specific
-+ * free memblock areas from a given point
-+ * @i: u64 used as loop variable
-+ * @zone: zone in which all of the memory blocks reside
-+ * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
-+ * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
-+ *
-+ * Walks over free (memory && !reserved) areas of memblock in a specific
-+ * zone, continuing from current position. Available as soon as memblock is
-+ * initialized.
-+ */
-+#define for_each_free_mem_pfn_range_in_zone_from(i, zone, p_start, p_end) \
-+	for (; i != U64_MAX;					  \
-+	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
- #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
- /**
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 72f9889e3866..fbd9bd2bc262 100644
+index fbd9bd2bc262..416bbb6f05ab 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -1519,16 +1519,102 @@ static unsigned long  __init deferred_init_pages(struct zone *zone,
- 	return (nr_pages);
+@@ -1181,8 +1181,9 @@ static void free_one_page(struct zone *zone,
+ 	spin_unlock(&zone->lock);
  }
  
-+/*
-+ * This function is meant to pre-load the iterator for the zone init.
-+ * Specifically it walks through the ranges until we are caught up to the
-+ * first_init_pfn value and exits there. If we never encounter the value we
-+ * return false indicating there are no valid ranges left.
-+ */
-+static bool __init
-+deferred_init_mem_pfn_range_in_zone(u64 *i, struct zone *zone,
-+				    unsigned long *spfn, unsigned long *epfn,
-+				    unsigned long first_init_pfn)
+-static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+-				unsigned long zone, int nid)
++static void __meminit __init_struct_page_nolru(struct page *page,
++					       unsigned long pfn,
++					       unsigned long zone, int nid)
+ {
+ 	mm_zero_struct_page(page);
+ 	set_page_links(page, zone, nid, pfn);
+@@ -1191,7 +1192,6 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ 	page_cpupid_reset_last(page);
+ 	page_kasan_tag_reset(page);
+ 
+-	INIT_LIST_HEAD(&page->lru);
+ #ifdef WANT_PAGE_VIRTUAL
+ 	/* The shift won't overflow because ZONE_NORMAL is below 4G. */
+ 	if (!is_highmem_idx(zone))
+@@ -1199,6 +1199,80 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ #endif
+ }
+ 
++static void __meminit __init_single_page(struct page *page, unsigned long pfn,
++				unsigned long zone, int nid)
 +{
-+	u64 j;
++	__init_struct_page_nolru(page, pfn, zone, nid);
++	INIT_LIST_HEAD(&page->lru);
++}
++
++static void __meminit __init_pageblock(unsigned long start_pfn,
++				       unsigned long nr_pages,
++				       unsigned long zone, int nid,
++				       struct dev_pagemap *pgmap)
++{
++	unsigned long nr_pgmask = pageblock_nr_pages - 1;
++	struct page *start_page = pfn_to_page(start_pfn);
++	unsigned long pfn = start_pfn + nr_pages - 1;
++	struct page *page;
 +
 +	/*
-+	 * Start out by walking through the ranges in this zone that have
-+	 * already been initialized. We don't need to do anything with them
-+	 * so we just need to flush them out of the system.
++	 * Enforce the following requirements:
++	 * size > 0
++	 * size < pageblock_nr_pages
++	 * start_pfn -> pfn does not cross pageblock_nr_pages boundary
 +	 */
-+	for_each_free_mem_pfn_range_in_zone(j, zone, spfn, epfn) {
-+		if (*epfn <= first_init_pfn)
-+			continue;
-+		if (*spfn < first_init_pfn)
-+			*spfn = first_init_pfn;
-+		*i = j;
-+		return true;
++	VM_BUG_ON(((start_pfn ^ pfn) | (nr_pages - 1)) > nr_pgmask);
++
++	/*
++	 * Work from highest page to lowest, this way we will still be
++	 * warm in the cache when we call set_pageblock_migratetype
++	 * below.
++	 *
++	 * The loop is based around the page pointer as the main index
++	 * instead of the pfn because pfn is not used inside the loop if
++	 * the section number is not in page flags and WANT_PAGE_VIRTUAL
++	 * is not defined.
++	 */
++	for (page = start_page + nr_pages; page-- != start_page; pfn--) {
++		__init_struct_page_nolru(page, pfn, zone, nid);
++		/*
++		 * Mark page reserved as it will need to wait for onlining
++		 * phase for it to be fully associated with a zone.
++		 *
++		 * We can use the non-atomic __set_bit operation for setting
++		 * the flag as we are still initializing the pages.
++		 */
++		__SetPageReserved(page);
++		/*
++		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
++		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
++		 * page is ever freed or placed on a driver-private list.
++		 */
++		page->pgmap = pgmap;
++		if (!pgmap)
++			INIT_LIST_HEAD(&page->lru);
 +	}
 +
-+	return false;
++	/*
++	 * Mark the block movable so that blocks are reserved for
++	 * movable at startup. This will force kernel allocations
++	 * to reserve their blocks rather than leaking throughout
++	 * the address space during boot when many long-lived
++	 * kernel allocations are made.
++	 *
++	 * bitmap is created for zone's valid pfn range. but memmap
++	 * can be created for invalid pages (for alignment)
++	 * check here not to call set_pageblock_migratetype() against
++	 * pfn out of zone.
++	 *
++	 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
++	 * because this is done early in sparse_add_one_section
++	 */
++	if (!(start_pfn & nr_pgmask))
++		set_pageblock_migratetype(start_page, MIGRATE_MOVABLE);
 +}
 +
-+/*
-+ * Initialize and free pages. We do it in two loops: first we initialize
-+ * struct page, than free to buddy allocator, because while we are
-+ * freeing pages we can access pages that are ahead (computing buddy
-+ * page in __free_one_page()).
-+ *
-+ * In order to try and keep some memory in the cache we have the loop
-+ * broken along max page order boundaries. This way we will not cause
-+ * any issues with the buddy page computation.
-+ */
-+static unsigned long __init
-+deferred_init_maxorder(u64 *i, struct zone *zone, unsigned long *start_pfn,
-+		       unsigned long *end_pfn)
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ static void __meminit init_reserved_page(unsigned long pfn)
+ {
+@@ -5693,6 +5767,25 @@ overlap_memmap_init(unsigned long zone, unsigned long *pfn)
+ 	return false;
+ }
+ 
++static void __meminit __memmap_init_hotplug(unsigned long size, int nid,
++					    unsigned long zone,
++					    unsigned long start_pfn,
++					    struct dev_pagemap *pgmap)
 +{
-+	unsigned long mo_pfn = ALIGN(*start_pfn + 1, MAX_ORDER_NR_PAGES);
-+	unsigned long spfn = *start_pfn, epfn = *end_pfn;
-+	unsigned long nr_pages = 0;
-+	u64 j = *i;
++	unsigned long pfn = start_pfn + size;
 +
-+	/* First we loop through and initialize the page values */
-+	for_each_free_mem_pfn_range_in_zone_from(j, zone, &spfn, &epfn) {
-+		unsigned long t;
++	while (pfn != start_pfn) {
++		unsigned long stride = pfn;
 +
-+		if (mo_pfn <= spfn)
-+			break;
++		pfn = max(ALIGN_DOWN(pfn - 1, pageblock_nr_pages), start_pfn);
++		stride -= pfn;
 +
-+		t = min(mo_pfn, epfn);
-+		nr_pages += deferred_init_pages(zone, spfn, t);
++		__init_pageblock(pfn, stride, zone, nid, pgmap);
 +
-+		if (mo_pfn <= epfn)
-+			break;
++		cond_resched();
 +	}
-+
-+	/* Reset values and now loop through freeing pages as needed */
-+	j = *i;
-+
-+	for_each_free_mem_pfn_range_in_zone_from(j, zone, start_pfn, end_pfn) {
-+		unsigned long t;
-+
-+		if (mo_pfn <= *start_pfn)
-+			break;
-+
-+		t = min(mo_pfn, *end_pfn);
-+		deferred_free_pages(*start_pfn, t);
-+		*start_pfn = t;
-+
-+		if (mo_pfn < *end_pfn)
-+			break;
-+	}
-+
-+	/* Store our current values to be reused on the next iteration */
-+	*i = j;
-+
-+	return nr_pages;
 +}
 +
- /* Initialise remaining memory on a node */
- static int __init deferred_init_memmap(void *data)
+ /*
+  * Initially all pages are reserved - free ones are freed
+  * up by memblock_free_all() once the early boot process is
+@@ -5703,49 +5796,59 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		struct vmem_altmap *altmap)
  {
- 	pg_data_t *pgdat = data;
-+	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
-+	unsigned long spfn = 0, epfn = 0, nr_pages = 0;
-+	unsigned long first_init_pfn, flags;
- 	unsigned long start = jiffies;
--	unsigned long nr_pages = 0;
--	unsigned long spfn, epfn, first_init_pfn, flags;
--	int zid;
- 	struct zone *zone;
--	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
-+	int zid;
- 	u64 i;
+ 	unsigned long pfn, end_pfn = start_pfn + size;
+-	struct page *page;
  
- 	/* Bind memory initialisation thread to a local node if possible */
-@@ -1554,22 +1640,20 @@ static int __init deferred_init_memmap(void *data)
- 		if (first_init_pfn < zone_end_pfn(zone))
- 			break;
- 	}
--	first_init_pfn = max(zone->zone_start_pfn, first_init_pfn);
+ 	if (highest_memmap_pfn < end_pfn - 1)
+ 		highest_memmap_pfn = end_pfn - 1;
+ 
++	if (context == MEMMAP_HOTPLUG) {
+ #ifdef CONFIG_ZONE_DEVICE
+-	/*
+-	 * Honor reservation requested by the driver for this ZONE_DEVICE
+-	 * memory. We limit the total number of pages to initialize to just
+-	 * those that might contain the memory mapping. We will defer the
+-	 * ZONE_DEVICE page initialization until after we have released
+-	 * the hotplug lock.
+-	 */
+-	if (zone == ZONE_DEVICE) {
+-		if (!altmap)
+-			return;
++		/*
++		 * Honor reservation requested by the driver for this
++		 * ZONE_DEVICE memory. We limit the total number of pages to
++		 * initialize to just those that might contain the memory
++		 * mapping. We will defer the ZONE_DEVICE page initialization
++		 * until after we have released the hotplug lock.
++		 */
++		if (zone == ZONE_DEVICE) {
++			if (!altmap)
++				return;
 +
-+	/* If the zone is empty somebody else may have cleared out the zone */
-+	if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
-+						 first_init_pfn))
-+		goto zone_empty;
++			if (start_pfn == altmap->base_pfn)
++				start_pfn += altmap->reserve;
++			end_pfn = altmap->base_pfn +
++				  vmem_altmap_offset(altmap);
++		}
++#endif
++		/*
++		 * For these ZONE_DEVICE pages we don't need to record the
++		 * pgmap as they should represent only those pages used to
++		 * store the memory map. The actual ZONE_DEVICE pages will
++		 * be initialized later.
++		 */
++		__memmap_init_hotplug(end_pfn - start_pfn, nid, zone,
++				      start_pfn, NULL);
  
- 	/*
--	 * Initialize and free pages. We do it in two loops: first we initialize
--	 * struct page, than free to buddy allocator, because while we are
--	 * freeing pages we can access pages that are ahead (computing buddy
--	 * page in __free_one_page()).
-+	 * Initialize and free pages in MAX_ORDER sized increments so
-+	 * that we can avoid introducing any issues with the buddy
-+	 * allocator.
- 	 */
--	for_each_free_mem_pfn_range_in_zone(i, zone, &spfn, &epfn) {
--		spfn = max_t(unsigned long, first_init_pfn, spfn);
--		nr_pages += deferred_init_pages(zone, spfn, epfn);
--	}
--	for_each_free_mem_pfn_range_in_zone(i, zone, &spfn, &epfn) {
--		spfn = max_t(unsigned long, first_init_pfn, spfn);
--		deferred_free_pages(spfn, epfn);
--	}
-+	while (spfn < epfn)
-+		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
-+zone_empty:
- 	pgdat_resize_unlock(pgdat, &flags);
- 
- 	/* Sanity check that the next zone really is unpopulated */
-@@ -1609,9 +1693,9 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
- {
- 	unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
- 	pg_data_t *pgdat = zone->zone_pgdat;
--	unsigned long nr_pages = 0;
--	unsigned long first_init_pfn, spfn, epfn, t, flags;
- 	unsigned long first_deferred_pfn = pgdat->first_deferred_pfn;
-+	unsigned long spfn, epfn, flags;
-+	unsigned long nr_pages = 0;
- 	u64 i;
- 
- 	/* Only the last zone may have deferred pages */
-@@ -1640,36 +1724,24 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
- 		return true;
+-		if (start_pfn == altmap->base_pfn)
+-			start_pfn += altmap->reserve;
+-		end_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
++		return;
  	}
+-#endif
  
--	first_init_pfn = max(zone->zone_start_pfn, first_deferred_pfn);
--
--	if (first_init_pfn >= pgdat_end_pfn(pgdat)) {
-+	/* If the zone is empty somebody else may have cleared out the zone */
-+	if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
-+						 first_deferred_pfn)) {
-+		pgdat->first_deferred_pfn = ULONG_MAX;
- 		pgdat_resize_unlock(pgdat, &flags);
--		return false;
-+		return true;
- 	}
- 
--	for_each_free_mem_pfn_range_in_zone(i, zone, &spfn, &epfn) {
--		spfn = max_t(unsigned long, first_init_pfn, spfn);
--
--		while (spfn < epfn && nr_pages < nr_pages_needed) {
--			t = ALIGN(spfn + PAGES_PER_SECTION, PAGES_PER_SECTION);
--			first_deferred_pfn = min(t, epfn);
--			nr_pages += deferred_init_pages(zone, spfn,
--							first_deferred_pfn);
--			spfn = first_deferred_pfn;
+ 	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
++		struct page *page;
++
+ 		/*
+ 		 * There can be holes in boot-time mem_map[]s handed to this
+ 		 * function.  They do not exist on hotplugged memory.
+ 		 */
+-		if (context == MEMMAP_EARLY) {
+-			if (!early_pfn_valid(pfn))
+-				continue;
+-			if (!early_pfn_in_nid(pfn, nid))
+-				continue;
+-			if (overlap_memmap_init(zone, &pfn))
+-				continue;
+-			if (defer_init(nid, pfn, end_pfn))
+-				break;
 -		}
--
--		if (nr_pages >= nr_pages_needed)
--			break;
-+	/*
-+	 * Initialize and free pages in MAX_ORDER sized increments so
-+	 * that we can avoid introducing any issues with the buddy
-+	 * allocator.
-+	 */
-+	while (spfn < epfn && nr_pages < nr_pages_needed) {
-+		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
-+		first_deferred_pfn = spfn;
++		if (!early_pfn_valid(pfn))
++			continue;
++		if (!early_pfn_in_nid(pfn, nid))
++			continue;
++		if (overlap_memmap_init(zone, &pfn))
++			continue;
++		if (defer_init(nid, pfn, end_pfn))
++			break;
+ 
+ 		page = pfn_to_page(pfn);
+ 		__init_single_page(page, pfn, zone, nid);
+-		if (context == MEMMAP_HOTPLUG)
+-			__SetPageReserved(page);
+ 
+ 		/*
+ 		 * Mark the block movable so that blocks are reserved for
+@@ -5772,7 +5875,6 @@ void __ref memmap_init_zone_device(struct zone *zone,
+ 				   unsigned long size,
+ 				   struct dev_pagemap *pgmap)
+ {
+-	unsigned long pfn, end_pfn = start_pfn + size;
+ 	struct pglist_data *pgdat = zone->zone_pgdat;
+ 	unsigned long zone_idx = zone_idx(zone);
+ 	unsigned long start = jiffies;
+@@ -5788,53 +5890,13 @@ void __ref memmap_init_zone_device(struct zone *zone,
+ 	 */
+ 	if (pgmap->altmap_valid) {
+ 		struct vmem_altmap *altmap = &pgmap->altmap;
++		unsigned long end_pfn = start_pfn + size;
+ 
+ 		start_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+ 		size = end_pfn - start_pfn;
  	}
  
--	for_each_free_mem_pfn_range_in_zone(i, zone, &spfn, &epfn) {
--		spfn = max_t(unsigned long, first_init_pfn, spfn);
--		epfn = min_t(unsigned long, first_deferred_pfn, epfn);
--		deferred_free_pages(spfn, epfn);
+-	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+-		struct page *page = pfn_to_page(pfn);
 -
--		if (first_deferred_pfn == epfn)
--			break;
+-		__init_single_page(page, pfn, zone_idx, nid);
+-
+-		/*
+-		 * Mark page reserved as it will need to wait for onlining
+-		 * phase for it to be fully associated with a zone.
+-		 *
+-		 * We can use the non-atomic __set_bit operation for setting
+-		 * the flag as we are still initializing the pages.
+-		 */
+-		__SetPageReserved(page);
+-
+-		/*
+-		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
+-		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
+-		 * page is ever freed or placed on a driver-private list.
+-		 */
+-		page->pgmap = pgmap;
+-		page->hmm_data = 0;
+-
+-		/*
+-		 * Mark the block movable so that blocks are reserved for
+-		 * movable at startup. This will force kernel allocations
+-		 * to reserve their blocks rather than leaking throughout
+-		 * the address space during boot when many long-lived
+-		 * kernel allocations are made.
+-		 *
+-		 * bitmap is created for zone's valid pfn range. but memmap
+-		 * can be created for invalid pages (for alignment)
+-		 * check here not to call set_pageblock_migratetype() against
+-		 * pfn out of zone.
+-		 *
+-		 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
+-		 * because this is done early in sparse_add_one_section
+-		 */
+-		if (!(pfn & (pageblock_nr_pages - 1))) {
+-			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-			cond_resched();
+-		}
 -	}
- 	pgdat->first_deferred_pfn = first_deferred_pfn;
- 	pgdat_resize_unlock(pgdat, &flags);
++	__memmap_init_hotplug(size, nid, zone_idx, start_pfn, pgmap);
  
+ 	pr_info("%s initialised, %lu pages in %ums\n", dev_name(pgmap->dev),
+ 		size, jiffies_to_msecs(jiffies - start));
 
