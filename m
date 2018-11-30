@@ -2,31 +2,31 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1F5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90412C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF8C20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:47:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BF8C20868
+	by mail.kernel.org (Postfix) with ESMTP id 5837520868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:48:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5837520868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbeLAB5a (ORCPT
+        id S1727152AbeLAB5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:57:30 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56055 "EHLO mail.bootlin.com"
+        Fri, 30 Nov 2018 20:57:40 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56094 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726871AbeLAB5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:57:30 -0500
+        id S1727126AbeLAB5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:57:39 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 23D4A20D27; Fri, 30 Nov 2018 15:47:55 +0100 (CET)
+        id 43397207B0; Fri, 30 Nov 2018 15:48:05 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B8812207B0;
-        Fri, 30 Nov 2018 15:47:44 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id B465620CFC;
+        Fri, 30 Nov 2018 15:47:45 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -44,68 +44,44 @@ Cc:     <devicetree@vger.kernel.org>,
         Marcin Wojtas <mw@semihalf.com>,
         Grzegorz Jaszczyk <jaz@semihalf.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 0/8] Add Armada 3700 COMPHY support
-Date:   Fri, 30 Nov 2018 15:47:35 +0100
-Message-Id: <20181130144743.675-1-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 3/8] phy: enumerate SATA PHY mode
+Date:   Fri, 30 Nov 2018 15:47:38 +0100
+Message-Id: <20181130144743.675-4-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181130144743.675-1-miquel.raynal@bootlin.com>
+References: <20181130144743.675-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Grzegorz Jaszczyk <jaz@semihalf.com>
 
-This series adds a new driver to support Armada 3700 COMPHY IP.
-The series has been tested on an ESPRESSObin with SATA, PCIe
-and USB3 host. For this purpose, patch 1 enumerates the SATA PHY
-mode. The SGMII PHY mode that is supported by the IP has been written
-(uses SMC calls anyway) but could not be tested on this platform.
+Add SATA mode to the PHY framework in preparation of upcoming PHYs
+that will handle it. For instance, SATA mode will be used by the
+Armada3700 COMPHY driver, which supports configuring SERDES lanes to
+be used by various controllers: Ethernet, USB3, SATA and PCIe.
 
-Three series will follow to add PHY support (or at least a PHY nodes
-in the A3700/ESPRESSObin device trees) to the MVEBU AHCI driver, the
-Aardvark PCI controller driver and the MVEBU xHCI driver. All this is
-needed in order to achieve suspend to RAM on this platform.
+Signed-off-by: Grzegorz Jaszczyk <jaz@semihalf.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ include/linux/phy/phy.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Miquèl
-
-
-Changes since v1:
-=================
-* Fix wrong check in ->xlate().
-* Apply the same fix to the cp110 comphy driver from which the a3700
-  driver is based.
-* Added credit to Gregorz Jaszczyk for his work.
-* Added Suggested-by tag to the patch adding the COMPHY DT node.
-
-
-Grzegorz Jaszczyk (1):
-  phy: enumerate SATA PHY mode
-
-Miquel Raynal (7):
-  phy: mvebu-cp110-comphy: fix spelling in structure name
-  phy: mvebu-cp110-comphy: fix port check in ->xlate()
-  phy: add A3700 COMPHY support
-  dt-bindings: phy: mvebu-comphy: extend the file to describe a3700
-    bindings
-  MAINTAINERS: phy: add entry for Armada 3700 COMPHY driver
-  ARM64: dts: marvell: armada-37xx: fix SATA node scope
-  ARM64: dts: marvell: armada-37xx: declare the COMPHY node
-
- .../bindings/phy/phy-mvebu-comphy.txt         |  65 ++++-
- MAINTAINERS                                   |   6 +
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  31 +-
- drivers/phy/marvell/Kconfig                   |  10 +
- drivers/phy/marvell/Makefile                  |   1 +
- drivers/phy/marvell/phy-mvebu-a3700-comphy.c  | 276 ++++++++++++++++++
- drivers/phy/marvell/phy-mvebu-cp110-comphy.c  |   8 +-
- include/linux/phy/phy.h                       |   1 +
- 8 files changed, 381 insertions(+), 17 deletions(-)
- create mode 100644 drivers/phy/marvell/phy-mvebu-a3700-comphy.c
-
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 03b319f89a34..553d8520e37f 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -42,6 +42,7 @@ enum phy_mode {
+ 	PHY_MODE_UFS_HS_A,
+ 	PHY_MODE_UFS_HS_B,
+ 	PHY_MODE_PCIE,
++	PHY_MODE_SATA,
+ };
+ 
+ /**
 -- 
 2.19.1
 
