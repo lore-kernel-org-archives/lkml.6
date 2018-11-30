@@ -2,283 +2,107 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164A9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3456C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81F62082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1F12082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:44:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eqcnhp30"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81F62082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWxaXWCf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F1F12082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbeK3Wwd (ORCPT
+        id S1726837AbeK3Wxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:52:33 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:47236 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbeK3Wwd (ORCPT
+        Fri, 30 Nov 2018 17:53:53 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:34735 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeK3Wxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:52:33 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAUBggUG126629;
-        Fri, 30 Nov 2018 05:42:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543578162;
-        bh=XxZNkJ6kGqvrWbQvqntfwan4RpKXJsE9yclC13CMiZU=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=eqcnhp30bc1lNDdq6kQFuJvJNeL562LYyA/D9bXU6BIiCJ7sR95s40Xvri6hg8mM5
-         yfleMJPhO80eQiL0a2utfVx0co4vCI0Rct0jmdDdO8qwByePAqbwFWW4WuFyxKcqPe
-         r9os/J2T98xNAabom4gl0Dcf4EYu5k7sdsk0w33I=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAUBggsD010835
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 30 Nov 2018 05:42:42 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 30
- Nov 2018 05:42:42 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 30 Nov 2018 05:42:42 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAUBgbnm022498;
-        Fri, 30 Nov 2018 05:42:38 -0600
-Subject: Re: [PATCH 12/16] dt-bindings: remoteproc: ti-pruss: Document
- application node bindings
-To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
- <1543218769-5507-13-git-send-email-rogerq@ti.com>
- <6a945433-00b2-e0e5-2dc8-2a4d2bf0db6f@lechnology.com> <5BFFBA5F.703@ti.com>
- <377707a9-6ea8-8faf-35dc-0aa1fddda272@lechnology.com>
-CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
-        <ssantosh@kernel.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
-        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
-        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C01222D.3060104@ti.com>
-Date:   Fri, 30 Nov 2018 13:42:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Fri, 30 Nov 2018 17:53:53 -0500
+Received: by mail-vs1-f66.google.com with SMTP id y27so3158212vsi.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 03:44:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NfGBLwjoprYk9UKLztyEYMY3kS/F2jQg2rNXpAjWL0c=;
+        b=SWxaXWCf90RC/viOeI8KLUnANscg8zyNRAF4DNDeI2aRRhgW/bjaAVO0yYK+kPYndQ
+         FwumgLU1JctR6jZayR4v38oyETvM7YcEKkYpKgBkXN9XeWP0OYf6rF9Xf/Rbt2fJHxAu
+         ey/CTbzSxeUHtKVf+jJsmhuPiReBbxihRKUwz4efq+9MsxKdlsF+4Rlm0zODqNSkzp/7
+         1V+DKALTN5n8cixAUIDUkWI1C8I+vSdG3jQnxynTDd48uYvKYZslkzErkRih7NoE4Hnu
+         hU9EWUSEl+o5ClYlRfE2uNWxL+MeBjnVIIMYvN9JfXwHK3IYtkk4UAosl5JcFT8dFHwH
+         NOAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NfGBLwjoprYk9UKLztyEYMY3kS/F2jQg2rNXpAjWL0c=;
+        b=TAmSdzHxeL5f+dMFrrCwFFaPv8YbwaZ3nFH9mEBvelPvOHPrz6PqU5hrjS6FyrgdeO
+         mGln5fpbEqAYHbyYmAdEg8AoheZYrJ0fMOhh+cCxU+XFgLGd3GR67bp2uK1dQqUhgTZr
+         DA/Ryuae3hov8QEVfXhcAPuGHuxwoq1w0G9hZaBc4qOk5by+v+5rZ3pSFVA7xPf8nlcE
+         au69naHm12Fp84eL2u2grefWk3fVMicbLcOGcX7vVlSUflJBoQUU6u84tcbbwfdvfhta
+         qLP4xwHH0MQfFHc21wkV8dh4HKMTG6o9D88WUhJyfqQqZ8cpmuSd/nsRAMzgzoaEfGAj
+         8swA==
+X-Gm-Message-State: AA+aEWb16oDigAqJ6Cy9XllfOzowiV8xWM+HpSHKRna9Aef38d3Gv2Vz
+        Qp2rsnCk0g/y1paCjJBtCsNnMc64Twv4AkttrKe6YOFWpfTT
+X-Google-Smtp-Source: AFSGD/UXdTJx7sh2NfJG7XBJXLmAn7HdewZ7ZKdKEcvvI9nbKaRrW4Gi0vfsyUWs2URKCtox8w4Xm2a/mSSkwIBI9HU=
+X-Received: by 2002:a67:2a83:: with SMTP id q125mr2350849vsq.230.1543578292331;
+ Fri, 30 Nov 2018 03:44:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <377707a9-6ea8-8faf-35dc-0aa1fddda272@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <CALjTZvZzHSZ=s0W0Pd-MVd7OA0hYxu0LzsZ+GxYybXKoUQQR6Q@mail.gmail.com>
+ <20181130103222.GA23393@lst.de>
+In-Reply-To: <20181130103222.GA23393@lst.de>
+From:   Rui Salvaterra <rsalvaterra@gmail.com>
+Date:   Fri, 30 Nov 2018 11:44:41 +0000
+Message-ID: <CALjTZvZsk0qA+Yxu7S+8pfa5y6rpihnThrHiAKkZMWsdyC-tVg@mail.gmail.com>
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     hch@lst.de
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/18 18:33, David Lechner wrote:
-> On 11/29/18 4:07 AM, Roger Quadros wrote:
->> On 27/11/18 01:27, David Lechner wrote:
->>> On 11/26/18 1:52 AM, Roger Quadros wrote:
->>>> From: Tero Kristo <t-kristo@ti.com>
->>>>
->>>> Add documentation for the Texas Instruments PRU application nodes.
->>>> These are used to configure specific user applications for PRU instances.
->>>
->>> Could this be made into a generic remoteproc producer/consumer binding? Or
->>> are there really things that are specific to the TI PRU that need to be
->>> handled?
->>
->> The remoteproc handle and firmware name sound generic enough.
->> But there are TI PRU specific properties as well which we'll discuss if
->> they can be made generic.
->>
->>>
->>>>
->>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>> [s-anna@ti.com: some binding updates]
->>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>>> ---
->>>>    .../devicetree/bindings/soc/ti/ti,pruss.txt        | 43 ++++++++++++++++++++++
->>>>    1 file changed, 43 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>>> index 3e5f32f..94c91ee 100644
->>>> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>>> @@ -210,6 +210,38 @@ used in TI Davinci SoCs. Please refer to the corresponding binding document,
->>>>    Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
->>>>      +Application/User Nodes
->>>> +=======================
->>>
->>> Are these supposed to be stand-alone platform devices?
->>>
->>
->> Yes. The first use case we're going to address is the Ethernet ports on the IDKs.
->> (Industrial development Kit) http://www.ti.com/tool/TMDXIDK437X
->>
->>>> +A PRU application/user node typically uses one or more PRU device nodes to
->>>> +implement a PRU application/functionality. Each application/client node would
->>>> +need a reference to at least a PRU node, and optionally pass some configuration
->>>> +parameters.
->>>
->>> I thought device tree is not supposed to be used for configuration.
->>
->> I think we need to word it properly. It is really a hardware/firmware map.
->>>
->>>> +
->>>> +Required Properties:
->>>> +--------------------
->>>> +- prus                 : phandles to the PRU nodes used
->>>> +
->>>> +Optional Properties:
->>>> +--------------------
->>>> +- firmware-name        : firmwares for the PRU cores, the default firmware
->>>> +                         for the core from the PRU node will be used if not
->>>> +                         provided. The firmware names should correspond to
->>>> +                         the PRU cores listed in the 'prus' property
->>>
->>> Perhaps this should be a "compatible" property instead of "firmware-name"? The
->>> driver that matches the compatible string can then set the firmware names.
->>
->> Compatible property is there to choose the application driver. Should have mentioned
->> it in Required properties.
->>
->> It is tricky for the driver to decipher the firmware-name as it needs to support
->> the same use case on multiple platforms and the firmware name will be different for each.
->> The driver itself is platform agnostic.
->>
->> So providing the firmware-name in the DT is the easiest and scalable solution.
->>>
->>>> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
->>>> +                         register for a PRU. This selects the internal muxing
->>>> +                         scheme for the PRU instance. If not provided, the
->>>> +                         default out-of-reset value (0) for the PRU core is
->>>> +                         used. Values should correspond to the PRU cores listed
->>>> +                         in the 'prus' property
->>>
->>> Is this supposed to be a pinmux? So maybe we should be using pinmux bindings?
->>
->> We already have pinmux binding for the PRU pins. This GP mux setting is an odd duck.
->>
->> It provides a way for a set of signals inside the ICSS to be connected to the PRU pins
->> on the SOC, which are again multiplexed with other SOC pins via the regular pinmux.
->>
->> Some of the sets are
->>
->> GPIO mode (0)
->> EnDAT mode (1)
->> SD mode (3)
->> MII2 mode (4)
->>
->> The application node needs to decide which set it wants to use.
->>
->>>
->>>> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
->>>> +                         with each entry consisting of 4 cell-values. First one
->>>> +                         is an index towards the "prus" property to identify the
->>>> +                         PRU core for the interrupt map, second is the PRU
->>>> +                         System Event id, third is the PRU interrupt channel id
->>>> +                         and fourth is the PRU host interrupt id. If provided,
->>>> +                         this map will supercede any other configuration
->>>> +                         provided through firmware
->>>
->>> Could this mapping just be cells of the interrupt consumer nodes instead of an
->>> extra property? As I mentioned in a reply to another patch, unless there is a
->>> compelling reason to do otherwise, the channel to host mapping can be required
->>> to be 1:1 as recommended in the TRMs, so that cell can be omitted. Also, since
->>> the interrupt controller is independent of the PRU cores, the cell specifying the
->>> index of the PRU core is not needed in this case. The #interrupt-cells already
->>> includes a cell for the system event number, so this just leaves one cell, the
->>> host channel, to be added to the #interrupt-cells.
->>>
->>> So, instead of:
->>>
->>>      ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
->>>
->>> we could have:
->>>
->>>      interrupt-parent = <&pruss_intc>;
->>>      interrupts = <16 7>, <19 3>;
->>>
->>
->> No, interrupts property will be used to provide the actual sysevent IRQs to the
->> application driver. Below is how the ethernet application node looks like.
->>
->>     pruss2_eth {
->>         compatible = "ti,am57-prueth";
->>         prus = <&pru2_0>, <&pru2_1>;
->>         firmware-name = "ti-pruss/am57xx-pru0-prueth-fw.elf",
->>                 "ti-pruss/am57xx-pru1-prueth-fw.elf";
->>         sram = <&ocmcram1>;
->>         interrupt-parent = <&pruss2_intc>;
->>         mii-rt = <&pruss2_mii_rt>;
->>         iep = <&pruss2_iep>;
->>
->>         pruss2_emac0: ethernet-mii0 {
->>             phy-handle = <&pruss2_eth0_phy>;
->>             phy-mode = "mii";
->>             interrupts = <20>, <22>;
->>             interrupt-names = "rx", "tx";
->>         };
->>
->>         pruss2_emac1: ethernet-mii1 {
->>             phy-handle = <&pruss2_eth1_phy>;
->>             phy-mode = "mii";
->>             interrupts = <21>, <23>;
->>             interrupt-names = "rx", "tx";
->>         };
->>     };
->>
->> You can see that interrupts is providing the RX and TX sysevents.
->>
->> There needs to be a different way to provide the internal INTC map.
->>
->> Currently there are 2 ways of providing the INTC map. One is via the
->> resource table and other is via DT.
->>
->>> There are also already alternate interrupt bindings that allow for the case
->>> where there is more than one interrupt-parent.
-> 
-> Thanks for the insights. On the example above there is not a
-> ti,pru-interrupt-map property. Does this mean that the interrupt
-> mapping table comes from the firmware/resource-table in this case?
-> 
+On Fri, 30 Nov 2018 at 10:32, Christoph Hellwig <hch@lst.de> wrote:
+>
+> Hi Rui,
+>
+> can you check if the patch below fixes the issue for you?
+>
+> diff --git a/arch/powerpc/sysdev/dart_iommu.c b/arch/powerpc/sysdev/dart_iommu.c
+> index 2e24fc87ed84..809797dbe169 100644
+> --- a/arch/powerpc/sysdev/dart_iommu.c
+> +++ b/arch/powerpc/sysdev/dart_iommu.c
+> @@ -392,7 +392,9 @@ static void pci_dma_dev_setup_dart(struct pci_dev *dev)
+>
+>  static bool iommu_bypass_supported_dart(struct pci_dev *dev, u64 mask)
+>  {
+> -       return dart_is_u4 && dart_device_on_pcie(&dev->dev);
+> +       return dart_is_u4 &&
+> +               dart_device_on_pcie(&dev->dev) &&
+> +               mask >= DMA_BIT_MASK(40);
+>  }
+>
+>  void __init iommu_init_early_dart(struct pci_controller_ops *controller_ops)
 
-Yes, that's correct.
+Hi, Christoph,
 
->>>
->>>> +
->>>>    Example:
->>>>    ========
->>>>    1.    /* AM33xx PRU-ICSS */
->>>> @@ -397,3 +429,14 @@ Example:
->>>>                ...
->>>>            };
->>>>        };
->>>> +
->>>> +3:    /* PRU application node example */
->>>> +    app_node: app_node {
->>>> +        prus = <&pru1_0>, <&pru1_1>;
->>>> +        firmware-name = "pruss-app-fw", "pruss-app-fw-2";
->>>> +        ti,pruss-gp-mux-sel = <2>, <1>;
->>>> +        /* setup interrupts for prus:
->>>> +           prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
->>>> +           prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
->>>> +        ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
->>>> +    }
->>>>
->>>
->>
+Thanks for the quick response! I applied it on top of your
+powerpc-dma.4 branch and retested.
+I'm not seeing nouveau complaining anymore (I'm not using X11 or any
+DE, though).
+In any case and FWIW, this series is
 
-cheers,
--roger
+Tested-by: Rui Salvaterra <rsalvaterra@gmail.com>
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thanks,
+Rui
