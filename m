@@ -2,126 +2,107 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9A3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECA4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C5420868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:03:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C5420868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E3AA721473
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AA721473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbeK3XMl (ORCPT
+        id S1727149AbeK3XM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:12:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42482 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726473AbeK3XMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:12:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0A177AE8F;
-        Fri, 30 Nov 2018 12:03:35 +0000 (UTC)
-Subject: Re: [PATCH 1/2] x86/mm: Fix guard hole handling
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org
-Cc:     boris.ostrovsky@oracle.com, bhe@redhat.com, x86@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20181130115758.4425-1-kirill.shutemov@linux.intel.com>
- <20181130115758.4425-2-kirill.shutemov@linux.intel.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <76b8ca15-405a-055f-41b3-532b116c3a8b@suse.com>
-Date:   Fri, 30 Nov 2018 13:03:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 30 Nov 2018 18:12:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58668 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbeK3XM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 18:12:57 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1825D3001FCB;
+        Fri, 30 Nov 2018 12:03:53 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 50713104C53F;
+        Fri, 30 Nov 2018 12:03:45 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 30 Nov 2018 13:03:52 +0100 (CET)
+Date:   Fri, 30 Nov 2018 13:03:45 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Enke Chen <enkechen@cisco.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
+        Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH v5 1/2] kernel/signal: Signal-based pre-coredump
+ notification
+Message-ID: <20181130120344.GA25998@redhat.com>
+References: <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
+ <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
+ <20181026082812.GA10581@redhat.com>
+ <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
+ <20181029111804.GA24820@redhat.com>
+ <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
+ <80e96710-f424-9b39-72ee-9cc7cbe7a5f7@cisco.com>
+ <20181128151911.GN3505@e103592.cambridge.arm.com>
+ <ad461da7-f0a6-7912-3201-e440dc372f89@cisco.com>
+ <20181129115520.GO3505@e103592.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181130115758.4425-2-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129115520.GO3505@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 30 Nov 2018 12:03:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/11/2018 12:57, Kirill A. Shutemov wrote:
-> There is a guard hole at the beginning of kernel address space, also
-> used by hypervisors. It occupies 16 PGD entries.
-> 
-> We do not state the reserved range directly, but calculate it relative
-> to other entities: direct mapping and user space ranges.
-> 
-> The calculation got broken by recent change in kernel memory layout: LDT
-> remap range is now mapped before direct mapping and makes the calculation
-> invalid.
-> 
-> The breakage leads to crash on Xen dom0 boot[1].
-> 
-> State the reserved range directly. It's part of kernel ABI (hypervisors
-> expect it to be stable) and must not depend on changes in the rest of
-> kernel memory layout.
-> 
-> [1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
-> Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
-> ---
->  arch/x86/include/asm/pgtable_64_types.h |  5 +++++
->  arch/x86/mm/dump_pagetables.c           |  8 ++++----
->  arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
->  3 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-> index 84bd9bdc1987..13aef22cee18 100644
-> --- a/arch/x86/include/asm/pgtable_64_types.h
-> +++ b/arch/x86/include/asm/pgtable_64_types.h
-> @@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
->   */
->  #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
->  
-> +#define GUARD_HOLE_PGD_ENTRY	-256UL
-> +#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
-> +#define GUARD_HOLE_BASE_ADDR	(LDT_PGD_ENTRY << PGDIR_SHIFT)
+On 11/29, Dave Martin wrote:
+>
+> SIGCHLD + wait() is immune to this problem for other child status
+> notifications (albeit with higher overhead).
+>
+> Unless I've missed something fundamental, signals simply aren't a
+> reliable data transport
 
-s/LDT_PGD_ENTRY/GUARD_HOLE_PGD_ENTRY/
+Yes. But I hope we are not going to implement WCOREDUMP.
 
+I am not fan of this patch, but at least it is simple.
 
-Juergen
+Oleg.
+
