@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D91AC64EB4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF2CC65BAF
 	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D9B20868
+	by mail.kernel.org (Postfix) with ESMTP id 808442145D
 	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HasY6LQt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D9B20868
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eR81Gzpz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 808442145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbeLAFx0 (ORCPT
+        id S1726964AbeLAFx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:53:26 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:32891 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbeLAFxZ (ORCPT
+        Sat, 1 Dec 2018 00:53:27 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43611 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeLAFx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:53:25 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c123so3239063pfb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 10:43:14 -0800 (PST)
+        Sat, 1 Dec 2018 00:53:26 -0500
+Received: by mail-pg1-f196.google.com with SMTP id v28so2856085pgk.10
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 10:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=c70yC8nTUX49YKlETWoE+QkSk9SIJlmG5ulj2mcAOIQ=;
-        b=HasY6LQt1kbAfq6HXFV0B4/cxttvkZ5qDQxWLYxJwURXGtGt+IFNl6b7i/Le9BSliE
-         N1hXLFUfFfhxNcZVFV/YhkWv6metAzkUiggaHlRr5tl8WUxqLnDFSJTOeQter7MuF0/+
-         p/asvmqul8e5yGAsEwGJmPoIW6ni/dnP0qpZ8=
+        bh=IG7KRCWaojU1bB2x6elFS8JLJg5OGapgO5FtAnCgCzM=;
+        b=eR81GzpzDzdMjHwlH7UN8hQc2PhFXh4zxkagfQpuLUEoJz/H3yCRLL4gV6X7c6pL2g
+         xOIZZUGPma3AUQJsZIb4UnRjn3c7Ez6dWs+y1LRv28eyBAa298s25pm+O1kOCe6zbokD
+         je/h9wBxtXRRbXRY8jrb8Je0qcjAi8kN7JyMs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=c70yC8nTUX49YKlETWoE+QkSk9SIJlmG5ulj2mcAOIQ=;
-        b=EKUpSmIUQQjaOCWmVNyTVXi4z53EYMaPgC82Wq6o0bPAxQbV+VSXRtqg2QLQFsOW2v
-         UdBqrFJlzwxQyjqrh3E+bt4oo1Y61HiSW63886I7gI7YO6yfiiDIn4QJNHI3ox7uYSUo
-         FJU3evrVQANFFlwr2l/ntAePX2BvUfpWOJHuPmkEMI07YdhvLMDzf1IJI9c7F31ShF35
-         TerwC+rJJjxSIyPg+Myvfs4Kdo89yDrX9c2BtmlHFdXP3GvS8CI9r1QJFDlk3EAzV0gR
-         b0wsR1xT2ukwFbDM69I5i0zHjOgPTTFfkb/4X1h14Pvv0638q4OzFJN91psvFQ8F7cCr
-         wPQg==
-X-Gm-Message-State: AA+aEWY14YYDSL5un1HQwaQXaSCZ7nR/7Y1qpoVSQToJqkC5+RNnKUV5
-        EZ1y38WN0uLluwlfSaJzFqDpXQ==
-X-Google-Smtp-Source: AFSGD/XzNHY9kWDpwaeQcBGsnouBEkdj5n/q2gSqwQ/Jg+tVRFFP23O62II+IEaE8Low4nMRLrIzbA==
-X-Received: by 2002:a63:4f5e:: with SMTP id p30mr5734462pgl.71.1543603393874;
-        Fri, 30 Nov 2018 10:43:13 -0800 (PST)
+        bh=IG7KRCWaojU1bB2x6elFS8JLJg5OGapgO5FtAnCgCzM=;
+        b=TNCniwNF7dbp2wqUEf7cuyhvEZejGWh+TzPbnW2xr/9EE4bs+rZKQiLDksyWQJ/GjG
+         w6E83xMBQZKBZ03wDvBQD6l5KugLhXEfDuXTQHHhaTtZKcgVkaHpqBAm0MQG8IQvDoqA
+         gOgYtSSKNsKwNC2GzzlH+aTNePonL+lvut2w9SJHL9CyDOo/R7UlTa8yvWXoi+fU9W/h
+         hT/SvVo4iv+9b/AKLJ9vu0Dt5jGXOAYD8mElZn2lC6AjvZvfeq+RS5bmPGG2HpPRJ9/o
+         eKIoiANAjxypK4VRqnKobP28iibD57smo0xte09E0uEv6OTbOva/ewbuSzAs4ste36lD
+         qhjQ==
+X-Gm-Message-State: AA+aEWY9fhhcUw8aZ7peSljXnHtCuX0CItasWaSrSffP0nnXpc038i4H
+        SMrsO8yO7Ov+FpEBlz9qdXt3w7d+Nbg=
+X-Google-Smtp-Source: AFSGD/VruTurxButpnNWTJKd4LeKbbF5ewudhVyxxtbRET00jIeRD7eFXTLI25rW5Panaj2uw8Kn0Q==
+X-Received: by 2002:a63:9749:: with SMTP id d9mr5591505pgo.415.1543603394789;
+        Fri, 30 Nov 2018 10:43:14 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id l184sm12743147pfc.112.2018.11.30.10.43.12
+        by smtp.gmail.com with ESMTPSA id l184sm12743147pfc.112.2018.11.30.10.43.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 10:43:13 -0800 (PST)
+        Fri, 30 Nov 2018 10:43:14 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] coresight: etm3x: Release CLAIM tag when operated from perf
-Date:   Fri, 30 Nov 2018 11:43:06 -0700
-Message-Id: <1543603387-32645-6-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 6/6] coresight: fix spelling mistake "deffered" -> "deferred"
+Date:   Fri, 30 Nov 2018 11:43:07 -0700
+Message-Id: <1543603387-32645-7-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543603387-32645-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1543603387-32645-1-git-send-email-mathieu.poirier@linaro.org>
@@ -69,28 +69,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch deals with the release of the CLAIM tag when the ETM is
-operated from perf.  Otherwise the tag is left asserted and subsequent
-requests to use the device fail.
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a spelling mistake in the dev_info error message, fix it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-etm3x.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwtracing/coresight/coresight-stm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
-index 6f30d52da9e4..9a63e87ea5f3 100644
---- a/drivers/hwtracing/coresight/coresight-etm3x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm3x.c
-@@ -601,6 +601,7 @@ static void etm_disable_perf(struct coresight_device *csdev)
- 	 * power down the tracer.
- 	 */
- 	etm_set_pwrdwn(drvdata);
-+	coresight_disclaim_device_unlocked(drvdata->base);
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index 35d6f9709274..ef339ff22090 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -856,7 +856,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
  
- 	CS_LOCK(drvdata->base);
- }
+ 	if (stm_register_device(dev, &drvdata->stm, THIS_MODULE)) {
+ 		dev_info(dev,
+-			 "stm_register_device failed, probing deffered\n");
++			 "stm_register_device failed, probing deferred\n");
+ 		return -EPROBE_DEFER;
+ 	}
+ 
 -- 
 2.7.4
 
