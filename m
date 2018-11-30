@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68044C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB9C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3894A2082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3894A2082F
+	by mail.kernel.org (Postfix) with ESMTP id 985AA2082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985AA2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbeK3TH1 (ORCPT
+        id S1727177AbeK3THd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:07:27 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50182 "EHLO
+        Fri, 30 Nov 2018 14:07:33 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50184 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbeK3TH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:07:26 -0500
+        id S1727100AbeK3TH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 14:07:27 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 5AD065FDD9; Fri, 30 Nov 2018 15:58:55 +0800 (CST)
+        id 60E0F5FDF9; Fri, 30 Nov 2018 15:58:55 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -33,9 +33,9 @@ To:     Yong Deng <yong.deng@magewell.com>,
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] [DO NOT MERGE] ARM: dts: sunxi: bananapi-m2p: Add HDF5640 camera module
-Date:   Fri, 30 Nov 2018 15:58:48 +0800
-Message-Id: <20181130075849.16941-6-wens@csie.org>
+Subject: [PATCH 6/6] [DO NOT MERGE] ARM: dts: sunxi: libretech-all-h3-cc: Add HDF5640 camera module
+Date:   Fri, 30 Nov 2018 15:58:49 +0800
+Message-Id: <20181130075849.16941-7-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181130075849.16941-1-wens@csie.org>
 References: <20181130075849.16941-1-wens@csie.org>
@@ -46,19 +46,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Bananapi M2+ comes with an optional sensor based on the ov5640 from
-Omnivision. Enable the support for it in the DT.
+The Libretech ALL-H3-CC is compatible with the Orange Pi's camera sensor
+module. This module itself features a detachable camera sensor module
+ribbon connector, which is populated with a GC2035 sensor by default.
+The connector is also compatible with Bananapi's HDF5640 camera module,
+which features an OV5640 sensor. The Orange Pi module however does not
+activate the auto focus feature of the HDF5640 module.
+
+Enable the camera by enabling the CSI controller, I2C control bus, and
+adding needed regulator supplies. As the schematics for the module are
+not available, the regulators and GPIO lines controlling them are just
+an educated guess.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/boot/dts/sunxi-bananapi-m2-plus.dtsi | 87 +++++++++++++++++++
- 1 file changed, 87 insertions(+)
+ .../boot/dts/sunxi-libretech-all-h3-cc.dtsi   | 81 +++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sunxi-bananapi-m2-plus.dtsi b/arch/arm/boot/dts/sunxi-bananapi-m2-plus.dtsi
-index b3283aeb5b7d..d97a98acf378 100644
---- a/arch/arm/boot/dts/sunxi-bananapi-m2-plus.dtsi
-+++ b/arch/arm/boot/dts/sunxi-bananapi-m2-plus.dtsi
-@@ -89,6 +89,42 @@
+diff --git a/arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi b/arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi
+index 1eadc132390c..3252e1af59cd 100644
+--- a/arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi
++++ b/arch/arm/boot/dts/sunxi-libretech-all-h3-cc.dtsi
+@@ -52,6 +52,36 @@
  		};
  	};
  
@@ -69,7 +78,7 @@ index b3283aeb5b7d..d97a98acf378 100644
 +		regulator-max-microvolt = <2800000>;
 +		startup-delay-us = <200>; /* 50 us + board delays */
 +		enable-active-high;
-+		gpio = <&pio 3 14 GPIO_ACTIVE_HIGH>; /* PD14 */
++		gpio = <&r_pio 0 0 GPIO_ACTIVE_HIGH>; /* PL0 */
 +	};
 +
 +	reg_cam_dovdd: cam-dovdd {
@@ -77,15 +86,9 @@ index b3283aeb5b7d..d97a98acf378 100644
 +		regulator-name = "csi-dovdd";
 +		regulator-min-microvolt = <2800000>;
 +		regulator-max-microvolt = <2800000>;
-+		/*
-+		 * This regulator also powers the pull-ups for the I2C bus.
-+		 * For some reason, if this is turned off, subsequent use
-+		 * of the I2C bus, even when turned on, does not work.
-+		 */
 +		startup-delay-us = <200>; /* 50 us + board delays */
-+		regulator-always-on;
 +		enable-active-high;
-+		gpio = <&pio 3 14 GPIO_ACTIVE_HIGH>; /* PD14 */
++		gpio = <&r_pio 0 0 GPIO_ACTIVE_HIGH>; /* PL0 */
 +	};
 +
 +	reg_cam_dvdd: cam-dvdd {
@@ -95,14 +98,14 @@ index b3283aeb5b7d..d97a98acf378 100644
 +		regulator-max-microvolt = <1500000>;
 +		startup-delay-us = <200>; /* 50 us + board delays */
 +		enable-active-high;
-+		gpio = <&pio 3 14 GPIO_ACTIVE_HIGH>; /* PD14 */
++		gpio = <&r_pio 0 1 GPIO_ACTIVE_HIGH>; /* PL1 */
 +	};
 +
- 	reg_gmac_3v3: gmac-3v3 {
- 		      compatible = "regulator-fixed";
- 		      regulator-name = "gmac-3v3";
-@@ -106,6 +142,26 @@
- 	};
+ 	reg_vcc1v2: vcc1v2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc1v2";
+@@ -128,6 +158,26 @@
+ 	cpu-supply = <&reg_vdd_cpux>;
  };
  
 +&csi {
@@ -128,7 +131,7 @@ index b3283aeb5b7d..d97a98acf378 100644
  &de {
  	status = "okay";
  };
-@@ -149,6 +205,37 @@
+@@ -165,6 +215,37 @@
  	};
  };
  
@@ -143,8 +146,8 @@ index b3283aeb5b7d..d97a98acf378 100644
 +		clocks = <&ccu CLK_CSI_MCLK>;
 +		clock-names = "xclk";
 +
-+		reset-gpios = <&pio 4 14 GPIO_ACTIVE_LOW>; /* PE14 */
-+		powerdown-gpios = <&pio 4 15 GPIO_ACTIVE_HIGH>; /* PE15 */
++		powerdown-gpios = <&pio 4 14 GPIO_ACTIVE_HIGH>; /* PE14 */
++		reset-gpios = <&pio 4 15 GPIO_ACTIVE_LOW>; /* PE15 */
 +		AVDD-supply = <&reg_cam_avdd>;
 +		DOVDD-supply = <&reg_cam_dovdd>;
 +		DVDD-supply = <&reg_cam_dvdd>;
