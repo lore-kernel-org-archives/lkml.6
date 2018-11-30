@@ -2,183 +2,107 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667B0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9D2C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33EF420834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33EF420834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 53AA42145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:18:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JNwz99Xq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53AA42145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbeLAE2i (ORCPT
+        id S1727789AbeLAE2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 23:28:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:32774 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbeLAE2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 23:28:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82AB0EBD;
-        Fri, 30 Nov 2018 09:18:39 -0800 (PST)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 08D4F3F5A0;
-        Fri, 30 Nov 2018 09:18:37 -0800 (PST)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        catalin.marinas@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
-        vladimir.murzin@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 7/7] arm64: capabilities: Batch cpu_enable callbacks
-Date:   Fri, 30 Nov 2018 17:18:06 +0000
-Message-Id: <1543598286-2663-8-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543598286-2663-1-git-send-email-suzuki.poulose@arm.com>
-References: <1543598286-2663-1-git-send-email-suzuki.poulose@arm.com>
+        Fri, 30 Nov 2018 23:28:47 -0500
+Received: from mail-pf1-f178.google.com ([209.85.210.178]:46422 "EHLO
+        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeLAE2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 23:28:47 -0500
+Received: by mail-pf1-f178.google.com with SMTP id c73so3103793pfe.13
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 09:18:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=0XiIgNN5g8m0ASixQgc70B8VnwScjACFWrnXhl1VGDw=;
+        b=JNwz99XqEwXtIMdWbLnvpSEUZkwNFoXIB1C7Zm/kZK92JZc1cRZyIt1z78uu5fpVuG
+         IV/uiALs7fJ+3mOuF0LH5op48Sfe5dbFhi2LfM5BYhuiatSN9KzDKVVcRWTbxJmPs4Pr
+         ItS5/E6o1rJ84HX+OoS1OlEOZ+hpTyvkWZc2I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=0XiIgNN5g8m0ASixQgc70B8VnwScjACFWrnXhl1VGDw=;
+        b=VShaKau4FLXoEmV8MGYDS1kZXHueH7K3gYOXa+iqw8Sb8CG0sl2Uapomr0YuEOwpMR
+         P53kmQHsdV7h1ZNimFymH6nthZNWHco8I2b6DL8GdZqQmHFvocd1XwNkBRU81YiV8nEN
+         mN5zuLFAX019Okd8VWyEzjVLsk5r+4X06ByE8QIR5x8HAhuF59KBUUztdLJT3kVvxDa8
+         BHnv1jNjdi1pzvDx+X8ZQM1IOH80+HzzxkTkxnwNQRwExb1QS9eMECKrYPLrI9WDzuR/
+         /EUsN4YjcN5tSsd8hMymkEMSdtX29sgI/JQJA3qgN5B3MdAZQvkZjbW5q09oKqSrOzkY
+         6Hmw==
+X-Gm-Message-State: AA+aEWb/hEed5SN1+wBebUudE0OGBwjOTUhw7Ekp4LQbzNSuLz4rWitd
+        m40jXIHwjSrOpI5Eq+bxhPQg/pkhut8J/A==
+X-Google-Smtp-Source: AFSGD/W1fBYDXbAFY4FaWsWGk7lg+QJSgoM6r3K/oZ6+aXAzNEHjdDzHK8Q35IzN8sLI9imBjN63Uw==
+X-Received: by 2002:a63:ca0a:: with SMTP id n10mr5554129pgi.258.1543598327890;
+        Fri, 30 Nov 2018 09:18:47 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id a9sm5672487pgq.20.2018.11.30.09.18.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 09:18:47 -0800 (PST)
+Date:   Fri, 30 Nov 2018 09:18:46 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Popov <alex.popov@linux.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [GIT PULL] gcc-plugins fix for v4.20-rc5
+Message-ID: <20181130171846.GA48303@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We use a stop_machine call for each available capability to
-enable it on all the CPUs available at boot time. Instead
-we could batch the cpu_enable callbacks to a single stop_machine()
-call to save us some time.
+Hi Linus,
 
-Reviewed-by: Vladimiri Murzin <vladimir.murzin@arm.com>
-Tested-by: Vladimiri Murzin <vladimir.murzin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- arch/arm64/include/asm/cpufeature.h |  3 ++
- arch/arm64/kernel/cpufeature.c      | 70 +++++++++++++++++++++++--------------
- 2 files changed, 47 insertions(+), 26 deletions(-)
+Please pull this gcc-plugin fix for v4.20-rc5.
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 7e2ec64..0a15e2c 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -357,6 +357,9 @@ extern DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
- extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
- extern struct static_key_false arm64_const_caps_ready;
- 
-+#define for_each_available_cap(cap)		\
-+	for_each_set_bit(cap, cpu_hwcaps, ARM64_NCAPS)
-+
- bool this_cpu_has_cap(unsigned int cap);
- 
- static inline bool cpu_have_feature(unsigned int num)
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 13d729c..b12b9933 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1531,11 +1531,27 @@ static void update_cpu_capabilities(u16 scope_mask)
- 	}
- }
- 
--static int __enable_cpu_capability(void *arg)
-+/*
-+ * Enable all the available capabilities on this CPU. The capabilities
-+ * with BOOT_CPU scope are handled separately and hence skipped here.
-+ */
-+static int cpu_enable_non_boot_scope_capabilities(void *__unused)
- {
--	const struct arm64_cpu_capabilities *cap = arg;
-+	int i;
-+	u16 non_boot_scope = SCOPE_ALL & ~SCOPE_BOOT_CPU;
- 
--	cap->cpu_enable(cap);
-+	for_each_available_cap(i) {
-+		const struct arm64_cpu_capabilities *cap = cpu_hwcaps_ptrs[i];
-+
-+		if (WARN_ON(!cap))
-+			continue;
-+
-+		if (!(cap->type & non_boot_scope))
-+			continue;
-+
-+		if (cap->cpu_enable)
-+			cap->cpu_enable(cap);
-+	}
- 	return 0;
- }
- 
-@@ -1543,21 +1559,29 @@ static int __enable_cpu_capability(void *arg)
-  * Run through the enabled capabilities and enable() it on all active
-  * CPUs
-  */
--static void __init
--__enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			  u16 scope_mask)
-+static void __init enable_cpu_capabilities(u16 scope_mask)
- {
-+	int i;
-+	const struct arm64_cpu_capabilities *caps;
-+	bool boot_scope;
-+
- 	scope_mask &= ARM64_CPUCAP_SCOPE_MASK;
--	for (; caps->matches; caps++) {
--		unsigned int num = caps->capability;
-+	boot_scope = !!(scope_mask & SCOPE_BOOT_CPU);
- 
--		if (!(caps->type & scope_mask) || !cpus_have_cap(num))
-+	for (i = 0; i < ARM64_NCAPS; i++) {
-+		unsigned int num;
-+
-+		caps = cpu_hwcaps_ptrs[i];
-+		if (!caps || !(caps->type & scope_mask))
-+			continue;
-+		num = caps->capability;
-+		if (!cpus_have_cap(num))
- 			continue;
- 
- 		/* Ensure cpus_have_const_cap(num) works */
- 		static_branch_enable(&cpu_hwcap_keys[num]);
- 
--		if (caps->cpu_enable) {
-+		if (boot_scope && caps->cpu_enable)
- 			/*
- 			 * Capabilities with SCOPE_BOOT_CPU scope are finalised
- 			 * before any secondary CPU boots. Thus, each secondary
-@@ -1566,25 +1590,19 @@ __enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 			 * the boot CPU, for which the capability must be
- 			 * enabled here. This approach avoids costly
- 			 * stop_machine() calls for this case.
--			 *
--			 * Otherwise, use stop_machine() as it schedules the
--			 * work allowing us to modify PSTATE, instead of
--			 * on_each_cpu() which uses an IPI, giving us a PSTATE
--			 * that disappears when we return.
- 			 */
--			if (scope_mask & SCOPE_BOOT_CPU)
--				caps->cpu_enable(caps);
--			else
--				stop_machine(__enable_cpu_capability,
--					     (void *)caps, cpu_online_mask);
--		}
-+			caps->cpu_enable(caps);
- 	}
--}
- 
--static void __init enable_cpu_capabilities(u16 scope_mask)
--{
--	__enable_cpu_capabilities(arm64_errata, scope_mask);
--	__enable_cpu_capabilities(arm64_features, scope_mask);
-+	/*
-+	 * For all non-boot scope capabilities, use stop_machine()
-+	 * as it schedules the work allowing us to modify PSTATE,
-+	 * instead of on_each_cpu() which uses an IPI, giving us a
-+	 * PSTATE that disappears when we return.
-+	 */
-+	if (!boot_scope)
-+		stop_machine(cpu_enable_non_boot_scope_capabilities,
-+			     NULL, cpu_online_mask);
- }
- 
- /*
+Thanks!
+
+-Kees
+
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
+
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/gcc-plugins-v4.20-rc5
+
+for you to fetch changes up to ef1a8409348966f0b25ff97a170d6d0367710ea9:
+
+  stackleak: Disable function tracing and kprobes for stackleak_erase() (2018-11-30 09:05:07 -0800)
+
+----------------------------------------------------------------
+stackleak plugin fix
+
+- Fix crash by not allowing kprobing of stackleak_erase() (Alexander Popov)
+
+----------------------------------------------------------------
+Alexander Popov (1):
+      stackleak: Disable function tracing and kprobes for stackleak_erase()
+
+ kernel/stackleak.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
 -- 
-2.7.4
-
+Kees Cook
