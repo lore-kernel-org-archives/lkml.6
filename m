@@ -2,224 +2,105 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F249C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18086C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D25206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:51:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D25206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D9F1B2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:51:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F1B2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbeK3UAa (ORCPT
+        id S1727238AbeK3UAd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:00:30 -0500
-Received: from mga03.intel.com ([134.134.136.65]:22359 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeK3UAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:00:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 00:51:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,298,1539673200"; 
-   d="scan'208";a="117421785"
-Received: from ikonopko-mobl1.ger.corp.intel.com (HELO [10.255.132.242]) ([10.255.132.242])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Nov 2018 00:51:50 -0800
-Subject: Re: [PATCH] lightnvm: simplify geometry enumeration
-To:     =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>,
-        marcin.dziegielewski@intel.com, javier@cnexlabs.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keith.busch@intel.com, linux-nvme@lists.infradead.org
-References: <20181129142738.9567-1-mb@lightnvm.io>
-From:   Igor Konopko <igor.j.konopko@intel.com>
-Message-ID: <b8e97f61-51b4-d60c-c37e-21b5471b9f30@intel.com>
-Date:   Fri, 30 Nov 2018 09:51:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181129142738.9567-1-mb@lightnvm.io>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 30 Nov 2018 15:00:33 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:28387 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726572AbeK3UAc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:00:32 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAU8iRER024678;
+        Fri, 30 Nov 2018 09:51:32 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2nxw030u0q-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 30 Nov 2018 09:51:32 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C5E2C1E2;
+        Fri, 30 Nov 2018 09:50:59 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 151D52670;
+        Fri, 30 Nov 2018 08:51:29 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 30 Nov
+ 2018 09:51:28 +0100
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Fri, 30 Nov 2018 09:51:28 +0100
+From:   Pascal PAILLET-LME <p.paillet@st.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+Subject: Re: [PATCH v6 3/8] dt-bindings: regulator: document stpmic1 pmic
+ regulators
+Thread-Topic: [PATCH v6 3/8] dt-bindings: regulator: document stpmic1 pmic
+ regulators
+Thread-Index: AQHUhnGMXziu4rqWSUmQ9+/ALvBZeg==
+Date:   Fri, 30 Nov 2018 08:51:28 +0000
+Message-ID: <5C00FA0F.3020303@st.com>
+References: <1543337529-22301-1-git-send-email-p.paillet@st.com>
+ <1543337529-22301-4-git-send-email-p.paillet@st.com>
+ <20181128094801.GF6828@sirena.org.uk>
+In-Reply-To: <20181128094801.GF6828@sirena.org.uk>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.50]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <9DB619103FCF3F4681616A2DF44F3FBE@st.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-30_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Le 11/28/2018 10:48 AM, Mark Brown a �crit :
+> On Tue, Nov 27, 2018 at 04:52:15PM +0000, Pascal PAILLET-LME wrote:
+>> The STPMIC1 regulators supply power to the application processor as well as
+>> to the external system peripherals such as DDR, Flash memories and system
+>> devices.
+> Please do not submit new versions of already applied patches, please
+> submit incremental updates to the existing code.  Modifying existing
+> commits creates problems for other users building on top of those
+> commits so it's best practice to only change pubished git commits if
+> absolutely essential.
 
+Sorry Mark, I will submit my changes on the regulator driver in separate 
+patches.
 
-On 29.11.2018 15:27, Matias Bjørling wrote:
-> Currently the geometry of an OCSSD is enumerated using a two step
-> approach:
-> 
-> First, nvm_register is called, the OCSSD identify command is issued,
-> and second the geometry sos and csecs values are read either from the
-> OCSSD identify if it is a 1.2 drive, or from the NVMe namespace data
-> structure if it is a 2.0 device.
-> 
-> This patch recombines it into a single step, such that nvm_register can
-> use the csecs and sos fields independent of which version is used. This
-> enables one to dynamically size the lightnvm subsystem dma pool.
-> 
-> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-> ---
->   drivers/lightnvm/core.c      | 12 +++++-------
->   drivers/nvme/host/core.c     | 18 +++++++++---------
->   drivers/nvme/host/lightnvm.c | 18 ++++++------------
->   drivers/nvme/host/nvme.h     |  2 --
->   4 files changed, 20 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-> index 73ab3cf26868..a1d52e934ce4 100644
-> --- a/drivers/lightnvm/core.c
-> +++ b/drivers/lightnvm/core.c
-> @@ -1145,25 +1145,23 @@ int nvm_register(struct nvm_dev *dev)
->   	if (!dev->q || !dev->ops)
->   		return -EINVAL;
->   
-> +	ret = nvm_init(dev);
-> +	if (ret)
-> +		return ret;
-> +
->   	dev->dma_pool = dev->ops->create_dma_pool(dev, "ppalist");
->   	if (!dev->dma_pool) {
->   		pr_err("nvm: could not create dma pool\n");
-> +		nvm_free(dev);
->   		return -ENOMEM;
->   	}
->   
-> -	ret = nvm_init(dev);
-> -	if (ret)
-> -		goto err_init;
-> -
->   	/* register device with a supported media manager */
->   	down_write(&nvm_lock);
->   	list_add(&dev->devices, &nvm_devices);
->   	up_write(&nvm_lock);
->   
->   	return 0;
-> -err_init:
-> -	dev->ops->destroy_dma_pool(dev->dma_pool);
-> -	return ret;
->   }
->   EXPORT_SYMBOL(nvm_register);
->   
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 65c42448e904..387833b37e38 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -1516,8 +1516,6 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
->   	if (ns->noiob)
->   		nvme_set_chunk_size(ns);
->   	nvme_update_disk_info(disk, ns, id);
-> -	if (ns->ndev)
-> -		nvme_nvm_update_nvm_info(ns);
->   #ifdef CONFIG_NVME_MULTIPATH
->   	if (ns->head->disk)
->   		nvme_update_disk_info(ns->head->disk, ns, id);
-> @@ -3086,13 +3084,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
->   	nvme_setup_streams_ns(ctrl, ns);
->   	nvme_set_disk_name(disk_name, ns, ctrl, &flags);
->   
-> -	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
-> -		if (nvme_nvm_register(ns, disk_name, node)) {
-> -			dev_warn(ctrl->device, "LightNVM init failure\n");
-> -			goto out_unlink_ns;
-> -		}
-> -	}
-> -
->   	disk = alloc_disk_node(0, node);
->   	if (!disk)
->   		goto out_unlink_ns;
-> @@ -3106,6 +3097,13 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
->   
->   	__nvme_revalidate_disk(disk, id);
->   
-> +	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
-> +		if (nvme_nvm_register(ns, disk_name, node)) {
-> +			dev_warn(ctrl->device, "LightNVM init failure\n");
-> +			goto out_put_disk;
-> +		}
-> +	}
-> +
->   	down_write(&ctrl->namespaces_rwsem);
->   	list_add_tail(&ns->list, &ctrl->namespaces);
->   	up_write(&ctrl->namespaces_rwsem);
-> @@ -3119,6 +3117,8 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
->   	kfree(id);
->   
->   	return;
-> + out_put_disk:
-> +	put_disk(ns->disk);
->    out_unlink_ns:
->   	mutex_lock(&ctrl->subsys->lock);
->   	list_del_rcu(&ns->siblings);
-> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-> index d64805dc8efb..51d957ccf328 100644
-> --- a/drivers/nvme/host/lightnvm.c
-> +++ b/drivers/nvme/host/lightnvm.c
-> @@ -973,22 +973,11 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
->   	}
->   }
->   
-> -void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
-> -{
-> -	struct nvm_dev *ndev = ns->ndev;
-> -	struct nvm_geo *geo = &ndev->geo;
-> -
-> -	if (geo->version == NVM_OCSSD_SPEC_12)
-> -		return;
-> -
-> -	geo->csecs = 1 << ns->lba_shift;
-> -	geo->sos = ns->ms;
-> -}
-> -
->   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
->   {
->   	struct request_queue *q = ns->queue;
->   	struct nvm_dev *dev;
-> +	struct nvm_geo *geo;
->   
->   	_nvme_nvm_check_size();
->   
-> @@ -996,6 +985,11 @@ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
->   	if (!dev)
->   		return -ENOMEM;
->   
-> +	/* Note that csecs and sos will be overridden if it is a 1.2 drive. */
-> +	geo = &dev->geo;
-> +	geo->csecs = 1 << ns->lba_shift;
-> +	geo->sos = ns->ms;
-> +
->   	dev->q = q;
->   	memcpy(dev->name, disk_name, DISK_NAME_LEN);
->   	dev->ops = &nvme_nvm_dev_ops;
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index 9fefba039d1e..4f5399c8808b 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -541,13 +541,11 @@ static inline void nvme_mpath_stop(struct nvme_ctrl *ctrl)
->   #endif /* CONFIG_NVME_MULTIPATH */
->   
->   #ifdef CONFIG_NVM
-> -void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
->   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
->   void nvme_nvm_unregister(struct nvme_ns *ns);
->   extern const struct attribute_group nvme_nvm_attr_group;
->   int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
->   #else
-> -static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
->   static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
->   				    int node)
->   {
-> 
+pascal
 
-Looks good to me - I will rebase my changes on top of this patch and resend.
-
-Reviewed-by: Igor Konopko <igor.j.konopko@intel.com>
