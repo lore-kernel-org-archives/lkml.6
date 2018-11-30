@@ -2,92 +2,95 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C62B8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA9DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C90F2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:57:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoJfzb8B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C90F2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E4832082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E4832082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbeK3TGM (ORCPT
+        id S1727133AbeK3THY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:06:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeK3TGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:06:12 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 267C72146D;
-        Fri, 30 Nov 2018 07:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543564666;
-        bh=d4zuB6bK9q8J6HeMbjSu2I2mFc+Nq0vACLZJZRCZAK8=;
-        h=From:To:References:In-Reply-To:Subject:Date:From;
-        b=eoJfzb8Bv0EjVgQwacNfuE/QhnFHlFiJdW1F403MSVEr1yKPfLDs142X3KjalAD8f
-         SHII9DV9boB+fG0WZHgBdvCCq6TfrkbeVsAqkFEe3ZXUlK6xNzyKMccIzybhpTj4Oj
-         gycc6v487u9p+jrdO4V1xeWHRX6O8ku3E2Attfmg=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 30 Nov 2018 14:07:24 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50114 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726633AbeK3THY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 14:07:24 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id 3AE2D5FB8C; Fri, 30 Nov 2018 15:58:55 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] media: sun6i: Separate H3 compatible from A31
+Date:   Fri, 30 Nov 2018 15:58:43 +0800
+Message-Id: <20181130075849.16941-1-wens@csie.org>
+X-Mailer: git-send-email 2.20.0.rc1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.7
-To:     Andreas Kemnade <andreas@kemnade.info>,
-        Tero Kristo <t-kristo@ti.com>, bcousson@baylibre.com,
-        letux-kernel@openphoenux.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        mturquette@baylibre.com, paul@pwsan.com, tony@atomide.com
-References: <20181110203115.13335-1-andreas@kemnade.info>
- <154353757335.88331.5161306764126530976@swboyd.mtv.corp.google.com>
- <6c450d4f-8dbf-5122-edcc-3ac17e295bbe@ti.com>
-In-Reply-To: <6c450d4f-8dbf-5122-edcc-3ac17e295bbe@ti.com>
-Message-ID: <154356466554.88331.3614998218425782290@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 0/3] mach-omap2: handle autoidle denial
-Date:   Thu, 29 Nov 2018 23:57:45 -0800
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Tero Kristo (2018-11-29 23:37:35)
-> On 30/11/2018 02:26, Stephen Boyd wrote:
-> > Quoting Andreas Kemnade (2018-11-10 12:31:12)
-> >> On the gta04 with a dm3730 omap_hdq does not work properly when the
-> >> device enters lower power states. Idling uart1 and 2 is enough
-> >> to show up that problem, if there are no other things enabled.
-> >> Further research reveals that hdq iclk must not be turned off during
-> >> transfers, also according to the TRM. That fact is also correctly desc=
-ribed
-> >> in the flags but the code to handle that is incomplete.
-> >>
-> >> To handle multiple users of a single ick, autoidle is disabled
-> >> when a user of that ick requires that (has the OCPIF_SWSUP_IDLE))
-> >>
-> >> Changes since v1:
-> >> - uses spinlocks instead of mutexes
-> >> - invert counter logic
-> >> - check whether clock type is basic
-> >>
-> > =
+The CSI (camera sensor interface) controller found on the H3 (and H5)
+is a reduced version of the one found on the A31. It only has 1 channel,
+instead of 4 channels supporting time-multiplexed BT.656 on the A31.
+Since the H3 is a reduced version, it cannot "fallback" to a compatible
+that implements more features than it supports.
 
-> > I'm expecting someone like Tero or Tony to review this.
-> > =
+This series separates support for the H3 variant from the A31 variant.
 
-> =
+Patches 1 ~ 3 separate H3 CSI from A31 CSI in the bindings, driver, and
+device tree, respectively.
 
-> Rest of it looks fine to me, except for the discussion under the =
+Patch 4 adds a pinmux setting for the MCLK (master clock). Some camera
+sensors use the master clock from the SoC instead of a standalone
+crystal.
 
-> CLK_IS_BASIC flag, which might trigger a bigger rework of the code.
-> =
+Patches 5 and 6 are examples of using a camera sensor with an SBC.
+Since the modules are detachable, these changes should not be merged.
+They should be implemented as overlays instead.
+
+Please have a look.
+
+In addition, I found that the first frame captured seems to always be
+incomplete, with either parts cropped, out of position, or missing
+color components.
+
+Regards
+ChenYu
 
 
-Is that a Reviewed-by tag?
+Chen-Yu Tsai (6):
+  media: dt-bindings: media: sun6i: Separate H3 compatible from A31
+  media: sun6i: Add H3 compatible
+  ARM: dts: sunxi: h3/h5: Drop A31 fallback compatible for CSI
+    controller
+  ARM: dts: sunxi: h3-h5: Add pinmux setting for CSI MCLK on PE1
+  [DO NOT MERGE] ARM: dts: sunxi: bananapi-m2p: Add HDF5640 camera
+    module
+  [DO NOT MERGE] ARM: dts: sunxi: libretech-all-h3-cc: Add HDF5640
+    camera module
+
+ .../devicetree/bindings/media/sun6i-csi.txt   |  2 +-
+ arch/arm/boot/dts/sunxi-bananapi-m2-plus.dtsi | 87 +++++++++++++++++++
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  8 +-
+ .../boot/dts/sunxi-libretech-all-h3-cc.dtsi   | 81 +++++++++++++++++
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      |  1 +
+ 5 files changed, 176 insertions(+), 3 deletions(-)
+
+-- 
+2.20.0.rc1
+
