@@ -2,38 +2,37 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C0DC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1A9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B6C20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B6C20834
+	by mail.kernel.org (Postfix) with ESMTP id 9C02C20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C02C20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeLAC4d (ORCPT
+        id S1727611AbeLAC5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:56:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35396 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 21:57:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeLAC4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726564AbeLAC4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Nov 2018 21:56:33 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AB622148E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BF262146F;
         Fri, 30 Nov 2018 15:46:48 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gSl0B-0005yc-3z; Fri, 30 Nov 2018 10:46:47 -0500
-Message-Id: <20181130154647.022471992@goodmis.org>
+        id 1gSl0B-00060F-MR; Fri, 30 Nov 2018 10:46:47 -0500
+Message-Id: <20181130154647.591673556@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 30 Nov 2018 10:44:05 -0500
+Date:   Fri, 30 Nov 2018 10:44:08 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -41,7 +40,7 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: [PATCH 2/9] tools/lib/traceevent: Added support for pkg-config
+Subject: [PATCH 5/9] tools/lib/traceevent: Rename tep_free_format() to tep_free_event()
 References: <20181130154403.150474900@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -52,99 +51,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-This patch implements integration with pkg-config framework.
-pkg-config can be used by the library users to determine
-required CFLAGS and LDFLAGS in order to use the library
+In order to make libtraceevent into a proper library, variables, data
+structures and functions require a unique prefix to prevent name space
+conflicts. This renames tep_free_format() to tep_free_event(),
+which describes more closely the purpose of the function.
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/lib/traceevent/Makefile                 | 26 ++++++++++++++++---
- .../lib/traceevent/libtraceevent.pc.template  | 10 +++++++
- 2 files changed, 33 insertions(+), 3 deletions(-)
- create mode 100644 tools/lib/traceevent/libtraceevent.pc.template
+ tools/lib/traceevent/event-parse.c | 6 +++---
+ tools/lib/traceevent/event-parse.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 0b4e833088a4..adb16f845ab3 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -25,6 +25,7 @@ endef
- $(call allow-override,CC,$(CROSS_COMPILE)gcc)
- $(call allow-override,AR,$(CROSS_COMPILE)ar)
- $(call allow-override,NM,$(CROSS_COMPILE)nm)
-+$(call allow-override,PKG_CONFIG,pkg-config)
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index bacd86c41563..848cd76b91a7 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -6154,7 +6154,7 @@ __parse_event(struct tep_handle *pevent,
+ 	return 0;
  
- EXT = -std=gnu99
- INSTALL = install
-@@ -47,6 +48,8 @@ prefix ?= /usr/local
- libdir = $(prefix)/$(libdir_relative)
- man_dir = $(prefix)/share/man
- man_dir_SQ = '$(subst ','\'',$(man_dir))'
-+pkgconfig_dir ?= $(word 1,$(shell $(PKG_CONFIG) 		\
-+			--variable pc_path pkg-config | tr ":" " "))
+ event_add_failed:
+-	tep_free_format(event);
++	tep_free_event(event);
+ 	return ret;
+ }
  
- export man_dir man_dir_SQ INSTALL
- export DESTDIR DESTDIR_SQ
-@@ -270,7 +273,19 @@ define do_generate_dynamic_list_file
- 	fi
- endef
+@@ -6763,7 +6763,7 @@ static void free_formats(struct tep_format *format)
+ 	free_format_fields(format->fields);
+ }
  
--install_lib: all_cmd install_plugins
-+PKG_CONFIG_FILE = libtraceevent.pc
-+define do_install_pkgconfig_file
-+	if [ -n "${pkgconfig_dir}" ]; then 					\
-+		cp -f ${PKG_CONFIG_FILE}.template ${PKG_CONFIG_FILE}; 		\
-+		sed -i "s|INSTALL_PREFIX|${1}|g" ${PKG_CONFIG_FILE}; 		\
-+		sed -i "s|LIB_VERSION|${EVENT_PARSE_VERSION}|g" ${PKG_CONFIG_FILE}; \
-+		$(call do_install,$(PKG_CONFIG_FILE),$(pkgconfig_dir),644); 	\
-+	else 									\
-+		(echo Failed to locate pkg-config directory) 1>&2;		\
-+	fi
-+endef
-+
-+install_lib: all_cmd install_plugins install_pkgconfig
- 	$(call QUIET_INSTALL, $(LIB_TARGET)) \
- 		$(call do_install_mkdir,$(libdir_SQ)); \
- 		cp -fpR $(LIB_INSTALL) $(DESTDIR)$(libdir_SQ)
-@@ -279,6 +294,10 @@ install_plugins: $(PLUGINS)
- 	$(call QUIET_INSTALL, trace_plugins) \
- 		$(call do_install_plugins, $(PLUGINS))
+-void tep_free_format(struct tep_event *event)
++void tep_free_event(struct tep_event *event)
+ {
+ 	free(event->name);
+ 	free(event->system);
+@@ -6849,7 +6849,7 @@ void tep_free(struct tep_handle *pevent)
+ 	}
  
-+install_pkgconfig:
-+	$(call QUIET_INSTALL, $(PKG_CONFIG_FILE)) \
-+		$(call do_install_pkgconfig_file,$(prefix))
-+
- install_headers:
- 	$(call QUIET_INSTALL, headers) \
- 		$(call do_install,event-parse.h,$(prefix)/include/traceevent,644); \
-@@ -289,8 +308,9 @@ install: install_lib
+ 	for (i = 0; i < pevent->nr_events; i++)
+-		tep_free_format(pevent->events[i]);
++		tep_free_event(pevent->events[i]);
  
- clean:
- 	$(call QUIET_CLEAN, libtraceevent) \
--		$(RM) *.o *~ $(TARGETS) *.a *.so $(VERSION_FILES) .*.d .*.cmd \
--		$(RM) TRACEEVENT-CFLAGS tags TAGS
-+		$(RM) *.o *~ $(TARGETS) *.a *.so $(VERSION_FILES) .*.d .*.cmd; \
-+		$(RM) TRACEEVENT-CFLAGS tags TAGS; \
-+		$(RM) $(PKG_CONFIG_FILE)
+ 	while (pevent->handlers) {
+ 		handle = pevent->handlers;
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 2a1a644c5ec8..950ad185a5c4 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -475,7 +475,7 @@ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+ 				struct tep_event **eventp,
+ 				const char *buf,
+ 				unsigned long size, const char *sys);
+-void tep_free_format(struct tep_event *event);
++void tep_free_event(struct tep_event *event);
+ void tep_free_format_field(struct tep_format_field *field);
  
- PHONY += force plugins
- force:
-diff --git a/tools/lib/traceevent/libtraceevent.pc.template b/tools/lib/traceevent/libtraceevent.pc.template
-new file mode 100644
-index 000000000000..42e4d6cb6b9e
---- /dev/null
-+++ b/tools/lib/traceevent/libtraceevent.pc.template
-@@ -0,0 +1,10 @@
-+prefix=INSTALL_PREFIX
-+libdir=${prefix}/lib64
-+includedir=${prefix}/include/traceevent
-+
-+Name: libtraceevent
-+URL: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-+Description: Linux kernel trace event library
-+Version: LIB_VERSION
-+Cflags: -I${includedir}
-+Libs: -L${libdir} -ltraceevent
+ void *tep_get_field_raw(struct trace_seq *s, struct tep_event *event,
 -- 
 2.19.1
 
