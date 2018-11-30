@@ -2,89 +2,138 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3AFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BA7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98BC2082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98BC2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A53F20867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ph2rZ+Jb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A53F20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbeLAJaK (ORCPT
+        id S1727030AbeLAJaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:30:10 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:44872 "EHLO ale.deltatee.com"
+        Sat, 1 Dec 2018 04:30:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726883AbeLAJaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:30:10 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gSr7x-0005bO-Dj; Fri, 30 Nov 2018 15:19:14 -0700
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <154275556908.76910.8966087090637564219.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154275558526.76910.7535251937849268605.stgit@dwillia2-desk3.amr.corp.intel.com>
- <6875ca04-a36a-89ae-825b-f629ab011d47@deltatee.com>
- <CAPcyv4i9QXsX9Rjz9E3gi643LQbSzaO_+iFLqLS+QO-GmrS0Eg@mail.gmail.com>
- <14d6413c-b002-c152-5016-7ed659c08c24@deltatee.com>
- <CAPcyv4gZisOAE8VJPJChNXrWv0NhUevWuutsPdvNORBTOBXJfA@mail.gmail.com>
- <43778343-6d43-eb43-0de0-3db6828902d0@deltatee.com>
- <CAPcyv4hJV71RLhBCKgqc=nQ_D_upySD=ZZk0y=5Qk69kKPHFog@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b8ae55a4-7c1a-cc35-beea-badf35a69b06@deltatee.com>
-Date:   Fri, 30 Nov 2018 15:19:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1726877AbeLAJaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:30:18 -0500
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69FBF21479;
+        Fri, 30 Nov 2018 22:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543616371;
+        bh=LA/PfnhDfVkeFfga7qgRNkvrRtFx+kj5fkxfWxfssvs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ph2rZ+JbuYCfr8BIST2w3dwI394pHunTuvYQBUVnGXWNZNONfzSlNPjcmBKCLdBf+
+         XECL5VDObcnWtpcik11R98AAbwy1IjzvJNMrm2b5kkFZRiUg7WD8f/BOktcuWwA4y/
+         nXS1+0RVu1oclnkJfw95Y2BEgEr0ZxX+yZRZ2ib0=
+Received: by mail-qt1-f172.google.com with SMTP id p17so7676869qtl.5;
+        Fri, 30 Nov 2018 14:19:31 -0800 (PST)
+X-Gm-Message-State: AA+aEWZOMK6Xa9wVQmsI8dRln9zip4Di+UL8ZGBHUFU9K4iJkSnnIzcS
+        GUIbUH8BAGehP/MXtfwcZE2q7Me4yGXiJRXjoA==
+X-Google-Smtp-Source: AFSGD/VXXa4a0RH1Z6bkkdMnhmHtDRywFcrPlAlUa3so6i/9Dvbo6/G/LHGaU5sPk4kf+XlEanij1LCKY1jS8jq455Y=
+X-Received: by 2002:a0c:c389:: with SMTP id o9mr7320505qvi.90.1543616370592;
+ Fri, 30 Nov 2018 14:19:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4hJV71RLhBCKgqc=nQ_D_upySD=ZZk0y=5Qk69kKPHFog@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, bhelgaas@google.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, torvalds@linux-foundation.org, hch@lst.de, jglisse@redhat.com, stable@vger.kernel.org, akpm@linux-foundation.org, dan.j.williams@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v8 3/7] mm, devm_memremap_pages: Fix shutdown handling
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+ <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com> <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
+ <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com> <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
+ <20181130210814.GA5756@amd>
+In-Reply-To: <20181130210814.GA5756@amd>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 30 Nov 2018 16:19:18 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
+Message-ID: <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color properties
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+On Fri, Nov 30, 2018 at 3:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> Hi!
+>
+> > > Pavel gave following examples:
+> > >
+> > > eth0:green:link
+> > > adsl0:green:link
+> > > adsl0:red:error
+> > >
+> > > So we would have e.g.:
+> > >
+> > > associated-vl42-device = <&camera1>;
+> > > associated-network-device = <&phy1>;
+> > > associated-block-device = <&phy1>;
+> >
+> > Variable property names are kind of a pain to parse.
+>
+> Ok, would it be enough to have associated-device = <&whatever>?
 
-On 2018-11-29 11:51 a.m., Dan Williams wrote:
-> Got it, let me see how bad moving arch_remove_memory() turns out,
-> sounds like a decent approach to coordinate multiple users of a single
-> ref.
+Yeah, but I though you needed the device type name in there.
 
-I've put together a patch set[1] that fixes all the users of
-devm_memremap_pages() without moving arch_remove_memory(). It's pretty
-clean except for the p2pdma case which is fairly tricky but I don't
-think there's an easy way around that.
+> > Perhaps when LEDs are associated with a device, we shouldn't care
+> > within the context of the LED subsystem what the name is. The
+> > association is more important and if you have that exposed, then you
+> > don't really need to care what the name is. You still have to deal
+> > with a device with more than 1 LED, but that becomes a problem local
+> > to that device.
+> >
+> > What I'm getting at is following a more standard binding pattern of
+> > providers and consumers like we have for gpios, clocks, etc. So we'd
+> > have something like this:
+> >
+> > ethernet {
+> >   ...
+> >   leds = <&green_led>, <&red_led>;
+> >   led-names = "link", "err";
+> > };
+>
+> Basically every single device could have a LED associated with it
+> ("activity"). Would doing it like this mean we'd have to modify every
+> single driver to parse leds / led-names properties?
 
-If you come up with a better solution that's great, otherwise let me
-know and I'll do some clean up and more testing and send this set to the
-lists. Though, we might need to wait for your patch to land before we
-can properly send the fix to it (the first patch in my series)...
+Normally, that's how properties like this would work. A driver is also
+what knows how the leds should function. A driver can retrieve the led
+and associate it with the 'foo-bar' function. The 'foo-bar' function
+then doesn't have to be defined in DT nor exposed to userspace. It
+wouldn't even have to be driver specific. The driver's subsystem could
+handle it all if the led functions are standardized. Though then you'd
+be back to needing standard names for 'led-names', but that's no worse
+that trigger names. This model would also allow getting rid of
+'linux,default-trigger' properties in a lot of cases which wouldn't be
+a bad thing.
 
-Logan
+However, having drivers handle this is not required. You can iterate
+thru the tree for nodes with 'leds' and find the node which has a
+phandle to the led node you care about. Sure, it's not that efficient,
+but it does work and it's only done once. Basically, as long as the
+linkage is there, we can make it work. I think using
+'associated-device' might work better for the current implementation
+of Linux LED support, but leds/led-names would be more inline with
+other DT bindings. The current Linux implementation shouldn't dictate
+the binding design.
 
-[1] https://github.com/sbates130272/linux-p2pmem/ memremap_fix
-
+Rob
