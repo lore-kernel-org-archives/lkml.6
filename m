@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63CBC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15EAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC7C620868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:21:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C8D20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:21:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="w3qBpdwx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC7C620868
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="SMCP04mH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C8D20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbeK3T3x (ORCPT
+        id S1727238AbeK3T3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:29:53 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51477 "EHLO
+        Fri, 30 Nov 2018 14:29:54 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51128 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727115AbeK3T3w (ORCPT
+        with ESMTP id S1727037AbeK3T3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:29:52 -0500
-Received: by mail-wm1-f65.google.com with SMTP id s14so4848436wmh.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 00:21:21 -0800 (PST)
+        Fri, 30 Nov 2018 14:29:53 -0500
+Received: by mail-wm1-f65.google.com with SMTP id 125so4853129wmh.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 00:21:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hgb7Jf4JzQq+BZf3FS+sr7z0n9uuyVnC5JrBI/ymMjs=;
-        b=w3qBpdwxixKSwtAr2cNDwRPb862aZc1l5jZUSeftGTT+U5xnaxdDyMnk0xCVgQ6Qr1
-         SIpGBUmLI2/wwgvA7w/IDXtewl1fq4HIJLwy/U+iipgBZWPVgRk90vzPSB2AHS6MZhq9
-         SPiMYg05c7lYy/rudI0Zsfq36kIQPgV3HJVlrjDKDeYId4r3huxbFbhvYt8GHoB7sd6J
-         9U7QDoWPPlrCdFuVh11U8e7SRCNXcYGPlT6M2ZeBZot1EJCdo/qabOEUO8BIYDHo81BV
-         WAdl3WIDrqfHscg45CxbMYHTcHzQRscZqOg0P/CXmAHugm8/xjTrJp0BAwDYN89bjRoI
-         nGQQ==
+        bh=f7gfNo0gVKcDfyj3+9h+7K8WG/3dMlnqMt9RiFsd5OU=;
+        b=SMCP04mHX+HN8lYdExPwcBsPbSlvChP1SxdIPmKX1Ytvz+rpx1Z3k8xyxXiPGngx/I
+         H89wzBI3hdnwTm1QfaKyi8iw2uOQLhtULTlj7Ado1sEL21QYE3mTpH+B9jJegADwpFby
+         yANRPw/WRGlMgMO2r60UnuamjqMVnj5NyYWAPIuYhjgc9NIcYJhaoDmqq3QwMKT3ujnE
+         rZ/wi2HNq5JuIlAlgQtUbU+CMSUsZRrVtXTh0xk/gW50jqOgsNd5OJWkbKgxMgG6vjIH
+         aZTwe2oxlqmSTIMNFnf3DAnAQmdpEheCmYeZCPfnpTvFjyjhjRr3ZDSQlopIc7VYFTka
+         8FWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hgb7Jf4JzQq+BZf3FS+sr7z0n9uuyVnC5JrBI/ymMjs=;
-        b=RvsnqqvSKj5zDa7V5xoZFXuqEr/6kz1Nzdss9k1xZtLxrEebMaI9xIzU48A84pV7jt
-         EodPAO1Xqb4uDiMa8/pF/d3u5qXbvvtFS8Lep+8PW7b3bVbALjxBlaP75josMsJ9bDJF
-         AHmgAziGI5HBFqp+YEumhEIXPhvQotMCbqACUChcX59+HtzcnKE8S/3uqYONkTtW8XhZ
-         t1sTJH6PxXptaPW+pgE3U6fbeKonZQpHvvzgSm1Uw9DUdAEndnNzA3tJrCJZrEkXTxK9
-         pEEcRL1REanfi7WeiYGYfYqqGm26BwoYFpStNau0k+sCDMiUq7hYzZkxsPMWk37b/GrU
-         iqag==
-X-Gm-Message-State: AA+aEWZDd71cb59KWBzg9I4Bys1jJKAPQBRERTIsEIQcXJqJBo08hlwH
-        C0jOeNbfwoSEwm9mAJQVAKGGiw==
-X-Google-Smtp-Source: AFSGD/ViqOg8nrUwEf+F8iUN8aKfzpJNyeWswKQvwjj7Pb3cp37fFbccS3X9uNfsKPQHRgnDZzfwuQ==
-X-Received: by 2002:a1c:df46:: with SMTP id w67mr3264485wmg.51.1543566080748;
-        Fri, 30 Nov 2018 00:21:20 -0800 (PST)
+        bh=f7gfNo0gVKcDfyj3+9h+7K8WG/3dMlnqMt9RiFsd5OU=;
+        b=cTeuS3hNKQKuvCjz9cW2jxN1eraQPlWZXBX8PnaK26lA3iNck/u9kpo2vvvn2mZS3s
+         HKAWLPXTUoZe6X/1Whf8pnqsDxPY4XJdVbZF4n0f5Zg0zor2RttzVEuEGdxyxzKlM7wd
+         7osoa59L+bNnbGhVxbqSzBenUPN5QokRZBiFXTfOjC6bnH46Cp2R+zAHtayegGHKU0YW
+         3hagMtFKx/OzgGxnhQD4HbgDZA1UrPRr4z0RkJz/kFcvTAO9EN35C3R0pQQYOKA4Cugn
+         VcVjdMRTqUQ5Bey/4OgFyWfYU6hFHVUvbDO5gP2DKral1fVgqnaL1ksNtw7momCKeTTV
+         ZU6w==
+X-Gm-Message-State: AA+aEWaTV4DNm2r1W3bZ6jdb9ECOnqZ6p1dtM/qExfiKetKsa+Lrck70
+        U1ujnY8QB+r1sP+iNLv++qLysw==
+X-Google-Smtp-Source: AFSGD/VMhw3YbQrfCsu4V97PPFHUfcGIZvfrQo5y1/MLySEQGXyveI40+Q3kqQ5zsLdpXeB5yysX5Q==
+X-Received: by 2002:a7b:c095:: with SMTP id r21mr4650862wmh.118.1543566081898;
+        Fri, 30 Nov 2018 00:21:21 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id x197sm6473374wmd.2.2018.11.30.00.21.19
+        by smtp.gmail.com with ESMTPSA id x197sm6473374wmd.2.2018.11.30.00.21.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 00:21:20 -0800 (PST)
+        Fri, 30 Nov 2018 00:21:21 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Grygorii Strashko <grygorii.strashko@ti.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -72,9 +72,9 @@ To:     Grygorii Strashko <grygorii.strashko@ti.com>,
 Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         linux-omap@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [net-next][PATCH 3/4] of: net: kill of_get_nvmem_mac_address()
-Date:   Fri, 30 Nov 2018 09:20:59 +0100
-Message-Id: <20181130082100.6241-4-brgl@bgdev.pl>
+Subject: [net-next][PATCH 4/4] net: davinci_emac: use nvmem_get_mac_address()
+Date:   Fri, 30 Nov 2018 09:21:00 +0100
+Message-Id: <20181130082100.6241-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181130082100.6241-1-brgl@bgdev.pl>
 References: <20181130082100.6241-1-brgl@bgdev.pl>
@@ -87,87 +87,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We've switched all users to nvmem_get_mac_address(). Remove the now
-dead code.
+All DaVinci boards still supported in board files now define nvmem
+cells containing the MAC address. We want to stop using the setup
+callback from at24 so the MAC address for those users will no longer
+be provided over platform data. If we didn't get a valid MAC in pdata,
+try nvmem before resorting to a random MAC.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/of/of_net.c    | 39 ---------------------------------------
- include/linux/of_net.h |  6 ------
- 2 files changed, 45 deletions(-)
+ drivers/net/ethernet/ti/davinci_emac.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
-index 53189d4022a6..810ab0fbcccb 100644
---- a/drivers/of/of_net.c
-+++ b/drivers/of/of_net.c
-@@ -81,42 +81,3 @@ const void *of_get_mac_address(struct device_node *np)
- 	return of_get_mac_addr(np, "address");
- }
- EXPORT_SYMBOL(of_get_mac_address);
--
--/**
-- * Obtain the MAC address from an nvmem provider named 'mac-address' through
-- * device tree.
-- * On success, copies the new address into memory pointed to by addr and
-- * returns 0. Returns a negative error code otherwise.
-- * @np:		Device tree node containing the nvmem-cells phandle
-- * @addr:	Pointer to receive the MAC address using ether_addr_copy()
-- */
--int of_get_nvmem_mac_address(struct device_node *np, void *addr)
--{
--	struct nvmem_cell *cell;
--	const void *mac;
--	size_t len;
--	int ret;
--
--	cell = of_nvmem_cell_get(np, "mac-address");
--	if (IS_ERR(cell))
--		return PTR_ERR(cell);
--
--	mac = nvmem_cell_read(cell, &len);
--
--	nvmem_cell_put(cell);
--
--	if (IS_ERR(mac))
--		return PTR_ERR(mac);
--
--	if (len < ETH_ALEN || !is_valid_ether_addr(mac)) {
--		ret = -EINVAL;
--	} else {
--		ether_addr_copy(addr, mac);
--		ret = 0;
--	}
--
--	kfree(mac);
--
--	return ret;
--}
--EXPORT_SYMBOL(of_get_nvmem_mac_address);
-diff --git a/include/linux/of_net.h b/include/linux/of_net.h
-index 90d81ee9e6a0..9cd72aab76fe 100644
---- a/include/linux/of_net.h
-+++ b/include/linux/of_net.h
-@@ -13,7 +13,6 @@
- struct net_device;
- extern int of_get_phy_mode(struct device_node *np);
- extern const void *of_get_mac_address(struct device_node *np);
--extern int of_get_nvmem_mac_address(struct device_node *np, void *addr);
- extern struct net_device *of_find_net_device_by_node(struct device_node *np);
- #else
- static inline int of_get_phy_mode(struct device_node *np)
-@@ -26,11 +25,6 @@ static inline const void *of_get_mac_address(struct device_node *np)
- 	return NULL;
- }
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index 9153db120352..840820402cd0 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1912,11 +1912,15 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 		ether_addr_copy(ndev->dev_addr, priv->mac_addr);
  
--static inline int of_get_nvmem_mac_address(struct device_node *np, void *addr)
--{
--	return -ENODEV;
--}
--
- static inline struct net_device *of_find_net_device_by_node(struct device_node *np)
- {
- 	return NULL;
+ 	if (!is_valid_ether_addr(priv->mac_addr)) {
+-		/* Use random MAC if none passed */
+-		eth_hw_addr_random(ndev);
+-		memcpy(priv->mac_addr, ndev->dev_addr, ndev->addr_len);
+-		dev_warn(&pdev->dev, "using random MAC addr: %pM\n",
+-							priv->mac_addr);
++		/* Try nvmem if MAC wasn't passed over pdata or DT. */
++		rc = nvmem_get_mac_address(&pdev->dev, priv->mac_addr);
++		if (rc) {
++			/* Use random MAC if still none obtained. */
++			eth_hw_addr_random(ndev);
++			memcpy(priv->mac_addr, ndev->dev_addr, ndev->addr_len);
++			dev_warn(&pdev->dev, "using random MAC addr: %pM\n",
++				 priv->mac_addr);
++		}
+ 	}
+ 
+ 	ndev->netdev_ops = &emac_netdev_ops;
 -- 
 2.19.1
 
