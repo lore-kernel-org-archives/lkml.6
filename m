@@ -2,98 +2,95 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFA4C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDB4C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 441F420673
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:04:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="peLeyysK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441F420673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=marvell.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E13A20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:04:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E13A20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbeLAGPJ (ORCPT
+        id S1726932AbeLAGPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:15:09 -0500
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:45326 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725842AbeLAGPJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:15:09 -0500
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAUJ04KK015940;
-        Fri, 30 Nov 2018 11:04:50 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=9tBtL1JHl6ghZpe+NIX4glfnRUd/wIb0/aY17WCBgTs=;
- b=peLeyysKudjGH7Ae088rLNzWF2e4LRedcdP7zGfFbg1Y6P1K5VVoLzj1rP1DD37UkDHq
- OB7wUCL59WlZKuso8UEzgdTxxq4fV8mAJHHvHUQVZaMNJF/CZNSyAqvplbRTniv7Fpik
- JXo6fvbSAGPafBiQpKT/TqktzhhEYeZp/kAX+OTWzW5In9szVLE2NPzp2QqJZX7BcBuz
- KE4K2eYnF3P0LeHYpWcwjrYVvWXNL/ZZUvM+hr2wcjqtfa8Wg9t6AC49QDVaZ8oXRtJl
- UWvxEyeIHI15wAqWe8Y7dWuy1XoFb1TFh5E+5YbkGlV0k20hPE0jhc7OwVn+VOSzKL01 gg== 
-Received: from sc-exch01.marvell.com ([199.233.58.181])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2p322et5bu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 30 Nov 2018 11:04:50 -0800
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH01.marvell.com
- (10.93.176.81) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 30 Nov
- 2018 11:04:49 -0800
-Received: from SC-EXCH02.marvell.com ([fe80::980b:63cf:b3c0:7c95]) by
- SC-EXCH02.marvell.com ([fe80::980b:63cf:b3c0:7c95%20]) with mapi id
- 15.00.1367.000; Fri, 30 Nov 2018 11:04:49 -0800
-From:   Ganapathi Bhat <gbhat@marvell.com>
-To:     Brian Norris <briannorris@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Amitkumar Karwar" <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [EXT] [4.20 PATCH] Revert "mwifiex: restructure
- rx_reorder_tbl_lock usage"
-Thread-Topic: [EXT] [4.20 PATCH] Revert "mwifiex: restructure
- rx_reorder_tbl_lock usage"
-Thread-Index: AQHUiNaKT7djGVDyUkmVsQwZLL0jnqVoq67Q
-Date:   Fri, 30 Nov 2018 19:04:49 +0000
-Message-ID: <2cbb1f04ef8545ad9eaf3d7551a5dc03@SC-EXCH02.marvell.com>
-References: <20181130175957.167031-1-briannorris@chromium.org>
-In-Reply-To: <20181130175957.167031-1-briannorris@chromium.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.93.176.43]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 1 Dec 2018 01:15:10 -0500
+Received: from foss.arm.com ([217.140.101.70]:35082 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbeLAGPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 01:15:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 925231682;
+        Fri, 30 Nov 2018 11:04:54 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33D683F575;
+        Fri, 30 Nov 2018 11:04:52 -0800 (PST)
+Subject: Re: [PATCH 2/9] dma-direct: reject highmem pages from
+ dma_alloc_from_contiguous
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Guo Ren <ren_guo@c-sky.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181105121931.13481-1-hch@lst.de>
+ <20181105121931.13481-3-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <e479a766-07c0-c319-0d91-318aaafdf7bc@arm.com>
+Date:   Fri, 30 Nov 2018 19:04:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-30_09:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=467 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811300161
+In-Reply-To: <20181105121931.13481-3-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brian,
->=20
-> This was clearly not tested well at all. I simply performed 'wget' in a l=
-oop and
-> it fell over within a few seconds.
-Sorry. I had run a iperf test before sharing the patch (no regression obser=
-ved).
-It looks I failed to get this right for second time I will check this.
+On 05/11/2018 12:19, Christoph Hellwig wrote:
+> dma_alloc_from_contiguous can return highmem pages depending on the
+> setup, which a plain non-remapping DMA allocator can't handle.  Detect
+> this case and try the normal page allocator instead.
 
-Regards,
-Ganapathi
+...except the actual implementation is "Detect this case and fail the 
+entire allocation if so".
+
+Again, the diff itself makes sense, so given an accurate commit message,
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   kernel/dma/direct.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 680287779b0a..c49849bcced6 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -162,6 +162,18 @@ void *dma_direct_alloc_pages(struct device *dev, size_t size,
+>   	if (!page)
+>   		return NULL;
+>   
+> +	if (PageHighMem(page)) {
+> +		/*
+> +		 * Depending on the cma= arguments and per-arch setup
+> +		 * dma_alloc_from_contiguous could return highmem pages.
+> +		 * Without remapping there is no way to return them here,
+> +		 * so log an error and fail.
+> +		 */
+> +		dev_info(dev, "Rejecting highmem page from CMA.\n");
+> +		__dma_direct_free_pages(dev, size, page);
+> +		return NULL;
+> +	}
+> +
+>   	ret = page_address(page);
+>   	if (force_dma_unencrypted()) {
+>   		set_memory_decrypted((unsigned long)ret, 1 << get_order(size));
+> 
