@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11885C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1600C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F102080A
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A22D2080A
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r+qXhKzs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F102080A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TaY9Olxu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A22D2080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727214AbeLAAco (ORCPT
+        id S1727253AbeLAAcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:32:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46630 "EHLO
+        Fri, 30 Nov 2018 19:32:47 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46890 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbeLAAcn (ORCPT
+        with ESMTP id S1726512AbeLAAcq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:32:43 -0500
+        Fri, 30 Nov 2018 19:32:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=d9JpAhPkajo8247Fbaz7IQ+E4cfLUOsbaKmSdSNZxls=; b=r+qXhKzsb0BlPxOwbIk651yQbo
-        zq3uWS0yHaTQ6U6y0xF7L1kIu4amq/eyO6LMFlWHitAis44uTxvkhPbcRXBrDCkLxnioi2s0pkL9Z
-        la3K9Y32qI2Pd0t5XDzHg642XnPZX1IrF/7D3qfPJkWcf22q32vfR0t2IDTjfO7axmiez6eTag2Mi
-        nkd/2OzXe0Mq+IVgk/AnaPcbK8kUho5bFT41j06D9hqzw4N+DiVntM6cVHHEkJa6qMICHw6VG1EGH
-        E1CKeMmrk+EhwPnjEbZcAIRFHXE1RqNI+IzK7dfqomQIzv8Vv/KQRx3CNx2N9x5oZDejQMu4R9Zcx
-        M7tG2FGA==;
+        bh=UlTvCVuSLDW9AZDoMxHDIcPbv1chhpRBuQVATQStN/w=; b=TaY9OlxuHy38PAPrdIgq9qN78j
+        MjsG4ecFnmOhtOM90l3CgWUT88khKSIFQK2u5jAJw6LOcVnvR0gqGTBt2KVExQ5e6ghiDz+KTblL/
+        XyjdesR0GXQCE0/Y9x3F3cnuIUOfXzuIZp6fNULYdiKHWP7l6oSSktJ+QxsYoFzLNvTsv9PMrojjC
+        Pr05lng/aeiX9pvIFWw4vvxqqnPL9AkwyYQEV0igacOpOaYWIewmH4h9Cz1cvQWkRlNutZRvDUk2W
+        +LNHH6fjq7+UJuD4PNBiXqKdK/ayBTThwbJgh9Y9/t+vKwZ5To9gcMQSXyYqfhlC38rtWa8G8dj+A
+        HN9ODYPw==;
 Received: from 089144206221.atnat0015.highway.bob.at ([89.144.206.221] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSilJ-0004V1-Aj; Fri, 30 Nov 2018 13:23:17 +0000
+        id 1gSilP-0004XV-8Q; Fri, 30 Nov 2018 13:23:23 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     iommu@lists.linux-foundation.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -52,9 +52,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 06/23] s390: remove the mapping_error dma_map_ops method
-Date:   Fri, 30 Nov 2018 14:22:14 +0100
-Message-Id: <20181130132231.16512-7-hch@lst.de>
+Subject: [PATCH 08/23] parisc/ccio: remove the mapping_error dma_map_ops method
+Date:   Fri, 30 Nov 2018 14:22:16 +0100
+Message-Id: <20181130132231.16512-9-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181130132231.16512-1-hch@lst.de>
 References: <20181130132231.16512-1-hch@lst.de>
@@ -66,93 +66,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-S390 already returns (~(dma_addr_t)0x0) on mapping failures, so we can
-switch over to returning DMA_MAPPING_ERROR and let the core dma-mapping
-code handle the rest.
+The CCIO iommu code already returns (~(dma_addr_t)0x0) on mapping
+failures, so we can switch over to returning DMA_MAPPING_ERROR and let
+the core dma-mapping code handle the rest.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/s390/pci/pci_dma.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ drivers/parisc/ccio-dma.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/arch/s390/pci/pci_dma.c b/arch/s390/pci/pci_dma.c
-index d387a0fbdd7e..346ba382193a 100644
---- a/arch/s390/pci/pci_dma.c
-+++ b/arch/s390/pci/pci_dma.c
-@@ -15,8 +15,6 @@
- #include <linux/pci.h>
- #include <asm/pci_dma.h>
+diff --git a/drivers/parisc/ccio-dma.c b/drivers/parisc/ccio-dma.c
+index 701a7d6a74d5..714aac72df0e 100644
+--- a/drivers/parisc/ccio-dma.c
++++ b/drivers/parisc/ccio-dma.c
+@@ -110,8 +110,6 @@
+ #define CMD_TLB_DIRECT_WRITE 35         /* IO_COMMAND for I/O TLB Writes     */
+ #define CMD_TLB_PURGE        33         /* IO_COMMAND to Purge I/O TLB entry */
  
--#define S390_MAPPING_ERROR		(~(dma_addr_t) 0x0)
+-#define CCIO_MAPPING_ERROR    (~(dma_addr_t)0)
 -
- static struct kmem_cache *dma_region_table_cache;
- static struct kmem_cache *dma_page_table_cache;
- static int s390_iommu_strict;
-@@ -301,7 +299,7 @@ static dma_addr_t dma_alloc_address(struct device *dev, int size)
+ struct ioa_registers {
+         /* Runway Supervisory Set */
+         int32_t    unused1[12];
+@@ -740,7 +738,7 @@ ccio_map_single(struct device *dev, void *addr, size_t size,
+ 	BUG_ON(!dev);
+ 	ioc = GET_IOC(dev);
+ 	if (!ioc)
+-		return CCIO_MAPPING_ERROR;
++		return DMA_MAPPING_ERROR;
  
- out_error:
- 	spin_unlock_irqrestore(&zdev->iommu_bitmap_lock, flags);
--	return S390_MAPPING_ERROR;
-+	return DMA_MAPPING_ERROR;
+ 	BUG_ON(size <= 0);
+ 
+@@ -1021,11 +1019,6 @@ ccio_unmap_sg(struct device *dev, struct scatterlist *sglist, int nents,
+ 	DBG_RUN_SG("%s() DONE (nents %d)\n", __func__, nents);
  }
  
- static void dma_free_address(struct device *dev, dma_addr_t dma_addr, int size)
-@@ -349,7 +347,7 @@ static dma_addr_t s390_dma_map_pages(struct device *dev, struct page *page,
- 	/* This rounds up number of pages based on size and offset */
- 	nr_pages = iommu_num_pages(pa, size, PAGE_SIZE);
- 	dma_addr = dma_alloc_address(dev, nr_pages);
--	if (dma_addr == S390_MAPPING_ERROR) {
-+	if (dma_addr == DMA_MAPPING_ERROR) {
- 		ret = -ENOSPC;
- 		goto out_err;
- 	}
-@@ -372,7 +370,7 @@ static dma_addr_t s390_dma_map_pages(struct device *dev, struct page *page,
- out_err:
- 	zpci_err("map error:\n");
- 	zpci_err_dma(ret, pa);
--	return S390_MAPPING_ERROR;
-+	return DMA_MAPPING_ERROR;
- }
- 
- static void s390_dma_unmap_pages(struct device *dev, dma_addr_t dma_addr,
-@@ -449,7 +447,7 @@ static int __s390_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 	int ret;
- 
- 	dma_addr_base = dma_alloc_address(dev, nr_pages);
--	if (dma_addr_base == S390_MAPPING_ERROR)
-+	if (dma_addr_base == DMA_MAPPING_ERROR)
- 		return -ENOMEM;
- 
- 	dma_addr = dma_addr_base;
-@@ -496,7 +494,7 @@ static int s390_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 	for (i = 1; i < nr_elements; i++) {
- 		s = sg_next(s);
- 
--		s->dma_address = S390_MAPPING_ERROR;
-+		s->dma_address = DMA_MAPPING_ERROR;
- 		s->dma_length = 0;
- 
- 		if (s->offset || (size & ~PAGE_MASK) ||
-@@ -546,11 +544,6 @@ static void s390_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
- 	}
- }
- 	
--static int s390_mapping_error(struct device *dev, dma_addr_t dma_addr)
+-static int ccio_mapping_error(struct device *dev, dma_addr_t dma_addr)
 -{
--	return dma_addr == S390_MAPPING_ERROR;
+-	return dma_addr == CCIO_MAPPING_ERROR;
 -}
 -
- int zpci_dma_init_device(struct zpci_dev *zdev)
- {
- 	int rc;
-@@ -675,7 +668,6 @@ const struct dma_map_ops s390_pci_dma_ops = {
- 	.unmap_sg	= s390_dma_unmap_sg,
- 	.map_page	= s390_dma_map_pages,
- 	.unmap_page	= s390_dma_unmap_pages,
--	.mapping_error	= s390_mapping_error,
- 	/* dma_supported is unconditionally true without a callback */
+ static const struct dma_map_ops ccio_ops = {
+ 	.dma_supported =	ccio_dma_supported,
+ 	.alloc =		ccio_alloc,
+@@ -1034,7 +1027,6 @@ static const struct dma_map_ops ccio_ops = {
+ 	.unmap_page =		ccio_unmap_page,
+ 	.map_sg = 		ccio_map_sg,
+ 	.unmap_sg = 		ccio_unmap_sg,
+-	.mapping_error =	ccio_mapping_error,
  };
- EXPORT_SYMBOL_GPL(s390_pci_dma_ops);
+ 
+ #ifdef CONFIG_PROC_FS
 -- 
 2.19.1
 
