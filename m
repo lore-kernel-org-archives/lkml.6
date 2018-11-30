@@ -4,42 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0052C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F116C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9375C2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D92F420868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:17:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="0lPI4l5Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9375C2146D
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="o72pLIlT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92F420868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbeK3UZ7 (ORCPT
+        id S1726831AbeK3U0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:25:59 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:53048 "EHLO
+        Fri, 30 Nov 2018 15:26:08 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:53045 "EHLO
         conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeK3UZx (ORCPT
+        with ESMTP id S1726467AbeK3UZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Nov 2018 15:25:53 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id wAU9GEac028692;
-        Fri, 30 Nov 2018 18:16:16 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wAU9GEac028692
+        by conuserg-09.nifty.com with ESMTP id wAU9GEae028692;
+        Fri, 30 Nov 2018 18:16:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wAU9GEae028692
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543569376;
-        bh=HiMqj/ME+AaGau+DxV454Be5fNhnAhoE/t6iCz3z6jg=;
+        s=dec2015msa; t=1543569377;
+        bh=gzYKmCi7RFLRJbVhrqU0TB39r/78EVYGgl3EJRt3LHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0lPI4l5QGeZ4FmFhB/3a9h8BVW7oBdM/qSU9p6YwNGzHP9nRB0gfgHj4pYmH1yGWG
-         LYkh7Cdo4wdnem8m11bWar/IW3pOibroI/ohq/5zaDRUdMNA1Yno7CTlHfcgpIJ8O6
-         KpBuc3YgtCTBHzujQm5/l2RK67n2I7l/afD+pig7sHvZ6iOYZ1f3rTNJfQb5qUfD2o
-         HaivYoNgvbqvyMDdLJlyMizYgephTbiAdrP8Cia/Z9H2CZm9EhVcjoONNpyn0MCrjl
-         D65NB86DUMrUMmuk8psBlyhvHN7XST8u+mdfsArGImSb1Fl3IrtjexDxmqeJHnPm+s
-         OppF+2kH0PB7g==
+        b=o72pLIlT3hEsKSyRX4sL507cGrtN4IE8mSFLVIfTcleG3s5VOVof1gKNVqSQNktLG
+         n24ORWdy1EUxa1xbG60LGIQeCghPp2/Al8rzDExxTs1sNIAf3pdRE304SPh6KbxO69
+         VRaFCg5vDTEDBAfmZUbGvloDkizBIPXGTUXQzfROJlrlyDIks8G0zZa5mJqSTd7oR0
+         Jq64CddIkYgWNWLs6SYdsFNAXp2vnEy/636vV96MiM+yAsgrFhI0quBktqFzzXedoD
+         /OvPqD+J4YSl7uNPCTXUZQUm0p2ZgjGhGyVtydfiWLCgzVM85DxGDnx1GXReM1hvE2
+         7N3K3ET8HYhBQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -47,9 +46,9 @@ Cc:     Sam Ravnborg <sam@ravnborg.org>,
         Ulf Magnusson <ulfalizer@gmail.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] kconfig: split out code touching a file to conf_touch_dep()
-Date:   Fri, 30 Nov 2018 18:15:50 +0900
-Message-Id: <1543569352-4899-3-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 5/5] kconfig: remove k_invalid from expr_parse_string() return type
+Date:   Fri, 30 Nov 2018 18:15:52 +0900
+Message-Id: <1543569352-4899-5-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543569352-4899-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1543569352-4899-1-git-send-email-yamada.masahiro@socionext.com>
@@ -58,146 +57,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-conf_touch_deps() iterates over symbols, touching corresponding
-include/config/*.h files as needed.
+The only possibility of k_invalid being returned was when
+expr_parse_sting() parsed S_OTHER type symbol. This actually never
+happened, and this is even clearer since S_OTHER has gone.
 
-Split the part that touches a single file into a new helper so it can
-be reused.
-
-The new helper, conf_touch_dep(), takes a symbol name as a parameter,
-and touches the corresponding include/config/*.h file.
+Clean up unreachable code.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/kconfig/confdata.c | 92 ++++++++++++++++++++++++----------------------
- 1 file changed, 49 insertions(+), 43 deletions(-)
+ scripts/kconfig/expr.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 4c76d56..7263b83 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -74,6 +74,47 @@ static int make_parent_dir(const char *path)
- 	return 0;
- }
+diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
+index e1a39e9..57ebf71 100644
+--- a/scripts/kconfig/expr.c
++++ b/scripts/kconfig/expr.c
+@@ -980,7 +980,6 @@ enum string_value_kind {
+ 	k_string,
+ 	k_signed,
+ 	k_unsigned,
+-	k_invalid
+ };
  
-+static char depfile_path[PATH_MAX];
-+static size_t depfile_prefix_len;
-+
-+/* touch depfile for symbol 'name' */
-+static int conf_touch_dep(const char *name)
-+{
-+	int fd, ret;
-+	const char *s;
-+	char *d, c;
-+
-+	/* check overflow: prefix + name + ".h" + '\0' must fix in buffer. */
-+	if (depfile_prefix_len + strlen(name) + 3 > sizeof(depfile_path))
-+		return -1;
-+
-+	d = depfile_path + depfile_prefix_len;
-+	s = name;
-+
-+	while ((c = *s++))
-+		*d++ = (c == '_') ? '/' : tolower(c);
-+	strcpy(d, ".h");
-+
-+	/* Assume directory path already exists. */
-+	fd = open(depfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-+	if (fd == -1) {
-+		if (errno != ENOENT)
-+			return -1;
-+
-+		ret = make_parent_dir(depfile_path);
-+		if (ret)
-+			return ret;
-+
-+		/* Try it again. */
-+		fd = open(depfile_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-+		if (fd == -1)
-+			return -1;
-+	}
-+	close(fd);
-+
-+	return 0;
-+}
-+
- struct conf_printer {
- 	void (*print_symbol)(FILE *, struct symbol *, const char *, void *);
- 	void (*print_comment)(FILE *, const char *, void *);
-@@ -909,21 +950,16 @@ static int conf_write_dep(const char *name)
- static int conf_touch_deps(void)
- {
- 	const char *name;
--	char path[PATH_MAX+1];
--	char *s, *d, c;
- 	struct symbol *sym;
--	int res, i, fd;
-+	int res, i;
-+
-+	strcpy(depfile_path, "include/config/");
-+	depfile_prefix_len = strlen(depfile_path);
- 
- 	name = conf_get_autoconfig_name();
- 	conf_read_simple(name, S_DEF_AUTO);
- 	sym_calc_value(modules_sym);
- 
--	if (make_parent_dir("include/config/foo.h"))
--		return 1;
--	if (chdir("include/config"))
--		return 1;
--
--	res = 0;
- 	for_all_symbols(i, sym) {
- 		sym_calc_value(sym);
- 		if ((sym->flags & SYMBOL_NO_WRITE) || !sym->name)
-@@ -975,42 +1011,12 @@ static int conf_touch_deps(void)
- 		 *	different from 'no').
- 		 */
- 
--		/* Replace all '_' and append ".h" */
--		s = sym->name;
--		d = path;
--		while ((c = *s++)) {
--			c = tolower(c);
--			*d++ = (c == '_') ? '/' : c;
--		}
--		strcpy(d, ".h");
--
--		/* Assume directory path already exists. */
--		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
--		if (fd == -1) {
--			if (errno != ENOENT) {
--				res = 1;
--				break;
--			}
--
--			if (make_parent_dir(path)) {
--				res = 1;
--				goto out;
--			}
--
--			/* Try it again. */
--			fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
--			if (fd == -1) {
--				res = 1;
--				break;
--			}
--		}
--		close(fd);
-+		res = conf_touch_dep(sym->name);
-+		if (res)
-+			return res;
+ union string_value {
+@@ -1011,13 +1010,10 @@ static enum string_value_kind expr_parse_string(const char *str,
+ 		val->u = strtoull(str, &tail, 16);
+ 		kind = k_unsigned;
+ 		break;
+-	case S_STRING:
+-	case S_UNKNOWN:
++	default:
+ 		val->s = strtoll(str, &tail, 0);
+ 		kind = k_signed;
+ 		break;
+-	default:
+-		return k_invalid;
  	}
--out:
--	if (chdir("../.."))
--		return 1;
+ 	return !errno && !*tail && tail > str && isxdigit(tail[-1])
+ 	       ? kind : k_string;
+@@ -1073,13 +1069,7 @@ tristate expr_calc_value(struct expr *e)
  
--	return res;
-+	return 0;
- }
- 
- int conf_write_autoconf(int overwrite)
+ 	if (k1 == k_string || k2 == k_string)
+ 		res = strcmp(str1, str2);
+-	else if (k1 == k_invalid || k2 == k_invalid) {
+-		if (e->type != E_EQUAL && e->type != E_UNEQUAL) {
+-			printf("Cannot compare \"%s\" and \"%s\"\n", str1, str2);
+-			return no;
+-		}
+-		res = strcmp(str1, str2);
+-	} else if (k1 == k_unsigned || k2 == k_unsigned)
++	else if (k1 == k_unsigned || k2 == k_unsigned)
+ 		res = (lval.u > rval.u) - (lval.u < rval.u);
+ 	else /* if (k1 == k_signed && k2 == k_signed) */
+ 		res = (lval.s > rval.s) - (lval.s < rval.s);
 -- 
 2.7.4
 
