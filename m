@@ -2,86 +2,116 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1636CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAAFC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB5F2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB5F2145D
+	by mail.kernel.org (Postfix) with ESMTP id 50E7C2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E7C2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbeK3O04 (ORCPT
+        id S1727392AbeK3O06 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 09:26:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55578 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 09:26:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbeK3O04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 09:26:56 -0500
+        id S1726472AbeK3O05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 09:26:57 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA51F2145D;
+        by mail.kernel.org (Postfix) with ESMTPSA id BFF592146D;
         Fri, 30 Nov 2018 03:19:08 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gSZKd-0002kI-Kx; Thu, 29 Nov 2018 22:19:07 -0500
-Message-Id: <20181130031829.268422593@goodmis.org>
+        id 1gSZKd-0002kt-PX; Thu, 29 Nov 2018 22:19:07 -0500
+Message-Id: <20181130031907.694438604@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 29 Nov 2018 22:18:29 -0500
+Date:   Thu, 29 Nov 2018 22:18:30 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 0/2] [GIT PULL] tracing: More fixes for 4.20
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Wang Haibin <wanghaibin.wang@huawei.com>,
+        linux-trace-devel@vger.kernel.org, stable@vger.kernel.org,
+        Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH 1/2] tracepoint: Use __idx instead of idx in DO_TRACE macro to make it
+ unique
+References: <20181130031829.268422593@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Zenghui Yu <yuzenghui@huawei.com>
 
-Linus,
+After enabling KVM event tracing, almost all of trace_kvm_exit()'s
+printk shows
 
-This includes two more fixes:
+	"kvm_exit: IRQ: ..."
 
- - Change idx variable in DO_TRACE macro to __idx to avoid name conflicts.
-   A kvm event had "idx" as a parameter and it confused the macro.
+even if the actual exception_type is NOT IRQ.  More specifically,
+trace_kvm_exit() is defined in virt/kvm/arm/trace.h by TRACE_EVENT.
 
- - Fix a race where interrupts would be traced when set_graph_function was set.
-   The previous patch set increased a race window that tricked the function graph
-   tracer to think it should trace interrupts when it really should not have.
-   The bug has been there before, but was seldom hit. Only the last patch series
-   made it more common.
+This slight problem may have existed after commit e6753f23d961
+("tracepoint: Make rcuidle tracepoint callers use SRCU"). There are
+two variables in trace_kvm_exit() and __DO_TRACE() which have the
+same name, *idx*. Thus the actual value of *idx* will be overwritten
+when tracing. Fix it by adding a simple prefix.
 
-Note, this is on top of a previous git pull that I have submitted:
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Wang Haibin <wanghaibin.wang@huawei.com>
+Cc: linux-trace-devel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Fixes: e6753f23d961 ("tracepoint: Make rcuidle tracepoint callers use SRCU")
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/linux/tracepoint.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-  http://lkml.kernel.org/r/20181127224031.76681fe0@vmware.local.home
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 538ba1a58f5b..e9de8ad0bad7 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -166,7 +166,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		struct tracepoint_func *it_func_ptr;			\
+ 		void *it_func;						\
+ 		void *__data;						\
+-		int __maybe_unused idx = 0;				\
++		int __maybe_unused __idx = 0;				\
+ 									\
+ 		if (!(cond))						\
+ 			return;						\
+@@ -182,7 +182,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		 * doesn't work from the idle path.			\
+ 		 */							\
+ 		if (rcuidle) {						\
+-			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
++			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
+ 			rcu_irq_enter_irqson();				\
+ 		}							\
+ 									\
+@@ -198,7 +198,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 									\
+ 		if (rcuidle) {						\
+ 			rcu_irq_exit_irqson();				\
+-			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
++			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
+ 		}							\
+ 									\
+ 		preempt_enable_notrace();				\
+-- 
+2.19.1
 
-Please pull the latest trace-v4.20-rc4 tree, which can be found at:
 
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.20-rc4
-
-Tag SHA1: 9ecaefab677642b895cdb44889a2baff3e7436bc
-Head SHA1: 5cf99a0f3161bc3ae2391269d134d6bf7e26f00e
-
-
-Steven Rostedt (VMware) (1):
-      tracing/fgraph: Fix set_graph_function from showing interrupts
-
-Zenghui Yu (1):
-      tracepoint: Use __idx instead of idx in DO_TRACE macro to make it unique
-
-----
- include/linux/tracepoint.h           |  6 ++--
- kernel/trace/trace.h                 | 57 ++++++++++++++++++++++++++++++++++--
- kernel/trace/trace_functions_graph.c |  4 +++
- kernel/trace/trace_irqsoff.c         |  2 ++
- kernel/trace/trace_sched_wakeup.c    |  2 ++
- 5 files changed, 65 insertions(+), 6 deletions(-)
