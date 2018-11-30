@@ -2,111 +2,75 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68A8C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EC3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F71120834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:22:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D09442146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:24:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s8YhznWh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F71120834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jSlsVUtY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D09442146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeLADcl (ORCPT
+        id S1727036AbeLADe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:32:41 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34552 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726881AbeLADcl (ORCPT
+        Fri, 30 Nov 2018 22:34:27 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51550 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeLADe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:32:41 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h3so3057017pfg.1;
-        Fri, 30 Nov 2018 08:22:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=UXx7K1aD1lH5akuv9QVkU+NEL46CsTmiv8IdZL4IEBY=;
-        b=s8YhznWhtYjCyX7QfR6AMwlENj5pew2kWkombLmFKr7Rmfq51kPaPPwsj/1cW3Fs5I
-         qumG6R9XPnc/bOmsaUwjlVADlRY1ZuZ4C/j8kxs0WeOmIXtbrrv7h/ybbBnsZ5V379aC
-         cFFQzYmKQhB+f8/robh/TF+9pnJueKJcQczudQcEUFUi5xh5j4iyYvZGVO20kIlNGCW+
-         k3c9hYYxKeTYWTz7pVrsXtRvA9sgVQo/VDEoFeJ2+L4ymoQtuVdOFiBHAccF/RqTVvSu
-         SEvifFzjDHz9SvyF7jybWYmtKPP5GEk+sH95anGntTtDekSgU6ka29mrmt7Ws7/jFyhB
-         HH/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UXx7K1aD1lH5akuv9QVkU+NEL46CsTmiv8IdZL4IEBY=;
-        b=gGaqvznFmZqly+TH6mfpPR21LHiYqUnpwWO8Fy4WqFfIWCvwW3qXkl5pGjnMiEbV+i
-         qb43qe+iqJ/pgY1WKRLItt1kYfMnhc/LjaalhUfND6G6thpY/pjjfHR36ZmuBxOnEKpO
-         VBG2zS7TdEAW8epgu9iU5ve44EyE1mw7tXF1hg3Sb2NT+jfjYG3gHANqJXPfXyPWS3hU
-         WLUNnR3LI37m0AtDoktoiGsGDQ7gpZKZ7TMwmHFoaBvujZKWTjk6C7csz5Gk/fLgyHuw
-         tiLC0V1oBwJVmhb4NDaNcT4hWery/KMFwBQReTQSdT1Nv/21wdIOKSN35rtiZ+q4XV0E
-         GW1w==
-X-Gm-Message-State: AA+aEWYBDQeXfNjbAOvni1ZT4WiqGuAMLI/AR+fQASiBr1RHKWZlbcfS
-        lNYL3NNzZXSLzPxFq/35fuM=
-X-Google-Smtp-Source: AFSGD/U7jbewC1xW48SahpN20upkuhfUkldoXyWkpyiyX/LaLrMVXje8Ep0H3vQGa/SBsxEHIdHiwQ==
-X-Received: by 2002:a63:6645:: with SMTP id a66mr5245444pgc.390.1543594971016;
-        Fri, 30 Nov 2018 08:22:51 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id n22sm12990198pfh.166.2018.11.30.08.22.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 08:22:49 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] gpio: ks8695: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Fri, 30 Nov 2018 11:22:46 -0500
-Message-Id: <20181130162246.3555-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 30 Nov 2018 22:34:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=P0ZOugyMlnKj+NkZlXijcTkkjHK+ttJiBPhe82ZjmJ0=; b=jSlsVUtY+m3I6zPUn9Hyhosa7
+        pv+f51J+wDEnbvu1qSm79x2+I5a0sULnE92GHedKnkqfTeczxXfxVSecBMOwF59iSzudoWzS/IZcV
+        82co6yRQjjSnCaHwHhHabJIDQZrvTfhfz9dQdnemqEjEuYq89i0BCipw0HO7U73NFv/iR5hAsbWXS
+        vn5AUoVKNgohkBNzycw8yVWLjNZ6EC9IYSE40Afdq/+3UpL1JaIN1ZUjCP9ZyhZxp0UKOPzfPS9bC
+        PBruKpA0WqZd4lwtt2ophMR6S0tlH/iAUF7Uir3mPa+iC63twiq2pBjGARnk9Ibh7Cy3tAkwSvCFm
+        0W7Y/tRzw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSlal-000394-EH; Fri, 30 Nov 2018 16:24:35 +0000
+Date:   Fri, 30 Nov 2018 08:24:35 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix Xarray conversion of dax_unlock_mapping_entry()
+Message-ID: <20181130162435.GM10377@bombadil.infradead.org>
+References: <154353682674.1676897.15440708268545845062.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181130154902.GL10377@bombadil.infradead.org>
+ <CAPcyv4iE375mP7eJP4nb76shWNaATy6FcZYi800wZ3iAJE8G8g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iE375mP7eJP4nb76shWNaATy6FcZYi800wZ3iAJE8G8g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On Fri, Nov 30, 2018 at 07:54:49AM -0800, Dan Williams wrote:
+> Looks good to me, although can we make that cookie an actual type? I
+> think it's mostly ok to pass around (void *) for 'entry' inside of
+> fs/dax.c, but once an entry leaves that file I'd like it to have an
+> explicit type to catch people that might accidentally pass a (struct
+> page *) to the unlock routine.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/gpio/gpio-ks8695.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+That's a really good idea.  Something like this?
 
-diff --git a/drivers/gpio/gpio-ks8695.c b/drivers/gpio/gpio-ks8695.c
-index 55d562e1278e..d6d6140ffc40 100644
---- a/drivers/gpio/gpio-ks8695.c
-+++ b/drivers/gpio/gpio-ks8695.c
-@@ -282,22 +282,13 @@ static int ks8695_gpio_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int ks8695_gpio_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ks8695_gpio_show, NULL);
--}
--
--static const struct file_operations ks8695_gpio_operations = {
--	.open		= ks8695_gpio_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(ks8695_gpio);
- 
- static int __init ks8695_gpio_debugfs_init(void)
- {
- 	/* /sys/kernel/debug/ks8695_gpio */
--	(void) debugfs_create_file("ks8695_gpio", S_IFREG | S_IRUGO, NULL, NULL, &ks8695_gpio_operations);
-+	debugfs_create_file("ks8695_gpio", S_IFREG | S_IRUGO, NULL, NULL,
-+				&ks8695_gpio_fops);
- 	return 0;
- }
- postcore_initcall(ks8695_gpio_debugfs_init);
--- 
-2.17.0
+typedef struct {
+	void *v;
+} dax_entry_t;
 
+I could see us making good use of that within dax.c.
