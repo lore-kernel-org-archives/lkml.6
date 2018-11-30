@@ -2,121 +2,102 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DATE_IN_PAST_03_06,
+X-Spam-Status: No, score=-11.9 required=3.0 tests=DATE_IN_PAST_03_06,
 	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F422C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40C6C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61FC320834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7752E2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:56:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="SC1Lf6aD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FC320834
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="CMP08eMG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7752E2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeLAKHS (ORCPT
+        id S1726870AbeLAKHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 05:07:18 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34172 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbeLAKHS (ORCPT
+        Sat, 1 Dec 2018 05:07:21 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38345 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbeLAKHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 05:07:18 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u6-v6so6408810ljd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:56:25 -0800 (PST)
+        Sat, 1 Dec 2018 05:07:20 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p86so5257781lfg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:56:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=D2hp/Ir0gBlnqWcUXzziRNf+Jis9t1VhUFTTdvJjBRc=;
-        b=SC1Lf6aDLPjRP0JOUQoUj1dytI3cZdU5eDX1AxmL025ahvjfNxiC9+hqH6zA6KsDj+
-         yQzEH0lOl332nbvYrSuopMgodlP+XrHkayXTEkhdtaSxpmPiujcZ1pRCKatLBIFjgYpD
-         F6oA/3oqvvWacuukkqVquHuiWeCG1Pr032pbeiPygpObRjBF43ic/eLKcICxCr4gD5LO
-         Wjt8J0BEJTzD1UGiO8g3Xyhas5e2LSy0voSlzD5Pkl9UCifkgUU4JzB8DhQVSynw12jX
-         CGljiNu8k8fEulyz6NWdt1PKXpeSqVEpBD48xfBNeULmrasehxkxJ89zmdLL60Ps3/1o
-         bPiQ==
+        bh=CRaczM14x8jN2CGA32OyRSnI3OnYrZYJ8H64Fo/XgsY=;
+        b=CMP08eMG1ImxNQPqDq6Dz1EVM6Gn69gv14Orf1Cp9uUyfGOcJxwrje5SQrueUWQ40f
+         SfYoPSBYk4+HG9UzDLiZiFKholiBpLJBLtG6S2HCp2jMI8a4XTpurG5XOVcinvQIkj3X
+         JbefcIF5uBrLxF0rPDIGXzI67l4Eu1JXpRQgbaAH5LJ7fCVOAHPWd7DiNi6/ByCyWOe7
+         02m0kKTce0hMp6Oy+bRXF8fVWZlaWuSQr/VUVnHNNe36OKDlDWVZqwvx4nWUdJMCX8lJ
+         hoPltMmRGie/qv1ULtFIjJ6+dj4fdT04Mci70mdv5hkOBc92lHGpuihSXHcdlaX5PNHI
+         RcGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D2hp/Ir0gBlnqWcUXzziRNf+Jis9t1VhUFTTdvJjBRc=;
-        b=EI09+9rFdxM8tSvp4vSI1wCH15oq1sOWBjQm6h1FMMbixrC+pgccQhOAwtl7UqGbCB
-         EYZ+R4z2wBYm6NIFv0F62vhmBpnIUy1ipyfb/EQ3mfygaSe605jcoYCPg2u0qRiUwJCK
-         enEFOJsjMCsyMyGoOgg6L7l8lhZVOhzYOhQOOjFRYJ5J/2+Q2bIR7ZsfR14a8ZxpaDGF
-         6zu9HVwBd8OqwYejkMD1ftKGlwijgTugWJCie/LzT3eFJSyYh8o6XlhUHqieiiZMrUFS
-         UvLanJRZE36W+6i5cDd4zDmithMoEpz/HQ4MZtzn3o76KdxbVnw6yneHSeLCLuLkU/Qm
-         38aA==
-X-Gm-Message-State: AA+aEWbVCujDVrNl+miZZdQL1mK/NzgojLYNmRzONEeqV0qk76Uvj+cy
-        tcmH9Wn8Z79GCgPO9YimzbCaFQ==
-X-Google-Smtp-Source: AFSGD/VbTI/4U1VT41i7x5ClnS7JN+PeiNmFfZw/R0ZuiILEih03rWq9gADRYveyGS/GzhN/cfpVHA==
-X-Received: by 2002:a2e:9603:: with SMTP id v3-v6mr4293247ljh.15.1543618584252;
-        Fri, 30 Nov 2018 14:56:24 -0800 (PST)
+        bh=CRaczM14x8jN2CGA32OyRSnI3OnYrZYJ8H64Fo/XgsY=;
+        b=VJkvqy35L9h+Hrc4PKavZiY2QSA8gmKQOPH38khfyy9UYVGYI4ZqDsc6QjDtCh+/R6
+         I6mtGSncVBL8a3OxXxpcKMCnt1Kb+KOeRX3D2/JCwqWYV+E7IKkzJY7zPc3qc5jQylGp
+         FmFVN5EGPISCFaZ1znysrr9nPYoXfvnpgSO9MoPzIhhwmmCNppmSBxi/KdtvAU9kaqW6
+         XI71wpeK/+AiUiLy7Wwx9HYAHDbkw6ICu4RPDNfiy3VlxuWJ74V2JhckOKRWGjvSfq8M
+         1Pu/l6+Tlqb+391xwKLSecpPgjmeQwVBlcaVPTWmkKoEAt5KedVkiZOEoypa8B9WlADz
+         yXyg==
+X-Gm-Message-State: AA+aEWarSFd5g4X/fJPiFduBubbReE3V0bS8TKFyV8wO7VYRsUWY55Fa
+        i4ylKcA7Hupr6xzEIOstMweq7g==
+X-Google-Smtp-Source: AFSGD/Xytu2S9QiwctTNlf6nYW5Fpz9uarqPX9iu2oP71QRDFwBrfFMWbIxHXuBNsUWhpOTpRJYEeQ==
+X-Received: by 2002:a19:5f1e:: with SMTP id t30mr4465906lfb.76.1543618586569;
+        Fri, 30 Nov 2018 14:56:26 -0800 (PST)
 Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id f8sm1143749lfe.72.2018.11.30.14.56.22
+        by smtp.gmail.com with ESMTPSA id k68-v6sm1013616ljb.35.2018.11.30.14.56.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 14:56:22 -0800 (PST)
-Date:   Fri, 30 Nov 2018 11:48:18 -0800
+        Fri, 30 Nov 2018 14:56:25 -0800 (PST)
+Date:   Fri, 30 Nov 2018 11:49:19 -0800
 From:   Olof Johansson <olof@lixom.net>
-To:     Rob Herring <robh@kernel.org>
-Cc:     chunyan.zhang@unisoc.com, Lyra Zhang <zhang.lyra@gmail.com>,
-        ARM-SoC Maintainers <arm@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [GIT PULL] sprd dts for kernel v4.20-rc1
-Message-ID: <20181130194818.7v5ysbwkoq6buzko@localhost>
-References: <1539854253-4784-1-git-send-email-chunyan.zhang@unisoc.com>
- <20181102183246.r5xxwsic2mxwihsi@localhost>
- <CAL_Jsq+HFPnzw4Fo3rLRMxber8_itGZ=LjnUeyvvDOt4_txm3g@mail.gmail.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] ARM: at91: fixes for 4.20
+Message-ID: <20181130194919.rah6fxh6jcaiadea@localhost>
+References: <20181121111623.GA10372@piout.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+HFPnzw4Fo3rLRMxber8_itGZ=LjnUeyvvDOt4_txm3g@mail.gmail.com>
+In-Reply-To: <20181121111623.GA10372@piout.net>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 09:18:34AM -0600, Rob Herring wrote:
-> On Fri, Nov 2, 2018 at 1:50 PM Olof Johansson <olof@lixom.net> wrote:
-> >
-> > On Thu, Oct 18, 2018 at 05:17:33PM +0800, Chunyan Zhang wrote:
-> > > Hi Arnd,
-> > >
-> > > For 4.20-rc1 there's one patch only for sprd devicetree, please pull from my git tree:
-> > >
-> > > https://github.com/lyrazhang/linux.git m-v4.19-rc1
-> > >
-> > > Please let me know if there's some problem.
-> > >
-> > > Thanks,
-> > > Chunyan
-> > >
-> > > ----------------------------------------------------------------
-> > >
-> > > Suzuki K Poulose (1):
-> > >   arm64: dts: sc9836/sc9860: Update coresight bindings for hardware
-> > >     ports
-> > >
-> > >  arch/arm64/boot/dts/sprd/sc9836.dtsi |  78 +++++++------
-> > >  arch/arm64/boot/dts/sprd/sc9860.dtsi | 215 ++++++++++++++++++-----------------
-> > >  2 files changed, 151 insertions(+), 142 deletions(-)
-> >
-> > Hi,
-> >
-> > This came in right before the merge window so it wasn't included since
-> > it's more of a cleanup. Please resend it after -rc1 is out and we'll be
-> > happy to queue it up for 4.21.
+On Wed, Nov 21, 2018 at 12:16:23PM +0100, Alexandre Belloni wrote:
+> Arnd, Olof,
 > 
-> I'm enabling by default the DT warnings that this fixes, so please pull it in.
+> A simple DT fix that is necessary to get reliable access to the NAND on
+> sama5d2 based boards.
+> 
+> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+> 
+>   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-4.20-fixes
+> 
+> for you to fetch changes up to 4ab7ca092c3c7ac8b16aa28eba723a8868f82f14:
+> 
+>   ARM: dts: at91: sama5d2: use the divided clock for SMC (2018-11-21 11:50:32 +0100)
 
-It was merged on November 13.
+Merged, thanks.
 
 
 -Olof
