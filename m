@@ -2,224 +2,115 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3C0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C5BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C06220863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57B4B2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LhEj0h7C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C06220863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BRnfZODI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Tr2XFNMZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B4B2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbeK3Pl0 (ORCPT
+        id S1726712AbeK3PmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 10:41:26 -0500
-Received: from mail-eopbgr00080.outbound.protection.outlook.com ([40.107.0.80]:34256
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726410AbeK3PlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 10:41:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OIB1Gi9vAZciMf1Npz3ho+DNRtmch0WDWIax6dCU8cA=;
- b=LhEj0h7Cg/WNPrmEoLic7+Vi6BNk0QEuFJG0dMXmZqVsbxx0Ol4KmJ8d1TO20SXf8D0crhRy0BVs7K3fhveIw4cMLG5gXytLAlBwiSab077HMi9q86xEnthOsLv48EwDNwYG9bQT4wOyfR+mvEYT+BN8CNuuU+fHR6/h1o1/yLs=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB3214.eurprd04.prod.outlook.com (10.170.227.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18; Fri, 30 Nov 2018 04:33:22 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::595a:9890:8397:5d51]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::595a:9890:8397:5d51%4]) with mapi id 15.20.1382.020; Fri, 30 Nov 2018
- 04:33:22 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Han Xu <han.xu@nxp.com>
-CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        David Wolfe <david.wolfe@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Topic: [PATCH v6 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Index: AQHUhjthS4yZSu2tFUKxjttSopGq5aVk3CAAgAG6GYCAABGdAIABFslQ
-Date:   Fri, 30 Nov 2018 04:33:21 +0000
-Message-ID: <VI1PR04MB5726E3E7FD5F16A5D57EA37399D30@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <1543314174-28580-1-git-send-email-frieder.schrempf@kontron.de>
- <1543314174-28580-4-git-send-email-frieder.schrempf@kontron.de>
- <3981845c-327a-bb14-2908-47dd443971bf@kontron.de>
- <VI1PR04MB572644A2AE3214356A62478799D20@VI1PR04MB5726.eurprd04.prod.outlook.com>
- <f4c584e5-8930-bec3-0c4e-2216a89606b0@kontron.de>
-In-Reply-To: <f4c584e5-8930-bec3-0c4e-2216a89606b0@kontron.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB3214;6:PXhz1D+1x30X3He9pbl7OF/LycJLPwh2a6QaUcZGt/oai8RiP7obuT5zEtwTfX300htd7WFWZPmGK4lP0rG+AbFf5R2YK50RyKDeoZ2Tn2m5EiRQUdz0BTU20vQGrIWKbIaPeWOdUZH+YmufCIrcHs+l5MtVIEd+xEeTHaBtTdDLWSBAh3vq8UFtpRha/RWg2ugtAYpjWEsy+KdO2Y3ykBd7Wy7TVnLiW3F+RT6e/TfSKuMjLuCOdy6gtSPQJeLttqi3EqLnTJS1O5gtD1bQG+HBUjILmdZqpsXlgE5du5JajYQC07tx6EmSKdCZPDmXwIi7z6mIWO7R10nqywhzKBNMfMaogUoUGHMxKDrOmoibyE0Mg6pqWln9hTC++rY95v7r5JUmhAl5c3JyjQVB5ivyAIet9dMe0K/r5Q7JXCp7UPe0NSU08moxnnQ03oi0bMl2Axn0n9ZmCkHWkfFScA==;5:TW/PURuDYMR3waAV19lVWKN+ubAdPyOE9gvWBl8t2DORZb1eXsceJ0Ka8esPaOICrXeaUR1n0t3cCyO40iCviAHMXfLkvSMLrGtz065szdymycm+VsM2mQ9qfeynz0c5ugUTQLW0C92fv1nHF062wQ8yYi5RAPCpjmq9onA5Hak=;7:05msf2TJRPTnzsVK2fPWpARRb+aWiyGiyLmYKpgvcYY+uHb9MsyIba2DGvOnhJUmqQoDZFyDpHv3dmdjQMa+yh4zee8oM5xJ1ORMliqAN+f4MbRYolYRNpjYuiT6NIbnGjU41/Jv1jKxglZ+hmPGZA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e5bf4630-eb27-42ce-8880-08d6567cf5fc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3214;
-x-ms-traffictypediagnostic: VI1PR04MB3214:
-x-microsoft-antispam-prvs: <VI1PR04MB3214344F21277152D71C9BC799D30@VI1PR04MB3214.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231453)(999002)(944501460)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3214;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3214;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(396003)(366004)(346002)(189003)(199004)(13464003)(5660300001)(11346002)(66066001)(446003)(105586002)(106356001)(476003)(486006)(33656002)(4326008)(39060400002)(6436002)(25786009)(345774005)(2906002)(478600001)(229853002)(6636002)(53936002)(110136005)(3846002)(6116002)(54906003)(55016002)(7416002)(9686003)(2501003)(6246003)(68736007)(74316002)(316002)(93886005)(305945005)(7736002)(76176011)(2201001)(14444005)(256004)(71190400001)(26005)(71200400001)(78486014)(8936002)(7696005)(186003)(14454004)(99286004)(8676002)(55236004)(97736004)(53546011)(86362001)(6506007)(81166006)(81156014)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3214;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0+igMWqvd4oRvYnpT/Jso7D0w2xvIlVLs6sIGJ6dzaCucR+B/JhU8oAOm6svoehz2DmVMlVtFGXwH/ZOPCCFDZvK5sY8Y0XqfBHRWwYb9Qw5hVC4JIMr3c5sdtUD4TjIaHCiFMaFTZgybp8S++8jw5X7qzIetqZVcN7EnOVY+NR4gWAOY+cYjzbqbHwQ6wgN38ecgQrfBQJnM2vu3Y9f+W0bl7pNNG99fG2ZXBrYzrOXiAKSp+cfjwdMtxM4vC5MWHu30YirDAjumnTZsuBY53z2nABg1qiBurM0ob+Sfj8qi6ULPkuV+9HDAkLNMlViersgoXBfygt0W80RYL5QOhawMvZvPxweTNUvC8Qn9l4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 30 Nov 2018 10:42:03 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56724 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbeK3PmD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 10:42:03 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6588960B1E; Fri, 30 Nov 2018 04:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543552443;
+        bh=IPcjawDDQ2wOvSnSyDZUHPRyG8N34E5C/gWejrog3Sk=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=BRnfZODIDQzMIcGETuYY7TvVp4twHDyLyohflrmZX0xUtxExdOqKJQkouqw3tPB4H
+         9oUs23ScgDDW1ZyitjKYNfrnG0D/qy+5mh4QSfLsaZoqVdtA16xu+WbNhwmVmw89Vy
+         wWWjX9Sp13AWl4rrS1popxUWNr+7rKfyZ/kKUu5s=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BF22F60722;
+        Fri, 30 Nov 2018 04:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543552433;
+        bh=IPcjawDDQ2wOvSnSyDZUHPRyG8N34E5C/gWejrog3Sk=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Tr2XFNMZbmfJLvR52SQtGHPxVHn4h1zbxYnaJElJUyLLRYf/nBGfMJjs5Q2xB+Xpq
+         V8TYFwCK/nv21C3WIsiNmhWntz0FDiO3A0u4ngVaFPQAYoMv1974nnZ17SafV5rkWr
+         lk0oNctwte/b6KRxfsyGi1r3uqeMsqaB37z7Kxhg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF22F60722
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Wireless <linux-wireless@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kees Cook <keescook@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: linux-next: build warnings after merge of the wireless-drivers-next tree
+References: <20181130120555.1d35eb6b@canb.auug.org.au>
+Date:   Fri, 30 Nov 2018 06:33:47 +0200
+In-Reply-To: <20181130120555.1d35eb6b@canb.auug.org.au> (Stephen Rothwell's
+        message of "Fri, 30 Nov 2018 12:05:55 +1100")
+Message-ID: <87lg5b5glw.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5bf4630-eb27-42ce-8880-08d6567cf5fc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 04:33:22.0433
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3214
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRnJpZWRlciwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTY2hy
-ZW1wZiBGcmllZGVyIFttYWlsdG86ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRlXQ0KPiBTZW50
-OiBUaHVyc2RheSwgTm92ZW1iZXIgMjksIDIwMTggNToyNCBQTQ0KPiBUbzogWW9nZXNoIE5hcmF5
-YW4gR2F1ciA8eW9nZXNobmFyYXlhbi5nYXVyQG54cC5jb20+OyBsaW51eC0NCj4gbXRkQGxpc3Rz
-LmluZnJhZGVhZC5vcmc7IGJvcmlzLmJyZXppbGxvbkBib290bGluLmNvbTsgbGludXgtDQo+IHNw
-aUB2Z2VyLmtlcm5lbC5vcmc7IE1hcmVrIFZhc3V0IDxtYXJlay52YXN1dEBnbWFpbC5jb20+OyBN
-YXJrIEJyb3duDQo+IDxicm9vbmllQGtlcm5lbC5vcmc+OyBIYW4gWHUgPGhhbi54dUBueHAuY29t
-Pg0KPiBDYzogZHdtdzJAaW5mcmFkZWFkLm9yZzsgY29tcHV0ZXJzZm9ycGVhY2VAZ21haWwuY29t
-OyByaWNoYXJkQG5vZC5hdDsNCj4gbWlxdWVsLnJheW5hbEBib290bGluLmNvbTsgRGF2aWQgV29s
-ZmUgPGRhdmlkLndvbGZlQG54cC5jb20+OyBGYWJpbw0KPiBFc3RldmFtIDxmYWJpby5lc3RldmFt
-QG54cC5jb20+OyBQcmFiaGFrYXIgS3VzaHdhaGENCj4gPHByYWJoYWthci5rdXNod2FoYUBueHAu
-Y29tPjsgc2hhd25ndW9Aa2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NiAzLzldIHNwaTogQWRkIGEgZHJpdmVyIGZvciB0
-aGUgRnJlZXNjYWxlL05YUCBRdWFkU1BJDQo+IGNvbnRyb2xsZXINCj4gDQo+IEhpIFlvZ2VzaCwN
-Cj4gDQo+IE9uIDI5LjExLjE4IDEyOjM4LCBZb2dlc2ggTmFyYXlhbiBHYXVyIHdyb3RlOg0KPiA+
-IEhpIEZyaWVkZXIsDQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4g
-RnJvbTogU2NocmVtcGYgRnJpZWRlciBbbWFpbHRvOmZyaWVkZXIuc2NocmVtcGZAa29udHJvbi5k
-ZV0NCj4gPj4gU2VudDogV2VkbmVzZGF5LCBOb3ZlbWJlciAyOCwgMjAxOCAxOjU4IFBNDQo+ID4+
-IFRvOiBsaW51eC1tdGRAbGlzdHMuaW5mcmFkZWFkLm9yZzsgYm9yaXMuYnJlemlsbG9uQGJvb3Rs
-aW4uY29tOw0KPiA+PiBsaW51eC0gc3BpQHZnZXIua2VybmVsLm9yZzsgTWFyZWsgVmFzdXQgPG1h
-cmVrLnZhc3V0QGdtYWlsLmNvbT47IE1hcmsNCj4gPj4gQnJvd24gPGJyb29uaWVAa2VybmVsLm9y
-Zz47IEhhbiBYdSA8aGFuLnh1QG54cC5jb20+DQo+ID4+IENjOiBkd213MkBpbmZyYWRlYWQub3Jn
-OyBjb21wdXRlcnNmb3JwZWFjZUBnbWFpbC5jb207DQo+IHJpY2hhcmRAbm9kLmF0Ow0KPiA+PiBt
-aXF1ZWwucmF5bmFsQGJvb3RsaW4uY29tOyBEYXZpZCBXb2xmZSA8ZGF2aWQud29sZmVAbnhwLmNv
-bT47IEZhYmlvDQo+ID4+IEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IFByYWJoYWth
-ciBLdXNod2FoYQ0KPiA+PiA8cHJhYmhha2FyLmt1c2h3YWhhQG54cC5jb20+OyBZb2dlc2ggTmFy
-YXlhbiBHYXVyDQo+ID4+IDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNvbT47IHNoYXduZ3VvQGtl
-cm5lbC5vcmc7IGxpbnV4LQ0KPiA+PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+ID4+IFN1Ympl
-Y3Q6IFJlOiBbUEFUQ0ggdjYgMy85XSBzcGk6IEFkZCBhIGRyaXZlciBmb3IgdGhlIEZyZWVzY2Fs
-ZS9OWFANCj4gPj4gUXVhZFNQSSBjb250cm9sbGVyDQo+ID4+DQo+ID4+IE9uIDI3LjExLjE4IDEx
-OjI0LCBTY2hyZW1wZiBGcmllZGVyIHdyb3RlOg0KPiA+Pj4gVGhpcyBkcml2ZXIgaXMgZGVyaXZl
-ZCBmcm9tIHRoZSBTUEkgTk9SIGRyaXZlciBhdA0KPiA+Pj4gbXRkL3NwaS1ub3IvZnNsLXF1YWRz
-cGkuYy4gSXQgdXNlcyB0aGUgbmV3IFNQSSBtZW1vcnkgaW50ZXJmYWNlIG9mDQo+ID4+PiB0aGUg
-U1BJIGZyYW1ld29yayB0byBpc3N1ZSBmbGFzaCBtZW1vcnkgb3BlcmF0aW9ucyB0byB1cCB0byBm
-b3VyDQo+ID4+PiBjb25uZWN0ZWQgZmxhc2ggY2hpcHMgKDIgYnVzZXMgd2l0aCAyIENTIGVhY2gp
-Lg0KPiA+Pj4NCj4gPj4+IFRoZSBjb250cm9sbGVyIGRvZXMgbm90IHN1cHBvcnQgZ2VuZXJpYyBT
-UEkgbWVzc2FnZXMuDQo+ID4+Pg0KPiA+Pj4gVGhpcyBwYXRjaCBhbHNvIGRpc2FibGVzIHRoZSBi
-dWlsZCBvZiB0aGUgIm9sZCIgZHJpdmVyIGFuZCByZXVzZXMNCj4gPj4+IGl0cyBLY29uZmlnIG9w
-dGlvbiBDT05GSUdfU1BJX0ZTTF9RVUFEU1BJIHRvIHJlcGxhY2UgaXQuDQo+ID4+Pg0KPiA+Pj4g
-U2lnbmVkLW9mZi1ieTogRnJpZWRlciBTY2hyZW1wZiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9u
-LmRlPg0KPiA+Pj4gLS0tDQo+ID4+PiAgICBkcml2ZXJzL210ZC9zcGktbm9yL0tjb25maWcgIHwg
-ICA5IC0NCj4gPj4+ICAgIGRyaXZlcnMvbXRkL3NwaS1ub3IvTWFrZWZpbGUgfCAgIDEgLQ0KPiA+
-Pj4gICAgZHJpdmVycy9zcGkvS2NvbmZpZyAgICAgICAgICB8ICAxMSArDQo+ID4+PiAgICBkcml2
-ZXJzL3NwaS9NYWtlZmlsZSAgICAgICAgIHwgICAxICsNCj4gPj4+ICAgIGRyaXZlcnMvc3BpL3Nw
-aS1mc2wtcXNwaS5jICAgfCA5NjcNCj4gPj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysNCj4gPj4+ICAgIDUgZmlsZXMgY2hhbmdlZCwgOTc5IGluc2VydGlvbnMoKyksIDEw
-IGRlbGV0aW9ucygtKQ0KPiA+Pj4NCj4gPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9zcGkt
-bm9yL0tjb25maWcNCj4gPj4+IGIvZHJpdmVycy9tdGQvc3BpLW5vci9LY29uZmlnIGluZGV4IDZj
-YzljOTIuLmQxY2EzMDcgMTAwNjQ0DQo+ID4+PiAtLS0gYS9kcml2ZXJzL210ZC9zcGktbm9yL0tj
-b25maWcNCj4gPj4+ICsrKyBiL2RyaXZlcnMvbXRkL3NwaS1ub3IvS2NvbmZpZw0KPiA+Pj4gQEAg
-LTU5LDE1ICs1OSw2IEBAIGNvbmZpZyBTUElfQ0FERU5DRV9RVUFEU1BJDQo+ID4+PiAgICAJICBk
-ZXZpY2Ugd2l0aCBhIENhZGVuY2UgUVNQSSBjb250cm9sbGVyIGFuZCB3YW50IHRvIGFjY2VzcyB0
-aGUNCj4gPj4+ICAgIAkgIEZsYXNoIGFzIGFuIE1URCBkZXZpY2UuDQo+ID4+Pg0KPiA+Pj4gLWNv
-bmZpZyBTUElfRlNMX1FVQURTUEkNCj4gPj4+IC0JdHJpc3RhdGUgIkZyZWVzY2FsZSBRdWFkIFNQ
-SSBjb250cm9sbGVyIg0KPiA+Pj4gLQlkZXBlbmRzIG9uIEFSQ0hfTVhDIHx8IFNPQ19MUzEwMjFB
-IHx8IEFSQ0hfTEFZRVJTQ0FQRSB8fA0KPiA+PiBDT01QSUxFX1RFU1QNCj4gPj4+IC0JZGVwZW5k
-cyBvbiBIQVNfSU9NRU0NCj4gPj4+IC0JaGVscA0KPiA+Pj4gLQkgIFRoaXMgZW5hYmxlcyBzdXBw
-b3J0IGZvciB0aGUgUXVhZCBTUEkgY29udHJvbGxlciBpbiBtYXN0ZXIgbW9kZS4NCj4gPj4+IC0J
-ICBUaGlzIGNvbnRyb2xsZXIgZG9lcyBub3Qgc3VwcG9ydCBnZW5lcmljIFNQSS4gSXQgb25seSBz
-dXBwb3J0cw0KPiA+Pj4gLQkgIFNQSSBOT1IuDQo+ID4+PiAtDQo+ID4+PiAgICBjb25maWcgU1BJ
-X0hJU0lfU0ZDDQo+ID4+PiAgICAJdHJpc3RhdGUgIkhpc2lsaWNvbiBTUEktTk9SIEZsYXNoIENv
-bnRyb2xsZXIoU0ZDKSINCj4gPj4+ICAgIAlkZXBlbmRzIG9uIEFSQ0hfSElTSSB8fCBDT01QSUxF
-X1RFU1QgZGlmZiAtLWdpdA0KPiA+Pj4gYS9kcml2ZXJzL210ZC9zcGktbm9yL01ha2VmaWxlIGIv
-ZHJpdmVycy9tdGQvc3BpLW5vci9NYWtlZmlsZSBpbmRleA0KPiA+Pj4gZjRjNjFkMi4uM2YxNjBj
-MmUzIDEwMDY0NA0KPiA+Pj4gLS0tIGEvZHJpdmVycy9tdGQvc3BpLW5vci9NYWtlZmlsZQ0KPiA+
-Pj4gKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9NYWtlZmlsZQ0KPiA+Pj4gQEAgLTMsNyArMyw2
-IEBAIG9iai0kKENPTkZJR19NVERfU1BJX05PUikJKz0gc3BpLW5vci5vDQo+ID4+PiAgICBvYmot
-JChDT05GSUdfU1BJX0FTUEVFRF9TTUMpCSs9IGFzcGVlZC1zbWMubw0KPiA+Pj4gICAgb2JqLSQo
-Q09ORklHX1NQSV9BVE1FTF9RVUFEU1BJKQkrPSBhdG1lbC1xdWFkc3BpLm8NCj4gPj4+ICAgIG9i
-ai0kKENPTkZJR19TUElfQ0FERU5DRV9RVUFEU1BJKQkrPSBjYWRlbmNlLXF1YWRzcGkubw0KPiA+
-Pj4gLW9iai0kKENPTkZJR19TUElfRlNMX1FVQURTUEkpCSs9IGZzbC1xdWFkc3BpLm8NCj4gPj4+
-ICAgIG9iai0kKENPTkZJR19TUElfSElTSV9TRkMpCSs9IGhpc2ktc2ZjLm8NCj4gPj4+ICAgIG9i
-ai0kKENPTkZJR19NVERfTVQ4MXh4X05PUikgICAgKz0gbXRrLXF1YWRzcGkubw0KPiA+Pj4gICAg
-b2JqLSQoQ09ORklHX1NQSV9OWFBfU1BJRkkpCSs9IG54cC1zcGlmaS5vDQo+ID4+PiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9zcGkvS2NvbmZpZyBiL2RyaXZlcnMvc3BpL0tjb25maWcgaW5kZXgNCj4g
-Pj4+IDdkM2E1YzkuLjhjODQxODYgMTAwNjQ0DQo+ID4+PiAtLS0gYS9kcml2ZXJzL3NwaS9LY29u
-ZmlnDQo+ID4+PiArKysgYi9kcml2ZXJzL3NwaS9LY29uZmlnDQo+ID4+PiBAQCAtMjU5LDYgKzI1
-OSwxNyBAQCBjb25maWcgU1BJX0ZTTF9MUFNQSQ0KPiA+Pj4gICAgCWhlbHANCj4gPj4+ICAgIAkg
-IFRoaXMgZW5hYmxlcyBGcmVlc2NhbGUgaS5NWCBMUFNQSSBjb250cm9sbGVycyBpbiBtYXN0ZXIg
-bW9kZS4NCj4gPj4+DQo+ID4+PiArY29uZmlnIFNQSV9GU0xfUVVBRFNQSQ0KPiA+Pj4gKwl0cmlz
-dGF0ZSAiRnJlZXNjYWxlIFFTUEkgY29udHJvbGxlciINCj4gPj4+ICsJZGVwZW5kcyBvbiBBUkNI
-X01YQyB8fCBTT0NfTFMxMDIxQSB8fCBBUkNIX0xBWUVSU0NBUEUgfHwNCj4gPj4gQ09NUElMRV9U
-RVNUDQo+ID4+PiArCWRlcGVuZHMgb24gSEFTX0lPTUVNDQo+ID4+PiArCWhlbHANCj4gPj4+ICsJ
-ICBUaGlzIGVuYWJsZXMgc3VwcG9ydCBmb3IgdGhlIFF1YWQgU1BJIGNvbnRyb2xsZXIgaW4gbWFz
-dGVyIG1vZGUuDQo+ID4+PiArCSAgVXAgdG8gZm91ciBmbGFzaCBjaGlwcyBjYW4gYmUgY29ubmVj
-dGVkIG9uIHR3byBidXNlcyB3aXRoIHR3bw0KPiA+Pj4gKwkgIGNoaXBzZWxlY3RzIGVhY2guDQo+
-ID4+PiArCSAgVGhpcyBjb250cm9sbGVyIGRvZXMgbm90IHN1cHBvcnQgZ2VuZXJpYyBTUEkgbWVz
-c2FnZXMuIEl0IG9ubHkNCj4gPj4+ICsJICBzdXBwb3J0cyB0aGUgaGlnaC1sZXZlbCBTUEkgbWVt
-b3J5IGludGVyZmFjZS4NCj4gPj4+ICsNCj4gPiBbLi4uXQ0KPiA+Pj4gK3N0YXRpYyB2b2lkIGZz
-bF9xc3BpX3NlbGVjdF9tZW0oc3RydWN0IGZzbF9xc3BpICpxLCBzdHJ1Y3QNCj4gPj4+ICtzcGlf
-ZGV2aWNlICpzcGkpIHsNCj4gPj4+ICsJdW5zaWduZWQgbG9uZyByYXRlID0gc3BpLT5tYXhfc3Bl
-ZWRfaHo7DQo+ID4+PiArCWludCByZXQsIGk7DQo+ID4+PiArCXUzMiBtYXBfYWRkcjsNCj4gPj4N
-Cj4gPj4gRm9yZ290IHRvIGRyb3Agc29tZSB1bnVzZWQgdmFycyBoZXJlLiBJIHdpbGwgcmVtb3Zl
-IHRoZW0gaW4gdGhlIG5leHQNCj4gPj4gdmVyc2lvbi4NCj4gPj4NCj4gPg0KPiA+IFllcywgYmVs
-b3cgYXJlIHRoZSBidWlsZCB3YXJuaW5ncyBtZXNzYWdlcyBjb21pbmcgZm9yIHRoaXMgdmVyc2lv
-biBvZiB0aGUNCj4gcGF0Y2guDQo+ID4NCj4gPiAJZHJpdmVycy9zcGkvc3BpLWZzbC1xc3BpLmM6
-IEluIGZ1bmN0aW9uIOKAmGZzbF9xc3BpX3NlbGVjdF9tZW3igJk6DQo+ID4gCWRyaXZlcnMvc3Bp
-L3NwaS1mc2wtcXNwaS5jOjUwMDo2OiB3YXJuaW5nOiB1bnVzZWQgdmFyaWFibGUg4oCYbWFwX2Fk
-ZHLigJkgWy0NCj4gV3VudXNlZC12YXJpYWJsZV0NCj4gPiAJICB1MzIgbWFwX2FkZHI7DQo+ID4g
-CSAgICAgIF4NCj4gPiAJZHJpdmVycy9zcGkvc3BpLWZzbC1xc3BpLmM6NDk5OjExOiB3YXJuaW5n
-OiB1bnVzZWQgdmFyaWFibGUg4oCYaeKAmSBbLVd1bnVzZWQtDQo+IHZhcmlhYmxlXQ0KPiA+IAkg
-IGludCByZXQsIGk7DQo+ID4NCj4gPj4+ICsNCj4gPj4+ICsJaWYgKHEtPnNlbGVjdGVkID09IHNw
-aS0+Y2hpcF9zZWxlY3QpDQo+ID4gWy4uLl0NCj4gPg0KPiA+IFZlcmlmaWVkIHRoaXMgcGF0Y2gg
-c2VyaWVzIG9uIExheWVyU2NhcGUtMi54IGFyY2hpdGVjdHVyZSBib2FyZHMuDQo+ID4gTFMxMDg4
-YXJkYiwgaXMgaGF2aW5nIHR3byBjb25uZWN0ZWQgZmxhc2ggc2xhdmUgZGV2aWNlcyBvbiBDUzAg
-YW5kIENTMS4NCj4gPg0KPiA+IFZlcmlmaWVkIHdpdGggc2ltcGxlIFJlYWQvV3JpdGUvRXJhc2Ug
-b3BlcmF0aW9ucyBhbG9uZyB3aXRoIEpGRlMyIG1vdW50aW5nDQo+IGFuZCBib290aW5nIGZyb20g
-Zmxhc2ggTVREIHBhcnRpdGlvbiBmb3IgYm90aCBzbGF2ZSBkZXZpY2VzLg0KPiANCj4gVGhhbmsg
-eW91IGZvciB0ZXN0aW5nISBEb2VzIHRoaXMgbWVhbiBJIGNhbiBhZGQgeW91ciBUZXN0ZWQtYnkg
-dGFnPw0KPiBJZiB5b3UgaGF2ZSBkb25lIGEgcmV2aWV3IG9mIGFueSBvZiB0aGUgcGF0Y2hlcyBp
-biB0aGlzIHNldCwgcGxlYXNlIGFsc28gYWRkIGENCj4gUmV2aWV3ZWQtYnkgdGFnLg0KPiANCg0K
-SSB3b3VsZCBhZGQgbXkgUmV2aWV3ZWQtYnkgYW5kIFRlc3RlZC1ieSB0YWcgb24geW91ciBuZXh0
-IHZlcnNpb24gb2YgdGhlIHBhdGNoIGluIHdoaWNoIHlvdSB3b3VsZCBnb2luZyB0byBmaXggdGhp
-cyBjb21waWxhdGlvbiB3YXJuaW5ncy4NCkFsc28sIEkgc3VnZ2VzdCB0byBhZGQgaW4gY292ZXIg
-bGV0dGVyICJUZXN0ZWQgb24gTFMxMDg4YXJkYiB0YXJnZXQgd2hpY2ggaXMgaGF2aW5nIHR3byBT
-UEktTk9SIHNsYXZlIGRldmljZSBjb25uZWN0ZWQgb24gQ1MwIGFuZCBDUzEiDQoNCi0tDQpSZWdh
-cmRzDQpZb2dlc2ggR2F1ci4NCg0KPiBUaGFua3MsDQo+IEZyaWVkZXINCg==
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+
+> Hi all,
+>
+> After merging the wireless-drivers-next tree, today's linux-next build
+> (x86_64 allmodconfig) produced these warnings:
+>
+> drivers/net/wireless/intel/iwlwifi/iwl-drv.c: In function 'iwl_parse_tlv_firmware':
+> drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1098:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     if (iwlwifi_mod_params.enable_ini)
+>        ^
+> drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1100:3: note: here
+>    default:
+>    ^~~~~~~
+> drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c: In function 'iwl_parse_fw_dbg_tlv':
+> drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:203:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     iwl_fw_dbg_copy_tlv(trans, tlv, true);
+>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:204:3: note: here
+>    default:
+>    ^~~~~~~
+>
+> Introduced by commit
+>
+>   f14cda6f3b31 ("iwlwifi: trans: parse and store debug ini TLVs")
+>
+> These are noted because I use -Wimplict-fallthrough
+>
+> The warnings can be suppressed by adding a comment like
+> 	/* fall through */
+> at the appropriate place to indicate that the fallthough is intended.
+
+I take it that -Wimplict-fallthrough is not enabled by default yet? So
+Dave and Linus won't see these warnings?
+
+What I'm planning is to send a pull request to Dave today and fix these
+warnings in the next pull request. Does that sound good?
+
+-- 
+Kalle Valo
