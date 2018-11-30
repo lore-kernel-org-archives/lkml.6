@@ -2,212 +2,210 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D23FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA10C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E05720863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:59:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19C8D2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="H65u3ydv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E05720863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MUKfcAlq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C8D2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbeK3RIF (ORCPT
+        id S1726793AbeK3RIf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:08:05 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:55504 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeK3RIF (ORCPT
+        Fri, 30 Nov 2018 12:08:35 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:53348 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeK3RIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:08:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1543557596; x=1575093596;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=XpqupTVWAc5RsI55w5sOTDBNuD15nAsHQiNjExPdJ9w=;
-  b=H65u3ydvR2Akk0AEHvY1HxfAa8PPy62Ko+NZMNB+hj2kZox8/36KoIId
-   +mwV4aAUMqTO6ym896D9mcE8cc5mg17et/VS8VGLR5+CVxPL1QZ/8D+xU
-   RyOg3v3+bgg/4gHv79HTpsbY76JUSQiafG/JUK//z35tuDfybpq4JJuv4
-   x9dB1m3I6pL/Qvh51imlw9CvdU0YN8XQHsdBstNJAz9nrTFBj7IltT5BZ
-   6yYkgBdTCXPTe3PuXnghcjkeF2wA5uR91OggAyq9+S2FHLC1n1qlpfV92
-   JBSUZ1UYoU2IAQRaJQXeRmKMDTJk+Imoeoa4U/7fByyPeg70ICLKA+KuI
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
-   d="scan'208";a="200063071"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2018 13:59:56 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 29 Nov 2018 21:42:52 -0800
-Received: from th2t96qc2.ad.shared (HELO [10.86.56.90]) ([10.86.56.90])
-  by uls-op-cesaip02.wdc.com with ESMTP; 29 Nov 2018 21:59:56 -0800
-Subject: Re: [PATCH v2 4/4] irqchip: sifive-plic: Implement irq_set_affinity()
- for SMP host
-To:     Anup Patel <anup@brainfault.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181127100317.12809-1-anup@brainfault.org>
- <20181127100317.12809-5-anup@brainfault.org>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <71aaed41-c794-ea82-8d87-ddcde3506067@wdc.com>
-Date:   Thu, 29 Nov 2018 21:59:55 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
+        Fri, 30 Nov 2018 12:08:35 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAU609Pm184028;
+        Fri, 30 Nov 2018 06:00:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : cc : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=oPwe3if1gAGQyM1Gp5StGTDJVqt1OSJwn9u1qSv+E4o=;
+ b=MUKfcAlqszUZM20LsyOZVAYsS6wMhbSNc3bU/mi79009aURNhwIXuK2Vc1UClziY8rbZ
+ zQ66mQ9jJmTUosITctHEkgU3s8G9HP585CENl8dxfv1vN7QAkZ8wLn7UfN+MHQgjSkx5
+ /2buIrjc416iCSK5EQcPVMckUfNxEh9ryEBxFiPbn/kWR0CDSsAvHEtke7LlFY/aKwzu
+ gTsAY7ZASKGMC/uZETNNkfrSkxtXddeOL3xkummdAWWJ9d+bwYAkjDQNS5Mgn8jrHpZF
+ rsJgCuT2qJUcjAEqwMXN0A4fj0cr1f/qW+gt/x3ZWF3K7MlsiU5M1L36/wTFtYdZ53+1 Hg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2p2jf0kbnq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Nov 2018 06:00:17 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAU60GIk015761
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Nov 2018 06:00:16 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAU60E1g024734;
+        Fri, 30 Nov 2018 06:00:14 GMT
+Received: from [192.168.0.120] (/202.156.140.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Nov 2018 22:00:14 -0800
+Subject: Re: invalid opcode in close_fs_devices
+To:     dsterba@suse.com, josef@toxicpanda.com
+References: <0000000000005852b8057bc8b123@google.com>
+From:   Anand Jain <anand.jain@oracle.com>
+Cc:     syzbot <syzbot+cabf977d00d3db1fdc37@syzkaller.appspotmail.com>,
+        clm@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <5704d945-a862-fa2a-8447-138c242cd357@oracle.com>
+Date:   Fri, 30 Nov 2018 13:59:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181127100317.12809-5-anup@brainfault.org>
+In-Reply-To: <0000000000005852b8057bc8b123@google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9092 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811300050
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 2:04 AM, Anup Patel wrote:
-> Currently on SMP host, all CPUs take external interrupts routed via
-> PLIC. All CPUs will try to claim a given external interrupt but only
-> one of them will succeed while other CPUs would simply resume whatever
-> they were doing before. This means if we have N CPUs then for every
-> external interrupt N-1 CPUs will always fail to claim it and waste
-> their CPU time.
-> 
-> Instead of above, external interrupts should be taken by only one CPU
-> and we should have provision to explicity specify IRQ affinity from
-s/explicity/explicitly
 
-> kernel-space or user-space.
+
+On 11/29/2018 03:33 PM, syzbot wrote:
+> Hello,
 > 
-> This patch provides irq_set_affinity() implementation for PLIC driver.
-> It also updates irq_enable() such that PLIC interrupts are only enabled
-> for one of CPUs specified in IRQ affinity mask.
+> syzbot found the following crash on:
 > 
-> With this patch in-place, we can change IRQ affinity at any-time from
-> user-space using procfs.
+> HEAD commit:    ef78e5ec9214 ia64: export node_distance function
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1514f733400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
+> dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=cabf977d00d3db1fdc37
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 > 
-> Example:
+> Unfortunately, I don't have any reproducer for this crash yet.
 > 
-> / # cat /proc/interrupts
->             CPU0       CPU1       CPU2       CPU3
->    8:         44          0          0          0  SiFive PLIC   8  virtio0
->   10:         48          0          0          0  SiFive PLIC  10  ttyS0
-> IPI0:        55        663         58        363  Rescheduling interrupts
-> IPI1:         0          1          3         16  Function call interrupts
-> / #
-> / #
-> / # echo 4 > /proc/irq/10/smp_affinity
-> / #
-> / # cat /proc/interrupts
->             CPU0       CPU1       CPU2       CPU3
->    8:         45          0          0          0  SiFive PLIC   8  virtio0
->   10:        160          0         17          0  SiFive PLIC  10  ttyS0
-> IPI0:        68        693         77        410  Rescheduling interrupts
-> IPI1:         0          2          3         16  Function call interrupts
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+cabf977d00d3db1fdc37@syzkaller.appspotmail.com
 > 
-> Signed-off-by: Anup Patel <anup@brainfault.org>
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 6312 Comm: syz-executor4 Not tainted 4.20.0-rc4+ #132
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS 
+> Google 01/01/2011
+> RIP: 0010:btrfs_close_one_device fs/btrfs/volumes.c:1039 [inline]
+
+
+1037         new_device = btrfs_alloc_device(NULL, &device->devid,
+1038                                         device->uuid);
+1039         BUG_ON(IS_ERR(new_device)); /* -ENOMEM */
+
+
+As part of close operations (lets say for unmount). We alloc a new
+struct btrfs_device, copy few items and free the original struct
+btrfs_device. This comes from the original design, this approach
+has been bothering me and few others. We don't know for sure what
+is the motivation to design like this, but I guess to satisfy the
+RCUs.
+
+To fix- one idea is to selectively reset the struct btrfs_device
+members, avoid allocating a new btrfS_device and thus no need to
+fail the unmount due to ENOMEM here.
+
+-Anand
+
+
+> RIP: 0010:close_fs_devices.part.44+0x7be/0xa20 fs/btrfs/volumes.c:1063
+> Code: 48 8d 7b 30 49 89 44 24 18 48 89 f8 48 c1 e8 03 42 80 3c 28 00 0f 
+> 85 bd 01 00 00 48 83 6b 30 01 e9 7a fa ff ff e8 82 85 8c fe <0f> 0b e8 
+> 7b 85 8c fe 0f 0b e8 74 85 8c fe 0f 0b e9 6f fd ff ff e8
+> RSP: 0018:ffff8881b7b771d8 EFLAGS: 00010212
+> RAX: 0000000000040000 RBX: ffff8881cdebb300 RCX: ffffc9000dea2000
+> RDX: 0000000000022db4 RSI: ffffffff82f3057e RDI: 0000000000000007
+> RBP: ffff8881b7b77380 R08: ffff8881b50d0000 R09: 0000000000000006
+> R10: 0000000000000000 R11: ffff8881b50d0000 R12: ffff8881bad2b200
+> R13: dffffc0000000000 R14: fffffffffffffff4 R15: 0000000000000000
+> FS:  00007fc6d31a2700(0000) GS:ffff8881dae00000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000400200 CR3: 00000001d3b95000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   close_fs_devices fs/btrfs/volumes.c:1095 [inline]
+>   btrfs_close_devices+0xa1/0x210 fs/btrfs/volumes.c:1081
+>   btrfs_mount_root+0x13d2/0x1d70 fs/btrfs/super.c:1619
+>   mount_fs+0xae/0x31d fs/super.c:1261
+>   vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+>   vfs_kern_mount+0x40/0x60 fs/namespace.c:951
+>   btrfs_mount+0x4a3/0x2136 fs/btrfs/super.c:1670
+>   mount_fs+0xae/0x31d fs/super.c:1261
+>   vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+>   vfs_kern_mount fs/namespace.c:951 [inline]
+>   do_new_mount fs/namespace.c:2469 [inline]
+>   do_mount+0x581/0x31f0 fs/namespace.c:2801
+>   ksys_mount+0x12d/0x140 fs/namespace.c:3017
+>   __do_sys_mount fs/namespace.c:3031 [inline]
+>   __se_sys_mount fs/namespace.c:3028 [inline]
+>   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x459fda
+> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d 89 fb ff c3 66 2e 
+> 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 
+> f0 ff ff 0f 83 5a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
+> RSP: 002b:00007fc6d31a1a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007fc6d31a1b30 RCX: 0000000000459fda
+> RDX: 00007fc6d31a1ad0 RSI: 0000000020000740 RDI: 00007fc6d31a1af0
+> RBP: 0000000020000740 R08: 00007fc6d31a1b30 R09: 00007fc6d31a1ad0
+> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000004
+> R13: 0000000000000000 R14: 00000000004d8ef0 R15: 0000000000000003
+> Modules linked in:
+> kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+> kobject: 'loop1' (0000000014e46057): fill_kobj_path: path = 
+> '/devices/virtual/block/loop1'
+> kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+> kobject: 'loop1' (0000000014e46057): fill_kobj_path: path = 
+> '/devices/virtual/block/loop1'
+> kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+> kobject: 'loop1' (0000000014e46057): fill_kobj_path: path = 
+> '/devices/virtual/block/loop1'
+> kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+> kobject: 'loop1' (0000000014e46057): fill_kobj_path: path = 
+> '/devices/virtual/block/loop1'
+> ---[ end trace 260d74aed8afc1e0 ]---
+> RIP: 0010:btrfs_close_one_device fs/btrfs/volumes.c:1039 [inline]
+> RIP: 0010:close_fs_devices.part.44+0x7be/0xa20 fs/btrfs/volumes.c:1063
+> Code: 48 8d 7b 30 49 89 44 24 18 48 89 f8 48 c1 e8 03 42 80 3c 28 00 0f 
+> 85 bd 01 00 00 48 83 6b 30 01 e9 7a fa ff ff e8 82 85 8c fe <0f> 0b e8 
+> 7b 85 8c fe 0f 0b e8 74 85 8c fe 0f 0b e9 6f fd ff ff e8
+> RSP: 0018:ffff8881b7b771d8 EFLAGS: 00010212
+> RAX: 0000000000040000 RBX: ffff8881cdebb300 RCX: ffffc9000dea2000
+> RDX: 0000000000022db4 RSI: ffffffff82f3057e RDI: 0000000000000007
+> RBP: ffff8881b7b77380 R08: ffff8881b50d0000 R09: 0000000000000006
+> R10: 0000000000000000 R11: ffff8881b50d0000 R12: ffff8881bad2b200
+> R13: dffffc0000000000 R14: fffffffffffffff4 R15: 0000000000000000
+> FS:  00007fc6d31a2700(0000) GS:ffff8881daf00000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000004dc418 CR3: 00000001d3b95000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
 > ---
->   drivers/irqchip/irq-sifive-plic.c | 35 +++++++++++++++++++++++++++++--
->   1 file changed, 33 insertions(+), 2 deletions(-)
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
-> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-> index ffd4deaca057..fec7da3797fa 100644
-> --- a/drivers/irqchip/irq-sifive-plic.c
-> +++ b/drivers/irqchip/irq-sifive-plic.c
-> @@ -98,14 +98,42 @@ static void plic_irq_toggle(const struct cpumask *mask, int hwirq, int enable)
->   
->   static void plic_irq_enable(struct irq_data *d)
->   {
-> -	plic_irq_toggle(irq_data_get_affinity_mask(d), d->hwirq, 1);
-> +	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
-> +					   cpu_online_mask);
-> +	WARN_ON(cpu >= nr_cpu_ids);
-> +	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
->   }
->   
->   static void plic_irq_disable(struct irq_data *d)
->   {
-> -	plic_irq_toggle(irq_data_get_affinity_mask(d), d->hwirq, 0);
-> +	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
->   }
->   
-> +#ifdef CONFIG_SMP
-> +static int plic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
-> +			    bool force)
-> +{
-> +	unsigned int cpu;
-> +
-> +	if (!force)
-> +		cpu = cpumask_any_and(mask_val, cpu_online_mask);
-> +	else
-> +		cpu = cpumask_first(mask_val);
-> +
-> +	if (cpu >= nr_cpu_ids)
-> +		return -EINVAL;
-> +
-> +	if (!irqd_irq_disabled(d)) {
-> +		plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
-> +		plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
-
-irq is disabled for a fraction of time for cpu as well.
-You can use cpumask_andnot to avoid that.
-
-
-Moreover, something is weird here. I tested the patch in Unleashed with 
-a debug statement.
-
-Here are the cpumask plic_set_affinity receives.
-
-# echo 0 > /proc[  280.810000] plic: plic_set_affinity: set affinity [0-1]
-[  280.810000] plic: plic_set_affinity: cpu = [0] irq = 4
-# echo 1 > /proc[  286.290000] plic: plic_set_affinity: set affinity [0]
-[  286.290000] plic: plic_set_affinity: cpu = [0] irq = 4
-# echo 2 > /proc[  292.130000] plic: plic_set_affinity: set affinity [1]
-[  292.130000] plic: plic_set_affinity: cpu = [1] irq = 4
-# echo 3 > /proc[  297.750000] plic: plic_set_affinity: set affinity [0-1]
-[  297.750000] plic: plic_set_affinity: cpu = [0] irq = 4
-
-# echo 2 > /proc/irq/4/smp_affinity
-[  322.850000] plic: plic_set_affinity: set affinity [1]
-[  322.850000] plic: plic_set_affinity: cpu = [1] irq = 4
-
-I have not figured out why it receive cpu mask for 0 & 3.
-Not sure if logical cpu id to hart id mapping is responsible for other 
-two case. I will continue to test tomorrow.
-
-Regards,
-Atish
-> +	}
-> +
-
-> +	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-> +
-> +	return IRQ_SET_MASK_OK_DONE;
-> +}
-> +#endif
-> +
->   static struct irq_chip plic_chip = {
->   	.name		= "SiFive PLIC",
->   	/*
-> @@ -114,6 +142,9 @@ static struct irq_chip plic_chip = {
->   	 */
->   	.irq_enable	= plic_irq_enable,
->   	.irq_disable	= plic_irq_disable,
-> +#ifdef CONFIG_SMP
-> +	.irq_set_affinity = plic_set_affinity,
-> +#endif
->   };
->   
->   static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
-> 
-
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with 
+> syzbot.
