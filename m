@@ -2,117 +2,170 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215D6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9813C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9AE520673
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:22:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9AE520673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E72920673
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:23:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ew9SX3Rh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E72920673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeLAFcR (ORCPT
+        id S1726690AbeLAFdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:32:17 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34400 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbeLAFcR (ORCPT
+        Sat, 1 Dec 2018 00:33:37 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34542 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbeLAFdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:32:17 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 17so2855662pgg.1;
-        Fri, 30 Nov 2018 10:22:09 -0800 (PST)
+        Sat, 1 Dec 2018 00:33:37 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y185so2234484wmd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 10:23:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=gyqSeFnxuL66/4Tb83vuNNeyna66MDa5D0/0KSnYmmA=;
+        b=Ew9SX3RhnoO0FB2mWoiHH/G5G9uPbHdEEKfx28ZS1PmNH/iK+DNijjO38sGJjmcojV
+         VTpXBHm1FHfP+HQEyVYsIQsMag6z4pGTPuHtx+kKI2peqoRPOkdUtVdfv0aFZ1MhIutc
+         jXusQzvJpN5XrW4REVP3SAiqy/jxMo17A54Lo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pQcUow3rtfROGco5fKqiF8AvO6eLeBwD4In1k1teLIg=;
-        b=ph2cCJpqajKOz9PAmyEE71jqwmhGuj6oi1ba5pV8FA3d7at2yW4TJfh7QxAe6UNjGO
-         llKL7s2lJbOh+udALjdu0sVdz61EjmMImHk52QSzCUp/ZRNPqVfJ/1C+qfRzEFD9Z1Eg
-         VOPZYw83DVUpvxq/rs6BD2OP9dtW3+TYYDL+nI3jK3kN9lI2rH6nzYUeM3bQvAPgUPoF
-         +qXpAl6lIEgNsQaTusGnuna2qXrxFJi5lajQtP0s6GTFU8jczCwBcWG3jZy7BHI7nb+R
-         jkQCGCFIVzICmvuPz/8popum44e+OLLyJ5Fh2SK/h8abSG2DTdanuLXUiuL59kvrOGGQ
-         nEjg==
-X-Gm-Message-State: AA+aEWa0t1a63OC8xGIuYor3pxaoBTqtnYrXhg4PuwgjaOoQfGCL56Rc
-        Eo+M4tY/uOmyi0KSuWMf7mw=
-X-Google-Smtp-Source: AFSGD/UcmEtYJe8mp/VoGjf5O6sYcV5VbFAq5jcWCPggX43KCCGWhQnYWW/41gPVOCkjpzg7aQZXzw==
-X-Received: by 2002:a65:60c2:: with SMTP id r2mr4559360pgv.393.1543602128770;
-        Fri, 30 Nov 2018 10:22:08 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id d18sm7781998pfj.47.2018.11.30.10.22.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 10:22:07 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Fri, 30 Nov 2018 10:22:03 -0800
-Date:   Fri, 30 Nov 2018 10:22:03 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=gyqSeFnxuL66/4Tb83vuNNeyna66MDa5D0/0KSnYmmA=;
+        b=L8Q+j5Dm506t/nBHEzjW+EYReMeOwz330tXlj8yIn9T1is76ihai2+IhItC2h0HF7Q
+         u3jNIADkV+n5cIiL3OpxIayIuzVNf5OsgwDLk2NXw0P1qxyLSyZjHkTwzaGNWzRWsyAK
+         +tSDxD4xQF8CEAp4fTP0PO7ByYJHeoIWRcYBZBiCbqr/skggZsY42OxxUG1eqcifMUWI
+         yIeNJkqQsImHJ2Su8+kbiVkNPdIqrunEoZWSsEJ0SdIxDaRnD9AA0AoLbY51dxAEjPDl
+         GX4q63EIzHqXT9ETtqjJgf7O2VdbZabwGfnxGDUfgCK+8lE2eJvvzFckwgMvTqWmcogv
+         t9dw==
+X-Gm-Message-State: AA+aEWaUfHxPDMe8pqcY89GxmN4uGPntEQdiLRtI1MONPc1tPl3fbWQf
+        r9ga2X0uIyC+HM5dF+wJRT1FhQ==
+X-Google-Smtp-Source: AFSGD/V2amZ1PLVb2nhEMbUahwTygyOFFUoTG/mBG2w41KefN6kABCf8oMVPRw0CUjuQ4ifzD6ySrA==
+X-Received: by 2002:a7b:cb86:: with SMTP id m6mr6541428wmi.61.1543602206993;
+        Fri, 30 Nov 2018 10:23:26 -0800 (PST)
+Received: from [192.168.0.101] (146-241-2-120.dyn.eolo.it. [146.241.2.120])
+        by smtp.gmail.com with ESMTPSA id z17sm5453917wrv.2.2018.11.30.10.23.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 10:23:26 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
+ policy in blkio/io
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
+Date:   Fri, 30 Nov 2018 19:23:24 +0100
+Cc:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Frank Rowand <frowand.list@gmail.com>, knut.omang@oracle.com
-Subject: Re: [RFC v3 06/19] arch: um: enable running kunit from User Mode
- Linux
-Message-ID: <20181130182203.GS18410@garbanzo.do-not-panic.com>
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-7-brendanhiggins@google.com>
- <CAL_JsqJLNSg-38hej8LV+Oh-YXBM2hRGomie3b_psa9LvzoRYg@mail.gmail.com>
- <20181130033704.GL18410@garbanzo.do-not-panic.com>
- <CAL_Jsq+jxHHmT5bLnABnF7S0fSBZvH72nDPyY5LHTn9Zm9hCUw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+jxHHmT5bLnABnF7S0fSBZvH72nDPyY5LHTn9Zm9hCUw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Li Zefan <lizefan@huawei.com>,
+        Angelo Ruocco <angeloruocco90@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        broonie@kernel.org, oleksandr@natalenko.name,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
+References: <20181119103424.3853-1-paolo.valente@linaro.org>
+ <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
+ <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
+To:     'Paolo Valente' via bfq-iosched <bfq-iosched@googlegroups.com>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 08:05:34AM -0600, Rob Herring wrote:
-> On Thu, Nov 29, 2018 at 9:37 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Wed, Nov 28, 2018 at 03:26:03PM -0600, Rob Herring wrote:
-> > > On Wed, Nov 28, 2018 at 1:37 PM Brendan Higgins
-> > > <brendanhiggins@google.com> wrote:
-> > > >
-> > > > Make minimum number of changes outside of the KUnit directories for
-> > > > KUnit to build and run using UML.
-> > >
-> > > There's nothing in this patch limiting this to UML.
-> >
-> > Not that one, but the abort thing segv thing is, eventually.
-> > To support other architectures we'd need to make a wrapper to that
-> > hack which Brendan added, and then allow each os to implement
-> > its own call, and add an asm-generic helper.
-> 
-> I've not looked into why this is needed, but can't you make the abort
-> support optional and arches can select it when they support it.
 
-Its why I have asked for it to be properly documented. The patches in no
-way illustrate *why* such thing is done. And if we are going to
-potentially have other archs do something similar best to make it
-explicit.
 
-> At
-> least before, the DT unittests didn't need this to run and shouldn't
-> depend on it after converting to kunit.
+> Il giorno 20 nov 2018, alle ore 17:50, Paolo Valente =
+<paolo.valente@linaro.org> ha scritto:
+>=20
+>=20
+>=20
+>> Il giorno 20 nov 2018, alle ore 17:28, Tejun Heo <tj@kernel.org> ha =
+scritto:
+>>=20
+>> Hello, Paolo.
+>>=20
+>> On Mon, Nov 19, 2018 at 11:34:14AM +0100, Paolo Valente wrote:
+>>> - if all entities produce the same output, the this common output is
+>>> shown only once;
+>>> - if the outputs differ, then every per-entity output is shown,
+>>> followed by the name of the entity that produced that output.
+>>=20
+>> So, this doesn't make sense to me.  One set of numbers is meaningful,
+>> the other not and the user doesn't have a way to tell which one is.
+>> It makes no sense to present both numbers.
+>>=20
+>=20
+> I do agree that these numbers may confuse.  Before discussing how to
+> do this better, let me tell you why we are showing them.
+>=20
+> In the first place, the need for a diversified output showed up in the
+> following case.  Given a group using the blkio/io controller, and two
+> drives
+> - one with legacy block and cfq
+> - one with blk-mq and bfq
+> there will be different statistics for each scheduler, for the same
+> interface files.
+>=20
+> Then we understood that exactly the same happens with throttling, in
+> case the latter is activated on different devices w.r.t. bfq.
+>=20
+> In addition, the same may happen, in the near future, with the
+> bandwidth controller Josef is working on.  If the controller can be
+> configured per device, as with throttling, then statistics may differ,
+> for the same interface files, between bfq, throttling and that
+> controller.
+>=20
+> More general examples could be made considering that this extension is
+> for the generic cgroup interface.
+>=20
+> Of course, suggestions for a clearer way to show these numbers are
+> more than welcome!  Maybe involved device identifiers can be somehow
+> gathered by the entities providing these numbers, and then shown?  In
+> this respect, consider that, even without this extension, one still
+> has the fundamental problem of not knowing to which devices numbers
+> apply (unless I'm missing something else).
+>=20
 
-  Luis
+Hi Tejun,
+have you had time to look into this?  Any improvement to this
+interface is ok for us. We are only interested in finally solving this
+interface issue, as, for what concerns us directly, it has been
+preventing legacy code to use bfq for years.
+
+Thanks,
+Paolo
+
+
+
+> Thanks,
+> Paolo
+>=20
+>> Thanks.
+>>=20
+>> --=20
+>> tejun
+>=20
+> --=20
+> You received this message because you are subscribed to the Google =
+Groups "bfq-iosched" group.
+> To unsubscribe from this group and stop receiving emails from it, send =
+an email to bfq-iosched+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
+
