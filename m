@@ -2,196 +2,146 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40127C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A543C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F280A2080A
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F280A2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BFE32080A
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFE32080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbeLAAfz (ORCPT
+        id S1726952AbeLAAgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:35:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53569 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbeLAAfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:35:55 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 59BC1207B0; Fri, 30 Nov 2018 14:26:35 +0100 (CET)
-Received: from aptenodytes (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 00B1320711;
-        Fri, 30 Nov 2018 14:26:34 +0100 (CET)
-Message-ID: <82a1ef7ea170ba50f58f74e26dac6170ac87783f.camel@bootlin.com>
-Subject: Re: [PATCH 07/15] arm64: dts: allwinner: h5: Add system-control
- node with SRAM C1
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 30 Nov 2018 19:36:01 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:36107 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeLAAgA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:36:00 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t13so5859419qtn.3;
+        Fri, 30 Nov 2018 05:26:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OiIiq+eBwupJMmehByf87me5bWCoRjY4A7/Tc6drQ5A=;
+        b=VW5bYGcrMmVEBT6uA27po1fI2QyeFmVVbQ7gz7gWdOgAu7O1H9sliIk564QsFNB+7x
+         f7zZ4gq8B6cja49P612LhIcpLhZdRWBhMy6Z5PIR7jMz82z5CMFs+fesElTZCdgRUak4
+         7E6Y/LfDW3tzx+DHUz9CfwVMshKhNh9zyEZNZ8VYDpUuS65Mx2mhgWCQIg/oOJY5zUOS
+         1VAlhS8ykOtb31saEcucIexM6BaC8vR0W9hEYixIJ+xh77zcDUQ64iKA8l6sbvJuhABB
+         lJt+bxg1YTTqmJa49MLfeC7ta5SjqvYml5a260rnsnjOF3kJJo2Dsgqc+1gDcBqZq/0p
+         3q7A==
+X-Gm-Message-State: AA+aEWbKptVocN4wheNpYveeoKzp99W4++7+5dg0fzRlte75BHfwWblI
+        4jsimXnWMVAZLITcnDx4mbdRKm2nnyM1EvY4iRU=
+X-Google-Smtp-Source: AFSGD/W9KBzauhsLZSWYV1MD/+wETNGmwKn1bhig5mEFb8JsuSZwoviUOz2+i4bIt7aLh3YOg+4qq/DvEZzSdlFTG44=
+X-Received: by 2002:ac8:2c34:: with SMTP id d49mr5554344qta.152.1543584401848;
+ Fri, 30 Nov 2018 05:26:41 -0800 (PST)
+MIME-Version: 1.0
+References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org> <20181130104657.14875-5-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20181130104657.14875-5-srinivas.kandagatla@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 30 Nov 2018 14:26:23 +0100
+Message-ID: <CAK8P3a0CzU5mGE9YBfe5FVPGCBhjFRsZbgbyy8Yvopu4wQ7uxA@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/6] char: fastrpc: Add support for create remote init process
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Fri, 30 Nov 2018 14:26:34 +0100
-In-Reply-To: <CAGb2v65yNKnqbeQmUYjMzDtydYL=7kxmtPrAEEU9U=a5XbMiFg@mail.gmail.com>
-References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
-         <20181115145013.3378-8-paul.kocialkowski@bootlin.com>
-         <CAGb2v64t6t3Bwf4nc8gQWRDkdv4zGRF1-+Q7snqX6bkEVqirvA@mail.gmail.com>
-         <CAGb2v65yNKnqbeQmUYjMzDtydYL=7kxmtPrAEEU9U=a5XbMiFg@mail.gmail.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-GiwLARmS2nmhlZHes8Vi"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
+        thierry.escande@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 30, 2018 at 11:48 AM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
 
---=-GiwLARmS2nmhlZHes8Vi
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> +
+> +static int fastrpc_init_process(struct fastrpc_user *fl,
+> +                               struct fastrpc_ioctl_init *init)
+> +{
+> +       struct fastrpc_ioctl_invoke *ioctl;
+> +       struct fastrpc_phy_page pages[1];
+> +       struct fastrpc_map *file = NULL, *mem = NULL;
+> +       struct fastrpc_buf *imem = NULL;
+> +       int err = 0;
+> +
+> +       ioctl = kzalloc(sizeof(*ioctl), GFP_KERNEL);
+> +       if (!ioctl)
+> +               return -ENOMEM;
+> +
+> +       if (init->flags == FASTRPC_INIT_ATTACH) {
+> +               remote_arg_t ra[1];
+> +               int tgid = fl->tgid;
+> +
+> +               ra[0].buf.pv = (void *)&tgid;
+> +               ra[0].buf.len = sizeof(tgid);
+> +               ioctl->handle = 1;
+> +               ioctl->sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
+> +               ioctl->pra = ra;
+> +               fl->pd = 0;
+> +
+> +               err = fastrpc_internal_invoke(fl, 1, ioctl);
+> +               if (err)
+> +                       goto bail;
 
-Hi,
+It doesn't seem right to me to dynamically allocate an 'ioctl' data structure
+from kernel context and pass that down to another function. Maybe eliminate
+that structure and change fastrpc_internal_invoke to take the individual
+arguments here instead of a pointer?
 
-On Fri, 2018-11-30 at 11:38 +0800, Chen-Yu Tsai wrote:
-> On Fri, Nov 16, 2018 at 12:52 AM Chen-Yu Tsai <wens@csie.org> wrote:
-> > On Thu, Nov 15, 2018 at 10:50 PM Paul Kocialkowski
-> > <paul.kocialkowski@bootlin.com> wrote:
-> > > Add the H5-specific system control node description to its device-tre=
-e
-> > > with support for the SRAM C1 section, that will be used by the video
-> > > codec node later on.
-> > >=20
-> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > ---
-> > >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 22 ++++++++++++++++++=
-++
-> > >  1 file changed, 22 insertions(+)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm6=
-4/boot/dts/allwinner/sun50i-h5.dtsi
-> > > index b41dc1aab67d..c2d14b22b8c1 100644
-> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > @@ -94,6 +94,28 @@
-> > >         };
-> > >=20
-> > >         soc {
-> > > +               system-control@1c00000 {
-> > > +                       compatible =3D "allwinner,sun50i-h5-system-co=
-ntrol";
-> > > +                       reg =3D <0x01c00000 0x1000>;
-> > > +                       #address-cells =3D <1>;
-> > > +                       #size-cells =3D <1>;
-> > > +                       ranges;
-> > > +
-> > > +                       sram_c1: sram@1d00000 {
-> > > +                               compatible =3D "mmio-sram";
-> > > +                               reg =3D <0x01d00000 0x80000>;
-> >=20
-> > I'll try to check this one tomorrow.
-> >=20
-> > I did find something interesting on the H3: there also seems to be SRAM=
- at
-> > 0x01dc0000 to 0x01dcfeff , again mapped by the same bits as SRAM C1.
-> >=20
-> > And on the A33, the SRAM C1 range is 0x01d00000 to 0x01d478ff.
-> >=20
-> > This was found by mapping the SRAM to the CPU, then using devmem to pok=
-e
-> > around the register range. If there's SRAM, the first read would typica=
-lly
-> > return random data, and a subsequent write to it would set some value t=
-hat
-> > would be read back correctly. If there's no SRAM, a read either returns=
- 0x0
-> > or some random data that can't be overwritten.
-> >=20
-> > You might want to check the other SoCs.
->=20
-> This range seems to contain stuff other than SRAM, possibly fixed lookup
-> tables. Since this is entirely unknown, lets just stick to the known full
-> range instead.
+> +       } else if (init->flags == FASTRPC_INIT_CREATE) {
 
-Thanks for investigating all this!
+How about splitting each flags== case into a separate function?
 
-I also conducted some tests and found that the H5 has its SRAM C1
-(marked as SRAM C in the manual) at 0x18000. However for the A64, SRAM
-C1 gets mapped to 0x1D00000. There is also SRAM C at 0x18000 but this
-one seems unrelated to the VPU and only used by DE2 (as already
-described in the A64 dt).
+> diff --git a/include/uapi/linux/fastrpc.h b/include/uapi/linux/fastrpc.h
+> index 8fec66601337..6b596fc7ddf3 100644
+> --- a/include/uapi/linux/fastrpc.h
+> +++ b/include/uapi/linux/fastrpc.h
+> @@ -6,6 +6,12 @@
+>  #include <linux/types.h>
+>
+>  #define FASTRPC_IOCTL_INVOKE   _IOWR('R', 3, struct fastrpc_ioctl_invoke)
+> +#define FASTRPC_IOCTL_INIT     _IOWR('R', 4, struct fastrpc_ioctl_init)
+> +
+> +/* INIT a new process or attach to guestos */
+> +#define FASTRPC_INIT_ATTACH      0
+> +#define FASTRPC_INIT_CREATE      1
+> +#define FASTRPC_INIT_CREATE_STATIC  2
 
-I share your conclusion that there seems to be more than SRAM in there.
-Testing with devmem write/read on the start address was reliable as a
-test, but some chunks in the range did not behave like SRAM (not the
-same value read).
+Maybe use three command codes here, and remove the 'flags' member?
 
-I agree that we should keep the known full range as there are lots of
-unknowns here.
+> @@ -53,4 +59,16 @@ struct fastrpc_ioctl_invoke {
+>         unsigned int *crc;
+>  };
+>
+> +struct fastrpc_ioctl_init {
+> +       uint32_t flags;         /* one of FASTRPC_INIT_* macros */
+> +       uintptr_t file;         /* pointer to elf file */
+> +       uint32_t filelen;       /* elf file length */
+> +       int32_t filefd;         /* ION fd for the file */
 
-Cheers,
+What does this have to do with ION? The driver seems to otherwise
+just use the generic dma_buf interfaces.
 
-Paul
+> +       uintptr_t mem;          /* mem for the PD */
+> +       uint32_t memlen;        /* mem length */
+> +       int32_t memfd;          /* fd for the mem */
+> +       int attrs;
+> +       unsigned int siglen;
+> +};
 
-> ChenYu
->=20
-> > > +                               #address-cells =3D <1>;
-> > > +                               #size-cells =3D <1>;
-> > > +                               ranges =3D <0 0x01d00000 0x80000>;
-> > > +
-> > > +                               ve_sram: sram-section@0 {
-> > > +                                       compatible =3D "allwinner,sun=
-50i-h5-sram-c1",
-> > > +                                                    "allwinner,sun4i=
--a10-sram-c1";
-> > > +                                       reg =3D <0x000000 0x80000>;
-> > > +                               };
-> > > +                       };
-> > > +               };
-> > > +
-> > >                 mali: gpu@1e80000 {
-> > >                         compatible =3D "allwinner,sun50i-h5-mali", "a=
-rm,mali-450";
-> > >                         reg =3D <0x01e80000 0x30000>;
-> > > --
-> > > 2.19.1
-> > >=20
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
+This structure is again not suitable for ioctls. Please used fixed-length
+members and no holes in the structure.
 
---=-GiwLARmS2nmhlZHes8Vi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlwBOooACgkQ3cLmz3+f
-v9H5cAf/Y4PYNTtU8z80K7NkG2UKbqz1WClI50UXcS49VGXlbAN+Q4scGjd2bzML
-JMgd3lpH5sCqmMR0B3sZBe1H7qPuTQQwZ6h94h8aULW7BppqjT3X2FGuaOr5TT5l
-0OL4Rlsj1RzKB8vFn3prDtwOlDanSjq1Akrf8F1pNs6CH4wmtVhEOtQq6Pzgb6RY
-KQZrD9Ahyh01YQd2eWvmCEEwQKMbS61uFRWSKbi6PPqCn9NjkyzYYB5MhDOQ2Rl5
-OtLiDpcTMR3GwpbfNczbUsy3C/Ad8Yo0iZvVMoqKgZpLbqyXkT4r5qIcNc80uY8u
-LEep4QqRU2g3pCM3AY0wvpAfzidZgg==
-=LKPm
------END PGP SIGNATURE-----
-
---=-GiwLARmS2nmhlZHes8Vi--
-
+       Arnd
