@@ -2,90 +2,94 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50484C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F512C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B05620673
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:28:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UulstH9S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B05620673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5107F20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:31:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5107F20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbeLAFiV (ORCPT
+        id S1726474AbeLAFl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:38:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56472 "EHLO mail.kernel.org"
+        Sat, 1 Dec 2018 00:41:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:34504 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727386AbeLAFiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:38:20 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A4BB2146F;
-        Fri, 30 Nov 2018 18:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543602491;
-        bh=8bHq+yFrwQ7eXFqbIbehPOUy5lCvqA7uE+ZfwOMsi4Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UulstH9SgCCZpdnasf4dx4nxPXUarKS1zqwiKNgbevzXD8LPrxO8c1RgBIGkaTBYi
-         6CgIH7dIfVQSNAarh6vSGP0DQ3aLSilrqIMI5QeLGNquHTj0yzfVGPzFy2WN8A+2F5
-         6ujhYiymGP74LYO6wPuiOMiI3wBLSeDze5N8JBqM=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 22/22] tools lib traceevent: Add sanity check to is_timestamp_in_us()
-Date:   Fri, 30 Nov 2018 15:26:52 -0300
-Message-Id: <20181130182652.23620-23-acme@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181130182652.23620-1-acme@kernel.org>
-References: <20181130182652.23620-1-acme@kernel.org>
+        id S1725817AbeLAFlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:41:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EA23165C;
+        Fri, 30 Nov 2018 10:31:16 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74F533F575;
+        Fri, 30 Nov 2018 10:31:15 -0800 (PST)
+Subject: Re: [PATCH] firmware: arm_sdei: fix wrong of_node_put() in init
+ function
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181126121536.28739-1-nsaenzjulienne@suse.de>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <08d6b9e6-7aa0-9342-193b-1ce6e0417f77@arm.com>
+Date:   Fri, 30 Nov 2018 18:31:13 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181126121536.28739-1-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Hi Nicolas,
 
-This patch adds a sanity check to is_timestamp_in_us() input parameter
-trace_clock. It avoids a potential segfault in this function for the
-case trace_clock is NULL.
+On 26/11/2018 12:15, Nicolas Saenz Julienne wrote:
+> After finding a "firmware" dt node arm_sdei tries to match it's
+> compatible string with it. To do so it's calling of_find_matching_node()
+> which already takes care of decreasing the refcount on the "firmware"
+> node. We are then incorrectly decreasing the refcount on that node
+> again.
+> 
+> This patch removes the unwarranted call to of_node_put().
+> 
+> Fixes: ad6eb31ef903 ("firmware: arm_sdei: Add driver for Software Delegated Exceptions")
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-Reported-by: Slavomir Kaslev <kaslevs@vmware.com>
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181128145552.68c4f87b@gandalf.local.home
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/lib/traceevent/event-parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index fbd6d6813fab..2b5cb33046ce 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -5409,7 +5409,7 @@ void tep_event_info(struct trace_seq *s, struct tep_event_format *event,
- 
- static bool is_timestamp_in_us(char *trace_clock, bool use_trace_clock)
- {
--	if (!use_trace_clock)
-+	if (!trace_clock || !use_trace_clock)
- 		return true;
- 
- 	if (!strcmp(trace_clock, "local") || !strcmp(trace_clock, "global")
--- 
-2.19.1
+Thanks!, I agree this is unwarranted.
+Is there a tool that picks these up? I remember sparse giving me a headache, but
+I don't remember this one... I probably cargo-culted it from somewhere else.
+
+Acked-by: James Morse <james.morse@arm.com>
+
+
+Thanks,
+
+James
+
+
+> ---
+>  drivers/firmware/arm_sdei.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/arm_sdei.c b/drivers/firmware/arm_sdei.c
+> index 1ea71640fdc2..dffb47c6b480 100644
+> --- a/drivers/firmware/arm_sdei.c
+> +++ b/drivers/firmware/arm_sdei.c
+> @@ -1017,7 +1017,6 @@ static bool __init sdei_present_dt(void)
+>  		return false;
+>  
+>  	np = of_find_matching_node(fw_np, sdei_of_match);
+> -	of_node_put(fw_np);
+>  	if (!np)
+>  		return false;
+>  
+> 
 
