@@ -2,241 +2,91 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489ADC04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0DDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DBD8213A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:35:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DBD8213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B5AF8213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:37:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5AF8213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeK3Nnb (ORCPT
+        id S1726777AbeK3NpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:43:31 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15176 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726392AbeK3Nnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:43:31 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8FBD8BDACF8A6;
-        Fri, 30 Nov 2018 10:35:47 +0800 (CST)
-Received: from [127.0.0.1] (10.111.221.165) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Fri, 30 Nov 2018
- 10:35:41 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid frequent costly fsck triggers
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20181128073125.39102-1-jaegeuk@kernel.org>
- <724de929-6ee1-3ad7-cfa7-6e80d4e7a3da@huawei.com>
- <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
- <4f43735a-d01f-f194-18ce-4fbbe10ad8d4@huawei.com>
- <20181128174805.GB41969@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Sheng Yong <shengyong1@huawei.com>
-Message-ID: <234cabcd-a1c1-9fb6-13aa-94fe681731dc@huawei.com>
-Date:   Fri, 30 Nov 2018 10:35:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 30 Nov 2018 08:45:19 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42360 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726409AbeK3NpT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 08:45:19 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 64so2008157pfr.9;
+        Thu, 29 Nov 2018 18:37:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pV08akpReKWfPs1JXmEU10zEQpzm6oMKj8ePhQRinaA=;
+        b=YnYwZSrujETeaEscIE8k3LsblAspOtqGc6k4S0lrlC0dMuolemSb9IzIgNa4PAzYre
+         O7K5sSEauk9vACnjAWvXEduW23BeNJskr+2jBgBq1125rG70JRqES3qdgU5XZfs2z9xD
+         AjyuQ0b7qt63yjAks/hnIVKgSl4zko721uy63M4Z4WjC23BRVRaraZAbXkq/tv/9X3GZ
+         dotTj4vEZR1N5Hr9BA2bszHEU93NG1KknM/5nzkGYZbxANxBF/cQy7Eg3GGIwFmylXV+
+         HfaOyL/3nxOQfn/mzyqaasMUHxJXfXTM8Y0YzWD+4jXXE44m9LXmCJWmhtIzo0mNs37S
+         gKHQ==
+X-Gm-Message-State: AA+aEWZJqbeUaAmxEvIiI+CB/4I6R/qQ8I3di4G2rXbNiQAz8jVB6ZxM
+        fBMmdcSKK7JJNHAllfRnxxo=
+X-Google-Smtp-Source: AFSGD/WmGnB4kJgY/lFfQG4xpyEN/WgRwSLEaCYoO3so4xBl4P8i2fml4bz11Ii/GWjVGMWN5zPrtQ==
+X-Received: by 2002:a63:4e41:: with SMTP id o1mr2224832pgl.282.1543545457073;
+        Thu, 29 Nov 2018 18:37:37 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id u69sm4791578pfj.116.2018.11.29.18.37.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 18:37:36 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 29 Nov 2018 18:37:32 -0800
+Date:   Thu, 29 Nov 2018 18:37:32 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Dan Rue <dan.rue@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] selftests: firmware: remove use of non-standard diff
+ -Z option
+Message-ID: <20181130023732.GO4922@garbanzo.do-not-panic.com>
+References: <20181127031218.24419-1-dan.rue@linaro.org>
+ <20181127031218.24419-2-dan.rue@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20181128174805.GB41969@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.111.221.165]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127031218.24419-2-dan.rue@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jaegeuk and Chao,
+On Mon, Nov 26, 2018 at 09:12:15PM -0600, Dan Rue wrote:
+> diff -Z is used to trim the trailing whitespace when comparing the
+> loaded firmware file with the source firmware file. However, per the
+> comment in the source code, -Z should not be necessary. In testing, the
+> input and output files are identical.
+> 
+> Additionally, -Z is not a standard option and is not available in
+> environments such as busybox. When -Z is not supported, diff fails with
+> a usage error, which is suppressed, but then causes read_firmwares() to
+> exit with a false failure message.
 
-On 2018/11/29 1:48, Jaegeuk Kim wrote:
-> On 11/28, Chao Yu wrote:
->> On 2018/11/28 16:10, Jaegeuk Kim wrote:
->>> On 11/28, Chao Yu wrote:
->>>> Hi Jaeguek,
->>>>
->>>> On 2018/11/28 15:31, Jaegeuk Kim wrote:
->>>>> If we want to re-enable nat_bits, we rely on fsck which requires full scan
->>>>> of directory tree. Let's do that by regular fsck or unclean shutdown.
->>>>
->>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>>>
->>>> BTW, I have patch made some month ago...
->>>>
->>>> In order to detect nat_bits disabling, could we introduce one more flag for
->>>> fsck?
->>>
->>> Do we have a way to enable nat_bits very quickly in fsck?
->>
->> For image with SBI_NATBIT_NEED_REPAIR flag, can we just check metadata and
->> rebuild nat_bits based on verified nat blocks/journals?
-> 
-> I'm leaning to rely on full scan to enable nat_bits again. We may add a mount
-> count or timer to trigger fsck regularly?
+NACK -- this breaks testing on debian:
 
-I'm afraid regular full fsck would give us bad experience of booting time.
-FYI, 256GB storage, which is filled with small files, costs almost 10 min
-to do a full fsck. And it seems larger capacity storages are on the way.
-So, is it worth doing that only to enable nat_bits (plus checking f2fs
-consistent not that necessarily)?
+Testing with the file present...
+Batched request_firmware() try #1: Files
+/tmp/tmp.8GWkoSo5jZ/test-firmware.bin and
+/sys/devices/virtual/misc/test_firmware/read_firmware differ
+request #0: firmware was not loaded
 
-Thanks
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> >From 86e8bdb2faeec904944bb6621073f4f7de51cc2d Mon Sep 17 00:00:00 2001
->>>> From: Chao Yu <yuchao0@huawei.com>
->>>> Date: Sun, 9 Sep 2018 05:40:20 +0800
->>>> Subject: [PATCH] f2fs: set specified flag after invalidating nat_bits
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>   fs/f2fs/checkpoint.c    | 12 +++++++++++-
->>>>   fs/f2fs/f2fs.h          |  3 ++-
->>>>   fs/f2fs/node.c          |  3 +++
->>>>   include/linux/f2fs_fs.h |  1 +
->>>>   4 files changed, 17 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>> index 7e17bb3dfcb1..f7fb14e0f5f9 100644
->>>> --- a/fs/f2fs/checkpoint.c
->>>> +++ b/fs/f2fs/checkpoint.c
->>>> @@ -1226,13 +1226,16 @@ static void update_ckpt_flags(struct f2fs_sb_info
->>>> *sbi, struct cp_control *cpc)
->>>>   	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
->>>>   	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
->>>>   	unsigned long flags;
->>>> +	bool disable_natbits = false;
->>>>
->>>>   	spin_lock_irqsave(&sbi->cp_lock, flags);
->>>>
->>>>   	if ((cpc->reason & CP_UMOUNT) &&
->>>>   			le32_to_cpu(ckpt->cp_pack_total_block_count) >
->>>> -			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
->>>> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
->>>>   		disable_nat_bits(sbi, false);
->>>> +		disable_natbits = true;
->>>> +	}
->>>>
->>>>   	if (cpc->reason & CP_TRIMMED)
->>>>   		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
->>>> @@ -1270,11 +1273,18 @@ static void update_ckpt_flags(struct f2fs_sb_info
->>>> *sbi, struct cp_control *cpc)
->>>>   	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>>>   		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>
->>>> +	if (is_sbi_flag_set(sbi, SBI_NATBIT_NEED_REPAIR))
->>>> +		__set_ckpt_flags(ckpt, CP_NATBIT_NEED_FSCK_FLAG);
->>>> +
->>>>   	/* set this flag to activate crc|cp_ver for recovery */
->>>>   	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
->>>>   	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
->>>>
->>>>   	spin_unlock_irqrestore(&sbi->cp_lock, flags);
->>>> +
->>>> +	if (disable_natbits)
->>>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
->>>> +			"No enough space in CP area, disable nat_bits.");
->>>>   }
->>>>
->>>>   static void commit_checkpoint(struct f2fs_sb_info *sbi,
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index f0cedbe0c536..b55341c269b2 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -1107,6 +1107,7 @@ enum {
->>>>   	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
->>>>   	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
->>>>   	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
->>>> +	SBI_NATBIT_NEED_REPAIR,			/* nat full/empty bitmaps need repair */
->>>>   };
->>>>
->>>>   enum {
->>>> @@ -1628,7 +1629,7 @@ static inline void disable_nat_bits(struct
->>>> f2fs_sb_info *sbi, bool lock)
->>>>   {
->>>>   	unsigned long flags;
->>>>
->>>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
->>>> +	set_sbi_flag(sbi, SBI_NATBIT_NEED_REPAIR);
->>>>
->>>>   	if (lock)
->>>>   		spin_lock_irqsave(&sbi->cp_lock, flags);
->>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->>>> index e57add1e8966..0c6f8312a087 100644
->>>> --- a/fs/f2fs/node.c
->>>> +++ b/fs/f2fs/node.c
->>>> @@ -2902,6 +2902,9 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
->>>>
->>>>   	cp_ver |= (cur_cp_crc(ckpt) << 32);
->>>>   	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
->>>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
->>>> +			"Disable nat_bits due to incorrect cp_ver (%llu, %llu)",
->>>> +			cp_ver, le64_to_cpu(*(__le64 *)nm_i->nat_bits));
->>>>   		disable_nat_bits(sbi, true);
->>>>   		return 0;
->>>>   	}
->>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->>>> index 7196653833fa..1f3ae1504573 100644
->>>> --- a/include/linux/f2fs_fs.h
->>>> +++ b/include/linux/f2fs_fs.h
->>>> @@ -117,6 +117,7 @@ struct f2fs_super_block {
->>>>   /*
->>>>    * For checkpoint
->>>>    */
->>>> +#define CP_NATBIT_NEED_FSCK_FLAG	0X00002000
->>>>   #define CP_DISABLED_FLAG		0x00001000
->>>>   #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
->>>>   #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
->>>> -- 
->>>> 2.18.0.rc1
->>>>
->>>>
->>>>
->>>>>
->>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>> ---
->>>>>   fs/f2fs/f2fs.h | 6 +++++-
->>>>>   1 file changed, 5 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>> index c28a9d1cb278..aa500239baf2 100644
->>>>> --- a/fs/f2fs/f2fs.h
->>>>> +++ b/fs/f2fs/f2fs.h
->>>>> @@ -1621,7 +1621,11 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
->>>>>   {
->>>>>   	unsigned long flags;
->>>>>   
->>>>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
->>>>> +	/*
->>>>> +	 * In order to re-enable nat_bits we need to call fsck.f2fs by
->>>>> +	 * set_sbi_flag(sbi, SBI_NEED_FSCK). But it may give huge cost,
->>>>> +	 * so let's rely on regular fsck or unclean shutdown.
->>>>> +	 */
->>>>>   
->>>>>   	if (lock)
->>>>>   		spin_lock_irqsave(&sbi->cp_lock, flags);
->>>>>
->>>
->>> .
->>>
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
+Please add a quirks check, enable it by default, and remove it for
+Busybox.
 
+   Luis
