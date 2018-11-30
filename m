@@ -2,139 +2,162 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8047EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48318C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525352146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:19:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525352146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A04920863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 12:19:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A04920863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbeK3X21 (ORCPT
+        id S1727028AbeK3X2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:28:27 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59276 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbeK3X21 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:28:27 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 4F9CD27D961
-Subject: Re: [PATCH v2 1/2] power: supply: add input voltage limit property.
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-pm@vger.kernel.org, sre@kernel.org,
-        Sameer Nanda <snanda@chromium.org>, gwendal@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        Adam.Thomson.Opensource@diasemi.com, kernel@collabora.com,
-        bleung@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>
-References: <20181122101119.29194-1-enric.balletbo@collabora.com>
- <20181123232203.GA3852@amd>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <c122a1f9-70d7-7129-f139-4a0449c366a5@collabora.com>
-Date:   Fri, 30 Nov 2018 13:19:15 +0100
+        Fri, 30 Nov 2018 18:28:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44930 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726521AbeK3X2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 18:28:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7EC09AE98;
+        Fri, 30 Nov 2018 12:19:41 +0000 (UTC)
+Subject: Re: [PATCH 1/2] x86/mm: Fix guard hole handling
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        boris.ostrovsky@oracle.com, bhe@redhat.com, x86@kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20181130115758.4425-1-kirill.shutemov@linux.intel.com>
+ <20181130115758.4425-2-kirill.shutemov@linux.intel.com>
+ <76b8ca15-405a-055f-41b3-532b116c3a8b@suse.com>
+ <20181130121131.g3xvlvixv7mvlr7b@black.fi.intel.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <de576537-d524-aa2e-adc0-3fa969e4ffe2@suse.com>
+Date:   Fri, 30 Nov 2018 13:19:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181123232203.GA3852@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
+In-Reply-To: <20181130121131.g3xvlvixv7mvlr7b@black.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-
-Thanks for the feedback.
-
-On 24/11/18 0:22, Pavel Machek wrote:
-> Hi!
-> 
->> We have a problem with USBPD chargers which under certain conditions
->> can result in system overheating if the voltage provided by the USBPD
->> port is too high. While the preferred means to control this would be
->> through devicetree or ACPI settings, this is not always possible, and
->> we need to have a means to set a voltage limit.
+On 30/11/2018 13:11, Kirill A. Shutemov wrote:
+> On Fri, Nov 30, 2018 at 12:03:33PM +0000, Juergen Gross wrote:
+>> On 30/11/2018 12:57, Kirill A. Shutemov wrote:
+>>> There is a guard hole at the beginning of kernel address space, also
+>>> used by hypervisors. It occupies 16 PGD entries.
+>>>
+>>> We do not state the reserved range directly, but calculate it relative
+>>> to other entities: direct mapping and user space ranges.
+>>>
+>>> The calculation got broken by recent change in kernel memory layout: LDT
+>>> remap range is now mapped before direct mapping and makes the calculation
+>>> invalid.
+>>>
+>>> The breakage leads to crash on Xen dom0 boot[1].
+>>>
+>>> State the reserved range directly. It's part of kernel ABI (hypervisors
+>>> expect it to be stable) and must not depend on changes in the rest of
+>>> kernel memory layout.
+>>>
+>>> [1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
+>>>
+>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>> Reported-by: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
+>>> Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
+>>> ---
+>>>  arch/x86/include/asm/pgtable_64_types.h |  5 +++++
+>>>  arch/x86/mm/dump_pagetables.c           |  8 ++++----
+>>>  arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
+>>>  3 files changed, 15 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+>>> index 84bd9bdc1987..13aef22cee18 100644
+>>> --- a/arch/x86/include/asm/pgtable_64_types.h
+>>> +++ b/arch/x86/include/asm/pgtable_64_types.h
+>>> @@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
+>>>   */
+>>>  #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
+>>>  
+>>> +#define GUARD_HOLE_PGD_ENTRY	-256UL
+>>> +#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
+>>> +#define GUARD_HOLE_BASE_ADDR	(LDT_PGD_ENTRY << PGDIR_SHIFT)
 >>
->> This patch exposes a new property, similar to input current limit, to
->> re-configure the maximum voltage from the external supply at runtime
->> based on system-level knowledge or user input.
+>> s/LDT_PGD_ENTRY/GUARD_HOLE_PGD_ENTRY/
 > 
-> First, this should really be handled by dt / ACPI. If it is broken,
-> that's a hardware bug, and we can do DMI-based blacklists in kernel.
+> Ughh..
 > 
-
-I think that handle this via dt / ACPI is not possible for our use case. It can
-be a hardware bug or a hardware/user constrain, let me try to explain better
-with an example.
-
-On Pixel C's devices, userspace uses this to set a USB input limit of 5V when
-the screen is on for thermal reasons, but those go away when the screen is
-off/system is sleeping, so we allow 9V and 12V levels when sleeping.
-
-> How are you supposed to fsck a system, for example?
+>>From 4308d560cc2874a9f596512bcb4c601b2450653d Mon Sep 17 00:00:00 2001
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Date: Fri, 30 Nov 2018 14:29:42 +0300
+> Subject: [PATCH 1/2] x86/mm: Fix guard hole handling
 > 
-
-hmm, I'm not sure I get the question, sorry, could you rephrase?
-
->> +What:		/sys/class/power_supply/<supply_name>/input_voltage_limit
->> +Date:		Nov 2018
->> +Contact:	linux-pm@vger.kernel.org
->> +Description:
->> +		Details the incoming VBUS voltage limit currently set in the
->> +		supply. Normally this is configured based on the type of
->> +		connection made.
+> There is a guard hole at the beginning of kernel address space, also
+> used by hypervisors. It occupies 16 PGD entries.
 > 
-> "Details"?
+> We do not state the reserved range directly, but calculate it relative
+> to other entities: direct mapping and user space ranges.
 > 
-> Who can write to this value and when? What is the limit? If USB
-> charger is plugged in, should it show 5.0V (because that's nominal on
-> the USB) or 5.25V (because that is the real limit)?
+> The calculation got broken by recent change in kernel memory layout: LDT
+> remap range is now mapped before direct mapping and makes the calculation
+> invalid.
 > 
-
-The voltages here refer to the Typical or Nominal values defined by the USB
-specification for a Fixed power supply (or Fixed PDO). 5.0V, 5.25V, 4.75V,
-5.5V... all of those are considered "5V" according to the USB specifications.
-
-At the 5V level (defined in the USB PD specification as vSafe5V), a nominal
-power source is allowed to have a voltage between 4.75V and 5.50V (5V -5%/
-+10%). For simplicity, we refer to this range as 5V, the typical value.
-For all higher voltage levels other than vSafe5V, MIN voltage is PDO Voltage *
-0.95, and MAX voltage is PDO Voltage * 1.05, where PDO Voltage is the Typical
-value (9V, 12V, 15V, 20V). [1]
-
-> Who can write to this and when. And what happens on write? What
-> happens if I write value that charger can't provide there?
+> The breakage leads to crash on Xen dom0 boot[1].
 > 
-> Does it set the voltage power supply should produce? Or maximal it can
-> choose to produce?
+> State the reserved range directly. It's part of kernel ABI (hypervisors
+> expect it to be stable) and must not depend on changes in the rest of
+> kernel memory layout.
 > 
-
-This defines a maximal voltage. If you write a value it can't provide,
-it should go down to the next lowest level, and barring that, 5V is
-always allowed.
-
-That makes me think that maybe I should also improve the implementation.
-
-> This really needs better documentation.
-
-Ack, I'll send a next version improving that.
-
-Make sense to you?
-
-Thanks
- Enric
-
-[1] USB PD Specification revision 2.0, Version 1.3, Table 7-22
-
+> [1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
 > 
-> 								Pavel
-> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
+> Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+
+Juergen
