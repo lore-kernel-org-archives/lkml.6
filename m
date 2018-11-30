@@ -2,139 +2,129 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D6CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67EEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4B621479
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D11B20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:05:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bub7JWVZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4B621479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IYtMXcvP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D11B20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeLADOr (ORCPT
+        id S1727561AbeLADPD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:14:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbeLADOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:14:47 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E784D2146F;
-        Fri, 30 Nov 2018 16:04:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543593899;
-        bh=EQMqvhBWT0RXGVnrRwx1B5v6xCIFrgbum/RlzPShH/g=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bub7JWVZxTPcysgjtF3BTaLF2t1Nk7eAvm2OCcUDT3otJg7Hz8IaN9um6CsjkPKfB
-         BtZhadKts1VQuTCBrQJc95yQzjjUMAy71TWOgxkXrcnUNeZWrve8gqHdxtCzK8/aWJ
-         DcR5S7inJbz1iCENEFfDf/cWEZ7nmoBnZLfg3xnY=
-Date:   Fri, 30 Nov 2018 17:04:57 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
-Subject: [GIT PULL] Staging/IIO driver fixes for 4.20-rc5
-Message-ID: <20181130160457.GA2944@kroah.com>
+        Fri, 30 Nov 2018 22:15:03 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39908 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeLADPD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:15:03 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t9-v6so5432034ljh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 08:05:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1Q6OpVlKGi2rNqRFLuocPd3nAs+AvtLdb1mSVpc1EnA=;
+        b=IYtMXcvPk8+BDvFq2Q2tdfg9Rwd44S3kfp4mU1Z7O5P4HmDpKH50HnwftrxRChC9gr
+         mcU1/XKs8lU+B9cy8BpheN343aEDbGBg/tacXx6uGRLOseXTUuY0b7lYcS0Fx+gVGlwL
+         d/cW/S16Pw9BcKsfNY65nlIt7i8S53wbk7zoA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1Q6OpVlKGi2rNqRFLuocPd3nAs+AvtLdb1mSVpc1EnA=;
+        b=QSJC90MbCqNosn2nePrdXHGcZC2ElxD+QTxSodDK2b19pg/zh7J8vlnemRuIve/lJB
+         L2wK5s5AaRCYF0vNG4alunsGc9ncOgqRiLH+/b50VaClfIGMHvE5Ws3L0R/sMjKREgCy
+         qm+Z1Zr/gyAZZSW1CtGLnZpEgiSGztBsIWwwK1odt5YGAS55LgBF2ohIr04o5/+HBhx+
+         dg6AQ1mrN9kE8cp/GtLQvUvAt+MIU01UTpGaTZ6kuk26Gz6bQbllWQAAXsh1QItE3qTk
+         cxWlXZ22z0LEAILmpeD3Uao3Tl1HQrx9xtl4xLqRT/80qHLP4STNqG6iDSd5wiDxAyBP
+         jC0Q==
+X-Gm-Message-State: AA+aEWb3bLQ17yU5hQe0rLpr94kOW7//6YZxA3WCR77ZZDMovEdEBCuB
+        +Yyn+/baTWWt4Vg7EUs6Ku/2NQ==
+X-Google-Smtp-Source: AFSGD/X6Lm1WS5hC8lqISP4G+FznzWxMvIBnP2h2EOCLz3/i4IaSqq3+7YUOt1dFf9VbYgX8c4dB4Q==
+X-Received: by 2002:a2e:5418:: with SMTP id i24-v6mr4603769ljb.51.1543593913761;
+        Fri, 30 Nov 2018 08:05:13 -0800 (PST)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id d82sm889847lfd.82.2018.11.30.08.05.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 08:05:13 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     airlied@linux.ie, wens@csie.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] drm/sun4i: tcon: fix false-positive uninitialized build warning
+Date:   Fri, 30 Nov 2018 17:05:08 +0100
+Message-Id: <20181130160508.28230-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+With GCC version 5 and 6, this uninitialized warning can be seen.
+GCC have been fixed in newer versions.
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+drivers/gpu/drm/sun4i/sun4i_tcon.c: In function ‘sun4i_tcon_bind’:
+drivers/gpu/drm/sun4i/sun4i_tcon.c:1091:21: warning: ‘has_lvds_alt’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  bool has_lvds_rst, has_lvds_alt, can_lvds;
+                     ^~~~~~~~~~~~
 
-are available in the Git repository at:
+Reworked the code so it covers that false positive also.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-4.20-rc5
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-for you to fetch changes up to c648284f6c9606f1854816086593eeae5556845a:
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 0420f5c978b9..317d4fa3429c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1161,20 +1161,20 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 		 */
+ 		if (tcon->quirks->has_lvds_alt) {
+ 			tcon->lvds_pll = devm_clk_get(dev, "lvds-alt");
+-			if (IS_ERR(tcon->lvds_pll)) {
+-				if (PTR_ERR(tcon->lvds_pll) == -ENOENT) {
+-					has_lvds_alt = false;
+-				} else {
+-					dev_err(dev, "Couldn't get the LVDS PLL\n");
+-					return PTR_ERR(tcon->lvds_pll);
+-				}
++			ret = PTR_ERR_OR_ZERO(tcon->lvds_pll);
++			if (ret == -ENOENT) {
++				has_lvds_alt = false;
++			} else if (ret) {
++				dev_err(dev, "Couldn't get the LVDS PLL\n");
++				return ret;
+ 			} else {
+ 				has_lvds_alt = true;
+ 			}
++		} else  {
++			has_lvds_alt = false;
+ 		}
+ 
+-		if (!has_lvds_rst ||
+-		    (tcon->quirks->has_lvds_alt && !has_lvds_alt)) {
++		if (!has_lvds_rst || !has_lvds_alt) {
+ 			dev_warn(dev, "Missing LVDS properties, Please upgrade your DT\n");
+ 			dev_warn(dev, "LVDS output disabled\n");
+ 			can_lvds = false;
+-- 
+2.19.1
 
-  Merge tag 'iio-fixes-for-4.20a' of git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio into staging-linus (2018-11-22 09:37:36 +0100)
-
-----------------------------------------------------------------
-Staging and IIO driver fixes for 4.20-rc5
-
-Here are some small IIO and Staging driver fixes for 4.20-rc5.
-
-Nothing major, the IIO fix ended up touching the HID drivers at the same
-time, but the HID maintainer acked it.  The staging fixes are all minor
-patches for reported issues and regressions, full details are in the
-shortlog.
-
-All of these have been in linux-next for a while with no reported
-issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Ben Wolsieffer (1):
-      staging: vchiq_arm: fix compat VCHIQ_IOC_AWAIT_COMPLETION
-
-Christophe JAILLET (1):
-      staging: rtl8723bs: Fix the return value in case of error in 'rtw_wx_read32()'
-
-Colin Ian King (3):
-      drivers: staging: cedrus: find ctx before dereferencing it ctx
-      staging: most: use format specifier "%s" in snprintf
-      staging: mt7621-pinctrl: fix uninitialized variable ngroups
-
-Greg Kroah-Hartman (1):
-      Merge tag 'iio-fixes-for-4.20a' of git://git.kernel.org/.../jic23/iio into staging-linus
-
-Hans de Goede (1):
-      iio/hid-sensors: Fix IIO_CHAN_INFO_RAW returning wrong values for signed numbers
-
-Larry Finger (2):
-      staging: rtl8723bs: Fix incorrect sense of ether_addr_equal
-      staging: rtl8723bs: Add missing return for cfg80211_rtw_get_station
-
-Martin Kelly (1):
-      iio:st_magn: Fix enable device after trigger
-
-Sergio Paracuellos (1):
-      staging: mt7621-dma: fix potentially dereferencing uninitialized 'tx_desc'
-
-Spencer E. Olson (2):
-      staging: comedi: ni_mio_common: scale ao INSN_CONFIG_GET_CMD_TIMING_CONSTRAINTS
-      staging: comedi: clarify/unify macros for NI macro-defined terminals
-
- drivers/hid/hid-sensor-custom.c                    |  2 +-
- drivers/hid/hid-sensor-hub.c                       | 13 ++++++--
- drivers/iio/accel/hid-sensor-accel-3d.c            |  5 ++-
- drivers/iio/gyro/hid-sensor-gyro-3d.c              |  5 ++-
- drivers/iio/humidity/hid-sensor-humidity.c         |  3 +-
- drivers/iio/light/hid-sensor-als.c                 |  8 +++--
- drivers/iio/light/hid-sensor-prox.c                |  8 +++--
- drivers/iio/magnetometer/hid-sensor-magn-3d.c      |  8 +++--
- drivers/iio/magnetometer/st_magn_buffer.c          | 12 ++-----
- drivers/iio/orientation/hid-sensor-incl-3d.c       |  8 +++--
- drivers/iio/pressure/hid-sensor-press.c            |  8 +++--
- drivers/iio/temperature/hid-sensor-temperature.c   |  3 +-
- drivers/rtc/rtc-hid-sensor-time.c                  |  2 +-
- drivers/staging/comedi/comedi.h                    | 39 ++++++++++++----------
- drivers/staging/comedi/drivers/ni_mio_common.c     |  3 +-
- drivers/staging/media/sunxi/cedrus/cedrus.c        | 22 ++++++------
- drivers/staging/most/core.c                        |  2 +-
- drivers/staging/mt7621-dma/mtk-hsdma.c             |  3 +-
- drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c    |  2 +-
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c     |  4 +--
- drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c  |  2 +-
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c     |  2 +-
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c  |  7 +++-
- include/linux/hid-sensor-hub.h                     |  4 ++-
- 24 files changed, 103 insertions(+), 72 deletions(-)
