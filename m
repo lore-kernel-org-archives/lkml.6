@@ -2,78 +2,72 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D00C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B451AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBF1D2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781642145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:43:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mg3Dhw19"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF1D2145D
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="f0an6cYG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781642145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbeLAAwa (ORCPT
+        id S1727187AbeLAAxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:52:30 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38422 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbeLAAw3 (ORCPT
+        Fri, 30 Nov 2018 19:53:05 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33596 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbeLAAwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:52:29 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v13so5340783wrw.5
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:43:06 -0800 (PST)
+        Fri, 30 Nov 2018 19:52:30 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c14so5365044wrr.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:43:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=167V7UFFgN2ZfSuUQzl601VfAFL+URLNGJyCnJAzM4Y=;
-        b=mg3Dhw19GeQ+QsSwZJbm3uuumBvpQcv1hlgBjv0uaDtzmAjAGmePr60wtZHzQ6TzUO
-         Tk2S4HhUp9SIMRp+Hs7Knl9oAzOrAPXnkUYlZ+khcVPFQlKj51p4ex1dDfVz1WVlwTxN
-         0cBjxK7DyhunGlds68Y//u9ZQK8uaYajJ8EDlDq6IKFdZ3rsIwEcmztKK3jbHoUghjZT
-         8uuBdylFVBKScugbxC6AlWzkOTdYAV10dZyfu3AkoZCis7Jt3AL9JebIJZmC7NRsrxMA
-         +GCK0m1/vQZmLkuIEUlJl3U2cnzOZIHAiPG6ZEp+MUGmhL3LIpAkN5SaWmgoIiwCbIs3
-         SyhA==
+        bh=uSoaClJe2VwJrVf3BYX56JymGMy95DbVg8e+WAGVJ14=;
+        b=f0an6cYGq1iPZp4oIws9G77BregI9k+0nmvJwA2K6wIWrTeYLEyHfrH95QNeWM6u/a
+         dGvZnptAR39l7x/NxAMnm+d//Zxt6+K6i7lhfLay6inMslpPM97rRgVImMj/LQxKH2rP
+         7z9iZGxL4qWS0po/A01To3whKfN0POiocKtBh8TRD/BvwWYUQq/fllJq0nkeph2Ik0NW
+         alLMEvcKyd/qX47AY+w8iChCa7D/X4rIkezV07o6clIKQ0DqnyvoCIddSR6ErtGlK93I
+         /sfCHI3/c6Qzkee12CDDR7Is6sZ2/m2bH2p8cZs7dY7WGdasHiSAGcYsXQN8147Q/emZ
+         WEqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=167V7UFFgN2ZfSuUQzl601VfAFL+URLNGJyCnJAzM4Y=;
-        b=Yh/57JJvAIe5qNWHFuYpDM/hme6i6/rB8RLLFKDVTLuD7YQgqrHz0SCk+vTe2a6AwC
-         QItKscPBMXW4s0fgpPsfNRNSYrFxNlEki05JGFPBqtm0NvO3naQ2cbrkH13yARSFiqfw
-         BLF1UtDvwfiL0xVXwuLe8w9RtkqgHWEhNW0eBxaFLDBtd6mbaAh0K8wFx/zEeVaNRWfF
-         d6+W2MxCBEH1miS39A00ue8IxCstaNQiRypZPKuj35ShWBha3WcxMk9pahu7KltaOrLQ
-         62Wa83hfYcR8/2HbZ30nJoVdYUTuI8ihrhnQI0cPi/4NIjBTkXEIcR9xchh+V2linY57
-         GhUw==
-X-Gm-Message-State: AA+aEWb1qCzmBS+8weQhkkI52h1UCMwvlhr3+2pGZ+5TlhJkiE5ZKB9E
-        Idbk+U2w9wXvR8JFxIsmE+SwQA==
-X-Google-Smtp-Source: AFSGD/UzpnJh/KnP6boF6H5ePDIPP+YnL2ZVkesl4dbmDo7xpRd1SISbE0/Z7alvXjcmbT4baNFmMw==
-X-Received: by 2002:a5d:4652:: with SMTP id j18mr5114625wrs.279.1543585385835;
-        Fri, 30 Nov 2018 05:43:05 -0800 (PST)
+        bh=uSoaClJe2VwJrVf3BYX56JymGMy95DbVg8e+WAGVJ14=;
+        b=dT/2vHBPXOIJpnpHvsMRTqSrbto+dIbz/N1OVcu5wsFcto79HZipsmQv7FM/I025Lv
+         TezT4qZEmY4gpHK8/2q/ApsWKbPwqcVDT3e3IvcZ1HkLL8DkyNI5Cgu/Ue+56BseX6UC
+         tD3KTgLZCsJa08sRHRyzO2HKbOLkrBlkt8uioPruVxkVTlycIi+/byAeqFvibGPZokrK
+         FmBpiN+k5ZGAHqPnd75psWaf+6RnDOjWreNps+SKDEWDRS6LMX/Eb1ktMSdRkj8lgS9y
+         UWj5YXIi2guqN7b+h43+/EC9IjBw0oD6rRjc3LvUdlwek+xyXIGMq5eoTveRGnfuEgQx
+         vy9w==
+X-Gm-Message-State: AA+aEWY/LlUjn7fbld++97+5nINihi2IKwqK6kFKGwh7tIIBuikvaDpa
+        Xuq2wBzTfp+C/melfd3/rcIzUg==
+X-Google-Smtp-Source: AFSGD/XMOjIFvJp5titmU+bmuir/auYOcVAWltP7EIdXNZVFnsJfO0vV+kvNF5mey6Gm5EYhwUoJgg==
+X-Received: by 2002:a05:6000:1189:: with SMTP id g9mr5357968wrx.221.1543585387856;
+        Fri, 30 Nov 2018 05:43:07 -0800 (PST)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 125sm6864898wml.35.2018.11.30.05.43.04
+        by smtp.gmail.com with ESMTPSA id 125sm6864898wml.35.2018.11.30.05.43.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 05:43:05 -0800 (PST)
+        Fri, 30 Nov 2018 05:43:07 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        maxime.ripard@bootlin.com
+        Laurent.pinchart@ideasonboard.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        Huicong Xu <xhc@rock-chips.com>
-Subject: [PATCH RFC v2 1/8] drm/bridge: dw-hdmi: Add SCDC and TMDS Scrambling support
-Date:   Fri, 30 Nov 2018 14:42:54 +0100
-Message-Id: <20181130134301.17963-2-narmstrong@baylibre.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2 3/8] drm/meson: add support for HDMI2.0 2160p modes
+Date:   Fri, 30 Nov 2018 14:42:56 +0100
+Message-Id: <20181130134301.17963-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181130134301.17963-1-narmstrong@baylibre.com>
 References: <20181130134301.17963-1-narmstrong@baylibre.com>
@@ -84,211 +78,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for SCDC Setup for TMDS Clock > 3.4GHz and enable TMDS
-Scrambling when supported or mandatory.
+Now we support the TMDS Clock > 3.4GHz and support the SCDC Control
+operation in the DW-HDMI Controller, we can enable support for the
+HDMI2.0 3840x2160@60/50 RGB444 display modes.
 
-This patch also adds an helper to setup the control bit to support
-the high TMDS Bit Period/TMDS Clock-Period Ratio as required with
-TMDS Clock > 3.4GHz for HDMI2.0 3840x2160@60/50 modes.
-
-These changes were based on work done by Huicong Xu <xhc@rock-chips.com>
-and Nickey Yang <nickey.yang@rock-chips.com> to support HDMI2.0 modes
-on the Rockchip 4.4 BSP kernel at [1]
-
-[1] https://github.com/rockchip-linux/kernel/tree/release-4.4
-
-Cc: Nickey Yang <nickey.yang@rock-chips.com>
-Cc: Huicong Xu <xhc@rock-chips.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 88 ++++++++++++++++++++++-
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  1 +
- include/drm/bridge/dw_hdmi.h              |  1 +
- 3 files changed, 87 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/meson/meson_venc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 64c3cf027518..fcd941d52753 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -28,6 +28,7 @@
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_encoder_slave.h>
-+#include <drm/drm_scdc_helper.h>
- #include <drm/bridge/dw_hdmi.h>
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index 0ba04f6813e6..66d73a932d19 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -848,6 +848,8 @@ struct meson_hdmi_venc_vic_mode {
+ 	{ 93, &meson_hdmi_encp_mode_2160p24 },
+ 	{ 94, &meson_hdmi_encp_mode_2160p25 },
+ 	{ 95, &meson_hdmi_encp_mode_2160p30 },
++	{ 96, &meson_hdmi_encp_mode_2160p25 },
++	{ 97, &meson_hdmi_encp_mode_2160p30 },
+ 	{ 0, NULL}, /* sentinel */
+ };
  
- #include <uapi/linux/media-bus-format.h>
-@@ -43,6 +44,11 @@
- 
- #define HDMI_EDID_LEN		512
- 
-+/* DW-HDMI Controller >= 0x200a are at least compliant with SCDC version 1 */
-+#define SCDC_MIN_SOURCE_VERSION	0x1
-+
-+#define HDMI14_MAX_TMDSCLK	340000000
-+
- enum hdmi_datamap {
- 	RGB444_8B = 0x01,
- 	RGB444_10B = 0x03,
-@@ -1015,6 +1021,33 @@ void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
- }
- EXPORT_SYMBOL_GPL(dw_hdmi_phy_i2c_write);
- 
-+/*
-+ * HDMI2.0 Specifies the following procedure for High TMDS Bit Rates:
-+ * - The Source shall suspend transmission of the TMDS clock and data
-+ * - The Source shall write to the TMDS_Bit_Clock_Ratio bit to change it
-+ * from a 0 to a 1 or from a 1 to a 0
-+ * - The Source shall allow a minimum of 1 ms and a maximum of 100 ms from
-+ * the time the TMDS_Bit_Clock_Ratio bit is written until resuming
-+ * transmission of TMDS clock and data
-+ *
-+ * To respect the 100ms maximum delay, the dw_hdmi_set_high_tmds_clock_ratio()
-+ * helper should called right before enabling the TMDS Clock and Data in
-+ * the PHY configuration callback.
-+ */
-+void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi)
-+{
-+	unsigned long mtmdsclock = hdmi->hdmi_data.video_mode.mpixelclock;
-+
-+	/* Control for TMDS Bit Period/TMDS Clock-Period Ratio */
-+	if (hdmi->connector.display_info.hdmi.scdc.supported) {
-+		if (mtmdsclock > HDMI14_MAX_TMDSCLK)
-+			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 1);
-+		else
-+			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 0);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(dw_hdmi_set_high_tmds_clock_ratio);
-+
- static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
- {
- 	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
-@@ -1216,6 +1249,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 
- 	dw_hdmi_phy_power_off(hdmi);
- 
-+	dw_hdmi_set_high_tmds_clock_ratio(hdmi);
-+
- 	/* Leave low power consumption mode by asserting SVSRET. */
- 	if (phy->has_svsret)
- 		dw_hdmi_phy_enable_svsret(hdmi, 1);
-@@ -1237,6 +1272,10 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
- 		return ret;
- 	}
- 
-+	/* Wait for resuming transmission of TMDS clock and data */
-+	if (mpixelclock > HDMI14_MAX_TMDSCLK)
-+		msleep(100);
-+
- 	return dw_hdmi_phy_power_on(hdmi);
- }
- 
-@@ -1340,11 +1379,12 @@ static void hdmi_tx_hdcp_config(struct dw_hdmi *hdmi)
- 
- static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
- {
-+	bool is_hdmi2_sink = hdmi->connector.display_info.hdmi.scdc.supported;
- 	struct hdmi_avi_infoframe frame;
- 	u8 val;
- 
- 	/* Initialise info frame from DRM mode */
--	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, false);
-+	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, is_hdmi2_sink);
- 
- 	if (hdmi_bus_fmt_is_yuv444(hdmi->hdmi_data.enc_out_bus_format))
- 		frame.colorspace = HDMI_COLORSPACE_YUV444;
-@@ -1503,7 +1543,8 @@ static void hdmi_config_vendor_specific_infoframe(struct dw_hdmi *hdmi,
- static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 			     const struct drm_display_mode *mode)
- {
--	u8 inv_val;
-+	u8 inv_val, bytes;
-+	struct drm_hdmi_info *hdmi_info = &hdmi->connector.display_info.hdmi;
- 	struct hdmi_vmode *vmode = &hdmi->hdmi_data.video_mode;
- 	int hblank, vblank, h_de_hs, v_de_vs, hsync_len, vsync_len;
- 	unsigned int vdisplay;
-@@ -1513,7 +1554,9 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 	dev_dbg(hdmi->dev, "final pixclk = %d\n", vmode->mpixelclock);
- 
- 	/* Set up HDMI_FC_INVIDCONF */
--	inv_val = (hdmi->hdmi_data.hdcp_enable ?
-+	inv_val = (hdmi->hdmi_data.hdcp_enable ||
-+		   vmode->mpixelclock > HDMI14_MAX_TMDSCLK ||
-+		   hdmi_info->scdc.scrambling.low_rates ?
- 		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_ACTIVE :
- 		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_INACTIVE);
- 
-@@ -1562,6 +1605,45 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
- 		vsync_len /= 2;
- 	}
- 
-+	/* Scrambling Control */
-+	if (hdmi_info->scdc.supported) {
-+		if (vmode->mpixelclock > HDMI14_MAX_TMDSCLK ||
-+		    hdmi_info->scdc.scrambling.low_rates) {
-+			/*
-+			 * HDMI2.0 Specifies the following procedure:
-+			 * After the Source Device has determined that
-+			 * SCDC_Present is set (=1), the Source Device should
-+			 * write the accurate Version of the Source Device
-+			 * to the Source Version field in the SCDCS.
-+			 * Source Devices compliant shall set the
-+			 * Source Version = 1.
-+			 */
-+			drm_scdc_readb(&hdmi->i2c->adap, SCDC_SINK_VERSION,
-+				       &bytes);
-+			drm_scdc_writeb(&hdmi->i2c->adap, SCDC_SOURCE_VERSION,
-+				min_t(u8, bytes, SCDC_MIN_SOURCE_VERSION));
-+
-+			/* Enabled Scrambling in the Sink */
-+			drm_scdc_set_scrambling(&hdmi->i2c->adap, 1);
-+
-+			/*
-+			 * To activate the scrambler feature, you must ensure
-+			 * that the quasi-static configuration bit
-+			 * fc_invidconf.HDCP_keepout is set at configuration
-+			 * time, before the required mc_swrstzreq.tmdsswrst_req
-+			 * reset request is issued.
-+			 */
-+			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
-+				    HDMI_MC_SWRSTZ);
-+			hdmi_writeb(hdmi, 1, HDMI_FC_SCRAMBLER_CTRL);
-+		} else {
-+			hdmi_writeb(hdmi, 0, HDMI_FC_SCRAMBLER_CTRL);
-+			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
-+				    HDMI_MC_SWRSTZ);
-+			drm_scdc_set_scrambling(&hdmi->i2c->adap, 0);
-+		}
-+	}
-+
- 	/* Set up horizontal active pixel width */
- 	hdmi_writeb(hdmi, mode->hdisplay >> 8, HDMI_FC_INHACTV1);
- 	hdmi_writeb(hdmi, mode->hdisplay, HDMI_FC_INHACTV0);
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-index 9d90eb9c46e5..3f3c616eba97 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-@@ -255,6 +255,7 @@
- #define HDMI_FC_MASK2                           0x10DA
- #define HDMI_FC_POL2                            0x10DB
- #define HDMI_FC_PRCONF                          0x10E0
-+#define HDMI_FC_SCRAMBLER_CTRL                  0x10E1
- 
- #define HDMI_FC_GMD_STAT                        0x1100
- #define HDMI_FC_GMD_EN                          0x1101
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 9c56412bb2cf..7a02744ce0bc 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -157,6 +157,7 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
- void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
- void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
- void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
-+void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi);
- 
- /* PHY configuration */
- void dw_hdmi_phy_i2c_set_addr(struct dw_hdmi *hdmi, u8 address);
 -- 
 2.19.2
 
