@@ -2,206 +2,87 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C89C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B952DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D6820863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:56:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="daaU4UDp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D6820863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 894352082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 894352082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbeLAIHF (ORCPT
+        id S1726788AbeLAIH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 03:07:05 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38247 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbeLAIHE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 03:07:04 -0500
-Received: by mail-io1-f67.google.com with SMTP id l14so5649291ioj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 12:56:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wJHwQgWDMEBP/NNgbjssB3B91GE0fJoGSOGi0poC1z0=;
-        b=daaU4UDp/0IK2RAsu/D1B/AmF44RUjoeCdt35uCijib20Tr0GjH6ACB5k4slXbm2WU
-         YV7xfPdw9SfzrtsXZ4v2vWFzYFiQWZ92tvjMrReKak94LW76pJvqTnKmSD3BcrDGEdLn
-         DuEmvs0oEe203eLATGmQYAREvC2sC1OMEcDoeGO5X6fLyC1vBLVqb+NvfbHGMEo/P9na
-         7XvmxCPueJh/StzWtDojVLga//fBXpmJ3yzSNZpy9M3UiTE0WFhbvquemwt9EQjdLeGl
-         F8l9t9Nnqay2wntojm8HUkhQ6HyAECGNB5lNHUBra23hxYXtXgXri6GL7Pszs8VLKRxE
-         Ernw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=wJHwQgWDMEBP/NNgbjssB3B91GE0fJoGSOGi0poC1z0=;
-        b=Kr+jWeD/Oer5JUqxwrLbpFeb0nWUvPu6taEYA00LgyYoe+ls+2E9H7/eXhpn6hfZzg
-         rVh2lIPkcJRMyhG4iP2K+K99uFl8+DspJrN4ZJbiMTNrKC1EumKrY0onNsfpjAbWZh2A
-         Qm2XGVZfaP2gS8j94ETjkUXKe/p7nGAXC9j4mfegVtfck7u2S6UYNKb7Gvpwi26JGp6h
-         xrGglxOL9TpsAmVkPNQYgaLF9WY+5h3R7/Am/i1H2BQvs92g+uj9FWrhXB159CGXOCUS
-         Pl4ccq0vVHuAB5+lBn0m1hjK2L0DjSDrVgCuUFc3sMYPKZpHd+JM1HqibtucyJNP0xQC
-         N+zg==
-X-Gm-Message-State: AA+aEWY/FzLtP9sPXs+DOwyVzDDVheZc5rYJ0NhQ0lsYmWUjngpIFbGy
-        wRKeO5GfbxXikoASJfqdT70=
-X-Google-Smtp-Source: AFSGD/VoIgOskWLOSTZLiWc2hklabRsnluxB+UfGl82oAuiP/cN1/i01H1wVcsJiOYPb9dM0LXkC4A==
-X-Received: by 2002:a6b:ec07:: with SMTP id c7mr5920815ioh.33.1543611390979;
-        Fri, 30 Nov 2018 12:56:30 -0800 (PST)
-Received: from localhost.localdomain ([198.52.185.227])
-        by smtp.gmail.com with ESMTPSA id p198sm126967itb.30.2018.11.30.12.56.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 12:56:30 -0800 (PST)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@googlemail.com
-To:     TheSven73@googlemail.com, Shawn Guo <shawnguo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] bus: imx-weim: guard against timing configuration conflicts
-Date:   Fri, 30 Nov 2018 15:56:24 -0500
-Message-Id: <20181130205624.16227-3-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181130205624.16227-1-TheSven73@googlemail.com>
-References: <20181130205624.16227-1-TheSven73@googlemail.com>
+        Sat, 1 Dec 2018 03:07:27 -0500
+Received: from mga04.intel.com ([192.55.52.120]:52332 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726528AbeLAIH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 03:07:27 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 12:56:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
+   d="scan'208";a="121030448"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
+  by fmsmga001.fm.intel.com with ESMTP; 30 Nov 2018 12:56:54 -0800
+Date:   Fri, 30 Nov 2018 12:56:54 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        "open list:MEMORY TECHNOLOGY DEVICES (MTD)" 
+        <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH RFC 09/15] mtd: replace **** with a hug
+Message-ID: <20181130205654.GA22338@linux.intel.com>
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+ <20181130192737.15053-10-jarkko.sakkinen@linux.intel.com>
+ <20181130203906.1af0d88d@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130203906.1af0d88d@bbrezillon>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Van Asbroeck <TheSven73@googlemail.com>
+On Fri, Nov 30, 2018 at 08:39:06PM +0100, Boris Brezillon wrote:
+> On Fri, 30 Nov 2018 11:27:18 -0800
+> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> 
+> > In order to comply with the CoC, replace **** with a hug.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  drivers/mtd/mtd_blkdevs.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
+> > index b0d44f9214b0..bdf68678fccc 100644
+> > --- a/drivers/mtd/mtd_blkdevs.c
+> > +++ b/drivers/mtd/mtd_blkdevs.c
+> > @@ -565,7 +565,7 @@ int register_mtd_blktrans(struct mtd_blktrans_ops *tr)
+> >  	int ret;
+> >  
+> >  	/* Register the notifier if/when the first device type is
+> > -	   registered, to prevent the link/init ordering from fucking
+> > +	   registered, to prevent the link/init ordering from hugging
+> >  	   us over. */
+> 
+> Please rephrase the comment instead of this replacement.
 
-When adding weim child devices, there is a risk that the developer will
-(by mistake) specify more than one timing setting for the same chip select.
+Will do in the next version of this patch set!
 
-The driver cannot support such a configuration.
-
-In case of conflict, this patch will print a warning to the log,
-and will ignore the child node in question.
-
-In this example, node acme@1 will be ignored, as it tries to modify
-timing settings for CS0:
-
-&weim {
-	acme@0,0 {
-		compatible = "acme,whatever";
-		reg = <0 0 0x100>;
-		fsl,weim-cs-timing = <something>;
-	};
-	acme@0,500 {
-		compatible = "acme,whatnot";
-		reg = <0 0x500 0x100>;
-		fsl,weim-cs-timing = <something else>;
-	};
-};
-
-However in this example, the driver will be happy:
-
-&weim {
-        acme@0,0 {
-                compatible = "acme,whatever";
-                reg = <0 0 0x100>;
-                fsl,weim-cs-timing = <something>;
-        };
-        acme@0,500 {
-                compatible = "acme,whatnot";
-                reg = <0 0x500 0x100>;
-                fsl,weim-cs-timing = <something>;
-        };
-};
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
----
- drivers/bus/imx-weim.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-index 24f22285395d..114e503ec785 100644
---- a/drivers/bus/imx-weim.c
-+++ b/drivers/bus/imx-weim.c
-@@ -46,8 +46,18 @@ static const struct imx_weim_devtype imx51_weim_devtype = {
- };
- 
- #define MAX_CS_REGS_COUNT	6
-+#define MAX_CS_REGS		6
- #define OF_REG_SIZE		3
- 
-+struct cs_timing {
-+	bool is_applied;
-+	u32 regs[MAX_CS_REGS_COUNT];
-+};
-+
-+struct cs_timing_state {
-+	struct cs_timing cs[MAX_CS_REGS];
-+};
-+
- static const struct of_device_id weim_id_table[] = {
- 	/* i.MX1/21 */
- 	{ .compatible = "fsl,imx1-weim", .data = &imx1_weim_devtype, },
-@@ -112,11 +122,14 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
- }
- 
- /* Parse and set the timing for this device. */
--static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
--				    const struct imx_weim_devtype *devtype)
-+static int __init weim_timing_setup(struct device *dev,
-+				    struct device_node *np, void __iomem *base,
-+				    const struct imx_weim_devtype *devtype,
-+				    struct cs_timing_state *ts)
- {
- 	u32 cs_idx, value[MAX_CS_REGS_COUNT];
- 	int i, ret, reg_idx, num_regs;
-+	struct cs_timing *cst;
- 
- 	if (WARN_ON(devtype->cs_regs_count > MAX_CS_REGS_COUNT))
- 		return -EINVAL;
-@@ -145,10 +158,23 @@ static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
- 		if (cs_idx >= devtype->cs_count)
- 			return -EINVAL;
- 
-+		/* prevent re-configuring a CS that's already been configured */
-+		cst = &ts->cs[cs_idx];
-+		if (cst->is_applied && memcmp(value, cst->regs,
-+					devtype->cs_regs_count*sizeof(u32))) {
-+			dev_err(dev, "fsl,weim-cs-timing conflict on %pOF", np);
-+			return -EINVAL;
-+		}
-+
- 		/* set the timing for WEIM */
- 		for (i = 0; i < devtype->cs_regs_count; i++)
- 			writel(value[i],
- 				base + cs_idx * devtype->cs_stride + i * 4);
-+		if (!cst->is_applied) {
-+			cst->is_applied = true;
-+			memcpy(cst->regs, value,
-+				devtype->cs_regs_count*sizeof(u32));
-+		}
- 	}
- 
- 	return 0;
-@@ -165,6 +191,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
- 	const struct imx_weim_devtype *devtype = of_id->data;
- 	struct device_node *child;
- 	int ret, have_child = 0;
-+	struct cs_timing_state ts = {};
- 
- 	if (devtype == &imx50_weim_devtype) {
- 		ret = imx_weim_gpr_setup(pdev);
-@@ -179,7 +206,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
- 	}
- 
- 	for_each_available_child_of_node(pdev->dev.of_node, child) {
--		ret = weim_timing_setup(child, base, devtype);
-+		ret = weim_timing_setup(&pdev->dev, child, base, devtype, &ts);
- 		if (ret)
- 			dev_warn(&pdev->dev, "%pOF set timing failed.\n",
- 				child);
--- 
-2.17.1
-
+/Jarkko
