@@ -2,262 +2,512 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9756AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BEB9C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61C1D2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C1D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E8A9B2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OdkBQ7vh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A9B2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeLAFKC (ORCPT
+        id S1727191AbeLAFKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:10:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54128 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725754AbeLAFKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:10:02 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4937F8E664;
-        Fri, 30 Nov 2018 17:59:57 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-126-156.rdu2.redhat.com [10.10.126.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 734C55D9C9;
-        Fri, 30 Nov 2018 17:59:44 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devel@linuxdriverproject.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, David Hildenbrand <david@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Banman <andrew.banman@hpe.com>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH RFCv2 1/4] mm/memory_hotplug: Introduce memory block types
-Date:   Fri, 30 Nov 2018 18:59:19 +0100
-Message-Id: <20181130175922.10425-2-david@redhat.com>
-In-Reply-To: <20181130175922.10425-1-david@redhat.com>
-References: <20181130175922.10425-1-david@redhat.com>
+        Sat, 1 Dec 2018 00:10:14 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:32931 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbeLAFKO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:10:14 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so2832546pgu.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 10:00:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VYOc457wvpyCnlgNdfF49IapIjpYiSd/LpRw6Rqk9Vg=;
+        b=OdkBQ7vhbqv07+OqNOW4ikms+nwi6lrOWSAQqWht4wavPHNEL9nl+2ueWPvvRxrBUd
+         vFKNsRNHXJJHn0p81WpUs0ximZkmTO7N9f7fFNK5S3jO/suLL42MeNi5/YXyt9sM2KIe
+         n5LcrhoEFXlrhAY1Px5nzVlKu6Ir/HEowkZ9k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VYOc457wvpyCnlgNdfF49IapIjpYiSd/LpRw6Rqk9Vg=;
+        b=D7doeVuCIaJsf84aAPYIxDvf7YkcCgV96o+DVAkYXvFS64Croj3H7aEdQUYmuql/MY
+         YEZi/gwkZROOBzB5Cl5LBoRkId87tFwtXIG+8JeAuZrn8UeQD6SbGG1HmQw0UnjQ5aBL
+         QOWxeSFQWH51Pqiv9UcIWvQu+thKnPsff0atYhYKR5Rb/XOo90dWLw1pmwK+qAyUZNF+
+         JjQoMDvYclM1K3xXdvcyLBzJM6yQCBhZw6G5Wg99JhN2JZqdZeBQyCVpc9oymUY8FHym
+         JLD5A/veT4ujDlyG4WajZl2+0PIIlTlGFE/4ElGR34dPUfkj7/fJkvWKlGnIaFYtPhWF
+         ikCQ==
+X-Gm-Message-State: AA+aEWaEFA5gXZOC55cg+7NqsK5u6CrFqvD+JTzeHYww/WmLFWsfiu7N
+        psCrvZyOYer/FpurJnfT7VFJ9ZJ0xhg=
+X-Google-Smtp-Source: AFSGD/Uza7ZnMyOhgaifQtCmWzgKJhyJMNcbUIsQd3gjrQe2nj1H7VxLhYZ8DylPDwvg5r+yhZWcDA==
+X-Received: by 2002:a62:c583:: with SMTP id j125mr6594382pfg.37.1543600808985;
+        Fri, 30 Nov 2018 10:00:08 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id i1sm6926522pgb.46.2018.11.30.10.00.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 10:00:07 -0800 (PST)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     <linux-kernel@vger.kernel.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        linux-wireless@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>, stable@vger.kernel.org
+Subject: [4.20 PATCH] Revert "mwifiex: restructure rx_reorder_tbl_lock usage"
+Date:   Fri, 30 Nov 2018 09:59:57 -0800
+Message-Id: <20181130175957.167031-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 30 Nov 2018 17:59:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory onlining should always be handled by user space, because only user
-space knows which use cases it wants to satisfy. E.g. memory might be
-onlined to the MOVABLE zone even if it can never be removed from the
-system, e.g. to make usage of huge pages more reliable.
+This reverts commit 5188d5453bc9380ccd4ae1086138dd485d13aef2, because it
+introduced lock recursion:
 
-However to implement such rules (especially default rules in distributions)
-we need more information about the memory that was added in user space.
+  BUG: spinlock recursion on CPU#2, kworker/u13:1/395
+   lock: 0xffffffc0e28a47f0, .magic: dead4ead, .owner: kworker/u13:1/395, .owner_cpu: 2
+  CPU: 2 PID: 395 Comm: kworker/u13:1 Not tainted 4.20.0-rc4+ #2
+  Hardware name: Google Kevin (DT)
+  Workqueue: MWIFIEX_RX_WORK_QUEUE mwifiex_rx_work_queue [mwifiex]
+  Call trace:
+   dump_backtrace+0x0/0x140
+   show_stack+0x20/0x28
+   dump_stack+0x84/0xa4
+   spin_bug+0x98/0xa4
+   do_raw_spin_lock+0x5c/0xdc
+   _raw_spin_lock_irqsave+0x38/0x48
+   mwifiex_flush_data+0x2c/0xa4 [mwifiex]
+   call_timer_fn+0xcc/0x1c4
+   run_timer_softirq+0x264/0x4f0
+   __do_softirq+0x1a8/0x35c
+   do_softirq+0x54/0x64
+   netif_rx_ni+0xe8/0x120
+   mwifiex_recv_packet+0xfc/0x10c [mwifiex]
+   mwifiex_process_rx_packet+0x1d4/0x238 [mwifiex]
+   mwifiex_11n_dispatch_pkt+0x190/0x1ac [mwifiex]
+   mwifiex_11n_rx_reorder_pkt+0x28c/0x354 [mwifiex]
+   mwifiex_process_sta_rx_packet+0x204/0x26c [mwifiex]
+   mwifiex_handle_rx_packet+0x15c/0x16c [mwifiex]
+   mwifiex_rx_work_queue+0x104/0x134 [mwifiex]
+   worker_thread+0x4cc/0x72c
+   kthread+0x134/0x13c
+   ret_from_fork+0x10/0x18
 
-E.g. on x86 we want to online memory provided by balloon devices (e.g.
-XEN, Hyper-V) differently (-> will not be unplugged by offlining the whole
-block) than ordinary DIMMs (-> might eventually be unplugged by offlining
-the whole block). This might also become relevat for other architectures.
+This was clearly not tested well at all. I simply performed 'wget' in a
+loop and it fell over within a few seconds.
 
-Also, udev rules right now check if running on s390x and treat all added
-memory blocks as standby memory (-> don't online automatically). As soon as
-we support other memory hotplug mechanism (e.g. virtio-mem) checks would
-have to get more involved (e.g. also check if under KVM) but eventually
-also wrong (e.g. if KVM ever supports standby memory we are doomed).
-
-I decided to allow to specify the type of memory that is getting added
-to the system. Let's start with two types, BOOT and UNSPECIFIED to get the
-basic infrastructure running. We'll introduce and use further types in
-follow-up patches. For now we classify any hotplugged memory temporarily
-as as UNSPECIFIED (which will eventually be dropped later on).
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Banman <andrew.banman@hpe.com>
-Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
-Cc: Oscar Salvador <osalvador@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Michal Suchánek <msuchanek@suse.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Fixes: 5188d5453bc9 ("mwifiex: restructure rx_reorder_tbl_lock usage")
+Cc: <stable@vger.kernel.org>
+Cc: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- drivers/base/memory.c  | 38 +++++++++++++++++++++++++++++++++++---
- include/linux/memory.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 62 insertions(+), 3 deletions(-)
+This is a 4.19 regression, but IMO the revert should be merged ASAP.
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 0c290f86ab20..17f2985c07c5 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -381,6 +381,29 @@ static ssize_t show_phys_device(struct device *dev,
- 	return sprintf(buf, "%d\n", mem->phys_device);
+ drivers/net/wireless/marvell/mwifiex/11n.c    |  5 +-
+ .../wireless/marvell/mwifiex/11n_rxreorder.c  | 96 ++++++++++---------
+ .../net/wireless/marvell/mwifiex/uap_txrx.c   |  3 -
+ 3 files changed, 51 insertions(+), 53 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/11n.c b/drivers/net/wireless/marvell/mwifiex/11n.c
+index e2addd8b878b..5d75c971004b 100644
+--- a/drivers/net/wireless/marvell/mwifiex/11n.c
++++ b/drivers/net/wireless/marvell/mwifiex/11n.c
+@@ -696,11 +696,10 @@ void mwifiex_11n_delba(struct mwifiex_private *priv, int tid)
+ 				"Send delba to tid=%d, %pM\n",
+ 				tid, rx_reor_tbl_ptr->ta);
+ 			mwifiex_send_delba(priv, tid, rx_reor_tbl_ptr->ta, 0);
+-			spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock,
+-					       flags);
+-			return;
++			goto exit;
+ 		}
+ 	}
++exit:
+ 	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
  }
  
-+static ssize_t type_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct memory_block *mem = to_memory_block(dev);
-+	ssize_t len = 0;
-+
-+	switch (mem->type) {
-+	case MEMORY_BLOCK_UNSPECIFIED:
-+		len = sprintf(buf, "unspecified\n");
-+		break;
-+	case MEMORY_BLOCK_BOOT:
-+		len = sprintf(buf, "boot\n");
-+		break;
-+	default:
-+		len = sprintf(buf, "ERROR-UNKNOWN-%ld\n",
-+				mem->state);
-+		WARN_ON(1);
-+		break;
-+	}
-+
-+	return len;
-+}
-+
- #ifdef CONFIG_MEMORY_HOTREMOVE
- static void print_allowed_zone(char *buf, int nid, unsigned long start_pfn,
- 		unsigned long nr_pages, int online_type,
-@@ -442,6 +465,7 @@ static DEVICE_ATTR(phys_index, 0444, show_mem_start_phys_index, NULL);
- static DEVICE_ATTR(state, 0644, show_mem_state, store_mem_state);
- static DEVICE_ATTR(phys_device, 0444, show_phys_device, NULL);
- static DEVICE_ATTR(removable, 0444, show_mem_removable, NULL);
-+static DEVICE_ATTR_RO(type);
+diff --git a/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c b/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
+index 8e63d14c1e1c..5380fba652cc 100644
+--- a/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
++++ b/drivers/net/wireless/marvell/mwifiex/11n_rxreorder.c
+@@ -103,8 +103,6 @@ static int mwifiex_11n_dispatch_pkt(struct mwifiex_private *priv, void *payload)
+  * There could be holes in the buffer, which are skipped by the function.
+  * Since the buffer is linear, the function uses rotation to simulate
+  * circular buffer.
+- *
+- * The caller must hold rx_reorder_tbl_lock spinlock.
+  */
+ static void
+ mwifiex_11n_dispatch_pkt_until_start_win(struct mwifiex_private *priv,
+@@ -113,21 +111,25 @@ mwifiex_11n_dispatch_pkt_until_start_win(struct mwifiex_private *priv,
+ {
+ 	int pkt_to_send, i;
+ 	void *rx_tmp_ptr;
++	unsigned long flags;
+ 
+ 	pkt_to_send = (start_win > tbl->start_win) ?
+ 		      min((start_win - tbl->start_win), tbl->win_size) :
+ 		      tbl->win_size;
+ 
+ 	for (i = 0; i < pkt_to_send; ++i) {
++		spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 		rx_tmp_ptr = NULL;
+ 		if (tbl->rx_reorder_ptr[i]) {
+ 			rx_tmp_ptr = tbl->rx_reorder_ptr[i];
+ 			tbl->rx_reorder_ptr[i] = NULL;
+ 		}
++		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		if (rx_tmp_ptr)
+ 			mwifiex_11n_dispatch_pkt(priv, rx_tmp_ptr);
+ 	}
+ 
++	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	/*
+ 	 * We don't have a circular buffer, hence use rotation to simulate
+ 	 * circular buffer
+@@ -138,6 +140,7 @@ mwifiex_11n_dispatch_pkt_until_start_win(struct mwifiex_private *priv,
+ 	}
+ 
+ 	tbl->start_win = start_win;
++	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ }
  
  /*
-  * Block size attribute stuff
-@@ -620,6 +644,7 @@ static struct attribute *memory_memblk_attrs[] = {
- 	&dev_attr_state.attr,
- 	&dev_attr_phys_device.attr,
- 	&dev_attr_removable.attr,
-+	&dev_attr_type.attr,
- #ifdef CONFIG_MEMORY_HOTREMOVE
- 	&dev_attr_valid_zones.attr,
- #endif
-@@ -657,13 +682,17 @@ int register_memory(struct memory_block *memory)
+@@ -147,8 +150,6 @@ mwifiex_11n_dispatch_pkt_until_start_win(struct mwifiex_private *priv,
+  * The start window is adjusted automatically when a hole is located.
+  * Since the buffer is linear, the function uses rotation to simulate
+  * circular buffer.
+- *
+- * The caller must hold rx_reorder_tbl_lock spinlock.
+  */
+ static void
+ mwifiex_11n_scan_and_dispatch(struct mwifiex_private *priv,
+@@ -156,15 +157,22 @@ mwifiex_11n_scan_and_dispatch(struct mwifiex_private *priv,
+ {
+ 	int i, j, xchg;
+ 	void *rx_tmp_ptr;
++	unsigned long flags;
+ 
+ 	for (i = 0; i < tbl->win_size; ++i) {
+-		if (!tbl->rx_reorder_ptr[i])
++		spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
++		if (!tbl->rx_reorder_ptr[i]) {
++			spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock,
++					       flags);
+ 			break;
++		}
+ 		rx_tmp_ptr = tbl->rx_reorder_ptr[i];
+ 		tbl->rx_reorder_ptr[i] = NULL;
++		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		mwifiex_11n_dispatch_pkt(priv, rx_tmp_ptr);
+ 	}
+ 
++	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	/*
+ 	 * We don't have a circular buffer, hence use rotation to simulate
+ 	 * circular buffer
+@@ -177,6 +185,7 @@ mwifiex_11n_scan_and_dispatch(struct mwifiex_private *priv,
+ 		}
+ 	}
+ 	tbl->start_win = (tbl->start_win + i) & (MAX_TID_VALUE - 1);
++	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
  }
  
- static int init_memory_block(struct memory_block **memory,
--			     struct mem_section *section, unsigned long state)
-+			     struct mem_section *section, unsigned long state,
-+			     int type)
+ /*
+@@ -184,8 +193,6 @@ mwifiex_11n_scan_and_dispatch(struct mwifiex_private *priv,
+  *
+  * The function stops the associated timer and dispatches all the
+  * pending packets in the Rx reorder table before deletion.
+- *
+- * The caller must hold rx_reorder_tbl_lock spinlock.
+  */
+ static void
+ mwifiex_del_rx_reorder_entry(struct mwifiex_private *priv,
+@@ -211,7 +218,11 @@ mwifiex_del_rx_reorder_entry(struct mwifiex_private *priv,
+ 
+ 	del_timer_sync(&tbl->timer_context.timer);
+ 	tbl->timer_context.timer_is_set = false;
++
++	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	list_del(&tbl->list);
++	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
++
+ 	kfree(tbl->rx_reorder_ptr);
+ 	kfree(tbl);
+ 
+@@ -224,17 +235,22 @@ mwifiex_del_rx_reorder_entry(struct mwifiex_private *priv,
+ /*
+  * This function returns the pointer to an entry in Rx reordering
+  * table which matches the given TA/TID pair.
+- *
+- * The caller must hold rx_reorder_tbl_lock spinlock.
+  */
+ struct mwifiex_rx_reorder_tbl *
+ mwifiex_11n_get_rx_reorder_tbl(struct mwifiex_private *priv, int tid, u8 *ta)
  {
- 	struct memory_block *mem;
- 	unsigned long start_pfn;
- 	int scn_nr;
+ 	struct mwifiex_rx_reorder_tbl *tbl;
++	unsigned long flags;
+ 
+-	list_for_each_entry(tbl, &priv->rx_reorder_tbl_ptr, list)
+-		if (!memcmp(tbl->ta, ta, ETH_ALEN) && tbl->tid == tid)
++	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
++	list_for_each_entry(tbl, &priv->rx_reorder_tbl_ptr, list) {
++		if (!memcmp(tbl->ta, ta, ETH_ALEN) && tbl->tid == tid) {
++			spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock,
++					       flags);
+ 			return tbl;
++		}
++	}
++	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 
+ 	return NULL;
+ }
+@@ -251,9 +267,14 @@ void mwifiex_11n_del_rx_reorder_tbl_by_ta(struct mwifiex_private *priv, u8 *ta)
+ 		return;
+ 
+ 	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+-	list_for_each_entry_safe(tbl, tmp, &priv->rx_reorder_tbl_ptr, list)
+-		if (!memcmp(tbl->ta, ta, ETH_ALEN))
++	list_for_each_entry_safe(tbl, tmp, &priv->rx_reorder_tbl_ptr, list) {
++		if (!memcmp(tbl->ta, ta, ETH_ALEN)) {
++			spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock,
++					       flags);
+ 			mwifiex_del_rx_reorder_entry(priv, tbl);
++			spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
++		}
++	}
+ 	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 
+ 	return;
+@@ -262,18 +283,24 @@ void mwifiex_11n_del_rx_reorder_tbl_by_ta(struct mwifiex_private *priv, u8 *ta)
+ /*
+  * This function finds the last sequence number used in the packets
+  * buffered in Rx reordering table.
+- *
+- * The caller must hold rx_reorder_tbl_lock spinlock.
+  */
+ static int
+ mwifiex_11n_find_last_seq_num(struct reorder_tmr_cnxt *ctx)
+ {
+ 	struct mwifiex_rx_reorder_tbl *rx_reorder_tbl_ptr = ctx->ptr;
++	struct mwifiex_private *priv = ctx->priv;
++	unsigned long flags;
+ 	int i;
+ 
+-	for (i = rx_reorder_tbl_ptr->win_size - 1; i >= 0; --i)
+-		if (rx_reorder_tbl_ptr->rx_reorder_ptr[i])
++	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
++	for (i = rx_reorder_tbl_ptr->win_size - 1; i >= 0; --i) {
++		if (rx_reorder_tbl_ptr->rx_reorder_ptr[i]) {
++			spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock,
++					       flags);
+ 			return i;
++		}
++	}
++	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 
+ 	return -1;
+ }
+@@ -291,22 +318,17 @@ mwifiex_flush_data(struct timer_list *t)
+ 	struct reorder_tmr_cnxt *ctx =
+ 		from_timer(ctx, t, timer);
+ 	int start_win, seq_num;
+-	unsigned long flags;
+ 
+ 	ctx->timer_is_set = false;
+-	spin_lock_irqsave(&ctx->priv->rx_reorder_tbl_lock, flags);
+ 	seq_num = mwifiex_11n_find_last_seq_num(ctx);
+ 
+-	if (seq_num < 0) {
+-		spin_unlock_irqrestore(&ctx->priv->rx_reorder_tbl_lock, flags);
++	if (seq_num < 0)
+ 		return;
+-	}
+ 
+ 	mwifiex_dbg(ctx->priv->adapter, INFO, "info: flush data %d\n", seq_num);
+ 	start_win = (ctx->ptr->start_win + seq_num + 1) & (MAX_TID_VALUE - 1);
+ 	mwifiex_11n_dispatch_pkt_until_start_win(ctx->priv, ctx->ptr,
+ 						 start_win);
+-	spin_unlock_irqrestore(&ctx->priv->rx_reorder_tbl_lock, flags);
+ }
+ 
+ /*
+@@ -333,14 +355,11 @@ mwifiex_11n_create_rx_reorder_tbl(struct mwifiex_private *priv, u8 *ta,
+ 	 * If we get a TID, ta pair which is already present dispatch all the
+ 	 * the packets and move the window size until the ssn
+ 	 */
+-	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	tbl = mwifiex_11n_get_rx_reorder_tbl(priv, tid, ta);
+ 	if (tbl) {
+ 		mwifiex_11n_dispatch_pkt_until_start_win(priv, tbl, seq_num);
+-		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		return;
+ 	}
+-	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 	/* if !tbl then create one */
+ 	new_node = kzalloc(sizeof(struct mwifiex_rx_reorder_tbl), GFP_KERNEL);
+ 	if (!new_node)
+@@ -551,20 +570,16 @@ int mwifiex_11n_rx_reorder_pkt(struct mwifiex_private *priv,
+ 	int prev_start_win, start_win, end_win, win_size;
+ 	u16 pkt_index;
+ 	bool init_window_shift = false;
+-	unsigned long flags;
  	int ret = 0;
  
-+	if (type == MEMORY_BLOCK_NONE)
-+		return -EINVAL;
-+
- 	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
- 	if (!mem)
- 		return -ENOMEM;
-@@ -675,6 +704,7 @@ static int init_memory_block(struct memory_block **memory,
- 	mem->state = state;
- 	start_pfn = section_nr_to_pfn(mem->start_section_nr);
- 	mem->phys_device = arch_get_memory_phys_device(start_pfn);
-+	mem->type = type;
- 
- 	ret = register_memory(mem);
- 
-@@ -699,7 +729,8 @@ static int add_memory_block(int base_section_nr)
- 
- 	if (section_count == 0)
- 		return 0;
--	ret = init_memory_block(&mem, __nr_to_section(section_nr), MEM_ONLINE);
-+	ret = init_memory_block(&mem, __nr_to_section(section_nr), MEM_ONLINE,
-+				MEMORY_BLOCK_BOOT);
- 	if (ret)
+-	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	tbl = mwifiex_11n_get_rx_reorder_tbl(priv, tid, ta);
+ 	if (!tbl) {
+-		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		if (pkt_type != PKT_TYPE_BAR)
+ 			mwifiex_11n_dispatch_pkt(priv, payload);
  		return ret;
- 	mem->section_count = section_count;
-@@ -722,7 +753,8 @@ int hotplug_memory_register(int nid, struct mem_section *section)
- 		mem->section_count++;
- 		put_device(&mem->dev);
+ 	}
+ 
+ 	if ((pkt_type == PKT_TYPE_AMSDU) && !tbl->amsdu) {
+-		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		mwifiex_11n_dispatch_pkt(priv, payload);
+ 		return ret;
+ 	}
+@@ -651,8 +666,6 @@ int mwifiex_11n_rx_reorder_pkt(struct mwifiex_private *priv,
+ 	if (!tbl->timer_context.timer_is_set ||
+ 	    prev_start_win != tbl->start_win)
+ 		mwifiex_11n_rxreorder_timer_restart(tbl);
+-
+-	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 	return ret;
+ }
+ 
+@@ -681,18 +694,14 @@ mwifiex_del_ba_tbl(struct mwifiex_private *priv, int tid, u8 *peer_mac,
+ 		    peer_mac, tid, initiator);
+ 
+ 	if (cleanup_rx_reorder_tbl) {
+-		spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 		tbl = mwifiex_11n_get_rx_reorder_tbl(priv, tid,
+ 								 peer_mac);
+ 		if (!tbl) {
+-			spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock,
+-					       flags);
+ 			mwifiex_dbg(priv->adapter, EVENT,
+ 				    "event: TID, TA not found in table\n");
+ 			return;
+ 		}
+ 		mwifiex_del_rx_reorder_entry(priv, tbl);
+-		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
  	} else {
--		ret = init_memory_block(&mem, section, MEM_OFFLINE);
-+		ret = init_memory_block(&mem, section, MEM_OFFLINE,
-+					MEMORY_BLOCK_UNSPECIFIED);
- 		if (ret)
- 			goto out;
- 		mem->section_count++;
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index d75ec88ca09d..06268e96e0da 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -34,12 +34,39 @@ struct memory_block {
- 	int (*phys_callback)(struct memory_block *);
- 	struct device dev;
- 	int nid;			/* NID for this memory block */
-+	int type;			/* type of this memory block */
- };
+ 		ptx_tbl = mwifiex_get_ba_tbl(priv, tid, peer_mac);
+ 		if (!ptx_tbl) {
+@@ -726,7 +735,6 @@ int mwifiex_ret_11n_addba_resp(struct mwifiex_private *priv,
+ 	int tid, win_size;
+ 	struct mwifiex_rx_reorder_tbl *tbl;
+ 	uint16_t block_ack_param_set;
+-	unsigned long flags;
  
- int arch_get_memory_phys_device(unsigned long start_pfn);
- unsigned long memory_block_size_bytes(void);
- int set_memory_block_size_order(unsigned int order);
+ 	block_ack_param_set = le16_to_cpu(add_ba_rsp->block_ack_param_set);
  
-+/*
-+ * Memory block types allow user space to formulate rules if and how to
-+ * online memory blocks. The types are exposed to user space as text
-+ * strings in sysfs.
-+ *
-+ * MEMORY_BLOCK_NONE:
-+ *  No memory block is to be created (e.g. device memory). Not exposed to
-+ *  user space.
-+ *
-+ * MEMORY_BLOCK_UNSPECIFIED:
-+ *  The type of memory block was not further specified when adding the
-+ *  memory block.
-+ *
-+ * MEMORY_BLOCK_BOOT:
-+ *  This memory block was added during boot by the basic system. No
-+ *  specific device driver takes care of this memory block. This memory
-+ *  block type is onlined automatically by the kernel during boot and might
-+ *  later be managed by a different device driver, in which case the type
-+ *  might change.
-+ */
-+enum {
-+	MEMORY_BLOCK_NONE = 0,
-+	MEMORY_BLOCK_UNSPECIFIED,
-+	MEMORY_BLOCK_BOOT,
-+};
-+
- /* These states are exposed to userspace as text strings in sysfs */
- #define	MEM_ONLINE		(1<<0) /* exposed to userspace */
- #define	MEM_GOING_OFFLINE	(1<<1) /* exposed to userspace */
+@@ -740,20 +748,17 @@ int mwifiex_ret_11n_addba_resp(struct mwifiex_private *priv,
+ 		mwifiex_dbg(priv->adapter, ERROR, "ADDBA RSP: failed %pM tid=%d)\n",
+ 			    add_ba_rsp->peer_mac_addr, tid);
+ 
+-		spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 		tbl = mwifiex_11n_get_rx_reorder_tbl(priv, tid,
+ 						     add_ba_rsp->peer_mac_addr);
+ 		if (tbl)
+ 			mwifiex_del_rx_reorder_entry(priv, tbl);
+ 
+-		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		return 0;
+ 	}
+ 
+ 	win_size = (block_ack_param_set & IEEE80211_ADDBA_PARAM_BUF_SIZE_MASK)
+ 		    >> BLOCKACKPARAM_WINSIZE_POS;
+ 
+-	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	tbl = mwifiex_11n_get_rx_reorder_tbl(priv, tid,
+ 					     add_ba_rsp->peer_mac_addr);
+ 	if (tbl) {
+@@ -764,7 +769,6 @@ int mwifiex_ret_11n_addba_resp(struct mwifiex_private *priv,
+ 		else
+ 			tbl->amsdu = false;
+ 	}
+-	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 
+ 	mwifiex_dbg(priv->adapter, CMD,
+ 		    "cmd: ADDBA RSP: %pM tid=%d ssn=%d win_size=%d\n",
+@@ -804,8 +808,11 @@ void mwifiex_11n_cleanup_reorder_tbl(struct mwifiex_private *priv)
+ 
+ 	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	list_for_each_entry_safe(del_tbl_ptr, tmp_node,
+-				 &priv->rx_reorder_tbl_ptr, list)
++				 &priv->rx_reorder_tbl_ptr, list) {
++		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		mwifiex_del_rx_reorder_entry(priv, del_tbl_ptr);
++		spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
++	}
+ 	INIT_LIST_HEAD(&priv->rx_reorder_tbl_ptr);
+ 	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 
+@@ -929,7 +936,6 @@ void mwifiex_11n_rxba_sync_event(struct mwifiex_private *priv,
+ 	int tlv_buf_left = len;
+ 	int ret;
+ 	u8 *tmp;
+-	unsigned long flags;
+ 
+ 	mwifiex_dbg_dump(priv->adapter, EVT_D, "RXBA_SYNC event:",
+ 			 event_buf, len);
+@@ -949,18 +955,14 @@ void mwifiex_11n_rxba_sync_event(struct mwifiex_private *priv,
+ 			    tlv_rxba->mac, tlv_rxba->tid, tlv_seq_num,
+ 			    tlv_bitmap_len);
+ 
+-		spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 		rx_reor_tbl_ptr =
+ 			mwifiex_11n_get_rx_reorder_tbl(priv, tlv_rxba->tid,
+ 						       tlv_rxba->mac);
+ 		if (!rx_reor_tbl_ptr) {
+-			spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock,
+-					       flags);
+ 			mwifiex_dbg(priv->adapter, ERROR,
+ 				    "Can not find rx_reorder_tbl!");
+ 			return;
+ 		}
+-		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 
+ 		for (i = 0; i < tlv_bitmap_len; i++) {
+ 			for (j = 0 ; j < 8; j++) {
+diff --git a/drivers/net/wireless/marvell/mwifiex/uap_txrx.c b/drivers/net/wireless/marvell/mwifiex/uap_txrx.c
+index a83c5afc256a..5ce85d5727e4 100644
+--- a/drivers/net/wireless/marvell/mwifiex/uap_txrx.c
++++ b/drivers/net/wireless/marvell/mwifiex/uap_txrx.c
+@@ -421,15 +421,12 @@ int mwifiex_process_uap_rx_packet(struct mwifiex_private *priv,
+ 		spin_unlock_irqrestore(&priv->sta_list_spinlock, flags);
+ 	}
+ 
+-	spin_lock_irqsave(&priv->rx_reorder_tbl_lock, flags);
+ 	if (!priv->ap_11n_enabled ||
+ 	    (!mwifiex_11n_get_rx_reorder_tbl(priv, uap_rx_pd->priority, ta) &&
+ 	    (le16_to_cpu(uap_rx_pd->rx_pkt_type) != PKT_TYPE_AMSDU))) {
+ 		ret = mwifiex_handle_uap_rx_forward(priv, skb);
+-		spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 		return ret;
+ 	}
+-	spin_unlock_irqrestore(&priv->rx_reorder_tbl_lock, flags);
+ 
+ 	/* Reorder and send to kernel */
+ 	pkt_type = (u8)le16_to_cpu(uap_rx_pd->rx_pkt_type);
 -- 
-2.17.2
+2.20.0.rc1.387.gf8505762e3-goog
 
