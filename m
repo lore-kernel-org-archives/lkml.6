@@ -2,193 +2,166 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB80C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA11C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E9F2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:59:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+6E5Iap"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E9F2148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 19EE52146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:59:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19EE52146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbeK3VIC (ORCPT
+        id S1727119AbeK3VIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:08:02 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40284 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeK3VIB (ORCPT
+        Fri, 30 Nov 2018 16:08:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49603 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbeK3VIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:08:01 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z10so2282940pgp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 01:59:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sIOcUZFi/d8ycyPMDjSduHEEINK1Q9XjtGpnlohgJdk=;
-        b=C+6E5IapjkA+1X3HY8xYzzXftQrrPfrd36bWKD/MiDjIzISJxgovYKcJF5E8CbHehw
-         T/lB5dljzhvBSYSiHLuf5lcPGCMDKeKp2IsfYKgz+bN3t4v0uqSw8QlQhJfKPtR0h+oa
-         ICgh405vokxEOAtq5lS1rkCPxdwFqw913MZn8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sIOcUZFi/d8ycyPMDjSduHEEINK1Q9XjtGpnlohgJdk=;
-        b=ha6JRWbVcfsk4zt7S6ccznPjtO+nbhSaIMDItkvTh9/8NPdzlxqj+mYaI/nNvugoxD
-         HAyWJORcdXiC/E3PtEjpDgM1XOJ150ThtfiQfuF9PajDR3QPWzxVzgyAKXvCqU8JnCqD
-         +ttjAiwDk0NnOLZGoARmsYVDsgfXL/aWXW8F/3itmssrUeOzYFw9PgUmg0VQ0Kv3SeJU
-         fH5T4M4jp3rTRb+3dP7ttaD3Cci37WQ4PzN2oOXQ01hW0aQRbMlBNTIj+zs79piaQV3L
-         Ca/9O+wsbKeSDUad+lfNelR7kGWRQciXKpkpSnV2+YHO1NnDxv+/MN7IeM00APES/XXr
-         Hwjg==
-X-Gm-Message-State: AA+aEWb4+pHr9YXdAK4VCjjwzVTO+X+Hj7bX3i3rya0fySp4dpPxWpI2
-        H/MQUxvTPT78BwLCdRmpsZH4SA==
-X-Google-Smtp-Source: AFSGD/XdwGSO7eCq3/BwOhuieZaMWbYs/4IofkqbVqER0vmN0Nf7qraGBmdJNbV9tiQ7jAHqVVqvtA==
-X-Received: by 2002:a63:f811:: with SMTP id n17mr4409325pgh.23.1543571955530;
-        Fri, 30 Nov 2018 01:59:15 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id k26sm5536920pgf.65.2018.11.30.01.59.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 01:59:14 -0800 (PST)
-Date:   Fri, 30 Nov 2018 15:29:12 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 5/5] PM / Domains: Propagate performance state updates
-Message-ID: <20181130095912.7hutbsrihpg4gez4@vireshk-i7>
-References: <cover.1543219386.git.viresh.kumar@linaro.org>
- <5a29ceb2704239a8efb4db2e47ca155a422a6e57.1543219386.git.viresh.kumar@linaro.org>
- <CAPDyKFpp1iPQ08QQjoi9b4RGUo2Zw_L_vjy8xtnSpg34gn--eA@mail.gmail.com>
+        Fri, 30 Nov 2018 16:08:10 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAU9wdp53261961
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 30 Nov 2018 01:58:39 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAU9wd9F3261958;
+        Fri, 30 Nov 2018 01:58:39 -0800
+Date:   Fri, 30 Nov 2018 01:58:39 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sai Praneeth Prakhya <tipbot@zytor.com>
+Message-ID: <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
+Cc:     hdegoede@redhat.com, mingo@kernel.org, bp@alien8.de,
+        marc.zyngier@arm.com, eric.snowberg@oracle.com,
+        sai.praneeth.prakhya@intel.com, hpa@zytor.com,
+        julien.thierry@arm.com, arend.vanspriel@broadcom.com,
+        bhsharma@redhat.com, dave.hansen@intel.com, peterz@infradead.org,
+        ard.biesheuvel@linaro.org, torvalds@linux-foundation.org,
+        jonathanh@nvidia.com, joe@perches.com, matt@codeblueprint.co.uk,
+        linux-kernel@vger.kernel.org, luto@kernel.org,
+        zhuyifei1999@gmail.com, sedat.dilek@gmail.com, tglx@linutronix.de,
+        natechancellor@gmail.com
+Reply-To: bp@alien8.de, marc.zyngier@arm.com, eric.snowberg@oracle.com,
+          hdegoede@redhat.com, mingo@kernel.org, dave.hansen@intel.com,
+          peterz@infradead.org, hpa@zytor.com,
+          sai.praneeth.prakhya@intel.com, arend.vanspriel@broadcom.com,
+          julien.thierry@arm.com, bhsharma@redhat.com,
+          jonathanh@nvidia.com, joe@perches.com, matt@codeblueprint.co.uk,
+          ard.biesheuvel@linaro.org, torvalds@linux-foundation.org,
+          natechancellor@gmail.com, luto@kernel.org,
+          linux-kernel@vger.kernel.org, sedat.dilek@gmail.com,
+          zhuyifei1999@gmail.com, tglx@linutronix.de
+In-Reply-To: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
+References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/core] x86/efi: Unmap EFI boot services code/data regions
+ from efi_pgd
+Git-Commit-ID: 08cfb38f3ef49cfd1bba11a00401451606477d80
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFpp1iPQ08QQjoi9b4RGUo2Zw_L_vjy8xtnSpg34gn--eA@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-11-18, 10:44, Ulf Hansson wrote:
-> On Mon, 26 Nov 2018 at 09:10, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > This commit updates genpd core to start propagating performance state
-> > updates to master domains that have their set_performance_state()
-> > callback set.
-> >
-> > A genpd handles two type of performance states now. The first one is the
-> > performance state requirement put on the genpd by the devices and
-> > sub-domains under it, which is already represented by
-> > genpd->performance_state.
-> 
-> This isn't correct.
-> 
-> Currently genpd->performance_state reflects the aggregation of the
-> state requirements from each device that is attached to it. Not from
-> subdomains.
+Commit-ID:  08cfb38f3ef49cfd1bba11a00401451606477d80
+Gitweb:     https://git.kernel.org/tip/08cfb38f3ef49cfd1bba11a00401451606477d80
+Author:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+AuthorDate: Thu, 29 Nov 2018 18:12:24 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 30 Nov 2018 09:10:30 +0100
 
-Okay, will improve the changelog.
+x86/efi: Unmap EFI boot services code/data regions from efi_pgd
 
-> > The second type, introduced in this commit, is
-> > the performance state requirement(s) put by the genpd on its master
-> > domain(s). There is a separate value required for each master that the
-> > genpd has and so a new field is added to the struct gpd_link
-> > (link->performance_state), which represents the link between a genpd and
-> > its master. The struct gpd_link also got another field
-> > prev_performance_state, which is used by genpd core as a temporary
-> > variable during transitions.
-> >
-> > We need to propagate setting performance state while powering-on a genpd
-> > as well, as we ignore performance state requirements from sub-domains
-> > which are powered-off. For this reason _genpd_power_on() also received
-> > the additional parameter, depth, which is used for hierarchical locking
-> > within genpd.
-> >
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >  drivers/base/power/domain.c | 113 ++++++++++++++++++++++++++++++------
-> >  include/linux/pm_domain.h   |   4 ++
-> >  2 files changed, 98 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > index d6b389a9f678..206e263abe90 100644
-> > --- a/drivers/base/power/domain.c
-> > +++ b/drivers/base/power/domain.c
-> > @@ -239,24 +239,88 @@ static void genpd_update_accounting(struct generic_pm_domain *genpd)
-> >  static inline void genpd_update_accounting(struct generic_pm_domain *genpd) {}
-> >  #endif
-> >
-> > +static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
-> > +                                          unsigned int state, int depth);
-> > +
-> 
-> I don't like forward declarations like these, as in most cases it
-> means that the code can be re-worked and improved.
-> 
-> However, because of the recursiveness code in genpd, I understand that
-> it may be needed for some cases. Anyway, please have look and see if
-> you can rid of it.
+efi_free_boot_services(), as the name suggests, frees EFI boot services
+code/data regions but forgets to unmap these regions from efi_pgd. This
+means that any code that's running in efi_pgd address space (e.g:
+any EFI runtime service) would still be able to access these regions but
+the contents of these regions would have long been over written by
+someone else. So, it's important to unmap these regions. Hence,
+introduce efi_unmap_pages() to unmap these regions from efi_pgd.
 
-Will see if I can do it any better, though I really doubt it :)
+After unmapping EFI boot services code/data regions, any illegal access
+by buggy firmware to these regions would result in page fault which will
+be handled by EFI specific fault handler.
 
-> >  static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
-> > -                                       unsigned int state)
-> > +                                       unsigned int state, int depth)
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: YiFei Zhu <zhuyifei1999@gmail.com>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181129171230.18699-6-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/platform/efi/quirks.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-
-> > -static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
-> > +static int
-> > +_genpd_power_on(struct generic_pm_domain *genpd, bool timed, int depth)
-> 
-> Cosmetics, but please move the new parameter below instead of moving
-> "static int" above.
-> 
-> >  {
-> >         unsigned int state_idx = genpd->state_idx;
-> >         ktime_t time_start;
-> > @@ -368,7 +442,8 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
-> >         elapsed_ns = ktime_to_ns(ktime_sub(ktime_get(), time_start));
-> >
-> >         if (unlikely(genpd->set_performance_state)) {
-> > -               ret = genpd->set_performance_state(genpd, genpd->performance_state);
-> > +               ret = _genpd_set_performance_state(genpd,
-> > +                                       genpd->performance_state, depth);
-> 
-> This is going to be a problem for genpd_sync_power_on() as in some
-> cases we can't allow to use locks.
-
-So we pass the use_lock parameter to this routine as well ?
-
-> Moreover I am wondering how this plays with genpd_power_on(), as when
-> it calls _genpd_power_on() the first time, that is done by holding the
-> top-level master's lock - and all locks in that hierarchy. In other
-> words we are always powering on the top most master first, then step
-> by step we move down in the hierarchy to power on the genpds.
-
-Sure, but the ordering of locks is always subdomain first and then master.
-Considering the case of Qcom, we have two domains Cx (sub-domain) and Mx (master).
-
-On first genpd_power_on(Cx) call, we will first call genpd_power_on(Mx) which
-will just power it on as none of its master will have perf-state support. We
-then call _genpd_power_on(Cx) which will also not do anything with Mx as its own
-(Cx's) pstate would be 0 at that time. But even if it had a valid value, it will
-propagate just fine with all proper locking in place.
-
-I will wait for your reply on this particular patch before sending out V3.
-Thanks for the reviews Ulf.
-
--- 
-viresh
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 95e77a667ba5..09e811b9da26 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -369,6 +369,24 @@ void __init efi_reserve_boot_services(void)
+ 	}
+ }
+ 
++/*
++ * Apart from having VA mappings for EFI boot services code/data regions,
++ * (duplicate) 1:1 mappings were also created as a quirk for buggy firmware. So,
++ * unmap both 1:1 and VA mappings.
++ */
++static void __init efi_unmap_pages(efi_memory_desc_t *md)
++{
++	pgd_t *pgd = efi_mm.pgd;
++	u64 pa = md->phys_addr;
++	u64 va = md->virt_addr;
++
++	if (kernel_unmap_pages_in_pgd(pgd, pa, md->num_pages))
++		pr_err("Failed to unmap 1:1 mapping for 0x%llx\n", pa);
++
++	if (kernel_unmap_pages_in_pgd(pgd, va, md->num_pages))
++		pr_err("Failed to unmap VA mapping for 0x%llx\n", va);
++}
++
+ void __init efi_free_boot_services(void)
+ {
+ 	phys_addr_t new_phys, new_size;
+@@ -393,6 +411,13 @@ void __init efi_free_boot_services(void)
+ 			continue;
+ 		}
+ 
++		/*
++		 * Before calling set_virtual_address_map(), EFI boot services
++		 * code/data regions were mapped as a quirk for buggy firmware.
++		 * Unmap them from efi_pgd before freeing them up.
++		 */
++		efi_unmap_pages(md);
++
+ 		/*
+ 		 * Nasty quirk: if all sub-1MB memory is used for boot
+ 		 * services, we can get here without having allocated the
