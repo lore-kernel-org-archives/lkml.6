@@ -2,201 +2,360 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35771C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BAEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B1520863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:01:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B1520863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E32D320863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:02:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F+0XGl/R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32D320863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeLAAK1 (ORCPT
+        id S1726867AbeLAALd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:10:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52852 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbeLAAK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:10:27 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 677BB3078A23;
-        Fri, 30 Nov 2018 13:01:12 +0000 (UTC)
-Received: from [10.36.112.44] (ovpn-112-44.ams2.redhat.com [10.36.112.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 45DCB1054FD4;
-        Fri, 30 Nov 2018 13:01:08 +0000 (UTC)
-Subject: Re: [PATCH net-next v3 01/13] virtio: add packed ring types and
- macros
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Tiwei Bie <tiwei.bie@intel.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20181121100330.24846-1-tiwei.bie@intel.com>
- <20181121100330.24846-2-tiwei.bie@intel.com>
- <1928ac96-3684-45c4-1e8c-09dff03bf308@redhat.com>
- <20181130095339.GA11984@debian>
- <20181130074720-mutt-send-email-mst@kernel.org>
-From:   Maxime Coquelin <maxime.coquelin@redhat.com>
-Message-ID: <13593b5c-c1dc-3ab3-a843-d62908e0c7e0@redhat.com>
-Date:   Fri, 30 Nov 2018 14:01:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 30 Nov 2018 19:11:33 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:46694 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbeLAALc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:11:32 -0500
+Received: by mail-io1-f66.google.com with SMTP id v10so4406501ios.13
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 05:02:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=316GarZrE48fTWC2o3KKVf8ffb1bhJGHRl5+FXEI3Fk=;
+        b=F+0XGl/RBYzvZ1YbpLioD7HNEODvZbFU1ydA9d/Los2sXu2IGWaYqf6LidGlRuyDiH
+         NEZQV9LZlnLufQdIaMg6lVj0Y6M2RYxabf6sx3lC2BdUHT+UjDpuotd545Y9OaxELpQ3
+         tSbXzDsUZzO6lAbitQgxr9DVmg3xeq3hCdxe8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=316GarZrE48fTWC2o3KKVf8ffb1bhJGHRl5+FXEI3Fk=;
+        b=ig5yEXWwHqLzacefLvKCxmWk4xcfnRGRCagHm3MbA0FB2t4dWOAOT86Smc3KhOx3Nl
+         ln3irS9afR2ezHIw9NmoEVdK36FrxwfAONvA8rJKxSrJXx9IjMeE14rwiecJGSMN/GB2
+         F+YrUHseOmUi2tJwkhN6aczlvnmpnSsavWaneXcHF6KOEIMj88k1PCnTnKG/yy29a0CK
+         L1P4JYhu2dB6ZrctQhu7KjUYP8uvRmhPa8icNRNWB1wWR3ukp3h+0J10/6YwnBbYGlyq
+         KYgmnUs7X30AmXrXuvYPBwlpkl9I/QAJ+HTaNTLvrVHbxpqYAilP8ZwrwaqmrtYjaMWl
+         UqmA==
+X-Gm-Message-State: AA+aEWbDTNE6ywZjpEHPQqCUwKbYbpMp1OhA0n34DGZTeFfA4exiy9l3
+        06X3RlX25+TkihxJRl5T52Fbl0//6t4liFQiL+XOZg==
+X-Google-Smtp-Source: AFSGD/WR+vzzc7n+Ta1aenfHMfsxcSZiH7L1GB/CDHECllpT3UQZUWaImj/t2RriJqQ2UtVJQ6m+YoU4Qt4JcGQBE3k=
+X-Received: by 2002:a6b:7a46:: with SMTP id k6mr4845504iop.60.1543582937305;
+ Fri, 30 Nov 2018 05:02:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181130074720-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 30 Nov 2018 13:01:12 +0000 (UTC)
+References: <20181129063422.24307-1-ebiggers@kernel.org> <20181129063422.24307-3-ebiggers@kernel.org>
+In-Reply-To: <20181129063422.24307-3-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 30 Nov 2018 14:02:05 +0100
+Message-ID: <CAKv+Gu_NqwJV4JTaTS3WR-ex2gGaO_Ji2T+W6T6UKa8UQvvuyw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] crypto: arm64/chacha20 - add XChaCha20 support
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 29 Nov 2018 at 07:35, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add an XChaCha20 implementation that is hooked up to the ARM64 NEON
+> implementation of ChaCha20.  This can be used by Adiantum.
+>
+> A NEON implementation of single-block HChaCha20 is also added so that
+> XChaCha20 can use it rather than the generic implementation.  This
+> required refactoring the ChaCha permutation into its own function.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  arch/arm64/crypto/Kconfig              |   2 +-
+>  arch/arm64/crypto/chacha20-neon-core.S |  62 ++++++++++-----
+>  arch/arm64/crypto/chacha20-neon-glue.c | 101 +++++++++++++++++++------
+>  3 files changed, 121 insertions(+), 44 deletions(-)
+>
+> diff --git a/arch/arm64/crypto/Kconfig b/arch/arm64/crypto/Kconfig
+> index 3f5aeb786192b..d54ddb8468ef5 100644
+> --- a/arch/arm64/crypto/Kconfig
+> +++ b/arch/arm64/crypto/Kconfig
+> @@ -101,7 +101,7 @@ config CRYPTO_AES_ARM64_NEON_BLK
+>         select CRYPTO_SIMD
+>
+>  config CRYPTO_CHACHA20_NEON
+> -       tristate "NEON accelerated ChaCha20 symmetric cipher"
+> +       tristate "ChaCha20 and XChaCha20 stream ciphers using NEON instructions"
+>         depends on KERNEL_MODE_NEON
+>         select CRYPTO_BLKCIPHER
+>         select CRYPTO_CHACHA20
+> diff --git a/arch/arm64/crypto/chacha20-neon-core.S b/arch/arm64/crypto/chacha20-neon-core.S
+> index 13c85e272c2a1..378850505c0ae 100644
+> --- a/arch/arm64/crypto/chacha20-neon-core.S
+> +++ b/arch/arm64/crypto/chacha20-neon-core.S
+> @@ -23,25 +23,20 @@
+>         .text
+>         .align          6
+>
+> -ENTRY(chacha20_block_xor_neon)
+> -       // x0: Input state matrix, s
+> -       // x1: 1 data block output, o
+> -       // x2: 1 data block input, i
+> -
+> -       //
+> -       // This function encrypts one ChaCha20 block by loading the state matrix
+> -       // in four NEON registers. It performs matrix operation on four words in
+> -       // parallel, but requires shuffling to rearrange the words after each
+> -       // round.
+> -       //
+> -
+> -       // x0..3 = s0..3
+> -       adr             x3, ROT8
+> -       ld1             {v0.4s-v3.4s}, [x0]
+> -       ld1             {v8.4s-v11.4s}, [x0]
+> -       ld1             {v12.4s}, [x3]
+> +/*
+> + * chacha20_permute - permute one block
+> + *
+> + * Permute one 64-byte block where the state matrix is stored in the four NEON
+> + * registers v0-v3.  It performs matrix operations on four words in parallel,
+> + * but requires shuffling to rearrange the words after each round.
+> + *
+> + * Clobbers: x3, x10, v4, v12
+> + */
+> +chacha20_permute:
+>
+>         mov             x3, #10
+> +       adr             x10, ROT8
+> +       ld1             {v12.4s}, [x10]
+>
+>  .Ldoubleround:
+>         // x0 += x1, x3 = rotl32(x3 ^ x0, 16)
+> @@ -105,6 +100,22 @@ ENTRY(chacha20_block_xor_neon)
+>         subs            x3, x3, #1
+>         b.ne            .Ldoubleround
+>
+> +       ret
+> +ENDPROC(chacha20_permute)
+> +
+> +ENTRY(chacha20_block_xor_neon)
+> +       // x0: Input state matrix, s
+> +       // x1: 1 data block output, o
+> +       // x2: 1 data block input, i
+> +
+> +       mov             x9, lr
 
+please use x30 not lr. The latter is not supported by all assemblers
 
-On 11/30/18 1:47 PM, Michael S. Tsirkin wrote:
-> On Fri, Nov 30, 2018 at 05:53:40PM +0800, Tiwei Bie wrote:
->> On Fri, Nov 30, 2018 at 04:10:55PM +0800, Jason Wang wrote:
->>>
->>> On 2018/11/21 下午6:03, Tiwei Bie wrote:
->>>> Add types and macros for packed ring.
->>>>
->>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
->>>> ---
->>>>    include/uapi/linux/virtio_config.h |  3 +++
->>>>    include/uapi/linux/virtio_ring.h   | 52 ++++++++++++++++++++++++++++++++++++++
->>>>    2 files changed, 55 insertions(+)
->>>>
->>>> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
->>>> index 449132c76b1c..1196e1c1d4f6 100644
->>>> --- a/include/uapi/linux/virtio_config.h
->>>> +++ b/include/uapi/linux/virtio_config.h
->>>> @@ -75,6 +75,9 @@
->>>>     */
->>>>    #define VIRTIO_F_IOMMU_PLATFORM		33
->>>> +/* This feature indicates support for the packed virtqueue layout. */
->>>> +#define VIRTIO_F_RING_PACKED		34
->>>> +
->>>>    /*
->>>>     * Does the device support Single Root I/O Virtualization?
->>>>     */
->>>> diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
->>>> index 6d5d5faa989b..2414f8af26b3 100644
->>>> --- a/include/uapi/linux/virtio_ring.h
->>>> +++ b/include/uapi/linux/virtio_ring.h
->>>> @@ -44,6 +44,13 @@
->>>>    /* This means the buffer contains a list of buffer descriptors. */
->>>>    #define VRING_DESC_F_INDIRECT	4
->>>> +/*
->>>> + * Mark a descriptor as available or used in packed ring.
->>>> + * Notice: they are defined as shifts instead of shifted values.
->>>
->>>
->>> This looks inconsistent to previous flags, any reason for using shifts?
->>
->> Yeah, it was suggested to use shifts, as _F_ should be a bit
->> number, not a shifted value:
->>
->> https://patchwork.ozlabs.org/patch/942296/#1989390
-> 
-> But let's add a _SPLIT_ variant that uses shifts consistently.
+Also, I'd prefer it if we could create a full stack frame here, i.e.,
 
-Maybe we could avoid adding SPLIT and PACKED, but define as follow:
+stp x29, x30, [sp, #-16]!
+mov x29, sp
 
-#define VRING_DESC_F_INDIRECT_SHIFT 2
-#define VRING_DESC_F_INDIRECT (1ull <<  VRING_DESC_F_INDIRECT_SHIFT)
+(same for the other caller)
 
-#define VRING_DESC_F_AVAIL_SHIFT 7
-#define VRING_DESC_F_AVAIL (1ull << VRING_DESC_F_AVAIL_SHIFT)
+Otherwise, this will look like a tail call to the unwinder,
+potentially creating problems with features that need reliable
+backtraces, such as livepatch.
 
-I think it would be better for consistency.
-> 
-> 
->>>
->>>
->>>> + */
->>>> +#define VRING_PACKED_DESC_F_AVAIL	7
->>>> +#define VRING_PACKED_DESC_F_USED	15
->>>> +
->>>>    /* The Host uses this in used->flags to advise the Guest: don't kick me when
->>>>     * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
->>>>     * will still kick if it's out of buffers. */
->>>> @@ -53,6 +60,23 @@
->>>>     * optimization.  */
->>>>    #define VRING_AVAIL_F_NO_INTERRUPT	1
->>>> +/* Enable events in packed ring. */
->>>> +#define VRING_PACKED_EVENT_FLAG_ENABLE	0x0
->>>> +/* Disable events in packed ring. */
->>>> +#define VRING_PACKED_EVENT_FLAG_DISABLE	0x1
->>>> +/*
->>>> + * Enable events for a specific descriptor in packed ring.
->>>> + * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
->>>> + * Only valid if VIRTIO_RING_F_EVENT_IDX has been negotiated.
->>>> + */
->>>> +#define VRING_PACKED_EVENT_FLAG_DESC	0x2
->>>
->>>
->>> Any reason for using _FLAG_ instead of _F_?
->>
->> Yeah, it was suggested to not use _F_, as these are values,
->> should not have _F_:
->>
->> https://patchwork.ozlabs.org/patch/942296/#1989390
->>
->> Regards,
->> Tiwei
->>
->>>
->>> Thanks
->>>
->>>
->>>> +
->>>> +/*
->>>> + * Wrap counter bit shift in event suppression structure
->>>> + * of packed ring.
->>>> + */
->>>> +#define VRING_PACKED_EVENT_F_WRAP_CTR	15
->>>> +
->>>>    /* We support indirect buffer descriptors */
->>>>    #define VIRTIO_RING_F_INDIRECT_DESC	28
->>>> @@ -171,4 +195,32 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
->>>>    	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
->>>>    }
->>>> +struct vring_packed_desc_event {
->>>> +	/* Descriptor Ring Change Event Offset/Wrap Counter. */
->>>> +	__le16 off_wrap;
->>>> +	/* Descriptor Ring Change Event Flags. */
->>>> +	__le16 flags;
->>>> +};
->>>> +
->>>> +struct vring_packed_desc {
->>>> +	/* Buffer Address. */
->>>> +	__le64 addr;
->>>> +	/* Buffer Length. */
->>>> +	__le32 len;
->>>> +	/* Buffer ID. */
->>>> +	__le16 id;
->>>> +	/* The flags depending on descriptor type. */
->>>> +	__le16 flags;
->>>> +};
->>>> +
->>>> +struct vring_packed {
->>>> +	unsigned int num;
->>>> +
->>>> +	struct vring_packed_desc *desc;
->>>> +
->>>> +	struct vring_packed_desc_event *driver;
->>>> +
->>>> +	struct vring_packed_desc_event *device;
->>>> +};
->>>> +
->>>>    #endif /* _UAPI_LINUX_VIRTIO_RING_H */
+> +
+> +       // x0..3 = s0..3
+> +       ld1             {v0.4s-v3.4s}, [x0]
+> +       ld1             {v8.4s-v11.4s}, [x0]
+> +
+> +       bl              chacha20_permute
+> +
+>         ld1             {v4.16b-v7.16b}, [x2]
+>
+>         // o0 = i0 ^ (x0 + s0)
+> @@ -125,9 +136,24 @@ ENTRY(chacha20_block_xor_neon)
+>
+>         st1             {v0.16b-v3.16b}, [x1]
+>
+> -       ret
+> +       ret             x9
+>  ENDPROC(chacha20_block_xor_neon)
+>
+> +ENTRY(hchacha20_block_neon)
+> +       // x0: Input state matrix, s
+> +       // x1: output (8 32-bit words)
+> +       mov             x9, lr
+> +
+> +       ld1             {v0.4s-v3.4s}, [x0]
+> +
+> +       bl              chacha20_permute
+> +
+> +       st1             {v0.16b}, [x1], #16
+> +       st1             {v3.16b}, [x1]
+> +
+> +       ret             x9
+> +ENDPROC(hchacha20_block_neon)
+> +
+>         .align          6
+>  ENTRY(chacha20_4block_xor_neon)
+>         // x0: Input state matrix, s
+> diff --git a/arch/arm64/crypto/chacha20-neon-glue.c b/arch/arm64/crypto/chacha20-neon-glue.c
+> index 96e0cfb8c3f5b..a5b9cbc0c4de4 100644
+> --- a/arch/arm64/crypto/chacha20-neon-glue.c
+> +++ b/arch/arm64/crypto/chacha20-neon-glue.c
+> @@ -30,6 +30,7 @@
+>
+>  asmlinkage void chacha20_block_xor_neon(u32 *state, u8 *dst, const u8 *src);
+>  asmlinkage void chacha20_4block_xor_neon(u32 *state, u8 *dst, const u8 *src);
+> +asmlinkage void hchacha20_block_neon(const u32 *state, u32 *out);
+>
+>  static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
+>                             unsigned int bytes)
+> @@ -65,20 +66,16 @@ static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
+>         kernel_neon_end();
+>  }
+>
+> -static int chacha20_neon(struct skcipher_request *req)
+> +static int chacha20_neon_stream_xor(struct skcipher_request *req,
+> +                                   struct chacha_ctx *ctx, u8 *iv)
+>  {
+> -       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> -       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+>         struct skcipher_walk walk;
+>         u32 state[16];
+>         int err;
+>
+> -       if (!may_use_simd() || req->cryptlen <= CHACHA_BLOCK_SIZE)
+> -               return crypto_chacha_crypt(req);
+> -
+>         err = skcipher_walk_virt(&walk, req, false);
+>
+> -       crypto_chacha_init(state, ctx, walk.iv);
+> +       crypto_chacha_init(state, ctx, iv);
+>
+>         while (walk.nbytes > 0) {
+>                 unsigned int nbytes = walk.nbytes;
+> @@ -94,22 +91,73 @@ static int chacha20_neon(struct skcipher_request *req)
+>         return err;
+>  }
+>
+> -static struct skcipher_alg alg = {
+> -       .base.cra_name          = "chacha20",
+> -       .base.cra_driver_name   = "chacha20-neon",
+> -       .base.cra_priority      = 300,
+> -       .base.cra_blocksize     = 1,
+> -       .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> -       .base.cra_module        = THIS_MODULE,
+> -
+> -       .min_keysize            = CHACHA_KEY_SIZE,
+> -       .max_keysize            = CHACHA_KEY_SIZE,
+> -       .ivsize                 = CHACHA_IV_SIZE,
+> -       .chunksize              = CHACHA_BLOCK_SIZE,
+> -       .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> -       .setkey                 = crypto_chacha20_setkey,
+> -       .encrypt                = chacha20_neon,
+> -       .decrypt                = chacha20_neon,
+> +static int chacha20_neon(struct skcipher_request *req)
+> +{
+> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +
+> +       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> +               return crypto_chacha_crypt(req);
+> +
+> +       return chacha20_neon_stream_xor(req, ctx, req->iv);
+> +}
+> +
+> +static int xchacha20_neon(struct skcipher_request *req)
+> +{
+> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +       struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +       struct chacha_ctx subctx;
+> +       u32 state[16];
+> +       u8 real_iv[16];
+> +
+> +       if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
+> +               return crypto_xchacha_crypt(req);
+> +
+> +       crypto_chacha_init(state, ctx, req->iv);
+> +
+> +       kernel_neon_begin();
+> +       hchacha20_block_neon(state, subctx.key);
+> +       kernel_neon_end();
+> +
+> +       memcpy(&real_iv[0], req->iv + 24, 8);
+> +       memcpy(&real_iv[8], req->iv + 16, 8);
+> +       return chacha20_neon_stream_xor(req, &subctx, real_iv);
+> +}
+> +
+> +static struct skcipher_alg algs[] = {
+> +       {
+> +               .base.cra_name          = "chacha20",
+> +               .base.cra_driver_name   = "chacha20-neon",
+> +               .base.cra_priority      = 300,
+> +               .base.cra_blocksize     = 1,
+> +               .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> +               .base.cra_module        = THIS_MODULE,
+> +
+> +               .min_keysize            = CHACHA_KEY_SIZE,
+> +               .max_keysize            = CHACHA_KEY_SIZE,
+> +               .ivsize                 = CHACHA_IV_SIZE,
+> +               .chunksize              = CHACHA_BLOCK_SIZE,
+> +               .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> +               .setkey                 = crypto_chacha20_setkey,
+> +               .encrypt                = chacha20_neon,
+> +               .decrypt                = chacha20_neon,
+> +       }, {
+> +               .base.cra_name          = "xchacha20",
+> +               .base.cra_driver_name   = "xchacha20-neon",
+> +               .base.cra_priority      = 300,
+> +               .base.cra_blocksize     = 1,
+> +               .base.cra_ctxsize       = sizeof(struct chacha_ctx),
+> +               .base.cra_module        = THIS_MODULE,
+> +
+> +               .min_keysize            = CHACHA_KEY_SIZE,
+> +               .max_keysize            = CHACHA_KEY_SIZE,
+> +               .ivsize                 = XCHACHA_IV_SIZE,
+> +               .chunksize              = CHACHA_BLOCK_SIZE,
+> +               .walksize               = 4 * CHACHA_BLOCK_SIZE,
+> +               .setkey                 = crypto_chacha20_setkey,
+> +               .encrypt                = xchacha20_neon,
+> +               .decrypt                = xchacha20_neon,
+> +       }
+>  };
+>
+>  static int __init chacha20_simd_mod_init(void)
+> @@ -117,12 +165,12 @@ static int __init chacha20_simd_mod_init(void)
+>         if (!(elf_hwcap & HWCAP_ASIMD))
+>                 return -ENODEV;
+>
+> -       return crypto_register_skcipher(&alg);
+> +       return crypto_register_skciphers(algs, ARRAY_SIZE(algs));
+>  }
+>
+>  static void __exit chacha20_simd_mod_fini(void)
+>  {
+> -       crypto_unregister_skcipher(&alg);
+> +       crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
+>  }
+>
+>  module_init(chacha20_simd_mod_init);
+> @@ -131,3 +179,6 @@ module_exit(chacha20_simd_mod_fini);
+>  MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS_CRYPTO("chacha20");
+> +MODULE_ALIAS_CRYPTO("chacha20-neon");
+> +MODULE_ALIAS_CRYPTO("xchacha20");
+> +MODULE_ALIAS_CRYPTO("xchacha20-neon");
+> --
+> 2.19.2
+>
