@@ -2,123 +2,89 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3363CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3AFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20902082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SbNWfSqD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E20902082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B98BC2082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:19:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98BC2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeLAJ3p (ORCPT
+        id S1727009AbeLAJaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:29:45 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35169 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeLAJ3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:29:45 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z9so3468133pfi.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:18:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AaHUNzHZjdvii4QW8EE7VJEzORSyjjnCvfEOzUa3Tz0=;
-        b=SbNWfSqDGyV/2bqLLU4S3khJ12n7EdFx2GCHiREjh9Rxh94mxVs51rfvPX6FE61/0s
-         ksWcweWGEtXpH34Z3CAjxIb7/99wIu6JOBFGCqy2m/9zRLe7ntae7jgjhluMvnOMhLac
-         FUmJE3f7O2qa/+gx4hJavCRH+afXGY/F1/Yyo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AaHUNzHZjdvii4QW8EE7VJEzORSyjjnCvfEOzUa3Tz0=;
-        b=CtfHvFSnmzHjTYhJAB9nJBr6MP5wVbXaLnI8pt6+lb8eE+Yes6u4IGbaG5t4JfO3z6
-         sMioVH/mH8A2WFfrQbSwBQAMaDF3QAcxoMIUHU4C4s+fMI4wnQ89UKw5Nvj2X4brSHzA
-         e22+uca1nQrIH9Ct98LPY2EaM0jHYnjnH3g4X61AsDwGSrXmqqyYL5FQEaCVbMDlvpxA
-         t7Cmh52SlnHE+UxuNslVzo0XmU/ZMYU8MAVhcGAIb6U6eo/xnBgYJWTi/+rjiu+e+q09
-         /t1n6XtRLu/qzUGqqWBKkwocKyYs/WwqK/Ej3noRibb9xYYhZsMLZG+Fk3b+vvnefHZ9
-         ggpg==
-X-Gm-Message-State: AA+aEWbLBOeOWAy5oZvS2i4takRKLf8abnpTyRBLpQefRMjau6rUpYkG
-        5iiblWtEeiYG6N5p1hvPn7dEnw==
-X-Google-Smtp-Source: AFSGD/U9Au3Twmvj3GvUvjiIwwy+yjqBZlCkgGMciLFVmkZzukA9Pge8sw8XGWUecK7Pb4Ob80qm1g==
-X-Received: by 2002:a63:6bc1:: with SMTP id g184mr6400610pgc.25.1543616338895;
-        Fri, 30 Nov 2018 14:18:58 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id p24sm15601120pfk.155.2018.11.30.14.18.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 14:18:58 -0800 (PST)
-Date:   Fri, 30 Nov 2018 14:18:57 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/7] drm/msm/dsi: 14nm PHY: Get ref clock from the DT
-Message-ID: <20181130221857.GC22824@google.com>
-References: <20181126231159.122298-1-mka@chromium.org>
- <20181126231159.122298-3-mka@chromium.org>
- <CAD=FV=WNHUL+W1ozoRaCCd=-OcAD3QmqZaNLK0PNJQVbDqdaLQ@mail.gmail.com>
+        Sat, 1 Dec 2018 04:30:10 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:44872 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726883AbeLAJaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:30:10 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gSr7x-0005bO-Dj; Fri, 30 Nov 2018 15:19:14 -0700
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <154275556908.76910.8966087090637564219.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154275558526.76910.7535251937849268605.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <6875ca04-a36a-89ae-825b-f629ab011d47@deltatee.com>
+ <CAPcyv4i9QXsX9Rjz9E3gi643LQbSzaO_+iFLqLS+QO-GmrS0Eg@mail.gmail.com>
+ <14d6413c-b002-c152-5016-7ed659c08c24@deltatee.com>
+ <CAPcyv4gZisOAE8VJPJChNXrWv0NhUevWuutsPdvNORBTOBXJfA@mail.gmail.com>
+ <43778343-6d43-eb43-0de0-3db6828902d0@deltatee.com>
+ <CAPcyv4hJV71RLhBCKgqc=nQ_D_upySD=ZZk0y=5Qk69kKPHFog@mail.gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <b8ae55a4-7c1a-cc35-beea-badf35a69b06@deltatee.com>
+Date:   Fri, 30 Nov 2018 15:19:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <CAPcyv4hJV71RLhBCKgqc=nQ_D_upySD=ZZk0y=5Qk69kKPHFog@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=WNHUL+W1ozoRaCCd=-OcAD3QmqZaNLK0PNJQVbDqdaLQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: sbates@raithlin.com, bhelgaas@google.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, torvalds@linux-foundation.org, hch@lst.de, jglisse@redhat.com, stable@vger.kernel.org, akpm@linux-foundation.org, dan.j.williams@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v8 3/7] mm, devm_memremap_pages: Fix shutdown handling
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 09:56:46PM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Nov 26, 2018 at 3:12 PM Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > Get the ref clock of the PHY from the device tree instead of
-> > hardcoding its name and rate.
-> 
-> In the case of the 14nm PHY I think it's OK that you break
-> compatibility with old device tree files (as this patch does) since
-> the 14nm support was added sorta recently and "git grep" shows no
-> users in linuxnext.  You should note that you're breaking
-> compatibility with old DTS files in the commit message here so that if
-> someone crawls out of the woodwork it will be easy for them to
-> understand what happened.
+Hey,
 
-ok, I'll add the note
+On 2018-11-29 11:51 a.m., Dan Williams wrote:
+> Got it, let me see how bad moving arch_remove_memory() turns out,
+> sounds like a decent approach to coordinate multiple users of a single
+> ref.
 
-> > +       pll_14nm->vco_ref_clk = devm_clk_get(&pdev->dev, "ref");
-> > +       if (IS_ERR(pll_14nm->vco_ref_clk)) {
-> > +               ret = PTR_ERR(pll_14nm->vco_ref_clk);
-> > +               if (ret != EPROBE_DEFER)
-> 
-> Shouldn't this check against -EPROBE_DEFER, not against EPROBE_DEFER?
-> It's negative.  Presumably this same feedback needs to be applied to
-> the whole patch series.
+I've put together a patch set[1] that fixes all the users of
+devm_memremap_pages() without moving arch_remove_memory(). It's pretty
+clean except for the p2pdma case which is fairly tricky but I don't
+think there's an easy way around that.
 
-You are right, will fix it throughout the series, thanks!
+If you come up with a better solution that's great, otherwise let me
+know and I'll do some clean up and more testing and send this set to the
+lists. Though, we might need to wait for your patch to land before we
+can properly send the fix to it (the first patch in my series)...
 
-> Other than that this looks good to me and you can feel free to add my
-> Reviewed-by tag FWIW.
+Logan
 
-Great, thanks for the review!
+[1] https://github.com/sbates130272/linux-p2pmem/ memremap_fix
 
-Matthias
