@@ -2,152 +2,216 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165A8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ABDC64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D859520863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:46:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D859520863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 3EE3720863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:46:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE3720863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbeK3Oxw (ORCPT
+        id S1726782AbeK3OyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 09:53:52 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42287 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeK3Oxw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 09:53:52 -0500
-Received: by mail-ed1-f65.google.com with SMTP id j6so3690394edp.9;
-        Thu, 29 Nov 2018 19:45:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mG8evtSjAEIqTCabuI83P9ZLeSo+48+408z67jqVjIw=;
-        b=r59YRoLrSWanpFfuIofH9HNJqsyXuowqU4/Oq1zsietUJHKkQi66aNiRrzhcpzDSoy
-         dhyQeS82SvEyG+d8cImN6t7/pISR0C9zopACZpjCxW3N5bUBHyERgxYu7S6Jd1gnzTFB
-         HjGFpBkEavXGfWtzCEjNiEWLAEf0zR8DJmRr8CkdDnZ3yuuGWfXnhYgdjx3zWMUK+vL3
-         4lpYQmB4TcZDvQCX7RpT2xShxq4MPDlUbrx1MiEEczv0UY4LygM1rUtycxuZORYU4CUS
-         Qm1NtzyQDyuCj1nhMY1p+4OjmHKTTfRemuHXFZ4+74zAbmbSmfJ3NpC62sIVh1mQehqP
-         l8fg==
-X-Gm-Message-State: AA+aEWZbDmOyQa2wCN4AQZFDy5rNCwbZCj1/OIXDofz5w+H/Vj02q80Z
-        KPJIBvvHTGP7WcT+P3Pv47iCBrkrzwQ=
-X-Google-Smtp-Source: AFSGD/VeePKhW7/QoyFTfYjjsjtOwqLazqc6eE1GQTYpzjWZRHB9iozFBJJw6UjxV77xRjeQq4CXmw==
-X-Received: by 2002:a50:9f64:: with SMTP id b91mr3658719edf.235.1543549118818;
-        Thu, 29 Nov 2018 19:38:38 -0800 (PST)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id r51sm1104896eda.64.2018.11.29.19.38.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 19:38:38 -0800 (PST)
-Received: by mail-wr1-f53.google.com with SMTP id v13so3893683wrw.5;
-        Thu, 29 Nov 2018 19:38:38 -0800 (PST)
-X-Received: by 2002:a5d:5208:: with SMTP id j8mr3628272wrv.188.1543549117778;
- Thu, 29 Nov 2018 19:38:37 -0800 (PST)
+        Fri, 30 Nov 2018 09:54:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47054 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726351AbeK3OyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 09:54:05 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A9D64169751;
+        Fri, 30 Nov 2018 03:37:14 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-100.pek2.redhat.com [10.72.12.100])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 633685C21E;
+        Fri, 30 Nov 2018 03:37:07 +0000 (UTC)
+Date:   Fri, 30 Nov 2018 11:37:03 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Lianbo Jiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        x86@kernel.org, linux-ia64@vger.kernel.org,
+        linux-efi@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, akpm@linux-foundation.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        ard.biesheuvel@linaro.org, tony.luck@intel.com,
+        fenghua.yu@intel.com, bhe@redhat.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Toshi Kani <toshi.kani@hp.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 1/2 v8] resource: add the new I/O resource descriptor
+ 'IORES_DESC_RESERVED'
+Message-ID: <20181130033703.GA23624@dhcp-128-65.nay.redhat.com>
+References: <20181129080956.20776-1-lijiang@redhat.com>
+ <20181129080956.20776-2-lijiang@redhat.com>
 MIME-Version: 1.0
-References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
- <20181115145013.3378-8-paul.kocialkowski@bootlin.com> <CAGb2v64t6t3Bwf4nc8gQWRDkdv4zGRF1-+Q7snqX6bkEVqirvA@mail.gmail.com>
-In-Reply-To: <CAGb2v64t6t3Bwf4nc8gQWRDkdv4zGRF1-+Q7snqX6bkEVqirvA@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 30 Nov 2018 11:38:23 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65yNKnqbeQmUYjMzDtydYL=7kxmtPrAEEU9U=a5XbMiFg@mail.gmail.com>
-Message-ID: <CAGb2v65yNKnqbeQmUYjMzDtydYL=7kxmtPrAEEU9U=a5XbMiFg@mail.gmail.com>
-Subject: Re: [PATCH 07/15] arm64: dts: allwinner: h5: Add system-control node
- with SRAM C1
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129080956.20776-2-lijiang@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 30 Nov 2018 03:37:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 12:52 AM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Thu, Nov 15, 2018 at 10:50 PM Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> >
-> > Add the H5-specific system control node description to its device-tree
-> > with support for the SRAM C1 section, that will be used by the video
-> > codec node later on.
-> >
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 22 ++++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > index b41dc1aab67d..c2d14b22b8c1 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > @@ -94,6 +94,28 @@
-> >         };
-> >
-> >         soc {
-> > +               system-control@1c00000 {
-> > +                       compatible = "allwinner,sun50i-h5-system-control";
-> > +                       reg = <0x01c00000 0x1000>;
-> > +                       #address-cells = <1>;
-> > +                       #size-cells = <1>;
-> > +                       ranges;
-> > +
-> > +                       sram_c1: sram@1d00000 {
-> > +                               compatible = "mmio-sram";
-> > +                               reg = <0x01d00000 0x80000>;
->
-> I'll try to check this one tomorrow.
->
-> I did find something interesting on the H3: there also seems to be SRAM at
-> 0x01dc0000 to 0x01dcfeff , again mapped by the same bits as SRAM C1.
->
-> And on the A33, the SRAM C1 range is 0x01d00000 to 0x01d478ff.
->
-> This was found by mapping the SRAM to the CPU, then using devmem to poke
-> around the register range. If there's SRAM, the first read would typically
-> return random data, and a subsequent write to it would set some value that
-> would be read back correctly. If there's no SRAM, a read either returns 0x0
-> or some random data that can't be overwritten.
->
-> You might want to check the other SoCs.
++ more people
 
-This range seems to contain stuff other than SRAM, possibly fixed lookup
-tables. Since this is entirely unknown, lets just stick to the known full
-range instead.
+On 11/29/18 at 04:09pm, Lianbo Jiang wrote:
+> When doing kexec_file_load, the first kernel needs to pass the e820
+> reserved ranges to the second kernel. But kernel can not exactly
+> match the e820 reserved ranges when walking through the iomem resources
+> with the descriptor 'IORES_DESC_NONE', because several e820 types(
+> e.g. E820_TYPE_RESERVED_KERN/E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820
+> _TYPE_RESERVED) are converted to the descriptor 'IORES_DESC_NONE'. It
+> may pass these four types to the kdump kernel, that is not desired result.
+> 
+> So, this patch adds a new I/O resource descriptor 'IORES_DESC_RESERVED'
+> for the iomem resources search interfaces. It is helpful to exactly
+> match the reserved resource ranges when walking through iomem resources.
+> 
+> In addition, since the new descriptor 'IORES_DESC_RESERVED' is introduced,
+> these code originally related to the descriptor 'IORES_DESC_NONE' need to
+> be updated. Otherwise, it will be easily confused and also cause some
+> errors. Because the 'E820_TYPE_RESERVED' type is converted to the new
+> descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE', it has been
+> changed.
+> 
+> Suggested-by: Dave Young <dyoung@redhat.com>
+> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+> ---
+>  arch/ia64/kernel/efi.c |  4 ++++
+>  arch/x86/kernel/e820.c |  2 +-
+>  arch/x86/mm/ioremap.c  | 13 ++++++++++++-
+>  include/linux/ioport.h |  1 +
+>  kernel/resource.c      |  6 +++---
+>  5 files changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/ia64/kernel/efi.c b/arch/ia64/kernel/efi.c
+> index 8f106638913c..1841e9b4db30 100644
+> --- a/arch/ia64/kernel/efi.c
+> +++ b/arch/ia64/kernel/efi.c
+> @@ -1231,6 +1231,10 @@ efi_initialize_iomem_resources(struct resource *code_resource,
+>  				break;
+>  
+>  			case EFI_RESERVED_TYPE:
+> +				name = "reserved";
 
-ChenYu
+Ingo updated X86 code to use "Reserved",  I think it would be good to do
+same for this case as well
 
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <1>;
-> > +                               ranges = <0 0x01d00000 0x80000>;
-> > +
-> > +                               ve_sram: sram-section@0 {
-> > +                                       compatible = "allwinner,sun50i-h5-sram-c1",
-> > +                                                    "allwinner,sun4i-a10-sram-c1";
-> > +                                       reg = <0x000000 0x80000>;
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> >                 mali: gpu@1e80000 {
-> >                         compatible = "allwinner,sun50i-h5-mali", "arm,mali-450";
-> >                         reg = <0x01e80000 0x30000>;
-> > --
-> > 2.19.1
-> >
+> +				desc = IORES_DESC_RESERVED;
+> +				break;
+> +
+>  			case EFI_RUNTIME_SERVICES_CODE:
+>  			case EFI_RUNTIME_SERVICES_DATA:
+>  			case EFI_ACPI_RECLAIM_MEMORY:
+
+Originally, above 3 are all "reserved", so probably they all should be
+IORES_DESC_RESERVED.
+
+Can any IA64 people to review this?
+
+> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> index 50895c2f937d..57fafdafb860 100644
+> --- a/arch/x86/kernel/e820.c
+> +++ b/arch/x86/kernel/e820.c
+> @@ -1048,10 +1048,10 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
+>  	case E820_TYPE_NVS:		return IORES_DESC_ACPI_NV_STORAGE;
+>  	case E820_TYPE_PMEM:		return IORES_DESC_PERSISTENT_MEMORY;
+>  	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
+> +	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
+>  	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+>  	case E820_TYPE_RAM:		/* Fall-through: */
+>  	case E820_TYPE_UNUSABLE:	/* Fall-through: */
+> -	case E820_TYPE_RESERVED:	/* Fall-through: */
+>  	default:			return IORES_DESC_NONE;
+>  	}
+>  }
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index 5378d10f1d31..fea2ef99415d 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -83,7 +83,18 @@ static bool __ioremap_check_ram(struct resource *res)
+>  
+>  static int __ioremap_check_desc_other(struct resource *res)
+>  {
+> -	return (res->desc != IORES_DESC_NONE);
+> +	/*
+> +	 * But now, the 'E820_TYPE_RESERVED' type is converted to the new
+> +	 * descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE',
+> +	 * it has been changed. And the value of 'mem_flags.desc_other'
+> +	 * is equal to 'true' if we don't strengthen the condition in this
+> +	 * function, that is wrong. Because originally it is equal to
+> +	 * 'false' for the same reserved type.
+> +	 *
+> +	 * So, that would be nice to keep it the same as before.
+> +	 */
+> +	return ((res->desc != IORES_DESC_NONE) &&
+> +		(res->desc != IORES_DESC_RESERVED));
+>  }
+
+Added Tom since he added the check function.  Is it possible to only
+check explict valid desc types instead of exclude IORES_DESC_NONE?
+
+>  
+>  static int __ioremap_res_check(struct resource *res, void *arg)
+> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+> index da0ebaec25f0..6ed59de48bd5 100644
+> --- a/include/linux/ioport.h
+> +++ b/include/linux/ioport.h
+> @@ -133,6 +133,7 @@ enum {
+>  	IORES_DESC_PERSISTENT_MEMORY_LEGACY	= 5,
+>  	IORES_DESC_DEVICE_PRIVATE_MEMORY	= 6,
+>  	IORES_DESC_DEVICE_PUBLIC_MEMORY		= 7,
+> +	IORES_DESC_RESERVED			= 8,
+>  };
+>  
+>  /* helpers to define resources */
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index b0fbf685c77a..f34a632c4169 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -994,7 +994,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+>  	res->start = start;
+>  	res->end = end;
+>  	res->flags = type | IORESOURCE_BUSY;
+> -	res->desc = IORES_DESC_NONE;
+> +	res->desc = IORES_DESC_RESERVED;
+>  
+>  	while (1) {
+>  
+> @@ -1029,7 +1029,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+>  				next_res->start = conflict->end + 1;
+>  				next_res->end = end;
+>  				next_res->flags = type | IORESOURCE_BUSY;
+> -				next_res->desc = IORES_DESC_NONE;
+> +				next_res->desc = IORES_DESC_RESERVED;
+>  			}
+>  		} else {
+>  			res->start = conflict->end + 1;
+> @@ -1477,7 +1477,7 @@ static int __init reserve_setup(char *str)
+>  			res->start = io_start;
+>  			res->end = io_start + io_num - 1;
+>  			res->flags |= IORESOURCE_BUSY;
+> -			res->desc = IORES_DESC_NONE;
+> +			res->desc = IORES_DESC_RESERVED;
+>  			res->child = NULL;
+>  			if (request_resource(parent, res) == 0)
+>  				reserved = x+1;
+> -- 
+> 2.17.1
+> 
+
+
+There are a lot of places call region_intersects which use DESC_NONE,
+I'm not sure if needed changes accordingly.  Cced Dan and Toshi.
+
+
+Thanks
+Dave
