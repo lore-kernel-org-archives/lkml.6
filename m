@@ -2,131 +2,142 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAA9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F74C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA4902082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:11:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4902082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B89620867
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:12:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B89620867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeLAJWN (ORCPT
+        id S1726991AbeLAJXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:22:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50900 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725749AbeLAJWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:22:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 812E9ACC8;
-        Fri, 30 Nov 2018 22:11:26 +0000 (UTC)
-Subject: Re: [PATCH RFC 01/15] MIPS: replace **** with a hug
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
+        Sat, 1 Dec 2018 04:23:07 -0500
+Received: from mga05.intel.com ([192.55.52.43]:62389 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725749AbeLAJXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:23:06 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 14:12:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
+   d="scan'208";a="121367316"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
+  by fmsmga001.fm.intel.com with ESMTP; 30 Nov 2018 14:12:19 -0800
+Date:   Fri, 30 Nov 2018 14:12:19 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Axtens <dja@axtens.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Eric Dumazet <edumazet@google.com>, federico.vaga@vaga.pv.it,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Helge Deller <deller@gmx.de>, Jonathan Corbet <corbet@lwn.net>,
         Joshua Kinard <kumba@gentoo.org>,
-        "open list:MIPS" <linux-mips@linux-mips.org>
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        Linux mtd <linux-mtd@lists.infradead.org>,
+        linux-parisc <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
+        Network Development <netdev@vger.kernel.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rob Herring <robh@kernel.org>,
+        sean.wang@mediatek.com,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        shannon.nelson@oracle.com, Stefano Brivio <sbrivio@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Tobin C. Harding" <me@tobin.cc>, makita.toshiaki@lab.ntt.co.jp,
+        Willem de Bruijn <willemb@google.com>,
+        Yonghong Song <yhs@fb.com>, yanjun.zhu@oracle.com
+Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
+Message-ID: <20181130221219.GA25537@linux.intel.com>
 References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
- <20181130192737.15053-2-jarkko.sakkinen@linux.intel.com>
- <20181130195758.GA20328@linux.intel.com>
- <9ba4d08d-10d1-c233-476a-c73051b8c9f5@suse.com>
- <20181130215003.GH23772@linux.intel.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <9f669daa-e6eb-0455-9842-c540f71df4e0@suse.com>
-Date:   Sat, 1 Dec 2018 00:11:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
+ <20181130195652.7syqys76646kpaph@linux-r8p5>
+ <20181130205521.GA21006@linux.intel.com>
+ <1543611662.3031.20.camel@HansenPartnership.com>
+ <20181130214405.GG23772@linux.intel.com>
+ <1543615069.3031.27.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <20181130215003.GH23772@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543615069.3031.27.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 30.11.18 г. 23:50 ч., Jarkko Sakkinen wrote:
-> On Fri, Nov 30, 2018 at 11:06:30PM +0200, Nikolay Borisov wrote:
->> I find it quite ridiculous that grown up people are engaging at yet
->> another coc-related conversation and are on the way to blowing it out of
->> proportions. Let's focus on improving the ACTUAL code what's the point
->> to bikeshed on the word?
->>
->> I've seen people before me comment that some comments are plainly out of
->> date and that warrants their removal but otherwise nitpicking things
->> like that. It seems common sense is very scant these days...
+On Fri, Nov 30, 2018 at 01:57:49PM -0800, James Bottomley wrote:
+> On Fri, 2018-11-30 at 13:44 -0800, Jarkko Sakkinen wrote:
+> > On Fri, Nov 30, 2018 at 01:01:02PM -0800, James Bottomley wrote:
+> > > No because use of what some people consider to be bad language
+> > > isn't necessarily abusive, offensive or degrading.  Our most
+> > > heavily censored medium is TV and "fuck" is now considered
+> > > acceptable in certain contexts on most channels in the UK and EU.
+> > 
+> > This makes following the CoC extremely hard to a non-native speaker
+> > as it is not too explicit on what is OK and what is not. I did
+> > through the whole thing with an eye glass and this what I deduced
+> > from it.
 > 
-> I have absolutely nothing against CoC.
-
-I didn't mean you are against the CoC, I meant it's ridiculous to follow
-it so closely.
-
-And regarding 'fuck', I believe this is rather pertinent as to why this
-patchset is unnecessary:
-
-https://ia801406.us.archive.org/30/items/JackWagnerattr.MontyPythontheWordFuck/The_Word_Fuck.ogg
-
+> OK, so something that would simply be considered in some quarters as
+> bad language isn't explicitly banned.  The thing which differentiates
+> simple bad language from "abusive, offensive or degrading language",
+> which is called out by the CoC, is the context and the target.
 > 
-> If you look up from LKML, there total zero posts from criticizing of
-> having such. OK, maybe I find it bit too high-level, and yeah, this
-> patch set has been useful to know where the line is. I can go through
-> the commits and think more appropriate alternatives (thus the RFC-tag).
-> 
-> Thanks.
-> 
-> /Jarkko
-> 
+> So when it's a simple expletive or the code of the author or even the
+> hardware is the target, I'd say it's an easy determination it's not a
+> CoC violation.  If someone else's code is the target or the inventor of
+> the hardware is targetted by name, I'd say it is.  Even non-native
+> English speakers should be able to determine target and context,
+> because that's the essence of meaning.
+
+I pasted this already to another response and this was probably the part
+that ignited me to send the patch set (was a few days ago, so had to
+revisit to find the exact paragraph):
+
+"Maintainers have the right and responsibility to remove, edit, or
+reject comments, commits, code, wiki edits, issues, and other
+contributions that are not aligned to this Code of Conduct, or to ban
+temporarily or permanently any contributor for other behaviors that they
+deem inappropriate, threatening, offensive, or harmful."
+
+The whole patch set is neither a joke/troll nor something I would
+necessarily want to be include myself. It does have the RFC tag.
+
+As a maintainer myself (and based on somewhat disturbed feedback from
+other maintainers) I can only make the conclusion that nobody knows what
+the responsibility part here means.
+
+I would interpret, if I read it like at lawyer at least, that even for
+existing code you would need to do the changes postmorterm.
+
+Is this wrong interpretation?  Should I conclude that I made a mistake
+by reading the CoC and trying to understand what it *actually* says?
+After this discussion, I can say that I understand it less than before.
+
+/Jarkko
