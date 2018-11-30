@@ -2,130 +2,147 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37771C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CAA0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E58E2213A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:14:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E58E2213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id DFFD22081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFFD22081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeK3OV7 (ORCPT
+        id S1727232AbeK3OWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 09:21:59 -0500
-Received: from p3plsmtpa11-05.prod.phx3.secureserver.net ([68.178.252.106]:54443
-        "EHLO p3plsmtpa11-05.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726387AbeK3OV7 (ORCPT
+        Fri, 30 Nov 2018 09:22:31 -0500
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:45798 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbeK3OWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 09:21:59 -0500
-Received: from [192.168.0.55] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id SZFqg4k93AqHTSZFrgGwZY; Thu, 29 Nov 2018 20:14:11 -0700
-Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
-To:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
-        linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-References: <20181110085041.10071-1-jhubbard@nvidia.com>
- <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
- <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
- <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
- <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
- <15e4a0c0-cadd-e549-962f-8d9aa9fc033a@talpey.com>
- <313bf82d-cdeb-8c75-3772-7a124ecdfbd5@nvidia.com>
- <2aa422df-d5df-5ddb-a2e4-c5e5283653b5@talpey.com>
- <7a68b7fc-ff9d-381e-2444-909c9c2f6679@nvidia.com>
- <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
- <0f093af1-dee9-51b6-0795-2c073a951fed@nvidia.com>
- <c64387d6-c51d-185a-d2a4-1fedcdac0abe@talpey.com>
- <04c18816-e15d-bffd-e8be-eceefae77197@nvidia.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <79d1ee27-9ea0-3d15-3fc4-97c1bd79c990@talpey.com>
-Date:   Thu, 29 Nov 2018 22:14:11 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 30 Nov 2018 09:22:30 -0500
+Received: by mail-pf1-f182.google.com with SMTP id g62so2048205pfd.12;
+        Thu, 29 Nov 2018 19:14:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TfsE2y5uyGQ+xDaWwbYRWfame/GiD1QyJljdjs1QLr0=;
+        b=QKb+2WR/DIVi9vquR3W3bUBe6OI2WmQAUnUr293gSoYrnvp+SWmGy8ozh4Yct+yCv3
+         dAS2PW2AsHNksE5ynlPtySNPRs1oTTMJdNVFhzX3k6i8xMrFgQiF0CW6kmOSZWTauZ8u
+         1X04V1PZClZ1aa4bsuSDxhJNrtdYH9WBDmHnVf7dMR9Dw8D1a5wv70Q/srxlYDAVqPaJ
+         tPDUHIk3sJeRLpEItl/qppjEs9GS1Smou5XQdR89E4h9ZAauIphto75LE+2r7H508bOZ
+         mRzzNXtjd4pYJyk0YFqYCXc7PmFVf6GAaAFias8cq4We41uyo5QjqQ5LJohyYPMLsEyk
+         JnHg==
+X-Gm-Message-State: AA+aEWadW8aBwyuXeBYSe61m7ypaGygPDf06/AV0M99YMN+4cBAfAQRy
+        n1RYGW+Sce3tTCjQhhxvKbY=
+X-Google-Smtp-Source: AFSGD/VcsOoRaNZL9I8RiIn16yTR0owFi8RuqlMbiG6rdapRT9fEV5ZKDcuBfC4zYMRNlTB1dSRfIQ==
+X-Received: by 2002:a63:ba19:: with SMTP id k25mr3412439pgf.194.1543547683131;
+        Thu, 29 Nov 2018 19:14:43 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id e16sm4936370pfn.46.2018.11.29.19.14.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 19:14:41 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 29 Nov 2018 19:14:38 -0800
+Date:   Thu, 29 Nov 2018 19:14:38 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     gregkh@linuxfoundation.org, keescook@google.com, shuah@kernel.org,
+        joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org, robh@kernel.org,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com, frowand.list@gmail.com,
+        knut.omang@oracle.com, mcgrof@kernel.org,
+        Alexander.Levin@microsoft.com, levinsasha928@gmail.com
+Subject: Re: [RFC v3 01/19] kunit: test: add KUnit test runner core
+Message-ID: <20181130031438.GQ4922@garbanzo.do-not-panic.com>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-2-brendanhiggins@google.com>
 MIME-Version: 1.0
-In-Reply-To: <04c18816-e15d-bffd-e8be-eceefae77197@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfLl4s2Kh4rjShZybL1Zd74cIbTB7KNle0FBc/ds3QYL1RKxFMzYx5OxLF5r3gyjGAMWVj/4FsC3DpMS5IB4RNe2LrZ/AaJaUDwL2ySsnyj8Yr/41xjEU
- zNj+D4iFYaa2PofC2o+MvNRy/Zqa4TNG33U/IlxVo4Kmnq8W6T24tOiCk+ydWd+yn5VqT3xNZuufes/300lE2wbs/YuLPVMGlFag0Da7Kyxc5sIz7fwcHOwJ
- 26eWAsneVln+12Jn1R+z+VT98L4fGewXqZrtgU+C1e5/40fe9TgeGsNeFzzKyKqHvAbBLpQ5sf0QfBEIyopJjk7haADD1S+26eELy9lZay/M7UvmeBuA2PHb
- EI4Y2cuAv2nAppxCbvvU/L0yi7cOymuDxdDM+owRhZ85LsoseaQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128193636.254378-2-brendanhiggins@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/2018 10:00 PM, John Hubbard wrote:
-> On 11/29/18 6:30 PM, Tom Talpey wrote:
->> On 11/29/2018 9:21 PM, John Hubbard wrote:
->>> On 11/29/18 6:18 PM, Tom Talpey wrote:
->>>> On 11/29/2018 8:39 PM, John Hubbard wrote:
->>>>> On 11/28/18 5:59 AM, Tom Talpey wrote:
->>>>>> On 11/27/2018 9:52 PM, John Hubbard wrote:
->>>>>>> On 11/27/18 5:21 PM, Tom Talpey wrote:
->>>>>>>> On 11/21/2018 5:06 PM, John Hubbard wrote:
->>>>>>>>> On 11/21/18 8:49 AM, Tom Talpey wrote:
->>>>>>>>>> On 11/21/2018 1:09 AM, John Hubbard wrote:
->>>>>>>>>>> On 11/19/18 10:57 AM, Tom Talpey wrote:
->>>>>>> [...]
->>>> Excerpting from below:
->>>>
->>>>> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
->>>>>        read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
->>>>>       cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
->>>>
->>>> vs
->>>>
->>>>> With patches applied:
->>>>>        read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
->>>>>       cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
->>>>
->>>> Perfect results, not CPU limited, and full IOPS.
->>>>
->>>> Curiously identical, so I trust you've checked that you measured
->>>> both targets, but if so, I say it's good.
->>>>
->>>
->>> Argh, copy-paste error in the email. The real "before" is ever so slightly
->>> better, at 194K IOPS and 759 MB/s:
->>
->> Definitely better - note the system CPU is lower, which is probably the
->> reason for the increased IOPS.
->>
->>>      cpu          : usr=18.24%, sys=44.77%, ctx=251527, majf=0, minf=73
->>
->> Good result - a correct implementation, and faster.
->>
-> 
-> Thanks, Tom, I really appreciate your experience and help on what performance
-> should look like here. (I'm sure you can guess that this is the first time
-> I've worked with fio, heh.)
+On Wed, Nov 28, 2018 at 11:36:18AM -0800, Brendan Higgins wrote:
+> +#define module_test(module) \
+> +		static int module_kunit_init##module(void) \
+> +		{ \
+> +			return kunit_run_tests(&module); \
+> +		} \
+> +		late_initcall(module_kunit_init##module)
 
-No problem, happy to chip in. Feel free to add my
+Here in lies an assumption that suffices. I'm inclined to believe we
+need new initcall level here so to ensure we *do* run after all the
+respective kernels iniut calls. Otherwise we're left at the whims of
+link order for kunit. For instance if a kunit test relies on frameworks
+which are also late_initcall() we'd have complete incompatibility with
+anything linked *after* kunit.
 
-Tested-By: Tom Talpey <ttalpey@microsoft.com>
+> diff --git a/kunit/Kconfig b/kunit/Kconfig
+> new file mode 100644
+> index 0000000000000..49b44c4f6630a
+> --- /dev/null
+> +++ b/kunit/Kconfig
+> @@ -0,0 +1,17 @@
+> +#
+> +# KUnit base configuration
+> +#
+> +
+> +menu "KUnit support"
+> +
+> +config KUNIT
+> +	bool "Enable support for unit tests (KUnit)"
+> +	depends on UML
 
-I know, that's not the personal email I'm posting from, but it's me.
+Consider using:
 
-I'll be hopefully trying the code with the Linux SMB client (cifs.ko)
-next week, Long Li is implementing direct io in that and we'll see how
-it helps.
+if UML
+   ...
+endif
 
-Mainly, I'm looking forward to seeing this enable RDMA-to-DAX.
+That allows the depends to be done once.
 
-Tom.
+> +	help
+> +	  Enables support for kernel unit tests (KUnit), a lightweight unit
+> +	  testing and mocking framework for the Linux kernel. These tests are
+> +	  able to be run locally on a developer's workstation without a VM or
+> +	  special hardware.
 
-> 
-> I'll send out a new, non-RFC patchset soon, then.
-> 
-> thanks,
-> 
+
+Some mention of UML may be good here?
+
+> For more information, please see
+> +	  Documentation/kunit/
+> +
+> +endmenu
+
+I'm a bit conflicted here. This currently depends on UML but yet you
+noted on RFC v2 that your intention is to liberate kunit from UML and
+ideally allow unit tests to depend only on userspace. I've addressed
+tests using both selftests kernels drivers and also re-written kernel
+APIs to userspace to test there. I think we may need to live with both.
+
+Then for the UML stuff, I think if we *really* accept that UML will
+always be a viable option we should probably consider now throwing these
+things under drivers/platform/uml/. This follows the pattern of arch
+specific drivers. Whether or not we end up with a complete userspace
+component independent of UML may implicate having a shared component
+somewhere else.
+
+Likewise, I realize the goal is to *avoid* using a virtual machine for
+these tests, but would it in any way make sense to share kunit to be
+supported for other architectures to allow easier-to-write tests as
+well?
+
+  Luis
