@@ -2,207 +2,154 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30463C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08526C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE99D2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:08:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C19252145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:15:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vy/evIQh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE99D2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nV05wTbR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C19252145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbeLAESC (ORCPT
+        id S1727013AbeLAEZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 23:18:02 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:33728 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbeLAESA (ORCPT
+        Fri, 30 Nov 2018 23:25:02 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:42981 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbeLAEZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 23:18:00 -0500
-Received: by mail-it1-f195.google.com with SMTP id m8so2438398itk.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 09:08:03 -0800 (PST)
+        Fri, 30 Nov 2018 23:25:01 -0500
+Received: by mail-yb1-f194.google.com with SMTP id s8so334769ybe.9
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 09:15:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Pkkhki6gOw8na4aLzcjKwCRPB4mHo2I09YZSWHEShAA=;
-        b=Vy/evIQhFHTxXtmT1GrpIk+f15L2ffu7raGxmXLyznJ97xd7OTwSGnJAFFX+uRkwA4
-         uwN1XdUCR2VZQXBNz8QRNsbml8zb/rDSo534jymsRbkgVE+FU4wwDS629OP3j8GuF8K3
-         2Cklkw7iarnakGVEMiuZ4d0k8+FmT8mrbfNisiTsDezXx3F2IWi/SgoQZpB7exdlLlsD
-         6BLrRp3kcwRV1eB5Fjp73Iz9GvB0om+aoVYRI44rHJp83603OPgidFms0SXbmmXIzAvm
-         IiwM8udIKza60NT80MMyJU69X056tIIxVlSjk8hxI7lcFp0YcgFeFPLJIrGt6p4dM1Gy
-         /lHQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eA8RA4BMCo4J6Tj7FedpLFV8GAZ8Ue1y/wfOuYx7IRw=;
+        b=nV05wTbR9GdI2h4En2tMC6ecY9fatk6N+XQPboTAptZvLo8XtMgte+MdmEMglze9Dt
+         /y2dVXn4NidmLvTt6UE6aHbl2ZbMqht0r2NVBicchD71ylSLz4rzd1+Ldt0HqCr611C7
+         2TarH69sIG6gt1L5N0uVfc3y4G5guz1BelI3I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Pkkhki6gOw8na4aLzcjKwCRPB4mHo2I09YZSWHEShAA=;
-        b=LAgmHqlFtDw7PvvdiKGVPKNAD+Bvf0s2LUSaBgVeh9OwpN1wTotfujgNUJKxCAjYAt
-         nKmUll2SHlPEfx7yaP+XS7BkWTUjpePP5iqtW3c3wwHzJVfYqP+pBOhfcJhjJckenrmd
-         dp1gdBW07QO3864lCEJMH2lkA2/d6yZEMddFL5kY27wTM5lbBLPdpYZvZh9pN+dJywi+
-         /NGdAH7x3SN+VnKOh5p0+aPGC0gmSAJhyT3reA3ESTdUIQAl6vwM6tkipuCSqFKDzAYy
-         hrFmi5BHqDp+F4ao0nflqLITmmnhElRooQW/DU7nZVPYlZkEkADiwQ5gk6kbEkdr+/he
-         lYFg==
-X-Gm-Message-State: AA+aEWaTArGeLy+xS03LYWmZ+V3RxFqLiKoHN4SC+9f1AvaWBiO+3/p0
-        osj1HenroHkce5UASUbEDeQ=
-X-Google-Smtp-Source: AFSGD/VQMggFAhEpwbZ93hE177TGK5/CrwBSEO/MK9tOg9CiQLKBP0JEdWSeEvtfc8dSY/v2yKxBlw==
-X-Received: by 2002:a02:8ca8:: with SMTP id f37mr6067381jak.80.1543597682784;
-        Fri, 30 Nov 2018 09:08:02 -0800 (PST)
-Received: from localhost.localdomain ([198.52.185.227])
-        by smtp.gmail.com with ESMTPSA id u26sm2143387iob.31.2018.11.30.09.08.01
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eA8RA4BMCo4J6Tj7FedpLFV8GAZ8Ue1y/wfOuYx7IRw=;
+        b=qR5CMqsFzDjYtqYgo2WIZuhMXsQyxwubJqjhlfkjNqdLh0/9jgxj6C9CU3o4uCA0i5
+         x19cLH3E1e8GD1XK1ITk8mzWbHZt8kBmplg5kRG2PWDW11uxlVXOCYeaMCEE69io+SPA
+         PkJgbvqAzMDHGcOjq+t19eSDMH+lEWOK6+RJB+qRd3xkw0NPPaSQ2k+OIHbAnfn23F5a
+         DkIdPT2ZOvHjnEfPY/Vj4ArmNFbTdAqWe7flqQ0gcyuowrombxHaxMd3ccQ0ToWHzFfz
+         5LR6+Gnb49THUDM9WVnAh6D3DKvTC6kCAnROC+oqZky8EGemzCDgbPWAywgeqpW2v5wx
+         lEMA==
+X-Gm-Message-State: AA+aEWYBevOD06j+ezPxYe+HgK7NwzqbaR3Khc31Sar6BBCRDKUT6stm
+        q71D9IUbV4KPgzs9eMd98VcpQH7P7yU=
+X-Google-Smtp-Source: AFSGD/VOYL6g+HLuEkXi2tLpfZRAdhtZQmLsnqbp1rdZ/wVPgUoRXtWyZaIKfmhTllquZdQKkLSD9A==
+X-Received: by 2002:a25:3005:: with SMTP id w5-v6mr6241277ybw.365.1543598102314;
+        Fri, 30 Nov 2018 09:15:02 -0800 (PST)
+Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
+        by smtp.gmail.com with ESMTPSA id p201sm2050170ywe.45.2018.11.30.09.15.01
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 09:08:02 -0800 (PST)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@googlemail.com
-To:     TheSven73@googlemail.com, Shawn Guo <shawnguo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] bus: imx-weim: guard against timing configuration conflicts
-Date:   Fri, 30 Nov 2018 12:07:54 -0500
-Message-Id: <20181130170754.346-3-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181130170754.346-1-TheSven73@googlemail.com>
-References: <20181130170754.346-1-TheSven73@googlemail.com>
+        Fri, 30 Nov 2018 09:15:02 -0800 (PST)
+Received: by mail-yw1-f54.google.com with SMTP id h193so2561796ywc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 09:15:01 -0800 (PST)
+X-Received: by 2002:a81:2890:: with SMTP id o138mr6717118ywo.168.1543597754077;
+ Fri, 30 Nov 2018 09:09:14 -0800 (PST)
+MIME-Version: 1.0
+References: <1543583987-27948-1-git-send-email-alex.popov@linux.com>
+In-Reply-To: <1543583987-27948-1-git-send-email-alex.popov@linux.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 30 Nov 2018 09:09:02 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJ7LmHRJJxtH2HD4XEu5hPLtAe=koJbaCmqF9qoSw=sVw@mail.gmail.com>
+Message-ID: <CAGXu5jJ7LmHRJJxtH2HD4XEu5hPLtAe=koJbaCmqF9qoSw=sVw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] stackleak: Register the 'stackleak_cleanup' pass
+ before the 'mach' pass
+To:     Alexander Popov <alex.popov@linux.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Richard Sandiford <richard.sandiford@arm.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        amonakov@ispras.ru, Tycho Andersen <tycho@tycho.ws>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Emese Revfy <re.emese@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        gcc@gcc.gnu.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Van Asbroeck <TheSven73@googlemail.com>
+On Fri, Nov 30, 2018 at 5:20 AM Alexander Popov <alex.popov@linux.com> wrote:
+>
+> Currently the 'stackleak_cleanup' pass deleting a CALL insn is executed
+> after the 'reload' pass. That allows gcc to do some weird optimization in
+> function prologues and epilogues, which are generated later [1].
+>
+> Let's avoid that by registering the 'stackleak_cleanup' pass before
+> the 'mach' pass, which performs the machine dependent code transformations.
+> It's the moment when the stack frame size is final and function prologues
+> and epilogues are already generated.
+>
+> [1] https://www.openwall.com/lists/kernel-hardening/2018/11/23/2
+>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Alexander Popov <alex.popov@linux.com>
 
-When adding weim child devices, there is a risk that the developer will
-(by mistake) specify more than one timing setting for the same chip select.
+Thanks, applied!
 
-The driver cannot support such a configuration.
+-Kees
 
-In case of conflict, this patch will print a warning to the log,
-and will ignore the child node in question.
+> ---
+>  scripts/gcc-plugins/stackleak_plugin.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/gcc-plugins/stackleak_plugin.c b/scripts/gcc-plugins/stackleak_plugin.c
+> index 2f48da9..6f41b32 100644
+> --- a/scripts/gcc-plugins/stackleak_plugin.c
+> +++ b/scripts/gcc-plugins/stackleak_plugin.c
+> @@ -363,10 +363,12 @@ __visible int plugin_init(struct plugin_name_args *plugin_info,
+>                                                 PASS_POS_INSERT_BEFORE);
+>
+>         /*
+> -        * The stackleak_cleanup pass should be executed after the
+> -        * "reload" pass, when the stack frame size is final.
+> +        * The stackleak_cleanup pass should be executed before the "mach"
+> +        * pass, which performs the machine dependent code transformations.
+> +        * It's the moment when the stack frame size is already final and
+> +        * function prologues and epilogues are generated.
+>          */
+> -       PASS_INFO(stackleak_cleanup, "reload", 1, PASS_POS_INSERT_AFTER);
+> +       PASS_INFO(stackleak_cleanup, "mach", 1, PASS_POS_INSERT_BEFORE);
+>
+>         if (!plugin_default_version_check(version, &gcc_version)) {
+>                 error(G_("incompatible gcc/plugin versions"));
+> --
+> 2.7.4
+>
 
-In this example, node acme@1 will be ignored, as it tries to modify
-timing settings for CS0:
 
-&weim {
-	acme@0 {
-		compatible = "acme,whatever";
-		reg = <0 0 0x100>;
-		fsl,weim-cs-timing = <something>;
-	};
-	acme@1 {
-		compatible = "acme,whatnot";
-		reg = <0 0x500 0x100>;
-		fsl,weim-cs-timing = <something else>;
-	};
-};
-
-However in this example, the driver will be happy:
-
-&weim {
-        acme@0 {
-                compatible = "acme,whatever";
-                reg = <0 0 0x100>;
-                fsl,weim-cs-timing = <something>;
-        };
-        acme@1 {
-                compatible = "acme,whatnot";
-                reg = <0 0x500 0x100>;
-                fsl,weim-cs-timing = <something>;
-        };
-};
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
----
- drivers/bus/imx-weim.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-index 24f22285395d..114e503ec785 100644
---- a/drivers/bus/imx-weim.c
-+++ b/drivers/bus/imx-weim.c
-@@ -46,8 +46,18 @@ static const struct imx_weim_devtype imx51_weim_devtype = {
- };
- 
- #define MAX_CS_REGS_COUNT	6
-+#define MAX_CS_REGS		6
- #define OF_REG_SIZE		3
- 
-+struct cs_timing {
-+	bool is_applied;
-+	u32 regs[MAX_CS_REGS_COUNT];
-+};
-+
-+struct cs_timing_state {
-+	struct cs_timing cs[MAX_CS_REGS];
-+};
-+
- static const struct of_device_id weim_id_table[] = {
- 	/* i.MX1/21 */
- 	{ .compatible = "fsl,imx1-weim", .data = &imx1_weim_devtype, },
-@@ -112,11 +122,14 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
- }
- 
- /* Parse and set the timing for this device. */
--static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
--				    const struct imx_weim_devtype *devtype)
-+static int __init weim_timing_setup(struct device *dev,
-+				    struct device_node *np, void __iomem *base,
-+				    const struct imx_weim_devtype *devtype,
-+				    struct cs_timing_state *ts)
- {
- 	u32 cs_idx, value[MAX_CS_REGS_COUNT];
- 	int i, ret, reg_idx, num_regs;
-+	struct cs_timing *cst;
- 
- 	if (WARN_ON(devtype->cs_regs_count > MAX_CS_REGS_COUNT))
- 		return -EINVAL;
-@@ -145,10 +158,23 @@ static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
- 		if (cs_idx >= devtype->cs_count)
- 			return -EINVAL;
- 
-+		/* prevent re-configuring a CS that's already been configured */
-+		cst = &ts->cs[cs_idx];
-+		if (cst->is_applied && memcmp(value, cst->regs,
-+					devtype->cs_regs_count*sizeof(u32))) {
-+			dev_err(dev, "fsl,weim-cs-timing conflict on %pOF", np);
-+			return -EINVAL;
-+		}
-+
- 		/* set the timing for WEIM */
- 		for (i = 0; i < devtype->cs_regs_count; i++)
- 			writel(value[i],
- 				base + cs_idx * devtype->cs_stride + i * 4);
-+		if (!cst->is_applied) {
-+			cst->is_applied = true;
-+			memcpy(cst->regs, value,
-+				devtype->cs_regs_count*sizeof(u32));
-+		}
- 	}
- 
- 	return 0;
-@@ -165,6 +191,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
- 	const struct imx_weim_devtype *devtype = of_id->data;
- 	struct device_node *child;
- 	int ret, have_child = 0;
-+	struct cs_timing_state ts = {};
- 
- 	if (devtype == &imx50_weim_devtype) {
- 		ret = imx_weim_gpr_setup(pdev);
-@@ -179,7 +206,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
- 	}
- 
- 	for_each_available_child_of_node(pdev->dev.of_node, child) {
--		ret = weim_timing_setup(child, base, devtype);
-+		ret = weim_timing_setup(&pdev->dev, child, base, devtype, &ts);
- 		if (ret)
- 			dev_warn(&pdev->dev, "%pOF set timing failed.\n",
- 				child);
 -- 
-2.17.1
-
+Kees Cook
