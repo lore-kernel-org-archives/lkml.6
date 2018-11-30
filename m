@@ -2,115 +2,121 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D568C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7190CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D452020834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E3C20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WV+xOH8M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D452020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Sch7T17C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E3C20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbeLAGLN (ORCPT
+        id S1726944AbeLAGLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:11:13 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:58854 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeLAGLN (ORCPT
+        Sat, 1 Dec 2018 01:11:46 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:58962 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbeLAGLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:11:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cgLqnsGOzZTpWIhpPCkX25BM43oTGYD8p0WI42VHhW0=; b=WV+xOH8M2NgemEIYzcxbfR8HW
-        wv2yBSh9Tg7I8OZ1D6HJIoI3rSnIDzOiGa7bCDPW9b+KSjr8tqybiMXhYx8OWyPub6AQEm/IE/a53
-        L/3F5NlzZEAOqKdVF7Z/D2MoP70TuvG//jhW+3AYISsLcY2uegAbo+0fK0gNvjuMfo18E=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:56909)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gSo1t-0001V7-5s; Fri, 30 Nov 2018 19:00:45 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gSo1k-0002CJ-Ur; Fri, 30 Nov 2018 19:00:37 +0000
-Date:   Fri, 30 Nov 2018 19:00:31 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>,
-        linux-kernel@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/8] phy: mvebu-cp110-comphy: fix port check in
- ->xlate()
-Message-ID: <20181130190031.GH30658@n2100.armlinux.org.uk>
-References: <20181130144743.675-1-miquel.raynal@bootlin.com>
- <20181130144743.675-3-miquel.raynal@bootlin.com>
+        Sat, 1 Dec 2018 01:11:45 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAUIwe4t011951;
+        Fri, 30 Nov 2018 19:01:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=PxwZbLjKgQoXunc74PUvQscm47Sj4mPW9TZmUlQzteU=;
+ b=Sch7T17Ci0sOQCQiW0m5jg99oAe7Tv1/RzF2rnuoGMKmc5Etf+R98+3Q19pnnoy0VEiT
+ GpqQ1w59hKMOiyfZKHEhhZq39OaURll5s6UcSXAZGx6iHGdnjlkGcr7dv1cTjwjp+SLe
+ Wz3stMaB2ZleeCJBDxHYdYBxS6XxEgufrjdD5OTCA3/QND57ygXOObiL/nM5uRUsjSVL
+ 36jguYBqso/cFMBwxIFS7EJAUh4am3HgwpM0ckkmPNXvA3lbDuMuvX3ZLmdiS0Q5HlN0
+ jHQIcrUeBq8l9d9dwl8GoQStzWqBx83AfBtlvo2ZyXPunxTi1TW1IkrlPTwBvK83Wbzt dw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2nxxkqywk9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Nov 2018 19:01:12 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAUJ1BwI007307
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Nov 2018 19:01:11 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAUJ17Is016204;
+        Fri, 30 Nov 2018 19:01:08 GMT
+Received: from [10.154.136.200] (/10.154.136.200)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 30 Nov 2018 11:01:07 -0800
+Subject: Re: [PULL] vhost: cleanups and fixes
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, gedwards@ddn.com,
+        joe@perches.com, lenaic@lhuard.fr, liang.z.li@intel.com,
+        mhocko@kernel.org, mhocko@suse.com, stefanha@redhat.com,
+        wei.w.wang@intel.com
+References: <20181101171938-mutt-send-email-mst@kernel.org>
+ <CAGXu5jJ0HgV2qN=wohEgro6ixqXHOHBTsvS5a9Dcpz8gxVo3bA@mail.gmail.com>
+ <CAHk-=wicvws38JqzVF6oNEZ0jGzP6RecR6yAGtyzX3AkoJ321g@mail.gmail.com>
+ <20181130084227-mutt-send-email-mst@kernel.org>
+From:   Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Message-ID: <e5eb0188-61fa-7556-4c36-68a618ba39bf@oracle.com>
+Date:   Fri, 30 Nov 2018 11:01:03 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130144743.675-3-miquel.raynal@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181130084227-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Antivirus: Avast (VPS 181130-2, 11/30/2018), Outbound message
+X-Antivirus-Status: Clean
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9093 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=975
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811300161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 03:47:37PM +0100, Miquel Raynal wrote:
-> So far the PHY ->xlate() callback was checking if the port was
-> "invalid" before continuing, meaning that the port has not been used
-> yet. This check is not correct as there is no opposite call to
-> ->xlate() once the PHY is released by the user and the port will
-> remain "valid" after the first phy_get()/phy_put() calls. Hence, if
-> this driver is built as a module, inserted, removed and inserted
-> again, the PHY will appear busy and the second probe will fail.
-> 
-> To fix this, just drop the faulty check and instead verify that the
-> port number is valid (ie. in the possible range).
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-> index 31b9a1c18345..a40b876ff214 100644
-> --- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-> +++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-> @@ -567,9 +567,9 @@ static struct phy *mvebu_comphy_xlate(struct device *dev,
->  		return phy;
->  
->  	lane = phy_get_drvdata(phy);
-> -	if (lane->port >= 0)
-> -		return ERR_PTR(-EBUSY);
->  	lane->port = args->args[0];
-> +	if (lane->port >= MVEBU_COMPHY_PORTS)
-> +		return ERR_PTR(-EINVAL);
+On 11/30/2018 5:44 AM, Michael S. Tsirkin wrote:
+> On Thu, Nov 01, 2018 at 04:06:19PM -0700, Linus Torvalds wrote:
+>> On Thu, Nov 1, 2018 at 4:00 PM Kees Cook <keescook@chromium.org> wrote:
+>>> +       memset(&rsp, 0, sizeof(rsp));
+>>> +       rsp.response = VIRTIO_SCSI_S_FUNCTION_REJECTED;
+>>> +       resp = vq->iov[out].iov_base;
+>>> +       ret = __copy_to_user(resp, &rsp, sizeof(rsp));
+>>>
+>>> Is it actually safe to trust that iov_base has passed an earlier
+>>> access_ok() check here? Why not just use copy_to_user() instead?
+>> Good point.
+>>
+>> We really should have removed those double-underscore things ages ago.
+>>
+>> Also, apart from the address, what about the size? Wouldn't it be
+>> better to use copy_to_iter() rather than implement it badly by hand?
+>>
+>>                 Linus
+> Bijan can you respond please?
+> Are you going to look into this and convert code to copy_to_iter?
+> I don't think we should release Linux like this, so if you don't
+> have the time I'd rather revert for now and you can look
+> into reposting for the next release.
+>
+> Thanks,
+>
 
-Shouldn't we validate args->args[0] before doing anything?
+Sure, will do.  Can I send an individual patch for the fix to 
+vhost_scsi_send_tmf_reject()?
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Thanks.
+
+--bijan
