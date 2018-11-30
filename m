@@ -2,442 +2,175 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CA9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCADC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBC152081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45E112081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:30:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKEh62fr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC152081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="RDBMhslE";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="RkXJopF0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E112081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbeK3RhZ (ORCPT
+        id S1726772AbeK3RiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:37:25 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32984 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeK3RhY (ORCPT
+        Fri, 30 Nov 2018 12:38:14 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:46640 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726386AbeK3RiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:37:24 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c14so4147177wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 22:29:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=gM00MDhgQklZaZWezzK6ngjmaYBWFbyqmF7GmheqEQg=;
-        b=TKEh62frnscGyFp6YZBLcruTT1SvD6fHW8EwEzwM+oDcFWUImyYuMU+DZC5tGAVCHk
-         mWbiothphEpa6a9gr/PtTA3Q6OVP4gAmZ2hePeL7MNEFD4FPYa4GwIkjXCvknNK9CN+r
-         Vf2u6TDej3uW8gacT6TRk577keaCWSXjYAZj1YaR+KlYLQGjuF0Wg/94lS1kt9+GcyzB
-         8FIyZciUo6P2y+3v0iqEe8I7HjVIEYWKWoDwtW2TqRPuz+xEz1EtA30B6xXvXGO2li23
-         RXgyekPyCc1NJVW9/LcvnvDsXshA8T9BnWWkM3pfiGdYgM+FJngqvro3WdSeK+IdFZDZ
-         nXLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=gM00MDhgQklZaZWezzK6ngjmaYBWFbyqmF7GmheqEQg=;
-        b=oGBSSnnK+QeH3B0augmal2lCUI071edDTUKLdPE02tC/9VtYuprGRoyyKi4bYfsbdt
-         BOXEDrBcDMK7q+KJD6NTBy84e5N8cAYYsHi7gF6qyNWKpg2nGNCgaI9yHWVTG97kUDTL
-         2UX4GMmx2X5n+MllXfTI1MVFB66BaPjoFyPKYwaCGa1vWc2VXbuwiA3QKQfPpwVEFGLk
-         49IBfbnkWI45OX4GODuCiK2RwOxumy1kw2SMQlHCHEZZyKLjnPv9WvkTJE5iUHHRryw7
-         da37X/2iS1O5WWcBMjPMOe8WJn3ALsh/PPNtzEsslTiUkpHs+dAVFUSFgTxXTNGbGTz9
-         5tsQ==
-X-Gm-Message-State: AA+aEWZMKegsnAauINioe4hslRNMgJQPVc4/KgACvSY5CUdIFNlrutqV
-        LP6dgMCJ9zgU7HrIWVNkhN4=
-X-Google-Smtp-Source: AFSGD/US6uKS94FcmRbRwW0mfzP0CswHHCfMcf9OGGNaPhEfw6hPMxPwyHr1NPyeu0fpsI1WgtLS+Q==
-X-Received: by 2002:adf:b716:: with SMTP id l22mr4011091wre.186.1543559349283;
-        Thu, 29 Nov 2018 22:29:09 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j33sm6378285wre.91.2018.11.29.22.29.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 22:29:08 -0800 (PST)
-Date:   Fri, 30 Nov 2018 07:29:06 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86 fixes
-Message-ID: <20181130062906.GA112090@gmail.com>
+        Fri, 30 Nov 2018 12:38:14 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAU6T86o003340;
+        Thu, 29 Nov 2018 22:29:35 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=+GUP4PdSAwCzbW/DPCSfv+1nzSe2pqHKoTdkTsptNno=;
+ b=RDBMhslEa8+o45VxyUuAM4F4q/PLofWVy9TXysFwZjFLEmvEd13Aurcdn3BbG5JIUY2I
+ d+HqF0JCcwXzuVmlwlzPDwBPh93XoBE2Avf18bA8LmlsqYzwHKFoUyigvu6PlGPjqxbK
+ TqBly9mdqBM2paMT0kU5Plx3tfuioCbNEXtoIM1uzyBGkBxD024rYbTVAdjBiHqqwyCq
+ RHaMW5bKNHA5GIjIf2xVi13VfellDV4Y+4y1tbvXlMo+vmTxyutFZNW3qmQNDveLgDZ9
+ zF3gqTqM6pMd6t8BKwUYQaJS+D4Al8yp3tzHNXtG1eNjAMyxYjvnaH1rRhWeDkFmot0X 0Q== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp0047.outbound.protection.outlook.com [207.46.163.47])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2p270gyn04-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Nov 2018 22:29:35 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+GUP4PdSAwCzbW/DPCSfv+1nzSe2pqHKoTdkTsptNno=;
+ b=RkXJopF0BunYxNaSyZzGqir6NPa0c8BP+mxCJncN+RUuI+QullqtzsQaZ2uU+h2cTm+sb6VedTx+QFvawWBeA30xtRUXT7QdLU2TA5wYuEzMvODNaxr+ZFNZjy+vFxkpJB7bJDPu6HfjWMHFvBvG8TQ6gj9rd9rBZabVcEhK6Cg=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4854.namprd07.prod.outlook.com (52.135.205.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.23; Fri, 30 Nov 2018 06:29:33 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e0dc:ebd5:e248:d644]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e0dc:ebd5:e248:d644%6]) with mapi id 15.20.1361.019; Fri, 30 Nov 2018
+ 06:29:32 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     PETER CHEN <peter.chen@nxp.com>, Felipe Balbi <balbi@kernel.org>,
+        Roger Quadros <rogerq@ti.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [RFC PATCH v2 07/15] usb:cdns3: Adds Device mode support -
+ initialization.
+Thread-Topic: [RFC PATCH v2 07/15] usb:cdns3: Adds Device mode support -
+ initialization.
+Thread-Index: AQHUfycXki8AfRuxW0m5LfbM+YmFdqVlHjwAgAABzgCAAqnDgIAAEpHw
+Date:   Fri, 30 Nov 2018 06:29:31 +0000
+Message-ID: <BYAPR07MB470997B0FBAAE31DABC61A22DDD30@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-8-git-send-email-pawell@cadence.com>
+ <5BFE7D2E.7030702@ti.com> <87pnupzaz1.fsf@linux.intel.com>
+ <VI1PR04MB5327227A807B92DDA62CF9038BD30@VI1PR04MB5327.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB5327227A807B92DDA62CF9038BD30@VI1PR04MB5327.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNDU4NTYwMmItZjQ2OS0xMWU4LTg3MjYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDQ1ODU2MDJjLWY0NjktMTFlOC04NzI2LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTU3NCIgdD0iMTMxODgwMzI5NzE2NzE2OTUxIiBoPSJsOTRMY0ozTDdReEJmY2JSQXFJclVJVmhsaXM9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB4854;20:bsTIR9LkG7I2gs7oZFDL8/yrUjKpWWvkVNVLN/evkeszLslE6a2szop2f7bAzxNURlU8B+SaWkCI9m4g8FONFqzxhiWRDl7GP4elUM5mPaFD1KiRhIFXZoMMjLyO/9c5KILaKJO7eZgM8KkMp/RipcqxK+wZQdL/jS3NTV17eX2064Mr4KGxm/0L2/kokiQcCHoFo/6KWDrx5FYjVksq35uVWCUbi2MRDCVvk/1qX78x2L/kbyXJndTAVnXSr8BH
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(979002)(396003)(39860400002)(366004)(136003)(376002)(346002)(189003)(199004)(36092001)(476003)(71190400001)(71200400001)(3846002)(2501003)(7736002)(105586002)(106356001)(9686003)(186003)(33656002)(229853002)(86362001)(26005)(7416002)(68736007)(4326008)(97736004)(6246003)(74316002)(55016002)(11346002)(53936002)(107886003)(305945005)(6116002)(8936002)(256004)(478600001)(316002)(110136005)(54906003)(6436002)(217873002)(93886005)(99286004)(25786009)(8676002)(14454004)(66066001)(7696005)(2906002)(81166006)(5660300001)(6506007)(486006)(76176011)(102836004)(81156014)(446003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4854;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: fdefb480-90cd-44c7-f010-08d6568d304e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4854;
+x-ms-traffictypediagnostic: BYAPR07MB4854:
+x-microsoft-antispam-prvs: <BYAPR07MB485477FF2C74A536ED934793DDD30@BYAPR07MB4854.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(31051911155226);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231453)(999002)(944501462)(52105112)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4854;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4854;
+x-forefront-prvs: 087223B4DA
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 0XaowT7HDNGfdXC5LEpq/aeeLQK1vISN7SdN9G10XjqkKnA/7E9EZYVnjmBsbrwuNto7P8J0mC1sMY503hoRrluMMBTkcOvRhpeU2mxTQkn9IFyBeZs5JUgd4HkUsImFmgvw2Kr6B1y+H0zPHP9nzNkCBiv5K2TNXXRMyBNzObRTv/kdu9FD6OLv/PhjJf11k6KAMzzROHLCfb+4dc+Fw77uzG5hn9jYY9kf2J3NDmyrE6ypDlhSI5XZaClQwo+0UnjIS3Yci+XpfgrWslRcl+C7uX8/onevTEzb9ASo75GoT/a2gB34eaMTSfF5JhI/YaXctx1NqEeR3+1OoQ2GV03ZqJONUUpfU3FtcS1qjVs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdefb480-90cd-44c7-f010-08d6568d304e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 06:29:31.8929
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4854
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-30_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811300054
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Hi,
 
-Please pull the latest x86-urgent-for-linus git tree from:
+>> Roger Quadros <rogerq@ti.com> writes:
+>> >> +static void cdns3_gadget_config(struct cdns3_device *priv_dev) {
+>> >> +	struct cdns3_usb_regs __iomem *regs =3D priv_dev->regs;
+>> >> +
+>> >> +	cdns3_ep0_config(priv_dev);
+>> >> +
+>> >> +	/* enable interrupts for endpoint 0 (in and out) */
+>> >> +	writel(EP_IEN_EP_OUT0 | EP_IEN_EP_IN0, &regs->ep_ien);
+>> >> +
+>> >> +	/* enable generic interrupt*/
+>> >> +	writel(USB_IEN_INIT, &regs->usb_ien);
+>> >> +	writel(USB_CONF_CLK2OFFDS | USB_CONF_L1DS, &regs->usb_conf);
+>> >> +	writel(USB_CONF_DMULT, &regs->usb_conf);
+>> >> +	writel(USB_CONF_DEVEN, &regs->usb_conf);
+>> >
+>> > If you are enabling interrupts in this patch you should handle them in=
+ the ISR.
+>>
+>> Frankly, I don't understand why this is a series. It's a single driver a=
+nd splitting it into
+>> a series just makes it more difficult to review, actually.
+>>
+>> Sure, a single patch will be large, but there's no way to have a functio=
+nal driver until
+>> all patches are applied, anyway.
+>>
+>
+>Yes, I agree with Felipe. Pawel, you could remove the "RFC" prefix, and se=
+nd the whole
+>one as one patch. I will test it at my hardware.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+Ok, I will prepare such single patch. =20
+Peter I know that you have little different platform.=20
+Probably you should made some additional changes for your platform.=20
 
-   # HEAD: 60c8144afc287ef09ce8c1230c6aa972659ba1bb x86/MCE/AMD: Fix the thresholding machinery initialization order
+I assume that core.c should be common file.=20
+Probably we should add also some platform specific file.=20
 
-Misc fixes:
+Thanks. =20
 
- - an MCE related boot crash fix on certain AMD systems
- - an FPU exception handling fix
- - an FPU handling race fix
- - a revert+rewrite of the RSDP boot protocol extension, use boot_params 
-   instead
- - a documentation fix
-
- Thanks,
-
-	Ingo
-
------------------->
-Borislav Petkov (1):
-      x86/MCE/AMD: Fix the thresholding machinery initialization order
-
-Elvira Khabirova (1):
-      x86/ptrace: Fix documentation for tracehook_report_syscall_entry()
-
-Jann Horn (1):
-      x86/fpu: Use the correct exception table macro in the XSTATE_OP wrapper
-
-Juergen Gross (2):
-      x86/boot: Mostly revert commit ae7e1238e68f2a ("Add ACPI RSDP address to setup_header")
-      x86/acpi, x86/boot: Take RSDP address from boot params if available
-
-Sebastian Andrzej Siewior (1):
-      x86/fpu: Disable bottom halves while loading FPU registers
-
-
- Documentation/x86/boot.txt            | 32 +-------------------------------
- arch/x86/boot/header.S                |  6 +-----
- arch/x86/include/asm/fpu/internal.h   |  2 +-
- arch/x86/include/asm/x86_init.h       |  2 --
- arch/x86/include/uapi/asm/bootparam.h |  7 ++-----
- arch/x86/kernel/acpi/boot.c           |  2 +-
- arch/x86/kernel/cpu/mcheck/mce_amd.c  | 19 ++++++-------------
- arch/x86/kernel/fpu/signal.c          |  4 ++--
- arch/x86/kernel/head32.c              |  1 -
- arch/x86/kernel/head64.c              |  2 --
- arch/x86/kernel/setup.c               | 17 -----------------
- include/linux/tracehook.h             |  4 ++--
- 12 files changed, 16 insertions(+), 82 deletions(-)
-
-diff --git a/Documentation/x86/boot.txt b/Documentation/x86/boot.txt
-index 7727db8f94bc..5e9b826b5f62 100644
---- a/Documentation/x86/boot.txt
-+++ b/Documentation/x86/boot.txt
-@@ -61,18 +61,6 @@ Protocol 2.12:	(Kernel 3.8) Added the xloadflags field and extension fields
- 	 	to struct boot_params for loading bzImage and ramdisk
- 		above 4G in 64bit.
- 
--Protocol 2.13:	(Kernel 3.14) Support 32- and 64-bit flags being set in
--		xloadflags to support booting a 64-bit kernel from 32-bit
--		EFI
--
--Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
--		address of the ACPI RSDP table.
--		The bootloader updates version with:
--		0x8000 | min(kernel-version, bootloader-version)
--		kernel-version being the protocol version supported by
--		the kernel and bootloader-version the protocol version
--		supported by the bootloader.
--
- **** MEMORY LAYOUT
- 
- The traditional memory map for the kernel loader, used for Image or
-@@ -209,7 +197,6 @@ Offset	Proto	Name		Meaning
- 0258/8	2.10+	pref_address	Preferred loading address
- 0260/4	2.10+	init_size	Linear memory required during initialization
- 0264/4	2.11+	handover_offset	Offset of handover entry point
--0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
- 
- (1) For backwards compatibility, if the setup_sects field contains 0, the
-     real value is 4.
-@@ -322,7 +309,7 @@ Protocol:	2.00+
-   Contains the magic number "HdrS" (0x53726448).
- 
- Field name:	version
--Type:		modify
-+Type:		read
- Offset/size:	0x206/2
- Protocol:	2.00+
- 
-@@ -330,12 +317,6 @@ Protocol:	2.00+
-   e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
-   10.17.
- 
--  Up to protocol version 2.13 this information is only read by the
--  bootloader. From protocol version 2.14 onwards the bootloader will
--  write the used protocol version or-ed with 0x8000 to the field. The
--  used protocol version will be the minimum of the supported protocol
--  versions of the bootloader and the kernel.
--
- Field name:	realmode_swtch
- Type:		modify (optional)
- Offset/size:	0x208/4
-@@ -763,17 +744,6 @@ Offset/size:	0x264/4
- 
-   See EFI HANDOVER PROTOCOL below for more details.
- 
--Field name:	acpi_rsdp_addr
--Type:		write
--Offset/size:	0x268/8
--Protocol:	2.14+
--
--  This field can be set by the boot loader to tell the kernel the
--  physical address of the ACPI RSDP table.
--
--  A value of 0 indicates the kernel should fall back to the standard
--  methods to locate the RSDP.
--
- 
- **** THE IMAGE CHECKSUM
- 
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 4c881c850125..850b8762e889 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -300,7 +300,7 @@ _start:
- 	# Part 2 of the header, from the old setup.S
- 
- 		.ascii	"HdrS"		# header signature
--		.word	0x020e		# header version number (>= 0x0105)
-+		.word	0x020d		# header version number (>= 0x0105)
- 					# or else old loadlin-1.5 will fail)
- 		.globl realmode_swtch
- realmode_swtch:	.word	0, 0		# default_switch, SETUPSEG
-@@ -558,10 +558,6 @@ pref_address:		.quad LOAD_PHYSICAL_ADDR	# preferred load addr
- init_size:		.long INIT_SIZE		# kernel initialization size
- handover_offset:	.long 0			# Filled in by build.c
- 
--acpi_rsdp_addr:		.quad 0			# 64-bit physical pointer to the
--						# ACPI RSDP table, added with
--						# version 2.14
--
- # End of setup header #####################################################
- 
- 	.section ".entrytext", "ax"
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 5f7290e6e954..69dcdf195b61 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -226,7 +226,7 @@ static inline void copy_fxregs_to_kernel(struct fpu *fpu)
- 		     "3: movl $-2,%[err]\n\t"				\
- 		     "jmp 2b\n\t"					\
- 		     ".popsection\n\t"					\
--		     _ASM_EXTABLE_UA(1b, 3b)				\
-+		     _ASM_EXTABLE(1b, 3b)				\
- 		     : [err] "=r" (err)					\
- 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 0f842104862c..b85a7c54c6a1 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -303,6 +303,4 @@ extern void x86_init_noop(void);
- extern void x86_init_uint_noop(unsigned int unused);
- extern bool x86_pnpbios_disabled(void);
- 
--void x86_verify_bootdata_version(void);
--
- #endif
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index 22f89d040ddd..60733f137e9a 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -16,9 +16,6 @@
- #define RAMDISK_PROMPT_FLAG		0x8000
- #define RAMDISK_LOAD_FLAG		0x4000
- 
--/* version flags */
--#define VERSION_WRITTEN	0x8000
--
- /* loadflags */
- #define LOADED_HIGH	(1<<0)
- #define KASLR_FLAG	(1<<1)
-@@ -89,7 +86,6 @@ struct setup_header {
- 	__u64	pref_address;
- 	__u32	init_size;
- 	__u32	handover_offset;
--	__u64	acpi_rsdp_addr;
- } __attribute__((packed));
- 
- struct sys_desc_table {
-@@ -159,7 +155,8 @@ struct boot_params {
- 	__u8  _pad2[4];					/* 0x054 */
- 	__u64  tboot_addr;				/* 0x058 */
- 	struct ist_info ist_info;			/* 0x060 */
--	__u8  _pad3[16];				/* 0x070 */
-+	__u64 acpi_rsdp_addr;				/* 0x070 */
-+	__u8  _pad3[8];					/* 0x078 */
- 	__u8  hd0_info[16];	/* obsolete! */		/* 0x080 */
- 	__u8  hd1_info[16];	/* obsolete! */		/* 0x090 */
- 	struct sys_desc_table sys_desc_table; /* obsolete! */	/* 0x0a0 */
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 92c76bf97ad8..06635fbca81c 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1776,5 +1776,5 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
- 
- u64 x86_default_get_root_pointer(void)
- {
--	return boot_params.hdr.acpi_rsdp_addr;
-+	return boot_params.acpi_rsdp_addr;
- }
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index dd33c357548f..e12454e21b8a 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -56,7 +56,7 @@
- /* Threshold LVT offset is at MSR0xC0000410[15:12] */
- #define SMCA_THR_LVT_OFF	0xF000
- 
--static bool thresholding_en;
-+static bool thresholding_irq_en;
- 
- static const char * const th_names[] = {
- 	"load_store",
-@@ -534,9 +534,8 @@ prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
- 
- set_offset:
- 	offset = setup_APIC_mce_threshold(offset, new);
--
--	if ((offset == new) && (mce_threshold_vector != amd_threshold_interrupt))
--		mce_threshold_vector = amd_threshold_interrupt;
-+	if (offset == new)
-+		thresholding_irq_en = true;
- 
- done:
- 	mce_threshold_block_init(&b, offset);
-@@ -1357,9 +1356,6 @@ int mce_threshold_remove_device(unsigned int cpu)
- {
- 	unsigned int bank;
- 
--	if (!thresholding_en)
--		return 0;
--
- 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
- 		if (!(per_cpu(bank_map, cpu) & (1 << bank)))
- 			continue;
-@@ -1377,9 +1373,6 @@ int mce_threshold_create_device(unsigned int cpu)
- 	struct threshold_bank **bp;
- 	int err = 0;
- 
--	if (!thresholding_en)
--		return 0;
--
- 	bp = per_cpu(threshold_banks, cpu);
- 	if (bp)
- 		return 0;
-@@ -1408,9 +1401,6 @@ static __init int threshold_init_device(void)
- {
- 	unsigned lcpu = 0;
- 
--	if (mce_threshold_vector == amd_threshold_interrupt)
--		thresholding_en = true;
--
- 	/* to hit CPUs online before the notifier is up */
- 	for_each_online_cpu(lcpu) {
- 		int err = mce_threshold_create_device(lcpu);
-@@ -1419,6 +1409,9 @@ static __init int threshold_init_device(void)
- 			return err;
- 	}
- 
-+	if (thresholding_irq_en)
-+		mce_threshold_vector = amd_threshold_interrupt;
-+
- 	return 0;
- }
- /*
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 61a949d84dfa..d99a8ee9e185 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -344,10 +344,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
- 		}
- 
-+		local_bh_disable();
- 		fpu->initialized = 1;
--		preempt_disable();
- 		fpu__restore(fpu);
--		preempt_enable();
-+		local_bh_enable();
- 
- 		return err;
- 	} else {
-diff --git a/arch/x86/kernel/head32.c b/arch/x86/kernel/head32.c
-index 76fa3b836598..ec6fefbfd3c0 100644
---- a/arch/x86/kernel/head32.c
-+++ b/arch/x86/kernel/head32.c
-@@ -37,7 +37,6 @@ asmlinkage __visible void __init i386_start_kernel(void)
- 	cr4_init_shadow();
- 
- 	sanitize_boot_params(&boot_params);
--	x86_verify_bootdata_version();
- 
- 	x86_early_init_platform_quirks();
- 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 7663a8eb602b..16b1cbd3a61e 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -457,8 +457,6 @@ void __init x86_64_start_reservations(char *real_mode_data)
- 	if (!boot_params.hdr.version)
- 		copy_bootdata(__va(real_mode_data));
- 
--	x86_verify_bootdata_version();
--
- 	x86_early_init_platform_quirks();
- 
- 	switch (boot_params.hdr.hardware_subarch) {
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index b74e7bfed6ab..d494b9bfe618 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1280,23 +1280,6 @@ void __init setup_arch(char **cmdline_p)
- 	unwind_init();
- }
- 
--/*
-- * From boot protocol 2.14 onwards we expect the bootloader to set the
-- * version to "0x8000 | <used version>". In case we find a version >= 2.14
-- * without the 0x8000 we assume the boot loader supports 2.13 only and
-- * reset the version accordingly. The 0x8000 flag is removed in any case.
-- */
--void __init x86_verify_bootdata_version(void)
--{
--	if (boot_params.hdr.version & VERSION_WRITTEN)
--		boot_params.hdr.version &= ~VERSION_WRITTEN;
--	else if (boot_params.hdr.version >= 0x020e)
--		boot_params.hdr.version = 0x020d;
--
--	if (boot_params.hdr.version < 0x020e)
--		boot_params.hdr.acpi_rsdp_addr = 0;
--}
--
- #ifdef CONFIG_X86_32
- 
- static struct resource video_ram_resource = {
-diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
-index 40b0b4c1bf7b..df20f8bdbfa3 100644
---- a/include/linux/tracehook.h
-+++ b/include/linux/tracehook.h
-@@ -83,8 +83,8 @@ static inline int ptrace_report_syscall(struct pt_regs *regs)
-  * tracehook_report_syscall_entry - task is about to attempt a system call
-  * @regs:		user register state of current task
-  *
-- * This will be called if %TIF_SYSCALL_TRACE has been set, when the
-- * current task has just entered the kernel for a system call.
-+ * This will be called if %TIF_SYSCALL_TRACE or %TIF_SYSCALL_EMU have been set,
-+ * when the current task has just entered the kernel for a system call.
-  * Full user register state is available here.  Changing the values
-  * in @regs can affect the system call number and arguments to be tried.
-  * It is safe to block here, preventing the system call from beginning.
+Pawel.
