@@ -2,93 +2,94 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58190C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94447C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E342146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:33:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E342146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 55B802146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:36:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qk+Nvdim"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B802146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeK3VmX (ORCPT
+        id S1726644AbeK3Vpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:42:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:16297 "EHLO mx1.redhat.com"
+        Fri, 30 Nov 2018 16:45:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeK3VmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:42:23 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726509AbeK3Vpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 16:45:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E6FEF80F7D;
-        Fri, 30 Nov 2018 10:33:32 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 410C15D736;
-        Fri, 30 Nov 2018 10:33:30 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 30 Nov 2018 11:33:32 +0100 (CET)
-Date:   Fri, 30 Nov 2018 11:33:30 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     =?iso-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] prctl: add PR_{GET,SET}_KILL_DESCENDANTS_ON_EXIT
-Message-ID: <20181130103329.GB23670@redhat.com>
-References: <20181127225408.7553-1-j@bitron.ch>
- <20181127225408.7553-2-j@bitron.ch>
- <20181128144230.GG30395@redhat.com>
- <87r2f5gr9g.fsf@xmission.com>
- <20181129123409.GA10645@redhat.com>
- <f55261dbc41544363b4348820f67fb01c6d7aaec.camel@bitron.ch>
+        by mail.kernel.org (Postfix) with ESMTPSA id E0A9B206B7;
+        Fri, 30 Nov 2018 10:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543574201;
+        bh=tHL8JFuZPd0eks9NCCNYhzADsCLxGyz1wxkjoCyX9vA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qk+Nvdim2EFeDXrsLk19XgdMRnZjCQDdiIDhQWqkVVBv927Fsvc5oY7tbqkTGZDoD
+         jV+6Z8N5SCWoVo66NXqR3qEB3Iod5TQApS+RMSbpNpu1tAnc5Qm0tVd2V0otftIOnK
+         k7SBNEwOyiKSYJMfnojTfvn+RooSbqdslRDSPOLE=
+Date:   Fri, 30 Nov 2018 11:36:39 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.9 00/92] 4.9.142-stable review
+Message-ID: <20181130103639.GA11558@kroah.com>
+References: <20181129140106.520639693@linuxfoundation.org>
+ <cef73be8-b2d1-dda1-ff57-d39fd15baa03@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f55261dbc41544363b4348820f67fb01c6d7aaec.camel@bitron.ch>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 30 Nov 2018 10:33:33 +0000 (UTC)
+In-Reply-To: <cef73be8-b2d1-dda1-ff57-d39fd15baa03@nvidia.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29, Jürg Billeter wrote:
->
-> On Thu, 2018-11-29 at 13:34 +0100, Oleg Nesterov wrote:
-> > To me it would be more clean to call walk_process_tree(kill_descendant_visitor)
-> > unconditionally in find_new_reaper() right before "if (has_child_subreaper)", but
-> > then we will need to shift read_lock(tasklist) from walk_process_tree().
->
-> Yes, that's the reason why I added the call before the tasklist lock.
-> Let me know if you want me to move the read lock from
-> walk_process_tree() to PR_SET_CHILD_SUBREAPER (the only caller)
-> instead.
+On Fri, Nov 30, 2018 at 09:10:27AM +0000, Jon Hunter wrote:
+> 
+> On 29/11/2018 14:11, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.142 release.
+> > There are 92 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat Dec  1 14:00:37 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.142-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> All tests are passing for Tegra ...
+> 
+> Test results for stable-v4.9:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
+> 
+> Linux version:	4.9.142-rc1-gf46aebe
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-I am fine either way. We can do this later, lets keep your patch simple.
+Great, thanks for testing and letting me know.
 
-> > So I think the patch is mostly fine, the only problem I can see is that
-> > PR_SET_KILL_DESCENDANTS_ON_EXIT can race with PR_SET_CHILD_SUBREAPER, they both
-> > need to update the bits in the same word.
->
-> Good point. I'll make it a regular bool instead of a bitfield for v2,
-
-Agreed,
-
-> unless you have another approach in mind to fix this.
-
-Well, I think that is_child_subreaper/has_child_subreaper and the new
-kill_descendants_on_exit should live in signal->flags, but we need some
-cleanups to make this possible, so I agree with the boolean.
-
-Oleg.
-
+greg k-h
