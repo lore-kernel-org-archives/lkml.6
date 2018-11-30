@@ -2,80 +2,91 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECBFC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E52C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B51AE2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:45:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51AE2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C8052146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:47:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8052146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeLABy7 (ORCPT
+        id S1727122AbeLAB5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:54:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34850 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 20:57:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56066 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726645AbeLABy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:54:59 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D01C20863;
-        Fri, 30 Nov 2018 14:45:25 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 09:45:23 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        ldv@altlinux.org, esyr@redhat.com,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: Rough idea of implementing blocking perf calls for system call
- tracepoints
-Message-ID: <20181130094523.1bc91052@gandalf.local.home>
-In-Reply-To: <20181130140158.GD3617@krava>
-References: <20181128134700.212ed035@gandalf.local.home>
-        <20181128141808.4b047976@gandalf.local.home>
-        <20181130104044.GB3617@krava>
-        <20181130114809.GC3617@krava>
-        <20181130140158.GD3617@krava>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726899AbeLAB5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:57:30 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 72F6C20D23; Fri, 30 Nov 2018 15:47:55 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 153B220CFA;
+        Fri, 30 Nov 2018 15:47:45 +0100 (CET)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 1/8] phy: mvebu-cp110-comphy: fix spelling in structure name
+Date:   Fri, 30 Nov 2018 15:47:36 +0100
+Message-Id: <20181130144743.675-2-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181130144743.675-1-miquel.raynal@bootlin.com>
+References: <20181130144743.675-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 15:01:58 +0100
-Jiri Olsa <jolsa@redhat.com> wrote:
+Rename the mvebu_comhy_conf structure to be mvebu_comphy_conf, which is
+probably what the original author meant.
 
-> > or perhaps just tracepoints.. does not seem to make much
-> > sense for he events  
-> 
-> actualy the syscalls seems to be enough for now ;-) I tried
-> something and ended up with hack below
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Actually, we *only* want to do syscalls. We really don't want to add
-blocking to trace events. That would be a nightmare for deadlocks and
-such.
+diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+index 86a5f7b9448b..31b9a1c18345 100644
+--- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
++++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+@@ -114,7 +114,7 @@
+ #define MVEBU_COMPHY_LANES	6
+ #define MVEBU_COMPHY_PORTS	3
+ 
+-struct mvebu_comhy_conf {
++struct mvebu_comphy_conf {
+ 	enum phy_mode mode;
+ 	unsigned lane;
+ 	unsigned port;
+@@ -129,7 +129,7 @@ struct mvebu_comhy_conf {
+ 		.mux = _mux,				\
+ 	}
+ 
+-static const struct mvebu_comhy_conf mvebu_comphy_cp110_modes[] = {
++static const struct mvebu_comphy_conf mvebu_comphy_cp110_modes[] = {
+ 	/* lane 0 */
+ 	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_SGMII, 0x1),
+ 	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_2500SGMII, 0x1),
+-- 
+2.19.1
 
-I was thinking about adding a PTRACE feature that makes this part of
-PTRACE. That is, we start this via PTRACE and let PTRACE signal the
-tracer process when the tracee process blocks, and it can then wake up
-the tracee process.
-
-A tracer must have PTRACE permissions anyway. The goal of this is to
-speed up syscall tracing.
-
--- Steve
