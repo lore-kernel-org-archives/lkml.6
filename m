@@ -2,206 +2,158 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713BEC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A76C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36EA020868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:57:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36EA020868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 63F27204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:58:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F27204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeK3VGb (ORCPT
+        id S1727114AbeK3VHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:06:31 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48170 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726499AbeK3VGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:06:30 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E25C220CFC; Fri, 30 Nov 2018 10:57:42 +0100 (CET)
-Received: from localhost.localdomain (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A1E712072D;
-        Fri, 30 Nov 2018 10:57:32 +0100 (CET)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH] drm/vc4: Add a debugfs entry to disable/enable the load tracker
-Date:   Fri, 30 Nov 2018 10:56:58 +0100
-Message-Id: <20181130095658.31062-1-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 30 Nov 2018 16:07:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52181 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbeK3VHE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 16:07:04 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAU9vUYx3261741
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 30 Nov 2018 01:57:30 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAU9vUdX3261738;
+        Fri, 30 Nov 2018 01:57:30 -0800
+Date:   Fri, 30 Nov 2018 01:57:30 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Julien Thierry <tipbot@zytor.com>
+Message-ID: <tip-8c25db0a5a67986106aa3da7ce165ff961aa7847@git.kernel.org>
+Cc:     arend.vanspriel@broadcom.com, luto@kernel.org, bp@alien8.de,
+        mingo@kernel.org, torvalds@linux-foundation.org,
+        dave.hansen@intel.com, zhuyifei1999@gmail.com,
+        natechancellor@gmail.com, jonathanh@nvidia.com,
+        bhsharma@redhat.com, julien.thierry@arm.com, hdegoede@redhat.com,
+        marc.zyngier@arm.com, sai.praneeth.prakhya@intel.com,
+        peterz@infradead.org, eric.snowberg@oracle.com,
+        ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, matt@codeblueprint.co.uk,
+        joe@perches.com, sedat.dilek@gmail.com
+Reply-To: hdegoede@redhat.com, bhsharma@redhat.com, jonathanh@nvidia.com,
+          julien.thierry@arm.com, mingo@kernel.org,
+          torvalds@linux-foundation.org, dave.hansen@intel.com,
+          natechancellor@gmail.com, zhuyifei1999@gmail.com,
+          arend.vanspriel@broadcom.com, luto@kernel.org, bp@alien8.de,
+          sedat.dilek@gmail.com, tglx@linutronix.de, hpa@zytor.com,
+          matt@codeblueprint.co.uk, joe@perches.com,
+          eric.snowberg@oracle.com, ard.biesheuvel@linaro.org,
+          linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+          sai.praneeth.prakhya@intel.com, peterz@infradead.org
+In-Reply-To: <20181129171230.18699-4-ard.biesheuvel@linaro.org>
+References: <20181129171230.18699-4-ard.biesheuvel@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/core] efi/fdt: Simplify the get_fdt() flow
+Git-Commit-ID: 8c25db0a5a67986106aa3da7ce165ff961aa7847
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to test whether the load tracker is working as expected, we
-need the ability to compare the commit result with the underrun
-indication. With the load tracker always enabled, commits that are
-expected to trigger an underrun are always rejected, so userspace
-cannot get the actual underrun indication from the hardware.
+Commit-ID:  8c25db0a5a67986106aa3da7ce165ff961aa7847
+Gitweb:     https://git.kernel.org/tip/8c25db0a5a67986106aa3da7ce165ff961aa7847
+Author:     Julien Thierry <julien.thierry@arm.com>
+AuthorDate: Thu, 29 Nov 2018 18:12:22 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 30 Nov 2018 09:10:30 +0100
 
-Add a debugfs entry to disable/enable the load tracker, so that a DRM
-commit expected to trigger an underrun can go through with the load
-tracker disabled. The underrun indication is then available to
-userspace and can be checked against the commit result with the load
-tracker enabled.
+efi/fdt: Simplify the get_fdt() flow
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reorganize the get_fdt() lookup loop, clearly showing that:
+
+- Nothing is done for table entries that do not have fdt_guid
+- Once an entry with fdt_guid is found, break out of the loop
+
+No functional changes.
+
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: YiFei Zhu <zhuyifei1999@gmail.com>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181129171230.18699-4-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
+ drivers/firmware/efi/libstub/fdt.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-This patch is based on Boris Brezillion's series: drm/vc4: Add a load tracker.
-
- drivers/gpu/drm/vc4/vc4_debugfs.c |  8 +++++
- drivers/gpu/drm/vc4/vc4_drv.c     | 52 +++++++++++++++++++++++++++++++
- drivers/gpu/drm/vc4/vc4_drv.h     |  3 ++
- drivers/gpu/drm/vc4/vc4_kms.c     |  6 +++-
- 4 files changed, 68 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_debugfs.c b/drivers/gpu/drm/vc4/vc4_debugfs.c
-index 7a0003de71ab..250fee440aac 100644
---- a/drivers/gpu/drm/vc4/vc4_debugfs.c
-+++ b/drivers/gpu/drm/vc4/vc4_debugfs.c
-@@ -35,6 +35,14 @@ static const struct drm_info_list vc4_debugfs_list[] = {
- int
- vc4_debugfs_init(struct drm_minor *minor)
+diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+index a3614f9b5f75..0dc7b4987cc2 100644
+--- a/drivers/firmware/efi/libstub/fdt.c
++++ b/drivers/firmware/efi/libstub/fdt.c
+@@ -370,23 +370,24 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
  {
-+	struct dentry *dentry;
+ 	efi_guid_t fdt_guid = DEVICE_TREE_GUID;
+ 	efi_config_table_t *tables;
+-	void *fdt;
+ 	int i;
+ 
+-	tables = (efi_config_table_t *) sys_table->tables;
+-	fdt = NULL;
++	tables = (efi_config_table_t *)sys_table->tables;
+ 
+ 	for (i = 0; i < sys_table->nr_tables; i++) {
+-		if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
+-			fdt = (void *) tables[i].table;
+-			if (fdt_check_header(fdt) != 0) {
+-				pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
+-				return NULL;
+-			}
+-			*fdt_size = fdt_totalsize(fdt);
+-			break;
++		void *fdt;
 +
-+	dentry = debugfs_create_file("load_tracker", S_IRUGO | S_IWUSR,
-+				     minor->debugfs_root, minor->dev,
-+				     &vc4_debugfs_load_tracker_fops);
-+	if (!dentry)
-+		return -ENOMEM;
++		if (efi_guidcmp(tables[i].guid, fdt_guid) != 0)
++			continue;
 +
- 	return drm_debugfs_create_files(vc4_debugfs_list, VC4_DEBUGFS_ENTRIES,
- 					minor->debugfs_root, minor);
++		fdt = (void *)tables[i].table;
++		if (fdt_check_header(fdt) != 0) {
++			pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
++			return NULL;
+ 		}
++		*fdt_size = fdt_totalsize(fdt);
++		return fdt;
+ 	}
+ 
+-	return fdt;
++	return NULL;
  }
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 7195a0bcceb3..0ee75c71d8d8 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -46,6 +46,56 @@
- #define DRIVER_MINOR 0
- #define DRIVER_PATCHLEVEL 0
- 
-+static int vc4_debugfs_load_tracker_get(struct seq_file *m, void *data)
-+{
-+	struct drm_device *dev = m->private;
-+	struct vc4_dev *vc4 = to_vc4_dev(dev);
-+
-+	if (vc4->load_tracker_enabled)
-+		seq_printf(m, "enabled\n");
-+	else
-+		seq_printf(m, "disabled\n");
-+
-+	return 0;
-+}
-+
-+static ssize_t vc4_debugfs_load_tracker_set(struct file *file,
-+					    const char __user *ubuf,
-+					    size_t len, loff_t *offp)
-+{
-+	struct seq_file *m = file->private_data;
-+	struct drm_device *dev = m->private;
-+	struct vc4_dev *vc4 = to_vc4_dev(dev);
-+	char buf[32] = {};
-+
-+	if (len >= sizeof(buf))
-+		return -EINVAL;
-+
-+	if (copy_from_user(buf, ubuf, len))
-+		return -EFAULT;
-+
-+	if (!strncasecmp(buf, "enable", 6))
-+		vc4->load_tracker_enabled = true;
-+	else if (!strncasecmp(buf, "disable", 7))
-+		vc4->load_tracker_enabled = false;
-+	else
-+		return -EINVAL;
-+
-+	return len;
-+}
-+
-+static int vc4_debugfs_load_tracker_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, vc4_debugfs_load_tracker_get, inode->i_private);
-+}
-+
-+const struct file_operations vc4_debugfs_load_tracker_fops = {
-+	.owner = THIS_MODULE,
-+	.open = vc4_debugfs_load_tracker_open,
-+	.read = seq_read,
-+	.write = vc4_debugfs_load_tracker_set,
-+};
-+
- /* Helper function for mapping the regs on a platform device. */
- void __iomem *vc4_ioremap_regs(struct platform_device *dev, int index)
- {
-@@ -290,6 +340,8 @@ static int vc4_drm_bind(struct device *dev)
- 
- 	drm_fbdev_generic_setup(drm, 32);
- 
-+	vc4->load_tracker_enabled = true;
-+
- 	return 0;
- 
- unbind_all:
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-index 11369da944b6..1344c4d996c4 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.h
-+++ b/drivers/gpu/drm/vc4/vc4_drv.h
-@@ -188,6 +188,8 @@ struct vc4_dev {
- 
- 	int power_refcount;
- 
-+	bool load_tracker_enabled;
-+
- 	/* Mutex controlling the power refcount. */
- 	struct mutex power_lock;
- 
-@@ -717,6 +719,7 @@ void vc4_crtc_txp_armed(struct drm_crtc_state *state);
- int vc4_debugfs_init(struct drm_minor *minor);
- 
- /* vc4_drv.c */
-+extern const struct file_operations vc4_debugfs_load_tracker_fops;
- void __iomem *vc4_ioremap_regs(struct platform_device *dev, int index);
- 
- /* vc4_dpi.c */
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index b905a19c1470..4b2509b1b8ed 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -473,6 +473,7 @@ static const struct drm_private_state_funcs vc4_load_tracker_state_funcs = {
- static int
- vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
- {
-+	struct vc4_dev *vc4 = to_vc4_dev(dev);
- 	int ret;
- 
- 	ret = vc4_ctm_atomic_check(dev, state);
-@@ -483,7 +484,10 @@ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
- 	if (ret)
- 		return ret;
- 
--	return vc4_load_tracker_atomic_check(state);
-+	if (vc4->load_tracker_enabled)
-+		return vc4_load_tracker_atomic_check(state);
-+
-+	return 0;
- }
- 
- static const struct drm_mode_config_funcs vc4_mode_funcs = {
--- 
-2.19.1
-
