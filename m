@@ -2,263 +2,129 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57220C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D244AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE4820868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:11:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oJ54QHBD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE4820868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 93B5420868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 09:16:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93B5420868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726624AbeK3UUd (ORCPT
+        id S1726585AbeK3UZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:20:33 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44191 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbeK3UUc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:20:32 -0500
-Received: by mail-qk1-f193.google.com with SMTP id n12so2733367qkh.11;
-        Fri, 30 Nov 2018 01:11:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xPgiQv76Tbaq5oCVyqFwL3566XE+B00LG3k/7dV9AcE=;
-        b=oJ54QHBD9Fb+hY5WE/KT5Iq58+uCn5UJTPyrt515UH/P7qtAnJombyk707833+rnPY
-         20/M5ZwHHzZGBfAtSVgXy1LSCjTaZkLIfLWcRJusQ+Bh9wGr+UMI6A6MLgTYaICkb17F
-         QaGKIxYEPQRSDt8digwBzBVPNWmunOPXJbh0dfqt+RJZsfs/C4YbiAOFPb5DKb3XB2Ze
-         qe6JEirblPlnsO17RROCPEJg6hkUbu726lvmObiakEtUqd2azKv85eRATTYRDFbNpFMb
-         IS0rzpon0X+mydpT0yVc3I1sgWcIMCi+47NmAHT+T3pmX/vbEa8cV93bRq0p45wk6Nm7
-         473Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xPgiQv76Tbaq5oCVyqFwL3566XE+B00LG3k/7dV9AcE=;
-        b=LsTNhQ+mTCgvqTG7Al/HoaMP0CD9Hkr5ya0UL2kT1eMaQT3l/o1io+vTsEWSSlpv8I
-         4f6mXlHje/HGFFYVCTlJHObb5k2W7MXIVn+owcTx3xdwpaYadXUA+fuWV4smVV0jJkEO
-         DwbtzQ08n2xr/Yf590eGfE2I7dcMSI8fsPLoT0dJ/o1n0hU7MdeQL8BkxymdVRBMJHOE
-         eZIBEARG5wPbYIQ93EE1ggiZG8twa0GjhxofxfzZLdG8GixRkC9i0q1SmeOAinvkkLYT
-         RMTNpalw+POfl8O6GWYqPGGWbKQQRDnjwfef3ObA7LH1sKPjOWgQ22ONxaP599tdLrOp
-         HuRw==
-X-Gm-Message-State: AA+aEWY8lyBas8TIvoaNmgc+M+JGMPGFqw/Uhg1ebjmuv7qHouzGedvO
-        Ar0GtCUV8fl8MthN0IYI7ocGYtEKcgyuXUlUBFw=
-X-Google-Smtp-Source: AFSGD/WnhoE6N7sxX9mqDyLE/7V8TTL3chu/zMlu2b7iABiCnX1kGBRLaT9bEvafnDxyCsvqVyo7a60Nt1P22I3/Lmw=
-X-Received: by 2002:a37:b2c2:: with SMTP id b185mr4420885qkf.194.1543569112384;
- Fri, 30 Nov 2018 01:11:52 -0800 (PST)
+        Fri, 30 Nov 2018 15:25:13 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15178 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726467AbeK3UZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:25:13 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 41CB1F8FF158C;
+        Fri, 30 Nov 2018 17:16:27 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Fri, 30 Nov 2018
+ 17:16:18 +0800
+Subject: Re: [PATCH] dma-debug: hns_enet_drv could use more DMA entries
+To:     Christoph Hellwig <hch@lst.de>, Qian Cai <cai@gmx.us>
+References: <20181130035456.1586-1-cai@gmx.us> <20181130084203.GA19812@lst.de>
+CC:     <robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
+        <yisen.zhuang@huawei.com>, Linuxarm <linuxarm@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <23da2426-a397-a33c-cfd8-dba7b3c1aaee@huawei.com>
+Date:   Fri, 30 Nov 2018 09:16:12 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-References: <20181129075301.29087-1-nborisov@suse.com> <20181129075301.29087-2-nborisov@suse.com>
-In-Reply-To: <20181129075301.29087-2-nborisov@suse.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Fri, 30 Nov 2018 17:11:39 +0800
-Message-ID: <CAAM7YA==GN5epC5BZYVmcXuyZp-reVi+_MdhDrgcOjnVwME6zA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fs: Don't open-code lru_to_page
-To:     nborisov@suse.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
-        josef@toxicpanda.com, David Sterba <dsterba@suse.com>,
-        Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>, sfrench@samba.org,
-        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        mark@fasheh.com, jlbec@evilplan.org, hubcap@omnibond.com,
-        martin@omnibond.com, Andrew Morton <akpm@linux-foundation.org>,
-        rppt@linux.vnet.ibm.com, willy@infradead.org,
-        rdunlap@infradead.org, yuehaibing@huawei.com, shakeelb@google.com,
-        dan.j.williams@intel.com, mhocko@suse.com,
-        linux-afs@lists.infradead.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181130084203.GA19812@lst.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 3:56 PM Nikolay Borisov <nborisov@suse.com> wrote:
->
-> There are a bunch of filesystems which essentially open-code lru_to_page
-> helper. Change them to using the helper. No functional changes.
->
-> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-> ---
->
-> Since this is a mostly mechanical change I've actually batched all of them in
-> a single patch.
->
->  fs/afs/file.c        | 5 +++--
->  fs/btrfs/extent_io.c | 2 +-
->  fs/ceph/addr.c       | 5 ++---
->  fs/cifs/file.c       | 3 ++-
->  fs/ext4/readpage.c   | 2 +-
->  fs/ocfs2/aops.c      | 3 ++-
->  fs/orangefs/inode.c  | 2 +-
->  mm/swap.c            | 2 +-
->  8 files changed, 13 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/afs/file.c b/fs/afs/file.c
-> index d6bc3f5d784b..323ae9912203 100644
-> --- a/fs/afs/file.c
-> +++ b/fs/afs/file.c
-> @@ -17,6 +17,7 @@
->  #include <linux/writeback.h>
->  #include <linux/gfp.h>
->  #include <linux/task_io_accounting_ops.h>
-> +#include <linux/mm.h>
->  #include "internal.h"
->
->  static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
-> @@ -441,7 +442,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
->         /* Count the number of contiguous pages at the front of the list.  Note
->          * that the list goes prev-wards rather than next-wards.
->          */
-> -       first = list_entry(pages->prev, struct page, lru);
-> +       first = lru_to_page(pages);
->         index = first->index + 1;
->         n = 1;
->         for (p = first->lru.prev; p != pages; p = p->prev) {
-> @@ -473,7 +474,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
->          * page at the end of the file.
->          */
->         do {
-> -               page = list_entry(pages->prev, struct page, lru);
-> +               page = lru_to_page(pages);
->                 list_del(&page->lru);
->                 index = page->index;
->                 if (add_to_page_cache_lru(page, mapping, index,
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index 19f4b8fd654f..8332c5f4b1c3 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -4104,7 +4104,7 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
->         u64 prev_em_start = (u64)-1;
->
->         for (page_idx = 0; page_idx < nr_pages; page_idx++) {
-> -               page = list_entry(pages->prev, struct page, lru);
-> +               page = lru_to_page(pages);
->
->                 prefetchw(&page->flags);
->                 list_del(&page->lru);
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 8eade7a993c1..5d0c05e288cc 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -306,7 +306,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
->         struct ceph_osd_client *osdc =
->                 &ceph_inode_to_client(inode)->client->osdc;
->         struct ceph_inode_info *ci = ceph_inode(inode);
-> -       struct page *page = list_entry(page_list->prev, struct page, lru);
-> +       struct page *page = lru_to_page(page_list);
->         struct ceph_vino vino;
->         struct ceph_osd_request *req;
->         u64 off;
-> @@ -333,8 +333,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
->                         if (got)
->                                 ceph_put_cap_refs(ci, got);
->                         while (!list_empty(page_list)) {
-> -                               page = list_entry(page_list->prev,
-> -                                                 struct page, lru);
-> +                               page = lru_to_page(page_list);
->                                 list_del(&page->lru);
->                                 put_page(page);
->                         }
++
 
-For the ceph patch
+Pasting original message at bottom.
 
-Acked-by:: "Yan, Zheng" <zyan@redhat.com
 
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 74c33d5fafc8..b16a4d887d17 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -33,6 +33,7 @@
->  #include <linux/mount.h>
->  #include <linux/slab.h>
->  #include <linux/swap.h>
-> +#include <linux/mm.h>
->  #include <asm/div64.h>
->  #include "cifsfs.h"
->  #include "cifspdu.h"
-> @@ -3975,7 +3976,7 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
+On 30/11/2018 08:42, Christoph Hellwig wrote:
+> On Thu, Nov 29, 2018 at 10:54:56PM -0500, Qian Cai wrote:
+>>  /* allow architectures to override this if absolutely required */
+>>  #ifndef PREALLOC_DMA_DEBUG_ENTRIES
+>> +/* amount of DMA mappings on this driver is huge. */
+>> +#ifdef	HNS_ENET
+>> +#define PREALLOC_DMA_DEBUG_ENTRIES (1 << 17)
+>> +#else
+>>  #define PREALLOC_DMA_DEBUG_ENTRIES (1 << 16)
+>>  #endif
+>> +#endif
 >
->         INIT_LIST_HEAD(tmplist);
+> How would this be defined in a header that leaks into this file?
 >
-> -       page = list_entry(page_list->prev, struct page, lru);
-> +       page = lru_to_page(page_list);
+> I think we need to turn PREALLOC_DMA_DEBUG_ENTRIES into a user
+> selectable config options, as I really don't want to collect hacks like
+> this.
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
 >
->         /*
->          * Lock the page and put it in the cache. Since no one else
-> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> index f461d75ac049..6aa282ee455a 100644
-> --- a/fs/ext4/readpage.c
-> +++ b/fs/ext4/readpage.c
-> @@ -128,7 +128,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
 >
->                 prefetchw(&page->flags);
->                 if (pages) {
-> -                       page = list_entry(pages->prev, struct page, lru);
-> +                       page = lru_to_page(pages);
->                         list_del(&page->lru);
->                         if (add_to_page_cache_lru(page, mapping, page->index,
->                                   readahead_gfp_mask(mapping)))
-> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-> index eb1ce30412dc..832c1759a09a 100644
-> --- a/fs/ocfs2/aops.c
-> +++ b/fs/ocfs2/aops.c
-> @@ -30,6 +30,7 @@
->  #include <linux/quotaops.h>
->  #include <linux/blkdev.h>
->  #include <linux/uio.h>
-> +#include <linux/mm.h>
->
->  #include <cluster/masklog.h>
->
-> @@ -397,7 +398,7 @@ static int ocfs2_readpages(struct file *filp, struct address_space *mapping,
->          * Check whether a remote node truncated this file - we just
->          * drop out in that case as it's not worth handling here.
->          */
-> -       last = list_entry(pages->prev, struct page, lru);
-> +       last = lru_to_page(pages);
->         start = (loff_t)last->index << PAGE_SHIFT;
->         if (start >= i_size_read(inode))
->                 goto out_unlock;
-> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-> index fe53381b26b1..f038235c64bd 100644
-> --- a/fs/orangefs/inode.c
-> +++ b/fs/orangefs/inode.c
-> @@ -77,7 +77,7 @@ static int orangefs_readpages(struct file *file,
->         for (page_idx = 0; page_idx < nr_pages; page_idx++) {
->                 struct page *page;
->
-> -               page = list_entry(pages->prev, struct page, lru);
-> +               page = lru_to_page(pages);
->                 list_del(&page->lru);
->                 if (!add_to_page_cache(page,
->                                        mapping,
-> diff --git a/mm/swap.c b/mm/swap.c
-> index aa483719922e..20b9e9d99652 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -126,7 +126,7 @@ void put_pages_list(struct list_head *pages)
->         while (!list_empty(pages)) {
->                 struct page *victim;
->
-> -               victim = list_entry(pages->prev, struct page, lru);
-> +               victim = lru_to_page(pages);
->                 list_del(&victim->lru);
->                 put_page(victim);
->         }
-> --
-> 2.17.1
->
+
+
+
+
+
+
+
+The amount of DMA mappings from Hisilicon HNS ethernet devices is huge,
+so it could trigger "DMA-API: debugging out of memory - disabling".
+
+hnae_get_handle [1]
+   hnae_init_queue
+     hnae_init_ring
+       hnae_alloc_buffers [2]
+         debug_dma_map_page
+           dma_entry_alloc
+
+[1] for (i = 0; i < handle->q_num; i++)
+[2] for (i = 0; i < ring->desc_num; i++)
+
+On this Huawei TaiShan 2280 aarch64 server, it has reached the limit
+already,
+
+4 (ports) x 16 (handles) x 1024 (rings) = 65536
+
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
+  kernel/dma/debug.c | 5 +++++
+  1 file changed, 5 insertions(+)
+
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index 231ca4628062..ae91689cc9ad 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -43,8 +43,13 @@
+
+  /* allow architectures to override this if absolutely required */
+  #ifndef PREALLOC_DMA_DEBUG_ENTRIES
++/* amount of DMA mappings on this driver is huge. */
++#ifdef	HNS_ENET
++#define PREALLOC_DMA_DEBUG_ENTRIES (1 << 17)
++#else
+  #define PREALLOC_DMA_DEBUG_ENTRIES (1 << 16)
+  #endif
++#endif
+
+  enum {
+  	dma_debug_single,
+
+
