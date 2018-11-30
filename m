@@ -2,160 +2,124 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F9DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF839C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CE720673
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:20:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Gccugtgp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CE720673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id B15D920673
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 23:21:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B15D920673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726679AbeLAKbX (ORCPT
+        id S1726691AbeLAKcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 05:31:23 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37335 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeLAKbX (ORCPT
+        Sat, 1 Dec 2018 05:32:36 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43956 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAKcg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 05:31:23 -0500
-Received: by mail-io1-f67.google.com with SMTP id f14so429330iol.4
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 15:20:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7OLitVEz1SetRn2MjAv+vIotpvPLKp4TtCihf1dsLlI=;
-        b=Gccugtgpz0FXwW/8n/LVhHTFcPZFeRumcTxbzjN/ujeeaKvmH0pXPbuQsGdatcpn+O
-         694wRbXMyrQdscYqTSzIe2A/N0Pd/iCNa079/FyasdcqkDbvX/3d9bIYN0TfTgCcTPO/
-         gpwzr4FoP1w+9Fye2dyRMqjRd3aCKu+2DD+c0=
+        Sat, 1 Dec 2018 05:32:36 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so3516657pfk.10;
+        Fri, 30 Nov 2018 15:21:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7OLitVEz1SetRn2MjAv+vIotpvPLKp4TtCihf1dsLlI=;
-        b=sZUiGjfUxyDhR/BYFMWS+vBq9wQUaA847OQXt0tOKEOsmPVV/v4EPLHdrhjgALuK7u
-         GC0LXLBe/JgB82tC0RJWcolgk6+g3jCRdqbaoCE+vavlwQHOJmRfAVGM4fKEHKTOQtYL
-         fXZjw5DLqEW+iU6uD1gmAdzAVA7WMtMsDdEDiKOKcXoUzo+i3IWvwwCWHE69xwZGAqPI
-         fHedkLna8BdopqQCJlyW8Ge8hRt/FyCD5i9/7oXV0atl3URV7g3NefQqw8/05IoTX3t1
-         +uilQn5qweSjP9RSUnxW5/PTHG9xFCa07scbViSnML1Md0QBCVpzlvKYxCJqQsy00V7Z
-         uKiw==
-X-Gm-Message-State: AA+aEWbpC+kg/7636MLiNcK379rhnAE/Z6zaGDtj3Do98bptLSpQrVIv
-        +p3lgVE0N/z6wl0AyxiGHUL0nHJARX3FDcf4Dv96TQ==
-X-Google-Smtp-Source: AFSGD/UthYa58zBLGA3f1x426lziwt2yWl5Ht7E2iaVuR1jvwTPR0sTEBkbhnNYJv+ElE+7l6qlmrB8oQEmxYWlrGJo=
-X-Received: by 2002:a6b:4001:: with SMTP id k1mr6892599ioa.34.1543620027279;
- Fri, 30 Nov 2018 15:20:27 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JEB/4Zv475uLn9MIf8zqMX+RFM2EbEbSyCy6bqSFF/E=;
+        b=R0gFO0mcakSPaSfj8WrbDYSL4UTQ/cBxrXkzsaSsNnMfrV2O9oHk4ReBuujkAuLv5D
+         eCR152g/1h1oZKyAoyYGTEKS5hG0dP8yEw64GuHTD6kRE4RUyigHn1sqJF91Djgbf+yJ
+         OxxxUt8rmhTSpkl2ggl+9aJGLWEor0ulAsNWtFyckS1Rhahs9Xmx8jYUsxuw79jtr1hG
+         c4glhC/xY8bUcUslu2rET1zvDCGfFPD/l2fF4prNTfjobYA7Nlyi4G2W1ZWUBNS0RD+n
+         kWT20vp3hguduhs+4CTBJK+4ycpeIk+safIQKBrNfn8gUe9WM6eZRrIBHE9ZZvuev/Bp
+         u9Aw==
+X-Gm-Message-State: AA+aEWZz7ACJe/6wV2GT/6gat8pbJdAnt1qr6zCPGUFmOx1459MkhTDC
+        co/ObYCtuEfKFZHsarmQAhI=
+X-Google-Smtp-Source: AFSGD/UVKyUUfttgmpXAmnFhGaCe+wjY9NXrKYmxqpVqFfJARmKX203/1/q7BLeTqTIlJgJO+70F2g==
+X-Received: by 2002:a63:680a:: with SMTP id d10mr6429182pgc.396.1543620101133;
+        Fri, 30 Nov 2018 15:21:41 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id d202sm9980502pfd.58.2018.11.30.15.21.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 15:21:39 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Fri, 30 Nov 2018 15:21:37 -0800
+Date:   Fri, 30 Nov 2018 15:21:37 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        dmitry.torokhov@gmail.com
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org
+Subject: Re: [driver-core PATCH v7 1/9] driver core: Move
+ async_synchronize_full call
+Message-ID: <20181130232137.GE28501@garbanzo.do-not-panic.com>
+References: <154345118835.18040.17186161872550839244.stgit@ahduyck-desk1.amr.corp.intel.com>
+ <154345153162.18040.15354788106932190561.stgit@ahduyck-desk1.amr.corp.intel.com>
 MIME-Version: 1.0
-References: <20181130203232.5743-1-robh@kernel.org> <CAKMK7uGrBnaip1E+vp6foGfvdRb2=bhPNOmmZfjTUt2HZPLQcA@mail.gmail.com>
- <CAL_JsqKwnzA+e6pbfUCzCX5ZCJAYixjJtDV2Dfh9u-bgOBKYHQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqKwnzA+e6pbfUCzCX5ZCJAYixjJtDV2Dfh9u-bgOBKYHQ@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Sat, 1 Dec 2018 00:20:15 +0100
-Message-ID: <CAKMK7uFoAKgKmqaz2GpTq958CijTp6EOJVYFcNKPcm1yEyqa0g@mail.gmail.com>
-Subject: Re: [RFC PATCH] of: Add a GitLab CI config file for unittests
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154345153162.18040.15354788106932190561.stgit@ahduyck-desk1.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:22 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Nov 30, 2018 at 2:53 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> >
-> > On Fri, Nov 30, 2018 at 9:32 PM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > This adds a GitLab CI config file running the DT unittest in a usermode
-> > > Linux build. The corresponding CI job can be found here:
-> > >
-> > > https://gitlab.com/robherring/linux-dt-unittest/pipelines
-> > >
-> > > This CI job can be duplicated by others by creating a kernel repo on a
-> > > GitLab instance and configuring GitLab CI to use
-> > > drivers/of/.gitlab-ci.yml config file.
-> > >
-> > > Cc: Frank Rowand <frowand.list@gmail.com>
-> > > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> >
-> > Adding dri-devel.
-> >
-> > > ---
-> > >  drivers/of/.gitlab-ci.yml | 18 ++++++++++++++++++
-> > >  1 file changed, 18 insertions(+)
-> > >  create mode 100644 drivers/of/.gitlab-ci.yml
-> > >
-> > > diff --git a/drivers/of/.gitlab-ci.yml b/drivers/of/.gitlab-ci.yml
-> > > new file mode 100644
-> > > index 000000000000..44a4824f5c33
-> > > --- /dev/null
-> > > +++ b/drivers/of/.gitlab-ci.yml
-> > > @@ -0,0 +1,18 @@
-> > > +# SPDX-License-Identifier: GPL-2.0+
-> > > +
-> > > +image: registry.gitlab.com/robherring/docker-images/ubuntu-kernel-build
-> >
-> > I think it's better to include the docker recipe too. One because
-> > shipping pre-built dockers is a license nightmare, second because
-> > better hackability. For a full on example see:
-> >
-> > https://gitlab.freedesktop.org/drm/igt-gpu-tools/blob/master/.gitlab-ci.yml
->
-> Humm, but in the end you are still publishing the docker images either
-> way. It's just a difference of publishing across projects and whether
-> it's 2 jobs or 1 job with 2 stages.
+On Wed, Nov 28, 2018 at 04:32:11PM -0800, Alexander Duyck wrote:
+> Move the async_synchronize_full call out of __device_release_driver and
+> into driver_detach.
+> 
+> The idea behind this is that the async_synchronize_full call will only
+> guarantee that any existing async operations are flushed. This doesn't do
+> anything to guarantee that a hotplug event that may occur while we are
+> doing the release of the driver will not be asynchronously scheduled.
+> 
+> By moving this into the driver_detach path we can avoid potential deadlocks
+> as we aren't holding the device lock at this point and we should not have
+> the driver we want to flush loaded so the flush will take care of any
+> asynchronous events the driver we are detaching might have scheduled.
+> 
+> Fixes: 765230b5f084 ("driver-core: add asynchronous probing support for drivers")
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Yeah, but it comes with sources for rebuilding the image :-)
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-> I do tend to prefer the Travis-CI simplicity of just listing packages
-> to install. It seems like the same could be done with docker and some
-> magic on the server side. At least for the simple case of 'install
-> this list of packages'.
+  Luis
 
-Yeah, gitlab is a bunch more explicit, and you need to do your caching
-of the setup you want yourself.
-
-> > For the kernel I guess the question is where we should put all the
-> > docker files. There's going to be some need for subsystem specific
-> > tooling (e.g. we want something that has igt installed eventually for
-> > anything drm), so maybe just keeping them in subsystem directories is
-> > best. Was at least my plan with drivers/gpu.
->
-> My plan (to the extent I have one) was to put the common parts into
-> the docker image and leave the small job specific things in the job
-> setup. Then I can use the same docker image across jobs. Maybe that's
-> a pointless goal in the docker world.
-
-We do that too. The different docker images we have is for different
-testing (new/old distros, and the cross build chain in userspace
-conflicts, so need separate docker images for that). Aside from those
-cases where we need different images because they're incompatible, we
-do reuse them.
-
-For the kernel there's much less of these userspace problems, so one
-image should be good enough for all jobs.
--Daniel
-
-> My dockerfile is simple enough, I could probably just create it within
-> the .gitlab-ci.yml.
->
-> Rob
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> ---
+>  drivers/base/dd.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 689ac9dc6d81..88713f182086 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -931,9 +931,6 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+>  
+>  	drv = dev->driver;
+>  	if (drv) {
+> -		if (driver_allows_async_probing(drv))
+> -			async_synchronize_full();
+> -
+>  		while (device_links_busy(dev)) {
+>  			device_unlock(dev);
+>  			if (parent)
+> @@ -1039,6 +1036,9 @@ void driver_detach(struct device_driver *drv)
+>  	struct device_private *dev_prv;
+>  	struct device *dev;
+>  
+> +	if (driver_allows_async_probing(drv))
+> +		async_synchronize_full();
+> +
+>  	for (;;) {
+>  		spin_lock(&drv->p->klist_devices.k_lock);
+>  		if (list_empty(&drv->p->klist_devices.k_list)) {
+> 
