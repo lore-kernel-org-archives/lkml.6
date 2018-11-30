@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E861C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF40C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CD0C2146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CD0C2146F
+	by mail.kernel.org (Postfix) with ESMTP id B16FA2082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 07:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16FA2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbeK3THY (ORCPT
+        id S1727063AbeK3THY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 30 Nov 2018 14:07:24 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50124 "EHLO
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50162 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbeK3THY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726648AbeK3THY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Nov 2018 14:07:24 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 494BC5FD57; Fri, 30 Nov 2018 15:58:55 +0800 (CST)
+        id 54C165FDC9; Fri, 30 Nov 2018 15:58:55 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -33,9 +33,9 @@ To:     Yong Deng <yong.deng@magewell.com>,
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] media: sun6i: Add H3 compatible
-Date:   Fri, 30 Nov 2018 15:58:45 +0800
-Message-Id: <20181130075849.16941-3-wens@csie.org>
+Subject: [PATCH 4/6] ARM: dts: sunxi: h3-h5: Add pinmux setting for CSI MCLK on PE1
+Date:   Fri, 30 Nov 2018 15:58:47 +0800
+Message-Id: <20181130075849.16941-5-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181130075849.16941-1-wens@csie.org>
 References: <20181130075849.16941-1-wens@csie.org>
@@ -46,31 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CSI controller found on the H3 (and H5) is a reduced version of the
-one found on the A31. It only has 1 channel, instead of 4 channels for
-time-multiplexed BT.656. Since the H3 is a reduced version, it cannot
-"fallback" to a compatible that implements more features than it
-supports.
+Some camera modules have the SoC feeding a master clock to the sensor
+instead of having a standalone crystal. This clock signal is generated
+from the clock control unit and output from the CSI MCLK function of
+pin PE1.
 
-Add a compatible string entry for the H3.
+Add a pinmux setting for it for camera sensors to reference.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-index 6950585edb5a..ee882b66a5ea 100644
---- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-@@ -893,6 +893,7 @@ static int sun6i_csi_remove(struct platform_device *pdev)
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index c9c9ec71945f..b70899500825 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -400,6 +400,11 @@
+ 				function = "csi";
+ 			};
  
- static const struct of_device_id sun6i_csi_of_match[] = {
- 	{ .compatible = "allwinner,sun6i-a31-csi", },
-+	{ .compatible = "allwinner,sun8i-h3-csi", },
- 	{ .compatible = "allwinner,sun8i-v3s-csi", },
- 	{},
- };
++			csi_mclk_pin: csi-mclk {
++				pins = "PE1";
++				function = "csi";
++			};
++
+ 			emac_rgmii_pins: emac0 {
+ 				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
+ 				       "PD5", "PD7", "PD8", "PD9", "PD10",
 -- 
 2.20.0.rc1
 
