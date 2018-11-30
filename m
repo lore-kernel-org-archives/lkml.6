@@ -2,199 +2,212 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839C3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D23FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0BC20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E05720863
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:59:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGu5HD0b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0BC20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="H65u3ydv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E05720863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeK3RGl (ORCPT
+        id S1726757AbeK3RIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:06:41 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42019 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeK3RGl (ORCPT
+        Fri, 30 Nov 2018 12:08:05 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:55504 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeK3RIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:06:41 -0500
-Received: by mail-ed1-f66.google.com with SMTP id j6so3858439edp.9;
-        Thu, 29 Nov 2018 21:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fSej9rhDuzriP43502WmBLjF2269U+EE7u/NX9KHncA=;
-        b=rGu5HD0bzB9mPNBoRNrzfcv24vqBBL/fsrPbQNg92clnKjYHuMgtPYprWKVnRQrrrb
-         wfv3627FEjAtYH9Tlw8dpZeMazavQpvPVrPh1+BmGBJpUCzqqhANH5RmxUj7knX2ceJ4
-         KvSaoSaiyqvRHNtjpnGmvjm+DClPj4p/7hj75eTmPlyxgIQaJGm/ODamvZLerdLtkNRC
-         RwOyVE5nPc4lCaRyLnVSxjpZ2jYxuYIF/NvTdI4i+BTauUgMP69bLjxW9tt/4jZYFnYQ
-         VMInwWzq1sW7eqxLN/gnO0zVfH53FAsvzXZMpd7x6U5tcVlOfbiIPrD+IGKKBV+aUqlN
-         OYVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fSej9rhDuzriP43502WmBLjF2269U+EE7u/NX9KHncA=;
-        b=nugyKgw+3q9VU7Zufk5rDgOJrvSKT7k3xJUQ5HXgzx0SvMq3Db/3ytcnMItUpz3iAv
-         3miDdG4IgW3NUIYI5QPBKfkgrSbNSzYZMCjWr3C9mRwvvgubUTYXAug1KErMtfjaqlJ2
-         mAh/WdNbgbpBDh0sJiFWKmisCQSUozBVRwUAgk16U0n4BF7pflZJKU990/e7ZNQmkDwA
-         feBO2aQcD++pINqP1Q+1GsKErN9fIxlpVWrsHMQMQxa45qRAiVOgST7AOsRacwyEyQ0P
-         sZwaH5KJ0the6EreMDgwIEAKKBVL4RLJW9VOsZ0TDTqvNFWsg/BFvGNHKcH3YKxBCp2N
-         XpLA==
-X-Gm-Message-State: AA+aEWYkhrGTvAF0l7qT83VUx15uwUZpv6QFP6bH7THIFzm+lixUYW/h
-        GeuQ4nWaqnbwDOUTB+cWLeL//ueA/Ni7XBMIKUA=
-X-Google-Smtp-Source: AFSGD/XkfCd2QbuiXAtJilb+yt13iECoManQWJF8Qj7jCcmY7KEfgiJyIvXFaYCEkxUe0/vwCX1uLostKbjoWKQyTHg=
-X-Received: by 2002:a50:93c5:: with SMTP id o63mr3999672eda.20.1543557510457;
- Thu, 29 Nov 2018 21:58:30 -0800 (PST)
+        Fri, 30 Nov 2018 12:08:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1543557596; x=1575093596;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=XpqupTVWAc5RsI55w5sOTDBNuD15nAsHQiNjExPdJ9w=;
+  b=H65u3ydvR2Akk0AEHvY1HxfAa8PPy62Ko+NZMNB+hj2kZox8/36KoIId
+   +mwV4aAUMqTO6ym896D9mcE8cc5mg17et/VS8VGLR5+CVxPL1QZ/8D+xU
+   RyOg3v3+bgg/4gHv79HTpsbY76JUSQiafG/JUK//z35tuDfybpq4JJuv4
+   x9dB1m3I6pL/Qvh51imlw9CvdU0YN8XQHsdBstNJAz9nrTFBj7IltT5BZ
+   6yYkgBdTCXPTe3PuXnghcjkeF2wA5uR91OggAyq9+S2FHLC1n1qlpfV92
+   JBSUZ1UYoU2IAQRaJQXeRmKMDTJk+Imoeoa4U/7fByyPeg70ICLKA+KuI
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.56,297,1539619200"; 
+   d="scan'208";a="200063071"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2018 13:59:56 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 29 Nov 2018 21:42:52 -0800
+Received: from th2t96qc2.ad.shared (HELO [10.86.56.90]) ([10.86.56.90])
+  by uls-op-cesaip02.wdc.com with ESMTP; 29 Nov 2018 21:59:56 -0800
+Subject: Re: [PATCH v2 4/4] irqchip: sifive-plic: Implement irq_set_affinity()
+ for SMP host
+To:     Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181127100317.12809-1-anup@brainfault.org>
+ <20181127100317.12809-5-anup@brainfault.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <71aaed41-c794-ea82-8d87-ddcde3506067@wdc.com>
+Date:   Thu, 29 Nov 2018 21:59:55 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <18d54cd3edbf4fd3a7c01962f41ead58@cnbox5.mioffice.cn>
-In-Reply-To: <18d54cd3edbf4fd3a7c01962f41ead58@cnbox5.mioffice.cn>
-From:   =?UTF-8?B?56iL5rSL?= <d17103513@gmail.com>
-Date:   Fri, 30 Nov 2018 13:58:14 +0800
-Message-ID: <CADd0cq3UZPfzdUXb_XtL23L-xHNjF-xV=wNVNDiF-NYPreioZw@mail.gmail.com>
-Subject: Re: > [PATCH] Security: Handle hidepid option correctly
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Davidlohr Bueso <dbueso@suse.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181127100317.12809-5-anup@brainfault.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is an article illustrates the details.
-https://medium.com/@topjohnwu/from-anime-game-to-android-system-security-vu=
-lnerability-9b955a182f20
+On 11/27/18 2:04 AM, Anup Patel wrote:
+> Currently on SMP host, all CPUs take external interrupts routed via
+> PLIC. All CPUs will try to claim a given external interrupt but only
+> one of them will succeed while other CPUs would simply resume whatever
+> they were doing before. This means if we have N CPUs then for every
+> external interrupt N-1 CPUs will always fail to claim it and waste
+> their CPU time.
+> 
+> Instead of above, external interrupts should be taken by only one CPU
+> and we should have provision to explicity specify IRQ affinity from
+s/explicity/explicitly
 
-And There is a similar fix on kernel-4.4:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D99663be772c827b8f5f594fe87eb4807be1994e5
+> kernel-space or user-space.
+> 
+> This patch provides irq_set_affinity() implementation for PLIC driver.
+> It also updates irq_enable() such that PLIC interrupts are only enabled
+> for one of CPUs specified in IRQ affinity mask.
+> 
+> With this patch in-place, we can change IRQ affinity at any-time from
+> user-space using procfs.
+> 
+> Example:
+> 
+> / # cat /proc/interrupts
+>             CPU0       CPU1       CPU2       CPU3
+>    8:         44          0          0          0  SiFive PLIC   8  virtio0
+>   10:         48          0          0          0  SiFive PLIC  10  ttyS0
+> IPI0:        55        663         58        363  Rescheduling interrupts
+> IPI1:         0          1          3         16  Function call interrupts
+> / #
+> / #
+> / # echo 4 > /proc/irq/10/smp_affinity
+> / #
+> / # cat /proc/interrupts
+>             CPU0       CPU1       CPU2       CPU3
+>    8:         45          0          0          0  SiFive PLIC   8  virtio0
+>   10:        160          0         17          0  SiFive PLIC  10  ttyS0
+> IPI0:        68        693         77        410  Rescheduling interrupts
+> IPI1:         0          2          3         16  Function call interrupts
+> 
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> ---
+>   drivers/irqchip/irq-sifive-plic.c | 35 +++++++++++++++++++++++++++++--
+>   1 file changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+> index ffd4deaca057..fec7da3797fa 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -98,14 +98,42 @@ static void plic_irq_toggle(const struct cpumask *mask, int hwirq, int enable)
+>   
+>   static void plic_irq_enable(struct irq_data *d)
+>   {
+> -	plic_irq_toggle(irq_data_get_affinity_mask(d), d->hwirq, 1);
+> +	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
+> +					   cpu_online_mask);
+> +	WARN_ON(cpu >= nr_cpu_ids);
+> +	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
+>   }
+>   
+>   static void plic_irq_disable(struct irq_data *d)
+>   {
+> -	plic_irq_toggle(irq_data_get_affinity_mask(d), d->hwirq, 0);
+> +	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+>   }
+>   
+> +#ifdef CONFIG_SMP
+> +static int plic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+> +			    bool force)
+> +{
+> +	unsigned int cpu;
+> +
+> +	if (!force)
+> +		cpu = cpumask_any_and(mask_val, cpu_online_mask);
+> +	else
+> +		cpu = cpumask_first(mask_val);
+> +
+> +	if (cpu >= nr_cpu_ids)
+> +		return -EINVAL;
+> +
+> +	if (!irqd_irq_disabled(d)) {
+> +		plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+> +		plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
 
-Q: Other filesystems parse the options from fill_super().  Is proc
-special in some fashion?
-A: According to my research, start_kernel will call proc_mount first,
-and initialize sb->s_root before any userspace process runs. If others
-want to mount it, all options will be ignored.
-     AOSP change here:
-https://android-review.googlesource.com/c/platform/system/core/+/181345/4/i=
-nit/init.cpp
-     At first I though we should mount it with MS_REMOUNT flag. But
-mount will failed. Though i can mount it first, and then mount second
-time with MS_REMOUNT, which is tricky
+irq is disabled for a fraction of time for cpu as well.
+You can use cpumask_andnot to avoid that.
 
-Q:  Why is this considered to be security sensitive?  I can guess, but
-I'd like to know your reasoning.
-A: See the article above. It's part of Android sanbox.
 
-=E7=A8=8B=E6=B4=8B <chengyang@xiaomi.com> =E4=BA=8E2018=E5=B9=B411=E6=9C=88=
-30=E6=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8A=E5=8D=8810:34=E5=86=99=E9=81=93=EF=
-=BC=9A
->
-> Here is an article illustrates the details.
-> https://medium.com/@topjohnwu/from-anime-game-to-android-system-security-=
-vulnerability-9b955a182f20
->
-> And There is a similar fix on kernel-4.4:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3D99663be772c827b8f5f594fe87eb4807be1994e5
->
-> Q: Other filesystems parse the options from fill_super().  Is proc specia=
-l in some fashion?
-> A: According to my research, start_kernel will call proc_mount first, and=
- initialize sb->s_root before any userspace process runs. If others want to=
- mount it, all options will be ignored.
->      AOSP change here: https://android-review.googlesource.com/c/platform=
-/system/core/+/181345/4/init/init.cpp
->      At first I though we should mount it with MS_REMOUNT flag. But kerne=
-l will crash if we did this.
->
-> Q:  Why is this considered to be security sensitive?  I can guess, but I'=
-d like to know your reasoning.
-> A: See the article above. It's part of Android sanbox.
->
->
-> > [PATCH] Security: Handle hidepid option correctly
->
-> Why is this considered to be security sensitive?  I can guess, but I'd li=
-ke to know your reasoning.
->
-> On Thu, 29 Nov 2018 19:08:21 +0800 mailto:d17103513@gmail.com wrote:
->
-> > From: Cheng Yang <mailto:chengyang@xiaomi.com>
-> >
-> > The proc_parse_options() call from proc_mount() runs only once at boot
-> > time.  So on any later mount attempt, any mount options are ignored
-> > because ->s_root is already initialized.
-> > As a consequence, "mount -o <options>" will ignore the options.  The
-> > only way to change mount options is "mount -o remount,<options>".
-> > To fix this, parse the mount options unconditionally.
-> >
-> > --- a/fs/proc/inode.c
-> > +++ b/fs/proc/inode.c
-> > @@ -493,13 +493,9 @@ struct inode *proc_get_inode(struct super_block
-> > *sb, struct proc_dir_entry *de)
-> >
-> >  int proc_fill_super(struct super_block *s, void *data, int silent)  {
-> > -struct pid_namespace *ns =3D get_pid_ns(s->s_fs_info);
-> >  struct inode *root_inode;
-> >  int ret;
-> >
-> > -if (!proc_parse_options(data, ns))
-> > -return -EINVAL;
-> > -
-> >  /* User space would break if executables or devices appear on proc */
-> >  s->s_iflags |=3D SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
-> >  s->s_flags |=3D SB_NODIRATIME | SB_NOSUID | SB_NOEXEC; diff --git
-> > a/fs/proc/root.c b/fs/proc/root.c index f4b1a9d..f5f3bf3 100644
-> > --- a/fs/proc/root.c
-> > +++ b/fs/proc/root.c
-> > @@ -98,6 +98,9 @@ static struct dentry *proc_mount(struct file_system_t=
-ype *fs_type,
-> >  ns =3D task_active_pid_ns(current);
-> >  }
-> >
-> > +if (!proc_parse_options(data, ns))
-> > +return ERR_PTR(-EINVAL);
-> > +
-> >  return mount_ns(fs_type, flags, data, ns, ns->user_ns,
-> > proc_fill_super);  }
->
-> Other filesystems parse the options from fill_super().  Is proc special i=
-n some fashion?
->
-> #/******=E6=9C=AC=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=BB=B6=
-=E5=90=AB=E6=9C=89=E5=B0=8F=E7=B1=B3=E5=85=AC=E5=8F=B8=E7=9A=84=E4=BF=9D=E5=
-=AF=86=E4=BF=A1=E6=81=AF=EF=BC=8C=E4=BB=85=E9=99=90=E4=BA=8E=E5=8F=91=E9=80=
-=81=E7=BB=99=E4=B8=8A=E9=9D=A2=E5=9C=B0=E5=9D=80=E4=B8=AD=E5=88=97=E5=87=BA=
-=E7=9A=84=E4=B8=AA=E4=BA=BA=E6=88=96=E7=BE=A4=E7=BB=84=E3=80=82=E7=A6=81=E6=
-=AD=A2=E4=BB=BB=E4=BD=95=E5=85=B6=E4=BB=96=E4=BA=BA=E4=BB=A5=E4=BB=BB=E4=BD=
-=95=E5=BD=A2=E5=BC=8F=E4=BD=BF=E7=94=A8=EF=BC=88=E5=8C=85=E6=8B=AC=E4=BD=86=
-=E4=B8=8D=E9=99=90=E4=BA=8E=E5=85=A8=E9=83=A8=E6=88=96=E9=83=A8=E5=88=86=E5=
-=9C=B0=E6=B3=84=E9=9C=B2=E3=80=81=E5=A4=8D=E5=88=B6=E3=80=81=E6=88=96=E6=95=
-=A3=E5=8F=91=EF=BC=89=E6=9C=AC=E9=82=AE=E4=BB=B6=E4=B8=AD=E7=9A=84=E4=BF=A1=
-=E6=81=AF=E3=80=82=E5=A6=82=E6=9E=9C=E6=82=A8=E9=94=99=E6=94=B6=E4=BA=86=E6=
-=9C=AC=E9=82=AE=E4=BB=B6=EF=BC=8C=E8=AF=B7=E6=82=A8=E7=AB=8B=E5=8D=B3=E7=94=
-=B5=E8=AF=9D=E6=88=96=E9=82=AE=E4=BB=B6=E9=80=9A=E7=9F=A5=E5=8F=91=E4=BB=B6=
-=E4=BA=BA=E5=B9=B6=E5=88=A0=E9=99=A4=E6=9C=AC=E9=82=AE=E4=BB=B6=EF=BC=81 Th=
-is e-mail and its attachments contain confidential information from XIAOMI,=
- which is intended only for the person or entity whose address is listed ab=
-ove. Any use of the information contained herein in any way (including, but=
- not limited to, total or partial disclosure, reproduction, or disseminatio=
-n) by persons other than the intended recipient(s) is prohibited. If you re=
-ceive this e-mail in error, please notify the sender by phone or email imme=
-diately and delete it!******/#
+Moreover, something is weird here. I tested the patch in Unleashed with 
+a debug statement.
+
+Here are the cpumask plic_set_affinity receives.
+
+# echo 0 > /proc[  280.810000] plic: plic_set_affinity: set affinity [0-1]
+[  280.810000] plic: plic_set_affinity: cpu = [0] irq = 4
+# echo 1 > /proc[  286.290000] plic: plic_set_affinity: set affinity [0]
+[  286.290000] plic: plic_set_affinity: cpu = [0] irq = 4
+# echo 2 > /proc[  292.130000] plic: plic_set_affinity: set affinity [1]
+[  292.130000] plic: plic_set_affinity: cpu = [1] irq = 4
+# echo 3 > /proc[  297.750000] plic: plic_set_affinity: set affinity [0-1]
+[  297.750000] plic: plic_set_affinity: cpu = [0] irq = 4
+
+# echo 2 > /proc/irq/4/smp_affinity
+[  322.850000] plic: plic_set_affinity: set affinity [1]
+[  322.850000] plic: plic_set_affinity: cpu = [1] irq = 4
+
+I have not figured out why it receive cpu mask for 0 & 3.
+Not sure if logical cpu id to hart id mapping is responsible for other 
+two case. I will continue to test tomorrow.
+
+Regards,
+Atish
+> +	}
+> +
+
+> +	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+> +
+> +	return IRQ_SET_MASK_OK_DONE;
+> +}
+> +#endif
+> +
+>   static struct irq_chip plic_chip = {
+>   	.name		= "SiFive PLIC",
+>   	/*
+> @@ -114,6 +142,9 @@ static struct irq_chip plic_chip = {
+>   	 */
+>   	.irq_enable	= plic_irq_enable,
+>   	.irq_disable	= plic_irq_disable,
+> +#ifdef CONFIG_SMP
+> +	.irq_set_affinity = plic_set_affinity,
+> +#endif
+>   };
+>   
+>   static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
+> 
+
