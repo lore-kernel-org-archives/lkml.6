@@ -2,169 +2,502 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38844C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BEAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC7672145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6782D20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 05:37:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="atjuFAJT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC7672145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KCIfZkNg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6782D20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbeK3Qii (ORCPT
+        id S1726633AbeK3Qpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 11:38:38 -0500
-Received: from mail-eopbgr00048.outbound.protection.outlook.com ([40.107.0.48]:25725
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeK3Qih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 11:38:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S38rqo3KsT9aGYkjuKnlWNJWGuRMo2p9cCDx8k4XU6k=;
- b=atjuFAJTkGmjmyS1LegkUPHFpV2A/trpSXIcpVI/SH5zyR/sgzqmcx1ob1hfQnMzhc6KTnaobX7o/5TgscrBwFUQlsBUtklWFQn1bVqK3uQ2IvLZ1iu8qyPSwKS9mkuW5gZYD2NEaYmD7vsJrvD6qJfSQx9l8UQ+oElfXw7G7fY=
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com (20.177.49.14) by
- VI1PR04MB4128.eurprd04.prod.outlook.com (52.133.14.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Fri, 30 Nov 2018 05:29:47 +0000
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a]) by VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a%2]) with mapi id 15.20.1339.032; Fri, 30 Nov 2018
- 05:29:47 +0000
-From:   Bharat Bhushan <bharat.bhushan@nxp.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-CC:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        David Daney <david.daney@cavium.com>,
-        "jglauber@cavium.com" <jglauber@cavium.com>,
-        "mbroemme@libmpq.org" <mbroemme@libmpq.org>,
-        "chrisrblake93@gmail.com" <chrisrblake93@gmail.com>
-Subject: RE: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Topic: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Index: AQHUhi2yh4+Qm28J50ixacdSn4eZIqVjwNwAgAAJqACAALvmYIABG3kAgACEALA=
-Date:   Fri, 30 Nov 2018 05:29:47 +0000
-Message-ID: <VI1PR04MB4845D4ED02E38246E71DD1A49AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
-References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
- <20181127153356.GA112381@google.com> <20181127090830.084fedf1@x1.home>
- <VI1PR04MB48457E23AA3354316C7782D69AD10@VI1PR04MB4845.eurprd04.prod.outlook.com>
- <CAErSpo7By1t5X=M=x_+Fs8TeROACBnS3f5ujsi=Ewiogh=-wRg@mail.gmail.com>
-In-Reply-To: <CAErSpo7By1t5X=M=x_+Fs8TeROACBnS3f5ujsi=Ewiogh=-wRg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharat.bhushan@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4128;6:gDJtOw/ANRnuAX/StZCg4kKWN5oCK1g+Tg8x70392k4zCKz11HGzboW8PP3eP+DFjvCfz0zQBk5XO1bwKXpjq3Mni80pza5oGbEqnLTFbFYean783vxatCT/WS+FSZ2D6zLKfsu6ku1NZ5tEyCRQp28R1zmfDbZiH5WUefuuwdHXFEahcIcEtUsu2q7OJH94eEvVVK8MPh1YFk/k11LpOFxTjZlLHgWxL/Udh2KXw1a/KRbcoRNpfUkkdC8gGGWLtt37UWAzzi78SfIal6Wc5R+86QMDnldGznpImpVTHwx9nnxVBOkcFrlMvLejulf+XQ6Crbv39ZIb5K07fn7rhdgGYV3+4/N4sGk5Tckh0+crxe1EEeCRMyNlRK5anaetxcAhHNRecyms6Od1cHQbXYRH5Vs0afdp1qJ8BtAN5oUlM6/GNrD8H1UedK3YH8C9mUwG6lS46SRajge6PoI4Og==;5:uNCe5G123ztrf7CY0fbjrsvmQbIq9kBWd+KuW6blLqxZxRJgAq5/WYUqKb3T8d/A7vUiVpCtYp23aKvJPUFJKWB8//PeZZWyAh2OHSO0Vf9/SFErvN++Pu7MbBgeEyZdgp0qFT9TinzaI6kvZX5B/ncy9wmRwkrCQgFllUrpg/w=;7:iQLDSRsUe4xlJxMA3aykjYRSAjAxyJkC4XE2k97qP78pIqf5IMkYAH4Ai+lnbX80rg2TMppHYm8dj46PxlXzklVMjN8//sPj/ToRvefVgkXqByHYc9jWLn5PzVeKX4dbee/HgXgeBFcJX5B4zEs/3w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c08cca2a-834a-4630-f304-08d65684d7a3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4128;
-x-ms-traffictypediagnostic: VI1PR04MB4128:
-x-microsoft-antispam-prvs: <VI1PR04MB412832F052E33AFB8F5597B29AD30@VI1PR04MB4128.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231453)(999002)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4128;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4128;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(13464003)(9686003)(11346002)(6246003)(6916009)(71190400001)(71200400001)(97736004)(3846002)(6116002)(93886005)(54906003)(229853002)(39060400002)(6436002)(14454004)(25786009)(8676002)(256004)(14444005)(53936002)(81166006)(81156014)(8936002)(2906002)(478600001)(78486014)(33656002)(74316002)(105586002)(5660300001)(7696005)(106356001)(102836004)(55236004)(86362001)(68736007)(53546011)(99286004)(186003)(6506007)(446003)(66066001)(7736002)(4326008)(316002)(44832011)(476003)(26005)(7416002)(305945005)(486006)(76176011)(55016002)(505234006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4128;H:VI1PR04MB4845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: c9Uf15fJjqDG2VLMuGZYjwCnbtorpYAq92TIzWfyaqPqzzb8SDiilzZCII8BegptVezmEOg6u5/zATX0RsM5/0W7QFK0QfX0OBnDVFGFCd804LZD5oWFdRWMc5Zvo8zX1sJAycHnqMkQL0CJcF5iVD76gEp2GDwQmcklAvCHQBKbKumMQzfMWb8hPoS11mWR1weONpmMa6dcRorq8fNud5DIAvXwyu7Xm/fV0L6puPHSCUNP1/3S3So+ZSMC7ojhv+r9SZJrpcVL+Nr25E93r0F8oBElzBdmgUAigRk14Ur23SxxXUSPbAph/IwhNRnxySJRwbBOyTTB/LgZHrYHLlaALsLPBklKnO+lkBKFTQQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 30 Nov 2018 11:45:41 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50750 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbeK3Qpl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 11:45:41 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 125so4506134wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 21:37:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7mCo0H0ztwXASPWVS6EwIjRVqPAn1Z+mviSaNIfu3u4=;
+        b=KCIfZkNgXVdwjuIqpsxrWu/vCHiMwzdmtEzVnX4r4paaCRMTM4YK6Na8H2rGV0ZkmC
+         JjxJCo78+FAJmr3dG3iS6i2gV1NfqZeJfAPxeKeEPJv3WrKKmIr1C4lGjHxn+53i1l3D
+         s9doxaLTc6yNpTtAKsaAfVW6PuRY+bNzBwnZg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7mCo0H0ztwXASPWVS6EwIjRVqPAn1Z+mviSaNIfu3u4=;
+        b=AewbaYj7XvCvSRt/C4XwUJNXPRuYwy1sYsqyjur4ETqCN2g9rgAZDG4x0AoZmn93nF
+         hmEUoaM3BWQ+09X042OHlYBrR9+2pvq+z7YYhTjg6XK+ZFeL5bSxM4DbfTKeFBn5/A/H
+         Qq2X3z9LCu+H/rW1m3tP+Bn+2KR4Kuzzie7RmqJ5x9POoF4BHAR7aJS/5TGq/fpqQJkI
+         xSVjTTmil5GTU5z0bbf6+whYBp9zYdt/ITOwe+pwoQQAtMVzNMr79TTHqigE8hZsqJoj
+         eTkUE1HFPQhQ1vLb180J0RotMYuivPkS63Tzrwzjz35s/YkzX437bzN0/crDo4IGM583
+         zJSA==
+X-Gm-Message-State: AA+aEWaber9T5QXw+5qxSmHKB9Q4sLYDpTjfHIYM7NIyhCmBDQzgCauq
+        CsvXAx8QAh0Hsz8aewYTuqpOmJ/qEye1h8UYAik1XA==
+X-Google-Smtp-Source: AFSGD/WSZIsyjpj3mqWMd5ZSwrcy+DjU28GdmBMAy3rWNaYTUZUC64SC1wkwOAQWD+L5vT9jj8RQPAq8zk+z1K3jZqE=
+X-Received: by 2002:a1c:ce0e:: with SMTP id e14mr4407503wmg.53.1543556251278;
+ Thu, 29 Nov 2018 21:37:31 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c08cca2a-834a-4630-f304-08d65684d7a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 05:29:47.1927
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4128
+References: <1542082418-16675-1-git-send-email-srinath.mannam@broadcom.com>
+ <1542082418-16675-3-git-send-email-srinath.mannam@broadcom.com>
+ <b626bff7-9228-b53f-b16a-7f6fb1f27100@ti.com> <CABe79T4r-20DmQoHX5HXFU0O7KXid=JuhKVtA7+yzkrb4vafkA@mail.gmail.com>
+ <46144237-8069-2cf5-a298-14a7ff0bd634@ti.com>
+In-Reply-To: <46144237-8069-2cf5-a298-14a7ff0bd634@ti.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Fri, 30 Nov 2018 11:07:19 +0530
+Message-ID: <CABe79T5VpbmgOuOjSceP+W3A028uO+SBD+coHOnSssMKPcJi8w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] phy: sr-usb: Add stingray usb phy driver
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQmpvcm4gSGVsZ2Fh
-cyA8YmhlbGdhYXNAZ29vZ2xlLmNvbT4NCj4gU2VudDogVGh1cnNkYXksIE5vdmVtYmVyIDI5LCAy
-MDE4IDE6NDYgQU0NCj4gVG86IEJoYXJhdCBCaHVzaGFuIDxiaGFyYXQuYmh1c2hhbkBueHAuY29t
-Pg0KPiBDYzogYWxleC53aWxsaWFtc29uQHJlZGhhdC5jb207IEJqb3JuIEhlbGdhYXMgPGhlbGdh
-YXNAa2VybmVsLm9yZz47IGxpbnV4LQ0KPiBwY2lAdmdlci5rZXJuZWwub3JnOyBMaW51eCBLZXJu
-ZWwgTWFpbGluZyBMaXN0IDxsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZz47IGJoYXJh
-dGIueWFkYXZAZ21haWwuY29tOyBEYXZpZCBEYW5leQ0KPiA8ZGF2aWQuZGFuZXlAY2F2aXVtLmNv
-bT47IGpnbGF1YmVyQGNhdml1bS5jb207DQo+IG1icm9lbW1lQGxpYm1wcS5vcmc7IGNocmlzcmJs
-YWtlOTNAZ21haWwuY29tDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIFBDSTogTWFyayBOWFAgTFMx
-MDg4IHRvIGF2b2lkIGJ1cyByZXNldCBidXMNCj4gDQo+IE9uIFR1ZSwgTm92IDI3LCAyMDE4IGF0
-IDEwOjMyIFBNIEJoYXJhdCBCaHVzaGFuDQo+IDxiaGFyYXQuYmh1c2hhbkBueHAuY29tPiB3cm90
-ZToNCj4gDQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJvbTogQWxl
-eCBXaWxsaWFtc29uIDxhbGV4LndpbGxpYW1zb25AcmVkaGF0LmNvbT4NCj4gPiA+IFNlbnQ6IFR1
-ZXNkYXksIE5vdmVtYmVyIDI3LCAyMDE4IDk6MzkgUE0NCj4gPiA+IFRvOiBCam9ybiBIZWxnYWFz
-IDxoZWxnYWFzQGtlcm5lbC5vcmc+DQo+ID4gPiBDYzogQmhhcmF0IEJodXNoYW4gPGJoYXJhdC5i
-aHVzaGFuQG54cC5jb20+Ow0KPiA+ID4gbGludXgtcGNpQHZnZXIua2VybmVsLm9yZzsgbGludXgt
-a2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGJoYXJhdGIueWFkYXZAZ21haWwuY29tOyBE
-YXZpZCBEYW5leSA8ZGF2aWQuZGFuZXlAY2F2aXVtLmNvbT47DQo+IEphbg0KPiA+ID4gR2xhdWJl
-ciA8amdsYXViZXJAY2F2aXVtLmNvbT47IE1haWsgQnJvZW1tZQ0KPiA8bWJyb2VtbWVAbGlibXBx
-Lm9yZz47DQo+ID4gPiBDaHJpcyBCbGFrZSA8Y2hyaXNyYmxha2U5M0BnbWFpbC5jb20+DQo+ID4g
-PiBTdWJqZWN0OiBSZTogW1BBVENIXSBQQ0k6IE1hcmsgTlhQIExTMTA4OCB0byBhdm9pZCBidXMg
-cmVzZXQgYnVzDQo+ID4gPg0KPiA+ID4gT24gVHVlLCAyNyBOb3YgMjAxOCAwOTozMzo1NiAtMDYw
-MA0KPiA+ID4gQmpvcm4gSGVsZ2FhcyA8aGVsZ2Fhc0BrZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+
-ID4gPiA+IDQpIElzIHRoZXJlIGEgaGFyZHdhcmUgZXJyYXR1bSBmb3IgdGhpcz8gIElmIHNvLCBw
-bGVhc2UgaW5jbHVkZQ0KPiA+ID4gPiB0aGUgVVJMIGhlcmUuDQo+ID4NCj4gPiBObyBoL3cgZXJy
-YXRhIGFzIG9mIG5vdy4NCj4gDQo+IERvZXMgdGhhdCBtZWFuIChhKSB0aGUgSFcgZm9sa3MgYWdy
-ZWUgdGhpcyBpcyBhIGhhcmR3YXJlIHByb2JsZW0gYnV0IHRoZXkNCj4gaGF2ZW4ndCB3cml0dGVu
-IGFuIGVycmF0dW0sIChiKSB0aGVyZSBpcyBhbiBlcnJhdHVtIGJ1dCBpdCBpc24ndCBwdWJsaWMs
-IChjKSB3ZQ0KPiBkb24ndCBoYXZlIGFueSBjb25jcmV0ZSBldmlkZW5jZSBvZiBhIGhhcmR3YXJl
-IHByb2JsZW0sIGJ1dCB0aGluZ3MganVzdA0KPiBkb24ndCB3b3JrIGlmIHdlIGRvIGEgYnVzIHJl
-c2V0LCAoZCkgc29tZXRoaW5nIGVsc2U/DQoNCkkgd2lsbCBzYXkgaXQgaXMgKGMpIC0gbm90IGNv
-bmNsdWRlZCB0byBiZSBoYXJkd2FyZSBoL3cgaXNzdWUuIA0KDQo+IA0KPiA+IEluIHBjaV9yZXNl
-dF9zZWNvbmRhcnlfYnVzKCkgSSBoYXZlIHRyaWVkIHRvIGluY3JlYXNlIHRoZSBkZWxheSBhZnRl
-ciByZXNldA0KPiBidXQgbm90IGhlbHBlZC4NCj4gPiBEbyBJIG5lZWQgdG8gYWRkIGRlbGF5IGF0
-IHNvbWUgb3RoZXIgcGxhY2UgYXMgd2VsbD8NCj4gDQo+IE5vLCBJIHRoaW5rIHRoZSBwbGFjZSB5
-b3UgdHJpZWQgc2hvdWxkIGJlIGVub3VnaC4NCj4gDQo+IFlvdSBzaG91bGQgYWxzbyBiZSBhYmxl
-IHRvIGV4ZXJjaXNlIHRoaXMgZnJvbSB1c2VyLXNwYWNlIGJ5IHVzaW5nICJzZXRwY2kiIHRvDQo+
-IHNldCBhbmQgY2xlYXIgdGhlIFNlY29uZGFyeSBCdXMgUmVzZXQgYml0IGluIHRoZSBCcmlkZ2Ug
-Q29udHJvbCByZWdpc3Rlci4gIFRoZW4NCj4geW91IGNhbiBhbHNvIHVzZSBzZXRwY2kgdG8gcmVh
-ZC93cml0ZSBjb25maWcgc3BhY2Ugb2YgdGhlIE5JQy4gIFRoZSBrZXJuZWwNCj4gd291bGQgbm9y
-bWFsbHkgcmVhZCB0aGUgVmVuZG9yIGFuZCBEZXZpY2UgSURzIGFzIHRoZSBmaXJzdCBhY2Nlc3Mg
-dG8gdGhlDQo+IGRldmljZSBkdXJpbmcgZW51bWVyYXRpb24uICBZb3UgYWxzbyBtaWdodCBiZSBh
-YmxlIHRvIGxlYXJuIHNvbWV0aGluZyBieQ0KPiB1c2luZyAibHNwY2kgLXZ2IiBvbiB0aGUgYnJp
-ZGdlIGJlZm9yZSBhbmQgYWZ0ZXIgdGhlIHJlc2V0IHRvIHNlZSBpZiBpdCBsb2dzIGFueQ0KPiBB
-RVIgYml0cyAoaWYgaXQgc3VwcG9ydHMgQUVSKSBvciB0aGUgb3RoZXIgc3RhbmRhcmQgZXJyb3Ig
-bG9nZ2luZyBiaXRzLg0KDQpJIHRyaWVkIGJlbG93IHNlcXVlbmNlIGZvciBTZWNvbmRhcnkgYnVz
-IHJlc2V0IGFuZCBkZXZpY2UgY29uZmlnIHNwYWNlIHNob3cgMHhmZg0KDQpyb290QGxvY2FsaG9z
-dDp+IyBsc3BjaSAteA0KMDAwMjowMDowMC4wIFBDSSBicmlkZ2U6IEZyZWVzY2FsZSBTZW1pY29u
-ZHVjdG9yIEluYyBEZXZpY2UgODBjMCAocmV2IDEwKQ0KMDA6IDU3IDE5IGMwIDgwIDA3IDAxIDEw
-IDAwIDEwIDAwIDA0IDA2IDA4IDAwIDAxIDAwDQoxMDogMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAg
-MDAgMDEgZmYgMDAgMDEgMDEgMDAgMDANCjIwOiAwMCA0MCAwMCA0MCBmMSBmZiAwMSAwMCAwMCAw
-MCAwMCAwMCAwMCAwMCAwMCAwMA0KMzA6IDAwIDAwIDAwIDAwIDQwIDAwIDAwIDAwIDAwIDAwIDAw
-IDQwIDYzIDAxIDAwIDAwDQoNCjAwMDI6MDE6MDAuMCBFdGhlcm5ldCBjb250cm9sbGVyOiBJbnRl
-bCBDb3Jwb3JhdGlvbiA4MjU3NEwgR2lnYWJpdCBOZXR3b3JrIENvbm5lY3Rpb24NCjAwOiA4NiA4
-MCBkMyAxMCAwNiAwNCAxMCAwMCAwMCAwMCAwMCAwMiAxMCAwMCAwMCAwMA0KMTA6IDAwIDAwIDBj
-IDQwIDAwIDAwIDAwIDQwIDAxIDAwIDAwIDAwIDAwIDAwIDBlIDQwDQoyMDogMDAgMDAgMDAgMDAg
-MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgODYgODAgMWYgYTANCjMwOiAwMCAwMCAyNCA0MCBjOCAw
-MCAwMCAwMCAwMCAwMCAwMCAwMCA2MyAwMSAwMCAwMA0KDQpyb290QGxvY2FsaG9zdDp+IyAgc2V0
-cGNpIC1zIDAwMDI6MDA6MDAuMCAweDNlLmI9MHg0MA0Kcm9vdEBsb2NhbGhvc3Q6fiMgIHNldHBj
-aSAtcyAwMDAyOjAwOjAwLjAgMHgzZS5iPTB4MDANCg0Kcm9vdEBsb2NhbGhvc3Q6fiMgbHNwY2kg
-LXgNCjAwMDI6MDA6MDAuMCBQQ0kgYnJpZGdlOiBGcmVlc2NhbGUgU2VtaWNvbmR1Y3RvciBJbmMg
-RGV2aWNlIDgwYzAgKHJldiAxMCkNCjAwOiA1NyAxOSBjMCA4MCAwNyAwMSAxMCAwMCAxMCAwMCAw
-NCAwNiAwOCAwMCAwMSAwMA0KMTA6IDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAxIGZmIDAw
-IDAxIDAxIDAwIDAwDQoyMDogMDAgNDAgMDAgNDAgZjEgZmYgMDEgMDAgMDAgMDAgMDAgMDAgMDAg
-MDAgMDAgMDANCjMwOiAwMCAwMCAwMCAwMCA0MCAwMCAwMCAwMCAwMCAwMCAwMCA0MCA2MyAwMSAw
-MCAwMA0KDQowMDAyOjAxOjAwLjAgRXRoZXJuZXQgY29udHJvbGxlcjogSW50ZWwgQ29ycG9yYXRp
-b24gODI1NzRMIEdpZ2FiaXQgTmV0d29yayBDb25uZWN0aW9uIChyZXYgZmYpDQowMDogZmYgZmYg
-ZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYNCjEwOiBmZiBmZiBmZiBm
-ZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZg0KMjA6IGZmIGZmIGZmIGZmIGZm
-IGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmDQozMDogZmYgZmYgZmYgZmYgZmYgZmYg
-ZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYNCg0KVGhhbmtzDQotQmhhcmF0DQoNCg0K
+Hi Kishon,
+
+Thank you for more information. Please find my answers below in line.
+
+On Fri, Nov 30, 2018 at 9:56 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>
+> Hi,
+>
+> On 29/11/18 6:31 PM, Srinath Mannam wrote:
+> > Hi Kishon,
+> >
+> > Thank you for review.. Please find my answers below in line.
+> >
+> >
+> > On Thu, Nov 29, 2018 at 3:55 PM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On 13/11/18 9:43 AM, Srinath Mannam wrote:
+> >>> This driver supports all versions of stingray SS and HS
+> >>> USB phys.
+> >>> In version 1 is combo phy contain both SS and HS phys
+> >>> in a common IO space.
+> >>> In version 2 a single HS phy.
+> >>> These phys support both xHCI host driver and
+> >>> BDC Broadcom device controller driver.
+> >>>
+> >>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> >>> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> >>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> >>> ---
+> >>>  drivers/phy/broadcom/Kconfig          |  11 +
+> >>>  drivers/phy/broadcom/Makefile         |   1 +
+> >>>  drivers/phy/broadcom/phy-bcm-sr-usb.c | 367 ++++++++++++++++++++++++++++++++++
+> >>>  3 files changed, 379 insertions(+)
+> >>>  create mode 100644 drivers/phy/broadcom/phy-bcm-sr-usb.c
+> >>>
+> >>> diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
+> >>> index 8786a96..c1e4dd5 100644
+> >>> --- a/drivers/phy/broadcom/Kconfig
+> >>> +++ b/drivers/phy/broadcom/Kconfig
+> >>> @@ -10,6 +10,17 @@ config PHY_CYGNUS_PCIE
+> >>>         Enable this to support the Broadcom Cygnus PCIe PHY.
+> >>>         If unsure, say N.
+> >>>
+> >>> +config PHY_BCM_SR_USB
+> >>> +     tristate "Broadcom Stingray USB PHY driver"
+> >>> +     depends on OF && (ARCH_BCM_IPROC || COMPILE_TEST)
+> >>> +     select GENERIC_PHY
+> >>> +     default ARCH_BCM_IPROC
+> >>> +     help
+> >>> +       Enable this to support the Broadcom Stingray USB PHY
+> >>> +       driver. It supports all versions of Superspeed and
+> >>> +       Highspeed PHYs.
+> >>> +       If unsure, say N.
+> >>> +
+> >>>  config BCM_KONA_USB2_PHY
+> >>>       tristate "Broadcom Kona USB2 PHY Driver"
+> >>>       depends on HAS_IOMEM
+> >>> diff --git a/drivers/phy/broadcom/Makefile b/drivers/phy/broadcom/Makefile
+> >>> index 0f60184..f453c7d 100644
+> >>> --- a/drivers/phy/broadcom/Makefile
+> >>> +++ b/drivers/phy/broadcom/Makefile
+> >>> @@ -11,3 +11,4 @@ obj-$(CONFIG_PHY_BRCM_USB)          += phy-brcm-usb-dvr.o
+> >>>  phy-brcm-usb-dvr-objs := phy-brcm-usb.o phy-brcm-usb-init.o
+> >>>
+> >>>  obj-$(CONFIG_PHY_BCM_SR_PCIE)                += phy-bcm-sr-pcie.o
+> >>> +obj-$(CONFIG_PHY_BCM_SR_USB)         += phy-bcm-sr-usb.o
+> >>> diff --git a/drivers/phy/broadcom/phy-bcm-sr-usb.c b/drivers/phy/broadcom/phy-bcm-sr-usb.c
+> >>> new file mode 100644
+> >>> index 0000000..99de49f
+> >>> --- /dev/null
+> >>> +++ b/drivers/phy/broadcom/phy-bcm-sr-usb.c
+> >>> @@ -0,0 +1,367 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0
+> >>> +/*
+> >>> + * Copyright (C) 2016-2018 Broadcom
+> >>> + */
+> >>> +
+> >>> +#include <linux/delay.h>
+> >>> +#include <linux/io.h>
+> >>> +#include <linux/module.h>
+> >>> +#include <linux/of.h>
+> >>> +#include <linux/phy/phy.h>
+> >>> +#include <linux/platform_device.h>
+> >>> +
+> >>> +enum bcm_usb_phy_version {
+> >>> +     BCM_USB_PHY_V1,
+> >>> +     BCM_USB_PHY_V2,
+> >>> +};
+> >>> +
+> >>> +enum bcm_usb_phy_reg {
+> >>> +     PLL_NDIV_FRAC,
+> >>> +     PLL_NDIV_INT,
+> >>> +     PLL_CTRL,
+> >>> +     PHY_CTRL,
+> >>> +     PHY_PLL_CTRL,
+> >>> +};
+> >>> +
+> >>> +/* USB PHY registers */
+> >>> +
+> >>> +static const u8 bcm_usb_u3phy_v1[] = {
+> >>> +     [PLL_CTRL]              = 0x18,
+> >>> +     [PHY_CTRL]              = 0x14,
+> >>> +};
+> >>> +
+> >>> +static const u8 bcm_usb_u2phy_v1[] = {
+> >>> +     [PLL_NDIV_FRAC] = 0x04,
+> >>> +     [PLL_NDIV_INT]  = 0x08,
+> >>> +     [PLL_CTRL]      = 0x0c,
+> >>> +     [PHY_CTRL]      = 0x10,
+> >>> +};
+> >>> +
+> >>> +#define HSPLL_NDIV_INT_VAL   0x13
+> >>> +#define HSPLL_NDIV_FRAC_VAL  0x1005
+> >>> +
+> >>> +static const u8 bcm_usb_u2phy_v2[] = {
+> >>> +     [PLL_NDIV_FRAC] = 0x0,
+> >>> +     [PLL_NDIV_INT]  = 0x4,
+> >>> +     [PLL_CTRL]      = 0x8,
+> >>> +     [PHY_CTRL]      = 0xc,
+> >>> +};
+> >>> +
+> >>> +enum pll_ctrl_bits {
+> >>> +     PLL_RESETB,
+> >>> +     SSPLL_SUSPEND_EN,
+> >>> +     PLL_SEQ_START,
+> >>> +     PLL_LOCK,
+> >>> +     PLL_PDIV,
+> >>> +};
+> >>> +
+> >>> +static const u8 u3pll_ctrl[] = {
+> >>> +     [PLL_RESETB]            = 0,
+> >>> +     [SSPLL_SUSPEND_EN]      = 1,
+> >>> +     [PLL_SEQ_START]         = 2,
+> >>> +     [PLL_LOCK]              = 3,
+> >>> +};
+> >>> +
+> >>> +#define HSPLL_PDIV_MASK              0xF
+> >>> +#define HSPLL_PDIV_VAL               0x1
+> >>> +
+> >>> +static const u8 u2pll_ctrl[] = {
+> >>> +     [PLL_PDIV]      = 1,
+> >>> +     [PLL_RESETB]    = 5,
+> >>> +     [PLL_LOCK]      = 6,
+> >>> +};
+> >>> +
+> >>> +enum bcm_usb_phy_ctrl_bits {
+> >>> +     CORERDY,
+> >>> +     AFE_LDO_PWRDWNB,
+> >>> +     AFE_PLL_PWRDWNB,
+> >>> +     AFE_BG_PWRDWNB,
+> >>> +     PHY_ISO,
+> >>> +     PHY_RESETB,
+> >>> +     PHY_PCTL,
+> >>> +};
+> >>> +
+> >>> +#define PHY_PCTL_MASK        0xffff
+> >>> +/*
+> >>> + * 0x0806 of PCTL_VAL has below bits set
+> >>> + * BIT-8 : refclk divider 1
+> >>> + * BIT-3:2: device mode; mode is not effect
+> >>> + * BIT-1: soft reset active low
+> >>> + */
+> >>> +#define HSPHY_PCTL_VAL       0x0806
+> >>> +#define SSPHY_PCTL_VAL       0x0006
+> >>> +
+> >>> +static const u8 u3phy_ctrl[] = {
+> >>> +     [PHY_RESETB]    = 1,
+> >>> +     [PHY_PCTL]      = 2,
+> >>> +};
+> >>> +
+> >>> +static const u8 u2phy_ctrl[] = {
+> >>> +     [CORERDY]               = 0,
+> >>> +     [AFE_LDO_PWRDWNB]       = 1,
+> >>> +     [AFE_PLL_PWRDWNB]       = 2,
+> >>> +     [AFE_BG_PWRDWNB]        = 3,
+> >>> +     [PHY_ISO]               = 4,
+> >>> +     [PHY_RESETB]            = 5,
+> >>> +     [PHY_PCTL]              = 6,
+> >>> +};
+> >>> +
+> >>> +struct bcm_usb_phy_cfg {
+> >>> +     uint32_t type;
+> >>> +     uint32_t ver;
+> >>> +     void __iomem *regs;
+> >>> +     struct phy *phy;
+> >>> +     const u8 *offset;
+> >>> +};
+> >>> +
+> >>> +#define PLL_LOCK_RETRY_COUNT 1000
+> >>> +
+> >>> +enum bcm_usb_phy_type {
+> >>> +     USB_HS_PHY,
+> >>> +     USB_SS_PHY,
+> >>> +};
+> >>> +
+> >>> +static inline void bcm_usb_reg32_clrbits(void __iomem *addr, uint32_t clear)
+> >>> +{
+> >>> +     writel(readl(addr) & ~clear, addr);
+> >>> +}
+> >>> +
+> >>> +static inline void bcm_usb_reg32_setbits(void __iomem *addr, uint32_t set)
+> >>> +{
+> >>> +     writel(readl(addr) | set, addr);
+> >>> +}
+> >>> +
+> >>> +static int bcm_usb_pll_lock_check(void __iomem *addr, u32 bit)
+> >>> +{
+> >>> +     int retry;
+> >>> +     u32 rd_data;
+> >>> +
+> >>> +     retry = PLL_LOCK_RETRY_COUNT;
+> >>> +     do {
+> >>> +             rd_data = readl(addr);
+> >>> +             if (rd_data & bit)
+> >>> +                     return 0;
+> >>> +             udelay(1);
+> >>> +     } while (--retry > 0);
+> >>> +
+> >>> +     pr_err("%s: FAIL\n", __func__);
+> >>> +     return -ETIMEDOUT;
+> >>> +}
+> >>> +
+> >>> +static int bcm_usb_ss_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
+> >>> +{
+> >>> +     int ret = 0;
+> >>> +     void __iomem *regs = phy_cfg->regs;
+> >>> +     const u8 *offset;
+> >>> +     u32 rd_data;
+> >>> +
+> >>> +     offset = phy_cfg->offset;
+> >>> +
+> >>> +     /* Set pctl with mode and soft reset */
+> >>> +     rd_data = readl(regs + offset[PHY_CTRL]);
+> >>> +     rd_data &= ~(PHY_PCTL_MASK << u3phy_ctrl[PHY_PCTL]);
+> >>> +     rd_data |= (SSPHY_PCTL_VAL << u3phy_ctrl[PHY_PCTL]);
+> >>> +     writel(rd_data, regs + offset[PHY_CTRL]);
+> >>> +
+> >>> +     bcm_usb_reg32_clrbits(regs + offset[PLL_CTRL],
+> >>> +                           BIT(u3pll_ctrl[SSPLL_SUSPEND_EN]));
+> >>> +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
+> >>> +                           BIT(u3pll_ctrl[PLL_SEQ_START]));
+> >>> +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
+> >>> +                           BIT(u3pll_ctrl[PLL_RESETB]));
+> >>> +
+> >>> +     msleep(30);
+>
+> Please add a comment for each of the delay added to mention if it's documented
+> in the data manual or was a result of experiment etc..
+I will add comments in next patch version.
+> >>> +
+> >>> +     ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
+> >>> +                                  BIT(u3pll_ctrl[PLL_LOCK]));
+> >>> +
+> >>> +     return ret;
+> >>> +}
+> >>> +
+> >>> +static int bcm_usb_hs_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
+> >>> +{
+> >>> +     int ret = 0;
+> >>> +     void __iomem *regs = phy_cfg->regs;
+> >>> +     const u8 *offset;
+> >>> +     u32 rd_data;
+> >>> +
+> >>> +     offset = phy_cfg->offset;
+> >>> +
+> >>> +     writel(HSPLL_NDIV_INT_VAL, regs + offset[PLL_NDIV_INT]);
+> >>> +     writel(HSPLL_NDIV_FRAC_VAL, regs + offset[PLL_NDIV_FRAC]);
+> >>> +
+> >>> +     rd_data = readl(regs + offset[PLL_CTRL]);
+> >>> +     rd_data &= ~(HSPLL_PDIV_MASK << u2pll_ctrl[PLL_PDIV]);
+> >>> +     rd_data |= (HSPLL_PDIV_VAL << u2pll_ctrl[PLL_PDIV]);
+> >>> +     writel(rd_data, regs + offset[PLL_CTRL]);
+> >>> +
+> >>> +     /* Set Core Ready high */
+> >>> +     bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
+> >>> +                           BIT(u2phy_ctrl[CORERDY]));
+> >>> +
+> >>> +     msleep(100);
+> >>> +
+> >>> +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
+> >>> +                           BIT(u2pll_ctrl[PLL_RESETB]));
+> >>> +     bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
+> >>> +                           BIT(u2phy_ctrl[PHY_RESETB]));
+> >>> +
+> >>> +
+> >>> +     rd_data = readl(regs + offset[PHY_CTRL]);
+> >>> +     rd_data &= ~(PHY_PCTL_MASK << u2phy_ctrl[PHY_PCTL]);
+> >>> +     rd_data |= (HSPHY_PCTL_VAL << u2phy_ctrl[PHY_PCTL]);
+> >>> +     writel(rd_data, regs + offset[PHY_CTRL]);
+> >>> +
+> >>> +     ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
+> >>> +                                  BIT(u2pll_ctrl[PLL_LOCK]));
+> >>> +
+> >>> +     return ret;
+> >>> +}
+> >>> +
+> >>> +static int bcm_usb_phy_reset(struct phy *phy)
+> >>> +{
+> >>> +     struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
+> >>> +     void __iomem *regs = phy_cfg->regs;
+> >>> +     const u8 *offset;
+> >>> +
+> >>> +     offset = phy_cfg->offset;
+> >>> +
+> >>> +     if (phy_cfg->type == USB_HS_PHY) {
+> >>> +             bcm_usb_reg32_clrbits(regs + offset[PHY_CTRL],
+> >>> +                                   BIT(u2phy_ctrl[CORERDY]));
+> >>> +             bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
+> >>> +                                   BIT(u2phy_ctrl[CORERDY]));
+> >>> +     }
+> >>> +
+> >>> +     return 0;
+> >>> +}
+> >>> +
+> >>> +static int bcm_usb_phy_init(struct phy *phy)
+> >>> +{
+> >>> +     struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
+> >>> +
+> >>> +     if (phy_cfg->type == USB_SS_PHY)
+> >>> +             bcm_usb_ss_phy_init(phy_cfg);
+> >>> +     if (phy_cfg->type == USB_HS_PHY)
+> >>> +             bcm_usb_hs_phy_init(phy_cfg);
+> >>> +
+> >>> +     return 0;
+> >>> +}
+> >>> +
+> >>> +static struct phy_ops sr_phy_ops = {
+> >>> +     .init           = bcm_usb_phy_init,
+> >>> +     .reset          = bcm_usb_phy_reset,
+> >>> +     .owner          = THIS_MODULE,
+> >>> +};
+> >>> +
+> >>> +static int bcm_usb_phy_create(struct device *dev, struct device_node *node,
+> >>> +                          void __iomem *regs, uint32_t version)
+> >>> +{
+> >>> +     struct bcm_usb_phy_cfg *phy_cfg;
+> >>> +     struct phy_provider *phy_provider;
+> >>> +
+> >>> +     phy_cfg = devm_kzalloc(dev, sizeof(struct bcm_usb_phy_cfg), GFP_KERNEL);
+> >>> +     if (!phy_cfg)
+> >>> +             return -ENOMEM;
+> >>> +
+> >>> +     phy_cfg->regs = regs;
+> >>
+> >> Are there any registers shared by all the PHYs?
+> > No registers shared between phys. All phys have same type of registers
+> > but at different address offset.
+> > In the same way few bits in registers are same but at different
+> > position in registers.
+> >>> +     phy_cfg->ver = version;
+> >>> +
+> >>> +     if (phy_cfg->ver == BCM_USB_PHY_V1) {
+> >>> +             unsigned int id;
+> >>> +
+> >>> +             if (of_property_read_u32(node, "reg", &id)) {
+> >>> +                     dev_err(dev, "missing reg property in node %s\n",
+> >>> +                             node->name);
+> >>> +                     return -EINVAL;
+> >>> +             }
+> >>> +
+> >>> +             if (id == 0) {
+> >>> +                     phy_cfg->offset = bcm_usb_u2phy_v1;
+> >>
+> >> The reg space can come from the dt itself.
+> > This driver supports two different phys. one is combo phy which has
+> > both USB3 and USB2 phy.
+> > other is single phy it has only USB2 phy.
+> > So that, from DT we passed address of either combo phy address or
+> > single phy address.
+> > In combo phy, USB3 phy and USB2 phy registers are at different offsets
+> > from the base address passed through DT.
+> >>> +                     phy_cfg->type = USB_HS_PHY;
+> >>> +             } else if (id == 1) {
+> >>> +                     phy_cfg->offset = bcm_usb_u3phy_v1;
+> >>> +                     phy_cfg->type = USB_SS_PHY;
+> >>> +             } else {
+> >>> +                     return -ENODEV;
+> >>> +             }
+> >>> +     } else if (phy_cfg->ver == BCM_USB_PHY_V2) {
+> >>> +             phy_cfg->offset = bcm_usb_u2phy_v2;
+> >>> +             phy_cfg->type = USB_HS_PHY;
+> >>> +     }
+> >>> +
+> >>> +     phy_cfg->phy = devm_phy_create(dev, node, &sr_phy_ops);
+> >>> +     if (IS_ERR(phy_cfg->phy))
+> >>> +             return PTR_ERR(phy_cfg->phy);
+> >>> +
+> >>> +     phy_set_drvdata(phy_cfg->phy, phy_cfg);
+> >>> +     phy_provider = devm_of_phy_provider_register(&phy_cfg->phy->dev,
+> >>> +                                                  of_phy_simple_xlate);
+> >>> +     if (IS_ERR(phy_provider)) {
+> >>> +             dev_err(dev, "Failed to register phy provider\n");
+> >>> +             return PTR_ERR(phy_provider);
+> >>> +     }
+> >>
+> >> No need for a separate PHY provider.
+> > Could you please provide more details?
+> > I thought to get phy device in the upper layer we need to register
+> > provider. can we skip this?
+> > In this driver, combo phy provides two usb ports to host controller,
+> > so that I need to add separate phandlers
+> > in host controller DT node and need to create two separate phy
+> > devices. also phy_init and reset handlers need
+> > to call for both phy devices separately.
+>
+> A single phy_provider can create multiple PHY's. Here anyways you have subnodes
+> for each of the PHY's. So host controller DT node can have a phandle to the
+> subnodes directly.
+Yes, phandles of subnodes only given in host controller DT node as
+shown in below line.
+phys = <&usb0_phy1>, <&usb0_phy0>;
+I thought phy device is fetched using of_node passed in host
+controller DT by fetching
+provider attached to it. dev pointer of provide is dev of phy device.
+so that I thought it is better to have separate
+provider for each phy device. Please correct me if my understanding is
+not right.
+
+Thank you very much.
+
+Regards,
+Srinath.
+>
+> Thanks
+> Kishon
