@@ -2,263 +2,107 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A875BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECCBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6226F2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:41:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6226F2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 63DA02145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 04:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DA02145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbeK3PtD (ORCPT
+        id S1726562AbeK3Pww (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 10:49:03 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41916 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeK3PtD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 10:49:03 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAU4exv9123600;
-        Thu, 29 Nov 2018 22:40:59 -0600
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAU4exV9107903
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 22:40:59 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
- Nov 2018 22:40:58 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 29 Nov 2018 22:40:59 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAU4euq8000826;
-        Thu, 29 Nov 2018 22:40:57 -0600
-Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
- tuning failures (i929)
-To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>
-References: <20181129190503.6040-1-faiz_abbas@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
-Date:   Fri, 30 Nov 2018 10:10:51 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 30 Nov 2018 10:52:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53466 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726355AbeK3Pww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 10:52:52 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2912E31256D9;
+        Fri, 30 Nov 2018 04:44:51 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-125.pek2.redhat.com [10.72.12.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 41EEA19940;
+        Fri, 30 Nov 2018 04:44:39 +0000 (UTC)
+Subject: Re: [PATCH 1/2 v8] resource: add the new I/O resource descriptor
+ 'IORES_DESC_RESERVED'
+To:     Dave Young <dyoung@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        x86@kernel.org, linux-ia64@vger.kernel.org,
+        linux-efi@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, akpm@linux-foundation.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        ard.biesheuvel@linaro.org, tony.luck@intel.com,
+        fenghua.yu@intel.com, bhe@redhat.com
+References: <20181129080956.20776-1-lijiang@redhat.com>
+ <20181129080956.20776-2-lijiang@redhat.com>
+ <20181130034129.GA26791@dhcp-128-65.nay.redhat.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <5bda3bfe-8ab2-3c3e-fc4d-6322d372e9ae@redhat.com>
+Date:   Fri, 30 Nov 2018 12:44:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181129190503.6040-1-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181130034129.GA26791@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 30 Nov 2018 04:44:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Faiz,
+在 2018年11月30日 11:41, Dave Young 写道:
+> On 11/29/18 at 04:09pm, Lianbo Jiang wrote:
+>> When doing kexec_file_load, the first kernel needs to pass the e820
+>> reserved ranges to the second kernel. But kernel can not exactly
+>> match the e820 reserved ranges when walking through the iomem resources
+>> with the descriptor 'IORES_DESC_NONE', because several e820 types(
+>> e.g. E820_TYPE_RESERVED_KERN/E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820
+>> _TYPE_RESERVED) are converted to the descriptor 'IORES_DESC_NONE'. It
+>> may pass these four types to the kdump kernel, that is not desired result.
+>>
+>> So, this patch adds a new I/O resource descriptor 'IORES_DESC_RESERVED'
+>> for the iomem resources search interfaces. It is helpful to exactly
+>> match the reserved resource ranges when walking through iomem resources.
+>>
+>> In addition, since the new descriptor 'IORES_DESC_RESERVED' is introduced,
+>> these code originally related to the descriptor 'IORES_DESC_NONE' need to
+>> be updated. Otherwise, it will be easily confused and also cause some
+>> errors. Because the 'E820_TYPE_RESERVED' type is converted to the new
+>> descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE', it has been
+>> changed.
+>>
+>> Suggested-by: Dave Young <dyoung@redhat.com>
+> 
+> This was suggested by Boris instead :) 
+> 
 
-On 30/11/18 12:35 AM, Faiz Abbas wrote:
-> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
-> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
-> unexpected tuning pattern errors. A small failure band may be present
-> in the tuning range which may be missed by the current algorithm.
-> Furthermore, the failure bands vary with temperature leading to
-> different optimum tuning values for different temperatures.
-> 
-> As suggested in the related Application Report (SPRACA9B - October 2017
-> - Revised July 2018 [2]), tuning should be done in two stages.
-> In stage 1, assign the optimum ratio in the maximum pass window for the
-> current temperature. In stage 2, if the chosen value is close to the
-> small failure band, move away from it in the appropriate direction.
-> 
-> References:
-> [1] http://www.ti.com/lit/pdf/sprz426
-> [2] http://www.ti.com/lit/pdf/SPRACA9
-> 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
->  drivers/mmc/host/Kconfig      |  2 +
->  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
->  2 files changed, 91 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 1b58739d9744..6d3553f06f27 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
->  config MMC_SDHCI_OMAP
->  	tristate "TI SDHCI Controller Support"
->  	depends on MMC_SDHCI_PLTFM && OF
-> +	select THERMAL
-> +	select TI_SOC_THERMAL
->  	help
->  	  This selects the Secure Digital Host Controller Interface (SDHCI)
->  	  support present in TI's DRA7 SOCs. The controller supports
-> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-> index b3cb39d0db6f..9ccce7ef3a60 100644
-> --- a/drivers/mmc/host/sdhci-omap.c
-> +++ b/drivers/mmc/host/sdhci-omap.c
-> @@ -27,6 +27,7 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/sys_soc.h>
-> +#include <linux/thermal.h>
->  
->  #include "sdhci-pltfm.h"
->  
-> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  	struct sdhci_host *host = mmc_priv(mmc);
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->  	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-> +	struct thermal_zone_device *thermal_dev;
->  	struct device *dev = omap_host->dev;
->  	struct mmc_ios *ios = &mmc->ios;
->  	u32 start_window = 0, max_window = 0;
-> +	bool single_point_failure = false;
->  	u8 cur_match, prev_match = 0;
->  	u32 length = 0, max_len = 0;
->  	u32 phase_delay = 0;
-> +	int temperature;
->  	int ret = 0;
->  	u32 reg;
-> +	int i;
->  
->  	/* clock tuning is not needed for upto 52MHz */
->  	if (ios->clock <= 52000000)
-> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  	if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
->  		return 0;
->  
-> +	thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
-> +	if (IS_ERR(thermal_dev)) {
-> +		dev_err(dev, "Unable to get thermal zone for tuning\n");
-> +		return PTR_ERR(thermal_dev);
-> +	}
+Sorry for this, i forgot to change it.
+And i will correct this in next version.
 
-Can't we get thermal zone once during probe?
+Thanks.
 
-Thanks
-Kishon
-> +
-> +	ret = thermal_zone_get_temp(thermal_dev, &temperature);
-> +	if (ret)
-> +		return ret;
-> +
->  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
->  	reg |= DLL_SWT;
->  	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
-> @@ -317,6 +332,11 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  
->  	omap_host->is_tuning = true;
->  
-> +	/*
-> +	 * Stage 1: Search for a maximum pass window ignoring any
-> +	 * any single point failures. If the tuning value ends up
-> +	 * near it, move away from it in stage 2 below
-> +	 */
->  	while (phase_delay <= MAX_PHASE_DELAY) {
->  		sdhci_omap_set_dll(omap_host, phase_delay);
->  
-> @@ -324,10 +344,15 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  		if (cur_match) {
->  			if (prev_match) {
->  				length++;
-> +			} else if (single_point_failure) {
-> +				/* ignore single point failure */
-> +				length++;
->  			} else {
->  				start_window = phase_delay;
->  				length = 1;
->  			}
-> +		} else {
-> +			single_point_failure = prev_match;
->  		}
->  
->  		if (length > max_len) {
-> @@ -345,13 +370,76 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  		goto tuning_error;
->  	}
->  
-> +	/*
-> +	 * Assign tuning value as a ratio of maximum pass window based
-> +	 * on temperature
-> +	 */
-> +	if (temperature < -20000)
-> +		phase_delay = min(max_window + 4 * max_len - 24,
-> +				  max_window +
-> +				  DIV_ROUND_UP(13 * max_len, 16) * 4);
-> +	else if (temperature < 20000)
-> +		phase_delay = max_window + DIV_ROUND_UP(9 * max_len, 16) * 4;
-> +	else if (temperature < 40000)
-> +		phase_delay = max_window + DIV_ROUND_UP(8 * max_len, 16) * 4;
-> +	else if (temperature < 70000)
-> +		phase_delay = max_window + DIV_ROUND_UP(7 * max_len, 16) * 4;
-> +	else if (temperature < 90000)
-> +		phase_delay = max_window + DIV_ROUND_UP(5 * max_len, 16) * 4;
-> +	else if (temperature < 120000)
-> +		phase_delay = max_window + DIV_ROUND_UP(4 * max_len, 16) * 4;
-> +	else
-> +		phase_delay = max_window + DIV_ROUND_UP(3 * max_len, 16) * 4;
-> +
-> +	/*
-> +	 * Stage 2: Search for a single point failure near the chosen tuning
-> +	 * value in two steps. First in the +3 to +10 range and then in the
-> +	 * +2 to -10 range. If found, move away from it in the appropriate
-> +	 * direction by the appropriate amount depending on the temperature.
-> +	 */
-> +	for (i = 3; i <= 10; i++) {
-> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
-> +
-> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
-> +			if (temperature < 10000)
-> +				phase_delay += i + 6;
-> +			else if (temperature < 20000)
-> +				phase_delay += i - 12;
-> +			else if (temperature < 70000)
-> +				phase_delay += i - 8;
-> +			else
-> +				phase_delay += i - 6;
-> +
-> +			goto single_failure_found;
-> +		}
-> +	}
-> +
-> +	for (i = 2; i >= -10; i--) {
-> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
-> +
-> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
-> +			if (temperature < 10000)
-> +				phase_delay += i + 12;
-> +			else if (temperature < 20000)
-> +				phase_delay += i + 8;
-> +			else if (temperature < 70000)
-> +				phase_delay += i + 8;
-> +			else if (temperature < 90000)
-> +				phase_delay += i + 10;
-> +			else
-> +				phase_delay += i + 12;
-> +
-> +			goto single_failure_found;
-> +		}
-> +	}
-> +
-> +single_failure_found:
->  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_AC12);
->  	if (!(reg & AC12_SCLK_SEL)) {
->  		ret = -EIO;
->  		goto tuning_error;
->  	}
->  
-> -	phase_delay = max_window + 4 * (max_len >> 1);
->  	sdhci_omap_set_dll(omap_host, phase_delay);
->  
->  	omap_host->is_tuning = false;
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  arch/ia64/kernel/efi.c |  4 ++++
+>>  arch/x86/kernel/e820.c |  2 +-
+>>  arch/x86/mm/ioremap.c  | 13 ++++++++++++-
+>>  include/linux/ioport.h |  1 +
+>>  kernel/resource.c      |  6 +++---
+>>  5 files changed, 21 insertions(+), 5 deletions(-)
+>>
+>>
+> [snip]
+> 
+> Thanks
+> Dave
 > 
