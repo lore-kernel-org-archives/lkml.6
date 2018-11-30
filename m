@@ -6,44 +6,40 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAAFC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB57C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50E7C2146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E7C2146F
+	by mail.kernel.org (Postfix) with ESMTP id E85942145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85942145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbeK3O06 (ORCPT
+        id S1727368AbeK3O05 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 09:26:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55590 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 09:26:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726472AbeK3O05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726509AbeK3O05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Nov 2018 09:26:57 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFF592146D;
+        by mail.kernel.org (Postfix) with ESMTPSA id E2BCC21479;
         Fri, 30 Nov 2018 03:19:08 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gSZKd-0002kt-PX; Thu, 29 Nov 2018 22:19:07 -0500
-Message-Id: <20181130031907.694438604@goodmis.org>
+        id 1gSZKd-0002lR-UT; Thu, 29 Nov 2018 22:19:07 -0500
+Message-Id: <20181130031907.844644427@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 29 Nov 2018 22:18:30 -0500
+Date:   Thu, 29 Nov 2018 22:18:31 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Wang Haibin <wanghaibin.wang@huawei.com>,
-        linux-trace-devel@vger.kernel.org, stable@vger.kernel.org,
-        Zenghui Yu <yuzenghui@huawei.com>
-Subject: [PATCH 1/2] tracepoint: Use __idx instead of idx in DO_TRACE macro to make it
- unique
+        Andrew Morton <akpm@linux-foundation.org>, stable@kernel.org,
+        Joe Lawrence <joe.lawrence@redhat.com>
+Subject: [PATCH 2/2] tracing/fgraph: Fix set_graph_function from showing interrupts
 References: <20181130031829.268422593@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,65 +48,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zenghui Yu <yuzenghui@huawei.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-After enabling KVM event tracing, almost all of trace_kvm_exit()'s
-printk shows
+The tracefs file set_graph_function is used to only function graph functions
+that are listed in that file (or all functions if the file is empty). The
+way this is implemented is that the function graph tracer looks at every
+function, and if the current depth is zero and the function matches
+something in the file then it will trace that function. When other functions
+are called, the depth will be greater than zero (because the original
+function will be at depth zero), and all functions will be traced where the
+depth is greater than zero.
 
-	"kvm_exit: IRQ: ..."
+The issue is that when a function is first entered, and the handler that
+checks this logic is called, the depth is set to zero. If an interrupt comes
+in and a function in the interrupt handler is traced, its depth will be
+greater than zero and it will automatically be traced, even if the original
+function was not. But because the logic only looks at depth it may trace
+interrupts when it should not be.
 
-even if the actual exception_type is NOT IRQ.  More specifically,
-trace_kvm_exit() is defined in virt/kvm/arm/trace.h by TRACE_EVENT.
+The recent design change of the function graph tracer to fix other bugs
+caused the depth to be zero while the function graph callback handler is
+being called for a longer time, widening the race of this happening. This
+bug was actually there for a longer time, but because the race window was so
+small it seldom happened. The Fixes tag below is for the commit that widen
+the race window, because that commit belongs to a series that will also help
+fix the original bug.
 
-This slight problem may have existed after commit e6753f23d961
-("tracepoint: Make rcuidle tracepoint callers use SRCU"). There are
-two variables in trace_kvm_exit() and __DO_TRACE() which have the
-same name, *idx*. Thus the actual value of *idx* will be overwritten
-when tracing. Fix it by adding a simple prefix.
-
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Wang Haibin <wanghaibin.wang@huawei.com>
-Cc: linux-trace-devel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Fixes: e6753f23d961 ("tracepoint: Make rcuidle tracepoint callers use SRCU")
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Cc: stable@kernel.org
+Fixes: 39eb456dacb5 ("function_graph: Use new curr_ret_depth to manage depth instead of curr_ret_stack")
+Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
+Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/tracepoint.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/trace/trace.h                 | 57 ++++++++++++++++++++++++++--
+ kernel/trace/trace_functions_graph.c |  4 ++
+ kernel/trace/trace_irqsoff.c         |  2 +
+ kernel/trace/trace_sched_wakeup.c    |  2 +
+ 4 files changed, 62 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 538ba1a58f5b..e9de8ad0bad7 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -166,7 +166,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		struct tracepoint_func *it_func_ptr;			\
- 		void *it_func;						\
- 		void *__data;						\
--		int __maybe_unused idx = 0;				\
-+		int __maybe_unused __idx = 0;				\
- 									\
- 		if (!(cond))						\
- 			return;						\
-@@ -182,7 +182,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		 * doesn't work from the idle path.			\
- 		 */							\
- 		if (rcuidle) {						\
--			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-+			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
- 			rcu_irq_enter_irqson();				\
- 		}							\
- 									\
-@@ -198,7 +198,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 									\
- 		if (rcuidle) {						\
- 			rcu_irq_exit_irqson();				\
--			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-+			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
- 		}							\
- 									\
- 		preempt_enable_notrace();				\
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 3b8c0e24ab30..447bd96ee658 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -512,12 +512,44 @@ enum {
+  * can only be modified by current, we can reuse trace_recursion.
+  */
+ 	TRACE_IRQ_BIT,
++
++	/* Set if the function is in the set_graph_function file */
++	TRACE_GRAPH_BIT,
++
++	/*
++	 * In the very unlikely case that an interrupt came in
++	 * at a start of graph tracing, and we want to trace
++	 * the function in that interrupt, the depth can be greater
++	 * than zero, because of the preempted start of a previous
++	 * trace. In an even more unlikely case, depth could be 2
++	 * if a softirq interrupted the start of graph tracing,
++	 * followed by an interrupt preempting a start of graph
++	 * tracing in the softirq, and depth can even be 3
++	 * if an NMI came in at the start of an interrupt function
++	 * that preempted a softirq start of a function that
++	 * preempted normal context!!!! Luckily, it can't be
++	 * greater than 3, so the next two bits are a mask
++	 * of what the depth is when we set TRACE_GRAPH_BIT
++	 */
++
++	TRACE_GRAPH_DEPTH_START_BIT,
++	TRACE_GRAPH_DEPTH_END_BIT,
+ };
+ 
+ #define trace_recursion_set(bit)	do { (current)->trace_recursion |= (1<<(bit)); } while (0)
+ #define trace_recursion_clear(bit)	do { (current)->trace_recursion &= ~(1<<(bit)); } while (0)
+ #define trace_recursion_test(bit)	((current)->trace_recursion & (1<<(bit)))
+ 
++#define trace_recursion_depth() \
++	(((current)->trace_recursion >> TRACE_GRAPH_DEPTH_START_BIT) & 3)
++#define trace_recursion_set_depth(depth) \
++	do {								\
++		current->trace_recursion &=				\
++			~(3 << TRACE_GRAPH_DEPTH_START_BIT);		\
++		current->trace_recursion |=				\
++			((depth) & 3) << TRACE_GRAPH_DEPTH_START_BIT;	\
++	} while (0)
++
+ #define TRACE_CONTEXT_BITS	4
+ 
+ #define TRACE_FTRACE_START	TRACE_FTRACE_BIT
+@@ -843,8 +875,9 @@ extern void __trace_graph_return(struct trace_array *tr,
+ extern struct ftrace_hash *ftrace_graph_hash;
+ extern struct ftrace_hash *ftrace_graph_notrace_hash;
+ 
+-static inline int ftrace_graph_addr(unsigned long addr)
++static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
+ {
++	unsigned long addr = trace->func;
+ 	int ret = 0;
+ 
+ 	preempt_disable_notrace();
+@@ -855,6 +888,14 @@ static inline int ftrace_graph_addr(unsigned long addr)
+ 	}
+ 
+ 	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
++
++		/*
++		 * This needs to be cleared on the return functions
++		 * when the depth is zero.
++		 */
++		trace_recursion_set(TRACE_GRAPH_BIT);
++		trace_recursion_set_depth(trace->depth);
++
+ 		/*
+ 		 * If no irqs are to be traced, but a set_graph_function
+ 		 * is set, and called by an interrupt handler, we still
+@@ -872,6 +913,13 @@ static inline int ftrace_graph_addr(unsigned long addr)
+ 	return ret;
+ }
+ 
++static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
++{
++	if (trace_recursion_test(TRACE_GRAPH_BIT) &&
++	    trace->depth == trace_recursion_depth())
++		trace_recursion_clear(TRACE_GRAPH_BIT);
++}
++
+ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ {
+ 	int ret = 0;
+@@ -885,7 +933,7 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ 	return ret;
+ }
+ #else
+-static inline int ftrace_graph_addr(unsigned long addr)
++static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
+ {
+ 	return 1;
+ }
+@@ -894,6 +942,8 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
+ {
+ 	return 0;
+ }
++static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
++{ }
+ #endif /* CONFIG_DYNAMIC_FTRACE */
+ 
+ extern unsigned int fgraph_max_depth;
+@@ -901,7 +951,8 @@ extern unsigned int fgraph_max_depth;
+ static inline bool ftrace_graph_ignore_func(struct ftrace_graph_ent *trace)
+ {
+ 	/* trace it when it is-nested-in or is a function enabled. */
+-	return !(trace->depth || ftrace_graph_addr(trace->func)) ||
++	return !(trace_recursion_test(TRACE_GRAPH_BIT) ||
++		 ftrace_graph_addr(trace)) ||
+ 		(trace->depth < 0) ||
+ 		(fgraph_max_depth && trace->depth >= fgraph_max_depth);
+ }
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 2561460d7baf..086af4f5c3e8 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -509,6 +509,8 @@ void trace_graph_return(struct ftrace_graph_ret *trace)
+ 	int cpu;
+ 	int pc;
+ 
++	ftrace_graph_addr_finish(trace);
++
+ 	local_irq_save(flags);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->trace_buffer.data, cpu);
+@@ -532,6 +534,8 @@ void set_graph_array(struct trace_array *tr)
+ 
+ static void trace_graph_thresh_return(struct ftrace_graph_ret *trace)
+ {
++	ftrace_graph_addr_finish(trace);
++
+ 	if (tracing_thresh &&
+ 	    (trace->rettime - trace->calltime < tracing_thresh))
+ 		return;
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index b7357f9f82a3..98ea6d28df15 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -208,6 +208,8 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace)
+ 	unsigned long flags;
+ 	int pc;
+ 
++	ftrace_graph_addr_finish(trace);
++
+ 	if (!func_prolog_dec(tr, &data, &flags))
+ 		return;
+ 
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index a86b303e6c67..7d04b9890755 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -270,6 +270,8 @@ static void wakeup_graph_return(struct ftrace_graph_ret *trace)
+ 	unsigned long flags;
+ 	int pc;
+ 
++	ftrace_graph_addr_finish(trace);
++
+ 	if (!func_prolog_preempt_disable(tr, &data, &pc))
+ 		return;
+ 
 -- 
 2.19.1
 
