@@ -2,112 +2,168 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2193FC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6575C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6BDC20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:10:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ldt8w1V7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BDC20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A72C1206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:11:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72C1206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbeK3TSu (ORCPT
+        id S1727075AbeK3TTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:18:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39576 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 14:19:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42004 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbeK3TSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:18:50 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726459AbeK3TTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 14:19:41 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E55B0206B7;
-        Fri, 30 Nov 2018 08:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543565421;
-        bh=gU4o9r8iFoOeEBSQraFc44QNd+eXnvT5fifJEEQqD8U=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Ldt8w1V7Q3l9p6TS1PvKa5/21RmLN+2NIQcPNzPIyem9+qKWlgi76K7fASrCcyuZm
-         2AjgS0qHGQZE0VddkbSknXysDiBk/C+wMpd5xbJHGsKbOQfRd3Nl9OQ9wK5ZwrA+m/
-         Y4eztqxVUjFhxpbj7z8U/pyJWSXJu86LkqiDQIIk=
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id 18107307D845;
+        Fri, 30 Nov 2018 08:11:12 +0000 (UTC)
+Received: from [10.72.12.53] (ovpn-12-53.pek2.redhat.com [10.72.12.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6FD46105705E;
+        Fri, 30 Nov 2018 08:10:58 +0000 (UTC)
+Subject: Re: [PATCH net-next v3 01/13] virtio: add packed ring types and
+ macros
+To:     Tiwei Bie <tiwei.bie@intel.com>, mst@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org
+Cc:     wexu@redhat.com, jfreimann@redhat.com, maxime.coquelin@redhat.com
+References: <20181121100330.24846-1-tiwei.bie@intel.com>
+ <20181121100330.24846-2-tiwei.bie@intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <1928ac96-3684-45c4-1e8c-09dff03bf308@redhat.com>
+Date:   Fri, 30 Nov 2018 16:10:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <DB3PR0402MB3916F9DC4C054747211EB90FF5D30@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-References: <1543562288-28638-1-git-send-email-Anson.Huang@nxp.com>
- <154356270811.88331.17520386069332746427@swboyd.mtv.corp.google.com>
- <DB3PR0402MB3916F9DC4C054747211EB90FF5D30@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-Message-ID: <154356542041.88331.1938476424482018533@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Date:   Fri, 30 Nov 2018 00:10:20 -0800
+In-Reply-To: <20181121100330.24846-2-tiwei.bie@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 30 Nov 2018 08:11:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2018-11-29 23:37:14)
-> Hi, Stephen
-> =
 
-> Best Regards!
-> Anson Huang
-> =
-
-> > -----Original Message-----
-> > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > Sent: 2018=E5=B9=B411=E6=9C=8830=E6=97=A5 15:25
-> > To: kernel@pengutronix.de; linux-arm-kernel@lists.infradead.org;
-> > linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > mturquette@baylibre.com; s.hauer@pengutronix.de; shawnguo@kernel.org;
-> > Anson Huang <anson.huang@nxp.com>; Fabio Estevam
-> > <fabio.estevam@nxp.com>
-> > Cc: dl-linux-imx <linux-imx@nxp.com>
-> > Subject: Re: [PATCH] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-> > =
-
-> > Quoting Anson Huang (2018-11-29 23:23:47)
-> > > Same as other i.MX6 SoCs, ensure unused MMDC channel's handshake is
-> > > bypassed, this is to make sure no request signal will be generated
-> > > when periphe_clk_sel is changed or SRC warm reset is triggered.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > =
-
-> > Does this need a fixes tag?
-> =
-
-> Normally this bit is 1b'1 by reset, but during our development, it used t=
-o be
-> overwritten in u-boot and lead to some clock operation fail in Linux kern=
-el, that is why we ensure it
-> in clock driver early phase. IMO, it should be OK to not add a fix tag, s=
-ince it is just
-> to make sure the setting is correct and NOT depends on the hardware reset=
- value which
-> could be changed in u-boot.
-> =
-
-> =
+On 2018/11/21 下午6:03, Tiwei Bie wrote:
+> Add types and macros for packed ring.
+>
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> ---
+>   include/uapi/linux/virtio_config.h |  3 +++
+>   include/uapi/linux/virtio_ring.h   | 52 ++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 55 insertions(+)
+>
+> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> index 449132c76b1c..1196e1c1d4f6 100644
+> --- a/include/uapi/linux/virtio_config.h
+> +++ b/include/uapi/linux/virtio_config.h
+> @@ -75,6 +75,9 @@
+>    */
+>   #define VIRTIO_F_IOMMU_PLATFORM		33
+>   
+> +/* This feature indicates support for the packed virtqueue layout. */
+> +#define VIRTIO_F_RING_PACKED		34
+> +
+>   /*
+>    * Does the device support Single Root I/O Virtualization?
+>    */
+> diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+> index 6d5d5faa989b..2414f8af26b3 100644
+> --- a/include/uapi/linux/virtio_ring.h
+> +++ b/include/uapi/linux/virtio_ring.h
+> @@ -44,6 +44,13 @@
+>   /* This means the buffer contains a list of buffer descriptors. */
+>   #define VRING_DESC_F_INDIRECT	4
+>   
+> +/*
+> + * Mark a descriptor as available or used in packed ring.
+> + * Notice: they are defined as shifts instead of shifted values.
 
 
-Hmm ok.
+This looks inconsistent to previous flags, any reason for using shifts?
 
+
+> + */
+> +#define VRING_PACKED_DESC_F_AVAIL	7
+> +#define VRING_PACKED_DESC_F_USED	15
+> +
+>   /* The Host uses this in used->flags to advise the Guest: don't kick me when
+>    * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
+>    * will still kick if it's out of buffers. */
+> @@ -53,6 +60,23 @@
+>    * optimization.  */
+>   #define VRING_AVAIL_F_NO_INTERRUPT	1
+>   
+> +/* Enable events in packed ring. */
+> +#define VRING_PACKED_EVENT_FLAG_ENABLE	0x0
+> +/* Disable events in packed ring. */
+> +#define VRING_PACKED_EVENT_FLAG_DISABLE	0x1
+> +/*
+> + * Enable events for a specific descriptor in packed ring.
+> + * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
+> + * Only valid if VIRTIO_RING_F_EVENT_IDX has been negotiated.
+> + */
+> +#define VRING_PACKED_EVENT_FLAG_DESC	0x2
+
+
+Any reason for using _FLAG_ instead of _F_?
+
+Thanks
+
+
+> +
+> +/*
+> + * Wrap counter bit shift in event suppression structure
+> + * of packed ring.
+> + */
+> +#define VRING_PACKED_EVENT_F_WRAP_CTR	15
+> +
+>   /* We support indirect buffer descriptors */
+>   #define VIRTIO_RING_F_INDIRECT_DESC	28
+>   
+> @@ -171,4 +195,32 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
+>   	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
+>   }
+>   
+> +struct vring_packed_desc_event {
+> +	/* Descriptor Ring Change Event Offset/Wrap Counter. */
+> +	__le16 off_wrap;
+> +	/* Descriptor Ring Change Event Flags. */
+> +	__le16 flags;
+> +};
+> +
+> +struct vring_packed_desc {
+> +	/* Buffer Address. */
+> +	__le64 addr;
+> +	/* Buffer Length. */
+> +	__le32 len;
+> +	/* Buffer ID. */
+> +	__le16 id;
+> +	/* The flags depending on descriptor type. */
+> +	__le16 flags;
+> +};
+> +
+> +struct vring_packed {
+> +	unsigned int num;
+> +
+> +	struct vring_packed_desc *desc;
+> +
+> +	struct vring_packed_desc_event *driver;
+> +
+> +	struct vring_packed_desc_event *device;
+> +};
+> +
+>   #endif /* _UAPI_LINUX_VIRTIO_RING_H */
