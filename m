@@ -2,175 +2,121 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F6CC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F422C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235D220867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:55:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 235D220867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=blastwave.org
+	by mail.kernel.org (Postfix) with ESMTP id 61FC320834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:56:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="SC1Lf6aD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FC320834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbeLAKFz (ORCPT
+        id S1726798AbeLAKHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 05:05:55 -0500
-Received: from atl4mhfb01.myregisteredsite.com ([209.17.115.55]:34876 "EHLO
-        atl4mhfb01.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726652AbeLAKFz (ORCPT
+        Sat, 1 Dec 2018 05:07:18 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34172 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbeLAKHS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 05:05:55 -0500
-Received: from atl4mhob09.registeredsite.com (atl4mhob09.registeredsite.com [209.17.115.47])
-        by atl4mhfb01.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id wAUMmaTG007912
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 17:48:36 -0500
-Received: from mailpod.hostingplatform.com (atl4qobmail02pod2.registeredsite.com [10.30.77.36])
-        by atl4mhob09.registeredsite.com (8.14.4/8.14.4) with ESMTP id wAUMmYHc016529
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 17:48:34 -0500
-Received: (qmail 37930 invoked by uid 0); 30 Nov 2018 22:48:34 -0000
-X-TCPREMOTEIP: 174.118.245.214
-X-Authenticated-UID: dclarke@blastwave.org
-Received: from unknown (HELO ?172.16.35.3?) (dclarke@blastwave.org@174.118.245.214)
-  by 0 with ESMTPA; 30 Nov 2018 22:48:34 -0000
-Subject: Re: [PATCH RFC 05/15] parisc: replace **** with a hug
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-parisc@vger.kernel.org,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
- <20181130192737.15053-6-jarkko.sakkinen@linux.intel.com>
-From:   Dennis Clarke <dclarke@blastwave.org>
-Message-ID: <cc2c08ea-2d9b-4aac-ba98-e7cec57a9cce@blastwave.org>
-Date:   Fri, 30 Nov 2018 17:48:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
+        Sat, 1 Dec 2018 05:07:18 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u6-v6so6408810ljd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 14:56:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D2hp/Ir0gBlnqWcUXzziRNf+Jis9t1VhUFTTdvJjBRc=;
+        b=SC1Lf6aDLPjRP0JOUQoUj1dytI3cZdU5eDX1AxmL025ahvjfNxiC9+hqH6zA6KsDj+
+         yQzEH0lOl332nbvYrSuopMgodlP+XrHkayXTEkhdtaSxpmPiujcZ1pRCKatLBIFjgYpD
+         F6oA/3oqvvWacuukkqVquHuiWeCG1Pr032pbeiPygpObRjBF43ic/eLKcICxCr4gD5LO
+         Wjt8J0BEJTzD1UGiO8g3Xyhas5e2LSy0voSlzD5Pkl9UCifkgUU4JzB8DhQVSynw12jX
+         CGljiNu8k8fEulyz6NWdt1PKXpeSqVEpBD48xfBNeULmrasehxkxJ89zmdLL60Ps3/1o
+         bPiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D2hp/Ir0gBlnqWcUXzziRNf+Jis9t1VhUFTTdvJjBRc=;
+        b=EI09+9rFdxM8tSvp4vSI1wCH15oq1sOWBjQm6h1FMMbixrC+pgccQhOAwtl7UqGbCB
+         EYZ+R4z2wBYm6NIFv0F62vhmBpnIUy1ipyfb/EQ3mfygaSe605jcoYCPg2u0qRiUwJCK
+         enEFOJsjMCsyMyGoOgg6L7l8lhZVOhzYOhQOOjFRYJ5J/2+Q2bIR7ZsfR14a8ZxpaDGF
+         6zu9HVwBd8OqwYejkMD1ftKGlwijgTugWJCie/LzT3eFJSyYh8o6XlhUHqieiiZMrUFS
+         UvLanJRZE36W+6i5cDd4zDmithMoEpz/HQ4MZtzn3o76KdxbVnw6yneHSeLCLuLkU/Qm
+         38aA==
+X-Gm-Message-State: AA+aEWbVCujDVrNl+miZZdQL1mK/NzgojLYNmRzONEeqV0qk76Uvj+cy
+        tcmH9Wn8Z79GCgPO9YimzbCaFQ==
+X-Google-Smtp-Source: AFSGD/VbTI/4U1VT41i7x5ClnS7JN+PeiNmFfZw/R0ZuiILEih03rWq9gADRYveyGS/GzhN/cfpVHA==
+X-Received: by 2002:a2e:9603:: with SMTP id v3-v6mr4293247ljh.15.1543618584252;
+        Fri, 30 Nov 2018 14:56:24 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id f8sm1143749lfe.72.2018.11.30.14.56.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 14:56:22 -0800 (PST)
+Date:   Fri, 30 Nov 2018 11:48:18 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Rob Herring <robh@kernel.org>
+Cc:     chunyan.zhang@unisoc.com, Lyra Zhang <zhang.lyra@gmail.com>,
+        ARM-SoC Maintainers <arm@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: [GIT PULL] sprd dts for kernel v4.20-rc1
+Message-ID: <20181130194818.7v5ysbwkoq6buzko@localhost>
+References: <1539854253-4784-1-git-send-email-chunyan.zhang@unisoc.com>
+ <20181102183246.r5xxwsic2mxwihsi@localhost>
+ <CAL_Jsq+HFPnzw4Fo3rLRMxber8_itGZ=LjnUeyvvDOt4_txm3g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181130192737.15053-6-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+HFPnzw4Fo3rLRMxber8_itGZ=LjnUeyvvDOt4_txm3g@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/18 2:27 PM, Jarkko Sakkinen wrote:
-> In order to comply with the CoC, replace **** with a hug.
+On Fri, Nov 30, 2018 at 09:18:34AM -0600, Rob Herring wrote:
+> On Fri, Nov 2, 2018 at 1:50 PM Olof Johansson <olof@lixom.net> wrote:
+> >
+> > On Thu, Oct 18, 2018 at 05:17:33PM +0800, Chunyan Zhang wrote:
+> > > Hi Arnd,
+> > >
+> > > For 4.20-rc1 there's one patch only for sprd devicetree, please pull from my git tree:
+> > >
+> > > https://github.com/lyrazhang/linux.git m-v4.19-rc1
+> > >
+> > > Please let me know if there's some problem.
+> > >
+> > > Thanks,
+> > > Chunyan
+> > >
+> > > ----------------------------------------------------------------
+> > >
+> > > Suzuki K Poulose (1):
+> > >   arm64: dts: sc9836/sc9860: Update coresight bindings for hardware
+> > >     ports
+> > >
+> > >  arch/arm64/boot/dts/sprd/sc9836.dtsi |  78 +++++++------
+> > >  arch/arm64/boot/dts/sprd/sc9860.dtsi | 215 ++++++++++++++++++-----------------
+> > >  2 files changed, 151 insertions(+), 142 deletions(-)
+> >
+> > Hi,
+> >
+> > This came in right before the merge window so it wasn't included since
+> > it's more of a cleanup. Please resend it after -rc1 is out and we'll be
+> > happy to queue it up for 4.21.
 > 
+> I'm enabling by default the DT warnings that this fixes, so please pull it in.
 
-To be honest the source has been full of sh!t and other expressions
-for a long long time now. I am sure we all know this and it would
-take a pile of effort to clean^H^H^H^Hsanitize and ruin the flavour and
-ambiance of the whole damn thing.  Everyone knows this :
+It was merged on November 13.
 
 
-c $ find . -type f | xargs grep -ic " shit " | grep -v ":0$" | awk 
-'BEGIN{FS=":";print "\nshitlist"}{print $2 " " $1}' | sort -n
-
-shitlist
-1 ./linux-4.20-rc4/arch/powerpc/kernel/eeh_driver.c
-1 ./linux-4.20-rc4/arch/sparc/kernel/pcic.c
-1 ./linux-4.20-rc4/arch/sparc/mm/srmmu.c
-1 ./linux-4.20-rc4/drivers/ata/sata_via.c
-1 ./linux-4.20-rc4/drivers/infiniband/hw/qib/qib_file_ops.c
-1 ./linux-4.20-rc4/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-1 ./linux-4.20-rc4/drivers/net/ethernet/sun/sunhme.c
-1 ./linux-4.20-rc4/drivers/net/wan/z85230.c
-1 ./linux-4.20-rc4/drivers/net/wireless/intel/iwlegacy/3945-mac.c
-1 ./linux-4.20-rc4/net/ipv4/tcp_input.c
-1 ./linux-4.20-rc4/sound/pci/ac97/ac97_patch.c
-1 ./linux-4.20-rc4/sound/pci/cs46xx/dsp_spos_scb_lib.c
-c $
-
-c $ find . -type f | xargs grep -ic " piss " | grep -v ":0$" | awk 
-'BEGIN{FS=":";print "\npisspot"}{print $2 " " $1}' | sort -n
-
-pisspot
-1 ./linux-4.20-rc4/Documentation/process/submitting-patches.rst
-1 ./linux-4.20-rc4/Documentation/translations/ja_JP/SubmittingPatches
-1 ./linux-4.20-rc4/Documentation/translations/zh_CN/SubmittingPatches
-c $
-
-c $ grep -in " piss " 
-./linux-4.20-rc4/Documentation/process/submitting-patches.rst
-817:Greg Kroah-Hartman, "How to piss off a kernel subsystem maintainer".
-
-
-c $ find . -type f | xargs grep -ic " fuck " | grep -v ":0$" | awk 
-'BEGIN{FS=":";print "\nfucked"}{print $2 " " $1}' | sort -n
-
-fucked
-1 ./linux-4.20-rc4/Documentation/kernel-hacking/locking.rst
-1 ./linux-4.20-rc4/arch/m68k/include/asm/sun3ints.h
-1 ./linux-4.20-rc4/drivers/gpu/drm/nouveau/nvkm/subdev/pmu/fuc/macros.fuc
-1 ./linux-4.20-rc4/drivers/media/i2c/bt819.c
-1 ./linux-4.20-rc4/drivers/net/ethernet/sun/sunhme.c
-c $
-
-
-c $ find . -type f | xargs grep -ic " fucked " | grep -v ":0$" | awk 
-'BEGIN{FS=":";print "\nreally fucked"}{print $2 " " $1}' | sort -n
-
-really fucked
-1 ./linux-4.20-rc4/drivers/cpufreq/powernow-k7.c
-1 ./linux-4.20-rc4/drivers/ide/cmd640.c
-1 ./linux-4.20-rc4/fs/notify/inotify/inotify_user.c
-1 ./linux-4.20-rc4/lib/vsprintf.c
-12 ./linux-4.20-rc4/arch/mips/pci/ops-bridge.c
-c $
-
-The finest example of colorful comments is arch/mips/pci/ops-bridge.c:
-
-
-     54          addr = 
-&bridge->b_type0_cfg_dev[slot].f[fn].c[PCI_VENDOR_ID];
-     55          if (get_dbe(cf, (u32 *) addr))
-     56                  return PCIBIOS_DEVICE_NOT_FOUND;
-     57
-     58          /*
-     59           * IOC3 is fucking fucked beyond belief ...  Don't even 
-give the
-     60           * generic PCI code a chance to look at it for real ...
-     61           */
-     62          if (cf == (PCI_VENDOR_ID_SGI | (PCI_DEVICE_ID_SGI_IOC3 
-<< 16)))
-     63                  goto oh_my_gawd;
-     64
-.
-.
-.
-     76  oh_my_gawd:
-     77
-     78          /*
-     79           * IOC3 is fucking fucked beyond belief ...  Don't even 
-give the
-     80           * generic PCI code a chance to look at the wrong register.
-     81           */
-     82          if ((where >= 0x14 && where < 0x40) || (where >= 0x48)) {
-     83                  *value = emulate_ioc3_cfg(where, size);
-     84                  return PCIBIOS_SUCCESSFUL;
-     85          }
-     86
-     87          /*
-     88           * IOC3 is fucking fucked beyond belief ...  Don't try 
-to access
-     89           * anything but 32-bit words ...
-     90           */
-     91          addr = &bridge->b_type0_cfg_dev[slot].f[fn].l[where >> 2];
-     92
-
-
-Ah yes .. I remember the days when IBM bought Lotus and no one could
-have a beer in the office anymore.  Everyone that was good walked out.
-Let's not do that.
-
-Dennis Clarke
-
+-Olof
