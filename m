@@ -2,245 +2,296 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4215BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF27C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE6312081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:20:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6312081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id 82C1C2081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:21:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="g7L6IqiJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C1C2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbeK3N2P convert rfc822-to-8bit (ORCPT
+        id S1727126AbeK3N31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:28:15 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:33915 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726549AbeK3N2P (ORCPT
+        Fri, 30 Nov 2018 08:29:27 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:9623 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbeK3N31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:28:15 -0500
-X-ASG-Debug-ID: 1543544432-093b7e197b41010001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id AzM3INU2B5I8Heq5 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 30 Nov 2018 10:20:32 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 30 Nov 2018 10:19:46 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Fri, 30 Nov 2018 10:19:46 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     Kees Cook <keescook@chromium.org>
-CC:     David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        Fri, 30 Nov 2018 08:29:27 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c009e8e0000>; Thu, 29 Nov 2018 18:21:02 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 29 Nov 2018 18:21:47 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 29 Nov 2018 18:21:47 -0800
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Nov
+ 2018 02:21:47 +0000
+Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
+To:     Tom Talpey <tom@talpey.com>, <john.hubbard@gmail.com>,
+        <linux-mm@kvack.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
- by STACK_END_MAGIC
-Thread-Topic: [PATCH 1/1] sched/headers: fix thread_info.<first> is
- overwritten by STACK_END_MAGIC
-X-ASG-Orig-Subj: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
- by STACK_END_MAGIC
-Thread-Index: AQHUgwHXQvH51CSg9UWtTixRCjaq8A==
-Date:   Fri, 30 Nov 2018 02:19:46 +0000
-Message-ID: <24e0c18ed41c44828c753ce9ed3016a5@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <e7952089a66db4e5d59d2af230a324155bb018a0.1542955914.git.dongsheng.wang@hxt-semitech.com>
- <CAGXu5jKTQK2BGYefNXkW=-=svzhnqP4Pho3jK+mORAjDxgnsRA@mail.gmail.com>
- <19391812db6444f3bd260546acded9b7@HXTBJIDCEMVIW02.hxtcorp.net>
- <CAGXu5jJg+rfDi1VuiaevPSkaZidjmEC2au9yJR6n6rWJR-qcsg@mail.gmail.com>
- <810b0ad91d5547c5bbbec1b61c119bdc@HXTBJIDCEMVIW02.hxtcorp.net>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.64.6.159]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181110085041.10071-1-jhubbard@nvidia.com>
+ <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
+ <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
+ <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
+ <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
+ <15e4a0c0-cadd-e549-962f-8d9aa9fc033a@talpey.com>
+ <313bf82d-cdeb-8c75-3772-7a124ecdfbd5@nvidia.com>
+ <2aa422df-d5df-5ddb-a2e4-c5e5283653b5@talpey.com>
+ <7a68b7fc-ff9d-381e-2444-909c9c2f6679@nvidia.com>
+ <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <0f093af1-dee9-51b6-0795-2c073a951fed@nvidia.com>
+Date:   Thu, 29 Nov 2018 18:21:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1543544432
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.62725
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+In-Reply-To: <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543544462; bh=E+uR3IdD7Rdrwk5CV65yf/TjEcWPA8cAPAna3TVj22c=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=g7L6IqiJVIeYSGKVznSTyWfxCnPjm9bf4ogR4erHAbyOdcRlwXK1gKDwhXlmXUpND
+         l4BjxQpC44V6tMqCxD/vYY55nkTwqmOQBOiy9qp3cqtDoDntBQ9L00um5CmtiAqrlq
+         hgqv7hsJy2TpJBZYZRkBy1GGb8KWsy+RgIERSEwqHGOhduzmw4nAhF1rIQcADK2ZgI
+         JhsJs2LDRthAB2cZWDSxwYmrgSuUiPIIdLA6XTd4j7LA0VdFNhqQ6yUv8KzLZIFCXD
+         Szo98PPrV6YgN6+2GBu4QlKeCw2ycClnzVxz9iYlN5hSQe2hFwPu59zKYXb9AsppAt
+         tT6qSVzbfCZng==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/30 10:04, Wang, Dongsheng wrote:
-> On 2018/11/30 5:22, Kees Cook wrote:
->> On Tue, Nov 27, 2018 at 8:38 PM Wang, Dongsheng
->> <dongsheng.wang@hxt-semitech.com> wrote:
->>> Hello Kees,
->>>
->>> On 2018/11/28 6:38, Kees Cook wrote:
->>>> On Thu, Nov 22, 2018 at 11:54 PM, Wang Dongsheng
->>>> <dongsheng.wang@hxt-semitech.com> wrote:
->>>>> When select ARCH_TASK_STRUCT_ON_STACK the first of thread_info variable
->>>>> is overwritten by STACK_END_MAGIC. In fact, the ARCH_TASK_STRUCT_ON_STACK
->>>>> is not a real task on stack, it's only init_task on init_stack.
+On 11/29/18 6:18 PM, Tom Talpey wrote:
+> On 11/29/2018 8:39 PM, John Hubbard wrote:
+>> On 11/28/18 5:59 AM, Tom Talpey wrote:
+>>> On 11/27/2018 9:52 PM, John Hubbard wrote:
+>>>> On 11/27/18 5:21 PM, Tom Talpey wrote:
+>>>>> On 11/21/2018 5:06 PM, John Hubbard wrote:
+>>>>>> On 11/21/18 8:49 AM, Tom Talpey wrote:
+>>>>>>> On 11/21/2018 1:09 AM, John Hubbard wrote:
+>>>>>>>> On 11/19/18 10:57 AM, Tom Talpey wrote:
+>>>> [...]
+>>>>> I'm super-limited here this week hardware-wise and have not been able
+>>>>> to try testing with the patched kernel.
 >>>>>
->>>>> Commit 0500871f21b2 ("Construct init thread stack in the linker script
->>>>> rather than by union") added this macro and put task_strcut into
->>>>> thread_union. This brings us the following possibilities:
->>>>>     TASK_ON_STACK    THREAD_INFO_IN_TASK    STACK
->>>>>                                             ----- <-- thread_info & stack
->>>>>         N                    N             |     |     --- <-- task
->>>>>                                            |     |    |   |
->>>>>                                             -----      ---
+>>>>> I was able to compare my earlier quick test with a Bionic 4.15 kernel
+>>>>> (400K IOPS) against a similar 4.20rc3 kernel, and the rate dropped to
+>>>>> ~_375K_ IOPS. Which I found perhaps troubling. But it was only a quic=
+k
+>>>>> test, and without your change.
 >>>>>
->>>>>                                             ----- <-- stack
->>>>>         N                    Y             |     |     --- <-- task(Including thread_info)
->>>>>                                            |     |    |   |
->>>>>                                             -----      ---
->>>>>
->>>>>                                             ----- <-- stack & task & thread_info
->>>>>         Y                    N             |     |
->>>>>                                            |     |
->>>>>                                             -----
->>>>>
->>>>>                                             ----- <-- stack & task(Including thread_info)
->>>>>         Y                    Y             |     |
->>>>>                                            |     |
->>>>>                                             -----
->>>>> The kernel has handled the first two cases correctly.
->>>>>
->>>>> For the third case:
->>>>> TASK_ON_STACK: Y. THREAD_INFO_IN_TASK: N. this case
->>>>> should never happen, because the task and thread_info will overlap. So
->>>>> when TASK_ON_STACK is selected, THREAD_INFO_IN_TASK must be selected too.
->>>>>
->>>>> For the fourth case:
->>>>> When task on stack, the end of stack should add a sizeof(task_struct) offset.
->>>>>
->>>>> This patch handled with the third and fourth case.
->>>>>
->>>>> Fixes: 0500871f21b2 ("Construct init thread stack in the linker ...")
->>>>>
->>>>> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
->>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
->>>>> ---
->>>>>  arch/Kconfig                     | 1 +
->>>>>  include/linux/sched/task_stack.h | 5 ++++-
->>>>>  2 files changed, 5 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/Kconfig b/arch/Kconfig
->>>>> index e1e540ffa979..0a2c73e73195 100644
->>>>> --- a/arch/Kconfig
->>>>> +++ b/arch/Kconfig
->>>>> @@ -251,6 +251,7 @@ config ARCH_HAS_SET_MEMORY
->>>>>  # Select if arch init_task must go in the __init_task_data section
->>>>>  config ARCH_TASK_STRUCT_ON_STACK
->>>>>         bool
->>>>> +       depends on THREAD_INFO_IN_TASK || IA64
->>>> The "IA64" part shouldn't be needed since IA64 already selects it.
 >>>>
->>>> Since it's selected, it also can't have a depends, IIUC.
->>> Since the IA64 thread_info including task_struct, it doesn't need to
->>> select THREAD_INFO_IN_TASK.
->>> So we need to allow IA64 select ARCH_TASK_STRUCT_ON_STACK without
->>> THREAD_INFO.
->> Okay.
->>
->>>>>  # Select if arch has its private alloc_task_struct() function
->>>>>  config ARCH_TASK_STRUCT_ALLOCATOR
->>>>> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
->>>>> index 6a841929073f..624c48defb9e 100644
->>>>> --- a/include/linux/sched/task_stack.h
->>>>> +++ b/include/linux/sched/task_stack.h
->>>>> @@ -7,6 +7,7 @@
->>>>>   */
->>>>>
->>>>>  #include <linux/sched.h>
->>>>> +#include <linux/sched/task.h>
->>>>>  #include <linux/magic.h>
->>>>>
->>>>>  #ifdef CONFIG_THREAD_INFO_IN_TASK
->>>>> @@ -25,7 +26,9 @@ static inline void *task_stack_page(const struct task_struct *task)
->>>>>
->>>>>  static inline unsigned long *end_of_stack(const struct task_struct *task)
->>>>>  {
->>>>> -       return task->stack;
->>>>> +       if (!IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) || task != &init_task)
->>>>> +               return task->stack;
->>>>> +       return (unsigned long *)(task + 1);
->>>>>  }
->>>> This seems like a strange place for the change. It feels more like
->>>> init_task has been defined incorrectly.
->>> The init_task will put into init_stack when ARCH_TASK_STRUCT_ON_STACK is
->>> selected.
->>> include/asm-generic/vmlinux.lds.h:
->>> #define INIT_TASK_DATA(align)                        \
->>>     . = ALIGN(align);                        \
->>>     __start_init_task = .;                        \
->>>     init_thread_union = .;                        \
->>>     init_stack = .;                            \
->>>     KEEP(*(.data..init_task))                    \
->>>     KEEP(*(.data..init_thread_info))                \
->>>     . = __start_init_task + THREAD_SIZE;                \
->>>     __end_init_task = .;
+>>>> So just to double check (again): you are running fio with these parame=
+ters,
+>>>> right?
+>>>>
+>>>> [reader]
+>>>> direct=3D1
+>>>> ioengine=3Dlibaio
+>>>> blocksize=3D4096
+>>>> size=3D1g
+>>>> numjobs=3D1
+>>>> rw=3Dread
+>>>> iodepth=3D64
 >>>
->>> So we need end_of_stack to offset sizeof(task_struct).
->> Well, I guess I mean I'd rather the end_of_stack() code not be
->> special-cased in the if. The default should be how it was. Perhaps:
+>>> Correct, I copy/pasted these directly. I also ran with size=3D10g becau=
+se
+>>> the 1g provides a really small sample set.
+>>>
+>>> There was one other difference, your results indicated fio 3.3 was used=
+.
+>>> My Bionic install has fio 3.1. I don't find that relevant because our
+>>> goal is to compare before/after, which I haven't done yet.
+>>>
 >>
->> if (IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) && task == &init_task)
-About this special case:
-As I mentioned in the description of patch, The
-ARCH_TASK_STRUCT_ON_STACK is not a real task on stack, it's only
-init_task on init_stack.
-The alloc task is not in alloc stack, So if condition including "task ==
-&init_task".
+>> OK, the 50 MB/s was due to my particular .config. I had some expensive d=
+ebug options
+>> set in mm, fs and locking subsystems. Turning those off, I'm back up to =
+the rated
+>> speed of the Samsung NVMe device, so now we should have a clearer pictur=
+e of the
+>> performance that real users will see.
+>=20
+> Oh, good! I'm especially glad because I was having a heck of a time
+> reconfiguring the one machine I have available for this.
+>=20
+>> Continuing on, then: running a before and after test, I don't see any si=
+gnificant
+>> difference in the fio results:
+>=20
+> Excerpting from below:
+>=20
+>> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
+>>=C2=A0=C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB/s)(1024M=
+iB/1360msec)
+>>=C2=A0=C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 : usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D73
+>=20
+> vs
+>=20
+>> With patches applied:
+>>=C2=A0=C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB/s)(1024M=
+iB/1360msec)
+>>=C2=A0=C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 : usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D73
+>=20
+> Perfect results, not CPU limited, and full IOPS.
+>=20
+> Curiously identical, so I trust you've checked that you measured
+> both targets, but if so, I say it's good.
+>=20
 
-Cheers,
-Dongsheng
+Argh, copy-paste error in the email. The real "before" is ever so slightly
+better, at 194K IOPS and 759 MB/s:
 
->>     return (unsigned long *)(task + 1);
->> return task->stack;
+ $ fio ./experimental-fio.conf
+reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096=
+B-4096B, ioengine=3Dlibaio, iodepth=3D64
+fio-3.3
+Starting 1 process
+Jobs: 1 (f=3D1)
+reader: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D1715: Thu Nov 29 17:07:09 =
+2018
+   read: IOPS=3D194k, BW=3D759MiB/s (795MB/s)(1024MiB/1350msec)
+    slat (nsec): min=3D1245, max=3D2812.7k, avg=3D1538.03, stdev=3D5519.61
+    clat (usec): min=3D148, max=3D755, avg=3D326.85, stdev=3D18.13
+     lat (usec): min=3D150, max=3D3483, avg=3D328.41, stdev=3D19.53
+    clat percentiles (usec):
+     |  1.00th=3D[  322],  5.00th=3D[  326], 10.00th=3D[  326], 20.00th=3D[=
+  326],
+     | 30.00th=3D[  326], 40.00th=3D[  326], 50.00th=3D[  326], 60.00th=3D[=
+  326],
+     | 70.00th=3D[  326], 80.00th=3D[  326], 90.00th=3D[  326], 95.00th=3D[=
+  326],
+     | 99.00th=3D[  355], 99.50th=3D[  537], 99.90th=3D[  553], 99.95th=3D[=
+  553],
+     | 99.99th=3D[  619]
+   bw (  KiB/s): min=3D767816, max=3D783096, per=3D99.84%, avg=3D775456.00,=
+ stdev=3D10804.59, samples=3D2
+   iops        : min=3D191954, max=3D195774, avg=3D193864.00, stdev=3D2701.=
+15, samples=3D2
+  lat (usec)   : 250=3D0.09%, 500=3D99.30%, 750=3D0.61%, 1000=3D0.01%
+  cpu          : usr=3D18.24%, sys=3D44.77%, ctx=3D251527, majf=3D0, minf=
+=3D73
+  IO depths    : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%, 8=3D0.1%, 16=3D0.1%, 32=3D0.=
+1%, >=3D64=3D100.0%
+     submit    : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
+=3D0.0%, >=3D64=3D0.0%
+     complete  : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
+=3D0.1%, >=3D64=3D0.0%
+     issued rwts: total=3D262144,0,0,0 short=3D0,0,0,0 dropped=3D0,0,0,0
+     latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D64
+
+Run status group 0 (all jobs):
+   READ: bw=3D759MiB/s (795MB/s), 759MiB/s-759MiB/s (795MB/s-795MB/s), io=
+=3D1024MiB (1074MB), run=3D1350-1350msec
+
+Disk stats (read/write):
+  nvme0n1: ios=3D222853/0, merge=3D0/0, ticks=3D71410/0, in_queue=3D71935, =
+util=3D100.00%
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
+>=20
 >>
->> But it still feels strange: why can't task->stack point to the correct
->> place in this special case?
-> Normally, task->stack is the bottom of the stack, the end_of_stack just
-> need to return task->stack.
-> The task->stack always represents the bottom of the stack, and it cannot
-> be changed, so what
-> happens here is we have some data(task or thread info)that we want to
-> put at the bottom of the
-> stack. The end_of_stack just refers to the size of the stack available
-> to us.
-> In ARCH_TASK_STRUCT_ON_STACK case, the init_task has been placed in a
-> fixed location, the task
-> is placed at the bottom of the stack. Current end_of_stack doesn't
-> handle this situation, so we need
-> add a if condition to handle it. And this is just like
-> !THREAD_INFO_IN_TASK(the thead_info on stack),
-> the thread_info is placed at the bottom of the stack, the end_of_stack =
-> the bottom of stack + sizeof(*thread_info).
->
->
-> Cheers,
-> Dongsheng
->
->
-
+>> fio.conf:
+>>
+>> [reader]
+>> direct=3D1
+>> ioengine=3Dlibaio
+>> blocksize=3D4096
+>> size=3D1g
+>> numjobs=3D1
+>> rw=3Dread
+>> iodepth=3D64
+>>
+>> ---------------------------------------------------------
+>> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
+>>
+[deleted with prejudice. See the correction above, instead] --jhubbard
+>>
+>> ---------------------------------------------------------
+>> With patches applied:
+>>
+>> <redforge> fast_256GB $ fio ./experimental-fio.conf
+>> reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4=
+096B-4096B, ioengine=3Dlibaio, iodepth=3D64
+>> fio-3.3
+>> Starting 1 process
+>> Jobs: 1 (f=3D1)
+>> reader: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D1738: Thu Nov 29 17:20:=
+07 2018
+>> =C2=A0=C2=A0=C2=A0 read: IOPS=3D193k, BW=3D753MiB/s (790MB/s)(1024MiB/13=
+60msec)
+>> =C2=A0=C2=A0=C2=A0=C2=A0 slat (nsec): min=3D1381, max=3D46469, avg=3D164=
+9.48, stdev=3D594.46
+>> =C2=A0=C2=A0=C2=A0=C2=A0 clat (usec): min=3D162, max=3D12247, avg=3D330.=
+00, stdev=3D185.55
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lat (usec): min=3D165, max=3D12253, avg=
+=3D331.68, stdev=3D185.69
+>> =C2=A0=C2=A0=C2=A0=C2=A0 clat percentiles (usec):
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1.00th=3D[=C2=A0 322],=C2=A0 5.00=
+th=3D[=C2=A0 326], 10.00th=3D[=C2=A0 326], 20.00th=3D[=C2=A0 326],
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 30.00th=3D[=C2=A0 326], 40.00th=3D[=C2=
+=A0 326], 50.00th=3D[=C2=A0 326], 60.00th=3D[=C2=A0 326],
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 70.00th=3D[=C2=A0 326], 80.00th=3D[=C2=
+=A0 326], 90.00th=3D[=C2=A0 326], 95.00th=3D[=C2=A0 326],
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 99.00th=3D[=C2=A0 379], 99.50th=3D[=C2=
+=A0 594], 99.90th=3D[=C2=A0 603], 99.95th=3D[=C2=A0 611],
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 99.99th=3D[12125]
+>> =C2=A0=C2=A0=C2=A0 bw (=C2=A0 KiB/s): min=3D751640, max=3D782912, per=3D=
+99.52%, avg=3D767276.00, stdev=3D22112.64, samples=3D2
+>> =C2=A0=C2=A0=C2=A0 iops=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : min=
+=3D187910, max=3D195728, avg=3D191819.00, stdev=3D5528.16, samples=3D2
+>> =C2=A0=C2=A0 lat (usec)=C2=A0=C2=A0 : 250=3D0.08%, 500=3D99.30%, 750=3D0=
+.59%
+>> =C2=A0=C2=A0 lat (msec)=C2=A0=C2=A0 : 20=3D0.02%
+>> =C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :=
+ usr=3D16.26%, sys=3D48.05%, ctx=3D251258, majf=3D0, minf=3D73
+>> =C2=A0=C2=A0 IO depths=C2=A0=C2=A0=C2=A0 : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%,=
+ 8=3D0.1%, 16=3D0.1%, 32=3D0.1%, >=3D64=3D100.0%
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 submit=C2=A0=C2=A0=C2=A0 : 0=3D0.0%, 4=3D=
+100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=3D0.0%, >=3D64=3D0.0%
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 complete=C2=A0 : 0=3D0.0%, 4=3D100.0%, 8=
+=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=3D0.1%, >=3D64=3D0.0%
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 issued rwts: total=3D262144,0,0,0 short=
+=3D0,0,0,0 dropped=3D0,0,0,0
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 latency=C2=A0=C2=A0 : target=3D0, window=
+=3D0, percentile=3D100.00%, depth=3D64
+>>
+>> Run status group 0 (all jobs):
+>> =C2=A0=C2=A0=C2=A0 READ: bw=3D753MiB/s (790MB/s), 753MiB/s-753MiB/s (790=
+MB/s-790MB/s), io=3D1024MiB (1074MB), run=3D1360-1360msec
+>>
+>> Disk stats (read/write):
+>> =C2=A0=C2=A0 nvme0n1: ios=3D220798/0, merge=3D0/0, ticks=3D71481/0, in_q=
+ueue=3D71966, util=3D100.00%
+>>
+>>
+>> thanks,
+>>
+>=20
