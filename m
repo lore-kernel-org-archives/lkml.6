@@ -2,103 +2,228 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0924EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4ACCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA04420868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A13FC20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:06:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPJQmKnS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA04420868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fDHHoDVy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A13FC20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbeLABPM (ORCPT
+        id S1726885AbeLABPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:15:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbeLABPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:15:12 -0500
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68DCF2146F;
-        Fri, 30 Nov 2018 14:05:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543586746;
-        bh=PoTIaqiHxSur5Uv2gK+uTzhGCQx72ga/gdWkfYh/9Ik=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mPJQmKnS+LrjOW41EjNzpMiAZl6SZ8AqQiQQW9oTCmN5CDuzMYluWxapEcZkdDqku
-         F8fFDoaHysVtHtt9nZCc0NfXv69qdjmGx32+iQJ3AqGC9k0ZYQ4CUB3rvxqNbpQWqG
-         NejVxIalTwepHE24v1rE5Ffpdly8WQUn86eu2oBo=
-Received: by mail-qt1-f181.google.com with SMTP id p17so5989626qtl.5;
-        Fri, 30 Nov 2018 06:05:46 -0800 (PST)
-X-Gm-Message-State: AA+aEWZN8ZK5jQ6Olv3O8YONp7NRCE9XCGbnS5ACv4sLFFuZITgqWKOO
-        KSiosZMRapOhZShhsu2njw2KRwGuhZ2iwpLbIA==
-X-Google-Smtp-Source: AFSGD/VUzsPQpkC1qPgfOMf+rAMf2iGIZ0/2i05uUOD8hy15aSyFx/UpWvJkPmsdHEda2ZqiW5fyRqxINmNqCL5khAc=
-X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr5811141qvl.77.1543586745563;
- Fri, 30 Nov 2018 06:05:45 -0800 (PST)
+        Fri, 30 Nov 2018 20:15:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44616 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbeLABPo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 20:15:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=k5DBNKfj7R4vuRl0uYCsPIspnLkumZndZcevVZZ7rMQ=; b=fDHHoDVyW/igCpZFgJu5mc17tr
+        0eCJmmKgWa5w3yIgcXCfe95kANOBUb9DFKmTdPCkEkjP5Hz01FRTlAiQZ4fIxmn6DJXNgxK+aaG1n
+        BV+f9MKRSjFaaNDh8nH+ldo7msPm/uY4iejk0Oc3XmuNgfRk5xK2PXLdNhISZ0baeF15PyH0OVLGT
+        aAKVQaszbSkkqlkcJQtbr7fWgpCPdBm+aYqXqbYduSky1gqAVs6lFETfVEL3TDoKRAYbFMx83Nn2Q
+        HVNE6XIRC4YGTn328l+f87RQgUccFrXNS9U8dii++cVqFbZj9WfoVzIfO82Pu1tq7DFzj7YBbduM4
+        Q3UqJQNw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSjQv-0003Dr-2M; Fri, 30 Nov 2018 14:06:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 631E52029FD64; Fri, 30 Nov 2018 15:06:14 +0100 (CET)
+Message-Id: <20181130140337.547357878@infradead.org>
+User-Agent: quilt/0.65
+Date:   Fri, 30 Nov 2018 14:44:57 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     dave.hansen@intel.com, luto@kernel.org, peterz@infradead.org
+Cc:     x86@kernel.org, Tom.StDenis@amd.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] x86/mm/cpa: Fix cpa_flush_array()
+References: <20181130134455.490139778@infradead.org>
 MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-7-brendanhiggins@google.com> <CAL_JsqJLNSg-38hej8LV+Oh-YXBM2hRGomie3b_psa9LvzoRYg@mail.gmail.com>
- <20181130033704.GL18410@garbanzo.do-not-panic.com>
-In-Reply-To: <20181130033704.GL18410@garbanzo.do-not-panic.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 30 Nov 2018 08:05:34 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+jxHHmT5bLnABnF7S0fSBZvH72nDPyY5LHTn9Zm9hCUw@mail.gmail.com>
-Message-ID: <CAL_Jsq+jxHHmT5bLnABnF7S0fSBZvH72nDPyY5LHTn9Zm9hCUw@mail.gmail.com>
-Subject: Re: [RFC v3 06/19] arch: um: enable running kunit from User Mode Linux
-To:     "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Frank Rowand <frowand.list@gmail.com>, knut.omang@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=peterz-cpa-fix-flush_array.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 9:37 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Wed, Nov 28, 2018 at 03:26:03PM -0600, Rob Herring wrote:
-> > On Wed, Nov 28, 2018 at 1:37 PM Brendan Higgins
-> > <brendanhiggins@google.com> wrote:
-> > >
-> > > Make minimum number of changes outside of the KUnit directories for
-> > > KUnit to build and run using UML.
-> >
-> > There's nothing in this patch limiting this to UML.
->
-> Not that one, but the abort thing segv thing is, eventually.
-> To support other architectures we'd need to make a wrapper to that
-> hack which Brendan added, and then allow each os to implement
-> its own call, and add an asm-generic helper.
+In commit:
 
-I've not looked into why this is needed, but can't you make the abort
-support optional and arches can select it when they support it. At
-least before, the DT unittests didn't need this to run and shouldn't
-depend on it after converting to kunit.
+  a7295fd53c39 ("x86/mm/cpa: Use flush_tlb_kernel_range()")
 
-Rob
+I misread the cpa array code and incorrectly used
+tlb_flush_kernel_range(), resulting in missing TLB flushes and
+consequent failures.
+
+Iterate the array and invalidate the individual pages instead.
+
+Fixes: a7295fd53c39 ("x86/mm/cpa: Use flush_tlb_kernel_range()")
+Reported-by: "StDenis, Tom" <Tom.StDenis@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/mm/mm_internal.h |    2 +
+ arch/x86/mm/pageattr.c    |   62 ++++++++++++++++++++++++++++------------------
+ arch/x86/mm/tlb.c         |    4 ++
+ 3 files changed, 43 insertions(+), 25 deletions(-)
+
+--- a/arch/x86/mm/mm_internal.h
++++ b/arch/x86/mm/mm_internal.h
+@@ -19,4 +19,6 @@ extern int after_bootmem;
+ 
+ void update_cache_mode_entry(unsigned entry, enum page_cache_mode cache);
+ 
++extern unsigned long tlb_single_page_flush_ceiling;
++
+ #endif	/* __X86_MM_INTERNAL_H */
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -26,6 +26,8 @@
+ #include <asm/pat.h>
+ #include <asm/set_memory.h>
+ 
++#include "mm_internal.h"
++
+ /*
+  * The current flushing context - we pass it instead of 5 arguments:
+  */
+@@ -302,20 +304,16 @@ static void cpa_flush_all(unsigned long
+ 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
+ }
+ 
+-static bool __cpa_flush_range(unsigned long start, int numpages, int cache)
++static bool cpa_check_flush_all(int cache)
+ {
+ 	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
+ 
+-	WARN_ON(PAGE_ALIGN(start) != start);
+-
+ 	if (cache && !static_cpu_has(X86_FEATURE_CLFLUSH)) {
+ 		cpa_flush_all(cache);
+ 		return true;
+ 	}
+ 
+-	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
+-
+-	return !cache;
++	return false;
+ }
+ 
+ static void cpa_flush_range(unsigned long start, int numpages, int cache)
+@@ -323,7 +321,14 @@ static void cpa_flush_range(unsigned lon
+ 	unsigned int i, level;
+ 	unsigned long addr;
+ 
+-	if (__cpa_flush_range(start, numpages, cache))
++	WARN_ON(PAGE_ALIGN(start) != start);
++
++	if (cpa_check_flush_all(cache))
++		return;
++
++	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
++
++	if (!cache)
+ 		return;
+ 
+ 	/*
+@@ -343,13 +348,28 @@ static void cpa_flush_range(unsigned lon
+ 	}
+ }
+ 
+-static void cpa_flush_array(unsigned long baddr, unsigned long *start,
+-			    int numpages, int cache,
+-			    int in_flags, struct page **pages)
++void __cpa_flush_array(void *data)
+ {
+-	unsigned int i, level;
++	struct cpa_data *cpa = data;
++	unsigned int i;
+ 
+-	if (__cpa_flush_range(baddr, numpages, cache))
++	for (i = 0; i < cpa->numpages; i++)
++		__flush_tlb_one_kernel(__cpa_addr(cpa, i));
++}
++
++static void cpa_flush_array(struct cpa_data *cpa, int cache)
++{
++	unsigned int i;
++
++	if (cpa_check_flush_all(cache))
++		return;
++
++	if (cpa->numpages <= tlb_single_page_flush_ceiling)
++		on_each_cpu(__cpa_flush_array, cpa, 1);
++	else
++		flush_tlb_all();
++
++	if (!cache)
+ 		return;
+ 
+ 	/*
+@@ -358,15 +378,11 @@ static void cpa_flush_array(unsigned lon
+ 	 * will cause all other CPUs to flush the same
+ 	 * cachelines:
+ 	 */
+-	for (i = 0; i < numpages; i++) {
+-		unsigned long addr;
++	for (i = 0; i < cpa->numpages; i++) {
++		unsigned long addr = __cpa_addr(cpa, i);
++		unsigned int level;
+ 		pte_t *pte;
+ 
+-		if (in_flags & CPA_PAGES_ARRAY)
+-			addr = (unsigned long)page_address(pages[i]);
+-		else
+-			addr = start[i];
+-
+ 		pte = lookup_address(addr, &level);
+ 
+ 		/*
+@@ -1765,12 +1781,10 @@ static int change_page_attr_set_clr(unsi
+ 		goto out;
+ 	}
+ 
+-	if (cpa.flags & (CPA_PAGES_ARRAY | CPA_ARRAY)) {
+-		cpa_flush_array(baddr, addr, numpages, cache,
+-				cpa.flags, pages);
+-	} else {
++	if (cpa.flags & (CPA_PAGES_ARRAY | CPA_ARRAY))
++		cpa_flush_array(&cpa, cache);
++	else
+ 		cpa_flush_range(baddr, numpages, cache);
+-	}
+ 
+ out:
+ 	return ret;
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -16,6 +16,8 @@
+ #include <asm/apic.h>
+ #include <asm/uv/uv.h>
+ 
++#include "mm_internal.h"
++
+ /*
+  *	TLB flushing, formerly SMP-only
+  *		c/o Linus Torvalds.
+@@ -664,7 +666,7 @@ void native_flush_tlb_others(const struc
+  *
+  * This is in units of pages.
+  */
+-static unsigned long tlb_single_page_flush_ceiling __read_mostly = 33;
++unsigned long tlb_single_page_flush_ceiling __read_mostly = 33;
+ 
+ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ 				unsigned long end, unsigned int stride_shift,
+
+
