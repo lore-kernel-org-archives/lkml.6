@@ -2,185 +2,157 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23607C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3402C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45982081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:53:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HpsuS/Kg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45982081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C1DC62146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 08:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DC62146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeK3UCV (ORCPT
+        id S1727407AbeK3UC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:02:21 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:45895 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbeK3UCU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:02:20 -0500
-Received: by mail-vs1-f68.google.com with SMTP id v10so2872014vsv.12
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 00:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X1+MhAM+ndLUP+nviSfx6z+uM3DshGB8/xuC8G90ofg=;
-        b=HpsuS/KgkcCpAVvZzsCoA5BrGmyDZN1XqHpZaERKtMW3T/PuWhOTAdDV6588LPqONo
-         bMkJLx7gXj8N9JMiV2V3ggEfe284XqcLf0VyPPRts2MPETlMf5TXHIDruDdrDhw3uOHU
-         2UDKZswPuURx6+iqujVZlbbZ6+bjqax1X7INk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X1+MhAM+ndLUP+nviSfx6z+uM3DshGB8/xuC8G90ofg=;
-        b=efMx39roNxMl9e8xduwpdqWlveC9gcUTwee9uFMnrke5lkUR9dLqnJZHzXhF35hNm3
-         2G+l5ucUcS+RV+thjhJefdrkiWlnt0r/hs2z2O77AOM+IvEqNfEK1BffQfnTMaVKWRYg
-         3w1FhNd8zngVs0Qk2GHtOGxS3OrL5NTXPGSk4wxuuahOYFHnEY9KHZtkvNwHGULzAHq1
-         e8986Uchj376ZHB0N/XTuWAYeK0MilyJeqYCprSdXnwqFy4LL9VguTap+hSsCqoJHO6i
-         2mRuDEEIJ1zAkVyibHiX1miymRL70U9n8pJwniblYUfwX+eBZ1S411yTmVfKDXro/GSJ
-         Jmjg==
-X-Gm-Message-State: AA+aEWas43/KE4guENvahc565dhRNUH9DnO95tHZSsdT/3vTUUyG1N9b
-        hTkLNe77ttHt1y9CJjKQym07Uv8j31Z4bW5Gh73gyg==
-X-Google-Smtp-Source: AFSGD/WO0IDW/+ZBovI0O7YdAjXRAz6Qjv/Rl+Zj85Si6U8n0jZ9c3f2wIKMsqCh9WM6hqOk23t9FWF6mflVxvV/joE=
-X-Received: by 2002:a67:7685:: with SMTP id r127mr2136341vsc.35.1543568023843;
- Fri, 30 Nov 2018 00:53:43 -0800 (PST)
+        Fri, 30 Nov 2018 15:02:27 -0500
+Received: from foss.arm.com ([217.140.101.70]:52498 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727196AbeK3UC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:02:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 034F915AB;
+        Fri, 30 Nov 2018 00:53:51 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2552B3F5A0;
+        Fri, 30 Nov 2018 00:53:49 -0800 (PST)
+From:   Julien Thierry <julien.thierry@arm.com>
+Subject: Re: [PATCH v6 06/24] arm64: ptrace: Provide definitions for PMR
+ values
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        james.morse@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        Oleg Nesterov <oleg@redhat.com>
+References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-7-git-send-email-julien.thierry@arm.com>
+ <20181129164013.qmmwhbygjkh5lwx5@lakrids.cambridge.arm.com>
+Message-ID: <79145359-3594-3dac-1123-cec552c2b13e@arm.com>
+Date:   Fri, 30 Nov 2018 08:53:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <cover.1543219386.git.viresh.kumar@linaro.org> <f95b514f7b3b3ab6ac00c9871e91513c9c3a09a3.1543219386.git.viresh.kumar@linaro.org>
-In-Reply-To: <f95b514f7b3b3ab6ac00c9871e91513c9c3a09a3.1543219386.git.viresh.kumar@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 30 Nov 2018 09:53:07 +0100
-Message-ID: <CAPDyKFrUBwagtfwCezqw2ujPBVVtQNqz4rKgAG0Yyy18FZv+wA@mail.gmail.com>
-Subject: Re: [PATCH V2 3/5] PM / Domains: Save OPP table pointer in genpd
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181129164013.qmmwhbygjkh5lwx5@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 at 09:10, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> We will need these going forward in hotpath, i.e. from within
-> dev_pm_genpd_set_performance_state().
 
-Well, as for patch2, please try to be a bit more descriptive of why
-and what this patch does.
 
->
-> Lets fetch and save them while the OPP tables are added.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/base/power/domain.c | 23 +++++++++++++++++++++--
->  include/linux/pm_domain.h   |  2 ++
->  2 files changed, 23 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 8e554e6a82a2..0d928359b880 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1907,12 +1907,21 @@ int of_genpd_add_provider_simple(struct device_node *np,
->                                 ret);
->                         goto unlock;
->                 }
-> +
-> +               /*
-> +                * Save table for faster processing while setting performance
-> +                * state.
-> +                */
-> +               genpd->opp_table = dev_pm_opp_get_opp_table(&genpd->dev);
-> +               WARN_ON(!genpd->opp_table);
+On 29/11/18 16:40, Mark Rutland wrote:
+> On Mon, Nov 12, 2018 at 11:56:57AM +0000, Julien Thierry wrote:
+>> Introduce fixed values for PMR that are going to be used to mask and
+>> unmask interrupts by priority. These values are chosent in such a way
+> 
+> Nit: s/chosent/chosen/
+> 
+>> that a single bit (GIC_PMR_UNMASKED_BIT) encodes the information whether
+>> interrupts are masked or not.
+> 
+> There's no GIC_PMR_UNMASKED_BIT in this patch. Should that be
+> GIC_PRIO_STATUS_BIT?
+> 
 
-The WARN_ON seems lazy. Why not implement a proper error path?
+Yep, forgot to update the commit message when renaming, thanks.
 
->         }
->
->         ret = genpd_add_provider(np, genpd_xlate_simple, genpd);
->         if (ret) {
-> -               if (genpd->set_performance_state)
-> +               if (genpd->set_performance_state) {
-> +                       dev_pm_opp_put_opp_table(genpd->opp_table);
->                         dev_pm_opp_of_remove_table(&genpd->dev);
-> +               }
->
->                 goto unlock;
->         }
-> @@ -1965,6 +1974,13 @@ int of_genpd_add_provider_onecell(struct device_node *np,
->                                         i, ret);
->                                 goto error;
->                         }
-> +
-> +                       /*
-> +                        * Save table for faster processing while setting
-> +                        * performance state.
-> +                        */
-> +                       genpd->opp_table = dev_pm_opp_get_opp_table_indexed(&genpd->dev, i);
-> +                       WARN_ON(!genpd->opp_table);
->                 }
->
->                 genpd->provider = &np->fwnode;
-> @@ -1989,8 +2005,10 @@ int of_genpd_add_provider_onecell(struct device_node *np,
->                 genpd->provider = NULL;
->                 genpd->has_provider = false;
->
-> -               if (genpd->set_performance_state)
-> +               if (genpd->set_performance_state) {
-> +                       dev_pm_opp_put_opp_table(genpd->opp_table);
->                         dev_pm_opp_of_remove_table(&genpd->dev);
-> +               }
->         }
->
->         mutex_unlock(&gpd_list_lock);
-> @@ -2024,6 +2042,7 @@ void of_genpd_del_provider(struct device_node *np)
->                                         if (!gpd->set_performance_state)
->                                                 continue;
->
-> +                                       dev_pm_opp_put_opp_table(gpd->opp_table);
->                                         dev_pm_opp_of_remove_table(&gpd->dev);
->                                 }
->                         }
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 642036952553..9ad101362aef 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -73,6 +73,7 @@ struct genpd_power_state {
->
->  struct genpd_lock_ops;
->  struct dev_pm_opp;
-> +struct opp_table;
->
->  struct generic_pm_domain {
->         struct device dev;
-> @@ -94,6 +95,7 @@ struct generic_pm_domain {
->         unsigned int performance_state; /* Aggregated max performance state */
->         int (*power_off)(struct generic_pm_domain *domain);
->         int (*power_on)(struct generic_pm_domain *domain);
-> +       struct opp_table *opp_table;    /* OPP table of the genpd */
->         unsigned int (*opp_to_performance_state)(struct generic_pm_domain *genpd,
->                                                  struct dev_pm_opp *opp);
->         int (*set_performance_state)(struct generic_pm_domain *genpd,
-> --
-> 2.19.1.568.g152ad8e3369a
->
+>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> Cc: Oleg Nesterov <oleg@redhat.com>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> ---
+>>  arch/arm64/include/asm/ptrace.h | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+>> index fce22c4..ce6998c 100644
+>> --- a/arch/arm64/include/asm/ptrace.h
+>> +++ b/arch/arm64/include/asm/ptrace.h
+>> @@ -25,6 +25,12 @@
+>>  #define CurrentEL_EL1		(1 << 2)
+>>  #define CurrentEL_EL2		(2 << 2)
+>>  
+>> +/* PMR values used to mask/unmask interrupts */
+>> +#define GIC_PRIO_IRQON		0xf0
+>> +#define GIC_PRIO_STATUS_SHIFT	6
+>> +#define GIC_PRIO_STATUS_BIT	(1 << GIC_PRIO_STATUS_SHIFT)
+>> +#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON ^ GIC_PRIO_STATUS_BIT)
+> 
+> Could you elaborate on the GIC priority logic a bit?
+> 
 
-Similar as for patch2, this makes sense to me. Although, let me review
-the complete series before giving a final call.
+Yes, I'll give details below.
 
-Kind regards
-Uffe
+> Are lower numbers higher priority?
+> 
+
+Yes, that is the case.
+
+> Are there restrictions on valid PMR values?
+> 
+
+Yes, there are at most 8 priority bits but implementations are free to
+implement a number of priority bits:
+- between 5 and 8 when GIC runs two security states (bits [7:3] always
+being implemented and [2:0] being optional), but non-secure side is
+always deprived or the lowest implemented bit
+- between 4 and 8 when GIC runs only one security state (bits [7:4]
+implemented, bits [3:0] optional)
+
+This is detailed in section 4.8 "Interrupt prioritization" of the GICv3
+architecture specification.
+
+So Linux should always be able to see bits [7:4].
+
+> IIUC GIC_PRIO_IRQOFF is 0xb0 (aka 0b10110000), which seems a little
+> surprising. I'd have expected that we'd use the most signficant bit.
+> 
+
+So, re-reading the GICv3 spec, I believe this sparked from a confusion...
+
+The idea was that the GICv3 specification would recommend to keep
+non-secure group-1 interrupts at a lower priority that group-0 (and
+secure group-1 interrupts) interrupts, and to do so the idea was to
+always keep bit[7] == 1 for non-secure group-1.
+
+So, we would need to have priority bit[7] == 1 for both normal
+interrupts and pseudo-NMIs, and using the most significant bit to mask
+would mean masking pseudo-NMIs as well.
+
+However, I only find mention of this in the notes of section 4.8.6
+"Software accesses of interrupt priority". The section only applies to
+GIC with two security states, and the recommendation of writing
+non-secure group-1 priorities with bit[7] == 1 is only directed at
+writes from the secure side. From the non-secure side, the GIC already
+does some magic to enforce that the value kept in the distributor has
+bit[7] == 1.
+
+So, I believe that from the non-secure point of view, we could define
+pseudo-NMI priority as e.g. 0x40 (which the GIC will convert to 0xa0)
+and use the most significant bit of PMR to mask normal interrupts which
+would be more intuitive.
+
+Marc, as GIC expert do you agree with this? Or is there a reason we
+should keep bit[7] == 1 for non-secure group-1 priorities?
+
+Thanks,
+
+-- 
+Julien Thierry
