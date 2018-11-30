@@ -2,166 +2,198 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B0AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0653C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CA1E2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:56:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA1E2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 97EFB2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 06:56:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="fxNv+Mmk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97EFB2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbeK3SES (ORCPT
+        id S1727057AbeK3SEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:04:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55086 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726456AbeK3SER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 13:04:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0E5FDAF58;
-        Fri, 30 Nov 2018 06:55:58 +0000 (UTC)
-Subject: Re: arch/x86/include/asm/cmpxchg.h:245:2: error: 'asm' operand has
- impossible constraints
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <201811301413.r3UWSoXH%fengguang.wu@intel.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <56b6dc1c-d596-56a2-7c64-7e31a7c81f50@suse.com>
-Date:   Fri, 30 Nov 2018 07:55:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 30 Nov 2018 13:04:41 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36011 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbeK3SEl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 13:04:41 -0500
+Received: by mail-io1-f65.google.com with SMTP id m19so3715280ioh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 22:56:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=tgCpOD0fN3NaA8+9zrLq+HWKB9UIL2lYHaWps6IsXeI=;
+        b=fxNv+Mmk7HbU1RWZ0APACSJIUG8DQG8+iODQnxh8DluEkaBUmKcXxicqaanv2quV77
+         Q8+pM8doW9au7soFZstCjXoFOO3TaIPJ1CzNw+IKhZJeDuNenACaAnBfO0Hoq6q9Wto7
+         lpn7j3UD1P1nVNbGxY+2qtR4n4o2n0bhZCaAgc+qlS7rxEbZh1uB04llgaOE50ksHUv3
+         Nnhb1+hzBc1sUXvNB829Q9xR0l+YotR6kyRwS0HTntaeqOiiD8fTQYIMxvcKhi02naEn
+         /0JaVaYTqFFTOz7StDk/R/EfzSwyLYQtuai2s8eBZ91IcwOE+nMKzJVDMztfpUhN0vV9
+         yytw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=tgCpOD0fN3NaA8+9zrLq+HWKB9UIL2lYHaWps6IsXeI=;
+        b=dKNKIrjqhJwRmcRtLssLPviVTUzY4Myq3YCV4X+D6YhCkDtD+Lv/IjvDt/13FvAwh+
+         /PiZ9TBJhzMfv3B+ZawVUgEOZ7+2BDfBrJkpaZIWFg21fTazLN49pmEPOtjv8hqd+Mtp
+         RoNtwHEtFrIG6og30G82BhmHNkuWW0ITYofHhVXEFcg7y7Yt1phrxrJr8dQSJuvfyTIi
+         TcgqQ+JY+d+Pos85pz1CL0L4H3MZdEK5R89JehpCgYr35Pe6zpp7DwmDcrscIQk5Xifi
+         Lf7FxedjHSsfmiIS5a0pgIr00yF93FvY8gvsWd6S2Jh9aMcpCSZ5k3+BOt+NckcOoKup
+         BntA==
+X-Gm-Message-State: AA+aEWYbGqlWc05Od7+rr/VnPJlijjNkBRK2ewa33bsROgqVinLdK1aa
+        dPNh0iKeo5Tm/w6WG0ShYDO36w==
+X-Google-Smtp-Source: AFSGD/URIZbJzvNzfeBmtI4MPp3TICcU+cPPLurGJ3h10IJgRMHoefJ8IR1yb3xPlzXzWjpbGPSyLg==
+X-Received: by 2002:a6b:8f8d:: with SMTP id r135mr3763782iod.5.1543560983604;
+        Thu, 29 Nov 2018 22:56:23 -0800 (PST)
+Received: from brauner.io ([210.246.63.204])
+        by smtp.gmail.com with ESMTPSA id i74-v6sm2742672itc.29.2018.11.29.22.56.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 22:56:22 -0800 (PST)
+Date:   Fri, 30 Nov 2018 07:56:09 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+Message-ID: <20181130065606.kmilbbq46oeycjp5@brauner.io>
+References: <20181120105124.14733-1-christian@brauner.io>
+ <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+ <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net>
+ <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
+ <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
+ <20181129195551.woe2bl3z3yaysqb6@brauner.io>
+ <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
+ <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
+ <87y39b2lm2.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <201811301413.r3UWSoXH%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87y39b2lm2.fsf@xmission.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/11/2018 07:44, kbuild test robot wrote:
-> Hi Juergen,
+On Thu, Nov 29, 2018 at 11:13:57PM -0600, Eric W. Biederman wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
 > 
-> FYI, the error/warning still remains.
+> > On Thu, Nov 29, 2018 at 9:14 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> >> > On Nov 29, 2018, at 11:55 AM, Christian Brauner <christian@brauner.io> wrote:
+> >> >> On Thu, Nov 29, 2018 at 11:22:58AM -0800, Andy Lutomirski wrote:
+> >> >>> On Thu, Nov 29, 2018 at 11:17 AM Christian Brauner <christian@brauner.io> wrote:
+> >> >>>> On November 30, 2018 5:54:18 AM GMT+13:00, Andy Lutomirski <luto@amacapital.net> wrote:
+> >> >>
+> >> >> The #1 fix would add a copy_siginfo_from_user64() or similar.
+> >> >
+> >> > Thanks very much! That all helped a bunch already! I'll try to go the
+> >> > copy_siginfo_from_user64() way first and see if I can make this work. If
+> >> > we do this I would however only want to use it for the new syscall first
+> >> > and not change all other signal syscalls over to it too. I'd rather keep
+> >> > this patchset focussed and small and do such conversions caused by the
+> >> > new approach later. Does that sound reasonable?
+> >>
+> >> Absolutely. I don’t think we can change old syscalls — the ABI is set in stone.
+> >> But for new syscalls, I think the always-64-bit behavior makes sense.
+> >
+> > It looks like we already have a 'struct signalfd_siginfo' that is defined in a
+> > sane architecture-independent way, so I'd suggest we use that.
+> 
+> Unfortunately it isn't maintained very well.  What you can
+> express with signalfd_siginfo is a subset what you can express with
+> siginfo.  Many of the linux extensions to siginfo for exception
+> information add pointers and have integers right after those pointers.
+> Not all of those linux specific extentions for exceptions are handled
+> by signalfd_siginfo (it needs new fields).
+> 
+> As originally defined siginfo had the sigval_t union at the end so it
+> was perfectly fine on both 32bit and 64bit as it only had a single
+> pointer in the structure and the other fields were 32bits in size.
+> 
+> Although I do feel the pain as x86_64 has to deal with 3 versions
+> of siginfo.  A 64bit one.  A 32bit one for ia32.  A 32bit one for x32
+> with a 64bit si_clock_t.
+> 
+> > We may then also want to make sure that any system call that takes a
+> > siginfo has a replacement that takes a signalfd_siginfo, and that this
+> > replacement can be used to implement the old version purely in
+> > user space.
+> 
+> If you are not implementing CRIU and reinserting exceptions to yourself.
+> At most user space wants the ability to implement sigqueue:
+> 
+> AKA:
+> sigqueue(pid_t pid, int sig, const union sigval value);
+> 
+> Well sigqueue with it's own si_codes so the following would cover all
+> the use cases I know of:
+> int sendnewsig(pid_t pid, int sig, int si_code, const union sigval value);
+> 
+> The si_code could even be set to SI_USER to request that the normal
+> trusted SI_USER values be filled in.  si_code values of < 0 if not
+> recognized could reasonably safely be treated as the _rt member of
+> the siginfo union.  Or perhaps better we error out in such a case.
+> 
+> If we want to be flexible and not have N kinds of system calls that
+> is the direction I would go.  That is simple, and you don't need any of
+> the rest.
+> 
+> 
+> Alternatively we abandon the mistake of sigqueueinfo and not allow
+> a signal number in the arguments that differs from the si_signo in the
+> siginfo and allow passing the entire thing unchanged from sender to
+> receiver.  That is maximum flexibility.
+> 
+> signalfd_siginfo just sucks in practice.  It is larger that siginfo 104
+> bytes versus 48.  We must deliver it to userspace as a siginfo so it
+> must be translated.  Because of the translation signalfd_siginfo adds
+> no flexiblity in practice, because it can not just be passed through.
+> Finallay signalfd_siginfo does not have encodings for all of the
+> siginfo union members, so it fails to be fully general.
+> 
+> Personally if I was to define signalfd_siginfo today I would make it:
+> struct siginfo_subset {
+> 	__u32 sis_signo;
+> 	__s32 sis_errno;
+> 	__s32 sis_code;
+>         __u32 sis_pad;
+> 	__u32 sis_pid;
+> 	__u32 sis_uid;
+> 	__u64 sis_data (A pointer or integer data field);
+> };
+> 
+> That is just 32bytes, and is all that is needed for everything
+> except for synchronous exceptions.  Oh and that happens to be a proper
+> subset of a any sane siginfo layout, on both 32bit and 64bit.
+> 
+> This is one of those rare times where POSIX is sane and what linux
+> has implemented is not.
 
-This problem is one of gcc. It is in no way the (direct) result of my
-patch. Please see my gcc bug report:
-
-https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=908154
-
-
-Juergen
-
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   94f371cb73944b410a269d570d6946c042f2ddd0
-> commit: 6da63eb241a05b0e676d68975e793c0521387141 x86/paravirt: Move the pv_irq_ops under the PARAVIRT_XXL umbrella
-> date:   3 months ago
-> config: i386-randconfig-sb0-11301144 (attached as .config)
-> compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
-> reproduce:
->         git checkout 6da63eb241a05b0e676d68975e793c0521387141
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from arch/x86/include/asm/atomic.h:8:0,
->                     from arch/x86/include/asm/msr.h:67,
->                     from arch/x86/include/asm/processor.h:21,
->                     from arch/x86/include/asm/cpufeature.h:5,
->                     from arch/x86/include/asm/thread_info.h:53,
->                     from include/linux/thread_info.h:38,
->                     from arch/x86/include/asm/preempt.h:7,
->                     from include/linux/preempt.h:81,
->                     from include/linux/spinlock.h:51,
->                     from include/linux/mmzone.h:8,
->                     from include/linux/gfp.h:6,
->                     from include/linux/mm.h:10,
->                     from mm/slub.c:13:
->    mm/slub.c: In function '__slab_free':
->>> arch/x86/include/asm/cmpxchg.h:245:2: error: 'asm' operand has impossible constraints
->      asm volatile(pfx "cmpxchg%c4b %2; sete %0"   \
->      ^
->    arch/x86/include/asm/cmpxchg.h:254:2: note: in expansion of macro '__cmpxchg_double'
->      __cmpxchg_double(LOCK_PREFIX, p1, p2, o1, o2, n1, n2)
->      ^
->    include/asm-generic/atomic-instrumented.h:457:2: note: in expansion of macro 'arch_cmpxchg_double'
->      arch_cmpxchg_double(__ai_p1, (p2), (o1), (o2), (n1), (n2)); \
->      ^
->    mm/slub.c:403:7: note: in expansion of macro 'cmpxchg_double'
->       if (cmpxchg_double(&page->freelist, &page->counters,
->           ^
-> 
-> vim +/asm +245 arch/x86/include/asm/cmpxchg.h
-> 
-> 3d94ae0c Jeremy Fitzhardinge 2011-09-28  235  
-> cdcd6298 Jan Beulich         2012-01-02  236  #define __cmpxchg_double(pfx, p1, p2, o1, o2, n1, n2)			\
-> cdcd6298 Jan Beulich         2012-01-02  237  ({									\
-> cdcd6298 Jan Beulich         2012-01-02  238  	bool __ret;							\
-> cdcd6298 Jan Beulich         2012-01-02  239  	__typeof__(*(p1)) __old1 = (o1), __new1 = (n1);			\
-> cdcd6298 Jan Beulich         2012-01-02  240  	__typeof__(*(p2)) __old2 = (o2), __new2 = (n2);			\
-> cdcd6298 Jan Beulich         2012-01-02  241  	BUILD_BUG_ON(sizeof(*(p1)) != sizeof(long));			\
-> cdcd6298 Jan Beulich         2012-01-02  242  	BUILD_BUG_ON(sizeof(*(p2)) != sizeof(long));			\
-> cdcd6298 Jan Beulich         2012-01-02  243  	VM_BUG_ON((unsigned long)(p1) % (2 * sizeof(long)));		\
-> cdcd6298 Jan Beulich         2012-01-02  244  	VM_BUG_ON((unsigned long)((p1) + 1) != (unsigned long)(p2));	\
-> cdcd6298 Jan Beulich         2012-01-02 @245  	asm volatile(pfx "cmpxchg%c4b %2; sete %0"			\
-> cdcd6298 Jan Beulich         2012-01-02  246  		     : "=a" (__ret), "+d" (__old2),			\
-> cdcd6298 Jan Beulich         2012-01-02  247  		       "+m" (*(p1)), "+m" (*(p2))			\
-> cdcd6298 Jan Beulich         2012-01-02  248  		     : "i" (2 * sizeof(long)), "a" (__old1),		\
-> cdcd6298 Jan Beulich         2012-01-02  249  		       "b" (__new1), "c" (__new2));			\
-> cdcd6298 Jan Beulich         2012-01-02  250  	__ret;								\
-> cdcd6298 Jan Beulich         2012-01-02  251  })
-> cdcd6298 Jan Beulich         2012-01-02  252  
-> 
-> :::::: The code at line 245 was first introduced by commit
-> :::::: cdcd629869fabcd38ebd24a03b0a05ec1cbcafb0 x86: Fix and improve cmpxchg_double{,_local}()
-> 
-> :::::: TO: Jan Beulich <JBeulich@suse.com>
-> :::::: CC: Ingo Molnar <mingo@elte.hu>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
-
+Thanks for the in-depth explanation. So your point is that we are better
+off if we stick with siginfo_t instead of struct signalfd_siginfo in
+procfd_signal()?
