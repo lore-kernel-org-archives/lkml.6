@@ -2,60 +2,60 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CC0C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E3FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D728206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A2AF2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 10:48:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+CwMVSW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D728206B7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nva1STv/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2AF2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbeK3V45 (ORCPT
+        id S1727112AbeK3V5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:56:57 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45476 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbeK3V44 (ORCPT
+        Fri, 30 Nov 2018 16:57:00 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37377 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbeK3V46 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:56:56 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v6so4788970wrr.12
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 02:48:02 -0800 (PST)
+        Fri, 30 Nov 2018 16:56:58 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g67so5204823wmd.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 02:48:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1xBFoc/RKzOsh2kRyCCfcDZahd1lzxzWNUu4wmBv0j0=;
-        b=j+CwMVSWT38hha7Njwla431O6N5NhVGAqCqumWNKonbSPkiDIcWWC1igbkW8rKnegj
-         ESN2mbKUJsxpe/vPxqYw0FEtMdacbmzWPm3NPhMQpbm+vyKUFJgE8Zg2tqjU9WgJtYyT
-         DGj5AT0Bb06BflYvVGDolDUUfakHxaQU7CgFg=
+        bh=H9qjdn/c387gvtfUKEl5bxOl70UBdeJeDDgUe1gSkpE=;
+        b=Nva1STv/TgUvlEkf0QcVE8dinbAysbFyytKiD0H3cI6EtSxYjQZeAYvlcOeolkskDm
+         bv1eaL2fmxHzbePFRfTruEzhtbmLc/V20hfM9BiYwRTkz+tSjKH6O4yS2pZHIdnSqWGy
+         w4PrvPuJpkCTK7uxuFngQIFOel1GdwS0x1+II=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1xBFoc/RKzOsh2kRyCCfcDZahd1lzxzWNUu4wmBv0j0=;
-        b=MRlQn7GFxRS6t7KU3TN75TsBFf5GE2nZPnoFFN0NuZElmI555I4NzB2lZgXthxkmoM
-         +bN9gQ9jrdpWtnClzlp7sHve89HOibeRhNo/5Lk9tAAR06ZBWL64zWQce1ewNrNX7u9m
-         lXnvuw8ZWQW1+yHpP8pkubP191xgKxY232CHW7TVIPPHZbF0A4SfBI/BKu6w1S4vpaHH
-         L+I+VbQryj0gAMQBfMur5X9s1r7ub/pBXE5prNZ7hPcySbibsFOUi1ZzuQkGpwiMpEyz
-         78+/EO/5JU+YrkD8NUqMJyfUZDjeQixGcaFvXcciWiyHuN4iD1tC6P20UYakCSpOZpR+
-         mi7Q==
-X-Gm-Message-State: AA+aEWbw/TLUU0nbRYFcYjGAd+ZEk982vcjOfRsml+dq4vgI5qSQBpHY
-        KFSeIeACBTZ4btm12qKQERfB7w==
-X-Google-Smtp-Source: AFSGD/XILGzFbqcF1wD1aiCvecNFss4qC5MvL943BkQHpmY/aGTg2S3ZX1aa0ux7ndXX05X2IwthWQ==
-X-Received: by 2002:a5d:4b8b:: with SMTP id b11mr4530702wrt.180.1543574881020;
-        Fri, 30 Nov 2018 02:48:01 -0800 (PST)
+        bh=H9qjdn/c387gvtfUKEl5bxOl70UBdeJeDDgUe1gSkpE=;
+        b=fRsTg/oV9hF1QRxbQMl4xAivu5LDpibBXRsAkUQ4b8f/RzO2XONJvKq4NRSuzA1cTc
+         2az/1jJuU6WxxWfc1dAXqO7a0RJBAdP1ZjHp23hehEOVGZkFTWDen5g91CVnCPyQ6ozQ
+         yjR+/t1wd/WzmHsYbawRxeE4dbLf3SX+XAmWZjpHGOuHS+GjzkSOc8CepLHHvtZ3qNi6
+         w9r0eQVF5fC+VyJ500qLcp0xtGuTne5n2FM1nQzHjnE1LElMmAMmMlk42CVBBwDEu6Sh
+         mlxgOAm+R6cfeGdAbx3tjeSap+Yq/apcCC6NNllkHPkUvHMT6HYtpw9rIK8s41rU9G4g
+         P3fw==
+X-Gm-Message-State: AA+aEWaN8HhFT3gRgpCygOl56xOB0zBtzpBjjbLtKBFNM3gXz/1av82K
+        rZLOzHK1iaKkFyIU+bO8uM7jyg==
+X-Google-Smtp-Source: AFSGD/VV+orq66bc6piv6ePmFEWcDi/0HzB6b7mGhIWLX6BCwrFiMEij3qyA4mYVQStQAmKd8bhxFA==
+X-Received: by 2002:a1c:2e0c:: with SMTP id u12mr4467144wmu.81.1543574883541;
+        Fri, 30 Nov 2018 02:48:03 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id 18sm6964211wmm.32.2018.11.30.02.47.59
+        by smtp.gmail.com with ESMTPSA id 18sm6964211wmm.32.2018.11.30.02.48.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 30 Nov 2018 02:48:00 -0800 (PST)
+        Fri, 30 Nov 2018 02:48:02 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     robh+dt@kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
 Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
         thierry.escande@linaro.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [RFC PATCH 3/6] char: fastrpc: Add support for context Invoke method
-Date:   Fri, 30 Nov 2018 10:46:54 +0000
-Message-Id: <20181130104657.14875-4-srinivas.kandagatla@linaro.org>
+Subject: [RFC PATCH 5/6] char: fastrpc: Add support for dmabuf exporter
+Date:   Fri, 30 Nov 2018 10:46:56 +0000
+Message-Id: <20181130104657.14875-6-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
 References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
@@ -76,965 +76,259 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to compute context invoke method
-on the remote processor (DSP).
-This involves setting up the functions input and output arguments,
-input and output handles and mapping the dmabuf fd for the
-argument/handle buffers.
+User process can involve dealing with big buffer sizes, and also passing
+buffers from one compute context bank to other compute context bank for
+complex dsp algorithms.
 
-Most of the work is derived from various downstream Qualcomm kernels.
-Credits to various Qualcomm authors who have contributed to this code.
-Specially Tharun Kumar Merugu <mtharu@codeaurora.org>
+This patch adds support to fastrpc to make it a proper dmabuf exporter
+to avoid making copies of buffers.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/char/fastrpc.c       | 790 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/fastrpc.h |  56 +++
- 2 files changed, 846 insertions(+)
- create mode 100644 include/uapi/linux/fastrpc.h
+ drivers/char/fastrpc.c       | 173 ++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/fastrpc.h |   8 ++
+ 2 files changed, 180 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/char/fastrpc.c b/drivers/char/fastrpc.c
-index 97d8062eb3e1..5bb224adc24f 100644
+index 3630e883d3f4..3c52502eae9f 100644
 --- a/drivers/char/fastrpc.c
 +++ b/drivers/char/fastrpc.c
-@@ -3,7 +3,9 @@
- // Copyright (c) 2018, Linaro Limited
+@@ -110,10 +110,20 @@ struct fastrpc_invoke_rsp {
  
- #include <linux/cdev.h>
-+#include <linux/completion.h>
- #include <linux/device.h>
-+#include <linux/dma-buf.h>
- #include <linux/dma-mapping.h>
- #include <linux/idr.h>
- #include <linux/list.h>
-@@ -14,6 +16,7 @@
- #include <linux/rpmsg.h>
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
-+#include <uapi/linux/fastrpc.h>
- 
- #define ADSP_DOMAIN_ID (0)
- #define MDSP_DOMAIN_ID (1)
-@@ -21,10 +24,41 @@
- #define CDSP_DOMAIN_ID (3)
- #define FASTRPC_DEV_MAX		4 /* adsp, mdsp, slpi, cdsp*/
- #define FASTRPC_MAX_SESSIONS	9 /*8 compute, 1 cpz*/
-+#define FASTRPC_ALIGN		128
-+#define FASTRPC_MAX_FDLIST	16
-+#define FASTRPC_MAX_CRCLIST	64
-+#define FASTRPC_PHYS(p)	(p & 0xffffffff)
- #define FASTRPC_CTX_MAX (256)
- #define FASTRPC_CTXID_MASK (0xFF0)
- #define FASTRPC_DEVICE_NAME	"fastrpc"
- 
-+/* Retrives number of input buffers from the scalars parameter */
-+#define REMOTE_SCALARS_INBUFS(sc)        (((sc) >> 16) & 0x0ff)
-+
-+/* Retrives number of output buffers from the scalars parameter */
-+#define REMOTE_SCALARS_OUTBUFS(sc)       (((sc) >> 8) & 0x0ff)
-+
-+/* Retrives number of input handles from the scalars parameter */
-+#define REMOTE_SCALARS_INHANDLES(sc)     (((sc) >> 4) & 0x0f)
-+
-+/* Retrives number of output handles from the scalars parameter */
-+#define REMOTE_SCALARS_OUTHANDLES(sc)    ((sc) & 0x0f)
-+
-+#define REMOTE_SCALARS_LENGTH(sc)	(REMOTE_SCALARS_INBUFS(sc) +\
-+					REMOTE_SCALARS_OUTBUFS(sc) +\
-+					REMOTE_SCALARS_INHANDLES(sc) +\
-+					REMOTE_SCALARS_OUTHANDLES(sc))
-+
-+#define FASTRPC_BUILD_SCALARS(attr, method, in, out, oin, oout) \
-+		((((uint32_t)   (attr) & 0x7) << 29) | \
-+		(((uint32_t) (method) & 0x1f) << 24) | \
-+		(((uint32_t)     (in) & 0xff) << 16) | \
-+		(((uint32_t)    (out) & 0xff) <<  8) | \
-+		(((uint32_t)    (oin) & 0x0f) <<  4) | \
-+		((uint32_t)   (oout) & 0x0f))
-+
-+#define FASTRPC_SCALARS(method, in, out) \
-+		FASTRPC_BUILD_SCALARS(0, method, in, out, 0, 0)
- #define cdev_to_cctx(d) container_of(d, struct fastrpc_channel_ctx, cdev)
- 
- static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
-@@ -32,6 +66,82 @@ static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
- static dev_t fastrpc_major;
- static struct class *fastrpc_class;
- 
-+struct fastrpc_invoke_header {
-+	uint64_t ctx;		/* invoke caller context */
-+	uint32_t handle;	/* handle to invoke */
-+	uint32_t sc;		/* scalars structure describing the data */
+ struct fastrpc_buf {
+ 	struct fastrpc_user *fl;
++	struct dma_buf *dmabuf;
+ 	struct device *dev;
+ 	void *virt;
+ 	uint64_t phys;
+ 	size_t size;
++	/* Lock for dma buf attachments */
++	struct mutex lock;
++	struct list_head attachments;
 +};
 +
-+struct fastrpc_phy_page {
-+	uint64_t addr;		/* physical address */
-+	uint64_t size;		/* size of contiguous region */
-+};
-+
-+struct fastrpc_invoke_buf {
-+	int num;		/* number of contiguous regions */
-+	int pgidx;		/* index to start of contiguous region */
-+};
-+
-+struct fastrpc_invoke {
-+	struct fastrpc_invoke_header header;
-+	struct fastrpc_phy_page page; /* list of pages address */
-+};
-+
-+struct fastrpc_msg {
-+	uint32_t pid;		/* process group id */
-+	uint32_t tid;		/* thread id */
-+	struct fastrpc_invoke invoke;
-+};
-+
-+struct fastrpc_invoke_rsp {
-+	uint64_t ctx;		/* invoke caller context */
-+	int retval;		/* invoke return value */
-+};
-+
-+struct fastrpc_buf {
-+	struct fastrpc_user *fl;
++struct fastrpc_dma_buf_attachment {
 +	struct device *dev;
-+	void *virt;
-+	uint64_t phys;
-+	size_t size;
-+};
-+
-+struct fastrpc_map {
++	struct sg_table sgt;
 +	struct list_head node;
-+	struct fastrpc_user *fl;
-+	int fd;
-+	struct dma_buf *buf;
-+	struct sg_table *table;
-+	struct dma_buf_attachment *attach;
-+	uint64_t phys;
-+	size_t size;
-+	uintptr_t va;
-+	size_t len;
-+	struct kref refcount;
-+};
-+
-+struct fastrpc_invoke_ctx {
-+	struct fastrpc_user *fl;
-+	struct list_head node; /* list of ctxs */
-+	struct completion work;
-+	int retval;
-+	int pid;
-+	int tgid;
-+	uint32_t sc;
-+	struct fastrpc_msg msg;
-+	uint64_t ctxid;
-+	size_t used_sz;
-+
-+	remote_arg_t *lpra;
-+	unsigned int *attrs;
-+	int *fds;
-+	uint32_t *crc;
-+
-+	remote_arg64_t *rpra;
-+	struct fastrpc_map **maps;
-+	struct fastrpc_buf *buf;
-+};
-+
- struct fastrpc_session_ctx {
- 	struct device *dev;
- 	int sid;
-@@ -59,6 +169,7 @@ struct fastrpc_user {
- 
- 	struct fastrpc_channel_ctx *cctx;
- 	struct fastrpc_session_ctx *sctx;
-+	struct fastrpc_buf *init_mem;
- 
- 	int tgid;
- 	int pd;
-@@ -69,6 +180,590 @@ struct fastrpc_user {
- 	struct device *dev;
  };
  
-+static void fastrpc_free_map(struct kref *ref)
+ struct fastrpc_map {
+@@ -256,6 +266,9 @@ static int fastrpc_buf_alloc(struct fastrpc_user *fl, struct device *dev,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
++	INIT_LIST_HEAD(&buf->attachments);
++	mutex_init(&buf->lock);
++
+ 	buf->fl = fl;
+ 	buf->virt = NULL;
+ 	buf->phys = 0;
+@@ -394,6 +407,109 @@ static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
+ 	return ERR_PTR(err);
+ }
+ 
++static struct sg_table *fastrpc_map_dma_buf(struct dma_buf_attachment
++			*attachment, enum dma_data_direction dir)
 +{
-+	struct fastrpc_map *map;
++	struct fastrpc_dma_buf_attachment *a = attachment->priv;
++	struct sg_table *table;
 +
-+	map = container_of(ref, struct fastrpc_map, refcount);
++	table = &a->sgt;
 +
-+	list_del(&map->node);
-+
-+	if (map->table) {
-+		dma_buf_unmap_attachment(map->attach, map->table,
-+				DMA_BIDIRECTIONAL);
-+		dma_buf_detach(map->buf, map->attach);
-+		dma_buf_put(map->buf);
-+	}
-+
-+	kfree(map);
-+}
-+
-+static void fastrpc_map_put(struct fastrpc_map *map)
-+{
-+	struct fastrpc_user *fl;
-+
-+	if (map) {
-+		fl = map->fl;
-+		mutex_lock(&fl->mutex);
-+		kref_put(&map->refcount, fastrpc_free_map);
-+		mutex_unlock(&fl->mutex);
-+	}
-+}
-+
-+static int fastrpc_map_get(struct fastrpc_user *fl, int fd,
-+			     uintptr_t va, size_t len,
-+			     struct fastrpc_map **ppmap)
-+{
-+	struct fastrpc_map *map = NULL, *n;
-+
-+	mutex_lock(&fl->mutex);
-+	list_for_each_entry_safe(map, n, &fl->maps, node) {
-+		if (map->fd == fd) {
-+			kref_get(&map->refcount);
-+			*ppmap = map;
-+			mutex_unlock(&fl->mutex);
-+			return 0;
-+		}
-+	}
-+	mutex_unlock(&fl->mutex);
-+
-+	return -ENOENT;
-+}
-+
-+static void fastrpc_buf_free(struct fastrpc_buf *buf)
-+{
-+	dma_free_coherent(buf->dev, buf->size, buf->virt,
-+				FASTRPC_PHYS(buf->phys));
-+	kfree(buf);
-+}
-+
-+static int fastrpc_buf_alloc(struct fastrpc_user *fl, struct device *dev,
-+			     size_t size, struct fastrpc_buf **obuf)
-+{
-+	struct fastrpc_buf *buf;
-+
-+	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	buf->fl = fl;
-+	buf->virt = NULL;
-+	buf->phys = 0;
-+	buf->size = size;
-+	buf->dev = dev;
-+
-+	buf->virt = dma_alloc_coherent(dev, buf->size, (dma_addr_t *)&buf->phys,
-+				       GFP_KERNEL);
-+	if (!buf->virt)
-+		return -ENOMEM;
-+
-+	if (fl->sctx && fl->sctx->sid)
-+		buf->phys += ((uint64_t)fl->sctx->sid << 32);
-+
-+	*obuf = buf;
-+
-+	return 0;
-+}
-+
-+static void fastrpc_context_free(struct fastrpc_invoke_ctx *ctx)
-+{
-+	struct fastrpc_channel_ctx *cctx = ctx->fl->cctx;
-+	struct fastrpc_user *user = ctx->fl;
-+	int scalars = REMOTE_SCALARS_LENGTH(ctx->sc);
-+	int i;
-+
-+	spin_lock(&user->lock);
-+	list_del(&ctx->node);
-+	spin_unlock(&user->lock);
-+
-+	for (i = 0; i < scalars; i++) {
-+		if (ctx->maps[i])
-+			fastrpc_map_put(ctx->maps[i]);
-+	}
-+
-+	if (ctx->buf)
-+		fastrpc_buf_free(ctx->buf);
-+
-+	spin_lock(&cctx->lock);
-+	idr_remove(&cctx->ctx_idr, ctx->ctxid >> 4);
-+	spin_unlock(&cctx->lock);
-+
-+	kfree(ctx);
-+}
-+
-+static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
-+					struct fastrpc_user *user,
-+					uint32_t kernel,
-+					struct fastrpc_ioctl_invoke *inv)
-+{
-+	struct fastrpc_channel_ctx *cctx = user->cctx;
-+	struct fastrpc_invoke_ctx *ctx = NULL;
-+	int bufs, size, ret;
-+	int err = 0;
-+
-+	bufs = REMOTE_SCALARS_LENGTH(inv->sc);
-+	size = (sizeof(*ctx->lpra) + sizeof(*ctx->maps) +
-+		sizeof(*ctx->fds)  + sizeof(*ctx->attrs)) * bufs;
-+
-+	ctx = kzalloc(sizeof(*ctx) + size, GFP_KERNEL);
-+	if (!ctx)
++	if (!dma_map_sg(attachment->dev, table->sgl, table->nents, dir))
 +		return ERR_PTR(-ENOMEM);
 +
-+	INIT_LIST_HEAD(&ctx->node);
-+	ctx->fl = user;
-+	ctx->maps = (struct fastrpc_map **)(&ctx[1]);
-+	ctx->lpra = (remote_arg_t *)(&ctx->maps[bufs]);
-+	ctx->fds = (int *)(&ctx->lpra[bufs]);
-+	ctx->attrs = (unsigned int *)(&ctx->fds[bufs]);
-+
-+	if (!kernel) {
-+		if (copy_from_user(ctx->lpra,
-+				     (void const __user *)inv->pra,
-+				     bufs * sizeof(*ctx->lpra))) {
-+			err = -EFAULT;
-+			goto err;
-+		}
-+
-+		if (inv->fds) {
-+			if (copy_from_user(ctx->fds,
-+					     (void const __user *)inv->fds,
-+					     bufs * sizeof(*ctx->fds))) {
-+				err = -EFAULT;
-+				goto err;
-+			}
-+		}
-+		if (inv->attrs) {
-+			if (copy_from_user(
-+					ctx->attrs,
-+					(void const __user *)inv->attrs,
-+					bufs * sizeof(*ctx->attrs))) {
-+				err = -EFAULT;
-+				goto err;
-+			}
-+		}
-+	} else {
-+		memcpy(ctx->lpra, inv->pra, bufs * sizeof(*ctx->lpra));
-+		if (inv->fds)
-+			memcpy(ctx->fds, inv->fds,
-+			       bufs * sizeof(*ctx->fds));
-+		if (inv->attrs)
-+			memcpy(ctx->attrs, inv->attrs,
-+			       bufs * sizeof(*ctx->attrs));
-+	}
-+
-+	ctx->crc = (uint32_t *)inv->crc;
-+	ctx->sc = inv->sc;
-+	ctx->retval = -1;
-+	ctx->pid = current->pid;
-+	ctx->tgid = user->tgid;
-+	init_completion(&ctx->work);
-+
-+	spin_lock(&user->lock);
-+	list_add_tail(&ctx->node, &user->pending);
-+	spin_unlock(&user->lock);
-+
-+	spin_lock(&cctx->lock);
-+	ret = idr_alloc_cyclic(&cctx->ctx_idr, ctx, 1,
-+				FASTRPC_CTX_MAX, GFP_ATOMIC);
-+	if (ret < 0) {
-+		spin_unlock(&cctx->lock);
-+		err = ret;
-+		goto err_idr;
-+	}
-+	ctx->ctxid = ret << 4;
-+	spin_unlock(&cctx->lock);
-+
-+	return ctx;
-+err_idr:
-+	spin_lock(&user->lock);
-+	list_del(&ctx->node);
-+	spin_unlock(&user->lock);
-+err:
-+	kfree(ctx);
-+
-+	return ERR_PTR(err);
++	return table;
 +}
 +
-+static int fastrpc_map_create(struct fastrpc_user *fl, int fd, uintptr_t va,
-+			       size_t len, struct fastrpc_map **ppmap)
++static void fastrpc_unmap_dma_buf(struct dma_buf_attachment *attach,
++				     struct sg_table *table,
++				     enum dma_data_direction dir)
 +{
-+	struct fastrpc_session_ctx *sess = fl->sctx;
-+	struct fastrpc_map *map = NULL;
-+	int err = 0;
++}
 +
-+	if (!fastrpc_map_get(fl, fd, va, len, ppmap))
-+		return 0;
++static void fastrpc_release(struct dma_buf *dmabuf)
++{
++	struct fastrpc_buf *buffer = dmabuf->priv;
 +
-+	map = kzalloc(sizeof(*map), GFP_KERNEL);
-+	if (!map)
++	fastrpc_buf_free(buffer);
++}
++
++static int fastrpc_dma_buf_attach(struct dma_buf *dmabuf,
++			      struct dma_buf_attachment *attachment)
++{
++	struct fastrpc_dma_buf_attachment *a;
++	struct fastrpc_buf *buffer = dmabuf->priv;
++	int ret;
++
++	a = kzalloc(sizeof(*a), GFP_KERNEL);
++	if (!a)
 +		return -ENOMEM;
 +
-+	INIT_LIST_HEAD(&map->node);
-+	map->fl = fl;
-+	map->fd = fd;
-+	map->buf = dma_buf_get(fd);
-+	if (!map->buf) {
-+		err = -EINVAL;
-+		goto get_err;
++	ret = dma_get_sgtable(buffer->dev, &a->sgt, buffer->virt,
++			      FASTRPC_PHYS(buffer->phys), buffer->size);
++	if (ret < 0) {
++		dev_err(buffer->dev, "failed to get scatterlist from DMA API\n");
++		return -EINVAL;
 +	}
 +
-+	map->attach = dma_buf_attach(map->buf, sess->dev);
-+	if (IS_ERR(map->attach)) {
-+		dev_err(sess->dev, "Failed to attach dmabuf\n");
-+		err = PTR_ERR(map->attach);
-+		goto attach_err;
-+	}
++	a->dev = attachment->dev;
++	INIT_LIST_HEAD(&a->node);
++	attachment->priv = a;
 +
-+	map->table = dma_buf_map_attachment(map->attach,
-+					    DMA_BIDIRECTIONAL);
-+	if (IS_ERR(map->table)) {
-+		err = PTR_ERR(map->table);
-+		goto map_err;
-+	}
-+
-+	map->phys = sg_dma_address(map->table->sgl);
-+	map->phys += ((uint64_t)fl->sctx->sid << 32);
-+	map->size = len;
-+	map->va = (uintptr_t)sg_virt(map->table->sgl);
-+	map->len = len;
-+	kref_init(&map->refcount);
-+
-+	spin_lock(&fl->lock);
-+	list_add_tail(&map->node, &fl->maps);
-+	spin_unlock(&fl->lock);
-+	*ppmap = map;
++	mutex_lock(&buffer->lock);
++	list_add(&a->node, &buffer->attachments);
++	mutex_unlock(&buffer->lock);
 +
 +	return 0;
-+
-+map_err:
-+	dma_buf_detach(map->buf, map->attach);
-+attach_err:
-+	dma_buf_put(map->buf);
-+get_err:
-+	kfree(map);
-+
-+	return err;
 +}
 +
-+static inline struct fastrpc_invoke_buf *fastrpc_invoke_buf_start(
-+							remote_arg64_t *pra,
-+							uint32_t sc)
++static void fastrpc_dma_buf_detatch(struct dma_buf *dmabuf,
++				    struct dma_buf_attachment *attachment)
 +{
-+	return (struct fastrpc_invoke_buf *)(&pra[REMOTE_SCALARS_LENGTH(sc)]);
++	struct fastrpc_dma_buf_attachment *a = attachment->priv;
++	struct fastrpc_buf *buffer = dmabuf->priv;
++
++	mutex_lock(&buffer->lock);
++	list_del(&a->node);
++	mutex_unlock(&buffer->lock);
++	kfree(a);
 +}
 +
-+static inline struct fastrpc_phy_page *fastrpc_phy_page_start(uint32_t sc,
-+						struct fastrpc_invoke_buf *buf)
++static void *fastrpc_kmap(struct dma_buf *dmabuf, unsigned long pgnum)
 +{
-+	return (struct fastrpc_phy_page *)(&buf[REMOTE_SCALARS_LENGTH(sc)]);
++	struct fastrpc_buf *buf = dmabuf->priv;
++
++	return buf->virt ? buf->virt + pgnum * PAGE_SIZE : NULL;
 +}
 +
-+static int fastrpc_get_args(uint32_t kernel, struct fastrpc_invoke_ctx *ctx)
++static void *fastrpc_vmap(struct dma_buf *dmabuf)
 +{
-+	remote_arg64_t *rpra;
-+	remote_arg_t *lpra = ctx->lpra;
-+	struct fastrpc_invoke_buf *list;
-+	struct fastrpc_phy_page *pages;
-+	uint32_t sc = ctx->sc;
-+	uintptr_t args;
-+	size_t rlen = 0, copylen = 0, metalen = 0;
-+	int inbufs, handles, bufs, i, err = 0;
-+	uint64_t *fdlist;
-+	uint32_t *crclist;
++	struct fastrpc_buf *buf = dmabuf->priv;
 +
-+	inbufs = REMOTE_SCALARS_INBUFS(sc);
-+	bufs = inbufs + REMOTE_SCALARS_OUTBUFS(sc);
-+	handles = REMOTE_SCALARS_INHANDLES(sc) + REMOTE_SCALARS_OUTHANDLES(sc);
-+	metalen = (bufs + handles) * (sizeof(remote_arg64_t) +
-+		  sizeof(struct fastrpc_invoke_buf) +
-+		  sizeof(struct fastrpc_phy_page)) +
-+		  sizeof(uint64_t) * FASTRPC_MAX_FDLIST +
-+		  sizeof(uint32_t) * FASTRPC_MAX_CRCLIST;
-+
-+	copylen = metalen;
-+
-+	for (i = 0; i < bufs + handles; ++i) {
-+		uintptr_t buf = (uintptr_t)lpra[i].buf.pv;
-+		size_t len = lpra[i].buf.len;
-+
-+		if (i < bufs) {
-+			if (ctx->fds[i] && (ctx->fds[i] != -1))
-+				fastrpc_map_create(ctx->fl, ctx->fds[i], buf,
-+						len, &ctx->maps[i]);
-+
-+			if (!len)
-+				continue;
-+
-+			if (ctx->maps[i])
-+				continue;
-+
-+			copylen = ALIGN(copylen, FASTRPC_ALIGN);
-+			copylen += len;
-+		} else {
-+			err = fastrpc_map_create(ctx->fl, ctx->fds[i], 0,
-+						  0, &ctx->maps[i]);
-+			if (err)
-+				goto bail;
-+		}
-+	}
-+	ctx->used_sz = copylen;
-+
-+	/* allocate new buffer */
-+	if (copylen) {
-+		err = fastrpc_buf_alloc(ctx->fl, ctx->fl->sctx->dev,
-+					copylen, &ctx->buf);
-+		if (err)
-+			goto bail;
-+	}
-+
-+	/* copy metadata */
-+	rpra = ctx->buf->virt;
-+	ctx->rpra = rpra;
-+	list = fastrpc_invoke_buf_start(rpra, sc);
-+	pages = fastrpc_phy_page_start(sc, list);
-+	args = (uintptr_t)ctx->buf->virt + metalen;
-+	fdlist = (uint64_t *)&pages[bufs + handles];
-+	memset(fdlist, 0, sizeof(uint32_t)*FASTRPC_MAX_FDLIST);
-+	crclist = (uint32_t *)&fdlist[FASTRPC_MAX_FDLIST];
-+	memset(crclist, 0, sizeof(uint32_t)*FASTRPC_MAX_CRCLIST);
-+	rlen = copylen - metalen;
-+
-+	for (i = 0; i < bufs; ++i) {
-+		struct fastrpc_map *map = ctx->maps[i];
-+		size_t len = lpra[i].buf.len;
-+		size_t mlen;
-+
-+		if (len)
-+			list[i].num = 1;
-+		else
-+			list[i].num = 0;
-+
-+		list[i].pgidx = i;
-+
-+		rpra[i].buf.pv = 0;
-+		rpra[i].buf.len = len;
-+		if (!len)
-+			continue;
-+		if (map) {
-+			uintptr_t offset = 0;
-+			uint64_t num = roundup(len,
-+					       PAGE_SIZE) / PAGE_SIZE;
-+			int idx = list[i].pgidx;
-+
-+			pages[idx].addr = map->phys + offset;
-+			pages[idx].size = num << PAGE_SHIFT;
-+			rpra[i].buf.pv =
-+				(uint64_t)((uintptr_t)lpra[i].buf.pv);
-+		} else {
-+			rlen -= ALIGN(args, FASTRPC_ALIGN) - args;
-+			args = ALIGN(args, FASTRPC_ALIGN);
-+			mlen = len;
-+			if (rlen < mlen)
-+				goto bail;
-+
-+			rpra[i].buf.pv = (args);
-+			pages[list[i].pgidx].addr = ctx->buf->phys +
-+							(copylen - rlen);
-+			pages[list[i].pgidx].addr = pages[list[i].pgidx].addr &
-+							PAGE_MASK;
-+			pages[list[i].pgidx].size = roundup(len, PAGE_SIZE);
-+
-+			if (i < inbufs) {
-+				if (!kernel) {
-+					err = copy_from_user(
-+					(void *)rpra[i].buf.pv,
-+					(void const __user *)lpra[i].buf.pv,
-+					len);
-+					if (err)
-+						goto bail;
-+				} else {
-+					memcpy((void *)rpra[i].buf.pv,
-+					       lpra[i].buf.pv, len);
-+				}
-+			}
-+			args = args + mlen;
-+			rlen -= mlen;
-+		}
-+	}
-+
-+	for (i = bufs; i < handles; ++i) {
-+		struct fastrpc_map *map = ctx->maps[i];
-+		size_t len = lpra[i].buf.len;
-+
-+		if (len)
-+			list[i].num = 1;
-+		else
-+			list[i].num = 0;
-+
-+		list[i].pgidx = i;
-+
-+		pages[i].addr = map->phys;
-+		pages[i].size = map->size;
-+		rpra[i].dma.fd = ctx->fds[i];
-+		rpra[i].dma.len = len;
-+		rpra[i].dma.offset = (uint32_t)(uintptr_t)lpra[i].buf.pv;
-+	}
-+
-+bail:
-+	return err;
++	return buf->virt;
 +}
 +
-+static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
-+			    uint32_t kernel, remote_arg_t *upra)
++static int fastrpc_mmap(struct dma_buf *dmabuf,
++			       struct vm_area_struct *vma)
 +{
-+	remote_arg64_t *rpra = ctx->rpra;
-+	int i, inbufs, outbufs, handles;
-+	struct fastrpc_invoke_buf *list;
-+	struct fastrpc_phy_page *pages;
-+	struct fastrpc_map *mmap;
-+	uint32_t sc = ctx->sc;
-+	uint64_t *fdlist;
-+	uint32_t *crclist;
-+	int err = 0;
++	struct fastrpc_buf *buf = dmabuf->priv;
++	size_t size = vma->vm_end - vma->vm_start;
 +
-+	inbufs = REMOTE_SCALARS_INBUFS(sc);
-+	outbufs = REMOTE_SCALARS_OUTBUFS(sc);
-+	handles = REMOTE_SCALARS_INHANDLES(sc) + REMOTE_SCALARS_OUTHANDLES(sc);
-+	list = fastrpc_invoke_buf_start(ctx->rpra, sc);
-+	pages = fastrpc_phy_page_start(sc, list);
-+	fdlist = (uint64_t *)(pages + inbufs + outbufs + handles);
-+	crclist = (uint32_t *)(fdlist + FASTRPC_MAX_FDLIST);
-+
-+	for (i = inbufs; i < inbufs + outbufs; ++i) {
-+		if (!ctx->maps[i]) {
-+			if (!kernel)
-+				err =
-+				copy_to_user((void __user *)ctx->lpra[i].buf.pv,
-+				       (void *)rpra[i].buf.pv, rpra[i].buf.len);
-+			else
-+				memcpy(ctx->lpra[i].buf.pv,
-+				       (void *)rpra[i].buf.pv, rpra[i].buf.len);
-+
-+			if (err)
-+				goto bail;
-+		} else {
-+			fastrpc_map_put(ctx->maps[i]);
-+			ctx->maps[i] = NULL;
-+		}
-+	}
-+
-+	if (inbufs + outbufs + handles) {
-+		for (i = 0; i < FASTRPC_MAX_FDLIST; i++) {
-+			if (!fdlist[i])
-+				break;
-+			if (!fastrpc_map_get(ctx->fl, (int)fdlist[i], 0,
-+					       0, &mmap))
-+				fastrpc_map_put(mmap);
-+		}
-+	}
-+
-+	if (ctx->crc && crclist) {
-+		if (!kernel)
-+			err = copy_to_user((void __user *)ctx->crc, crclist,
-+					FASTRPC_MAX_CRCLIST*sizeof(uint32_t));
-+		else
-+			memcpy(ctx->crc, crclist,
-+					FASTRPC_MAX_CRCLIST*sizeof(uint32_t));
-+	}
-+
-+bail:
-+	return err;
++	return dma_mmap_coherent(buf->dev, vma, buf->virt,
++				 FASTRPC_PHYS(buf->phys), size);
 +}
 +
-+static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
-+			       struct fastrpc_invoke_ctx *ctx,
-+			       uint32_t kernel, uint32_t handle)
-+{
-+	struct fastrpc_channel_ctx *cctx;
-+	struct fastrpc_user *fl = ctx->fl;
-+	struct fastrpc_msg *msg = &ctx->msg;
++static const struct dma_buf_ops fastrpc_dma_buf_ops = {
++	.attach = fastrpc_dma_buf_attach,
++	.detach = fastrpc_dma_buf_detatch,
++	.map_dma_buf = fastrpc_map_dma_buf,
++	.unmap_dma_buf = fastrpc_unmap_dma_buf,
++	.mmap = fastrpc_mmap,
++	.map = fastrpc_kmap,
++	.vmap = fastrpc_vmap,
++	.release = fastrpc_release,
++};
 +
-+	cctx = fl->cctx;
-+	msg->pid = fl->tgid;
-+	msg->tid = current->pid;
-+
-+	if (kernel)
-+		msg->pid = 0;
-+
-+	msg->invoke.header.ctx = ctx->ctxid | fl->pd;
-+	msg->invoke.header.handle = handle;
-+	msg->invoke.header.sc = ctx->sc;
-+	msg->invoke.page.addr = ctx->buf ? ctx->buf->phys : 0;
-+	msg->invoke.page.size = roundup(ctx->used_sz, PAGE_SIZE);
-+
-+	return rpmsg_send(cctx->rpdev->ept, (void *)msg, sizeof(*msg));
-+}
-+
-+static int fastrpc_internal_invoke(struct fastrpc_user *fl,
-+				   uint32_t kernel,
-+				   struct fastrpc_ioctl_invoke *inv)
-+{
-+	struct fastrpc_invoke_ctx *ctx = NULL;
-+	int err = 0;
-+
-+	if (!fl->sctx)
-+		return -EINVAL;
-+
-+	ctx = fastrpc_context_alloc(fl, kernel, inv);
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
-+
-+	if (REMOTE_SCALARS_LENGTH(ctx->sc)) {
-+		err = fastrpc_get_args(kernel, ctx);
-+		if (err)
-+			goto bail;
-+	}
-+
-+	err = fastrpc_invoke_send(fl->sctx, ctx, kernel, inv->handle);
-+	if (err)
-+		goto bail;
-+
-+	err = wait_for_completion_interruptible(&ctx->work);
-+	if (err)
-+		goto bail;
-+
-+	err = ctx->retval;
-+	if (err)
-+		goto bail;
-+
-+	err = fastrpc_put_args(ctx, kernel, inv->pra);
-+	if (err)
-+		goto bail;
-+bail:
-+	if (ctx)
-+		fastrpc_context_free(ctx);
-+
-+	return err;
-+}
-+static struct fastrpc_session_ctx *fastrpc_session_alloc(
-+					struct fastrpc_channel_ctx *cctx,
-+					int secure)
-+{
-+	struct fastrpc_session_ctx *session = NULL;
-+	int i;
-+
-+	spin_lock(&cctx->lock);
-+	for (i = 0; i < cctx->sesscount; i++) {
-+		if (!cctx->session[i].used && cctx->session[i].valid &&
-+				cctx->session[i].secure == secure) {
-+			cctx->session[i].used = true;
-+			session = &cctx->session[i];
-+			break;
-+		}
-+	}
-+	spin_unlock(&cctx->lock);
-+
-+	return session;
-+}
-+
-+static void fastrpc_session_free(struct fastrpc_channel_ctx *cctx,
-+				 struct fastrpc_session_ctx *session)
-+{
-+	spin_lock(&cctx->lock);
-+	session->used = false;
-+	spin_unlock(&cctx->lock);
-+}
-+
- static const struct of_device_id fastrpc_match_table[] = {
- 	{ .compatible = "qcom,fastrpc-compute-cb", },
- 	{}
-@@ -78,11 +773,26 @@ static int fastrpc_device_release(struct inode *inode, struct file *file)
+ static int fastrpc_map_create(struct fastrpc_user *fl, int fd, uintptr_t va,
+ 			       size_t len, struct fastrpc_map **ppmap)
  {
- 	struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
- 	struct fastrpc_channel_ctx *cctx = cdev_to_cctx(inode->i_cdev);
-+	struct fastrpc_invoke_ctx *ctx, *n;
-+	struct fastrpc_map *map, *m;
+@@ -989,7 +1105,8 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
+ 	char __user *argp = (char __user *)arg;
+ 	int err;
  
- 	spin_lock(&cctx->lock);
- 	list_del(&fl->user);
- 	spin_unlock(&cctx->lock);
- 
-+	if (fl->init_mem)
-+		fastrpc_buf_free(fl->init_mem);
+-	if (!fl->sctx) {
++	if (!fl->sctx && cmd != FASTRPC_IOCTL_ALLOC_DMA_BUFF &&
++			cmd != FASTRPC_IOCTL_FREE_DMA_BUFF) {
+ 		fl->sctx = fastrpc_session_alloc(cctx, 0);
+ 		if (!fl->sctx)
+ 			return -ENOENT;
+@@ -1027,6 +1144,60 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
+ 			goto bail;
+ 		}
+ 		break;
 +
-+	list_for_each_entry_safe(ctx, n, &fl->pending, node)
-+		fastrpc_context_free(ctx);
++	case FASTRPC_IOCTL_FREE_DMA_BUFF: {
++		struct dma_buf *buf;
++		uint32_t info;
 +
-+	list_for_each_entry_safe(map, m, &fl->maps, node)
-+		fastrpc_map_put(map);
-+
-+	if (fl->sctx)
-+		fastrpc_session_free(fl->cctx, fl->sctx);
-+
-+	mutex_destroy(&fl->mutex);
- 	kfree(fl);
- 	file->private_data = NULL;
- 
-@@ -116,9 +826,48 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
- 	return 0;
- }
- 
-+static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
-+				 unsigned long arg)
-+{
-+	struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
-+	struct fastrpc_channel_ctx *cctx = fl->cctx;
-+	char __user *argp = (char __user *)arg;
-+	int err;
-+
-+	if (!fl->sctx) {
-+		fl->sctx = fastrpc_session_alloc(cctx, 0);
-+		if (!fl->sctx)
-+			return -ENOENT;
-+	}
-+
-+	switch (cmd) {
-+	case FASTRPC_IOCTL_INVOKE: {
-+		struct fastrpc_ioctl_invoke inv;
-+
-+		inv.fds = NULL;
-+		inv.attrs = NULL;
-+		inv.crc = NULL;
-+		err = copy_from_user(&inv, argp, sizeof(inv));
++		err = copy_from_user(&info, argp, sizeof(info));
 +		if (err)
 +			goto bail;
-+		err = fastrpc_internal_invoke(fl, 0, &inv);
-+		if (err)
++
++		buf = dma_buf_get(info);
++		if (IS_ERR_OR_NULL(buf)) {
++			err = -EINVAL;
 +			goto bail;
-+		break;
 +		}
-+default:
-+		err = -ENOTTY;
-+		pr_info("bad ioctl: %d\n", cmd);
-+		break;
++		/*
++		 * one for the last get and other for the ALLOC_DMA_BUFF ioctl
++		 */
++		dma_buf_put(buf);
++		dma_buf_put(buf);
 +	}
-+bail:
-+	return err;
-+}
++	break;
++	case FASTRPC_IOCTL_ALLOC_DMA_BUFF: {
++		struct fastrpc_ioctl_alloc_dma_buf bp;
++		DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
++		struct fastrpc_buf *buf = NULL;
 +
- static const struct file_operations fastrpc_fops = {
- 	.open = fastrpc_device_open,
- 	.release = fastrpc_device_release,
-+	.unlocked_ioctl = fastrpc_device_ioctl,
++		err = copy_from_user(&bp, argp, sizeof(bp));
++		if (err)
++			goto bail;
++
++		err = fastrpc_buf_alloc(fl, fl->dev, bp.size, &buf);
++		exp_info.ops = &fastrpc_dma_buf_ops;
++		exp_info.size = bp.size;
++		exp_info.flags = O_RDWR;
++		exp_info.priv = buf;
++		buf->dmabuf = dma_buf_export(&exp_info);
++		if (IS_ERR(buf->dmabuf)) {
++			err = PTR_ERR(buf->dmabuf);
++			goto bail;
++		}
++		get_dma_buf(buf->dmabuf);
++		bp.fd = dma_buf_fd(buf->dmabuf, O_ACCMODE);
++		if (bp.fd < 0) {
++			dma_buf_put(buf->dmabuf);
++			err = -EINVAL;
++			goto bail;
++		}
++
++		err = copy_to_user(argp, &bp, sizeof(bp));
++		if (err)
++			goto bail;
++
++		}
++		break;
+ default:
+ 		err = -ENOTTY;
+ 		pr_info("bad ioctl: %d\n", cmd);
+diff --git a/include/uapi/linux/fastrpc.h b/include/uapi/linux/fastrpc.h
+index 6b596fc7ddf3..6b1ca29867fd 100644
+--- a/include/uapi/linux/fastrpc.h
++++ b/include/uapi/linux/fastrpc.h
+@@ -5,6 +5,8 @@
+ 
+ #include <linux/types.h>
+ 
++#define FASTRPC_IOCTL_ALLOC_DMA_BUFF _IOWR('R', 1, struct fastrpc_ioctl_alloc_dma_buf)
++#define FASTRPC_IOCTL_FREE_DMA_BUFF _IOWR('R', 2, uint32_t)
+ #define FASTRPC_IOCTL_INVOKE	_IOWR('R', 3, struct fastrpc_ioctl_invoke)
+ #define FASTRPC_IOCTL_INIT	_IOWR('R', 4, struct fastrpc_ioctl_init)
+ 
+@@ -71,4 +73,10 @@ struct fastrpc_ioctl_init {
+ 	unsigned int siglen;
  };
  
- static int fastrpc_cb_probe(struct platform_device *pdev)
-@@ -251,9 +1000,25 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 	return err;
- }
- 
-+static void fastrpc_notify_users(struct fastrpc_user *user)
-+{
-+	struct fastrpc_invoke_ctx *ctx, *n;
-+
-+	spin_lock(&user->lock);
-+	list_for_each_entry_safe(ctx, n, &user->pending, node)
-+		complete(&ctx->work);
-+	spin_unlock(&user->lock);
-+}
-+
- static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
- {
- 	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(&rpdev->dev);
-+	struct fastrpc_user *user, *n;
-+
-+	spin_lock(&cctx->lock);
-+	list_for_each_entry_safe(user, n, &cctx->users, user)
-+		fastrpc_notify_users(user);
-+	spin_unlock(&cctx->lock);
- 
- 	device_del(&cctx->dev);
- 	put_device(&cctx->dev);
-@@ -264,6 +1029,31 @@ static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
- static int fastrpc_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
- 				  int len, void *priv, u32 addr)
- {
-+	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(&rpdev->dev);
-+	struct fastrpc_invoke_rsp *rsp = data;
-+	struct fastrpc_invoke_ctx *ctx;
-+	unsigned long flags;
-+	int ctxid;
-+
-+	if (rsp && len < sizeof(*rsp)) {
-+		dev_err(&rpdev->dev, "invalid response or context\n");
-+		return -EINVAL;
-+	}
-+
-+	ctxid = (uint32_t)((rsp->ctx & FASTRPC_CTXID_MASK) >> 4);
-+
-+	spin_lock_irqsave(&cctx->lock, flags);
-+	ctx = idr_find(&cctx->ctx_idr, ctxid);
-+	spin_unlock_irqrestore(&cctx->lock, flags);
-+
-+	if (!ctx) {
-+		dev_err(&rpdev->dev, "No context ID matches response\n");
-+		return -ENOENT;
-+	}
-+
-+	ctx->retval = rsp->retval;
-+	complete(&ctx->work);
-+
- 	return 0;
- }
- 
-diff --git a/include/uapi/linux/fastrpc.h b/include/uapi/linux/fastrpc.h
-new file mode 100644
-index 000000000000..8fec66601337
---- /dev/null
-+++ b/include/uapi/linux/fastrpc.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __QCOM_FASTRPC_H__
-+#define __QCOM_FASTRPC_H__
-+
-+#include <linux/types.h>
-+
-+#define FASTRPC_IOCTL_INVOKE	_IOWR('R', 3, struct fastrpc_ioctl_invoke)
-+
-+#define remote_arg64_t    union remote_arg64
-+
-+struct remote_buf64 {
-+	uint64_t pv;
-+	uint64_t len;
++struct fastrpc_ioctl_alloc_dma_buf {
++	int     fd;	/* fd */
++	ssize_t size;	/* size */
++	uint32_t flags;	/* flags to map with */
 +};
 +
-+struct remote_dma_handle64 {
-+	int fd;
-+	uint32_t offset;
-+	uint32_t len;
-+};
-+
-+union remote_arg64 {
-+	struct remote_buf64	buf;
-+	struct remote_dma_handle64 dma;
-+	uint32_t h;
-+};
-+
-+#define remote_arg_t    union remote_arg
-+
-+struct remote_buf {
-+	void *pv;		/* buffer pointer */
-+	size_t len;		/* length of buffer */
-+};
-+
-+struct remote_dma_handle {
-+	int fd;
-+	uint32_t offset;
-+};
-+
-+union remote_arg {
-+	struct remote_buf buf;	/* buffer info */
-+	struct remote_dma_handle dma;
-+	uint32_t h;		/* remote handle */
-+};
-+
-+struct fastrpc_ioctl_invoke {
-+	uint32_t handle;	/* remote handle */
-+	uint32_t sc;		/* scalars describing the data */
-+	remote_arg_t *pra;	/* remote arguments list */
-+	int *fds;		/* fd list */
-+	unsigned int *attrs;	/* attribute list */
-+	unsigned int *crc;
-+};
-+
-+#endif /* __QCOM_FASTRPC_H__ */
+ #endif /* __QCOM_FASTRPC_H__ */
 -- 
 2.19.2
 
