@@ -2,75 +2,102 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740CEC64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C30DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A1120834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:13:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A1120834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2158D20660
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:15:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="KgIZy+9t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2158D20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbeLAIYX (ORCPT
+        id S1726702AbeLAI0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 03:24:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44948 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725749AbeLAIYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 03:24:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ABE8AAC89;
-        Fri, 30 Nov 2018 21:13:45 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 22:13:42 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call implementation
- for x86-64
-In-Reply-To: <CALCETrUtaXU+5hTNrPKZgU_w1piyZ7O+5Kpk99RJMv9jry-OdQ@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1811302209370.21108@cbobk.fhfr.pm>
-References: <20181129124404.2fe55dd0@gandalf.local.home> <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com> <20181129125857.75c55b96@gandalf.local.home> <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
- <20181129134725.6d86ade6@gandalf.local.home> <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com> <CAHk-=wjN=sow0F-UtA6DtHHT_CNUV7wYVe3cQ4E8GPp4LN32+Q@mail.gmail.com> <CALCETrVzFk2Yv8q54Xh6qOb45AKKrQhD5OkAuTsw9HaR3Wvy4Q@mail.gmail.com>
- <20181129202452.56f4j2wdct6qbaqo@treble> <CALCETrW1ju40hFrM3sr21tDTZ-m1=swHfD2cMiyYFJkgbb3cug@mail.gmail.com> <20181130183917.hxmti5josgq4clti@treble> <CAHk-=whx=Dme9q0k0pK7S_3YwuvdMw1yKxESSUhS+eEce8HTOQ@mail.gmail.com> <CALCETrVwdtLnnLR7Qb3LVCHDRpJ-cgU28jiGOQdaPFLVSvvZXA@mail.gmail.com>
- <20181130152852.456ce379@gandalf.local.home> <CALCETrUtaXU+5hTNrPKZgU_w1piyZ7O+5Kpk99RJMv9jry-OdQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Sat, 1 Dec 2018 03:26:32 -0500
+Received: from mail-qk1-f227.google.com ([209.85.222.227]:44168 "EHLO
+        mail-qk1-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAI0c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 03:26:32 -0500
+Received: by mail-qk1-f227.google.com with SMTP id n12so3999981qkh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 13:15:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/GL+vMwLEIx6YDK73nJMetbGD8d1zqFOPKI/7jt3NQk=;
+        b=KgIZy+9tT+i7CRlxDSpmevqvb5hOzzAGGtSt630tiSG5GWXAg+Igk5RwTIqlbRJqpF
+         MCjpvRuwW65f+ChecqqQDKPMX3v2s7PdXNqAFDp0feLpNolEspChYH4doA/DyRTCrJJr
+         B6fv4x8cn6k0U6ctr13njCHIX2xCvFMo0VEqQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/GL+vMwLEIx6YDK73nJMetbGD8d1zqFOPKI/7jt3NQk=;
+        b=eYrPfmDRWhjte6mZPHaIW47b+PWxfdALQFuLC9DrdbtsqEiksYa1sZt9vSJGC9uOl2
+         M5k+WEcnHfWyP2HzoL9tKqADd7kR6quAqdIKzwHjOl81Ytxno0bfDY7Mbcka0PcqfV1j
+         YlLvOVyNtiAsn2u3a2L+FJ6k1sHM1o55qietAReHrsVZ2stiQ9KybxNDTYi5lBtnyDxK
+         7265hksVGy+imYWmz12Pxqv2rcpQ7n7cheUAha9rOBULom7zZNMfL0LPwQJ4M9ja17IO
+         hpKLl2EAmXO2ZbY0ds+0BLJB0865d6aPB/qEt09dlt2mxbvowuYja9EuMFuMmmaWyn3U
+         DeaA==
+X-Gm-Message-State: AA+aEWbmKYh+n5mtLMEPWKirQuAGbRDQ+4wYPt8wlBwH/efUjOLpUrHK
+        B435+j11oqveizuiP9T3Q04f07e+RV3BEIZASSZQ75tOaOGdkA==
+X-Google-Smtp-Source: AFSGD/V3rh2gprbZGHlBnGABRuJs6fcglYLreFmaeWERf5YqH4/j23cDyJ5yG3piSvJwtqeAQDAlXiIlgZFf
+X-Received: by 2002:a37:484c:: with SMTP id v73mr6585358qka.196.1543612555734;
+        Fri, 30 Nov 2018 13:15:55 -0800 (PST)
+Received: from c7-smtp.dev.purestorage.com ([192.30.188.252])
+        by smtp-relay.gmail.com with ESMTPS id h21sm513995qkj.9.2018.11.30.13.15.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 13:15:55 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from roland-x1-yoga.digitalvampire.org (roland-x1-yoga.purestorage.com [10.202.102.176])
+        by c7-smtp.dev.purestorage.com (Postfix) with ESMTPS id 5378D2191E;
+        Fri, 30 Nov 2018 14:15:54 -0700 (MST)
+From:   Roland Dreier <roland@purestorage.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/hpet: Remove unused FSEC_PER_NSEC define
+Date:   Fri, 30 Nov 2018 13:15:53 -0800
+Message-Id: <20181130211553.5450-1-roland@purestorage.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018, Andy Lutomirski wrote:
+The FSEC_PER_NSEC macro has had zero users since commit ab0e08f15d23
+("x86: hpet: Cleanup the clockevents init and register code").
 
-> According to the SDM, you can program the APIC ICR to request an SMI. 
-> It's not remotely clear to me what will happen if we do this.  
+Signed-off-by: Roland Dreier <roland@purestorage.com>
+---
+ arch/x86/kernel/hpet.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-I think one of the known reliable ways to trigger SMI is to write 0x0 to 
-the SMI command I/O port (0xb2).
-
-> For all I know, the SMI handler will explode and the computer will catch 
-> fire.
-
-Ha, therefore noone can't claim any more that SMIs are always harmful :)
-
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index b0acb22e5a46..dfd3aca82c61 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -21,10 +21,6 @@
+ 
+ #define HPET_MASK			CLOCKSOURCE_MASK(32)
+ 
+-/* FSEC = 10^-15
+-   NSEC = 10^-9 */
+-#define FSEC_PER_NSEC			1000000L
+-
+ #define HPET_DEV_USED_BIT		2
+ #define HPET_DEV_USED			(1 << HPET_DEV_USED_BIT)
+ #define HPET_DEV_VALID			0x8
 -- 
-Jiri Kosina
-SUSE Labs
+2.19.1
 
