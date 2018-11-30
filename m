@@ -2,72 +2,47 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 619FFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CF0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25BE920660
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:53:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="gStp/Q3z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25BE920660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 303AB2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303AB2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbeLAJEQ (ORCPT
+        id S1726913AbeLAJFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:04:16 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51901 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeLAJEJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:04:09 -0500
-Received: by mail-it1-f195.google.com with SMTP id x19so771886itl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 13:53:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YbALuDan4FuFV4eX+ephaYVAxQ59K1quXJ7RMoEMPCs=;
-        b=gStp/Q3zfBzq/lyYrmhyYUyTfzQvBSpaY/q+qV+o16X3MgO4QcPUbeUFaN+luJ3xCe
-         OeGsX+HZiqUP8UcEdwkk0VGO8tfh2EwCF8L50Kr2BMqRpnUKmzYZIHBDTpunfC7zaBQR
-         6+l22+BotVOOql+jPfxn5nIA9gLNotLSfL9p/0/3Asopet7x2Q4ChxYxj9hv0xCOWSvP
-         gCT1XAkuHhbq5+fHhxdi5k4c7yDrFqo/2czq5R9h4JcGS53AIxTBrk+sz/HrRC9ZAMY7
-         UzqgyPQgvRs7m2JOB2MY5P8grMuR6ES1VxQHRCm+DYXSCYhomk+cuhY21cVTQFJUKlJ9
-         dZTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YbALuDan4FuFV4eX+ephaYVAxQ59K1quXJ7RMoEMPCs=;
-        b=Ue0F8yzqcGDiWFyKuD6emONgKah/M6tDnyDrCjud2vI7xohc5QGR8ufiUbcchAvLlz
-         7kHRcUTOkbjBD6gSOOX/w0kVnxyXGurlj7rPPXekWvhOXDbh2OtjBqBdiu2CDdIcrYFR
-         GDLEVYKI1IyhYVYllz2ivIZ4HoGU4d4K+5NT39Jagpjm+QHQuwFGeOWHSQUjUrK7DVPj
-         JrCsMQQ7gC5dvM9Whv6PpE7eRTS8cka/9WvU2KU7pcxpAY7TxaBAyfn+qES5r9ikOWYi
-         Z9D0TplDUCVy+Aqtj+yk8VbCtwnJGRzyDUaLHh/1x65wY65c/Pm0N83f4mC353dW2m6W
-         QF0g==
-X-Gm-Message-State: AA+aEWZxCaMjpr+XYlgFEXkt1cH6Lt1WAOZAt+B6wxEBfgw6fPBaU/2Q
-        ezqfJji0RzBxHw1ctmoP7U0g6Q==
-X-Google-Smtp-Source: AFSGD/XDQInznbS4iopjRBTDXgerdxC1yiEbky1iNrPAUAfmUb5wHYHEYjzCsl0n9R1fDEYT7A4y5A==
-X-Received: by 2002:a24:4d87:: with SMTP id l129mr447326itb.37.1543614807405;
-        Fri, 30 Nov 2018 13:53:27 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id b188sm182238itc.9.2018.11.30.13.53.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 13:53:26 -0800 (PST)
-Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
-To:     David Miller <davem@davemloft.net>, jarkko.sakkinen@linux.intel.com
-Cc:     dave@stgolabs.net, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, amir73il@gmail.com,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        dja@axtens.net, linux@dominikbrodowski.net,
-        dri-devel@lists.freedesktop.org, edumazet@google.com,
-        federico.vaga@vaga.pv.it, geert+renesas@glider.be, deller@gmx.de,
-        corbet@lwn.net, kumba@gentoo.org, linux-doc@vger.kernel.org,
+        Sat, 1 Dec 2018 04:05:13 -0500
+Received: from mga12.intel.com ([192.55.52.136]:61821 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726746AbeLAJFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:05:13 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 13:54:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
+   d="scan'208";a="121363483"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
+  by fmsmga001.fm.intel.com with ESMTP; 30 Nov 2018 13:54:29 -0800
+Date:   Fri, 30 Nov 2018 13:54:29 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     James.Bottomley@HansenPartnership.com, dave@stgolabs.net,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        amir73il@gmail.com, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, dja@axtens.net,
+        linux@dominikbrodowski.net, dri-devel@lists.freedesktop.org,
+        edumazet@google.com, federico.vaga@vaga.pv.it,
+        geert+renesas@glider.be, deller@gmx.de, corbet@lwn.net,
+        kumba@gentoo.org, linux-doc@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-media@vger.kernel.org,
         linux-mips@linux-mips.org, linux-mtd@lists.infradead.org,
@@ -80,36 +55,53 @@ Cc:     dave@stgolabs.net, keescook@chromium.org,
         sbrivio@redhat.com, rostedt@goodmis.org, me@tobin.cc,
         makita.toshiaki@lab.ntt.co.jp, willemb@google.com, yhs@fb.com,
         yanjun.zhu@oracle.com
-References: <d7c34289-f03a-b641-cc9c-00395306511d@kernel.dk>
- <20181130.123507.1940310466680455876.davem@davemloft.net>
- <20181130214233.GF23772@linux.intel.com>
- <20181130.134703.1703684498402097596.davem@davemloft.net>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8ec7ecc9-ebb5-3c01-3b54-0aab97b856c2@kernel.dk>
-Date:   Fri, 30 Nov 2018 14:53:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
+Message-ID: <20181130215429.GA24415@linux.intel.com>
+References: <20181130205521.GA21006@linux.intel.com>
+ <1543611662.3031.20.camel@HansenPartnership.com>
+ <20181130214405.GG23772@linux.intel.com>
+ <20181130.134808.1785785556132211918.davem@davemloft.net>
 MIME-Version: 1.0
-In-Reply-To: <20181130.134703.1703684498402097596.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130.134808.1785785556132211918.davem@davemloft.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/18 2:47 PM, David Miller wrote:
+On Fri, Nov 30, 2018 at 01:48:08PM -0800, David Miller wrote:
 > From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Date: Fri, 30 Nov 2018 13:42:33 -0800
+> Date: Fri, 30 Nov 2018 13:44:05 -0800
 > 
->> Can you tell how the CoC should be interpreted then?
+> > On Fri, Nov 30, 2018 at 01:01:02PM -0800, James Bottomley wrote:
+> >> No because use of what some people consider to be bad language isn't
+> >> necessarily abusive, offensive or degrading.  Our most heavily censored
+> >> medium is TV and "fuck" is now considered acceptable in certain
+> >> contexts on most channels in the UK and EU.
+> > 
+> > This makes following the CoC extremely hard to a non-native speaker as
+> > it is not too explicit on what is OK and what is not. I did through the
+> > whole thing with an eye glass and this what I deduced from it.
 > 
-> Regardless of what I think, as others have showen the CoC explicitly
-> does not apply to existing code.
+> It would be helpful if you could explain what part of the language
+> is unclear wrt. explaining how CoC does not apply to existing code.
+> 
+> That part seems very explicit to me.
 
-And with that, can we please put an end to this thread (and patchset)?
+Well, now that I re-read it, it was this part to be exact:
 
--- 
-Jens Axboe
+"Maintainers have the right and responsibility to remove, edit, or
+reject comments, commits, code, wiki edits, issues, and other
+contributions that are not aligned to this Code of Conduct, or to ban
+temporarily or permanently any contributor for other behaviors that they
+deem inappropriate, threatening, offensive, or harmful."
 
+How this should be interpreted?
+
+I have not really followed the previous CoC discussions as I try to
+always use polite language so I'm sorry if this duplicate.
+
+/Jarkko
