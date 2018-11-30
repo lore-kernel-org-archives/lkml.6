@@ -2,170 +2,125 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9813C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6F2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E72920673
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:23:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ew9SX3Rh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E72920673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1223020673
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:26:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1223020673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbeLAFdh (ORCPT
+        id S1726340AbeLAFgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:33:37 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34542 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbeLAFdh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:33:37 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y185so2234484wmd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 10:23:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=gyqSeFnxuL66/4Tb83vuNNeyna66MDa5D0/0KSnYmmA=;
-        b=Ew9SX3RhnoO0FB2mWoiHH/G5G9uPbHdEEKfx28ZS1PmNH/iK+DNijjO38sGJjmcojV
-         VTpXBHm1FHfP+HQEyVYsIQsMag6z4pGTPuHtx+kKI2peqoRPOkdUtVdfv0aFZ1MhIutc
-         jXusQzvJpN5XrW4REVP3SAiqy/jxMo17A54Lo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=gyqSeFnxuL66/4Tb83vuNNeyna66MDa5D0/0KSnYmmA=;
-        b=L8Q+j5Dm506t/nBHEzjW+EYReMeOwz330tXlj8yIn9T1is76ihai2+IhItC2h0HF7Q
-         u3jNIADkV+n5cIiL3OpxIayIuzVNf5OsgwDLk2NXw0P1qxyLSyZjHkTwzaGNWzRWsyAK
-         +tSDxD4xQF8CEAp4fTP0PO7ByYJHeoIWRcYBZBiCbqr/skggZsY42OxxUG1eqcifMUWI
-         yIeNJkqQsImHJ2Su8+kbiVkNPdIqrunEoZWSsEJ0SdIxDaRnD9AA0AoLbY51dxAEjPDl
-         GX4q63EIzHqXT9ETtqjJgf7O2VdbZabwGfnxGDUfgCK+8lE2eJvvzFckwgMvTqWmcogv
-         t9dw==
-X-Gm-Message-State: AA+aEWaUfHxPDMe8pqcY89GxmN4uGPntEQdiLRtI1MONPc1tPl3fbWQf
-        r9ga2X0uIyC+HM5dF+wJRT1FhQ==
-X-Google-Smtp-Source: AFSGD/V2amZ1PLVb2nhEMbUahwTygyOFFUoTG/mBG2w41KefN6kABCf8oMVPRw0CUjuQ4ifzD6ySrA==
-X-Received: by 2002:a7b:cb86:: with SMTP id m6mr6541428wmi.61.1543602206993;
-        Fri, 30 Nov 2018 10:23:26 -0800 (PST)
-Received: from [192.168.0.101] (146-241-2-120.dyn.eolo.it. [146.241.2.120])
-        by smtp.gmail.com with ESMTPSA id z17sm5453917wrv.2.2018.11.30.10.23.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 10:23:26 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
- policy in blkio/io
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
-Date:   Fri, 30 Nov 2018 19:23:24 +0100
-Cc:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, oleksandr@natalenko.name,
-        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
-References: <20181119103424.3853-1-paolo.valente@linaro.org>
- <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
- <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
-To:     'Paolo Valente' via bfq-iosched <bfq-iosched@googlegroups.com>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Sat, 1 Dec 2018 00:36:20 -0500
+Received: from foss.arm.com ([217.140.101.70]:34354 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725817AbeLAFgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:36:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 129F9165C;
+        Fri, 30 Nov 2018 10:26:11 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D5DA83F575;
+        Fri, 30 Nov 2018 10:26:10 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B8FAC1AE0FA2; Fri, 30 Nov 2018 18:26:29 +0000 (GMT)
+Date:   Fri, 30 Nov 2018 18:26:29 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] arm64/bpf: don't allocate BPF JIT programs in
+ module memory
+Message-ID: <20181130182629.GA16085@arm.com>
+References: <20181123221804.440-1-ard.biesheuvel@linaro.org>
+ <20181123221804.440-3-ard.biesheuvel@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181123221804.440-3-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 23, 2018 at 11:18:04PM +0100, Ard Biesheuvel wrote:
+> The arm64 module region is a 128 MB region that is kept close to
+> the core kernel, in order to ensure that relative branches are
+> always in range. So using the same region for programs that do
+> not have this restriction is wasteful, and preferably avoided.
+> 
+> Now that the core BPF JIT code permits the alloc/free routines to
+> be overridden, implement them by vmalloc()/vfree() calls from a
+> dedicated 128 MB region set aside for BPF programs. This ensures
+> that BPF programs are still in branching range of each other, which
+> is something the JIT currently depends upon (and is not guaranteed
+> when using module_alloc() on KASLR kernels like we do currently).
+> It also ensures that placement of BPF programs does not correlate
+> with the placement of the core kernel or modules, making it less
+> likely that leaking the former will reveal the latter.
+> 
+> This also solves an issue under KASAN, where shadow memory is
+> needlessly allocated for all BPF programs (which don't require KASAN
+> shadow pages since they are not KASAN instrumented)
+> 
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  arch/arm64/include/asm/memory.h |  5 ++++-
+>  arch/arm64/net/bpf_jit_comp.c   | 13 +++++++++++++
+>  2 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> index b96442960aea..ee20fc63899c 100644
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -62,8 +62,11 @@
+>  #define PAGE_OFFSET		(UL(0xffffffffffffffff) - \
+>  	(UL(1) << (VA_BITS - 1)) + 1)
+>  #define KIMAGE_VADDR		(MODULES_END)
+> +#define BPF_JIT_REGION_START	(VA_START + KASAN_SHADOW_SIZE)
+> +#define BPF_JIT_REGION_SIZE	(SZ_128M)
+> +#define BPF_JIT_REGION_END	(BPF_JIT_REGION_START + BPF_JIT_REGION_SIZE)
+>  #define MODULES_END		(MODULES_VADDR + MODULES_VSIZE)
+> -#define MODULES_VADDR		(VA_START + KASAN_SHADOW_SIZE)
+> +#define MODULES_VADDR		(BPF_JIT_REGION_END)
+>  #define MODULES_VSIZE		(SZ_128M)
+>  #define VMEMMAP_START		(PAGE_OFFSET - VMEMMAP_SIZE)
+>  #define PCI_IO_END		(VMEMMAP_START - SZ_2M)
+> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+> index a6fdaea07c63..76c2ab40c02d 100644
+> --- a/arch/arm64/net/bpf_jit_comp.c
+> +++ b/arch/arm64/net/bpf_jit_comp.c
+> @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+>  					   tmp : orig_prog);
+>  	return prog;
+>  }
+> +
+> +void *bpf_jit_alloc_exec(unsigned long size)
+> +{
+> +	return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_START,
+> +				    BPF_JIT_REGION_END, GFP_KERNEL,
+> +				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+> +				    __builtin_return_address(0));
 
+I guess we'll want VM_IMMEDIATE_UNMAP here if Rich gets that merged. In the
+meantime, I wonder if it's worth zeroing the region in bpf_jit_free_exec()?
+(although we'd need the size information...).
 
-> Il giorno 20 nov 2018, alle ore 17:50, Paolo Valente =
-<paolo.valente@linaro.org> ha scritto:
->=20
->=20
->=20
->> Il giorno 20 nov 2018, alle ore 17:28, Tejun Heo <tj@kernel.org> ha =
-scritto:
->>=20
->> Hello, Paolo.
->>=20
->> On Mon, Nov 19, 2018 at 11:34:14AM +0100, Paolo Valente wrote:
->>> - if all entities produce the same output, the this common output is
->>> shown only once;
->>> - if the outputs differ, then every per-entity output is shown,
->>> followed by the name of the entity that produced that output.
->>=20
->> So, this doesn't make sense to me.  One set of numbers is meaningful,
->> the other not and the user doesn't have a way to tell which one is.
->> It makes no sense to present both numbers.
->>=20
->=20
-> I do agree that these numbers may confuse.  Before discussing how to
-> do this better, let me tell you why we are showing them.
->=20
-> In the first place, the need for a diversified output showed up in the
-> following case.  Given a group using the blkio/io controller, and two
-> drives
-> - one with legacy block and cfq
-> - one with blk-mq and bfq
-> there will be different statistics for each scheduler, for the same
-> interface files.
->=20
-> Then we understood that exactly the same happens with throttling, in
-> case the latter is activated on different devices w.r.t. bfq.
->=20
-> In addition, the same may happen, in the near future, with the
-> bandwidth controller Josef is working on.  If the controller can be
-> configured per device, as with throttling, then statistics may differ,
-> for the same interface files, between bfq, throttling and that
-> controller.
->=20
-> More general examples could be made considering that this extension is
-> for the generic cgroup interface.
->=20
-> Of course, suggestions for a clearer way to show these numbers are
-> more than welcome!  Maybe involved device identifiers can be somehow
-> gathered by the entities providing these numbers, and then shown?  In
-> this respect, consider that, even without this extension, one still
-> has the fundamental problem of not knowing to which devices numbers
-> apply (unless I'm missing something else).
->=20
-
-Hi Tejun,
-have you had time to look into this?  Any improvement to this
-interface is ok for us. We are only interested in finally solving this
-interface issue, as, for what concerns us directly, it has been
-preventing legacy code to use bfq for years.
-
-Thanks,
-Paolo
-
-
-
-> Thanks,
-> Paolo
->=20
->> Thanks.
->>=20
->> --=20
->> tejun
->=20
-> --=20
-> You received this message because you are subscribed to the Google =
-Groups "bfq-iosched" group.
-> To unsubscribe from this group and stop receiving emails from it, send =
-an email to bfq-iosched+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
-
+Will
