@@ -2,86 +2,95 @@ Return-Path: <SRS0=1bfu=OR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F463C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 633CAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE2982081C
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:42:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="qSgzCY0m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2982081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 20FAA2081C
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Dec 2018 12:48:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20FAA2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeLHMmt (ORCPT
+        id S1726164AbeLHMs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Dec 2018 07:42:49 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59946 "EHLO mail.skyhub.de"
+        Sat, 8 Dec 2018 07:48:57 -0500
+Received: from gate.crashing.org ([63.228.1.57]:41836 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbeLHMms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Dec 2018 07:42:48 -0500
-Received: from zn.tnic (p200300EC2BDEA700C0511CCA78411630.dip0.t-ipconnect.de [IPv6:2003:ec:2bde:a700:c051:1cca:7841:1630])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 864BB1EC0229;
-        Sat,  8 Dec 2018 13:42:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544272967;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=MddpSfX/Z5b4o6oEd1QVsIadhzsWCcyAfGYIKMLMo6Q=;
-        b=qSgzCY0mAE4sd38wv35yt/Uh0qfZ4n3UAn3Wq7AMgzs43MhIimwTgON+l84Ib+bmB5QZdN
-        CsdMxCKgMnHfxrImRdYle5gHj/XPt1CYZAahrupmNbsMmmimpZd8azchkrnR8044Rd8k8B
-        0yBk8G/Z9RKRp8gxX+xIO8dhHhK1SeA=
-Date:   Sat, 8 Dec 2018 13:42:40 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] x86/retpoline: Fix forcing me to update my compiler
-Message-ID: <20181208124240.GE30399@zn.tnic>
-References: <20181208123816.22952-1-k.marinushkin@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181208123816.22952-1-k.marinushkin@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726124AbeLHMs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Dec 2018 07:48:56 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id wAU3HgS0007716;
+        Thu, 29 Nov 2018 21:17:44 -0600
+Message-ID: <53c18168393e3134f7e4120a2528f972b1002c01.camel@kernel.crashing.org>
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@lst.de>, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 30 Nov 2018 14:17:42 +1100
+In-Reply-To: <20181127074253.GB30186@lst.de>
+References: <20181114082314.8965-1-hch@lst.de>
+         <20181127074253.GB30186@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 08, 2018 at 01:38:16PM +0100, Kirill Marinushkin wrote:
-> First problem: I cannot compile the kernel with my version of compiler
-> 
-> ~~~~
-> $ make defconfig
-> *** Default configuration is based on 'i386_defconfig'
-> \#
-> \# configuration written to .config
-> \#
-> $ grep CONFIG_RETPOLINE .config
-> CONFIG_RETPOLINE=y
-> $ make
-> arch/x86/Makefile:224: *** You are building kernel with non-retpoline
-> compiler, please update your compiler..  Stop.
-> ~~~~
+On Tue, 2018-11-27 at 08:42 +0100, Christoph Hellwig wrote:
+> Any comments?  I'd like to at least get the ball moving on the easy
+> bits.
 
-Does this help?
+So I had to cleanup some dust but it works on G5 with and without iommu
+and 32-bit powermacs at least.
 
-https://git.kernel.org/tip/25896d073d8a0403b07e6dec56f58e6c33678207
+We're doing more tests, hopefully mpe can dig out some PASemi and
+NXP/FSL HW as well. I'll try to review & ack the patches over the next
+few days too.
 
--- 
-Regards/Gruss,
-    Boris.
+Cheers,
+Ben.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> On Wed, Nov 14, 2018 at 09:22:40AM +0100, Christoph Hellwig wrote:
+> > Hi all,
+> > 
+> > this series switches the powerpc port to use the generic swiotlb and
+> > noncoherent dma ops, and to use more generic code for the coherent
+> > direct mapping, as well as removing a lot of dead code.
+> > 
+> > As this series is very large and depends on the dma-mapping tree I've
+> > also published a git tree:
+> > 
+> >     git://git.infradead.org/users/hch/misc.git powerpc-dma.4
+> > 
+> > Gitweb:
+> > 
+> >     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.4
+> > 
+> > Changes since v3:
+> >  - rebase on the powerpc fixes tree
+> >  - add a new patch to actually make the baseline amigaone config
+> >    configure without warnings
+> >  - only use ZONE_DMA for 64-bit embedded CPUs, on pseries an IOMMU is
+> >    always present
+> >  - fix compile in mem.c for one configuration
+> >  - drop the full npu removal for now, will be resent separately
+> >  - a few git bisection fixes
+> > 
+> > The changes since v1 are to big to list and v2 was not posted in public.
+> > 
+> > _______________________________________________
+> > iommu mailing list
+> > iommu@lists.linux-foundation.org
+> > https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> ---end quoted text---
+
