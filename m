@@ -2,195 +2,283 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8361FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164A9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46BE02082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:41:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BE02082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id B81F62082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:43:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eqcnhp30"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81F62082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbeK3Wuu (ORCPT
+        id S1726812AbeK3Wwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:50:50 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38348 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeK3Wuu (ORCPT
+        Fri, 30 Nov 2018 17:52:33 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:47236 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbeK3Wwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:50:50 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d19so2955859qkg.5;
-        Fri, 30 Nov 2018 03:41:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nZQHKiZnV9bH/l6eyhiWqAq+vzH9+nbM90oA3cnkcJE=;
-        b=HL5AzEmCmYUFuerpT02ODuC3QFjRk7GmaHaOZFDYYNxLjTNNWl0vIoH+3w1G5R3RDC
-         qE8y65QDGi0AyzDroZ96guCsGjk9lgXQls6Uy9HSsL6GeSwjH9ZekPTHVDETB+T2ZuCT
-         eoMvWAPYhYm5IzuL8miTJaZAx5qEFCxbe99DEN8YBm57ElZ76ENcgdJu534UOrGqBRt6
-         Ii48568lz33xPWaGQqrnfHUnC4GrEp2p016ust+Iu1P3e2o0/Qe/D8l3+Fd+iJ4aVXjI
-         IEQ4w39PpmMla0R61jfU37QNmeuVF5VuM9bRaqMxKRBYnLcd8clNBAIA7WI/AESFYWUc
-         3krA==
-X-Gm-Message-State: AA+aEWb9qiqLyl0CSn/lIVv9VXUlJAWL0va7j/xcFoRUenYOI6h1Q56g
-        eNybNgGqYkfEL+3Y+3kH9uEAVkO4xJ/Rvnn93Ow=
-X-Google-Smtp-Source: AFSGD/W2Ag7ZKN8Yo/eug3aP0ShV5cYy54AlR7JsGBuclCFMA0CVL0nYP5RNiO90mGH3zj/WbNc3HsX2ktfGSj893wE=
-X-Received: by 2002:ae9:e102:: with SMTP id g2mr4591998qkm.343.1543578109004;
- Fri, 30 Nov 2018 03:41:49 -0800 (PST)
+        Fri, 30 Nov 2018 17:52:33 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAUBggUG126629;
+        Fri, 30 Nov 2018 05:42:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543578162;
+        bh=XxZNkJ6kGqvrWbQvqntfwan4RpKXJsE9yclC13CMiZU=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=eqcnhp30bc1lNDdq6kQFuJvJNeL562LYyA/D9bXU6BIiCJ7sR95s40Xvri6hg8mM5
+         yfleMJPhO80eQiL0a2utfVx0co4vCI0Rct0jmdDdO8qwByePAqbwFWW4WuFyxKcqPe
+         r9os/J2T98xNAabom4gl0Dcf4EYu5k7sdsk0w33I=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAUBggsD010835
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 30 Nov 2018 05:42:42 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 30
+ Nov 2018 05:42:42 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 30 Nov 2018 05:42:42 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAUBgbnm022498;
+        Fri, 30 Nov 2018 05:42:38 -0600
+Subject: Re: [PATCH 12/16] dt-bindings: remoteproc: ti-pruss: Document
+ application node bindings
+To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-13-git-send-email-rogerq@ti.com>
+ <6a945433-00b2-e0e5-2dc8-2a4d2bf0db6f@lechnology.com> <5BFFBA5F.703@ti.com>
+ <377707a9-6ea8-8faf-35dc-0aa1fddda272@lechnology.com>
+CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
+        <ssantosh@kernel.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
+        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
+        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C01222D.3060104@ti.com>
+Date:   Fri, 30 Nov 2018 13:42:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
- <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
- <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
- <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
- <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
- <87y39b2lm2.fsf@xmission.com> <20181130065606.kmilbbq46oeycjp5@brauner.io>
-In-Reply-To: <20181130065606.kmilbbq46oeycjp5@brauner.io>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 30 Nov 2018 12:41:28 +0100
-Message-ID: <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-To:     christian@brauner.io
-Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <377707a9-6ea8-8faf-35dc-0aa1fddda272@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 7:56 AM Christian Brauner <christian@brauner.io> wrote:
-> On Thu, Nov 29, 2018 at 11:13:57PM -0600, Eric W. Biederman wrote:
-> > Arnd Bergmann <arnd@arndb.de> writes:
-> > > On Thu, Nov 29, 2018 at 9:14 PM Andy Lutomirski <luto@amacapital.net> wrote:
-> > >
-> > > It looks like we already have a 'struct signalfd_siginfo' that is defined in a
-> > > sane architecture-independent way, so I'd suggest we use that.
-> >
-> > Unfortunately it isn't maintained very well.  What you can
-> > express with signalfd_siginfo is a subset what you can express with
-> > siginfo.  Many of the linux extensions to siginfo for exception
-> > information add pointers and have integers right after those pointers.
-> > Not all of those linux specific extentions for exceptions are handled
-> > by signalfd_siginfo (it needs new fields).
+On 29/11/18 18:33, David Lechner wrote:
+> On 11/29/18 4:07 AM, Roger Quadros wrote:
+>> On 27/11/18 01:27, David Lechner wrote:
+>>> On 11/26/18 1:52 AM, Roger Quadros wrote:
+>>>> From: Tero Kristo <t-kristo@ti.com>
+>>>>
+>>>> Add documentation for the Texas Instruments PRU application nodes.
+>>>> These are used to configure specific user applications for PRU instances.
+>>>
+>>> Could this be made into a generic remoteproc producer/consumer binding? Or
+>>> are there really things that are specific to the TI PRU that need to be
+>>> handled?
+>>
+>> The remoteproc handle and firmware name sound generic enough.
+>> But there are TI PRU specific properties as well which we'll discuss if
+>> they can be made generic.
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>> [s-anna@ti.com: some binding updates]
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>>> ---
+>>>>    .../devicetree/bindings/soc/ti/ti,pruss.txt        | 43 ++++++++++++++++++++++
+>>>>    1 file changed, 43 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>> index 3e5f32f..94c91ee 100644
+>>>> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>> @@ -210,6 +210,38 @@ used in TI Davinci SoCs. Please refer to the corresponding binding document,
+>>>>    Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
+>>>>      +Application/User Nodes
+>>>> +=======================
+>>>
+>>> Are these supposed to be stand-alone platform devices?
+>>>
+>>
+>> Yes. The first use case we're going to address is the Ethernet ports on the IDKs.
+>> (Industrial development Kit) http://www.ti.com/tool/TMDXIDK437X
+>>
+>>>> +A PRU application/user node typically uses one or more PRU device nodes to
+>>>> +implement a PRU application/functionality. Each application/client node would
+>>>> +need a reference to at least a PRU node, and optionally pass some configuration
+>>>> +parameters.
+>>>
+>>> I thought device tree is not supposed to be used for configuration.
+>>
+>> I think we need to word it properly. It is really a hardware/firmware map.
+>>>
+>>>> +
+>>>> +Required Properties:
+>>>> +--------------------
+>>>> +- prus                 : phandles to the PRU nodes used
+>>>> +
+>>>> +Optional Properties:
+>>>> +--------------------
+>>>> +- firmware-name        : firmwares for the PRU cores, the default firmware
+>>>> +                         for the core from the PRU node will be used if not
+>>>> +                         provided. The firmware names should correspond to
+>>>> +                         the PRU cores listed in the 'prus' property
+>>>
+>>> Perhaps this should be a "compatible" property instead of "firmware-name"? The
+>>> driver that matches the compatible string can then set the firmware names.
+>>
+>> Compatible property is there to choose the application driver. Should have mentioned
+>> it in Required properties.
+>>
+>> It is tricky for the driver to decipher the firmware-name as it needs to support
+>> the same use case on multiple platforms and the firmware name will be different for each.
+>> The driver itself is platform agnostic.
+>>
+>> So providing the firmware-name in the DT is the easiest and scalable solution.
+>>>
+>>>> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
+>>>> +                         register for a PRU. This selects the internal muxing
+>>>> +                         scheme for the PRU instance. If not provided, the
+>>>> +                         default out-of-reset value (0) for the PRU core is
+>>>> +                         used. Values should correspond to the PRU cores listed
+>>>> +                         in the 'prus' property
+>>>
+>>> Is this supposed to be a pinmux? So maybe we should be using pinmux bindings?
+>>
+>> We already have pinmux binding for the PRU pins. This GP mux setting is an odd duck.
+>>
+>> It provides a way for a set of signals inside the ICSS to be connected to the PRU pins
+>> on the SOC, which are again multiplexed with other SOC pins via the regular pinmux.
+>>
+>> Some of the sets are
+>>
+>> GPIO mode (0)
+>> EnDAT mode (1)
+>> SD mode (3)
+>> MII2 mode (4)
+>>
+>> The application node needs to decide which set it wants to use.
+>>
+>>>
+>>>> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
+>>>> +                         with each entry consisting of 4 cell-values. First one
+>>>> +                         is an index towards the "prus" property to identify the
+>>>> +                         PRU core for the interrupt map, second is the PRU
+>>>> +                         System Event id, third is the PRU interrupt channel id
+>>>> +                         and fourth is the PRU host interrupt id. If provided,
+>>>> +                         this map will supercede any other configuration
+>>>> +                         provided through firmware
+>>>
+>>> Could this mapping just be cells of the interrupt consumer nodes instead of an
+>>> extra property? As I mentioned in a reply to another patch, unless there is a
+>>> compelling reason to do otherwise, the channel to host mapping can be required
+>>> to be 1:1 as recommended in the TRMs, so that cell can be omitted. Also, since
+>>> the interrupt controller is independent of the PRU cores, the cell specifying the
+>>> index of the PRU core is not needed in this case. The #interrupt-cells already
+>>> includes a cell for the system event number, so this just leaves one cell, the
+>>> host channel, to be added to the #interrupt-cells.
+>>>
+>>> So, instead of:
+>>>
+>>>      ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+>>>
+>>> we could have:
+>>>
+>>>      interrupt-parent = <&pruss_intc>;
+>>>      interrupts = <16 7>, <19 3>;
+>>>
+>>
+>> No, interrupts property will be used to provide the actual sysevent IRQs to the
+>> application driver. Below is how the ethernet application node looks like.
+>>
+>>     pruss2_eth {
+>>         compatible = "ti,am57-prueth";
+>>         prus = <&pru2_0>, <&pru2_1>;
+>>         firmware-name = "ti-pruss/am57xx-pru0-prueth-fw.elf",
+>>                 "ti-pruss/am57xx-pru1-prueth-fw.elf";
+>>         sram = <&ocmcram1>;
+>>         interrupt-parent = <&pruss2_intc>;
+>>         mii-rt = <&pruss2_mii_rt>;
+>>         iep = <&pruss2_iep>;
+>>
+>>         pruss2_emac0: ethernet-mii0 {
+>>             phy-handle = <&pruss2_eth0_phy>;
+>>             phy-mode = "mii";
+>>             interrupts = <20>, <22>;
+>>             interrupt-names = "rx", "tx";
+>>         };
+>>
+>>         pruss2_emac1: ethernet-mii1 {
+>>             phy-handle = <&pruss2_eth1_phy>;
+>>             phy-mode = "mii";
+>>             interrupts = <21>, <23>;
+>>             interrupt-names = "rx", "tx";
+>>         };
+>>     };
+>>
+>> You can see that interrupts is providing the RX and TX sysevents.
+>>
+>> There needs to be a different way to provide the internal INTC map.
+>>
+>> Currently there are 2 ways of providing the INTC map. One is via the
+>> resource table and other is via DT.
+>>
+>>> There are also already alternate interrupt bindings that allow for the case
+>>> where there is more than one interrupt-parent.
+> 
+> Thanks for the insights. On the example above there is not a
+> ti,pru-interrupt-map property. Does this mean that the interrupt
+> mapping table comes from the firmware/resource-table in this case?
+> 
 
-Would those fit in the 30 remaining padding bytes?
+Yes, that's correct.
 
-> > As originally defined siginfo had the sigval_t union at the end so it
-> > was perfectly fine on both 32bit and 64bit as it only had a single
-> > pointer in the structure and the other fields were 32bits in size.
+>>>
+>>>> +
+>>>>    Example:
+>>>>    ========
+>>>>    1.    /* AM33xx PRU-ICSS */
+>>>> @@ -397,3 +429,14 @@ Example:
+>>>>                ...
+>>>>            };
+>>>>        };
+>>>> +
+>>>> +3:    /* PRU application node example */
+>>>> +    app_node: app_node {
+>>>> +        prus = <&pru1_0>, <&pru1_1>;
+>>>> +        firmware-name = "pruss-app-fw", "pruss-app-fw-2";
+>>>> +        ti,pruss-gp-mux-sel = <2>, <1>;
+>>>> +        /* setup interrupts for prus:
+>>>> +           prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
+>>>> +           prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
+>>>> +        ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+>>>> +    }
+>>>>
+>>>
+>>
 
-The problem with sigval_t of course is that it is incompatible between
-32-bit and 64-bit. We can add the same information, but at least on
-the syscall level that would have to be a __u64.
+cheers,
+-roger
 
-> > Although I do feel the pain as x86_64 has to deal with 3 versions
-> > of siginfo.  A 64bit one.  A 32bit one for ia32.  A 32bit one for x32
-> > with a 64bit si_clock_t.
-
-At least you and Al have managed to get it down to a single source-level
-definition across all architectures, but there is also the (lesser) problem
-that the structure has a slightly different binary layout on each of the
-classic architectures.
-
-If we go with Andy's suggestion of having only a single binary layout
-on x86 for the new call, I'd argue that we should also make it have
-the exact same layout on all other architectures.
-
-> > > We may then also want to make sure that any system call that takes a
-> > > siginfo has a replacement that takes a signalfd_siginfo, and that this
-> > > replacement can be used to implement the old version purely in
-> > > user space.
-> >
-> > If you are not implementing CRIU and reinserting exceptions to yourself.
-> > At most user space wants the ability to implement sigqueue:
-> >
-> > AKA:
-> > sigqueue(pid_t pid, int sig, const union sigval value);
-> >
-> > Well sigqueue with it's own si_codes so the following would cover all
-> > the use cases I know of:
-> > int sendnewsig(pid_t pid, int sig, int si_code, const union sigval value);
-> >
-> > The si_code could even be set to SI_USER to request that the normal
-> > trusted SI_USER values be filled in.  si_code values of < 0 if not
-> > recognized could reasonably safely be treated as the _rt member of
-> > the siginfo union.  Or perhaps better we error out in such a case.
-> >
-> > If we want to be flexible and not have N kinds of system calls that
-> > is the direction I would go.  That is simple, and you don't need any of
-> > the rest.
-
-I'm not sure I understand what you are suggesting here. Would the
-low-level implementation of this be based on procfd, or do you
-mean that would be done for pid_t at the kernel level, plus another
-syscall for procfd?
-
-> > Alternatively we abandon the mistake of sigqueueinfo and not allow
-> > a signal number in the arguments that differs from the si_signo in the
-> > siginfo and allow passing the entire thing unchanged from sender to
-> > receiver.  That is maximum flexibility.
-
-This would be regardless of which flavor of siginfo (today's arch
-specific one, signalfd_siginfo, or a new one) we pass, right?
-
-> > signalfd_siginfo just sucks in practice.  It is larger that siginfo 104
-> > bytes versus 48.  We must deliver it to userspace as a siginfo so it
-> > must be translated.  Because of the translation signalfd_siginfo adds
-> > no flexiblity in practice, because it can not just be passed through.
-> > Finallay signalfd_siginfo does not have encodings for all of the
-> > siginfo union members, so it fails to be fully general.
-> >
-> > Personally if I was to define signalfd_siginfo today I would make it:
-> > struct siginfo_subset {
-> >       __u32 sis_signo;
-> >       __s32 sis_errno;
-> >       __s32 sis_code;
-> >         __u32 sis_pad;
-> >       __u32 sis_pid;
-> >       __u32 sis_uid;
-> >       __u64 sis_data (A pointer or integer data field);
-> > };
-> >
-> > That is just 32bytes, and is all that is needed for everything
-> > except for synchronous exceptions.  Oh and that happens to be a proper
-> > subset of a any sane siginfo layout, on both 32bit and 64bit.
-
-And that would work for signalfd and waitid_time64, but not for
-procfd_signal/kill/sendsiginfo?
-
-> > This is one of those rare times where POSIX is sane and what linux
-> > has implemented is not.
->
-> Thanks for the in-depth explanation. So your point is that we are better
-> off if we stick with siginfo_t instead of struct signalfd_siginfo in
-> procfd_signal()?
-
-I think it means we still need more discussion. Using signalfd_siginfo
-without further changes doesn't seem sufficient because of the missing
-sigval and the excessive length adds some cost.
-
-siginfo_t as it is now still has a number of other downsides, and Andy in
-particular didn't like the idea of having three new variants on x86
-(depending on how you count). His alternative suggestion of having
-a single syscall entry point that takes a 'signfo_t __user *' but interprets
-it as compat_siginfo depending on in_compat_syscall()/in_x32_syscall()
-should work correctly, but feels wrong to me, or at least inconsistent
-with how we do this elsewhere.
-
-        Arnd
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
