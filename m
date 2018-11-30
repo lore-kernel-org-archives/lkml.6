@@ -2,315 +2,262 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC7FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9756AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB7F2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 17:59:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G+goUS2d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB7F2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 61C1D2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 18:00:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C1D2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeLAFJP (ORCPT
+        id S1727007AbeLAFKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 00:09:15 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33231 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725754AbeLAFJO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 00:09:14 -0500
-Received: by mail-io1-f66.google.com with SMTP id t24so5261278ioi.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 09:59:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DVgG0jl5fgkGAZ71Yw5XSNQmedh95iw0an5sT8Cfh9o=;
-        b=G+goUS2dXEYndyOrZeXngIoTQSO/c+F4dYzaDTfR87dKIMyj/ubNG+IioBfF3dCdkh
-         v4W9/UvEXHrjd634K86DcAxNBDTsgWUuGX7bvzHX5pKAZusKjmX+TqVd+cLKvFmeIh31
-         Ksz/7DWnQ6Dofno4cECW9zBVypdOddGqKKZTH/fnHGD2VWeRZE1P/QjO7r8/sW9tgPva
-         lYDctiOd3Oomgj4uqJMJBPTh93uV+eb+3GmQuoJginjlo8HN4AV5o5IV3N4RIS2AvKm+
-         ebEr3ZemwibmVF9yYlDyrQk+U3ULMzS38IRj7xq7CwADecp1mIFFOUoCXxhwpRUXiOIU
-         mxFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DVgG0jl5fgkGAZ71Yw5XSNQmedh95iw0an5sT8Cfh9o=;
-        b=e2iapD0q9uYBXHuXWzrF77NqB4VwmzUKDtdiqlD5kKixOqyk6Y3CmM6AIfPdOZ2vIW
-         luEAP4sV71OsA+Rc/1u8PFGbF7Iv8XW8JOZOXrftmmn/XPhEf+xAn3WH39LbKR+GHIIf
-         9QxBtrTU0lcJY+dVCdVI5E6Xf6kV19/kl8psr2uMN3MKhT/k2HkhlGmrJQwE/+D3ufgq
-         antN9H8xIaYaBZCGkgRrECB+BSWZNfyRxkSLrJHiO5goVT+QgFjqjUM+rJB51aNNspNX
-         ijJ5T5muS9yaX+Kbt4zpkqJgu+H9yBKhI+8B+lG2gdm4wB/0wA0NtLoflcCMqHKzajwX
-         +1kg==
-X-Gm-Message-State: AA+aEWZ4A9y9WFiBDjZu1jPz0bSgsz71Q/5dqyUZnvRCvxd1MLv09btt
-        WjDBBpN2WoZAnhEiK+kMwKEs/xUhdUsj+bNK9J0TOg==
-X-Google-Smtp-Source: AFSGD/WYE8ej3qs/Nt+hBQx9SGSmpXICfHLCAc2QBqxq811DByvjXNcbll4J/rO2oFQwC9a9AfeVwfW/NxHmLsd5Pw8=
-X-Received: by 2002:a5d:944d:: with SMTP id x13mr1713463ior.282.1543600749109;
- Fri, 30 Nov 2018 09:59:09 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Fri, 30 Nov 2018 09:58:48
- -0800 (PST)
-In-Reply-To: <621f7c52-de52-eb35-bf61-e839adee7ec9@colorfullife.com>
-References: <0000000000004eade9057ba76eae@google.com> <621f7c52-de52-eb35-bf61-e839adee7ec9@colorfullife.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 30 Nov 2018 17:58:48 +0000
-Message-ID: <CACT4Y+ZStCdg6NhyYAtUZS07NWR=oJzdTZxpD+uyr=3SAVSmVw@mail.gmail.com>
-Subject: Re: BUG: corrupted list in freeary
-To:     Manfred Spraul <manfred@colorfullife.com>
-Cc:     syzbot <syzbot+c92d3646e35bc5d1a909@syzkaller.appspotmail.com>,
+        Sat, 1 Dec 2018 00:10:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54128 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725754AbeLAFKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 00:10:02 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4937F8E664;
+        Fri, 30 Nov 2018 17:59:57 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-126-156.rdu2.redhat.com [10.10.126.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 734C55D9C9;
+        Fri, 30 Nov 2018 17:59:44 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-acpi@vger.kernel.org,
+        devel@linuxdriverproject.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux@dominikbrodowski.net,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@kernel.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH RFCv2 1/4] mm/memory_hotplug: Introduce memory block types
+Date:   Fri, 30 Nov 2018 18:59:19 +0100
+Message-Id: <20181130175922.10425-2-david@redhat.com>
+In-Reply-To: <20181130175922.10425-1-david@redhat.com>
+References: <20181130175922.10425-1-david@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 30 Nov 2018 17:59:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 9:13 AM, Manfred Spraul
-<manfred@colorfullife.com> wrote:
-> Hello together,
->
-> On 11/27/18 4:52 PM, syzbot wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    e195ca6cb6f2 Merge branch 'for-linus' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10d3e6a3400000
->
-> From the console output:
->
-> 20:36:14 executing program 4:
-> semget$private(0x12000000, 0x39d0, 0x0)
->
->
-> I don't understand the 0x12000000.
->
-> What does that mean? What is the actual syscall?
+Memory onlining should always be handled by user space, because only user
+space knows which use cases it wants to satisfy. E.g. memory might be
+onlined to the MOVABLE zone even if it can never be removed from the
+system, e.g. to make usage of huge pages more reliable.
 
-Hi Manfred,
+However to implement such rules (especially default rules in distributions)
+we need more information about the memory that was added in user space.
 
-The syscall is semget with the first argument 0x12000000.
+E.g. on x86 we want to online memory provided by balloon devices (e.g.
+XEN, Hyper-V) differently (-> will not be unplugged by offlining the whole
+block) than ordinary DIMMs (-> might eventually be unplugged by offlining
+the whole block). This might also become relevat for other architectures.
 
+Also, udev rules right now check if running on s390x and treat all added
+memory blocks as standby memory (-> don't online automatically). As soon as
+we support other memory hotplug mechanism (e.g. virtio-mem) checks would
+have to get more involved (e.g. also check if under KVM) but eventually
+also wrong (e.g. if KVM ever supports standby memory we are doomed).
 
->
-> Is 0x39d0 the number of semaphores in the array, i.e. create ~13.000
-> semaphores?
+I decided to allow to specify the type of memory that is getting added
+to the system. Let's start with two types, BOOT and UNSPECIFIED to get the
+basic infrastructure running. We'll introduce and use further types in
+follow-up patches. For now we classify any hotplugged memory temporarily
+as as UNSPECIFIED (which will eventually be dropped later on).
 
-If the second argument of 0x39d0 relates to creation of 0x39d0
-semaphores, then yes.
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Banman <andrew.banman@hpe.com>
+Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
+Cc: Oscar Salvador <osalvador@suse.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Michal Suchánek <msuchanek@suse.de>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ drivers/base/memory.c  | 38 +++++++++++++++++++++++++++++++++++---
+ include/linux/memory.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 0c290f86ab20..17f2985c07c5 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -381,6 +381,29 @@ static ssize_t show_phys_device(struct device *dev,
+ 	return sprintf(buf, "%d\n", mem->phys_device);
+ }
+ 
++static ssize_t type_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct memory_block *mem = to_memory_block(dev);
++	ssize_t len = 0;
++
++	switch (mem->type) {
++	case MEMORY_BLOCK_UNSPECIFIED:
++		len = sprintf(buf, "unspecified\n");
++		break;
++	case MEMORY_BLOCK_BOOT:
++		len = sprintf(buf, "boot\n");
++		break;
++	default:
++		len = sprintf(buf, "ERROR-UNKNOWN-%ld\n",
++				mem->state);
++		WARN_ON(1);
++		break;
++	}
++
++	return len;
++}
++
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+ static void print_allowed_zone(char *buf, int nid, unsigned long start_pfn,
+ 		unsigned long nr_pages, int online_type,
+@@ -442,6 +465,7 @@ static DEVICE_ATTR(phys_index, 0444, show_mem_start_phys_index, NULL);
+ static DEVICE_ATTR(state, 0644, show_mem_state, store_mem_state);
+ static DEVICE_ATTR(phys_device, 0444, show_phys_device, NULL);
+ static DEVICE_ATTR(removable, 0444, show_mem_removable, NULL);
++static DEVICE_ATTR_RO(type);
+ 
+ /*
+  * Block size attribute stuff
+@@ -620,6 +644,7 @@ static struct attribute *memory_memblk_attrs[] = {
+ 	&dev_attr_state.attr,
+ 	&dev_attr_phys_device.attr,
+ 	&dev_attr_removable.attr,
++	&dev_attr_type.attr,
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+ 	&dev_attr_valid_zones.attr,
+ #endif
+@@ -657,13 +682,17 @@ int register_memory(struct memory_block *memory)
+ }
+ 
+ static int init_memory_block(struct memory_block **memory,
+-			     struct mem_section *section, unsigned long state)
++			     struct mem_section *section, unsigned long state,
++			     int type)
+ {
+ 	struct memory_block *mem;
+ 	unsigned long start_pfn;
+ 	int scn_nr;
+ 	int ret = 0;
+ 
++	if (type == MEMORY_BLOCK_NONE)
++		return -EINVAL;
++
+ 	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+ 	if (!mem)
+ 		return -ENOMEM;
+@@ -675,6 +704,7 @@ static int init_memory_block(struct memory_block **memory,
+ 	mem->state = state;
+ 	start_pfn = section_nr_to_pfn(mem->start_section_nr);
+ 	mem->phys_device = arch_get_memory_phys_device(start_pfn);
++	mem->type = type;
+ 
+ 	ret = register_memory(mem);
+ 
+@@ -699,7 +729,8 @@ static int add_memory_block(int base_section_nr)
+ 
+ 	if (section_count == 0)
+ 		return 0;
+-	ret = init_memory_block(&mem, __nr_to_section(section_nr), MEM_ONLINE);
++	ret = init_memory_block(&mem, __nr_to_section(section_nr), MEM_ONLINE,
++				MEMORY_BLOCK_BOOT);
+ 	if (ret)
+ 		return ret;
+ 	mem->section_count = section_count;
+@@ -722,7 +753,8 @@ int hotplug_memory_register(int nid, struct mem_section *section)
+ 		mem->section_count++;
+ 		put_device(&mem->dev);
+ 	} else {
+-		ret = init_memory_block(&mem, section, MEM_OFFLINE);
++		ret = init_memory_block(&mem, section, MEM_OFFLINE,
++					MEMORY_BLOCK_UNSPECIFIED);
+ 		if (ret)
+ 			goto out;
+ 		mem->section_count++;
+diff --git a/include/linux/memory.h b/include/linux/memory.h
+index d75ec88ca09d..06268e96e0da 100644
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@ -34,12 +34,39 @@ struct memory_block {
+ 	int (*phys_callback)(struct memory_block *);
+ 	struct device dev;
+ 	int nid;			/* NID for this memory block */
++	int type;			/* type of this memory block */
+ };
+ 
+ int arch_get_memory_phys_device(unsigned long start_pfn);
+ unsigned long memory_block_size_bytes(void);
+ int set_memory_block_size_order(unsigned int order);
+ 
++/*
++ * Memory block types allow user space to formulate rules if and how to
++ * online memory blocks. The types are exposed to user space as text
++ * strings in sysfs.
++ *
++ * MEMORY_BLOCK_NONE:
++ *  No memory block is to be created (e.g. device memory). Not exposed to
++ *  user space.
++ *
++ * MEMORY_BLOCK_UNSPECIFIED:
++ *  The type of memory block was not further specified when adding the
++ *  memory block.
++ *
++ * MEMORY_BLOCK_BOOT:
++ *  This memory block was added during boot by the basic system. No
++ *  specific device driver takes care of this memory block. This memory
++ *  block type is onlined automatically by the kernel during boot and might
++ *  later be managed by a different device driver, in which case the type
++ *  might change.
++ */
++enum {
++	MEMORY_BLOCK_NONE = 0,
++	MEMORY_BLOCK_UNSPECIFIED,
++	MEMORY_BLOCK_BOOT,
++};
++
+ /* These states are exposed to userspace as text strings in sysfs */
+ #define	MEM_ONLINE		(1<<0) /* exposed to userspace */
+ #define	MEM_GOING_OFFLINE	(1<<1) /* exposed to userspace */
+-- 
+2.17.2
 
-
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c92d3646e35bc5d1a909
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+c92d3646e35bc5d1a909@syzkaller.appspotmail.com
->
-> input: syz1 as /devices/virtual/input/input670
-> input: syz1 as /devices/virtual/input/input671
-> list_del corruption. prev->next should be ffff8881dae2cdb8, but was
-> 0000000000100000
-> ------------[ cut here ]------------
-> kernel BUG at lib/list_debug.c:53!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 6194 Comm: syz-executor5 Not tainted 4.20.0-rc3+ #348
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__list_del_entry_valid.cold.1+0x48/0x4a lib/list_debug.c:51
-> Code: d0 60 88 e8 b2 31 d2 fd 0f 0b 48 89 de 48 c7 c7 00 d2 60 88 e8 a1 31
-> d2 fd 0f 0b 48 89 de 48 c7 c7 a0 d1 60 88 e8 90 31 d2 fd <0f> 0b 48 89 d9 48
-> c7 c7 60 d2 60 88 e8 7f 31 d2 fd 0f 0b 48 89 f1
-> RSP: 0018:ffff8881848fee80 EFLAGS: 00010286
-> RAX: 0000000000000054 RBX: ffff8881dae2cdb8 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
-> RBP: ffff8881848fee98 R08: ffff8881848f26c0 R09: 0000000000000006
-> R10: 0000000000000000 R11: ffff8881848f26c0 R12: ffff8881c3173a00
-> R13: ffff8881be118118 R14: ffff8881848ff280 R15: dffffc0000000000
-> FS:  00000000020b2940(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000625208 CR3: 00000001c10d3000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __list_del_entry include/linux/list.h:117 [inline]
->  list_del include/linux/list.h:125 [inline]
->  unlink_queue ipc/sem.c:786 [inline]
->
-> Unlink_queue means transfer all waiting threads to the wake-q.
->
-> There are 2*(1+<semaphores in the array>) linked lists in an array.
->
-> And this fails, because one linked list contains 0x100000 instead of a real
-> pointer.
->
-> I could not find any semop() in the log --> all lists must be empty.
->
-> Actually, the lists were initialized in newary(), and then never touched.
->
->  freeary+0xbd1/0x1a40 ipc/sem.c:1160
->
-> Free a semaphore array
->
->  free_ipcs+0x9f/0x1c0 ipc/namespace.c:112
->  sem_exit_ns+0x20/0x40 ipc/sem.c:237
->  free_ipc_ns ipc/namespace.c:120 [inline]
->
-> Free all ipc ids in the name space
->
->  put_ipc_ns+0x66/0x180 ipc/namespace.c:152
->  free_nsproxy+0xcf/0x220 kernel/nsproxy.c:180
->
-> Free the name space
->
->  switch_task_namespaces+0xb3/0xd0 kernel/nsproxy.c:229
->  exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
->  do_exit+0x1ad1/0x26d0 kernel/exit.c:866
->  do_group_exit+0x177/0x440 kernel/exit.c:970
->  get_signal+0x8b0/0x1980 kernel/signal.c:2517
->  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
->  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x410fa0
->
-> This is time code 604.599748 in the console output:
->
-> [  604.599748] RIP: 0033:0x410fa0
->
->
-> Questions:
->
-> 1) What is this?
->
-> [  600.924691]  entry_SYSCALL_64_after_hwframe+0x49/0xbe^M
-> [  600.929872] RIP: 0033:0x7f3e597d0120^M
-> [  600.933576] Code: Bad RIP value.^M
-> [  600.936920] RSP: 002b:00007ffc2d83e008 EFLAGS: 00000246 ORIG_RAX:
-> 0000000000000002^M
-> [  600.944608] RAX: ffffffffffffffda RBX: 000055ca2995b436 RCX:
-> 00007f3e597d0120^M
-> [  600.951856] RDX: 00007ffc2d83e244 RSI: 0000000000080000 RDI:
-> 00007ffc2d83e220^M
-> [  600.959107] RBP: 000055ca2995b1e0 R08: 0000000000000000 R09:
-> 000055ca2995b099^M
-> [  600.966355] R10: 0000000000000000 R11: 0000000000000246 R12:
-> 0000000000000001^M
-> [  600.973628] R13: 000055ca2995b090 R14: 000055ca2995b190 R15:
-> 00007ffc2d83e220^M
->
-> Isn't this a kernel stack overrun?
->
-> RSP: 0x..83e008. Assuming 8 kB kernel stack, and 8 kB alignment, we have
-> used up everything.
-
-I don't exact answer, that's just the kernel output that we captured
-from console.
-
-FWIW with KASAN stacks are 16K:
-https://elixir.bootlin.com/linux/latest/source/arch/x86/include/asm/page_64_types.h#L10
-
-
-But it looks like the OOM may have been caused by a page fault, so the
-IP/SP are legitimately in user-space, e.g. in the same log:
-
-[  443.339635]  __do_page_fault+0x5e8/0xe60
-[  443.343683]  ? trace_hardirqs_off+0xb8/0x310
-[  443.348079]  do_page_fault+0xf2/0x7e0
-[  443.351867]  ? vmalloc_sync_all+0x30/0x30
-[  443.356002]  ? error_entry+0x70/0xd0
-[  443.359702]  ? trace_hardirqs_off_caller+0xbb/0x310
-[  443.364702]  ? trace_hardirqs_on_caller+0xc0/0x310
-[  443.369620]  ? syscall_return_slowpath+0x5e0/0x5e0
-[  443.374537]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  443.379390]  ? trace_hardirqs_on_caller+0x310/0x310
-[  443.384397]  ? __bpf_trace_preemptirq_template+0x30/0x30
-[  443.389837]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  443.395366]  ? prepare_exit_to_usermode+0x291/0x3b0
-[  443.400374]  ? page_fault+0x8/0x30
-[  443.403901]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  443.408729]  ? page_fault+0x8/0x30
-[  443.412255]  page_fault+0x1e/0x30
-[  443.415693] RIP: 0033:0x43d8e8
-[  443.418884] Code: Bad RIP value.
-[  443.422229] RSP: 002b:000000c43a053490 EFLAGS: 00010206
-
-
-
-
-> - How/where are namespaces used by the bot?
->
-> I.e. what triggered the namespace exit?
-
-It creates whole set of namespaces per test process:
-https://github.com/google/syzkaller/blob/master/executor/common_linux.h#L1523
-
-but then each test can also execute unshare as well.
-
-Namespace exits usually happen when process terminates.
-In the reported stack it seems to be the case:
-
- exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
- do_exit+0x1ad1/0x26d0 kernel/exit.c:866
- do_group_exit+0x177/0x440 kernel/exit.c:970
- get_signal+0x8b0/0x1980 kernel/signal.c:2517
- do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
- exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
-
-
-> - There are ~370 calls to semget(), most with large (>10.000) semaphores in
-> the arrays.
->
-> Starting from [442.544635], the OOM killer starts to kill processes.
->
-> Is this as intended?
-
-Well, generally everything except for kernel crashes is expected.
-
-We actually sandbox it with memcg quite aggressively:
-https://github.com/google/syzkaller/blob/master/executor/common_linux.h#L2159
-But it seems to manage to either break the limits, or cause some
-massive memory leaks. The nature of that is yet unknown.
-
-
-> - Which stress tests are enabled? By chance, I found:
->
-> [  433.304586] FAULT_INJECTION: forcing a failure.^M
-> [  433.304586] name fail_page_alloc, interval 1, probability 0, space 0,
-> times 0^M
-> [  433.316471] CPU: 1 PID: 19653 Comm: syz-executor4 Not tainted 4.20.0-rc3+
-> #348^M
-> [  433.323841] Hardware name: Google Google Compute Engine/Google Compute
-> Engine, BIOS Google 01/01/2011^M
->
-> I need some more background, then I can review the code.
-
-What exactly do you mean by "Which stress tests"?
-Fault injection is enabled. Also random workload from userspace.
-
-
-> Right now, I would put it into my "unknown syzcaller finding" folder.
->
-> --
->
->     Manfred
