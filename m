@@ -2,121 +2,116 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0777EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC65EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C403A20660
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:40:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C403A20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7131620660
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:43:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tNL4YbJe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7131620660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeLAJvK (ORCPT
+        id S1726725AbeLAJyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:51:10 -0500
-Received: from mga01.intel.com ([192.55.52.88]:44815 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726245AbeLAJvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:51:09 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 14:40:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
-   d="scan'208";a="255157106"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
-  by orsmga004.jf.intel.com with ESMTP; 30 Nov 2018 14:40:19 -0800
-Date:   Fri, 30 Nov 2018 14:40:19 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Axtens <dja@axtens.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>, federico.vaga@vaga.pv.it,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Helge Deller <deller@gmx.de>, Joshua Kinard <kumba@gentoo.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Linux mtd <linux-mtd@lists.infradead.org>,
-        linux-parisc <linux-parisc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
-        Network Development <netdev@vger.kernel.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rob Herring <robh@kernel.org>,
-        sean.wang@mediatek.com,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        shannon.nelson@oracle.com, Stefano Brivio <sbrivio@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Tobin C. Harding" <me@tobin.cc>, makita.toshiaki@lab.ntt.co.jp,
-        Willem de Bruijn <willemb@google.com>,
-        Yonghong Song <yhs@fb.com>, yanjun.zhu@oracle.com
-Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
-Message-ID: <20181130224019.GA27562@linux.intel.com>
-References: <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
- <20181130195652.7syqys76646kpaph@linux-r8p5>
- <20181130205521.GA21006@linux.intel.com>
- <1543611662.3031.20.camel@HansenPartnership.com>
- <20181130214405.GG23772@linux.intel.com>
- <1543615069.3031.27.camel@HansenPartnership.com>
- <20181130221219.GA25537@linux.intel.com>
- <20181130151459.3ca2f5c8@lwn.net>
- <20181130222605.GA26261@linux.intel.com>
- <1543617045.3031.41.camel@HansenPartnership.com>
+        Sat, 1 Dec 2018 04:54:13 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40740 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeLAJyM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:54:12 -0500
+Received: by mail-io1-f67.google.com with SMTP id n9so5841035ioh.7;
+        Fri, 30 Nov 2018 14:43:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DZT01dsD8qpi2rsK/ob5mfzEL677Q+xDV5gPtHeYIoA=;
+        b=tNL4YbJelzCvwk85qcpPySaAjE77/zjFGhNrq+iGQ4U2oplhjiSvglbnfpEtc2GGKL
+         xyv29UAkCKTfmh+4dXhkGisqYa1h+1Dwni0weGLQdHN+YVMeLxSlwZ0Sh7vEbEiDb4uM
+         KTWLoM12+fZSjITD3gBHq/RQY/fCzVW8y0sqLEkbRP4od/U4QKHGee/OWPrStuLlpBQG
+         Y2iNUKWABuaySWhxyjXPWfexwpwVZLRNVIQ2YRHUJuog/vfgAqQ6ekyMzS3OoO/+qT3O
+         pJcG/nTy4Vii+0an2llh9ibpF5xucqz+C1yLKKlcn9B0TU44ILaZQ06v9eLX0ocfGZgg
+         dmfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DZT01dsD8qpi2rsK/ob5mfzEL677Q+xDV5gPtHeYIoA=;
+        b=lRNNOfSusY5VjB4Bj3TmU7BcdZRnyrzN8oi60FCUEXPUJHOWGlkoDz7sYH8KcreqRW
+         S2j+7j1SYC7jgWdxHIPbsKNL3tFJKx4JNvyFXk83aCam5ijtkLos/s+vTFWNydAGUZ/6
+         VcBGiqkCZP8eOOsf/0kM8vV/T1ZVXMY2tg+HwD8Bx1EGwlVc042VDvgKLKgIL74HelRc
+         HrotZkJPGyutGejI5LNlDcnoo3Qg0N5WBSdAwb6MgEXkrEtT1l8kpIv83UnmUc6Yrnm9
+         +AGWsWoSILM6tRiVdT0c2YDUvquYCQ9ol1gnaRVu5/czN/Bui3tEkFIm3uR5x75QsO4a
+         v7HA==
+X-Gm-Message-State: AA+aEWY5VSo3TZkVqie2XZy9IEIBvMtiUFMNBXKp9iX/jnU1khNLzdQW
+        4fBqf3BJUbfcTYGDvHHRPxCnSNVUhJ6q5bKe5GU=
+X-Google-Smtp-Source: AFSGD/WTNXkuYAMq/7Nrg4kTNJDcvfBWz3yl4p6LZ/G4vQZEFNdEy8nH5TEruGrEImsWgoSzrCdV1/VQ74UxrlWOKAU=
+X-Received: by 2002:a6b:4001:: with SMTP id k1mr6796923ioa.34.1543617801922;
+ Fri, 30 Nov 2018 14:43:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543617045.3031.41.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181124022035.17519-1-deepa.kernel@gmail.com>
+ <20181124022035.17519-8-deepa.kernel@gmail.com> <CAF=yD-K=ZLZ_S=Y6YnhvvkfKQS=21ujwiGd7+JB9yDMtiX_9hg@mail.gmail.com>
+ <CAF=yD-K3Ga8qojSh5Epa6m4EYn-Lvdo=e38MnFqOKch1128VHw@mail.gmail.com>
+ <CABeXuvoDPvT45CCt2L0TReqtb1Q_-E8+toYu6qjiP0cxfdQNdA@mail.gmail.com> <CAF=yD-LngkYq23Q2TCJv_0PRiAryznYRWRbqYFaQkNO=U0w9gQ@mail.gmail.com>
+In-Reply-To: <CAF=yD-LngkYq23Q2TCJv_0PRiAryznYRWRbqYFaQkNO=U0w9gQ@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Fri, 30 Nov 2018 14:43:10 -0800
+Message-ID: <CABeXuvp5OaVetzJJf2L5ZE1BP_KOO2FvvG8EWn5t29eCe-=dtg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] socket: Add SO_TIMESTAMP[NS]_NEW
+To:     willemdebruijn.kernel@gmail.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Network Devel Mailing List <netdev@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Ralf Baechle <ralf@linux-mips.org>, rth@twiddle.net,
+        linux-alpha@vger.kernel.org,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-rdma@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 02:30:45PM -0800, James Bottomley wrote:
-> On Fri, 2018-11-30 at 14:26 -0800, Jarkko Sakkinen wrote:
-> > On Fri, Nov 30, 2018 at 03:14:59PM -0700, Jonathan Corbet wrote:
-> [...]
-> > > Have you read Documentation/process/code-of-conduct-
-> > > interpretation.rst? 
-> > > As has been pointed out, it contains a clear answer to how things
-> > > should be interpreted here.
-> > 
-> > Ugh, was not aware that there two documents.
-> > 
-> > Yeah, definitely sheds light. Why the documents could not be merged
-> > to single common sense code of conduct?
-> 
-> The fact that we've arrived at essentially an original CoC
-> reinterpreted to the point where it's effectively a new CoC has been
-> the source of much debate and recrimination over the last few months
-> ... you can read it in the ksummit-discuss archives, but I really think
-> we don't want to reopen that can of worms.
+On Sun, Nov 25, 2018 at 6:33 AM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Sun, Nov 25, 2018 at 12:28 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> >
+> > > > > +       if (type == SO_TIMESTAMP_NEW || type == SO_TIMESTAMPNS_NEW)
+> > > > > +               sock_set_flag(sk, SOCK_TSTAMP_NEW);
+> > > > > +       else
+> > > > > +               sock_reset_flag(sk, SOCK_TSTAMP_NEW);
+> > > > > +
+> > > >
+> > > > if adding a boolean whether the socket uses new or old-style
+> > > > timestamps, perhaps fail hard if a process tries to set a new-style
+> > > > option while an old-style is already set and vice versa. Also include
+> > > > SO_TIMESTAMPING_NEW as it toggles the same option.
+> >
+> > I do not think this is a problem.
+> > Consider this example, if there is a user application with updated
+> > socket timestamps is linking into a library that is yet to be updated.
+>
+> Also consider applications that do not use libraries.
 
-Got you... Well I now read the 2nd amendment now through, and yeah, kind
-of way I work/function anyway.
+Arnd and I talked about this.
+We thought that the new options should behave like the already
+existing options. The patch already does this.
+Eg: Today if we set SO_TIMESTAMP and then try to switch to
+SO_TIMESTAMPNS then there is no fail.
 
-Thank you for the patience...
+Do you still want a hard fail?
 
-/Jarkko
+-Deepa
