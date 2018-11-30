@@ -2,174 +2,166 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC0EC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9171C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC422081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:29:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC422081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A05782081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 00:32:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TkboY525"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05782081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeK3LgU (ORCPT
+        id S1727140AbeK3LkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 06:36:20 -0500
-Received: from mga05.intel.com ([192.55.52.43]:59878 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbeK3LgU (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 06:36:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 16:28:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,296,1539673200"; 
-   d="scan'208";a="96992753"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.196.44]) ([10.239.196.44])
-  by orsmga008.jf.intel.com with ESMTP; 29 Nov 2018 16:28:51 -0800
-Subject: Re: [PATCH v3 0/3] perf report/annotate: Support average IPC and IPC
- coverage for function
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <1543418098-10435-1-git-send-email-yao.jin@linux.intel.com>
- <20181128101757.GA11280@krava> <20181128101846.GB11280@krava>
- <4f05c9c6-f82f-1a23-ce8b-b061d5758400@linux.intel.com>
- <20181129101303.GC25884@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <3ddc2196-baad-69e1-1bc2-270f9f82e9de@linux.intel.com>
-Date:   Fri, 30 Nov 2018 08:28:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 30 Nov 2018 06:40:01 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:56266 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeK3LkA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 06:40:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5oq0o6hXSHtb1vd0lJVNl2VziMJIgX9BMe+VSPNjnF0=; b=TkboY52541Hsx2wko89KEBmfzb
+        FT4ArvU9BGKRG1g1+ZjU/Bbuvex5oKsaau3DERD0Tvikm7dyh3WBVsfq8G85Ev5WbPMDu5AWCcm9B
+        kYc7iiyibjGIoD9APeDoSmKFRjNF2k0AEa60KuAfUs7KmVSRoo1znRRED/ZE7El+CvAR9IfkGlyrW
+        lKGOE73dUzz2o5Gb/TeBIiS0HVBslHRXSdkzO7sEHKX8bJEwbcqj6kZWOG7dWbweN4QlpNsbzy+3c
+        LSuPQJ9KNrHtukSddld8ySj5Y+HdTmvyKOjMAd7j2lfG10J3+WraS0LIFmQNbhCepD7nh9xotRzz4
+        eomGWK7g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSWjR-00073b-3S; Fri, 30 Nov 2018 00:32:33 +0000
+Subject: Re: mmotm 2018-11-29-13-37 uploaded (kasan)
+To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>
+References: <20181129213822.EbBH1%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d24875f4-f73f-3ec9-55ee-94367f797451@infradead.org>
+Date:   Thu, 29 Nov 2018 16:32:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181129101303.GC25884@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181129213822.EbBH1%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/29/2018 6:13 PM, Jiri Olsa wrote:
-> On Thu, Nov 29, 2018 at 02:24:27PM +0800, Jin, Yao wrote:
->>
->>
->> On 11/28/2018 6:18 PM, Jiri Olsa wrote:
->>> On Wed, Nov 28, 2018 at 11:17:57AM +0100, Jiri Olsa wrote:
->>>> On Wed, Nov 28, 2018 at 11:14:55PM +0800, Jin Yao wrote:
->>>>> Add supporting of displaying the average IPC and IPC coverage
->>>>> percentage per function.
->>>>>
->>>>> For example,
->>>>>
->>>>> $ perf record -b ...
->>>>> $ perf report -s symbol or
->>>>>     perf report -s symbol --stdio
->>>>>
->>>>> Overhead  Symbol                           IPC   [IPC Coverage]
->>>>>     39.60%  [.] __random                     2.30  [ 54.8%]
->>>>>     18.02%  [.] main                         0.43  [ 54.3%]
->>>>>     14.21%  [.] compute_flag                 2.29  [100.0%]
->>>>>     14.16%  [.] rand                         0.36  [100.0%]
->>>>>      7.06%  [.] __random_r                   2.57  [ 70.5%]
->>>>>      6.85%  [.] rand@plt                     0.00  [  0.0%]
->>>>>     ...
->>>>>
->>>>> $ perf annotate --stdio2
->>>>>
->>>>> Percent  IPC Cycle (Average IPC: 2.30, IPC Coverage: 54.8%)
->>>>>
->>>>>                           Disassembly of section .text:
->>>>>
->>>>>                           000000000003aac0 <random@@GLIBC_2.2.5>:
->>>>>     8.32  3.28              sub    $0x18,%rsp
->>>>>           3.28              mov    $0x1,%esi
->>>>>           3.28              xor    %eax,%eax
->>>>>           3.28              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x1e0
->>>>>    11.57  3.28     1      ↓ je     20
->>>>>                             lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
->>>>>                           ↓ jne    29
->>>>>                           ↓ jmp    43
->>>>>    11.57  1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
->>>>>    ...
->>>>>
->>>>> v3:
->>>>> ---
->>>>>       Remove the sortkey "ipc" from command-line. The columns "IPC"
->>>>>       and "[IPC Coverage]" are automatically enabled when "symbol"
->>>>>       is specified.
->>>>>
->>>>>       Patch "perf report: Display average IPC and IPC coverage per symbol"
->>>>>       is impacted.
->>>>>
->>>>> v2:
->>>>> ---
->>>>>     1. Merge in Jiri's patch to support stdio mode
->>>>>
->>>>>     2. Add a new patch "perf annotate: Create a annotate2 flag
->>>>>        in struct symbol" which records if the symbol has been
->>>>>        annotated yet.
->>>>>
->>>>>     3. Minor update such as adding { } for multiline code in 'if'
->>>>>        condition.
->>>>>
->>>>> Jin Yao (3):
->>>>>     perf annotate: Compute average IPC and IPC coverage per symbol
->>>>>     perf annotate: Create a annotate2 flag in struct symbol
->>>>>     perf report: Display average IPC and IPC coverage per symbol
->>>>
->>>> hi,
->>>> I took he liberty and moved the annotation retrieval into
->>>> resort phase under progress bar scope. It's currently on top
->>>> of my perf/fixes branch, could you please check it?
->>>>
->>>>     git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->>>
->>> commits:
->>> 7f3ffdb9783f perf tools: Move symbol annotation to resort
->>> e87f7d3c4f10 perf tools: Add perf_evsel__output_resort_cb function
->>> 40012b422108 perf tools: Add argument to hists__resort_cb_t callback
->>>
->>> jirka
->>>
->>
->> Hi Jiri,
->>
->> Thanks for your patches. I have tested with your repo. Now I can see 2
->> progress bars. One is displayed at the events processing phase, the other is
->> displayed at resorting phase.
->>
->> I have only one concern that is, in my test, much of time is consumed by the
->> event processing phase, for example, 90% of time. Only 10% of time is
->> consumed at resorting phase.
->>
->> So do we really need the second progress bar?
+On 11/29/18 1:38 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-11-29-13-37 has been uploaded to
 > 
-> well I did not add it, it's been always there, it just must
-> have been real quick for you so u did not notice I guess
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
-
-Yes, I think so. :)
-
-> it's strange, because for me the resorting takes much longer
-> even for small data.. let's have your patchset applied and
-> have this discussion when I send out the patches
+> mmotm-readme.txt says
 > 
-
-That's fine! I will post v5 soon.
-
-Thanks
-Jin Yao
-
-> thanks,
-> jirka
+> README for mm-of-the-moment:
 > 
+> http://www.ozlabs.org/~akpm/mmotm/
+
+Lots of kasan build errors on x86_64.
+
+> * kasan-mm-change-hooks-signatures.patch
+> * kasan-slub-handle-pointer-tags-in-early_kmem_cache_node_alloc.patch
+> * kasan-move-common-generic-and-tag-based-code-to-commonc.patch
+> * kasan-rename-source-files-to-reflect-the-new-naming-scheme.patch
+> * kasan-add-config_kasan_generic-and-config_kasan_sw_tags.patch
+> * kasan-arm64-adjust-shadow-size-for-tag-based-mode.patch
+> * kasan-rename-kasan_zero_page-to-kasan_early_shadow_page.patch
+> * kasan-initialize-shadow-to-0xff-for-tag-based-mode.patch
+> * arm64-move-untagged_addr-macro-from-uaccessh-to-memoryh.patch
+> * kasan-add-tag-related-helper-functions.patch
+> * kasan-arm64-untag-address-in-_virt_addr_is_linear.patch
+> * kasan-preassign-tags-to-objects-with-ctors-or-slab_typesafe_by_rcu.patch
+> * kasan-arm64-fix-up-fault-handling-logic.patch
+> * kasan-arm64-enable-top-byte-ignore-for-the-kernel.patch
+> * kasan-mm-perform-untagged-pointers-comparison-in-krealloc.patch
+> * kasan-split-out-generic_reportc-from-reportc.patch
+> * kasan-add-bug-reporting-routines-for-tag-based-mode.patch
+> * mm-move-obj_to_index-to-include-linux-slab_defh.patch
+> * kasan-add-hooks-implementation-for-tag-based-mode.patch
+> * kasan-arm64-add-brk-handler-for-inline-instrumentation.patch
+> * kasan-mm-arm64-tag-non-slab-memory-allocated-via-pagealloc.patch
+> * kasan-add-__must_check-annotations-to-kasan-hooks.patch
+> * kasan-arm64-select-have_arch_kasan_sw_tags.patch
+> * kasan-update-documentation.patch
+> * kasan-add-spdx-license-identifier-mark-to-source-files.patch
+
+The simplest error is:
+../mm/kasan/common.c:574:17: error: 'KASAN_SHADOW_INIT' undeclared (first use in this function)
+
+when neither KASAN_GENERIC nor KASAN_SW_TAGS is set (enabled).
+
+There there are a slew of these:
+
+../mm/kasan/common.c: In function 'filter_irq_stacks':
+../mm/kasan/common.c:53:12: error: dereferencing pointer to incomplete type
+  if (!trace->nr_entries)
+            ^
+../mm/kasan/common.c:55:23: error: dereferencing pointer to incomplete type
+  for (i = 0; i < trace->nr_entries; i++)
+                       ^
+../mm/kasan/common.c:56:29: error: dereferencing pointer to incomplete type
+   if (in_irqentry_text(trace->entries[i])) {
+                             ^
+../mm/kasan/common.c:58:9: error: dereferencing pointer to incomplete type
+    trace->nr_entries = i + 1;
+         ^
+../mm/kasan/common.c: In function 'save_stack':
+../mm/kasan/common.c:66:9: error: variable 'trace' has initializer but incomplete type
+  struct stack_trace trace = {
+         ^
+../mm/kasan/common.c:67:3: error: unknown field 'nr_entries' specified in initializer
+   .nr_entries = 0,
+   ^
+../mm/kasan/common.c:67:3: warning: excess elements in struct initializer [enabled by default]
+../mm/kasan/common.c:67:3: warning: (near initialization for 'trace') [enabled by default]
+../mm/kasan/common.c:68:3: error: unknown field 'entries' specified in initializer
+   .entries = entries,
+   ^
+../mm/kasan/common.c:68:3: warning: excess elements in struct initializer [enabled by default]
+../mm/kasan/common.c:68:3: warning: (near initialization for 'trace') [enabled by default]
+../mm/kasan/common.c:69:3: error: unknown field 'max_entries' specified in initializer
+   .max_entries = KASAN_STACK_DEPTH,
+   ^
+../mm/kasan/common.c:69:3: warning: excess elements in struct initializer [enabled by default]
+../mm/kasan/common.c:69:3: warning: (near initialization for 'trace') [enabled by default]
+../mm/kasan/common.c:70:3: error: unknown field 'skip' specified in initializer
+   .skip = 0
+   ^
+../mm/kasan/common.c:71:2: warning: excess elements in struct initializer [enabled by default]
+  };
+  ^
+../mm/kasan/common.c:71:2: warning: (near initialization for 'trace') [enabled by default]
+../mm/kasan/common.c:66:21: error: storage size of 'trace' isn't known
+  struct stack_trace trace = {
+                     ^
+../mm/kasan/common.c:66:21: warning: unused variable 'trace' [-Wunused-variable]
+../mm/kasan/common.c: In function 'kasan_module_alloc':
+../mm/kasan/common.c:574:17: error: 'KASAN_SHADOW_INIT' undeclared (first use in this function)
+   __memset(ret, KASAN_SHADOW_INIT, shadow_size);
+                 ^
+../mm/kasan/common.c:574:17: note: each undeclared identifier is reported only once for each function it appears in
+../mm/kasan/common.c: In function 'save_stack':
+../mm/kasan/common.c:80:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+../scripts/Makefile.build:285: recipe for target 'mm/kasan/common.o' failed
+
+
+-- 
+~Randy
