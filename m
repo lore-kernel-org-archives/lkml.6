@@ -3,219 +3,193 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F37C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E96C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C69E20867
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C69E20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 21987214E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:20:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21987214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeLAD3V (ORCPT
+        id S1727479AbeLADaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:29:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49654 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726644AbeLAD3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:29:21 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 19E99A797;
-        Fri, 30 Nov 2018 16:19:31 +0000 (UTC)
-Received: from x1.home (ovpn-116-92.phx2.redhat.com [10.3.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D8A40600C9;
-        Fri, 30 Nov 2018 16:19:29 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 09:19:29 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Bharat Bhushan <bharat.bhushan@nxp.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        David Daney <david.daney@cavium.com>,
-        "jglauber@cavium.com" <jglauber@cavium.com>,
-        "mbroemme@libmpq.org" <mbroemme@libmpq.org>,
-        "chrisrblake93@gmail.com" <chrisrblake93@gmail.com>
-Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Message-ID: <20181130091929.3eae4e99@x1.home>
-In-Reply-To: <VI1PR04MB48458DF3A1EBB73A4E2CDCD19AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
-References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
-        <20181127153356.GA112381@google.com>
-        <20181127090830.084fedf1@x1.home>
-        <VI1PR04MB48457E23AA3354316C7782D69AD10@VI1PR04MB4845.eurprd04.prod.outlook.com>
-        <CAErSpo7By1t5X=M=x_+Fs8TeROACBnS3f5ujsi=Ewiogh=-wRg@mail.gmail.com>
-        <VI1PR04MB4845D4ED02E38246E71DD1A49AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
-        <20181129225606.328f7386@x1.home>
-        <VI1PR04MB48458DF3A1EBB73A4E2CDCD19AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
-Organization: Red Hat
+        Fri, 30 Nov 2018 22:30:03 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33438 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbeLADaD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:30:03 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o89so3489657qko.0;
+        Fri, 30 Nov 2018 08:20:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=92lJKmUQne39o4hvgBZDk6qeIkNWSwxaGv7AcYJLor0=;
+        b=HZwN2DtgXIrnnETsJne1kSrBI0QgPGZdOylLChx7BHMm0mNdbWeQQMpS9bYIzLRTFM
+         j9KZwG/5obqYZ+Jusb2hiHjpqEDcwtJUsqHEPpQ0d0cOfBIHnhT5kFxUPncFITULHbpD
+         fW2q8ukagkHTdSjuIJ1PYW8LUFNjI6e89+PhXui6ZjHJga4sw/Ze+fgSfjsUQXCCRoHK
+         Rf/iymRAlSH4PvcRN4KcEGQ62WdAbQcaTFp/hJHtH2GvPZSXLnnn2MIfcwbel9XklyDT
+         hzciqGY+2+xamBx6L0l/WEbEXKUwNoq/AqGLNO+5gcRsJq9QSks9q0ludLbyjVfJycz2
+         5x/Q==
+X-Gm-Message-State: AA+aEWYax3g+ZnSZY9t6J1IK2gYk3oAt0RNl6Pk4s7N0MWf6WiN9xr/M
+        xzGqytLOw00voc4K10dBIckIPdUZalJCPAWL8n8=
+X-Google-Smtp-Source: AFSGD/WnwBwGM3aAgt4vUdVJP4HNg+OjjrXGiUXynIGDwJo/rfYgJGS2pTaod9lMEE/SMMbF7439IVN2WW9YRzdmV8I=
+X-Received: by 2002:a37:a3c6:: with SMTP id m189mr5843105qke.173.1543594811954;
+ Fri, 30 Nov 2018 08:20:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 30 Nov 2018 16:19:31 +0000 (UTC)
+References: <20181130104657.14875-1-srinivas.kandagatla@linaro.org>
+ <20181130104657.14875-4-srinivas.kandagatla@linaro.org> <CAK8P3a1mFWJyXCn74_Yd_y3Df0JN=qM4nw4-2t_LjRO7yXmXBw@mail.gmail.com>
+ <3c177508-cf6f-1f8d-a324-5bec40fd9a9c@linaro.org> <CAK8P3a0d=VRP+9vZm+eJeJM933PWYL4sruMAYBYzWjg5B_kL2g@mail.gmail.com>
+ <633cb111-f5d7-3648-54af-a476f3cbb279@linaro.org>
+In-Reply-To: <633cb111-f5d7-3648-54af-a476f3cbb279@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 30 Nov 2018 17:19:53 +0100
+Message-ID: <CAK8P3a1JSyxjuH2Xez-K3SFV20f-FJnzZHdNR1o41VrNNZkUPQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/6] char: fastrpc: Add support for context Invoke method
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, bkumar@qti.qualcomm.com,
+        thierry.escande@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 06:24:16 +0000
-Bharat Bhushan <bharat.bhushan@nxp.com> wrote:
+On Fri, Nov 30, 2018 at 5:03 PM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+> On 30/11/18 15:08, Arnd Bergmann wrote:
+> > On Fri, Nov 30, 2018 at 4:01 PM Srinivas Kandagatla
+> > <srinivas.kandagatla@linaro.org> wrote:
+> >> Thanks Arnd for the review comments!
+> >> On 30/11/18 13:41, Arnd Bergmann wrote:
+> >>> On Fri, Nov 30, 2018 at 11:48 AM Srinivas Kandagatla
+> >>> <srinivas.kandagatla@linaro.org> wrote:
+> >
+> >>>> +static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
+> >>>> +                                unsigned long arg)
+> >>>> +{
+> >>>> +       struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
+> >>>> +       struct fastrpc_channel_ctx *cctx = fl->cctx;
+> >>>> +       char __user *argp = (char __user *)arg;
+> >>>> +       int err;
+> >>>> +
+> >>>> +       if (!fl->sctx) {
+> >>>> +               fl->sctx = fastrpc_session_alloc(cctx, 0);
+> >>>> +               if (!fl->sctx)
+> >>>> +                       return -ENOENT;
+> >>>> +       }
+> >>>
+> >>> Shouldn't that session be allocated during open()?
+> >>>
+> >> Yes, and no, we do not need context in all the cases. In cases like we
+> >> just want to allocate dmabuf.
+> >
+> > Can you give an example what that would be good for?
+> >
+>
+> Currently the instance which does not need session is used as simple
+> memory allocator (rpcmem), TBH, this is the side effect of trying to fit
+> in with downstream application infrastructure which uses ion for andriod
+> usecases.
 
-> Hi Alex,
-> 
-> > -----Original Message-----
-> > From: Alex Williamson <alex.williamson@redhat.com>
-> > Sent: Friday, November 30, 2018 11:26 AM
-> > To: Bharat Bhushan <bharat.bhushan@nxp.com>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>; Bjorn Helgaas
-> > <helgaas@kernel.org>; linux-pci@vger.kernel.org; Linux Kernel Mailing List
-> > <linux-kernel@vger.kernel.org>; bharatb.yadav@gmail.com; David Daney
-> > <david.daney@cavium.com>; jglauber@cavium.com;
-> > mbroemme@libmpq.org; chrisrblake93@gmail.com
-> > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-> > 
-> > On Fri, 30 Nov 2018 05:29:47 +0000
-> > Bharat Bhushan <bharat.bhushan@nxp.com> wrote:
-> >   
-> > > Hi,
-> > >  
-> > > > -----Original Message-----
-> > > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > > > Sent: Thursday, November 29, 2018 1:46 AM
-> > > > To: Bharat Bhushan <bharat.bhushan@nxp.com>
-> > > > Cc: alex.williamson@redhat.com; Bjorn Helgaas <helgaas@kernel.org>;
-> > > > linux- pci@vger.kernel.org; Linux Kernel Mailing List <linux-  
-> > > > kernel@vger.kernel.org>; bharatb.yadav@gmail.com; David Daney  
-> > > > <david.daney@cavium.com>; jglauber@cavium.com;  
-> > mbroemme@libmpq.org;  
-> > > > chrisrblake93@gmail.com
-> > > > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-> > > >
-> > > > On Tue, Nov 27, 2018 at 10:32 PM Bharat Bhushan
-> > > > <bharat.bhushan@nxp.com> wrote:
-> > > >  
-> > > > > > -----Original Message-----
-> > > > > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > > > > Sent: Tuesday, November 27, 2018 9:39 PM
-> > > > > > To: Bjorn Helgaas <helgaas@kernel.org>
-> > > > > > Cc: Bharat Bhushan <bharat.bhushan@nxp.com>;
-> > > > > > linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > > > bharatb.yadav@gmail.com; David Daney  
-> > <david.daney@cavium.com>;  
-> > > > Jan  
-> > > > > > Glauber <jglauber@cavium.com>; Maik Broemme  
-> > > > <mbroemme@libmpq.org>;  
-> > > > > > Chris Blake <chrisrblake93@gmail.com>
-> > > > > > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-> > > > > >
-> > > > > > On Tue, 27 Nov 2018 09:33:56 -0600 Bjorn Helgaas
-> > > > > > <helgaas@kernel.org> wrote:  
-> > > >  
-> > > > > > > 4) Is there a hardware erratum for this?  If so, please
-> > > > > > > include the URL here.  
-> > > > >
-> > > > > No h/w errata as of now.  
-> > > >
-> > > > Does that mean (a) the HW folks agree this is a hardware problem but
-> > > > they haven't written an erratum, (b) there is an erratum but it
-> > > > isn't public, (c) we don't have any concrete evidence of a hardware
-> > > > problem, but things just don't work if we do a bus reset, (d) something  
-> > else?  
-> > >
-> > > I will say it is (c) - not concluded to be hardware h/w issue.
-> > >  
-> > > >  
-> > > > > In pci_reset_secondary_bus() I have tried to increase the delay
-> > > > > after reset  
-> > > > but not helped.  
-> > > > > Do I need to add delay at some other place as well?  
-> > > >
-> > > > No, I think the place you tried should be enough.
-> > > >
-> > > > You should also be able to exercise this from user-space by using
-> > > > "setpci" to set and clear the Secondary Bus Reset bit in the Bridge
-> > > > Control register.  Then you can also use setpci to read/write config
-> > > > space of the NIC.  The kernel would normally read the Vendor and
-> > > > Device IDs as the first access to the device during enumeration.
-> > > > You also might be able to learn something by using "lspci -vv" on
-> > > > the bridge before and after the reset to see if it logs any AER bits (if it  
-> > supports AER) or the other standard error logging bits.  
-> > >
-> > > I tried below sequence for Secondary bus reset and device config space
-> > > show 0xff
-> > >
-> > > root@localhost:~# lspci -x
-> > > 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0 (rev
-> > > 10)
-> > > 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> > > 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> > > 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> > > 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
-> > >
-> > > 0002:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit
-> > > Network Connection
-> > > 00: 86 80 d3 10 06 04 10 00 00 00 00 02 10 00 00 00
-> > > 10: 00 00 0c 40 00 00 00 40 01 00 00 00 00 00 0e 40
-> > > 20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 1f a0
-> > > 30: 00 00 24 40 c8 00 00 00 00 00 00 00 63 01 00 00
-> > >
-> > > root@localhost:~#  setpci -s 0002:00:00.0 0x3e.b=0x40
-> > > root@localhost:~#  setpci -s 0002:00:00.0 0x3e.b=0x00
-> > >
-> > > root@localhost:~# lspci -x
-> > > 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0 (rev
-> > > 10)
-> > > 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> > > 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> > > 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> > > 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00  
-> > 
-> > Just for curiosity sake, what if you re-write the secondary and subordinate
-> > bus registers here:
-> > 
-> > # setpci -s 0002:00:00.0 0x19.b=0x01
-> > # setpci -s 0002:00:00.0 0x1a.b=0xff  
-> 
-> Result is same, here are logs
-> 
-> root@localhost:~# setpci -s 0002:00:00.0 0x3e.b=0x40
-> root@localhost:~# setpci -s 0002:00:00.0 0x3e.b=0x00
-> root@localhost:~# setpci -s 0002:00:00.0 0x19.b=0x01
-> root@localhost:~# setpci -s 0002:00:00.0 0x1a.b=0xff
-> root@localhost:~# lspci -x
-> 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0 (rev 10)
-> 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
-> 
-> 0002:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit Network Connection (rev ff)
-> 00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> 10: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> 20: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> 30: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+That does not sound like enough of a reason then, user space is
+easy to change here to just allocate the memory from the device itself.
+The only reason that I can see for needing a dmabuf would be if
+you have to share a buffer between two instances, and then you
+can use either of them.
 
-Ok, thanks for scratching my itch.
+> >>>> +static void fastrpc_notify_users(struct fastrpc_user *user)
+> >>>> +{
+> >>>> +       struct fastrpc_invoke_ctx *ctx, *n;will go
+> >>>> +
+> >>>> +       spin_lock(&user->lock);
+> >>>> +       list_for_each_entry_safe(ctx, n, &user->pending, node)
+> >>>> +               complete(&ctx->work);
+> >>>> +       spin_unlock(&user->lock);
+> >>>> +}
+> >>>
+> >>> Can you explain here what it means to have multiple 'users'
+> >>> a 'fastrpc_user' structure? Why are they all done at the same time?
+>
+> user is allocated on every open(). Having multiple users means that
+> there are more than one compute sessions running on a given dsp.
+>
+> They reason why all the users are notified here is because the dsp is
+> going down, so all the compute sessions associated with it will not see
+> any response from dsp, so any pending/waiting compute contexts are
+> explicitly notified.
 
-> > IIRC the users that debugged the AMD bus reset issue re-wrote the entire 64
-> > bytes of the bridge config header and then further narrowed the issue down
-> > to the two registers above.  If one bridge implementation can have such an
-> > issue, maybe others do too.  Perhaps there's common IP in use.  
-> 
-> >  Are you able
-> > to test other endpoints besides this e1000e device with this setpci
-> > technique?  Thanks,  
-> 
-> I tried  with " Broadcom Limited NetXtreme BCM5722 Gigabit Ethernet PCI Express" I observe same issue.
+I don't get it yet. What are 'compute sessions'? Do you have
+multiple threads running on a single instance at the same time?
+I would have expected to only ever see one thread in the
+'wait_for_completion()' above, and others possibly waiting
+for a chance to get to but not already running.
 
-Personally I'd exhaust talking with your hardware folks before blocking
-bus resets at the software level, it seems like a gap in PCIe
-compliance of the device.  Thanks,
+> >> struct fastrpc_remote_crc {
+> >>          __u64 crc;
+> >>          __u64 reserved1
+> >>          __u64 reserved2
+> >>          __u64 reserved3
+> >> };
+> >
+> > I don't see a need to add extra served fields for structures
+> > that are already naturally aligned here, e.g. in
+> > fastrpc_remote_arg we need the 'reserved1' but not
+> > the 'reserved2'.
+> Yes, I see, I overdone it!
+> Other idea, is, may be I can try to combine these into single structure
+> something like:
+>
+> struct fastrpc_invoke_arg {
+>         __u64 ptr;
+>         __u64 len;
+>         __u32 fd;
+>         __u32 reserved1
+>         __u64 attr;
+>         __u64 crc;
+> };
+>
+> struct fastrpc_ioctl_invoke {
+>         __u32 handle;
+>         __u32 sc;
+>         /* The minimum size is scalar_length * 32*/
+>         struct fastrpc_invoke_args *args;
+> };
 
-Alex
+That is still two structure, not one ;-)
+
+> >> struct fastrpc_ioctl_invoke {
+> >>          __u32 handle;
+> >>          __u32 sc;
+> >>          /* The minimum size is scalar_length * 32 */
+> >>          struct fastrpc_remote_args *rargs;
+> >>          struct fastrpc_remote_fd *fds;
+> >>          struct fastrpc_remote_attr *attrs;
+> >>          struct fastrpc_remote_crc *crc;
+> >> };
+> >
+> > Do these really have to be indirect then? Are they all
+> > lists of variable length? How do you know how long?
+> Yes, they are variable length and will be scalar length long.
+> Scalar length is derived from sc variable in this structure.
+
+Do you mean we have a variable number 'sc', but each array
+always has the same length as the other ones? In that
+case: yes, combining them seems sensible.
+
+The other question this raises is: what is 'handle'?
+Why is the file descriptor not enough to identify the
+instance we want to talk to?
+
+      Arnd
