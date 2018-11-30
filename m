@@ -2,106 +2,112 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB8BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C34BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10B7B2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:07:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B7B2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 0DF982145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 11:07:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="duPXXMD2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF982145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeK3WPx (ORCPT
+        id S1726989AbeK3WQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:15:53 -0500
-Received: from sauhun.de ([88.99.104.3]:57322 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbeK3WPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:15:52 -0500
-Received: from localhost (p54B334EC.dip0.t-ipconnect.de [84.179.52.236])
-        by pokefinder.org (Postfix) with ESMTPSA id 571D02E3542;
-        Fri, 30 Nov 2018 12:06:56 +0100 (CET)
-Date:   Fri, 30 Nov 2018 12:06:52 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 09/15] i2c: acpi: Introduce
- i2c_acpi_get_i2c_resource() helper
-Message-ID: <20181130110652.ckj75wrxxaez2sq2@ninjato>
-References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
- <20181128114535.80223-10-andriy.shevchenko@linux.intel.com>
- <20181130095533.GC1079@kunai>
- <20181130105759.GK10650@smile.fi.intel.com>
+        Fri, 30 Nov 2018 17:16:26 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:53140 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeK3WQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:16:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Xm3GtPoyMLfyE7dcaanJdP5XZ9duT9aSerkVkuOSze0=; b=duPXXMD2w7C5f4wHR2EDHDqYF
+        7svGwFb2Qju+jY0E6YhmK0J12Zlr2gMtToJbKXjGfBrnpgh5RAg8v75ghNlHxz+bOocbS0c7t9Xdw
+        8IuaU6xLrtoHlpXhK1xcDRceWrT4XgV5AQkSDbkmFPYMxJfmsB+MhEsqRS2mU7q7xF8po=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:41136)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gSgdQ-0007yq-FX; Fri, 30 Nov 2018 11:07:00 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gSgdM-0005Rj-7C; Fri, 30 Nov 2018 11:06:56 +0000
+Date:   Fri, 30 Nov 2018 11:06:53 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, mazziesaccount@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
+ provider registrations
+Message-ID: <20181130110653.GF30658@n2100.armlinux.org.uk>
+References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
+ <20181130105022.GA15388@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nq7xysahvxit562s"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181130105759.GK10650@smile.fi.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181130105022.GA15388@localhost.localdomain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 30, 2018 at 12:50:22PM +0200, Matti Vaittinen wrote:
+> Hello Stephen,
+> 
+> Thanks a bunch for taking the time and reviewing this!
+> 
+> On Fri, Nov 30, 2018 at 12:54:10AM -0800, Stephen Boyd wrote:
+> > Quoting Matti Vaittinen (2018-11-13 03:55:58)
+> > > With MFD devices the clk properties may be contained in MFD (parent) DT
+> > > node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
+> > > subdevice not to MFD device (parent). Add
+> > > devm_of_clk_add_hw_provider_parent to tackle this issue.
+> > > 
+> > > Also clkdev registration lacks of managed registration functions and it
+> > > seems few drivers do not drop clkdev lookups at exit. Add
+> > > devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
+> > > releasing at exit.
+> > 
+> > Please split this into clkdev and non-clkdev devm functionality.
+> Allright. I'll split this to two patches.
 
---nq7xysahvxit562s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Definitely, please note that clkdev is separate from the common
+clk stuff, and is actually maintained by a different person (me)
+although I currently defer much of the review to the common clk
+guys.
 
-
-> > >  drivers/i2c/i2c-core-acpi.c | 41 ++++++++++++++++++++++++++---------=
---
-> > >  include/linux/acpi.h        | 11 ++++++++++
-> >=20
-> > Any reason this is not in i2c.h?
->=20
-> Yes. As I explained earlier to some people there are facts affecting this:
-> - the function is operate on top of solely ACPI structures
-
-And moving the function itself to the ACPI realm then?
-
-I don't say this is a show-stopper for this series, but I just wonder...
-
-> - there is already similar function for GPIO and it stays like that
->=20
-> On top of this recently I've discovered, that i2c.h has separate #ifdef f=
-or I2C
-> and ACPI which theoretically might produce a linker error in some cases.
-
-Is this something we have to live with or which can be cleaned up
-somewhen?
-
-
---nq7xysahvxit562s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwBGcgACgkQFA3kzBSg
-KbavxRAAjKEwKlbD+2KGti8Ezmd3HXwE/DeJ8H+qNJqdWh8c3KdV5M2aBcESNVmL
-UIr2ppYaIsHzRgDP50pZC3ND1u04O/EE4b+0kgYCka3gNbzig5eS1G/g5jYirdKc
-cBES3w7UgtUK3p7hbuvqnloy/NkKvw0YZa9+Vl7wnaopyuHFWnNSvOvrJLARR+IL
-ECbhWGjmVDgex16iwZwqrbAFQXSSpmariXFUEokVdL3LWnUhuKD0NiIyza8T9wV3
-B1fT/02NOf/D7Xn4xBFrHB8bPL2HS1dmvsrT3gTm5pcdSk4XwyZ0VNMQd0JRazmH
-Hp9StKw8aQC36CoOwMl6fS0UVvijTVgAgUk902+yqhtAj/DNHkz6EA1GjBj7M6d9
-9dKa16q7bVizTcxYAIFOd6U7bdUwvP3aIn1Ri7TYJqmwoVvZghKFxai9XUraSWQx
-OlhSQSwa1HDugpmjb4J2suLKgPrQkyLYJRE4w3d50QluYx0wac66HfUw3xmMN2ef
-TTEjb7Z1wAVNqg/+iHEzvE7rc4j8z9tcGq+z8sD20d/Rpgxy+SWNLIZlTDNMoySl
-LiunUhdKi8E66CTV8wU0o+VK4ntWD50gb8yMG1azGniZ3BhLgNw5CA7Rz2x7WpRJ
-NiaFAsJAzIaSSZrWCqQWqfH04GIpOidBuSXb4Vbc9muqfcfA1og=
-=I3U0
------END PGP SIGNATURE-----
-
---nq7xysahvxit562s--
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
