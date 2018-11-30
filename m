@@ -2,250 +2,245 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D351C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4215BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036E92086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:19:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cvuXPhO4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036E92086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id EE6312081C
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:20:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6312081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeK3N1E (ORCPT
+        id S1727172AbeK3N2P convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:27:04 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33440 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeK3N1E (ORCPT
+        Fri, 30 Nov 2018 08:28:15 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:33915 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726549AbeK3N2P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:27:04 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c123so2009586pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 18:19:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v/I8xEX9P8gErGvxWyJaERYOeiDW5zp+tAQouUaMhHc=;
-        b=cvuXPhO44rwL4Er9yGKkDGhp8cXLO/sdmF91tKuU3Gu8z+vhdwguHlJ3N33hiueh/C
-         rX9oPDtxuumqIdEicgCMcTSGF16/GmO1cizGjELrX1Xk35eWwDzGWZEgRBZ5NpFjWsdr
-         NbJlxYz9d06wcynMoKsfQOJlcRoxb88UgVxb4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v/I8xEX9P8gErGvxWyJaERYOeiDW5zp+tAQouUaMhHc=;
-        b=mW+KEZGfj3hXwinZkyJNxbbdrWiZJ5j53CieLFEZ8uEOlqf6uNmrN2pbpq38NCAdFY
-         TISmBBgFr9d0AA3JPlyZg1/MW8xTuz47LSHp/iu+yavNnLnbtc/BlRPOzov80eTn7Rk8
-         v1UshhsWZLUIWsNTmdVpboePl7Tv1MZ09Gb4NNXD3Cdklgjs6J1fNSz4hf/UnrLSrUeY
-         UFTJCm1qj+fHsDgwu5yQXBzKhntV2qQArspQZrPVcuwai8+AHJHnytojVRsJ6pS5ZzoD
-         BW/yjD+bSUPEmLA86i3zKN8ba+UhC4uP1toKii9C87YAlsGWnsK3CceXZXxUwA3YmPli
-         6sNg==
-X-Gm-Message-State: AA+aEWagswBXPYWuq3SKU26ARbR+XggGu2/cqqK5xDRGEmXsOABhFaES
-        p5SoD58/nMFCqZEGuDrZACT+ag==
-X-Google-Smtp-Source: AFSGD/X7MDerg79agx4geQeMWnycHoUwkoTsH5z2cpxQbnQ8G/RDGjqidwrXciiYG0ajAwcFVjixLw==
-X-Received: by 2002:a62:8a51:: with SMTP id y78mr3771160pfd.35.1543544364803;
-        Thu, 29 Nov 2018 18:19:24 -0800 (PST)
-Received: from ryandcase.mtv.corp.google.com ([2620:15c:202:201:ed1c:3d1c:9d92:99cb])
-        by smtp.gmail.com with ESMTPSA id b9sm4678524pfi.118.2018.11.29.18.19.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 18:19:24 -0800 (PST)
-From:   Ryan Case <ryandcase@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     Evan Green <evgreen@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>
-Subject: [PATCH v3] tty: serial: qcom_geni_serial: Fix softlock
-Date:   Thu, 29 Nov 2018 18:18:40 -0800
-Message-Id: <20181130021840.75861-1-ryandcase@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+        Fri, 30 Nov 2018 08:28:15 -0500
+X-ASG-Debug-ID: 1543544432-093b7e197b41010001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id AzM3INU2B5I8Heq5 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 30 Nov 2018 10:20:32 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Nov 2018 10:19:46 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Fri, 30 Nov 2018 10:19:46 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     Kees Cook <keescook@chromium.org>
+CC:     David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Topic: [PATCH 1/1] sched/headers: fix thread_info.<first> is
+ overwritten by STACK_END_MAGIC
+X-ASG-Orig-Subj: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Index: AQHUgwHXQvH51CSg9UWtTixRCjaq8A==
+Date:   Fri, 30 Nov 2018 02:19:46 +0000
+Message-ID: <24e0c18ed41c44828c753ce9ed3016a5@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <e7952089a66db4e5d59d2af230a324155bb018a0.1542955914.git.dongsheng.wang@hxt-semitech.com>
+ <CAGXu5jKTQK2BGYefNXkW=-=svzhnqP4Pho3jK+mORAjDxgnsRA@mail.gmail.com>
+ <19391812db6444f3bd260546acded9b7@HXTBJIDCEMVIW02.hxtcorp.net>
+ <CAGXu5jJg+rfDi1VuiaevPSkaZidjmEC2au9yJR6n6rWJR-qcsg@mail.gmail.com>
+ <810b0ad91d5547c5bbbec1b61c119bdc@HXTBJIDCEMVIW02.hxtcorp.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.6.159]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1543544432
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.62725
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Transfers were being divided into device FIFO sized (64 byte max)
-operations which would poll for completion within a spin_lock_irqsave /
-spin_unlock_irqrestore block. This both made things slow by waiting for
-the FIFO to completely drain before adding further data and would also
-result in softlocks on large transmissions.
+On 2018/11/30 10:04, Wang, Dongsheng wrote:
+> On 2018/11/30 5:22, Kees Cook wrote:
+>> On Tue, Nov 27, 2018 at 8:38 PM Wang, Dongsheng
+>> <dongsheng.wang@hxt-semitech.com> wrote:
+>>> Hello Kees,
+>>>
+>>> On 2018/11/28 6:38, Kees Cook wrote:
+>>>> On Thu, Nov 22, 2018 at 11:54 PM, Wang Dongsheng
+>>>> <dongsheng.wang@hxt-semitech.com> wrote:
+>>>>> When select ARCH_TASK_STRUCT_ON_STACK the first of thread_info variable
+>>>>> is overwritten by STACK_END_MAGIC. In fact, the ARCH_TASK_STRUCT_ON_STACK
+>>>>> is not a real task on stack, it's only init_task on init_stack.
+>>>>>
+>>>>> Commit 0500871f21b2 ("Construct init thread stack in the linker script
+>>>>> rather than by union") added this macro and put task_strcut into
+>>>>> thread_union. This brings us the following possibilities:
+>>>>>     TASK_ON_STACK    THREAD_INFO_IN_TASK    STACK
+>>>>>                                             ----- <-- thread_info & stack
+>>>>>         N                    N             |     |     --- <-- task
+>>>>>                                            |     |    |   |
+>>>>>                                             -----      ---
+>>>>>
+>>>>>                                             ----- <-- stack
+>>>>>         N                    Y             |     |     --- <-- task(Including thread_info)
+>>>>>                                            |     |    |   |
+>>>>>                                             -----      ---
+>>>>>
+>>>>>                                             ----- <-- stack & task & thread_info
+>>>>>         Y                    N             |     |
+>>>>>                                            |     |
+>>>>>                                             -----
+>>>>>
+>>>>>                                             ----- <-- stack & task(Including thread_info)
+>>>>>         Y                    Y             |     |
+>>>>>                                            |     |
+>>>>>                                             -----
+>>>>> The kernel has handled the first two cases correctly.
+>>>>>
+>>>>> For the third case:
+>>>>> TASK_ON_STACK: Y. THREAD_INFO_IN_TASK: N. this case
+>>>>> should never happen, because the task and thread_info will overlap. So
+>>>>> when TASK_ON_STACK is selected, THREAD_INFO_IN_TASK must be selected too.
+>>>>>
+>>>>> For the fourth case:
+>>>>> When task on stack, the end of stack should add a sizeof(task_struct) offset.
+>>>>>
+>>>>> This patch handled with the third and fourth case.
+>>>>>
+>>>>> Fixes: 0500871f21b2 ("Construct init thread stack in the linker ...")
+>>>>>
+>>>>> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+>>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>>>> ---
+>>>>>  arch/Kconfig                     | 1 +
+>>>>>  include/linux/sched/task_stack.h | 5 ++++-
+>>>>>  2 files changed, 5 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/arch/Kconfig b/arch/Kconfig
+>>>>> index e1e540ffa979..0a2c73e73195 100644
+>>>>> --- a/arch/Kconfig
+>>>>> +++ b/arch/Kconfig
+>>>>> @@ -251,6 +251,7 @@ config ARCH_HAS_SET_MEMORY
+>>>>>  # Select if arch init_task must go in the __init_task_data section
+>>>>>  config ARCH_TASK_STRUCT_ON_STACK
+>>>>>         bool
+>>>>> +       depends on THREAD_INFO_IN_TASK || IA64
+>>>> The "IA64" part shouldn't be needed since IA64 already selects it.
+>>>>
+>>>> Since it's selected, it also can't have a depends, IIUC.
+>>> Since the IA64 thread_info including task_struct, it doesn't need to
+>>> select THREAD_INFO_IN_TASK.
+>>> So we need to allow IA64 select ARCH_TASK_STRUCT_ON_STACK without
+>>> THREAD_INFO.
+>> Okay.
+>>
+>>>>>  # Select if arch has its private alloc_task_struct() function
+>>>>>  config ARCH_TASK_STRUCT_ALLOCATOR
+>>>>> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+>>>>> index 6a841929073f..624c48defb9e 100644
+>>>>> --- a/include/linux/sched/task_stack.h
+>>>>> +++ b/include/linux/sched/task_stack.h
+>>>>> @@ -7,6 +7,7 @@
+>>>>>   */
+>>>>>
+>>>>>  #include <linux/sched.h>
+>>>>> +#include <linux/sched/task.h>
+>>>>>  #include <linux/magic.h>
+>>>>>
+>>>>>  #ifdef CONFIG_THREAD_INFO_IN_TASK
+>>>>> @@ -25,7 +26,9 @@ static inline void *task_stack_page(const struct task_struct *task)
+>>>>>
+>>>>>  static inline unsigned long *end_of_stack(const struct task_struct *task)
+>>>>>  {
+>>>>> -       return task->stack;
+>>>>> +       if (!IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) || task != &init_task)
+>>>>> +               return task->stack;
+>>>>> +       return (unsigned long *)(task + 1);
+>>>>>  }
+>>>> This seems like a strange place for the change. It feels more like
+>>>> init_task has been defined incorrectly.
+>>> The init_task will put into init_stack when ARCH_TASK_STRUCT_ON_STACK is
+>>> selected.
+>>> include/asm-generic/vmlinux.lds.h:
+>>> #define INIT_TASK_DATA(align)                        \
+>>>     . = ALIGN(align);                        \
+>>>     __start_init_task = .;                        \
+>>>     init_thread_union = .;                        \
+>>>     init_stack = .;                            \
+>>>     KEEP(*(.data..init_task))                    \
+>>>     KEEP(*(.data..init_thread_info))                \
+>>>     . = __start_init_task + THREAD_SIZE;                \
+>>>     __end_init_task = .;
+>>>
+>>> So we need end_of_stack to offset sizeof(task_struct).
+>> Well, I guess I mean I'd rather the end_of_stack() code not be
+>> special-cased in the if. The default should be how it was. Perhaps:
+>>
+>> if (IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) && task == &init_task)
+About this special case:
+As I mentioned in the description of patch, The
+ARCH_TASK_STRUCT_ON_STACK is not a real task on stack, it's only
+init_task on init_stack.
+The alloc task is not in alloc stack, So if condition including "task ==
+&init_task".
 
-This patch allows larger transfers with continuous FIFO additions as
-space becomes available and removes polling from the interrupt handler.
+Cheers,
+Dongsheng
 
-Signed-off-by: Ryan Case <ryandcase@chromium.org>
----
-
-Changes in v3:
-- Reworded comment for clarity
-- Fixed mips compiler warning
-
-Changes in v2:
-- Addressed nits raised by Stephen
-
- drivers/tty/serial/qcom_geni_serial.c | 56 +++++++++++++++++++--------
- 1 file changed, 39 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 7ded51081add..bbc7d7a5b8b6 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -117,6 +117,8 @@ struct qcom_geni_serial_port {
- 	u32 *rx_fifo;
- 	u32 loopback;
- 	bool brk;
-+
-+	unsigned int tx_remaining;
- };
- 
- static const struct uart_ops qcom_geni_console_pops;
-@@ -439,6 +441,7 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 	struct qcom_geni_serial_port *port;
- 	bool locked = true;
- 	unsigned long flags;
-+	u32 geni_status;
- 
- 	WARN_ON(co->index < 0 || co->index >= GENI_UART_CONS_PORTS);
- 
-@@ -452,6 +455,8 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 	else
- 		spin_lock_irqsave(&uport->lock, flags);
- 
-+	geni_status = readl_relaxed(uport->membase + SE_GENI_STATUS);
-+
- 	/* Cancel the current write to log the fault */
- 	if (!locked) {
- 		geni_se_cancel_m_cmd(&port->se);
-@@ -465,9 +470,19 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 		}
- 		writel_relaxed(M_CMD_CANCEL_EN, uport->membase +
- 							SE_GENI_M_IRQ_CLEAR);
-+	} else if ((geni_status & M_GENI_CMD_ACTIVE) && !port->tx_remaining) {
-+		/*
-+		 * It seems we can't interrupt existing transfers if all data
-+		 * has been sent, in which case we need to look for done first.
-+		 */
-+		qcom_geni_serial_poll_tx_done(uport);
- 	}
- 
- 	__qcom_geni_serial_console_write(uport, s, count);
-+
-+	if (port->tx_remaining)
-+		qcom_geni_serial_setup_tx(uport, port->tx_remaining);
-+
- 	if (locked)
- 		spin_unlock_irqrestore(&uport->lock, flags);
- }
-@@ -701,40 +716,45 @@ static void qcom_geni_serial_handle_rx(struct uart_port *uport, bool drop)
- 	port->handle_rx(uport, total_bytes, drop);
- }
- 
--static void qcom_geni_serial_handle_tx(struct uart_port *uport)
-+static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
-+		bool active)
- {
- 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
- 	struct circ_buf *xmit = &uport->state->xmit;
- 	size_t avail;
- 	size_t remaining;
-+	size_t pending;
- 	int i;
- 	u32 status;
- 	unsigned int chunk;
- 	int tail;
--	u32 irq_en;
- 
--	chunk = uart_circ_chars_pending(xmit);
- 	status = readl_relaxed(uport->membase + SE_GENI_TX_FIFO_STATUS);
--	/* Both FIFO and framework buffer are drained */
--	if (!chunk && !status) {
-+
-+	/* Complete the current tx command before taking newly added data */
-+	if (active)
-+		pending = port->tx_remaining;
-+	else
-+		pending = uart_circ_chars_pending(xmit);
-+
-+	/* All data has been transmitted and acknowledged as received */
-+	if (!pending && !status && done) {
- 		qcom_geni_serial_stop_tx(uport);
- 		goto out_write_wakeup;
- 	}
- 
--	if (!uart_console(uport)) {
--		irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
--		irq_en &= ~(M_TX_FIFO_WATERMARK_EN);
--		writel_relaxed(0, uport->membase + SE_GENI_TX_WATERMARK_REG);
--		writel_relaxed(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
--	}
-+	avail = port->tx_fifo_depth - (status & TX_FIFO_WC);
-+	avail *= port->tx_bytes_pw;
- 
--	avail = (port->tx_fifo_depth - port->tx_wm) * port->tx_bytes_pw;
- 	tail = xmit->tail;
--	chunk = min3((size_t)chunk, (size_t)(UART_XMIT_SIZE - tail), avail);
-+	chunk = min3(avail, pending, (size_t)(UART_XMIT_SIZE - tail));
- 	if (!chunk)
- 		goto out_write_wakeup;
- 
--	qcom_geni_serial_setup_tx(uport, chunk);
-+	if (!port->tx_remaining) {
-+		qcom_geni_serial_setup_tx(uport, pending);
-+		port->tx_remaining = pending;
-+	}
- 
- 	remaining = chunk;
- 	for (i = 0; i < chunk; ) {
-@@ -753,11 +773,10 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport)
- 		tail += tx_bytes;
- 		uport->icount.tx += tx_bytes;
- 		remaining -= tx_bytes;
-+		port->tx_remaining -= tx_bytes;
- 	}
- 
- 	xmit->tail = tail & (UART_XMIT_SIZE - 1);
--	if (uart_console(uport))
--		qcom_geni_serial_poll_tx_done(uport);
- out_write_wakeup:
- 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(uport);
-@@ -767,6 +786,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
- {
- 	unsigned int m_irq_status;
- 	unsigned int s_irq_status;
-+	unsigned int geni_status;
- 	struct uart_port *uport = dev;
- 	unsigned long flags;
- 	unsigned int m_irq_en;
-@@ -780,6 +800,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
- 	spin_lock_irqsave(&uport->lock, flags);
- 	m_irq_status = readl_relaxed(uport->membase + SE_GENI_M_IRQ_STATUS);
- 	s_irq_status = readl_relaxed(uport->membase + SE_GENI_S_IRQ_STATUS);
-+	geni_status = readl_relaxed(uport->membase + SE_GENI_STATUS);
- 	m_irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
- 	writel_relaxed(m_irq_status, uport->membase + SE_GENI_M_IRQ_CLEAR);
- 	writel_relaxed(s_irq_status, uport->membase + SE_GENI_S_IRQ_CLEAR);
-@@ -794,7 +815,8 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
- 
- 	if (m_irq_status & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN) &&
- 	    m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
--		qcom_geni_serial_handle_tx(uport);
-+		qcom_geni_serial_handle_tx(uport, m_irq_status & M_CMD_DONE_EN,
-+					geni_status & M_GENI_CMD_ACTIVE);
- 
- 	if (s_irq_status & S_GP_IRQ_0_EN || s_irq_status & S_GP_IRQ_1_EN) {
- 		if (s_irq_status & S_GP_IRQ_0_EN)
--- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
+>>     return (unsigned long *)(task + 1);
+>> return task->stack;
+>>
+>> But it still feels strange: why can't task->stack point to the correct
+>> place in this special case?
+> Normally, task->stack is the bottom of the stack, the end_of_stack just
+> need to return task->stack.
+> The task->stack always represents the bottom of the stack, and it cannot
+> be changed, so what
+> happens here is we have some data(task or thread info)that we want to
+> put at the bottom of the
+> stack. The end_of_stack just refers to the size of the stack available
+> to us.
+> In ARCH_TASK_STRUCT_ON_STACK case, the init_task has been placed in a
+> fixed location, the task
+> is placed at the bottom of the stack. Current end_of_stack doesn't
+> handle this situation, so we need
+> add a if condition to handle it. And this is just like
+> !THREAD_INFO_IN_TASK(the thead_info on stack),
+> the thread_info is placed at the bottom of the stack, the end_of_stack =
+> the bottom of stack + sizeof(*thread_info).
+>
+>
+> Cheers,
+> Dongsheng
+>
+>
 
