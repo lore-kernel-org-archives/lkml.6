@@ -2,114 +2,61 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB41C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62411C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB3820868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:29:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="HS0eWDst"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB3820868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 1AF0020834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 19:35:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF0020834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbeLAGkE (ORCPT
+        id S1726528AbeLAGpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:40:04 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:53756 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbeLAGkE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:40:04 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 4F2D610C1050;
-        Fri, 30 Nov 2018 11:29:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1543606185; bh=q2GNK6YBsTlz/DUIohoAV0KIDZTNxA7yvSkHVOOTzic=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=HS0eWDstR6b+ODPG2eOmxsLocDmmHfCN9wH4rXPlGLrOXjTUZWbANQadp1L4nuORW
-         w4WP74xFzhxikTbteHNQ1XuplJiu01yyJwnevuTT+voNZm1yCGf8RKBWCzMV5+nKR7
-         SrQI1tqgAW2CqsddHYmzccUIHGz9U4Jqi6x5/1HMY9jHqlahC5Q3dqRMhzGFOEMs+Z
-         JfdjomkYKZEuZ6oUv88p8TBxdLHBmyFtRxXE0/lSSCUx/Me6rdRzBeY17bBlAxS+op
-         WI3JjM/dVaw0nrgLTTq96NwjEahYPJzOPHXHmxhvhv0gQ85sWiocakTr8dSa10e8pr
-         F9Mt0uwXXj/Sw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 353235DCC;
-        Fri, 30 Nov 2018 11:29:45 -0800 (PST)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
- 30 Nov 2018 11:29:45 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Jose Abreu <jose.abreu@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        Vitor Soares <vitor.soares@synopsys.com>,
-        David Laight <David.Laight@ACULAB.COM>
-Subject: Re: [PATCH v3] ARC: io.h: Implement reads{x}()/writes{x}()
-Thread-Topic: [PATCH v3] ARC: io.h: Implement reads{x}()/writes{x}()
-Thread-Index: AQHUiJG/o7fyzIGCckGLnUFm4swJ4g==
-Date:   Fri, 30 Nov 2018 19:29:44 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641A449@US01WEMBX2.internal.synopsys.com>
-References: <244eba764469e8493f2d0c85a6d965aad6cd8128.1543571088.git.joabreu@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 1 Dec 2018 01:45:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbeLAGpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 01:45:33 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE0C020834;
+        Fri, 30 Nov 2018 19:35:12 +0000 (UTC)
+Date:   Fri, 30 Nov 2018 14:35:10 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 0/2] [GIT PULL] tracing: More fixes for 4.20
+Message-ID: <20181130143510.39457d20@gandalf.local.home>
+In-Reply-To: <CAHk-=wgJErbyjbAy=cFHUcT7STP7taGtTBX5sfAgkTX6Yq6Skg@mail.gmail.com>
+References: <20181130031829.268422593@goodmis.org>
+        <CAHk-=wgVQNNB6XhJQMwyQdc1B5Qh3nMXhixK5uzbdeOOnwOmdw@mail.gmail.com>
+        <CAHk-=wgJErbyjbAy=cFHUcT7STP7taGtTBX5sfAgkTX6Yq6Skg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/18 1:47 AM, Jose Abreu wrote:=0A=
-> Some ARC CPU's do not support unaligned loads/stores. Currently, generic=
-=0A=
-> implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.=
-=0A=
-> This can lead to misfunction of some drivers as generic functions do a=0A=
-> plain dereference of a pointer that can be unaligned.=0A=
->=0A=
-> Let's use {get/put}_unaligned() helpers instead of plain dereference of=
-=0A=
-> pointer in order to fix. The helpers allow to get and store data from an=
-=0A=
-> unaligned address whilst preserving the CPU internal alignment.=0A=
-> According to [1], the use of these helpers are costly in terms of=0A=
-> performance so we added an initial check for a buffer already aligned so=
-=0A=
-> that the usage of the helpers can be avoided, when possible.=0A=
->=0A=
-> [1] Documentation/unaligned-memory-access.txt=0A=
->=0A=
-> Changes from v2:=0A=
-> - Rework commit msg (Vineet)=0A=
-> - Check if count is 0 and return (Vineet)=0A=
-> - Use two different loops (Vineet)=0A=
->=0A=
-> Changes from v1:=0A=
-> - Check if buffer is already aligned (David)=0A=
-> - Remove 64 bit mention (Alexey)=0A=
->=0A=
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>=0A=
-> Tested-by: Vitor Soares <soares@synopsys.com>=0A=
-> Cc: Vineet Gupta <vgupta@synopsys.com>=0A=
-> Cc: Alexey Brodkin <abrodkin@synopsys.com>=0A=
-> Cc: Joao Pinto <jpinto@synopsys.com>=0A=
-> Cc: Vitor Soares <soares@synopsys.com>=0A=
-> Cc: David Laight <David.Laight@ACULAB.COM>=0A=
-=0A=
-Applied to for-curr after some minor chg (added a comment about accessor)=
-=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
+On Fri, 30 Nov 2018 10:56:06 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> This way I got the matching diffstat from your pull requests, but more
+> importantly also the independent merge messages.
+> 
+> The history looks slightly odd this way (with two adjacent merges of
+> continuous history), but I thought I'd explain the reason.
+
+It makes perfect sense.
+
+-- Steve
