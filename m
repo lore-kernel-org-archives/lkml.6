@@ -2,112 +2,354 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A618C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B48C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB5C20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DAEC20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:54:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="VUS1Pomf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB5C20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyeTK5px"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DAEC20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeLACCE (ORCPT
+        id S1726773AbeLACEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:02:04 -0500
-Received: from mail-eopbgr680053.outbound.protection.outlook.com ([40.107.68.53]:19652
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726589AbeLACCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:02:03 -0500
+        Fri, 30 Nov 2018 21:04:15 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40906 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbeLACEP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 21:04:15 -0500
+Received: by mail-qt1-f196.google.com with SMTP id k12so6148455qtf.7
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 06:54:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0VftuTY9YvYqrZ8IbBFby0gNela1aXJI0ak6GsIGqCo=;
- b=VUS1Pomftxz9nyxCaFBxi70OWp3th6rrh2u82GUnxK4/3UUmquDUNLHPUdBfFNB7HLiLzl7lUZLnN9tP4N/owG6B8RKe5npx+Zj0Mlq+XaEjesNIU6Hbo4K0+aRbK5WH+imsq8B+w3bN/kquqMPXZflKt2FLfiaRPcnPBa2UVDg=
-Received: from MWHPR1201MB0061.namprd12.prod.outlook.com (10.174.98.12) by
- MWHPR1201MB0224.namprd12.prod.outlook.com (10.174.99.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Fri, 30 Nov 2018 14:52:27 +0000
-Received: from MWHPR1201MB0061.namprd12.prod.outlook.com
- ([fe80::4481:91d7:9564:e869]) by MWHPR1201MB0061.namprd12.prod.outlook.com
- ([fe80::4481:91d7:9564:e869%9]) with mapi id 15.20.1361.019; Fri, 30 Nov 2018
- 14:52:27 +0000
-From:   "StDenis, Tom" <Tom.StDenis@amd.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "luto@kernel.org" <luto@kernel.org>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Subject: Re: [PATCH 0/4] x86/mm/cpa: Fix cpa-array TLB invalidation
-Thread-Topic: [PATCH 0/4] x86/mm/cpa: Fix cpa-array TLB invalidation
-Thread-Index: AQHUiLXipdRkoql6EkWifNhS5aJus6VoZy0A
-Date:   Fri, 30 Nov 2018 14:52:26 +0000
-Message-ID: <d1e4cb48-1952-fb61-bd2b-db9efe3b5f1a@amd.com>
-References: <20181130134455.490139778@infradead.org>
-In-Reply-To: <20181130134455.490139778@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: YQXPR0101CA0002.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:15::15) To MWHPR1201MB0061.namprd12.prod.outlook.com
- (2603:10b6:301:54::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tom.StDenis@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.55.251]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR1201MB0224;20:tw02LTg/OrFCLd6x4uV8vN+Tustzn1Tu1OYrzK6P5KZFIUC5o819VicELqS8XOXPGWd3hMMDgZsMblwYI49QirxoswXS4tdhgJTxNHtmYra/8SiqdCUtvF7JeIqmi5QAo5I5v5VVhwlKyS/KEJwGEZouMQTd7WFIYn7rIlp7nQBlxHVOa3T2hShyPPvHtcMyJHKQfxkzLlOtOuYx96EU4OwUlEiLW7u1rzuFjEKhgItYYJORijGbg/boVQ4edgjL
-x-ms-office365-filtering-correlation-id: 4ec0aa6a-acbe-4a95-8013-08d656d371a2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR1201MB0224;
-x-ms-traffictypediagnostic: MWHPR1201MB0224:
-x-microsoft-antispam-prvs: <MWHPR1201MB0224EADF16380C22EA4A1702F7D30@MWHPR1201MB0224.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231453)(999002)(944501466)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:MWHPR1201MB0224;BCL:0;PCL:0;RULEID:;SRVR:MWHPR1201MB0224;
-x-forefront-prvs: 087223B4DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39850400004)(366004)(346002)(376002)(136003)(199004)(189003)(486006)(2906002)(52116002)(2501003)(7736002)(2201001)(305945005)(86362001)(316002)(14454004)(6506007)(476003)(99286004)(81166006)(71190400001)(386003)(2616005)(71200400001)(81156014)(6512007)(31686004)(256004)(26005)(66066001)(229853002)(72206003)(68736007)(8936002)(478600001)(186003)(31696002)(106356001)(6486002)(105586002)(6116002)(36756003)(5660300001)(6436002)(25786009)(76176011)(6246003)(53936002)(97736004)(53546011)(102836004)(4326008)(8676002)(54906003)(110136005)(4001150100001)(3846002)(11346002)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR1201MB0224;H:MWHPR1201MB0061.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: c27lK99HofesEfyh5CrVHju9xhEYsh+TAuM2ok7AgJru/TdefwHSc5KqJonMp0ebxxTLy0AhEeUVmBLu2zj/wZXh7VbD96ieT6qIPi5ZEyPBn81MKo3Qkd9c9ACLzHe0vMyxfTGIJ7hjsYRaeSO8K1klHr6MB8x/D3De7Bze8t4msHcJYVJQTasWE90vd9FbZvBJixFxpFT9C+sD6nxywmCpy8g7ISZNcEsnBFOlcpiNpr+0/qj7KssPvgk5RHEbVCzS1hRG/se3EBgTottiOpndnmN1DXY80AVKf4BQctVDTQZdWxOBtO/BCN8VJwBcwzglWv5qeDuLw7+qgOa6NFGo/z70rYSWAFQdSRisPAQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9BDD37FFAF29EC46994C21D528AE70BE@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sWrbsAAdWe5zay0NeuUtXZzvRoSNQY2GhOPZGMQsli4=;
+        b=DyeTK5px+GiJweb24MuGV9NXv5zNj9FfnT+10O8sudbdJoGgykLKcG7+HdIzbxw0Qo
+         dKaBBbO0yLkJWoGOYePeOHZYjLyiHvL3C6++krMSw5VV2OTmrl2lithk5vAXw1jr2ax9
+         sI1z2Lk/B2HXXLSTg9L3P9584Kto/ufwugwXpbC2Xv9JKbUTr3XIPLR1l5k44eVb69CR
+         Mfv+WluoSjcC40IH1nUQimnMKm/aSWI38d76svIoE/OExu8MT9WasDvFqpuqq1OQjJdv
+         XeZkzkkkZ6F2k1l5kPaO1JTWpxCQ9UUH2u1rlphu76LTHvFIP+dGP6YUmS3ou88Co9E+
+         dtcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sWrbsAAdWe5zay0NeuUtXZzvRoSNQY2GhOPZGMQsli4=;
+        b=fx/nFG69V7JQ+Mp+e2DcMssQHWSsaCeblW/5AYF7cvZB83lIHYz5pkno/8UxEMeRYy
+         h97jWuCFuZK8iTl/CYuoEPzeDARe9Op2n1cEByezCkJwEkDv7yFAboSttulaesE37X/V
+         RRpiyDdRTLa9SMyfrUSAlp3EnKqCOJbC/cQ6EANk0rS2m6bxjI66ybLwrRv2g4gCRGko
+         D5ocLDzvkouxYgEowVR/LfHWWm+9GLo9eMkxd1pctNRKsgM4ZtPUUIAVI4aXHHccsYar
+         5HGxadXYobdyEay/1Ag2xG9jRU4sgIUmxcSzHaIM8+g6Wh05RAF5dMGKhld79YOBeS8+
+         3qqw==
+X-Gm-Message-State: AA+aEWYJ4TAASGw0bp1lvMUZeoJ3rt8o1yun2MHbWPtU3jD3UnYBjK8M
+        IvHUroUtjyndI2zeGy9jwQ==
+X-Google-Smtp-Source: AFSGD/Va2L9hBE69yHO36130UAhT1B/ISJSdl6NThh2Y7O110xFeAQ9WB+QQgc9S2m/scW0n5grguQ==
+X-Received: by 2002:a0c:a1c6:: with SMTP id e64mr5836966qva.196.1543589679757;
+        Fri, 30 Nov 2018 06:54:39 -0800 (PST)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id o27sm3756835qkh.35.2018.11.30.06.54.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 06:54:39 -0800 (PST)
+Date:   Fri, 30 Nov 2018 09:54:33 -0500
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v12 4/5] x86/boot: Parse SRAT table from RSDP and store
+ immovable memory
+Message-ID: <20181130145432.j2iwbglwrtj5xdus@gabell>
+References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
+ <20181129081631.11139-5-fanc.fnst@cn.fujitsu.com>
+ <20181129175520.xcmj3bv4yhdr7kk3@gabell>
+ <20181130012454.GB1527@localhost.localdomain>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ec0aa6a-acbe-4a95-8013-08d656d371a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 14:52:26.9961
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0224
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130012454.GB1527@localhost.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUGV0ZXIsDQoNClVuZm9ydHVuYXRlbHkgSSBjYW4ndCBhcHBseSB0aGlzIG9uIHRvcCBvZiBv
-dXIgZHJtLW5leHQgdGhlIGZpcnN0IHBhdGNoIA0KZmFpbHMuDQoNCkFsZXg6IGNvdWxkIHdlIHJl
-YmFzZSBhZ2FpbiBhdCBzb21lIHBvaW50Pw0KDQpUb20NCg0KT24gMjAxOC0xMS0zMCA4OjQ0IGEu
-bS4sIFBldGVyIFppamxzdHJhIHdyb3RlOg0KPiBIaSwNCj4gDQo+IFllc3RlcmRheSBUb20gcmVw
-b3J0ZWQgYSBDUEEgYnVnIHRyaWdnZXJlZCBieSB0aGUgQU1ER1BVIHRlYW0uDQo+IA0KPiBJdCB0
-dXJucyBvdXQgdGhhdCB3aXRoIGNvbW1pdDoNCj4gDQo+ICAgIGE3Mjk1ZmQ1M2MzOSAoIng4Ni9t
-bS9jcGE6IFVzZSBmbHVzaF90bGJfa2VybmVsX3JhbmdlKCkiKQ0KPiANCj4gSSBtaXNyZWFkIHRo
-ZSBjcGEgYXJyYXkgY29kZSBhbmQgbWVzc2VkIHVwIHRoZSBUTEIgaW52YWxpZGF0aW9ucyBmb3Ig
-aXQuIFRoZXNlDQo+IHBhdGNoZXMgKGhvcGVmdWxseSkgZml4IHRoZSBpc3N1ZSB3aGlsZSBhbHNv
-IHNocmlua2luZyB0aGUgQ1BBIGNvZGUgYWdhaW4uDQo+IA0KPiBUb20sIHdvdWxkIHlvdSBiZSBz
-byBraW5kIGFzIHRvIHRlc3QgYWdhaW4/IFRoZXNlIHBhdGNoZXMgYXJlIHNpZ25pZmljYW50bHkN
-Cj4gZGlmZmVyZW50IGZyb20gd2hhdCBJIHNlbmQgeW91IHllc3RlcmRheS4NCj4gDQo+IC0tLQ0K
-PiBhcmNoL3g4Ni9tbS9tbV9pbnRlcm5hbC5oIHwgICAyICsNCj4gYXJjaC94ODYvbW0vcGFnZWF0
-dHIuYyAgICB8IDE2NyArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tDQo+IGFyY2gveDg2L21tL3RsYi5jICAgICAgICAgfCAgIDQgKy0NCj4gMyBmaWxlcyBjaGFu
-Z2VkLCA3OSBpbnNlcnRpb25zKCspLCA5NCBkZWxldGlvbnMoLSkNCj4gDQoNCg==
+On Fri, Nov 30, 2018 at 09:24:54AM +0800, Chao Fan wrote:
+> On Thu, Nov 29, 2018 at 12:55:21PM -0500, Masayoshi Mizuma wrote:
+> >On Thu, Nov 29, 2018 at 04:16:30PM +0800, Chao Fan wrote:
+> >> To fix the conflict between KASLR and memory-hotremove, SRAT table
+> >> should be parsed by RSDP pointer, then find the immovable
+> >> memory regions and store them in an array called immovable_mem[].
+> >> The array called immovable_mem[] will extern to KASLR, then
+> >> KASLR will avoid to extract kernel to these regions.
+> >> 
+> >> Add 'CONFIG_EARLY_PARSE_RSDP' which depends on RANDOMIZE_BASE &&
+> >> MEMORY_HOTREMOVE, cause only when both KASLR and memory-hotremove
+> >> are enabled, RSDP needs to be parsed in compressed period.
+> >> 
+> >> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> >> ---
+> >>  arch/x86/Kconfig                  |  10 +++
+> >>  arch/x86/boot/compressed/Makefile |   2 +
+> >>  arch/x86/boot/compressed/acpitb.c | 125 ++++++++++++++++++++++++++++++
+> >>  arch/x86/boot/compressed/kaslr.c  |   4 -
+> >>  arch/x86/boot/compressed/misc.h   |  20 +++++
+> >>  5 files changed, 157 insertions(+), 4 deletions(-)
+> >> 
+> >> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> >> index a29d49ef4d56..bc775968557b 100644
+> >> --- a/arch/x86/Kconfig
+> >> +++ b/arch/x86/Kconfig
+> >> @@ -2146,6 +2146,16 @@ config X86_NEED_RELOCS
+> >>  	def_bool y
+> >>  	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
+> >>  
+> >
+> >> +config CONFIG_EARLY_PARSE_RSDP
+> >
+> >config EARLY_PARSE_RSDP
+> >
+> >> +	bool "Parse RSDP pointer on compressed period for KASLR"
+> >> +	def_bool n
+> >
+> >Should be def_bool y?
+> 
+> I will change it to y.
+> 
+> >It is better to enable EARLY_PARSE_RSDP by default if 
+> >RANDOMIZE_BASE and MEMORY_HOTREMOVE are enabled.
+> >
+> >> +	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
+> >> +	help
+> >> +	  This option parses RSDP pointer in compressed period. Works
+> >> +	  for KASLR to get memory information by SRAT table and choose
+> >> +	  immovable memory to extract kernel.
+> >> +	  Say Y if you want to use both KASLR and memory-hotremove.
+> >> +
+> >>  config PHYSICAL_ALIGN
+> >>  	hex "Alignment value to which kernel should be aligned"
+> >>  	default "0x200000"
+> >> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> >> index 466f66c8a7f8..4cbfb58bf083 100644
+> >> --- a/arch/x86/boot/compressed/Makefile
+> >> +++ b/arch/x86/boot/compressed/Makefile
+> >> @@ -84,6 +84,8 @@ ifdef CONFIG_X86_64
+> >>  	vmlinux-objs-y += $(obj)/pgtable_64.o
+> >>  endif
+> >>  
+> >> +vmlinux-objs-$(CONFIG_EARLY_PARSE_RSDP) += $(obj)/acpitb.o
+> >> +
+> >>  $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
+> >>  
+> >>  vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
+> >> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+> >> index 82d27c4b8978..023b33d0cd3b 100644
+> >> --- a/arch/x86/boot/compressed/acpitb.c
+> >> +++ b/arch/x86/boot/compressed/acpitb.c
+> >> @@ -195,3 +195,128 @@ static acpi_physical_address bios_get_rsdp_addr(void)
+> >>  		return (acpi_physical_address)address;
+> >>  	}
+> >>  }
+> >> +
+> >> +/* Used to determine RSDP table, based on acpi_os_get_root_pointer(). */
+> >> +static acpi_physical_address get_rsdp_addr(void)
+> >> +{
+> >> +	acpi_physical_address pa = 0;
+> >> +
+> >> +	pa = get_acpi_rsdp();
+> >> +
+> >> +	if (!pa)
+> >> +		pa = efi_get_rsdp_addr();
+> >> +
+> >> +	if (!pa)
+> >> +		pa = bios_get_rsdp_addr();
+> >> +
+> >> +	return pa;
+> >> +}
+> >> +
+> >> +/* Compute SRAT table from RSDP. */
+> >> +static struct acpi_table_header *get_acpi_srat_table(void)
+> >> +{
+> >> +	acpi_physical_address acpi_table;
+> >> +	acpi_physical_address root_table;
+> >> +	struct acpi_table_header *header;
+> >> +	struct acpi_table_rsdp *rsdp;
+> >> +	int num_entries;
+> >> +	char arg[10];
+> >> +	u8 *entry;
+> >> +	u32 size;
+> >> +	u32 len;
+> >> +
+> >> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
+> >> +	if (!rsdp)
+> >> +		return NULL;
+> >> +
+> >> +	/* Get RSDT or XSDT from RSDP. */
+> >
+> >> +	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
+> >> +	    !strncmp(arg, "rsdt", 4)) &&
+> >> +	    rsdp->xsdt_physical_address &&
+> >> +	    rsdp->revision > 1) {
+> >> +		root_table = rsdp->xsdt_physical_address;
+> >> +		size = ACPI_XSDT_ENTRY_SIZE;
+> >> +	} else {
+> >> +		root_table = rsdp->rsdt_physical_address;
+> >> +		size = ACPI_RSDT_ENTRY_SIZE;
+> >> +	}
+> >> +
+> >> +	/* Get ACPI root table from RSDT or XSDT.*/
+> >> +	header = (struct acpi_table_header *)root_table;
+> >> +	if (!header)
+> >> +		return NULL;
+> >> +
+> >> +	len = header->length;
+> >> +	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
+> >
+> >> +	if (num_entries > MAX_ACPI_SIG)
+> >> +		return NULL;
+> >
+> >I think this check isn't needed...
+> >
+> >> +
+> >> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+> >> +
+> >> +	while (num_entries--) {
+> >> +		u64 address64;
+> >> +
+> >> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+> >> +			acpi_table = ((acpi_physical_address)
+> >> +				      (*ACPI_CAST_PTR(u32, entry)));
+> >> +		else {
+> >> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
+> >> +			acpi_table = (acpi_physical_address) address64;
+> >> +		}
+> >> +
+> >> +		if (acpi_table) {
+> >> +			header = (struct acpi_table_header *)acpi_table;
+> >> +
+> >> +			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
+> >> +				return header;
+> >> +		}
+> >> +		entry += size;
+> >> +	}
+> >> +	return NULL;
+> >> +}
+> >> +
+> >> +/*
+> >> + * According to ACPI table, filter the immovable memory regions
+> >> + * and store them in immovable_mem[].
+> >> + */
+> >> +void get_immovable_mem(void)
+> >> +{
+> >> +	struct acpi_table_header *table_header;
+> >> +	struct acpi_subtable_header *table;
+> >> +	struct acpi_srat_mem_affinity *ma;
+> >> +	unsigned long table_end;
+> >> +	char arg[10];
+> >> +	int i = 0;
+> >> +
+> >> +	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
+> >> +	    !strncmp(arg, "off", 3))
+> >> +		return;
+> >> +
+> >> +	table_header = get_acpi_srat_table();
+> >> +	if (!table_header)
+> >> +		return;
+> >> +
+> >> +	table_end = (unsigned long)table_header + table_header->length;
+> >> +	table = (struct acpi_subtable_header *)
+> >> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+> >> +
+> >> +	while (((unsigned long)table) +
+> >> +		       sizeof(struct acpi_subtable_header) < table_end) {
+> >> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+> >> +			ma = (struct acpi_srat_mem_affinity *)table;
+> >> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+> >> +				immovable_mem[i].start = ma->base_address;
+> >> +				immovable_mem[i].size = ma->length;
+> >> +				i++;
+> >> +			}
+> >> +
+> >> +			if (i >= MAX_NUMNODES*2) {
+> >> +				debug_putstr("Too many immovable memory regions, aborting.\n");
+> >> +				return;
+> >> +			}
+> >> +		}
+> >> +		table = (struct acpi_subtable_header *)
+> >> +			((unsigned long)table + table->length);
+> >> +	}
+> >> +	num_immovable_mem = i;
+> >> +}
+> >> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> >> index 9ed9709d9947..b251572e77af 100644
+> >> --- a/arch/x86/boot/compressed/kaslr.c
+> >> +++ b/arch/x86/boot/compressed/kaslr.c
+> >> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
+> >>  #define KASLR_COMPRESSED_BOOT
+> >>  #include "../../lib/kaslr.c"
+> >>  
+> >> -struct mem_vector {
+> >> -	unsigned long long start;
+> >> -	unsigned long long size;
+> >> -};
+> >>  
+> >>  /* Only supporting at most 4 unusable memmap regions with kaslr */
+> >>  #define MAX_MEMMAP_REGIONS	4
+> >> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+> >> index 809c31effa4b..d94e2a419c13 100644
+> >> --- a/arch/x86/boot/compressed/misc.h
+> >> +++ b/arch/x86/boot/compressed/misc.h
+> >> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
+> >>  			    unsigned long *output,
+> >>  			    unsigned long output_size,
+> >>  			    unsigned long *virt_addr);
+> >> +struct mem_vector {
+> >> +	unsigned long long start;
+> >> +	unsigned long long size;
+> >> +};
+> >> +
+> >>  /* cpuflags.c */
+> >>  bool has_cpuflag(int flag);
+> >>  #else
+> >> @@ -118,5 +123,20 @@ void set_sev_encryption_mask(void);
+> >>  #endif
+> >>  
+> >>  /* acpitb.c */
+> >> +#ifdef CONFIG_RANDOMIZE_BASE
+> >> +/* Store the amount of immovable memory regions */
+> >> +int num_immovable_mem;
+> >> +#endif
+> >> +
+> >> +#ifdef CONFIG_EARLY_PARSE_RSDP
+> >> +void get_immovable_mem(void);
+> >
+> >> +/* There are 72 kinds of ACPI_SIG in head file of ACPI. */
+> >> +#define MAX_ACPI_SIG	72
+> >
+> >The 72 isn't the specification of ACPI, right? So the number
+> 
+> Yes, it's from  ACPI code, include/acpi/actbl*h.
+> Boris said there should be a check for the num_entries,
+> I didn't get a good idea, so I use the max number to check it.
+> So do you have some advice?
+
+Ah, got it. How about adding the check for len to prevent the wrap?
+Like as:
+
+	len = header->length;
+	if (len <= sizeof(struct acpi_table_header))
+		return NULL;
+ 	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
+
+Thanks,
+Masa
