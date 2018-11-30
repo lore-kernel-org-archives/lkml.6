@@ -2,114 +2,117 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2257C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D12F4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 649BD2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:26:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVTvFcMV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649BD2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9DCCC2086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 01:27:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DCCC2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeK3MeH (ORCPT
+        id S1727284AbeK3Meu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 07:34:07 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34036 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeK3MeH (ORCPT
+        Fri, 30 Nov 2018 07:34:50 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37368 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeK3Met (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 07:34:07 -0500
-Received: by mail-lf1-f68.google.com with SMTP id p6so2932029lfc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 17:26:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=imTXz5sZlu1Kh8pfeNdiHOOHYdQh1mhRs+8hfeMyx/0=;
-        b=YVTvFcMVFW4d6Qtv3Gks1YZGGyVCSefK5irFL+CjNcGCDo7iI+YfcYrh4TOEntWcCP
-         B8JLC+l0UdUpI03kiKWKiTS0hQXm35qCSaFVL2fFNr4TIL4Jvco9+AuXlUZO4Ul+zJtD
-         /WuRE7+3V/FpE+G1bTiX9/epsPNiOBDdBouQzb36Wm8cUADJnMV6hJpokbUnhaIN1v8/
-         WUuqdLvo6JXL2XlIWuV3s5yxd+EG/Kv458HIOHlgd96gemRkTdPryKV6lMe00zvwHvI+
-         FpmdYPXpmPQONQr0jL9vwuvd9vfbc2+5cC1pVbww/k1Njwm7Qq4YsDneEqSz0KJFBJJQ
-         YyEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=imTXz5sZlu1Kh8pfeNdiHOOHYdQh1mhRs+8hfeMyx/0=;
-        b=JpLU5EG9UwfmzVS/Py5e1K9iKcrTguyKing4bJCbzLilKrHcH8l3tsAgVI9lG//rcx
-         ZtYjJlZ/chu3jMYSNdG3S9CtGSu7C5ZmRf+pU6GYkVt+RBYU8yl66P/0qvMTEZNznE1F
-         LsqDNw/sI3rhsRWVG0Epp9GlsBbbX7jLobtkVpHHEPaN1xv0uUoIhnGPMKZwlbiEyw+O
-         GpiUQNbVfh9hoI/rs7d/TO3G1k8ElmoXmtuxD8ea1mQRRKGzlQVYs7JypoMJDNPhQAp8
-         kuP0tTDwCof593mTcD9eEzMLb4rLIQib4IRJNFd67/Nc6LzXo92X7c7pmxRG8zLLm61q
-         ui4g==
-X-Gm-Message-State: AA+aEWb7od509CFtUQEqilFXvQRTVslTkUtD20duqnzV++5SoCooAQ8x
-        bJy+3NGNIdFZByk3bXNvi04=
-X-Google-Smtp-Source: AFSGD/VnATtqBLw0BdwFAvAmEpDlT6x+WaXVlEwoxi5zttbfvR/rd6c5cCTJJLwaOcsg6bZpEY9IOA==
-X-Received: by 2002:a19:6f0a:: with SMTP id k10mr2281069lfc.119.1543541194530;
-        Thu, 29 Nov 2018 17:26:34 -0800 (PST)
-Received: from z50.localnet (apn-31-0-32-254.dynamic.gprs.plus.pl. [31.0.32.254])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm535382ljk.53.2018.11.29.17.26.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 17:26:33 -0800 (PST)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Petr Cvek <petr.cvek@tul.cz>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH 2/5 v7] regulator: fixed/gpio: Pull inversion/OD into gpiolib
-Date:   Fri, 30 Nov 2018 02:28:36 +0100
-Message-ID: <3345160.3ImKfB1b4q@z50>
-In-Reply-To: <20181119071126.8889-2-linus.walleij@linaro.org>
-References: <20181119071126.8889-1-linus.walleij@linaro.org> <20181119071126.8889-2-linus.walleij@linaro.org>
+        Fri, 30 Nov 2018 07:34:49 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gSXaF-0008Ii-6j; Fri, 30 Nov 2018 01:27:07 +0000
+Date:   Fri, 30 Nov 2018 01:27:07 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Paul Moore <paul@paul-moore.com>, omosnace@redhat.com,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+Message-ID: <20181130012707.GK2217@ZenIV.linux.org.uk>
+References: <20181127115246.00967523@canb.auug.org.au>
+ <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+ <20181127225013.133adc7d@canb.auug.org.au>
+ <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+ <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
+ <CAHC9VhRthWKfgYenGq6Az+jVQ+76wCeBhBcMyo9zZwv+nBhy3A@mail.gmail.com>
+ <20181129235130.GI2217@ZenIV.linux.org.uk>
+ <84796ec6-2603-7957-b159-e4c8b1e7362c@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84796ec6-2603-7957-b159-e4c8b1e7362c@schaufler-ca.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Nov 29, 2018 at 04:57:20PM -0800, Casey Schaufler wrote:
 
-On Monday, November 19, 2018 8:11:23 AM CET Linus Walleij wrote:
-> This pushes the handling of inversion semantics and open drain
-> settings to the GPIO descriptor and gpiolib. All affected board
-> files are also augmented.
+> > Question: what *should* happen if we try to cross into a submount and find
+> > that the thing on the other side is already mounted elsewhere, with incompatible
+> > LSM options?  Ditto for referrals, with an extra twist - what if we are given
+> > 3 alternatives, the first two already mounted elsewhere with incompatible
+> > options, the third one not mounted anywhere yet?
 > 
-> This is especially nice since we don't have to have any
-> confusing flags passed around to the left and right littering
-> the fixed and GPIO regulator drivers and the regulator core.
-> It is all just very straight-forward: the core asks the GPIO
-> line to be asserted or deasserted and gpiolib deals with the
-> rest depending on how the platform is configured: if the line
-> is active low, it deals with that, if the line is open drain,
-> it deals with that too.
+> I fear that the safe answer and the containers answer are likely
+> to differ. The safe answer has to be to refuse the mount.
 > 
-> Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com> # OMAP1
+> > Incidentally, should smack have ->sb_clone_mnt_opts()?
+> 
+> Probably, but I could never figure out what it was for,
+> and haven't identified a problem with not using it.
 
-Tested-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>	#OMAP1 Amstrad Delta
+Transferring the Linux S&M options when crossing into a submount.
 
-Thanks,
-Janusz
+Frankly, the set of mount-related hooks is atrocious - way too much
+duplication between them (sb_kern_mount vs. sb_set_mnt_opts vs.
+sb_parse_opts_str vs. sb_clone_mnt_opts) and that, actually, is the
+worst part of safely untangling the mount-API series ;-/
 
+And then there's sb_mount, with 3 instances and arseloads of
+races in 2 out of 3.  Consider e.g. this:
+        if (need_dev) {
+                /* Get mount point or device file. */
+                if (!dev_name || kern_path(dev_name, LOOKUP_FOLLOW, &path)) {
+                        error = -ENOENT;
+                        goto out;
+                }
+                obj.path1 = path;
+                requested_dev_name = tomoyo_realpath_from_path(&path);
+                if (!requested_dev_name) {
+                        error = -ENOENT;
+                        goto out;
+                }
+in tomoyo.  OK, so we do a pathname resolution of dev_name (including
+the source in mount --bind case).  Then we apply checks to it...
+and proceed to...
+        if (obj.path1.dentry)
+                path_put(&obj.path1);
+... discard the result of lookup.  Then the caller proceeds to do
+the work, including (at various locations, depending upon the
+mount(2) flags, fs type, etc.) looking dev_name up.  Could you spell TOCTOU?
 
+Or, for example, this:
+        if (!dev_name || !*dev_name)
+                return -EINVAL;
+
+        flags &= MS_REC | MS_BIND;
+
+        error = kern_path(dev_name, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &old_path);
+        if (error)
+                return error;
+
+        get_buffers(buffer, old_buffer);
+        error = fn_for_each_confined(label, profile,
+                        match_mnt(profile, path, buffer, &old_path, old_buffer,
+                                  NULL, flags, NULL, false));
+        put_buffers(buffer, old_buffer);
+        path_put(&old_path);
+Same story, same TOCTOU race, this time in apparmour...
