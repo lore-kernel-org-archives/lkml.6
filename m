@@ -2,92 +2,69 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819A8C64EB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AC8C64EB4
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5D7214C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:28:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5D7214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 2105F2080A
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 20:28:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2105F2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbeLAHin (ORCPT
+        id S1727038AbeLAHiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 02:38:43 -0500
-Received: from anholt.net ([50.246.234.109]:41020 "EHLO anholt.net"
+        Sat, 1 Dec 2018 02:38:50 -0500
+Received: from mga04.intel.com ([192.55.52.120]:49570 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbeLAHiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 02:38:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 00E6110A156D;
-        Fri, 30 Nov 2018 12:27:52 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id s43h6Es2pkh1; Fri, 30 Nov 2018 12:27:49 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 79BF110A1521;
-        Fri, 30 Nov 2018 12:27:44 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 663CA2FE2D5E; Fri, 30 Nov 2018 12:27:43 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH v3 0/5] BCM2835 PM driver (MFD version respin)
-Date:   Fri, 30 Nov 2018 12:27:38 -0800
-Message-Id: <20181130202743.20585-1-eric@anholt.net>
-X-Mailer: git-send-email 2.20.0.rc1
+        id S1726624AbeLAHit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 02:38:49 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 12:28:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
+   d="scan'208";a="121024583"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmsmga001.fm.intel.com with ESMTP; 30 Nov 2018 12:28:21 -0800
+Date:   Fri, 30 Nov 2018 12:28:41 -0800
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] x86/umip: Print UMIP line only once
+Message-ID: <20181130202841.GA4214@ranerica-svr.sc.intel.com>
+References: <20181127205936.30331-1-bp@alien8.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127205936.30331-1-bp@alien8.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guenter had some minor changes to patch #2, which I've done in this
-version.
+On Tue, Nov 27, 2018 at 09:59:36PM +0100, Borislav Petkov wrote:
+> From: Borislav Petkov <bp@suse.de>
+> 
+> ... instead of issuing it per CPU and flooding dmesg unnecessarily.
+> 
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
 
-Eric Anholt (5):
-  dt-bindings: soc: Add a new binding for the BCM2835 PM node.
-  bcm2835-pm: Move bcm2835-watchdog's DT probe to an MFD.
-  soc: bcm: bcm2835-pm: Add support for power domains under a new
-    binding.
-  ARM: bcm283x: Extend the WDT DT node out to cover the whole PM block.
-  ARM: bcm283x: Switch V3D over to using the PM driver instead of
-    firmware.
+This make sense to me. I also noticed that this message was being
+printed when CPUs were put offline and the back online. There was
+no need for it.
 
- .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |  42 ++
- arch/arm/boot/dts/bcm2835-rpi.dtsi            |   4 -
- arch/arm/boot/dts/bcm283x.dtsi                |  16 +-
- arch/arm/mach-bcm/Kconfig                     |   1 +
- drivers/mfd/Makefile                          |   1 +
- drivers/mfd/bcm2835-pm.c                      |  92 +++
- drivers/soc/bcm/Kconfig                       |  11 +
- drivers/soc/bcm/Makefile                      |   1 +
- drivers/soc/bcm/bcm2835-power.c               | 661 ++++++++++++++++++
- drivers/watchdog/bcm2835_wdt.c                |  26 +-
- include/dt-bindings/soc/bcm2835-pm.h          |  28 +
- include/linux/mfd/bcm2835-pm.h                |  14 +
- 12 files changed, 873 insertions(+), 24 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
- create mode 100644 drivers/mfd/bcm2835-pm.c
- create mode 100644 drivers/soc/bcm/bcm2835-power.c
- create mode 100644 include/dt-bindings/soc/bcm2835-pm.h
- create mode 100644 include/linux/mfd/bcm2835-pm.h
-
--- 
-2.20.0.rc1
-
+Thanks and BR,
+Ricardo
