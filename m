@@ -2,112 +2,184 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB98C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6774EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270642081C
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:05:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 147E1213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 03:07:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="mdkos8df"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270642081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=live.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Jb5EPmRV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147E1213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeK3ONZ (ORCPT
+        id S1726728AbeK3OPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 09:13:25 -0500
-Received: from mail-oln040092033094.outbound.protection.outlook.com ([40.92.33.94]:25684
-        "EHLO NAM06-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726161AbeK3ONZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 09:13:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JEEF4gna/fCcT0LIG89KEGL3RKAIu4PcOgJxcFHTmN0=;
- b=mdkos8df7ScFbE0ODXdonlBHVyoYRww5dfk9lgiM/Ahd4l/L8J5p8KCQjCZcJoU4Ce86r9IAuN6fVRFIQcPAwU5jaawFwERVtYo0jW32i3LGZyQHLF/iI6fjoFmKexXaYiS2I+0bm6FMfWy7FREkpoyXLz6JRhbWlBdFonwVIE+1IazraS5pZGTwFFSUgTflNKSrmLHeUkSpaPJKnr5MJf9+mQwJ9sRYTGtmhma1Dqoyms69NCgMleE0YpWMWCRznRieN9RZm4CLR7XXqgPkK0sKHIoGGT92wUBYgnuhkUr/LrBeXQKidp2E1P0dYjhQFiGsEjAxV7ubjyBo9KNi/w==
-Received: from BL2NAM06FT003.Eop-nam06.prod.protection.outlook.com
- (10.152.106.59) by BL2NAM06HT023.Eop-nam06.prod.protection.outlook.com
- (10.152.107.2) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1420.0; Fri, 30 Nov
- 2018 03:05:38 +0000
-Received: from SN1PR13MB0304.namprd13.prod.outlook.com (10.152.106.59) by
- BL2NAM06FT003.mail.protection.outlook.com (10.152.106.155) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1420.0 via Frontend Transport; Fri, 30 Nov 2018 03:05:38 +0000
-Received: from SN1PR13MB0304.namprd13.prod.outlook.com
- ([fe80::399e:4b0e:8423:5bad]) by SN1PR13MB0304.namprd13.prod.outlook.com
- ([fe80::399e:4b0e:8423:5bad%3]) with mapi id 15.20.1404.010; Fri, 30 Nov 2018
- 03:05:38 +0000
-From:   Yueyi Li <liyueyi@live.com>
-To:     Dave Rodgman <dave.rodgman@arm.com>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "w@1wt.eu" <w@1wt.eu>,
-        "donb@securitymouse.com" <donb@securitymouse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "markus@oberhumer.com" <markus@oberhumer.com>
-CC:     nd <nd@arm.com>
-Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
-Thread-Topic: [PATCH v2] lzo: fix ip overrun during compress.
-Thread-Index: AQHUhuxfhCM/itRkZUmE23ES7mjh0qVlNWoAgAHDqgCAAKwqAA==
-Date:   Fri, 30 Nov 2018 03:05:38 +0000
-Message-ID: <SN1PR13MB030426DBA527C725AE28B5A9DFD30@SN1PR13MB0304.namprd13.prod.outlook.com>
-References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
- <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
- <c03227b3-1c79-d214-5880-19f2f1ea0491@arm.com>
-In-Reply-To: <c03227b3-1c79-d214-5880-19f2f1ea0491@arm.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR03CA0026.apcprd03.prod.outlook.com
- (2603:1096:203:2f::14) To SN1PR13MB0304.namprd13.prod.outlook.com
- (2a01:111:e400:c42a::30)
-x-incomingtopheadermarker: OriginalChecksum:F837E1216827B0D880A1693863126E8AB7FC749D2E3D7FF25ECA67C6F6D8B5EB;UpperCasedChecksum:68A3280B817CF404AC710605724811C5D8A91F9B5B93085DFE7CF5C9BABA4E87;SizeAsReceived:7841;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [KeZkD8Gvw26xp3rDnIxsnl/MXxB5c0fK]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL2NAM06HT023;6:vU7904V9dlQThX80K9qjb2KwlIR2AKO8w1X7J3Jvk1+PfPsC0ZiDxsKzzYvwfHPeL6Gl2Bxykmuays94Z2HyU2mKam30+xVaYpN1sACR41GjQK/WhnVrAepu6yx4YKLxk2oTnDlorpuRQQuTE84EX/bdIyDopCv/zI5VgampkA1AUR01iViLYdeob5rmnZ/VAIKJVs2sO5d7mWbfSiH0l/X36BmcIPYqrAA06piVq1D7VrpYhAp0DE/NihqGi36G80N8tu/r21D9y7qwrhJMyzlnRUNO7qmmJmv2gyfTEVhDS/GtB9vR/84JxORsa9eHGR2ZUhOY9c9blj88/Yn36qeCDHcUVs2grVHH8Qt+DPe7HSqzTkdYk/mnmzHW/T6RBYKACeccLRgJ9Lt1guZG640SuxQDwPBoUZokcleofLxLfU1yCV+PPZwaVRAh8hbGWGlJcfqtBgeptrYTKKfilg==;5:iXqbcXWwl7ju8cNYhZrumnqOSdiQ4/udqTOasMv4tJaovuySgnqKXWXVNAFKAcJuazeQxvIp6B93DCupiv5IPZ+gCTIXQUBYXlqfsRy95AZrNhrc1fq+krcvSLl2/vbI+X3ohcTRx+mfI6O0pb3JVMzU/+1+d7p1iG/vzjc3mHQ=;7:U7+iBpUGrfPdHWEycYXWvSpM3CpuETzuMNUtV47w7ljlaTquswl27iCY7xY92UKItuTtUa++ALOBArl7BS42KyJ5y7eOAsjnV8OOlxtHUZ5qXVYO2aD92cX8LesFmsnSNldt09o8DYq1AsA9w/JQ9g==
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(20181119015)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:BL2NAM06HT023;
-x-ms-traffictypediagnostic: BL2NAM06HT023:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:BL2NAM06HT023;BCL:0;PCL:0;RULEID:;SRVR:BL2NAM06HT023;
-x-microsoft-antispam-message-info: 8C0S+f9k0G/opC9kt0hEbPaRrmpqGgMrEUek/fRILGPfobMmR3AtMpSUESO3UVNk
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C6EBD592B08D0F498AA624BA786DEEC9@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 30 Nov 2018 09:15:35 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:12123 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbeK3OPe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 09:15:34 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c00a9880000>; Thu, 29 Nov 2018 19:07:52 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 29 Nov 2018 19:07:47 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 29 Nov 2018 19:07:47 -0800
+Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Nov
+ 2018 03:07:45 +0000
+Subject: Re: [PATCH] thermal: tegra: add get_trend ops
+To:     Eduardo Valentin <edubezval@gmail.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        <daniel.lezcano@linaro.org>, <linux-tegra@vger.kernel.org>,
+        <rui.zhang@intel.com>, <linux-kernel@vger.kernel.org>
+References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
+ <20181120153833.GB28796@ulmo>
+ <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
+ <20181129170145.GG2688@localhost.localdomain>
+From:   Wei Ni <wni@nvidia.com>
+Message-ID: <f2d10339-4086-7102-9949-719483f545bf@nvidia.com>
+Date:   Fri, 30 Nov 2018 11:07:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: live.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: b6587b75-6f1a-4db7-b0b6-5cad10ef59a7
-X-MS-Exchange-CrossTenant-Network-Message-Id: a44e54b4-be0b-4f82-1385-08d65670b34a
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: b6587b75-6f1a-4db7-b0b6-5cad10ef59a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2018 03:05:38.1462
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2NAM06HT023
+In-Reply-To: <20181129170145.GG2688@localhost.localdomain>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543547272; bh=YRKXUlBstRrLkeRgSYEE/JKNdSIS2sd/PSlpHIO88ME=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Jb5EPmRVRK1512VXrpuDmgT06jvLy2XqJaZcqcw02tb6xEBrkRcGC1geqtoSsYE1T
+         PTRX2TO2dz1M9w9ZsNzo2GqM0XSU2+gO54VXVv6Mny7kqRnNS6gzgvIiU1+aFCs/pd
+         27qc0TzsBAlFQuRdmwAmvs8tj03oCG1W4aF84KfyJmh4iuJ8NG4bWigDQ+QGkmfLZC
+         1RMQSOotZW9ZfZqO0lODgJksWmKgAh2wrpnHK306R7x2ZVfDu38BA9VMpOsg1uGFTc
+         u3yEVsZIMkSs4NM5Dq1UT+bzxu7d5wOA129pCqyWW0rVFDfneDrfy+pb5kXbt80WhW
+         vGF1WAjRFJinQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRGF2ZSwNCg0KDQpPbiAyMDE4LzExLzMwIDA6NDksIERhdmUgUm9kZ21hbiB3cm90ZToNCj4g
-T24gMjgvMTEvMjAxOCAxOjUyIHBtLCBEYXZpZCBTdGVyYmEgd3JvdGU6DQo+DQo+PiBUaGUgZml4
-IGlzIGFkZGluZyBhIGZldyBicmFuY2hlcyB0byBjb2RlIHRoYXQncyBzdXBwb3NlZCB0byBiZSBh
-cyBmYXN0DQo+PiBhcyBwb3NzaWJsZS4gVGhlIGJyYW5jaGVzIHdvdWxkIGJlIGV2YWx1YXRlZCBh
-bGwgdGhlIHRpbWUgd2hpbGUNCj4+IHByb3RlY3RpbmcgYWdhaW5zdCBvbmUgc2lnbmxlIGJhZCBw
-YWdlIGFkZHJlc3MuIFRoaXMgZG9lcyBub3QgbG9vayBsaWtlDQo+PiBhIGdvb2QgcGVyZm9ybWFu
-Y2UgdHJhZGVvZmYuDQo+IEFzIGFuIGFsdGVybmF0aXZlLCBmb3IgYWxsIGJ1dCB0aGUgZmlyc3Qg
-Y2FzZSwgaW5zdGVhZCBvZjoNCj4NCj4gaWYgKHVubGlrZWx5KE9WRVJGTE9XX0FERF9DSEVDSyhp
-cCwgbV9sZW4pIHx8IChpcCArIG1fbGVuID49IGlwX2VuZCkpKQ0KPg0KPiBJJ2Qgc3VnZ2VzdCB3
-ZSBkbzoNCj4NCj4gaWYgKHVubGlrZWx5KChpcF9lbmQgLSBpcCkgPD0gbV9sZW4pKQ0KPg0KPiB3
-aGljaCB3aWxsIGJlIGFib3V0IGFzIGVmZmljaWVudCBhcyB3aGF0J3MgY3VycmVudGx5IHRoZXJl
-LCBidXQgZG9lc24ndA0KPiBoYXZlIGlzc3VlcyB3aXRoIG92ZXJmbG93Lg0KDQpPb2gsIHllcywg
-cHJldHR5IGdvb2Qgc29sdXRpb24gdG8gdGhpcywgdGhhbmtzLg0KDQo+IERhdmUNCg0KVGhhbmtz
-LA0KWXVleWkNCg==
+
+
+On 30/11/2018 1:01 AM, Eduardo Valentin wrote:
+> On Wed, Nov 21, 2018 at 02:36:10PM +0800, Wei Ni wrote:
+>>
+>>
+>> On 20/11/2018 11:38 PM, Thierry Reding wrote:
+>>> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
+>>>> Add support for get_trend ops that allows soctherm
+>>>> sensors to be used with the step-wise governor.
+>>>>
+>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>> ---
+>>>>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 34 insertions(+)
+>>>>
+>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>> index ed28110a3535..d2951fbe2b7c 100644
+>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> +static int tegra_thermctl_get_trend(void *data, int trip,
+>>>> +				    enum thermal_trend *trend)
+>>>> +{
+>>>> +	struct tegra_thermctl_zone *zone = data;
+>>>> +	struct thermal_zone_device *tz = zone->tz;
+>>>> +	int trip_temp, temp, last_temp, ret;
+>>>> +
+>>>> +	if (!tz)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	mutex_lock(&tz->lock);
+>>>> +	temp = tz->temperature;
+>>>> +	last_temp = tz->last_temperature;
+>>>> +	mutex_unlock(&tz->lock);
+>>>> +
+>>>> +	if (temp > trip_temp) {
+>>>> +		if (temp >= last_temp)
+>>>> +			*trend = THERMAL_TREND_RAISING;
+>>>> +		else
+>>>> +			*trend = THERMAL_TREND_STABLE;
+>>>> +	} else if (temp < trip_temp) {
+>>>> +		*trend = THERMAL_TREND_DROPPING;
+>>>> +	} else {
+>>>> +		*trend = THERMAL_TREND_STABLE;
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>
+>>> This looks like a reimplementation of the get_tz_trend() helper. Is
+>>> seems like that helper already has everything we need. Perhaps this
+>>> isn't working because of-thermal installs of_thermal_get_trend(), a
+>>> function that returns -EINVAL if the driver doesn't implement the
+>>> ->get_trend() callback.
+>>
+>> 1. The get_tz_trend() helper can work, because it has:
+>> if (tz->emul_temperature || !tz->ops->get_trend ||
+>>             tz->ops->get_trend(tz, trip, &trend)) {
+>> ...
+>> }
+>> the tz->ops->get_trend is of_thermal_get_trend(). If without special
+>> get_trend(), it will return -EINVAL, so it will implement the if block
+>> to get the "trend". If we have the special get_trend(), then the
+>> of_thermal_get_trend() will return 0, so this helper will not implement
+>> the if block, it will get the "trend" from the special get_trend().
+> 
+> The idea of the helper is to provide a trend in case drivers dont have
+> a specific way of doing so. 
+
+Yes, thanks for your explanation.
+
+> 
+>>
+>> 2. There has a little difference between the helper and our special
+>> callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
+>> get_tz_trend() helper didn't.
+>>
+> 
+> Yeah, if you are computing trend towards a trip, then yes, that is
+> different and this patch is needed.
+> 
+>>>
+>>> Perhaps a better way would be to do something like this in
+>>> thermal_zone_of_add_sensor():
+>>>
+>>> 	if (ops->get_trend)
+>>> 		tzd->ops->get_trend = of_thermal_get_trend;
+>>>
+>>> That's similar to how ->set_trips() and ->set_emul_temp() are set up
+>>> and should make sure that get_tz_trend() will do the right thing for
+>>> all drivers that don't implement a special ->get_trend().
+>>
+>> As above description, I think the of_thermal_get_trend() already can
+>> handle this case, doesn't need to change.
+>>
+>> Wei.
+>>
+>>>
+>>> Thierry
+>>>
