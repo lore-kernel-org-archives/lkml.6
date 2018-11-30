@@ -2,250 +2,170 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92125C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46800C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5562120660
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:53:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5562120660
+	by mail.kernel.org (Postfix) with ESMTP id 132C92146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:53:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132C92146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbeLADDA (ORCPT
+        id S1727497AbeLADDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:03:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49420 "EHLO mx1.redhat.com"
+        Fri, 30 Nov 2018 22:03:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55920 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeLADDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:03:00 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726966AbeLADDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:03:06 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5BE99C049596;
-        Fri, 30 Nov 2018 15:53:14 +0000 (UTC)
-Received: from redhat.com (ovpn-120-67.rdu2.redhat.com [10.10.120.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33B19105706A;
-        Fri, 30 Nov 2018 15:53:08 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 10:53:07 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     Maxime Coquelin <maxime.coquelin@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v3 01/13] virtio: add packed ring types and
- macros
-Message-ID: <20181130104957-mutt-send-email-mst@kernel.org>
-References: <20181121100330.24846-1-tiwei.bie@intel.com>
- <20181121100330.24846-2-tiwei.bie@intel.com>
- <1928ac96-3684-45c4-1e8c-09dff03bf308@redhat.com>
- <20181130095339.GA11984@debian>
- <20181130074720-mutt-send-email-mst@kernel.org>
- <13593b5c-c1dc-3ab3-a843-d62908e0c7e0@redhat.com>
- <20181130084722-mutt-send-email-mst@kernel.org>
- <20181130153737.GA15105@debian>
+        by mx1.redhat.com (Postfix) with ESMTPS id EFA7E300126C;
+        Fri, 30 Nov 2018 15:53:19 +0000 (UTC)
+Received: from [10.10.126.156] (ovpn-126-156.rdu2.redhat.com [10.10.126.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C29C95C21E;
+        Fri, 30 Nov 2018 15:53:09 +0000 (UTC)
+Subject: Re: [PATCH v2] mm: page_mapped: don't assume compound page is huge or
+ THP
+To:     Jan Stancek <jstancek@redhat.com>, linux-mm@kvack.org,
+        lersek@redhat.com, alex.williamson@redhat.com, aarcange@redhat.com,
+        rientjes@google.com, kirill@shutemov.name,
+        mgorman@techsingularity.net, mhocko@suse.com
+Cc:     linux-kernel@vger.kernel.org
+References: <eabca57aa14f4df723173b24891f4a2d9c501f21.1543526537.git.jstancek@redhat.com>
+ <c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <cf639c1b-9799-6507-04d5-fb3f3f3aa408@redhat.com>
+Date:   Fri, 30 Nov 2018 16:53:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181130153737.GA15105@debian>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 30 Nov 2018 15:53:14 +0000 (UTC)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 30 Nov 2018 15:53:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:37:37PM +0800, Tiwei Bie wrote:
-> On Fri, Nov 30, 2018 at 08:52:42AM -0500, Michael S. Tsirkin wrote:
-> > On Fri, Nov 30, 2018 at 02:01:06PM +0100, Maxime Coquelin wrote:
-> > > On 11/30/18 1:47 PM, Michael S. Tsirkin wrote:
-> > > > On Fri, Nov 30, 2018 at 05:53:40PM +0800, Tiwei Bie wrote:
-> > > > > On Fri, Nov 30, 2018 at 04:10:55PM +0800, Jason Wang wrote:
-> > > > > > 
-> > > > > > On 2018/11/21 下午6:03, Tiwei Bie wrote:
-> > > > > > > Add types and macros for packed ring.
-> > > > > > > 
-> > > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > > > ---
-> > > > > > >    include/uapi/linux/virtio_config.h |  3 +++
-> > > > > > >    include/uapi/linux/virtio_ring.h   | 52 ++++++++++++++++++++++++++++++++++++++
-> > > > > > >    2 files changed, 55 insertions(+)
-> > > > > > > 
-> > > > > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > > > > > > index 449132c76b1c..1196e1c1d4f6 100644
-> > > > > > > --- a/include/uapi/linux/virtio_config.h
-> > > > > > > +++ b/include/uapi/linux/virtio_config.h
-> > > > > > > @@ -75,6 +75,9 @@
-> > > > > > >     */
-> > > > > > >    #define VIRTIO_F_IOMMU_PLATFORM		33
-> > > > > > > +/* This feature indicates support for the packed virtqueue layout. */
-> > > > > > > +#define VIRTIO_F_RING_PACKED		34
-> > > > > > > +
-> > > > > > >    /*
-> > > > > > >     * Does the device support Single Root I/O Virtualization?
-> > > > > > >     */
-> > > > > > > diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-> > > > > > > index 6d5d5faa989b..2414f8af26b3 100644
-> > > > > > > --- a/include/uapi/linux/virtio_ring.h
-> > > > > > > +++ b/include/uapi/linux/virtio_ring.h
-> > > > > > > @@ -44,6 +44,13 @@
-> > > > > > >    /* This means the buffer contains a list of buffer descriptors. */
-> > > > > > >    #define VRING_DESC_F_INDIRECT	4
-> > > > > > > +/*
-> > > > > > > + * Mark a descriptor as available or used in packed ring.
-> > > > > > > + * Notice: they are defined as shifts instead of shifted values.
-> > > > > > 
-> > > > > > 
-> > > > > > This looks inconsistent to previous flags, any reason for using shifts?
-> > > > > 
-> > > > > Yeah, it was suggested to use shifts, as _F_ should be a bit
-> > > > > number, not a shifted value:
-> > > > > 
-> > > > > https://patchwork.ozlabs.org/patch/942296/#1989390
-> > > > 
-> > > > But let's add a _SPLIT_ variant that uses shifts consistently.
-> > > 
-> > > Maybe we could avoid adding SPLIT and PACKED, but define as follow:
-> > > 
-> > > #define VRING_DESC_F_INDIRECT_SHIFT 2
-> > > #define VRING_DESC_F_INDIRECT (1ull <<  VRING_DESC_F_INDIRECT_SHIFT)
-> > > 
-> > > #define VRING_DESC_F_AVAIL_SHIFT 7
-> > > #define VRING_DESC_F_AVAIL (1ull << VRING_DESC_F_AVAIL_SHIFT)
-> > > 
-> > > I think it would be better for consistency.
-> > 
-> > I don't think that will help. the problem is that
-> > most of the existing virtio code consistently uses _F_ as shifts.
-> > So we just need to do something about these 5 being inconsistent:
-> > 
-> > include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_NEXT      1
-> > include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_WRITE     2
-> > include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_INDIRECT  4
-> > include/uapi/linux/virtio_ring.h:#define VRING_USED_F_NO_NOTIFY 1
-> > include/uapi/linux/virtio_ring.h:#define VRING_AVAIL_F_NO_INTERRUPT     1
-> > 
-> > I do not want all of virtio to become verbose with _SHIFT, ergo
-> > we need to change the above 5 to have names which are with _F_ and
-> > have the bit number.
+On 30.11.18 13:06, Jan Stancek wrote:
+> LTP proc01 testcase has been observed to rarely trigger crashes
+> on arm64:
+>     page_mapped+0x78/0xb4
+>     stable_page_flags+0x27c/0x338
+>     kpageflags_read+0xfc/0x164
+>     proc_reg_read+0x7c/0xb8
+>     __vfs_read+0x58/0x178
+>     vfs_read+0x90/0x14c
+>     SyS_read+0x60/0xc0
 > 
-> How about something like this:
+> Issue is that page_mapped() assumes that if compound page is not
+> huge, then it must be THP. But if this is 'normal' compound page
+> (COMPOUND_PAGE_DTOR), then following loop can keep running
+> (for HPAGE_PMD_NR iterations) until it tries to read from memory
+> that isn't mapped and triggers a panic:
+>         for (i = 0; i < hpage_nr_pages(page); i++) {
+>                 if (atomic_read(&page[i]._mapcount) >= 0)
+>                         return true;
+> 	}
 > 
-> #define VRING_COMM_DESC_F_NEXT			0
-> #define VRING_COMM_DESC_F_WRITE			1
-> #define VRING_COMM_DESC_F_INDIRECT		2
+> I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
+> with a custom kernel module [1] which:
+> - allocates compound page (PAGEC) of order 1
+> - allocates 2 normal pages (COPY), which are initialized to 0xff
+>   (to satisfy _mapcount >= 0)
+> - 2 PAGEC page structs are copied to address of first COPY page
+> - second page of COPY is marked as not present
+> - call to page_mapped(COPY) now triggers fault on access to 2nd
+>   COPY page at offset 0x30 (_mapcount)
 > 
-> #define VRING_SPLIT_USED_F_NO_NOTIFY		0
-> #define VRING_SPLIT_AVAIL_F_NO_INTERRUPT	0
+> [1] https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
 > 
-> or
+> Fix the loop to iterate for "1 << compound_order" pages.
 > 
-> #define VRING_SPLIT_DESC_F_NEXT			0
-> #define VRING_SPLIT_DESC_F_WRITE		1
-> #define VRING_SPLIT_DESC_F_INDIRECT		2
+> Debugged-by: Laszlo Ersek <lersek@redhat.com>
+> Suggested-by: "Kirill A. Shutemov" <kirill@shutemov.name>
+> Signed-off-by: Jan Stancek <jstancek@redhat.com>
+> ---
+>  mm/util.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> #define VRING_SPLIT_USED_F_NO_NOTIFY		0
-> #define VRING_SPLIT_AVAIL_F_NO_INTERRUPT	0
+> Changes in v2:
+> - change the loop instead so we check also mapcount of subpages
 > 
-> #define VRING_PACKED_DESC_F_NEXT		0
-> #define VRING_PACKED_DESC_F_WRITE		1
-> #define VRING_PACKED_DESC_F_INDIRECT		2
+> diff --git a/mm/util.c b/mm/util.c
+> index 8bf08b5b5760..5c9c7359ee8a 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -478,7 +478,7 @@ bool page_mapped(struct page *page)
+>  		return true;
+>  	if (PageHuge(page))
+>  		return false;
+> -	for (i = 0; i < hpage_nr_pages(page); i++) {
+> +	for (i = 0; i < (1 << compound_order(page)); i++) {
+>  		if (atomic_read(&page[i]._mapcount) >= 0)
+>  			return true;
+>  	}
+> 
 
-As we aren't sharing code I think I prefer the second form.
-Maybe add VRING_NO_LEGACY so people can audit their code
-for assumptions?
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-We also want to guard layout definitions at the end of that file
-I think.
+-- 
 
-> > 
-> > 
-> > 
-> > > > 
-> > > > 
-> > > > > > 
-> > > > > > 
-> > > > > > > + */
-> > > > > > > +#define VRING_PACKED_DESC_F_AVAIL	7
-> > > > > > > +#define VRING_PACKED_DESC_F_USED	15
-> > > > > > > +
-> > > > > > >    /* The Host uses this in used->flags to advise the Guest: don't kick me when
-> > > > > > >     * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
-> > > > > > >     * will still kick if it's out of buffers. */
-> > > > > > > @@ -53,6 +60,23 @@
-> > > > > > >     * optimization.  */
-> > > > > > >    #define VRING_AVAIL_F_NO_INTERRUPT	1
-> > > > > > > +/* Enable events in packed ring. */
-> > > > > > > +#define VRING_PACKED_EVENT_FLAG_ENABLE	0x0
-> > > > > > > +/* Disable events in packed ring. */
-> > > > > > > +#define VRING_PACKED_EVENT_FLAG_DISABLE	0x1
-> > > > > > > +/*
-> > > > > > > + * Enable events for a specific descriptor in packed ring.
-> > > > > > > + * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
-> > > > > > > + * Only valid if VIRTIO_RING_F_EVENT_IDX has been negotiated.
-> > > > > > > + */
-> > > > > > > +#define VRING_PACKED_EVENT_FLAG_DESC	0x2
-> > > > > > 
-> > > > > > 
-> > > > > > Any reason for using _FLAG_ instead of _F_?
-> > > > > 
-> > > > > Yeah, it was suggested to not use _F_, as these are values,
-> > > > > should not have _F_:
-> > > > > 
-> > > > > https://patchwork.ozlabs.org/patch/942296/#1989390
-> > > > > 
-> > > > > Regards,
-> > > > > Tiwei
-> > > > > 
-> > > > > > 
-> > > > > > Thanks
-> > > > > > 
-> > > > > > 
-> > > > > > > +
-> > > > > > > +/*
-> > > > > > > + * Wrap counter bit shift in event suppression structure
-> > > > > > > + * of packed ring.
-> > > > > > > + */
-> > > > > > > +#define VRING_PACKED_EVENT_F_WRAP_CTR	15
-> > > > > > > +
-> > > > > > >    /* We support indirect buffer descriptors */
-> > > > > > >    #define VIRTIO_RING_F_INDIRECT_DESC	28
-> > > > > > > @@ -171,4 +195,32 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
-> > > > > > >    	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
-> > > > > > >    }
-> > > > > > > +struct vring_packed_desc_event {
-> > > > > > > +	/* Descriptor Ring Change Event Offset/Wrap Counter. */
-> > > > > > > +	__le16 off_wrap;
-> > > > > > > +	/* Descriptor Ring Change Event Flags. */
-> > > > > > > +	__le16 flags;
-> > > > > > > +};
-> > > > > > > +
-> > > > > > > +struct vring_packed_desc {
-> > > > > > > +	/* Buffer Address. */
-> > > > > > > +	__le64 addr;
-> > > > > > > +	/* Buffer Length. */
-> > > > > > > +	__le32 len;
-> > > > > > > +	/* Buffer ID. */
-> > > > > > > +	__le16 id;
-> > > > > > > +	/* The flags depending on descriptor type. */
-> > > > > > > +	__le16 flags;
-> > > > > > > +};
-> > > > > > > +
-> > > > > > > +struct vring_packed {
-> > > > > > > +	unsigned int num;
-> > > > > > > +
-> > > > > > > +	struct vring_packed_desc *desc;
-> > > > > > > +
-> > > > > > > +	struct vring_packed_desc_event *driver;
-> > > > > > > +
-> > > > > > > +	struct vring_packed_desc_event *device;
-> > > > > > > +};
-> > > > > > > +
-> > > > > > >    #endif /* _UAPI_LINUX_VIRTIO_RING_H */
+Thanks,
+
+David / dhildenb
