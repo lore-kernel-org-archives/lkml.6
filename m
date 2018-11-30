@@ -2,101 +2,100 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C58C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB2DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E98820868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:20:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4DE42082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 14:21:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nOqwGUi9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E98820868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GMkRrWEC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DE42082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeLABaV (ORCPT
+        id S1726964AbeLABbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 20:30:21 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40496 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbeLABaV (ORCPT
+        Fri, 30 Nov 2018 20:31:17 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35747 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726489AbeLABbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 20:30:21 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so2879578plq.7;
-        Fri, 30 Nov 2018 06:20:53 -0800 (PST)
+        Fri, 30 Nov 2018 20:31:16 -0500
+Received: by mail-wr1-f67.google.com with SMTP id 96so5487268wrb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 06:21:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9oxNtI/XqZntomgU2D7FhDJ5jw0eegFJ+kQ7TtHocgo=;
-        b=nOqwGUi9rZSZrQay0B5Vsg4K09K0fQUwnmsRxmq+627/l8YV8oaxE80jbybmZ2Wv6B
-         Hg2qI38SQXBQeMPSqlVpG8aTrxeW5UaDSZ8nWbPHwkfUdy4Pk0v8laFEe626rseuUX+M
-         QWFm7REreiMyvuzWC4QJ5tTxFgnjFNNBpugTQkxQWXeiKuDzuTGgx4SlzaiD1DFfWv/n
-         Cpqy6mWevJ7U0UQRKO/AwaYTT68dd1fZXaNqyW9hAAJjJ24kDwoEshmBQBl4kFTFxIqB
-         4LiIPBxvasj6v5gWhbSm/d9/5qrwg76D6F8JasScKTj9CyRt0M3AXfSsKWKdkiaDFlBS
-         h7/w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hrz6jHuLdhjE2uhw2f7vRbC/QCZBWo7QMTqDcGV57oc=;
+        b=GMkRrWEChzP4d00iC/Jm4I3/50OeDGaJQyFG3faVCG4F0itlTaPdnrCPMQWZ0FyM9J
+         pI7kNbgXD8pmTIu0M0vbgUj3sc1TDZrV4SC01h8g906slR84hwXKTosce3oil8y0Fev1
+         gtTuJ5pWnGw1UAXRSG/mbLrXuiGcEpx/oBl78=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9oxNtI/XqZntomgU2D7FhDJ5jw0eegFJ+kQ7TtHocgo=;
-        b=WpPktNRWoFo0UyzGjEdZT7y12MarEeoT15s4nUi731z005pmLp1W7AKGjUOwy16Oku
-         VsZ2fBnsVAVhg950ohK3cr4sCPvZu36gOqKFjdxif+Lu2r+R2CgA8VdmOgLkCrlZzy/h
-         h5C5ocQ/+Oqm0WG7UX+zgTluNAUMyhPB1ON42MuaT2PcyHXKjTrdfV7UxnyAEzG5ubvZ
-         llg8b+S8EPpo37uaij6RXq5c5wCKs4ih+HSy7pFerAY127CiftjF0qi6EIJ2JLbfiC2L
-         bVxiJfi8Tfzb9pnGUsJBqvms7lSQjQ411MunvOij1PmlVk9rNiU/ZHIJB6s+CTV8Dg/w
-         DWjQ==
-X-Gm-Message-State: AA+aEWYafipWGOfLtgO/vYCzAH9xAujAAf/mTnfzeYid6ZduI9pjoRml
-        +qrvGriOfOj4ezeLskR1BREQyX+h
-X-Google-Smtp-Source: AFSGD/WYDAlhWU8Foty8qJPAL62Y/uq7gywWJ0tbSQVFCiVim2g91KUnkf4HkiwI5x39DEPI/HI48A==
-X-Received: by 2002:a17:902:346:: with SMTP id 64mr6003073pld.337.1543587653047;
-        Fri, 30 Nov 2018 06:20:53 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g2sm7255594pfi.95.2018.11.30.06.20.50
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hrz6jHuLdhjE2uhw2f7vRbC/QCZBWo7QMTqDcGV57oc=;
+        b=XSrll02rbYzpvSKrdup2dtdK9//U9k+3eEMVBwSWrRVMafWwxhXYHEMHZl6XsPTjaq
+         1CQ/o3I41nEgBvFosqr74Y4C+L4QDTQ4/kULQKgqLCiOaD/dw+IcdVRCbD1BWErdmz1e
+         Wb1XVPxRCIeK3NxK91ODfQcVALYvhgkmy+W22lHMxRJAPa6Zzn80Xsf7NuXXQpF808h8
+         IB2AQSd8zbDUFpSJ0pKw7aaeBtQamDOVmvdGpMYtBOGgL/u0MliDYH5TSONtnRHtMORo
+         t9geZUlmqNLRP7Z5Bw4bYukq9/r3Y0FitOo7kFwwmk3ug5P7BkqOI5NG6iMey2D5bxU8
+         9t7w==
+X-Gm-Message-State: AA+aEWZANte+PeALu6cewnkIHLRE0/tD4GFODcklYRnhWthh/nXNfEa+
+        IwQFTRJz3wRXNuPKdVVGM6IfdQ==
+X-Google-Smtp-Source: AFSGD/X57sH87ghbVG0V8fxFCYa12nnxKNcEHe4GcNv71wfeJCAEvbcMXpCFNC5/em0GC1M6Dio1Kw==
+X-Received: by 2002:a5d:660e:: with SMTP id n14mr5054675wru.19.1543587707710;
+        Fri, 30 Nov 2018 06:21:47 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id t6sm1645962wru.11.2018.11.30.06.21.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 06:20:51 -0800 (PST)
-Subject: Re: [PATCH 4.14 000/100] 4.14.85-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20181129140058.768942700@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <e5bf27b0-5611-e2ea-c8b1-d08f3910e9d5@roeck-us.net>
-Date:   Fri, 30 Nov 2018 06:20:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 30 Nov 2018 06:21:46 -0800 (PST)
+Date:   Fri, 30 Nov 2018 22:21:40 +0800
+From:   leo.yan@linaro.org
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH] perf evsel: Correct clock unit to nanosecond
+Message-ID: <20181130142140.GB11833@leoy-ThinkPad-X240s>
+References: <1543572365-11706-1-git-send-email-leo.yan@linaro.org>
+ <20181130102154.GA3617@krava>
 MIME-Version: 1.0
-In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130102154.GA3617@krava>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 6:11 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.85 release.
-> There are 100 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Dec  1 14:00:29 UTC 2018.
-> Anything received after that time might be too late.
-> 
+On Fri, Nov 30, 2018 at 11:21:54AM +0100, Jiri Olsa wrote:
+> On Fri, Nov 30, 2018 at 06:06:05PM +0800, Leo Yan wrote:
+> > Since commit 0aa802a79469 ("perf stat: Get rid of extra clock display
+> > function"), the cpu and task clock unit has been changed from
+> > nanosecond value to millisecond value.  This introduces confusion for
+> > CPU run time statistics, we can see in below flow the clock value is
+> > scaled from nanosecond value to millisecond value; but this is
+> > contradiction with statistics type 'STAT_NSECS', which always takes
+> > clock as nanosecond unit.
 
-arm:allmodconfig, arm:exynos_defconfig
+[...]
 
-arch/arm/kernel/smp.c: In function 'secondary_biglittle_init':
-arch/arm/kernel/smp.c:117:19: error: implicit declaration of function 'lookup_processor'; did you mean 'lookup_resource'?
+> there was fix for this recently, could you please check
+> if it's working for you:
+>   6e269c85dcea perf stat: Fix shadow stats for clock events
 
-Also affects v4.19.5-111-gac4af649901b.
+Ah, I missed this patch ...
 
-Guenter
+Yeah, I tested this patch and can confirm this patch fixes
+this issue.
+
+Thanks,
+Leo Yan
