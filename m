@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45313C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42640C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F13452148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0742A2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 13:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZfoLWyH+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F13452148E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dNl1ixhp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0742A2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbeLAAdE (ORCPT
+        id S1727408AbeLAAdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:33:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48194 "EHLO
+        Fri, 30 Nov 2018 19:33:07 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48338 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbeLAAdE (ORCPT
+        with ESMTP id S1727310AbeLAAdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 19:33:04 -0500
+        Fri, 30 Nov 2018 19:33:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iD/dRc9UIv9SfqvzdC8Dc4U8+KY0iTA1zzLpZCyDmfU=; b=ZfoLWyH+3Kgr0g0l7ugdbg7gji
-        D4JGHdW7FkbTASKgJbZ4ogfSvRlpts+iZt0Acp7iFEpcmz6xSj5y3wCsRtnw3mtP+5AWIkboUqSXE
-        RHTxIrtaf/MnMi+nAEZO171l+6Y7YdccUKdLxQq9SN/AGFJQdzgILnpatGOvVvD1nqJ0xzYoGjgYD
-        hXN2YgLgJssb1Iq4Fqsd3MLcNdSK4OXBog2SlKiHoFO3ZjDJ76s/zrxso6yM5iu0tT/2i0f91Hbpf
-        M6HVx9J68csbGRDp9rhX8n8lcPB1UFYIh/sxNJUlg3XgDKInuraWTdCopLvGZhHg+PJ36G68nHPf3
-        NvkDZstQ==;
+        bh=SIFzBEc7j6qgeNt7BuWlURIi04w4uDKFXrRX3hXECw0=; b=dNl1ixhpVaTQyOBGJtLirB9eWC
+        AvJWY1+pNZWMhcyb7HWymzY0F5n/x3uQdD6GhLa16w4MTf893b+OzlRzhkPusJgs78K6sDr0BjR3c
+        tWaAA50erZmOjr4Hb/j0kaRHcVWSaUjlaxMblPY0k8GbVPAwxpACUx5SfjWMKallYFJ8z757PYeOj
+        CAVtVdCNWeOwBxBtsz3el5wQc+vyTo1xDD2gXEbKvRmkYx3r6ny5PcYkYRjiFZ62h8CuceVeTazNI
+        GZwTJjCJB5rUmZDwjMyf2LF9k3qMXBGxnTXDWaW3UpP7MEPQ7y2B4fajTEwtbaG4B1Jpj/gxMXAyy
+        pdKWshWw==;
 Received: from 089144206221.atnat0015.highway.bob.at ([89.144.206.221] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSilY-0004gK-H6; Fri, 30 Nov 2018 13:23:33 +0000
+        id 1gSilh-0004pw-IQ; Fri, 30 Nov 2018 13:23:42 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     iommu@lists.linux-foundation.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -52,9 +52,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 11/23] alpha: remove the mapping_error dma_map_ops method
-Date:   Fri, 30 Nov 2018 14:22:19 +0100
-Message-Id: <20181130132231.16512-12-hch@lst.de>
+Subject: [PATCH 14/23] ia64/sn: remove the mapping_error dma_map_ops method
+Date:   Fri, 30 Nov 2018 14:22:22 +0100
+Message-Id: <20181130132231.16512-15-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181130132231.16512-1-hch@lst.de>
 References: <20181130132231.16512-1-hch@lst.de>
@@ -71,69 +71,42 @@ the core dma-mapping code handle the rest.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/alpha/kernel/pci_iommu.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ arch/ia64/sn/pci/pci_dma.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/arch/alpha/kernel/pci_iommu.c b/arch/alpha/kernel/pci_iommu.c
-index 46e08e0d9181..e1716e0d92fd 100644
---- a/arch/alpha/kernel/pci_iommu.c
-+++ b/arch/alpha/kernel/pci_iommu.c
-@@ -291,7 +291,7 @@ pci_map_single_1(struct pci_dev *pdev, void *cpu_addr, size_t size,
- 	   use direct_map above, it now must be considered an error. */
- 	if (! alpha_mv.mv_pci_tbi) {
- 		printk_once(KERN_WARNING "pci_map_single: no HW sg\n");
+diff --git a/arch/ia64/sn/pci/pci_dma.c b/arch/ia64/sn/pci/pci_dma.c
+index 4ce4ee4ef9f2..b7d42e4edc1f 100644
+--- a/arch/ia64/sn/pci/pci_dma.c
++++ b/arch/ia64/sn/pci/pci_dma.c
+@@ -196,7 +196,7 @@ static dma_addr_t sn_dma_map_page(struct device *dev, struct page *page,
+ 
+ 	if (!dma_addr) {
+ 		printk(KERN_ERR "%s: out of ATEs\n", __func__);
 -		return 0;
 +		return DMA_MAPPING_ERROR;
  	}
- 
- 	arena = hose->sg_pci;
-@@ -307,7 +307,7 @@ pci_map_single_1(struct pci_dev *pdev, void *cpu_addr, size_t size,
- 	if (dma_ofs < 0) {
- 		printk(KERN_WARNING "pci_map_single failed: "
- 		       "could not allocate dma page tables\n");
--		return 0;
-+		return DMA_MAPPING_ERROR;
- 	}
- 
- 	paddr &= PAGE_MASK;
-@@ -455,7 +455,7 @@ static void *alpha_pci_alloc_coherent(struct device *dev, size_t size,
- 	memset(cpu_addr, 0, size);
- 
- 	*dma_addrp = pci_map_single_1(pdev, cpu_addr, size, 0);
--	if (*dma_addrp == 0) {
-+	if (*dma_addrp == DMA_MAPPING_ERROR) {
- 		free_pages((unsigned long)cpu_addr, order);
- 		if (alpha_mv.mv_pci_tbi || (gfp & GFP_DMA))
- 			return NULL;
-@@ -671,7 +671,7 @@ static int alpha_pci_map_sg(struct device *dev, struct scatterlist *sg,
- 		sg->dma_address
- 		  = pci_map_single_1(pdev, SG_ENT_VIRT_ADDRESS(sg),
- 				     sg->length, dac_allowed);
--		return sg->dma_address != 0;
-+		return sg->dma_address != DMA_MAPPING_ERROR;
- 	}
- 
- 	start = sg;
-@@ -935,11 +935,6 @@ iommu_unbind(struct pci_iommu_arena *arena, long pg_start, long pg_count)
- 	return 0;
+ 	return dma_addr;
+ }
+@@ -314,11 +314,6 @@ static int sn_dma_map_sg(struct device *dev, struct scatterlist *sgl,
+ 	return nhwentries;
  }
  
--static int alpha_pci_mapping_error(struct device *dev, dma_addr_t dma_addr)
+-static int sn_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
 -{
--	return dma_addr == 0;
+-	return 0;
 -}
 -
- const struct dma_map_ops alpha_pci_ops = {
- 	.alloc			= alpha_pci_alloc_coherent,
- 	.free			= alpha_pci_free_coherent,
-@@ -947,7 +942,6 @@ const struct dma_map_ops alpha_pci_ops = {
- 	.unmap_page		= alpha_pci_unmap_page,
- 	.map_sg			= alpha_pci_map_sg,
- 	.unmap_sg		= alpha_pci_unmap_sg,
--	.mapping_error		= alpha_pci_mapping_error,
- 	.dma_supported		= alpha_pci_supported,
+ static u64 sn_dma_get_required_mask(struct device *dev)
+ {
+ 	return DMA_BIT_MASK(64);
+@@ -441,7 +436,6 @@ static struct dma_map_ops sn_dma_ops = {
+ 	.unmap_page		= sn_dma_unmap_page,
+ 	.map_sg			= sn_dma_map_sg,
+ 	.unmap_sg		= sn_dma_unmap_sg,
+-	.mapping_error		= sn_dma_mapping_error,
+ 	.dma_supported		= sn_dma_supported,
+ 	.get_required_mask	= sn_dma_get_required_mask,
  };
- EXPORT_SYMBOL(alpha_pci_ops);
 -- 
 2.19.1
 
