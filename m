@@ -2,216 +2,250 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BF8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D351C04EB9
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BE292086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:18:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE292086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id 036E92086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 02:19:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cvuXPhO4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036E92086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbeK3NZp (ORCPT
+        id S1727146AbeK3N1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 08:25:45 -0500
-Received: from p3plsmtpa11-05.prod.phx3.secureserver.net ([68.178.252.106]:57773
-        "EHLO p3plsmtpa11-05.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726675AbeK3NZo (ORCPT
+        Fri, 30 Nov 2018 08:27:04 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33440 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbeK3N1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 08:25:44 -0500
-Received: from [192.168.0.55] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id SYNYg427iAqHTSYNZgGuhb; Thu, 29 Nov 2018 19:18:05 -0700
-Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
-To:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
-        linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-References: <20181110085041.10071-1-jhubbard@nvidia.com>
- <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
- <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
- <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
- <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
- <15e4a0c0-cadd-e549-962f-8d9aa9fc033a@talpey.com>
- <313bf82d-cdeb-8c75-3772-7a124ecdfbd5@nvidia.com>
- <2aa422df-d5df-5ddb-a2e4-c5e5283653b5@talpey.com>
- <7a68b7fc-ff9d-381e-2444-909c9c2f6679@nvidia.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <1939f47a-eaec-3f2c-4ae7-f92d9fba7693@talpey.com>
-Date:   Thu, 29 Nov 2018 21:18:05 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 30 Nov 2018 08:27:04 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c123so2009586pfb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 18:19:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v/I8xEX9P8gErGvxWyJaERYOeiDW5zp+tAQouUaMhHc=;
+        b=cvuXPhO44rwL4Er9yGKkDGhp8cXLO/sdmF91tKuU3Gu8z+vhdwguHlJ3N33hiueh/C
+         rX9oPDtxuumqIdEicgCMcTSGF16/GmO1cizGjELrX1Xk35eWwDzGWZEgRBZ5NpFjWsdr
+         NbJlxYz9d06wcynMoKsfQOJlcRoxb88UgVxb4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v/I8xEX9P8gErGvxWyJaERYOeiDW5zp+tAQouUaMhHc=;
+        b=mW+KEZGfj3hXwinZkyJNxbbdrWiZJ5j53CieLFEZ8uEOlqf6uNmrN2pbpq38NCAdFY
+         TISmBBgFr9d0AA3JPlyZg1/MW8xTuz47LSHp/iu+yavNnLnbtc/BlRPOzov80eTn7Rk8
+         v1UshhsWZLUIWsNTmdVpboePl7Tv1MZ09Gb4NNXD3Cdklgjs6J1fNSz4hf/UnrLSrUeY
+         UFTJCm1qj+fHsDgwu5yQXBzKhntV2qQArspQZrPVcuwai8+AHJHnytojVRsJ6pS5ZzoD
+         BW/yjD+bSUPEmLA86i3zKN8ba+UhC4uP1toKii9C87YAlsGWnsK3CceXZXxUwA3YmPli
+         6sNg==
+X-Gm-Message-State: AA+aEWagswBXPYWuq3SKU26ARbR+XggGu2/cqqK5xDRGEmXsOABhFaES
+        p5SoD58/nMFCqZEGuDrZACT+ag==
+X-Google-Smtp-Source: AFSGD/X7MDerg79agx4geQeMWnycHoUwkoTsH5z2cpxQbnQ8G/RDGjqidwrXciiYG0ajAwcFVjixLw==
+X-Received: by 2002:a62:8a51:: with SMTP id y78mr3771160pfd.35.1543544364803;
+        Thu, 29 Nov 2018 18:19:24 -0800 (PST)
+Received: from ryandcase.mtv.corp.google.com ([2620:15c:202:201:ed1c:3d1c:9d92:99cb])
+        by smtp.gmail.com with ESMTPSA id b9sm4678524pfi.118.2018.11.29.18.19.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 18:19:24 -0800 (PST)
+From:   Ryan Case <ryandcase@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Evan Green <evgreen@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>
+Subject: [PATCH v3] tty: serial: qcom_geni_serial: Fix softlock
+Date:   Thu, 29 Nov 2018 18:18:40 -0800
+Message-Id: <20181130021840.75861-1-ryandcase@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 MIME-Version: 1.0
-In-Reply-To: <7a68b7fc-ff9d-381e-2444-909c9c2f6679@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfF9qknIpQJmp8aBwJ3rmaH9di8o1vUQuWCrXwTQ/0WQ7j+XT0YoHPohrly9tftRvIYnYTfT52ViLBMajYjXayn3RX47vxEuy4bqAiB6294uz68XzUMnd
- VWmgSYTR1KJcXPoJ0cqHR8cQd/Y0oJGxl2eVVyTJ5wDsO6cteK9trifMFfeguMi/OaaYeQsxCtMgrWQUzIWyQtpKVk9iMTNvf51BFYoBde/YBFIQMgHRNr4c
- 2UHpRCZKccFKWi9H8D0DeWMddO+h2jTJpL18SGFcvpkphzNVw6/HQlBGztoVLAvJbf2DZzWK6N2hDRSTyMG2GldW+Ml55rWHfKQLgrjR8Up0+hbFC9JFzwx/
- SO9cm3P5hja7gjAmzIAfsAnhwSTWtyH92ej8UR15vOHPmVKgWIs=
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/2018 8:39 PM, John Hubbard wrote:
-> On 11/28/18 5:59 AM, Tom Talpey wrote:
->> On 11/27/2018 9:52 PM, John Hubbard wrote:
->>> On 11/27/18 5:21 PM, Tom Talpey wrote:
->>>> On 11/21/2018 5:06 PM, John Hubbard wrote:
->>>>> On 11/21/18 8:49 AM, Tom Talpey wrote:
->>>>>> On 11/21/2018 1:09 AM, John Hubbard wrote:
->>>>>>> On 11/19/18 10:57 AM, Tom Talpey wrote:
->>> [...]
->>>> I'm super-limited here this week hardware-wise and have not been able
->>>> to try testing with the patched kernel.
->>>>
->>>> I was able to compare my earlier quick test with a Bionic 4.15 kernel
->>>> (400K IOPS) against a similar 4.20rc3 kernel, and the rate dropped to
->>>> ~_375K_ IOPS. Which I found perhaps troubling. But it was only a quick
->>>> test, and without your change.
->>>>
->>>
->>> So just to double check (again): you are running fio with these parameters,
->>> right?
->>>
->>> [reader]
->>> direct=1
->>> ioengine=libaio
->>> blocksize=4096
->>> size=1g
->>> numjobs=1
->>> rw=read
->>> iodepth=64
->>
->> Correct, I copy/pasted these directly. I also ran with size=10g because
->> the 1g provides a really small sample set.
->>
->> There was one other difference, your results indicated fio 3.3 was used.
->> My Bionic install has fio 3.1. I don't find that relevant because our
->> goal is to compare before/after, which I haven't done yet.
->>
-> 
-> OK, the 50 MB/s was due to my particular .config. I had some expensive debug options
-> set in mm, fs and locking subsystems. Turning those off, I'm back up to the rated
-> speed of the Samsung NVMe device, so now we should have a clearer picture of the
-> performance that real users will see.
+Transfers were being divided into device FIFO sized (64 byte max)
+operations which would poll for completion within a spin_lock_irqsave /
+spin_unlock_irqrestore block. This both made things slow by waiting for
+the FIFO to completely drain before adding further data and would also
+result in softlocks on large transmissions.
 
-Oh, good! I'm especially glad because I was having a heck of a time
-reconfiguring the one machine I have available for this.
+This patch allows larger transfers with continuous FIFO additions as
+space becomes available and removes polling from the interrupt handler.
 
-> Continuing on, then: running a before and after test, I don't see any significant
-> difference in the fio results:
+Signed-off-by: Ryan Case <ryandcase@chromium.org>
+---
 
-Excerpting from below:
+Changes in v3:
+- Reworded comment for clarity
+- Fixed mips compiler warning
 
- > Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
- >     read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
- >    cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
+Changes in v2:
+- Addressed nits raised by Stephen
 
-vs
+ drivers/tty/serial/qcom_geni_serial.c | 56 +++++++++++++++++++--------
+ 1 file changed, 39 insertions(+), 17 deletions(-)
 
- > With patches applied:
- >     read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
- >    cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 7ded51081add..bbc7d7a5b8b6 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -117,6 +117,8 @@ struct qcom_geni_serial_port {
+ 	u32 *rx_fifo;
+ 	u32 loopback;
+ 	bool brk;
++
++	unsigned int tx_remaining;
+ };
+ 
+ static const struct uart_ops qcom_geni_console_pops;
+@@ -439,6 +441,7 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
+ 	struct qcom_geni_serial_port *port;
+ 	bool locked = true;
+ 	unsigned long flags;
++	u32 geni_status;
+ 
+ 	WARN_ON(co->index < 0 || co->index >= GENI_UART_CONS_PORTS);
+ 
+@@ -452,6 +455,8 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
+ 	else
+ 		spin_lock_irqsave(&uport->lock, flags);
+ 
++	geni_status = readl_relaxed(uport->membase + SE_GENI_STATUS);
++
+ 	/* Cancel the current write to log the fault */
+ 	if (!locked) {
+ 		geni_se_cancel_m_cmd(&port->se);
+@@ -465,9 +470,19 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
+ 		}
+ 		writel_relaxed(M_CMD_CANCEL_EN, uport->membase +
+ 							SE_GENI_M_IRQ_CLEAR);
++	} else if ((geni_status & M_GENI_CMD_ACTIVE) && !port->tx_remaining) {
++		/*
++		 * It seems we can't interrupt existing transfers if all data
++		 * has been sent, in which case we need to look for done first.
++		 */
++		qcom_geni_serial_poll_tx_done(uport);
+ 	}
+ 
+ 	__qcom_geni_serial_console_write(uport, s, count);
++
++	if (port->tx_remaining)
++		qcom_geni_serial_setup_tx(uport, port->tx_remaining);
++
+ 	if (locked)
+ 		spin_unlock_irqrestore(&uport->lock, flags);
+ }
+@@ -701,40 +716,45 @@ static void qcom_geni_serial_handle_rx(struct uart_port *uport, bool drop)
+ 	port->handle_rx(uport, total_bytes, drop);
+ }
+ 
+-static void qcom_geni_serial_handle_tx(struct uart_port *uport)
++static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
++		bool active)
+ {
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+ 	struct circ_buf *xmit = &uport->state->xmit;
+ 	size_t avail;
+ 	size_t remaining;
++	size_t pending;
+ 	int i;
+ 	u32 status;
+ 	unsigned int chunk;
+ 	int tail;
+-	u32 irq_en;
+ 
+-	chunk = uart_circ_chars_pending(xmit);
+ 	status = readl_relaxed(uport->membase + SE_GENI_TX_FIFO_STATUS);
+-	/* Both FIFO and framework buffer are drained */
+-	if (!chunk && !status) {
++
++	/* Complete the current tx command before taking newly added data */
++	if (active)
++		pending = port->tx_remaining;
++	else
++		pending = uart_circ_chars_pending(xmit);
++
++	/* All data has been transmitted and acknowledged as received */
++	if (!pending && !status && done) {
+ 		qcom_geni_serial_stop_tx(uport);
+ 		goto out_write_wakeup;
+ 	}
+ 
+-	if (!uart_console(uport)) {
+-		irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
+-		irq_en &= ~(M_TX_FIFO_WATERMARK_EN);
+-		writel_relaxed(0, uport->membase + SE_GENI_TX_WATERMARK_REG);
+-		writel_relaxed(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+-	}
++	avail = port->tx_fifo_depth - (status & TX_FIFO_WC);
++	avail *= port->tx_bytes_pw;
+ 
+-	avail = (port->tx_fifo_depth - port->tx_wm) * port->tx_bytes_pw;
+ 	tail = xmit->tail;
+-	chunk = min3((size_t)chunk, (size_t)(UART_XMIT_SIZE - tail), avail);
++	chunk = min3(avail, pending, (size_t)(UART_XMIT_SIZE - tail));
+ 	if (!chunk)
+ 		goto out_write_wakeup;
+ 
+-	qcom_geni_serial_setup_tx(uport, chunk);
++	if (!port->tx_remaining) {
++		qcom_geni_serial_setup_tx(uport, pending);
++		port->tx_remaining = pending;
++	}
+ 
+ 	remaining = chunk;
+ 	for (i = 0; i < chunk; ) {
+@@ -753,11 +773,10 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport)
+ 		tail += tx_bytes;
+ 		uport->icount.tx += tx_bytes;
+ 		remaining -= tx_bytes;
++		port->tx_remaining -= tx_bytes;
+ 	}
+ 
+ 	xmit->tail = tail & (UART_XMIT_SIZE - 1);
+-	if (uart_console(uport))
+-		qcom_geni_serial_poll_tx_done(uport);
+ out_write_wakeup:
+ 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+ 		uart_write_wakeup(uport);
+@@ -767,6 +786,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
+ {
+ 	unsigned int m_irq_status;
+ 	unsigned int s_irq_status;
++	unsigned int geni_status;
+ 	struct uart_port *uport = dev;
+ 	unsigned long flags;
+ 	unsigned int m_irq_en;
+@@ -780,6 +800,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
+ 	spin_lock_irqsave(&uport->lock, flags);
+ 	m_irq_status = readl_relaxed(uport->membase + SE_GENI_M_IRQ_STATUS);
+ 	s_irq_status = readl_relaxed(uport->membase + SE_GENI_S_IRQ_STATUS);
++	geni_status = readl_relaxed(uport->membase + SE_GENI_STATUS);
+ 	m_irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
+ 	writel_relaxed(m_irq_status, uport->membase + SE_GENI_M_IRQ_CLEAR);
+ 	writel_relaxed(s_irq_status, uport->membase + SE_GENI_S_IRQ_CLEAR);
+@@ -794,7 +815,8 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
+ 
+ 	if (m_irq_status & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN) &&
+ 	    m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
+-		qcom_geni_serial_handle_tx(uport);
++		qcom_geni_serial_handle_tx(uport, m_irq_status & M_CMD_DONE_EN,
++					geni_status & M_GENI_CMD_ACTIVE);
+ 
+ 	if (s_irq_status & S_GP_IRQ_0_EN || s_irq_status & S_GP_IRQ_1_EN) {
+ 		if (s_irq_status & S_GP_IRQ_0_EN)
+-- 
+2.20.0.rc0.387.gc7a69e6b6c-goog
 
-Perfect results, not CPU limited, and full IOPS.
-
-Curiously identical, so I trust you've checked that you measured
-both targets, but if so, I say it's good.
-
-Tom.
-
-> 
-> fio.conf:
-> 
-> [reader]
-> direct=1
-> ioengine=libaio
-> blocksize=4096
-> size=1g
-> numjobs=1
-> rw=read
-> iodepth=64
-> 
-> ---------------------------------------------------------
-> Baseline 4.20.0-rc3 (commit f2ce1065e767), as before:
-> 
-> $ fio ./experimental-fio.conf
-> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
-> fio-3.3
-> Starting 1 process
-> Jobs: 1 (f=1)
-> reader: (groupid=0, jobs=1): err= 0: pid=1738: Thu Nov 29 17:20:07 2018
->     read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
->      slat (nsec): min=1381, max=46469, avg=1649.48, stdev=594.46
->      clat (usec): min=162, max=12247, avg=330.00, stdev=185.55
->       lat (usec): min=165, max=12253, avg=331.68, stdev=185.69
->      clat percentiles (usec):
->       |  1.00th=[  322],  5.00th=[  326], 10.00th=[  326], 20.00th=[  326],
->       | 30.00th=[  326], 40.00th=[  326], 50.00th=[  326], 60.00th=[  326],
->       | 70.00th=[  326], 80.00th=[  326], 90.00th=[  326], 95.00th=[  326],
->       | 99.00th=[  379], 99.50th=[  594], 99.90th=[  603], 99.95th=[  611],
->       | 99.99th=[12125]
->     bw (  KiB/s): min=751640, max=782912, per=99.52%, avg=767276.00, stdev=22112.64, samples=2
->     iops        : min=187910, max=195728, avg=191819.00, stdev=5528.16, samples=2
->    lat (usec)   : 250=0.08%, 500=99.30%, 750=0.59%
->    lat (msec)   : 20=0.02%
->    cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
->    IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=100.0%
->       submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->       complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, >=64=0.0%
->       issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
->       latency   : target=0, window=0, percentile=100.00%, depth=64
-> 
-> Run status group 0 (all jobs):
->     READ: bw=753MiB/s (790MB/s), 753MiB/s-753MiB/s (790MB/s-790MB/s), io=1024MiB (1074MB), run=1360-1360msec
-> 
-> Disk stats (read/write):
->    nvme0n1: ios=220798/0, merge=0/0, ticks=71481/0, in_queue=71966, util=100.00%
-> 
-> ---------------------------------------------------------
-> With patches applied:
-> 
-> <redforge> fast_256GB $ fio ./experimental-fio.conf
-> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
-> fio-3.3
-> Starting 1 process
-> Jobs: 1 (f=1)
-> reader: (groupid=0, jobs=1): err= 0: pid=1738: Thu Nov 29 17:20:07 2018
->     read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1360msec)
->      slat (nsec): min=1381, max=46469, avg=1649.48, stdev=594.46
->      clat (usec): min=162, max=12247, avg=330.00, stdev=185.55
->       lat (usec): min=165, max=12253, avg=331.68, stdev=185.69
->      clat percentiles (usec):
->       |  1.00th=[  322],  5.00th=[  326], 10.00th=[  326], 20.00th=[  326],
->       | 30.00th=[  326], 40.00th=[  326], 50.00th=[  326], 60.00th=[  326],
->       | 70.00th=[  326], 80.00th=[  326], 90.00th=[  326], 95.00th=[  326],
->       | 99.00th=[  379], 99.50th=[  594], 99.90th=[  603], 99.95th=[  611],
->       | 99.99th=[12125]
->     bw (  KiB/s): min=751640, max=782912, per=99.52%, avg=767276.00, stdev=22112.64, samples=2
->     iops        : min=187910, max=195728, avg=191819.00, stdev=5528.16, samples=2
->    lat (usec)   : 250=0.08%, 500=99.30%, 750=0.59%
->    lat (msec)   : 20=0.02%
->    cpu          : usr=16.26%, sys=48.05%, ctx=251258, majf=0, minf=73
->    IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=100.0%
->       submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->       complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, >=64=0.0%
->       issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
->       latency   : target=0, window=0, percentile=100.00%, depth=64
-> 
-> Run status group 0 (all jobs):
->     READ: bw=753MiB/s (790MB/s), 753MiB/s-753MiB/s (790MB/s-790MB/s), io=1024MiB (1074MB), run=1360-1360msec
-> 
-> Disk stats (read/write):
->    nvme0n1: ios=220798/0, merge=0/0, ticks=71481/0, in_queue=71966, util=100.00%
-> 
-> 
-> thanks,
-> 
