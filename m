@@ -2,96 +2,136 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3388C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89A3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A7C120660
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:50:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7C120660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DA1D20660
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 21:52:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA1D20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbeLAJAv (ORCPT
+        id S1726771AbeLAJDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:00:51 -0500
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:33767 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725749AbeLAJAv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:00:51 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 01 Dec 2018 08:20:06 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gSqfl-0008It-D6; Sat, 01 Dec 2018 08:50:05 +1100
-Date:   Sat, 1 Dec 2018 08:50:05 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.14 25/35] iomap: sub-block dio needs to zeroout
- beyond EOF
-Message-ID: <20181130215005.GP19305@dastard>
-References: <20181129060110.159878-1-sashal@kernel.org>
- <20181129060110.159878-25-sashal@kernel.org>
- <20181129121458.GK19305@dastard>
- <20181129124756.GA25945@kroah.com>
- <20181129224019.GM19305@dastard>
- <20181130082203.GA26830@kroah.com>
- <20181130101441.GA213156@sasha-vm>
+        Sat, 1 Dec 2018 04:03:32 -0500
+Received: from mga02.intel.com ([134.134.136.20]:32118 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725749AbeLAJDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 04:03:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 13:52:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
+   d="scan'208";a="114393636"
+Received: from ahduyck-desk1.jf.intel.com (HELO ahduyck-desk1.amr.corp.intel.com) ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 30 Nov 2018 13:52:48 -0800
+Subject: [mm PATCH v6 0/7] Deferred page init improvements
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     akpm@linux-foundation.org, linux-mm@kvack.org
+Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, alexander.h.duyck@linux.intel.com,
+        rppt@linux.vnet.ibm.com, willy@infradead.org, vbabka@suse.cz,
+        khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com,
+        alexander.h.duyck@linux.intel.com
+Date:   Fri, 30 Nov 2018 13:52:48 -0800
+Message-ID: <154361452447.7497.1348692079883153517.stgit@ahduyck-desk1.amr.corp.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130101441.GA213156@sasha-vm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 05:14:41AM -0500, Sasha Levin wrote:
-> On Fri, Nov 30, 2018 at 09:22:03AM +0100, Greg KH wrote:
-> >On Fri, Nov 30, 2018 at 09:40:19AM +1100, Dave Chinner wrote:
-> >>I stopped my tests at 5 billion ops yesterday (i.e. 20 billion ops
-> >>aggregate) to focus on testing the copy_file_range() changes, but
-> >>Darrick's tests are still ongoing and have passed 40 billion ops in
-> >>aggregate over the past few days.
-> >>
-> >>The reason we are running these so long is that we've seen fsx data
-> >>corruption failures after 12+ hours of runtime and hundreds of
-> >>millions of ops. Hence the testing for backported fixes will need to
-> >>replicate these test runs across multiple configurations for
-> >>multiple days before we have any confidence that we've actually
-> >>fixed the data corruptions and not introduced any new ones.
-> >>
-> >>If you pull only a small subset of the fixes, the fsx will still
-> >>fail and we have no real way of actually verifying that there have
-> >>been no regression introduced by the backport.  IOWs, there's a
-> >>/massive/ amount of QA needed for ensuring that these backports work
-> >>correctly.
-> >>
-> >>Right now the XFS developers don't have the time or resources
-> >>available to validate stable backports are correct and regression
-> >>fre because we are focussed on ensuring the upstream fixes we've
-> >>already made (and are still writing) are solid and reliable.
-> >
-> >Ok, that's fine, so users of XFS should wait until the 4.20 release
-> >before relying on it?  :)
-> 
-> It's getting to the point that with the amount of known issues with XFS
-> on LTS kernels it makes sense to mark it as CONFIG_BROKEN.
+This patchset is essentially a refactor of the page initialization logic
+that is meant to provide for better code reuse while providing a
+significant improvement in deferred page initialization performance.
 
-Really? Where are the bug reports?
+In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
+memory per node I have seen the following. In the case of regular memory
+initialization the deferred init time was decreased from 3.75s to 1.06s on
+average. For the persistent memory the initialization time dropped from
+24.17s to 19.12s on average. This amounts to a 253% improvement for the
+deferred memory initialization performance, and a 26% improvement in the
+persistent memory initialization performance.
 
-Cheers,
+I have called out the improvement observed with each patch.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Note: This patch set is meant as a replacment for the v5 set that is already
+      in the MM tree.
+      
+      I had considered just doing incremental changes but Pavel at the time
+      had suggested I submit it as a whole set, however that was almost 3
+      weeks ago so if incremental changes are preferred let me know and
+      I can submit the changes as incremental updates.
+
+      I appologize for the delay in submitting this follow-on set. I had been
+      trying to address the DAX PageReserved bit issue at the same time but
+      that is taking more time than I anticipated so I decided to push this
+      before the code sits too much longer.
+
+      Commit bf416078f1d83 ("mm/page_alloc.c: memory hotplug: free pages as 
+      higher order") causes issues with the revert of patch 7. It was
+      necessary to replace all instances of __free_pages_boot_core with
+      __free_pages_core.
+
+v1->v2:
+    Fixed build issue on PowerPC due to page struct size being 56
+    Added new patch that removed __SetPageReserved call for hotplug
+v2->v3:
+    Rebased on latest linux-next
+    Removed patch that had removed __SetPageReserved call from init
+    Added patch that folded __SetPageReserved into set_page_links
+    Tweaked __init_pageblock to use start_pfn to get section_nr instead of pfn
+v3->v4:
+    Updated patch description and comments for mm_zero_struct_page patch
+        Replaced "default" with "case 64"
+        Removed #ifndef mm_zero_struct_page
+    Fixed typo in comment that ommited "_from" in kerneldoc for iterator
+    Added Reviewed-by for patches reviewed by Pavel
+    Added Acked-by from Michal Hocko
+    Added deferred init times for patches that affect init performance
+    Swapped patches 5 & 6, pulled some code/comments from 4 into 5
+v4->v5:
+    Updated Acks/Reviewed-by
+    Rebased on latest linux-next
+    Split core bits of zone iterator patch from MAX_ORDER_NR_PAGES init
+v5->v6:
+    Rebased on linux-next with previous v5 reverted
+    Drop the "This patch" or "This change" from patch desriptions.
+    Cleaned up patch descriptions for patches 3 & 4
+    Fixed kerneldoc for __next_mem_pfn_range_in_zone
+    Updated several Reviewed-by, and incorporated suggestions from Pavel
+    Added __init_single_page_nolru to patch 5 to consolidate code
+    Refactored iterator in patch 7 and fixed several issues
+
+---
+
+Alexander Duyck (7):
+      mm: Use mm_zero_struct_page from SPARC on all 64b architectures
+      mm: Drop meminit_pfn_in_nid as it is redundant
+      mm: Implement new zone specific memblock iterator
+      mm: Initialize MAX_ORDER_NR_PAGES at a time instead of doing larger sections
+      mm: Move hot-plug specific memory init into separate functions and optimize
+      mm: Add reserved flag setting to set_page_links
+      mm: Use common iterator for deferred_init_pages and deferred_free_pages
+
+
+ arch/sparc/include/asm/pgtable_64.h |   30 --
+ include/linux/memblock.h            |   41 +++
+ include/linux/mm.h                  |   50 +++
+ mm/memblock.c                       |   64 ++++
+ mm/page_alloc.c                     |  571 +++++++++++++++++++++--------------
+ 5 files changed, 498 insertions(+), 258 deletions(-)
+
+--
