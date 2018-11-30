@@ -2,141 +2,137 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F38C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D382C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D2220660
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:04:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="C0kEFKUv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D2220660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id C51172145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 22:10:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51172145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbeLAJO7 (ORCPT
+        id S1726905AbeLAJVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 04:14:59 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44974 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725749AbeLAJO6 (ORCPT
+        Sat, 1 Dec 2018 04:21:02 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33664 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeLAJVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 04:14:58 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 22E598EE287;
-        Fri, 30 Nov 2018 14:04:13 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4srXcmRn0mJE; Fri, 30 Nov 2018 14:04:12 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 424318EE0C3;
-        Fri, 30 Nov 2018 14:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1543615452;
-        bh=sHv1RuC29Ah0kUwJuQCHZNr6Jhi+2ezuorzmimNMwt0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=C0kEFKUvIhIzDBoocFKvVsTT1hITFvBoAmIfY0sJLItZbzjY14IDL9ZTy65jVnhoy
-         JnkEMNwf1Q10IkOZor5wVcv7CcLkeOnzm0OjnpZRJ8K9+8yOnklNU4UqElw2kABlya
-         UllDfjAYZmzNXXGdwjH8EH2ciIu6wyJJyV6bonus=
-Message-ID: <1543615449.3031.32.camel@HansenPartnership.com>
-Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Miller <davem@davemloft.net>
-Cc:     dave@stgolabs.net, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, amir73il@gmail.com,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        dja@axtens.net, linux@dominikbrodowski.net,
-        dri-devel@lists.freedesktop.org, edumazet@google.com,
-        federico.vaga@vaga.pv.it, geert+renesas@glider.be, deller@gmx.de,
-        corbet@lwn.net, kumba@gentoo.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-media@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-mtd@lists.infradead.org,
-        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
-        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
-        pabeni@redhat.com, paul.burton@mips.com, pmladek@suse.com,
-        robh@kernel.org, sean.wang@mediatek.com,
-        sergey.senozhatsky@gmail.com, shannon.nelson@oracle.com,
-        sbrivio@redhat.com, rostedt@goodmis.org, me@tobin.cc,
-        makita.toshiaki@lab.ntt.co.jp, willemb@google.com, yhs@fb.com,
-        yanjun.zhu@oracle.com
-Date:   Fri, 30 Nov 2018 14:04:09 -0800
-In-Reply-To: <20181130215429.GA24415@linux.intel.com>
-References: <20181130205521.GA21006@linux.intel.com>
-         <1543611662.3031.20.camel@HansenPartnership.com>
-         <20181130214405.GG23772@linux.intel.com>
-         <20181130.134808.1785785556132211918.davem@davemloft.net>
-         <20181130215429.GA24415@linux.intel.com>
+        Sat, 1 Dec 2018 04:21:02 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l11so7688044qtp.0;
+        Fri, 30 Nov 2018 14:10:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aGA1VXKrvoTOERg3O+Jz0z4OocXMxN8reAWA8j2jG78=;
+        b=oRA3CLXjXiyigyjWSX3ACCp6JGB32Wr0Fia1xkmbfyPBTWQvqBePsHx5rC/SZ6pjWv
+         0JaSjWFE0o/o6FzvK0hC4PHLI9DxniqhFiCJ0FoKYmYpKl+j7OBBuNO7OMQg+snpnVkk
+         nJR7a6yMqScm3Tz6Ks6TJLVEWruIbpeHKX8y3CMlmwtSILQChiEZQpkq7mPSg/fC2j9G
+         J9GnFcp/394tryEIkqQxIeY41/xrXNut8Vag6dqVoVK+O4/51iH0R4/FV3H7qpyXCXWR
+         sGxHZoV5ZBkho0ApRmgQUycDgml1JaIdrzpTmeMSQ6k/JFTJLhWQQruGLB1ZEhnLLLYt
+         ipRQ==
+X-Gm-Message-State: AA+aEWaZo5Lh1qRiV+tEgZXNlxRS6JgxsL5/kEXOyQkevUBkyR1sqMcL
+        n+se7JVcYMRL86X/1fq/8vleS3CVL+JBprNXxhc=
+X-Google-Smtp-Source: AFSGD/WkbJ78dI27YZsEIMK1t29r2EHecKM1WBek4m5t1AwK3ZZ3nGX9bpqhi5Y+5ikSnNFyxAbAzJJrG2D8GeZ7Fa0=
+X-Received: by 2002:ac8:4141:: with SMTP id e1mr6866210qtm.96.1543615816138;
+ Fri, 30 Nov 2018 14:10:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+ <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
+ <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
+ <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
+ <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
+ <87y39b2lm2.fsf@xmission.com> <20181130065606.kmilbbq46oeycjp5@brauner.io>
+ <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com> <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com>
+In-Reply-To: <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 30 Nov 2018 23:09:58 +0100
+Message-ID: <CAK8P3a1isSRCd-OLJK15C+gSJdpeR=zEXghc8+AMM5QYYw3Tyg@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     christian@brauner.io, "Eric W . Biederman" <ebiederm@xmission.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-30 at 13:54 -0800, Jarkko Sakkinen wrote:
-> On Fri, Nov 30, 2018 at 01:48:08PM -0800, David Miller wrote:
-> > From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Date: Fri, 30 Nov 2018 13:44:05 -0800
-> > 
-> > > On Fri, Nov 30, 2018 at 01:01:02PM -0800, James Bottomley wrote:
-> > > > No because use of what some people consider to be bad language
-> > > > isn't
-> > > > necessarily abusive, offensive or degrading.  Our most heavily
-> > > > censored
-> > > > medium is TV and "fuck" is now considered acceptable in certain
-> > > > contexts on most channels in the UK and EU.
-> > > 
-> > > This makes following the CoC extremely hard to a non-native
-> > > speaker as
-> > > it is not too explicit on what is OK and what is not. I did
-> > > through the
-> > > whole thing with an eye glass and this what I deduced from it.
-> > 
-> > It would be helpful if you could explain what part of the language
-> > is unclear wrt. explaining how CoC does not apply to existing code.
-> > 
-> > That part seems very explicit to me.
-> 
-> Well, now that I re-read it, it was this part to be exact:
-> 
-> "Maintainers have the right and responsibility to remove, edit, or
-> reject comments, commits, code, wiki edits, issues, and other
-> contributions that are not aligned to this Code of Conduct, or to ban
-> temporarily or permanently any contributor for other behaviors that
-> they deem inappropriate, threatening, offensive, or harmful."
-> 
-> How this should be interpreted?
+On Fri, Nov 30, 2018 at 5:36 PM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> On Fri, Nov 30, 2018 at 3:41 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > siginfo_t as it is now still has a number of other downsides, and Andy in
+> > particular didn't like the idea of having three new variants on x86
+> > (depending on how you count). His alternative suggestion of having
+> > a single syscall entry point that takes a 'signfo_t __user *' but interprets
+> > it as compat_siginfo depending on in_compat_syscall()/in_x32_syscall()
+> > should work correctly, but feels wrong to me, or at least inconsistent
+> > with how we do this elsewhere.
+>
+> If everyone else is okay with it, I can get on board with three
+> variants on x86.  What I can't get on board with is *five* variants on
+> x86, which would be:
+>
+> procfd_signal via int80 / the 32-bit vDSO: the ia32 structure
+>
+> syscall64 with nr == 335 (presumably): 64-bit
 
-Firstly, this is *only* about contributions going forward.  The
-interpretation document says we don't have to look back into the
-repository and we definitely can't remove something from git that's
-already been committed.
+These seem unavoidable
 
-As a Maintainer, if you feel bad language is inappropriate for your
-subsystem then you say so and reject with that reason patches that come
-in containing it (suggesting alternative rewordings).  However, your
-determination about what is or isn't acceptable in your subsystem isn't
-binding on other maintainers, who may have different standards ... this
-is identical to what we do with coding, like your insistence on one
-line per variable or other subsystem's insistence on reverse christmas
-tree for includes ...
+> syscall64 with nr == 548 | 0x40000000: x32
+>
+> syscall64 with nr == 548: 64-bit entry but in_compat_syscall() ==
+> true, behavior is arbitrary
+>
+> syscall64 with nr == 335 | 0x40000000: x32 entry, but
+> in_compat_syscall() == false, behavior is arbitrary
 
-James
+Am I misreading the code? The way I understand it, setting the
+0x40000000 bit means that both in_compat_syscall() and
+in_x32_syscall become() true, based on
 
+static inline bool in_x32_syscall(void)
+{
+#ifdef CONFIG_X86_X32_ABI
+        if (task_pt_regs(current)->orig_ax & __X32_SYSCALL_BIT)
+                return true;
+#endif
+        return false;
+}
 
-> I have not really followed the previous CoC discussions as I try to
-> always use polite language so I'm sorry if this duplicate.
-> 
-> /Jarkko
-> 
+The '548 | 0x40000000' part seems to be the only sensible
+way to handle x32 here. What exactly would you propose to
+avoid defining the other entry points?
 
+> This mess isn't really Christian's fault -- it's been there for a
+> while, but it's awful and I don't think we want to perpetuate it.
+
+I'm not convinced that not assigning an x32 syscall number
+improves the situation, it just means that we now have one
+syscall that behaves completely differently from all others,
+in that the x32 version requires being called through a
+SYSCALL_DEFINE() entry point rather than a
+COMPAT_SYSCALL_DEFINE() one, and we have to
+add more complexity to the copy_siginfo_from_user()
+implementation to duplicate the hack that exists in
+copy_siginfo_from_user32().
+
+Of course, the nicest option would be to completely remove
+x32 so we can stop worrying about it.
+
+      Arnd
