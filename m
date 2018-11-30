@@ -2,212 +2,152 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C206EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001E1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FCDD20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:49:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jqn+knwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FCDD20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id BEB0120834
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 15:49:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEB0120834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeLAC6w (ORCPT
+        id S1727517AbeLAC7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:58:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:32844 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeLAC6w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:58:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MA2s+8gVjStmCtaou91J+A3fkOma7YbmzWeiPVmxV1s=; b=jqn+knwb1lsycPFphNXRhxoMU
-        fOKlZ2yaEH5qrg6FMQ8jLw2NX4x/GzmaooHlnrPZ4heiIxlxtkSqHnD1ZY/2ebX0mnh0DZPp81zcP
-        TrmitM+hIcnJlk++B++7njnBqeNhJJCsKKX1f8BPrX/rw9dWn5yehdyD339be0T78MasdNL8Y23d2
-        Qt7CnN5DljlOd+TB599rqn1TlFnHvYDDW5umHbjynxwwsS8uyPqNyins569PhRKW0MYzFKbNHfuak
-        Br0Yu6oraJ5wsWpR5XfnyGb3e+m1qWnxV9FoUfRVgOT6J6wdyIoEgp7eVQ44V26DLKvCE8idIbNp9
-        HHjebze2Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSl2M-0004ZV-IG; Fri, 30 Nov 2018 15:49:02 +0000
-Date:   Fri, 30 Nov 2018 07:49:02 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dax: Fix Xarray conversion of dax_unlock_mapping_entry()
-Message-ID: <20181130154902.GL10377@bombadil.infradead.org>
-References: <154353682674.1676897.15440708268545845062.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Fri, 30 Nov 2018 21:59:21 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48820 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727158AbeLAC7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 21:59:21 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0A3DFE2878776;
+        Fri, 30 Nov 2018 23:49:30 +0800 (CST)
+Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 30 Nov 2018 23:49:24 +0800
+From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+To:     <lorenzo.pieralisi@arm.com>, <robin.murphy@arm.com>
+CC:     <jean-philippe.brucker@arm.com>, <will.deacon@arm.com>,
+        <mark.rutland@arm.com>, <guohanjun@huawei.com>,
+        <john.garry@huawei.com>, <pabba@codeaurora.org>,
+        <vkilari@codeaurora.org>, <rruigrok@codeaurora.org>,
+        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
+        <neil.m.leeder@gmail.com>
+Subject: [PATCH v5 3/4] perf/smmuv3: Add MSI irq support
+Date:   Fri, 30 Nov 2018 15:47:50 +0000
+Message-ID: <20181130154751.28580-4-shameerali.kolothum.thodi@huawei.com>
+X-Mailer: git-send-email 2.12.0.windows.1
+In-Reply-To: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
+References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154353682674.1676897.15440708268545845062.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.237]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 04:13:46PM -0800, Dan Williams wrote:
-> Internal to dax_unlock_mapping_entry(), dax_unlock_entry() is used to
-> store a replacement entry in the Xarray at the given xas-index with the
-> DAX_LOCKED bit clear. When called, dax_unlock_entry() expects the unlocked
-> value of the entry relative to the current Xarray state to be specified.
-> 
-> In most contexts dax_unlock_entry() is operating in the same scope as
-> the matched dax_lock_entry(). However, in the dax_unlock_mapping_entry()
-> case the implementation needs to recall the original entry. In the case
-> where the original entry is a 'pmd' entry it is possible that the pfn
-> performed to do the lookup is misaligned to the value retrieved in the
-> Xarray.
+This adds support for MSI-based counter overflow interrupt.
 
-So far, dax_unlock_mapping_entry only has the one caller.  I'd rather we
-returned the 'entry' to the caller, then had them pass it back to the
-unlock function.  That matches the flow in the rest of DAX and doesn't
-pose an undue burden to the caller.
+Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+---
+ drivers/perf/arm_smmuv3_pmu.c | 58 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-I plan to reclaim the DAX_LOCK bit (and the DAX_EMPTY bit for that
-matter), instead using a special DAX_LOCK value.  DAX is almost free of
-assumptions about the other bits in a locked entry, and this will remove
-the assuption that there's a PMD bit in the entry.
+diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
+index fb9dcd8..71d10a0 100644
+--- a/drivers/perf/arm_smmuv3_pmu.c
++++ b/drivers/perf/arm_smmuv3_pmu.c
+@@ -68,6 +68,7 @@
+ #define SMMU_PMCG_OVSSET0               0xCC0
+ #define SMMU_PMCG_CFGR                  0xE00
+ #define SMMU_PMCG_CFGR_RELOC_CTRS       BIT(20)
++#define SMMU_PMCG_CFGR_MSI              BIT(21)
+ #define SMMU_PMCG_CFGR_SID_FILTER_TYPE  BIT(23)
+ #define SMMU_PMCG_CFGR_SIZE_MASK        GENMASK(13, 8)
+ #define SMMU_PMCG_CFGR_NCTR_MASK        GENMASK(5, 0)
+@@ -78,6 +79,12 @@
+ #define SMMU_PMCG_IRQ_CTRL              0xE50
+ #define SMMU_PMCG_IRQ_CTRL_IRQEN        BIT(0)
+ #define SMMU_PMCG_IRQ_CFG0              0xE58
++#define SMMU_PMCG_IRQ_CFG1              0xE60
++#define SMMU_PMCG_IRQ_CFG2              0xE64
++
++/* MSI config fields */
++#define MSI_CFG0_ADDR_MASK              GENMASK_ULL(51, 2)
++#define MSI_CFG2_MEMATTR_DEVICE_nGnRE   0x1
+ 
+ #define SMMU_DEFAULT_FILTER_SPAN        1
+ #define SMMU_DEFAULT_FILTER_STREAM_ID   GENMASK(31, 0)
+@@ -587,11 +594,62 @@ static irqreturn_t smmu_pmu_handle_irq(int irq_num, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void smmu_pmu_free_msis(void *data)
++{
++	struct device *dev = data;
++
++	platform_msi_domain_free_irqs(dev);
++}
++
++static void smmu_pmu_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
++{
++	phys_addr_t doorbell;
++	struct device *dev = msi_desc_to_dev(desc);
++	struct smmu_pmu *pmu = dev_get_drvdata(dev);
++
++	doorbell = (((u64)msg->address_hi) << 32) | msg->address_lo;
++	doorbell &= MSI_CFG0_ADDR_MASK;
++
++	writeq_relaxed(doorbell, pmu->reg_base + SMMU_PMCG_IRQ_CFG0);
++	writel_relaxed(msg->data, pmu->reg_base + SMMU_PMCG_IRQ_CFG1);
++	writel_relaxed(MSI_CFG2_MEMATTR_DEVICE_nGnRE,
++		       pmu->reg_base + SMMU_PMCG_IRQ_CFG2);
++}
++
++static void smmu_pmu_setup_msi(struct smmu_pmu *pmu)
++{
++	struct msi_desc *desc;
++	struct device *dev = pmu->dev;
++	int ret;
++
++	/* Clear MSI address reg */
++	writeq_relaxed(0, pmu->reg_base + SMMU_PMCG_IRQ_CFG0);
++
++	/* MSI supported or not */
++	if (!(readl(pmu->reg_base + SMMU_PMCG_CFGR) & SMMU_PMCG_CFGR_MSI))
++		return;
++
++	ret = platform_msi_domain_alloc_irqs(dev, 1, smmu_pmu_write_msi_msg);
++	if (ret) {
++		dev_warn(dev, "failed to allocate MSIs\n");
++		return;
++	}
++
++	desc = first_msi_entry(dev);
++	if (desc)
++		pmu->irq = desc->irq;
++
++	/* Add callback to free MSIs on teardown */
++	devm_add_action(dev, smmu_pmu_free_msis, dev);
++}
++
+ static int smmu_pmu_setup_irq(struct smmu_pmu *pmu)
+ {
+ 	unsigned long flags = IRQF_NOBALANCING | IRQF_SHARED | IRQF_NO_THREAD;
+ 	int irq, ret = -ENXIO;
+ 
++	smmu_pmu_setup_msi(pmu);
++
+ 	irq = pmu->irq;
+ 	if (irq)
+ 		ret = devm_request_irq(pmu->dev, irq, smmu_pmu_handle_irq,
+-- 
+2.7.4
 
-How does this look?
-
-diff --git a/fs/dax.c b/fs/dax.c
-index 9bcce89ea18e..7681429af42f 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -351,20 +351,20 @@ static struct page *dax_busy_page(void *entry)
-  * @page: The page whose entry we want to lock
-  *
-  * Context: Process context.
-- * Return: %true if the entry was locked or does not need to be locked.
-+ * Return: A cookie to pass to dax_unlock_mapping_entry() or %NULL if the
-+ * entry could not be locked.
-  */
--bool dax_lock_mapping_entry(struct page *page)
-+void *dax_lock_mapping_entry(struct page *page)
- {
- 	XA_STATE(xas, NULL, 0);
- 	void *entry;
--	bool locked;
- 
- 	/* Ensure page->mapping isn't freed while we look at it */
- 	rcu_read_lock();
- 	for (;;) {
- 		struct address_space *mapping = READ_ONCE(page->mapping);
- 
--		locked = false;
-+		entry = NULL;
- 		if (!dax_mapping(mapping))
- 			break;
- 
-@@ -375,7 +375,7 @@ bool dax_lock_mapping_entry(struct page *page)
- 		 * otherwise we would not have a valid pfn_to_page()
- 		 * translation.
- 		 */
--		locked = true;
-+		entry = (void *)1;
- 		if (S_ISCHR(mapping->host->i_mode))
- 			break;
- 
-@@ -400,22 +400,17 @@ bool dax_lock_mapping_entry(struct page *page)
- 		break;
- 	}
- 	rcu_read_unlock();
--	return locked;
-+	return entry;
- }
- 
--void dax_unlock_mapping_entry(struct page *page)
-+void dax_unlock_mapping_entry(struct page *page, void *entry)
- {
- 	struct address_space *mapping = page->mapping;
- 	XA_STATE(xas, &mapping->i_pages, page->index);
--	void *entry;
- 
- 	if (S_ISCHR(mapping->host->i_mode))
- 		return;
- 
--	rcu_read_lock();
--	entry = xas_load(&xas);
--	rcu_read_unlock();
--	entry = dax_make_entry(page_to_pfn_t(page), dax_is_pmd_entry(entry));
- 	dax_unlock_entry(&xas, entry);
- }
- 
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 450b28db9533..bc143c2d6980 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -88,8 +88,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 		struct block_device *bdev, struct writeback_control *wbc);
- 
- struct page *dax_layout_busy_page(struct address_space *mapping);
--bool dax_lock_mapping_entry(struct page *page);
--void dax_unlock_mapping_entry(struct page *page);
-+void *dax_lock_mapping_entry(struct page *page);
-+void dax_unlock_mapping_entry(struct page *page, void *entry);
- #else
- static inline bool bdev_dax_supported(struct block_device *bdev,
- 		int blocksize)
-@@ -122,14 +122,14 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
- 	return -EOPNOTSUPP;
- }
- 
--static inline bool dax_lock_mapping_entry(struct page *page)
-+static inline void *dax_lock_mapping_entry(struct page *page)
- {
- 	if (IS_DAX(page->mapping->host))
--		return true;
--	return false;
-+		return (void *)1;
-+	return NULL;
- }
- 
--static inline void dax_unlock_mapping_entry(struct page *page)
-+static inline void dax_unlock_mapping_entry(struct page *page, void *entry)
- {
- }
- #endif
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 0cd3de3550f0..3abea1e19902 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1161,6 +1161,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
- 	LIST_HEAD(tokill);
- 	int rc = -EBUSY;
- 	loff_t start;
-+	void *cookie;
- 
- 	/*
- 	 * Prevent the inode from being freed while we are interrogating
-@@ -1169,7 +1170,8 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
- 	 * also prevents changes to the mapping of this pfn until
- 	 * poison signaling is complete.
- 	 */
--	if (!dax_lock_mapping_entry(page))
-+	cookie = dax_lock_mapping_entry(page);
-+	if (!cookie)
- 		goto out;
- 
- 	if (hwpoison_filter(page)) {
-@@ -1220,7 +1222,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
- 	kill_procs(&tokill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
- 	rc = 0;
- unlock:
--	dax_unlock_mapping_entry(page);
-+	dax_unlock_mapping_entry(page, cookie);
- out:
- 	/* drop pgmap ref acquired in caller */
- 	put_dev_pagemap(pgmap);
 
