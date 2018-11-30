@@ -2,113 +2,176 @@ Return-Path: <SRS0=bYeO=OJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D84FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B7DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2235B20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F942145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 30 Nov 2018 16:36:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNA8vZbO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2235B20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/EyT+5i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F942145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeLADpw (ORCPT
+        id S1727602AbeLADqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 22:45:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32820 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726830AbeLADpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:45:52 -0500
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84636214C1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 16:35:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543595759;
-        bh=4Gac/Vhr2TC3XRK5vvjmEJW6+Ymq3jRJY1l0TE4OGQE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gNA8vZbONlpPsLbIejimZ3mdYbXqWHekUsW0E69IsZOz6vmYzUvZCavKEkwgCVUTC
-         Nns+tlX1FmCIsVx1twEmyhu3sJvMoDHOyDG2XXsY1jvUFh4csOUE1VYRqVnVlxWcEt
-         mxYKyikHsVsv+vl3s2lEKJxrC+lSucMjF7eKnWUg=
-Received: by mail-wr1-f54.google.com with SMTP id x10so5874289wrs.8
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 08:35:59 -0800 (PST)
-X-Gm-Message-State: AA+aEWaDRNltB1pac1vrvhbIptq7+B+lCi3s5Y7A2td48LmtMqpjyepO
-        IDezaf6DTSeeXAfJ7Udg5iTM1sZLLkNtY0oH6C2Y5g==
-X-Google-Smtp-Source: AFSGD/WAXIxJuwgMScXUJij0Os0AawoUXSwMEqu+LAro7x9Wf/70L80mjEU24nvMG7y7D6cFZeUDx08Ay3cD8dPOFBc=
-X-Received: by 2002:adf:8323:: with SMTP id 32mr5328377wrd.176.1543595757875;
- Fri, 30 Nov 2018 08:35:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
- <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
- <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
- <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
- <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
- <87y39b2lm2.fsf@xmission.com> <20181130065606.kmilbbq46oeycjp5@brauner.io> <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 30 Nov 2018 08:35:45 -0800
-X-Gmail-Original-Message-ID: <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com>
-Message-ID: <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christian Brauner <christian@brauner.io>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Nov 2018 22:46:14 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33606 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbeLADqO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 22:46:14 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z23so3073645plo.0;
+        Fri, 30 Nov 2018 08:36:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=m5lpqb58unwhhYr1UH2S+9bDI2XUBanLKdG1j+tGvWE=;
+        b=O/EyT+5iIDsaomnA8oemDV236TpOElVOYZrfbM8KB/kA736QlHwSDnfyrHXIjRAh4C
+         JwM2sPU5McF9Cy/Yb+o0xfO+Bku9oj4S/FzmB1NudFWHVAMsRNa7sgfpoon41/wN8gzB
+         qvk+PIJxPxgOeEOZGaWLv4AZhALtW49kwjhqgw6diMtRz0cKUjh7hE9ZHkAHJoHsu5Yt
+         T27sBkhG4YunJ6831AAfYg2TYqMPCkQq6TFSjXPzZtum6vTSpCR3Cl+vvYGC3nUNwnJy
+         OLPbW4+JIjayqBmc+B59n//T0+/+KB7mXDkmoz74uozhx0J1ILvlSDpI5D5PerijNNJv
+         IneQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m5lpqb58unwhhYr1UH2S+9bDI2XUBanLKdG1j+tGvWE=;
+        b=QFCAy2XgL/lkxGjOek+8y9QS9cbf1E72C+K+++MvJuW6al87mDkK9L8umDvcOF9/hJ
+         rvRKEto+WyMUfc6Q123QjT2bQWbpjxWfx/+D7+uy72KCKa2O0n1AIgytemc5e12lzLPU
+         Iie7SML2hwpY1/wtirTADpXqMwKJLfU9FxmFmqJ/vsGyhJ6+g4sEfHcCcbOH9RXrgxiR
+         a+tSkGpHMy+xQtvhGv/Cv7dnVZ5m+TtelwbE3zrmgApNx3rtkl3G8+ukbtQsdowrRWGg
+         NIAI4tgn5F9m3mEqO2YnpZSwQfA0pxdYuhzxi6rfFmYAYwr/menDRJlU4sKsVkC6QP8r
+         w9yg==
+X-Gm-Message-State: AA+aEWai3H5d14bSIpZ+7Dim6ZovXqeDeXztG8JHHeKZ9nJStzt1m7Xu
+        dLZug+bdEN34T1JPwc3ZaQsB2XKMxPg=
+X-Google-Smtp-Source: AFSGD/WyogUTwTLDhcFFqYsWAAu7+34kg5iQDkTe34xVTx941xXLQoaCakEM/zs/oDzN7xqkUPUGiA==
+X-Received: by 2002:a17:902:780a:: with SMTP id p10mr6517733pll.54.1543595781155;
+        Fri, 30 Nov 2018 08:36:21 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id z13sm14902826pgf.84.2018.11.30.08.36.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 08:36:20 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] pinctrl: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Fri, 30 Nov 2018 11:36:17 -0500
+Message-Id: <20181130163617.3778-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 3:41 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> siginfo_t as it is now still has a number of other downsides, and Andy in
-> particular didn't like the idea of having three new variants on x86
-> (depending on how you count). His alternative suggestion of having
-> a single syscall entry point that takes a 'signfo_t __user *' but interprets
-> it as compat_siginfo depending on in_compat_syscall()/in_x32_syscall()
-> should work correctly, but feels wrong to me, or at least inconsistent
-> with how we do this elsewhere.
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-If everyone else is okay with it, I can get on board with three
-variants on x86.  What I can't get on board with is *five* variants on
-x86, which would be:
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/pinctrl/pinconf.c | 29 ++++-------------------------
+ drivers/pinctrl/pinmux.c  | 29 ++++-------------------------
+ 2 files changed, 8 insertions(+), 50 deletions(-)
 
-procfd_signal via int80 / the 32-bit vDSO: the ia32 structure
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index d3fe14394b73..2c7229380f08 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -366,29 +366,8 @@ static int pinconf_groups_show(struct seq_file *s, void *what)
+ 	return 0;
+ }
+ 
+-static int pinconf_pins_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pinconf_pins_show, inode->i_private);
+-}
+-
+-static int pinconf_groups_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pinconf_groups_show, inode->i_private);
+-}
+-
+-static const struct file_operations pinconf_pins_ops = {
+-	.open		= pinconf_pins_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-static const struct file_operations pinconf_groups_ops = {
+-	.open		= pinconf_groups_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(pinconf_pins);
++DEFINE_SHOW_ATTRIBUTE(pinconf_groups);
+ 
+ #define MAX_NAME_LEN 15
+ 
+@@ -613,9 +592,9 @@ void pinconf_init_device_debugfs(struct dentry *devroot,
+ 			 struct pinctrl_dev *pctldev)
+ {
+ 	debugfs_create_file("pinconf-pins", S_IFREG | S_IRUGO,
+-			    devroot, pctldev, &pinconf_pins_ops);
++			    devroot, pctldev, &pinconf_pins_fops);
+ 	debugfs_create_file("pinconf-groups", S_IFREG | S_IRUGO,
+-			    devroot, pctldev, &pinconf_groups_ops);
++			    devroot, pctldev, &pinconf_groups_fops);
+ 	debugfs_create_file("pinconf-config",  (S_IRUGO | S_IWUSR | S_IWGRP),
+ 			    devroot, pctldev, &pinconf_dbg_pinconfig_fops);
+ }
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 5780442c068b..4d0cc1889dd9 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -644,37 +644,16 @@ void pinmux_show_setting(struct seq_file *s,
+ 		   setting->data.mux.func);
+ }
+ 
+-static int pinmux_functions_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pinmux_functions_show, inode->i_private);
+-}
+-
+-static int pinmux_pins_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pinmux_pins_show, inode->i_private);
+-}
+-
+-static const struct file_operations pinmux_functions_ops = {
+-	.open		= pinmux_functions_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-static const struct file_operations pinmux_pins_ops = {
+-	.open		= pinmux_pins_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(pinmux_functions);
++DEFINE_SHOW_ATTRIBUTE(pinmux_pins);
+ 
+ void pinmux_init_device_debugfs(struct dentry *devroot,
+ 			 struct pinctrl_dev *pctldev)
+ {
+ 	debugfs_create_file("pinmux-functions", S_IFREG | S_IRUGO,
+-			    devroot, pctldev, &pinmux_functions_ops);
++			    devroot, pctldev, &pinmux_functions_fops);
+ 	debugfs_create_file("pinmux-pins", S_IFREG | S_IRUGO,
+-			    devroot, pctldev, &pinmux_pins_ops);
++			    devroot, pctldev, &pinmux_pins_fops);
+ }
+ 
+ #endif /* CONFIG_DEBUG_FS */
+-- 
+2.17.0
 
-syscall64 with nr == 335 (presumably): 64-bit
-
-syscall64 with nr == 548 | 0x40000000: x32
-
-syscall64 with nr == 548: 64-bit entry but in_compat_syscall() ==
-true, behavior is arbitrary
-
-syscall64 with nr == 335 | 0x40000000: x32 entry, but
-in_compat_syscall() == false, behavior is arbitrary
-
-This mess isn't really Christian's fault -- it's been there for a
-while, but it's awful and I don't think we want to perpetuate it.
-
-Obviously, I'd prefer a variant where the structure that's passed in
-is always the same.
-
-BTW, do we consider siginfo_t to be extensible?  If so, and if we pass
-in a pointer, presumably we should pass a length as well.
