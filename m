@@ -2,144 +2,89 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11528C65BAE
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D654C65BAE
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B5A21473
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:48:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1B5A21473
+	by mail.kernel.org (Postfix) with ESMTP id 11DDF20673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:52:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="kvLOg+Vy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DDF20673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbeLAL7L (ORCPT
+        id S1726629AbeLAMEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 06:59:11 -0500
-Received: from mga17.intel.com ([192.55.52.151]:42180 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbeLAL7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 06:59:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 16:48:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
-   d="scan'208";a="100743193"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Nov 2018 16:48:00 -0800
-Subject: [PATCH v2 5/5] x86/mm: Drop usage of __flush_tlb_all() in
- kernel_physical_mapping_init()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     tglx@linutronix.de
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, stable@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 30 Nov 2018 16:35:32 -0800
-Message-ID: <154362453268.2367148.268782514142834053.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154362450646.2367148.16448130381211111341.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154362450646.2367148.16448130381211111341.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Sat, 1 Dec 2018 07:04:06 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44511 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbeLAMEG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 07:04:06 -0500
+Received: by mail-ot1-f68.google.com with SMTP id f18so6781465otl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 16:52:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bRYshC/pQ0qYWjfqH+kV5ROPjGOP9RnyUeFhFlXm0Nk=;
+        b=kvLOg+VykFD85Cs3MSzczgd7cE8OVuFUzKtGaXU2nrt/4CFuAKf6rEJBdexLjM37iE
+         eWK97PIgqWvotql6dKX5qbVj3AMRyjRlFHToSOiDVON76pQsN6AxZqOuOENvEkYAE3Q8
+         Ji1Jeq46Hcg2f5WtDnp1rXsIibZMJSWsKo1eyWsNVUqDd3PNKiVaD7vkWmGqe6czYzNe
+         qXH56xfOzbFGa8ktOuuuz/GZhcSATr1Z1GG9YKWDfgG149fUxWoiAJgARIXsFILYZpZa
+         drGT7semM2bVAvokB1O2Apt+GRHWLEJMN5e/ZOE684215Uf3713eAj2YDwvISgl9NlRP
+         4qDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bRYshC/pQ0qYWjfqH+kV5ROPjGOP9RnyUeFhFlXm0Nk=;
+        b=LDURY1ftip5oXtAnSlLYJbu56FnH51mauom52hLN3hcPCkTdIwegPfJXB8meJatjK4
+         RzWKPfVW+zFrfc9QwhKhios+jFoZt9xyUDTpRIJHBGJ+8OEhpy2zKJJ6s++jb1rR6mbr
+         6mrcNfwftegPCyJiZ0hrPafW7hH4v3YVR+ulRn0PP+3CEITyTzqFHP3V5eZA1Uybgfc5
+         WMH1UDaUcwDzKROXZroMhlhyquHPQIvalgOywoxHg2QLtGvOX2qsrVBZHK9/qwo3jwLq
+         0mOG9o6UZTlloR96fhVS90JoS4gJeUroHtZrz2AXGCw2YTmOkIbJiTnu6Xh0e/CBzAmu
+         nLXw==
+X-Gm-Message-State: AA+aEWYnwde/FLfU0KfhoBQZL1cU03+Gm5N5psqiiYPnV7wqZZ5hV3PS
+        uDoFQfZogH4794sYk0Nfic7+X6GnOk7D3R4G9tuwwg==
+X-Google-Smtp-Source: AFSGD/Wv3usxcnLZIpAsHPFAf5cdEwRibKsxWDdz8k0gLb564Mx3fVhcGiQs+xMWpPYdZbUh5ScDgQROCHIym3XnZig=
+X-Received: by 2002:a9d:775a:: with SMTP id t26mr4623979otl.32.1543625575051;
+ Fri, 30 Nov 2018 16:52:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20181130225911.2900-1-logang@deltatee.com>
+In-Reply-To: <20181130225911.2900-1-logang@deltatee.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 30 Nov 2018 16:52:43 -0800
+Message-ID: <CAPcyv4jHF-3H09Zgtcm_+AVviMAvE1zfEQnoipAakE+o=KMpUg@mail.gmail.com>
+Subject: Re: [PATCH] PCI/P2PDMA: Match interface changes to devm_memremap_pages()
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f77084d96355 "x86/mm/pat: Disable preemption around
-__flush_tlb_all()" addressed a case where __flush_tlb_all() is called
-without preemption being disabled. It also left a warning to catch other
-cases where preemption is not disabled. That warning triggers for the
-memory hotplug path which is also used for persistent memory enabling:
+On Fri, Nov 30, 2018 at 2:59 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+> "mm-hmm-mark-hmm_devmem_add-add_resource-export_symbol_gpl.patch" in the
+> mm tree breaks p2pdma. The patch was written and reviewed before p2pdma
+> was merged so the necessary changes were not done to the call site in
+> that code.
+>
+> Without this patch, all drivers will fail to register P2P resources
+> because devm_memremap_pages() will return -EINVAL due to the 'kill'
+> member of the pagemap structure not yet being set.
+>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
 
- WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
- RIP: 0010:__flush_tlb_all+0x1b/0x3a
- [..]
- Call Trace:
-  phys_pud_init+0x29c/0x2bb
-  kernel_physical_mapping_init+0xfc/0x219
-  init_memory_mapping+0x1a5/0x3b0
-  arch_add_memory+0x2c/0x50
-  devm_memremap_pages+0x3aa/0x610
-  pmem_attach_disk+0x585/0x700 [nd_pmem]
-
-Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
-and Dave confirmed the expectation for TLB flush is for modifying /
-invalidating existing pte entries, but not initial population [2]. Drop
-the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
-expectation that this path is only ever populating empty entries for the
-linear map. Note, at linear map teardown time there is a call to the
-all-cpu flush_tlb_all() to invalidate the removed mappings.
-
-[1]: https://lore.kernel.org/lkml/9DFD717D-857D-493D-A606-B635D72BAC21@amacapital.net
-[2]: https://lore.kernel.org/lkml/749919a4-cdb1-48a3-adb4-adb81a5fa0b5@intel.com
-
-Fixes: f77084d96355 ("x86/mm/pat: Disable preemption around __flush_tlb_all()")
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: <stable@vger.kernel.org>
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/mm/init_64.c |    6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 3e25ac2793ef..484c1b92f078 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -584,7 +584,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
- 							   paddr_end,
- 							   page_size_mask,
- 							   prot);
--				__flush_tlb_all();
- 				continue;
- 			}
- 			/*
-@@ -627,7 +626,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
- 		pud_populate_safe(&init_mm, pud, pmd);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	update_page_count(PG_LEVEL_1G, pages);
- 
-@@ -668,7 +666,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
- 			paddr_last = phys_pud_init(pud, paddr,
- 					paddr_end,
- 					page_size_mask);
--			__flush_tlb_all();
- 			continue;
- 		}
- 
-@@ -680,7 +677,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
- 		p4d_populate_safe(&init_mm, p4d, pud);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	return paddr_last;
- }
-@@ -733,8 +729,6 @@ kernel_physical_mapping_init(unsigned long paddr_start,
- 	if (pgd_changed)
- 		sync_global_pgds(vaddr_start, vaddr_end - 1);
- 
--	__flush_tlb_all();
--
- 	return paddr_last;
- }
- 
-
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
