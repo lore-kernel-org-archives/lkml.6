@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE496C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0A6C65BAE
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC7820673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC7820673
+	by mail.kernel.org (Postfix) with ESMTP id 2D55720673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D55720673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeLAMLc (ORCPT
+        id S1727073AbeLAMLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:11:32 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38134 "EHLO
+        Sat, 1 Dec 2018 07:11:39 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38160 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbeLAMLb (ORCPT
+        with ESMTP id S1726897AbeLAMLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:11:31 -0500
+        Sat, 1 Dec 2018 07:11:32 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 0FC18281EB; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
+        id 5ECAC281FF; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -36,11 +36,11 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <e8dcf2c09f3aa8d24732529234569f997be5888a.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <68b40c64e1cc2f095f93cf27f860f8f6fc0152cc.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 06/14] m68k: atari: Convert to clocksource API
+Subject: [PATCH v4 11/14] m68k: mvme147: Convert to clocksource API
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,133 +50,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Add a platform clocksource by adapting the existing arch_gettimeoffset
 implementation.
 
-Normally the MFP timer C interrupt flag would be used to check for
-timer counter wrap-around. Unfortunately, that flag gets cleared by the
-MFP itself (due to automatic End-of-Interrupt mode). This means that
-mfp_timer_c_handler() and atari_read_clk() must race when accounting
-for counter wrap-around.
-
-That problem is avoided by effectively stopping the clock when it might
-otherwise jump backwards (due to interrupt latency). Note that this may
-affect clock accuracy.
-
-After the timer interrupt is asserted, wait for the counter to be
-reloaded so that atari_read_clk() will not see the intermediate state
-as that would cause the clock to jump backwards.
-
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 ---
-TODO: find a spare counter for the clocksource, rather than hanging
-it off the HZ timer.
-
-Changed since v2:
- - Wait for timer reload after timer interrupt.
- - Add comment and improve code style for better clarity.
-
 Changed since v1:
  - Moved clk_total access to within the irq lock.
- - Renamed mfp_timer_handler and mfptimer_handler.
- - Avoid accessing the timer interrupt flag in atari_read_clk(). To
-get monotonicity, keep track of the previous timer counter value.
+ - Use type u32 for tick counter.
 ---
- arch/m68k/atari/time.c | 53 ++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 17 deletions(-)
+ arch/m68k/include/asm/mvme147hw.h |  1 -
+ arch/m68k/mvme147/config.c        | 36 +++++++++++++++++++++++++------
+ 2 files changed, 30 insertions(+), 7 deletions(-)
 
-diff --git a/arch/m68k/atari/time.c b/arch/m68k/atari/time.c
-index fafa20f75ab9..ce923a523695 100644
---- a/arch/m68k/atari/time.c
-+++ b/arch/m68k/atari/time.c
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/rtc.h>
- #include <linux/bcd.h>
+diff --git a/arch/m68k/include/asm/mvme147hw.h b/arch/m68k/include/asm/mvme147hw.h
+index 9c7ff67c5ffd..7c3dd513128e 100644
+--- a/arch/m68k/include/asm/mvme147hw.h
++++ b/arch/m68k/include/asm/mvme147hw.h
+@@ -66,7 +66,6 @@ struct pcc_regs {
+ #define PCC_INT_ENAB		0x08
+ 
+ #define PCC_TIMER_INT_CLR	0x80
+-#define PCC_TIMER_PRELOAD	63936l
+ 
+ #define PCC_LEVEL_ABORT		0x07
+ #define PCC_LEVEL_SERIAL	0x04
+diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
+index 4ef4faa5ed8b..c44a254e8a8c 100644
+--- a/arch/m68k/mvme147/config.c
++++ b/arch/m68k/mvme147/config.c
+@@ -17,6 +17,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/tty.h>
 +#include <linux/clocksource.h>
- #include <linux/delay.h>
- #include <linux/export.h>
+ #include <linux/console.h>
+ #include <linux/linkage.h>
+ #include <linux/init.h>
+@@ -92,6 +93,21 @@ void __init config_mvme147(void)
+ 		vme_brdtype = VME_TYPE_MVME147;
+ }
  
-@@ -24,12 +25,29 @@
- DEFINE_SPINLOCK(rtc_lock);
- EXPORT_SYMBOL_GPL(rtc_lock);
- 
-+static u64 atari_read_clk(struct clocksource *cs);
++static u64 mvme147_read_clk(struct clocksource *cs);
 +
-+static struct clocksource atari_clk = {
-+	.name   = "mfp",
-+	.rating = 100,
-+	.read   = atari_read_clk,
++static struct clocksource mvme147_clk = {
++	.name   = "pcc",
++	.rating = 250,
++	.read   = mvme147_read_clk,
 +	.mask   = CLOCKSOURCE_MASK(32),
 +	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
 +};
 +
 +static u32 clk_total;
-+static u8 last_timer_count;
 +
- static irqreturn_t mfp_timer_c_handler(int irq, void *dev_id)
- {
- 	irq_handler_t timer_routine = dev_id;
- 	unsigned long flags;
++#define PCC_TIMER_CLOCK_FREQ 160000
++#define PCC_TIMER_CYCLES     (PCC_TIMER_CLOCK_FREQ / HZ)
++#define PCC_TIMER_PRELOAD    (0x10000 - PCC_TIMER_CYCLES)
  
+ /* Using pcc tick timer 1 */
+ 
+@@ -103,6 +119,7 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
  	local_irq_save(flags);
-+	do {
-+		last_timer_count = st_mfp.tim_dt_c;
-+	} while (last_timer_count == 1);
-+	clk_total += INT_TICKS;
+ 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;
+ 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
++	clk_total += PCC_TIMER_CYCLES;
  	timer_routine(0, NULL);
  	local_irq_restore(flags);
  
-@@ -44,32 +62,33 @@ atari_sched_init(irq_handler_t timer_routine)
-     /* start timer C, div = 1:100 */
-     st_mfp.tim_ct_cd = (st_mfp.tim_ct_cd & 15) | 0x60;
-     /* install interrupt service routine for MFP Timer C */
--    if (request_irq(IRQ_MFP_TIMC, mfp_timer_c_handler, 0, "timer",
-+    if (request_irq(IRQ_MFP_TIMC, mfp_timer_c_handler, IRQF_TIMER, "timer",
-                     timer_routine))
- 	pr_err("Couldn't register timer interrupt\n");
+@@ -112,32 +129,39 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
+ 
+ void mvme147_sched_init (irq_handler_t timer_routine)
+ {
+-	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, 0, "timer 1",
+-			timer_routine))
++	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, IRQF_TIMER,
++			"timer 1", timer_routine))
+ 		pr_err("Couldn't register timer interrupt\n");
+ 
+ 	/* Init the clock with a value */
+-	/* our clock goes off every 6.25us */
++	/* The clock counter increments until 0xFFFF then reloads */
+ 	m147_pcc->t1_preload = PCC_TIMER_PRELOAD;
+ 	m147_pcc->t1_cntrl = 0x0;	/* clear timer */
+ 	m147_pcc->t1_cntrl = 0x3;	/* start timer */
+ 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;  /* clear pending ints */
+ 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
 +
-+    clocksource_register_hz(&atari_clk, INT_CLK);
++	clocksource_register_hz(&mvme147_clk, PCC_TIMER_CLOCK_FREQ);
  }
  
- /* ++andreas: gettimeoffset fixed to check for pending interrupt */
- 
--#define TICK_SIZE 10000
--
 -/* This is always executed with interrupts disabled.  */
--u32 atari_gettimeoffset(void)
-+static u64 atari_read_clk(struct clocksource *cs)
+ /* XXX There are race hazards in this code XXX */
+-u32 mvme147_gettimeoffset(void)
++static u64 mvme147_read_clk(struct clocksource *cs)
  {
--  u32 ticks, offset = 0;
--
--  /* read MFP timer C current value */
--  ticks = st_mfp.tim_dt_c;
--  /* The probability of underflow is less than 2% */
--  if (ticks > INT_TICKS - INT_TICKS / 50)
--    /* Check for pending timer interrupt */
--    if (st_mfp.int_pn_b & (1 << 5))
--      offset = TICK_SIZE;
 +	unsigned long flags;
-+	u8 count;
+ 	volatile unsigned short *cp = (volatile unsigned short *)0xfffe1012;
+ 	unsigned short n;
 +	u32 ticks;
  
--  ticks = INT_TICKS - ticks;
--  ticks = ticks * 10000L / INT_TICKS;
 +	local_irq_save(flags);
-+	/* Ensure that the count is monotonically decreasing, even though
-+	 * the result may briefly stop changing after counter wrap-around.
-+	 */
-+	count = min(st_mfp.tim_dt_c, last_timer_count);
-+	last_timer_count = count;
-+
-+	ticks = INT_TICKS - count;
-+	ticks += clk_total;
-+	local_irq_restore(flags);
+ 	n = *cp;
+ 	while (n != *cp)
+ 		n = *cp;
  
--  return (ticks + offset) * 1000;
+ 	n -= PCC_TIMER_PRELOAD;
+-	return ((unsigned long)n * 25 / 4) * 1000;
++	ticks = clk_total + n;
++	local_irq_restore(flags);
++
 +	return ticks;
  }
  
- 
+ static int bcd2int (unsigned char b)
 -- 
 2.18.1
 
