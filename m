@@ -2,251 +2,167 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CD5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 22:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144CEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 23:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AEE5205C9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 22:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AEE5205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
+	by mail.kernel.org (Postfix) with ESMTP id C00C72081D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 23:23:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pd4uPiz2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C00C72081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725771AbeLBJiX (ORCPT
+        id S1725768AbeLBKha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 04:38:23 -0500
-Received: from csm1.csm-office.com.au ([165.228.118.109]:59016 "EHLO
-        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeLBJiW (ORCPT
+        Sun, 2 Dec 2018 05:37:30 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44976 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725729AbeLBKha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 04:38:22 -0500
-X-Virus-Scanned: amavisd-new at aussec.com
-Received: from sneezy.aussec.com (sneezy.aussec.com [172.16.0.4])
-        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTP id wB1MOZgj011553;
-        Sun, 2 Dec 2018 09:24:40 +1100
-Received: from c110-21-61-29.farfl4.nsw.optusnet.com.au
- (c110-21-61-29.farfl4.nsw.optusnet.com.au [110.21.61.29]) by www.aussec.com
- (Horde Framework) with HTTP; Sun, 02 Dec 2018 09:24:30 +1100
-Message-ID: <20181202092430.13212jdulbjds6qm@www.aussec.com>
-Date:   Sun, 02 Dec 2018 09:24:30 +1100
-From:   tom burkart <tom@aussec.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] dt-bindings: pps: descriptor-based gpio,
- capture-clear addition
-References: <20181114125432.16044-1-tom@aussec.com>
- <20181114125432.16044-2-tom@aussec.com> <20181116224919.GA18008@bogus>
- <20181117213522.12672utznrvpbn56@www.aussec.com>
- <CAL_JsqKZHg5_8ghMmU4qO4CVZibcHOvtVJH669zod_6GLGakRg@mail.gmail.com>
- <20181118113502.55634v85ybgkt586@www.aussec.com>
- <CAL_Jsq+_Fb8mRDf_g=qDVsw-KPnrdZunLksYrgBFvhehzVNX+g@mail.gmail.com>
- <20181127145729.128452ujmj4uhb55@aussec.com>
- <CAL_Jsq+-S2tF++VstMCeUrX4SXcB4B99Tc-SFUQ3R66KPHVf+Q@mail.gmail.com>
- <20181129130520.198263bp7uxu51ls@aussec.com>
- <CAL_JsqLSz+iS0Ghy26+cvOd2xHdgc8z6VY88J2hm5gHFHR9vwg@mail.gmail.com>
-In-Reply-To:  <CAL_JsqLSz+iS0Ghy26+cvOd2xHdgc8z6VY88J2hm5gHFHR9vwg@mail.gmail.com>
+        Sun, 2 Dec 2018 05:37:30 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so9980958qte.11;
+        Sat, 01 Dec 2018 15:23:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=9ex1yDTFBOZH8oBUJUNdOXEjg0UXXLqMVVgTNO5HPVk=;
+        b=pd4uPiz23jtfP/yMGCeDDZh+Qrae1CkUdyaUXAMJReNclVbTmEf5eZCHxuI/5O0FfD
+         Jrkd0pjP3M+RZNggWQ7Ho380Ev3Zb39EJ73cUqunMmryZVHkm91bZHyQLPvz2qXojsoh
+         vx0CIHkudhcpnU7vlQMkEBmuBYy2a8JbPfQcQ5jc+q+1ajtsOWjxgLrpsanqQfrRc/OV
+         XhzXqFb6KkS1u1m+3LP4qViNmml9n4cp4RIEoXn4oE1YRPW0YXwuaLY2M/CPTMBWqFGy
+         hws76823rQiu/lFFUERS55DK6ZnqcI0t+keHkzoswjPBRIS6vOzkTETQYXS9B+S+eJkl
+         8AkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=9ex1yDTFBOZH8oBUJUNdOXEjg0UXXLqMVVgTNO5HPVk=;
+        b=ZM/4QXAF5Sm15Z7pgXb9dNYhtiOCFXrNrm9ernNPPMgNNVo1cjbD1DGkq9U6kH58fY
+         VBPCOnL19ys3VCB/fwEAjCaz9YvRZ6qDwYcZgsgebICjw0cjc0CeKzE4Y8kBveT6Pa+S
+         5fTn4XTxrTHqT3BmtONXSenSNOxg4YS7UO8BtqurVR0n1LWGTt8eJkzc4hfdgfChTYcd
+         +2NR5egkDgO7Ti7ikKQ05SBhzmLfT8/PHpvyWYqozcXJ6Trhgp76CK2t2sAtqJLM2Kg1
+         D9RJ3WQAOkDBfmrlIs9PDd/1OeDTBwd0C8f53re2/kj+C4YV5ySuZjv2ty71pG2AgcEs
+         TDLg==
+X-Gm-Message-State: AA+aEWYWNTq6SqjD017h0T0wS2VuOTOLndNw/KEu1KMGnCQLCxHnAX5H
+        /9AYE1e/ZkeLJDujoxeTfZ8NAxo=
+X-Google-Smtp-Source: AFSGD/Xbkd8SmS9c/xAfQicAg8jfKUFgSUq3XjjNu5znO3QrgjzGOsa0jui6cqTdubm+VPAe8pFHsA==
+X-Received: by 2002:a0c:b0db:: with SMTP id p27mr10925281qvc.73.1543706629798;
+        Sat, 01 Dec 2018 15:23:49 -0800 (PST)
+Received: from kmo-pixel (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
+        by smtp.gmail.com with ESMTPSA id z8sm4171795qto.45.2018.12.01.15.23.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Dec 2018 15:23:48 -0800 (PST)
+Date:   Sat, 1 Dec 2018 18:23:46 -0500
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcache@vger.kernel.org
+Subject: Bcachefs status update, current work
+Message-ID: <20181201232346.GA3571@kmo-pixel>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8;
- DelSp="Yes";
- format="flowed"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 7bit
-User-Agent: Internet Messaging Program (IMP) H3 (4.3.9)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring <robh@kernel.org>:
+So, since I've been pretty quiet since LSF I thought I ought to give an update
+on where bcachefs is at - and in particular talk about what sorts of problems
+and improvements are currently being worked on.
 
-> On Wed, Nov 28, 2018 at 8:05 PM tom burkart <tom@aussec.com> wrote:
->>
->> Quoting Rob Herring <robh@kernel.org>:
->>
->> > On Mon, Nov 26, 2018 at 9:57 PM tom burkart <tom@aussec.com> wrote:
->> >>
->> >> Quoting Rob Herring <robh@kernel.org>:
->> >>
->> >> > On Sat, Nov 17, 2018 at 6:35 PM tom burkart <tom@aussec.com> wrote:
->> >> >>
->> >> >> Quoting Rob Herring <robh@kernel.org>:
->> >> >>
->> >> >> > On Sat, Nov 17, 2018 at 4:35 AM tom burkart <tom@aussec.com> wrote:
->> >> >> >>
->> >> >> >> Quoting Rob Herring <robh@kernel.org>:
->> >> >> >>
->> >> >> >> > On Wed, Nov 14, 2018 at 11:54:29PM +1100, Tom Burkart wrote:
->> >> >> >> >> This patch changes the devicetree bindings for the  
->> pps-gpio driver
->> >> >> >> >> from the integer based ABI to the descriptor based ABI.
->> >> >> >> > ? That has nothing to do with DT.
->> >> >> >>
->> >> >> >> I believe it does, as the change in ABI forces a rename in the DT
->> >> >> >> naming convention.
->> >> >> >> This is due to the descriptor based ABI appending "-gpio" or
->> >> >> "-gpios" (see
->> >> >> >> Documentation/gpio/base.txt.)
->> >> >> >> Admittedly, I may have called it by the wrong name due to  
->> ignorance,
->> >> >> >> my apologies.
->> >> >> >
->> >> >> > If what you say is correct, then you can't change this  
->> driver. You'll
->> >> >> > break compatibility with any existing DT.
->> >> >> >
->> >> >> > Changing the binding reasoning should purely be that this is the
->> >> >> > preferred form. Bindings must be independent from changing kernel
->> >> >> > APIs.
->> >> >>
->> >> >> See comments from Philip Zabel.  I misread the documentation and this
->> >> >> has now been corrected in v8 of the patch.  I hope that eliminates all
->> >> >> comments made above.
->> >> >>
->> >> >> >> >>  It also adds
->> >> >> >> >> documentation for the device tree capture-clear option.  
->>  The legacy
->> >> >> >> >> device tree entry for the GPIO pin is supported.
->> >> >> >> >>
->> >> >> >> >> Signed-off-by: Tom Burkart <tom@aussec.com>
->> >> >> >> >> ---
->> >> >> >> >>  Documentation/devicetree/bindings/pps/pps-gpio.txt | 8 ++++++--
->> >> >> >> >>  1 file changed, 6 insertions(+), 2 deletions(-)
->> >> >> >> >>
->> >> >> >> >> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> >> >> >> >> b/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> >> >> >> >> index 3683874832ae..6c9fc0998d94 100644
->> >> >> >> >> --- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> >> >> >> >> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> >> >> >> >> @@ -5,19 +5,23 @@ a GPIO pin.
->> >> >> >> >>
->> >> >> >> >>  Required properties:
->> >> >> >> >>  - compatible: should be "pps-gpio"
->> >> >> >> >> -- gpios: one PPS GPIO in the format described by  
->> ../gpio/gpio.txt
->> >> >> >> >> +- pps-gpios: one PPS GPIO in the format described by
->> >> ../gpio/gpio.txt
->> >> >> >> >> +Alternatively (DEPRECATED), instead of pps-gpios above,
->> >> it may have:
->> >> >> >> >> +- gpios: one PPS GPIO as above
->> >> >> >> >>
->> >> >> >> >>  Optional properties:
->> >> >> >> >>  - assert-falling-edge: when present, assert is indicated by a
->> >> >> >> falling edge
->> >> >> >> >>                         (instead of by a rising edge)
->> >> >> >> >> +- capture-clear: when present, also capture the PPS clear event
->> >> >> >> >
->> >> >> >> > Is this a h/w thing? or driver configuration?
->> >> >> >>
->> >> >> >> Driver configuration.  Most of the code was present in the  
->> driver, yet
->> >> >> >> it was not documented, or usable due to a two line (code) omission
->> >> >> >> (the value was not being fetched from DT).
->> >> >> >
->> >> >> > So what determines how you want to configure this? If the user will
->> >> >> > want to change it, then it should be a sysfs attr and exposed to
->> >> >> > userspace. If it depends on h/w config for a board then it can be in
->> >> >> > DT.
->> >> >>
->> >> >> Sorry, I misled you somewhat.  If the PPS pulse active transition from
->> >> >> the hardware is on the falling edge, this flag is required to get the
->> >> >> OS to use that as the active transition.  This would not change at the
->> >> >> user's whim but rather it is dependent on connected hardware.
->> >> >
->> >> > This description sounds more like 'assert-falling-edge' than
->> >> 'capture-clear'.
->> >> >
->> >> > I'm still not clear on what 'capture-clear' is.
->> >>
->> >> Ignoring my patch for a minute, the pps_gpio_irq_handler will only
->> >> report a pps PPS_CAPTURECLEAR event if 'capture-clear' is set.  As the
->> >> current pps-gpio driver is not able to set this flag, it cannot ever
->> >> report a PPS_CAPTURECLEAR event.
->> >>
->> >> My patch adds the ability to set this flag and adds the documentation
->> >> to go with it.
->> >> Admittedly, I do not require this functionality for what I want, but
->> >> working with the code, I noticed the omission and decided to add it
->> >> for someone else to use it, if they need it.
->> >>
->> >> I am happy to remove this out of my patch, if you feel this to be the
->> >> best way forward.
->> >
->> > I found this prior discussion on adding this[1]. Seems to me this
->> > should be userspace configurable if the GPIO line can interrupt on
->> > both edges. We shouldn't need a DT property to determine that.
->> >
->> > Rob
->> >
->> > [1] https://lore.kernel.org/patchwork/patch/557781/
->>
->> Hi Rob,
->> the fact that prior knowledge of board/CPU/SOC specifics is required
->> is the most compelling argument for this to be in the DT.  This is not
->> something a user should need to know or remember.
->>
->> Userspace is already asking for what they need via the
->> time_pps_setparams call, but to do that they have to first call
->> time_pps_getparams.  Time_pps_getparams will not return
->> PPS_CAPTURECLEAR as it is never set in the driver due to it being
->> hardware specific/unable to be set.
->
-> My understanding is it is a 2 step process. The capability is exposed
-> to the user if the hardware supports it, but it is still a user
-> decision whether or not to enable it. So as far as DT bindings are
-> concerned, we're only concerned with the first part. Whether the
-> hardware supports capture clear in the GPIO PPS case just depends on
-> whether the GPIO controller can support both edge interrupts (or
-> emulate that by switching between rising/falling edge interrupts). Do
-> we agree on that part?
+As of last LSF, there was still a lot of work to be done before we had fast
+mount times that don't require walking all metadata. There were two main work
+items:
+ - atomicity of filesystem operations. Any filesystem operation that had
+   anything to do with i_nlink wasn't atomic (but they were ordered so that
+   filesystem consistency wasn't an issue) - on startup we'd have to scan and
+   recalculate i_nlink and also delete no longer referenced inodes.
+ - allocation information wasn't persisted (per bucket sector counts) - so on
+   startup we have to walk all the extents and recalculate all the disk space
+   accounting.
 
-Yes and no.  While it is desirable to have a complete separation of  
-the two parts as described above, we do live in a world that isn't  
-perfect and we do need to compromise to maximise the benefit to all.   
-See explanation below.
+#1 is done. For those curious about the details, if you've seen how bcachefs
+implements rename (with multiple linked btree iterators), it's based off of
+that. Basically, there's a new btree transaction context widget for allocating
+btree iterators out of, and queuing up updates to be done at transaction commit
+- so that different code paths (e.g. inode create, dirent create, xattr create)
+can be used together without having to manually write code to keep track of all
+the iterators that need to be used and kept locked, etc. I think it's pretty
+neat how clean it turned out.
 
-> Needing to know GPIO interrupt capabilities is hardly specific to PPS.
-> There is not any explicit property in DT for this capability because
-> it is implicit based on the GPIO controller's compatible string (or
-> driver capabilities if emulated). Therefore, it is up to the GPIO
-> driver and API to expose this information to client drivers like PPS.
+So basically, everything's fully atomic now except for fallocate/fcollapse/etc. -
+and after unclean shutdown we do have to scan just the inodes btree for inodes
+that have been deleted. Eventually we'll have to implement a linked list of
+deleted inodes like xfs does (or perhaps fake hidden directory), but inodes are
+small in bcachefs, < 100 bytes, so it's a low priority.
 
-Let me pose the following scenario:  Say, the GPIO driver/API tell the  
-PPS driver that both edges are indeed supported.  This then means that  
-the PPS driver will blindly configure itself for returning data for  
-both the ASSERT and DEASSERT edges of the PPS pulse.  However, say,  
-the user only wants the ASSERT edge (as would be the case in most  
-instances).  As the kernel currently stands, there is no way for the  
-PPS driver to reconfigure itself after the pps_gpio_probe function  
-exits.  This then means that you will automatically be servicing two  
-interrupts per PPS cycle, even though the user only wants one (for PPS  
-this is probably not a big deal...)
+Erasure coding is about 80% done now. I'm quite happy with how erasure coding
+turned out - there's no write hole (we never update existing stripes in place),
+and we also don't fragment writes like zfs does. Instead, foreground writes are
+replicated (raid10 style), and as soon as we have a stripe of new data we write
+out p/q blocks and then update the extents with a pointer to the stripe and drop
+the now unneeded replicas. Right now it's just reed solomon (raid5/6), but
+weaver codes or something else could be added in the future if anyone wants to.
+The part that still needs to be implemented before it'll be useful is stripe
+level compaction - when we have stripes with some empty blocks (all the data in
+them was overwritten), we need to use the remaining data blocks when creating
+new stripes so that we can drop the old stripe (and stop pinning the empty
+blocks). I'm leaving that off until later though because that won't impact the
+on disk format at all, and there's other stuff I want to get done first.
 
-The reason for the PPS driver to have to blindly configure itself is  
-that there is always going to be a delay between the driver being  
-loaded and the userspace program becoming active and actually  
-requesting what it wants.  On a modern x86 system this may be in the  
-order of milliseconds, but on an embedded system this would be in the  
-order of seconds as some systems load all configured modules at boot,  
-before userspace gets control.
+My current priority is reflink - as that will be highly useful to the company
+that's funding bcachefs development. That's more or less requiring me to do
+persistent allocation information first though, so that's become my current
+project (the reflinked extent refcounts will be much too big to keep in memory
+like I am now for bucket sector counts, so they'll have to be kept in a btree
+and updated whenever doing extent updates - and the infrastructure I need to
+make that happen is also what I need for making all the other disk space
+accounting persistent).
 
-In the ideal case, it would be nice for the PPS driver to load and  
-only configure itself after the time_pps_setparams function has been  
-called by the user.
+So, bcachefs will have fast mounts (including after unclean shutdown) soon.
 
-Here is the compromise:  It is usually the hardware vendor/integrator  
-who has a good idea (hopefully) as to what capabilities are going to  
-be used by the system.  Hence the devicetree would be the most logical  
-place to put a flag that embodies the capabilities of the GPIO  
-subsystem as well as the GPS or other peripheral device creating the  
-PPS pulses.  To me, that is what capture_clear is.
+At the very moment what I'm working on (leading up to fast mounts after clean
+shutdowns, first) is some improvements to disk space accounting for multi device
+filesystems.
 
-Anyway, v11 of my patch now excludes all changes made previously to  
-the capture_clear flag.
+The background to this is that in order to know whether you can safely mount in
+degraded mode, you have to store a list of all the combinations of disks that
+have data replicated across them (or are in an erasure coded stripe) - this is
+assuming you don't have any kind of fixed layout, like regular RAID does. That
+is, if you've got 8 disks in your filesystem, and you're running with
+replicas=2, and two of your disks are offline, you need to know whether you have
+any data that's replicated across those two particular disks.
 
-Tom
+bcachefs has such a table kept in the superblock, but entries in it aren't
+refcounted - we create new entries if necessary when inserting new extents into
+the extents btree, but we need a gc pass to delete them, generally triggered by
+device removal. That's kind of lame, since it means we might fail mounts that
+are actually safe.
 
+So, before writing the code to persist the filesystem level sector counts I'm
+changing it to track them broken out by replicas entry - i.e. per unique
+combination of disks the data lies on. Which also means you'll be able to see in
+a multi device filesystem how your data is laid out in a really fine grained
+way.
+
+Re: upstreaming - my current thinking is that since so much of the current
+development involves on disk format changes/additions it probably make sense to
+hold off until reflink is done, which I'm expecting to be in the next 3-6
+months. That said, nothing has required any breaking disk format changes -
+writing compat code where necessary has been easy enough, so there haven't been
+any breaking changes except for one accidental dirent cockup in quite awhile
+(~2 years, I think) and one or two changes in features that weren't considered
+stable yet (e.g. there was a change to fix extent nonces when encryption was
+still new, and I'm still making one or two breaking changes to erasure coding as
+it can't actually be used yet without stripe compaction).
+
+That sums up all the big stuff I can think of, the todo list continues to get
+shorter and bugs continue to get fixed...
