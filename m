@@ -6,27 +6,28 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765EFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EF6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 379B42145D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379B42145D
+	by mail.kernel.org (Postfix) with ESMTP id 2624820673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2624820673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbeLAMLb (ORCPT
+        id S1726889AbeLAMLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 1 Dec 2018 07:11:31 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37986 "EHLO
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38012 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeLAMLa (ORCPT
+        with ESMTP id S1726691AbeLAMLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 1 Dec 2018 07:11:30 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id D4E6C27467; Fri, 30 Nov 2018 20:00:14 -0500 (EST)
+        id E30B6281E7; Fri, 30 Nov 2018 20:00:14 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>
+        Philip Blundell <philb@gnu.org>,
+        Joshua Thompson <funaho@jurai.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Stephen N Chivers <schivers@csc.com.au>,
@@ -37,176 +38,187 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <c722dc9f175e4803f0e48e5170aad1792c168eb8.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <51dd60aa18dd46d5ad250d74d5f5d1a2d2ba187c.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 03/14] m68k: apollo, q40, sun3, sun3x: Remove
- arch_gettimeoffset implementations
+Subject: [PATCH v4 04/14] m68k: Drop ARCH_USES_GETTIMEOFFSET
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These dummy implementations are no better than
-default_arch_gettimeoffset() so remove them.
+The functions that implement arch_gettimeoffset are re-used by
+new clocksource drivers in subsequent patches.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/m68k/apollo/config.c | 7 -------
- arch/m68k/q40/config.c    | 9 ---------
- arch/m68k/sun3/config.c   | 2 --
- arch/m68k/sun3/intersil.c | 7 -------
- arch/m68k/sun3x/config.c  | 1 -
- arch/m68k/sun3x/time.c    | 5 -----
- arch/m68k/sun3x/time.h    | 1 -
- 7 files changed, 32 deletions(-)
+ arch/m68k/Kconfig           | 1 -
+ arch/m68k/amiga/config.c    | 3 ---
+ arch/m68k/atari/config.c    | 2 --
+ arch/m68k/bvme6000/config.c | 2 --
+ arch/m68k/hp300/config.c    | 1 -
+ arch/m68k/hp300/time.h      | 1 -
+ arch/m68k/mac/config.c      | 3 ---
+ arch/m68k/mvme147/config.c  | 2 --
+ arch/m68k/mvme16x/config.c  | 2 --
+ 9 files changed, 17 deletions(-)
 
-diff --git a/arch/m68k/apollo/config.c b/arch/m68k/apollo/config.c
-index aef8d42e078d..7d168e6dfb01 100644
---- a/arch/m68k/apollo/config.c
-+++ b/arch/m68k/apollo/config.c
-@@ -29,7 +29,6 @@ u_long apollo_model;
+diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+index 070553791e97..cc62660a5760 100644
+--- a/arch/m68k/Kconfig
++++ b/arch/m68k/Kconfig
+@@ -19,7 +19,6 @@ config M68K
+ 	select GENERIC_STRNCPY_FROM_USER if MMU
+ 	select GENERIC_STRNLEN_USER if MMU
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+-	select ARCH_USES_GETTIMEOFFSET if MMU && !COLDFIRE
+ 	select HAVE_FUTEX_CMPXCHG if MMU && FUTEX
+ 	select HAVE_MOD_ARCH_SPECIFIC
+ 	select MODULES_USE_ELF_REL
+diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
+index 65f63a457130..d4976c1aa0cc 100644
+--- a/arch/m68k/amiga/config.c
++++ b/arch/m68k/amiga/config.c
+@@ -95,8 +95,6 @@ static char amiga_model_name[13] = "Amiga ";
+ static void amiga_sched_init(irq_handler_t handler);
+ static void amiga_get_model(char *model);
+ static void amiga_get_hardware_list(struct seq_file *m);
+-/* amiga specific timer functions */
+-static u32 amiga_gettimeoffset(void);
+ extern void amiga_mksound(unsigned int count, unsigned int ticks);
+ static void amiga_reset(void);
+ extern void amiga_init_sound(void);
+@@ -386,7 +384,6 @@ void __init config_amiga(void)
+ 	mach_init_IRQ        = amiga_init_IRQ;
+ 	mach_get_model       = amiga_get_model;
+ 	mach_get_hardware_list = amiga_get_hardware_list;
+-	arch_gettimeoffset   = amiga_gettimeoffset;
  
- extern void dn_sched_init(irq_handler_t handler);
- extern void dn_init_IRQ(void);
--extern u32 dn_gettimeoffset(void);
- extern int dn_dummy_hwclk(int, struct rtc_time *);
- extern void dn_dummy_reset(void);
- #ifdef CONFIG_HEARTBEAT
-@@ -152,7 +151,6 @@ void __init config_apollo(void)
+ 	/*
+ 	 * default MAX_DMA=0xffffffff on all machines. If we don't do so, the SCSI
+diff --git a/arch/m68k/atari/config.c b/arch/m68k/atari/config.c
+index bd96702a1ad0..89e65be2655f 100644
+--- a/arch/m68k/atari/config.c
++++ b/arch/m68k/atari/config.c
+@@ -78,7 +78,6 @@ static void atari_heartbeat(int on);
  
- 	mach_sched_init=dn_sched_init; /* */
- 	mach_init_IRQ=dn_init_IRQ;
--	arch_gettimeoffset   = dn_gettimeoffset;
- 	mach_max_dma_address = 0xffffffff;
- 	mach_hwclk           = dn_dummy_hwclk; /* */
- 	mach_reset	     = dn_dummy_reset;  /* */
-@@ -205,11 +203,6 @@ void dn_sched_init(irq_handler_t timer_routine)
- 		pr_err("Couldn't register timer interrupt\n");
- }
+ /* atari specific timer functions (in time.c) */
+ extern void atari_sched_init(irq_handler_t);
+-extern u32 atari_gettimeoffset(void);
+ extern int atari_mste_hwclk (int, struct rtc_time *);
+ extern int atari_tt_hwclk (int, struct rtc_time *);
  
--u32 dn_gettimeoffset(void)
--{
--	return 0xdeadbeef;
--}
--
- int dn_dummy_hwclk(int op, struct rtc_time *t) {
+@@ -205,7 +204,6 @@ void __init config_atari(void)
+ 	mach_init_IRQ        = atari_init_IRQ;
+ 	mach_get_model	 = atari_get_model;
+ 	mach_get_hardware_list = atari_get_hardware_list;
+-	arch_gettimeoffset   = atari_gettimeoffset;
+ 	mach_reset           = atari_reset;
+ 	mach_max_dma_address = 0xffffff;
+ #if IS_ENABLED(CONFIG_INPUT_M68K_BEEP)
+diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
+index 0e5efed4da86..c8b99d5516d1 100644
+--- a/arch/m68k/bvme6000/config.c
++++ b/arch/m68k/bvme6000/config.c
+@@ -39,7 +39,6 @@
  
+ static void bvme6000_get_model(char *model);
+ extern void bvme6000_sched_init(irq_handler_t handler);
+-extern u32 bvme6000_gettimeoffset(void);
+ extern int bvme6000_hwclk (int, struct rtc_time *);
+ extern void bvme6000_reset (void);
+ void bvme6000_set_vectors (void);
+@@ -105,7 +104,6 @@ void __init config_bvme6000(void)
+     mach_max_dma_address = 0xffffffff;
+     mach_sched_init      = bvme6000_sched_init;
+     mach_init_IRQ        = bvme6000_init_IRQ;
+-    arch_gettimeoffset   = bvme6000_gettimeoffset;
+     mach_hwclk           = bvme6000_hwclk;
+     mach_reset		 = bvme6000_reset;
+     mach_get_model       = bvme6000_get_model;
+diff --git a/arch/m68k/hp300/config.c b/arch/m68k/hp300/config.c
+index a19bcd23f80b..a161d44fd20b 100644
+--- a/arch/m68k/hp300/config.c
++++ b/arch/m68k/hp300/config.c
+@@ -254,7 +254,6 @@ void __init config_hp300(void)
+ 	mach_sched_init      = hp300_sched_init;
+ 	mach_init_IRQ        = hp300_init_IRQ;
+ 	mach_get_model       = hp300_get_model;
+-	arch_gettimeoffset   = hp300_gettimeoffset;
+ 	mach_hwclk	     = hp300_hwclk;
+ 	mach_get_ss	     = hp300_get_ss;
+ 	mach_reset           = hp300_reset;
+diff --git a/arch/m68k/hp300/time.h b/arch/m68k/hp300/time.h
+index f5583ec4033d..1d77b55cc72a 100644
+--- a/arch/m68k/hp300/time.h
++++ b/arch/m68k/hp300/time.h
+@@ -1,2 +1 @@
+ extern void hp300_sched_init(irq_handler_t vector);
+-extern u32 hp300_gettimeoffset(void);
+diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+index cd9317d53276..11be08f4f750 100644
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -54,8 +54,6 @@ struct mac_booter_data mac_bi_data;
+ /* The phys. video addr. - might be bogus on some machines */
+ static unsigned long mac_orig_videoaddr;
  
-diff --git a/arch/m68k/q40/config.c b/arch/m68k/q40/config.c
-index 96810d91da2b..e63eb5f06999 100644
---- a/arch/m68k/q40/config.c
-+++ b/arch/m68k/q40/config.c
-@@ -40,7 +40,6 @@ extern void q40_init_IRQ(void);
- static void q40_get_model(char *model);
- extern void q40_sched_init(irq_handler_t handler);
+-/* Mac specific timer functions */
+-extern u32 mac_gettimeoffset(void);
+ extern int mac_hwclk(int, struct rtc_time *);
+ extern void iop_preinit(void);
+ extern void iop_init(void);
+@@ -155,7 +153,6 @@ void __init config_mac(void)
+ 	mach_sched_init = mac_sched_init;
+ 	mach_init_IRQ = mac_init_IRQ;
+ 	mach_get_model = mac_get_model;
+-	arch_gettimeoffset = mac_gettimeoffset;
+ 	mach_hwclk = mac_hwclk;
+ 	mach_reset = mac_reset;
+ 	mach_halt = mac_poweroff;
+diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
+index 93c68d2b8e0e..4ef4faa5ed8b 100644
+--- a/arch/m68k/mvme147/config.c
++++ b/arch/m68k/mvme147/config.c
+@@ -38,7 +38,6 @@
  
--static u32 q40_gettimeoffset(void);
- static int q40_hwclk(int, struct rtc_time *);
- static unsigned int q40_get_ss(void);
- static int q40_get_rtc_pll(struct rtc_pll_info *pll);
-@@ -169,7 +168,6 @@ void __init config_q40(void)
- 	mach_sched_init = q40_sched_init;
+ static void mvme147_get_model(char *model);
+ extern void mvme147_sched_init(irq_handler_t handler);
+-extern u32 mvme147_gettimeoffset(void);
+ extern int mvme147_hwclk (int, struct rtc_time *);
+ extern void mvme147_reset (void);
  
- 	mach_init_IRQ = q40_init_IRQ;
--	arch_gettimeoffset = q40_gettimeoffset;
- 	mach_hwclk = q40_hwclk;
- 	mach_get_ss = q40_get_ss;
- 	mach_get_rtc_pll = q40_get_rtc_pll;
-@@ -201,13 +199,6 @@ int __init q40_parse_bootinfo(const struct bi_record *rec)
- 	return 1;
- }
+@@ -84,7 +83,6 @@ void __init config_mvme147(void)
+ 	mach_max_dma_address	= 0x01000000;
+ 	mach_sched_init		= mvme147_sched_init;
+ 	mach_init_IRQ		= mvme147_init_IRQ;
+-	arch_gettimeoffset	= mvme147_gettimeoffset;
+ 	mach_hwclk		= mvme147_hwclk;
+ 	mach_reset		= mvme147_reset;
+ 	mach_get_model		= mvme147_get_model;
+diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
+index 5feb3ab484d0..3a3129e6f0bc 100644
+--- a/arch/m68k/mvme16x/config.c
++++ b/arch/m68k/mvme16x/config.c
+@@ -44,7 +44,6 @@ static MK48T08ptr_t volatile rtc = (MK48T08ptr_t)MVME_RTC_BASE;
  
--
--static u32 q40_gettimeoffset(void)
--{
--	return 5000 * (ql_ticks != 0) * 1000;
--}
--
--
- /*
-  * Looks like op is non-zero for setting the clock, and zero for
-  * reading the clock.
-diff --git a/arch/m68k/sun3/config.c b/arch/m68k/sun3/config.c
-index 79a2bb857906..867e68d92c71 100644
---- a/arch/m68k/sun3/config.c
-+++ b/arch/m68k/sun3/config.c
-@@ -37,7 +37,6 @@
+ static void mvme16x_get_model(char *model);
+ extern void mvme16x_sched_init(irq_handler_t handler);
+-extern u32 mvme16x_gettimeoffset(void);
+ extern int mvme16x_hwclk (int, struct rtc_time *);
+ extern void mvme16x_reset (void);
  
- char sun3_reserved_pmeg[SUN3_PMEGS_NUM];
- 
--extern u32 sun3_gettimeoffset(void);
- static void sun3_sched_init(irq_handler_t handler);
- extern void sun3_get_model (char* model);
- extern int sun3_hwclk(int set, struct rtc_time *t);
-@@ -138,7 +137,6 @@ void __init config_sun3(void)
-         mach_sched_init      =  sun3_sched_init;
-         mach_init_IRQ        =  sun3_init_IRQ;
-         mach_reset           =  sun3_reboot;
--	arch_gettimeoffset   =  sun3_gettimeoffset;
- 	mach_get_model	     =  sun3_get_model;
- 	mach_hwclk           =  sun3_hwclk;
- 	mach_halt	     =  sun3_halt;
-diff --git a/arch/m68k/sun3/intersil.c b/arch/m68k/sun3/intersil.c
-index d911070af02a..8fc74864de81 100644
---- a/arch/m68k/sun3/intersil.c
-+++ b/arch/m68k/sun3/intersil.c
-@@ -22,13 +22,6 @@
- #define STOP_VAL (INTERSIL_STOP | INTERSIL_INT_ENABLE | INTERSIL_24H_MODE)
- #define START_VAL (INTERSIL_RUN | INTERSIL_INT_ENABLE | INTERSIL_24H_MODE)
- 
--/* does this need to be implemented? */
--u32 sun3_gettimeoffset(void)
--{
--  return 1000;
--}
--
--
- /* get/set hwclock */
- 
- int sun3_hwclk(int set, struct rtc_time *t)
-diff --git a/arch/m68k/sun3x/config.c b/arch/m68k/sun3x/config.c
-index 33d3a1c6fba0..03ce7f9facfe 100644
---- a/arch/m68k/sun3x/config.c
-+++ b/arch/m68k/sun3x/config.c
-@@ -49,7 +49,6 @@ void __init config_sun3x(void)
- 	mach_sched_init      = sun3x_sched_init;
- 	mach_init_IRQ        = sun3_init_IRQ;
- 
--	arch_gettimeoffset   = sun3x_gettimeoffset;
- 	mach_reset           = sun3x_reboot;
- 
- 	mach_hwclk           = sun3x_hwclk;
-diff --git a/arch/m68k/sun3x/time.c b/arch/m68k/sun3x/time.c
-index 3c8a86d08508..9163294b0fb6 100644
---- a/arch/m68k/sun3x/time.c
-+++ b/arch/m68k/sun3x/time.c
-@@ -73,11 +73,6 @@ int sun3x_hwclk(int set, struct rtc_time *t)
- 
- 	return 0;
- }
--/* Not much we can do here */
--u32 sun3x_gettimeoffset(void)
--{
--    return 0L;
--}
- 
- #if 0
- static irqreturn_t sun3x_timer_tick(int irq, void *dev_id)
-diff --git a/arch/m68k/sun3x/time.h b/arch/m68k/sun3x/time.h
-index 496f406412ad..86ce78bb3c28 100644
---- a/arch/m68k/sun3x/time.h
-+++ b/arch/m68k/sun3x/time.h
-@@ -3,7 +3,6 @@
- #define SUN3X_TIME_H
- 
- extern int sun3x_hwclk(int set, struct rtc_time *t);
--u32 sun3x_gettimeoffset(void);
- void sun3x_sched_init(irq_handler_t vector);
- 
- struct mostek_dt {
+@@ -272,7 +271,6 @@ void __init config_mvme16x(void)
+     mach_max_dma_address = 0xffffffff;
+     mach_sched_init      = mvme16x_sched_init;
+     mach_init_IRQ        = mvme16x_init_IRQ;
+-    arch_gettimeoffset   = mvme16x_gettimeoffset;
+     mach_hwclk           = mvme16x_hwclk;
+     mach_reset		 = mvme16x_reset;
+     mach_get_model       = mvme16x_get_model;
 -- 
 2.18.1
 
