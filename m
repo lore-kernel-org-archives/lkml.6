@@ -2,97 +2,275 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767C9C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2E7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9D9E21473
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:17:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F16B02146F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:25:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="LcEikyD7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D9E21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OvuibO9v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16B02146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbeLBCak (ORCPT
+        id S1726952AbeLBChr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 21:30:40 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38329 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbeLBCaj (ORCPT
+        Sat, 1 Dec 2018 21:37:47 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46919 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbeLBChq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 21:30:39 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so7977276wrw.5
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:17:55 -0800 (PST)
+        Sat, 1 Dec 2018 21:37:46 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c73so4244857pfe.13;
+        Sat, 01 Dec 2018 07:25:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g+uc0CQJwcttduqsonucjxD/sSZykRQ6+JEeGQ7Ro2M=;
-        b=LcEikyD7iUx/vTbTyJ0cBln7RZQtesi+WRvDUMNmIoKwK9VfRbmjCWp6ZGEJDY/2iB
-         qN/kDTHaGlPS7uN56YC8dfC3crP5wUMS+YLSMJI8Wa15ZKte9XcPOLXxUxvkfp7ZRCFT
-         cn8BpXfUyPxkEUZsdf4pSjK7JB3iD4VDFWkhhh66kB6Ev1iDRJTaLsEPSxDylQA1vQTN
-         4UEm2t8dSfH54jknGyuCp2u0PA5dZyaDPtpTX4Zg+qwfe8+gTWEhmmIb4ArjqG8amb7T
-         3yVOGAj9ElO/+qOQ3qqO0LX0+cfzKlzmxd3QluAOiMYQEox4gJ4BZVAcmnW+AOSvFgoq
-         GfFw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EagGsPYdCLnMlqKHPTjHkSD04BBZGNDeFtpRHybwRDM=;
+        b=OvuibO9vC9CWgQIhtMy1sH2MzeBAh+KCkK5bIoZdaRaCDUJRWV+zUS1jdHCMF6wLuv
+         KosuG3f1Rm65kf+FgTNJp45DqEh5WewqJVJU2HHVg0VsWfvYF6XJW6t470bowaHlKsO9
+         KgEnof/IloqxuX8LzxKuJu4DNSlab7QqduHGjDksqnqUT8Lr/jj0ADeMxaHW9KhuQwju
+         YfY6A6h/i6DJQaK1TWxxGB2owpDOFvdbLoKxV2B+oH0d2VcdSlAWdPrSpnnPD0JtWsKN
+         1eUkvG+6ZK9wM7Z2WEJfn+xjSPTnxWzhZOYQ/2NhTj7fC/jFjH2J3koMCsQu6zJstQbj
+         k/ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=g+uc0CQJwcttduqsonucjxD/sSZykRQ6+JEeGQ7Ro2M=;
-        b=ClVwG2VzMZtV1BWz2pIKB0hZPOEjE8u6P96I3/xDX+3m8jub56zoxHmi3EYBLlzp8Y
-         d+6c5Dt6UrnJr9t6RcVNnbCfICzyGOYpl0R4k69zV2wj96JhkeUE9fGSlxLmexZT8TIz
-         dqqdgMB0m29YlOOTj0FFYpWm6ufJ75wWWxSTMXa7Q9o2bksP/3Frdh0NyxEUSaEgSPkM
-         /YtyOSolzLScPpNAKrAsphNF/EoOPUa0RAT2mlIUvozgz6igX12tU1MnKNwWUgX8KnUL
-         NP5eRpekGNsHBHBFixxqiGfeqR4GeBgNUkFvSlqlXASu6bidMopozKYt6wSV4hcyXpeA
-         Uv+Q==
-X-Gm-Message-State: AA+aEWYdq7vjvtJJtru2Jw/4nl6Hw1zRJ07Syfra1o9JNHTB5mj95glb
-        aQ95dhYx982aORVy6M++EEVKDymAks+JbwQq
-X-Google-Smtp-Source: AFSGD/VhTmlHV4gqJ1FLY4LR/Y7yODovB+xdiLX4KUzAz342eFm8IanP+104spVi7aygC+eCg6cCJg==
-X-Received: by 2002:a5d:4dc8:: with SMTP id f8mr8641729wru.45.1543677474224;
-        Sat, 01 Dec 2018 07:17:54 -0800 (PST)
-Received: from localhost.localdomain ([104.207.76.73])
-        by smtp.gmail.com with ESMTPSA id m4sm5712663wmi.3.2018.12.01.07.17.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Dec 2018 07:17:53 -0800 (PST)
-From:   Carlo Caione <ccaione@baylibre.com>
-To:     linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        khilman@baylibre.com
-Cc:     Carlo Caione <ccaione@baylibre.com>
-Subject: [PATCH] MAINTAINERS: Remove myself from the list
-Date:   Sat,  1 Dec 2018 15:17:49 +0000
-Message-Id: <20181201151749.10932-1-ccaione@baylibre.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EagGsPYdCLnMlqKHPTjHkSD04BBZGNDeFtpRHybwRDM=;
+        b=MmBoBdLdNtEFIIXBuUUu6h3Foc8A9asQC29Ie6m5dvtm8jtD0wKQmxT+6qMonQHPKY
+         Ykwthuo/uofeTXKOQvhxGamzCn/DFoxAu8h0WnMAjIkS9h8SPUPam3iOuPgcvBts1pHW
+         vCD47ubbmDZvlvkTEC0jAeJif3KlHNZhxfOKyfOl+wK0k2TMfaijognL7H+G1YbDGFC3
+         iqP8O6cfj5dOXuOPUBtlvzKUepn9LBYxLXVzxENJkLSgnF0R98ZdJTArGFNGviUf61fG
+         CVTOC3qJT6Uj0IRmuzL8dckfgWNLmZJrMm75bcEZgKP5tVJXp4WdQRSTLjyWZs5S/qyP
+         eIfA==
+X-Gm-Message-State: AA+aEWY57BztZo15/DfDqZWf0F0JeJZ8MotQpzq1UKCnUbaDAbb804S1
+        HWoXmNjR3VAluMHQabJTim8=
+X-Google-Smtp-Source: AFSGD/UcsgPpvG8ONAD/nmtKrVtMh+Nd+V4jvdDj+Gyvy7dhK6ypz29LLb64DyKkspCKiPqPcMJb5A==
+X-Received: by 2002:a65:50c1:: with SMTP id s1mr7958328pgp.350.1543677900937;
+        Sat, 01 Dec 2018 07:25:00 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id c23sm12092777pfi.83.2018.12.01.07.24.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Dec 2018 07:25:00 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     ulf.hansson@linaro.org, ludovic.desroches@microchip.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ben-linux@fluff.org, adrian.hunter@intel.com,
+        linus.walleij@linaro.org, arnd@arndb.de, tony@atomide.com,
+        andreas@kemnade.info, kishon@ti.com
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] mmc: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Sat,  1 Dec 2018 10:24:57 -0500
+Message-Id: <20181201152457.8252-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kevin is basically doing all the work. Remove my name as co-maintainer.
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Signed-off-by: Carlo Caione <ccaione@baylibre.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/mmc/core/mmc_test.c   | 14 ++------------
+ drivers/mmc/host/atmel-mci.c  | 31 +++++--------------------------
+ drivers/mmc/host/omap_hsmmc.c | 14 ++------------
+ drivers/mmc/host/s3cmci.c     | 30 ++++--------------------------
+ 4 files changed, 13 insertions(+), 76 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 01645edc2388..63a2ad093524 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1297,7 +1297,6 @@ F:	include/dt-bindings/clock/gxbb*
- F:	Documentation/devicetree/bindings/clock/amlogic*
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index ef18daeaa4cc..eabb1cab1765 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -3145,17 +3145,7 @@ static int mtf_testlist_show(struct seq_file *sf, void *data)
+ 	return 0;
+ }
  
- ARM/Amlogic Meson SoC support
--M:	Carlo Caione <carlo@caione.org>
- M:	Kevin Hilman <khilman@baylibre.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-amlogic@lists.infradead.org
+-static int mtf_testlist_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, mtf_testlist_show, inode->i_private);
+-}
+-
+-static const struct file_operations mmc_test_fops_testlist = {
+-	.open		= mtf_testlist_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(mtf_testlist);
+ 
+ static void mmc_test_free_dbgfs_file(struct mmc_card *card)
+ {
+@@ -3216,7 +3206,7 @@ static int mmc_test_register_dbgfs_file(struct mmc_card *card)
+ 		goto err;
+ 
+ 	ret = __mmc_test_register_dbgfs_file(card, "testlist", S_IRUGO,
+-		&mmc_test_fops_testlist);
++		&mtf_testlist_fops);
+ 	if (ret)
+ 		goto err;
+ 
+diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+index be53044086c7..7469a7e369c0 100644
+--- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -446,18 +446,7 @@ static int atmci_req_show(struct seq_file *s, void *v)
+ 	return 0;
+ }
+ 
+-static int atmci_req_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, atmci_req_show, inode->i_private);
+-}
+-
+-static const struct file_operations atmci_req_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= atmci_req_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(atmci_req);
+ 
+ static void atmci_show_status_reg(struct seq_file *s,
+ 		const char *regname, u32 value)
+@@ -583,18 +572,7 @@ static int atmci_regs_show(struct seq_file *s, void *v)
+ 	return ret;
+ }
+ 
+-static int atmci_regs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, atmci_regs_show, inode->i_private);
+-}
+-
+-static const struct file_operations atmci_regs_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= atmci_regs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(atmci_regs);
+ 
+ static void atmci_init_debugfs(struct atmel_mci_slot *slot)
+ {
+@@ -608,13 +586,14 @@ static void atmci_init_debugfs(struct atmel_mci_slot *slot)
+ 		return;
+ 
+ 	node = debugfs_create_file("regs", S_IRUSR, root, host,
+-			&atmci_regs_fops);
++				   &atmci_regs_fops);
+ 	if (IS_ERR(node))
+ 		return;
+ 	if (!node)
+ 		goto err;
+ 
+-	node = debugfs_create_file("req", S_IRUSR, root, slot, &atmci_req_fops);
++	node = debugfs_create_file("req", S_IRUSR, root, slot,
++				   &atmci_req_fops);
+ 	if (!node)
+ 		goto err;
+ 
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index 467d889a1638..6094e9e687b1 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -1652,7 +1652,7 @@ static struct mmc_host_ops omap_hsmmc_ops = {
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 
+-static int omap_hsmmc_regs_show(struct seq_file *s, void *data)
++static int mmc_regs_show(struct seq_file *s, void *data)
+ {
+ 	struct mmc_host *mmc = s->private;
+ 	struct omap_hsmmc_host *host = mmc_priv(mmc);
+@@ -1691,17 +1691,7 @@ static int omap_hsmmc_regs_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int omap_hsmmc_regs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, omap_hsmmc_regs_show, inode->i_private);
+-}
+-
+-static const struct file_operations mmc_regs_fops = {
+-	.open           = omap_hsmmc_regs_open,
+-	.read           = seq_read,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(mmc_regs);
+ 
+ static void omap_hsmmc_debugfs(struct mmc_host *mmc)
+ {
+diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+index f77493604312..51069a43d609 100644
+--- a/drivers/mmc/host/s3cmci.c
++++ b/drivers/mmc/host/s3cmci.c
+@@ -1406,18 +1406,7 @@ static int s3cmci_state_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int s3cmci_state_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, s3cmci_state_show, inode->i_private);
+-}
+-
+-static const struct file_operations s3cmci_fops_state = {
+-	.owner		= THIS_MODULE,
+-	.open		= s3cmci_state_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(s3cmci_state);
+ 
+ #define DBG_REG(_r) { .addr = S3C2410_SDI##_r, .name = #_r }
+ 
+@@ -1459,18 +1448,7 @@ static int s3cmci_regs_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int s3cmci_regs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, s3cmci_regs_show, inode->i_private);
+-}
+-
+-static const struct file_operations s3cmci_fops_regs = {
+-	.owner		= THIS_MODULE,
+-	.open		= s3cmci_regs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(s3cmci_regs);
+ 
+ static void s3cmci_debugfs_attach(struct s3cmci_host *host)
+ {
+@@ -1484,14 +1462,14 @@ static void s3cmci_debugfs_attach(struct s3cmci_host *host)
+ 
+ 	host->debug_state = debugfs_create_file("state", 0444,
+ 						host->debug_root, host,
+-						&s3cmci_fops_state);
++						&s3cmci_state_fops);
+ 
+ 	if (IS_ERR(host->debug_state))
+ 		dev_err(dev, "failed to create debug state file\n");
+ 
+ 	host->debug_regs = debugfs_create_file("regs", 0444,
+ 					       host->debug_root, host,
+-					       &s3cmci_fops_regs);
++					       &s3cmci_regs_fops);
+ 
+ 	if (IS_ERR(host->debug_regs))
+ 		dev_err(dev, "failed to create debug regs file\n");
 -- 
-2.19.1
+2.17.0
 
