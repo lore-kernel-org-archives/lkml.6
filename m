@@ -2,119 +2,299 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CD7C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34344C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2678720867
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:01:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMfggQZK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2678720867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DC6D520867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:01:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6D520867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeLALML (ORCPT
+        id S1727006AbeLALMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 06:12:11 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34400 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbeLALMK (ORCPT
+        Sat, 1 Dec 2018 06:12:21 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42154 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeLALMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 06:12:10 -0500
-Received: by mail-qt1-f194.google.com with SMTP id r14so7927447qtp.1;
-        Fri, 30 Nov 2018 16:01:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=W1nBtzVUcRCUfSdX8ZWBsao8qJgnwwX+MKZQoaxO4/Q=;
-        b=OMfggQZKxF8tZrbA5JdmCkb5Fg3ihqtTTHl3LnsPwLuIrmph3c1KLtTTdKL2GFokzf
-         qfRWIi2YLBED/UgoPqHe9TsJfcmzeN0+sHSvRpTJEZYmRf1gMZ+5IIdyDDHI4P5wOMQE
-         3ZrEAVk3TRrXm2qHuJ9AqbsiXXIXZXny+NsZEq7Y2AamVoAcK3U3+zCK6VMTNgv/9Q5w
-         Hfs0sQNb7+P+IdakHjOxJ8NKXEyZJHL3wDPh48UUrcl58ifm4c70l9HPdBgIIn2/vKjV
-         wCXmuAXLhXiKTlBTCIpY2GqWHB7cPywKzGetemweO98vBc8xEaYHd4CJmHwnpXt/wOmh
-         oFpA==
+        Sat, 1 Dec 2018 06:12:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 64so3544925pfr.9;
+        Fri, 30 Nov 2018 16:01:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=W1nBtzVUcRCUfSdX8ZWBsao8qJgnwwX+MKZQoaxO4/Q=;
-        b=sdQ5ExN5L15hYM8JibacAMDCCa5x7TQzmDQRoJxDlgCSxP1fSwZxepjXa0NmV19Sl+
-         TchmbGKabNX7h3BYVpqJ2YBoqPNTToyqNqncR19572BuceCKppI68bBEDuQQtSgeN+q+
-         V9OOJhud2puNQR/6FBjF1u0ZWz1vcSCVLbexrh/wyS/FaHHNQfmlojJ74GtyPxj3z8A1
-         pk+bwO9PxNiZD+yWsOqlGsgMMXxIgkd4Mj1tG0o6GYfs4n8wxj8H3SYMr8QVV2A22sno
-         loxAMr4yCKTzuemM1DOMVDwj5dFOOrJQCvczN7VKL2w3vlTPAHCpR7S+86Jegxvw39wq
-         1VpQ==
-X-Gm-Message-State: AA+aEWZTjZBpOmWJTb8NESb+aB9ykZ6QwSRKXdRzDLEoczUnDTrRj3yV
-        Lb3GC8yooDwr7bBb66YAoQJ1sOfffGM=
-X-Google-Smtp-Source: AFSGD/UtGlRcsqcFdrbAKOHEs6N74NGGSFr1of8bGTcF2KW61bFBPv2pgVEn0lp9Ldc/VWMuiZwK+Q==
-X-Received: by 2002:a0c:eb41:: with SMTP id c1mr7774095qvq.211.1543622466489;
-        Fri, 30 Nov 2018 16:01:06 -0800 (PST)
-Received: from localhost.localdomain ([2804:7f4:338b:c48c:14b0:21c6:dbe:33b0])
-        by smtp.gmail.com with ESMTPSA id k38sm4315382qkh.72.2018.11.30.16.01.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 16:01:06 -0800 (PST)
-From:   Anderson Luiz Alves <alacn1@gmail.com>
-To:     andrew@lunn.ch, vivien.didelot@savoirfairelinux.com,
-        f.fainelli@gmail.com, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Anderson Luiz Alves <alacn1@gmail.com>
-Subject: [PATCH v3 net] mv88e6060: disable hardware level MAC learning
-Date:   Fri, 30 Nov 2018 21:58:36 -0200
-Message-Id: <20181130235836.11741-1-alacn1@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nuWNhIUijinqJI7JFlF7z/UWKHZ7eECm3FVwHYX/q0s=;
+        b=ZXqCk78vjO2phfyJX5gb86Adl/ALUa9Kc0zh1LtiNsDIX0xxXTEjyuNAOvSV73rOQi
+         GiUFDx60PV8cmPaHTvEVW1H4c3B0KaJGT6Ild3JoKrQjuhJxQKyDvWK9Yhn7Tw1HqdlF
+         ygx3BDBs1bGDi158h8vGdWuTLPbZn2oDt+IVGRZKBNfMH/81m+58z3aVeNhj7+nN1FkR
+         3NoVxgnnAOkXenF+vt3/F1Stq4Jexfye2vA6vKGH8t4oCm77NSNsIQVJPyKx/SWXeOKB
+         oXCR/zKH7Wl4+fr/RWD8H7tkHyRQsdXkiHid8wKaTV3YBVSy8NeWvWYrkV8/3S+4VfTL
+         sltA==
+X-Gm-Message-State: AA+aEWa/lpf9WBe0uZQvzQBGJs9uR7DZA/oladsVP8Oq8Pl1WlHiTuSR
+        NF6AjHkx5yaNufmIT2tNxT8=
+X-Google-Smtp-Source: AFSGD/W0feYBwzRsBaXgQWp6/RT7AdsR+A4FqYvV8AlpAmPsiRLxMKip4MvVo/PRXeQ+MQMXjqBqrQ==
+X-Received: by 2002:a63:8742:: with SMTP id i63mr6359226pge.298.1543622473498;
+        Fri, 30 Nov 2018 16:01:13 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id f8-v6sm10078238pff.29.2018.11.30.16.01.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 16:01:12 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Fri, 30 Nov 2018 16:01:09 -0800
+Date:   Fri, 30 Nov 2018 16:01:09 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org
+Subject: Re: [driver-core PATCH v7 3/9] device core: Consolidate locking and
+ unlocking of parent and device
+Message-ID: <20181201000109.GG28501@garbanzo.do-not-panic.com>
+References: <154345118835.18040.17186161872550839244.stgit@ahduyck-desk1.amr.corp.intel.com>
+ <154345154182.18040.12736221516488918534.stgit@ahduyck-desk1.amr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154345154182.18040.12736221516488918534.stgit@ahduyck-desk1.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disable hardware level MAC learning because it breaks station roaming.
-When enabled it drops all frames that arrive from a MAC address
-that is on a different port at learning table.
+On Wed, Nov 28, 2018 at 04:32:21PM -0800, Alexander Duyck wrote:
+> Try to consolidate all of the locking and unlocking of both the parent and
+> device when attaching or removing a driver from a given device.
+> 
+> To do that I first consolidated the lock pattern into two functions
+> __device_driver_lock and __device_driver_unlock. After doing that I then
+> created functions specific to attaching and detaching the driver while
+> acquiring these locks. By doing this I was able to reduce the number of
+> spots where we touch need_parent_lock from 12 down to 4.
 
-Signed-off-by: Anderson Luiz Alves <alacn1@gmail.com>
----
+While this later is true, it gives the impression there are functional
+changes but I see none. It can help reviewers / future reviewers of this
+commit if its clearly stated that this patch introduces no functional
+changes.
 
-Notes:
-    v2: Updated code comments.
-    v3: Sent with correct whitespaces.
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
- drivers/net/dsa/mv88e6060.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-diff --git a/drivers/net/dsa/mv88e6060.c b/drivers/net/dsa/mv88e6060.c
-index 65f10fec2..0b3e51f24 100644
---- a/drivers/net/dsa/mv88e6060.c
-+++ b/drivers/net/dsa/mv88e6060.c
-@@ -116,8 +116,7 @@ static int mv88e6060_switch_reset(struct dsa_switch *ds)
- 	/* Reset the switch. */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
- 		  GLOBAL_ATU_CONTROL_SWRESET |
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
- 
- 	/* Wait up to one second for reset to complete. */
- 	timeout = jiffies + 1 * HZ;
-@@ -142,13 +141,10 @@ static int mv88e6060_setup_global(struct dsa_switch *ds)
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_CONTROL, GLOBAL_CONTROL_MAX_FRAME_1536);
- 
--	/* Enable automatic address learning, set the address
--	 * database size to 1024 entries, and set the default aging
--	 * time to 5 minutes.
-+	/* Disable automatic address learning.
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
- 
- 	return 0;
- }
--- 
-2.17.1
-
+  Luis
+> ---
+>  drivers/base/base.h |    2 +
+>  drivers/base/bus.c  |   23 ++-----------
+>  drivers/base/dd.c   |   91 ++++++++++++++++++++++++++++++++++++++++-----------
+>  3 files changed, 77 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/base/base.h b/drivers/base/base.h
+> index 7a419a7a6235..3f22ebd6117a 100644
+> --- a/drivers/base/base.h
+> +++ b/drivers/base/base.h
+> @@ -124,6 +124,8 @@ extern int driver_add_groups(struct device_driver *drv,
+>  			     const struct attribute_group **groups);
+>  extern void driver_remove_groups(struct device_driver *drv,
+>  				 const struct attribute_group **groups);
+> +int device_driver_attach(struct device_driver *drv, struct device *dev);
+> +void device_driver_detach(struct device *dev);
+>  
+>  extern char *make_class_name(const char *name, struct kobject *kobj);
+>  
+> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> index 8bfd27ec73d6..8a630f9bd880 100644
+> --- a/drivers/base/bus.c
+> +++ b/drivers/base/bus.c
+> @@ -184,11 +184,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+>  
+>  	dev = bus_find_device_by_name(bus, NULL, buf);
+>  	if (dev && dev->driver == drv) {
+> -		if (dev->parent && dev->bus->need_parent_lock)
+> -			device_lock(dev->parent);
+> -		device_release_driver(dev);
+> -		if (dev->parent && dev->bus->need_parent_lock)
+> -			device_unlock(dev->parent);
+> +		device_driver_detach(dev);
+>  		err = count;
+>  	}
+>  	put_device(dev);
+> @@ -211,13 +207,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+>  
+>  	dev = bus_find_device_by_name(bus, NULL, buf);
+>  	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
+> -		if (dev->parent && bus->need_parent_lock)
+> -			device_lock(dev->parent);
+> -		device_lock(dev);
+> -		err = driver_probe_device(drv, dev);
+> -		device_unlock(dev);
+> -		if (dev->parent && bus->need_parent_lock)
+> -			device_unlock(dev->parent);
+> +		err = device_driver_attach(drv, dev);
+>  
+>  		if (err > 0) {
+>  			/* success */
+> @@ -769,13 +759,8 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
+>   */
+>  int device_reprobe(struct device *dev)
+>  {
+> -	if (dev->driver) {
+> -		if (dev->parent && dev->bus->need_parent_lock)
+> -			device_lock(dev->parent);
+> -		device_release_driver(dev);
+> -		if (dev->parent && dev->bus->need_parent_lock)
+> -			device_unlock(dev->parent);
+> -	}
+> +	if (dev->driver)
+> +		device_driver_detach(dev);
+>  	return bus_rescan_devices_helper(dev, NULL);
+>  }
+>  EXPORT_SYMBOL_GPL(device_reprobe);
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index ef3f70a7cb5a..d2515520569e 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -875,6 +875,60 @@ void device_initial_probe(struct device *dev)
+>  	__device_attach(dev, true);
+>  }
+>  
+> +/*
+> + * __device_driver_lock - acquire locks needed to manipulate dev->drv
+> + * @dev: Device we will update driver info for
+> + * @parent: Parent device. Needed if the bus requires parent lock
+> + *
+> + * This function will take the required locks for manipulating dev->drv.
+> + * Normally this will just be the @dev lock, but when called for a USB
+> + * interface, @parent lock will be held as well.
+> + */
+> +static void __device_driver_lock(struct device *dev, struct device *parent)
+> +{
+> +	if (parent && dev->bus->need_parent_lock)
+> +		device_lock(parent);
+> +	device_lock(dev);
+> +}
+> +
+> +/*
+> + * __device_driver_unlock - release locks needed to manipulate dev->drv
+> + * @dev: Device we will update driver info for
+> + * @parent: Parent device. Needed if the bus requires parent lock
+> + *
+> + * This function will release the required locks for manipulating dev->drv.
+> + * Normally this will just be the the @dev lock, but when called for a
+> + * USB interface, @parent lock will be released as well.
+> + */
+> +static void __device_driver_unlock(struct device *dev, struct device *parent)
+> +{
+> +	device_unlock(dev);
+> +	if (parent && dev->bus->need_parent_lock)
+> +		device_unlock(parent);
+> +}
+> +
+> +/**
+> + * device_driver_attach - attach a specific driver to a specific device
+> + * @drv: Driver to attach
+> + * @dev: Device to attach it to
+> + *
+> + * Manually attach driver to a device. Will acquire both @dev lock and
+> + * @dev->parent lock if needed.
+> + */
+> +int device_driver_attach(struct device_driver *drv, struct device *dev)
+> +{
+> +	int ret = 0;
+> +
+> +	__device_driver_lock(dev, dev->parent);
+> +
+> +	if (!dev->driver)
+> +		ret = driver_probe_device(drv, dev);
+> +
+> +	__device_driver_unlock(dev, dev->parent);
+> +
+> +	return ret;
+> +}
+> +
+>  static int __driver_attach(struct device *dev, void *data)
+>  {
+>  	struct device_driver *drv = data;
+> @@ -902,14 +956,7 @@ static int __driver_attach(struct device *dev, void *data)
+>  		return ret;
+>  	} /* ret > 0 means positive match */
+>  
+> -	if (dev->parent && dev->bus->need_parent_lock)
+> -		device_lock(dev->parent);
+> -	device_lock(dev);
+> -	if (!dev->driver)
+> -		driver_probe_device(drv, dev);
+> -	device_unlock(dev);
+> -	if (dev->parent && dev->bus->need_parent_lock)
+> -		device_unlock(dev->parent);
+> +	device_driver_attach(drv, dev);
+>  
+>  	return 0;
+>  }
+> @@ -948,15 +995,11 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+>  	drv = dev->driver;
+>  	if (drv) {
+>  		while (device_links_busy(dev)) {
+> -			device_unlock(dev);
+> -			if (parent)
+> -				device_unlock(parent);
+> +			__device_driver_unlock(dev, parent);
+>  
+>  			device_links_unbind_consumers(dev);
+> -			if (parent)
+> -				device_lock(parent);
+>  
+> -			device_lock(dev);
+> +			__device_driver_lock(dev, parent);
+>  			/*
+>  			 * A concurrent invocation of the same function might
+>  			 * have released the driver successfully while this one
+> @@ -1009,16 +1052,12 @@ void device_release_driver_internal(struct device *dev,
+>  				    struct device_driver *drv,
+>  				    struct device *parent)
+>  {
+> -	if (parent && dev->bus->need_parent_lock)
+> -		device_lock(parent);
+> +	__device_driver_lock(dev, parent);
+>  
+> -	device_lock(dev);
+>  	if (!drv || drv == dev->driver)
+>  		__device_release_driver(dev, parent);
+>  
+> -	device_unlock(dev);
+> -	if (parent && dev->bus->need_parent_lock)
+> -		device_unlock(parent);
+> +	__device_driver_unlock(dev, parent);
+>  }
+>  
+>  /**
+> @@ -1043,6 +1082,18 @@ void device_release_driver(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(device_release_driver);
+>  
+> +/**
+> + * device_driver_detach - detach driver from a specific device
+> + * @dev: device to detach driver from
+> + *
+> + * Detach driver from device. Will acquire both @dev lock and @dev->parent
+> + * lock if needed.
+> + */
+> +void device_driver_detach(struct device *dev)
+> +{
+> +	device_release_driver_internal(dev, NULL, dev->parent);
+> +}
+> +
+>  /**
+>   * driver_detach - detach driver from all devices it controls.
+>   * @drv: driver.
+> 
