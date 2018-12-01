@@ -2,360 +2,128 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 337C8C65BAE
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 03:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B198C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 03:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED73E2146F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 03:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C93E420867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 03:34:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pRv3jdzX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED73E2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="lroTmmu3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93E420867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeLAOde (ORCPT
+        id S1726619AbeLAOqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 09:33:34 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45344 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbeLAOdd (ORCPT
+        Sat, 1 Dec 2018 09:46:25 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:47425 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbeLAOqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 09:33:33 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so3711938pfd.12;
-        Fri, 30 Nov 2018 19:22:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=qWZh87NcjDusrCVAOBYDZUJJmsbAHwkZ9EhuGSORJho=;
-        b=pRv3jdzX0Ghy0Q7tawQnxsvqsIvOJg/CRo/bBwgr64YqnIwzLb9tcApBWH5L9ynGO3
-         uAzd/ePru5Ng8hrbgODN5LwTQhvN0wbpFqhkTdQ2xBasw/aOiofTqcs78JekeI3673WF
-         nGBJ21HH7IGM3LoHIKX5flh7XJ7Zjw56s0cCz/vdcQ1GdObshxhlcqhsMA0e/HlsdOhD
-         6hIv50cH76wkr9eg8NT7sWkm/DF9kXYFkynZpkx2xS9RneEOUby1/ja/mmPRPsaHGUy4
-         VfOtvQHk5XbQ/47SnebhnsEjgIfPebKH64trRVZ7knvKgJzY9gPi2DA6QInFiW6RVGYR
-         h50g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qWZh87NcjDusrCVAOBYDZUJJmsbAHwkZ9EhuGSORJho=;
-        b=IG3txyFPFCdGzpc/s/ZCbx4FwK6jm9mZ/eSDeICnBKVo1mPutk9p0TcZNSwCRNrthp
-         Tpr7eWduQh1wFjkT7QpWtex/lXpRTwLIIpXL2xOAgzezVXEVdyvFEW62ZUOgHv9nASpM
-         2HF3RDQPM7Mv+rXrt+ycjpVaL4+lJfdy+ouZ5EDGqGNDYvCLv2VSQ0v6+bengOtgr7Kz
-         gpqawxBR4uKb7FZoEMIiEH5/DaXR4f7ySkFyqtlKHrwwrvDiS5IxQwumt/1gqxllr3TE
-         +njB6RZPV1FKExjaigGf1R+hu9vrFwODqbN7cfRjQ3rp7eGZVqDI/xd0wvqWtrNoFm2M
-         hrEw==
-X-Gm-Message-State: AA+aEWbbhcZW2WQwU0UgTiBlHywbEVWFHu/5IbpgObGJ7IHfOp+fan2H
-        ZAtzXTPm+CULeJG5Rq72qVk=
-X-Google-Smtp-Source: AFSGD/UdGmX0/bUnS9W9BddlaeuLLd3tUqknaMkweNZ01VpJfGT0GF2Dwe/iG0+Rfd6n5RT7JfKXCw==
-X-Received: by 2002:a62:e704:: with SMTP id s4mr8126774pfh.124.1543634524122;
-        Fri, 30 Nov 2018 19:22:04 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id c13sm13924475pfe.93.2018.11.30.19.22.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 19:22:03 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     ed.cashin@acm.org, axboe@kernel.dk, philipp.reisner@linbit.com,
-        lars.ellenberg@linbit.com, josef@toxicpanda.com,
-        linux-block@vger.kernel.org, josh.h.morris@us.ibm.com,
-        pjk1939@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] block: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Fri, 30 Nov 2018 22:22:00 -0500
-Message-Id: <20181201032200.5746-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 1 Dec 2018 09:46:24 -0500
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id wB13YcAF007080
+        for <linux-kernel@vger.kernel.org>; Sat, 1 Dec 2018 12:34:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wB13YcAF007080
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1543635279;
+        bh=FY8fXA8CF4jB6GdPRb1yLOKDnQGiI8/Hhk9WS2m2CmQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lroTmmu31deRNWfnjypfhZx4++afORQHkj9ARcixA45PP3zCfZNKgK2/fr9trZJlF
+         ckMNV18yiL339dNPk1Hde3/ABXwhg6RoRvRCM5LkjDxztY0Apt2a7A2qidYHuMZY1L
+         JQaoJBPdONqBpPqHoKvyGqdWMYX7zN4+FGEaKk+zh8XI7ZBFeHxc8Cvz617jDnWyUR
+         hdXUpDB3FwFOMI+c/sVyZknAUxuOx/V89m3sGhDRuYR9QXRn5DYHXsiIFP/Y6mCl/E
+         6dRg6GfyNPWc5xGN6CmvpIOLOQeIAott9LTa2Eas1HDH8Or6dp4TX9eP1onI7xn/LN
+         rp8C1R0251E7g==
+X-Nifty-SrcIP: [209.85.221.171]
+Received: by mail-vk1-f171.google.com with SMTP id o130so1753215vke.10
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 19:34:38 -0800 (PST)
+X-Gm-Message-State: AA+aEWbRy/TMhnA0qM0mLGBVQeeoMj4Sim9DC6jiVKRkIS+wLdzVydr0
+        16fbDG27aG5yDxUnzDcpiTa71zR4Q2qPqWIwsjs=
+X-Google-Smtp-Source: AFSGD/VV4U+M6JsMovb1LAlCb+p390/AHD2G6HLFdWT6zx+mVlMBotY4PXYpAwfA+6dg7txzuMjR0VRl1omG3i7ns8A=
+X-Received: by 2002:a1f:6bc8:: with SMTP id k69mr3500130vki.84.1543635277420;
+ Fri, 30 Nov 2018 19:34:37 -0800 (PST)
+MIME-Version: 1.0
+References: <1542856462-18836-1-git-send-email-yamada.masahiro@socionext.com>
+ <20181122143201.d7vifhlny7gmrhzd@ltop.local> <CANiq72miapoMHiXsq-gSu5+dhpGDE6Dnf3c_6DpHRkwNiPPU6g@mail.gmail.com>
+In-Reply-To: <CANiq72miapoMHiXsq-gSu5+dhpGDE6Dnf3c_6DpHRkwNiPPU6g@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat, 1 Dec 2018 12:34:01 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARZLHaaFNjuFEteY59ybAHTKp3ciwOMgacTXr+Sagk-DQ@mail.gmail.com>
+Message-ID: <CAK7LNARZLHaaFNjuFEteY59ybAHTKp3ciwOMgacTXr+Sagk-DQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] kernel.h: disable type-checks in container_of()
+ for Sparse
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Crt Mori <cmo@melexis.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+Hi Andrew,
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/block/aoe/aoeblk.c        | 16 +++-----------
- drivers/block/drbd/drbd_debugfs.c | 13 +-----------
- drivers/block/nbd.c               | 28 ++++---------------------
- drivers/block/pktcdvd.c           | 26 +++++------------------
- drivers/block/rsxx/core.c         | 35 ++++++-------------------------
- 5 files changed, 19 insertions(+), 99 deletions(-)
 
-diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
-index ed26b7287256..5d2be31ac7f8 100644
---- a/drivers/block/aoe/aoeblk.c
-+++ b/drivers/block/aoe/aoeblk.c
-@@ -110,7 +110,7 @@ static ssize_t aoedisk_show_payload(struct device *dev,
- 	return snprintf(page, PAGE_SIZE, "%lu\n", d->maxbcnt);
- }
- 
--static int aoedisk_debugfs_show(struct seq_file *s, void *ignored)
-+static int aoe_show(struct seq_file *s, void *ignored)
- {
- 	struct aoedev *d;
- 	struct aoetgt **t, **te;
-@@ -154,11 +154,6 @@ static int aoedisk_debugfs_show(struct seq_file *s, void *ignored)
- 	return 0;
- }
- 
--static int aoe_debugfs_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, aoedisk_debugfs_show, inode->i_private);
--}
--
- static DEVICE_ATTR(state, 0444, aoedisk_show_state, NULL);
- static DEVICE_ATTR(mac, 0444, aoedisk_show_mac, NULL);
- static DEVICE_ATTR(netif, 0444, aoedisk_show_netif, NULL);
-@@ -186,12 +181,7 @@ static const struct attribute_group *aoe_attr_groups[] = {
- 	NULL,
- };
- 
--static const struct file_operations aoe_debugfs_fops = {
--	.open = aoe_debugfs_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(aoe);
- 
- static void
- aoedisk_add_debugfs(struct aoedev *d)
-@@ -208,7 +198,7 @@ aoedisk_add_debugfs(struct aoedev *d)
- 		p++;
- 	BUG_ON(*p == '\0');
- 	entry = debugfs_create_file(p, 0444, aoe_debugfs_dir, d,
--				    &aoe_debugfs_fops);
-+				    &aoe_fops);
- 	if (IS_ERR_OR_NULL(entry)) {
- 		pr_info("aoe: cannot create debugfs file for %s\n",
- 			d->gd->disk_name);
-diff --git a/drivers/block/drbd/drbd_debugfs.c b/drivers/block/drbd/drbd_debugfs.c
-index 5d5e8d6a8a56..e46c198c2e6a 100644
---- a/drivers/block/drbd/drbd_debugfs.c
-+++ b/drivers/block/drbd/drbd_debugfs.c
-@@ -892,18 +892,7 @@ static int drbd_version_show(struct seq_file *m, void *ignored)
- 	return 0;
- }
- 
--static int drbd_version_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, drbd_version_show, NULL);
--}
--
--static const struct file_operations drbd_version_fops = {
--	.owner = THIS_MODULE,
--	.open = drbd_version_open,
--	.llseek = seq_lseek,
--	.read = seq_read,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(drbd_version);
- 
- /* not __exit, may be indirectly called
-  * from the module-load-failure path as well. */
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 4d4d6129ff66..415473cc3b7e 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1399,17 +1399,7 @@ static int nbd_dbg_tasks_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int nbd_dbg_tasks_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, nbd_dbg_tasks_show, inode->i_private);
--}
--
--static const struct file_operations nbd_dbg_tasks_ops = {
--	.open = nbd_dbg_tasks_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(nbd_dbg_tasks);
- 
- static int nbd_dbg_flags_show(struct seq_file *s, void *unused)
- {
-@@ -1434,17 +1424,7 @@ static int nbd_dbg_flags_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int nbd_dbg_flags_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, nbd_dbg_flags_show, inode->i_private);
--}
--
--static const struct file_operations nbd_dbg_flags_ops = {
--	.open = nbd_dbg_flags_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(nbd_dbg_flags);
- 
- static int nbd_dev_dbg_init(struct nbd_device *nbd)
- {
-@@ -1462,11 +1442,11 @@ static int nbd_dev_dbg_init(struct nbd_device *nbd)
- 	}
- 	config->dbg_dir = dir;
- 
--	debugfs_create_file("tasks", 0444, dir, nbd, &nbd_dbg_tasks_ops);
-+	debugfs_create_file("tasks", 0444, dir, nbd, &nbd_dbg_tasks_fops);
- 	debugfs_create_u64("size_bytes", 0444, dir, &config->bytesize);
- 	debugfs_create_u32("timeout", 0444, dir, &nbd->tag_set.timeout);
- 	debugfs_create_u64("blocksize", 0444, dir, &config->blksize);
--	debugfs_create_file("flags", 0444, dir, nbd, &nbd_dbg_flags_ops);
-+	debugfs_create_file("flags", 0444, dir, nbd, &nbd_dbg_flags_fops);
- 
- 	return 0;
- }
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 9381f4e3b221..9598004c25cb 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -106,7 +106,7 @@ static struct dentry	*pkt_debugfs_root = NULL; /* /sys/kernel/debug/pktcdvd */
- /* forward declaration */
- static int pkt_setup_dev(dev_t dev, dev_t* pkt_dev);
- static int pkt_remove_dev(dev_t pkt_dev);
--static int pkt_seq_show(struct seq_file *m, void *p);
-+static int pkt_show(struct seq_file *m, void *p);
- 
- static sector_t get_zone(sector_t sector, struct pktcdvd_device *pd)
- {
-@@ -452,23 +452,7 @@ static void pkt_sysfs_cleanup(void)
- 
-  *******************************************************************/
- 
--static int pkt_debugfs_seq_show(struct seq_file *m, void *p)
--{
--	return pkt_seq_show(m, p);
--}
--
--static int pkt_debugfs_fops_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pkt_debugfs_seq_show, inode->i_private);
--}
--
--static const struct file_operations debug_fops = {
--	.open		= pkt_debugfs_fops_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--	.owner		= THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(pkt);
- 
- static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
- {
-@@ -479,7 +463,7 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
- 		return;
- 
- 	pd->dfs_f_info = debugfs_create_file("info", 0444,
--					     pd->dfs_d_root, pd, &debug_fops);
-+					     pd->dfs_d_root, pd, &pkt_fops);
- }
- 
- static void pkt_debugfs_dev_remove(struct pktcdvd_device *pd)
-@@ -2501,7 +2485,7 @@ static void pkt_init_queue(struct pktcdvd_device *pd)
- 	q->queuedata = pd;
- }
- 
--static int pkt_seq_show(struct seq_file *m, void *p)
-+static int pkt_show(struct seq_file *m, void *p)
- {
- 	struct pktcdvd_device *pd = m->private;
- 	char *msg;
-@@ -2617,7 +2601,7 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 		goto out_mem;
- 	}
- 
--	proc_create_single_data(pd->name, 0, pkt_proc, pkt_seq_show, pd);
-+	proc_create_single_data(pd->name, 0, pkt_proc, pkt_show, pd);
- 	pkt_dbg(1, pd, "writer mapped to %s\n", bdevname(bdev, b));
- 	return 0;
- 
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index 0cf4509d575c..b02886cbd0d1 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -61,7 +61,7 @@ static DEFINE_IDA(rsxx_disk_ida);
- 
- /* --------------------Debugfs Setup ------------------- */
- 
--static int rsxx_attr_pci_regs_show(struct seq_file *m, void *p)
-+static int pci_regs_show(struct seq_file *m, void *p)
- {
- 	struct rsxx_cardinfo *card = m->private;
- 
-@@ -123,7 +123,7 @@ static int rsxx_attr_pci_regs_show(struct seq_file *m, void *p)
- 	return 0;
- }
- 
--static int rsxx_attr_stats_show(struct seq_file *m, void *p)
-+static int stats_show(struct seq_file *m, void *p)
- {
- 	struct rsxx_cardinfo *card = m->private;
- 	int i;
-@@ -164,16 +164,6 @@ static int rsxx_attr_stats_show(struct seq_file *m, void *p)
- 	return 0;
- }
- 
--static int rsxx_attr_stats_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, rsxx_attr_stats_show, inode->i_private);
--}
--
--static int rsxx_attr_pci_regs_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, rsxx_attr_pci_regs_show, inode->i_private);
--}
--
- static ssize_t rsxx_cram_read(struct file *fp, char __user *ubuf,
- 			      size_t cnt, loff_t *ppos)
- {
-@@ -220,21 +210,8 @@ static const struct file_operations debugfs_cram_fops = {
- 	.write		= rsxx_cram_write,
- };
- 
--static const struct file_operations debugfs_stats_fops = {
--	.owner		= THIS_MODULE,
--	.open		= rsxx_attr_stats_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations debugfs_pci_regs_fops = {
--	.owner		= THIS_MODULE,
--	.open		= rsxx_attr_pci_regs_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(stats);
-+DEFINE_SHOW_ATTRIBUTE(pci_regs);
- 
- static void rsxx_debugfs_dev_new(struct rsxx_cardinfo *card)
- {
-@@ -248,13 +225,13 @@ static void rsxx_debugfs_dev_new(struct rsxx_cardinfo *card)
- 
- 	debugfs_stats = debugfs_create_file("stats", 0444,
- 					    card->debugfs_dir, card,
--					    &debugfs_stats_fops);
-+					    &stats_fops);
- 	if (IS_ERR_OR_NULL(debugfs_stats))
- 		goto failed_debugfs_stats;
- 
- 	debugfs_pci_regs = debugfs_create_file("pci_regs", 0444,
- 					       card->debugfs_dir, card,
--					       &debugfs_pci_regs_fops);
-+					       &pci_regs_fops);
- 	if (IS_ERR_OR_NULL(debugfs_pci_regs))
- 		goto failed_debugfs_pci_regs;
- 
+On Sat, Nov 24, 2018 at 6:06 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Fri, Nov 23, 2018 at 10:14 PM Luc Van Oostenryck
+> <luc.vanoostenryck@gmail.com> wrote:
+> >
+> > On Thu, Nov 22, 2018 at 12:14:20PM +0900, Masahiro Yamada wrote:
+> > > When I tried to enable BUILD_BUG_ON for Sparse, the kbuild test robot
+> > > reported lots of "unknown expression" warnings from container_of(),
+> > > which seemed false positive.
+> > >
+> > > I addressed this in [1], but fixing Sparse is the right thing to do.
+> > >
+> > > The issue was fixed by Sparse commit 0eb8175d3e9c ("fix expansion of
+> > > function designator"), but it will take time until the fixed version
+> > > of Sparse is widely available.
+> > >
+> > > Disable the container_of() type checks for Sparse for now.
+> >
+> > I would prefer that developers upgrade their version of sparse but ...
+> >
+> > Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+>
+> Indeed. If someone is writing code for the latest kernels, I think it
+> is reasonable to assume they are able to use the latest sparse too,
+> since it is not required for compilation anyway.
+
+
+
+I was reconsidering about this.
+
+I saw other Sparse warnings anyway
+unless I use the state-of-the-art version of Sparse.
+
+
+So, now I think Luc and Miguel were right.
+
+
+Requiring the latest Sparse is the right solution.
+We do not need to take care of old Sparse.
+
+
+Andrew,
+Could you drop this patch please?
+
+
 -- 
-2.17.0
-
+Best Regards
+Masahiro Yamada
