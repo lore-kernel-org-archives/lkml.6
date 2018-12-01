@@ -3,80 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDA3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C25C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE7572147C
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE7572147C
+	by mail.kernel.org (Postfix) with ESMTP id F2E332147C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:37:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E332147C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725781AbeLBHua (ORCPT
+        id S1725795AbeLBHvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 02:50:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45818 "EHLO
+        Sun, 2 Dec 2018 02:51:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57298 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725726AbeLBHu3 (ORCPT
+        by vger.kernel.org with ESMTP id S1725726AbeLBHvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 02:50:29 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB1KXcvA092617
-        for <linux-kernel@vger.kernel.org>; Sat, 1 Dec 2018 15:37:08 -0500
+        Sun, 2 Dec 2018 02:51:01 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB1KXhVp099085
+        for <linux-kernel@vger.kernel.org>; Sat, 1 Dec 2018 15:37:39 -0500
 Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p41ay08r4-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p3pg6vbn3-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 15:37:08 -0500
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 15:37:38 -0500
 Received: from localhost
         by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 1 Dec 2018 20:37:06 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        Sat, 1 Dec 2018 20:37:37 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
         by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 1 Dec 2018 20:37:02 -0000
+        Sat, 1 Dec 2018 20:37:34 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB1Kb1Ol14942440
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB1KbXQw19923146
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 1 Dec 2018 20:37:01 GMT
+        Sat, 1 Dec 2018 20:37:34 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1AC88B2065;
-        Sat,  1 Dec 2018 20:37:01 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D9D82B2064;
+        Sat,  1 Dec 2018 20:37:33 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D875EB205F;
-        Sat,  1 Dec 2018 20:37:00 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B7A39B2066;
+        Sat,  1 Dec 2018 20:37:33 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.80.206.214])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat,  1 Dec 2018 20:37:00 +0000 (GMT)
+        Sat,  1 Dec 2018 20:37:33 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 092A616C1B3E; Sat,  1 Dec 2018 12:37:01 -0800 (PST)
-Date:   Sat, 1 Dec 2018 12:37:01 -0800
+        id 01B1016C1B3E; Sat,  1 Dec 2018 12:37:33 -0800 (PST)
+Date:   Sat, 1 Dec 2018 12:37:33 -0800
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     Wen Yang <wen.yang99@zte.com.cn>
 Cc:     Davidlohr Bueso <dave@stgolabs.net>,
         Josh Triplett <josh@joshtriplett.org>,
         linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
         peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com
-Subject: Re: [PATCH] locktorture: Fix assignment of boolean variables
+Subject: Re: [PATCH] locktorture: style fix - spaces required around
 Reply-To: paulmck@linux.ibm.com
-References: <20181201083149.36972-1-wen.yang99@zte.com.cn>
+References: <20181201084039.46125-1-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181201083149.36972-1-wen.yang99@zte.com.cn>
+In-Reply-To: <20181201084039.46125-1-wen.yang99@zte.com.cn>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18120120-2213-0000-0000-00000322EBD2
+x-cbid: 18120120-2213-0000-0000-00000322EBD5
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010154; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01125568; UDB=6.00584482; IPR=6.00905696;
- MB=3.00024410; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-01 20:37:04
+ PH=3.00000004; SC=3.00000270; SDB=6.01125569; UDB=6.00584482; IPR=6.00905696;
+ MB=3.00024410; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-01 20:37:36
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120120-2214-0000-0000-00005C73FF8F
-Message-Id: <20181201203700.GW4170@linux.ibm.com>
+x-cbparentid: 18120120-2214-0000-0000-00005C73FFBD
+Message-Id: <20181201203733.GX4170@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-01_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -89,18 +89,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 01, 2018 at 04:31:49PM +0800, Wen Yang wrote:
-> Fix the following warnings reported by coccinelle:
+On Sat, Dec 01, 2018 at 04:40:39PM +0800, Wen Yang wrote:
+> This patch fixes the following checkpatch.pl errors:
 > 
-> kernel/locking/locktorture.c:703:6-10: WARNING: Assignment of bool to 0/1
-> kernel/locking/locktorture.c:918:2-20: WARNING: Assignment of bool to 0/1
-> kernel/locking/locktorture.c:949:3-20: WARNING: Assignment of bool to 0/1
-> kernel/locking/locktorture.c:682:2-19: WARNING: Assignment of bool to 0/1
-> kernel/locking/locktorture.c:688:2-19: WARNING: Assignment of bool to 0/1
-> kernel/locking/locktorture.c:648:2-20: WARNING: Assignment of bool to 0/1
-> kernel/locking/locktorture.c:654:2-20: WARNING: Assignment of bool to 0/1
-> 
-> This patch also makes the code more readable.
+> ERROR: spaces required around that ':' (ctx:VxW)
+> +                torture_type, tag, cxt.debug_lock ? " [debug]": "",
+>                                                                ^
 > 
 > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
 > CC: Davidlohr Bueso <dave@stgolabs.net>
@@ -113,72 +107,22 @@ Adding the current maintainers on CC.
 							Thanx, Paul
 
 > ---
->  kernel/locking/locktorture.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  kernel/locking/locktorture.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-> index 7d0b0ed74404..cd95c01491d8 100644
+> index cd95c01491d8..d1d8356b770a 100644
 > --- a/kernel/locking/locktorture.c
 > +++ b/kernel/locking/locktorture.c
-> @@ -645,13 +645,13 @@ static int lock_torture_writer(void *arg)
->  		cxt.cur_ops->writelock();
->  		if (WARN_ON_ONCE(lock_is_write_held))
->  			lwsp->n_lock_fail++;
-> -		lock_is_write_held = 1;
-> +		lock_is_write_held = true;
->  		if (WARN_ON_ONCE(lock_is_read_held))
->  			lwsp->n_lock_fail++; /* rare, but... */
->  
->  		lwsp->n_lock_acquired++;
->  		cxt.cur_ops->write_delay(&rand);
-> -		lock_is_write_held = 0;
-> +		lock_is_write_held = false;
->  		cxt.cur_ops->writeunlock();
->  
->  		stutter_wait("lock_torture_writer");
-> @@ -679,13 +679,13 @@ static int lock_torture_reader(void *arg)
->  			schedule_timeout_uninterruptible(1);
->  
->  		cxt.cur_ops->readlock();
-> -		lock_is_read_held = 1;
-> +		lock_is_read_held = true;
->  		if (WARN_ON_ONCE(lock_is_write_held))
->  			lrsp->n_lock_fail++; /* rare, but... */
->  
->  		lrsp->n_lock_acquired++;
->  		cxt.cur_ops->read_delay(&rand);
-> -		lock_is_read_held = 0;
-> +		lock_is_read_held = false;
->  		cxt.cur_ops->readunlock();
->  
->  		stutter_wait("lock_torture_reader");
-> @@ -700,7 +700,7 @@ static int lock_torture_reader(void *arg)
->  static void __torture_print_stats(char *page,
->  				  struct lock_stress_stats *statp, bool write)
+> @@ -790,7 +790,7 @@ lock_torture_print_module_parms(struct lock_torture_ops *cur_ops,
 >  {
-> -	bool fail = 0;
-> +	bool fail = false;
->  	int i, n_stress;
->  	long max = 0, min = statp ? statp[0].n_lock_acquired : 0;
->  	long long sum = 0;
-> @@ -915,7 +915,7 @@ static int __init lock_torture_init(void)
->  
->  	/* Initialize the statistics so that each run gets its own numbers. */
->  	if (nwriters_stress) {
-> -		lock_is_write_held = 0;
-> +		lock_is_write_held = false;
->  		cxt.lwsa = kmalloc_array(cxt.nrealwriters_stress,
->  					 sizeof(*cxt.lwsa),
->  					 GFP_KERNEL);
-> @@ -946,7 +946,7 @@ static int __init lock_torture_init(void)
->  		}
->  
->  		if (nreaders_stress) {
-> -			lock_is_read_held = 0;
-> +			lock_is_read_held = false;
->  			cxt.lrsa = kmalloc_array(cxt.nrealreaders_stress,
->  						 sizeof(*cxt.lrsa),
->  						 GFP_KERNEL);
+>  	pr_alert("%s" TORTURE_FLAG
+>  		 "--- %s%s: nwriters_stress=%d nreaders_stress=%d stat_interval=%d verbose=%d shuffle_interval=%d stutter=%d shutdown_secs=%d onoff_interval=%d onoff_holdoff=%d\n",
+> -		 torture_type, tag, cxt.debug_lock ? " [debug]": "",
+> +		 torture_type, tag, cxt.debug_lock ? " [debug]" : "",
+>  		 cxt.nrealwriters_stress, cxt.nrealreaders_stress, stat_interval,
+>  		 verbose, shuffle_interval, stutter, shutdown_secs,
+>  		 onoff_interval, onoff_holdoff);
 > -- 
 > 2.19.1
 > 
