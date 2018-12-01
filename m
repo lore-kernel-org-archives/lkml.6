@@ -2,230 +2,150 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF3DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 10:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25680C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 10:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 517582081D
+	by mail.kernel.org (Postfix) with ESMTP id E1AC92081D
 	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 10:52:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qRfScgGe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517582081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bW8IYoPq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AC92081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbeLAWBL (ORCPT
+        id S1726692AbeLAWE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 17:01:11 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46766 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbeLAWBL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 17:01:11 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t13so4056236ply.13
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 02:48:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hSKKPTk27fIZMfGbBbGl57qf2cmutOBqwJyTjMegYEU=;
-        b=qRfScgGeSvVR9DWSf+Bovt88qBo76Yu+5w7hrc+SKa2HJIDXgxw8hnvmf25hkIMI51
-         5JyD0oQV/r++wXiOaj+ZIHTxK9Dqs5wRksWL50u5xC6qK5vlZHIa/9sfjPDB6yJjDiV7
-         JL1OT5c19dBdi3ZweAUdjoBGyO8V5kansBcAsz0Xpib6JbN6vGElbojSAJvaNpsjczS0
-         nqWM7D7ZRQCVjzcZibc4+0+NR2cEEU90PmO1M52Mmt5NtNGd+WYkQZxfYg3+JX7KstBe
-         mxA+Tb10w7A27+s/fOoiojH89LFU3jK5zQx8P+La7s+tlBFKbVA2rMcK0zyqjafRW5Tz
-         OmNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hSKKPTk27fIZMfGbBbGl57qf2cmutOBqwJyTjMegYEU=;
-        b=RJpz3uPU76SCTrtTNQ6ooHxlETZkXl0ybiEx1PtYqz9hJmx9VuEDxE7uI3sh+Wynqw
-         XokvWOZUkzhn/JFqYpVRMeX1p1hw2IIpmyksSY/QYT9oYI+h0ngfLYiYGKuh1vpht1b2
-         iptpkWbar5VMwuSz1E1cTVR2B0Gd7zGM47YUaS3+RkeOwG7SraYddvQS3n247GSR+pHD
-         Iy1uLVTqEKQ+6buygjg7CEoDVPnKacHwevCg/BgpeVtBOJok8TxxFhQjUGsZ9vpemEnr
-         iS4AMCuNjyAY15pFhpZwaBqbMAm3wvlzuTUtF/t3YuFypcdxcOGcqAg0pAoe58BvqP2u
-         kSCA==
-X-Gm-Message-State: AA+aEWYHEOXZqMmZKo6zjjZs71P/vvmG59HysXEZQ1F8yI79sKJ5Jf58
-        ksPzw39UCqtzQeBhfpQ4l78=
-X-Google-Smtp-Source: AFSGD/WHb68/k5vBViXmlUsE+8meF4dfctUu2ag25upZ4y7RcYxAwX5hswTA4gZsAU+BxrKoAIPXew==
-X-Received: by 2002:a17:902:4623:: with SMTP id o32-v6mr8846088pld.187.1543661336340;
-        Sat, 01 Dec 2018 02:48:56 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id f64sm29159316pfh.0.2018.12.01.02.48.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Dec 2018 02:48:55 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     robert.jarzmik@free.fr, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        keescook@chromium.org, shreeya.patel23498@gmail.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] mtd: remove DEBUGFS_RO_ATTR()
-Date:   Sat,  1 Dec 2018 05:48:53 -0500
-Message-Id: <20181201104853.6821-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 1 Dec 2018 17:04:28 -0500
+Received: from mail-eopbgr30062.outbound.protection.outlook.com ([40.107.3.62]:53856
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726416AbeLAWE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 17:04:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yhGepzEr5W0YkU5Ih5k1tb3XICCxH+dbv015txoDE9s=;
+ b=bW8IYoPq1Yb3CYafW3E86fCk613YIJWfuCPc7WRlj7QkLH5cHp/V12QH/+EAXM2HBqvlRTHuT5byc8H61i1E+4/KY1ERNJ593jynADD4ePND7QbHaEj2Ihc/62b1kGvbA97un66hGO5zVWkHoI+ZfVqbT491mSa0ip/fm8KoE/Y=
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
+ AM6PR0402MB3622.eurprd04.prod.outlook.com (52.133.20.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.20; Sat, 1 Dec 2018 10:52:09 +0000
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::c46b:915c:7a03:123d]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::c46b:915c:7a03:123d%3]) with mapi id 15.20.1339.036; Sat, 1 Dec 2018
+ 10:52:09 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v15 0/5] Add i.MX8MQ clock driver
+Thread-Topic: [PATCH v15 0/5] Add i.MX8MQ clock driver
+Thread-Index: AQHUiWPogHN0ujLDD0W0yi6RhMS+ow==
+Date:   Sat, 1 Dec 2018 10:52:09 +0000
+Message-ID: <1543661502-18573-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR0402CA0017.eurprd04.prod.outlook.com
+ (2603:10a6:209::30) To AM6PR0402MB3654.eurprd04.prod.outlook.com
+ (2603:10a6:209:19::17)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3622;6:DUNCsAPeDs86IeGRIxKXPzA2nIUgtLR8J7SkKgYGMyZ8+Qo5bu1dty3TzWlKwu/q/xpXC6pr2kENysM2sEhF/vY92N09UygTl1iUTPwGQg32lhTLXpcHnQzOE8JRafNUDEgCi3FWovg9+8hE98jOq7s8prN0hlzobXq4l6S6z3ljntJF/cpzlNdx1XHH4pfvfpzJ9Hz3f2XTjbha9GH7csi7MonkY9g9X88G9x4BKf+7FFBLUFqVhP8h/+rnyKi0Z39qX917BjGQ8wi2wPoWmbFRjuGOm2BNsi9GXwVnyiky80ICMNrZhqdSxKu57zk1zJ9VH4pERoRBQl10K400QXPmUj4RT/GSv2Tt43qtH3BDK9c9LzjCYyrhhfnznKrvf9Zigky2aYShBTSkz78eavLMy8jnmXgGbiMsFzmJDEYowdvPH/dI9gx6HeRy6GzMHVResHX1Dy7i+5R/1l/+gQ==;5:/qJIzbhDiIVZgIbAKHaZYKo/K5f9E3zigWmgdfEqIkl/61hC1cAZki6KEwBCEj3ohumukX2MvGWV8VIxN1B+jWtBlNNI9+Uxj7VuJ/aArN5JYphuUz3/s3RpJ9hvz+YpCreiMxjXczkR5BirxK3FnCEMKj84/gVR4u+z3d3abLc=;7:6LmjMobH8g6wcQjDwcdV7Mm2PkAxqTClcvxqMDQ+IUqkYdXB9r5S2oMiBT0tWazizyq/25YapP3xXTzilwoQkrvtV0CatlcB9y/3xgKCmbZv/ZzZBPr8YxV0JhE/+svOCE7WmORsoNypOvjY0ln7qA==
+x-ms-office365-filtering-correlation-id: b5bd2c18-908b-4874-203c-08d6577b0a63
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3622;
+x-ms-traffictypediagnostic: AM6PR0402MB3622:
+x-microsoft-antispam-prvs: <AM6PR0402MB36224D356E1B52974FBA9CA7F6AC0@AM6PR0402MB3622.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231454)(999002)(944501410)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3622;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3622;
+x-forefront-prvs: 087396016C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(396003)(346002)(376002)(189003)(199004)(305945005)(53936002)(316002)(52116002)(99286004)(54906003)(3846002)(6116002)(86362001)(6512007)(106356001)(6306002)(110136005)(966005)(81156014)(81166006)(8676002)(2906002)(14454004)(476003)(2616005)(105586002)(256004)(8936002)(478600001)(66066001)(71200400001)(44832011)(486006)(97736004)(6486002)(6436002)(14444005)(26005)(186003)(102836004)(7416002)(5660300001)(71190400001)(4326008)(36756003)(68736007)(7736002)(386003)(6506007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3622;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: HJ0yQyMWHLVmah5ApABemGTV2gtPqY/4/yziwpJechAVYq+OpE33XqrNwdtL3l5iFY4EmuIg1Jq81Qy0ZT1aNbY0U+nBwhVL+j+2XWILTMwrdmAZ7B30vWI33NgEIUmOMiQKRGSgpASKF0KoUjQSiwE3nEQ9xVkaOlouF0clqLT3bA5xhbR9PoJ67pt8+656ZKrjnwSQdF0FeG8PpGjgDoqEUSkaa+72tdvXMs+y3Redh+9/LcJj3lygCg+ma9hRPXQdAtcEuVM/gAr/mgsL2KdyEpnQMI/DrPrL0DZYDrpzNfcNczToRWytKmAj5vzwM+PcoKhTFVDItaXeV4BBzsYInQzXV5hW+ufLn750CkQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5bd2c18-908b-4874-203c-08d6577b0a63
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Dec 2018 10:52:09.3085
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
-such a macro,so remove DEBUGFS_RO_ATTR.Also use DEFINE_SHOW_ATTRIBUTE
-to simplify some code.
+Unfortunately, there was a problem with some divisions by 64-bit values
+in the Fractional PLL which led to a link failuire on arm32.
+That has been fixed now without any kind of functionality changes.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/mtd/devices/docg3.c    | 15 +++++++++------
- drivers/mtd/devices/docg3.h    | 11 -----------
- drivers/mtd/mtdswap.c          | 12 +-----------
- drivers/mtd/nand/raw/nandsim.c | 16 +++-------------
- 4 files changed, 13 insertions(+), 41 deletions(-)
+Though the v14 has made it to clk-next, due to the arm32 build failure,
+this patch series had to be dropped until the failure gets fixed.
 
-diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
-index 512bd4c2eec0..51d2c6e68f39 100644
---- a/drivers/mtd/devices/docg3.c
-+++ b/drivers/mtd/devices/docg3.c
-@@ -1603,7 +1603,7 @@ static void doc_unregister_sysfs(struct platform_device *pdev,
- /*
-  * Debug sysfs entries
-  */
--static int dbg_flashctrl_show(struct seq_file *s, void *p)
-+static int flashcontrol_show(struct seq_file *s, void *p)
- {
- 	struct docg3 *docg3 = (struct docg3 *)s->private;
- 
-@@ -1623,9 +1623,10 @@ static int dbg_flashctrl_show(struct seq_file *s, void *p)
- 
- 	return 0;
- }
--DEBUGFS_RO_ATTR(flashcontrol, dbg_flashctrl_show);
- 
--static int dbg_asicmode_show(struct seq_file *s, void *p)
-+DEFINE_SHOW_ATTRIBUTE(flashcontrol);
-+
-+static int asic_mode_show(struct seq_file *s, void *p)
- {
- 	struct docg3 *docg3 = (struct docg3 *)s->private;
- 
-@@ -1660,7 +1661,8 @@ static int dbg_asicmode_show(struct seq_file *s, void *p)
- 	seq_puts(s, ")\n");
- 	return 0;
- }
--DEBUGFS_RO_ATTR(asic_mode, dbg_asicmode_show);
-+
-+DEFINE_SHOW_ATTRIBUTE(asic_mode);
- 
- static int dbg_device_id_show(struct seq_file *s, void *p)
- {
-@@ -1676,7 +1678,7 @@ static int dbg_device_id_show(struct seq_file *s, void *p)
- }
- DEBUGFS_RO_ATTR(device_id, dbg_device_id_show);
- 
--static int dbg_protection_show(struct seq_file *s, void *p)
-+static int protection_show(struct seq_file *s, void *p)
- {
- 	struct docg3 *docg3 = (struct docg3 *)s->private;
- 	int protect, dps0, dps0_low, dps0_high, dps1, dps1_low, dps1_high;
-@@ -1726,7 +1728,8 @@ static int dbg_protection_show(struct seq_file *s, void *p)
- 		   !!(dps1 & DOC_DPS_KEY_OK));
- 	return 0;
- }
--DEBUGFS_RO_ATTR(protection, dbg_protection_show);
-+
-+DEFINE_SHOW_ATTRIBUTE(protection);
- 
- static void __init doc_dbg_register(struct mtd_info *floor)
- {
-diff --git a/drivers/mtd/devices/docg3.h b/drivers/mtd/devices/docg3.h
-index e99946575398..e16dca23655b 100644
---- a/drivers/mtd/devices/docg3.h
-+++ b/drivers/mtd/devices/docg3.h
-@@ -317,17 +317,6 @@ struct docg3 {
- #define doc_info(fmt, arg...) dev_info(docg3->dev, (fmt), ## arg)
- #define doc_dbg(fmt, arg...) dev_dbg(docg3->dev, (fmt), ## arg)
- #define doc_vdbg(fmt, arg...) dev_vdbg(docg3->dev, (fmt), ## arg)
--
--#define DEBUGFS_RO_ATTR(name, show_fct) \
--	static int name##_open(struct inode *inode, struct file *file) \
--	{ return single_open(file, show_fct, inode->i_private); }      \
--	static const struct file_operations name##_fops = { \
--		.owner = THIS_MODULE, \
--		.open = name##_open, \
--		.llseek = seq_lseek, \
--		.read = seq_read, \
--		.release = single_release \
--	};
- #endif
- 
- /*
-diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
-index d9dcb2d051b4..3afda6c95d62 100644
---- a/drivers/mtd/mtdswap.c
-+++ b/drivers/mtd/mtdswap.c
-@@ -1266,17 +1266,7 @@ static int mtdswap_show(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int mtdswap_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, mtdswap_show, inode->i_private);
--}
--
--static const struct file_operations mtdswap_fops = {
--	.open		= mtdswap_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(mtdswap);
- 
- static int mtdswap_add_debugfs(struct mtdswap_dev *d)
- {
-diff --git a/drivers/mtd/nand/raw/nandsim.c b/drivers/mtd/nand/raw/nandsim.c
-index c452819f6123..2d5532042803 100644
---- a/drivers/mtd/nand/raw/nandsim.c
-+++ b/drivers/mtd/nand/raw/nandsim.c
-@@ -443,7 +443,7 @@ static unsigned long total_wear = 0;
- /* MTD structure for NAND controller */
- static struct mtd_info *nsmtd;
- 
--static int nandsim_debugfs_show(struct seq_file *m, void *private)
-+static int nandsim_show(struct seq_file *m, void *private)
- {
- 	unsigned long wmin = -1, wmax = 0, avg;
- 	unsigned long deciles[10], decile_max[10], tot = 0;
-@@ -495,17 +495,7 @@ static int nandsim_debugfs_show(struct seq_file *m, void *private)
- 	return 0;
- }
- 
--static int nandsim_debugfs_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, nandsim_debugfs_show, inode->i_private);
--}
--
--static const struct file_operations dfs_fops = {
--	.open		= nandsim_debugfs_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(nandsim);
- 
- /**
-  * nandsim_debugfs_create - initialize debugfs
-@@ -531,7 +521,7 @@ static int nandsim_debugfs_create(struct nandsim *dev)
- 	}
- 
- 	dent = debugfs_create_file("nandsim_wear_report", S_IRUSR,
--				   root, dev, &dfs_fops);
-+				   root, dev, &nandsim_fops);
- 	if (IS_ERR_OR_NULL(dent)) {
- 		NS_ERR("cannot create \"nandsim_wear_report\" debugfs entry\n");
- 		return -1;
--- 
-2.17.0
+Stephen, please take this in one more time and sorry for all the trouble
+caused by this series. Thanks for all the support.
+
+Here is a link to the 14th version:
+
+https://lkml.org/lkml/2018/11/29/767
+
+Changes since v14:
+ * fixed all the divisions by 64-bit by replacing with do_divs in clk-frac-=
+pll
+
+Abel Vesa (2):
+  clk: imx: Add imx composite clock
+  clk: imx: Add clock driver for i.MX8MQ CCM
+
+Lucas Stach (3):
+  dt-bindings: Add binding for i.MX8MQ CCM
+  clk: imx: Add fractional PLL output clock
+  clk: imx: Add SCCG PLL type
+
+ .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-composite-8m.c                 | 178 +++++++
+ drivers/clk/imx/clk-frac-pll.c                     | 232 ++++++++
+ drivers/clk/imx/clk-imx8mq.c                       | 589 +++++++++++++++++=
+++++
+ drivers/clk/imx/clk-sccg-pll.c                     | 256 +++++++++
+ drivers/clk/imx/clk.h                              |  64 +++
+ include/dt-bindings/clock/imx8mq-clock.h           | 395 ++++++++++++++
+ 8 files changed, 1739 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.tx=
+t
+ create mode 100644 drivers/clk/imx/clk-composite-8m.c
+ create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ create mode 100644 drivers/clk/imx/clk-imx8mq.c
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+ create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+
+--=20
+2.7.4
 
