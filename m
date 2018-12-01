@@ -2,135 +2,660 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7C3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0465FC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F088020834
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:58:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7tm5Dos"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F088020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A3ACA2146F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3ACA2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbeLBDLb (ORCPT
+        id S1727221AbeLBDLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 22:11:31 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36756 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeLBDLa (ORCPT
+        Sat, 1 Dec 2018 22:11:55 -0500
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:47308 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726887AbeLBDLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 22:11:30 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g9so4310686plo.3;
-        Sat, 01 Dec 2018 07:58:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6Nlkx8dqzw9t0rvZXiELgUJGbtAVvFRbbQ2v5ajcc78=;
-        b=X7tm5DosNXhQu/yEC2gwRz1Lv+XUZCNZYRGMv8/Q/xG2/aSDfh95mNhoo7LYU4PANp
-         fLTORTmfXhpJLkgO+B+mfihePdnt4B8Jfehebeio/ttlTm6+0crtCcnfd7S0t9d3jJOw
-         fQnH8173Cd0GTVFBkbET+RcAIfVXC+hCGdk1KKLZeqYwdiUtOM53Mij7KN7d+nOHtblQ
-         My2/AOgOSW/uW+zAlLBWtuBwEVRUWVOKeZpgBzKy6PLonAgenkiqTIveJBJARmeLgGpC
-         17O6HA4Z8VzqfBcgKdVXC72RG+qZaje/d0Gd20uV3XlAMKpSGa8KS6ZA1olH7a7u9fLZ
-         8VSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6Nlkx8dqzw9t0rvZXiELgUJGbtAVvFRbbQ2v5ajcc78=;
-        b=nI8BPlj00wKyIZUYiOCesclGQHEsuM8/2gVlPOdd0NDl5OOx7qZwliYHP6cS+FNIzQ
-         fg4qbQjrIVeeLN8TeqK4lFMT0gUgTn4R723m+2IIfXzMwFiVcpna3r/2Um8cgQ0Nwn0A
-         Ls6tLrx+XKQaxvXoW05xqdneqxrpbMn/WAY2Vp/j4fcp30PBuOCbz9k6g64n+My/LcOM
-         u5urhr6UMpYagN2YnGWPZ1lcrbAemIUVWyATinO2sZXD6jI7hWblN28HdCvXN7UL8/6p
-         ftloOe2YRh+cpLdLaZaVPutgW6zW/q2bYiAuFmc//nI/QfIGhF5pzx4T2i0Usua03WT2
-         Kcag==
-X-Gm-Message-State: AA+aEWYvrts2pJSrk4IzNGA19SaZDQ6T+9uQToOh/3S3dkswlosSbDWI
-        DYIdio4UPwNeIIY/yH/xEaE=
-X-Google-Smtp-Source: AFSGD/Uhxex80TRguECaTbW/cu27VqKD1+5rdP0AOz8MHiSAO1pbXhE/YGbAAJdHzWubIzvEq8Eqqg==
-X-Received: by 2002:a17:902:7c82:: with SMTP id y2mr9568283pll.33.1543679921293;
-        Sat, 01 Dec 2018 07:58:41 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id x19sm14504083pfk.14.2018.12.01.07.58.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Dec 2018 07:58:40 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] remoteproc: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Sat,  1 Dec 2018 10:58:38 -0500
-Message-Id: <20181201155838.8619-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 1 Dec 2018 22:11:55 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 38E229E6A5E;
+        Sat,  1 Dec 2018 15:58:59 +0000 (GMT)
+Date:   Sat, 1 Dec 2018 15:58:57 +0000
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] iio: chemical: add support for Sensirion SPS30
+ sensor
+Message-ID: <20181201155857.214fcecc@archlinux>
+In-Reply-To: <20181125190508.GD5053@arch>
+References: <20181124221415.10081-1-tduszyns@gmail.com>
+        <20181124221415.10081-3-tduszyns@gmail.com>
+        <20181125085659.114b0950@archlinux>
+        <20181125190508.GD5053@arch>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On Sun, 25 Nov 2018 20:05:09 +0100
+Tomasz Duszynski <tduszyns@gmail.com> wrote:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/remoteproc/remoteproc_debugfs.c | 28 ++++---------------------
- 1 file changed, 4 insertions(+), 24 deletions(-)
+> On Sun, Nov 25, 2018 at 08:56:59AM +0000, Jonathan Cameron wrote:
+> > On Sat, 24 Nov 2018 23:14:14 +0100
+> > Tomasz Duszynski <tduszyns@gmail.com> wrote:
+> >  
+> > > Add support for Sensirion SPS30 particulate matter sensor.
+> > >
+> > > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>  
+> > A few things inline.
+> >
+> > I'm particularly curious as to why we are ignoring two of the particle
+> > sizes that the sensor seems to capture?
+> >  
+> 
+> I was thinking about adding first the most common ones i.e PM2.5 and
+> PM10 and the rest of them later on if there's a particular need.
+> 
+> On the other hand I can add PM1.0 and PM4.0 now so that we have
+> everything in place once new dust sensors appear on the market.
 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index e90135c64af0..f936c2e485ac 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -240,17 +240,7 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 	return 0;
- }
- 
--static int rproc_rsc_table_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, rproc_rsc_table_show, inode->i_private);
--}
--
--static const struct file_operations rproc_rsc_table_ops = {
--	.open		= rproc_rsc_table_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(rproc_rsc_table);
- 
- /* Expose carveout content via debugfs */
- static int rproc_carveouts_show(struct seq_file *seq, void *p)
-@@ -270,17 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
- 	return 0;
- }
- 
--static int rproc_carveouts_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, rproc_carveouts_show, inode->i_private);
--}
--
--static const struct file_operations rproc_carveouts_ops = {
--	.open		= rproc_carveouts_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(rproc_carveouts);
- 
- void rproc_remove_trace_file(struct dentry *tfile)
- {
-@@ -326,9 +306,9 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_recovery_ops);
- 	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
--			    rproc, &rproc_rsc_table_ops);
-+			    rproc, &rproc_rsc_table_fops);
- 	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
--			    rproc, &rproc_carveouts_ops);
-+			    rproc, &rproc_carveouts_fops);
- }
- 
- void __init rproc_init_debugfs(void)
--- 
-2.17.0
+I would.  I do hope there don't turn out to be 100s of different
+views of what these values should be though.  The various standards
+should prevent that even if people tuck in one or two extra
+just because they could.
+
+> 
+> It's seems reasonable to assume they will measure the very same
+> subset of particulates.
+> 
+> > Also, a 'potential' race in remove that I'd like us to make
+> > 'obviously' correct rather than requiring hard thought on whether
+> > it would be a problem.
+> >
+> > Thanks,
+> >
+> > Jonathan
+> >  
+> > > ---
+> > >  drivers/iio/chemical/Kconfig  |  11 ++
+> > >  drivers/iio/chemical/Makefile |   1 +
+> > >  drivers/iio/chemical/sps30.c  | 359 ++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 371 insertions(+)
+> > >  create mode 100644 drivers/iio/chemical/sps30.c
+> > >
+> > > diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
+> > > index b8e005be4f87..40057ecf8130 100644
+> > > --- a/drivers/iio/chemical/Kconfig
+> > > +++ b/drivers/iio/chemical/Kconfig
+> > > @@ -61,6 +61,17 @@ config IAQCORE
+> > >  	  iAQ-Core Continuous/Pulsed VOC (Volatile Organic Compounds)
+> > >  	  sensors
+> > >
+> > > +config SPS30
+> > > +	tristate "SPS30 Particulate Matter sensor"
+> > > +	depends on I2C
+> > > +	select CRC8
+> > > +	help
+> > > +	  Say Y here to build support for the Sensirion SPS30 Particulate
+> > > +	  Matter sensor.
+> > > +
+> > > +	  To compile this driver as a module, choose M here: the module will
+> > > +	  be called sps30.
+> > > +
+> > >  config VZ89X
+> > >  	tristate "SGX Sensortech MiCS VZ89X VOC sensor"
+> > >  	depends on I2C
+> > > diff --git a/drivers/iio/chemical/Makefile b/drivers/iio/chemical/Makefile
+> > > index 2f4c4ba4d781..9f42f4252151 100644
+> > > --- a/drivers/iio/chemical/Makefile
+> > > +++ b/drivers/iio/chemical/Makefile
+> > > @@ -9,4 +9,5 @@ obj-$(CONFIG_BME680_I2C) += bme680_i2c.o
+> > >  obj-$(CONFIG_BME680_SPI) += bme680_spi.o
+> > >  obj-$(CONFIG_CCS811)		+= ccs811.o
+> > >  obj-$(CONFIG_IAQCORE)		+= ams-iaq-core.o
+> > > +obj-$(CONFIG_SPS30) += sps30.o
+> > >  obj-$(CONFIG_VZ89X)		+= vz89x.o
+> > > diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
+> > > new file mode 100644
+> > > index 000000000000..bf802621ae7f
+> > > --- /dev/null
+> > > +++ b/drivers/iio/chemical/sps30.c
+> > > @@ -0,0 +1,359 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Sensirion SPS30 Particulate Matter sensor driver
+> > > + *
+> > > + * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
+> > > + *
+> > > + * I2C slave address: 0x69
+> > > + *
+> > > + * TODO:
+> > > + *  - support for turning on fan cleaning
+> > > + *  - support for reading/setting auto cleaning interval
+> > > + */
+> > > +
+> > > +#define pr_fmt(fmt) "sps30: " fmt
+> > > +
+> > > +#include <linux/crc8.h>
+> > > +#include <linux/delay.h>
+> > > +#include <linux/i2c.h>
+> > > +#include <linux/iio/buffer.h>
+> > > +#include <linux/iio/iio.h>
+> > > +#include <linux/iio/sysfs.h>
+> > > +#include <linux/iio/trigger_consumer.h>
+> > > +#include <linux/iio/triggered_buffer.h>
+> > > +#include <linux/module.h>
+> > > +
+> > > +#define SPS30_CRC8_POLYNOMIAL 0x31
+> > > +
+> > > +/* SPS30 commands */
+> > > +#define SPS30_START_MEAS 0x0010
+> > > +#define SPS30_STOP_MEAS 0x0104
+> > > +#define SPS30_RESET 0xd304
+> > > +#define SPS30_READ_DATA_READY_FLAG 0x0202
+> > > +#define SPS30_READ_DATA 0x0300
+> > > +#define SPS30_READ_SERIAL 0xD033
+> > > +
+> > > +#define SPS30_CHAN(_index, _mod) { \
+> > > +	.type = IIO_MASSCONCENTRATION, \
+> > > +	.modified = 1, \
+> > > +	.channel2 = IIO_MOD_ ## _mod, \
+> > > +	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED), \
+> > > +	.scan_index = _index, \
+> > > +	.scan_type = { \
+> > > +		.sign = 'u', \
+> > > +		.realbits = 12, \
+> > > +		.storagebits = 32, \  
+> >
+> > That is unusual.  Why do we need 32 bits to store a 12 bit value?
+> > 16 should be plenty.  It'll make a difference to the buffer
+> > sizes if people just want to stream data and don't care about
+> > timestamps as it'll halve the memory usage.  
+> 
+> Right, I could have picked up a petter values. But I've got at least one
+> valid reason for doing that. Sensor datasheet specifies 0-1000
+> measurement range but simple tests showed that SPS30 can measure way beyond
+> that. Interestingly, measurements are consistent with third party sensors.
+
+I'm guessing there are certification bodies for this sort of thing. They
+may only have paid for the low end to be certified (or there may be no
+official test for higher levels?)
+
+> 
+> So having 12/32 bit setting, especially 32 storagebits protects against
+> future changes in datasheet (which is btw preliminary) i.e updating
+> measurement range.
+
+Not really because userspace is going to assume the value is 12 bits and
+will probably mask it as such, thus any change requires userspace to cope
+with it. Once you are doing that, might as well just change the padding
+as well.
+
+> 
+> But, I guess that 16 for real and storage bits should be more
+> that enough.
+
+Feels like it to me as well.
+
+> 
+> >
+> > Also, convention has always been to got for next 8,16,32,64 above
+> > the realbits if there isn't a reason not to (shifting etc)
+> >
+> > How did we end up with 12 bits off the floating point conversion
+> > anyway?  Needs some docs.  
+> 
+> Matter of simple tests. I was able to trigger measurements of over
+> 3000 ug/m3.
+
+Hmm. So potentially it will give readings with more?  If so we should
+work out a hard justification for that limit.  Userspace will mask
+against it (as the rest of the bits may be garbage - we don't force
+them to 0 in other drivers and they often contain meta data if
+not actual garbage).
+
+> 
+> >
+> >  
+> > > +		.endianness = IIO_CPU, \
+> > > +	}, \
+> > > +}
+> > > +
+> > > +enum {
+> > > +	PM1p0, /* just a placeholder */
+> > > +	PM2p5,
+> > > +	PM4p0, /* just a placeholder */
+> > > +	PM10,
+> > > +};
+> > > +
+> > > +struct sps30_state {
+> > > +	struct i2c_client *client;
+> > > +	/* guards against concurrent access to sensor registers */
+> > > +	struct mutex lock;
+> > > +};
+> > > +
+> > > +DECLARE_CRC8_TABLE(sps30_crc8_table);
+> > > +  
+> >
+> > I think you are fine locking wise, but it would be good to add a note
+> > on what locks are expected to be held on entering this function.
+> >
+> > Without locks it's obviously very racey!
+> >  
+> 
+> Understood.
+> 
+> > > +static int sps30_write_then_read(struct sps30_state *state, u8 *buf,
+> > > +				 int buf_size, u8 *data, int data_size)
+> > > +{
+> > > +	/* every two received data bytes are checksummed */
+> > > +	u8 tmp[data_size + data_size / 2];
+> > > +	int ret, i;
+> > > +
+> > > +	/*
+> > > +	 * Sensor does not support repeated start so instead of
+> > > +	 * sending two i2c messages in a row we just send one by one.
+> > > +	 */
+> > > +	ret = i2c_master_send(state->client, buf, buf_size);
+> > > +	if (ret != buf_size)
+> > > +		return ret < 0 ? ret : -EIO;
+> > > +
+> > > +	if (!data)
+> > > +		return 0;
+> > > +
+> > > +	ret = i2c_master_recv(state->client, tmp, sizeof(tmp));
+> > > +	if (ret != sizeof(tmp))
+> > > +		return ret < 0 ? ret : -EIO;
+> > > +
+> > > +	for (i = 0; i < sizeof(tmp); i += 3) {
+> > > +		u8 crc = crc8(sps30_crc8_table, &tmp[i], 2, CRC8_INIT_VALUE);
+> > > +
+> > > +		if (crc != tmp[i + 2]) {
+> > > +			dev_err(&state->client->dev,
+> > > +				"data integrity check failed\n");
+> > > +			return -EIO;
+> > > +		}
+> > > +
+> > > +		*data++ = tmp[i];
+> > > +		*data++ = tmp[i + 1];
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+> > > +{
+> > > +	/* depending on the command up to 3 bytes may be needed for argument */
+> > > +	u8 buf[sizeof(cmd) + 3] = { cmd >> 8, cmd };
+> > > +
+> > > +	switch (cmd) {
+> > > +	case SPS30_START_MEAS:
+> > > +		buf[2] = 0x03;
+> > > +		buf[3] = 0x00;
+> > > +		buf[4] = 0xac; /* precomputed crc */  
+> >
+> > Could you put that in code and let the compiler do the pre compute?
+> > Might be a little more elegant.
+> >  
+> 
+> Okay.
+> 
+> > > +		return sps30_write_then_read(state, buf, 5, NULL, 0);
+> > > +	case SPS30_STOP_MEAS:
+> > > +	case SPS30_RESET:
+> > > +		return sps30_write_then_read(state, buf, 2, NULL, 0);
+> > > +	case SPS30_READ_DATA_READY_FLAG:
+> > > +	case SPS30_READ_DATA:
+> > > +	case SPS30_READ_SERIAL:
+> > > +		return sps30_write_then_read(state, buf, 2, data, size);
+> > > +	default:
+> > > +		return -EINVAL;
+> > > +	};
+> > > +}
+> > > +
+> > > +static int sps30_ieee754_to_int(const u8 *data)
+> > > +{
+> > > +	u32 val = ((u32)data[0] << 24) | ((u32)data[1] << 16) |
+> > > +		  ((u32)data[2] << 8) | (u32)data[3],  
+> > Have a separate
+> > u32 mantissa = (val << 9) >> 9 line.
+> > What is this next line actually doing?  Kind of looks like
+> > a mask?  If so just mask it with & as more readable.
+> >  
+> 
+> Do you mean mantissa? We want to get rid of sign bit and 8 exponent bits.
+Got it, but the above is the same as.
+
+val & 0x7ffffff; I think...  Shifting like this immediately made me
+think you were manually sign extending (but it's unsigned so obviously not).
+
+It's a mask to extract just the mantissa, so code it as one.
+
+
+> 
+> > > +	    mantissa = (val << 9) >> 9;
+> > > +	int exp = (val >> 23) - 127;
+> > > +
+> > > +	if (!exp && !mantissa)
+> > > +		return 0;
+> > > +
+> > > +	if (exp < 0)
+> > > +		return 0;
+> > > +
+> > > +	return (1 << exp) + (mantissa >> (23 - exp));
+> > > +}
+> > > +
+> > > +static int sps30_do_meas(struct sps30_state *state, int *pm2p5, int *pm10)
+> > > +{
+> > > +	/*
+> > > +	 * Internally sensor stores measurements in a following manner:
+> > > +	 *
+> > > +	 * PM1p0: upper two bytes, crc8, lower two bytes, crc8  
+> >
+> > So there are other particle sizes that this sensor reads?  Why
+> > are we mapping them down to just the two channel types?
+> >  
+> 
+> As said before, introducing PM1.0 and PM4.0 readings seems
+> a reasonable option.
+
+Go for it.  Userspace who doesn't care won't read them.
+
+> 
+> > > +	 * PM2p5: upper two bytes, crc8, lower two bytes, crc8
+> > > +	 * PM4p0: upper two bytes, crc8, lower two bytes, crc8
+> > > +	 * PM10:  upper two bytes, crc8, lower two bytes, crc8
+> > > +	 *
+> > > +	 * What follows next are number concentration measurements and
+> > > +	 * typical particle size measurement.
+> > > +	 *
+> > > +	 * Once data is read from sensor crc bytes are stripped off
+> > > +	 * hence we need 16 bytes of buffer space.
+> > > +	 */
+> > > +	int ret, tries = 5;
+> > > +	u8 buf[16];
+> > > +
+> > > +	while (tries--) {
+> > > +		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, buf, 2);
+> > > +		if (ret)
+> > > +			return -EIO;
+> > > +
+> > > +		/* new measurements ready to be read */
+> > > +		if (buf[1] == 1)
+> > > +			break;
+> > > +
+> > > +		usleep_range(300000, 400000);
+> > > +	}
+> > > +
+> > > +	if (!tries)
+> > > +		return -ETIMEDOUT;
+> > > +
+> > > +	ret = sps30_do_cmd(state, SPS30_READ_DATA, buf, sizeof(buf));
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	/*
+> > > +	 * All measurements come in IEEE754 single precision floating point
+> > > +	 * format but sensor itself is not precise enough (-+ 10% error)
+> > > +	 * to take full advantage of it. Hence converting result to int
+> > > +	 * to keep things simple.  
+> >
+> > Interesting.  We have talked about allowing floating point formats for
+> > sensors the provide them.  Would that be beneficial here?
+> >  
+> 
+> I recall this was discussed once but unfortunately do not
+> remember final conclusion. Anyway, in case of this device datasheet
+> states that readings have maximum error of -+10% in given range which
+> makes me think that using floats here is an overkill.
+> 
+> Example, reading of 1000.123412ug/m3 has error of -+100ug/m3.
+> Does it really matter if care about fractional part?
+
+*laughs*.  It does make you wonder why they ended up as floating point
+unless it is sensitive at very low levels? Note I know nothing about
+particle sensing at all! 
+
+> 
+> Just out of curiosity, if IIO gets support for floats would it
+> be problematic to to add extra channel returning measurements in floats?
+> Or it rather will not fly..
+
+It's hard for userspace to interpret the case of two channels measuring the
+same thing.  So it could be done (and we have once or twice done this)
+but it's messy.
+
+> 
+> > > +	 */
+> > > +	*pm2p5 = sps30_ieee754_to_int(&buf[PM2p5 * 4]);
+> > > +	*pm10 = sps30_ieee754_to_int(&buf[PM10 * 4]);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static irqreturn_t sps30_trigger_handler(int irq, void *p)
+> > > +{
+> > > +	struct iio_poll_func *pf = p;
+> > > +	struct iio_dev *indio_dev = pf->indio_dev;
+> > > +	struct sps30_state *state = iio_priv(indio_dev);
+> > > +	u32 buf[4]; /* PM2p5, PM10, timestamp */
+> > > +	int ret;
+> > > +
+> > > +	mutex_lock(&state->lock);
+> > > +	ret = sps30_do_meas(state, &buf[0], &buf[1]);
+> > > +	mutex_unlock(&state->lock);
+> > > +	if (ret < 0)
+> > > +		goto err;
+> > > +
+> > > +	iio_push_to_buffers_with_timestamp(indio_dev, buf,
+> > > +					   iio_get_time_ns(indio_dev));
+> > > +err:
+> > > +	iio_trigger_notify_done(indio_dev->trig);
+> > > +
+> > > +	return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +static int sps30_read_raw(struct iio_dev *indio_dev,
+> > > +			  struct iio_chan_spec const *chan,
+> > > +			  int *val, int *val2, long mask)
+> > > +{
+> > > +	struct sps30_state *state = iio_priv(indio_dev);
+> > > +	int ret;
+> > > +
+> > > +	switch (mask) {
+> > > +	case IIO_CHAN_INFO_PROCESSED:
+> > > +		switch (chan->type) {
+> > > +		case IIO_MASSCONCENTRATION:
+> > > +			mutex_lock(&state->lock);
+> > > +			switch (chan->channel2) {
+> > > +			case IIO_MOD_PM2p5:
+> > > +				ret = sps30_do_meas(state, val, val2);
+> > > +				break;
+> > > +			case IIO_MOD_PM10:
+> > > +				ret = sps30_do_meas(state, val2, val);
+> > > +				break;
+> > > +			default:
+> > > +				break;
+> > > +			}
+> > > +			mutex_unlock(&state->lock);
+> > > +			if (ret)
+> > > +				return ret;
+> > > +
+> > > +			return IIO_VAL_INT;
+> > > +		default:
+> > > +			return -EINVAL;
+> > > +		}
+> > > +		break;
+> > > +	default:  
+> > You can't get here.  Is this a warning suppression?
+> > If so just add a comment saying so to prevent it being removed
+> > by someone else later.
+> >  
+> 
+> Okay.
+> 
+> > > +		return -EINVAL;
+> > > +	}
+> > > +}
+> > > +
+> > > +static const struct iio_info sps30_info = {
+> > > +	.read_raw = sps30_read_raw,
+> > > +};
+> > > +  
+> > From a readability point of view, it would be helpful to pull
+> > the macro SPS30_CHAN down here in the code so we don't
+> > need to go jumping around to check what it is doing.
+> >  
+> 
+> Okay.
+> 
+> > > +static const struct iio_chan_spec sps30_channels[] = {
+> > > +	SPS30_CHAN(0, PM2p5),
+> > > +	SPS30_CHAN(1, PM10),
+> > > +	IIO_CHAN_SOFT_TIMESTAMP(2),
+> > > +};
+> > > +
+> > > +static const unsigned long sps30_scan_masks[] = { 0x03, 0x00 };
+> > > +
+> > > +static int sps30_probe(struct i2c_client *client)
+> > > +{
+> > > +	struct iio_dev *indio_dev;
+> > > +	struct sps30_state *state;
+> > > +	u8 buf[32] = { };
+> > > +	int ret;
+> > > +
+> > > +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
+> > > +		return -EOPNOTSUPP;
+> > > +
+> > > +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*state));
+> > > +	if (!indio_dev)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	state = iio_priv(indio_dev);
+> > > +	i2c_set_clientdata(client, indio_dev);
+> > > +	state->client = client;
+> > > +	indio_dev->dev.parent = &client->dev;
+> > > +	indio_dev->info = &sps30_info;
+> > > +	indio_dev->name = client->name;
+> > > +	indio_dev->channels = sps30_channels;
+> > > +	indio_dev->num_channels = ARRAY_SIZE(sps30_channels);
+> > > +	indio_dev->modes = INDIO_DIRECT_MODE;
+> > > +	indio_dev->available_scan_masks = sps30_scan_masks;
+> > > +
+> > > +	mutex_init(&state->lock);
+> > > +	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
+> > > +
+> > > +	/*
+> > > +	 * Power-on-reset causes sensor to produce some glitch on i2c bus
+> > > +	 * and some controllers end up in error state. Recover simply
+> > > +	 * by placing something on the bus.
+> > > +	 */
+> > > +	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
+> > > +	if (ret) {
+> > > +		dev_err(&client->dev, "failed to reset device\n");
+> > > +		return ret;
+> > > +	}
+> > > +	usleep_range(2500000, 3500000);
+> > > +	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);  
+> >
+> > Talk me through this logic.  We stop it then pretty much immediately
+> > start it again?  Needs a comment.
+> >  
+> 
+> The idea is to send some message after resetting sensor so that
+> i2c controller recovers from error state. I decided to send STOP_MEAS
+> as it's a NOP in this case. I'll try to do more testing with other
+> SPS30s and perhaps different boards.
+
+Ah.  Makes sense.  Just add a comment to the code saying this and it's
+fine.
+
+> 
+> > > +
+> > > +	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
+> > > +	if (ret) {
+> > > +		dev_err(&client->dev, "failed to read serial number\n");
+> > > +		return ret;
+> > > +	}
+> > > +	dev_info(&client->dev, "serial number: %s\n", buf);
+> > > +
+> > > +	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
+> > > +	if (ret) {  
+> >
+> > This is not unwound on error.   See comment on remove race below.
+> >  
+> > > +		dev_err(&client->dev, "failed to start measurement\n");
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
+> > > +					      sps30_trigger_handler, NULL);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	return devm_iio_device_register(&client->dev, indio_dev);
+> > > +}
+> > > +
+> > > +static int sps30_remove(struct i2c_client *client)
+> > > +{
+> > > +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> > > +	struct sps30_state *state = iio_priv(indio_dev);
+> > > +
+> > > +	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);  
+> > This looks like a race to me.
+> >  
+> 
+> Right, this needs fixing.
+> 
+> > You turn off the measurements before removing the interface to them.
+> > It's certainly not in the 'obviously' right category.
+> >
+> > As such I would either use a devm action to do this stop,
+> > or not use the managed interfaces for everything in probe
+> > after the equivalent start.
+> > The devm_add_action_or_reset would be the cleanest option I think..
+> > Will also fix the cleanup on error in probe.
+> >  
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static const struct i2c_device_id sps30_id[] = {
+> > > +	{ "sps30" },
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(i2c, sps30_id);
+> > > +
+> > > +static const struct of_device_id sps30_of_match[] = {
+> > > +	{ .compatible = "sensirion,sps30" },
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, sps30_of_match);
+> > > +
+> > > +static struct i2c_driver sps30_driver = {
+> > > +	.driver = {
+> > > +		.name = "sps30",
+> > > +		.of_match_table = sps30_of_match,
+> > > +	},
+> > > +	.id_table = sps30_id,
+> > > +	.probe_new = sps30_probe,
+> > > +	.remove = sps30_remove,
+> > > +};
+> > > +module_i2c_driver(sps30_driver);
+> > > +
+> > > +MODULE_AUTHOR("Tomasz Duszynski <tduszyns@gmail.com>");
+> > > +MODULE_DESCRIPTION("Sensirion SPS30 particulate matter sensor driver");
+> > > +MODULE_LICENSE("GPL v2");  
+> >  
 
