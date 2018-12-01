@@ -2,230 +2,274 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C65C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A0CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 806DD20673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:48:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806DD20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id A245C20834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:52:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u6rlBgXw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A245C20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeLBDB2 (ORCPT
+        id S1727158AbeLBDFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 22:01:28 -0500
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:47234 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbeLBDB2 (ORCPT
+        Sat, 1 Dec 2018 22:05:22 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34454 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbeLBDFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 22:01:28 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 709669E7854;
-        Sat,  1 Dec 2018 15:48:37 +0000 (GMT)
-Date:   Sat, 1 Dec 2018 15:48:35 +0000
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     Tomasz Duszynski <tduszyns@gmail.com>
-Cc:     Matt Ranostay <matt.ranostay@konsulko.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: add IIO_MASSCONCENTRATION channel type
-Message-ID: <20181201154835.19482d7a@archlinux>
-In-Reply-To: <20181125154423.GC5053@arch>
-References: <20181124221415.10081-1-tduszyns@gmail.com>
-        <20181124221415.10081-2-tduszyns@gmail.com>
-        <CAJCx=g=H6Zp4AtWPpC-KdZmyOxTymtdgf+Hx8VvThLFg0bjYVQ@mail.gmail.com>
-        <20181125140316.59d9872b@archlinux>
-        <CAJCx=g=oUmcfCA2octwfaoWr6aC=ZF7LUkMsraNe8buHc9mjPg@mail.gmail.com>
-        <20181125154423.GC5053@arch>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 1 Dec 2018 22:05:22 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 17so3830149pgg.1;
+        Sat, 01 Dec 2018 07:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ce+5YXO6CAGDZqaiRcP6TLFaIe25P1x6FTQjsqXBrTc=;
+        b=u6rlBgXwnJgYwUgd2rMJTngCyKjkpo+Y2haxsupsh3YW9gFq84dAWDAnN4tUZOmtYb
+         AZxox2q83uhC6kp2dreyeM5s/3i5vIKAoDAGWlUBjpNRLLd02or+n7snA5anqDajN/+6
+         e3skrob5M1U3ONjvNazhxCaq2w4JVZCqSZygJ34g+TXO2LtqrGc27RbfrrkYzvj4mJjX
+         d6NqZKakV1DX/VDy9EC65GVdocat94q2qcgNGB5CMvvmcsKO5G3ddZhfAfTJinXbIfqr
+         AgGcsTXdboYzrcnAUs2CQVaLbAC+aOynEO+hkQvZlFXLrCNogbV4fLExFMr2XsW1AvKR
+         /bMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ce+5YXO6CAGDZqaiRcP6TLFaIe25P1x6FTQjsqXBrTc=;
+        b=C/r9uAvLE11tJDohe5RhbPR4JfF6oA0E3M28eunSQ5jaMPEcB7xv1F3T6vMujIsmeC
+         HTJwgsPLWboOmbsit3cQSObt9EnPf3WuJ8aNZUbLuq6VrWVA0Musba7UXGM2YlE3WrA7
+         Fv4Jdy670Uhnr42im1+W88OVSwUv9wxMObqahOcBezarYI+eWG6fmPU9H/FfcXCWaLqI
+         FAfXeluqTKh8TTgmZurWTu+prBPvZsXKyFdZ2F404tg7L+3VZ/nhq7hMHHJwiQ1W21J8
+         O9P5JFMuWNJT/S39JEaCyB8uI1IBMLrFND1b+oOWA504oZz7AFJl/Bj/xx0W3wJ2OnkY
+         LQZA==
+X-Gm-Message-State: AA+aEWaj/nUlBjjRXt2lyHYWa6pyz6gmI+cGwMWhIygr4RWwjDYRKQMp
+        gBwb+5Gixkh9piAI8P6DB6o=
+X-Google-Smtp-Source: AFSGD/WzynOxMHliHp119yrsuS1rj3HzqtPFyhWvni9R4AcTndnbhHnzA89+w0IFt+95vWbB3p19Jg==
+X-Received: by 2002:a63:6782:: with SMTP id b124mr8292282pgc.151.1543679553188;
+        Sat, 01 Dec 2018 07:52:33 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id a10sm10817873pfi.138.2018.12.01.07.52.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Dec 2018 07:52:32 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rajneesh.bhardwaj@intel.com, vishwanath.somayaji@intel.com,
+        dvhart@infradead.org, andy@infradead.org,
+        david.e.box@linux.intel.com
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] platform/x86: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Sat,  1 Dec 2018 10:52:29 -0500
+Message-Id: <20181201155229.8532-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 25 Nov 2018 16:44:23 +0100
-Tomasz Duszynski <tduszyns@gmail.com> wrote:
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-> On Sun, Nov 25, 2018 at 06:14:44AM -0800, Matt Ranostay wrote:
-> > On Sun, Nov 25, 2018 at 6:03 AM Jonathan Cameron
-> > <jic23@jic23.retrosnub.co.uk> wrote:  
-> > >
-> > > On Sun, 25 Nov 2018 05:51:32 -0800
-> > > Matt Ranostay <matt.ranostay@konsulko.com> wrote:
-> > >  
-> > > > On Sat, Nov 24, 2018 at 2:14 PM Tomasz Duszynski <tduszyns@gmail.com> wrote:  
-> > > > >
-> > > > > Measuring particulate matter in ug / m3 (micro-grams per cubic meter)
-> > > > > is de facto standard. Existing air quality sensors usually follow
-> > > > > this convention and are capable of returning measurements using
-> > > > > this unit.
-> > > > >
-> > > > > IIO currently does not offer suitable channel type for this
-> > > > > type of measurements hence this patch adds this.
-> > > > >
-> > > > > In addition, two modifiers are introduced used for distinguishing
-> > > > > between coarse (PM10) and fine particles (PM2p5) measurements, i.e
-> > > > > IIO_MOD_PM10 and IIO_MOD_PM2p5.
-> > > > >
-> > > > > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-> > > > > ---
-> > > > >  Documentation/ABI/testing/sysfs-bus-iio | 11 ++++++++++-
-> > > > >  drivers/iio/industrialio-core.c         |  3 +++
-> > > > >  include/uapi/linux/iio/types.h          |  3 +++
-> > > > >  tools/iio/iio_event_monitor.c           |  6 ++++++
-> > > > >  4 files changed, 22 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> > > > > index 8127a08e366d..ce0ed140660d 100644
-> > > > > --- a/Documentation/ABI/testing/sysfs-bus-iio
-> > > > > +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> > > > > @@ -1684,4 +1684,13 @@ KernelVersion:   4.18
-> > > > >  Contact:       linux-iio@vger.kernel.org
-> > > > >  Description:
-> > > > >                 Raw (unscaled) phase difference reading from channel Y
-> > > > > -               that can be processed to radians.
-> > > > > \ No newline at end of file
-> > > > > +               that can be processed to radians.
-> > > > > +
-> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm2p5_input
-> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm2p5_input
-> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm10_input
-> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm10_input
-> > > > > +KernelVersion: 4.21
-> > > > > +Contact:       linux-iio@vger.kernel.org
-> > > > > +Description:
-> > > > > +               Mass concentration reading of particulate matter in ug / m3.
-> > > > > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> > > > > index a062cfddc5af..2a9ef600c1fb 100644
-> > > > > --- a/drivers/iio/industrialio-core.c
-> > > > > +++ b/drivers/iio/industrialio-core.c
-> > > > > @@ -87,6 +87,7 @@ static const char * const iio_chan_type_name_spec[] = {
-> > > > >         [IIO_GRAVITY]  = "gravity",
-> > > > >         [IIO_POSITIONRELATIVE]  = "positionrelative",
-> > > > >         [IIO_PHASE] = "phase",
-> > > > > +       [IIO_MASSCONCENTRATION] = "massconcentration",
-> > > > >  };
-> > > > >
-> > > > >  static const char * const iio_modifier_names[] = {
-> > > > > @@ -127,6 +128,8 @@ static const char * const iio_modifier_names[] = {
-> > > > >         [IIO_MOD_Q] = "q",
-> > > > >         [IIO_MOD_CO2] = "co2",
-> > > > >         [IIO_MOD_VOC] = "voc",
-> > > > > +       [IIO_MOD_PM2p5] = "pm2p5",
-> > > > > +       [IIO_MOD_PM10] = "pm10",
-> > > > >  };
-> > > > >
-> > > > >  /* relies on pairs of these shared then separate */
-> > > > > diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
-> > > > > index 92baabc103ac..465044b42af5 100644
-> > > > > --- a/include/uapi/linux/iio/types.h
-> > > > > +++ b/include/uapi/linux/iio/types.h
-> > > > > @@ -46,6 +46,7 @@ enum iio_chan_type {
-> > > > >         IIO_GRAVITY,
-> > > > >         IIO_POSITIONRELATIVE,
-> > > > >         IIO_PHASE,
-> > > > > +       IIO_MASSCONCENTRATION,  
-> > > >
-> > > > So I'm guessing IIO_CONCENTRATION can't be scaled to the micro-grams
-> > > > per cubic meter?  
-> > >
-> > > Currently concentration is defined as a percentage reading of a substance
-> > > (which does make me wonder if it is meant to be percentage of the volume or
-> > > percentage of the mass?)  Either way, if can't convert to a density measurement
-> > > as it's a unit free ratio (I think).  
-> >
-> > Seems like it can be both..  guessing all the atmosphere ( CO2, VOC,
-> > etc) ones are mass/density because on how they work.  
-> 
-> Hmm, but still percentage was picked up for IIO_CONCENTRATION which does
-> really match PM expectations. Perhaps if units were sticked to modifiers
-> it whould be easier to reuse that.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/platform/x86/intel_pmc_core.c         | 46 ++++---------------
+ .../platform/x86/intel_telemetry_debugfs.c    | 42 +++--------------
+ 2 files changed, 14 insertions(+), 74 deletions(-)
 
-It gets very messy if we start doing that modifiers, I'd rather stick to
-different channel types.  We already do this with other channel types
-position / positionrelative for example.
-
-It isn't as though it's actually possible to convert between the two without
-knowing what the particles actually are...
-
-Jonathan
-> 
-> > But the electro-conductivity sensor that is using IIO_CONCENTRATION
-> > channels is likely from percentage of volume.
-> >
-> > - Matt
-> >  
-> > >  
-> > > >  
-> > > > >  };
-> > > > >
-> > > > >  enum iio_modifier {
-> > > > > @@ -87,6 +88,8 @@ enum iio_modifier {
-> > > > >         IIO_MOD_VOC,
-> > > > >         IIO_MOD_LIGHT_UV,
-> > > > >         IIO_MOD_LIGHT_DUV,
-> > > > > +       IIO_MOD_PM2p5,  
-> > > >
-> > > > I know this is unit of measure but the lowercase p in IIO_MOD_PM2p5 is
-> > > > a bit non-standard for iio defines/enum.  
-> > > It is a bit odd and will get us scripted reports so maybe best to
-> > > just go upper case and not worry about it.
-> > >
-> > > Jonathan  
-> > > >
-> > > > - Matt
-> > > >  
-> > > > > +       IIO_MOD_PM10,
-> > > > >  };
-> > > > >
-> > > > >  enum iio_event_type {
-> > > > > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
-> > > > > index ac2de6b7e89f..f0fcfeddba2b 100644
-> > > > > --- a/tools/iio/iio_event_monitor.c
-> > > > > +++ b/tools/iio/iio_event_monitor.c
-> > > > > @@ -60,6 +60,7 @@ static const char * const iio_chan_type_name_spec[] = {
-> > > > >         [IIO_GRAVITY] = "gravity",
-> > > > >         [IIO_POSITIONRELATIVE] = "positionrelative",
-> > > > >         [IIO_PHASE] = "phase",
-> > > > > +       [IIO_MASSCONCENTRATION] = "massconcentration",
-> > > > >  };
-> > > > >
-> > > > >  static const char * const iio_ev_type_text[] = {
-> > > > > @@ -115,6 +116,8 @@ static const char * const iio_modifier_names[] = {
-> > > > >         [IIO_MOD_Q] = "q",
-> > > > >         [IIO_MOD_CO2] = "co2",
-> > > > >         [IIO_MOD_VOC] = "voc",
-> > > > > +       [IIO_MOD_PM2p5] = "pm2p5",
-> > > > > +       [IIO_MOD_PM10] = "pm10",
-> > > > >  };
-> > > > >
-> > > > >  static bool event_is_known(struct iio_event_data *event)
-> > > > > @@ -156,6 +159,7 @@ static bool event_is_known(struct iio_event_data *event)
-> > > > >         case IIO_GRAVITY:
-> > > > >         case IIO_POSITIONRELATIVE:
-> > > > >         case IIO_PHASE:
-> > > > > +       case IIO_MASSCONCENTRATION:
-> > > > >                 break;
-> > > > >         default:
-> > > > >                 return false;
-> > > > > @@ -200,6 +204,8 @@ static bool event_is_known(struct iio_event_data *event)
-> > > > >         case IIO_MOD_Q:
-> > > > >         case IIO_MOD_CO2:
-> > > > >         case IIO_MOD_VOC:
-> > > > > +       case IIO_MOD_PM2p5:
-> > > > > +       case IIO_MOD_PM10:
-> > > > >                 break;
-> > > > >         default:
-> > > > >                 return false;
-> > > > > --
-> > > > > 2.19.2
-> > > > >  
-> > >  
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index 6b31d410cb09..95311ad6ec6f 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -311,7 +311,7 @@ static void pmc_core_display_map(struct seq_file *s, int index,
+ 		   pf_map[index].bit_mask & pf_reg ? "Off" : "On");
+ }
+ 
+-static int pmc_core_ppfear_sts_show(struct seq_file *s, void *unused)
++static int pmc_core_ppfear_show(struct seq_file *s, void *unused)
+ {
+ 	struct pmc_dev *pmcdev = s->private;
+ 	const struct pmc_bit_map *map = pmcdev->map->pfear_sts;
+@@ -330,17 +330,7 @@ static int pmc_core_ppfear_sts_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int pmc_core_ppfear_sts_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pmc_core_ppfear_sts_show, inode->i_private);
+-}
+-
+-static const struct file_operations pmc_core_ppfear_ops = {
+-	.open           = pmc_core_ppfear_sts_open,
+-	.read           = seq_read,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(pmc_core_ppfear);
+ 
+ /* This function should return link status, 0 means ready */
+ static int pmc_core_mtpmc_link_status(void)
+@@ -372,7 +362,7 @@ static int pmc_core_send_msg(u32 *addr_xram)
+ 	return 0;
+ }
+ 
+-static int pmc_core_mphy_pg_sts_show(struct seq_file *s, void *unused)
++static int pmc_core_mphy_pg_show(struct seq_file *s, void *unused)
+ {
+ 	struct pmc_dev *pmcdev = s->private;
+ 	const struct pmc_bit_map *map = pmcdev->map->mphy_sts;
+@@ -425,17 +415,7 @@ static int pmc_core_mphy_pg_sts_show(struct seq_file *s, void *unused)
+ 	return err;
+ }
+ 
+-static int pmc_core_mphy_pg_sts_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pmc_core_mphy_pg_sts_show, inode->i_private);
+-}
+-
+-static const struct file_operations pmc_core_mphy_pg_ops = {
+-	.open           = pmc_core_mphy_pg_sts_open,
+-	.read           = seq_read,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(pmc_core_mphy_pg);
+ 
+ static int pmc_core_pll_show(struct seq_file *s, void *unused)
+ {
+@@ -472,17 +452,7 @@ static int pmc_core_pll_show(struct seq_file *s, void *unused)
+ 	return err;
+ }
+ 
+-static int pmc_core_pll_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pmc_core_pll_show, inode->i_private);
+-}
+-
+-static const struct file_operations pmc_core_pll_ops = {
+-	.open           = pmc_core_pll_open,
+-	.read           = seq_read,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(pmc_core_pll);
+ 
+ static ssize_t pmc_core_ltr_ignore_write(struct file *file, const char __user
+ *userbuf, size_t count, loff_t *ppos)
+@@ -602,19 +572,19 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+ 			    &pmc_core_dev_state);
+ 
+ 	debugfs_create_file("pch_ip_power_gating_status", 0444, dir, pmcdev,
+-			    &pmc_core_ppfear_ops);
++			    &pmc_core_ppfear_fops);
+ 
+ 	debugfs_create_file("ltr_ignore", 0644, dir, pmcdev,
+ 			    &pmc_core_ltr_ignore_ops);
+ 
+ 	if (pmcdev->map->pll_sts)
+ 		debugfs_create_file("pll_status", 0444, dir, pmcdev,
+-				    &pmc_core_pll_ops);
++				    &pmc_core_pll_fops);
+ 
+ 	if (pmcdev->map->mphy_sts)
+ 		debugfs_create_file("mphy_core_lanes_power_gating_status",
+ 				    0444, dir, pmcdev,
+-				    &pmc_core_mphy_pg_ops);
++				    &pmc_core_mphy_pg_fops);
+ 
+ 	if (pmcdev->map->slps0_dbg_maps) {
+ 		debugfs_create_file("slp_s0_debug_status", 0444,
+diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
+index 40bce560eb30..98ba9185a27b 100644
+--- a/drivers/platform/x86/intel_telemetry_debugfs.c
++++ b/drivers/platform/x86/intel_telemetry_debugfs.c
+@@ -466,17 +466,7 @@ static int telem_pss_states_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int telem_pss_state_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, telem_pss_states_show, inode->i_private);
+-}
+-
+-static const struct file_operations telem_pss_ops = {
+-	.open		= telem_pss_state_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(telem_pss_states);
+ 
+ static int telem_ioss_states_show(struct seq_file *s, void *unused)
+ {
+@@ -505,17 +495,7 @@ static int telem_ioss_states_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int telem_ioss_state_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, telem_ioss_states_show, inode->i_private);
+-}
+-
+-static const struct file_operations telem_ioss_ops = {
+-	.open		= telem_ioss_state_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(telem_ioss_states);
+ 
+ static int telem_soc_states_show(struct seq_file *s, void *unused)
+ {
+@@ -664,17 +644,7 @@ static int telem_soc_states_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int telem_soc_state_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, telem_soc_states_show, inode->i_private);
+-}
+-
+-static const struct file_operations telem_socstate_ops = {
+-	.open		= telem_soc_state_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(telem_soc_states);
+ 
+ static int telem_s0ix_res_get(void *data, u64 *val)
+ {
+@@ -960,7 +930,7 @@ static int __init telemetry_debugfs_init(void)
+ 
+ 	f = debugfs_create_file("pss_info", S_IFREG | S_IRUGO,
+ 				debugfs_conf->telemetry_dbg_dir, NULL,
+-				&telem_pss_ops);
++				&telem_pss_states_fops);
+ 	if (!f) {
+ 		pr_err("pss_sample_info debugfs register failed\n");
+ 		goto out;
+@@ -968,7 +938,7 @@ static int __init telemetry_debugfs_init(void)
+ 
+ 	f = debugfs_create_file("ioss_info", S_IFREG | S_IRUGO,
+ 				debugfs_conf->telemetry_dbg_dir, NULL,
+-				&telem_ioss_ops);
++				&telem_ioss_states_fops);
+ 	if (!f) {
+ 		pr_err("ioss_sample_info debugfs register failed\n");
+ 		goto out;
+@@ -976,7 +946,7 @@ static int __init telemetry_debugfs_init(void)
+ 
+ 	f = debugfs_create_file("soc_states", S_IFREG | S_IRUGO,
+ 				debugfs_conf->telemetry_dbg_dir,
+-				NULL, &telem_socstate_ops);
++				NULL, &telem_soc_states_fops);
+ 	if (!f) {
+ 		pr_err("ioss_sample_info debugfs register failed\n");
+ 		goto out;
+-- 
+2.17.0
 
