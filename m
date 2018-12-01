@@ -2,144 +2,89 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA19AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8E3C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953E22146F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6308F2146D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:57:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="q1TXm/Bb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953E22146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WuHADvJf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6308F2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbeLBCKD (ORCPT
+        id S1727054AbeLBCKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 21:10:03 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:22300 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbeLBCKD (ORCPT
+        Sat, 1 Dec 2018 21:10:08 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:36986 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeLBCKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 21:10:03 -0500
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wB1Ev8Uc006347;
-        Sat, 1 Dec 2018 23:57:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wB1Ev8Uc006347
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543676229;
-        bh=HKiTxFk5BiwWN91pJfdQ/j4r/lRX+V9IA6cQqN7JUQc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=q1TXm/BbsJKovN47204zbiHu4HjDHqyvM69u/lTy/cWrKkiiQ6uc/mYLEqy/XBAWc
-         UmryyB57dyXSPDS9iMNO8318fbkvbPG0IkkB2s2Gv+/0Dmnl9Vioi0cpcffjj3z81e
-         +KWtB4c7cColfyJXptGApTq6GbGD1EoU2XnrL/jdnj5f91k2DfDhkeogncmkM1Tar0
-         LKo2Acb3owdNsdn479b0UProIs2O3nVNUBapVh6X0isgThoaxQsZuwWsnl63eyftfE
-         BI/H9791PRHj4nLRrUvdhiG+byvD5q0PbgmARwT4qTopfW1jVkhTh8FHuhlpOguBua
-         JRDJYlcRqlEsA==
-X-Nifty-SrcIP: [209.85.222.52]
-Received: by mail-ua1-f52.google.com with SMTP id n7so2933431uao.7;
-        Sat, 01 Dec 2018 06:57:08 -0800 (PST)
-X-Gm-Message-State: AA+aEWZ30tS36S4fIteh0XB5yNDiRH5pj39whoBCDzM0r5EBDcoMvZwb
-        NAibXmFvvbevG3s9sMyrLaIKyURQzdFTaMz1SBM=
-X-Google-Smtp-Source: AFSGD/WM+C2EFR8YKrBYLaDHvHDd7s9lLujv/Z8HP1Gb8ej6yzyKq3e1/NgIvEvsne8onk1yhHGOGgo4fda81lyBSbU=
-X-Received: by 2002:ab0:6705:: with SMTP id q5mr4433915uam.89.1543676227898;
- Sat, 01 Dec 2018 06:57:07 -0800 (PST)
+        Sat, 1 Dec 2018 21:10:07 -0500
+Received: by mail-it1-f195.google.com with SMTP id b5so2677466iti.2;
+        Sat, 01 Dec 2018 06:57:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T6kFo1eZ8ABphdmLpbOUXAtMEimIy2gbxxzEuasDmxE=;
+        b=WuHADvJfXhhDJWuI1KsG/xkhNemIIKorYZ0vYm3Tpf++sm25tAHMb3sEJ1BPSsAnpm
+         sLf3b3hYEF95hAb8UnhhgSuCcg++0GkJjHTZsEeF7rOFc34uL3+I+VWZzEvffNliPOJz
+         UmDGKVlPTVXs+gZObb9XQM1ncCtVJm5eSyS+wxW/uCj2WINQY2OcDvRZI3urilDAvi/4
+         ctWNXkGNLDe3sBfN8jl5zrqLyC24wNNh9zha/XLyTf/G3vnfEjY8bHTpnmNqUglzOzXY
+         SS51XtnxCzf6SaU2mW8zRDMPZKQZV4ngcjQ0w7jUipq/mKdB5GIBQ0a6I/OyNDV2jfv5
+         aW/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T6kFo1eZ8ABphdmLpbOUXAtMEimIy2gbxxzEuasDmxE=;
+        b=avHgUDm2lJg9H/3uTDp2YmKQvtUyCpX29h+zA7v29VmEs+SgbnsEkNBshS/caEajz6
+         mKqaUvXx8twNTEooAuBx1OM1o/pddofqeGMqIepQhzWwTaVSAldC39ZEhxTsoaDA1XMz
+         QR1bJ3/kDW42BNEWzAVLmGrC8pBIpLubET1Foee8sIRFnIpqvnHGGAbawTWRUZ5hyauB
+         JNrwwbciUV00mwAkx0aLNQYQzPGXEGW3fhrqvGzxl3h/rd/9IINmrcyauepjsukBBkgI
+         22H4qvpzbpAzpab4wGgbSw961QP/os+GFKypOufIky3+vH9SkeaE2MnrVm15prccQGwY
+         KASg==
+X-Gm-Message-State: AA+aEWZm+3L9yQiTb4slfi4z1rnIiz+i8YQhNNzVGTnnp5H4d+y88yG5
+        TRRO0/CaJCJils31+PfonXFTau0nDBUhImZepDo=
+X-Google-Smtp-Source: AFSGD/UKvsl2Qw8DHKWn6gq6Jw4U/XT/dejFotCP5uVIbYRvj0DbYns7Bw1gALbEnXFPN1iuMr1uAmBx8J84GyGtphA=
+X-Received: by 2002:a24:648f:: with SMTP id t137mr2333345itc.95.1543676245373;
+ Sat, 01 Dec 2018 06:57:25 -0800 (PST)
 MIME-Version: 1.0
-References: <1543463791-18391-1-git-send-email-yamada.masahiro@socionext.com> <1543463791-18391-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1543463791-18391-2-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 1 Dec 2018 23:56:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARoQweReaTV7cFkf1VmiS3JzO+iGGPBMvvzsFqpw3JJOw@mail.gmail.com>
-Message-ID: <CAK7LNARoQweReaTV7cFkf1VmiS3JzO+iGGPBMvvzsFqpw3JJOw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kbuild: descend into scripts/gcc-plugins/ via scripts/Makefile
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
+References: <20181201101417.6368-1-tiny.windzz@gmail.com> <2b188937-e297-acb4-8c40-bb93ff5bbb76@roeck-us.net>
+In-Reply-To: <2b188937-e297-acb4-8c40-bb93ff5bbb76@roeck-us.net>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sat, 1 Dec 2018 22:57:03 +0800
+Message-ID: <CAEExFWu01nUBqb1N3R7rDXf96sLBYEfxOo06Q-ZAqMqYTmNKjQ@mail.gmail.com>
+Subject: Re: [PATCH] watchdog: convert to DEFINE_SHOW_ATTRIBUTE
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     wim@linux-watchdog.org, Florian Fainelli <f.fainelli@gmail.com>,
+        rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 12:57 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Sat, Dec 1, 2018 at 10:25 PM Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> Now that 'archprepare' depends on 'scripts', Kbuild can descend into
-> scripts/gcc-plugins in a more standard way.
+> On 12/1/18 2:14 AM, Yangtao Li wrote:
+> > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> ---
+> One patch per file, please.
+>
+> Guenter
+Already split into small files.
 
-Applied to linux-kbuild.
-
-
-> Changes in v2:
->   - It turned out UML + CONFIG_GCC_PLUGINS is broken for a long time.
->     https://patchwork.kernel.org/patch/10703853/
->     Rebased on the top of the fix-up
->
->  Makefile                     | 2 +-
->  scripts/Makefile             | 3 ++-
->  scripts/Makefile.gcc-plugins | 8 --------
->  3 files changed, 3 insertions(+), 10 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 9eb3f4f..c1f87cf 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1112,7 +1112,7 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
->
->  macroprepare: prepare1 archmacros
->
-> -archprepare: archheaders archscripts macroprepare scripts gcc-plugins
-> +archprepare: archheaders archscripts macroprepare scripts
->
->  prepare0: archprepare
->         $(Q)$(MAKE) $(build)=scripts/mod
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index b48259d..feb1f71 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -36,9 +36,10 @@ PHONY += build_unifdef
->  build_unifdef: $(obj)/unifdef
->         @:
->
-> +subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
->  subdir-$(CONFIG_MODVERSIONS) += genksyms
->  subdir-$(CONFIG_SECURITY_SELINUX) += selinux
->  subdir-$(CONFIG_GDB_SCRIPTS) += gdb
->
->  # Let clean descend into subdirs
-> -subdir-        += basic dtc kconfig mod package gcc-plugins
-> +subdir-        += basic dtc kconfig mod package
-> diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
-> index 46c5c68..c36f199 100644
-> --- a/scripts/Makefile.gcc-plugins
-> +++ b/scripts/Makefile.gcc-plugins
-> @@ -49,11 +49,3 @@ KBUILD_CFLAGS += $(GCC_PLUGINS_CFLAGS)
->  # All enabled GCC plugins are collected here for building below.
->  GCC_PLUGIN := $(gcc-plugin-y)
->  export GCC_PLUGIN
-> -
-> -# Actually do the build, if requested.
-> -PHONY += gcc-plugins
-> -gcc-plugins: scripts_basic
-> -ifdef CONFIG_GCC_PLUGINS
-> -       $(Q)$(MAKE) $(build)=scripts/gcc-plugins
-> -endif
-> -       @:
-> --
-> 2.7.4
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+MBR,
+Yangtao
