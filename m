@@ -2,224 +2,112 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E51C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D548C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D2EE20867
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:33:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D2EE20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 386042081D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:40:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDqKkVUH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 386042081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbeLARpJ (ORCPT
+        id S1726349AbeLARw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 12:45:09 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:36568 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbeLARpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 12:45:09 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id BD8FEFF60750F2432B35;
-        Sat,  1 Dec 2018 14:33:17 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB16XDHf096462;
-        Sat, 1 Dec 2018 14:33:13 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120114335828-14091282 ;
-          Sat, 1 Dec 2018 14:33:58 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     boris.ostrovsky@oracle.com, jgross@suse.com, sstabellini@kernel.org
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH v4] pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock
-Date:   Sat, 1 Dec 2018 14:33:03 +0800
-Message-Id: <20181201063303.45089-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Sat, 1 Dec 2018 12:52:26 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:46386 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbeLARw0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 12:52:26 -0500
+Received: by mail-yb1-f195.google.com with SMTP id x130-v6so3082121ybg.13;
+        Fri, 30 Nov 2018 22:40:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mJqXubT790RG2gv0vreC1tJ/s8pg7Do38WZfqD9flMo=;
+        b=ZDqKkVUHG0ZH14jixCwFrhbBgXPENrIEhb0NZHsJRpLXO7+flp3vpJmmvso3rPmDy4
+         Q/3yaffPIgHs11uCo5tmSXdyUQvRKY9ecxpgzjst86kqdumTqIIaU1/gZi8lGwDse3Og
+         sMLae3vLJEq/mBTzWdIQJ+uMoTw0kPChcMLaQzI1WAzKALi9cT4Z/zNcUKK2fTsSM7yZ
+         +8K0sV0M/FNCNHPCf07Q5FYk/hYl3navgw8B2ZCnE0Tl01zcy320/3XRUrgFFYfr3iwL
+         vYl9j56KOs1xzgoPSdYBRoPAHimA9uWA85yl8Mkm9QM7wI38chMkfATkLzzIqG7OBG9u
+         pcTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mJqXubT790RG2gv0vreC1tJ/s8pg7Do38WZfqD9flMo=;
+        b=MiSCL+Pk3Fd0Q6GoObunUpP/FDqgYiQmW3H1Qf9yT2gWDXwitrS/zVg4+gwRr/z7AN
+         nTJSdVVacw0sd8rmPXGPZgYDyEOWmzJPC3SVQyART7U+4VXzF+YK/voGTA4mARIT3XVe
+         INrSqHDFXAZGCQcsUCSaSrXt8IkO2gFp4vxSeGGRaEOQn8YOa7meDIpSRQuEzktgCcxr
+         c6k/HFA+4CBTSnQVlJ9+S3UJ50+UWA4me08VeoqCV6V2/iQCLKGwGuQf6ZC7Pc+72sjL
+         32hEJRxQZyU64ThlwwWTPLzMmNm6qUWC44oM+ZJvFw2D1Uua41dablkEjhfixjilPn4Y
+         33MA==
+X-Gm-Message-State: AA+aEWYD1+YtAg2UDZn7jwR8s3u0kGKRS6vWPCCvQ7gFVpRBCec1BJ51
+        ZNoieKHoycBam26MH+KsvrnFCOczM2IMnd4DVvNvVNIo
+X-Google-Smtp-Source: AFSGD/Way6HT6Rb+TQG/yc5qfNP+iKfgORcBv0tdQwrjf+GnVtt/JdKUSrWdqHoxuLHvQ2bLNh/PcP7f/D29Q8dVecI=
+X-Received: by 2002:a25:b002:: with SMTP id q2-v6mr8661271ybf.397.1543646436602;
+ Fri, 30 Nov 2018 22:40:36 -0800 (PST)
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-01 14:33:58,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-01 14:32:53
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wB16XDHf096462
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com> <20181130192737.15053-13-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181130192737.15053-13-jarkko.sakkinen@linux.intel.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 1 Dec 2018 08:40:25 +0200
+Message-ID: <CAOQ4uxiXqt+r64mtJUejzq6JTMcH-DYPsd609SdqWj5UOfZUjw@mail.gmail.com>
+Subject: Re: [PATCH RFC 12/15] inotify: replace **** with a hug
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is that we call this with a spin lock held.
-The call tree is:
-pvcalls=5Ffront=5Faccept() holds bedata->socket=5Flock.
-    -> create=5Factive()
-        -> =5F=5Fget=5Ffree=5Fpages() uses GFP=5FKERNEL
+On Fri, Nov 30, 2018 at 9:27 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> In order to comply with the CoC, replace **** with a hug.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  fs/notify/inotify/inotify_user.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 105576daca4a..db0b3b6d6a58 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -446,7 +446,7 @@ static void inotify_remove_from_idr(struct fsnotify_group *group,
+>         /*
+>          * We found an mark in the idr at the right wd, but it's
+>          * not the mark we were told to remove.  eparis seriously
+> -        * fucked up somewhere.
+> +        * hugged up somewhere.
+>          */
+>         if (unlikely(found_i_mark != i_mark)) {
+>                 WARN_ONCE(1, "%s: i_mark=%p i_mark->wd=%d i_mark->group=%p "
 
-The create=5Factive() function is only called from pvcalls=5Ffront=5Faccept=
-()
-with a spin=5Flock held, The allocation is not allowed to sleep and
-GFP=5FKERNEL is not sufficient.
 
-This issue was detected by using the Coccinelle software.
+LoL. doesn't shaming conflict with the CoC?
+Just remove this sentence - it adds no valuable information.
+While at it, please fix grammar "a mark".
 
-v2: Add a function doing the allocations which is called
-    outside the lock and passing the allocated data to
-    create=5Factive().
+BTW, maybe you want to teach checkpatch.pl to alert about this
+sort of language...
 
-v3: Use the matching deallocators i.e., free=5Fpage()
-    and free=5Fpages(), respectively.
+$ ./scripts/checkpatch.pl ./0001-test.patch
+WARNING: 'refered' may be misspelled - perhaps 'referred'?
+#4:
+Subject: [PATCH] fucked up refered to person
 
-v4: It would be better to pre-populate map (struct sock=5Fmapping),
-    rather than introducing one more new struct.
-
-Suggested-by: Juergen Gross <jgross@suse.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Suggested-by: Stefano Stabellini <sstabellini@kernel.org>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/xen/pvcalls-front.c | 57 ++++++++++++++++++++++++++++++-------
- 1 file changed, 46 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 77224d8f3e6f..555c9abdf58f 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -335,13 +335,18 @@ int pvcalls=5Ffront=5Fsocket(struct socket *sock)
- 	return ret;
- }
-=20
--static int create=5Factive(struct sock=5Fmapping *map, int *evtchn)
-+static void free=5Factive=5Fring(struct sock=5Fmapping *map)
- {
--	void *bytes;
--	int ret =3D -ENOMEM, irq =3D -1, i;
-+	if (!map)
-+		return;
-+	free=5Fpages((unsigned long)map->active.data.in,
-+			map->active.ring->ring=5Forder);
-+	free=5Fpage((unsigned long)map->active.ring);
-+}
-=20
--	*evtchn =3D -1;
--	init=5Fwaitqueue=5Fhead(&map->active.inflight=5Fconn=5Freq);
-+static int alloc=5Factive=5Fring(struct sock=5Fmapping *map)
-+{
-+	void *bytes;
-=20
- 	map->active.ring =3D (struct pvcalls=5Fdata=5Fintf *)
- 		=5F=5Fget=5Ffree=5Fpage(GFP=5FKERNEL | =5F=5FGFP=5FZERO);
-@@ -352,6 +357,26 @@ static int create=5Factive(struct sock=5Fmapping *map,=
- int *evtchn)
- 					PVCALLS=5FRING=5FORDER);
- 	if (bytes =3D=3D NULL)
- 		goto out=5Ferror;
-+	map->active.data.in =3D bytes;
-+	map->active.data.out =3D bytes +
-+		XEN=5FFLEX=5FRING=5FSIZE(PVCALLS=5FRING=5FORDER);
-+
-+	return 0;
-+
-+out=5Ferror:
-+	free=5Factive=5Fring(map);
-+	return -ENOMEM;
-+}
-+
-+static int create=5Factive(struct sock=5Fmapping *map, int *evtchn)
-+{
-+	void *bytes;
-+	int ret =3D -ENOMEM, irq =3D -1, i;
-+
-+	*evtchn =3D -1;
-+	init=5Fwaitqueue=5Fhead(&map->active.inflight=5Fconn=5Freq);
-+
-+	bytes =3D map->active.data.in;
- 	for (i =3D 0; i < (1 << PVCALLS=5FRING=5FORDER); i++)
- 		map->active.ring->ref[i] =3D gnttab=5Fgrant=5Fforeign=5Faccess(
- 			pvcalls=5Ffront=5Fdev->otherend=5Fid,
-@@ -361,10 +386,6 @@ static int create=5Factive(struct sock=5Fmapping *map,=
- int *evtchn)
- 		pvcalls=5Ffront=5Fdev->otherend=5Fid,
- 		pfn=5Fto=5Fgfn(virt=5Fto=5Fpfn((void *)map->active.ring)), 0);
-=20
--	map->active.data.in =3D bytes;
--	map->active.data.out =3D bytes +
--		XEN=5FFLEX=5FRING=5FSIZE(PVCALLS=5FRING=5FORDER);
--
- 	ret =3D xenbus=5Falloc=5Fevtchn(pvcalls=5Ffront=5Fdev, evtchn);
- 	if (ret)
- 		goto out=5Ferror;
-@@ -385,8 +406,7 @@ static int create=5Factive(struct sock=5Fmapping *map, =
-int *evtchn)
- out=5Ferror:
- 	if (*evtchn >=3D 0)
- 		xenbus=5Ffree=5Fevtchn(pvcalls=5Ffront=5Fdev, *evtchn);
--	free=5Fpages((unsigned long)map->active.data.in, PVCALLS=5FRING=5FORDER);
--	free=5Fpage((unsigned long)map->active.ring);
-+	free=5Factive=5Fring(map);
- 	return ret;
- }
-=20
-@@ -406,11 +426,17 @@ int pvcalls=5Ffront=5Fconnect(struct socket *sock, st=
-ruct sockaddr *addr,
- 		return PTR=5FERR(map);
-=20
- 	bedata =3D dev=5Fget=5Fdrvdata(&pvcalls=5Ffront=5Fdev->dev);
-+	ret =3D alloc=5Factive=5Fring(map);
-+	if (ret < 0) {
-+		pvcalls=5Fexit=5Fsock(sock);
-+		return ret;
-+	}
-=20
- 	spin=5Flock(&bedata->socket=5Flock);
- 	ret =3D get=5Frequest(bedata, &req=5Fid);
- 	if (ret < 0) {
- 		spin=5Funlock(&bedata->socket=5Flock);
-+		free=5Factive=5Fring(map);
- 		pvcalls=5Fexit=5Fsock(sock);
- 		return ret;
- 	}
-@@ -780,12 +806,20 @@ int pvcalls=5Ffront=5Faccept(struct socket *sock, str=
-uct socket *newsock, int flags)
- 		}
- 	}
-=20
-+	ret =3D alloc=5Factive=5Fring(map);
-+	if (ret < 0) {
-+		clear=5Fbit(PVCALLS=5FFLAG=5FACCEPT=5FINFLIGHT,
-+				(void *)&map->passive.flags);
-+		pvcalls=5Fexit=5Fsock(sock);
-+		return ret;
-+	}
- 	spin=5Flock(&bedata->socket=5Flock);
- 	ret =3D get=5Frequest(bedata, &req=5Fid);
- 	if (ret < 0) {
- 		clear=5Fbit(PVCALLS=5FFLAG=5FACCEPT=5FINFLIGHT,
- 			  (void *)&map->passive.flags);
- 		spin=5Funlock(&bedata->socket=5Flock);
-+		free=5Factive=5Fring(map);
- 		pvcalls=5Fexit=5Fsock(sock);
- 		return ret;
- 	}
-@@ -794,6 +828,7 @@ int pvcalls=5Ffront=5Faccept(struct socket *sock, struc=
-t socket *newsock, int flags)
- 		clear=5Fbit(PVCALLS=5FFLAG=5FACCEPT=5FINFLIGHT,
- 			  (void *)&map->passive.flags);
- 		spin=5Funlock(&bedata->socket=5Flock);
-+		free=5Factive=5Fring(map);
- 		pvcalls=5Fexit=5Fsock(sock);
- 		return -ENOMEM;
- 	}
---=20
-2.19.1
-
+Thanks,
+Amir.
