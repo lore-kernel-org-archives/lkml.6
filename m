@@ -2,1987 +2,1153 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AA8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDAAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96ECA20867
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96ECA20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 438052147C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 20:35:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438052147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725770AbeLBHsX (ORCPT
+        id S1725785AbeLBHse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 02:48:23 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:39684 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725736AbeLBHsW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 02:48:22 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gTByI-0005zV-If; Sat, 01 Dec 2018 21:34:39 +0100
-Date:   Sat, 1 Dec 2018 21:34:38 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: [GIT pull] x86/pti: Cure the STIBP fallout
-Message-ID: <alpine.DEB.2.21.1812012115310.10521@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 2 Dec 2018 02:48:34 -0500
+Received: from mga07.intel.com ([134.134.136.100]:53524 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725726AbeLBHse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 02:48:34 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Dec 2018 12:34:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,303,1539673200"; 
+   d="gz'50?scan'50,208,50";a="96928582"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 01 Dec 2018 12:34:22 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gTBy1-000EIe-H7; Sun, 02 Dec 2018 04:34:21 +0800
+Date:   Sun, 2 Dec 2018 04:34:16 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     kbuild-all@01.org, kyungmin.park@samsung.com,
+        s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org,
+        krzk@kernel.org, fabien.dessenne@st.com,
+        jean-christophe.trotin@st.com, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: Re: [PATCH] media: remove bdisp_dbg_declare() and hva_dbg_declare()
+Message-ID: <201812020441.JEiNv6zf%fengguang.wu@intel.com>
+References: <20181201133418.7236-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/mixed; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <20181201133418.7236-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
 
-please pull the latest x86-pti-for-linus git tree from:
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
+Hi Yangtao,
 
-The performance destruction department finally got it's act together and
-came up with a cure for the STIPB regression:
+Thank you for the patch! Yet something to improve:
 
-  - Provide a command line option to control the spectre v2 user space
-    mitigations. Default is either seccomp or prctl (if seccomp is disabled
-    in Kconfig). prctl allows mitigation opt-in, seccomp enables the
-    migitation for sandboxed processes.
+[auto build test ERROR on linuxtv-media/master]
+[also build test ERROR on v4.20-rc4 next-20181130]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-  - Rework the code to handle the conditional STIBP/IBPB control and remove
-    the now unused ptrace_may_access_sched() optimization attempt
+url:    https://github.com/0day-ci/linux/commits/Yangtao-Li/media-remove-bdisp_dbg_declare-and-hva_dbg_declare/20181202-033340
+base:   git://linuxtv.org/media_tree.git master
+config: xtensa-allyesconfig (attached as .config)
+compiler: xtensa-linux-gcc (GCC) 8.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=8.1.0 make.cross ARCH=xtensa 
 
-  - Disable STIBP automatically when SMT is disabled
+All errors (new ones prefixed by >>):
 
-  - Optimize the switch_to() logic to avoid MSR writes and invocations of
-    __switch_to_xtra().
+   drivers/media//platform/exynos4-is/fimc-is.c: In function 'fimc_is_debugfs_open':
+>> drivers/media//platform/exynos4-is/fimc-is.c:757:27: error: 'fimc_is_log_show' undeclared (first use in this function); did you mean 'fimc_is_show'?
+     return single_open(file, fimc_is_log_show, inode->i_private);
+                              ^~~~~~~~~~~~~~~~
+                              fimc_is_show
+   drivers/media//platform/exynos4-is/fimc-is.c:757:27: note: each undeclared identifier is reported only once for each function it appears in
+   At top level:
+   drivers/media//platform/exynos4-is/fimc-is.c:755:12: warning: 'fimc_is_debugfs_open' defined but not used [-Wunused-function]
+    static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
+               ^~~~~~~~~~~~~~~~~~~~
 
-  - Make the asynchronous speculation TIF updates synchronous to prevent
-    stale mitigation state.
+vim +757 drivers/media//platform/exynos4-is/fimc-is.c
 
-As a general cleanup this also makes retpoline directly depend on compiler
-support and removes the 'minimal retpoline' option which just pretended to
-provide some form of security while providing none.
+9a761e43 Sylwester Nawrocki 2013-03-11  754  
+9a761e43 Sylwester Nawrocki 2013-03-11  755  static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
+9a761e43 Sylwester Nawrocki 2013-03-11  756  {
+9a761e43 Sylwester Nawrocki 2013-03-11 @757  	return single_open(file, fimc_is_log_show, inode->i_private);
+9a761e43 Sylwester Nawrocki 2013-03-11  758  }
+9a761e43 Sylwester Nawrocki 2013-03-11  759  
 
-Thanks,
+:::::: The code at line 757 was first introduced by commit
+:::::: 9a761e436843f228eaa2decda6d2c6dbd5ef1480 [media] exynos4-is: Add Exynos4x12 FIMC-IS driver
 
-	tglx
+:::::: TO: Sylwester Nawrocki <s.nawrocki@samsung.com>
+:::::: CC: Mauro Carvalho Chehab <mchehab@redhat.com>
 
------------------->
-Peter Zijlstra (Intel) (1):
-      sched/smt: Make sched_smt_present track topology
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-Thomas Gleixner (21):
-      x86/speculation: Rename SSBD update functions
-      x86/Kconfig: Select SCHED_SMT if SMP enabled
-      sched/smt: Expose sched_smt_present static key
-      x86/speculation: Rework SMT state change
-      x86/l1tf: Show actual SMT state
-      x86/speculation: Reorder the spec_v2 code
-      x86/speculation: Mark string arrays const correctly
-      x86/speculataion: Mark command line parser data __initdata
-      x86/speculation: Unify conditional spectre v2 print functions
-      x86/speculation: Add command line control for indirect branch speculation
-      x86/process: Consolidate and simplify switch_to_xtra() code
-      x86/speculation: Avoid __switch_to_xtra() calls
-      x86/speculation: Prepare for conditional IBPB in switch_mm()
-      ptrace: Remove unused ptrace_may_access_sched() and MODE_IBRS
-      x86/speculation: Split out TIF update
-      x86/speculation: Prevent stale SPEC_CTRL msr content
-      x86/speculation: Prepare arch_smt_update() for PRCTL mode
-      x86/speculation: Add prctl() control for indirect branch speculation
-      x86/speculation: Enable prctl mode for spectre_v2_user
-      x86/speculation: Add seccomp Spectre v2 user space protection mode
-      x86/speculation: Provide IBPB always command line options
+--CE+1k2dSO48ffgeK
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-Tim Chen (7):
-      x86/speculation: Update the TIF_SSBD comment
-      x86/speculation: Clean up spectre_v2_parse_cmdline()
-      x86/speculation: Remove unnecessary ret variable in cpu_show_common()
-      x86/speculation: Move STIPB/IBPB string conditionals out of cpu_show_common()
-      x86/speculation: Disable STIBP when enhanced IBRS is in use
-      x86/speculation: Reorganize speculation control MSRs update
-      x86/speculation: Prepare for per task indirect branch speculation control
+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
+k2x9NA9nCe/j/wftGxBrGYkDAA==
 
-Zhenzhong Duan (2):
-      x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support
-      x86/retpoline: Remove minimal retpoline support
-
-
- Documentation/admin-guide/kernel-parameters.txt |  56 ++-
- Documentation/userspace-api/spec_ctrl.rst       |   9 +
- arch/x86/Kconfig                                |  12 +-
- arch/x86/Makefile                               |   5 +-
- arch/x86/include/asm/msr-index.h                |   5 +-
- arch/x86/include/asm/nospec-branch.h            |  26 +-
- arch/x86/include/asm/spec-ctrl.h                |  20 +-
- arch/x86/include/asm/switch_to.h                |   3 -
- arch/x86/include/asm/thread_info.h              |  20 +-
- arch/x86/include/asm/tlbflush.h                 |   8 +-
- arch/x86/kernel/cpu/bugs.c                      | 525 +++++++++++++++++-------
- arch/x86/kernel/process.c                       | 101 ++++-
- arch/x86/kernel/process.h                       |  39 ++
- arch/x86/kernel/process_32.c                    |  10 +-
- arch/x86/kernel/process_64.c                    |  10 +-
- arch/x86/mm/tlb.c                               | 115 ++++--
- include/linux/ptrace.h                          |  17 -
- include/linux/sched.h                           |   9 +
- include/linux/sched/smt.h                       |  20 +
- include/uapi/linux/prctl.h                      |   1 +
- kernel/cpu.c                                    |  15 +-
- kernel/ptrace.c                                 |  10 -
- kernel/sched/core.c                             |  19 +-
- kernel/sched/sched.h                            |   4 +-
- scripts/Makefile.build                          |   2 -
- tools/include/uapi/linux/prctl.h                |   1 +
- 26 files changed, 780 insertions(+), 282 deletions(-)
- create mode 100644 arch/x86/kernel/process.h
- create mode 100644 include/linux/sched/smt.h
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 19f4423e70d9..05a252e5178d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4194,9 +4194,13 @@
- 
- 	spectre_v2=	[X86] Control mitigation of Spectre variant 2
- 			(indirect branch speculation) vulnerability.
-+			The default operation protects the kernel from
-+			user space attacks.
- 
--			on   - unconditionally enable
--			off  - unconditionally disable
-+			on   - unconditionally enable, implies
-+			       spectre_v2_user=on
-+			off  - unconditionally disable, implies
-+			       spectre_v2_user=off
- 			auto - kernel detects whether your CPU model is
- 			       vulnerable
- 
-@@ -4206,6 +4210,12 @@
- 			CONFIG_RETPOLINE configuration option, and the
- 			compiler with which the kernel was built.
- 
-+			Selecting 'on' will also enable the mitigation
-+			against user space to user space task attacks.
-+
-+			Selecting 'off' will disable both the kernel and
-+			the user space protections.
-+
- 			Specific mitigations can also be selected manually:
- 
- 			retpoline	  - replace indirect branches
-@@ -4215,6 +4225,48 @@
- 			Not specifying this option is equivalent to
- 			spectre_v2=auto.
- 
-+	spectre_v2_user=
-+			[X86] Control mitigation of Spectre variant 2
-+		        (indirect branch speculation) vulnerability between
-+		        user space tasks
-+
-+			on	- Unconditionally enable mitigations. Is
-+				  enforced by spectre_v2=on
-+
-+			off     - Unconditionally disable mitigations. Is
-+				  enforced by spectre_v2=off
-+
-+			prctl   - Indirect branch speculation is enabled,
-+				  but mitigation can be enabled via prctl
-+				  per thread.  The mitigation control state
-+				  is inherited on fork.
-+
-+			prctl,ibpb
-+				- Like "prctl" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different user
-+				  space processes.
-+
-+			seccomp
-+				- Same as "prctl" above, but all seccomp
-+				  threads will enable the mitigation unless
-+				  they explicitly opt out.
-+
-+			seccomp,ibpb
-+				- Like "seccomp" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different
-+				  user space processes.
-+
-+			auto    - Kernel selects the mitigation depending on
-+				  the available CPU features and vulnerability.
-+
-+			Default mitigation:
-+			If CONFIG_SECCOMP=y then "seccomp", otherwise "prctl"
-+
-+			Not specifying this option is equivalent to
-+			spectre_v2_user=auto.
-+
- 	spec_store_bypass_disable=
- 			[HW] Control Speculative Store Bypass (SSB) Disable mitigation
- 			(Speculative Store Bypass vulnerability)
-diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
-index 32f3d55c54b7..c4dbe6f7cdae 100644
---- a/Documentation/userspace-api/spec_ctrl.rst
-+++ b/Documentation/userspace-api/spec_ctrl.rst
-@@ -92,3 +92,12 @@ Speculation misfeature controls
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
-+
-+- PR_SPEC_INDIR_BRANCH: Indirect Branch Speculation in User Processes
-+                        (Mitigate Spectre V2 style attacks against user processes)
-+
-+  Invocations:
-+   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, 0, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_ENABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 9d734f3c8234..8689e794a43c 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -444,10 +444,6 @@ config RETPOLINE
- 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
- 	  support for full protection. The kernel may run slower.
- 
--	  Without compiler support, at least indirect branches in assembler
--	  code are eliminated. Since this includes the syscall entry path,
--	  it is not entirely pointless.
--
- config INTEL_RDT
- 	bool "Intel Resource Director Technology support"
- 	depends on X86 && CPU_SUP_INTEL
-@@ -1004,13 +1000,7 @@ config NR_CPUS
- 	  to the kernel image.
- 
- config SCHED_SMT
--	bool "SMT (Hyperthreading) scheduler support"
--	depends on SMP
--	---help---
--	  SMT scheduler support improves the CPU scheduler's decision making
--	  when dealing with Intel Pentium 4 chips with HyperThreading at a
--	  cost of slightly increased overhead in some places. If unsure say
--	  N here.
-+	def_bool y if SMP
- 
- config SCHED_MC
- 	def_bool y
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 88398fdf8129..f5d7f4134524 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -220,9 +220,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
- 
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--ifneq ($(RETPOLINE_CFLAGS),)
--  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-+ifeq ($(RETPOLINE_CFLAGS),)
-+  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
- endif
-+  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
- endif
- 
- archscripts: scripts_basic
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 80f4a4f38c79..c8f73efb4ece 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -41,9 +41,10 @@
- 
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
--#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
-+#define SPEC_CTRL_STIBP_SHIFT		1	   /* Single Thread Indirect Branch Predictor (STIBP) bit */
-+#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
- #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
--#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
-+#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)	/* Speculative Store Bypass Disable */
- 
- #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
- #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 80dc14422495..032b6009baab 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -3,6 +3,8 @@
- #ifndef _ASM_X86_NOSPEC_BRANCH_H_
- #define _ASM_X86_NOSPEC_BRANCH_H_
- 
-+#include <linux/static_key.h>
-+
- #include <asm/alternative.h>
- #include <asm/alternative-asm.h>
- #include <asm/cpufeatures.h>
-@@ -162,11 +164,12 @@
- 	_ASM_PTR " 999b\n\t"					\
- 	".popsection\n\t"
- 
--#if defined(CONFIG_X86_64) && defined(RETPOLINE)
-+#ifdef CONFIG_RETPOLINE
-+#ifdef CONFIG_X86_64
- 
- /*
-- * Since the inline asm uses the %V modifier which is only in newer GCC,
-- * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
-+ * Inline asm uses the %V modifier which is only in newer GCC
-+ * which is ensured when CONFIG_RETPOLINE is defined.
-  */
- # define CALL_NOSPEC						\
- 	ANNOTATE_NOSPEC_ALTERNATIVE				\
-@@ -181,7 +184,7 @@
- 	X86_FEATURE_RETPOLINE_AMD)
- # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
- 
--#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
-+#else /* CONFIG_X86_32 */
- /*
-  * For i386 we use the original ret-equivalent retpoline, because
-  * otherwise we'll run out of registers. We don't care about CET
-@@ -211,6 +214,7 @@
- 	X86_FEATURE_RETPOLINE_AMD)
- 
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
-+#endif
- #else /* No retpoline for C / inline asm */
- # define CALL_NOSPEC "call *%[thunk_target]\n"
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
-@@ -219,13 +223,19 @@
- /* The Spectre V2 mitigation variants */
- enum spectre_v2_mitigation {
- 	SPECTRE_V2_NONE,
--	SPECTRE_V2_RETPOLINE_MINIMAL,
--	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
- 	SPECTRE_V2_IBRS_ENHANCED,
- };
- 
-+/* The indirect branch speculation control variants */
-+enum spectre_v2_user_mitigation {
-+	SPECTRE_V2_USER_NONE,
-+	SPECTRE_V2_USER_STRICT,
-+	SPECTRE_V2_USER_PRCTL,
-+	SPECTRE_V2_USER_SECCOMP,
-+};
-+
- /* The Speculative Store Bypass disable variants */
- enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
-@@ -303,6 +313,10 @@ do {									\
- 	preempt_enable();						\
- } while (0)
- 
-+DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
-+DECLARE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
-+DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
-+
- #endif /* __ASSEMBLY__ */
- 
- /*
-diff --git a/arch/x86/include/asm/spec-ctrl.h b/arch/x86/include/asm/spec-ctrl.h
-index ae7c2c5cd7f0..5393babc0598 100644
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -53,12 +53,24 @@ static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
- 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
- }
- 
-+static inline u64 stibp_tif_to_spec_ctrl(u64 tifn)
-+{
-+	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
-+	return (tifn & _TIF_SPEC_IB) >> (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
-+}
-+
- static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
- {
- 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
- 	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
- }
- 
-+static inline unsigned long stibp_spec_ctrl_to_tif(u64 spec_ctrl)
-+{
-+	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
-+	return (spec_ctrl & SPEC_CTRL_STIBP) << (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
-+}
-+
- static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
- {
- 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
-@@ -70,11 +82,7 @@ extern void speculative_store_bypass_ht_init(void);
- static inline void speculative_store_bypass_ht_init(void) { }
- #endif
- 
--extern void speculative_store_bypass_update(unsigned long tif);
--
--static inline void speculative_store_bypass_update_current(void)
--{
--	speculative_store_bypass_update(current_thread_info()->flags);
--}
-+extern void speculation_ctrl_update(unsigned long tif);
-+extern void speculation_ctrl_update_current(void);
- 
- #endif
-diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
-index 36bd243843d6..7cf1a270d891 100644
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -11,9 +11,6 @@ struct task_struct *__switch_to_asm(struct task_struct *prev,
- 
- __visible struct task_struct *__switch_to(struct task_struct *prev,
- 					  struct task_struct *next);
--struct tss_struct;
--void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
--		      struct tss_struct *tss);
- 
- /* This runs runs on the previous thread's stack. */
- static inline void prepare_switch_to(struct task_struct *next)
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 2ff2a30a264f..82b73b75d67c 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -79,10 +79,12 @@ struct thread_info {
- #define TIF_SIGPENDING		2	/* signal pending */
- #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
- #define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
--#define TIF_SSBD			5	/* Reduced data speculation */
-+#define TIF_SSBD		5	/* Speculative store bypass disable */
- #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
-+#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
-+#define TIF_SPEC_FORCE_UPDATE	10	/* Force speculation MSR update in context switch */
- #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
- #define TIF_UPROBE		12	/* breakpointed or singlestepping */
- #define TIF_PATCH_PENDING	13	/* pending live patching update */
-@@ -110,6 +112,8 @@ struct thread_info {
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
-+#define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
-+#define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
- #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
-@@ -145,8 +149,18 @@ struct thread_info {
- 	 _TIF_FSCHECK)
- 
- /* flags to check in __switch_to() */
--#define _TIF_WORK_CTXSW							\
--	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
-+#define _TIF_WORK_CTXSW_BASE						\
-+	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
-+	 _TIF_SSBD | _TIF_SPEC_FORCE_UPDATE)
-+
-+/*
-+ * Avoid calls to __switch_to_xtra() on UP as STIBP is not evaluated.
-+ */
-+#ifdef CONFIG_SMP
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE | _TIF_SPEC_IB)
-+#else
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE)
-+#endif
- 
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index d760611cfc35..f4204bf377fc 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -169,10 +169,14 @@ struct tlb_state {
- 
- #define LOADED_MM_SWITCHING ((struct mm_struct *)1)
- 
-+	/* Last user mm for optimizing IBPB */
-+	union {
-+		struct mm_struct	*last_user_mm;
-+		unsigned long		last_user_mm_ibpb;
-+	};
-+
- 	u16 loaded_mm_asid;
- 	u16 next_asid;
--	/* last user mm's ctx id */
--	u64 last_ctx_id;
- 
- 	/*
- 	 * We can be in one of several states:
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c37e66e493bf..500278f5308e 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -14,6 +14,7 @@
- #include <linux/module.h>
- #include <linux/nospec.h>
- #include <linux/prctl.h>
-+#include <linux/sched/smt.h>
- 
- #include <asm/spec-ctrl.h>
- #include <asm/cmdline.h>
-@@ -53,6 +54,13 @@ static u64 __ro_after_init x86_spec_ctrl_mask = SPEC_CTRL_IBRS;
- u64 __ro_after_init x86_amd_ls_cfg_base;
- u64 __ro_after_init x86_amd_ls_cfg_ssbd_mask;
- 
-+/* Control conditional STIPB in switch_to() */
-+DEFINE_STATIC_KEY_FALSE(switch_to_cond_stibp);
-+/* Control conditional IBPB in switch_mm() */
-+DEFINE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
-+/* Control unconditional IBPB in switch_mm() */
-+DEFINE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
-+
- void __init check_bugs(void)
- {
- 	identify_boot_cpu();
-@@ -123,31 +131,6 @@ void __init check_bugs(void)
- #endif
- }
- 
--/* The kernel command line selection */
--enum spectre_v2_mitigation_cmd {
--	SPECTRE_V2_CMD_NONE,
--	SPECTRE_V2_CMD_AUTO,
--	SPECTRE_V2_CMD_FORCE,
--	SPECTRE_V2_CMD_RETPOLINE,
--	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
--	SPECTRE_V2_CMD_RETPOLINE_AMD,
--};
--
--static const char *spectre_v2_strings[] = {
--	[SPECTRE_V2_NONE]			= "Vulnerable",
--	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
--	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
--	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
--	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
--	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
--};
--
--#undef pr_fmt
--#define pr_fmt(fmt)     "Spectre V2 : " fmt
--
--static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
--	SPECTRE_V2_NONE;
--
- void
- x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- {
-@@ -169,6 +152,10 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- 		    static_cpu_has(X86_FEATURE_AMD_SSBD))
- 			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
- 
-+		/* Conditional STIBP enabled? */
-+		if (static_branch_unlikely(&switch_to_cond_stibp))
-+			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
-+
- 		if (hostval != guestval) {
- 			msrval = setguest ? guestval : hostval;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
-@@ -202,7 +189,7 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- 		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
- 				 ssbd_spec_ctrl_to_tif(hostval);
- 
--		speculative_store_bypass_update(tif);
-+		speculation_ctrl_update(tif);
- 	}
- }
- EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
-@@ -217,6 +204,15 @@ static void x86_amd_ssb_disable(void)
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
- }
- 
-+#undef pr_fmt
-+#define pr_fmt(fmt)     "Spectre V2 : " fmt
-+
-+static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
-+	SPECTRE_V2_NONE;
-+
-+static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
-+	SPECTRE_V2_USER_NONE;
-+
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
- 
-@@ -238,67 +234,217 @@ static inline const char *spectre_v2_module_string(void)
- static inline const char *spectre_v2_module_string(void) { return ""; }
- #endif
- 
--static void __init spec2_print_if_insecure(const char *reason)
-+static inline bool match_option(const char *arg, int arglen, const char *opt)
- {
--	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s selected on command line.\n", reason);
-+	int len = strlen(opt);
-+
-+	return len == arglen && !strncmp(arg, opt, len);
- }
- 
--static void __init spec2_print_if_secure(const char *reason)
-+/* The kernel command line selection for spectre v2 */
-+enum spectre_v2_mitigation_cmd {
-+	SPECTRE_V2_CMD_NONE,
-+	SPECTRE_V2_CMD_AUTO,
-+	SPECTRE_V2_CMD_FORCE,
-+	SPECTRE_V2_CMD_RETPOLINE,
-+	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
-+	SPECTRE_V2_CMD_RETPOLINE_AMD,
-+};
-+
-+enum spectre_v2_user_cmd {
-+	SPECTRE_V2_USER_CMD_NONE,
-+	SPECTRE_V2_USER_CMD_AUTO,
-+	SPECTRE_V2_USER_CMD_FORCE,
-+	SPECTRE_V2_USER_CMD_PRCTL,
-+	SPECTRE_V2_USER_CMD_PRCTL_IBPB,
-+	SPECTRE_V2_USER_CMD_SECCOMP,
-+	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,
-+};
-+
-+static const char * const spectre_v2_user_strings[] = {
-+	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
-+	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
-+	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
-+	[SPECTRE_V2_USER_SECCOMP]	= "User space: Mitigation: STIBP via seccomp and prctl",
-+};
-+
-+static const struct {
-+	const char			*option;
-+	enum spectre_v2_user_cmd	cmd;
-+	bool				secure;
-+} v2_user_options[] __initdata = {
-+	{ "auto",		SPECTRE_V2_USER_CMD_AUTO,		false },
-+	{ "off",		SPECTRE_V2_USER_CMD_NONE,		false },
-+	{ "on",			SPECTRE_V2_USER_CMD_FORCE,		true  },
-+	{ "prctl",		SPECTRE_V2_USER_CMD_PRCTL,		false },
-+	{ "prctl,ibpb",		SPECTRE_V2_USER_CMD_PRCTL_IBPB,		false },
-+	{ "seccomp",		SPECTRE_V2_USER_CMD_SECCOMP,		false },
-+	{ "seccomp,ibpb",	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,	false },
-+};
-+
-+static void __init spec_v2_user_print_cond(const char *reason, bool secure)
- {
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s selected on command line.\n", reason);
-+	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
-+		pr_info("spectre_v2_user=%s forced on command line.\n", reason);
- }
- 
--static inline bool retp_compiler(void)
-+static enum spectre_v2_user_cmd __init
-+spectre_v2_parse_user_cmdline(enum spectre_v2_mitigation_cmd v2_cmd)
- {
--	return __is_defined(RETPOLINE);
-+	char arg[20];
-+	int ret, i;
-+
-+	switch (v2_cmd) {
-+	case SPECTRE_V2_CMD_NONE:
-+		return SPECTRE_V2_USER_CMD_NONE;
-+	case SPECTRE_V2_CMD_FORCE:
-+		return SPECTRE_V2_USER_CMD_FORCE;
-+	default:
-+		break;
-+	}
-+
-+	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
-+				  arg, sizeof(arg));
-+	if (ret < 0)
-+		return SPECTRE_V2_USER_CMD_AUTO;
-+
-+	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
-+		if (match_option(arg, ret, v2_user_options[i].option)) {
-+			spec_v2_user_print_cond(v2_user_options[i].option,
-+						v2_user_options[i].secure);
-+			return v2_user_options[i].cmd;
-+		}
-+	}
-+
-+	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
-+	return SPECTRE_V2_USER_CMD_AUTO;
- }
- 
--static inline bool match_option(const char *arg, int arglen, const char *opt)
-+static void __init
-+spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- {
--	int len = strlen(opt);
-+	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
-+	bool smt_possible = IS_ENABLED(CONFIG_SMP);
-+	enum spectre_v2_user_cmd cmd;
- 
--	return len == arglen && !strncmp(arg, opt, len);
-+	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
-+		return;
-+
-+	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
-+	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+		smt_possible = false;
-+
-+	cmd = spectre_v2_parse_user_cmdline(v2_cmd);
-+	switch (cmd) {
-+	case SPECTRE_V2_USER_CMD_NONE:
-+		goto set_mode;
-+	case SPECTRE_V2_USER_CMD_FORCE:
-+		mode = SPECTRE_V2_USER_STRICT;
-+		break;
-+	case SPECTRE_V2_USER_CMD_PRCTL:
-+	case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
-+		mode = SPECTRE_V2_USER_PRCTL;
-+		break;
-+	case SPECTRE_V2_USER_CMD_AUTO:
-+	case SPECTRE_V2_USER_CMD_SECCOMP:
-+	case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
-+		if (IS_ENABLED(CONFIG_SECCOMP))
-+			mode = SPECTRE_V2_USER_SECCOMP;
-+		else
-+			mode = SPECTRE_V2_USER_PRCTL;
-+		break;
-+	}
-+
-+	/* Initialize Indirect Branch Prediction Barrier */
-+	if (boot_cpu_has(X86_FEATURE_IBPB)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
-+
-+		switch (cmd) {
-+		case SPECTRE_V2_USER_CMD_FORCE:
-+		case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
-+		case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
-+			static_branch_enable(&switch_mm_always_ibpb);
-+			break;
-+		case SPECTRE_V2_USER_CMD_PRCTL:
-+		case SPECTRE_V2_USER_CMD_AUTO:
-+		case SPECTRE_V2_USER_CMD_SECCOMP:
-+			static_branch_enable(&switch_mm_cond_ibpb);
-+			break;
-+		default:
-+			break;
-+		}
-+
-+		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
-+			static_key_enabled(&switch_mm_always_ibpb) ?
-+			"always-on" : "conditional");
-+	}
-+
-+	/* If enhanced IBRS is enabled no STIPB required */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return;
-+
-+	/*
-+	 * If SMT is not possible or STIBP is not available clear the STIPB
-+	 * mode.
-+	 */
-+	if (!smt_possible || !boot_cpu_has(X86_FEATURE_STIBP))
-+		mode = SPECTRE_V2_USER_NONE;
-+set_mode:
-+	spectre_v2_user = mode;
-+	/* Only print the STIBP mode when SMT possible */
-+	if (smt_possible)
-+		pr_info("%s\n", spectre_v2_user_strings[mode]);
- }
- 
-+static const char * const spectre_v2_strings[] = {
-+	[SPECTRE_V2_NONE]			= "Vulnerable",
-+	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
-+	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
-+};
-+
- static const struct {
- 	const char *option;
- 	enum spectre_v2_mitigation_cmd cmd;
- 	bool secure;
--} mitigation_options[] = {
--	{ "off",               SPECTRE_V2_CMD_NONE,              false },
--	{ "on",                SPECTRE_V2_CMD_FORCE,             true },
--	{ "retpoline",         SPECTRE_V2_CMD_RETPOLINE,         false },
--	{ "retpoline,amd",     SPECTRE_V2_CMD_RETPOLINE_AMD,     false },
--	{ "retpoline,generic", SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
--	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
-+} mitigation_options[] __initdata = {
-+	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
-+	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
-+	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
-+	{ "retpoline,amd",	SPECTRE_V2_CMD_RETPOLINE_AMD,	  false },
-+	{ "retpoline,generic",	SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
-+	{ "auto",		SPECTRE_V2_CMD_AUTO,		  false },
- };
- 
-+static void __init spec_v2_print_cond(const char *reason, bool secure)
-+{
-+	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
-+		pr_info("%s selected on command line.\n", reason);
-+}
-+
- static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- {
-+	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
- 	char arg[20];
- 	int ret, i;
--	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
- 
- 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
- 		return SPECTRE_V2_CMD_NONE;
--	else {
--		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
--		if (ret < 0)
--			return SPECTRE_V2_CMD_AUTO;
- 
--		for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
--			if (!match_option(arg, ret, mitigation_options[i].option))
--				continue;
--			cmd = mitigation_options[i].cmd;
--			break;
--		}
-+	ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
-+	if (ret < 0)
-+		return SPECTRE_V2_CMD_AUTO;
- 
--		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
--			return SPECTRE_V2_CMD_AUTO;
--		}
-+	for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
-+		if (!match_option(arg, ret, mitigation_options[i].option))
-+			continue;
-+		cmd = mitigation_options[i].cmd;
-+		break;
-+	}
-+
-+	if (i >= ARRAY_SIZE(mitigation_options)) {
-+		pr_err("unknown option (%s). Switching to AUTO select\n", arg);
-+		return SPECTRE_V2_CMD_AUTO;
- 	}
- 
- 	if ((cmd == SPECTRE_V2_CMD_RETPOLINE ||
-@@ -316,54 +462,11 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 		return SPECTRE_V2_CMD_AUTO;
- 	}
- 
--	if (mitigation_options[i].secure)
--		spec2_print_if_secure(mitigation_options[i].option);
--	else
--		spec2_print_if_insecure(mitigation_options[i].option);
--
-+	spec_v2_print_cond(mitigation_options[i].option,
-+			   mitigation_options[i].secure);
- 	return cmd;
- }
- 
--static bool stibp_needed(void)
--{
--	if (spectre_v2_enabled == SPECTRE_V2_NONE)
--		return false;
--
--	if (!boot_cpu_has(X86_FEATURE_STIBP))
--		return false;
--
--	return true;
--}
--
--static void update_stibp_msr(void *info)
--{
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
--}
--
--void arch_smt_update(void)
--{
--	u64 mask;
--
--	if (!stibp_needed())
--		return;
--
--	mutex_lock(&spec_ctrl_mutex);
--	mask = x86_spec_ctrl_base;
--	if (cpu_smt_control == CPU_SMT_ENABLED)
--		mask |= SPEC_CTRL_STIBP;
--	else
--		mask &= ~SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--				cpu_smt_control == CPU_SMT_ENABLED ?
--				"Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
--	}
--	mutex_unlock(&spec_ctrl_mutex);
--}
--
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -417,14 +520,12 @@ static void __init spectre_v2_select_mitigation(void)
- 			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
- 			goto retpoline_generic;
- 		}
--		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
--					 SPECTRE_V2_RETPOLINE_MINIMAL_AMD;
-+		mode = SPECTRE_V2_RETPOLINE_AMD;
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE_AMD);
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	} else {
- 	retpoline_generic:
--		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_GENERIC :
--					 SPECTRE_V2_RETPOLINE_MINIMAL;
-+		mode = SPECTRE_V2_RETPOLINE_GENERIC;
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	}
- 
-@@ -443,12 +544,6 @@ static void __init spectre_v2_select_mitigation(void)
- 	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
- 	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
- 
--	/* Initialize Indirect Branch Prediction Barrier if supported */
--	if (boot_cpu_has(X86_FEATURE_IBPB)) {
--		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
--		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
--	}
--
- 	/*
- 	 * Retpoline means the kernel is safe because it has no indirect
- 	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
-@@ -465,10 +560,67 @@ static void __init spectre_v2_select_mitigation(void)
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
- 
-+	/* Set up IBPB and STIBP depending on the general spectre V2 command */
-+	spectre_v2_user_select_mitigation(cmd);
-+
- 	/* Enable STIBP if appropriate */
- 	arch_smt_update();
- }
- 
-+static void update_stibp_msr(void * __unused)
-+{
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+}
-+
-+/* Update x86_spec_ctrl_base in case SMT state changed. */
-+static void update_stibp_strict(void)
-+{
-+	u64 mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
-+
-+	if (sched_smt_active())
-+		mask |= SPEC_CTRL_STIBP;
-+
-+	if (mask == x86_spec_ctrl_base)
-+		return;
-+
-+	pr_info("Update user space SMT mitigation: STIBP %s\n",
-+		mask & SPEC_CTRL_STIBP ? "always-on" : "off");
-+	x86_spec_ctrl_base = mask;
-+	on_each_cpu(update_stibp_msr, NULL, 1);
-+}
-+
-+/* Update the static key controlling the evaluation of TIF_SPEC_IB */
-+static void update_indir_branch_cond(void)
-+{
-+	if (sched_smt_active())
-+		static_branch_enable(&switch_to_cond_stibp);
-+	else
-+		static_branch_disable(&switch_to_cond_stibp);
-+}
-+
-+void arch_smt_update(void)
-+{
-+	/* Enhanced IBRS implies STIBP. No update required. */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return;
-+
-+	mutex_lock(&spec_ctrl_mutex);
-+
-+	switch (spectre_v2_user) {
-+	case SPECTRE_V2_USER_NONE:
-+		break;
-+	case SPECTRE_V2_USER_STRICT:
-+		update_stibp_strict();
-+		break;
-+	case SPECTRE_V2_USER_PRCTL:
-+	case SPECTRE_V2_USER_SECCOMP:
-+		update_indir_branch_cond();
-+		break;
-+	}
-+
-+	mutex_unlock(&spec_ctrl_mutex);
-+}
-+
- #undef pr_fmt
- #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
- 
-@@ -483,7 +635,7 @@ enum ssb_mitigation_cmd {
- 	SPEC_STORE_BYPASS_CMD_SECCOMP,
- };
- 
--static const char *ssb_strings[] = {
-+static const char * const ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
- 	[SPEC_STORE_BYPASS_DISABLE]	= "Mitigation: Speculative Store Bypass disabled",
- 	[SPEC_STORE_BYPASS_PRCTL]	= "Mitigation: Speculative Store Bypass disabled via prctl",
-@@ -493,7 +645,7 @@ static const char *ssb_strings[] = {
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
--} ssb_mitigation_options[] = {
-+} ssb_mitigation_options[]  __initdata = {
- 	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
- 	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
- 	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
-@@ -604,10 +756,25 @@ static void ssb_select_mitigation(void)
- #undef pr_fmt
- #define pr_fmt(fmt)     "Speculation prctl: " fmt
- 
--static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-+static void task_update_spec_tif(struct task_struct *tsk)
- {
--	bool update;
-+	/* Force the update of the real TIF bits */
-+	set_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE);
- 
-+	/*
-+	 * Immediately update the speculation control MSRs for the current
-+	 * task, but for a non-current task delay setting the CPU
-+	 * mitigation until it is scheduled next.
-+	 *
-+	 * This can only happen for SECCOMP mitigation. For PRCTL it's
-+	 * always the current task.
-+	 */
-+	if (tsk == current)
-+		speculation_ctrl_update_current();
-+}
-+
-+static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-+{
- 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
- 	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
- 		return -ENXIO;
-@@ -618,28 +785,56 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
- 		if (task_spec_ssb_force_disable(task))
- 			return -EPERM;
- 		task_clear_spec_ssb_disable(task);
--		update = test_and_clear_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task);
- 		break;
- 	case PR_SPEC_DISABLE:
- 		task_set_spec_ssb_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task);
- 		break;
- 	case PR_SPEC_FORCE_DISABLE:
- 		task_set_spec_ssb_disable(task);
- 		task_set_spec_ssb_force_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task);
- 		break;
- 	default:
- 		return -ERANGE;
- 	}
-+	return 0;
-+}
- 
--	/*
--	 * If being set on non-current task, delay setting the CPU
--	 * mitigation until it is next scheduled.
--	 */
--	if (task == current && update)
--		speculative_store_bypass_update_current();
--
-+static int ib_prctl_set(struct task_struct *task, unsigned long ctrl)
-+{
-+	switch (ctrl) {
-+	case PR_SPEC_ENABLE:
-+		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
-+			return 0;
-+		/*
-+		 * Indirect branch speculation is always disabled in strict
-+		 * mode.
-+		 */
-+		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
-+			return -EPERM;
-+		task_clear_spec_ib_disable(task);
-+		task_update_spec_tif(task);
-+		break;
-+	case PR_SPEC_DISABLE:
-+	case PR_SPEC_FORCE_DISABLE:
-+		/*
-+		 * Indirect branch speculation is always allowed when
-+		 * mitigation is force disabled.
-+		 */
-+		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
-+			return -EPERM;
-+		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
-+			return 0;
-+		task_set_spec_ib_disable(task);
-+		if (ctrl == PR_SPEC_FORCE_DISABLE)
-+			task_set_spec_ib_force_disable(task);
-+		task_update_spec_tif(task);
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
- 	return 0;
- }
- 
-@@ -649,6 +844,8 @@ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
- 	switch (which) {
- 	case PR_SPEC_STORE_BYPASS:
- 		return ssb_prctl_set(task, ctrl);
-+	case PR_SPEC_INDIRECT_BRANCH:
-+		return ib_prctl_set(task, ctrl);
- 	default:
- 		return -ENODEV;
- 	}
-@@ -659,6 +856,8 @@ void arch_seccomp_spec_mitigate(struct task_struct *task)
- {
- 	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
- 		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
-+	if (spectre_v2_user == SPECTRE_V2_USER_SECCOMP)
-+		ib_prctl_set(task, PR_SPEC_FORCE_DISABLE);
- }
- #endif
- 
-@@ -681,11 +880,35 @@ static int ssb_prctl_get(struct task_struct *task)
- 	}
- }
- 
-+static int ib_prctl_get(struct task_struct *task)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+		return PR_SPEC_NOT_AFFECTED;
-+
-+	switch (spectre_v2_user) {
-+	case SPECTRE_V2_USER_NONE:
-+		return PR_SPEC_ENABLE;
-+	case SPECTRE_V2_USER_PRCTL:
-+	case SPECTRE_V2_USER_SECCOMP:
-+		if (task_spec_ib_force_disable(task))
-+			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
-+		if (task_spec_ib_disable(task))
-+			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
-+		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
-+	case SPECTRE_V2_USER_STRICT:
-+		return PR_SPEC_DISABLE;
-+	default:
-+		return PR_SPEC_NOT_AFFECTED;
-+	}
-+}
-+
- int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
- {
- 	switch (which) {
- 	case PR_SPEC_STORE_BYPASS:
- 		return ssb_prctl_get(task);
-+	case PR_SPEC_INDIRECT_BRANCH:
-+		return ib_prctl_get(task);
- 	default:
- 		return -ENODEV;
- 	}
-@@ -823,7 +1046,7 @@ early_param("l1tf", l1tf_cmdline);
- #define L1TF_DEFAULT_MSG "Mitigation: PTE Inversion"
- 
- #if IS_ENABLED(CONFIG_KVM_INTEL)
--static const char *l1tf_vmx_states[] = {
-+static const char * const l1tf_vmx_states[] = {
- 	[VMENTER_L1D_FLUSH_AUTO]		= "auto",
- 	[VMENTER_L1D_FLUSH_NEVER]		= "vulnerable",
- 	[VMENTER_L1D_FLUSH_COND]		= "conditional cache flushes",
-@@ -839,13 +1062,14 @@ static ssize_t l1tf_show_state(char *buf)
- 
- 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
- 	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
--	     cpu_smt_control == CPU_SMT_ENABLED))
-+	     sched_smt_active())) {
- 		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
- 			       l1tf_vmx_states[l1tf_vmx_mitigation]);
-+	}
- 
- 	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
- 		       l1tf_vmx_states[l1tf_vmx_mitigation],
--		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
-+		       sched_smt_active() ? "vulnerable" : "disabled");
- }
- #else
- static ssize_t l1tf_show_state(char *buf)
-@@ -854,11 +1078,39 @@ static ssize_t l1tf_show_state(char *buf)
- }
- #endif
- 
-+static char *stibp_state(void)
-+{
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return "";
-+
-+	switch (spectre_v2_user) {
-+	case SPECTRE_V2_USER_NONE:
-+		return ", STIBP: disabled";
-+	case SPECTRE_V2_USER_STRICT:
-+		return ", STIBP: forced";
-+	case SPECTRE_V2_USER_PRCTL:
-+	case SPECTRE_V2_USER_SECCOMP:
-+		if (static_key_enabled(&switch_to_cond_stibp))
-+			return ", STIBP: conditional";
-+	}
-+	return "";
-+}
-+
-+static char *ibpb_state(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_IBPB)) {
-+		if (static_key_enabled(&switch_mm_always_ibpb))
-+			return ", IBPB: always-on";
-+		if (static_key_enabled(&switch_mm_cond_ibpb))
-+			return ", IBPB: conditional";
-+		return ", IBPB: disabled";
-+	}
-+	return "";
-+}
-+
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -876,13 +1128,12 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+			       ibpb_state(),
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       stibp_state(),
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
--		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index c93fcfdf1673..7d31192296a8 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -40,6 +40,8 @@
- #include <asm/prctl.h>
- #include <asm/spec-ctrl.h>
- 
-+#include "process.h"
-+
- /*
-  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
-  * no more per-task TSS's. The TSS size is kept cacheline-aligned
-@@ -252,11 +254,12 @@ void arch_setup_new_exec(void)
- 		enable_cpuid();
- }
- 
--static inline void switch_to_bitmap(struct tss_struct *tss,
--				    struct thread_struct *prev,
-+static inline void switch_to_bitmap(struct thread_struct *prev,
- 				    struct thread_struct *next,
- 				    unsigned long tifp, unsigned long tifn)
- {
-+	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
-+
- 	if (tifn & _TIF_IO_BITMAP) {
- 		/*
- 		 * Copy the relevant range of the IO bitmap.
-@@ -395,32 +398,85 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
- 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
- }
- 
--static __always_inline void intel_set_ssb_state(unsigned long tifn)
-+/*
-+ * Update the MSRs managing speculation control, during context switch.
-+ *
-+ * tifp: Previous task's thread flags
-+ * tifn: Next task's thread flags
-+ */
-+static __always_inline void __speculation_ctrl_update(unsigned long tifp,
-+						      unsigned long tifn)
- {
--	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-+	unsigned long tif_diff = tifp ^ tifn;
-+	u64 msr = x86_spec_ctrl_base;
-+	bool updmsr = false;
-+
-+	/*
-+	 * If TIF_SSBD is different, select the proper mitigation
-+	 * method. Note that if SSBD mitigation is disabled or permanentely
-+	 * enabled this branch can't be taken because nothing can set
-+	 * TIF_SSBD.
-+	 */
-+	if (tif_diff & _TIF_SSBD) {
-+		if (static_cpu_has(X86_FEATURE_VIRT_SSBD)) {
-+			amd_set_ssb_virt_state(tifn);
-+		} else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
-+			amd_set_core_ssb_state(tifn);
-+		} else if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
-+			   static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+			msr |= ssbd_tif_to_spec_ctrl(tifn);
-+			updmsr  = true;
-+		}
-+	}
-+
-+	/*
-+	 * Only evaluate TIF_SPEC_IB if conditional STIBP is enabled,
-+	 * otherwise avoid the MSR write.
-+	 */
-+	if (IS_ENABLED(CONFIG_SMP) &&
-+	    static_branch_unlikely(&switch_to_cond_stibp)) {
-+		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
-+		msr |= stibp_tif_to_spec_ctrl(tifn);
-+	}
- 
--	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
-+	if (updmsr)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
--static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
- {
--	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
--		amd_set_ssb_virt_state(tifn);
--	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
--		amd_set_core_ssb_state(tifn);
--	else
--		intel_set_ssb_state(tifn);
-+	if (test_and_clear_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE)) {
-+		if (task_spec_ssb_disable(tsk))
-+			set_tsk_thread_flag(tsk, TIF_SSBD);
-+		else
-+			clear_tsk_thread_flag(tsk, TIF_SSBD);
-+
-+		if (task_spec_ib_disable(tsk))
-+			set_tsk_thread_flag(tsk, TIF_SPEC_IB);
-+		else
-+			clear_tsk_thread_flag(tsk, TIF_SPEC_IB);
-+	}
-+	/* Return the updated threadinfo flags*/
-+	return task_thread_info(tsk)->flags;
- }
- 
--void speculative_store_bypass_update(unsigned long tif)
-+void speculation_ctrl_update(unsigned long tif)
- {
-+	/* Forced update. Make sure all relevant TIF flags are different */
- 	preempt_disable();
--	__speculative_store_bypass_update(tif);
-+	__speculation_ctrl_update(~tif, tif);
- 	preempt_enable();
- }
- 
--void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
--		      struct tss_struct *tss)
-+/* Called from seccomp/prctl update */
-+void speculation_ctrl_update_current(void)
-+{
-+	preempt_disable();
-+	speculation_ctrl_update(speculation_ctrl_update_tif(current));
-+	preempt_enable();
-+}
-+
-+void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- {
- 	struct thread_struct *prev, *next;
- 	unsigned long tifp, tifn;
-@@ -430,7 +486,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 
- 	tifn = READ_ONCE(task_thread_info(next_p)->flags);
- 	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
--	switch_to_bitmap(tss, prev, next, tifp, tifn);
-+	switch_to_bitmap(prev, next, tifp, tifn);
- 
- 	propagate_user_return_notify(prev_p, next_p);
- 
-@@ -451,8 +507,15 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 	if ((tifp ^ tifn) & _TIF_NOCPUID)
- 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
- 
--	if ((tifp ^ tifn) & _TIF_SSBD)
--		__speculative_store_bypass_update(tifn);
-+	if (likely(!((tifp | tifn) & _TIF_SPEC_FORCE_UPDATE))) {
-+		__speculation_ctrl_update(tifp, tifn);
-+	} else {
-+		speculation_ctrl_update_tif(prev_p);
-+		tifn = speculation_ctrl_update_tif(next_p);
-+
-+		/* Enforce MSR update to ensure consistent state */
-+		__speculation_ctrl_update(~tifn, tifn);
-+	}
- }
- 
- /*
-diff --git a/arch/x86/kernel/process.h b/arch/x86/kernel/process.h
-new file mode 100644
-index 000000000000..898e97cf6629
---- /dev/null
-+++ b/arch/x86/kernel/process.h
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Code shared between 32 and 64 bit
-+
-+#include <asm/spec-ctrl.h>
-+
-+void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p);
-+
-+/*
-+ * This needs to be inline to optimize for the common case where no extra
-+ * work needs to be done.
-+ */
-+static inline void switch_to_extra(struct task_struct *prev,
-+				   struct task_struct *next)
-+{
-+	unsigned long next_tif = task_thread_info(next)->flags;
-+	unsigned long prev_tif = task_thread_info(prev)->flags;
-+
-+	if (IS_ENABLED(CONFIG_SMP)) {
-+		/*
-+		 * Avoid __switch_to_xtra() invocation when conditional
-+		 * STIPB is disabled and the only different bit is
-+		 * TIF_SPEC_IB. For CONFIG_SMP=n TIF_SPEC_IB is not
-+		 * in the TIF_WORK_CTXSW masks.
-+		 */
-+		if (!static_branch_likely(&switch_to_cond_stibp)) {
-+			prev_tif &= ~_TIF_SPEC_IB;
-+			next_tif &= ~_TIF_SPEC_IB;
-+		}
-+	}
-+
-+	/*
-+	 * __switch_to_xtra() handles debug registers, i/o bitmaps,
-+	 * speculation mitigations etc.
-+	 */
-+	if (unlikely(next_tif & _TIF_WORK_CTXSW_NEXT ||
-+		     prev_tif & _TIF_WORK_CTXSW_PREV))
-+		__switch_to_xtra(prev, next);
-+}
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 5046a3c9dec2..d3e593eb189f 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -59,6 +59,8 @@
- #include <asm/intel_rdt_sched.h>
- #include <asm/proto.h>
- 
-+#include "process.h"
-+
- void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
- {
- 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
-@@ -232,7 +234,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	struct fpu *prev_fpu = &prev->fpu;
- 	struct fpu *next_fpu = &next->fpu;
- 	int cpu = smp_processor_id();
--	struct tss_struct *tss = &per_cpu(cpu_tss_rw, cpu);
- 
- 	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
- 
-@@ -264,12 +265,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	if (get_kernel_rpl() && unlikely(prev->iopl != next->iopl))
- 		set_iopl_mask(next->iopl);
- 
--	/*
--	 * Now maybe handle debug registers and/or IO bitmaps
--	 */
--	if (unlikely(task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV ||
--		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
--		__switch_to_xtra(prev_p, next_p, tss);
-+	switch_to_extra(prev_p, next_p);
- 
- 	/*
- 	 * Leave lazy mode, flushing any hypercalls made here.
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 0e0b4288a4b2..bbfbf017065c 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -60,6 +60,8 @@
- #include <asm/unistd_32_ia32.h>
- #endif
- 
-+#include "process.h"
-+
- /* Prints also some state that isn't saved in the pt_regs */
- void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
- {
-@@ -553,7 +555,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	struct fpu *prev_fpu = &prev->fpu;
- 	struct fpu *next_fpu = &next->fpu;
- 	int cpu = smp_processor_id();
--	struct tss_struct *tss = &per_cpu(cpu_tss_rw, cpu);
- 
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ENTRY) &&
- 		     this_cpu_read(irq_count) != -1);
-@@ -617,12 +618,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	/* Reload sp0. */
- 	update_task_stack(next_p);
- 
--	/*
--	 * Now maybe reload the debug registers and handle I/O bitmaps
--	 */
--	if (unlikely(task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT ||
--		     task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV))
--		__switch_to_xtra(prev_p, next_p, tss);
-+	switch_to_extra(prev_p, next_p);
- 
- #ifdef CONFIG_XEN_PV
- 	/*
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index bddd6b3cee1d..03b6b4c2238d 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -7,7 +7,6 @@
- #include <linux/export.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
--#include <linux/ptrace.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-@@ -30,6 +29,12 @@
-  *	Implement flush IPI by CALL_FUNCTION_VECTOR, Alex Shi
-  */
- 
-+/*
-+ * Use bit 0 to mangle the TIF_SPEC_IB state into the mm pointer which is
-+ * stored in cpu_tlb_state.last_user_mm_ibpb.
-+ */
-+#define LAST_USER_MM_IBPB	0x1UL
-+
- /*
-  * We get here when we do something requiring a TLB invalidation
-  * but could not go invalidate all of the contexts.  We do the
-@@ -181,17 +186,87 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
- 	}
- }
- 
--static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
-+static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
-+{
-+	unsigned long next_tif = task_thread_info(next)->flags;
-+	unsigned long ibpb = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
-+
-+	return (unsigned long)next->mm | ibpb;
-+}
-+
-+static void cond_ibpb(struct task_struct *next)
- {
-+	if (!next || !next->mm)
-+		return;
-+
- 	/*
--	 * Check if the current (previous) task has access to the memory
--	 * of the @tsk (next) task. If access is denied, make sure to
--	 * issue a IBPB to stop user->user Spectre-v2 attacks.
--	 *
--	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
-+	 * Both, the conditional and the always IBPB mode use the mm
-+	 * pointer to avoid the IBPB when switching between tasks of the
-+	 * same process. Using the mm pointer instead of mm->context.ctx_id
-+	 * opens a hypothetical hole vs. mm_struct reuse, which is more or
-+	 * less impossible to control by an attacker. Aside of that it
-+	 * would only affect the first schedule so the theoretically
-+	 * exposed data is not really interesting.
- 	 */
--	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
--		ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB));
-+	if (static_branch_likely(&switch_mm_cond_ibpb)) {
-+		unsigned long prev_mm, next_mm;
-+
-+		/*
-+		 * This is a bit more complex than the always mode because
-+		 * it has to handle two cases:
-+		 *
-+		 * 1) Switch from a user space task (potential attacker)
-+		 *    which has TIF_SPEC_IB set to a user space task
-+		 *    (potential victim) which has TIF_SPEC_IB not set.
-+		 *
-+		 * 2) Switch from a user space task (potential attacker)
-+		 *    which has TIF_SPEC_IB not set to a user space task
-+		 *    (potential victim) which has TIF_SPEC_IB set.
-+		 *
-+		 * This could be done by unconditionally issuing IBPB when
-+		 * a task which has TIF_SPEC_IB set is either scheduled in
-+		 * or out. Though that results in two flushes when:
-+		 *
-+		 * - the same user space task is scheduled out and later
-+		 *   scheduled in again and only a kernel thread ran in
-+		 *   between.
-+		 *
-+		 * - a user space task belonging to the same process is
-+		 *   scheduled in after a kernel thread ran in between
-+		 *
-+		 * - a user space task belonging to the same process is
-+		 *   scheduled in immediately.
-+		 *
-+		 * Optimize this with reasonably small overhead for the
-+		 * above cases. Mangle the TIF_SPEC_IB bit into the mm
-+		 * pointer of the incoming task which is stored in
-+		 * cpu_tlbstate.last_user_mm_ibpb for comparison.
-+		 */
-+		next_mm = mm_mangle_tif_spec_ib(next);
-+		prev_mm = this_cpu_read(cpu_tlbstate.last_user_mm_ibpb);
-+
-+		/*
-+		 * Issue IBPB only if the mm's are different and one or
-+		 * both have the IBPB bit set.
-+		 */
-+		if (next_mm != prev_mm &&
-+		    (next_mm | prev_mm) & LAST_USER_MM_IBPB)
-+			indirect_branch_prediction_barrier();
-+
-+		this_cpu_write(cpu_tlbstate.last_user_mm_ibpb, next_mm);
-+	}
-+
-+	if (static_branch_unlikely(&switch_mm_always_ibpb)) {
-+		/*
-+		 * Only flush when switching to a user space task with a
-+		 * different context than the user space task which ran
-+		 * last on this CPU.
-+		 */
-+		if (this_cpu_read(cpu_tlbstate.last_user_mm) != next->mm) {
-+			indirect_branch_prediction_barrier();
-+			this_cpu_write(cpu_tlbstate.last_user_mm, next->mm);
-+		}
-+	}
- }
- 
- void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
-@@ -292,22 +367,12 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		new_asid = prev_asid;
- 		need_flush = true;
- 	} else {
--		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
--
- 		/*
- 		 * Avoid user/user BTB poisoning by flushing the branch
- 		 * predictor when switching between processes. This stops
- 		 * one process from doing Spectre-v2 attacks on another.
--		 *
--		 * As an optimization, flush indirect branches only when
--		 * switching into a processes that can't be ptrace by the
--		 * current one (as in such case, attacker has much more
--		 * convenient way how to tamper with the next process than
--		 * branch buffer poisoning).
- 		 */
--		if (static_cpu_has(X86_FEATURE_USE_IBPB) &&
--				ibpb_needed(tsk, last_ctx_id))
--			indirect_branch_prediction_barrier();
-+		cond_ibpb(tsk);
- 
- 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
- 			/*
-@@ -365,14 +430,6 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
- 	}
- 
--	/*
--	 * Record last user mm's context id, so we can avoid
--	 * flushing branch buffer with IBPB if we switch back
--	 * to the same user.
--	 */
--	if (next != &init_mm)
--		this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
--
- 	/* Make sure we write CR3 before loaded_mm. */
- 	barrier();
- 
-@@ -441,7 +498,7 @@ void initialize_tlbstate_and_flush(void)
- 	write_cr3(build_cr3(mm->pgd, 0));
- 
- 	/* Reinitialize tlbstate. */
--	this_cpu_write(cpu_tlbstate.last_ctx_id, mm->context.ctx_id);
-+	this_cpu_write(cpu_tlbstate.last_user_mm_ibpb, LAST_USER_MM_IBPB);
- 	this_cpu_write(cpu_tlbstate.loaded_mm_asid, 0);
- 	this_cpu_write(cpu_tlbstate.next_asid, 1);
- 	this_cpu_write(cpu_tlbstate.ctxs[0].ctx_id, mm->context.ctx_id);
-diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
-index 6c2ffed907f5..de20ede2c5c8 100644
---- a/include/linux/ptrace.h
-+++ b/include/linux/ptrace.h
-@@ -64,15 +64,12 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
- #define PTRACE_MODE_NOAUDIT	0x04
- #define PTRACE_MODE_FSCREDS	0x08
- #define PTRACE_MODE_REALCREDS	0x10
--#define PTRACE_MODE_SCHED	0x20
--#define PTRACE_MODE_IBPB	0x40
- 
- /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
- #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
- #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_REALCREDS)
--#define PTRACE_MODE_SPEC_IBPB (PTRACE_MODE_ATTACH_REALCREDS | PTRACE_MODE_IBPB)
- 
- /**
-  * ptrace_may_access - check whether the caller is permitted to access
-@@ -90,20 +87,6 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
-  */
- extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
- 
--/**
-- * ptrace_may_access - check whether the caller is permitted to access
-- * a target task.
-- * @task: target task
-- * @mode: selects type of access and caller credentials
-- *
-- * Returns true on success, false on denial.
-- *
-- * Similar to ptrace_may_access(). Only to be called from context switch
-- * code. Does not call into audit and the regular LSM hooks due to locking
-- * constraints.
-- */
--extern bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode);
--
- static inline int ptrace_reparented(struct task_struct *child)
- {
- 	return !same_thread_group(child->real_parent, child->parent);
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index a51c13c2b1a0..d607db5fcc6a 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1453,6 +1453,8 @@ static inline bool is_percpu_thread(void)
- #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
- #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
- #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
-+#define PFA_SPEC_IB_DISABLE		5	/* Indirect branch speculation restricted */
-+#define PFA_SPEC_IB_FORCE_DISABLE	6	/* Indirect branch speculation permanently restricted */
- 
- #define TASK_PFA_TEST(name, func)					\
- 	static inline bool task_##func(struct task_struct *p)		\
-@@ -1484,6 +1486,13 @@ TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ssb_disable)
- TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
- TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
- 
-+TASK_PFA_TEST(SPEC_IB_DISABLE, spec_ib_disable)
-+TASK_PFA_SET(SPEC_IB_DISABLE, spec_ib_disable)
-+TASK_PFA_CLEAR(SPEC_IB_DISABLE, spec_ib_disable)
-+
-+TASK_PFA_TEST(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
-+TASK_PFA_SET(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
-+
- static inline void
- current_restore_flags(unsigned long orig_flags, unsigned long flags)
- {
-diff --git a/include/linux/sched/smt.h b/include/linux/sched/smt.h
-new file mode 100644
-index 000000000000..59d3736c454c
---- /dev/null
-+++ b/include/linux/sched/smt.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_SCHED_SMT_H
-+#define _LINUX_SCHED_SMT_H
-+
-+#include <linux/static_key.h>
-+
-+#ifdef CONFIG_SCHED_SMT
-+extern struct static_key_false sched_smt_present;
-+
-+static __always_inline bool sched_smt_active(void)
-+{
-+	return static_branch_likely(&sched_smt_present);
-+}
-+#else
-+static inline bool sched_smt_active(void) { return false; }
-+#endif
-+
-+void arch_smt_update(void);
-+
-+#endif
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index c0d7ea0bf5b6..b17201edfa09 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -212,6 +212,7 @@ struct prctl_mm_map {
- #define PR_SET_SPECULATION_CTRL		53
- /* Speculation control variants */
- # define PR_SPEC_STORE_BYPASS		0
-+# define PR_SPEC_INDIRECT_BRANCH	1
- /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
- # define PR_SPEC_NOT_AFFECTED		0
- # define PR_SPEC_PRCTL			(1UL << 0)
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 3c7f3b4c453c..91d5c38eb7e5 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -10,6 +10,7 @@
- #include <linux/sched/signal.h>
- #include <linux/sched/hotplug.h>
- #include <linux/sched/task.h>
-+#include <linux/sched/smt.h>
- #include <linux/unistd.h>
- #include <linux/cpu.h>
- #include <linux/oom.h>
-@@ -367,6 +368,12 @@ static void lockdep_release_cpus_lock(void)
- 
- #endif	/* CONFIG_HOTPLUG_CPU */
- 
-+/*
-+ * Architectures that need SMT-specific errata handling during SMT hotplug
-+ * should override this.
-+ */
-+void __weak arch_smt_update(void) { }
-+
- #ifdef CONFIG_HOTPLUG_SMT
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
-@@ -1011,6 +1018,7 @@ static int __ref _cpu_down(unsigned int cpu, int tasks_frozen,
- 	 * concurrent CPU hotplug via cpu_add_remove_lock.
- 	 */
- 	lockup_detector_cleanup();
-+	arch_smt_update();
- 	return ret;
- }
- 
-@@ -1139,6 +1147,7 @@ static int _cpu_up(unsigned int cpu, int tasks_frozen, enum cpuhp_state target)
- 	ret = cpuhp_up_callbacks(cpu, st, target);
- out:
- 	cpus_write_unlock();
-+	arch_smt_update();
- 	return ret;
- }
- 
-@@ -2055,12 +2064,6 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
--/*
-- * Architectures that need SMT-specific errata handling during SMT hotplug
-- * should override this.
-- */
--void __weak arch_smt_update(void) { };
--
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 80b34dffdfb9..c2cee9db5204 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -261,9 +261,6 @@ static int ptrace_check_attach(struct task_struct *child, bool ignore_state)
- 
- static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
- {
--	if (mode & PTRACE_MODE_SCHED)
--		return false;
--
- 	if (mode & PTRACE_MODE_NOAUDIT)
- 		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
- 	else
-@@ -331,16 +328,9 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
- 	     !ptrace_has_cap(mm->user_ns, mode)))
- 	    return -EPERM;
- 
--	if (mode & PTRACE_MODE_SCHED)
--		return 0;
- 	return security_ptrace_access_check(task, mode);
- }
- 
--bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode)
--{
--	return __ptrace_may_access(task, mode | PTRACE_MODE_SCHED);
--}
--
- bool ptrace_may_access(struct task_struct *task, unsigned int mode)
- {
- 	int err;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 091e089063be..6fedf3a98581 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5738,15 +5738,10 @@ int sched_cpu_activate(unsigned int cpu)
- 
- #ifdef CONFIG_SCHED_SMT
- 	/*
--	 * The sched_smt_present static key needs to be evaluated on every
--	 * hotplug event because at boot time SMT might be disabled when
--	 * the number of booted CPUs is limited.
--	 *
--	 * If then later a sibling gets hotplugged, then the key would stay
--	 * off and SMT scheduling would never be functional.
-+	 * When going up, increment the number of cores with SMT present.
- 	 */
--	if (cpumask_weight(cpu_smt_mask(cpu)) > 1)
--		static_branch_enable_cpuslocked(&sched_smt_present);
-+	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-+		static_branch_inc_cpuslocked(&sched_smt_present);
- #endif
- 	set_cpu_active(cpu, true);
- 
-@@ -5790,6 +5785,14 @@ int sched_cpu_deactivate(unsigned int cpu)
- 	 */
- 	synchronize_rcu_mult(call_rcu, call_rcu_sched);
- 
-+#ifdef CONFIG_SCHED_SMT
-+	/*
-+	 * When going down, decrement the number of cores with SMT present.
-+	 */
-+	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-+		static_branch_dec_cpuslocked(&sched_smt_present);
-+#endif
-+
- 	if (!sched_smp_initialized)
- 		return 0;
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 618577fc9aa8..4e524ab589c9 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -23,6 +23,7 @@
- #include <linux/sched/prio.h>
- #include <linux/sched/rt.h>
- #include <linux/sched/signal.h>
-+#include <linux/sched/smt.h>
- #include <linux/sched/stat.h>
- #include <linux/sched/sysctl.h>
- #include <linux/sched/task.h>
-@@ -936,9 +937,6 @@ static inline int cpu_of(struct rq *rq)
- 
- 
- #ifdef CONFIG_SCHED_SMT
--
--extern struct static_key_false sched_smt_present;
--
- extern void __update_idle_core(struct rq *rq);
- 
- static inline void update_idle_core(struct rq *rq)
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index a8e7ba9f73e8..6a6be9f440cf 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -236,10 +236,8 @@ ifdef CONFIG_GCOV_KERNEL
- objtool_args += --no-unreachable
- endif
- ifdef CONFIG_RETPOLINE
--ifneq ($(RETPOLINE_CFLAGS),)
-   objtool_args += --retpoline
- endif
--endif
- 
- 
- ifdef CONFIG_MODVERSIONS
-diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
-index c0d7ea0bf5b6..b17201edfa09 100644
---- a/tools/include/uapi/linux/prctl.h
-+++ b/tools/include/uapi/linux/prctl.h
-@@ -212,6 +212,7 @@ struct prctl_mm_map {
- #define PR_SET_SPECULATION_CTRL		53
- /* Speculation control variants */
- # define PR_SPEC_STORE_BYPASS		0
-+# define PR_SPEC_INDIRECT_BRANCH	1
- /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
- # define PR_SPEC_NOT_AFFECTED		0
- # define PR_SPEC_PRCTL			(1UL << 0)
+--CE+1k2dSO48ffgeK--
