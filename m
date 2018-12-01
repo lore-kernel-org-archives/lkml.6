@@ -6,26 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8343FC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 765EFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC7320673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC7320673
+	by mail.kernel.org (Postfix) with ESMTP id 379B42145D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379B42145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbeLAMMR (ORCPT
+        id S1726939AbeLAMLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:12:17 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38158 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeLAMLb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 1 Dec 2018 07:11:31 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37986 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeLAMLa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 07:11:30 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 6DACE28201; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        id D4E6C27467; Fri, 30 Nov 2018 20:00:14 -0500 (EST)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sam Creasey <sammy@sammy.net>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Stephen N Chivers <schivers@csc.com.au>,
@@ -36,89 +37,176 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <da2c77a4a2e6cf8e821f2b21c8b4c38b414d0ae7.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <c722dc9f175e4803f0e48e5170aad1792c168eb8.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 12/14] m68k: mvme147: Handle timer counter overflow
+Subject: [PATCH v4 03/14] m68k: apollo, q40, sun3, sun3x: Remove
+ arch_gettimeoffset implementations
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reading the timer counter races with timer overflow (and the
-corresponding interrupt). This is resolved by reading the overflow
-register and taking this value into account. The interrupt handler
-must clear the overflow register when it eventually executes.
+These dummy implementations are no better than
+default_arch_gettimeoffset() so remove them.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
-TODO: find a spare counter for the clocksource, rather than hanging
-it off the HZ timer.
----
- arch/m68k/include/asm/mvme147hw.h |  1 +
- arch/m68k/mvme147/config.c        | 21 +++++++++++----------
- 2 files changed, 12 insertions(+), 10 deletions(-)
+ arch/m68k/apollo/config.c | 7 -------
+ arch/m68k/q40/config.c    | 9 ---------
+ arch/m68k/sun3/config.c   | 2 --
+ arch/m68k/sun3/intersil.c | 7 -------
+ arch/m68k/sun3x/config.c  | 1 -
+ arch/m68k/sun3x/time.c    | 5 -----
+ arch/m68k/sun3x/time.h    | 1 -
+ 7 files changed, 32 deletions(-)
 
-diff --git a/arch/m68k/include/asm/mvme147hw.h b/arch/m68k/include/asm/mvme147hw.h
-index 7c3dd513128e..257b29184af9 100644
---- a/arch/m68k/include/asm/mvme147hw.h
-+++ b/arch/m68k/include/asm/mvme147hw.h
-@@ -66,6 +66,7 @@ struct pcc_regs {
- #define PCC_INT_ENAB		0x08
+diff --git a/arch/m68k/apollo/config.c b/arch/m68k/apollo/config.c
+index aef8d42e078d..7d168e6dfb01 100644
+--- a/arch/m68k/apollo/config.c
++++ b/arch/m68k/apollo/config.c
+@@ -29,7 +29,6 @@ u_long apollo_model;
  
- #define PCC_TIMER_INT_CLR	0x80
-+#define PCC_TIMER_CLR_OVF	0x04
+ extern void dn_sched_init(irq_handler_t handler);
+ extern void dn_init_IRQ(void);
+-extern u32 dn_gettimeoffset(void);
+ extern int dn_dummy_hwclk(int, struct rtc_time *);
+ extern void dn_dummy_reset(void);
+ #ifdef CONFIG_HEARTBEAT
+@@ -152,7 +151,6 @@ void __init config_apollo(void)
  
- #define PCC_LEVEL_ABORT		0x07
- #define PCC_LEVEL_SERIAL	0x04
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index c44a254e8a8c..545a1fe0e119 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -118,7 +118,7 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- 
- 	local_irq_save(flags);
- 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;
--	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
-+	m147_pcc->t1_cntrl = PCC_TIMER_CLR_OVF;
- 	clk_total += PCC_TIMER_CYCLES;
- 	timer_routine(0, NULL);
- 	local_irq_restore(flags);
-@@ -144,21 +144,22 @@ void mvme147_sched_init (irq_handler_t timer_routine)
- 	clocksource_register_hz(&mvme147_clk, PCC_TIMER_CLOCK_FREQ);
+ 	mach_sched_init=dn_sched_init; /* */
+ 	mach_init_IRQ=dn_init_IRQ;
+-	arch_gettimeoffset   = dn_gettimeoffset;
+ 	mach_max_dma_address = 0xffffffff;
+ 	mach_hwclk           = dn_dummy_hwclk; /* */
+ 	mach_reset	     = dn_dummy_reset;  /* */
+@@ -205,11 +203,6 @@ void dn_sched_init(irq_handler_t timer_routine)
+ 		pr_err("Couldn't register timer interrupt\n");
  }
  
--/* XXX There are race hazards in this code XXX */
- static u64 mvme147_read_clk(struct clocksource *cs)
- {
- 	unsigned long flags;
--	volatile unsigned short *cp = (volatile unsigned short *)0xfffe1012;
--	unsigned short n;
-+	u8 overflow, tmp;
-+	u16 count;
- 	u32 ticks;
- 
- 	local_irq_save(flags);
--	n = *cp;
--	while (n != *cp)
--		n = *cp;
+-u32 dn_gettimeoffset(void)
+-{
+-	return 0xdeadbeef;
+-}
 -
--	n -= PCC_TIMER_PRELOAD;
--	ticks = clk_total + n;
-+	tmp = m147_pcc->t1_cntrl >> 4;
-+	count = m147_pcc->t1_count;
-+	overflow = m147_pcc->t1_cntrl >> 4;
-+	if (overflow != tmp)
-+		count = m147_pcc->t1_count;
-+	count -= PCC_TIMER_PRELOAD;
-+	ticks = count + overflow * PCC_TIMER_CYCLES;
-+	ticks += clk_total;
- 	local_irq_restore(flags);
+ int dn_dummy_hwclk(int op, struct rtc_time *t) {
  
- 	return ticks;
+ 
+diff --git a/arch/m68k/q40/config.c b/arch/m68k/q40/config.c
+index 96810d91da2b..e63eb5f06999 100644
+--- a/arch/m68k/q40/config.c
++++ b/arch/m68k/q40/config.c
+@@ -40,7 +40,6 @@ extern void q40_init_IRQ(void);
+ static void q40_get_model(char *model);
+ extern void q40_sched_init(irq_handler_t handler);
+ 
+-static u32 q40_gettimeoffset(void);
+ static int q40_hwclk(int, struct rtc_time *);
+ static unsigned int q40_get_ss(void);
+ static int q40_get_rtc_pll(struct rtc_pll_info *pll);
+@@ -169,7 +168,6 @@ void __init config_q40(void)
+ 	mach_sched_init = q40_sched_init;
+ 
+ 	mach_init_IRQ = q40_init_IRQ;
+-	arch_gettimeoffset = q40_gettimeoffset;
+ 	mach_hwclk = q40_hwclk;
+ 	mach_get_ss = q40_get_ss;
+ 	mach_get_rtc_pll = q40_get_rtc_pll;
+@@ -201,13 +199,6 @@ int __init q40_parse_bootinfo(const struct bi_record *rec)
+ 	return 1;
+ }
+ 
+-
+-static u32 q40_gettimeoffset(void)
+-{
+-	return 5000 * (ql_ticks != 0) * 1000;
+-}
+-
+-
+ /*
+  * Looks like op is non-zero for setting the clock, and zero for
+  * reading the clock.
+diff --git a/arch/m68k/sun3/config.c b/arch/m68k/sun3/config.c
+index 79a2bb857906..867e68d92c71 100644
+--- a/arch/m68k/sun3/config.c
++++ b/arch/m68k/sun3/config.c
+@@ -37,7 +37,6 @@
+ 
+ char sun3_reserved_pmeg[SUN3_PMEGS_NUM];
+ 
+-extern u32 sun3_gettimeoffset(void);
+ static void sun3_sched_init(irq_handler_t handler);
+ extern void sun3_get_model (char* model);
+ extern int sun3_hwclk(int set, struct rtc_time *t);
+@@ -138,7 +137,6 @@ void __init config_sun3(void)
+         mach_sched_init      =  sun3_sched_init;
+         mach_init_IRQ        =  sun3_init_IRQ;
+         mach_reset           =  sun3_reboot;
+-	arch_gettimeoffset   =  sun3_gettimeoffset;
+ 	mach_get_model	     =  sun3_get_model;
+ 	mach_hwclk           =  sun3_hwclk;
+ 	mach_halt	     =  sun3_halt;
+diff --git a/arch/m68k/sun3/intersil.c b/arch/m68k/sun3/intersil.c
+index d911070af02a..8fc74864de81 100644
+--- a/arch/m68k/sun3/intersil.c
++++ b/arch/m68k/sun3/intersil.c
+@@ -22,13 +22,6 @@
+ #define STOP_VAL (INTERSIL_STOP | INTERSIL_INT_ENABLE | INTERSIL_24H_MODE)
+ #define START_VAL (INTERSIL_RUN | INTERSIL_INT_ENABLE | INTERSIL_24H_MODE)
+ 
+-/* does this need to be implemented? */
+-u32 sun3_gettimeoffset(void)
+-{
+-  return 1000;
+-}
+-
+-
+ /* get/set hwclock */
+ 
+ int sun3_hwclk(int set, struct rtc_time *t)
+diff --git a/arch/m68k/sun3x/config.c b/arch/m68k/sun3x/config.c
+index 33d3a1c6fba0..03ce7f9facfe 100644
+--- a/arch/m68k/sun3x/config.c
++++ b/arch/m68k/sun3x/config.c
+@@ -49,7 +49,6 @@ void __init config_sun3x(void)
+ 	mach_sched_init      = sun3x_sched_init;
+ 	mach_init_IRQ        = sun3_init_IRQ;
+ 
+-	arch_gettimeoffset   = sun3x_gettimeoffset;
+ 	mach_reset           = sun3x_reboot;
+ 
+ 	mach_hwclk           = sun3x_hwclk;
+diff --git a/arch/m68k/sun3x/time.c b/arch/m68k/sun3x/time.c
+index 3c8a86d08508..9163294b0fb6 100644
+--- a/arch/m68k/sun3x/time.c
++++ b/arch/m68k/sun3x/time.c
+@@ -73,11 +73,6 @@ int sun3x_hwclk(int set, struct rtc_time *t)
+ 
+ 	return 0;
+ }
+-/* Not much we can do here */
+-u32 sun3x_gettimeoffset(void)
+-{
+-    return 0L;
+-}
+ 
+ #if 0
+ static irqreturn_t sun3x_timer_tick(int irq, void *dev_id)
+diff --git a/arch/m68k/sun3x/time.h b/arch/m68k/sun3x/time.h
+index 496f406412ad..86ce78bb3c28 100644
+--- a/arch/m68k/sun3x/time.h
++++ b/arch/m68k/sun3x/time.h
+@@ -3,7 +3,6 @@
+ #define SUN3X_TIME_H
+ 
+ extern int sun3x_hwclk(int set, struct rtc_time *t);
+-u32 sun3x_gettimeoffset(void);
+ void sun3x_sched_init(irq_handler_t vector);
+ 
+ struct mostek_dt {
 -- 
 2.18.1
 
