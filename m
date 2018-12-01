@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D6BC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41720C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82E1E20673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:58:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E1E20673
+	by mail.kernel.org (Postfix) with ESMTP id 021DB20645
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021DB20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeLAMJZ (ORCPT
+        id S1726860AbeLAMJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:09:25 -0500
-Received: from anholt.net ([50.246.234.109]:42772 "EHLO anholt.net"
+        Sat, 1 Dec 2018 07:09:32 -0500
+Received: from anholt.net ([50.246.234.109]:42758 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbeLAMJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:09:18 -0500
+        id S1726666AbeLAMJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 07:09:17 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 51CD410A156C;
-        Fri, 30 Nov 2018 16:58:06 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id CE7B910A1570;
+        Fri, 30 Nov 2018 16:58:04 -0800 (PST)
 X-Virus-Scanned: Debian amavisd-new at anholt.net
 Received: from anholt.net ([127.0.0.1])
         by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 30Y7l-K5haQs; Fri, 30 Nov 2018 16:58:05 -0800 (PST)
+        with LMTP id Gf_0sOPTBtFc; Fri, 30 Nov 2018 16:58:03 -0800 (PST)
 Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 3F01010A1572;
-        Fri, 30 Nov 2018 16:58:01 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id 6E8AA10A1218;
+        Fri, 30 Nov 2018 16:58:00 -0800 (PST)
 Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 77E2D2FE36F1; Fri, 30 Nov 2018 16:57:59 -0800 (PST)
+        id 626372FE2D16; Fri, 30 Nov 2018 16:57:59 -0800 (PST)
 From:   Eric Anholt <eric@anholt.net>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-kernel@vger.kernel.org,
         Dave Emett <david.emett@broadcom.com>,
         Thomas Spurden <thomas.spurden@broadcom.com>,
         Eric Anholt <eric@anholt.net>
-Subject: [PATCH 6/6] drm/v3d: Add missing fence timeline name for TFU.
-Date:   Fri, 30 Nov 2018 16:57:59 -0800
-Message-Id: <20181201005759.28093-6-eric@anholt.net>
+Subject: [PATCH 2/6] drm/v3d: Drop unused v3d_flush_caches().
+Date:   Fri, 30 Nov 2018 16:57:55 -0800
+Message-Id: <20181201005759.28093-2-eric@anholt.net>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181201005759.28093-1-eric@anholt.net>
 References: <20181201005759.28093-1-eric@anholt.net>
@@ -53,37 +53,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We shouldn't be returning v3d-render in for our new queue.
+Now that I've specified how the end-of-pipeline flushing should work,
+we're never going to use this function.
 
 Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 83d5139982db ("drm/v3d: Add support for submitting jobs to the TFU.")
 ---
- drivers/gpu/drm/v3d/v3d_fence.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/v3d/v3d_drv.h |  1 -
+ drivers/gpu/drm/v3d/v3d_gem.c | 21 ---------------------
+ 2 files changed, 22 deletions(-)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_fence.c b/drivers/gpu/drm/v3d/v3d_fence.c
-index 50bfcf9a8a1a..b0a2a1ae2eb1 100644
---- a/drivers/gpu/drm/v3d/v3d_fence.c
-+++ b/drivers/gpu/drm/v3d/v3d_fence.c
-@@ -29,10 +29,16 @@ static const char *v3d_fence_get_timeline_name(struct dma_fence *fence)
- {
- 	struct v3d_fence *f = to_v3d_fence(fence);
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+index bcd3d567bec2..239b56d76f3e 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.h
++++ b/drivers/gpu/drm/v3d/v3d_drv.h
+@@ -314,7 +314,6 @@ void v3d_exec_put(struct v3d_exec_info *exec);
+ void v3d_tfu_job_put(struct v3d_tfu_job *exec);
+ void v3d_reset(struct v3d_dev *v3d);
+ void v3d_invalidate_caches(struct v3d_dev *v3d);
+-void v3d_flush_caches(struct v3d_dev *v3d);
  
--	if (f->queue == V3D_BIN)
-+	switch (f->queue) {
-+	case V3D_BIN:
- 		return "v3d-bin";
--	else
-+	case V3D_RENDER:
- 		return "v3d-render";
-+	case V3D_TFU:
-+		return "v3d-tfu";
-+	default:
-+		return NULL;
-+	}
+ /* v3d_irq.c */
+ void v3d_irq_init(struct v3d_dev *v3d);
+diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+index 8b4af512450f..34103205b7cb 100644
+--- a/drivers/gpu/drm/v3d/v3d_gem.c
++++ b/drivers/gpu/drm/v3d/v3d_gem.c
+@@ -175,20 +175,6 @@ v3d_invalidate_slices(struct v3d_dev *v3d, int core)
+ 		       V3D_SET_FIELD(0xf, V3D_SLCACTL_ICC));
  }
  
- const struct dma_fence_ops v3d_fence_ops = {
+-/* Invalidates texture L2 cachelines */
+-static void
+-v3d_invalidate_l2t(struct v3d_dev *v3d, int core)
+-{
+-	V3D_CORE_WRITE(core,
+-		       V3D_CTL_L2TCACTL,
+-		       V3D_L2TCACTL_L2TFLS |
+-		       V3D_SET_FIELD(V3D_L2TCACTL_FLM_CLEAR, V3D_L2TCACTL_FLM));
+-	if (wait_for(!(V3D_CORE_READ(core, V3D_CTL_L2TCACTL) &
+-		       V3D_L2TCACTL_L2TFLS), 100)) {
+-		DRM_ERROR("Timeout waiting for L2T invalidate\n");
+-	}
+-}
+-
+ void
+ v3d_invalidate_caches(struct v3d_dev *v3d)
+ {
+@@ -199,13 +185,6 @@ v3d_invalidate_caches(struct v3d_dev *v3d)
+ 	v3d_flush_l2t(v3d, 0);
+ }
+ 
+-void
+-v3d_flush_caches(struct v3d_dev *v3d)
+-{
+-	v3d_invalidate_l1td(v3d, 0);
+-	v3d_invalidate_l2t(v3d, 0);
+-}
+-
+ static void
+ v3d_attach_object_fences(struct v3d_bo **bos, int bo_count,
+ 			 struct dma_fence *fence)
 -- 
 2.20.0.rc1
 
