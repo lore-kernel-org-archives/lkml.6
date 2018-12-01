@@ -2,394 +2,179 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12923C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE88C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C53EB2146F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:24:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EvcjffN/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C53EB2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7088920834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7088920834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbeLBBg4 (ORCPT
+        id S1726889AbeLBBiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 20:36:56 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44538 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbeLBBg4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 20:36:56 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k8so4220876pls.11;
-        Sat, 01 Dec 2018 06:24:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sRQJFeKwcT7e6SsQ8SngzjCV6HOa8md7Jsafg2hqBnE=;
-        b=EvcjffN/Xu6OHbcgraUM4SB7a7iWZstLBpdtsEovYLL5L/Oa7R+pHtmMqxKKphIQFU
-         T8xqmTDqCQCQmM8fw/iS7QIpPIej2xQtsuwxf+hPXEJbe07wt/t8l9tmfX05Q2CV2fmX
-         m6DGYd/txSQKiJaVS/l3DvhzQh3ToVqeq3+lfNXmhHcahrHrhozWYM0Iu6VF1JLTfjvv
-         denqZSDT3lj5RCBGxPxEw01eVkYkVfYf6aQpRV5MLUuUJkuoQlqvtwK+gX31n3PBcWa0
-         cilL3/XLeYyIzL40/jzesIAXwGeiuBVgjVd0P2gmYkwzJPX32KpesfsMP9kzCUU9pNyp
-         jPgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sRQJFeKwcT7e6SsQ8SngzjCV6HOa8md7Jsafg2hqBnE=;
-        b=rh2yFdTbe+y6ZM54Pdzt93PDnDk7/S/3i9V0+fAk5HBGkn5Pu1+RM2p69M5clv+Le+
-         qWKbjN9lzdq1GF9jcA2EEKfT9bqXRiUZW9+aj9iK+thINJ6Z22Qb9Ue5+WNqwaqQma5D
-         ub0O/DB2PxEr3M3f4RV+dE0Ywep0K2XmBbH6lg57oJIBfveeq2HSWFSGPvVCReBuQRke
-         4ue6I8mrcXFA9bMir4EzPT6Sd2fAKf6SZSFN/rtTQ/m2KSEhvkf7jn5OtPnLBGP8ny7j
-         A4apXEa97Z5s3BjpbZG6zIN6niuXNAmO8zGaDT8VVTWTB9tPk7B0p12/D01w/Zun40b5
-         utAg==
-X-Gm-Message-State: AA+aEWYUnRiL1uayn4lWFCRVlBd2QbkNKiMX5RGLdWy4gISMEnyPhrBn
-        TiNbPKSEuvHHwsVzW0BBRek=
-X-Google-Smtp-Source: AFSGD/XXJB1GvG5h5EvD9nsFPEPKnikYthIWrF+dMenB0oglR9y2AFY0zgnCf8XEJa73Zwtbu65yXA==
-X-Received: by 2002:a17:902:33c1:: with SMTP id b59mr9392688plc.220.1543674258592;
-        Sat, 01 Dec 2018 06:24:18 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id y29sm13322924pga.59.2018.12.01.06.24.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Dec 2018 06:24:17 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     ed.cashin@acm.org, axboe@kernel.dk, philipp.reisner@linbit.com,
-        lars.ellenberg@linbit.com, josef@toxicpanda.com,
-        linux-block@vger.kernel.org, josh.h.morris@us.ibm.com,
-        pjk1939@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH v2] block: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Sat,  1 Dec 2018 09:24:14 -0500
-Message-Id: <20181201142414.7766-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 1 Dec 2018 20:38:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34766 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726458AbeLBBiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 20:38:19 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2145537E60;
+        Sat,  1 Dec 2018 14:25:42 +0000 (UTC)
+Received: from treble (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE01F67662;
+        Sat,  1 Dec 2018 14:25:40 +0000 (UTC)
+Date:   Sat, 1 Dec 2018 08:25:38 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>
+Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
+Message-ID: <20181201142538.tuxabm2sy2xtrfuq@treble>
+References: <20181018005420.82993-1-namit@vmware.com>
+ <20181128160849.epmoto4o5jaxxxol@treble>
+ <9EACED43-EC21-41FB-BFAC-4E98C3842FD9@vmware.com>
+ <20181129003837.6lgxsnhoyipkebmz@treble>
+ <CALCETrUfC37TxuYLgqbN3_pZ1RzfpV03byKMpSt87o+JHtk6FQ@mail.gmail.com>
+ <0E75C656-18BF-4967-98A3-35E0BD83D603@vmware.com>
+ <4CD1975E-3B15-4B9C-B2A9-2E5F72E1D95F@amacapital.net>
+ <CALCETrWN5QenBqNpLZ3EWEF2XFje3HGubzck4AEFePCspM6mGQ@mail.gmail.com>
+ <20181129151906.owxeef2e3cm4nn2y@treble>
+ <EEB5784B-A85E-47E9-8CB5-1560E58E87C6@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <EEB5784B-A85E-47E9-8CB5-1560E58E87C6@vmware.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sat, 01 Dec 2018 14:25:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On Sat, Dec 01, 2018 at 06:52:45AM +0000, Nadav Amit wrote:
+> > On Nov 29, 2018, at 7:19 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > 
+> > On Wed, Nov 28, 2018 at 10:06:52PM -0800, Andy Lutomirski wrote:
+> >> On Wed, Nov 28, 2018 at 7:24 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> >>> On Nov 28, 2018, at 6:06 PM, Nadav Amit <namit@vmware.com> wrote:
+> >>> 
+> >>>>> On Nov 28, 2018, at 5:40 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> >>>>> 
+> >>>>>> On Wed, Nov 28, 2018 at 4:38 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >>>>>> On Wed, Nov 28, 2018 at 07:34:52PM +0000, Nadav Amit wrote:
+> >>>>>>>> On Nov 28, 2018, at 8:08 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >>>>>>>> 
+> >>>>>>>>> On Wed, Oct 17, 2018 at 05:54:15PM -0700, Nadav Amit wrote:
+> >>>>>>>>> This RFC introduces indirect call promotion in runtime, which for the
+> >>>>>>>>> matter of simplification (and branding) will be called here "relpolines"
+> >>>>>>>>> (relative call + trampoline). Relpolines are mainly intended as a way
+> >>>>>>>>> of reducing retpoline overheads due to Spectre v2.
+> >>>>>>>>> 
+> >>>>>>>>> Unlike indirect call promotion through profile guided optimization, the
+> >>>>>>>>> proposed approach does not require a profiling stage, works well with
+> >>>>>>>>> modules whose address is unknown and can adapt to changing workloads.
+> >>>>>>>>> 
+> >>>>>>>>> The main idea is simple: for every indirect call, we inject a piece of
+> >>>>>>>>> code with fast- and slow-path calls. The fast path is used if the target
+> >>>>>>>>> matches the expected (hot) target. The slow-path uses a retpoline.
+> >>>>>>>>> During training, the slow-path is set to call a function that saves the
+> >>>>>>>>> call source and target in a hash-table and keep count for call
+> >>>>>>>>> frequency. The most common target is then patched into the hot path.
+> >>>>>>>>> 
+> >>>>>>>>> The patching is done on-the-fly by patching the conditional branch
+> >>>>>>>>> (opcode and offset) that is used to compare the target to the hot
+> >>>>>>>>> target. This allows to direct all cores to the fast-path, while patching
+> >>>>>>>>> the slow-path and vice-versa. Patching follows 2 more rules: (1) Only
+> >>>>>>>>> patch a single byte when the code might be executed by any core. (2)
+> >>>>>>>>> When patching more than one byte, ensure that all cores do not run the
+> >>>>>>>>> to-be-patched-code by preventing this code from being preempted, and
+> >>>>>>>>> using synchronize_sched() after patching the branch that jumps over this
+> >>>>>>>>> code.
+> >>>>>>>>> 
+> >>>>>>>>> Changing all the indirect calls to use relpolines is done using assembly
+> >>>>>>>>> macro magic. There are alternative solutions, but this one is
+> >>>>>>>>> relatively simple and transparent. There is also logic to retrain the
+> >>>>>>>>> software predictor, but the policy it uses may need to be refined.
+> >>>>>>>>> 
+> >>>>>>>>> Eventually the results are not bad (2 VCPU VM, throughput reported):
+> >>>>>>>>> 
+> >>>>>>>>>         base            relpoline
+> >>>>>>>>>         ----            ---------
+> >>>>>>>>> nginx      22898           25178 (+10%)
+> >>>>>>>>> redis-ycsb 24523           25486 (+4%)
+> >>>>>>>>> dbench     2144            2103 (+2%)
+> >>>>>>>>> 
+> >>>>>>>>> When retpolines are disabled, and if retraining is off, performance
+> >>>>>>>>> benefits are up to 2% (nginx), but are much less impressive.
+> >>>>>>>> 
+> >>>>>>>> Hi Nadav,
+> >>>>>>>> 
+> >>>>>>>> Peter pointed me to these patches during a discussion about retpoline
+> >>>>>>>> profiling.  Personally, I think this is brilliant.  This could help
+> >>>>>>>> networking and filesystem intensive workloads a lot.
+> >>>>>>> 
+> >>>>>>> Thanks! I was a bit held-back by the relatively limited number of responses.
+> >>>>>> 
+> >>>>>> It is a rather, erm, ambitious idea, maybe they were speechless :-)
+> >>>>>> 
+> >>>>>>> I finished another version two weeks ago, and every day I think: "should it
+> >>>>>>> be RFCv2 or v1”, ending up not sending it…
+> >>>>>>> 
+> >>>>>>> There is one issue that I realized while working on the new version: I’m not
+> >>>>>>> sure it is well-defined what an outline retpoline is allowed to do. The
+> >>>>>>> indirect branch promotion code can change rflags, which might cause
+> >>>>>>> correction issues. In practice, using gcc, it is not a problem.
+> >>>>>> 
+> >>>>>> Callees can clobber flags, so it seems fine to me.
+> >>>>> 
+> >>>>> Just to check I understand your approach right: you made a macro
+> >>>>> called "call", and you're therefore causing all instances of "call" to
+> >>>>> become magic?  This is... terrifying.  It's even plausibly worse than
+> >>>>> "#define if" :)  The scariest bit is that it will impact inline asm as
+> >>>>> well.  Maybe a gcc plugin would be less alarming?
+> >>>> 
+> >>>> It is likely to look less alarming. When I looked at the inline retpoline
+> >>>> implementation of gcc, it didn’t look much better than what I did - it
+> >>>> basically just emits assembly instructions.
+> >>> 
+> >>> To be clear, that wasn’t a NAK.  It was merely a “this is alarming.”
+> >> 
+> >> Although... how do you avoid matching on things that really don't want
+> >> this treatment?  paravirt ops come to mind.
+> > 
+> > Paravirt ops don't use retpolines because they're patched into direct
+> > calls during boot.  So Nadav's patches won't touch them.
+> 
+> Actually, the way it’s handled is slightly more complicated - yes, the CALL
+> macro should not be applied, as Josh said, but the question is how it is
+> achieved.
+> 
+> The basic idea is that the CALL macro should only be applied to C
+> source-files and not to assembly files and for macros.s, which holds the PV
+> call macros. I will recheck it is done this way.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
-changes in v2:
--Modify some function names to avoid compilation errors
----
- drivers/block/aoe/aoeblk.c        | 16 +++-----------
- drivers/block/drbd/drbd_debugfs.c | 13 +----------
- drivers/block/nbd.c               | 28 ++++--------------------
- drivers/block/pktcdvd.c           | 36 +++++++++++--------------------
- drivers/block/rsxx/core.c         | 35 ++++++------------------------
- 5 files changed, 26 insertions(+), 102 deletions(-)
+Even if the CALL macro were applied, it would get ignored by your code
+because the PARAVIRT_CALL macro doesn't use retpolines.  So it would get
+skipped by this check:
 
-diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
-index ed26b7287256..5d2be31ac7f8 100644
---- a/drivers/block/aoe/aoeblk.c
-+++ b/drivers/block/aoe/aoeblk.c
-@@ -110,7 +110,7 @@ static ssize_t aoedisk_show_payload(struct device *dev,
- 	return snprintf(page, PAGE_SIZE, "%lu\n", d->maxbcnt);
- }
- 
--static int aoedisk_debugfs_show(struct seq_file *s, void *ignored)
-+static int aoe_show(struct seq_file *s, void *ignored)
- {
- 	struct aoedev *d;
- 	struct aoetgt **t, **te;
-@@ -154,11 +154,6 @@ static int aoedisk_debugfs_show(struct seq_file *s, void *ignored)
- 	return 0;
- }
- 
--static int aoe_debugfs_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, aoedisk_debugfs_show, inode->i_private);
--}
--
- static DEVICE_ATTR(state, 0444, aoedisk_show_state, NULL);
- static DEVICE_ATTR(mac, 0444, aoedisk_show_mac, NULL);
- static DEVICE_ATTR(netif, 0444, aoedisk_show_netif, NULL);
-@@ -186,12 +181,7 @@ static const struct attribute_group *aoe_attr_groups[] = {
- 	NULL,
- };
- 
--static const struct file_operations aoe_debugfs_fops = {
--	.open = aoe_debugfs_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(aoe);
- 
- static void
- aoedisk_add_debugfs(struct aoedev *d)
-@@ -208,7 +198,7 @@ aoedisk_add_debugfs(struct aoedev *d)
- 		p++;
- 	BUG_ON(*p == '\0');
- 	entry = debugfs_create_file(p, 0444, aoe_debugfs_dir, d,
--				    &aoe_debugfs_fops);
-+				    &aoe_fops);
- 	if (IS_ERR_OR_NULL(entry)) {
- 		pr_info("aoe: cannot create debugfs file for %s\n",
- 			d->gd->disk_name);
-diff --git a/drivers/block/drbd/drbd_debugfs.c b/drivers/block/drbd/drbd_debugfs.c
-index 5d5e8d6a8a56..e46c198c2e6a 100644
---- a/drivers/block/drbd/drbd_debugfs.c
-+++ b/drivers/block/drbd/drbd_debugfs.c
-@@ -892,18 +892,7 @@ static int drbd_version_show(struct seq_file *m, void *ignored)
- 	return 0;
- }
- 
--static int drbd_version_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, drbd_version_show, NULL);
--}
--
--static const struct file_operations drbd_version_fops = {
--	.owner = THIS_MODULE,
--	.open = drbd_version_open,
--	.llseek = seq_lseek,
--	.read = seq_read,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(drbd_version);
- 
- /* not __exit, may be indirectly called
-  * from the module-load-failure path as well. */
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 4d4d6129ff66..415473cc3b7e 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1399,17 +1399,7 @@ static int nbd_dbg_tasks_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int nbd_dbg_tasks_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, nbd_dbg_tasks_show, inode->i_private);
--}
--
--static const struct file_operations nbd_dbg_tasks_ops = {
--	.open = nbd_dbg_tasks_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(nbd_dbg_tasks);
- 
- static int nbd_dbg_flags_show(struct seq_file *s, void *unused)
- {
-@@ -1434,17 +1424,7 @@ static int nbd_dbg_flags_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int nbd_dbg_flags_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, nbd_dbg_flags_show, inode->i_private);
--}
--
--static const struct file_operations nbd_dbg_flags_ops = {
--	.open = nbd_dbg_flags_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(nbd_dbg_flags);
- 
- static int nbd_dev_dbg_init(struct nbd_device *nbd)
- {
-@@ -1462,11 +1442,11 @@ static int nbd_dev_dbg_init(struct nbd_device *nbd)
- 	}
- 	config->dbg_dir = dir;
- 
--	debugfs_create_file("tasks", 0444, dir, nbd, &nbd_dbg_tasks_ops);
-+	debugfs_create_file("tasks", 0444, dir, nbd, &nbd_dbg_tasks_fops);
- 	debugfs_create_u64("size_bytes", 0444, dir, &config->bytesize);
- 	debugfs_create_u32("timeout", 0444, dir, &nbd->tag_set.timeout);
- 	debugfs_create_u64("blocksize", 0444, dir, &config->blksize);
--	debugfs_create_file("flags", 0444, dir, nbd, &nbd_dbg_flags_ops);
-+	debugfs_create_file("flags", 0444, dir, nbd, &nbd_dbg_flags_fops);
- 
- 	return 0;
- }
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 9381f4e3b221..2db2ac47d87d 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -106,7 +106,7 @@ static struct dentry	*pkt_debugfs_root = NULL; /* /sys/kernel/debug/pktcdvd */
- /* forward declaration */
- static int pkt_setup_dev(dev_t dev, dev_t* pkt_dev);
- static int pkt_remove_dev(dev_t pkt_dev);
--static int pkt_seq_show(struct seq_file *m, void *p);
-+static int pkt_debugfs_show(struct seq_file *m, void *p);
- 
- static sector_t get_zone(sector_t sector, struct pktcdvd_device *pd)
- {
-@@ -452,23 +452,7 @@ static void pkt_sysfs_cleanup(void)
- 
-  *******************************************************************/
- 
--static int pkt_debugfs_seq_show(struct seq_file *m, void *p)
--{
--	return pkt_seq_show(m, p);
--}
--
--static int pkt_debugfs_fops_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pkt_debugfs_seq_show, inode->i_private);
--}
--
--static const struct file_operations debug_fops = {
--	.open		= pkt_debugfs_fops_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--	.owner		= THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(pkt_debugfs);
- 
- static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
- {
-@@ -479,7 +463,8 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
- 		return;
- 
- 	pd->dfs_f_info = debugfs_create_file("info", 0444,
--					     pd->dfs_d_root, pd, &debug_fops);
-+					     pd->dfs_d_root, pd,
-+					     &pkt_debugfs_fops);
- }
- 
- static void pkt_debugfs_dev_remove(struct pktcdvd_device *pd)
-@@ -2501,7 +2486,7 @@ static void pkt_init_queue(struct pktcdvd_device *pd)
- 	q->queuedata = pd;
- }
- 
--static int pkt_seq_show(struct seq_file *m, void *p)
-+static int pkt_debugfs_show(struct seq_file *m, void *p)
- {
- 	struct pktcdvd_device *pd = m->private;
- 	char *msg;
-@@ -2617,7 +2602,7 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 		goto out_mem;
- 	}
- 
--	proc_create_single_data(pd->name, 0, pkt_proc, pkt_seq_show, pd);
-+	proc_create_single_data(pd->name, 0, pkt_proc, pkt_debugfs_show, pd);
- 	pkt_dbg(1, pd, "writer mapped to %s\n", bdevname(bdev, b));
- 	return 0;
- 
-@@ -2628,7 +2613,8 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 	return ret;
- }
- 
--static int pkt_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd, unsigned long arg)
-+static int pkt_ioctl(struct block_device *bdev, fmode_t mode,
-+		     unsigned int cmd, unsigned long arg)
- {
- 	struct pktcdvd_device *pd = bdev->bd_disk->private_data;
- 	int ret;
-@@ -2861,7 +2847,8 @@ static void pkt_get_status(struct pkt_ctrl_command *ctrl_cmd)
- 	mutex_unlock(&ctl_mutex);
- }
- 
--static long pkt_ctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+static long pkt_ctl_ioctl(struct file *file, unsigned int cmd,
-+			  unsigned long arg)
- {
- 	void __user *argp = (void __user *)arg;
- 	struct pkt_ctrl_command ctrl_cmd;
-@@ -2899,7 +2886,8 @@ static long pkt_ctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg
- }
- 
- #ifdef CONFIG_COMPAT
--static long pkt_ctl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+static long pkt_ctl_compat_ioctl(struct file *file, unsigned int cmd,
-+				  unsigned long arg)
- {
- 	return pkt_ctl_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
- }
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index 0cf4509d575c..b02886cbd0d1 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -61,7 +61,7 @@ static DEFINE_IDA(rsxx_disk_ida);
- 
- /* --------------------Debugfs Setup ------------------- */
- 
--static int rsxx_attr_pci_regs_show(struct seq_file *m, void *p)
-+static int pci_regs_show(struct seq_file *m, void *p)
- {
- 	struct rsxx_cardinfo *card = m->private;
- 
-@@ -123,7 +123,7 @@ static int rsxx_attr_pci_regs_show(struct seq_file *m, void *p)
- 	return 0;
- }
- 
--static int rsxx_attr_stats_show(struct seq_file *m, void *p)
-+static int stats_show(struct seq_file *m, void *p)
- {
- 	struct rsxx_cardinfo *card = m->private;
- 	int i;
-@@ -164,16 +164,6 @@ static int rsxx_attr_stats_show(struct seq_file *m, void *p)
- 	return 0;
- }
- 
--static int rsxx_attr_stats_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, rsxx_attr_stats_show, inode->i_private);
--}
--
--static int rsxx_attr_pci_regs_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, rsxx_attr_pci_regs_show, inode->i_private);
--}
--
- static ssize_t rsxx_cram_read(struct file *fp, char __user *ubuf,
- 			      size_t cnt, loff_t *ppos)
- {
-@@ -220,21 +210,8 @@ static const struct file_operations debugfs_cram_fops = {
- 	.write		= rsxx_cram_write,
- };
- 
--static const struct file_operations debugfs_stats_fops = {
--	.owner		= THIS_MODULE,
--	.open		= rsxx_attr_stats_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations debugfs_pci_regs_fops = {
--	.owner		= THIS_MODULE,
--	.open		= rsxx_attr_pci_regs_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(stats);
-+DEFINE_SHOW_ATTRIBUTE(pci_regs);
- 
- static void rsxx_debugfs_dev_new(struct rsxx_cardinfo *card)
- {
-@@ -248,13 +225,13 @@ static void rsxx_debugfs_dev_new(struct rsxx_cardinfo *card)
- 
- 	debugfs_stats = debugfs_create_file("stats", 0444,
- 					    card->debugfs_dir, card,
--					    &debugfs_stats_fops);
-+					    &stats_fops);
- 	if (IS_ERR_OR_NULL(debugfs_stats))
- 		goto failed_debugfs_stats;
- 
- 	debugfs_pci_regs = debugfs_create_file("pci_regs", 0444,
- 					       card->debugfs_dir, card,
--					       &debugfs_pci_regs_fops);
-+					       &pci_regs_fops);
- 	if (IS_ERR_OR_NULL(debugfs_pci_regs))
- 		goto failed_debugfs_pci_regs;
- 
+.ifc "\v", "__x86_indirect_thunk_\reg_it"
+	relpoline_call reg=\reg_it
+	retpoline = 1
+.endif
+
 -- 
-2.17.0
-
+Josh
