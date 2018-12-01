@@ -5,53 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AA5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BE0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E3B20660
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:55:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E3B20660
+	by mail.kernel.org (Postfix) with ESMTP id 98C1B20660
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98C1B20660
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbeLAOG1 (ORCPT
+        id S1726857AbeLAOG1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 1 Dec 2018 09:06:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44010 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:43992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbeLAOG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726424AbeLAOG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 1 Dec 2018 09:06:27 -0500
-Subject: Re: [GIT PULL] arm64 fixes for 4.20-rc5
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 078F52146D
+Subject: Re: [GIT PULL] gcc-plugins fix for v4.20-rc5
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C244020660
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=pr-tracker-bot@kernel.org
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181130185455.GA24239@arrakis.emea.arm.com>
-References: <20181130185455.GA24239@arrakis.emea.arm.com>
+In-Reply-To: <20181130171846.GA48303@beast>
+References: <20181130171846.GA48303@beast>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181130185455.GA24239@arrakis.emea.arm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
-X-PR-Tracked-Commit-Id: ea2412dc21cc790335d319181dddc43682aef164
+X-PR-Tracked-Message-Id: <20181130171846.GA48303@beast>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+ tags/gcc-plugins-v4.20-rc5
+X-PR-Tracked-Commit-Id: ef1a8409348966f0b25ff97a170d6d0367710ea9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 868dda00b98ccc701a70b8c1b0168fc3bbfd595d
-Message-Id: <20181201025502.16477.66940.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 01 Dec 2018 02:55:02 +0000
-To:     Catalin Marinas <catalin.marinas@arm.com>
+X-PR-Merge-Commit-Id: 1f817429b2ddc08f5c92a5b83d0f303f1e0d1bd4
+Message-Id: <20181201025501.16477.32411.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Sat, 01 Dec 2018 02:55:01 +0000
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org,
+        Alexander Popov <alex.popov@linux.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 30 Nov 2018 18:54:57 +0000:
+The pull request you sent on Fri, 30 Nov 2018 09:18:46 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/gcc-plugins-v4.20-rc5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/868dda00b98ccc701a70b8c1b0168fc3bbfd595d
+https://git.kernel.org/torvalds/c/1f817429b2ddc08f5c92a5b83d0f303f1e0d1bd4
 
 Thank you!
 
