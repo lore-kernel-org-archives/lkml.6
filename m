@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5700FC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AC0C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19F6820673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56FCA20673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:54:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HLEX+LOL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F6820673
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Yq+XJ2lo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56FCA20673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbeLAMEm (ORCPT
+        id S1726796AbeLAMEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:04:42 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46224 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbeLAMEm (ORCPT
+        Sat, 1 Dec 2018 07:04:40 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44630 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeLAMEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:04:42 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w7so3190722pgp.13
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 16:53:30 -0800 (PST)
+        Sat, 1 Dec 2018 07:04:40 -0500
+Received: by mail-pl1-f193.google.com with SMTP id k8so3578456pls.11
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 16:53:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kWrCM77WkjJNs0uHmwXhClZRMn7AWk6Q6pGsnoalkDY=;
-        b=HLEX+LOLmxw8EYZlBga+1D1IQ4/kpgdTGf48q6/1PBACScqMRuAnWOCmZQZn1QS4sz
-         w6v1NbOSovg49iDMr8QqoPLY3pqtIxxbAoDwfpkRX+DdmvdHf1gH5Sl+Vs5NWXyO8QkI
-         CutI/ZHRK3sQQ5aNfttrVt5AoatCFJAVwmwyQ=
+        bh=ob9vpSU1+1nD+bwLCyctkKfXPK21XNBnKf3G59AN/2s=;
+        b=Yq+XJ2loJ4NwndoutH7UWBG5NADYr5m4oS/Cxl0NZgaxgrgDPmwkHvTpCZ68s9wsRt
+         Pi/gvFfYPeCuM5gxJNQj//1FGBq/GD6cNf2S1hr3mOK87kpqsv2t9U5kjxpsyg0govC9
+         QUCSHIlW8fRGhg/5SkePOOTBj1YtFYd0yTjjg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kWrCM77WkjJNs0uHmwXhClZRMn7AWk6Q6pGsnoalkDY=;
-        b=Ih6W5sHPKjeX7kbH1fc7ROCRau27DkMahLZHA7sfTBZ78D34qk+i1lzxVjEaA25M+R
-         UmO08BG7XiBa+lKGCWHqvMGBggWAl/02jy/M6wAGfBPe/JJdgz55YMyv5DVcttvmbmAP
-         GauatB7livuA7RnoUvFu77e6qHbx2JKIYLlZWknSycUxMO+xICdGyQ4rl61D+avlEE1b
-         Zqd1KVfWdw2jSSj/0nA8cSJmSDJJ9GKW6qqb+TP/HS07bUbkh9Q6xIfYpupwv6fVrpu7
-         JgtpPu8pmqtdPY5aLO9o89MmnHsW4SVDaXailt78pfmMOXjfxGevQ0AW7IVOf6i5P5Kr
-         NKug==
-X-Gm-Message-State: AA+aEWZp/juP40jtcJxVPXOX1b+pyIiaF+L7P0h2zVq+3Bpr6i96jEhJ
-        k8Mu8N9vtC+eeBKEM1rkAgBfYg==
-X-Google-Smtp-Source: AFSGD/WKbOJth2zgfWP4ngfPgpRi4fxDd1si6+gja5iW3oMIK9BioglwnKqp4zoO011+lIA/V2aIFQ==
-X-Received: by 2002:a63:8d44:: with SMTP id z65mr6610004pgd.57.1543625610226;
-        Fri, 30 Nov 2018 16:53:30 -0800 (PST)
+        bh=ob9vpSU1+1nD+bwLCyctkKfXPK21XNBnKf3G59AN/2s=;
+        b=bTgTAxA70mbECm8f2gwMo9CHVys3x7ZgGwbzLmIedEdxiZGcVaRzIFsHr8Jr3Mz62Q
+         N9syzxif/McKpLAs9Hpwtcnu90IyJvbydDyqep8kg+MVeKGedjxZ4WlfKnJfyNtMEgri
+         0nQ+mZ1cxRS5TLCA3VjTPImwa698AFj3qvNOPbtfFeRtmllA1bfu87eccD6uoCDkegLx
+         iZrPeW5Q/KmkTAYvXDyD7pzH36yt0R2hv9JqTQw17GVyJNveU41QN3X0J2QuAiX59jlE
+         5CpXEMY+5WKoFPK9ugONBErBmXoddr42gOVmq/5W0yV1mRwQHcuXnzGuGwfT92ESG3js
+         Ew0A==
+X-Gm-Message-State: AA+aEWYHFPFBtDhLcca7IRzsnPLB/SoHFP8xhvvScfwKPgRYvEZOf63T
+        2pABh5qwonWhnY5Qopv0ytbmBw==
+X-Google-Smtp-Source: AFSGD/WtbMF0k4XF3B4vC1zfgQMAbMscvD5azipj2OxsD80IfS1cZ8H+DgsYI+kdKY6i9S/A1JAA3Q==
+X-Received: by 2002:a17:902:bcc7:: with SMTP id o7mr7849325pls.281.1543625608053;
+        Fri, 30 Nov 2018 16:53:28 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id z8sm16518566pgz.53.2018.11.30.16.53.29
+        by smtp.gmail.com with ESMTPSA id z8sm16518566pgz.53.2018.11.30.16.53.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 16:53:29 -0800 (PST)
+        Fri, 30 Nov 2018 16:53:27 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
@@ -71,9 +71,9 @@ Cc:     Archit Taneja <architt@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 5/8] drm/msm/dsi: 10nm PHY: Get ref clock from the DT
-Date:   Fri, 30 Nov 2018 16:52:51 -0800
-Message-Id: <20181201005254.139908-6-mka@chromium.org>
+Subject: [PATCH v3 3/8] drm/msm/dsi: 28nm PHY: Get ref clock from the DT
+Date:   Fri, 30 Nov 2018 16:52:49 -0800
+Message-Id: <20181201005254.139908-4-mka@chromium.org>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <20181201005254.139908-1-mka@chromium.org>
 References: <20181201005254.139908-1-mka@chromium.org>
@@ -85,67 +85,134 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Get the ref clock of the PHY from the device tree instead of
-hardcoding its name and rate.
-
-Note: This change could break old out-of-tree DTS files that
-use the 10nm PHY
+hardcoding its name and rate. Use default values if the ref
+clock is not specified.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
 Changes in v3:
+- use default name and rate if the ref clock is not specified
+  in the DT
+- store vco_ref_clk_name instead of vco_ref_clk
+- dsi_pll_28nm_clk_set_rate: changed data type of ref_clk_rate to
+  unsigned long
 - fixed check for EPROBE_DEFER
-- added note to commit message about breaking old DTS files
-- added 'Reviewed-by: Douglas Anderson <dianders@chromium.org>' tag
+- renamed VCO_REF_CLK_RATE to VCO_REF_CLK_DEFAULT_RATE
 
 Changes in v2:
-- remove anonymous array in clk_init_data assignment
-- log error code if devm_clk_get() fails
-- don't log devm_clk_get() failures for -EPROBE_DEFER
-- updated commit message
+- patch added to the series
 ---
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c | 35 ++++++++++++++++------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-index 4c03f0b7343ed..2d23372acd20d 100644
---- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-+++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-@@ -91,6 +91,7 @@ struct dsi_pll_10nm {
- 	void __iomem *phy_cmn_mmio;
+diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
+index 26e3a01a99c2b..4a84c69ca0b2b 100644
+--- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
++++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
+@@ -40,7 +40,7 @@
+ 
+ #define NUM_PROVIDED_CLKS		2
+ 
+-#define VCO_REF_CLK_RATE		19200000
++#define VCO_REF_CLK_DEFAULT_RATE	19200000
+ #define VCO_MIN_RATE			350000000
+ #define VCO_MAX_RATE			750000000
+ 
+@@ -81,6 +81,7 @@ struct dsi_pll_28nm {
+ 	struct platform_device *pdev;
  	void __iomem *mmio;
  
-+	struct clk *vco_ref_clk;
- 	u64 vco_ref_clk_rate;
- 	u64 vco_current_rate;
++	const char *vco_ref_clk_name;
+ 	int vco_delay;
  
-@@ -629,8 +630,9 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm)
+ 	/* private clocks: */
+@@ -139,6 +140,8 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
+ 	struct device *dev = &pll_28nm->pdev->dev;
+ 	void __iomem *base = pll_28nm->mmio;
++	unsigned long ref_clk_rate = parent_rate ?
++		parent_rate : VCO_REF_CLK_DEFAULT_RATE;
+ 	unsigned long div_fbx1000, gen_vco_clk;
+ 	u32 refclk_cfg, frac_n_mode, frac_n_value;
+ 	u32 sdm_cfg0, sdm_cfg1, sdm_cfg2, sdm_cfg3;
+@@ -166,17 +169,17 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	pll_write(base + REG_DSI_28nm_PHY_PLL_LPFC1_CFG, 0x70);
+ 	pll_write(base + REG_DSI_28nm_PHY_PLL_LPFC2_CFG, 0x15);
+ 
+-	rem = rate % VCO_REF_CLK_RATE;
++	rem = rate % ref_clk_rate;
+ 	if (rem) {
+ 		refclk_cfg = DSI_28nm_PHY_PLL_REFCLK_CFG_DBLR;
+ 		frac_n_mode = 1;
+-		div_fbx1000 = rate / (VCO_REF_CLK_RATE / 500);
+-		gen_vco_clk = div_fbx1000 * (VCO_REF_CLK_RATE / 500);
++		div_fbx1000 = rate / (ref_clk_rate / 500);
++		gen_vco_clk = div_fbx1000 * (ref_clk_rate / 500);
+ 	} else {
+ 		refclk_cfg = 0x0;
+ 		frac_n_mode = 0;
+-		div_fbx1000 = rate / (VCO_REF_CLK_RATE / 1000);
+-		gen_vco_clk = div_fbx1000 * (VCO_REF_CLK_RATE / 1000);
++		div_fbx1000 = rate / (ref_clk_rate / 1000);
++		gen_vco_clk = div_fbx1000 * (ref_clk_rate / 1000);
+ 	}
+ 
+ 	DBG("refclk_cfg = %d", refclk_cfg);
+@@ -265,7 +268,8 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
+ 	void __iomem *base = pll_28nm->mmio;
+ 	u32 sdm0, doubler, sdm_byp_div;
+ 	u32 sdm_dc_off, sdm_freq_seed, sdm2, sdm3;
+-	u32 ref_clk = VCO_REF_CLK_RATE;
++	u32 ref_clk = parent_rate ?
++		parent_rate : VCO_REF_CLK_DEFAULT_RATE;
+ 	unsigned long vco_rate;
+ 
+ 	VERB("parent_rate=%lu", parent_rate);
+@@ -273,7 +277,7 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
+ 	/* Check to see if the ref clk doubler is enabled */
+ 	doubler = pll_read(base + REG_DSI_28nm_PHY_PLL_REFCLK_CFG) &
+ 			DSI_28nm_PHY_PLL_REFCLK_CFG_DBLR;
+-	ref_clk += (doubler * VCO_REF_CLK_RATE);
++	ref_clk += (doubler * ref_clk);
+ 
+ 	/* see if it is integer mode or sdm mode */
+ 	sdm0 = pll_read(base + REG_DSI_28nm_PHY_PLL_SDM_CFG0);
+@@ -518,7 +522,7 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm)
  {
- 	char clk_name[32], parent[32], vco_name[32];
- 	char parent2[32], parent3[32], parent4[32];
-+	const char *ref_clk_name = __clk_get_name(pll_10nm->vco_ref_clk);
+ 	char clk_name[32], parent1[32], parent2[32], vco_name[32];
  	struct clk_init_data vco_init = {
 -		.parent_names = (const char *[]){ "xo" },
-+		.parent_names = &ref_clk_name,
++		.parent_names = &pll_28nm->vco_ref_clk_name,
  		.num_parents = 1,
  		.name = vco_name,
  		.flags = CLK_IGNORE_UNUSED,
-@@ -786,6 +788,15 @@ struct msm_dsi_pll *msm_dsi_pll_10nm_init(struct platform_device *pdev, int id)
- 	pll_10nm->id = id;
- 	pll_10nm_list[id] = pll_10nm;
+@@ -593,6 +597,7 @@ struct msm_dsi_pll *msm_dsi_pll_28nm_init(struct platform_device *pdev,
+ {
+ 	struct dsi_pll_28nm *pll_28nm;
+ 	struct msm_dsi_pll *pll;
++	struct clk *vco_ref_clk;
+ 	int ret;
  
-+	pll_10nm->vco_ref_clk = devm_clk_get(&pdev->dev, "ref");
-+	if (IS_ERR(pll_10nm->vco_ref_clk)) {
-+		ret = PTR_ERR(pll_10nm->vco_ref_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "couldn't get 'ref' clock: %d\n",
-+				ret);
-+		return ERR_PTR(ret);
+ 	if (!pdev)
+@@ -605,6 +610,18 @@ struct msm_dsi_pll *msm_dsi_pll_28nm_init(struct platform_device *pdev,
+ 	pll_28nm->pdev = pdev;
+ 	pll_28nm->id = id;
+ 
++	vco_ref_clk = devm_clk_get(&pdev->dev, "ref");
++	if (!IS_ERR(vco_ref_clk)) {
++		pll_28nm->vco_ref_clk_name = __clk_get_name(vco_ref_clk);
++	} else {
++		ret = PTR_ERR(vco_ref_clk);
++		if (ret == -EPROBE_DEFER)
++			ERR_PTR(ret);
++
++		dev_warn(&pdev->dev, "'ref' clock is not specified, using default name\n");
++		pll_28nm->vco_ref_clk_name = "xo";
 +	}
 +
- 	pll_10nm->phy_cmn_mmio = msm_ioremap(pdev, "dsi_phy", "DSI_PHY");
- 	if (IS_ERR_OR_NULL(pll_10nm->phy_cmn_mmio)) {
- 		dev_err(&pdev->dev, "failed to map CMN PHY base\n");
+ 	pll_28nm->mmio = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
+ 	if (IS_ERR_OR_NULL(pll_28nm->mmio)) {
+ 		dev_err(&pdev->dev, "%s: failed to map pll base\n", __func__);
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
