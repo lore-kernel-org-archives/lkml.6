@@ -2,108 +2,114 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDA9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3A5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8DF820834
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4077F206B7
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:20:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c3uRybvE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8DF820834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMuJuL8E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4077F206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeLANZu (ORCPT
+        id S1726779AbeLANcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 08:25:50 -0500
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:43980 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbeLANZu (ORCPT
+        Sat, 1 Dec 2018 08:32:17 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46921 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeLANcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 08:25:50 -0500
-Received: by mail-ot1-f47.google.com with SMTP id a11so6889930otr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 18:14:29 -0800 (PST)
+        Sat, 1 Dec 2018 08:32:17 -0500
+Received: by mail-pg1-f195.google.com with SMTP id w7so3257617pgp.13;
+        Fri, 30 Nov 2018 18:20:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YzeU1Ye4+oHzQyr/YW+6VEBlXSN0V4JOdZWyjaPCZI0=;
-        b=c3uRybvEyYWdvNiNFl2CqNH2PaUd+jrW0/3HGbBJmdTe7vMyIuZv6UDqmViBTlUYJ8
-         0ksthYdYjVPGxRF57H9dYlTbhygbOlT7hKa3trw7STa3xpis2kf3yzg0VW4mvCRbOn/g
-         D3p3nrxRZg/arHbMkFUeHymu2COF2i0ORbU3OFaFdBSfY9GjG0jkI2+xSXg3+s9uUlIs
-         lJpX8xDoPGAhpPddDVgZMeK5GQhRO0tIw7+wgKe/BqGwlmuaui0HJdVKeO3o55itycBP
-         QesMbp/s7JTuM+LBUaUYXmisgxL5BAoWrMUyhyLG5lTTWOXcL/uh2enJUL8lyVIcywEW
-         +HkQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=yhnU2Z5njb1rYvI/MQIrvoG/s15QNOAphdQe97zPFLU=;
+        b=AMuJuL8E97/MzQqxoScrAlqrmmF1/NuZ+uKSGwUw67xjGqTnGfKw07899/SnkGJPfj
+         p5C2ax8eORFpSQ0W4LuuVLmDRfqbR8Sd9uj/XXfeEOmiX4sPkoH1TskqDTMo74+3dUyl
+         tmr5qIAfwL/SI+n7D4usbZzuHPj7mQQHKElvOCWojv+GYAbFfVv99V6xh/wUCEG48xF3
+         kN6jdq1Mu8KaaxdRSvgNSldQ1Ti7XPIGWkSJ9E+UjiPBOcwdaPl4FzlErqD2Tm+GXKBK
+         XNM0OM2+jlJxgQSKNEBcoCHBDh4WJxRnwN6x6EeBi1mOUn0++txtoCPmDmgulkTwGkLB
+         /IVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YzeU1Ye4+oHzQyr/YW+6VEBlXSN0V4JOdZWyjaPCZI0=;
-        b=mC76uHlhLIzv/J4cXtQj2nJ9vwLnO8OQ1I1vwZTn/lpUQloZ27l+hA3/eQN2w64sbx
-         5Mzwp0a8anFOTLLg18Vd4YMaA7m4ysrvcuJiOuyYyt4gUZj2rT8TWm96s7UqudWBOvQl
-         ziCfgOpjzC+BgXtmchNTDmrdMl3Fs245Fwvi7xv7C6/78HPrMl+bFEewYszWdpCG3279
-         1phNZ9Q5VXEZFgGrZuUwuddyoflfKC5IVRg7Q7j5DPGRrK9oQdOkYHnBn7XtGhAcdKLJ
-         ZrYI85Ij2MYEqM5Krp7GJbSBgBkpVEAo2mh6LB6DQylGw5zoQxt+anUXXjTEunSQehpt
-         DoJA==
-X-Gm-Message-State: AA+aEWZx7Jx2UOmnYECvbaEV7CpQezBhfuwEDQg9qGwJhAQMkvzPLS6U
-        3+Bui24UpTBQRPNw7EedIVt0QV/VoUg9gmAjNCCDuA==
-X-Google-Smtp-Source: AFSGD/UgUXHnTsOu2XJDv5cK0zMUzTIZBNvLRM6OS4Y2Yeyvslmt/YuRYKVHwv3Ru7/qwdD3Cm2XMeIpgUjWdboXSnk=
-X-Received: by 2002:a05:6830:1005:: with SMTP id a5mr4713308otp.113.1543630468498;
- Fri, 30 Nov 2018 18:14:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-4-brendanhiggins@google.com> <20181130032924.GH18410@garbanzo.do-not-panic.com>
-In-Reply-To: <20181130032924.GH18410@garbanzo.do-not-panic.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 30 Nov 2018 18:14:17 -0800
-Message-ID: <CAFd5g46AXpnoWpm+aFNfvNm2-As5RCO7QdMPhcOMXWRPwHqrGg@mail.gmail.com>
-Subject: Re: [RFC v3 03/19] kunit: test: add string_stream a std::stream like
- string builder
-To:     mcgrof@kernel.org
-Cc:     pmladek@suse.com, Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
-        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
-        kieran.bingham@ideasonboard.com,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yhnU2Z5njb1rYvI/MQIrvoG/s15QNOAphdQe97zPFLU=;
+        b=peNKWM0//bIW3pozPaKhLB80EAI6+Ra0uRxbSrXJY5MDsXhao50IPNOJeufhgYN3nw
+         ukd+cMW6bDbzfV4OFX6OEQyYpwvP1VdkoeYLwB5Ro23K9HLoOu5ubGVlTX7kqFWVCJPI
+         9dB9mVrEaNX2cdgxNPb9efRTdrwX2j1WjRS/EXt5dhMz+AqpHzFRofca5p6SMPLr9W31
+         rxyGtivhBKQPE/dTpzEvTutVrCGUeJ7cy9/89CelUG/bYPcxIFg5zlCceLgGqOZyUBr0
+         iZpUrW1xzMS2hb5X4YWxdI7nKVWdCLxYMGQavJENZNfARiADnyqtll24DFkekUKXkF8m
+         gnpg==
+X-Gm-Message-State: AA+aEWanWzUG5hKA2+U1zTToyT1IuHy4P0bf3jvS8yLc++ASUzwFE0SN
+        JAsx0IvNqnEme2kMvR327jSGIzrT8qM=
+X-Google-Smtp-Source: AFSGD/VxCbjrEeI0f76rHbBjfoQKTnxyZDvCghkrXH3wphYTF171qfmXCZYG8JcG+Uo0ZuSEW/UpOw==
+X-Received: by 2002:a63:a84a:: with SMTP id i10mr6800112pgp.263.1543630855251;
+        Fri, 30 Nov 2018 18:20:55 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id 202sm12447986pfy.87.2018.11.30.18.20.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 18:20:54 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     davem@davemloft.net
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] ide: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Fri, 30 Nov 2018 21:20:48 -0500
+Message-Id: <20181201022048.5106-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 7:29 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Wed, Nov 28, 2018 at 11:36:20AM -0800, Brendan Higgins wrote:
-> > A number of test features need to do pretty complicated string printing
-> > where it may not be possible to rely on a single preallocated string
-> > with parameters.
-> >
-> > So provide a library for constructing the string as you go similar to
-> > C++'s std::string.
->
-> Hrm, what's the potential for such thing actually being eventually
-> generically useful for printk folks, I wonder? Petr?
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Are you saying you think this is applicable for other things? Or are
-you saying that you are afraid that somebody might try to use this
-elsewhere?
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/ide/ide-proc.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-In the former case, this doesn't belong here. In the latter case, it
-explicitly depends on KUnit, so it is only available when running
-tests.
+diff --git a/drivers/ide/ide-proc.c b/drivers/ide/ide-proc.c
+index 45c997430332..4c8c7a620d08 100644
+--- a/drivers/ide/ide-proc.c
++++ b/drivers/ide/ide-proc.c
+@@ -614,18 +614,7 @@ static int ide_drivers_show(struct seq_file *s, void *p)
+ 	return 0;
+ }
+ 
+-static int ide_drivers_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, &ide_drivers_show, NULL);
+-}
+-
+-static const struct file_operations ide_drivers_operations = {
+-	.owner		= THIS_MODULE,
+-	.open		= ide_drivers_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(ide_drivers);
+ 
+ void proc_ide_create(void)
+ {
+@@ -634,7 +623,7 @@ void proc_ide_create(void)
+ 	if (!proc_ide_root)
+ 		return;
+ 
+-	proc_create("drivers", 0, proc_ide_root, &ide_drivers_operations);
++	proc_create("drivers", 0, proc_ide_root, &ide_drivers_fops);
+ }
+ 
+ void proc_ide_destroy(void)
+-- 
+2.17.0
 
-Cheers
