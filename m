@@ -2,279 +2,86 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7B6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA14C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E2872081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:46:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E2872081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BF8121473
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:51:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJOzTOxB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF8121473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeLBB7g (ORCPT
+        id S1726923AbeLBCEa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 20:59:36 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:52276 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbeLBB7g (ORCPT
+        Sat, 1 Dec 2018 21:04:30 -0500
+Received: from mail-pl1-f172.google.com ([209.85.214.172]:34885 "EHLO
+        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726577AbeLBCEa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 20:59:36 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gT6Xk-0000Ao-5E; Sat, 01 Dec 2018 07:46:52 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gT6Xh-0004Jz-9a; Sat, 01 Dec 2018 07:46:51 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     christian@brauner.io, Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20181120105124.14733-1-christian@brauner.io>
-        <87in0g5aqo.fsf@oldenburg.str.redhat.com>
-        <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net>
-        <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
-        <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
-        <20181129195551.woe2bl3z3yaysqb6@brauner.io>
-        <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
-        <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
-        <87y39b2lm2.fsf@xmission.com>
-        <20181130065606.kmilbbq46oeycjp5@brauner.io>
-        <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
-Date:   Sat, 01 Dec 2018 08:46:43 -0600
-In-Reply-To: <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
-        (Arnd Bergmann's message of "Fri, 30 Nov 2018 12:41:28 +0100")
-Message-ID: <87y399s3sc.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gT6Xh-0004Jz-9a;;;mid=<87y399s3sc.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+BQKBzkUBEG/2OU1Wzf/krGDFztZ3AP9g=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Sat, 1 Dec 2018 21:04:30 -0500
+Received: by mail-pl1-f172.google.com with SMTP id p8so4270071plo.2;
+        Sat, 01 Dec 2018 06:51:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=tPDeejCpyylczuJaP6jpNw2gWvr3Xq7v02s5amTrTSU=;
+        b=nJOzTOxBJUrMGvWsLf2CElYHmx6vphhDByvfRtcqLz2BqbL3JS2T1Db1kVzXbMNDLr
+         HKrKPxyZOlo7JIPl0fRgR2iOqXif0ZX7hPdhmlFqth97/CLoJrHolJ7M2LH6aUrb7wMq
+         YkB3h1ftqHGFtUkMxNqir8kU5cT1Afak7Un31A/Yy9BGCOVUXdD97kLTdDMu4dNR3O93
+         70tPxA/03yBSe9o9ePBc9jWBtxrsH2wbFldyh67rQQAuOReEXjraaN+6xW/1w4A9oXBG
+         ljGsHjLppSxjCWBw0XR9rBh3rEkrHEmGA+o+dHlpOZPFlQtkectikUGy2ZBYk8GW3VYv
+         F2xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tPDeejCpyylczuJaP6jpNw2gWvr3Xq7v02s5amTrTSU=;
+        b=J8DjJCQNre5Z0OzBdjVRYx7HDCtP8X5jKnJwAg3AABt0iCNtJ1Ij/tWq1Eq0XGASZi
+         v8DrwFi1YByPeHbIVw449z7QvPam9IFn/0+480D5xHtSTUhEgIFIrwu6QjXovT8Klo4z
+         NMiGA/TjIj76VsXezARFXZwdOhUn/kjADCQBBN/2yXJbxiPvNbkY1DWthgBwbhwhZdxW
+         xDINlOtnhccwlfJ6h4CDlm51NVf5VWV71PBS4Tpf30GDvqF9NRhhmjBpTsWhQgEuhL4E
+         +AEGZWbGG1lf8+2JVNK3mSBH66pFNbOJAhgZ2nameR7emnkw8X3lB8uQ9+Ygmql+NuiQ
+         AZsw==
+X-Gm-Message-State: AA+aEWZx6K7THH8lrR4V/6MAjIWLEtn8VFDV5OoN5NzBPy8YYjvoYtjz
+        cMXJpi3iiVOvN6G568VH85M=
+X-Google-Smtp-Source: AFSGD/Viqe60P4+vfKfde9IGQIs3HFqe/bMrLE0uPc26+fiQkIhmeQXr7uxPusO41bBxoycVKh09Yw==
+X-Received: by 2002:a17:902:9a98:: with SMTP id w24mr9630614plp.213.1543675909907;
+        Sat, 01 Dec 2018 06:51:49 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id z8sm21120854pgz.53.2018.12.01.06.51.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Dec 2018 06:51:49 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net, f.fainelli@gmail.com,
+        rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 0/2] watchdog: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Sat,  1 Dec 2018 09:51:38 -0500
+Message-Id: <20181201145140.8088-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-> On Fri, Nov 30, 2018 at 7:56 AM Christian Brauner <christian@brauner.io> wrote:
->> On Thu, Nov 29, 2018 at 11:13:57PM -0600, Eric W. Biederman wrote:
->> > Arnd Bergmann <arnd@arndb.de> writes:
->> > > On Thu, Nov 29, 2018 at 9:14 PM Andy Lutomirski <luto@amacapital.net> wrote:
->> > >
->> > > It looks like we already have a 'struct signalfd_siginfo' that is defined in a
->> > > sane architecture-independent way, so I'd suggest we use that.
->> >
->> > Unfortunately it isn't maintained very well.  What you can
->> > express with signalfd_siginfo is a subset what you can express with
->> > siginfo.  Many of the linux extensions to siginfo for exception
->> > information add pointers and have integers right after those pointers.
->> > Not all of those linux specific extentions for exceptions are handled
->> > by signalfd_siginfo (it needs new fields).
->
-> Would those fit in the 30 remaining padding bytes?
+Yangtao Li (2):
+  watchdog: bcm281xx: convert to DEFINE_SHOW_ATTRIBUTE
+  watchdog: convert to DEFINE_SHOW_ATTRIBUTE
 
-Probably.  I expect at some point the technique signalfd has been using
-won't scale.  Most of what are missing are synchronous exceptions but
-the crazy seccomp extensions might be missing as well.  I say crazy
-because seccomp places an integer immediately after a pointer which
-makes 32bit 64bit compatibility impossible.
+ drivers/watchdog/bcm_kona_wdt.c | 16 +++-------------
+ drivers/watchdog/ie6xx_wdt.c    | 16 +++-------------
+ 2 files changed, 6 insertions(+), 26 deletions(-)
 
->> > As originally defined siginfo had the sigval_t union at the end so it
->> > was perfectly fine on both 32bit and 64bit as it only had a single
->> > pointer in the structure and the other fields were 32bits in size.
->
-> The problem with sigval_t of course is that it is incompatible between
-> 32-bit and 64-bit. We can add the same information, but at least on
-> the syscall level that would have to be a __u64.
+-- 
+2.17.0
 
-But sigval_t with nothing after it is not incompatible between 32bit and
-64bit.  With nothing after it sigval_t in struct siginfo already has
-the extra 32bits you would need.  It is sort of like transparently
-adding a __u64 member to the union.
-
-That is where we really are with sigval_t.   Except for some crazy
-corner cases.
-
->> > Although I do feel the pain as x86_64 has to deal with 3 versions
->> > of siginfo.  A 64bit one.  A 32bit one for ia32.  A 32bit one for x32
->> > with a 64bit si_clock_t.
->
-> At least you and Al have managed to get it down to a single source-level
-> definition across all architectures, but there is also the (lesser) problem
-> that the structure has a slightly different binary layout on each of the
-> classic architectures.
->
-> If we go with Andy's suggestion of having only a single binary layout
-> on x86 for the new call, I'd argue that we should also make it have
-> the exact same layout on all other architectures.
-
-Yes.
-
->> > > We may then also want to make sure that any system call that takes a
->> > > siginfo has a replacement that takes a signalfd_siginfo, and that this
->> > > replacement can be used to implement the old version purely in
->> > > user space.
->> >
->> > If you are not implementing CRIU and reinserting exceptions to yourself.
->> > At most user space wants the ability to implement sigqueue:
->> >
->> > AKA:
->> > sigqueue(pid_t pid, int sig, const union sigval value);
->> >
->> > Well sigqueue with it's own si_codes so the following would cover all
->> > the use cases I know of:
->> > int sendnewsig(pid_t pid, int sig, int si_code, const union sigval value);
->> >
->> > The si_code could even be set to SI_USER to request that the normal
->> > trusted SI_USER values be filled in.  si_code values of < 0 if not
->> > recognized could reasonably safely be treated as the _rt member of
->> > the siginfo union.  Or perhaps better we error out in such a case.
->> >
->> > If we want to be flexible and not have N kinds of system calls that
->> > is the direction I would go.  That is simple, and you don't need any of
->> > the rest.
->
-> I'm not sure I understand what you are suggesting here. Would the
-> low-level implementation of this be based on procfd, or do you
-> mean that would be done for pid_t at the kernel level, plus another
-> syscall for procfd?
-
-I was thinking in general and for something that would be enough to back
-sigqueue, and normal kill semantics.
-
-For Christians proposed system call I can think of two ways we could go:
-
-	long procfd_sigsend(int fd, int sig, int si_code, __u64 sigval);
-
-Where sigval is an appropriately written version of union sigval that
-works on both 32bit and 64bit.  Or we could go with:
-
-	long procfd_sigqueueinfo(int fd, struct siginfo_subset *info)
-
-Both would support the same set of system calls today and both would
-have some similar challenges.  Both would take an si_code value of
-SI_USER as a request that the kernel fill in the struct siginfo as kill
-would.  As otherwise it is invalid for userspace to send a signal with
-SI_USER.  I would not worry about the signal injection case for CRIU
-where we explicitly allow any siginfo to be sent if we are sending it to
-ourselves.  We already have a system call for that.
-
-What I would do is carefully define siginfo_subset architecturally as
-a proper subset of siginfo on each architecture.  That in most if not
-all cases will work on 32bit and 64bit.   Because of the extra padding
-after union sigval.
-
-That siginfo_subset userspace could just consider a siginfo_t.  We would
-just leave out the trouble some bits.  So we could do a simple
-untranslated copy_from_user on it, and then validate that si_code is in
-a range we support.
-
-That definition of siginfo_subset doesn't preclude extensions in the
-future.  And so it could very much be a pass through interface on 32bit
-on 64bit and into everyone's existing stack frames that embed siginfo.
-
-So if we want to fix the situation that is what I would do, as userspace
-is not allowed to send any of the problematic siginfo definitions today.
-
-There might be some finicky detail of union sigval or some architure
-might have funny alignment between 32bit and 64bit, but I don't think
-there is.  If we want to be more flexible than my procfd_sigsend above
-I think we should definitely look at that.
-
->> > Alternatively we abandon the mistake of sigqueueinfo and not allow
->> > a signal number in the arguments that differs from the si_signo in the
->> > siginfo and allow passing the entire thing unchanged from sender to
->> > receiver.  That is maximum flexibility.
->
-> This would be regardless of which flavor of siginfo (today's arch
-> specific one, signalfd_siginfo, or a new one) we pass, right?
-
-No.  signalfd_siginfo offers much less future extensibility because it
-must be translated.  Once you can not just pass the structure through
-you fail.  As you can't be transparently forward compatible.
-
-In a similar way Linux filesystems written assuming all the world was
-ascii wound up forward compatible with utf8 as they are both byte
-encodings of strings that can use a NULL terminator.
-
->> > signalfd_siginfo just sucks in practice.  It is larger that siginfo 104
->> > bytes versus 48.  We must deliver it to userspace as a siginfo so it
->> > must be translated.  Because of the translation signalfd_siginfo adds
->> > no flexiblity in practice, because it can not just be passed through.
->> > Finallay signalfd_siginfo does not have encodings for all of the
->> > siginfo union members, so it fails to be fully general.
->> >
->> > Personally if I was to define signalfd_siginfo today I would make it:
->> > struct siginfo_subset {
->> >       __u32 sis_signo;
->> >       __s32 sis_errno;
->> >       __s32 sis_code;
->> >         __u32 sis_pad;
->> >       __u32 sis_pid;
->> >       __u32 sis_uid;
->> >       __u64 sis_data (A pointer or integer data field);
->> > };
->> >
->> > That is just 32bytes, and is all that is needed for everything
->> > except for synchronous exceptions.  Oh and that happens to be a proper
->> > subset of a any sane siginfo layout, on both 32bit and 64bit.
->
-> And that would work for signalfd and waitid_time64, but not for
-> procfd_signal/kill/sendsiginfo?
-
-No.  I was bringing this up because it will work for procfd_signal.  See
-above.  It supports every signal userspace can send today.  We should be
-able to specify it in a way that is compatible with the existing siginfo
-definitions on all architectures.
-
-For signalfd or let me say a future signalfd2 the practical problem is
-that we have Linux specific signal extensions that are not synchronous
-signals like seccomp and sigchld that have fields in a bad location.
-
-If we successfully define a siginfo_subset that is the same on
-32bit and 64bit  I would include the defintion in the kernels definition
-of siginfo_t so new extensions are automatically picked up and require
-any extensions to siginfo_t to be added to siginfo_subset_t, in the
-appropriate 32bit/64bit way.
-
->> > This is one of those rare times where POSIX is sane and what linux
->> > has implemented is not.
->>
->> Thanks for the in-depth explanation. So your point is that we are better
->> off if we stick with siginfo_t instead of struct signalfd_siginfo in
->> procfd_signal()?
-
-My point is that we are better sticking with siginfo_t or just cherry
-picking the relevant fields and making them system call parameters.
-
-The only advantage of using siginfo_t is forwards compatibility.  If we
-give up forward compatibility we can just as easily have our system call
-prototype include  "...(...,  int sig, int code, union sigval value)"
-for the definition of the signal bits.  Simple easy and enough for all
-posix signals.
-
-Eric
