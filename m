@@ -2,97 +2,92 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7CFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 019F8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 664ED20867
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:52:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664ED20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 92D9B20867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:59:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92D9B20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbeLAQD5 (ORCPT
+        id S1726280AbeLAQK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 11:03:57 -0500
-Received: from mout.gmx.net ([212.227.17.20]:49073 "EHLO mout.gmx.net"
+        Sat, 1 Dec 2018 11:10:59 -0500
+Received: from mout.gmx.net ([212.227.15.18]:46629 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbeLAQD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 11:03:56 -0500
-Received: from ovpn-120-135.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
- (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0MAy40-1gctPT3x1I-009wwp; Sat, 01 Dec 2018 05:52:04 +0100
-From:   Qian Cai <cai@gmx.us>
-To:     davem@davemloft.net
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@gmx.us>
-Subject: [PATCH] net/core: tidy up an error message
-Date:   Fri, 30 Nov 2018 23:51:53 -0500
-Message-Id: <20181201045153.4035-1-cai@gmx.us>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-X-Provags-ID: V03:K1:JfK0XEf9L9e3Hv/ORKO5uZxdRhHuLGb39BHrjJvvPpYwNeQHgb+
- el9FUYbm94nZsclLnMvtQuTIHHL+vdVkWKoOAG+sZlZ4m/906bMoF12Nq6wVK0CLaHPD7dY
- RpYwoV70xRits/Nm4mf+IqCv64P/k4VSzCKN7Ij21AubafeVlZ7KvP4wPei6pFgKZh8AIVp
- XSoLF/YfQ+e9xWHjAZk3w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:JOfZDzfZlrI=:rzNqNKTlECsbjJ/KSNSyKd
- +vBo1y1qb0ZGQg5hW3Ty8xvqz3i5KAUoMMtQcVd/N+2Pcqm3GBfqqX2AXH1G9aenGO3i1xx2Y
- B7Psy6Yq5gzQvZ4Q/vMzWKlkTBc26yclWR2xO0jBusYRwxgmJNWvV/DLgeLKUB3YCx5XoeI7T
- nDHeRdMCcF1LtVZOa2GToUfwkflT/+rJFv80ecf+rP0bDDS/sxGMkgreREmIYUbZOEzKG17s9
- dQwokhobOe/roTIB2h7MvuBIxvKGKjWkWY590zTvbrjgPkm+lYyBoGst3b0Lc8iQ4DNiJxmtq
- nSvdLHW4EHJNzbdqb5/YlhFcGTlGu3daVTFcwSSr7f0t5uSFSzHlt4M/PSEHILUDYatmcIuom
- Iz0M3/hoAh/yVigA9gNqhcXYS4j38mLuQypSEeqCR/r9ncRgePeKY4KeOBFuo1oaLI9c/eINb
- sdflF5w1rwTHI2QI+T2Ur2xmxnIjLRT3YhDU0wvoSn4295h+W1jutU/YNzSuBA7lohcUtyz8Q
- U2embw5vWL48Z/utVIpjl0GUW++4PVnBpkKOe3jgcxEld7jFpgoY+aDEtxT8SHfeR4Y3sVFUd
- l9rtN4rEC1cccpL7yP+k3MkrEbMdhQvxaUxRGLfBl0PIgMvNydCgvNbXvsrqtawYfrLpog+1z
- hK/4INyJkCPjqRB6iolsCvwX17kkgKd33BalV+yo+y5rpL0m5loIDgt6it0mr402Q1AeTyC0y
- z7YucETBNJVJRdRwn2+fMoRNCgO7WTsFdPWS8UIp0DA7HZmt9RStaBBPw3wq7L44gXwvLUIsU
- IebLNbqiFZwCgiR19WmwjxYOTiClptE//4GwsGoXEjC9piLm5TH/xVk4dPkVy/U1lWAqtRjOh
- Twjr+wD+C9QiKysXA2UfxGA8YSClmnUIGq57UOZJo=
+        id S1725877AbeLAQK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 11:10:58 -0500
+Received: from homer.simpson.net ([185.191.216.123]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0LfkUs-1hHAZL2Lta-00pP6t; Sat, 01
+ Dec 2018 05:58:45 +0100
+Message-ID: <1543640322.5017.61.camel@gmx.de>
+Subject: Re: [PATCH RFC 01/15] MIPS: replace **** with a hug
+From:   Mike Galbraith <efault@gmx.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Joshua Kinard <kumba@gentoo.org>,
+        "open list:MIPS" <linux-mips@linux-mips.org>
+Date:   Sat, 01 Dec 2018 05:58:42 +0100
+In-Reply-To: <20181130192737.15053-2-jarkko.sakkinen@linux.intel.com>
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+         <20181130192737.15053-2-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:w9wslFRx1u3RVruy7C2rQ3n1g24tyVv9mX0xZGVPjq4LgnUipmF
+ Ho22X071mK8vzaeDDuHCOg3zZ2VwD26PkvIhC0ZMOYWKEb0kRp+NzmaF6nwpstnwb0+HUPO
+ cQKk313jxCEHmru35vK8fI0WI5DjCyWRjIaG/3AeE9Bb7EvawYzN6NmUlGbtH4w2vrORYN9
+ h2EHawLTqYYWFElbxecjg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:XT6wiWwS2bA=:ljOfhWL/mPA1J750K25YJL
+ 1eI3r9d617ZZFbeIP4ljrkhqMg7UK4U1qEg/3iMCuVUMO5XlKs/oNbUekciC1j66yj5GocVyx
+ loXCv05m0uoeQQmRlSR3XqnhbMSysCuTc/lNj8ru/h7iZ00+6x8BFVzvujpQ8IDqfRhHZvC6p
+ mD/i7McuT2duCBr9HOv/MKO96gQaazoFLX/PijXUtP7QL1Fxk+IugR29ptRUfQvuw/M/HmbYZ
+ Kxv2kqRMZz7x0x5C4zjbQbr3bMDwQsp7jJM5D+ld0/ncKMxQi3RTY8Of+CJjvwlIXp7rWFSuu
+ uvEWikuza3dqskRi8QCNJmU7RuPnsPRNX6/G3aOAXgNLvrgJOZAtBZ/FnqK9fUVIu1nI0mcDT
+ ZfyddQo7+pBPvLBkk4nF3kk3nzptnku8G5P/xeZ/ow79VUQ7MHHHY4qowDv96J8iTlZRCUhIU
+ 9/QnPYNghDc/zIsnSwgdGTdh25FW4uGv6ZGUUnasLIbASCKAVzZV1E3W/aIAtZq7Sm2hLH8Wu
+ 3NYgofJjSovwR4IhCrXlJpuIxapf/JdxDvUwMx68my/BcFOP+0bVpcHdPMAQIh+yuJRL6Wqot
+ cybeCB5IX2uf/bCCXc63oQ/WC34VBuw/eo/KRqSSYBPPJJxF1VyXSoN/rIBcl/kduRRY4Op0N
+ mpZAD1HBToz23uH1Ri4xPCcH0vt8I6sPI7P/oQYAfxa/y8i6KvpSTHJsRjPfuSR3DrIcIVMUn
+ 4/ZPaPjP7ZfVBHHNr9vEQHgbPMXGZds5JcClgEZYrAJrDEraWa2ugsC7pMPSeSUz3sB5ilE06
+ 44zze6U7S7Q3eIqJJKnoYfBq400sA3+hWNgXwCobKe2kGscIJcjiB9CEWtC4O6JxN943ovBKv
+ 09D8YC49uGOcSp57gQ6IUMM8syoanR0h34MBTf4uoxJj/FGnSvlK+OabhiAq+R
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-netif_napi_add() could report an error like this below due to it allows
-to pass a format string for wildcarding before calling
-dev_get_valid_name(),
+On Fri, 2018-11-30 at 11:27 -0800, Jarkko Sakkinen wrote:
+> In order to comply with the CoC, replace **** with a hug.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/mips/pci/ops-bridge.c      | 24 ++++++++++++------------
+>  arch/mips/sgi-ip22/ip22-setup.c |  2 +-
+>  2 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/mips/pci/ops-bridge.c b/arch/mips/pci/ops-bridge.c
+> index a1d2c4ae0d1b..c755c4c92fa9 100644
+> --- a/arch/mips/pci/ops-bridge.c
+> +++ b/arch/mips/pci/ops-bridge.c
+> @@ -56,7 +56,7 @@ static int pci_conf0_read_config(struct pci_bus *bus, unsigned int devfn,
+>  		return PCIBIOS_DEVICE_NOT_FOUND;
+>  
+>  	/*
+> -	 * IOC3 is fucking fucked beyond belief ...  Don't even give the
+> +	 * IOC3 is hugging hugged beyond belief ...  Don't even give the
 
-"netif_napi_add() called with weight 256 on device eth%d"
+This obfuscation is a complete waste of reader brain cycles, as it will
+transparently be reverted to the original in order to restore meaning.
 
-For example, hns_enet_drv module does this.
-
-hns_nic_try_get_ae
-  hns_nic_init_ring_data
-    netif_napi_add
-  register_netdev
-    dev_get_valid_name
-
-Hence, make it a bit more human-readable.
-
-Signed-off-by: Qian Cai <cai@gmx.us>
----
- net/core/dev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/core/dev.c b/net/core/dev.c
-index ddc551f24ba2..bbd7cdbbbebd 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -6205,7 +6205,8 @@ void netif_napi_add(struct net_device *dev, struct napi_struct *napi,
- 	napi->poll = poll;
- 	if (weight > NAPI_POLL_WEIGHT)
- 		pr_err_once("netif_napi_add() called with weight %d on device %s\n",
--			    weight, dev->name);
-+			    weight,
-+			    !strchr(dev->name, '%') ? dev->name : "unknown");
- 	napi->weight = weight;
- 	list_add(&napi->dev_list, &dev->napi_list);
- 	napi->dev = dev;
--- 
-2.17.2 (Apple Git-113)
-
+	-Mike 
