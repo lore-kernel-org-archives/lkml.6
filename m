@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27B0C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB75C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C6D520673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C6D520673
+	by mail.kernel.org (Postfix) with ESMTP id AB49D20673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB49D20673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbeLAMMM (ORCPT
+        id S1727181AbeLAMMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:12:12 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38132 "EHLO
+        Sat, 1 Dec 2018 07:12:18 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38142 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbeLAMLb (ORCPT
+        with ESMTP id S1726788AbeLAMLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 1 Dec 2018 07:11:31 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id F11ED281E8; Fri, 30 Nov 2018 20:00:14 -0500 (EST)
+        id 1EDA2281EE; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -36,11 +36,11 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <b0f8afebfa9f6cc487fd9c6fd73904ffd16e7b0c.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <c37d7e26151afae6f1b5c37ac219b9ee101ebd69.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 05/14] m68k: amiga: Convert to clocksource API
+Subject: [PATCH v4 07/14] m68k: bvme6000: Convert to clocksource API
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,111 +52,153 @@ implementation.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 ---
 Changed since v3:
- - Don't test for timer counter > 0 as that should always be true.
  - Use clk_offset variable to track the offset when the irq check is skipped.
 
 Changed since v2:
- - Don't check for timer interrupt in amiga_read_clk() when the timer is
+ - Don't check for timer interrupt in bvme6000_read_clk() when the timer is
 about to be reloaded.
 
 Changed since v1:
  - Moved clk_total access to within the irq lock.
 ---
- arch/m68k/amiga/config.c | 46 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 9 deletions(-)
+ arch/m68k/bvme6000/config.c | 57 ++++++++++++++++++++++++++-----------
+ 1 file changed, 41 insertions(+), 16 deletions(-)
 
-diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
-index d4976c1aa0cc..c32ab8041cf6 100644
---- a/arch/m68k/amiga/config.c
-+++ b/arch/m68k/amiga/config.c
-@@ -17,6 +17,7 @@
+diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
+index c8b99d5516d1..8ebaabc931cd 100644
+--- a/arch/m68k/bvme6000/config.c
++++ b/arch/m68k/bvme6000/config.c
+@@ -18,6 +18,7 @@
+ #include <linux/kernel.h>
  #include <linux/mm.h>
- #include <linux/seq_file.h>
  #include <linux/tty.h>
 +#include <linux/clocksource.h>
  #include <linux/console.h>
- #include <linux/rtc.h>
+ #include <linux/linkage.h>
  #include <linux/init.h>
-@@ -461,7 +462,29 @@ void __init config_amiga(void)
- 		*(unsigned char *)ZTWO_VADDR(0xde0002) |= 0x80;
+@@ -147,6 +148,21 @@ irqreturn_t bvme6000_abort_int (int irq, void *dev_id)
+ 	return IRQ_HANDLED;
  }
  
-+static u64 amiga_read_clk(struct clocksource *cs);
++static u64 bvme6000_read_clk(struct clocksource *cs);
 +
-+static struct clocksource amiga_clk = {
-+	.name   = "ciab",
++static struct clocksource bvme6000_clk = {
++	.name   = "rtc",
 +	.rating = 250,
-+	.read   = amiga_read_clk,
++	.read   = bvme6000_read_clk,
 +	.mask   = CLOCKSOURCE_MASK(32),
 +	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
 +};
 +
- static unsigned short jiffy_ticks;
 +static u32 clk_total, clk_offset;
 +
-+static irqreturn_t ciab_timer_handler(int irq, void *dev_id)
-+{
-+	irq_handler_t timer_routine = dev_id;
-+
-+	clk_total += jiffy_ticks;
-+	clk_offset = 0;
-+	timer_routine(0, NULL);
-+
-+	return IRQ_HANDLED;
-+}
++#define RTC_TIMER_CLOCK_FREQ 8000000
++#define RTC_TIMER_CYCLES     (RTC_TIMER_CLOCK_FREQ / HZ)
++#define RTC_TIMER_COUNT      ((RTC_TIMER_CYCLES / 2) - 1)
  
- static void __init amiga_sched_init(irq_handler_t timer_routine)
+ static irqreturn_t bvme6000_timer_int (int irq, void *dev_id)
  {
-@@ -481,19 +504,22 @@ static void __init amiga_sched_init(irq_handler_t timer_routine)
- 	 * Please don't change this to use ciaa, as it interferes with the
- 	 * SCSI code. We'll have to take a look at this later
- 	 */
--	if (request_irq(IRQ_AMIGA_CIAB_TA, timer_routine, 0, "timer", NULL))
-+	if (request_irq(IRQ_AMIGA_CIAB_TA, ciab_timer_handler, IRQF_TIMER,
-+			"timer", timer_routine))
- 		pr_err("Couldn't register timer interrupt\n");
- 	/* start timer */
- 	ciab.cra |= 0x11;
--}
+@@ -158,6 +174,8 @@ static irqreturn_t bvme6000_timer_int (int irq, void *dev_id)
+     local_irq_save(flags);
+     msr = rtc->msr & 0xc0;
+     rtc->msr = msr | 0x20;		/* Ack the interrupt */
++    clk_total += RTC_TIMER_CYCLES;
++    clk_offset = 0;
+     timer_routine(0, NULL);
+     local_irq_restore(flags);
  
--#define TICK_SIZE 10000
-+	clocksource_register_hz(&amiga_clk, amiga_eclock);
-+}
+@@ -180,13 +198,13 @@ void bvme6000_sched_init (irq_handler_t timer_routine)
  
--/* This is always executed with interrupts disabled.  */
--static u32 amiga_gettimeoffset(void)
-+static u64 amiga_read_clk(struct clocksource *cs)
- {
- 	unsigned short hi, lo, hi2;
--	u32 ticks, offset = 0;
-+	unsigned long flags;
-+	u32 ticks;
+     rtc->msr = 0;	/* Ensure timer registers accessible */
+ 
+-    if (request_irq(BVME_IRQ_RTC, bvme6000_timer_int, 0, "timer",
++    if (request_irq(BVME_IRQ_RTC, bvme6000_timer_int, IRQF_TIMER, "timer",
+                     timer_routine))
+ 	panic ("Couldn't register timer int");
+ 
+     rtc->t1cr_omr = 0x04;	/* Mode 2, ext clk */
+-    rtc->t1msb = 39999 >> 8;
+-    rtc->t1lsb = 39999 & 0xff;
++    rtc->t1msb = RTC_TIMER_COUNT >> 8;
++    rtc->t1lsb = RTC_TIMER_COUNT & 0xff;
+     rtc->irr_icr1 &= 0xef;	/* Route timer 1 to INTR pin */
+     rtc->msr = 0x40;		/* Access int.cntrl, etc */
+     rtc->pfr_icr0 = 0x80;	/* Just timer 1 ints enabled */
+@@ -198,14 +216,14 @@ void bvme6000_sched_init (irq_handler_t timer_routine)
+ 
+     rtc->msr = msr;
+ 
++    clocksource_register_hz(&bvme6000_clk, RTC_TIMER_CLOCK_FREQ);
 +
-+	local_irq_save(flags);
- 
- 	/* read CIA B timer A current value */
- 	hi  = ciab.tahi;
-@@ -510,12 +536,14 @@ static u32 amiga_gettimeoffset(void)
- 	if (ticks > jiffy_ticks / 2)
- 		/* check for pending interrupt */
- 		if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
--			offset = 10000;
-+			clk_offset = jiffy_ticks;
- 
- 	ticks = jiffy_ticks - ticks;
--	ticks = (10000 * ticks) / jiffy_ticks;
-+	ticks += clk_offset + clk_total;
-+
-+	local_irq_restore(flags);
- 
--	return (ticks + offset) * 1000;
-+	return ticks;
+     if (request_irq(BVME_IRQ_ABORT, bvme6000_abort_int, 0,
+ 				"abort", bvme6000_abort_int))
+ 	panic ("Couldn't register abort int");
  }
  
- static void amiga_reset(void)  __noreturn;
+ 
+-/* This is always executed with interrupts disabled.  */
+-
+ /*
+  * NOTE:  Don't accept any readings within 5us of rollover, as
+  * the T1INT bit may be a little slow getting set.  There is also
+@@ -213,14 +231,18 @@ void bvme6000_sched_init (irq_handler_t timer_routine)
+  * results...
+  */
+ 
+-u32 bvme6000_gettimeoffset(void)
++static u64 bvme6000_read_clk(struct clocksource *cs)
+ {
++    unsigned long flags;
+     volatile RtcPtr_t rtc = (RtcPtr_t)BVME_RTC_BASE;
+     volatile PitRegsPtr pit = (PitRegsPtr)BVME_PIT_BASE;
+-    unsigned char msr = rtc->msr & 0xc0;
++    unsigned char msr, msb;
+     unsigned char t1int, t1op;
+     u32 v = 800000, ov;
+ 
++    local_irq_save(flags);
++
++    msr = rtc->msr & 0xc0;
+     rtc->msr = 0;	/* Ensure timer registers accessible */
+ 
+     do {
+@@ -228,22 +250,25 @@ u32 bvme6000_gettimeoffset(void)
+ 	t1int = rtc->msr & 0x20;
+ 	t1op  = pit->pcdr & 0x04;
+ 	rtc->t1cr_omr |= 0x40;		/* Latch timer1 */
+-	v = rtc->t1msb << 8;		/* Read timer1 */
+-	v |= rtc->t1lsb;		/* Read timer1 */
++	msb = rtc->t1msb;		/* Read timer1 */
++	v = (msb << 8) | rtc->t1lsb;	/* Read timer1 */
+     } while (t1int != (rtc->msr & 0x20) ||
+ 		t1op != (pit->pcdr & 0x04) ||
+ 			abs(ov-v) > 80 ||
+-				v > 39960);
++				v > RTC_TIMER_COUNT - (RTC_TIMER_COUNT / 100));
+ 
+-    v = 39999 - v;
++    v = RTC_TIMER_COUNT - v;
+     if (!t1op)				/* If in second half cycle.. */
+-	v += 40000;
+-    v /= 8;				/* Convert ticks to microseconds */
+-    if (t1int)
+-	v += 10000;			/* Int pending, + 10ms */
++	v += RTC_TIMER_CYCLES / 2;
++    if (msb > 0 && t1int)
++	clk_offset = RTC_TIMER_CYCLES;
+     rtc->msr = msr;
+ 
+-    return v * 1000;
++    v += clk_offset + clk_total;
++
++    local_irq_restore(flags);
++
++    return v;
+ }
+ 
+ /*
 -- 
 2.18.1
 
