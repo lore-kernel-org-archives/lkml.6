@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D957BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C27B0C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A78D320673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78D320673
+	by mail.kernel.org (Postfix) with ESMTP id 8C6D520673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:01:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C6D520673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbeLAMMF (ORCPT
+        id S1727140AbeLAMMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:12:05 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38162 "EHLO
+        Sat, 1 Dec 2018 07:12:12 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38132 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbeLAMLb (ORCPT
+        with ESMTP id S1726777AbeLAMLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 1 Dec 2018 07:11:31 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 8009C28202; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
+        id F11ED281E8; Fri, 30 Nov 2018 20:00:14 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -36,11 +36,11 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <bf6454a0d8077d3f2fc289716a2f1565a1c59c62.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <b0f8afebfa9f6cc487fd9c6fd73904ffd16e7b0c.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 13/14] m68k: mvme16x: Convert to clocksource API
+Subject: [PATCH v4 05/14] m68k: amiga: Convert to clocksource API
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,95 +52,111 @@ implementation.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 ---
+Changed since v3:
+ - Don't test for timer counter > 0 as that should always be true.
+ - Use clk_offset variable to track the offset when the irq check is skipped.
+
+Changed since v2:
+ - Don't check for timer interrupt in amiga_read_clk() when the timer is
+about to be reloaded.
+
 Changed since v1:
  - Moved clk_total access to within the irq lock.
 ---
- arch/m68k/mvme16x/config.c | 37 +++++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+ arch/m68k/amiga/config.c | 46 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 37 insertions(+), 9 deletions(-)
 
-diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
-index 3a3129e6f0bc..2c109ee2a1a5 100644
---- a/arch/m68k/mvme16x/config.c
-+++ b/arch/m68k/mvme16x/config.c
-@@ -19,6 +19,7 @@
+diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
+index d4976c1aa0cc..c32ab8041cf6 100644
+--- a/arch/m68k/amiga/config.c
++++ b/arch/m68k/amiga/config.c
+@@ -17,6 +17,7 @@
  #include <linux/mm.h>
  #include <linux/seq_file.h>
  #include <linux/tty.h>
 +#include <linux/clocksource.h>
  #include <linux/console.h>
- #include <linux/linkage.h>
+ #include <linux/rtc.h>
  #include <linux/init.h>
-@@ -343,6 +344,21 @@ static irqreturn_t mvme16x_abort_int (int irq, void *dev_id)
- 	return IRQ_HANDLED;
+@@ -461,7 +462,29 @@ void __init config_amiga(void)
+ 		*(unsigned char *)ZTWO_VADDR(0xde0002) |= 0x80;
  }
  
-+static u64 mvme16x_read_clk(struct clocksource *cs);
++static u64 amiga_read_clk(struct clocksource *cs);
 +
-+static struct clocksource mvme16x_clk = {
-+	.name   = "pcc",
++static struct clocksource amiga_clk = {
++	.name   = "ciab",
 +	.rating = 250,
-+	.read   = mvme16x_read_clk,
++	.read   = amiga_read_clk,
 +	.mask   = CLOCKSOURCE_MASK(32),
 +	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
 +};
 +
-+static u32 clk_total;
+ static unsigned short jiffy_ticks;
++static u32 clk_total, clk_offset;
 +
-+#define PCC_TIMER_CLOCK_FREQ 1000000
-+#define PCC_TIMER_CYCLES     (PCC_TIMER_CLOCK_FREQ / HZ)
++static irqreturn_t ciab_timer_handler(int irq, void *dev_id)
++{
++	irq_handler_t timer_routine = dev_id;
 +
- static irqreturn_t mvme16x_timer_int (int irq, void *dev_id)
++	clk_total += jiffy_ticks;
++	clk_offset = 0;
++	timer_routine(0, NULL);
++
++	return IRQ_HANDLED;
++}
+ 
+ static void __init amiga_sched_init(irq_handler_t timer_routine)
  {
- 	irq_handler_t timer_routine = dev_id;
-@@ -350,6 +366,7 @@ static irqreturn_t mvme16x_timer_int (int irq, void *dev_id)
+@@ -481,19 +504,22 @@ static void __init amiga_sched_init(irq_handler_t timer_routine)
+ 	 * Please don't change this to use ciaa, as it interferes with the
+ 	 * SCSI code. We'll have to take a look at this later
+ 	 */
+-	if (request_irq(IRQ_AMIGA_CIAB_TA, timer_routine, 0, "timer", NULL))
++	if (request_irq(IRQ_AMIGA_CIAB_TA, ciab_timer_handler, IRQF_TIMER,
++			"timer", timer_routine))
+ 		pr_err("Couldn't register timer interrupt\n");
+ 	/* start timer */
+ 	ciab.cra |= 0x11;
+-}
  
- 	local_irq_save(flags);
- 	*(volatile unsigned char *)0xfff4201b |= 8;
-+	clk_total += PCC_TIMER_CYCLES;
- 	timer_routine(0, NULL);
- 	local_irq_restore(flags);
+-#define TICK_SIZE 10000
++	clocksource_register_hz(&amiga_clk, amiga_eclock);
++}
  
-@@ -363,13 +380,15 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
- 
-     /* Using PCCchip2 or MC2 chip tick timer 1 */
-     *(volatile unsigned long *)0xfff42008 = 0;
--    *(volatile unsigned long *)0xfff42004 = 10000;	/* 10ms */
-+    *(volatile unsigned long *)0xfff42004 = PCC_TIMER_CYCLES;
-     *(volatile unsigned char *)0xfff42017 |= 3;
-     *(volatile unsigned char *)0xfff4201b = 0x16;
--    if (request_irq(MVME16x_IRQ_TIMER, mvme16x_timer_int, 0, "timer",
-+    if (request_irq(MVME16x_IRQ_TIMER, mvme16x_timer_int, IRQF_TIMER, "timer",
-                     timer_routine))
- 	panic ("Couldn't register timer int");
- 
-+    clocksource_register_hz(&mvme16x_clk, PCC_TIMER_CLOCK_FREQ);
-+
-     if (brdno == 0x0162 || brdno == 0x172)
- 	irq = MVME162_IRQ_ABORT;
-     else
-@@ -379,11 +398,17 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
- 	panic ("Couldn't register abort int");
- }
- 
--
 -/* This is always executed with interrupts disabled.  */
--u32 mvme16x_gettimeoffset(void)
-+static u64 mvme16x_read_clk(struct clocksource *cs)
+-static u32 amiga_gettimeoffset(void)
++static u64 amiga_read_clk(struct clocksource *cs)
  {
--    return (*(volatile u32 *)0xfff42008) * 1000;
+ 	unsigned short hi, lo, hi2;
+-	u32 ticks, offset = 0;
 +	unsigned long flags;
 +	u32 ticks;
 +
 +	local_irq_save(flags);
-+	ticks = *(volatile u32 *)0xfff42008;
-+	ticks += clk_total;
-+	local_irq_restore(flags);
+ 
+ 	/* read CIA B timer A current value */
+ 	hi  = ciab.tahi;
+@@ -510,12 +536,14 @@ static u32 amiga_gettimeoffset(void)
+ 	if (ticks > jiffy_ticks / 2)
+ 		/* check for pending interrupt */
+ 		if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
+-			offset = 10000;
++			clk_offset = jiffy_ticks;
+ 
+ 	ticks = jiffy_ticks - ticks;
+-	ticks = (10000 * ticks) / jiffy_ticks;
++	ticks += clk_offset + clk_total;
 +
++	local_irq_restore(flags);
+ 
+-	return (ticks + offset) * 1000;
 +	return ticks;
  }
  
- int bcd2int (unsigned char b)
+ static void amiga_reset(void)  __noreturn;
 -- 
 2.18.1
 
