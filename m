@@ -6,29 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5227C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72B3C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1EB2145D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1EB2145D
+	by mail.kernel.org (Postfix) with ESMTP id 7285120673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7285120673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbeLAMLa (ORCPT
+        id S1727030AbeLAMLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:11:30 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37940 "EHLO
+        Sat, 1 Dec 2018 07:11:32 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38156 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbeLAMLa (ORCPT
+        with ESMTP id S1726691AbeLAMLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:11:30 -0500
+        Sat, 1 Dec 2018 07:11:31 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id B3F5D2238E; Fri, 30 Nov 2018 20:00:14 -0500 (EST)
+        id 3EB41281F5; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Philip Blundell <philb@gnu.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Sam Creasey <sammy@sammy.net>
+        Philip Blundell <philb@gnu.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Stephen N Chivers <schivers@csc.com.au>,
@@ -39,433 +37,117 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <fa5da88f8b92dc843d90f5ef601e3bc76a839352.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <2aa62fd1164340976feb6e5e58a3c960083a3d95.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 01/14] m68k: Call timer_interrupt() with interrupts
- disabled
+Subject: [PATCH v4 09/14] m68k: hp300: Handle timer counter overflow
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some platforms execute their timer handler with the interrupt priority
-level set below 6. That means the handler could be interrupted by another
-driver and this could lead to re-entry of the timer core.
+Because hp300_read_clk() never checks the timer interrupt flag it may
+fail to notice that the timer has wrapped, allowing the clock to jump
+backwards. This is not a new problem.
 
-Avoid this by use of local_irq_save/restore for timer interrupt dispatch.
-This provides mutual exclusion around the timer interrupt flag access
-which is needed later in this series for the clocksource conversion.
+This is resolved by checking the interrupt flag and, if need be,
+taking wrap-around into account. The interrupt handler clears the flag
+when it eventually executes.
 
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1811131407120.2697@nanos.tec.linutronix.de
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
-I've only checked 680x0 MMU platforms for this issue.
+TODO: find a spare counter for the clocksource, rather than hanging
+it off the HZ timer.
 
-Changed since v2:
- - Don't waste an iteration of the for loop in cia_handler().
- - Remove q40_timer_routine for better consistency with other platforms.
- - Minor cleanup.
+Changed since v3:
+ - Use clk_offset variable to track the offset when the irq check is skipped.
 ---
- arch/m68k/amiga/cia.c       |  9 +++++++++
- arch/m68k/atari/ataints.c   |  4 ++--
- arch/m68k/atari/time.c      | 15 ++++++++++++++-
- arch/m68k/bvme6000/config.c | 20 ++++++++++----------
- arch/m68k/hp300/time.c      | 10 ++++++++--
- arch/m68k/mac/via.c         | 17 +++++++++++++++++
- arch/m68k/mvme147/config.c  | 18 ++++++++++--------
- arch/m68k/mvme16x/config.c  | 21 +++++++++++----------
- arch/m68k/q40/q40ints.c     | 19 +++++++++++--------
- arch/m68k/sun3/sun3ints.c   |  3 +++
- arch/m68k/sun3x/time.c      | 16 ++++++++++------
- 11 files changed, 105 insertions(+), 47 deletions(-)
+ arch/m68k/hp300/time.c | 46 +++++++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 19 deletions(-)
 
-diff --git a/arch/m68k/amiga/cia.c b/arch/m68k/amiga/cia.c
-index 2081b8cd5591..b9aee983e6f4 100644
---- a/arch/m68k/amiga/cia.c
-+++ b/arch/m68k/amiga/cia.c
-@@ -88,10 +88,19 @@ static irqreturn_t cia_handler(int irq, void *dev_id)
- 	struct ciabase *base = dev_id;
- 	int mach_irq;
- 	unsigned char ints;
-+	unsigned long flags;
- 
-+	/* Interrupts get disabled while the timer irq flag is cleared and
-+	 * the timer interrupt serviced.
-+	 */
- 	mach_irq = base->cia_irq;
-+	local_irq_save(flags);
- 	ints = cia_set_irq(base, CIA_ICR_ALL);
- 	amiga_custom.intreq = base->int_mask;
-+	if (ints & 1)
-+		generic_handle_irq(mach_irq);
-+	local_irq_restore(flags);
-+	mach_irq++, ints >>= 1;
- 	for (; ints; mach_irq++, ints >>= 1) {
- 		if (ints & 1)
- 			generic_handle_irq(mach_irq);
-diff --git a/arch/m68k/atari/ataints.c b/arch/m68k/atari/ataints.c
-index 3d2b63bedf05..56f02ea2c248 100644
---- a/arch/m68k/atari/ataints.c
-+++ b/arch/m68k/atari/ataints.c
-@@ -142,7 +142,7 @@ struct mfptimerbase {
- 	.name		= "MFP Timer D"
- };
- 
--static irqreturn_t mfptimer_handler(int irq, void *dev_id)
-+static irqreturn_t mfp_timer_d_handler(int irq, void *dev_id)
- {
- 	struct mfptimerbase *base = dev_id;
- 	int mach_irq;
-@@ -344,7 +344,7 @@ void __init atari_init_IRQ(void)
- 	st_mfp.tim_ct_cd = (st_mfp.tim_ct_cd & 0xf0) | 0x6;
- 
- 	/* request timer D dispatch handler */
--	if (request_irq(IRQ_MFP_TIMD, mfptimer_handler, IRQF_SHARED,
-+	if (request_irq(IRQ_MFP_TIMD, mfp_timer_d_handler, IRQF_SHARED,
- 			stmfp_base.name, &stmfp_base))
- 		pr_err("Couldn't register %s interrupt\n", stmfp_base.name);
- 
-diff --git a/arch/m68k/atari/time.c b/arch/m68k/atari/time.c
-index 9cca64286464..fafa20f75ab9 100644
---- a/arch/m68k/atari/time.c
-+++ b/arch/m68k/atari/time.c
-@@ -24,6 +24,18 @@
- DEFINE_SPINLOCK(rtc_lock);
- EXPORT_SYMBOL_GPL(rtc_lock);
- 
-+static irqreturn_t mfp_timer_c_handler(int irq, void *dev_id)
-+{
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
-+
-+	return IRQ_HANDLED;
-+}
-+
- void __init
- atari_sched_init(irq_handler_t timer_routine)
- {
-@@ -32,7 +44,8 @@ atari_sched_init(irq_handler_t timer_routine)
-     /* start timer C, div = 1:100 */
-     st_mfp.tim_ct_cd = (st_mfp.tim_ct_cd & 15) | 0x60;
-     /* install interrupt service routine for MFP Timer C */
--    if (request_irq(IRQ_MFP_TIMC, timer_routine, 0, "timer", timer_routine))
-+    if (request_irq(IRQ_MFP_TIMC, mfp_timer_c_handler, 0, "timer",
-+                    timer_routine))
- 	pr_err("Couldn't register timer interrupt\n");
- }
- 
-diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
-index 143ee9fa3893..0e5efed4da86 100644
---- a/arch/m68k/bvme6000/config.c
-+++ b/arch/m68k/bvme6000/config.c
-@@ -44,11 +44,6 @@ extern int bvme6000_hwclk (int, struct rtc_time *);
- extern void bvme6000_reset (void);
- void bvme6000_set_vectors (void);
- 
--/* Save tick handler routine pointer, will point to xtime_update() in
-- * kernel/timer/timekeeping.c, called via bvme6000_process_int() */
--
--static irq_handler_t tick_handler;
--
- 
- int __init bvme6000_parse_bootinfo(const struct bi_record *bi)
- {
-@@ -157,12 +152,18 @@ irqreturn_t bvme6000_abort_int (int irq, void *dev_id)
- 
- static irqreturn_t bvme6000_timer_int (int irq, void *dev_id)
- {
-+    irq_handler_t timer_routine = dev_id;
-+    unsigned long flags;
-     volatile RtcPtr_t rtc = (RtcPtr_t)BVME_RTC_BASE;
--    unsigned char msr = rtc->msr & 0xc0;
-+    unsigned char msr;
- 
-+    local_irq_save(flags);
-+    msr = rtc->msr & 0xc0;
-     rtc->msr = msr | 0x20;		/* Ack the interrupt */
-+    timer_routine(0, NULL);
-+    local_irq_restore(flags);
- 
--    return tick_handler(irq, dev_id);
-+    return IRQ_HANDLED;
- }
- 
- /*
-@@ -181,9 +182,8 @@ void bvme6000_sched_init (irq_handler_t timer_routine)
- 
-     rtc->msr = 0;	/* Ensure timer registers accessible */
- 
--    tick_handler = timer_routine;
--    if (request_irq(BVME_IRQ_RTC, bvme6000_timer_int, 0,
--				"timer", bvme6000_timer_int))
-+    if (request_irq(BVME_IRQ_RTC, bvme6000_timer_int, 0, "timer",
-+                    timer_routine))
- 	panic ("Couldn't register timer int");
- 
-     rtc->t1cr_omr = 0x04;	/* Mode 2, ext clk */
 diff --git a/arch/m68k/hp300/time.c b/arch/m68k/hp300/time.c
-index 289d928a46cb..d30b03ea93a2 100644
+index 90982803a629..bfee13e1d0fe 100644
 --- a/arch/m68k/hp300/time.c
 +++ b/arch/m68k/hp300/time.c
-@@ -38,13 +38,19 @@
+@@ -30,7 +30,7 @@ static struct clocksource hp300_clk = {
+ 	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
+ };
  
- static irqreturn_t hp300_tick(int irq, void *dev_id)
- {
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
- 	unsigned long tmp;
--	irq_handler_t vector = dev_id;
+-static u32 clk_total;
++static u32 clk_total, clk_offset;
+ 
+ /* Clock hardware definitions */
+ 
+@@ -41,9 +41,12 @@ static u32 clk_total;
+ #define	CLKCR3		CLKCR1
+ #define	CLKSR		CLKCR2
+ #define	CLKMSB1		0x5
++#define	CLKLSB1		0x7
+ #define	CLKMSB2		0x9
+ #define	CLKMSB3		0xD
+ 
++#define	CLKSR_INT1	BIT(0)
 +
-+	local_irq_save(flags);
+ /* This is for machines which generate the exact clock. */
+ 
+ #define HP300_TIMER_CLOCK_FREQ 250000
+@@ -60,6 +63,7 @@ static irqreturn_t hp300_tick(int irq, void *dev_id)
  	in_8(CLOCKBASE + CLKSR);
  	asm volatile ("movpw %1@(5),%0" : "=d" (tmp) : "a" (CLOCKBASE));
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
-+
- 	/* Turn off the network and SCSI leds */
- 	blinken_leds(0, 0xe0);
--	return vector(irq, NULL);
-+	return IRQ_HANDLED;
- }
+ 	clk_total += INTVAL;
++	clk_offset = 0;
+ 	timer_routine(0, NULL);
+ 	local_irq_restore(flags);
  
- u32 hp300_gettimeoffset(void)
-diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
-index e4facff0c1f3..f6df83ba2227 100644
---- a/arch/m68k/mac/via.c
-+++ b/arch/m68k/mac/via.c
-@@ -436,6 +436,8 @@ void via_nubus_irq_shutdown(int irq)
-  * via6522.c :-), disable/pending masks added.
-  */
+@@ -70,24 +74,28 @@ static irqreturn_t hp300_tick(int irq, void *dev_id)
  
-+#define VIA_TIMER_1_INT BIT(6)
-+
- void via1_irq(struct irq_desc *desc)
+ static u64 hp300_read_clk(struct clocksource *cs)
  {
- 	int irq_num;
-@@ -445,6 +447,21 @@ void via1_irq(struct irq_desc *desc)
- 	if (!events)
- 		return;
- 
-+	irq_num = IRQ_MAC_TIMER_1;
-+	irq_bit = VIA_TIMER_1_INT;
-+	if (events & irq_bit) {
-+		unsigned long flags;
+-  unsigned long flags;
+-  unsigned char lsb, msb1, msb2;
+-  u32 ticks;
+-
+-  local_irq_save(flags);
+-  /* Read current timer 1 value */
+-  msb1 = in_8(CLOCKBASE + 5);
+-  lsb = in_8(CLOCKBASE + 7);
+-  msb2 = in_8(CLOCKBASE + 5);
+-  if (msb1 != msb2)
+-    /* A carry happened while we were reading.  Read it again */
+-    lsb = in_8(CLOCKBASE + 7);
+-
+-  ticks = INTVAL - ((msb2 << 8) | lsb);
+-  ticks += clk_total;
+-  local_irq_restore(flags);
+-
+-  return ticks;
++	unsigned long flags;
++	unsigned char lsb, msb, msb_new;
++	u32 ticks;
 +
-+		local_irq_save(flags);
-+		via1[vIFR] = irq_bit;
-+		generic_handle_irq(irq_num);
-+		local_irq_restore(flags);
-+
-+		events &= ~irq_bit;
-+		if (!events)
-+			return;
++	local_irq_save(flags);
++	/* Read current timer 1 value */
++	msb = in_8(CLOCKBASE + CLKMSB1);
++again:
++	if ((in_8(CLOCKBASE + CLKSR) & CLKSR_INT1) && msb > 0)
++		clk_offset = INTVAL;
++	lsb = in_8(CLOCKBASE + CLKLSB1);
++	msb_new = in_8(CLOCKBASE + CLKMSB1);
++	if (msb_new != msb) {
++		msb = msb_new;
++		goto again;
 +	}
 +
- 	irq_num = VIA1_SOURCE_BASE;
- 	irq_bit = 1;
- 	do {
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index adea549d240e..93c68d2b8e0e 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -45,11 +45,6 @@ extern void mvme147_reset (void);
- 
- static int bcd2int (unsigned char b);
- 
--/* Save tick handler routine pointer, will point to xtime_update() in
-- * kernel/time/timekeeping.c, called via mvme147_process_int() */
--
--irq_handler_t tick_handler;
--
- 
- int __init mvme147_parse_bootinfo(const struct bi_record *bi)
- {
-@@ -104,16 +99,23 @@ void __init config_mvme147(void)
- 
- static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- {
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
- 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;
- 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
--	return tick_handler(irq, dev_id);
-+	timer_routine(0, NULL);
++	ticks = INTVAL - ((msb << 8) | lsb);
++	ticks += clk_offset + clk_total;
 +	local_irq_restore(flags);
 +
-+	return IRQ_HANDLED;
++	return ticks;
  }
  
- 
- void mvme147_sched_init (irq_handler_t timer_routine)
- {
--	tick_handler = timer_routine;
--	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, 0, "timer 1", NULL))
-+	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, 0, "timer 1",
-+			timer_routine))
- 		pr_err("Couldn't register timer interrupt\n");
- 
- 	/* Init the clock with a value */
-diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
-index 6ee36a5b528d..5feb3ab484d0 100644
---- a/arch/m68k/mvme16x/config.c
-+++ b/arch/m68k/mvme16x/config.c
-@@ -50,11 +50,6 @@ extern void mvme16x_reset (void);
- 
- int bcd2int (unsigned char b);
- 
--/* Save tick handler routine pointer, will point to xtime_update() in
-- * kernel/time/timekeeping.c, called via mvme16x_process_int() */
--
--static irq_handler_t tick_handler;
--
- 
- unsigned short mvme16x_config;
- EXPORT_SYMBOL(mvme16x_config);
-@@ -352,8 +347,15 @@ static irqreturn_t mvme16x_abort_int (int irq, void *dev_id)
- 
- static irqreturn_t mvme16x_timer_int (int irq, void *dev_id)
- {
--    *(volatile unsigned char *)0xfff4201b |= 8;
--    return tick_handler(irq, dev_id);
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	*(volatile unsigned char *)0xfff4201b |= 8;
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
-+
-+	return IRQ_HANDLED;
- }
- 
- void mvme16x_sched_init (irq_handler_t timer_routine)
-@@ -361,14 +363,13 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
-     uint16_t brdno = be16_to_cpu(mvme_bdid.brdno);
-     int irq;
- 
--    tick_handler = timer_routine;
-     /* Using PCCchip2 or MC2 chip tick timer 1 */
-     *(volatile unsigned long *)0xfff42008 = 0;
-     *(volatile unsigned long *)0xfff42004 = 10000;	/* 10ms */
-     *(volatile unsigned char *)0xfff42017 |= 3;
-     *(volatile unsigned char *)0xfff4201b = 0x16;
--    if (request_irq(MVME16x_IRQ_TIMER, mvme16x_timer_int, 0,
--				"timer", mvme16x_timer_int))
-+    if (request_irq(MVME16x_IRQ_TIMER, mvme16x_timer_int, 0, "timer",
-+                    timer_routine))
- 	panic ("Couldn't register timer int");
- 
-     if (brdno == 0x0162 || brdno == 0x172)
-diff --git a/arch/m68k/q40/q40ints.c b/arch/m68k/q40/q40ints.c
-index 3e7603202977..1c696906c159 100644
---- a/arch/m68k/q40/q40ints.c
-+++ b/arch/m68k/q40/q40ints.c
-@@ -127,10 +127,10 @@ void q40_mksound(unsigned int hz, unsigned int ticks)
- 	sound_ticks = ticks << 1;
- }
- 
--static irq_handler_t q40_timer_routine;
--
--static irqreturn_t q40_timer_int (int irq, void * dev)
-+static irqreturn_t q40_timer_int(int irq, void *dev_id)
- {
-+	irq_handler_t timer_routine = dev_id;
-+
- 	ql_ticks = ql_ticks ? 0 : 1;
- 	if (sound_ticks) {
- 		unsigned char sval=(sound_ticks & 1) ? 128-SVOL : 128+SVOL;
-@@ -139,8 +139,13 @@ static irqreturn_t q40_timer_int (int irq, void * dev)
- 		*DAC_RIGHT=sval;
- 	}
- 
--	if (!ql_ticks)
--		q40_timer_routine(irq, dev);
-+	if (!ql_ticks) {
-+		unsigned long flags;
-+
-+		local_irq_save(flags);
-+		timer_routine(0, NULL);
-+		local_irq_restore(flags);
-+	}
- 	return IRQ_HANDLED;
- }
- 
-@@ -148,11 +153,9 @@ void q40_sched_init (irq_handler_t timer_routine)
- {
- 	int timer_irq;
- 
--	q40_timer_routine = timer_routine;
- 	timer_irq = Q40_IRQ_FRAME;
- 
--	if (request_irq(timer_irq, q40_timer_int, 0,
--				"timer", q40_timer_int))
-+	if (request_irq(timer_irq, q40_timer_int, 0, "timer", timer_routine))
- 		panic("Couldn't register timer int");
- 
- 	master_outb(-1, FRAME_CLEAR_REG);
-diff --git a/arch/m68k/sun3/sun3ints.c b/arch/m68k/sun3/sun3ints.c
-index 6bbca30c9188..a5824abb4a39 100644
---- a/arch/m68k/sun3/sun3ints.c
-+++ b/arch/m68k/sun3/sun3ints.c
-@@ -61,8 +61,10 @@ static irqreturn_t sun3_int7(int irq, void *dev_id)
- 
- static irqreturn_t sun3_int5(int irq, void *dev_id)
- {
-+	unsigned long flags;
- 	unsigned int cnt;
- 
-+	local_irq_save(flags);
- #ifdef CONFIG_SUN3
- 	intersil_clear();
- #endif
-@@ -76,6 +78,7 @@ static irqreturn_t sun3_int5(int irq, void *dev_id)
- 	cnt = kstat_irqs_cpu(irq, 0);
- 	if (!(cnt % 20))
- 		sun3_leds(led_pattern[cnt % 160 / 20]);
-+	local_irq_restore(flags);
- 	return IRQ_HANDLED;
- }
- 
-diff --git a/arch/m68k/sun3x/time.c b/arch/m68k/sun3x/time.c
-index 047e2bcee3d7..3c8a86d08508 100644
---- a/arch/m68k/sun3x/time.c
-+++ b/arch/m68k/sun3x/time.c
-@@ -80,15 +80,19 @@ u32 sun3x_gettimeoffset(void)
- }
- 
- #if 0
--static void sun3x_timer_tick(int irq, void *dev_id, struct pt_regs *regs)
-+static irqreturn_t sun3x_timer_tick(int irq, void *dev_id)
- {
--    void (*vector)(int, void *, struct pt_regs *) = dev_id;
-+	irq_handler_t timer_routine = dev_id;
-+	unsigned long flags;
- 
--    /* Clear the pending interrupt - pulse the enable line low */
--    disable_irq(5);
--    enable_irq(5);
-+	local_irq_save(flags);
-+	/* Clear the pending interrupt - pulse the enable line low */
-+	disable_irq(5);
-+	enable_irq(5);
-+	timer_routine(0, NULL);
-+	local_irq_restore(flags);
- 
--    vector(irq, NULL, regs);
-+	return IRQ_HANDLED;
- }
- #endif
- 
+ void __init hp300_sched_init(irq_handler_t vector)
 -- 
 2.18.1
 
