@@ -6,98 +6,138 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 913FFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5C9C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A2C320834
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2C320834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CF5720834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:32:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF5720834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbeLATnY (ORCPT
+        id S1726521AbeLATn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 14:43:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15622 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726124AbeLATnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 14:43:24 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 429468E462846;
-        Sat,  1 Dec 2018 16:31:21 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 1 Dec 2018 16:31:14 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] coresight: stm: remove set but not used variable 'res_size'
-Date:   Sat, 1 Dec 2018 08:39:45 +0000
-Message-ID: <1543653585-108277-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Sat, 1 Dec 2018 14:43:59 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:17554 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726124AbeLATn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 14:43:58 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 643DAA238FD1CD828C72;
+        Sat,  1 Dec 2018 16:31:58 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB18Vrgm052595;
+        Sat, 1 Dec 2018 16:31:53 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120116323995-14110856 ;
+          Sat, 1 Dec 2018 16:32:39 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     Davidlohr Bueso <dave@stgolabs.net>, paulmck@linux.ibm.com,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH] locktorture: Fix assignment of boolean variables
+Date:   Sat, 1 Dec 2018 16:31:49 +0800
+Message-Id: <20181201083149.36972-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-01 16:32:40,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-01 16:31:34
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wB18Vrgm052595
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Fix the following warnings reported by coccinelle:
 
-drivers/hwtracing/coresight/coresight-stm.c: In function 'stm_probe':
-drivers/hwtracing/coresight/coresight-stm.c:796:9: warning:
- variable 'res_size' set but not used [-Wunused-but-set-variable]
+kernel/locking/locktorture.c:703:6-10: WARNING: Assignment of bool to 0/1
+kernel/locking/locktorture.c:918:2-20: WARNING: Assignment of bool to 0/1
+kernel/locking/locktorture.c:949:3-20: WARNING: Assignment of bool to 0/1
+kernel/locking/locktorture.c:682:2-19: WARNING: Assignment of bool to 0/1
+kernel/locking/locktorture.c:688:2-19: WARNING: Assignment of bool to 0/1
+kernel/locking/locktorture.c:648:2-20: WARNING: Assignment of bool to 0/1
+kernel/locking/locktorture.c:654:2-20: WARNING: Assignment of bool to 0/1
 
-It never used since introduction in commit
-237483aa5cf4 ("coresight: stm: adding driver for CoreSight STM component")
+This patch also makes the code more readable.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Davidlohr Bueso <dave@stgolabs.net>
+CC: "Paul E. McKenney" <paulmck@linux.ibm.com>
+CC: Josh Triplett <josh@joshtriplett.org>
+CC: linux-kernel@vger.kernel.org
 ---
- drivers/hwtracing/coresight/coresight-stm.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ kernel/locking/locktorture.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-index ef339ff..f07825d 100644
---- a/drivers/hwtracing/coresight/coresight-stm.c
-+++ b/drivers/hwtracing/coresight/coresight-stm.c
-@@ -793,7 +793,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
- 	struct stm_drvdata *drvdata;
- 	struct resource *res = &adev->res;
- 	struct resource ch_res;
--	size_t res_size, bitmap_size;
-+	size_t bitmap_size;
- 	struct coresight_desc desc = { 0 };
- 	struct device_node *np = adev->dev.of_node;
- 
-@@ -833,15 +833,11 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	drvdata->write_bytes = stm_fundamental_data_size(drvdata);
- 
--	if (boot_nr_channel) {
-+	if (boot_nr_channel)
- 		drvdata->numsp = boot_nr_channel;
--		res_size = min((resource_size_t)(boot_nr_channel *
--				  BYTES_PER_CHANNEL), resource_size(res));
--	} else {
-+	else
- 		drvdata->numsp = stm_num_stimulus_port(drvdata);
--		res_size = min((resource_size_t)(drvdata->numsp *
--				 BYTES_PER_CHANNEL), resource_size(res));
--	}
-+
- 	bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
- 
- 	guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
-
-
+diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+index 7d0b0ed74404..cd95c01491d8 100644
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
+@@ -645,13 +645,13 @@ static int lock=5Ftorture=5Fwriter(void *arg)
+ 		cxt.cur=5Fops->writelock();
+ 		if (WARN=5FON=5FONCE(lock=5Fis=5Fwrite=5Fheld))
+ 			lwsp->n=5Flock=5Ffail++;
+-		lock=5Fis=5Fwrite=5Fheld =3D 1;
++		lock=5Fis=5Fwrite=5Fheld =3D true;
+ 		if (WARN=5FON=5FONCE(lock=5Fis=5Fread=5Fheld))
+ 			lwsp->n=5Flock=5Ffail++; /* rare, but... */
+=20
+ 		lwsp->n=5Flock=5Facquired++;
+ 		cxt.cur=5Fops->write=5Fdelay(&rand);
+-		lock=5Fis=5Fwrite=5Fheld =3D 0;
++		lock=5Fis=5Fwrite=5Fheld =3D false;
+ 		cxt.cur=5Fops->writeunlock();
+=20
+ 		stutter=5Fwait("lock=5Ftorture=5Fwriter");
+@@ -679,13 +679,13 @@ static int lock=5Ftorture=5Freader(void *arg)
+ 			schedule=5Ftimeout=5Funinterruptible(1);
+=20
+ 		cxt.cur=5Fops->readlock();
+-		lock=5Fis=5Fread=5Fheld =3D 1;
++		lock=5Fis=5Fread=5Fheld =3D true;
+ 		if (WARN=5FON=5FONCE(lock=5Fis=5Fwrite=5Fheld))
+ 			lrsp->n=5Flock=5Ffail++; /* rare, but... */
+=20
+ 		lrsp->n=5Flock=5Facquired++;
+ 		cxt.cur=5Fops->read=5Fdelay(&rand);
+-		lock=5Fis=5Fread=5Fheld =3D 0;
++		lock=5Fis=5Fread=5Fheld =3D false;
+ 		cxt.cur=5Fops->readunlock();
+=20
+ 		stutter=5Fwait("lock=5Ftorture=5Freader");
+@@ -700,7 +700,7 @@ static int lock=5Ftorture=5Freader(void *arg)
+ static void =5F=5Ftorture=5Fprint=5Fstats(char *page,
+ 				  struct lock=5Fstress=5Fstats *statp, bool write)
+ {
+-	bool fail =3D 0;
++	bool fail =3D false;
+ 	int i, n=5Fstress;
+ 	long max =3D 0, min =3D statp ? statp[0].n=5Flock=5Facquired : 0;
+ 	long long sum =3D 0;
+@@ -915,7 +915,7 @@ static int =5F=5Finit lock=5Ftorture=5Finit(void)
+=20
+ 	/* Initialize the statistics so that each run gets its own numbers. */
+ 	if (nwriters=5Fstress) {
+-		lock=5Fis=5Fwrite=5Fheld =3D 0;
++		lock=5Fis=5Fwrite=5Fheld =3D false;
+ 		cxt.lwsa =3D kmalloc=5Farray(cxt.nrealwriters=5Fstress,
+ 					 sizeof(*cxt.lwsa),
+ 					 GFP=5FKERNEL);
+@@ -946,7 +946,7 @@ static int =5F=5Finit lock=5Ftorture=5Finit(void)
+ 		}
+=20
+ 		if (nreaders=5Fstress) {
+-			lock=5Fis=5Fread=5Fheld =3D 0;
++			lock=5Fis=5Fread=5Fheld =3D false;
+ 			cxt.lrsa =3D kmalloc=5Farray(cxt.nrealreaders=5Fstress,
+ 						 sizeof(*cxt.lrsa),
+ 						 GFP=5FKERNEL);
+--=20
+2.19.1
 
