@@ -2,182 +2,162 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE71FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C07C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F1C2146D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F1C2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 500D720834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:09:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 500D720834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeLBCRi (ORCPT
+        id S1726897AbeLBCWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 21:17:38 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:53960 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeLBCRi (ORCPT
+        Sat, 1 Dec 2018 21:22:21 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56654 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbeLBCWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 21:17:38 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gT6pD-0001hR-CA; Sat, 01 Dec 2018 08:04:55 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gT6ox-00067K-HW; Sat, 01 Dec 2018 08:04:55 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181112171144.GI3645@cisco> <87efbqi1xa.fsf@xmission.com>
-        <20181112185538.GK3645@cisco> <20181112192443.GL3645@cisco>
-        <20181127232126.GA23658@cisco>
-        <CAGXu5jLw0m8pG16u3huThNM2fYGjKoB2-5baUmg_FH6Z=L2SAg@mail.gmail.com>
-        <CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com>
-        <87zhtthkuy.fsf@xmission.com>
-        <CAGXu5jJv+TG8hovHi3Z5kTccz+Cx-keu=KZf032mCz2VRpc=Og@mail.gmail.com>
-Date:   Sat, 01 Dec 2018 09:04:34 -0600
-In-Reply-To: <CAGXu5jJv+TG8hovHi3Z5kTccz+Cx-keu=KZf032mCz2VRpc=Og@mail.gmail.com>
-        (Kees Cook's message of "Thu, 29 Nov 2018 13:17:01 -0800")
-Message-ID: <87k1ktqoe5.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Sat, 1 Dec 2018 21:22:21 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6A63F80A46; Sat,  1 Dec 2018 16:09:31 +0100 (CET)
+Date:   Sat, 1 Dec 2018 16:09:34 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-pm@vger.kernel.org, sre@kernel.org,
+        Sameer Nanda <snanda@chromium.org>, gwendal@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        Adam.Thomson.Opensource@diasemi.com, kernel@collabora.com,
+        bleung@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v2 1/2] power: supply: add input voltage limit property.
+Message-ID: <20181201150934.GA7052@amd>
+References: <20181122101119.29194-1-enric.balletbo@collabora.com>
+ <20181123232203.GA3852@amd>
+ <c122a1f9-70d7-7129-f139-4a0449c366a5@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gT6ox-00067K-HW;;;mid=<87k1ktqoe5.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/tgze8pIl4CAnxsHE/9Ah/aSvKbPBH8aI=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: siginfo pid not populated from ptrace?
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Disposition: inline
+In-Reply-To: <c122a1f9-70d7-7129-f139-4a0449c366a5@collabora.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
 
-> On Tue, Nov 27, 2018 at 8:44 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> Kees Cook <keescook@chromium.org> writes:
->>
->> > On Tue, Nov 27, 2018 at 4:38 PM, Kees Cook <keescook@chromium.org> wrote:
->> >> On Tue, Nov 27, 2018 at 3:21 PM, Tycho Andersen <tycho@tycho.ws> wrote:
->> >>> On Mon, Nov 12, 2018 at 12:24:43PM -0700, Tycho Andersen wrote:
->> >>>> On Mon, Nov 12, 2018 at 11:55:38AM -0700, Tycho Andersen wrote:
->> >>>> > I haven't manage to reproduce it on stock v4.20-rc2, unfortunately.
->> >>>>
->> >>>> Ok, now I have,
->> >>>>
->> >>>> seccomp_bpf.c:2736:global.syscall_restart:Expected getpid() (1493) == info._sifields._kill.si_pid (0)
->> >>>> global.syscall_restart: Test failed at step #22
->> >>>
->> >>> Seems like this is still happening on v4.20-rc4,
->> >>>
->> >>> [ RUN      ] global.syscall_restart
->> >>> seccomp_bpf.c:2736:global.syscall_restart:Expected getpid() (1901) == info._sifields._kill.si_pid (0)
->> >>> global.syscall_restart: Test failed at step #22
->> >>
->> >> This fails every time for me -- is it still racey for you?
->> >>
->> >> I'm attempting a bisect, hoping it doesn't _become_ racey for me. ;)
->> >
->> > This bisect to here for me:
->> >
->> > commit f149b31557446aff9ca96d4be7e39cc266f6e7cc
->> > Author: Eric W. Biederman <ebiederm@xmission.com>
->> > Date:   Mon Sep 3 09:50:36 2018 +0200
->> >
->> >     signal: Never allocate siginfo for SIGKILL or SIGSTOP
->> >
->> >     The SIGKILL and SIGSTOP signals are never delivered to userspace so
->> >     queued siginfo for these signals can never be observed.  Therefore
->> >     remove the chance of failure by never even attempting to allocate
->> >     siginfo in those cases.
->> >
->> >     Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
->> >     Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> >
->> > They are certainly visible via seccomp ;)
->>
->> Well SIGSTOP is visible via PTRACE_GETSIGINFO.
->>
->> I see what is happening now.  Since we don't have queued siginfo
->> we generate some as:
->>                 /*
->>                  * Ok, it wasn't in the queue.  This must be
->>                  * a fast-pathed signal or we must have been
->>                  * out of queue space.  So zero out the info.
->>                  */
->>                 clear_siginfo(info);
->>                 info->si_signo = sig;
->>                 info->si_errno = 0;
->>                 info->si_code = SI_USER;
->>                 info->si_pid = 0;
->>                 info->si_uid = 0;
->>
->> Which allows last_signfo to be set,
->> so despite not really having any siginfo PTRACE_GET_SIGINFO
->> has something to return so does not return -EINVAL.
->>
->> Reconstructing my context that was part of removing SEND_SIG_FORCED
->> so this looks like it will take a little more than a revert to fix
->> this.
->>
->> This is definitely a change that is visible to user space.  The logic in
->> my patch was definitely wrong with respect to SIGSTOP and
->> PTRACE_GETSIGINFO.  Is there something in userspace that actually cares?
->> AKA is the idiom that the test seccomp_bpf.c is using something that
->> non-test code does?
->
-> I think this would be needed by any ptracer that handled multiple
-> threads. It needs to figure out which pid stopped. I think it's worth
-> fixing, yes.
->
->> The change below should restore the old behavior.  I am just wondering
->> if this is something we want to do.  siginfo is allocated with
->> GFP_ATOMIC so if your machine is under memory pressure there is a real
->> chance the allocation can fail.  Which would cause whatever is breaking
->> now to break less deterministically then.
->
-> I think memory pressure that would block a 128 byte GFP_ATOMIC
-> allocation would mean the system was about to seriously fall over.
-> Given the user-facing behavior change and that an existing test was
-> already checking for this means we need to fix it.
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That sounds good but it is all rubbish.
-A) It doesn't matter for tracing multiple processes because ptrace
-   only works on a single signal at a time.  AKA if by the time you
-   are calling PTRACE_GETSIGINFO you already know which process you are
-   working against.
-B) Not every signal includes si_pid so even if you didn't know who you
-   were talking to this would be an issue.
-C) For a non-rt signal we only every try and queue up a signal signal.
-   We don't even attempt to queue siginfo otherwise.
+Hi!
 
-So what is the real world use case?
+> >> We have a problem with USBPD chargers which under certain conditions
+> >> can result in system overheating if the voltage provided by the USBPD
+> >> port is too high. While the preferred means to control this would be
+> >> through devicetree or ACPI settings, this is not always possible, and
+> >> we need to have a means to set a voltage limit.
+> >>
+> >> This patch exposes a new property, similar to input current limit, to
+> >> re-configure the maximum voltage from the external supply at runtime
+> >> based on system-level knowledge or user input.
+> >=20
+> > First, this should really be handled by dt / ACPI. If it is broken,
+> > that's a hardware bug, and we can do DMI-based blacklists in kernel.
+> >=20
+>=20
+> I think that handle this via dt / ACPI is not possible for our use case. =
+It can
+> be a hardware bug or a hardware/user constrain, let me try to explain bet=
+ter
+> with an example.
+>=20
+> On Pixel C's devices, userspace uses this to set a USB input limit of 5V =
+when
+> the screen is on for thermal reasons, but those go away when the screen is
+> off/system is sleeping, so we allow 9V and 12V levels when sleeping.
 
-The most useful I can think of is the whole check if this tracer was the
-one who sent SIGSTOP.  But that is fundamentally unreliable because we
-only queue a single signal anyway.  We must to that to preserve
-compatibility for non-rt signals as otherwise there are cases we could
-queue the same signal twice.  So with two simultaneous SIGSTOPs it is a
-race condition which siginfo is made available.
+So, on pixel C, what happens if userland ignores the constraint, keeps
+display on and sets charger to 12V?
 
-Right now we are on the edge of letting test cases for debug
-infrastructure prevent obvious optimizations/improvements to the code.
-So if we can find something other than our seccomp_bpf.c test case that
-fails I am happy to go with the change I posted.  Otherwise I think we
-just need to fix seccomp_bpf.c.
+> > How are you supposed to fsck a system, for example?
+> >=20
+>=20
+> hmm, I'm not sure I get the question, sorry, could you rephrase?
 
-Eric
+Ok, so I have just booted with init=3D/bin/bash, and would like to run
+fsck.ext4 on my root filesystem.
+
+> >> +What:		/sys/class/power_supply/<supply_name>/input_voltage_limit
+> >> +Date:		Nov 2018
+> >> +Contact:	linux-pm@vger.kernel.org
+> >> +Description:
+> >> +		Details the incoming VBUS voltage limit currently set in the
+> >> +		supply. Normally this is configured based on the type of
+> >> +		connection made.
+> >=20
+> > "Details"?
+> >=20
+> > Who can write to this value and when? What is the limit? If USB
+> > charger is plugged in, should it show 5.0V (because that's nominal on
+> > the USB) or 5.25V (because that is the real limit)?
+>=20
+> The voltages here refer to the Typical or Nominal values defined by the U=
+SB
+> specification for a Fixed power supply (or Fixed PDO). 5.0V, 5.25V, 4.75V,
+> 5.5V... all of those are considered "5V" according to the USB specificati=
+ons.
+>=20
+> At the 5V level (defined in the USB PD specification as vSafe5V), a nomin=
+al
+> power source is allowed to have a voltage between 4.75V and 5.50V (5V -5%/
+> +10%). For simplicity, we refer to this range as 5V, the typical value.
+> For all higher voltage levels other than vSafe5V, MIN voltage is PDO Volt=
+age *
+> 0.95, and MAX voltage is PDO Voltage * 1.05, where PDO Voltage is the Typ=
+ical
+> value (9V, 12V, 15V, 20V). [1]
+
+> > Who can write to this and when. And what happens on write? What
+> > happens if I write value that charger can't provide there?
+> >=20
+> > Does it set the voltage power supply should produce? Or maximal it can
+> > choose to produce?
+> >=20
+>=20
+> This defines a maximal voltage. If you write a value it can't provide,
+> it should go down to the next lowest level, and barring that, 5V is
+> always allowed.
+>=20
+> That makes me think that maybe I should also improve the implementation.
+>=20
+> > This really needs better documentation.
+>=20
+> Ack, I'll send a next version improving that.
+
+Thanks.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwCpC4ACgkQMOfwapXb+vJ7uACcCRDA8FIQmuQCK/hagMsggeRk
+D5kAnA+7vLPHIhWH3NHCkoY8AhnasD5b
+=Rpx/
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
