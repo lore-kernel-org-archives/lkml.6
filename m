@@ -2,57 +2,91 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BFFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC766C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 284CB2146D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:03:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90AFB20867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P7PQKMbC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284CB2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="beHuVywt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90AFB20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725784AbeLBIRN (ORCPT
+        id S1725764AbeLBIbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 03:17:13 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:49868 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeLBIRN (ORCPT
+        Sun, 2 Dec 2018 03:31:16 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38802 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725741AbeLBIbP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 03:17:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=gmEKfCMY3wMeJuXACp5/uT8XvMmNlcWaDS2ny5BZemA=; b=P7PQKMbC3TL8geXE0LcByxCzMV
-        z2YaLBlRnXUXoz2luVkPpwuc7dd7cnTMOT5wDCqiodNHUWjgnYU8yDDxILVp7uZm35AaXWWBcKLyX
-        tuX8sHbf0eqHKMwcy6qIb+/9oMukSZecRlOX34/1Q+BtjP+MFwkJcf85HrVOftaWSVgl2ALKItWMR
-        RpBy0Luouy1xuOlkZB12bZlrt5YpkWJ8/zMoLqlUPg2/3wqfnnLykR57kM2HbzJmqdRTew76WEk6y
-        HRu4w6jk1HPKcTIrYUH3lTbOt8awLoPhaFPEGo6lHUNmciZ9imZozGWm1bvgrRjRTufz3zFA7Hk+8
-        bJ6mWBBg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTCQV-0005EQ-BT; Sat, 01 Dec 2018 21:03:47 +0000
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] vfs: fix typos etc. in
- Documentation/filesystems/mount_api.txt
-Message-ID: <8a522bc9-5964-7fd7-9920-32920185ffd7@infradead.org>
-Date:   Sat, 1 Dec 2018 13:03:45 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sun, 2 Dec 2018 03:31:15 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m22so2166510wml.3;
+        Sat, 01 Dec 2018 13:17:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DZ+w095pSRVZvRAtnUnLIHFWqiPT2Y8YqU8hAKjxXf4=;
+        b=beHuVywtNuGvjyVo/Mvz8tRyc3arAeCJegSQnLqaAzizrcUsJUlhDG3KrFKcvfJTOf
+         FGcT3O5+SJG/u9aQPybwo/7TDTu96f4GkemgWPancnr0u0J78S6BfKPj4TxzNqAGivQY
+         uxaCnfCHw5DTvpnvANAjvU320jjeJbWLgc36vljsvmsJTVoEqakFndgtQ5x6ww4dYcYn
+         Bb3d2seUAgXhWqzCqLpZp+bMjzIshsc2WiB6pzCr2TAA4I0IthppfQJtoWErri+JUb8q
+         bexpbLl1OE1q4uONDBpa1GdUJrzyrIWuCyu2bbOUDmRtKw7vaujV1yZfwGa5mPWfN541
+         BlTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DZ+w095pSRVZvRAtnUnLIHFWqiPT2Y8YqU8hAKjxXf4=;
+        b=oKQUpdbBXuTc5SvgSRHGlI4FPdSSUHxIvdztIK/XJcfVajOG+iLn40qZdHRymvcXpg
+         vVSlduhQjohGKxkhp6Li7unMEOisVRGUQOt+h1Yc0UaGquoZHQMqSW9bjRaMtJoy/Kod
+         PdF9/8XhBQQXG5VLiVHfG+FySjfCwj9RmfpoRc8/IKaWG6C3KwIUARtGQY4+rPFHvnm3
+         ksUI2vkfSzsjgwnVbYUPZ2dBrqbzO2poEkCOsE76dNZnXMFRz7xkeAW1CdBz6IoGHLyC
+         ezkQS4LDcXp+axcWFaLunb1sUZAjmY07ZJBQaiB33QXBbsn7Tv7jCYIYl7P75DF0+8cF
+         Edhg==
+X-Gm-Message-State: AA+aEWZJP9xaLqvC3b5aJZ+k/pDoiYPYMUSr+uJCA4FxeoIfmNUusWK/
+        Ccn6i5kWr/2QQSNNGv0r1C4=
+X-Google-Smtp-Source: AFSGD/V4SdDgT7IP3FHMs7neN9FSYOtYkD9fgDmmiNvV/TwjXQMag3kJ+Php+PLFVG/FDukJiYwClA==
+X-Received: by 2002:a1c:ca15:: with SMTP id a21mr3059895wmg.132.1543699067076;
+        Sat, 01 Dec 2018 13:17:47 -0800 (PST)
+Received: from [192.168.1.18] (civ101.neoplus.adsl.tpnet.pl. [83.31.45.101])
+        by smtp.gmail.com with ESMTPSA id x10sm7654034wrn.29.2018.12.01.13.17.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 01 Dec 2018 13:17:46 -0800 (PST)
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
+ properties
+To:     Rob Herring <robh@kernel.org>, Pavel Machek <pavel@ucw.cz>
+Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+ <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
+ <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
+ <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
+ <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
+ <20181130210814.GA5756@amd>
+ <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <fa5add90-e1b7-d527-374f-175abdf88455@gmail.com>
+Date:   Sat, 1 Dec 2018 22:17:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -61,73 +95,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On 11/30/2018 11:19 PM, Rob Herring wrote:
+> On Fri, Nov 30, 2018 at 3:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+>>
+>> Hi!
+>>
+>>>> Pavel gave following examples:
+>>>>
+>>>> eth0:green:link
+>>>> adsl0:green:link
+>>>> adsl0:red:error
+>>>>
+>>>> So we would have e.g.:
+>>>>
+>>>> associated-vl42-device = <&camera1>;
+>>>> associated-network-device = <&phy1>;
+>>>> associated-block-device = <&phy1>;
+>>>
+>>> Variable property names are kind of a pain to parse.
+>>
+>> Ok, would it be enough to have associated-device = <&whatever>?
+> 
+> Yeah, but I though you needed the device type name in there.
+> 
+>>> Perhaps when LEDs are associated with a device, we shouldn't care
+>>> within the context of the LED subsystem what the name is. The
+>>> association is more important and if you have that exposed, then you
+>>> don't really need to care what the name is. You still have to deal
+>>> with a device with more than 1 LED, but that becomes a problem local
+>>> to that device.
+>>>
+>>> What I'm getting at is following a more standard binding pattern of
+>>> providers and consumers like we have for gpios, clocks, etc. So we'd
+>>> have something like this:
+>>>
+>>> ethernet {
+>>>   ...
+>>>   leds = <&green_led>, <&red_led>;
+>>>   led-names = "link", "err";
+>>> };
+>>
+>> Basically every single device could have a LED associated with it
+>> ("activity"). Would doing it like this mean we'd have to modify every
+>> single driver to parse leds / led-names properties?
+> 
+> Normally, that's how properties like this would work. A driver is also
+> what knows how the leds should function. 
 
-Fix typos, grammar, missing '_'s in mount_api.txt.
+This is not true in case of associations where LED controller is
+an independent device, as in Pavel's example [0].
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
----
-Also, is this meant to be "baz" or "bar"?
+> A driver can retrieve the led
+> and associate it with the 'foo-bar' function. The 'foo-bar' function
+> then doesn't have to be defined in DT nor exposed to userspace. It
+> wouldn't even have to be driver specific. The driver's subsystem could
+> handle it all if the led functions are standardized. Though then you'd
+> be back to needing standard names for 'led-names', but that's no worse
+> that trigger names. This model would also allow getting rid of
+> 'linux,default-trigger' properties in a lot of cases which wouldn't be
+> a bad thing.
+> 
+> However, having drivers handle this is not required. You can iterate
+> thru the tree for nodes with 'leds' and find the node which has a
+> phandle to the led node you care about. 
 
-	static const struct constant_table afs_param_keys[] = {
-		{ "baz",	Opt_bar },
-		{ "dynamic",	Opt_dyn },
-	};
+This way of discovering associations between devices and LEDs
+would be more reliable than by devicename part of LED class device
+as discussed previously.
 
- Documentation/filesystems/mount_api.txt |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+However, I've just tried to verify how it works, but
+I can't find the way to get the of_node phandle from sysfs.
 
---- linux-next-20181130.orig/Documentation/filesystems/mount_api.txt
-+++ linux-next-20181130/Documentation/filesystems/mount_api.txt
-@@ -258,7 +258,7 @@ manage the filesystem context.  They are
-  (*) int (*validate)(struct fs_context *fc);
- 
-      Called when all the options have been applied and the mount is about to
--     take place.  It is should check for inconsistencies from mount options and
-+     take place.  It should check for inconsistencies from mount options and
-      it is also allowed to do preliminary resource acquisition.  For instance,
-      the core NFS module could load the NFS protocol module here.
- 
-@@ -438,7 +438,7 @@ returned.
-  (*) int vfs_parse_fs_param(struct fs_context *fc,
- 			    struct fs_parameter *param);
- 
--     Supply a single mount parameter to the filesystem context.  This include
-+     Supply a single mount parameter to the filesystem context.  This includes
-      the specification of the source/device which is specified as the "source"
-      parameter (which may be specified multiple times if the filesystem
-      supports that).
-@@ -533,7 +533,7 @@ The members are as follows:
-      used in the values that the ->keys[] array maps to.
- 
-      It is expected that, for example, two parameters that are related, say
--     "acl" and "noacl" with have the same ID, but will be flagged to indicate
-+     "acl" and "noacl" will have the same ID, but will be flagged to indicate
-      that one is the inverse of the other.  The value can then be picked out
-      from the parse result.
- 
-@@ -574,9 +574,9 @@ The members are as follows:
-      For example:
- 
- 	static const struct fs_parameter_spec afs_param_specs[nr__afs_params] = {
--		[Opt_autocell]	= { fs_param_is flag },
-+		[Opt_autocell]	= { fs_param_is_flag },
- 		[Opt_bar]	= { fs_param_is_enum },
--		[Opt_dyn]	= { fs_param_is flag },
-+		[Opt_dyn]	= { fs_param_is_flag },
- 		[Opt_foo]	= { fs_param_is_bool, fs_param_neg_with_no },
- 		[Opt_source]	= { fs_param_is_string },
- 	};
-@@ -725,7 +725,7 @@ process the parameters it is given.
- 
-  (*) bool fs_validate_description(const struct fs_parameter_description *desc);
- 
--     This is validates the parameter description.  It returns true if the
-+     This validates the parameter description.  It returns true if the
-      description is good and false if it is not.
- 
-  (*) int fs_lookup_param(struct fs_context *fc,
+The "of_node" link in per-device dirs in /sys/devices point
+to the directories containing DT properties of the node, but
+I see no way to obtain the node phandle.
 
+> Sure, it's not that efficient,
+> but it does work and it's only done once. Basically, as long as the
+> linkage is there, we can make it work. I think using
+> 'associated-device' might work better for the current implementation
+> of Linux LED support, but leds/led-names would be more inline with
+> other DT bindings. The current Linux implementation shouldn't dictate
+> the binding design.
 
+[0] https://lkml.org/lkml/2018/11/13/103
+
+-- 
+Best regards,
+Jacek Anaszewski
