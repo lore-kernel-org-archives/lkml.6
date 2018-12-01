@@ -2,131 +2,113 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B7EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08281C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315EA2081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:44:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315EA2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id C7A272081D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7A272081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbeLBB51 (ORCPT
+        id S1726956AbeLBB5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 20:57:27 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:37752 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbeLBB51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 20:57:27 -0500
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wB1EikZX069031;
-        Sat, 1 Dec 2018 23:44:46 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Sat, 01 Dec 2018 23:44:46 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wB1Eic7J068967
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 1 Dec 2018 23:44:46 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-To:     Petr Mladek <pmladek@suse.com>, Dmitry Vyukov <dvyukov@google.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
-Date:   Sat, 1 Dec 2018 23:44:37 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 1 Dec 2018 20:57:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54202 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726458AbeLBB5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 20:57:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 32831AE69;
+        Sat,  1 Dec 2018 14:44:50 +0000 (UTC)
+Date:   Sat, 01 Dec 2018 15:44:48 +0100
+Message-ID: <s5hmupp1f33.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Jeremy Cline <jcline@redhat.com>
+Cc:     Kailang Yang <kailang@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Tim Van den Eynde <redhat@vdeynde.com>,
+        alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression: very quiet speakers on Thinkpad T570s
+In-Reply-To: <f14c37de-29ce-529b-8b37-40efd29ff1cb@redhat.com>
+References: <bbba2653-d57b-5fab-8c06-5fd22ae80aa5@redhat.com>
+        <s5h36riy2qh.wl-tiwai@suse.de>
+        <f14c37de-29ce-529b-8b37-40efd29ff1cb@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/01 0:40, Petr Mladek wrote:
->> Some examples for console output:
->>
->>   [    0.293000] [T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
->>   [    0.299733] [T1] Performance Events: Haswell events, core PMU driver.
->>   [    2.813808] [T35] clocksource: Switched to clocksource tsc
->>   [    2.893984] [C0] random: fast init done
->                   ^
+On Fri, 30 Nov 2018 17:51:33 +0100,
+Jeremy Cline wrote:
 > 
-> Please, remove the space between the timestamp and the from field.
-
-This space was emitted by print_time(). Do we want to modify print_time()
-not to emit this space if the from field is printed?
-
-If we modify print_time(), I think that the leading spaces inserted by "%5lu"
-makes little sense, for "%5lu" is too small for systems with uptime >= 1.16 days
-and parsers after all cannot assume fixed length for the timestamp field. Then,
-we could change from "%5lu.%06lu" to "%lu.%06lu" so that parsers (like /bin/awk)
-can get prefix part using white spaces as a delimiter.
-
-If we want to reduce space, do we want to do like
-
-  [0.293000@T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
-  [0.299733@T1] Performance Events: Haswell events, core PMU driver.
-  [2.813808@T35] clocksource: Switched to clocksource tsc
-  [2.893984@C0] random: fast init done
-
-(if printk_time = true) or
-
-  [@T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
-  [@T1] Performance Events: Haswell events, core PMU driver.
-  [@T35] clocksource: Switched to clocksource tsc
-  [@C0] random: fast init done
-
-(if printk_time = false) ?
-
-Dmitry, what format/delimiter is convenient for parsing by syzbot?
-
->> @@ -1037,6 +1054,9 @@ void log_buf_vmcoreinfo_setup(void)
->>  	VMCOREINFO_OFFSET(printk_log, len);
->>  	VMCOREINFO_OFFSET(printk_log, text_len);
->>  	VMCOREINFO_OFFSET(printk_log, dict_len);
->> +#ifdef CONFIG_PRINTK_FROM
->> +	VMCOREINFO_OFFSET(printk_log, from_id);
->> +#endif
+> On 11/30/18 11:00 AM, Takashi Iwai wrote:
+> > On Fri, 30 Nov 2018 15:49:17 +0100,
+> > Jeremy Cline wrote:
+> >>
+> >> Hi,
+> >>
+> >> Some folks have reported on the Fedora bug tracker[0] that the laptop
+> >> speaker volume is very low on the Thinkpad T570 when running a kernel
+> >> that includes commit 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad
+> >> Dock device for ALC298 platform").
+> >>
+> >> alsa-info.sh from v4.15.4 (just before commit 61fcf8ece9b6 arrived in
+> >> stable) and v4.19.4 with the issue present are attached to the bugzilla.
+> >> I've also Cc'd Tim, who uploaded them and has the laptop in question.
+> >>
+> >> [0] https://bugzilla.redhat.com/show_bug.cgi?id=1554304
+> > 
+> > Could you pinpoint which kernel version started showing the
+> > regression, at least?  The diffs are fairly wide between 4.15 and
+> > 4.19.
 > 
-> The crash tool would need to be updated if anyone wanted to read
-> the log from the extended structure. Well, it might be done later
-> if people start using it more widely.
-
-Since syzbot can utilize output from only normal consoles, I can
-keep extended records unmodified for now.
-
+> Ah, sorry for not being more clear. The regression appears to be
+> introduced by commit 61fcf8ece9b6, which got backported to v4.15.5
+> because it addressed a bug with the dock[0]. v4.19.4 with that commit
+> reverted works, according to the bug reporter.
 > 
-> I think about adding one more filed "u8 version". It would help
-> to solve the external compatibility in the long term.
+> [0] https://bugzilla.kernel.org/show_bug.cgi?id=195161
 
-/dev/kmsg format allows adding more fields, but that format did not define
-how to tell what fields are there. If fields are conditionally added by
-kernel config options, I don't think that "u8 version" field helps.
-Unless we add fields unconditionally, we will need to use $name=$value
-(where $name and $value must not contain ',' and ';') representation.
+OK, then this seems to be the change of DAC assignment.
 
-> Anyway, I like this feature. It is compatible with /dev/kmsg
-> format. dmesg works well. It helps to sort any mixed output
-> from both full and continuous lines.
+Maybe the hardware has some implicit assumption of NID 0x03 bound with
+the speaker pin.  Below is a patch for fixing the pin / DAC mapping.
+Please give it a try.
 
-OK, let's refine this approach.
 
+thanks,
+
+Takashi
+
+---
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 06f93032d0cc..50bc2e97d799 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4988,9 +4988,14 @@ static void alc_fixup_tpt470_dock(struct hda_codec *codec,
+ 		{ 0x19, 0x21a11010 }, /* dock mic */
+ 		{ }
+ 	};
++	static hda_nid_t preferred_pairs[] = {
++		0x14, 0x03, 0x17, 0x02, 0x21, 0x02,
++		0
++	};
+ 	struct alc_spec *spec = codec->spec;
+ 
+ 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
++		spec->gen.preferred_dacs = preferred_pairs;
+ 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
+ 		snd_hda_apply_pincfgs(codec, pincfgs);
+ 	} else if (action == HDA_FIXUP_ACT_INIT) {
