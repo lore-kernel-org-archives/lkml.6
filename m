@@ -6,26 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD54C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07EF7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8582145D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8582145D
+	by mail.kernel.org (Postfix) with ESMTP id CAA1520673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAA1520673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeLAMLj (ORCPT
+        id S1726994AbeLAMLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:11:39 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38164 "EHLO
+        Sat, 1 Dec 2018 07:11:31 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37958 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeLAMLc (ORCPT
+        with ESMTP id S1726640AbeLAMLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:11:32 -0500
+        Sat, 1 Dec 2018 07:11:30 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 8630822840; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        id C6D0E229DF; Fri, 30 Nov 2018 20:00:14 -0500 (EST)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Stephen N Chivers <schivers@csc.com.au>,
@@ -36,126 +37,174 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <9e87e71ff7978d7cc291c80efd98909375c0f7a0.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <cc803e15a80298921447042183294638d0ffe73d.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 14/14] m68k: mvme16x: Handle timer counter overflow
+Subject: [PATCH v4 02/14] m68k: mac: Fix VIA timer counter accesses
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reading the timer counter races with timer overflow (and the
-corresponding interrupt). This is resolved by reading the overflow
-register and taking this value into account. The interrupt handler
-must clear the overflow register when it eventually executes.
+This resolves some bugs that affect VIA timer counter accesses.
+Avoid lost interrupts caused by reading the counter low byte register.
+Make allowance for the fact that the counter will be decremented to
+0xFFFF before being reloaded.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
-TODO: find a spare counter for the clocksource, rather than hanging
-it off the HZ timer.
----
- arch/m68k/mvme16x/config.c | 45 +++++++++++++++++++++++++++-----------
- 1 file changed, 32 insertions(+), 13 deletions(-)
+Changed since v3:
+ - Don't add offset until after the timer counter actually wraps.
 
-diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
-index 2c109ee2a1a5..9bc2da69f80c 100644
---- a/arch/m68k/mvme16x/config.c
-+++ b/arch/m68k/mvme16x/config.c
-@@ -115,11 +115,11 @@ static void __init mvme16x_init_IRQ (void)
- 	m68k_setup_user_interrupt(VEC_USER, 192);
+Changed since v2:
+ - Don't check for timer interrupt in mac_gettimeoffset() when the timer is
+about to be reloaded.
+
+Changed since v1:
+ - Test the timer interrupt flag unconditionally.
+ - Drop some extraneous clean up.
+ - Don't try to recover from lost timer interrupts. Don't lose them
+in the first place. That means giving up on the timer counter low byte.
+The extra precision is probably not worth the extra complexity and
+I couldn't make it work anyway.
+---
+ arch/m68k/mac/via.c | 102 +++++++++++++++++++++++---------------------
+ 1 file changed, 53 insertions(+), 49 deletions(-)
+
+diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
+index f6df83ba2227..65aca12a8694 100644
+--- a/arch/m68k/mac/via.c
++++ b/arch/m68k/mac/via.c
+@@ -54,16 +54,6 @@ static __u8 rbv_clear;
+ 
+ static int gIER,gIFR,gBufA,gBufB;
+ 
+-/*
+- * Timer defs.
+- */
+-
+-#define TICK_SIZE		10000
+-#define MAC_CLOCK_TICK		(783300/HZ)		/* ticks per HZ */
+-#define MAC_CLOCK_LOW		(MAC_CLOCK_TICK&0xFF)
+-#define MAC_CLOCK_HIGH		(MAC_CLOCK_TICK>>8)
+-
+-
+ /*
+  * On Macs with a genuine VIA chip there is no way to mask an individual slot
+  * interrupt. This limitation also seems to apply to VIA clone logic cores in
+@@ -267,22 +257,6 @@ void __init via_init(void)
+ 	}
  }
  
--#define pcc2chip	((volatile u_char *)0xfff42000)
--#define PccSCCMICR	0x1d
--#define PccSCCTICR	0x1e
--#define PccSCCRICR	0x1f
--#define PccTPIACKR	0x25
-+#define PCC2CHIP   (0xfff42000)
-+#define PCCSCCMICR (PCC2CHIP + 0x1d)
-+#define PCCSCCTICR (PCC2CHIP + 0x1e)
-+#define PCCSCCRICR (PCC2CHIP + 0x1f)
-+#define PCCTPIACKR (PCC2CHIP + 0x25)
+-/*
+- * Start the 100 Hz clock
+- */
+-
+-void __init via_init_clock(irq_handler_t func)
+-{
+-	via1[vACR] |= 0x40;
+-	via1[vT1LL] = MAC_CLOCK_LOW;
+-	via1[vT1LH] = MAC_CLOCK_HIGH;
+-	via1[vT1CL] = MAC_CLOCK_LOW;
+-	via1[vT1CH] = MAC_CLOCK_HIGH;
+-
+-	if (request_irq(IRQ_MAC_TIMER_1, func, 0, "timer", func))
+-		pr_err("Couldn't register %s interrupt\n", "timer");
+-}
+-
+ /*
+  * Debugging dump, used in various places to see what's going on.
+  */
+@@ -310,29 +284,6 @@ void via_debug_dump(void)
+ 	}
+ }
  
- #ifdef CONFIG_EARLY_PRINTK
- 
-@@ -227,10 +227,10 @@ void mvme16x_cons_write(struct console *co, const char *str, unsigned count)
- 	base_addr[CyIER] = CyTxMpty;
- 
- 	while (1) {
--		if (pcc2chip[PccSCCTICR] & 0x20)
-+		if (in_8(PCCSCCTICR) & 0x20)
- 		{
- 			/* We have a Tx int. Acknowledge it */
--			sink = pcc2chip[PccTPIACKR];
-+			sink = in_8(PCCTPIACKR);
- 			if ((base_addr[CyLICR] >> 2) == port) {
- 				if (i == count) {
- 					/* Last char of string is now output */
-@@ -359,13 +359,26 @@ static u32 clk_total;
- #define PCC_TIMER_CLOCK_FREQ 1000000
- #define PCC_TIMER_CYCLES     (PCC_TIMER_CLOCK_FREQ / HZ)
- 
-+#define PCCTCMP1             (PCC2CHIP + 0x04)
-+#define PCCTCNT1             (PCC2CHIP + 0x08)
-+#define PCCTOVR1             (PCC2CHIP + 0x17)
-+#define PCCTIC1              (PCC2CHIP + 0x1b)
+-/*
+- * This is always executed with interrupts disabled.
+- *
+- * TBI: get time offset between scheduling timer ticks
+- */
+-
+-u32 mac_gettimeoffset(void)
+-{
+-	unsigned long ticks, offset = 0;
+-
+-	/* read VIA1 timer 2 current value */
+-	ticks = via1[vT1CL] | (via1[vT1CH] << 8);
+-	/* The probability of underflow is less than 2% */
+-	if (ticks > MAC_CLOCK_TICK - MAC_CLOCK_TICK / 50)
+-		/* Check for pending timer interrupt in VIA1 IFR */
+-		if (via1[vIFR] & 0x40) offset = TICK_SIZE;
+-
+-	ticks = MAC_CLOCK_TICK - ticks;
+-	ticks = ticks * 10000L / MAC_CLOCK_TICK;
+-
+-	return (ticks + offset) * 1000;
+-}
+-
+ /*
+  * Flush the L2 cache on Macs that have it by flipping
+  * the system into 24-bit mode for an instant.
+@@ -618,3 +569,56 @@ int via2_scsi_drq_pending(void)
+ 	return via2[gIFR] & (1 << IRQ_IDX(IRQ_MAC_SCSIDRQ));
+ }
+ EXPORT_SYMBOL(via2_scsi_drq_pending);
 +
-+#define PCCTOVR1_TIC_EN      0x01
-+#define PCCTOVR1_COC_EN      0x02
-+#define PCCTOVR1_OVR_CLR     0x04
++/* timer and clock source */
 +
-+#define PCCTIC1_INT_CLR      0x08
-+#define PCCTIC1_INT_EN       0x10
++#define VIA_CLOCK_FREQ     783360                /* VIA "phase 2" clock in Hz */
++#define VIA_TIMER_INTERVAL (1000000 / HZ)        /* microseconds per jiffy */
++#define VIA_TIMER_CYCLES   (VIA_CLOCK_FREQ / HZ) /* clock cycles per jiffy */
 +
- static irqreturn_t mvme16x_timer_int (int irq, void *dev_id)
- {
- 	irq_handler_t timer_routine = dev_id;
- 	unsigned long flags;
- 
- 	local_irq_save(flags);
--	*(volatile unsigned char *)0xfff4201b |= 8;
-+	out_8(PCCTIC1, in_8(PCCTIC1) | PCCTIC1_INT_CLR);
-+	out_8(PCCTOVR1, PCCTOVR1_OVR_CLR);
- 	clk_total += PCC_TIMER_CYCLES;
- 	timer_routine(0, NULL);
- 	local_irq_restore(flags);
-@@ -379,10 +392,10 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
-     int irq;
- 
-     /* Using PCCchip2 or MC2 chip tick timer 1 */
--    *(volatile unsigned long *)0xfff42008 = 0;
--    *(volatile unsigned long *)0xfff42004 = PCC_TIMER_CYCLES;
--    *(volatile unsigned char *)0xfff42017 |= 3;
--    *(volatile unsigned char *)0xfff4201b = 0x16;
-+    out_be32(PCCTCNT1, 0);
-+    out_be32(PCCTCMP1, PCC_TIMER_CYCLES);
-+    out_8(PCCTOVR1, in_8(PCCTOVR1) | PCCTOVR1_TIC_EN | PCCTOVR1_COC_EN);
-+    out_8(PCCTIC1, PCCTIC1_INT_EN | 6);
-     if (request_irq(MVME16x_IRQ_TIMER, mvme16x_timer_int, IRQF_TIMER, "timer",
-                     timer_routine))
- 	panic ("Couldn't register timer int");
-@@ -401,10 +414,16 @@ void mvme16x_sched_init (irq_handler_t timer_routine)
- static u64 mvme16x_read_clk(struct clocksource *cs)
- {
- 	unsigned long flags;
-+	u8 overflow, tmp;
- 	u32 ticks;
- 
- 	local_irq_save(flags);
--	ticks = *(volatile u32 *)0xfff42008;
-+	tmp = in_8(PCCTOVR1) >> 4;
-+	ticks = in_be32(PCCTCNT1);
-+	overflow = in_8(PCCTOVR1) >> 4;
-+	if (overflow != tmp)
-+		ticks = in_be32(PCCTCNT1);
-+	ticks += overflow * PCC_TIMER_CYCLES;
- 	ticks += clk_total;
- 	local_irq_restore(flags);
- 
++#define VIA_TC             (VIA_TIMER_CYCLES - 2) /* including 0 and -1 */
++#define VIA_TC_LOW         (VIA_TC & 0xFF)
++#define VIA_TC_HIGH        (VIA_TC >> 8)
++
++void __init via_init_clock(irq_handler_t timer_routine)
++{
++	if (request_irq(IRQ_MAC_TIMER_1, timer_routine, 0, "timer", NULL)) {
++		pr_err("Couldn't register %s interrupt\n", "timer");
++		return;
++	}
++
++	via1[vT1LL] = VIA_TC_LOW;
++	via1[vT1LH] = VIA_TC_HIGH;
++	via1[vT1CL] = VIA_TC_LOW;
++	via1[vT1CH] = VIA_TC_HIGH;
++	via1[vACR] |= 0x40;
++}
++
++u32 mac_gettimeoffset(void)
++{
++	unsigned long flags;
++	u8 count_high;
++	u16 count, offset = 0;
++
++	/*
++	 * Timer counter wrap-around is detected with the timer interrupt flag
++	 * but reading the counter low byte (vT1CL) would reset the flag.
++	 * Also, accessing both counter registers is essentially a data race.
++	 * These problems are avoided by ignoring the low byte. Clock accuracy
++	 * is 256 times worse (error can reach 0.327 ms) but CPU overhead is
++	 * reduced by avoiding slow VIA register accesses.
++	 */
++
++	local_irq_save(flags);
++	count_high = via1[vT1CH];
++	if (count_high == 0xFF)
++		count_high = 0;
++	if (count_high > 0 && (via1[vIFR] & VIA_TIMER_1_INT))
++		offset = VIA_TIMER_CYCLES;
++	local_irq_restore(flags);
++
++	count = count_high << 8;
++	count = VIA_TIMER_CYCLES - count + offset;
++
++	return ((count * VIA_TIMER_INTERVAL) / VIA_TIMER_CYCLES) * 1000;
++}
 -- 
 2.18.1
 
