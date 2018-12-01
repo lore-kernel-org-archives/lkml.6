@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 017FDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46844C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDCCC21479
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A3720834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KtUGzzrt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDCCC21479
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JThfbg/l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A3720834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbeLBDF7 (ORCPT
+        id S1727266AbeLBDGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 22:05:59 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33807 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbeLBDF6 (ORCPT
+        Sat, 1 Dec 2018 22:06:01 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45217 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbeLBDGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 22:05:58 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u6-v6so7649671ljd.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:53:08 -0800 (PST)
+        Sat, 1 Dec 2018 22:06:00 -0500
+Received: by mail-lf1-f68.google.com with SMTP id b20so6179743lfa.12
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:53:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kw5DmJYSpDmuJznmwAMRHQCtGgWe5nKFfzGdrXYI1X4=;
-        b=KtUGzzrtlk2DxLtkU0GSvQOAnNzIWPXRRGKfQe2yVbwdXt7ofrw5D7dZ8ce12OaLCS
-         unXZVIEy3vPQ16kqH5pI9yPTK5v/QOf7A0D/cUQQmPmHNSyWQnpzvMT+Mg6n5OHACWKu
-         Mu+sU2Hzi82ZRIhvlvRDcvy6bW5MtXlNd00RA=
+        bh=kRRqVVwMz5ixbamRKAl9gUoe/zOElJopLPpSl/n7en4=;
+        b=JThfbg/lOMn+xzuNaXHGw5fxxc6JgwX3c8sTa9g9M1xQwp2EdSRPgWwBwkTv5fyiAG
+         Q3e3FBWNCQNW7ilQSIPXLa4S5eNrDgiL1yYMZoxNu/gVHPnb4ljyOvTejUHcuP091y8Y
+         VNgyfKsYQnhYGgaRvJ7otQBDfkt20Rl5yEbrg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kw5DmJYSpDmuJznmwAMRHQCtGgWe5nKFfzGdrXYI1X4=;
-        b=KHvq9rfhICsOYHnL1U75pI36oQ55/oxT07883cNxA7trj9/Am69nZCEfB1xz41YsCa
-         CoxLXei9OOc4KoSBz4SrmNNE6nxDf2QTeVw40WKYtqZtNZ2kkMGYx+7HlAC8qgfMcVPY
-         L7wYGF/wU2YAz/FyG9MLusSKz/t7Zq4tYxdH2Pg0Joqay7mzezF8fVpK+y/GY4NEHbv0
-         51d+E5ldFknBjwMVNvmHgrmEXpCPw1+L+GOa2L8DHOaytVek4Vzm3T9DPbZyW/MqkbBG
-         PUCJ12XjgrnhASQZkxdHh9b5Qco0H1BRH8vor/KsPoh2xTxplWFYkBLIDOO6Eh7zMBAu
-         klBg==
-X-Gm-Message-State: AA+aEWYa4CNTMs355+4jd8qrYVgWP/ZEqrFyT+9uYHJvu6zqUlDXuLmc
-        y4OhKAKParS9acerRhnLSha1qw==
-X-Google-Smtp-Source: AFSGD/U3MK86JakjWAsGIAPOydF4Fu1ZuFebohW+lO98c3aYHQuBhpACEc2ZaU+lRM0KzWxfWxfRZA==
-X-Received: by 2002:a2e:6594:: with SMTP id e20-v6mr6836862ljf.123.1543679587802;
-        Sat, 01 Dec 2018 07:53:07 -0800 (PST)
+        bh=kRRqVVwMz5ixbamRKAl9gUoe/zOElJopLPpSl/n7en4=;
+        b=kw3Wgz64FSedQb7Fnpx6FFROYB5GTjelVTjY0h922aCz1tbgpHCjQhjC6dfTa09Uas
+         hNnJGF67iH9HwqoOHPd/bF9vYohBMNm88gWijxRr6N/avlE7glbCjaQWEz+pJC3AZILN
+         Dhy7zPHJXVFqO6Ilve3GUwpK0z4HGWu+0pyk0jMogtZrqfyaHRZORjRWWOBhuWvhshRi
+         6cezyzIEgsnoJ6hbiyJl8yxtiuAiFHAlEZtkERyiIf6H3g0OMmHKiK/9jGmF0g/bKFwR
+         0Ga/yb6wv0AzQaKUaMFs+Me2PIJSMwz/7DBowPa0oDsN90zS4/+oB5qKdTo5Y8uR3igJ
+         WhIw==
+X-Gm-Message-State: AA+aEWb6Mas2aylV2vKPMOQY2NVc/+Kuq8HGt61cmFNoYI2KOp2pQ+F+
+        CWBW4wZ1PTpOcGflJWA/GVVQ6g==
+X-Google-Smtp-Source: AFSGD/VJpCOCB7CUnIR+AxwYNRDLs6nRSYrC9f6OHv0tOG6hLpf2++rze+tuBU7hCzoTJxhOIfwrUQ==
+X-Received: by 2002:a19:fc09:: with SMTP id a9mr6080583lfi.21.1543679590022;
+        Sat, 01 Dec 2018 07:53:10 -0800 (PST)
 Received: from localhost.localdomain (c-ae7b71d5.014-348-6c756e10.bbcust.telenor.se. [213.113.123.174])
-        by smtp.gmail.com with ESMTPSA id 13-v6sm1365426ljj.49.2018.12.01.07.53.06
+        by smtp.gmail.com with ESMTPSA id 13-v6sm1365426ljj.49.2018.12.01.07.53.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Dec 2018 07:53:06 -0800 (PST)
+        Sat, 01 Dec 2018 07:53:09 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
@@ -64,9 +64,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 03/13 v2] regulator: lm363x: Let core handle GPIO descriptor
-Date:   Sat,  1 Dec 2018 16:41:41 +0100
-Message-Id: <20181201154151.14890-4-linus.walleij@linaro.org>
+Subject: [PATCH 04/13 v2] regulator: lp8788-ldo: Let core handle GPIO descriptor
+Date:   Sat,  1 Dec 2018 16:41:42 +0100
+Message-Id: <20181201154151.14890-5-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181201154151.14890-1-linus.walleij@linaro.org>
 References: <20181201154151.14890-1-linus.walleij@linaro.org>
@@ -80,7 +80,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Use the gpiod_get() rather than the devm_* version so that the
 regulator core can handle the lifecycle of these descriptors.
 
-Fixes: b2d751b7f69b ("regulator: lm363x: Pass descriptor instead of GPIO number")
+Fixes: 2468f0d51548 ("regulator: lp8788-ldo: Pass descriptor instead of GPIO number")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 ChangeLog v1->v2:
@@ -89,40 +89,28 @@ ChangeLog v1->v2:
 - Put a comment in the code so maintainers knows not to
   use managed resources (devm*)
 ---
- drivers/regulator/lm363x-regulator.c | 8 ++++++--
+ drivers/regulator/lp8788-ldo.c | 8 ++++++--
  1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
-index bbedb08d257b..8c0e8419c43f 100644
---- a/drivers/regulator/lm363x-regulator.c
-+++ b/drivers/regulator/lm363x-regulator.c
-@@ -224,13 +224,15 @@ static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev,
- 	/*
- 	 * Check LCM_EN1/2_GPIO is configured.
- 	 * Those pins are used for enabling VPOS/VNEG LDOs.
+diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+index 553b4790050f..2ee22e7ea675 100644
+--- a/drivers/regulator/lp8788-ldo.c
++++ b/drivers/regulator/lp8788-ldo.c
+@@ -501,8 +501,12 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
+ 		return 0;
+ 	}
+ 
+-	/* FIXME: check default mode for GPIO here: high or low? */
+-	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
++	/*
 +	 * Do not use devm* here: the regulator core takes over the
 +	 * lifecycle management of the GPIO descriptor.
- 	 */
- 	switch (id) {
- 	case LM3632_LDO_POS:
--		return devm_gpiod_get_index_optional(dev, "enable", 0,
-+		return gpiod_get_index_optional(dev, "enable", 0,
- 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
- 	case LM3632_LDO_NEG:
--		return devm_gpiod_get_index_optional(dev, "enable", 1,
-+		return gpiod_get_index_optional(dev, "enable", 1,
- 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
- 	default:
- 		return NULL;
-@@ -263,6 +265,8 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
- 					 LM3632_EXT_EN_MASK,
- 					 LM3632_EXT_EN_MASK);
- 		if (ret) {
-+			if (gpiod)
-+				gpiod_put(gpiod);
- 			dev_err(dev, "External pin err: %d\n", ret);
- 			return ret;
- 		}
++	 * FIXME: check default mode for GPIO here: high or low?
++	 */
++	ldo->ena_gpiod = gpiod_get_index_optional(&pdev->dev,
+ 					       "enable",
+ 					       enable_id,
+ 					       GPIOD_OUT_HIGH |
 -- 
 2.19.1
 
