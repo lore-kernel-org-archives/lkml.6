@@ -6,26 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0A6C65BAE
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B197DC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D55720673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D55720673
+	by mail.kernel.org (Postfix) with ESMTP id 7E1A620673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:00:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E1A620673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbeLAMLj (ORCPT
+        id S1727097AbeLAMLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 1 Dec 2018 07:11:39 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38160 "EHLO
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38154 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbeLAMLc (ORCPT
+        with ESMTP id S1726893AbeLAMLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 1 Dec 2018 07:11:32 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 5ECAC281FF; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        id 4E67A281FE; Fri, 30 Nov 2018 20:00:15 -0500 (EST)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Stephen N Chivers <schivers@csc.com.au>,
@@ -36,11 +37,11 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <68b40c64e1cc2f095f93cf27f860f8f6fc0152cc.1543625590.git.fthain@telegraphics.com.au>
+Message-Id: <204f589d89d7eabe0799003b0378142795afec99.1543625590.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543625590.git.fthain@telegraphics.com.au>
 References: <cover.1543625590.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 11/14] m68k: mvme147: Convert to clocksource API
+Subject: [PATCH v4 10/14] m68k: mac: Convert to clocksource API
 Date:   Sat, 01 Dec 2018 11:53:10 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,115 +53,111 @@ implementation.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Stan Johnson <userm57@yahoo.com>
 ---
+Changed since v3:
+ - Use clk_offset variable to track the offset when the irq check is skipped.
+
+Changed since v2:
+ - Drop 'clk_offset' variable.
+
 Changed since v1:
  - Moved clk_total access to within the irq lock.
  - Use type u32 for tick counter.
 ---
- arch/m68k/include/asm/mvme147hw.h |  1 -
- arch/m68k/mvme147/config.c        | 36 +++++++++++++++++++++++++------
- 2 files changed, 30 insertions(+), 7 deletions(-)
+ arch/m68k/mac/via.c | 45 ++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 36 insertions(+), 9 deletions(-)
 
-diff --git a/arch/m68k/include/asm/mvme147hw.h b/arch/m68k/include/asm/mvme147hw.h
-index 9c7ff67c5ffd..7c3dd513128e 100644
---- a/arch/m68k/include/asm/mvme147hw.h
-+++ b/arch/m68k/include/asm/mvme147hw.h
-@@ -66,7 +66,6 @@ struct pcc_regs {
- #define PCC_INT_ENAB		0x08
+diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
+index 65aca12a8694..31cccc79cb7a 100644
+--- a/arch/m68k/mac/via.c
++++ b/arch/m68k/mac/via.c
+@@ -23,6 +23,7 @@
+  *
+  */
  
- #define PCC_TIMER_INT_CLR	0x80
--#define PCC_TIMER_PRELOAD	63936l
- 
- #define PCC_LEVEL_ABORT		0x07
- #define PCC_LEVEL_SERIAL	0x04
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index 4ef4faa5ed8b..c44a254e8a8c 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -17,6 +17,7 @@
++#include <linux/clocksource.h>
+ #include <linux/types.h>
  #include <linux/kernel.h>
  #include <linux/mm.h>
- #include <linux/tty.h>
-+#include <linux/clocksource.h>
- #include <linux/console.h>
- #include <linux/linkage.h>
- #include <linux/init.h>
-@@ -92,6 +93,21 @@ void __init config_mvme147(void)
- 		vme_brdtype = VME_TYPE_MVME147;
- }
+@@ -573,16 +574,39 @@ EXPORT_SYMBOL(via2_scsi_drq_pending);
+ /* timer and clock source */
  
-+static u64 mvme147_read_clk(struct clocksource *cs);
+ #define VIA_CLOCK_FREQ     783360                /* VIA "phase 2" clock in Hz */
+-#define VIA_TIMER_INTERVAL (1000000 / HZ)        /* microseconds per jiffy */
+ #define VIA_TIMER_CYCLES   (VIA_CLOCK_FREQ / HZ) /* clock cycles per jiffy */
+ 
+ #define VIA_TC             (VIA_TIMER_CYCLES - 2) /* including 0 and -1 */
+ #define VIA_TC_LOW         (VIA_TC & 0xFF)
+ #define VIA_TC_HIGH        (VIA_TC >> 8)
+ 
++static u64 mac_read_clk(struct clocksource *cs);
 +
-+static struct clocksource mvme147_clk = {
-+	.name   = "pcc",
++static struct clocksource mac_clk = {
++	.name   = "via1",
 +	.rating = 250,
-+	.read   = mvme147_read_clk,
++	.read   = mac_read_clk,
 +	.mask   = CLOCKSOURCE_MASK(32),
 +	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
 +};
 +
-+static u32 clk_total;
++static u32 clk_total, clk_offset;
 +
-+#define PCC_TIMER_CLOCK_FREQ 160000
-+#define PCC_TIMER_CYCLES     (PCC_TIMER_CLOCK_FREQ / HZ)
-+#define PCC_TIMER_PRELOAD    (0x10000 - PCC_TIMER_CYCLES)
- 
- /* Using pcc tick timer 1 */
- 
-@@ -103,6 +119,7 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- 	local_irq_save(flags);
- 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;
- 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
-+	clk_total += PCC_TIMER_CYCLES;
- 	timer_routine(0, NULL);
- 	local_irq_restore(flags);
- 
-@@ -112,32 +129,39 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- 
- void mvme147_sched_init (irq_handler_t timer_routine)
++static irqreturn_t via_timer_handler(int irq, void *dev_id)
++{
++	irq_handler_t timer_routine = dev_id;
++
++	clk_total += VIA_TIMER_CYCLES;
++	clk_offset = 0;
++	timer_routine(0, NULL);
++
++	return IRQ_HANDLED;
++}
++
+ void __init via_init_clock(irq_handler_t timer_routine)
  {
--	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, 0, "timer 1",
--			timer_routine))
-+	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, IRQF_TIMER,
-+			"timer 1", timer_routine))
- 		pr_err("Couldn't register timer interrupt\n");
- 
- 	/* Init the clock with a value */
--	/* our clock goes off every 6.25us */
-+	/* The clock counter increments until 0xFFFF then reloads */
- 	m147_pcc->t1_preload = PCC_TIMER_PRELOAD;
- 	m147_pcc->t1_cntrl = 0x0;	/* clear timer */
- 	m147_pcc->t1_cntrl = 0x3;	/* start timer */
- 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;  /* clear pending ints */
- 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
+-	if (request_irq(IRQ_MAC_TIMER_1, timer_routine, 0, "timer", NULL)) {
++	if (request_irq(IRQ_MAC_TIMER_1, via_timer_handler, IRQF_TIMER, "timer",
++			timer_routine)) {
+ 		pr_err("Couldn't register %s interrupt\n", "timer");
+ 		return;
+ 	}
+@@ -592,13 +616,16 @@ void __init via_init_clock(irq_handler_t timer_routine)
+ 	via1[vT1CL] = VIA_TC_LOW;
+ 	via1[vT1CH] = VIA_TC_HIGH;
+ 	via1[vACR] |= 0x40;
 +
-+	clocksource_register_hz(&mvme147_clk, PCC_TIMER_CLOCK_FREQ);
++	clocksource_register_hz(&mac_clk, VIA_CLOCK_FREQ);
  }
  
--/* This is always executed with interrupts disabled.  */
- /* XXX There are race hazards in this code XXX */
--u32 mvme147_gettimeoffset(void)
-+static u64 mvme147_read_clk(struct clocksource *cs)
+-u32 mac_gettimeoffset(void)
++static u64 mac_read_clk(struct clocksource *cs)
  {
-+	unsigned long flags;
- 	volatile unsigned short *cp = (volatile unsigned short *)0xfffe1012;
- 	unsigned short n;
+ 	unsigned long flags;
+ 	u8 count_high;
+-	u16 count, offset = 0;
++	u16 count;
 +	u32 ticks;
  
-+	local_irq_save(flags);
- 	n = *cp;
- 	while (n != *cp)
- 		n = *cp;
- 
- 	n -= PCC_TIMER_PRELOAD;
--	return ((unsigned long)n * 25 / 4) * 1000;
-+	ticks = clk_total + n;
+ 	/*
+ 	 * Timer counter wrap-around is detected with the timer interrupt flag
+@@ -614,11 +641,11 @@ u32 mac_gettimeoffset(void)
+ 	if (count_high == 0xFF)
+ 		count_high = 0;
+ 	if (count_high > 0 && (via1[vIFR] & VIA_TIMER_1_INT))
+-		offset = VIA_TIMER_CYCLES;
+-	local_irq_restore(flags);
+-
++		clk_offset = VIA_TIMER_CYCLES;
+ 	count = count_high << 8;
+-	count = VIA_TIMER_CYCLES - count + offset;
++	ticks = VIA_TIMER_CYCLES - count;
++	ticks += clk_offset + clk_total;
 +	local_irq_restore(flags);
-+
+ 
+-	return ((count * VIA_TIMER_INTERVAL) / VIA_TIMER_CYCLES) * 1000;
 +	return ticks;
  }
- 
- static int bcd2int (unsigned char b)
 -- 
 2.18.1
 
