@@ -2,184 +2,160 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC766C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3211FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90AFB20867
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D476A2080A
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 21:32:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="beHuVywt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90AFB20867
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4aSAr7f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D476A2080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725764AbeLBIbQ (ORCPT
+        id S1725758AbeLBIpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 03:31:16 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38802 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725741AbeLBIbP (ORCPT
+        Sun, 2 Dec 2018 03:45:47 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44886 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725736AbeLBIpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 03:31:15 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m22so2166510wml.3;
-        Sat, 01 Dec 2018 13:17:47 -0800 (PST)
+        Sun, 2 Dec 2018 03:45:47 -0500
+Received: by mail-pl1-f194.google.com with SMTP id k8so4500785pls.11
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 13:32:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DZ+w095pSRVZvRAtnUnLIHFWqiPT2Y8YqU8hAKjxXf4=;
-        b=beHuVywtNuGvjyVo/Mvz8tRyc3arAeCJegSQnLqaAzizrcUsJUlhDG3KrFKcvfJTOf
-         FGcT3O5+SJG/u9aQPybwo/7TDTu96f4GkemgWPancnr0u0J78S6BfKPj4TxzNqAGivQY
-         uxaCnfCHw5DTvpnvANAjvU320jjeJbWLgc36vljsvmsJTVoEqakFndgtQ5x6ww4dYcYn
-         Bb3d2seUAgXhWqzCqLpZp+bMjzIshsc2WiB6pzCr2TAA4I0IthppfQJtoWErri+JUb8q
-         bexpbLl1OE1q4uONDBpa1GdUJrzyrIWuCyu2bbOUDmRtKw7vaujV1yZfwGa5mPWfN541
-         BlTA==
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IsolrVLm3RP9VspVOW/jCNjbCFZ7pA1u4vUTE9arfTs=;
+        b=k4aSAr7fN3Q4I6E6estBCgFMiIPtuhzHQdZ30cTcfcHMEakem8UBotFARzeYU2SLgA
+         LpFR9ZDEUjllny7JjfJZOsEBXXEX7kS7sdrXVE/U7ZiikbDKOtMYwvpRBeT7C4XLnFEO
+         SiWuzjjpa/47IZLWMKWci3srWuednJtwsdgprtX2LOZM1p0cZlkYfdILOu5Q2BGwDCkQ
+         kPG8M/qGKfdBLyzocSsfVzmkqLltaH9MA1n72TTzr8Hd2n1kPjLv933nfHmUOn5t+BN2
+         B6HhgnOqJMr4ITJpcBTZB8RwdPjxSdUBMWypMgcHR0z3o6M8pkRoDAY4tVPECy7qtdl4
+         Jw4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DZ+w095pSRVZvRAtnUnLIHFWqiPT2Y8YqU8hAKjxXf4=;
-        b=oKQUpdbBXuTc5SvgSRHGlI4FPdSSUHxIvdztIK/XJcfVajOG+iLn40qZdHRymvcXpg
-         vVSlduhQjohGKxkhp6Li7unMEOisVRGUQOt+h1Yc0UaGquoZHQMqSW9bjRaMtJoy/Kod
-         PdF9/8XhBQQXG5VLiVHfG+FySjfCwj9RmfpoRc8/IKaWG6C3KwIUARtGQY4+rPFHvnm3
-         ksUI2vkfSzsjgwnVbYUPZ2dBrqbzO2poEkCOsE76dNZnXMFRz7xkeAW1CdBz6IoGHLyC
-         ezkQS4LDcXp+axcWFaLunb1sUZAjmY07ZJBQaiB33QXBbsn7Tv7jCYIYl7P75DF0+8cF
-         Edhg==
-X-Gm-Message-State: AA+aEWZJP9xaLqvC3b5aJZ+k/pDoiYPYMUSr+uJCA4FxeoIfmNUusWK/
-        Ccn6i5kWr/2QQSNNGv0r1C4=
-X-Google-Smtp-Source: AFSGD/V4SdDgT7IP3FHMs7neN9FSYOtYkD9fgDmmiNvV/TwjXQMag3kJ+Php+PLFVG/FDukJiYwClA==
-X-Received: by 2002:a1c:ca15:: with SMTP id a21mr3059895wmg.132.1543699067076;
-        Sat, 01 Dec 2018 13:17:47 -0800 (PST)
-Received: from [192.168.1.18] (civ101.neoplus.adsl.tpnet.pl. [83.31.45.101])
-        by smtp.gmail.com with ESMTPSA id x10sm7654034wrn.29.2018.12.01.13.17.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Dec 2018 13:17:46 -0800 (PST)
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-To:     Rob Herring <robh@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
- <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
- <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
- <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
- <20181130210814.GA5756@amd>
- <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <fa5add90-e1b7-d527-374f-175abdf88455@gmail.com>
-Date:   Sat, 1 Dec 2018 22:17:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=IsolrVLm3RP9VspVOW/jCNjbCFZ7pA1u4vUTE9arfTs=;
+        b=i6MJQujdPnQStTR/TmQkwvqVU9IdvlAbrfBJx1R5OWGs4mjPMfwpw2CjUJKBB4uR9I
+         I/4frDI4GSSzC7CET1cEiT/Tb/1mtCGgOrZQ3jeXxuPg+d37POYcWinFd1fwhfSs8KiQ
+         G8sL8BMUGHsmWRuz9dWrSFWT4XDMBZpebfBaAwzNwjUF90gGnsVypTdvILOh3ckMhHsH
+         cAlgbfwLKTtR0A6SZdYabOw/PovfsHMS9uJqcOhqI45Z+6W1PYo9IYGN4biVKWajPrw+
+         BGo8S9f+lSj856LQ+tvkH1WrP2OeZkv/lP9h2e56jqa+VOB6u+UsZ933PIRnu3LdWosz
+         MO+A==
+X-Gm-Message-State: AA+aEWar7WHDEzJXqrOpVle6yO7r+D6rJRc5eyku8kBPN/0A2FLVoxXf
+        EO4RjGnx4psVRttuAaPNRMk=
+X-Google-Smtp-Source: AFSGD/VatVl5AQPHUJfXxN86BwKB9cLtiqhazOi138hBCNYiP9zbkzWrzJ0Y2JPFx16IQzz8r0ux2Q==
+X-Received: by 2002:a17:902:f082:: with SMTP id go2mr10610274plb.115.1543699939581;
+        Sat, 01 Dec 2018 13:32:19 -0800 (PST)
+Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
+        by smtp.gmail.com with ESMTPSA id c67sm13561182pfg.170.2018.12.01.13.32.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Dec 2018 13:32:18 -0800 (PST)
+Date:   Sat, 1 Dec 2018 11:32:16 -1000
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: Re: [PATCH] sched/fair: Fix assignment of boolean variables
+Message-ID: <20181201213216.wmikdw3emxhc7m5r@gmail.com>
+Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        Wen Yang <wen.yang99@zte.com.cn>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn
+References: <20181201090936.10175-1-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3qy7gq5q4ryywuu6"
+Content-Disposition: inline
+In-Reply-To: <20181201090936.10175-1-wen.yang99@zte.com.cn>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/2018 11:19 PM, Rob Herring wrote:
-> On Fri, Nov 30, 2018 at 3:08 PM Pavel Machek <pavel@ucw.cz> wrote:
->>
->> Hi!
->>
->>>> Pavel gave following examples:
->>>>
->>>> eth0:green:link
->>>> adsl0:green:link
->>>> adsl0:red:error
->>>>
->>>> So we would have e.g.:
->>>>
->>>> associated-vl42-device = <&camera1>;
->>>> associated-network-device = <&phy1>;
->>>> associated-block-device = <&phy1>;
->>>
->>> Variable property names are kind of a pain to parse.
->>
->> Ok, would it be enough to have associated-device = <&whatever>?
-> 
-> Yeah, but I though you needed the device type name in there.
-> 
->>> Perhaps when LEDs are associated with a device, we shouldn't care
->>> within the context of the LED subsystem what the name is. The
->>> association is more important and if you have that exposed, then you
->>> don't really need to care what the name is. You still have to deal
->>> with a device with more than 1 LED, but that becomes a problem local
->>> to that device.
->>>
->>> What I'm getting at is following a more standard binding pattern of
->>> providers and consumers like we have for gpios, clocks, etc. So we'd
->>> have something like this:
->>>
->>> ethernet {
->>>   ...
->>>   leds = <&green_led>, <&red_led>;
->>>   led-names = "link", "err";
->>> };
->>
->> Basically every single device could have a LED associated with it
->> ("activity"). Would doing it like this mean we'd have to modify every
->> single driver to parse leds / led-names properties?
-> 
-> Normally, that's how properties like this would work. A driver is also
-> what knows how the leds should function. 
 
-This is not true in case of associations where LED controller is
-an independent device, as in Pavel's example [0].
+--3qy7gq5q4ryywuu6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> A driver can retrieve the led
-> and associate it with the 'foo-bar' function. The 'foo-bar' function
-> then doesn't have to be defined in DT nor exposed to userspace. It
-> wouldn't even have to be driver specific. The driver's subsystem could
-> handle it all if the led functions are standardized. Though then you'd
-> be back to needing standard names for 'led-names', but that's no worse
-> that trigger names. This model would also allow getting rid of
-> 'linux,default-trigger' properties in a lot of cases which wouldn't be
-> a bad thing.
-> 
-> However, having drivers handle this is not required. You can iterate
-> thru the tree for nodes with 'leds' and find the node which has a
-> phandle to the led node you care about. 
+On Sat, Dec 01, 2018 at 05:09:36PM +0800, Wen Yang wrote:
+> Fix the following warnings reported by coccinelle:
+> kernel//sched/fair.c:7958:3-12: WARNING: Assignment of bool to 0/1
+>=20
+> This also makes the code more readable.
+>=20
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> CC: Ingo Molnar <mingo@redhat.com>
+> CC: Peter Zijlstra <peterz@infradead.org>
+> CC: linux-kernel@vger.kernel.org
 
-This way of discovering associations between devices and LEDs
-would be more reliable than by devicename part of LED class device
-as discussed previously.
+Ack, earlier assignments in the function like:
 
-However, I've just tried to verify how it works, but
-I can't find the way to get the of_node phandle from sysfs.
+	if (nr_running > 1)
+		*overload =3D true;
 
-The "of_node" link in per-device dirs in /sys/devices point
-to the directories containing DT properties of the node, but
-I see no way to obtain the node phandle.
+use `=3D true`, so this change keeps things consistent.
 
-> Sure, it's not that efficient,
-> but it does work and it's only done once. Basically, as long as the
-> linkage is there, we can make it work. I think using
-> 'associated-device' might work better for the current implementation
-> of Linux LED support, but leds/led-names would be more inline with
-> other DT bindings. The current Linux implementation shouldn't dictate
-> the binding design.
+Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
-[0] https://lkml.org/lkml/2018/11/13/103
+> ---
+>  kernel/sched/fair.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index a2e8160968cb..f19aa66f9b15 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7955,7 +7955,7 @@ static inline void update_sg_lb_stats(struct lb_env=
+ *env,
+>  		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
+>  		    sgs->group_misfit_task_load < rq->misfit_task_load) {
+>  			sgs->group_misfit_task_load =3D rq->misfit_task_load;
+> -			*overload =3D 1;
+> +			*overload =3D true;
+>  		}
+>  	}
+> =20
+> --=20
+> 2.19.1
+>=20
 
--- 
-Best regards,
-Jacek Anaszewski
+--=20
+Cheers,
+Joey Pabalinas
+
+--3qy7gq5q4ryywuu6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlwC/d8ACgkQ2rGdfm9D
+tVLsDxAAomwGuyDsqVM69ubKTE2jhrOmh4g4B7O3/bSWYJqMd2is9S0HvzQL2Q8i
+W5yl2bvtoCoWBYWdsBOofJMbj6it/WIZHbS8z4CtuWAVQJOQ/27tWwZbFjBKX/yo
+7YR+7klVlFp0PyCtSurpEFBJCCPYIzTQsddi07eFlJ+EoB/NIPPSR20bwTfmWzTe
+HQVO+5I0T5F3Kd6Qkp94X3tCgZ3c14RyfznTlHd0Pha3sfgU70hraGf6olgbzx4W
+7kBVqXgVG7C5oPBvnKlDOsO6wmk6KbymaKy9uyny4lPTdi2uyItzFoxZMVUCez4w
+opKn176HE+Le9fDbFe7EKqW4JLYFt8hmt9EMDUHOmUy9+OsUMFNbeQWVPLAw6Fct
+wtxS8GeiuCPk5C3z+3UikSAjNzj1f0RRzjH9YdMBTKKnGCATxxYTFrib5iTIRTIt
+2aqtzfmJg/qOlUW3//cFF6XmJ7oeIsass9h4bRcsbDL8L4ZoL2HMei1o/444CcRb
+DhOP6V0SWw+drNhjV03cNq/7lG5RynG86SKekNxrTbwuXe1io5XSJ7p6D1TetXGV
+OW4AfphuGHYe5xITsvEYSncg6GOD25gLBlD94JvlRyaKISrvz/5/4Drd2OW7m0BV
+OZAti70SbXECFw1ehUPjyWkNgGNSr1WXk9cn4p3K1TEAhuWdKpo=
+=3cdh
+-----END PGP SIGNATURE-----
+
+--3qy7gq5q4ryywuu6--
