@@ -2,141 +2,122 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC181C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C68DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8338F20834
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A59D20867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:12:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sbi4dxUG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8338F20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mb+qpzI7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A59D20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbeLANUJ (ORCPT
+        id S1726757AbeLANXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 08:20:09 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43128 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeLANUI (ORCPT
+        Sat, 1 Dec 2018 08:23:25 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35825 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeLANXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 08:20:08 -0500
-Received: by mail-ot1-f68.google.com with SMTP id a11so6882651otr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 18:08:48 -0800 (PST)
+        Sat, 1 Dec 2018 08:23:25 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z9so3677063pfi.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 18:12:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VdfIe7+VxwPLFKcKXYB9P/WieXnBdcv7g7QGMIAOBz0=;
-        b=Sbi4dxUG4nwVMYT/J6jCAbUel9qcHcl3iIc4yfUCia+USkaMAEipBeMO9MMWpqew5n
-         0WvExpaiRTB3TE6op+OKWYAZwEsBwNXaNEYyw0VH9flxmQ4ctaxSrIaYthTT9yV+nKBB
-         a4H4y5VhyVvwCDcEPCZYjtQwcw1coWeozTL5hTRzNXov/NAjWhCu8WP6MlBXv98tTR20
-         FVtJFzkvlpeykaDKn+NJlLcqTQYCqmFqpEQA6Lh7yoxB3Py//pWuwzRJaCoLL4VI1eXU
-         UDTHN6qSxqSfXwkq6TG6zg/NUEKnXD5L7f5StM0WiV3h/pOIXoemC5eJR8e31iFs21xI
-         TYtw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=G9lKEImSCb9h64LAQplK3nSKd69N5Pcfd2raSSqcT90=;
+        b=mb+qpzI7w/hOB5fXCN4bqbZYXoubpD6/3jrl7OLxaJwtQE23lt1FdJMtVikJt1S+vK
+         2wIqjcS9W3KhF4Zn0b1pz+sDkcg7l+KrAnUfAKsgMtl/0g9s4DSacl6aSSVaU1fCCrpS
+         uXONkFJKgDzMbdwqQsrtBfs6hQQdQauMGz+u117E8gHKOlQS8KmrjDRChzdOHDCVDqU6
+         D+LOTFrH3sAU/Y4gOrXqoFarzMF1C+mPHSum//lTjIzrSxys+TIjAR+ZcM841g5ZfvIZ
+         iifQ3cF5/+pm0EnnZyBQkpGeYCIirJll+cdXOJBDtqcRgJGd4xMDG2Mb5dJyRUQ1p/B0
+         KzoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VdfIe7+VxwPLFKcKXYB9P/WieXnBdcv7g7QGMIAOBz0=;
-        b=TsEqG21OBLgmzCAVUi3pXAp+uA0MfENOJf1aZFcHlj65u5K2l2QhIeU0fflK7VtsJQ
-         prHctVF/CRaIHSa5oCzb5XctIV9tlTQ4JnJPIhHvWkwKg3TViBbsB1phf4SdTw3AthQl
-         vOLBKFOV+9aAlUCmKSNKUNanV9UhvH9FcvHJggXlhvjUaQ7kBhf+tGmVZUS2dS05ZW/1
-         c/H0YMWQBiy6xHyQH3ynBaxBaF0d5o2PCrbhP6IjlCG1lYpVi5X0qTUuNWdLiGGAjRv0
-         o5SQTPT5a2ZWojr2rhu0N/i55j/mXIKtZBe0u1j2RUsna4AMcAg7RhzetlvEkOJy/zfC
-         52mw==
-X-Gm-Message-State: AA+aEWbm3BMERc8XECEAWVbB3oqF+Yew6oUCyIeZ9EC30jx9A7mhJ96T
-        gE5unJhnCk/OxUm8rGZ1NG4ZLholEbESN0/SlYyH6w==
-X-Google-Smtp-Source: AFSGD/Xw0RnpyhZXqCAo4nq9zBEWU3TaFToZsu5KWDyOEUFHnytyhanjVrKFx27KXTBXPcD101ftWHTxn8UMCXJyT4U=
-X-Received: by 2002:a9d:5549:: with SMTP id h9mr4631361oti.83.1543630127325;
- Fri, 30 Nov 2018 18:08:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-2-brendanhiggins@google.com> <20181130032802.GG18410@garbanzo.do-not-panic.com>
-In-Reply-To: <20181130032802.GG18410@garbanzo.do-not-panic.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 30 Nov 2018 18:08:36 -0800
-Message-ID: <CAFd5g45F0RViYDQyXRwyxVPAU=CO_Goqy3yHz=BbcMeAT7o6-g@mail.gmail.com>
-Subject: Re: [RFC v3 01/19] kunit: test: add KUnit test runner core
-To:     mcgrof@kernel.org
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
-        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
-        kieran.bingham@ideasonboard.com,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=G9lKEImSCb9h64LAQplK3nSKd69N5Pcfd2raSSqcT90=;
+        b=REtemXHM79kqlr25Yfs/fsTIrKL38+mJ0bEw4+Kck3HRbsYEVcrb4uf3QHdbYiYi7b
+         FArAcFQ/WvoJebvOUXziSFJlR6dXmW+zQPkPWMmqCbEDQSlMxNzgOw04U9viboD6h6Rb
+         mY8HEjdhZt4oqPiwaay+lnCjAjQn8+1pfWF2KTke7UR43ox1GgQcj1puQ9idL6AzihXF
+         BPDh9KhNO6zS8x7sfCMXDfaekUC92GvNcPX5clvT6ybWmxQcbYoutoU9YieV2HApb6K5
+         GzuJ2tkfa3sMxxjHq5JsTDhBn2zIq0bkNy1MkRRZxfFomwDRoFbzNaGYfJW2Gu1c/1Ur
+         y8Gw==
+X-Gm-Message-State: AA+aEWbAxkye+jvwb8C9ptf9N+/GJ9KHhJDYKrY3tceC6jY8U9Td3w/h
+        kqrr0JCwxKc50eR8ruG6Qjw=
+X-Google-Smtp-Source: AFSGD/UlJYRUCdTFRTHfX/nxbh9EOVPdWb0dT9sYAtFa2d2oznx4uetjUpwM+f4MO7B7s+8hzoUxSA==
+X-Received: by 2002:a63:42c1:: with SMTP id p184mr6648274pga.202.1543630323929;
+        Fri, 30 Nov 2018 18:12:03 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id d3sm8843511pgl.64.2018.11.30.18.12.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 18:12:03 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     robh@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] bus: mvebu-mbus: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Fri, 30 Nov 2018 21:12:01 -0500
+Message-Id: <20181201021201.5011-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 7:28 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> > +static void kunit_run_case_internal(struct kunit *test,
-> > +                                 struct kunit_module *module,
-> > +                                 struct kunit_case *test_case)
-> > +{
-> > +     int ret;
-> > +
-> > +     if (module->init) {
-> > +             ret = module->init(test);
-> > +             if (ret) {
-> > +                     kunit_err(test, "failed to initialize: %d", ret);
-> > +                     kunit_set_success(test, false);
-> > +                     return;
-> > +             }
-> > +     }
-> > +
-> > +     test_case->run_case(test);
-> > +}
->
-> <-- snip -->
->
-> > +static bool kunit_run_case(struct kunit *test,
-> > +                        struct kunit_module *module,
-> > +                        struct kunit_case *test_case)
-> > +{
-> > +     kunit_set_success(test, true);
-> > +
-> > +     kunit_run_case_internal(test, module, test_case);
-> > +     kunit_run_case_cleanup(test, module, test_case);
-> > +
-> > +     return kunit_get_success(test);
-> > +}
->
-> So we are running the module->init() for each test case... is that
-> correct? Shouldn't the init run once? Also, typically init calls are
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Yep, it's correct. `module->init()` should run once before every test
-case, reason being that the kunit_module serves as a test fixture in
-which each test cases should be run completely independently of every
-other. init and exit is supposed to allow code common to all test
-cases to run since it is so common to have dependencies needed for a
-test to be common to every test case.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/bus/mvebu-mbus.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-Maybe it is confusing that I call it kunit_module? Maybe I should call
-it kunit_fixture or something?
+diff --git a/drivers/bus/mvebu-mbus.c b/drivers/bus/mvebu-mbus.c
+index 5b2a11a88951..3aaaf484857f 100644
+--- a/drivers/bus/mvebu-mbus.c
++++ b/drivers/bus/mvebu-mbus.c
+@@ -470,17 +470,7 @@ static int mvebu_sdram_debug_show(struct seq_file *seq, void *v)
+ 	return mbus->soc->show_cpu_target(mbus, seq, v);
+ }
+ 
+-static int mvebu_sdram_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, mvebu_sdram_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations mvebu_sdram_debug_fops = {
+-	.open = mvebu_sdram_debug_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(mvebu_sdram_debug);
+ 
+ static int mvebu_devs_debug_show(struct seq_file *seq, void *v)
+ {
+@@ -520,17 +510,7 @@ static int mvebu_devs_debug_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int mvebu_devs_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, mvebu_devs_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations mvebu_devs_debug_fops = {
+-	.open = mvebu_devs_debug_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(mvebu_devs_debug);
+ 
+ /*
+  * SoC-specific functions and definitions
+-- 
+2.17.0
 
-> pegged with __init so we free them later. You seem to have skipped the
-> init annotations. Why?
-
-Like I said above, these aren't normal init functions. A
-kunit_module->init() function should run once before each test case
-and thus should reside in the same linker section as any other KUnit
-test code.
-
-Cheers
