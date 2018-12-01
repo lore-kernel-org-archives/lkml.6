@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADA5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1118AC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 655CC21473
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C837A21473
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jy+uxs7e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 655CC21473
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j3DMkc9d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C837A21473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeLBDFx (ORCPT
+        id S1727225AbeLBDF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 22:05:53 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:47052 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbeLBDFx (ORCPT
+        Sat, 1 Dec 2018 22:05:56 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:47056 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbeLBDFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 22:05:53 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f23so6180413lfc.13
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:53:03 -0800 (PST)
+        Sat, 1 Dec 2018 22:05:55 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f23so6180451lfc.13
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:53:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KuQK+AP+PaPYL/ufObO2FE/V1xtOKXFXPeo5PNTs1lY=;
-        b=jy+uxs7eTVMvE8JiKgruxMZtERO9vRBBRI5luHO8adGQ3Vq8vqADvUuT3M7TjhaKqo
-         Xh0qcfFvcs1SC7aAB1bWlZoz9mwboFr88O5lEw/HKWE9xli1n3TQ/kSOBGaCFsEPSZ4S
-         Gm2eggOXmba7hf8GMldqEEYWkY+LKl50Vl6qY=
+        bh=3iUsZ/16+oDFR/k1SSqoY5Bn/jlRg+zr47SC2D/gEWM=;
+        b=j3DMkc9ddwMjPqKCKbD7hXOMHd2rlLnPLk6WsLo2IASfy3MDmNSzo4yEfkwl6w9fDO
+         e5H5wiTmvGwZfk634qy9KHznxDvTwiL/1184WnjfTe+o6Xt6e8XJHym+JM7K/6iQuLYk
+         NgePIWkTJ7aV7V6YD0hGP37ah01Qd039ZIWJ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KuQK+AP+PaPYL/ufObO2FE/V1xtOKXFXPeo5PNTs1lY=;
-        b=YuUZ//+8xOzgaN9H/9b6QNqNa5v5UdJRx2cOTbc7MVKqXZ0HO6r0j3YsFAiAamcsKT
-         PbPjPHJLfgaytwza4B+50+Lo305zFhn2V49NuksUQ+/hOjpGCrU2l4wNv2HeENsjymSd
-         XleB5OX3b7sdNtbYoASawYyatVvsP3lMFEJKBp3+OnJUS41LeHnWKeV8gF2qMAI+vfsL
-         eP59FVeCipyvJbk1gC0No61OzW3RqtmarEtgcMM4Tgth44LDev9MKR/nkhBOQoBJZPL5
-         5nVUt1ChmFpl1d/2FlRJK0Kha9tcqVtuuhyDlWTHkz9gri4rhZiyXSWhrrUEjEyYzQP+
-         Blag==
-X-Gm-Message-State: AA+aEWZ7n1t6FCbtC8z+9Q1HR0BrJHvDiB5QzBSxL5nfM1/W2yE9rRPD
-        FkffViOJvbnnKM4bSvTX9l5BqQ==
-X-Google-Smtp-Source: AFSGD/XXr1DAtfYiSR0A1VA1ELZXDF8Y6sOsQuaNr2bLoxvZ+nEN+w9bqk+nyZMRoi3Wgm7xF4weIg==
-X-Received: by 2002:a19:ca51:: with SMTP id h17mr5524716lfj.126.1543679582797;
-        Sat, 01 Dec 2018 07:53:02 -0800 (PST)
+        bh=3iUsZ/16+oDFR/k1SSqoY5Bn/jlRg+zr47SC2D/gEWM=;
+        b=hkgqPTpQQaPONfpgg/4T55p+knB5L/zKfHYd7mOArP2FkahIq0nFKeyX57Bcf2Yq5I
+         HmE+chPeOJwHRFOU2QMweE/07EFtNRoRgA9ukofmk81lU47cjwcMrWsjw8/wHThSGOIT
+         L0hkhsMeAy2RfMrNREHhMeNvepvrL/D+WcFEzMO5ykztYZq/ybTEvMvij8HE5uMRl2oW
+         SBBCj9zH2YTHENkju0NPx17rFwCD6yX+xmbmAQmbLizYiOyM+zpcPYPInKbeuZU/1qny
+         9kSKFvEaD0me5wjFE1ktpue222oOVxyredFrCnxFxW39qHQfrSf94IKvG0zINVdO0Ibe
+         08VA==
+X-Gm-Message-State: AA+aEWZu7fr5BhWlq48W5l8a29qvddMD8axX+MbxtvT5OMTpz19YL85b
+        W3NBT3ur4njdGVgIBytl3qv5eg==
+X-Google-Smtp-Source: AFSGD/VzWf9Esb0CfflUQAHPI3wSVrzonO+F0mqgVT/XHH1csIcT4N4RUOCwx87P5t83mAyalLTAYA==
+X-Received: by 2002:a19:9904:: with SMTP id b4mr5610949lfe.95.1543679585544;
+        Sat, 01 Dec 2018 07:53:05 -0800 (PST)
 Received: from localhost.localdomain (c-ae7b71d5.014-348-6c756e10.bbcust.telenor.se. [213.113.123.174])
-        by smtp.gmail.com with ESMTPSA id 13-v6sm1365426ljj.49.2018.12.01.07.53.01
+        by smtp.gmail.com with ESMTPSA id 13-v6sm1365426ljj.49.2018.12.01.07.53.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Dec 2018 07:53:01 -0800 (PST)
+        Sat, 01 Dec 2018 07:53:04 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
@@ -64,9 +64,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 01/13 v2] regulator: core: Track dangling GPIO descriptors
-Date:   Sat,  1 Dec 2018 16:41:39 +0100
-Message-Id: <20181201154151.14890-2-linus.walleij@linaro.org>
+Subject: [PATCH 02/13 v2] regulator: fixed: Let core handle GPIO descriptor
+Date:   Sat,  1 Dec 2018 16:41:40 +0100
+Message-Id: <20181201154151.14890-3-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181201154151.14890-1-linus.walleij@linaro.org>
 References: <20181201154151.14890-1-linus.walleij@linaro.org>
@@ -77,152 +77,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a GPIO descriptor is passed to the regulator_register()
-function inside the config->ena_gpiod callers must be
-sure that once they call this API the regulator core
-owns that descriptor and will make sure to issue
-gpiod_put() on it, no matter whether the call is
-successful or not.
+Use the gpiod_get() rather than the devm_* version so that the
+regulator core can handle the lifecycle of these descriptors.
 
-For device tree regulators, the regulator core will
-automatically set up regulator init data from the device
-tree when registering a regulator by calling
-regulator_of_get_init_data() which in turn calls down to
-the regulator driver's .of_parse_cb() callback.
-This callback (in drivers such as for max77686) may also
-choose to fill in the config->ena_gpiod field with a GPIO
-descriptor.
-
-Harden the errorpath of regulator_register() to
-properly gpiod_put() any passed in cfg->ena_gpiod
-or any gpiod coming from the device tree on any type
-of error.
-
+Fixes: efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 ChangeLog v1->v2:
-- New patch, just numbering v2 to keep it in line with
-  the patch set it came out of.
+- Drop the conditional gpiod_put() on the errorpath: the
+  regulator core will take care of that once
+  devm_regulator_register() gets called.
+- Put a comment in the code so maintainers knows not to
+  use managed resources (devm*)
 ---
- drivers/regulator/core.c | 55 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 45 insertions(+), 10 deletions(-)
+ drivers/regulator/fixed.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 757619878068..79cb090ff22f 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4868,21 +4868,33 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	struct regulator_config *config = NULL;
- 	static atomic_t regulator_no = ATOMIC_INIT(-1);
- 	struct regulator_dev *rdev;
-+	bool dangling_cfg_gpiod = false;
-+	bool dangling_of_gpiod = false;
- 	struct device *dev;
- 	int ret, i;
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index ccc29038f19a..9abdb9130766 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -183,7 +183,11 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 	 */
+ 	gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
  
--	if (regulator_desc == NULL || cfg == NULL)
-+	if (cfg == NULL)
- 		return ERR_PTR(-EINVAL);
-+	if (cfg->ena_gpiod)
-+		dangling_cfg_gpiod = true;
-+	if (regulator_desc == NULL) {
-+		ret = -EINVAL;
-+		goto rinse;
-+	}
- 
- 	dev = cfg->dev;
- 	WARN_ON(!dev);
- 
--	if (regulator_desc->name == NULL || regulator_desc->ops == NULL)
--		return ERR_PTR(-EINVAL);
-+	if (regulator_desc->name == NULL || regulator_desc->ops == NULL) {
-+		ret = -EINVAL;
-+		goto rinse;
-+	}
- 
- 	if (regulator_desc->type != REGULATOR_VOLTAGE &&
--	    regulator_desc->type != REGULATOR_CURRENT)
--		return ERR_PTR(-EINVAL);
-+	    regulator_desc->type != REGULATOR_CURRENT) {
-+		ret = -EINVAL;
-+		goto rinse;
-+	}
- 
- 	/* Only one of each should be implemented */
- 	WARN_ON(regulator_desc->ops->get_voltage &&
-@@ -4893,16 +4905,20 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	/* If we're using selectors we must implement list_voltage. */
- 	if (regulator_desc->ops->get_voltage_sel &&
- 	    !regulator_desc->ops->list_voltage) {
--		return ERR_PTR(-EINVAL);
-+		ret = -EINVAL;
-+		goto rinse;
- 	}
- 	if (regulator_desc->ops->set_voltage_sel &&
- 	    !regulator_desc->ops->list_voltage) {
--		return ERR_PTR(-EINVAL);
-+		ret = -EINVAL;
-+		goto rinse;
- 	}
- 
- 	rdev = kzalloc(sizeof(struct regulator_dev), GFP_KERNEL);
--	if (rdev == NULL)
--		return ERR_PTR(-ENOMEM);
-+	if (rdev == NULL) {
-+		ret = -ENOMEM;
-+		goto rinse;
-+	}
- 
- 	/*
- 	 * Duplicate the config so the driver could override it after
-@@ -4911,11 +4927,22 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	config = kmemdup(cfg, sizeof(*cfg), GFP_KERNEL);
- 	if (config == NULL) {
- 		kfree(rdev);
--		return ERR_PTR(-ENOMEM);
-+		ret = -ENOMEM;
-+		goto rinse;
- 	}
- 
- 	init_data = regulator_of_get_init_data(dev, regulator_desc, config,
- 					       &rdev->dev.of_node);
+-	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, NULL, gflags);
 +	/*
-+	 * We need to keep track of any GPIO descriptor coming from the
-+	 * device tree until we have handled it over to the core. If the
-+	 * config that was passed in to this function DOES NOT contain
-+	 * a descriptor, and the config after this call DOES contain
-+	 * a descriptor, we definately got one from parsing the device
-+	 * tree.
++	 * Do not use devm* here: the regulator core takes over the
++	 * lifecycle management of the GPIO descriptor.
 +	 */
-+	if (!cfg->ena_gpiod && config->ena_gpiod)
-+		dangling_of_gpiod = true;
- 	if (!init_data) {
- 		init_data = config->init_data;
- 		rdev->dev.of_node = of_node_get(config->of_node);
-@@ -4954,6 +4981,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 				 config->ena_gpio, ret);
- 			goto clean;
- 		}
-+		/* The regulator core took over the GPIO descriptor */
-+		dangling_cfg_gpiod = false;
-+		dangling_of_gpiod = false;
- 	}
++	cfg.ena_gpiod = gpiod_get_optional(&pdev->dev, NULL, gflags);
+ 	if (IS_ERR(cfg.ena_gpiod))
+ 		return PTR_ERR(cfg.ena_gpiod);
  
- 	/* register with sysfs */
-@@ -5039,8 +5069,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	regulator_ena_gpio_free(rdev);
- 	mutex_unlock(&regulator_list_mutex);
- clean:
-+	if (dangling_of_gpiod)
-+		gpiod_put(config->ena_gpiod);
- 	kfree(rdev);
- 	kfree(config);
-+rinse:
-+	if (dangling_cfg_gpiod)
-+		gpiod_put(cfg->ena_gpiod);
- 	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(regulator_register);
 -- 
 2.19.1
 
