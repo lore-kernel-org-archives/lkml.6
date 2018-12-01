@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E5EC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0162C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AEFD20673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67DEC2145D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 00:53:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MjRxIEfn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AEFD20673
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hhP5BAw1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67DEC2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbeLAMEm (ORCPT
+        id S1726909AbeLAMEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:04:42 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39022 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeLAMEl (ORCPT
+        Sat, 1 Dec 2018 07:04:43 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38085 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeLAMEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:04:41 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c72so3602480pfc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 16:53:29 -0800 (PST)
+        Sat, 1 Dec 2018 07:04:43 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so3592788plb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 16:53:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yfHqrFcXb6DqfOnxiDhc9ZYc4/8SZbC2MiQD2KGIlgM=;
-        b=MjRxIEfn4CYW1Xn57271REGqXtGVqangJfgVdse2xow5MUgW1eMJr4vBiGYhEI7ZNA
-         tl2Tc6bVCarnNYb2OvsFTNHPSipR0WCiEiol+ium7qQKXsJe9KZ7IzKbuDOzIYPzNrBs
-         xou5FmFzsQ9xNYSB6OJqoLTT/kJLhIsTGi1pk=
+        bh=DloFiMteLjLHfxEkqAo7uWEc5+Pr5GKUVqhPyBTZvlM=;
+        b=hhP5BAw1MnFqSdIDqz6FXTrFKfrM4VR2JYzSjZNmZvEvAZuZ4vaJ2TNfMJWAn5u+yd
+         yeO/82B2gV/LT5ZgLWvYuQd+hpPIMtySnbmrDguiAqTWgc1wcq8A+8OxYGUIeyAh57eI
+         wMNeb8biAKxF29v07D29Uy8NRUThf29FVDupk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yfHqrFcXb6DqfOnxiDhc9ZYc4/8SZbC2MiQD2KGIlgM=;
-        b=Mq+nyC7FsYBQ0YwnrGm5R6PAfUszCEkCNwH3uVWbvohKxCQxQCJcP4Bo6QiJMHDOuf
-         gPykSbRbWif3Tqh7d1ht2LHYO61gKQhM2/r7DRe4y4EL+UgnUT//OeL/y0z2AqNNcuiY
-         c33YGwIHhrp14ucMoYTP7bExrU4fvHRFjn3j3dBLqXHhT6IMTzdi1FIme3QeBWeUdO1g
-         E8X1EYcsn807+4nb7wgz79mDam+OWSLDNvYxO/rliCdFMAT8ZkX2Ue8QypxPymffwuVW
-         MFmvQCbVmwK1QV8BTStzS34Ryu2D0CjKdScJgl4ff0Hd5eRdNUqUdZ9dfYvgX2nru2KY
-         i5Ag==
-X-Gm-Message-State: AA+aEWYRYlH1uj6iCxLF4XxGgPz9pmaXcdIZ2Ii9ZzThwsefKOTnQF36
-        ubzDe/PB2nCsMMq+/BzlNszJGQ==
-X-Google-Smtp-Source: AFSGD/U9ihLpyWL2mv4jXgOqQJrs4LLFSWq4NJCAd4rLOxoTn9JsUhqgoIl3SAandLJOjDQkLwSCVw==
-X-Received: by 2002:a63:6782:: with SMTP id b124mr6645442pgc.151.1543625609092;
-        Fri, 30 Nov 2018 16:53:29 -0800 (PST)
+        bh=DloFiMteLjLHfxEkqAo7uWEc5+Pr5GKUVqhPyBTZvlM=;
+        b=ECCbI9i0BXPYmc0aFoKlgbYenZdkHr4UAOjHSfUuON0yzgHZ4E5Be48Q/2dFxqY/Kg
+         4ZzUC3zQETZQ5MRn5Bd9i4eYt7Nkdv6ZPc86qn6zI5N2nSDdXpu5DvXCPBz5wx54OTWI
+         QGXBqUYetXRGVd7o9oP4SqE5XSM3drHabZHkqzZPxc8smf7wrQrqrSFBpQT2kJ7wDuvS
+         sMz2dkGX5CK0bg90ojgwIFGQOxLzBulmHGljMSOpsJqMXxAjMqQyGdeOx64Gtu8kP55+
+         yWq8wM6q8vjrim6EoDfNXsLe9rgVKemVbhVMHM3NqnvmPvvvUQ9ZIC6rRtMZhl4BSDy+
+         g5dA==
+X-Gm-Message-State: AA+aEWadNK1GoUKtmY5wriwzv+KOfTntSLGWB7vXyZCdRGFhoZU7fVLw
+        sTlW4DBAIAPnSc9BJzk/K6TpTg==
+X-Google-Smtp-Source: AFSGD/XJuCi6B6MFtqfOS99Rn7yzOIegpsaXxL6TZ6fcmukGUpskRIWVVsr6CzvbVGFU6r9KHQCrwA==
+X-Received: by 2002:a17:902:66e6:: with SMTP id e93mr7524936plk.92.1543625611218;
+        Fri, 30 Nov 2018 16:53:31 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id z8sm16518566pgz.53.2018.11.30.16.53.28
+        by smtp.gmail.com with ESMTPSA id z8sm16518566pgz.53.2018.11.30.16.53.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 16:53:28 -0800 (PST)
+        Fri, 30 Nov 2018 16:53:30 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
@@ -71,9 +71,9 @@ Cc:     Archit Taneja <architt@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 4/8] drm/msm/dsi: 14nm PHY: Get ref clock from the DT
-Date:   Fri, 30 Nov 2018 16:52:50 -0800
-Message-Id: <20181201005254.139908-5-mka@chromium.org>
+Subject: [PATCH v3 6/8] arm64: dts: qcom: msm8916: Set 'xo_board' as ref clock of the DSI PHY
+Date:   Fri, 30 Nov 2018 16:52:52 -0800
+Message-Id: <20181201005254.139908-7-mka@chromium.org>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <20181201005254.139908-1-mka@chromium.org>
 References: <20181201005254.139908-1-mka@chromium.org>
@@ -84,82 +84,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get the ref clock of the PHY from the device tree instead of
-hardcoding its name and rate.
-
-Note: This change could break old out-of-tree DTS files that
-use the 14nm PHY.
+Add 'xo_board' as ref clock for the DSI PHYs, it was previously
+hardcoded in the PLL 'driver' for the 28nm PHY.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
 Changes in v3:
-- fixed check for EPROBE_DEFER
-- added note to commit message about breaking old DTS files
 - added 'Reviewed-by: Douglas Anderson <dianders@chromium.org>' tag
 
 Changes in v2:
 - patch added to the series
 ---
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
-index 71fe60e5f01f1..032bf3e8614bd 100644
---- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
-+++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
-@@ -40,7 +40,6 @@
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index d302d8d639a12..89f30f34ff896 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -959,8 +959,9 @@
+ 				#clock-cells = <1>;
+ 				#phy-cells = <0>;
  
- #define NUM_PROVIDED_CLKS		2
+-				clocks = <&gcc GCC_MDSS_AHB_CLK>;
+-				clock-names = "iface";
++				clocks = <&gcc GCC_MDSS_AHB_CLK>,
++					 <&xo_board>;
++				clock-names = "iface", "ref";
+ 			};
+ 		};
  
--#define VCO_REF_CLK_RATE		19200000
- #define VCO_MIN_RATE			1300000000UL
- #define VCO_MAX_RATE			2600000000UL
- 
-@@ -139,6 +138,7 @@ struct dsi_pll_14nm {
- 	/* protects REG_DSI_14nm_PHY_CMN_CLK_CFG0 register */
- 	spinlock_t postdiv_lock;
- 
-+	struct clk *vco_ref_clk;
- 	u64 vco_current_rate;
- 	u64 vco_ref_clk_rate;
- 
-@@ -591,7 +591,7 @@ static int dsi_pll_14nm_vco_set_rate(struct clk_hw *hw, unsigned long rate,
- 	    parent_rate);
- 
- 	pll_14nm->vco_current_rate = rate;
--	pll_14nm->vco_ref_clk_rate = VCO_REF_CLK_RATE;
-+	pll_14nm->vco_ref_clk_rate = parent_rate;
- 
- 	dsi_pll_14nm_input_init(pll_14nm);
- 
-@@ -950,8 +950,9 @@ static struct clk_hw *pll_14nm_postdiv_register(struct dsi_pll_14nm *pll_14nm,
- static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm)
- {
- 	char clk_name[32], parent[32], vco_name[32];
-+	const char *ref_clk_name = __clk_get_name(pll_14nm->vco_ref_clk);
- 	struct clk_init_data vco_init = {
--		.parent_names = (const char *[]){ "xo" },
-+		.parent_names = &ref_clk_name,
- 		.num_parents = 1,
- 		.name = vco_name,
- 		.flags = CLK_IGNORE_UNUSED,
-@@ -1065,6 +1066,15 @@ struct msm_dsi_pll *msm_dsi_pll_14nm_init(struct platform_device *pdev, int id)
- 	pll_14nm->id = id;
- 	pll_14nm_list[id] = pll_14nm;
- 
-+	pll_14nm->vco_ref_clk = devm_clk_get(&pdev->dev, "ref");
-+	if (IS_ERR(pll_14nm->vco_ref_clk)) {
-+		ret = PTR_ERR(pll_14nm->vco_ref_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "couldn't get 'ref' clock: %d\n",
-+				ret);
-+		return ERR_PTR(ret);
-+	}
-+
- 	pll_14nm->phy_cmn_mmio = msm_ioremap(pdev, "dsi_phy", "DSI_PHY");
- 	if (IS_ERR_OR_NULL(pll_14nm->phy_cmn_mmio)) {
- 		dev_err(&pdev->dev, "failed to map CMN PHY base\n");
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
