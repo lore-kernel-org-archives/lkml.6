@@ -2,275 +2,155 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB33C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2798DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5E220834
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:05:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC5E220834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DE59320834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:05:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CcNKhgan"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE59320834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbeLANQb (ORCPT
+        id S1726817AbeLANQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 08:16:31 -0500
-Received: from mga03.intel.com ([134.134.136.65]:64190 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbeLANQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 08:16:30 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 18:05:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
-   d="scan'208";a="279578153"
-Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.173])
-  by orsmga005.jf.intel.com with ESMTP; 30 Nov 2018 18:05:08 -0800
-Date:   Sat, 1 Dec 2018 10:03:19 +0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Maxime Coquelin <maxime.coquelin@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v3 01/13] virtio: add packed ring types and
- macros
-Message-ID: <20181201020318.GA28554@debian>
-References: <20181121100330.24846-2-tiwei.bie@intel.com>
- <1928ac96-3684-45c4-1e8c-09dff03bf308@redhat.com>
- <20181130095339.GA11984@debian>
- <20181130074720-mutt-send-email-mst@kernel.org>
- <13593b5c-c1dc-3ab3-a843-d62908e0c7e0@redhat.com>
- <20181130084722-mutt-send-email-mst@kernel.org>
- <20181130153737.GA15105@debian>
- <20181130104957-mutt-send-email-mst@kernel.org>
- <20181130162416.GA19234@debian>
- <20181130114501-mutt-send-email-mst@kernel.org>
+        Sat, 1 Dec 2018 08:16:48 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:35810 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeLANQs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 08:16:48 -0500
+Received: by mail-yw1-f65.google.com with SMTP id h32so3130065ywk.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 18:05:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J3x8S3yC1yslH6TBAB26mUQf3aiheiLPm8MrLJeLAhY=;
+        b=CcNKhganF4G2np3CWuR5bcbnVDl9fCM8iDXOpB+eGZKN7ofpMB3S8m5yvq6fBDxc3a
+         JwJCHNksayTP+7CvyE02Mgsj8jWj9ne85c9OLceTiAikgLvSubwIzeSOkUHbNrYctYt7
+         +DHlDagr6ReBt/RhM0WvFijP4jK/6rkdNHMPM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J3x8S3yC1yslH6TBAB26mUQf3aiheiLPm8MrLJeLAhY=;
+        b=FaRT9GEvvAT+Om0J1uRkW9r4eMtWHjjp0Hz3r/PT46tjZ8VYbodpZ5nlR/YCFyCbs5
+         m9yeFsyRMGb0C/w12ULhGqF+SG0ev2eTcGPpzAvYgQfVrMyoyrrHf+fNK4jf+ACrrDo/
+         yaUjva9RPVo7LN0lenvjwMIRCUkPzPeFmmF9IqdvzuLUSStbjH//jPedyNS2BJmLMWw3
+         5rmYztH4cGYwD4vKJjuoAmFp1a9dNhM93jKQIit9y/2xUtokcZkmS3A/3QILA2wf8pll
+         0HlJ8N7X5AVYt9H6Hx5aVfn57d2JXMEq1Uu27oIy4tVgg14TeZuGN4hB5yx6d4jcJR3E
+         otQw==
+X-Gm-Message-State: AA+aEWZwXSvubNdsTDvd344Wp8uFusmDYL93+lwQAYrYJAwZ1Isc1O0y
+        obxI59gAOTcCAHikAibJF5NVxCi+m2A=
+X-Google-Smtp-Source: AFSGD/XnSur7rnJfHn2IVuFHwnDQsnRFi92JeWmCRSLrxR4sRrUlAXROzyGptzG1UNJm7FQgrSkTXQ==
+X-Received: by 2002:a81:1b09:: with SMTP id b9-v6mr8070705ywb.248.1543629926773;
+        Fri, 30 Nov 2018 18:05:26 -0800 (PST)
+Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
+        by smtp.gmail.com with ESMTPSA id v191sm2114310ywc.102.2018.11.30.18.05.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 18:05:25 -0800 (PST)
+Received: by mail-yw1-f51.google.com with SMTP id j6so3119227ywj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 18:05:24 -0800 (PST)
+X-Received: by 2002:a0d:e0c5:: with SMTP id j188mr8528170ywe.164.1543629924251;
+ Fri, 30 Nov 2018 18:05:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181130114501-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
+ <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
+ <CAF6AEGu65Vvzpy6K7eF+Kk4YdYBPEKFX5ct8GxG0pw-KNwM5eA@mail.gmail.com>
+ <20181129155418.GB26537@lst.de> <CAF6AEGufdp5jRtUZ_+VRQg3ZXH36hNHvbWZQeJDArp8N5SZ3Lg@mail.gmail.com>
+ <20181129194029.GE17663@jcrouse-lnx.qualcomm.com> <CAAFQd5D139pNx9aEpO8745R4kfVYCBDyqyJNR_HDDXvKt7NZjw@mail.gmail.com>
+ <06747338-b0fb-eef6-634a-0641e81ed3c1@arm.com> <CAAFQd5CEXZU5x+Fi5kRHZFfBwPkUbpo=-UBTARiaAoLqV-tMww@mail.gmail.com>
+In-Reply-To: <CAAFQd5CEXZU5x+Fi5kRHZFfBwPkUbpo=-UBTARiaAoLqV-tMww@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 30 Nov 2018 18:05:12 -0800
+X-Gmail-Original-Message-ID: <CAAFQd5DMgGDPcK=4DktfC7T9O0MrU1VBqJqR+6VYpOh_DdEXUg@mail.gmail.com>
+Message-ID: <CAAFQd5DMgGDPcK=4DktfC7T9O0MrU1VBqJqR+6VYpOh_DdEXUg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+To:     Rob Clark <robdclark@gmail.com>, Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:46:57AM -0500, Michael S. Tsirkin wrote:
-> On Sat, Dec 01, 2018 at 12:24:16AM +0800, Tiwei Bie wrote:
-> > On Fri, Nov 30, 2018 at 10:53:07AM -0500, Michael S. Tsirkin wrote:
-> > > On Fri, Nov 30, 2018 at 11:37:37PM +0800, Tiwei Bie wrote:
-> > > > On Fri, Nov 30, 2018 at 08:52:42AM -0500, Michael S. Tsirkin wrote:
-> > > > > On Fri, Nov 30, 2018 at 02:01:06PM +0100, Maxime Coquelin wrote:
-> > > > > > On 11/30/18 1:47 PM, Michael S. Tsirkin wrote:
-> > > > > > > On Fri, Nov 30, 2018 at 05:53:40PM +0800, Tiwei Bie wrote:
-> > > > > > > > On Fri, Nov 30, 2018 at 04:10:55PM +0800, Jason Wang wrote:
-> > > > > > > > > 
-> > > > > > > > > On 2018/11/21 下午6:03, Tiwei Bie wrote:
-> > > > > > > > > > Add types and macros for packed ring.
-> > > > > > > > > > 
-> > > > > > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > > > > > > ---
-> > > > > > > > > >    include/uapi/linux/virtio_config.h |  3 +++
-> > > > > > > > > >    include/uapi/linux/virtio_ring.h   | 52 ++++++++++++++++++++++++++++++++++++++
-> > > > > > > > > >    2 files changed, 55 insertions(+)
-> > > > > > > > > > 
-> > > > > > > > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > > > > > > > > > index 449132c76b1c..1196e1c1d4f6 100644
-> > > > > > > > > > --- a/include/uapi/linux/virtio_config.h
-> > > > > > > > > > +++ b/include/uapi/linux/virtio_config.h
-> > > > > > > > > > @@ -75,6 +75,9 @@
-> > > > > > > > > >     */
-> > > > > > > > > >    #define VIRTIO_F_IOMMU_PLATFORM		33
-> > > > > > > > > > +/* This feature indicates support for the packed virtqueue layout. */
-> > > > > > > > > > +#define VIRTIO_F_RING_PACKED		34
-> > > > > > > > > > +
-> > > > > > > > > >    /*
-> > > > > > > > > >     * Does the device support Single Root I/O Virtualization?
-> > > > > > > > > >     */
-> > > > > > > > > > diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-> > > > > > > > > > index 6d5d5faa989b..2414f8af26b3 100644
-> > > > > > > > > > --- a/include/uapi/linux/virtio_ring.h
-> > > > > > > > > > +++ b/include/uapi/linux/virtio_ring.h
-> > > > > > > > > > @@ -44,6 +44,13 @@
-> > > > > > > > > >    /* This means the buffer contains a list of buffer descriptors. */
-> > > > > > > > > >    #define VRING_DESC_F_INDIRECT	4
-> > > > > > > > > > +/*
-> > > > > > > > > > + * Mark a descriptor as available or used in packed ring.
-> > > > > > > > > > + * Notice: they are defined as shifts instead of shifted values.
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > This looks inconsistent to previous flags, any reason for using shifts?
-> > > > > > > > 
-> > > > > > > > Yeah, it was suggested to use shifts, as _F_ should be a bit
-> > > > > > > > number, not a shifted value:
-> > > > > > > > 
-> > > > > > > > https://patchwork.ozlabs.org/patch/942296/#1989390
-> > > > > > > 
-> > > > > > > But let's add a _SPLIT_ variant that uses shifts consistently.
-> > > > > > 
-> > > > > > Maybe we could avoid adding SPLIT and PACKED, but define as follow:
-> > > > > > 
-> > > > > > #define VRING_DESC_F_INDIRECT_SHIFT 2
-> > > > > > #define VRING_DESC_F_INDIRECT (1ull <<  VRING_DESC_F_INDIRECT_SHIFT)
-> > > > > > 
-> > > > > > #define VRING_DESC_F_AVAIL_SHIFT 7
-> > > > > > #define VRING_DESC_F_AVAIL (1ull << VRING_DESC_F_AVAIL_SHIFT)
-> > > > > > 
-> > > > > > I think it would be better for consistency.
-> > > > > 
-> > > > > I don't think that will help. the problem is that
-> > > > > most of the existing virtio code consistently uses _F_ as shifts.
-> > > > > So we just need to do something about these 5 being inconsistent:
-> > > > > 
-> > > > > include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_NEXT      1
-> > > > > include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_WRITE     2
-> > > > > include/uapi/linux/virtio_ring.h:#define VRING_DESC_F_INDIRECT  4
-> > > > > include/uapi/linux/virtio_ring.h:#define VRING_USED_F_NO_NOTIFY 1
-> > > > > include/uapi/linux/virtio_ring.h:#define VRING_AVAIL_F_NO_INTERRUPT     1
-> > > > > 
-> > > > > I do not want all of virtio to become verbose with _SHIFT, ergo
-> > > > > we need to change the above 5 to have names which are with _F_ and
-> > > > > have the bit number.
-> > > > 
-> > > > How about something like this:
-> > > > 
-> > > > #define VRING_COMM_DESC_F_NEXT			0
-> > > > #define VRING_COMM_DESC_F_WRITE			1
-> > > > #define VRING_COMM_DESC_F_INDIRECT		2
-> > > > 
-> > > > #define VRING_SPLIT_USED_F_NO_NOTIFY		0
-> > > > #define VRING_SPLIT_AVAIL_F_NO_INTERRUPT	0
-> > > > 
-> > > > or
-> > > > 
-> > > > #define VRING_SPLIT_DESC_F_NEXT			0
-> > > > #define VRING_SPLIT_DESC_F_WRITE		1
-> > > > #define VRING_SPLIT_DESC_F_INDIRECT		2
-> > > > 
-> > > > #define VRING_SPLIT_USED_F_NO_NOTIFY		0
-> > > > #define VRING_SPLIT_AVAIL_F_NO_INTERRUPT	0
-> > > > 
-> > > > #define VRING_PACKED_DESC_F_NEXT		0
-> > > > #define VRING_PACKED_DESC_F_WRITE		1
-> > > > #define VRING_PACKED_DESC_F_INDIRECT		2
-> > > 
-> > > As we aren't sharing code I think I prefer the second form.
-> > > Maybe add VRING_NO_LEGACY so people can audit their code
-> > > for assumptions?
-> > 
-> > Maybe it's better to name it as VIRTIO_RING_NO_LEGACY
-> > which is more consistent with the names in other files.
-> 
-> OK
-> 
-> > > 
-> > > We also want to guard layout definitions at the end of that file
-> > > I think.
-> > 
-> > Do you mean guard the definitions of `struct vring` and
-> > `struct vring_packed` with _NO_LEGACY?
-> 
-> I really mean vring_size/vring_init/vring_used_event/vring_avail_event
-> these are pre- virtio 1 and should be disabled when
-> building with no legacy.
-> 
-> But yes I would say let's make sure people can set a flag and
-> find all dependencies of the split layout in their code easily.
+On Thu, Nov 29, 2018 at 4:23 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> On Thu, Nov 29, 2018 at 12:03 PM Robin Murphy <robin.murphy@arm.com> wrote:
+> >
+> > On 29/11/2018 19:57, Tomasz Figa wrote:
+> > > On Thu, Nov 29, 2018 at 11:40 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> > >>
+> > >> On Thu, Nov 29, 2018 at 01:48:15PM -0500, Rob Clark wrote:
+> > >>> On Thu, Nov 29, 2018 at 10:54 AM Christoph Hellwig <hch@lst.de> wrote:
+> > >>>>
+> > >>>> On Thu, Nov 29, 2018 at 09:42:50AM -0500, Rob Clark wrote:
+> > >>>>> Maybe the thing we need to do is just implement a blacklist of
+> > >>>>> compatible strings for devices which should skip the automatic
+> > >>>>> iommu/dma hookup.  Maybe a bit ugly, but it would also solve a problem
+> > >>>>> preventing us from enabling per-process pagetables for a5xx (where we
+> > >>>>> need to control the domain/context-bank that is allocated by the dma
+> > >>>>> api).
+> > >>>>
+> > >>>> You can detach from the dma map attachment using arm_iommu_detach_device,
+> > >>>> which a few drm drivers do, but I don't think this is the problem.
+> > >>>
+> > >>> I think even with detach, we wouldn't end up with the context-bank
+> > >>> that the gpu firmware was hard-coded to expect, and so it would
+> > >>> overwrite the incorrect page table address register.  (I could be
+> > >>> mis-remembering that, Jordan spent more time looking at that.  But it
+> > >>> was something along those lines.)
+> > >>
+> > >> Right - basically the DMA domain steals context bank 0 and the GPU is hard coded
+> > >> to use that context bank for pagetable switching.
+> > >>
+> > >> I believe the Tegra guys also had a similar problem with a hard coded context
+> > >> bank.
+> >
+> > AIUI, they don't need a specific hardware context, they just need to
+> > know which one they're actually using, which the domain abstraction hides.
+> >
+> > > Wait, if we detach the GPU/display struct device from the default
+> > > domain and attach it to a newly allocated domain, wouldn't the newly
+> > > allocated domain use the context bank we need? Note that we're already
+> >
+> > The arm-smmu driver doesn't, but there's no fundamental reason it
+> > couldn't. That should just need code to refcount domain users and
+> > release hardware contexts for domains with no devices currently attached.
+> >
+> > Robin.
+> >
+> > > doing that, except that we're doing it behind the back of the DMA
+> > > mapping subsystem, so that it keeps using the IOMMU version of the DMA
+> > > ops for the device and doing any mapping operations on the default
+> > > domain. If we ask the DMA mapping to detach, wouldn't it essentially
+> > > solve the problem?
+>
+> Thanks Robin.
+>
+> Still, my point is that the MSM DRM driver attaches the GPU struct
+> device to a new domain it allocates using iommu_domain_alloc() and it
+> seems to work fine, so I believe it's not the problem we're looking
+> into with this patch.
 
-I see. Thanks!
+Could we just make the MSM DRM call arch_teardown_dma_ops() and then
+arch_setup_dma_ops() with the `iommu` argument set to NULL and be done
+with it?
 
-> 
-> > > 
-> > > > > 
-> > > > > 
-> > > > > 
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > > + */
-> > > > > > > > > > +#define VRING_PACKED_DESC_F_AVAIL	7
-> > > > > > > > > > +#define VRING_PACKED_DESC_F_USED	15
-> > > > > > > > > > +
-> > > > > > > > > >    /* The Host uses this in used->flags to advise the Guest: don't kick me when
-> > > > > > > > > >     * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
-> > > > > > > > > >     * will still kick if it's out of buffers. */
-> > > > > > > > > > @@ -53,6 +60,23 @@
-> > > > > > > > > >     * optimization.  */
-> > > > > > > > > >    #define VRING_AVAIL_F_NO_INTERRUPT	1
-> > > > > > > > > > +/* Enable events in packed ring. */
-> > > > > > > > > > +#define VRING_PACKED_EVENT_FLAG_ENABLE	0x0
-> > > > > > > > > > +/* Disable events in packed ring. */
-> > > > > > > > > > +#define VRING_PACKED_EVENT_FLAG_DISABLE	0x1
-> > > > > > > > > > +/*
-> > > > > > > > > > + * Enable events for a specific descriptor in packed ring.
-> > > > > > > > > > + * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
-> > > > > > > > > > + * Only valid if VIRTIO_RING_F_EVENT_IDX has been negotiated.
-> > > > > > > > > > + */
-> > > > > > > > > > +#define VRING_PACKED_EVENT_FLAG_DESC	0x2
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > Any reason for using _FLAG_ instead of _F_?
-> > > > > > > > 
-> > > > > > > > Yeah, it was suggested to not use _F_, as these are values,
-> > > > > > > > should not have _F_:
-> > > > > > > > 
-> > > > > > > > https://patchwork.ozlabs.org/patch/942296/#1989390
-> > > > > > > > 
-> > > > > > > > Regards,
-> > > > > > > > Tiwei
-> > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > Thanks
-> > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > > +
-> > > > > > > > > > +/*
-> > > > > > > > > > + * Wrap counter bit shift in event suppression structure
-> > > > > > > > > > + * of packed ring.
-> > > > > > > > > > + */
-> > > > > > > > > > +#define VRING_PACKED_EVENT_F_WRAP_CTR	15
-> > > > > > > > > > +
-> > > > > > > > > >    /* We support indirect buffer descriptors */
-> > > > > > > > > >    #define VIRTIO_RING_F_INDIRECT_DESC	28
-> > > > > > > > > > @@ -171,4 +195,32 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
-> > > > > > > > > >    	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
-> > > > > > > > > >    }
-> > > > > > > > > > +struct vring_packed_desc_event {
-> > > > > > > > > > +	/* Descriptor Ring Change Event Offset/Wrap Counter. */
-> > > > > > > > > > +	__le16 off_wrap;
-> > > > > > > > > > +	/* Descriptor Ring Change Event Flags. */
-> > > > > > > > > > +	__le16 flags;
-> > > > > > > > > > +};
-> > > > > > > > > > +
-> > > > > > > > > > +struct vring_packed_desc {
-> > > > > > > > > > +	/* Buffer Address. */
-> > > > > > > > > > +	__le64 addr;
-> > > > > > > > > > +	/* Buffer Length. */
-> > > > > > > > > > +	__le32 len;
-> > > > > > > > > > +	/* Buffer ID. */
-> > > > > > > > > > +	__le16 id;
-> > > > > > > > > > +	/* The flags depending on descriptor type. */
-> > > > > > > > > > +	__le16 flags;
-> > > > > > > > > > +};
-> > > > > > > > > > +
-> > > > > > > > > > +struct vring_packed {
-> > > > > > > > > > +	unsigned int num;
-> > > > > > > > > > +
-> > > > > > > > > > +	struct vring_packed_desc *desc;
-> > > > > > > > > > +
-> > > > > > > > > > +	struct vring_packed_desc_event *driver;
-> > > > > > > > > > +
-> > > > > > > > > > +	struct vring_packed_desc_event *device;
-> > > > > > > > > > +};
-> > > > > > > > > > +
-> > > > > > > > > >    #endif /* _UAPI_LINUX_VIRTIO_RING_H */
+Best regards,
+Tomasz
