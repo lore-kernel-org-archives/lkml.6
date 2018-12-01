@@ -2,107 +2,106 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7C1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B85C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0C92081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:00:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w5uD6uOj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D0C92081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DF83120834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 06:06:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF83120834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbeLARLk (ORCPT
+        id S1726255AbeLARRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 12:11:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbeLARLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 12:11:39 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFD6A2081D;
-        Sat,  1 Dec 2018 05:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543643995;
-        bh=Pg3d1Bs6TfgaZQkWBTvhasrsnC6KkCRnsSJouqdeUWo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=w5uD6uOjyksUMdDMrR0fYiw+hc5b7s43HsdS7FvceA3Wmuv+hTsSe7FCwu+kppdEW
-         I07zYcaIt+XnOAlfXjbW3I85Z852iSQoNDWzALuzaOic9ktF0vr/CkBRfUHHNid0vK
-         Cuvr+SqC3GUqVhs8DaHRWYz8LbRIWbTyTuO/UPc0=
-Date:   Fri, 30 Nov 2018 23:59:53 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Mikulas Patocka <mpatocka@redhat.com>
-Subject: [GIT PULL] PCI fixes for v4.20
-Message-ID: <20181201055953.GA207198@google.com>
+        Sat, 1 Dec 2018 12:17:45 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:38864 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726124AbeLARRo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 12:17:44 -0500
+X-IronPort-AV: E=Sophos;i="5.56,300,1539619200"; 
+   d="scan'208";a="48892017"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 01 Dec 2018 14:05:57 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 092524B6ED63;
+        Sat,  1 Dec 2018 14:05:54 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Sat, 1 Dec 2018 14:05:55 +0800
+Date:   Sat, 1 Dec 2018 14:05:39 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
+ cmdline from KEXEC
+Message-ID: <20181201060539.GD30941@localhost.localdomain>
+References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
+ <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
+ <20181129211003.saxfvyboxpsn5mdr@gabell>
+ <20181130024346.GB30941@localhost.localdomain>
+ <20181130173515.6zx5wvs52s5aqnge@gabell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <20181130173515.6zx5wvs52s5aqnge@gabell>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 092524B6ED63.A996A
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
+On Fri, Nov 30, 2018 at 12:35:16PM -0500, Masayoshi Mizuma wrote:
+>On Fri, Nov 30, 2018 at 10:43:47AM +0800, Chao Fan wrote:
+>...
+>> >]$ make arch/x86/boot/compressed/misc.o
+>> >  CALL    scripts/checksyscalls.sh
+>> >  DESCEND  objtool
+>> >  CC      arch/x86/boot/compressed/misc.o
+>> >ld: -r and -pie may not be used together
+>> >make[1]: *** [scripts/Makefile.build:294: arch/x86/boot/compressed/misc.o] Error 1
+>> >make: *** [Makefile:1715: arch/x86/boot/compressed/misc.o] Error 2
+>> >]$
+>> 
+>> Hi Masa,
+>> 
+>> So many thanks for your test.
+>> 
+>> Could you give me more details about this error? More error message.
+>> Just on the first commit or the whole PATCHSET?
+>> Cause I didn't get error both on this commit and on the whole PATCHSET.
+>
+>I built your whole patchset and got the error.
+>The error depends on CONFIG_MODVERSIONS.
+>If CONFIG_MODVERSIONS=y, you will get the build error.
 
-  - Fix a link speed checking interface that broke PCIe gen3 cards in gen1
-    slots (Mikulas Patocka)
+Hi Masa,
 
-  - Fix an imx6 link training error (Trent Piepho)
+Thanks, after that, I got the error.
+About your solution, it can fix the error. But I am not sure whether
+it's good.
 
-  - Fix a layerscape outbound window accessor calling error (Hou Zhiqiang)
+Boris and Baoquan,
+How do you think this issue.
 
-  - Fix a DesignWare endpoint MSI-X address calculation error (Gustavo
-    Pimentel)
+Thanks,
+Chao Fan
+
+>
+>Thanks,
+>Masa
+>
+>
 
 
-The following changes since commit 0d76bcc960e6057750fcf556b65da13f8bbdfd2b:
-
-  Revert "ACPI/PCI: Pay attention to device-specific _PXM node values" (2018-11-13 08:38:17 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.20-fixes-2
-
-for you to fetch changes up to c74eadf881ad634c68880e2c1b504989d95993ee:
-
-  Merge remote-tracking branch 'lorenzo/pci/controller-fixes' into for-linus (2018-11-30 23:42:08 -0600)
-
-----------------------------------------------------------------
-pci-v4.20-fixes-2
-
-----------------------------------------------------------------
-Bjorn Helgaas (1):
-      Merge remote-tracking branch 'lorenzo/pci/controller-fixes' into for-linus
-
-Gustavo Pimentel (1):
-      PCI: dwc: Fix MSI-X EP framework address calculation bug
-
-Hou Zhiqiang (1):
-      PCI: layerscape: Fix wrong invocation of outbound window disable accessor
-
-Mikulas Patocka (1):
-      PCI: Fix incorrect value returned from pcie_get_speed_cap()
-
-Trent Piepho (1):
-      PCI: imx6: Fix link training status detection in link up check
-
- drivers/pci/controller/dwc/pci-imx6.c           | 10 +---------
- drivers/pci/controller/dwc/pci-layerscape.c     |  2 +-
- drivers/pci/controller/dwc/pcie-designware-ep.c |  1 -
- drivers/pci/pci.c                               | 24 +++++++++++-------------
- 4 files changed, 13 insertions(+), 24 deletions(-)
