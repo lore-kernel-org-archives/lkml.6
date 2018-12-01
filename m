@@ -2,555 +2,502 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAF2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 10:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05B3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 11:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB7C2146D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 10:55:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F3272082F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 11:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OAvaewIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB7C2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="pnWMYU1L";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="gi57eOQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3272082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbeLAWHh (ORCPT
+        id S1726725AbeLAWXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 17:07:37 -0500
-Received: from mail-eopbgr30062.outbound.protection.outlook.com ([40.107.3.62]:53856
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726424AbeLAWHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 17:07:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        Sat, 1 Dec 2018 17:23:42 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:37994 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726488AbeLAWXl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 17:23:41 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB1B1kI3032750;
+        Sat, 1 Dec 2018 03:11:09 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=xVLH7OdR1GNnZyJTxjixLGF8Fab681parmxXlkgl5v4=;
+ b=pnWMYU1LVG0kkuWqEFYCphwNBmrmympkbig4a7PHO6FUhvhKcHo7pyn7o5z24fJPFPOi
+ 3WVTKsW7QJuoaof36x/HAUvtkKznj1rdyqeDP5efu4W9JweW2PQTI7xSFvhKXwDxfU4P
+ o6rKkjMOpi7HmodNZ2NrhDoe32QVs1I2WkfCj/S2oKWyCUHdu5VSVkGulh9ruuYZZ6XP
+ 6OJcEXVPhJjgWAafgaVbryxHOJ8hhYEV+0rRoULEn3cqr7A84dPV8OKO2UEZy9JsqGr2
+ ca2URIAcoVQjlEvojoK0K8ZguN3EiSQmuOiSNDpt6slO/T4bHcgszyBpRmIFCB7Z5q7b cw== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam02-bl2-obe.outbound.protection.outlook.com (mail-bl2nam02lp2054.outbound.protection.outlook.com [104.47.38.54])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2p3qr10cy9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 01 Dec 2018 03:11:08 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pUpzIs6/kFrFv30l5bKBymV8FZoqSSmGFlKz7L0/kCg=;
- b=OAvaewIyzIWCvS0JjKw8WHarV3bk02+TUKcTqaM0Vx/4Swpme81eadvYlQas5AeqMpcBF7FiaaS/eKXWwzGHJNKaKMAtjQcRORyxy26AxwL1CEmFZtQ2O7TRGlBMhhP0J7wpW5I+8xNYYgvSnvA4Ia1OP9kyetuN5uQ0zARo35Y=
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3622.eurprd04.prod.outlook.com (52.133.20.23) with Microsoft SMTP
+ bh=xVLH7OdR1GNnZyJTxjixLGF8Fab681parmxXlkgl5v4=;
+ b=gi57eOQ1WwY7WYcSnlgxgcgZHCXGYFpPbYB0n8+29K8RoFFxDpHL9R05UGTvuYzBit9BhIKnXjGIGNfbIlPGsKyzNOJkiS5pPX2fSbx/GGD4GiFVRJuLtCR8EX89MBbRZZbzNE1X7Fx8l7S01ruGsnblXqOWTAqRkCY7Ctas5GY=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4263.namprd07.prod.outlook.com (52.135.223.26) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.20; Sat, 1 Dec 2018 10:52:10 +0000
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::c46b:915c:7a03:123d]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::c46b:915c:7a03:123d%3]) with mapi id 15.20.1339.036; Sat, 1 Dec 2018
- 10:52:10 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v15 1/5] dt-bindings: Add binding for i.MX8MQ CCM
-Thread-Topic: [PATCH v15 1/5] dt-bindings: Add binding for i.MX8MQ CCM
-Thread-Index: AQHUiWPph+cdSvkdTU24CKTgYbb7Vw==
-Date:   Sat, 1 Dec 2018 10:52:10 +0000
-Message-ID: <1543661502-18573-2-git-send-email-abel.vesa@nxp.com>
-References: <1543661502-18573-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1543661502-18573-1-git-send-email-abel.vesa@nxp.com>
+ 15.20.1382.21; Sat, 1 Dec 2018 11:11:04 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e0dc:ebd5:e248:d644]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e0dc:ebd5:e248:d644%6]) with mapi id 15.20.1382.020; Sat, 1 Dec 2018
+ 11:11:02 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Roger Quadros <rogerq@ti.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: RE: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations part
+ of the API
+Thread-Topic: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations
+ part of the API
+Thread-Index: AQHUfycXLoLM1JyA10aQRtXGNL+S26VlK76AgAQ822A=
+Date:   Sat, 1 Dec 2018 11:11:01 +0000
+Message-ID: <BYAPR07MB4709BBB7E78C7A7244270215DDAC0@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-9-git-send-email-pawell@cadence.com>
+ <5BFE8883.7090802@ti.com>
+In-Reply-To: <5BFE8883.7090802@ti.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR0402CA0017.eurprd04.prod.outlook.com
- (2603:10a6:209::30) To AM6PR0402MB3654.eurprd04.prod.outlook.com
- (2603:10a6:209:19::17)
-x-originating-ip: [95.76.156.53]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYzY4OWE5MzktZjU1OS0xMWU4LTg3MjYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGM2ODlhOTNhLWY1NTktMTFlOC04NzI2LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTE2NTUiIHQ9IjEzMTg4MTM2MjYxNDQ1NDI2MyIgaD0iQVZWU2k5bzdlSUE5VXRtU00yU1dBQnZaNVVzPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3622;6:VpgEpZF6avqVoeeKux5W3sHMbtd1uxiIod8zpVzxoEqVGH9Pnhb/ivgpDwsAfvCMhrHO627W0T8t5zl3lFedYqvagylHCp0c1BbDXJbXu5j8Aho55DKiS2Jl1vcW9xBsEMF0glDxOndylAJjJIfOqwD4OcwUCJK76ryOxQR89CUgiM2ahWpHfqwZyh6FkV+xmlaJreqM9VcNF6XKRTqoUuNnhDQwoAaW990sDtVeTbanAfc3//3go+Ht2bzvQ4V0oRsA6U7oi4a8N6OqHu2LiAUXoiQDY/r+TpARanXDrEKbxL8KmF+Qd4x1AEDYJ7sTggziiW0gdip/ts3E3JE/QDIpFLJWiyXCgwPOyu5WsnCwFin/JMF4ixZlt/VAmhNFc325ZytW5KhYTkhX+dVaMiR1iXA+A9TVRuhaEm+XQO4SqYRPP91HT9HPC6KeAHw8v217hKxSpSjBsN1R4YPkHA==;5:RIRQJFCA1dCgarUwUXYQwigttWEk+lX3psBIbhRj2P5Gt81f9/pHD1LVfpViRkFD6tPXD49nT+2aEMs78xASBVatNBYHPeRUgVX1AFzsATnRqL2WeZOPeUQIqB61byk+rXVwD3wUT5hSMfcFg1ZxVH8MDvhFedCxW3IIQ7m9/AQ=;7:ufzxpe7XXRmnnyVkNQpJQktAhFLyzi99lg/roWp11I5yqSXEkVQG3Iw1or1xJTbLKu6wiiQHELgTQq9BW2WCOHfDGYmLKvrIrk9NVLrxGZr5qTZdm2YBJmJ2+3yWjccV/h9Cu+QAY+AzMnnHxO7vfw==
-x-ms-office365-filtering-correlation-id: 973d9bc8-acbc-4279-9ffb-08d6577b0b45
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3622;
-x-ms-traffictypediagnostic: AM6PR0402MB3622:
-x-microsoft-antispam-prvs: <AM6PR0402MB3622065BF9B19768B1D9A008F6AC0@AM6PR0402MB3622.eurprd04.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB4263;20:KoFBsHX7MQjBLW399ycHu675T5Z3KvHLn2KmqUCxcxrDZaxyPsjPrcjhotXgV6G5++2IuTkW1ItwFaArVBhdfkXPnNifIk2M+5olsxw/UjzqBQigj/UgJwVZcYFq+FT1vPQh252gsiVt85M5FN7LIVbHPUN8+eQJ+4rP+YFzGbaxaVnirlf/Z4qF/7RxAoxNpPaC0HqM5HtK+b9sAFS+vwHe8m+m5COxjlG5WsxLIYbQd2EEUhaH9ucXljgjWbXp
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(979002)(39860400002)(136003)(366004)(346002)(376002)(396003)(36092001)(199004)(189003)(76176011)(105586002)(2906002)(7736002)(97736004)(99286004)(478600001)(6246003)(6116002)(74316002)(33656002)(2501003)(7416002)(4326008)(305945005)(476003)(55016002)(486006)(5660300001)(14454004)(11346002)(446003)(53936002)(9686003)(6436002)(110136005)(54906003)(186003)(102836004)(26005)(6506007)(71200400001)(71190400001)(66066001)(217873002)(256004)(14444005)(81166006)(81156014)(8676002)(86362001)(8936002)(229853002)(68736007)(316002)(7696005)(4744004)(25786009)(106356001)(3846002)(309714004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4263;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 409a408d-ced4-4366-d457-08d6577dadf7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4263;
+x-ms-traffictypediagnostic: BYAPR07MB4263:
+x-microsoft-antispam-prvs: <BYAPR07MB426367CFF0A7B8C58973BB92DDAC0@BYAPR07MB4263.namprd07.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231454)(999002)(944501410)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3622;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3622;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231454)(999002)(944501475)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4263;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4263;
 x-forefront-prvs: 087396016C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(396003)(346002)(376002)(189003)(199004)(305945005)(76176011)(53936002)(316002)(52116002)(99286004)(54906003)(3846002)(6116002)(86362001)(6512007)(106356001)(110136005)(81156014)(81166006)(8676002)(2906002)(14454004)(476003)(11346002)(2616005)(446003)(105586002)(256004)(8936002)(478600001)(4744004)(66066001)(71200400001)(44832011)(486006)(97736004)(6486002)(6436002)(26005)(186003)(102836004)(7416002)(5660300001)(71190400001)(4326008)(36756003)(68736007)(7736002)(386003)(6506007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3622;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+received-spf: None (protection.outlook.com: cadence.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: bDislpLH+zMK7vwGmLj1PjhXY5BDevwt+zLtQ3pEGvU2vdwpTOGbbLt6NOUrn92jxu+V6YUCG39wByHAuK55TXRjANSGH0CTGYVoNF/QlsM/zs/jfsQcBetrFnIpKr508LZHdMiFd3SdpISJgBWwFAGVIzhpMhDKOMLthqxdpT5w6CwiV6nlurmmS9b6TTvbLUaSEo3Q1/Y9XxLyhUC2IaA3mM1mmff7XwAVJrMQWtwzLaCpNw3oz1GOvviK7Lv9QK1/FoJfGW5fp3DaIrUwEvZtcgjQUJgku3TbRlGfaXWvJywTmkoL2Wc+Kr4Apfm8yO/5jAPoTyYpaEzR40P13RqyWEGVnlt2Ykbom0AM2qA=
+x-microsoft-antispam-message-info: vZerv8/Art/IUS15ut8KGK1FUv6Nd3oFDrEyasrzV9JaC+pUItbpu+moZg+6wXeiGGvo2jL7RZh3XsoLCy51r5dkUHsoWl7vO6saRc3orTd7Ja2mLDbhLMZuVm2+FvAlfvR4BCMBsQ6ZU2pykUo3mqpHt1nrpQA7MwJ4MLrebJMsZ9KNgPiH5VMIhraZLisHR4X4I/4dlO8XR6d1NPJxW9noGoKXUz9Q6ENsxDib7TmJQ1rblRrzlqlg+dcq0kX9Def0DjKTaLdeiFkkDHMPGCNUKWwK5OduCndKFLCX+iPJ6WTik1GN0URi2Jyd0zyoW2EyPGKGXXmVCpCGySVEUK5sjYtahWcFMPZs916YGEQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 973d9bc8-acbc-4279-9ffb-08d6577b0b45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Dec 2018 10:52:10.7772
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 409a408d-ced4-4366-d457-08d6577dadf7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Dec 2018 11:11:01.9661
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3622
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4263
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-01_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812010106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+Hi,
 
-This adds the binding for the i.MX8MQ Clock Controller Module.
+>> Patch adds implementation callback function defined in
+>> usb_gadget_ops object.
+>>
+>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+>> ---
+>>  drivers/usb/cdns3/gadget.c | 249 ++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 247 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+>> index 376b68b13d1b..702a05faa664 100644
+>> --- a/drivers/usb/cdns3/gadget.c
+>> +++ b/drivers/usb/cdns3/gadget.c
+>> @@ -17,6 +17,36 @@
+>>  #include "gadget-export.h"
+>>  #include "gadget.h"
+>>
+>> +/**
+>> + * cdns3_handshake - spin reading  until handshake completes or fails
+>> + * @ptr: address of device controller register to be read
+>> + * @mask: bits to look at in result of read
+>> + * @done: value of those bits when handshake succeeds
+>> + * @usec: timeout in microseconds
+>> + *
+>> + * Returns negative errno, or zero on success
+>> + *
+>> + * Success happens when the "mask" bits have the specified value (hardw=
+are
+>> + * handshake done). There are two failure modes: "usec" have passed (ma=
+jor
+>> + * hardware flakeout), or the register reads as all-ones (hardware remo=
+ved).
+>> + */
+>> +int cdns3_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
+>> +{
+>> +	u32	result;
+>> +
+>> +	do {
+>> +		result =3D readl(ptr);
+>> +		if (result =3D=3D ~(u32)0)	/* card removed */
+>> +			return -ENODEV;
+>
+>Is this applicable to all registers?
+>What is meant by card removed? We're not connected to host?
+>
+>how does EP reset behave when there is no USB connection?
+>
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 ++
- include/dt-bindings/clock/imx8mq-clock.h           | 395 +++++++++++++++++=
-++++
- 2 files changed, 415 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.tx=
-t
- create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+Function was adopted from XHCI driver (xhci_handshake).=20
+I think it's about PCI card.  If this happens driver should read 0xffffffff=
+ from any register.=20
+I need to confirm it with hardware team or test it.=20
+I remember that I had such situation some time ago.=20
+My testing platform consist of separate FPGA  board and PC. Both has  PCI a=
+dapter=20
+and are connected by means of special PCI cable.
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.txt b/Doc=
-umentation/devicetree/bindings/clock/imx8mq-clock.txt
-new file mode 100644
-index 0000000..52de826
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-@@ -0,0 +1,20 @@
-+* Clock bindings for NXP i.MX8M Quad
-+
-+Required properties:
-+- compatible: Should be "fsl,imx8mq-ccm"
-+- reg: Address and length of the register set
-+- #clock-cells: Should be <1>
-+- clocks: list of clock specifiers, must contain an entry for each require=
-d
-+          entry in clock-names
-+- clock-names: should include the following entries:
-+    - "ckil"
-+    - "osc_25m"
-+    - "osc_27m"
-+    - "clk_ext1"
-+    - "clk_ext2"
-+    - "clk_ext3"
-+    - "clk_ext4"
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx8mq-clo=
-ck.h
-+for the full list of i.MX8M Quad clock IDs.
-diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings=
-/clock/imx8mq-clock.h
-new file mode 100644
-index 0000000..b53be41
---- /dev/null
-+++ b/include/dt-bindings/clock/imx8mq-clock.h
-@@ -0,0 +1,395 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_IMX8MQ_H
-+#define __DT_BINDINGS_CLOCK_IMX8MQ_H
-+
-+#define IMX8MQ_CLK_DUMMY		0
-+#define IMX8MQ_CLK_32K			1
-+#define IMX8MQ_CLK_25M			2
-+#define IMX8MQ_CLK_27M			3
-+#define IMX8MQ_CLK_EXT1			4
-+#define IMX8MQ_CLK_EXT2			5
-+#define IMX8MQ_CLK_EXT3			6
-+#define IMX8MQ_CLK_EXT4			7
-+
-+/* ANAMIX PLL clocks */
-+/* FRAC PLLs */
-+/* ARM PLL */
-+#define IMX8MQ_ARM_PLL_REF_SEL		8
-+#define IMX8MQ_ARM_PLL_REF_DIV		9
-+#define IMX8MQ_ARM_PLL			10
-+#define IMX8MQ_ARM_PLL_BYPASS		11
-+#define IMX8MQ_ARM_PLL_OUT		12
-+
-+/* GPU PLL */
-+#define IMX8MQ_GPU_PLL_REF_SEL		13
-+#define IMX8MQ_GPU_PLL_REF_DIV		14
-+#define IMX8MQ_GPU_PLL			15
-+#define IMX8MQ_GPU_PLL_BYPASS		16
-+#define IMX8MQ_GPU_PLL_OUT		17
-+
-+/* VPU PLL */
-+#define IMX8MQ_VPU_PLL_REF_SEL		18
-+#define IMX8MQ_VPU_PLL_REF_DIV		19
-+#define IMX8MQ_VPU_PLL			20
-+#define IMX8MQ_VPU_PLL_BYPASS		21
-+#define IMX8MQ_VPU_PLL_OUT		22
-+
-+/* AUDIO PLL1 */
-+#define IMX8MQ_AUDIO_PLL1_REF_SEL	23
-+#define IMX8MQ_AUDIO_PLL1_REF_DIV	24
-+#define IMX8MQ_AUDIO_PLL1		25
-+#define IMX8MQ_AUDIO_PLL1_BYPASS	26
-+#define IMX8MQ_AUDIO_PLL1_OUT		27
-+
-+/* AUDIO PLL2 */
-+#define IMX8MQ_AUDIO_PLL2_REF_SEL	28
-+#define IMX8MQ_AUDIO_PLL2_REF_DIV	29
-+#define IMX8MQ_AUDIO_PLL2		30
-+#define IMX8MQ_AUDIO_PLL2_BYPASS	31
-+#define IMX8MQ_AUDIO_PLL2_OUT		32
-+
-+/* VIDEO PLL1 */
-+#define IMX8MQ_VIDEO_PLL1_REF_SEL	33
-+#define IMX8MQ_VIDEO_PLL1_REF_DIV	34
-+#define IMX8MQ_VIDEO_PLL1		35
-+#define IMX8MQ_VIDEO_PLL1_BYPASS	36
-+#define IMX8MQ_VIDEO_PLL1_OUT		37
-+
-+/* SYS1 PLL */
-+#define IMX8MQ_SYS1_PLL1_REF_SEL	38
-+#define IMX8MQ_SYS1_PLL1_REF_DIV	39
-+#define IMX8MQ_SYS1_PLL1		40
-+#define IMX8MQ_SYS1_PLL1_OUT		41
-+#define IMX8MQ_SYS1_PLL1_OUT_DIV	42
-+#define IMX8MQ_SYS1_PLL2		43
-+#define IMX8MQ_SYS1_PLL2_DIV		44
-+#define IMX8MQ_SYS1_PLL2_OUT		45
-+
-+/* SYS2 PLL */
-+#define IMX8MQ_SYS2_PLL1_REF_SEL	46
-+#define IMX8MQ_SYS2_PLL1_REF_DIV	47
-+#define IMX8MQ_SYS2_PLL1		48
-+#define IMX8MQ_SYS2_PLL1_OUT		49
-+#define IMX8MQ_SYS2_PLL1_OUT_DIV	50
-+#define IMX8MQ_SYS2_PLL2		51
-+#define IMX8MQ_SYS2_PLL2_DIV		52
-+#define IMX8MQ_SYS2_PLL2_OUT		53
-+
-+/* SYS3 PLL */
-+#define IMX8MQ_SYS3_PLL1_REF_SEL	54
-+#define IMX8MQ_SYS3_PLL1_REF_DIV	55
-+#define IMX8MQ_SYS3_PLL1		56
-+#define IMX8MQ_SYS3_PLL1_OUT		57
-+#define IMX8MQ_SYS3_PLL1_OUT_DIV	58
-+#define IMX8MQ_SYS3_PLL2		59
-+#define IMX8MQ_SYS3_PLL2_DIV		60
-+#define IMX8MQ_SYS3_PLL2_OUT		61
-+
-+/* DRAM PLL */
-+#define IMX8MQ_DRAM_PLL1_REF_SEL	62
-+#define IMX8MQ_DRAM_PLL1_REF_DIV	63
-+#define IMX8MQ_DRAM_PLL1		64
-+#define IMX8MQ_DRAM_PLL1_OUT		65
-+#define IMX8MQ_DRAM_PLL1_OUT_DIV	66
-+#define IMX8MQ_DRAM_PLL2		67
-+#define IMX8MQ_DRAM_PLL2_DIV		68
-+#define IMX8MQ_DRAM_PLL2_OUT		69
-+
-+/* SYS PLL DIV */
-+#define IMX8MQ_SYS1_PLL_40M		70
-+#define IMX8MQ_SYS1_PLL_80M		71
-+#define IMX8MQ_SYS1_PLL_100M		72
-+#define IMX8MQ_SYS1_PLL_133M		73
-+#define IMX8MQ_SYS1_PLL_160M		74
-+#define IMX8MQ_SYS1_PLL_200M		75
-+#define IMX8MQ_SYS1_PLL_266M		76
-+#define IMX8MQ_SYS1_PLL_400M		77
-+#define IMX8MQ_SYS1_PLL_800M		78
-+
-+#define IMX8MQ_SYS2_PLL_50M		79
-+#define IMX8MQ_SYS2_PLL_100M		80
-+#define IMX8MQ_SYS2_PLL_125M		81
-+#define IMX8MQ_SYS2_PLL_166M		82
-+#define IMX8MQ_SYS2_PLL_200M		83
-+#define IMX8MQ_SYS2_PLL_250M		84
-+#define IMX8MQ_SYS2_PLL_333M		85
-+#define IMX8MQ_SYS2_PLL_500M		86
-+#define IMX8MQ_SYS2_PLL_1000M		87
-+
-+/* CCM ROOT clocks */
-+/* A53 */
-+#define IMX8MQ_CLK_A53_SRC		88
-+#define IMX8MQ_CLK_A53_CG		89
-+#define IMX8MQ_CLK_A53_DIV		90
-+/* M4 */
-+#define IMX8MQ_CLK_M4_SRC		91
-+#define IMX8MQ_CLK_M4_CG		92
-+#define IMX8MQ_CLK_M4_DIV		93
-+/* VPU */
-+#define IMX8MQ_CLK_VPU_SRC		94
-+#define IMX8MQ_CLK_VPU_CG		95
-+#define IMX8MQ_CLK_VPU_DIV		96
-+/* GPU CORE */
-+#define IMX8MQ_CLK_GPU_CORE_SRC		97
-+#define IMX8MQ_CLK_GPU_CORE_CG		98
-+#define IMX8MQ_CLK_GPU_CORE_DIV		99
-+/* GPU SHADER */
-+#define IMX8MQ_CLK_GPU_SHADER_SRC	100
-+#define IMX8MQ_CLK_GPU_SHADER_CG	101
-+#define IMX8MQ_CLK_GPU_SHADER_DIV	102
-+
-+/* BUS TYPE */
-+/* MAIN AXI */
-+#define IMX8MQ_CLK_MAIN_AXI		103
-+/* ENET AXI */
-+#define IMX8MQ_CLK_ENET_AXI		104
-+/* NAND_USDHC_BUS */
-+#define IMX8MQ_CLK_NAND_USDHC_BUS	105
-+/* VPU BUS */
-+#define IMX8MQ_CLK_VPU_BUS		106
-+/* DISP_AXI */
-+#define IMX8MQ_CLK_DISP_AXI		107
-+/* DISP APB */
-+#define IMX8MQ_CLK_DISP_APB		108
-+/* DISP RTRM */
-+#define IMX8MQ_CLK_DISP_RTRM		109
-+/* USB_BUS */
-+#define IMX8MQ_CLK_USB_BUS		110
-+/* GPU_AXI */
-+#define IMX8MQ_CLK_GPU_AXI		111
-+/* GPU_AHB */
-+#define IMX8MQ_CLK_GPU_AHB		112
-+/* NOC */
-+#define IMX8MQ_CLK_NOC			113
-+/* NOC_APB */
-+#define IMX8MQ_CLK_NOC_APB		115
-+
-+/* AHB */
-+#define IMX8MQ_CLK_AHB			116
-+/* AUDIO AHB */
-+#define IMX8MQ_CLK_AUDIO_AHB		117
-+
-+/* DRAM_ALT */
-+#define IMX8MQ_CLK_DRAM_ALT		118
-+/* DRAM APB */
-+#define IMX8MQ_CLK_DRAM_APB		119
-+/* VPU_G1 */
-+#define IMX8MQ_CLK_VPU_G1		120
-+/* VPU_G2 */
-+#define IMX8MQ_CLK_VPU_G2		121
-+/* DISP_DTRC */
-+#define IMX8MQ_CLK_DISP_DTRC		122
-+/* DISP_DC8000 */
-+#define IMX8MQ_CLK_DISP_DC8000		123
-+/* PCIE_CTRL */
-+#define IMX8MQ_CLK_PCIE1_CTRL		124
-+/* PCIE_PHY */
-+#define IMX8MQ_CLK_PCIE1_PHY		125
-+/* PCIE_AUX */
-+#define IMX8MQ_CLK_PCIE1_AUX		126
-+/* DC_PIXEL */
-+#define IMX8MQ_CLK_DC_PIXEL		127
-+/* LCDIF_PIXEL */
-+#define IMX8MQ_CLK_LCDIF_PIXEL		128
-+/* SAI1~6 */
-+#define IMX8MQ_CLK_SAI1			129
-+
-+#define IMX8MQ_CLK_SAI2			130
-+
-+#define IMX8MQ_CLK_SAI3			131
-+
-+#define IMX8MQ_CLK_SAI4			132
-+
-+#define IMX8MQ_CLK_SAI5			133
-+
-+#define IMX8MQ_CLK_SAI6			134
-+/* SPDIF1 */
-+#define IMX8MQ_CLK_SPDIF1		135
-+/* SPDIF2 */
-+#define IMX8MQ_CLK_SPDIF2		136
-+/* ENET_REF */
-+#define IMX8MQ_CLK_ENET_REF		137
-+/* ENET_TIMER */
-+#define IMX8MQ_CLK_ENET_TIMER		138
-+/* ENET_PHY */
-+#define IMX8MQ_CLK_ENET_PHY_REF		139
-+/* NAND */
-+#define IMX8MQ_CLK_NAND			140
-+/* QSPI */
-+#define IMX8MQ_CLK_QSPI			141
-+/* USDHC1 */
-+#define IMX8MQ_CLK_USDHC1		142
-+/* USDHC2 */
-+#define IMX8MQ_CLK_USDHC2		143
-+/* I2C1 */
-+#define IMX8MQ_CLK_I2C1			144
-+/* I2C2 */
-+#define IMX8MQ_CLK_I2C2			145
-+/* I2C3 */
-+#define IMX8MQ_CLK_I2C3			146
-+/* I2C4 */
-+#define IMX8MQ_CLK_I2C4			147
-+/* UART1 */
-+#define IMX8MQ_CLK_UART1		148
-+/* UART2 */
-+#define IMX8MQ_CLK_UART2		149
-+/* UART3 */
-+#define IMX8MQ_CLK_UART3		150
-+/* UART4 */
-+#define IMX8MQ_CLK_UART4		151
-+/* USB_CORE_REF */
-+#define IMX8MQ_CLK_USB_CORE_REF		152
-+/* USB_PHY_REF */
-+#define IMX8MQ_CLK_USB_PHY_REF		163
-+/* ECSPI1 */
-+#define IMX8MQ_CLK_ECSPI1		164
-+/* ECSPI2 */
-+#define IMX8MQ_CLK_ECSPI2		165
-+/* PWM1 */
-+#define IMX8MQ_CLK_PWM1			166
-+/* PWM2 */
-+#define IMX8MQ_CLK_PWM2			167
-+/* PWM3 */
-+#define IMX8MQ_CLK_PWM3			168
-+/* PWM4 */
-+#define IMX8MQ_CLK_PWM4			169
-+/* GPT1 */
-+#define IMX8MQ_CLK_GPT1			170
-+/* WDOG */
-+#define IMX8MQ_CLK_WDOG			171
-+/* WRCLK */
-+#define IMX8MQ_CLK_WRCLK		172
-+/* DSI_CORE */
-+#define IMX8MQ_CLK_DSI_CORE		173
-+/* DSI_PHY */
-+#define IMX8MQ_CLK_DSI_PHY_REF		174
-+/* DSI_DBI */
-+#define IMX8MQ_CLK_DSI_DBI		175
-+/*DSI_ESC */
-+#define IMX8MQ_CLK_DSI_ESC		176
-+/* CSI1_CORE */
-+#define IMX8MQ_CLK_CSI1_CORE		177
-+/* CSI1_PHY */
-+#define IMX8MQ_CLK_CSI1_PHY_REF		178
-+/* CSI_ESC */
-+#define IMX8MQ_CLK_CSI1_ESC		179
-+/* CSI2_CORE */
-+#define IMX8MQ_CLK_CSI2_CORE		170
-+/* CSI2_PHY */
-+#define IMX8MQ_CLK_CSI2_PHY_REF		181
-+/* CSI2_ESC */
-+#define IMX8MQ_CLK_CSI2_ESC		182
-+/* PCIE2_CTRL */
-+#define IMX8MQ_CLK_PCIE2_CTRL		183
-+/* PCIE2_PHY */
-+#define IMX8MQ_CLK_PCIE2_PHY		184
-+/* PCIE2_AUX */
-+#define IMX8MQ_CLK_PCIE2_AUX		185
-+/* ECSPI3 */
-+#define IMX8MQ_CLK_ECSPI3		186
-+
-+/* CCGR clocks */
-+#define IMX8MQ_CLK_A53_ROOT			187
-+#define IMX8MQ_CLK_DRAM_ROOT			188
-+#define IMX8MQ_CLK_ECSPI1_ROOT			189
-+#define IMX8MQ_CLK_ECSPI2_ROOT			180
-+#define IMX8MQ_CLK_ECSPI3_ROOT			181
-+#define IMX8MQ_CLK_ENET1_ROOT			182
-+#define IMX8MQ_CLK_GPT1_ROOT			193
-+#define IMX8MQ_CLK_I2C1_ROOT			194
-+#define IMX8MQ_CLK_I2C2_ROOT			195
-+#define IMX8MQ_CLK_I2C3_ROOT			196
-+#define IMX8MQ_CLK_I2C4_ROOT			197
-+#define IMX8MQ_CLK_M4_ROOT			198
-+#define IMX8MQ_CLK_PCIE1_ROOT			199
-+#define IMX8MQ_CLK_PCIE2_ROOT			200
-+#define IMX8MQ_CLK_PWM1_ROOT			201
-+#define IMX8MQ_CLK_PWM2_ROOT			202
-+#define IMX8MQ_CLK_PWM3_ROOT			203
-+#define IMX8MQ_CLK_PWM4_ROOT			204
-+#define IMX8MQ_CLK_QSPI_ROOT			205
-+#define IMX8MQ_CLK_SAI1_ROOT			206
-+#define IMX8MQ_CLK_SAI2_ROOT			207
-+#define IMX8MQ_CLK_SAI3_ROOT			208
-+#define IMX8MQ_CLK_SAI4_ROOT			209
-+#define IMX8MQ_CLK_SAI5_ROOT			210
-+#define IMX8MQ_CLK_SAI6_ROOT			212
-+#define IMX8MQ_CLK_UART1_ROOT			213
-+#define IMX8MQ_CLK_UART2_ROOT			214
-+#define IMX8MQ_CLK_UART3_ROOT			215
-+#define IMX8MQ_CLK_UART4_ROOT			216
-+#define IMX8MQ_CLK_USB1_CTRL_ROOT		217
-+#define IMX8MQ_CLK_USB2_CTRL_ROOT		218
-+#define IMX8MQ_CLK_USB1_PHY_ROOT		219
-+#define IMX8MQ_CLK_USB2_PHY_ROOT		220
-+#define IMX8MQ_CLK_USDHC1_ROOT			221
-+#define IMX8MQ_CLK_USDHC2_ROOT			222
-+#define IMX8MQ_CLK_WDOG1_ROOT			223
-+#define IMX8MQ_CLK_WDOG2_ROOT			224
-+#define IMX8MQ_CLK_WDOG3_ROOT			225
-+#define IMX8MQ_CLK_GPU_ROOT			226
-+#define IMX8MQ_CLK_HEVC_ROOT			227
-+#define IMX8MQ_CLK_AVC_ROOT			228
-+#define IMX8MQ_CLK_VP9_ROOT			229
-+#define IMX8MQ_CLK_HEVC_INTER_ROOT		230
-+#define IMX8MQ_CLK_DISP_ROOT			231
-+#define IMX8MQ_CLK_HDMI_ROOT			232
-+#define IMX8MQ_CLK_HDMI_PHY_ROOT		233
-+#define IMX8MQ_CLK_VPU_DEC_ROOT			234
-+#define IMX8MQ_CLK_CSI1_ROOT			235
-+#define IMX8MQ_CLK_CSI2_ROOT			236
-+#define IMX8MQ_CLK_RAWNAND_ROOT			237
-+#define IMX8MQ_CLK_SDMA1_ROOT			238
-+#define IMX8MQ_CLK_SDMA2_ROOT			239
-+#define IMX8MQ_CLK_VPU_G1_ROOT			240
-+#define IMX8MQ_CLK_VPU_G2_ROOT			241
-+
-+/* SCCG PLL GATE */
-+#define IMX8MQ_SYS1_PLL_OUT			232
-+#define IMX8MQ_SYS2_PLL_OUT			243
-+#define IMX8MQ_SYS3_PLL_OUT			244
-+#define IMX8MQ_DRAM_PLL_OUT			245
-+
-+#define IMX8MQ_GPT_3M_CLK			246
-+
-+#define IMX8MQ_CLK_IPG_ROOT			247
-+#define IMX8MQ_CLK_IPG_AUDIO_ROOT		248
-+#define IMX8MQ_CLK_SAI1_IPG			249
-+#define IMX8MQ_CLK_SAI2_IPG			250
-+#define IMX8MQ_CLK_SAI3_IPG			251
-+#define IMX8MQ_CLK_SAI4_IPG			252
-+#define IMX8MQ_CLK_SAI5_IPG			253
-+#define IMX8MQ_CLK_SAI6_IPG			254
-+
-+/* DSI AHB/IPG clocks */
-+/* rxesc clock */
-+#define IMX8MQ_CLK_DSI_AHB			255
-+/* txesc clock */
-+#define IMX8MQ_CLK_DSI_IPG_DIV                  256
-+
-+#define IMX8MQ_CLK_TMU_ROOT			265
-+
-+/* Display root clocks */
-+#define IMX8MQ_CLK_DISP_AXI_ROOT		266
-+#define IMX8MQ_CLK_DISP_APB_ROOT		267
-+#define IMX8MQ_CLK_DISP_RTRM_ROOT		268
-+
-+#define IMX8MQ_CLK_OCOTP_ROOT			269
-+
-+#define IMX8MQ_CLK_DRAM_ALT_ROOT		270
-+#define IMX8MQ_CLK_DRAM_CORE			271
-+
-+#define IMX8MQ_CLK_MU_ROOT			272
-+#define IMX8MQ_VIDEO2_PLL_OUT			273
-+
-+#define IMX8MQ_CLK_CLKO2			274
-+
-+#define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	275
-+
-+#define IMX8MQ_CLK_END				276
-+#endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
---=20
-2.7.4
+>> +		result &=3D mask;
+>> +		if (result =3D=3D done)
+>> +			return 0;
+>> +		udelay(1);
+>> +		usec--;
+>> +	} while (usec > 0);
+>> +	return -ETIMEDOUT;
+>> +}
+>> +
+>>  /**
+>>   * cdns3_set_register_bit - set bit in given register.
+>>   * @ptr: address of device controller register to be read and changed
+>> @@ -43,6 +73,25 @@ void cdns3_select_ep(struct cdns3_device *priv_dev, u=
+32 ep)
+>>  	writel(ep, &priv_dev->regs->ep_sel);
+>>  }
+>>
+>> +static void cdns3_free_trb_pool(struct cdns3_endpoint *priv_ep)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D priv_ep->cdns3_dev;
+>> +
+>> +	if (priv_ep->trb_pool) {
+>> +		dma_free_coherent(priv_dev->sysdev,
+>> +				  TRB_RIGN_SIZE,
+>> +				  priv_ep->trb_pool, priv_ep->trb_pool_dma);
+>> +		priv_ep->trb_pool =3D NULL;
+>> +	}
+>> +
+>> +	if (priv_ep->aligned_buff) {
+>> +		dma_free_coherent(priv_dev->sysdev, CDNS3_UNALIGNED_BUF_SIZE,
+>> +				  priv_ep->aligned_buff,
+>> +				  priv_ep->aligned_dma_addr);
+>> +		priv_ep->aligned_buff =3D NULL;
+>> +	}
+>> +}
+>> +
+>>  /**
+>>   * cdns3_irq_handler - irq line interrupt handler
+>>   * @cdns: cdns3 instance
+>> @@ -58,6 +107,114 @@ static irqreturn_t cdns3_irq_handler_thread(struct =
+cdns3 *cdns)
+>>  	return ret;
+>>  }
+>>
+>> +/* Find correct direction for HW endpoint according to description */
+>> +static int cdns3_ep_dir_is_correct(struct usb_endpoint_descriptor *desc=
+,
+>> +				   struct cdns3_endpoint *priv_ep)
+>> +{
+>> +	return (priv_ep->endpoint.caps.dir_in && usb_endpoint_dir_in(desc)) ||
+>> +	       (priv_ep->endpoint.caps.dir_out && usb_endpoint_dir_out(desc));
+>> +}
+>> +
+>> +static struct cdns3_endpoint *cdns3_find_available_ss_ep(struct cdns3_d=
+evice *priv_dev,
+>> +							 struct usb_endpoint_descriptor *desc)
+>
+>why is this function called ss_ep? This doesn't seem like only for supersp=
+eed endpoints.
 
+I will remove _ss_.=20
+>
+>> +{
+>> +	struct usb_ep *ep;
+>> +	struct cdns3_endpoint *priv_ep;
+>> +
+>> +	list_for_each_entry(ep, &priv_dev->gadget.ep_list, ep_list) {
+>> +		unsigned long num;
+>> +		int ret;
+>> +		/* ep name pattern likes epXin or epXout */
+>> +		char c[2] =3D {ep->name[2], '\0'};
+>> +
+>> +		ret =3D kstrtoul(c, 10, &num);
+>> +		if (ret)
+>> +			return ERR_PTR(ret);
+>> +
+>> +		priv_ep =3D ep_to_cdns3_ep(ep);
+>> +		if (cdns3_ep_dir_is_correct(desc, priv_ep)) {
+>> +			if (!(priv_ep->flags & EP_USED)) {
+>> +				priv_ep->num  =3D num;
+>> +				priv_ep->flags |=3D EP_USED;
+>> +				return priv_ep;
+>> +			}
+>> +		}
+>> +	}
+>> +	return ERR_PTR(-ENOENT);
+>> +}
+>> +
+>> +static struct usb_ep *cdns3_gadget_match_ep(struct usb_gadget *gadget,
+>> +					    struct usb_endpoint_descriptor *desc,
+>> +					    struct usb_ss_ep_comp_descriptor *comp_desc)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
+>> +	struct cdns3_endpoint *priv_ep;
+>> +	unsigned long flags;
+>> +
+>> +	priv_ep =3D cdns3_find_available_ss_ep(priv_dev, desc);
+>> +	if (IS_ERR(priv_ep)) {
+>> +		dev_err(&priv_dev->dev, "no available ep\n");
+>> +		return NULL;
+>> +	}
+>> +
+>> +	dev_dbg(&priv_dev->dev, "match endpoint: %s\n", priv_ep->name);
+>> +
+>> +	spin_lock_irqsave(&priv_dev->lock, flags);
+>> +	priv_ep->endpoint.desc =3D desc;
+>> +	priv_ep->dir  =3D usb_endpoint_dir_in(desc) ? USB_DIR_IN : USB_DIR_OUT=
+;
+>> +	priv_ep->type =3D usb_endpoint_type(desc);
+>> +
+>> +	list_add_tail(&priv_ep->ep_match_pending_list,
+>> +		      &priv_dev->ep_match_list);
+>> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+>> +	return &priv_ep->endpoint;
+>> +}
+>
+>Why do you need a custom match_ep?
+>doesn't usb_ep_autoconfig suffice?
+
+I need to test it but at first glance it  looks like usb_ep_autoconfig suff=
+ice.
+
+>
+>You can check if EP is claimed or not by checking the ep->claimed flag.
+>
+>> +
+>> +/**
+>> + * cdns3_gadget_get_frame Returns number of actual ITP frame
+>> + * @gadget: gadget object
+>> + *
+>> + * Returns number of actual ITP frame
+>> + */
+>> +static int cdns3_gadget_get_frame(struct usb_gadget *gadget)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
+>> +
+>> +	return readl(&priv_dev->regs->usb_iptn);
+>> +}
+>> +
+>> +static int cdns3_gadget_wakeup(struct usb_gadget *gadget)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static int cdns3_gadget_set_selfpowered(struct usb_gadget *gadget,
+>> +					int is_selfpowered)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&priv_dev->lock, flags);
+>> +	gadget->is_selfpowered =3D !!is_selfpowered;
+>> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+>> +	return 0;
+>> +}
+>> +
+>> +static int cdns3_gadget_pullup(struct usb_gadget *gadget, int is_on)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
+>> +
+>> +	if (!priv_dev->start_gadget)
+>> +		return 0;
+>> +
+>> +	if (is_on)
+>> +		writel(USB_CONF_DEVEN, &priv_dev->regs->usb_conf);
+>> +	else
+>> +		writel(USB_CONF_DEVDS, &priv_dev->regs->usb_conf);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static void cdns3_gadget_config(struct cdns3_device *priv_dev)
+>>  {
+>>  	struct cdns3_usb_regs __iomem *regs =3D priv_dev->regs;
+>> @@ -74,6 +231,95 @@ static void cdns3_gadget_config(struct cdns3_device =
+*priv_dev)
+>>  	writel(USB_CONF_DEVEN, &regs->usb_conf);
+>>  }
+>>
+>> +/**
+>> + * cdns3_gadget_udc_start Gadget start
+>> + * @gadget: gadget object
+>> + * @driver: driver which operates on this gadget
+>> + *
+>> + * Returns 0 on success, error code elsewhere
+>> + */
+>> +static int cdns3_gadget_udc_start(struct usb_gadget *gadget,
+>> +				  struct usb_gadget_driver *driver)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
+>> +	unsigned long flags;
+>> +
+>> +	if (priv_dev->gadget_driver) {
+>> +		dev_err(&priv_dev->dev, "%s is already bound to %s\n",
+>> +			priv_dev->gadget.name,
+>> +			priv_dev->gadget_driver->driver.name);
+>> +		return -EBUSY;
+>> +	}
+>
+>Not sure if this check is required. UDC core should be doing that.
+>
+>> +
+>> +	spin_lock_irqsave(&priv_dev->lock, flags);
+>> +	priv_dev->gadget_driver =3D driver;
+>> +	if (!priv_dev->start_gadget)
+>> +		goto unlock;
+>> +
+>> +	cdns3_gadget_config(priv_dev);
+>> +unlock:
+>> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * cdns3_gadget_udc_stop Stops gadget
+>> + * @gadget: gadget object
+>> + *
+>> + * Returns 0
+>> + */
+>> +static int cdns3_gadget_udc_stop(struct usb_gadget *gadget)
+>> +{
+>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
+>> +	struct cdns3_endpoint *priv_ep, *temp_ep;
+>> +	u32 bEndpointAddress;
+>> +	struct usb_ep *ep;
+>> +	int ret =3D 0;
+>> +	int i;
+>> +
+>> +	priv_dev->gadget_driver =3D NULL;
+>> +	list_for_each_entry_safe(priv_ep, temp_ep, &priv_dev->ep_match_list,
+>> +				 ep_match_pending_list) {
+>> +		list_del(&priv_ep->ep_match_pending_list);
+>> +		priv_ep->flags &=3D ~EP_USED;
+>> +	}
+>> +
+>> +	priv_dev->onchip_mem_allocated_size =3D 0;
+>> +	priv_dev->out_mem_is_allocated =3D 0;
+>> +	priv_dev->gadget.speed =3D USB_SPEED_UNKNOWN;
+>> +
+>> +	for (i =3D 0; i < priv_dev->ep_nums ; i++)
+>> +		cdns3_free_trb_pool(priv_dev->eps[i]);
+>> +
+>> +	if (!priv_dev->start_gadget)
+>> +		return 0;
+>
+>This looks tricky. Why do we need this flag?
+
+It will be removed in next version. It's no longer needed.=20
+>
+>> +
+>> +	list_for_each_entry(ep, &priv_dev->gadget.ep_list, ep_list) {
+>> +		priv_ep =3D ep_to_cdns3_ep(ep);
+>> +		bEndpointAddress =3D priv_ep->num | priv_ep->dir;
+>> +		cdns3_select_ep(priv_dev, bEndpointAddress);
+>> +		writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
+>> +		ret =3D cdns3_handshake(&priv_dev->regs->ep_cmd,
+>> +				      EP_CMD_EPRST, 0, 100);
+>> +	}
+>> +
+>> +	/* disable interrupt for device */
+>> +	writel(0, &priv_dev->regs->usb_ien);
+>> +	writel(USB_CONF_DEVDS, &priv_dev->regs->usb_conf);
+>
+>where are you requesting the interrupt? Looks like it should be done in
+>udc_start() no?
+
+Currently it is in initialization when the role is switched on. Interrupt i=
+s freeing=20
+during switching off role. So now the concept is the same as for host role.=
+=20
+Whole device part is loaded and unloaded during changing role..=20
+>
+>> +
+>> +	return ret;
+>> +}
+>
+>Can we combine cdns3_gadget_udc_start() and cdns3_gadget_udc_start()
+>with cdns3_gadget_start() and cdns3_gadget_stop() respectively so that
+>cdns3_gadget_config() and cleanup() is done at one place.
+>
+
+Ok, probably it can be invoked only in cdns3_gadget_udc_start() and=20
+cdns3_gadget_udc_start(), but I have to test it.=20
+>> +
+>> +static const struct usb_gadget_ops cdns3_gadget_ops =3D {
+>> +	.get_frame =3D cdns3_gadget_get_frame,
+>> +	.wakeup =3D cdns3_gadget_wakeup,
+>> +	.set_selfpowered =3D cdns3_gadget_set_selfpowered,
+>> +	.pullup =3D cdns3_gadget_pullup,
+>> +	.udc_start =3D cdns3_gadget_udc_start,
+>> +	.udc_stop =3D cdns3_gadget_udc_stop,
+>> +	.match_ep =3D cdns3_gadget_match_ep,
+>> +};
+>> +
+>>  /**
+>>   * cdns3_init_ep Initializes software endpoints of gadget
+>>   * @cdns3: extended gadget object
+>> @@ -184,8 +430,7 @@ static int __cdns3_gadget_init(struct cdns3 *cdns)
+>>  	/* fill gadget fields */
+>>  	priv_dev->gadget.max_speed =3D USB_SPEED_SUPER;
+>>  	priv_dev->gadget.speed =3D USB_SPEED_UNKNOWN;
+>> -	//TODO: Add implementation of cdns3_gadget_ops
+>> -	//priv_dev->gadget.ops =3D &cdns3_gadget_ops;
+>> +	priv_dev->gadget.ops =3D &cdns3_gadget_ops;
+>>  	priv_dev->gadget.name =3D "usb-ss-gadget";
+>>  	priv_dev->gadget.sg_supported =3D 1;
+>>  	priv_dev->is_connected =3D 0;
+>>
+>
+Cheers
+Pawel
