@@ -2,305 +2,153 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F2DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8BEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AD720867
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0739B20867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:25:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmAwW09l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AD720867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="KCuUtnNN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0739B20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeLAMg0 (ORCPT
+        id S1726788AbeLAMgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:36:26 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43138 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbeLAMg0 (ORCPT
+        Sat, 1 Dec 2018 07:36:50 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44986 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbeLAMgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:36:26 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f4so6278060edq.10;
-        Fri, 30 Nov 2018 17:25:09 -0800 (PST)
+        Sat, 1 Dec 2018 07:36:49 -0500
+Received: by mail-io1-f68.google.com with SMTP id r200so6030706iod.11
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 17:25:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xkaflSrUK4l/r2eO1FX25FanLd+q2Sm+RRC+guMDzQw=;
-        b=PmAwW09lRAgN47FMDLlf8nwFPPH2jGl4gjBhrk2FBk3y2OoYAPk0F2p0QUhjnF3wtP
-         83xFTt1abTum/gJJ5nAYLg2xU+nOcpyL3qUqCuNnnZ7pkyhSikh4dUKSdoXfZpDHQE/d
-         BKkC7zkGgLFpUrOTb+tkDQKYvHosMFmzu+zWd4fAKMnOC3XfhexEWrvooniTIccvGrrR
-         +7Qk/RDK7mO7BVOr4cbY1x0OxJ2xR+oyeMnNMoeupUFgJzqMoGO0jRwo53zVJHTFdRFw
-         MDtEFvpfgdWRqCWQWWuBGW7ctqmFecyobG22Mz1N3RTviZWaq+JuNbXYVzYVi9SjbaoM
-         Zs5w==
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=wp5WpQaUj8L83+/r3AKv1KvjDv7nhf3IntrUC6vo1ig=;
+        b=KCuUtnNNOyAHdtIjyphgpdlvzC9ejr5oF3HGdzP/O3rHuFnrS+yzWKVDUBUqyBnNOZ
+         73t2x/RRBKBkG5Iri7whnbnPqk5lcRcWld36NrDTdFwKfDbg4xd8bZWhiOXvf5ogjASq
+         mtXQ+4+OovHCos7YRuLZIgYTsZ7JOasTEPjP3t5GQ/wmCbRLBrzvm8fBoqavLaCDAruS
+         CPp0wJkab+C73ssOtR4PyPm8Q9JqfPgswq9970RfpPUdCG/rhTBp2L2Ws7aTQQKRPCv+
+         cnGShbnFnNbksLCdi27QOn7rfwN97i9oiq2mgeUVYEWpNXRlbBOC1YnwGz+1DTJqgOIN
+         Gl+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xkaflSrUK4l/r2eO1FX25FanLd+q2Sm+RRC+guMDzQw=;
-        b=A95UG5vklUDTSD/CqasUHnCITVDBPSlrrfPl1eKyiTy0NuAzbAPVbeQOxizQg2nEWg
-         yyEbN3dLCFC7K7145UpooXZA+s/srLjM0bnd1ngDFCoGE3BDxdXT06OkbWMxq1GBKZZO
-         xQSKjKGm6yq2eHwo0UEZ/7v3iCWXiHxTkpwy60t5Ob2gyZ4IU0+LYXDZklo6qVL221AZ
-         vxudyvK0/eBsaXlkxSKpKv9wuilAds4hR4BFpWSXXRBd5X7z/rLtVReU6sdWtIk0kRJS
-         WFdGl2cvGgJUxvbJwBMNJjNgADCGtsTSqDHVF0UxUqrUGvurMdmjC2nsxIXKqfEU1Ee5
-         nTcQ==
-X-Gm-Message-State: AA+aEWZiCkVmIEvmrRV2cL+9a2Y7U15IpLDYgHefcNRpUQspuvTfFeK6
-        X2APftkODufxpntypRbj18E=
-X-Google-Smtp-Source: AFSGD/VZIPh+k7Jv1lKfc+wuayhwG8OcPx1613dMk4Mzx/rOydh6bVYrgo/hvKR/RIjoO5mXP32sBw==
-X-Received: by 2002:aa7:d9d6:: with SMTP id v22mr6909794eds.265.1543627508379;
-        Fri, 30 Nov 2018 17:25:08 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a13sm1726020edt.83.2018.11.30.17.25.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 17:25:07 -0800 (PST)
-Date:   Sat, 1 Dec 2018 01:25:07 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devel@linuxdriverproject.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Banman <andrew.banman@hpe.com>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Such??nek <msuchanek@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH RFCv2 1/4] mm/memory_hotplug: Introduce memory block types
-Message-ID: <20181201012507.lxfscl6ho3gc6gnn@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20181130175922.10425-1-david@redhat.com>
- <20181130175922.10425-2-david@redhat.com>
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=wp5WpQaUj8L83+/r3AKv1KvjDv7nhf3IntrUC6vo1ig=;
+        b=oV+OIpG2PhMYGs1Md15U0ixEXo3WgdFt2tC8JrtJnhOgNPKluOaPh8GHxahnWpPfRK
+         OYoYZQsunKQ1QRcAged2l8GBrmA4IO6s4lMKhTVsvCZr1xMKAkw/zxgCFGS23AaxOCy5
+         UhYdPpT8YvcQyA+KEXwGSsJ4Dakmd6hxUDCbxStDI+hp8qYS5V+rNEUJsF20mYndYefH
+         cvbGZVqluR7ujTrTexvs/Qw+q1UW4fPd9yfEYhw33n4zjvL85IhbfJ3G1Yl8aGKu4HEl
+         DNPqqer5zdA03+iY9kKOkxEI4K13xUXqQroAPg37pcuchRiI6SM4/FFK6F+L9jfiEgo1
+         dIuQ==
+X-Gm-Message-State: AA+aEWYtxwXttZGlr9HBHy90cxrJwAQu0XQMrIa0Ohri9vkl5h7Kfgxu
+        B2KImbEjg3c5CcOG3hE5w4+VlQ==
+X-Google-Smtp-Source: AFSGD/V1p/zEfhJzZ27GzxWL8wRpQVVzMAUCwZ5I2P8//jnEcXdGGQg4jRBfLf3fD4qkiCG1wm0guQ==
+X-Received: by 2002:a5d:870c:: with SMTP id u12mr6679411iom.168.1543627533453;
+        Fri, 30 Nov 2018 17:25:33 -0800 (PST)
+Received: from [26.67.58.27] ([172.56.12.18])
+        by smtp.gmail.com with ESMTPSA id e10sm2847246ioa.65.2018.11.30.17.25.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 17:25:32 -0800 (PST)
+Date:   Sat, 01 Dec 2018 14:25:10 +1300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAK8P3a1_if7+Ak2eefU6JeZT9KW827gkLHaObX-QOsHrB5ZwfA@mail.gmail.com>
+References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com> <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io> <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com> <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net> <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com> <20181129213458.4h44dpg6ltqow4k4@brauner.io> <CAK8P3a1_if7+Ak2eefU6JeZT9KW827gkLHaObX-QOsHrB5ZwfA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130175922.10425-2-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <7D934AED-82E4-4DC3-8CCB-973680316B60@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 06:59:19PM +0100, David Hildenbrand wrote:
->Memory onlining should always be handled by user space, because only user
->space knows which use cases it wants to satisfy. E.g. memory might be
->onlined to the MOVABLE zone even if it can never be removed from the
->system, e.g. to make usage of huge pages more reliable.
+On November 30, 2018 10:40:49 AM GMT+13:00, Arnd Bergmann <arnd@arndb=2Ede>=
+ wrote:
+>On Thu, Nov 29, 2018 at 10:35 PM Christian Brauner
+><christian@brauner=2Eio> wrote:
+>> On Thu, Nov 29, 2018 at 10:02:13PM +0100, Arnd Bergmann wrote:
+>> > On Thu, Nov 29, 2018 at 9:14 PM Andy Lutomirski
+><luto@amacapital=2Enet> wrote:
+>> >
+>> > Is the current procfd_signal() proposal (under whichever name)
+>sufficient
+>> > to correctly implement both sys_rt_sigqueueinfo() and
+>sys_rt_tgsigqueueinfo()?
+>>
+>> Yes, I see no reason why not=2E My idea is to extend it - after we have
+>a
+>> basic version in - to also work with:
+>> /proc/<pid>/task/<tid>
+>> If I'm not mistaken this should be sufficient to get
+>rt_tgsigqueueinfo=2E
+>> The thread will be uniquely identified by the tid descriptor and no
+>> combination of /proc/<pid> and /proc/<pid>/task/<tid> is needed=2E Does
+>> that sound reasonable?
 >
->However to implement such rules (especially default rules in distributions)
->we need more information about the memory that was added in user space.
+>Yes=2E So it would currently replace rt_gsigqueueinfo() but
+>not rt_tgsigqueueinfo(), and could be extended to do both
+>afterwards, without making the interface ugly in any form?
+
+Yes=2E :)
+
 >
->E.g. on x86 we want to online memory provided by balloon devices (e.g.
->XEN, Hyper-V) differently (-> will not be unplugged by offlining the whole
->block) than ordinary DIMMs (-> might eventually be unplugged by offlining
->the whole block). This might also become relevat for other architectures.
+>I suppose we can always add more flags if needed, and you
+>already ensure that flags is zero for the moment=2E
+
+Yep=2E
+
 >
->Also, udev rules right now check if running on s390x and treat all added
->memory blocks as standby memory (-> don't online automatically). As soon as
->we support other memory hotplug mechanism (e.g. virtio-mem) checks would
->have to get more involved (e.g. also check if under KVM) but eventually
->also wrong (e.g. if KVM ever supports standby memory we are doomed).
+>> > Can we implement sys_rt_sigtimedwait() based on signalfd()?
+>> >
+>> > If yes, that would leave waitid(), which already needs a
+>replacement
+>> > for y2038, and that should then also return a signalfd_siginfo=2E
+>> > My current preference for waitid() would be to do a version that
+>> > closely resembles the current interface, but takes a
+>signalfd_siginfo
+>> > and a __kernel_timespec based rusage replacement (possibly
+>> > two of them to let us map wait6), but does not operate on procfd or
+>> > take a signal mask=2E That would require yet another syscall, but I
+>> > don't think I can do that before we want to have the set of y2038
+>> > safe syscalls=2E
+>>
+>> All sounds reasonable to me but that's not a blocker for the current
+>> syscall though, is it?
 >
->I decided to allow to specify the type of memory that is getting added
->to the system. Let's start with two types, BOOT and UNSPECIFIED to get the
->basic infrastructure running. We'll introduce and use further types in
->follow-up patches. For now we classify any hotplugged memory temporarily
->as as UNSPECIFIED (which will eventually be dropped later on).
+>I'd like to at least understand about sys_rt_sigtimedwait() before
+>we go on, so we all know what's coming, and document the
+>plans in the changelog=2E
 >
->Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->Cc: "Rafael J. Wysocki" <rafael@kernel.org>
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Ingo Molnar <mingo@kernel.org>
->Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->Cc: Stephen Rothwell <sfr@canb.auug.org.au>
->Cc: Andrew Banman <andrew.banman@hpe.com>
->Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
->Cc: Oscar Salvador <osalvador@suse.com>
->Cc: Dave Hansen <dave.hansen@linux.intel.com>
->Cc: Michal Hocko <mhocko@kernel.org>
->Cc: Michal Such??nek <msuchanek@suse.de>
->Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
->Cc: Dan Williams <dan.j.williams@intel.com>
->Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
->Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
->Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
->Signed-off-by: David Hildenbrand <david@redhat.com>
->---
-> drivers/base/memory.c  | 38 +++++++++++++++++++++++++++++++++++---
-> include/linux/memory.h | 27 +++++++++++++++++++++++++++
-> 2 files changed, 62 insertions(+), 3 deletions(-)
+>waitid() probably remains on my plate anyway, and I hope understand
+>where we're at with it=2E
 >
->diff --git a/drivers/base/memory.c b/drivers/base/memory.c
->index 0c290f86ab20..17f2985c07c5 100644
->--- a/drivers/base/memory.c
->+++ b/drivers/base/memory.c
->@@ -381,6 +381,29 @@ static ssize_t show_phys_device(struct device *dev,
-> 	return sprintf(buf, "%d\n", mem->phys_device);
-> }
-> 
->+static ssize_t type_show(struct device *dev, struct device_attribute *attr,
->+			 char *buf)
->+{
->+	struct memory_block *mem = to_memory_block(dev);
->+	ssize_t len = 0;
->+
->+	switch (mem->type) {
->+	case MEMORY_BLOCK_UNSPECIFIED:
->+		len = sprintf(buf, "unspecified\n");
->+		break;
->+	case MEMORY_BLOCK_BOOT:
->+		len = sprintf(buf, "boot\n");
->+		break;
->+	default:
->+		len = sprintf(buf, "ERROR-UNKNOWN-%ld\n",
->+				mem->state);
->+		WARN_ON(1);
->+		break;
->+	}
->+
->+	return len;
->+}
->+
-> #ifdef CONFIG_MEMORY_HOTREMOVE
-> static void print_allowed_zone(char *buf, int nid, unsigned long start_pfn,
-> 		unsigned long nr_pages, int online_type,
->@@ -442,6 +465,7 @@ static DEVICE_ATTR(phys_index, 0444, show_mem_start_phys_index, NULL);
-> static DEVICE_ATTR(state, 0644, show_mem_state, store_mem_state);
-> static DEVICE_ATTR(phys_device, 0444, show_phys_device, NULL);
-> static DEVICE_ATTR(removable, 0444, show_mem_removable, NULL);
->+static DEVICE_ATTR_RO(type);
+>     Arnd
 
-This is correct, while looks not consistent with other attributes.
-
-Not that beautiful :-)
-
-> 
-> /*
->  * Block size attribute stuff
->@@ -620,6 +644,7 @@ static struct attribute *memory_memblk_attrs[] = {
-> 	&dev_attr_state.attr,
-> 	&dev_attr_phys_device.attr,
-> 	&dev_attr_removable.attr,
->+	&dev_attr_type.attr,
-> #ifdef CONFIG_MEMORY_HOTREMOVE
-> 	&dev_attr_valid_zones.attr,
-> #endif
->@@ -657,13 +682,17 @@ int register_memory(struct memory_block *memory)
-> }
-> 
-> static int init_memory_block(struct memory_block **memory,
->-			     struct mem_section *section, unsigned long state)
->+			     struct mem_section *section, unsigned long state,
->+			     int type)
-> {
-> 	struct memory_block *mem;
-> 	unsigned long start_pfn;
-> 	int scn_nr;
-> 	int ret = 0;
-> 
->+	if (type == MEMORY_BLOCK_NONE)
->+		return -EINVAL;
-
-No one will pass in this value. Can we omit this check for now?
-
->+
-> 	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
-> 	if (!mem)
-> 		return -ENOMEM;
->@@ -675,6 +704,7 @@ static int init_memory_block(struct memory_block **memory,
-> 	mem->state = state;
-> 	start_pfn = section_nr_to_pfn(mem->start_section_nr);
-> 	mem->phys_device = arch_get_memory_phys_device(start_pfn);
->+	mem->type = type;
-> 
-> 	ret = register_memory(mem);
-> 
->@@ -699,7 +729,8 @@ static int add_memory_block(int base_section_nr)
-> 
-> 	if (section_count == 0)
-> 		return 0;
->-	ret = init_memory_block(&mem, __nr_to_section(section_nr), MEM_ONLINE);
->+	ret = init_memory_block(&mem, __nr_to_section(section_nr), MEM_ONLINE,
->+				MEMORY_BLOCK_BOOT);
-> 	if (ret)
-> 		return ret;
-> 	mem->section_count = section_count;
->@@ -722,7 +753,8 @@ int hotplug_memory_register(int nid, struct mem_section *section)
-> 		mem->section_count++;
-> 		put_device(&mem->dev);
-> 	} else {
->-		ret = init_memory_block(&mem, section, MEM_OFFLINE);
->+		ret = init_memory_block(&mem, section, MEM_OFFLINE,
->+					MEMORY_BLOCK_UNSPECIFIED);
-> 		if (ret)
-> 			goto out;
-> 		mem->section_count++;
->diff --git a/include/linux/memory.h b/include/linux/memory.h
->index d75ec88ca09d..06268e96e0da 100644
->--- a/include/linux/memory.h
->+++ b/include/linux/memory.h
->@@ -34,12 +34,39 @@ struct memory_block {
-> 	int (*phys_callback)(struct memory_block *);
-> 	struct device dev;
-> 	int nid;			/* NID for this memory block */
->+	int type;			/* type of this memory block */
-> };
-> 
-> int arch_get_memory_phys_device(unsigned long start_pfn);
-> unsigned long memory_block_size_bytes(void);
-> int set_memory_block_size_order(unsigned int order);
-> 
->+/*
->+ * Memory block types allow user space to formulate rules if and how to
->+ * online memory blocks. The types are exposed to user space as text
->+ * strings in sysfs.
->+ *
->+ * MEMORY_BLOCK_NONE:
->+ *  No memory block is to be created (e.g. device memory). Not exposed to
->+ *  user space.
->+ *
->+ * MEMORY_BLOCK_UNSPECIFIED:
->+ *  The type of memory block was not further specified when adding the
->+ *  memory block.
->+ *
->+ * MEMORY_BLOCK_BOOT:
->+ *  This memory block was added during boot by the basic system. No
->+ *  specific device driver takes care of this memory block. This memory
->+ *  block type is onlined automatically by the kernel during boot and might
->+ *  later be managed by a different device driver, in which case the type
->+ *  might change.
->+ */
->+enum {
->+	MEMORY_BLOCK_NONE = 0,
->+	MEMORY_BLOCK_UNSPECIFIED,
->+	MEMORY_BLOCK_BOOT,
->+};
->+
-> /* These states are exposed to userspace as text strings in sysfs */
-> #define	MEM_ONLINE		(1<<0) /* exposed to userspace */
-> #define	MEM_GOING_OFFLINE	(1<<1) /* exposed to userspace */
->-- 
->2.17.2
-
--- 
-Wei Yang
-Help you, Help me
