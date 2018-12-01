@@ -2,89 +2,90 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8E3C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FB9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6308F2146D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 14:57:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3A052146F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:04:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WuHADvJf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6308F2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogb+wUJX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A052146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbeLBCKI (ORCPT
+        id S1726925AbeLBCQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 21:10:08 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36986 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbeLBCKH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 21:10:07 -0500
-Received: by mail-it1-f195.google.com with SMTP id b5so2677466iti.2;
-        Sat, 01 Dec 2018 06:57:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T6kFo1eZ8ABphdmLpbOUXAtMEimIy2gbxxzEuasDmxE=;
-        b=WuHADvJfXhhDJWuI1KsG/xkhNemIIKorYZ0vYm3Tpf++sm25tAHMb3sEJ1BPSsAnpm
-         sLf3b3hYEF95hAb8UnhhgSuCcg++0GkJjHTZsEeF7rOFc34uL3+I+VWZzEvffNliPOJz
-         UmDGKVlPTVXs+gZObb9XQM1ncCtVJm5eSyS+wxW/uCj2WINQY2OcDvRZI3urilDAvi/4
-         ctWNXkGNLDe3sBfN8jl5zrqLyC24wNNh9zha/XLyTf/G3vnfEjY8bHTpnmNqUglzOzXY
-         SS51XtnxCzf6SaU2mW8zRDMPZKQZV4ngcjQ0w7jUipq/mKdB5GIBQ0a6I/OyNDV2jfv5
-         aW/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T6kFo1eZ8ABphdmLpbOUXAtMEimIy2gbxxzEuasDmxE=;
-        b=avHgUDm2lJg9H/3uTDp2YmKQvtUyCpX29h+zA7v29VmEs+SgbnsEkNBshS/caEajz6
-         mKqaUvXx8twNTEooAuBx1OM1o/pddofqeGMqIepQhzWwTaVSAldC39ZEhxTsoaDA1XMz
-         QR1bJ3/kDW42BNEWzAVLmGrC8pBIpLubET1Foee8sIRFnIpqvnHGGAbawTWRUZ5hyauB
-         JNrwwbciUV00mwAkx0aLNQYQzPGXEGW3fhrqvGzxl3h/rd/9IINmrcyauepjsukBBkgI
-         22H4qvpzbpAzpab4wGgbSw961QP/os+GFKypOufIky3+vH9SkeaE2MnrVm15prccQGwY
-         KASg==
-X-Gm-Message-State: AA+aEWZm+3L9yQiTb4slfi4z1rnIiz+i8YQhNNzVGTnnp5H4d+y88yG5
-        TRRO0/CaJCJils31+PfonXFTau0nDBUhImZepDo=
-X-Google-Smtp-Source: AFSGD/UKvsl2Qw8DHKWn6gq6Jw4U/XT/dejFotCP5uVIbYRvj0DbYns7Bw1gALbEnXFPN1iuMr1uAmBx8J84GyGtphA=
-X-Received: by 2002:a24:648f:: with SMTP id t137mr2333345itc.95.1543676245373;
- Sat, 01 Dec 2018 06:57:25 -0800 (PST)
+        Sat, 1 Dec 2018 21:16:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726642AbeLBCQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 21:16:46 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4E6D2146D;
+        Sat,  1 Dec 2018 15:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543676644;
+        bh=J85stcoPFM2krqR1tC/s3HX6StrE7fD5vRWamL+247M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ogb+wUJXEXjH+In/fJ8YKKxG8WxLjiuwxTCcYRQuG52ZuZ+pPjswAQmKikPmhRd/Y
+         0ZsRkHBy3Gt6t0rWJBwQC/mojsFrP3sM/9+oZua1/SmGXDINjCkz6SjaS2ESw9ARRG
+         eAPCCPbhbkKElwY2tJxGkl3lGDxiO3uoN4/Ac/48=
+Date:   Sat, 1 Dec 2018 15:04:00 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Vignesh R <vigneshr@ti.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: adc: ti_am335x_tscadc: Improve accuracy of
+ measurement
+Message-ID: <20181201150400.09706f47@archlinux>
+In-Reply-To: <20181128091432.GT4272@dell>
+References: <20181119064236.28902-1-vigneshr@ti.com>
+        <20181119064236.28902-3-vigneshr@ti.com>
+        <20181128091432.GT4272@dell>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181201101417.6368-1-tiny.windzz@gmail.com> <2b188937-e297-acb4-8c40-bb93ff5bbb76@roeck-us.net>
-In-Reply-To: <2b188937-e297-acb4-8c40-bb93ff5bbb76@roeck-us.net>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Sat, 1 Dec 2018 22:57:03 +0800
-Message-ID: <CAEExFWu01nUBqb1N3R7rDXf96sLBYEfxOo06Q-ZAqMqYTmNKjQ@mail.gmail.com>
-Subject: Re: [PATCH] watchdog: convert to DEFINE_SHOW_ATTRIBUTE
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     wim@linux-watchdog.org, Florian Fainelli <f.fainelli@gmail.com>,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 1, 2018 at 10:25 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 12/1/18 2:14 AM, Yangtao Li wrote:
-> > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->
-> One patch per file, please.
->
-> Guenter
-Already split into small files.
+On Wed, 28 Nov 2018 09:14:32 +0000
+Lee Jones <lee.jones@linaro.org> wrote:
 
-MBR,
-Yangtao
+> On Mon, 19 Nov 2018, Vignesh R wrote:
+> 
+> > When performing single ended measurements with TSCADC, its recommended
+> > to set negative input (SEL_INM_SWC_3_0) of ADC step to ADC's VREFN in the
+> > corresponding STEP_CONFIGx register.
+> > Also, the positive(SEL_RFP_SWC_2_0) and negative(SEL_RFM_SWC_1_0)
+> > reference voltage for ADC step needs to be set to VREFP and VREFN
+> > respectively in STEP_CONFIGx register.
+> > Without these changes, there may be variation of as much as ~2% in the
+> > ADC's digital output which is bad for precise measurement.
+> > 
+> > Signed-off-by: Vignesh R <vigneshr@ti.com>
+> > ---
+> >  drivers/iio/adc/ti_am335x_adc.c      | 5 ++++-  
+> 
+> >  include/linux/mfd/ti_am335x_tscadc.h | 4 ++++  
+> 
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> 
+I'll leave this for v2 given changes in the first patch.
+
+My assumption is at the moment that both will go through mfd.
+Shout Lee if you have other plans.
+
+Jonathan
+
