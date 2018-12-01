@@ -2,84 +2,230 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF58C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C65C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D58B920673
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:48:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lEFY28lc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58B920673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 806DD20673
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:48:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806DD20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727147AbeLBDAr (ORCPT
+        id S1727165AbeLBDB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 22:00:47 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35211 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbeLBDAr (ORCPT
+        Sat, 1 Dec 2018 22:01:28 -0500
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:47234 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbeLBDB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 22:00:47 -0500
-Received: by mail-wm1-f67.google.com with SMTP id c126so1729322wmh.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:47:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=7VsEOr6WXo8MtKSe6YFHkh0W0DTd5dOlnHo+96RQq1c=;
-        b=lEFY28lc8hxycIhp3OrDbCQuvpSF23vSZzbYVLs2G6G6jngyKztDY9lCIjvutZUffp
-         8g3Dt3/H+dWYDgWrDApFjv+jcfqqZtWJOsb99uLMrzgaU7E1N+yoQ/fjdwxLut63ggrC
-         XT5NCV8VA7Vh8NEYqrOjE4mY2Aci/9pVWL1BctIVNh3okmiMQMlLbXcEIaKvV26mbIRF
-         3PuJlWosIT+Re5cqoqsDRRYZVbcIJLbfArjsopXM3HgEI3zupnad1SdFp5UqYxcsLBIZ
-         oD1pmT7jljeyxXTX8qxw4TmmlWWj/nGS58+RI4TOu6b0WgWkHqkC50IRd5xwq1cAV+Wz
-         ZCRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=7VsEOr6WXo8MtKSe6YFHkh0W0DTd5dOlnHo+96RQq1c=;
-        b=KTnZ2XTd6fkbEjmWrh1omzPq14pXbAn99nez2ARMsItFi0QiysPszYpCvnO9Y1kbFE
-         2e5FB4L3eTtXzlfOThlmLfI68G7R7/HXUAXq8N3QF63T5qdVCPsCiqZOA4CVzooCqXUI
-         SEz7DykDFew/1DceBqH5iWKgEgqreFu9h/vGMfNe/KQtUEwCJ5zkKRNnMvKGJ/pTpyFg
-         r16DbmXjh+mDxrvUbdiKb5OesupNXnwGus3SyivEQB+xcJ9qgBerqxp1Pgm8Y7/pUf4O
-         dRqmqnzBaFXLlNFjUDmm9Y5QsXYa9gxqOI6kTCXZrsOMCDFJsd9bbh1YQfLRUEhYk0k6
-         H1fA==
-X-Gm-Message-State: AA+aEWb2IJ/GIqwjDvhFbWIQTJYIj3lYmVGEuXJGYPtbCCUOcH3X7N8O
-        cObLMOPW+oJ8k7OsP8fJm9dYk5+x6JWELCU12vTjSgpI
-X-Google-Smtp-Source: AFSGD/UzIokKM9+fZSpXAKN9LiMFjjiS9F2Qjl6f3T1t7WwzR9ugtrzQ2+8gEykjn9hxu5pFxY3o0b7Bki/BJ16c4+0=
-X-Received: by 2002:a1c:3e84:: with SMTP id l126-v6mr2517745wma.57.1543679277683;
- Sat, 01 Dec 2018 07:47:57 -0800 (PST)
+        Sat, 1 Dec 2018 22:01:28 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 709669E7854;
+        Sat,  1 Dec 2018 15:48:37 +0000 (GMT)
+Date:   Sat, 1 Dec 2018 15:48:35 +0000
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     Matt Ranostay <matt.ranostay@konsulko.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: add IIO_MASSCONCENTRATION channel type
+Message-ID: <20181201154835.19482d7a@archlinux>
+In-Reply-To: <20181125154423.GC5053@arch>
+References: <20181124221415.10081-1-tduszyns@gmail.com>
+        <20181124221415.10081-2-tduszyns@gmail.com>
+        <CAJCx=g=H6Zp4AtWPpC-KdZmyOxTymtdgf+Hx8VvThLFg0bjYVQ@mail.gmail.com>
+        <20181125140316.59d9872b@archlinux>
+        <CAJCx=g=oUmcfCA2octwfaoWr6aC=ZF7LUkMsraNe8buHc9mjPg@mail.gmail.com>
+        <20181125154423.GC5053@arch>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Reply-To: huangyan1987@gmail.com
-From:   Huang Yan <huangyan1987@gmail.com>
-Date:   Sat, 1 Dec 2018 16:47:20 +0100
-Message-ID: <CAK7X-Hd1jX614Gc80j0mY6G-_JZdLBRbBAT3eMyOmfYc+GmAHQ@mail.gmail.com>
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018 23:15:55 -0500, Theodore Y. Ts'o wrote:
-> I'm trying to figure out common factors from those people who are
-> reporting problems.
+On Sun, 25 Nov 2018 16:44:23 +0100
+Tomasz Duszynski <tduszyns@gmail.com> wrote:
 
-Hello, I experienced the ext4-randomly-switching-to-read-only issue
-with Linux kernel 4.19.5 (from
-http://kernel.ubuntu.com/~kernel-ppa/mainline/ ; also with the
-previous minor versions) on Ubuntu 18.04 - on two laptops (SATA HDD &
-SATA SSD).
+> On Sun, Nov 25, 2018 at 06:14:44AM -0800, Matt Ranostay wrote:
+> > On Sun, Nov 25, 2018 at 6:03 AM Jonathan Cameron
+> > <jic23@jic23.retrosnub.co.uk> wrote:  
+> > >
+> > > On Sun, 25 Nov 2018 05:51:32 -0800
+> > > Matt Ranostay <matt.ranostay@konsulko.com> wrote:
+> > >  
+> > > > On Sat, Nov 24, 2018 at 2:14 PM Tomasz Duszynski <tduszyns@gmail.com> wrote:  
+> > > > >
+> > > > > Measuring particulate matter in ug / m3 (micro-grams per cubic meter)
+> > > > > is de facto standard. Existing air quality sensors usually follow
+> > > > > this convention and are capable of returning measurements using
+> > > > > this unit.
+> > > > >
+> > > > > IIO currently does not offer suitable channel type for this
+> > > > > type of measurements hence this patch adds this.
+> > > > >
+> > > > > In addition, two modifiers are introduced used for distinguishing
+> > > > > between coarse (PM10) and fine particles (PM2p5) measurements, i.e
+> > > > > IIO_MOD_PM10 and IIO_MOD_PM2p5.
+> > > > >
+> > > > > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> > > > > ---
+> > > > >  Documentation/ABI/testing/sysfs-bus-iio | 11 ++++++++++-
+> > > > >  drivers/iio/industrialio-core.c         |  3 +++
+> > > > >  include/uapi/linux/iio/types.h          |  3 +++
+> > > > >  tools/iio/iio_event_monitor.c           |  6 ++++++
+> > > > >  4 files changed, 22 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> > > > > index 8127a08e366d..ce0ed140660d 100644
+> > > > > --- a/Documentation/ABI/testing/sysfs-bus-iio
+> > > > > +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> > > > > @@ -1684,4 +1684,13 @@ KernelVersion:   4.18
+> > > > >  Contact:       linux-iio@vger.kernel.org
+> > > > >  Description:
+> > > > >                 Raw (unscaled) phase difference reading from channel Y
+> > > > > -               that can be processed to radians.
+> > > > > \ No newline at end of file
+> > > > > +               that can be processed to radians.
+> > > > > +
+> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm2p5_input
+> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm2p5_input
+> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm10_input
+> > > > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm10_input
+> > > > > +KernelVersion: 4.21
+> > > > > +Contact:       linux-iio@vger.kernel.org
+> > > > > +Description:
+> > > > > +               Mass concentration reading of particulate matter in ug / m3.
+> > > > > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> > > > > index a062cfddc5af..2a9ef600c1fb 100644
+> > > > > --- a/drivers/iio/industrialio-core.c
+> > > > > +++ b/drivers/iio/industrialio-core.c
+> > > > > @@ -87,6 +87,7 @@ static const char * const iio_chan_type_name_spec[] = {
+> > > > >         [IIO_GRAVITY]  = "gravity",
+> > > > >         [IIO_POSITIONRELATIVE]  = "positionrelative",
+> > > > >         [IIO_PHASE] = "phase",
+> > > > > +       [IIO_MASSCONCENTRATION] = "massconcentration",
+> > > > >  };
+> > > > >
+> > > > >  static const char * const iio_modifier_names[] = {
+> > > > > @@ -127,6 +128,8 @@ static const char * const iio_modifier_names[] = {
+> > > > >         [IIO_MOD_Q] = "q",
+> > > > >         [IIO_MOD_CO2] = "co2",
+> > > > >         [IIO_MOD_VOC] = "voc",
+> > > > > +       [IIO_MOD_PM2p5] = "pm2p5",
+> > > > > +       [IIO_MOD_PM10] = "pm10",
+> > > > >  };
+> > > > >
+> > > > >  /* relies on pairs of these shared then separate */
+> > > > > diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> > > > > index 92baabc103ac..465044b42af5 100644
+> > > > > --- a/include/uapi/linux/iio/types.h
+> > > > > +++ b/include/uapi/linux/iio/types.h
+> > > > > @@ -46,6 +46,7 @@ enum iio_chan_type {
+> > > > >         IIO_GRAVITY,
+> > > > >         IIO_POSITIONRELATIVE,
+> > > > >         IIO_PHASE,
+> > > > > +       IIO_MASSCONCENTRATION,  
+> > > >
+> > > > So I'm guessing IIO_CONCENTRATION can't be scaled to the micro-grams
+> > > > per cubic meter?  
+> > >
+> > > Currently concentration is defined as a percentage reading of a substance
+> > > (which does make me wonder if it is meant to be percentage of the volume or
+> > > percentage of the mass?)  Either way, if can't convert to a density measurement
+> > > as it's a unit free ratio (I think).  
+> >
+> > Seems like it can be both..  guessing all the atmosphere ( CO2, VOC,
+> > etc) ones are mass/density because on how they work.  
+> 
+> Hmm, but still percentage was picked up for IIO_CONCENTRATION which does
+> really match PM expectations. Perhaps if units were sticked to modifiers
+> it whould be easier to reuse that.
 
-I noticed that the only thing I've changed from the default Ubuntu
-configuration was enabling *write cache* for the disk with the ext4
-root partition. Perhaps this information will help.
+It gets very messy if we start doing that modifiers, I'd rather stick to
+different channel types.  We already do this with other channel types
+position / positionrelative for example.
 
-Best regards,
-Yan Huang (Johnny)
+It isn't as though it's actually possible to convert between the two without
+knowing what the particles actually are...
+
+Jonathan
+> 
+> > But the electro-conductivity sensor that is using IIO_CONCENTRATION
+> > channels is likely from percentage of volume.
+> >
+> > - Matt
+> >  
+> > >  
+> > > >  
+> > > > >  };
+> > > > >
+> > > > >  enum iio_modifier {
+> > > > > @@ -87,6 +88,8 @@ enum iio_modifier {
+> > > > >         IIO_MOD_VOC,
+> > > > >         IIO_MOD_LIGHT_UV,
+> > > > >         IIO_MOD_LIGHT_DUV,
+> > > > > +       IIO_MOD_PM2p5,  
+> > > >
+> > > > I know this is unit of measure but the lowercase p in IIO_MOD_PM2p5 is
+> > > > a bit non-standard for iio defines/enum.  
+> > > It is a bit odd and will get us scripted reports so maybe best to
+> > > just go upper case and not worry about it.
+> > >
+> > > Jonathan  
+> > > >
+> > > > - Matt
+> > > >  
+> > > > > +       IIO_MOD_PM10,
+> > > > >  };
+> > > > >
+> > > > >  enum iio_event_type {
+> > > > > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+> > > > > index ac2de6b7e89f..f0fcfeddba2b 100644
+> > > > > --- a/tools/iio/iio_event_monitor.c
+> > > > > +++ b/tools/iio/iio_event_monitor.c
+> > > > > @@ -60,6 +60,7 @@ static const char * const iio_chan_type_name_spec[] = {
+> > > > >         [IIO_GRAVITY] = "gravity",
+> > > > >         [IIO_POSITIONRELATIVE] = "positionrelative",
+> > > > >         [IIO_PHASE] = "phase",
+> > > > > +       [IIO_MASSCONCENTRATION] = "massconcentration",
+> > > > >  };
+> > > > >
+> > > > >  static const char * const iio_ev_type_text[] = {
+> > > > > @@ -115,6 +116,8 @@ static const char * const iio_modifier_names[] = {
+> > > > >         [IIO_MOD_Q] = "q",
+> > > > >         [IIO_MOD_CO2] = "co2",
+> > > > >         [IIO_MOD_VOC] = "voc",
+> > > > > +       [IIO_MOD_PM2p5] = "pm2p5",
+> > > > > +       [IIO_MOD_PM10] = "pm10",
+> > > > >  };
+> > > > >
+> > > > >  static bool event_is_known(struct iio_event_data *event)
+> > > > > @@ -156,6 +159,7 @@ static bool event_is_known(struct iio_event_data *event)
+> > > > >         case IIO_GRAVITY:
+> > > > >         case IIO_POSITIONRELATIVE:
+> > > > >         case IIO_PHASE:
+> > > > > +       case IIO_MASSCONCENTRATION:
+> > > > >                 break;
+> > > > >         default:
+> > > > >                 return false;
+> > > > > @@ -200,6 +204,8 @@ static bool event_is_known(struct iio_event_data *event)
+> > > > >         case IIO_MOD_Q:
+> > > > >         case IIO_MOD_CO2:
+> > > > >         case IIO_MOD_VOC:
+> > > > > +       case IIO_MOD_PM2p5:
+> > > > > +       case IIO_MOD_PM10:
+> > > > >                 break;
+> > > > >         default:
+> > > > >                 return false;
+> > > > > --
+> > > > > 2.19.2
+> > > > >  
+> > >  
+
