@@ -2,148 +2,156 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F655C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ED9C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 09:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F126A2082F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:51:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F126A2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 1AC1B2146D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 09:09:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LhZBMppp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC1B2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbeLAUDi (ORCPT
+        id S1726497AbeLAUVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 15:03:38 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34250 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbeLAUDi (ORCPT
+        Sat, 1 Dec 2018 15:21:22 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:46047 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbeLAUVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 15:03:38 -0500
-Received: by mail-qt1-f194.google.com with SMTP id r14so8670016qtp.1;
-        Sat, 01 Dec 2018 00:51:37 -0800 (PST)
+        Sat, 1 Dec 2018 15:21:22 -0500
+Received: by mail-yb1-f195.google.com with SMTP id f6-v6so3291914ybg.12;
+        Sat, 01 Dec 2018 01:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bo3+dNYd8ja+Na04S1BWZUCrnDgrc2vWIJaHBRsSQYY=;
+        b=LhZBMpppPdnvjnzyWVbmpBogm76DwVeRzerH9cVrDVpJArG/e+HzDBYfXjinob074F
+         sQ/ptYxlIkJylPXc6o2P6mQbIvso8BEt7yd1w6QHSI7CXozM4J7iiQ7iUovCPYOEhSYf
+         feMEfbyOxikZLRRWbVErsO7shfY+4Y5WOI9OVxMi6qv86NR5uU+gtkjo4LjTF1DS4N/j
+         7lXvFODjg4CFqHq47Dwaa4ruiUqezwQsjsWZoLSFjY77T/MAcDmIyxsHHF3Sk+1Zforp
+         U1ZxvQpkODMcqLRrbo7dpGnLghyV1cn1T1P3H8ctBL8baCtOLc5+YuS1+wpLRAc2NNia
+         EERg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XlMvT1nlDvqDeuuFKDUcE7NepCTv6cI0dlPTopFOVyM=;
-        b=hNqdBkl1NjqojZzbc+spVqsRN8FxspPFhnUdy6ABP016vQSK48GcuRNEREq87JHk/s
-         vUUWlhSamBhSKmnxUhzAy2Qv97SJ7fgauLKEuprOB83NOZBxUrfaZA+h4ORZ/r8T7tZg
-         X+rzFd/TtRDBpyzO14KU8gAZeusiq1Z3AM4PP2jLLzn4d9kQXfKwUQPHjQxrMhwmdF5p
-         rcpdNNn3MFKgGaX/7Ih/cT+fLVRYx/mkbMLOJ3A7EPPkDBdleIm4U538ozgVSzUPsbju
-         rFFp2ikCCKU/phyXoQ20XxBqIlzNhjw/b2u3sCNMAEF6FZzQUmNUNfDmzs97C/Sgsq2O
-         W93Q==
-X-Gm-Message-State: AA+aEWYfj994JhZxDQAdVfk7CzDrEPDE7GK1jkTha9+0I7xyv+YG8G4F
-        7tCMQlD5WhyhNrMEre/9vecN+Na+qv/BNpfkOZY=
-X-Google-Smtp-Source: AFSGD/We+a5lyYAjDnE3cCyBaJ52xMV3frDLb9575xSLEXFaA/kOVEq1yeXOACuKrLX0s0hsbmg/sci7LJW0xDiNook=
-X-Received: by 2002:a0c:f50c:: with SMTP id j12mr8465383qvm.149.1543654296412;
- Sat, 01 Dec 2018 00:51:36 -0800 (PST)
+        bh=bo3+dNYd8ja+Na04S1BWZUCrnDgrc2vWIJaHBRsSQYY=;
+        b=Vf/AjQVA1hjhIfIlQrrwM/rZmYdzfgIrZLFXVtRY5hyEEraodcgcJEFqPZL1gywW5J
+         qEeiFFfzbbUoFwnjRueHkEmlk9uci3sphIwO7dzMh6H+Fc4TR7SfYr4bKYI4ufwRBCqE
+         nNmtkRuTyWuocI736xBwsQzCijexkjOysRJBrTi0Eguukyd0Jm3K8YI30nhCuETSZyUI
+         V8YNlLe18FVvSPh0ivDxJGXPXgrMnaTOBNUu2pKq1IdvSuph0YaQBi5bFryKOCu8o+37
+         TPkVjq8P+0Ajx7YeiitIyJ+LMRM5a56puBT/u9355/rOTFrd2e5jGJjw2jGg9U34CSA8
+         wshw==
+X-Gm-Message-State: AA+aEWbd6Wbh2lGmJmBirDFOv16XiwZjtxophf79U175iYw6x/9AAu3R
+        riGTNI/+y4U1MaLUKTlppFCBHZuRyxvhqbXNpJk=
+X-Google-Smtp-Source: AFSGD/XDZnZPUr/rf/DOphWYE5u4c85+6LK78egLTwzO1KBEnDpx6L2XtV5F+y4vWt/eooQCak+QMciHHb/jQ0NNHVI=
+X-Received: by 2002:a25:d8d5:: with SMTP id p204-v6mr3344958ybg.507.1543655358628;
+ Sat, 01 Dec 2018 01:09:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
- <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
- <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
- <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
- <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
- <87y39b2lm2.fsf@xmission.com> <20181130065606.kmilbbq46oeycjp5@brauner.io>
- <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
- <CALCETrW2aphWwEY4=hUwo_JBCvkQyMjxzxGd9FCW017kMLaMOQ@mail.gmail.com>
- <CAK8P3a1isSRCd-OLJK15C+gSJdpeR=zEXghc8+AMM5QYYw3Tyg@mail.gmail.com> <CALCETrWcJCjNGEqgq57Bm8O3qWkfEwau2SiXAv+SNYvNmXnBCA@mail.gmail.com>
-In-Reply-To: <CALCETrWcJCjNGEqgq57Bm8O3qWkfEwau2SiXAv+SNYvNmXnBCA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 1 Dec 2018 09:51:18 +0100
-Message-ID: <CAK8P3a1OX1Hb17=NbTYqZxgEM-sk5-dh_VeKa0bXJpq=k=KxHA@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     christian@brauner.io, "Eric W . Biederman" <ebiederm@xmission.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
+References: <20181129060110.159878-1-sashal@kernel.org> <20181129060110.159878-25-sashal@kernel.org>
+ <20181129121458.GK19305@dastard> <20181129124756.GA25945@kroah.com>
+ <20181129224019.GM19305@dastard> <20181130082203.GA26830@kroah.com>
+ <20181130101441.GA213156@sasha-vm> <20181130215005.GP19305@dastard> <20181201074909.GC213156@sasha-vm>
+In-Reply-To: <20181201074909.GC213156@sasha-vm>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 1 Dec 2018 11:09:05 +0200
+Message-ID: <CAOQ4uxhCH3oxVWDMVRcXMZO3JSTCA1Pp5AYnHP5pDxyNktqONw@mail.gmail.com>
+Subject: Re: XFS patches for stable
+To:     sashal@kernel.org
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "Luis R. Chamberlain" <mcgrof@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 1, 2018 at 12:54 AM Andy Lutomirski <luto@kernel.org> wrote:
-> On Fri, Nov 30, 2018 at 2:10 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Fri, Nov 30, 2018 at 5:36 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > > On Fri, Nov 30, 2018 at 3:41 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > siginfo_t as it is now still has a number of other downsides, and Andy in
-> > > > particular didn't like the idea of having three new variants on x86
-> > > > (depending on how you count). His alternative suggestion of having
-> > > > a single syscall entry point that takes a 'signfo_t __user *' but interprets
-> > > > it as compat_siginfo depending on in_compat_syscall()/in_x32_syscall()
-> > > > should work correctly, but feels wrong to me, or at least inconsistent
-> > > > with how we do this elsewhere.
-
-> > The '548 | 0x40000000' part seems to be the only sensible
-> > way to handle x32 here. What exactly would you propose to
-> > avoid defining the other entry points?
+> >> It's getting to the point that with the amount of known issues with XFS
+> >> on LTS kernels it makes sense to mark it as CONFIG_BROKEN.
+> >
+> >Really? Where are the bug reports?
 >
-> I would propose that it should be 335 | 0x40000000.  I can't see any
-> reasonable way to teach the kernel to reject 335 | 0x40000000 that
-> wouldn't work just as well to accept it and make it do the right
-> thing.  Currently we accept it and do the *wrong* thing, which is no
-> good.
+> In 'git log'! You report these every time you fix something in upstream
+> xfs but don't backport it to stable trees:
 >
-> > and we have to
-> > add more complexity to the copy_siginfo_from_user()
-> > implementation to duplicate the hack that exists in
-> > copy_siginfo_from_user32().
+> $ git log --oneline v4.18-rc1..v4.18 fs/xfs
+> d4a34e165557 xfs: properly handle free inodes in extent hint validators
+> 9991274fddb9 xfs: Initialize variables in xfs_alloc_get_rec before using them
+> d8cb5e423789 xfs: fix fdblocks accounting w/ RMAPBT per-AG reservation
+> e53c4b598372 xfs: ensure post-EOF zeroing happens after zeroing part of a file
+> a3a374bf1889 xfs: fix off-by-one error in xfs_rtalloc_query_range
+> 232d0a24b0fc xfs: fix uninitialized field in rtbitmap fsmap backend
+> 5bd88d153998 xfs: recheck reflink state after grabbing ILOCK_SHARED for a write
+> f62cb48e4319 xfs: don't allow insert-range to shift extents past the maximum offset
+> aafe12cee0b1 xfs: don't trip over negative free space in xfs_reserve_blocks
+> 10ee25268e1f xfs: allow empty transactions while frozen
+> e53946dbd31a xfs: xfs_iflush_abort() can be called twice on cluster writeback failure
+> 23fcb3340d03 xfs: More robust inode extent count validation
+> e2ac836307e3 xfs: simplify xfs_bmap_punch_delalloc_range
 >
-> What hack are you referring to here?
+> Since I'm assuming that at least some of them are based on actual issues
+> users hit, and some of those apply to stable kernels, why would users
+> want to use an XFS version which is knowingly buggy?
+>
 
-I mean this part:
+Sasha,
 
-#ifdef CONFIG_COMPAT
-int copy_siginfo_to_user32(struct compat_siginfo __user *to,
-                           const struct kernel_siginfo *from)
-#if defined(CONFIG_X86_X32_ABI) || defined(CONFIG_IA32_EMULATION)
-{
-        return __copy_siginfo_to_user32(to, from, in_x32_syscall());
-}
-int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
-                             const struct kernel_siginfo *from, bool x32_ABI)
-#endif
-{
-...
-        case SIL_CHLD:
-                new.si_pid    = from->si_pid;
-                new.si_uid    = from->si_uid;
-                new.si_status = from->si_status;
-#ifdef CONFIG_X86_X32_ABI
-                if (x32_ABI) {
-                        new._sifields._sigchld_x32._utime = from->si_utime;
-                        new._sifields._sigchld_x32._stime = from->si_stime;
-                } else
-#endif
-                {
-                        new.si_utime = from->si_utime;
-                        new.si_stime = from->si_stime;
-                }
-                break;
-...
-}
-#endif
+There is one more point to consider.
+Until v4.16, reflink and rmapbt features were experimental:
+76883f7988e6 xfs: remove experimental tag for reverse mapping
+1e369b0e199b xfs: remove experimental tag for reflinks
 
-If we have a '548 | 0x40000000' entry pointing to
-__x32_compat_sys_procfd_kill, then that will do the right
-thing. If you instead try to have x32 call into the native
-sys_procfd_kill, then copy_siginfo_to_user() will also have
-to know about x32, effectively duplicating that mess above,
-unless you want to also change all users of
-copy_siginfo_to_user32() to use copy_siginfo_to_user()
-and handle all cases in one function.
+And MANY of the bug fixes flowing in through XFS tree to master
+are related to those new XFS features and also to vfs functionality
+that depends on them (e.g. clone/dedupe), so there MAY be no
+bug reports at all for XFS in stable trees.
 
-        Arnd
+IMO users should NOT be expecting XFS to be stable with those
+features enabled (they are still disabled by default)
+when running on stable kernels below v4.16.
+
+Allow me to act as a self-appointed mediator here and say:
+There is obviously some bad blood between xfs developers and stable
+tree maintainers.
+The conflicts are caused by long standing frustration on both sides.
+We would all be better off with looking forward on how to improve the
+situation instead dwelling on past mistakes.
+This issue was on the agenda at the XFS team meeting on last LSF/MM.
+The path towards compliance has been laid out by xfs maintainers.
+Luis, Sasha and myself have been working to improve the filesystem
+test coverage for stable tree candidate patches.
+We have still some way to go.
+
+The stable candidate patches that triggered the recent flames
+was outside of the fs/xfs subsystem, which AUTOSEL already know
+to stay away from, so nobody had any intention to stir things up.
+
+At the end of the day, most xfs developers work for companies that
+ship enterprise distros and need to maintain stable trees, so I would
+hope that it is in the best interest of everyone involved to cooperate
+on the goal of better stable-xfs ecosystem.
+
+On my part, I would be happy if AUTOSEL could point me at
+candidate patch *series* for review instead of single patches.
+For that matter, it sure wouldn't hurt if an xfs developer sending
+out a patch series would cc:stable on the cover letter and if a developer
+would be kind enough to add some backporting hints to the cover letter
+text that would be very helpful indeed.
+
+Thanks,
+Amir.
