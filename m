@@ -2,279 +2,205 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90676C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66D1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C8E206B7
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5438F20834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 01:51:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZF0WNPa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C8E206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CIJ1WnKW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5438F20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeLAM5r (ORCPT
+        id S1726618AbeLANCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 07:57:47 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42720 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeLAM5r (ORCPT
+        Sat, 1 Dec 2018 08:02:42 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36755 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeLANCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 07:57:47 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so3240591pga.9
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 17:46:28 -0800 (PST)
+        Sat, 1 Dec 2018 08:02:42 -0500
+Received: by mail-oi1-f196.google.com with SMTP id x23so6415353oix.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 17:51:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JXGxWvqHDEn+bvRyCRdxX3OiMj535codbapxqfSc1yM=;
-        b=dZF0WNPa1VtzyEJ5EpHvHSuvmF1TrN+R3PLqVmPhSq9rKPa2M18VFxKwMDoD1pbt6z
-         2mNzdz0fFI/NVvtHcEvC1EUHcYC2bweVqQ2ojqK4IMeNmXRjPk9V3IEywwfIOxYJY1UA
-         IJo/8KauGMXHM/bCeqj68z7GJEGQKa1VZhuGvSmPI207LyumWHjXBBCrYdJomT6Z2waA
-         lDa+55A5YggUphcvqdRr5WILJwRcHhyk2BdguOZymN2cFzh15l67l89f+RVKYBf6V0wF
-         RWe8fXDnlJpRtwRc+hNE5Wm+bDXalsaNOKo2J+H/TL2jG9VkrnrkR0USo72r1r8QATqG
-         wfoA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4egdARPi+xUIFfj1s+osrK4IX23YvXJK6f44JVO83eU=;
+        b=CIJ1WnKWWDGFDBMOgK3v08wtkRcq3R2HCZMEpvK5X95tX0/HOCmITyk7mvKJQrSG7f
+         CNIg5wKNWHK/hh3SthFvBhV1aa0hDaUuhzA9ZQfB/1C45xVVqdEiC82cpMJWHagfumV2
+         9J01QCQqc6waVr6v65RjLESY814a8kKlGlVwZYOjWheXn8aIpOWuIMm8MinY3Yl1rwXe
+         1XNEJBqUDaEuldFF+VG6kMOaNhQa1b6m0z0dhMzHwr+RgzIVWW2FZd+VWDCTwyvXM+bz
+         kaU2CJNJSWxEShoRI5YqhvvsoSEj3k+b5Nle1s6XTBPGLIBfD1aleTHRjyfcRq+kA+kW
+         b1lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=JXGxWvqHDEn+bvRyCRdxX3OiMj535codbapxqfSc1yM=;
-        b=ZglhFlFWARAqhOgQ82l7vs3/6uZ2RwHW0La5U6LRFWIulcSF9c5KiAubp+wQgZuZLb
-         iKY0IaxLQe7+hNCAa+ATCvViivNsFUfDGUrGXiPbrN80c7P4ePkQ+xebZ5HDeD7vzOR+
-         V6CCb1Yvhoxm3S/52nmQ9281mKIwN4OZWJSr8JbcDbGc2I4Qt7f5NGIVqhYGUEt4Dcjc
-         OnTiMSsMQSm/BkwJtpTmYE/nX0g99qdNrfQjpyJDh3lJuRx+boPuIIl8g+ebEP8LkFae
-         +sfP96kQHa62QCqT+H9JsLmcWXGjb6XJ4V2ZJtNROYkUiXCRPxs4n6GbRntkIsyH7WUN
-         5L0Q==
-X-Gm-Message-State: AA+aEWZ865dnsOYtKxaAnAMqKYxu8436OshLPBc6G9AXhu6vsQCjLltl
-        4yVW4h2Jujhn8EsZtU0Fy7o=
-X-Google-Smtp-Source: AFSGD/UaCd2784FdmyK2WxoztCFUk5VTNprtsXDn1g8ODbmK1QT0iRh1Y44OwziR7LS9+xYCP/0gnA==
-X-Received: by 2002:a62:75d1:: with SMTP id q200mr7794497pfc.254.1543628788219;
-        Fri, 30 Nov 2018 17:46:28 -0800 (PST)
-Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
-        by smtp.gmail.com with ESMTPSA id x3sm20552627pgt.45.2018.11.30.17.46.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 17:46:27 -0800 (PST)
-Date:   Fri, 30 Nov 2018 15:46:24 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: Re: [PATCH] binder: remove BINDER_DEBUG_ENTRY()
-Message-ID: <20181201014624.7ukgr6e2c5msajzq@gmail.com>
-Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>, gregkh@linuxfoundation.org,
-        arve@android.com, tkjos@android.com, maco@android.com,
-        joel@joelfernandes.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <20181201012630.4459-1-tiny.windzz@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4egdARPi+xUIFfj1s+osrK4IX23YvXJK6f44JVO83eU=;
+        b=G2tzAAT9k0TxF7IXNgVl5o/h3Lqx2IkGGwsBuGCmgof85mthOKoi8T8DMmenVTI25l
+         vv85h2hyZBSopf/OacCs6ERySE4o1fwY5dqtROF7ZhQn26ncCVKSJAe28eSmhyK6GhCf
+         gtyq4Ea8MuMhLiMf2RN6Q6W6IY301zDxaQKI42wecE19qbqH06dM3gKtAeTX7UDS1NBc
+         YHAUPt7uw5xpna2LrS5SJUiZLuIAnWbjE5A/BokWYbzd7ozKOyEGCe22ecgQOjmKKXzO
+         ldzxD9IgpBmaAlVTxqBdf8mIQKGaJmEVNdZFrqX11xSTHIRVpbQo37f1UXQNA1bWKPuK
+         NCnQ==
+X-Gm-Message-State: AA+aEWaAxBRJaz0sMelySHbS0yqAMnHHVN4r1Qm0TNranStMC0zqaV8K
+        +1BCTHnaMKAjl1FojNF/sv9ybikPlYFjvFNH5nL0zA==
+X-Google-Smtp-Source: AFSGD/Uq8uY4PCi4LlC5YesZA+pJrHFJ+jAhVoNTF4sz4mzA4zbisQP7OnpNCzrEIBcthBAYEdoaQs1TBbJKP0igShs=
+X-Received: by 2002:aca:54c4:: with SMTP id i187mr4539313oib.238.1543629082674;
+ Fri, 30 Nov 2018 17:51:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aenzoeexw3i3nwa4"
-Content-Disposition: inline
-In-Reply-To: <20181201012630.4459-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-2-brendanhiggins@google.com> <20181130031438.GQ4922@garbanzo.do-not-panic.com>
+In-Reply-To: <20181130031438.GQ4922@garbanzo.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 30 Nov 2018 17:51:11 -0800
+Message-ID: <CAFd5g47t94RR78_sZ7Xr7ArDh+hJGYHNwmmG2HJb7AW+i=u3ew@mail.gmail.com>
+Subject: Re: [RFC v3 01/19] kunit: test: add KUnit test runner core
+To:     mcgrof@kernel.org
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        levinsasha928@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 29, 2018 at 7:14 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Wed, Nov 28, 2018 at 11:36:18AM -0800, Brendan Higgins wrote:
+> > +#define module_test(module) \
+> > +             static int module_kunit_init##module(void) \
+> > +             { \
+> > +                     return kunit_run_tests(&module); \
+> > +             } \
+> > +             late_initcall(module_kunit_init##module)
+>
+> Here in lies an assumption that suffices. I'm inclined to believe we
+> need new initcall level here so to ensure we *do* run after all the
+> respective kernels iniut calls. Otherwise we're left at the whims of
+> link order for kunit. For instance if a kunit test relies on frameworks
+> which are also late_initcall() we'd have complete incompatibility with
+> anything linked *after* kunit.
 
---aenzoeexw3i3nwa4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yep, I have some patches that address this, but I thought this is
+sufficient for the initial patchset (I figured that's the type of
+thing that people will have opinions about so best to get it out of
+the critical path). Do you want me to add those in the next revision?
 
-On Fri, Nov 30, 2018 at 08:26:30PM -0500, Yangtao Li wrote:
-> We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
-> such a macro,so remove BINDER_DEBUG_ENTRY.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>
+> > diff --git a/kunit/Kconfig b/kunit/Kconfig
+> > new file mode 100644
+> > index 0000000000000..49b44c4f6630a
+> > --- /dev/null
+> > +++ b/kunit/Kconfig
+> > @@ -0,0 +1,17 @@
+> > +#
+> > +# KUnit base configuration
+> > +#
+> > +
+> > +menu "KUnit support"
+> > +
+> > +config KUNIT
+> > +     bool "Enable support for unit tests (KUnit)"
+> > +     depends on UML
+>
+> Consider using:
+>
+> if UML
+>    ...
+> endif
+>
+> That allows the depends to be done once.
 
-Good catch.
+If you want to eliminate depends, wouldn't it be best to have KUNIT
+depend on whatever it needs, and then do `if KUNIT` below that? That
+seems cleaner over the long term. Anyway, Kees actually asked me to
+change it to the way it is now; I really don't care either way.
 
-Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+>
+> > +     help
+> > +       Enables support for kernel unit tests (KUnit), a lightweight unit
+> > +       testing and mocking framework for the Linux kernel. These tests are
+> > +       able to be run locally on a developer's workstation without a VM or
+> > +       special hardware.
+>
+>
+> Some mention of UML may be good here?
 
-On Fri, Nov 30, 2018 at 08:26:30PM -0500, Yangtao Li wrote:
-> We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
-> such a macro,so remove BINDER_DEBUG_ENTRY.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/android/binder.c | 48 ++++++++++++++--------------------------
->  1 file changed, 17 insertions(+), 31 deletions(-)
->=20
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index cb30a524d16d..5496b8e07234 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -94,22 +94,8 @@ static struct dentry *binder_debugfs_dir_entry_root;
->  static struct dentry *binder_debugfs_dir_entry_proc;
->  static atomic_t binder_last_id;
-> =20
-> -#define BINDER_DEBUG_ENTRY(name) \
-> -static int binder_##name##_open(struct inode *inode, struct file *file) \
-> -{ \
-> -	return single_open(file, binder_##name##_show, inode->i_private); \
-> -} \
-> -\
-> -static const struct file_operations binder_##name##_fops =3D { \
-> -	.owner =3D THIS_MODULE, \
-> -	.open =3D binder_##name##_open, \
-> -	.read =3D seq_read, \
-> -	.llseek =3D seq_lseek, \
-> -	.release =3D single_release, \
-> -}
-> -
-> -static int binder_proc_show(struct seq_file *m, void *unused);
-> -BINDER_DEBUG_ENTRY(proc);
-> +static int proc_show(struct seq_file *m, void *unused);
-> +DEFINE_SHOW_ATTRIBUTE(proc);
-> =20
->  /* This is only defined in include/asm-arm/sizes.h */
->  #ifndef SZ_1K
-> @@ -4964,7 +4950,7 @@ static int binder_open(struct inode *nodp, struct f=
-ile *filp)
->  		proc->debugfs_entry =3D debugfs_create_file(strbuf, 0444,
->  			binder_debugfs_dir_entry_proc,
->  			(void *)(unsigned long)proc->pid,
-> -			&binder_proc_fops);
-> +			&proc_fops);
->  	}
-> =20
->  	return 0;
-> @@ -5592,7 +5578,7 @@ static void print_binder_proc_stats(struct seq_file=
- *m,
->  }
-> =20
-> =20
-> -static int binder_state_show(struct seq_file *m, void *unused)
-> +static int state_show(struct seq_file *m, void *unused)
->  {
->  	struct binder_proc *proc;
->  	struct binder_node *node;
-> @@ -5631,7 +5617,7 @@ static int binder_state_show(struct seq_file *m, vo=
-id *unused)
->  	return 0;
->  }
-> =20
-> -static int binder_stats_show(struct seq_file *m, void *unused)
-> +static int stats_show(struct seq_file *m, void *unused)
->  {
->  	struct binder_proc *proc;
-> =20
-> @@ -5647,7 +5633,7 @@ static int binder_stats_show(struct seq_file *m, vo=
-id *unused)
->  	return 0;
->  }
-> =20
-> -static int binder_transactions_show(struct seq_file *m, void *unused)
-> +static int transactions_show(struct seq_file *m, void *unused)
->  {
->  	struct binder_proc *proc;
-> =20
-> @@ -5660,7 +5646,7 @@ static int binder_transactions_show(struct seq_file=
- *m, void *unused)
->  	return 0;
->  }
-> =20
-> -static int binder_proc_show(struct seq_file *m, void *unused)
-> +static int proc_show(struct seq_file *m, void *unused)
->  {
->  	struct binder_proc *itr;
->  	int pid =3D (unsigned long)m->private;
-> @@ -5703,7 +5689,7 @@ static void print_binder_transaction_log_entry(stru=
-ct seq_file *m,
->  			"\n" : " (incomplete)\n");
->  }
-> =20
-> -static int binder_transaction_log_show(struct seq_file *m, void *unused)
-> +static int transaction_log_show(struct seq_file *m, void *unused)
->  {
->  	struct binder_transaction_log *log =3D m->private;
->  	unsigned int log_cur =3D atomic_read(&log->cur);
-> @@ -5735,10 +5721,10 @@ static const struct file_operations binder_fops =
-=3D {
->  	.release =3D binder_release,
->  };
-> =20
-> -BINDER_DEBUG_ENTRY(state);
-> -BINDER_DEBUG_ENTRY(stats);
-> -BINDER_DEBUG_ENTRY(transactions);
-> -BINDER_DEBUG_ENTRY(transaction_log);
-> +DEFINE_SHOW_ATTRIBUTE(state);
-> +DEFINE_SHOW_ATTRIBUTE(stats);
-> +DEFINE_SHOW_ATTRIBUTE(transactions);
-> +DEFINE_SHOW_ATTRIBUTE(transaction_log);
-> =20
->  static int __init init_binder_device(const char *name)
->  {
-> @@ -5792,27 +5778,27 @@ static int __init binder_init(void)
->  				    0444,
->  				    binder_debugfs_dir_entry_root,
->  				    NULL,
-> -				    &binder_state_fops);
-> +				    &state_fops);
->  		debugfs_create_file("stats",
->  				    0444,
->  				    binder_debugfs_dir_entry_root,
->  				    NULL,
-> -				    &binder_stats_fops);
-> +				    &stats_fops);
->  		debugfs_create_file("transactions",
->  				    0444,
->  				    binder_debugfs_dir_entry_root,
->  				    NULL,
-> -				    &binder_transactions_fops);
-> +				    &transactions_fops);
->  		debugfs_create_file("transaction_log",
->  				    0444,
->  				    binder_debugfs_dir_entry_root,
->  				    &binder_transaction_log,
-> -				    &binder_transaction_log_fops);
-> +				    &transaction_log_fops);
->  		debugfs_create_file("failed_transaction_log",
->  				    0444,
->  				    binder_debugfs_dir_entry_root,
->  				    &binder_transaction_log_failed,
-> -				    &binder_transaction_log_fops);
-> +				    &transaction_log_fops);
->  	}
-> =20
->  	/*
-> --=20
-> 2.17.0
->=20
+Good point.
+>
+> > For more information, please see
+> > +       Documentation/kunit/
+> > +
+> > +endmenu
+>
+> I'm a bit conflicted here. This currently depends on UML but yet you
+> noted on RFC v2 that your intention is to liberate kunit from UML and
+> ideally allow unit tests to depend only on userspace. I've addressed
+> tests using both selftests kernels drivers and also re-written kernel
+> APIs to userspace to test there. I think we may need to live with both.
 
---=20
-Cheers,
-Joey Pabalinas
+I am not entirely opposed. The greater isolation we can achieve, the
+fewer dependencies, and barriers to setting up test fixtures the
+better. I think the best way to do that in most cases is allowing
+minimal test binaries to be built that have the absolute minimum
+amount of code necessary to test the desired property. That being
+said, integration tests are a thing and drawing a line between them
+and unit tests is not always possible, so supporting other
+architectures might be necessary.
 
---aenzoeexw3i3nwa4
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> Then for the UML stuff, I think if we *really* accept that UML will
+> always be a viable option we should probably consider now throwing these
+> things under drivers/platform/uml/. This follows the pattern of arch
+> specific drivers. Whether or not we end up with a complete userspace
+> component independent of UML may implicate having a shared component
+> somewhere else.
 
------BEGIN PGP SIGNATURE-----
+Fair enough. What specifically are you suggesting should go in
+`drivers/platform/uml`? Just the bits that are completely tied to UML
+or a concrete architecture?
 
-iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlwB5+8ACgkQ2rGdfm9D
-tVLhphAAsBmrt1cSnwvaCThNuz/NLMwDiZ8l+Rez5KydpAkZ3nVfdNZBu4gFiGeI
-5HFZM7wpiKJToCqXtfEfCSBTxt9g7vhEfwItr49vpV74SFxcfVEET32KFVPDR1Qj
-2wJ/M4Zou7CmvspZ61h/MA79cqrEU9CyYWzGu3wbjhZg0xJhATR2xIAMCVWpCPkS
-tTmd3/8P19yBN5c60YdIRriT5Mg5nE9eNdTIi8GyBVZj8iWHJBjqRXPAaEuVC18f
-Km54+QZzsN0OvoM7NO1PQ18CQvvwqF+pkqJxoqpc6IK9G4DCb22Bid34VFtCL8PZ
-62CYBVmqhZ7laLADPE690Onlj8j4NrWQkAgLkaPpiGEEqRSZm6AnAZ8eo8W12wN9
-2QsBU0WF/g4+YbI/RRxq2/J9Z5N6xn8RUoBGdoRMSBJc/bUO4ukoB9ogAmp2jKKl
-FFQLvUiDSgptszI1hpaBmLZsWmkMs/hqANkDRxKC8/42Isgh8KLZUgtUWu3a0R3s
-Uyxoi6TC8FGcV8/vUxNIC5Ift1IKrxtBS7la8yt6wRKpsJDAx1efTsjQrCwm6/v4
-Zwh0qU+UVB9KyTs/tLsRu/5f6QrvSZK3uvIqIgqtKePDb/U9l477rPYkLifk695b
-4c0tvUGMPjczabD19K5Hoz/DtI2e4KoP/TcZoQ6N4AnUc24UOmw=
-=NMOf
------END PGP SIGNATURE-----
+>
+> Likewise, I realize the goal is to *avoid* using a virtual machine for
+> these tests, but would it in any way make sense to share kunit to be
+> supported for other architectures to allow easier-to-write tests as
+> well?
 
---aenzoeexw3i3nwa4--
+You are not the first person to ask for this.
+
+For the vast majority of tests, I think we can (and consequently
+should) make them run without any external dependencies. Doing so
+makes it such that someone can run a test without knowing anything
+about it, which allows you to do a lot of things. For one, I, as a
+developer, don't have to hunt down somebody's QEMU patches, or
+whatever. But it also means I, as someone maintaining part of the
+kernel, can make nice test runners and build things like presubmit
+servers on top of them.
+
+Nevertheless, I accept that there are things which are just easier to
+do with hardware or a VM (for integration tests it is necessary).
+Still, I think we need to make sure the vast majority of unit tests do
+not depend on real hardware or a VM.
