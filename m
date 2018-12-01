@@ -2,528 +2,118 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5D4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C93FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 993562147C
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:42:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993562147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 1DD0F2146D
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:59:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pdc4RqdN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD0F2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725797AbeLBFzL (ORCPT
+        id S1725746AbeLBGMb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 00:55:11 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:43880 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725741AbeLBFzK (ORCPT
+        Sun, 2 Dec 2018 01:12:31 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36723 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725728AbeLBGMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 00:55:10 -0500
-Received: from [88.147.0.20] (port=45908 helo=[192.168.77.57])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gTAD5-00EImh-BA; Sat, 01 Dec 2018 19:41:47 +0100
-Subject: Re: [PATCH v4 1/4] dt-bindings: media: i2c: Add bindings for Maxim
- Integrated MAX9286
-To:     kieran.bingham@ideasonboard.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sakari.ailus@iki.fi
-Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
- <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
- <66239f2a-0159-8120-6dbb-8af0ce8b132a@ideasonboard.com>
- <d699e133-1459-7ce8-18e4-47bad5f66314@lucaceresoli.net>
- <59522e27-3d57-36e3-6a3a-85995270aaad@ideasonboard.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <29836e5d-4c3d-ce2f-b32c-e471ed585ac5@lucaceresoli.net>
-Date:   Sat, 1 Dec 2018 19:41:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 2 Dec 2018 01:12:31 -0500
+Received: by mail-io1-f65.google.com with SMTP id m19so7291407ioh.3;
+        Sat, 01 Dec 2018 10:59:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U7YcdIqzv1sYAlkJ/sjGQIzHUTNivoehXbNlBnCrIt8=;
+        b=pdc4RqdNO3u5c/PcskeDcB5WpU82VaJaUmUsqP3aNVUSVNFzOTjGHUb1lkRRDAEmAH
+         f3naAS/YQBwAyl5s0ACsuxOEsmvF1lFRAZu+CYZIfRgMY5OIxU7Zx+PUs1BeNp/xuBS0
+         7ypY/hv8gMO6wuQRqi1I5qdBy163kWOcYzEzCMTFAZK8wqi9r0qnI6/iVTFVmszG0WIO
+         Kqz5LfagK/QpYpWt6tqwzzkGUquWCAJN20iqBH+t+z0i2jpHGmApDi+BuxwVO1H3JLnD
+         2GcgKgMbfCrRA8iYmKcQbgj75bmGgielCv5CGEBz5YxJEcwWdJjQUMKQdXnfZptFhG7h
+         8Dcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U7YcdIqzv1sYAlkJ/sjGQIzHUTNivoehXbNlBnCrIt8=;
+        b=HZl8aMYuFTfRfJfEEj9bbToGdujkOitM1IGctDuXqM8cJNsBZSmNStIItQ0+wgDtSY
+         e76JRq+NPNlu4IFJm3lb4LUVgJoMBILl72ImQentXmhXb12zd0hs8DpNn+djd4rdYt1j
+         omMJ7yYZkeETMIAY1mhpLMaVIqPfrM9WBEyFcDi+ES61z8zReTcKuDUZsncUsUJ9hML5
+         avBj8o5yqDWih/Vh+bTyi5Q91/6HWpiwDljxri1IGuNhdNsK/5w9/r87tCCqRrOiErev
+         SI/Ws3Q1MctEGZkm3c7tNDMrIU1LAiEe42CtBMz6uF7/u9iHK/UPD6ygmPL9Oq2IxNZ0
+         6log==
+X-Gm-Message-State: AA+aEWZvxm0mOr0/3NPSiirnKN7zssJYM2K/EntW3ZTh4h6W5H/oji6K
+        IuQ2NYACDXR/GmHssWuoHYxiwLp1+CbAW6BPecg=
+X-Google-Smtp-Source: AFSGD/Vj9Yo1PoPRmGG0D6PVfTNgBOiFG3wsTfImebfG8F6uLWrrI3lRyIaOa8sSxCrv5GE8imIZNZ9l1jCryi8sM54=
+X-Received: by 2002:a5d:9818:: with SMTP id a24mr8302004iol.225.1543690759690;
+ Sat, 01 Dec 2018 10:59:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <59522e27-3d57-36e3-6a3a-85995270aaad@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20181201142414.7766-1-tiny.windzz@gmail.com> <5682c419-9e44-10ed-6a2e-286e6f5c5def@kernel.dk>
+ <CAEExFWtJEJwgGR3gqfHDXw-c4nyA7dkQTd9fkzVsht=ROmfgMQ@mail.gmail.com> <92334639-9d34-5e6a-2c43-945a20077394@kernel.dk>
+In-Reply-To: <92334639-9d34-5e6a-2c43-945a20077394@kernel.dk>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sun, 2 Dec 2018 02:58:57 +0800
+Message-ID: <CAEExFWtx=+Ee2FgxvOJPFOK=cisjMZiUM18OqQ8hb1FET6N=7Q@mail.gmail.com>
+Subject: Re: [PATCH v2] block: Change to use DEFINE_SHOW_ATTRIBUTE macro
+To:     axboe@kernel.dk
+Cc:     ed.cashin@acm.org, philipp.reisner@linbit.com,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        linux-block@vger.kernel.org, josh.h.morris@us.ibm.com,
+        pjk1939@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+On Sun, Dec 2, 2018 at 2:38 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 12/1/18 11:31 AM, Frank Lee wrote:
+> > On Sun, Dec 2, 2018 at 2:11 AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 12/1/18 7:24 AM, Yangtao Li wrote:
+> >>> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+> >>>
+> >>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> >>> ---
+> >>> changes in v2:
+> >>> -Modify some function names to avoid compilation errors
+> >>
+> >> The fact that your previous patch didn't even compile doesn't fill me
+> >> with a lot of confidence in the amount of diligence and testing
+> >> you apply to your patches.
+> >>
+> >> Why would you send something out that you didn't even compile?
+> >>
+> >> --
+> >> Jens Axboe
+> >>
+> > These changes are the same and only require a small change.
+> > Most of the changes are fine, so it's a bit negligent.
+>
+> When someone is sending a patch for inclusion, at the very minimum
+> I expect it to have been compiled, and preferably tested too. Doesn't
+> matter how small the change is, even a one-liner should go through that.
+>
+> That said, I'm not a huge fan of changes like this. It completely
+> hides what is going on for someone reading the code, and it's not
+> like there's a win on code size for example. The only win seems to
+> be that driver writes can't mess it up, which is a nice benefit.
+>
+> --
+> Jens Axboe
+>
+Yeah,you are right.Can you review it?
 
-On 27/11/18 23:47, Kieran Bingham wrote:
-> +Wolfram,
-> 
-> Hi Luca,
-> 
-> On 14/11/2018 02:04, Luca Ceresoli wrote:
->> Hi Kieran,
->>
->> On 14/11/18 00:12, Kieran Bingham wrote:
->>> Hi Luca,
->>>
->>> On 13/11/2018 14:42, Luca Ceresoli wrote:
->>>> Hi Kieran, All,
->>>>
->>>> sorry for joining this late... See below my considerations.
->>>
->>> I'd say you're on time - not late,
->>>
->>> Thanks for joining :)
->>>
->>>>
->>>> On 02/11/18 16:47, Kieran Bingham wrote:
->>>>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>>>
->>>>> The MAX9286 deserializes video data received on up to 4 Gigabit
->>>>> Multimedia Serial Links (GMSL) and outputs them on a CSI-2 port using up
->>>>> to 4 data lanes.
->>>>>
->>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>>>>
->>>>> ---
->>>>> v3:
->>>>>  - Update binding descriptions
->>>>>
->>>>> v4:
->>>>>  - Define the use of a CSI2 D-PHY
->>>>>  - Rename pwdn-gpios to enable-gpios (with inverted polarity)
->>>>>  - Remove clock-lanes mapping support
->>>>>  - rewrap text blocks
->>>>>  - Fix typos
->>>>> ---
->>>>>  .../bindings/media/i2c/maxim,max9286.txt      | 182 ++++++++++++++++++
->>>>>  1 file changed, 182 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
->>>>> new file mode 100644
->>>>> index 000000000000..672f6a4d417d
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
->>>>> @@ -0,0 +1,182 @@
->>>>> +Maxim Integrated Quad GMSL Deserializer
->>>>> +---------------------------------------
->>>>> +
->>>>> +The MAX9286 deserializer receives video data on up to 4 Gigabit Multimedia
->>>>> +Serial Links (GMSL) and outputs them on a CSI-2 D-PHY port using up to 4 data
->>>>> +lanes.
->>>>> +
->>>>> +In addition to video data, the GMSL links carry a bidirectional control channel
->>>>> +that encapsulates I2C messages. The MAX9286 forwards all I2C traffic not
->>>>> +addressed to itself to the other side of the links, where a GMSL serializer
->>>>> +will output it on a local I2C bus. In the other direction all I2C traffic
->>>>> +received over GMSL by the MAX9286 is output on the local I2C bus.
->>>>> +
->>>>> +Required Properties:
->>>>> +
->>>>> +- compatible: Shall be "maxim,max9286"
->>>>> +- reg: I2C device address
->>>>> +
->>>>> +Optional Properties:
->>>>> +
->>>>> +- poc-supply: Regulator providing Power over Coax to the cameras
->>>>> +- enable-gpios: GPIO connected to the #PWDN pin with inverted polarity
->>>>> +
->>>>> +Required endpoint nodes:
->>>>> +-----------------------
->>>>> +
->>>>> +The connections to the MAX9286 GMSL and its endpoint nodes are modeled using
->>>>> +the OF graph bindings in accordance with the video interface bindings defined
->>>>> +in Documentation/devicetree/bindings/media/video-interfaces.txt.
->>>>> +
->>>>> +The following table lists the port number corresponding to each device port.
->>>>> +
->>>>> +        Port            Description
->>>>> +        ----------------------------------------
->>>>> +        Port 0          GMSL Input 0
->>>>> +        Port 1          GMSL Input 1
->>>>> +        Port 2          GMSL Input 2
->>>>> +        Port 3          GMSL Input 3
->>>>> +        Port 4          CSI-2 Output
->>>>> +
->>>>> +Optional Endpoint Properties for GMSL Input Ports (Port [0-3]):
->>>>> +
->>>>> +- remote-endpoint: phandle to the remote GMSL source endpoint subnode in the
->>>>> +  remote node port.
->>>>> +
->>>>> +Required Endpoint Properties for CSI-2 Output Port (Port 4):
->>>>> +
->>>>> +- remote-endpoint: phandle to the remote CSI-2 sink endpoint node.
->>>>> +- data-lanes: array of physical CSI-2 data lane indexes.
->>>>> +
->>>>> +Required i2c-mux nodes:
->>>>> +----------------------
->>>>> +
->>>>> +Each GMSL link is modeled as a child bus of an i2c bus multiplexer/switch, in
->>>>> +accordance with bindings described in
->>>>> +Documentation/devicetree/bindings/i2c/i2c-mux.txt. The serializer device on the
->>>>> +remote end of the GMSL link shall be modelled as a child node of the
->>>>> +corresponding I2C bus.
->>>>> +
->>>>> +Required i2c child bus properties:
->>>>> +- all properties described as required i2c child bus nodes properties in
->>>>> +  Documentation/devicetree/bindings/i2c/i2c-mux.txt.
->>>>> +
->>>>> +Example:
->>>>> +-------
->>>>> +
->>>>> +	gmsl-deserializer@2c {
->>>>> +		compatible = "maxim,max9286";Not at all late - Just on time 
->>>>> +		reg = <0x2c>;
->>>>> +		poc-supply = <&camera_poc_12v>;
->>>>> +		enable-gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
->>>>> +
->>>>> +		#address-cells = <1>;
->>>>> +		#size-cells = <0>;
->>>>> +
->>>>> +		ports {
->>>>> +			#address-cells = <1>;
->>>>> +			#size-cells = <0>;
->>>>> +
->>>>> +			port@0 {
->>>>> +				reg = <0>;
->>>>> +				max9286_in0: endpoint {
->>>>> +					remote-endpoint = <&rdacm20_out0>;
->>>>> +				};
->>>>> +			};
->>>>> +
->>>>> +			port@1 {
->>>>> +				reg = <1>;
->>>>> +				max9286_in1: endpoint {
->>>>> +					remote-endpoint = <&rdacm20_out1>;
->>>>> +				};
->>>>> +			};
->>>>> +
->>>>> +			port@2 {
->>>>> +				reg = <2>;
->>>>> +				max9286_in2: endpoint {
->>>>> +					remote-endpoint = <&rdacm20_out2>;
->>>>> +				};
->>>>> +			};
->>>>> +
->>>>> +			port@3 {
->>>>> +				reg = <3>;
->>>>> +				max9286_in3: endpoint {
->>>>> +					remote-endpoint = <&rdacm20_out3>;
->>>>> +				};
->>>>> +			};
->>>>> +
->>>>> +			port@4 {
->>>>> +				reg = <4>;
->>>>> +				max9286_out: endpoint {
->>>>> +					data-lanes = <1 2 3 4>;
->>>>> +					remote-endpoint = <&csi40_in>;
->>>>> +				};
->>>>> +			};
->>>>> +		};
->>>>> +
->>>>> +		i2c@0 {
->>>>> +			#address-cells = <1>;
->>>>> +			#size-cells = <0>;
->>>>> +			reg = <0>;
->>>>> +
->>>>> +			camera@51 {
->>>>> +				compatible = "imi,rdacm20";
->>>>> +				reg = <0x51 0x61>;
->>>>
->>>> I find this kind of address mapping is the weak point in this patchset.
->>>>
->>>> The ser-deser chipset splits the world in "local" and "remote" side. The
->>>> camera node belongs to the remote side, but the 0x51 and 0x61 addresses
->>>> belong to the local side.
->>>
->>> Well, in our use case - in fact the camera has a set of fixed addresses
->>> (0x30,0x40,0x50) for each camera - and these are the addresses we are
->>> requesting the camera to be updated to. Once the camera is communicated
->>> with - the first step is to reprogram the device to respond to the
->>> addresses specified here.
->>
->> Yes, the way it works is clear.
->>
->>>> Think about supporting N different main boards
->>>> and M remote boards. 0x51 might be available on some main boards but not
->>>> all. IMO under the camera@51 (even the i2c@0) node there should be only
->>>> remote hardware description. To support the N*M possible combinations,
->>>> there should be:
->>>
->>> Of course - well in fact all of our I2C addresses across our two max9286
->>> instances, and 8 camera devices share the same bus 'address space'.
->>>
->>> It's crucial to provide this address on a per board level, which is why
->>> it is specified in the DT.
->>>
->>> I wonder if perhaps it was a mistake to include the camera description
->>> in this part of the example, as it's not related to the max9286
->>> specifically.
->>
->> Interesting point. In my case I'm thinking DT overlays, they help me a
->> lot in finding a proper generalization. With some generalization, camera
->> modules [the same would happen with display modules] are similar to
->> beaglebone capes or rpi hats:
->>
-> 
-> I agree - I too envisage that the camera's should be able to be
-> described as overlays.
-> 
-> In fact we have tried to model our expansion boards as if they are
-> overlays (although they are just direct 'include files' at the moment
-> rather than real overlays)
-> 
-> An example for the v3m is viewable at:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git/commit/?h=gmsl/v5&id=643d80a12edde3d7bd95ad7eff360ea820591430
-> 
-> 
-> 
-> Laurent has brought up an interesting topic here, that there is support
-> (or soon to be support) for overlay GPIO mappings, which we might be
-> able to translate to do I2C address mappings to help us.
-> 
-> (I look forward to someone posting a relevant link here:)
-> 
-> 
-> (re-edit: I think Wolfram has said this wouldn't be so easily applicable
-> to i2c)
-> 
-> 
->>  1. there can be different camera modules being designed over time
->>  2. there can be different base boards being designed over time
->>  3. there is a standard interconnection between them (mechanical,
->>     electrical, communication bus)
->>  4. camera modules and base boards are designed and sold independently
->>     (thanks to point 3)
->>
->> Overlays are a natural choice in this case. Even bootloader-time
->> overlays will suffice for my reasoning, let's remove the hotplug mess
->> from this discussion.
-> 
-> Ok.
-> 
->> Now, in this patch you are modeling the remote camera as if it were a
->> "normal" I2C device, except:
->>
->>  a) it has 2 slave addresses (no problem with this)
->>  b) the 2 slave addresses in DT are not the physical ones
->>
->> With this model it seems natural to write "camera@51/reg = <0x51 0x61>"
->> in the camera DT overlay. Except 0x51 and 0x61 do not exist on the
->> camera module, those numbers come from the base board, since you know
->> those two addresses are not used on the bus where gmsl-deserializer@2c
->> is. But it works.
->>
->> Then one year later a random SBC vendor starts selling a new base board
->> that has on the same i2c bus a GMSL deser and a random i2c chip,
->> unrelated to cameras, at address 0x51. Bang, the camera sensor does not
->> work anymore, but there is no hardware reason for it not to work. Well,
->> easy to fix, find an address that is unused on all known base boards and
->> replace, say, 0x51->0x71 in the camera overlay. (OK, I violated the "DT
->> as a stable ABI" principle)
->>
->> But then other boards appear and, taking this to an extreme, you can get
->> to a situation where every i2c address is used on at least one board.
->> How do you fix that?
->>
->> Maybe this scenario is a bit too apocalyptic, and maybe too much for
->> current automotive uses, but I think it illustrates how the current
->> model is not generic enough. Since there is no existing code in the
->> kernel yet, I think we should strive to do better in order to minimize
->> future problems.
-> 
-> I like apocalyptic thinking :)
-> 
-> Yes, it's probably more than the automotive use case that we currently
-> have - but it's good to think this through now.
-> 
-> 
-> Lets find out of the DT mapping system Laurent has just talked about
-> (locally) can help us here.
-> 
-> or Bringing in Wolfram, as I think he sees some merit in the address
-> pool definitions.
-> 
-> 
->> My approach is instead to clearly split the local and remote domain. The
->> latter is what could be moved to an overlay. For example:
->>
->> &i2c0 {
->>     serializer@3d {
->>         reg = <0x3d>;
->>         ...
->>
->>         /* Guaranteed not physically present on i2c0 */
->>         i2c-alias-pool = /bits/ 16 <0x20 0x21 0x22 0x23 0x24 0x25>;
->>
->>         i2c-mux {
->>             #address-cells = <1>;
->>             #size-cells = <0>;
->>
->> 	    i2c@0 {
->>                 reg = <0>;
->>                 #address-cells = <1>;
->>                 #size-cells = <0>;
->>
->>                 // ------8<------ this could be moved to an overlay
->>                 sensor@50 {
->>                     reg = <0x50>;
->>                     ...
->>                     endpoint {...};
->>                 };
->>                 eeprom@51 {
->>                     reg = <0x51>;
->>                     ...
->>                 };
->>                 // ------8<------
->>             };
->>
->> 	    i2c@1 {
->>                 reg = <1>;
->>                 #address-cells = <1>;
->>                 #size-cells = <0>;
->>
->>                 // ------8<------
->>                 sensor@50 {
->>                     reg = <0x50>;
->>                     ...
->>                     endpoint {...};
->>                 };
->>                 eeprom@51 {
->>                     reg = <0x51>;
->>                     ...
->>                 };
->>                 // ------8<------
->>             };
->>         };
->>     };
->> };
->>
->> The core difference is that I split the camera@51/reg property in two:
->>
->>  * sensor@50/reg: the remote side (camera overlay);
->>    carries the physical i2c address (note both sensors are at 0x50)
->>  * serializer@3d/i2c-alias-pool: the local side (base board);
->>    lists a pool of addresses that are not used on the i2c bus
->>
->> See how there is no mixing between local and remote. The pool will
->> differ from one base board to another.
->>
->> To implement this, I developed an "i2c address translator" that maps
->> physical remote addresses to local addresses from the pool at runtime.
->> It still needs some work, but address translation it is working.
->>
->>>>  * a DT for the main board mentioning only addresses for the
->>>>    local i2c bus, down to the i2c@0 with address-cells, size-cells and
->>>>    reg properties
->>>>  * a DT overlay for each remote board, mentioning the remote i2c
->>>>    chips with their physical addresses, but no local addresses
->>>>
->>>> The only way I could devise to be generic is to bind each physical
->>>> remote address to a local address at runtime.
->>>>
->>>> Also, to be implemented reliably, an address translation feature is
->>>> required on the local (de)ser chip.
->>>>
->>>> So the question is: can the max9286 chip do i2c address translation?
->>>>
->>>
->>> Yes, The max9286 (deser) can do i2c address translation - but so too can
->>> the max9271 (serialiser)
->>
->> Good!
->>
->>> We do our address translation on the camera (serialiser) side.
->>
->> By "address translation" I mean the i2c address is changed by some
->> device in the middle between the i2c master and the slave. In this sense
->> you are not doing address translation, you are rather modifying the chip
->> addresses. Then transactions happen with the new (0x51/0x61) address,
->> which does not get modified during subsequent transactions.
->>
->>> The cameras *all* boot with the same i2c address (and thus all conflict)
->>>  - We disable all links
->>>  - We enable /one/ link
->>>  - We initialise and reprogram the address of that camera to the address
->>>    specified in the camera node. - Then we move to the next camera.
->>>
->>> The reality is we 'just need' a spare address on the I2C bus - but as
->>> yet - there is no mechanism in I2C core to request a spare address.
->>
->> Not a reliable one, definitely, since there could be i2c devices unknown
->> to the software. This is why I had to introduce the alias pool: the DT
->> writer is required to know which addresses are available and list them
->> in DT.
-> 
-> Ok - so in this model - even if we don't do address translation - we
-> could still 'request' the address from the allocator, and use that to
-> set the new 'physical' address?
-
-Yes. Indeed the pool can be seen as a list of physical addresses that:
- - are unused by other chips on the local bus
- - and given to the ser/des to use for the remote devices
- - will physycally appear on the local bus to talk to remote devices
-
-Whether they are runtime translated or reprogrammed on the remode
-devices is not much relevant for the local bus.
-
-> I think if we were to use the i2c-alias-pool for our system we'd
-> probably want to put a pool at each i2c-mux-bus, to ensure that cameras
-> had addresses that were recognisable / identifiable perhaps:
-> 
-> &i2c0 {
->     serializer@3d {
->         reg = <0x3d>;
->         ...
-> 
->         i2c-mux {
-> 	    i2c@0 {
->                 reg = <0>;
->                 #address-cells = <1>;
->                 #size-cells
-> 
-> 	        i2c-alias-pool = /bits/ 16 <0x31 0x41 0x51>;
-> 	    }
-> 
-> 	    i2c@1 {
->                 reg = <1>;
->                 #address-cells = <1>;
->                 #size-cells
-> 
-> 	        i2c-alias-pool = /bits/ 16 <0x32 0x42 0x52>;
-> 	    }
-> 	}
->     }
-> }
-> 
-> or such ... but it seems feasible ... ?
-
-I don't foresee any problem in moving from a large pool at the
-serializer to small pools at each port.
-
--- 
-Luca
+Yours,
+Yangtao
