@@ -2,120 +2,95 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18844C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661C8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C861020867
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:01:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XmlAJQBc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C861020867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 277812081C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 08:05:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277812081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbeLATNO (ORCPT
+        id S1726409AbeLATRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 14:13:14 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:37411 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeLATNO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 14:13:14 -0500
-Received: by mail-yb1-f196.google.com with SMTP id w129-v6so1686855ybe.4
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 00:01:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=okiTj2ag2Wb3u5hZZLTG2IDy4RVm89b8fVtLPObUnug=;
-        b=XmlAJQBcl3LzZp8QWJGHvkE8rYTINTPYQJbXC8DLLEiShDgaFLZVoP93dV0L5fPBIx
-         wxm4rDKeLqagd0TlTYqLY5qqVEsGyLoOFNfM1BFaHI7E4o84as3wcUiCuAnJahFq0q9U
-         SKXPZj5PU8GCHAMd5pN2+UCP/+1/cKPkzEOtE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=okiTj2ag2Wb3u5hZZLTG2IDy4RVm89b8fVtLPObUnug=;
-        b=ra6vlJSvD26CC0mVffLUQ3+glTq9SzjPKPaYhnyTKtuPIypL2pw704OZJNf6rXr6GE
-         0Tkl4/5rEaPxlQJEID38vSI9HNf3onHDqtt2VvobzGipcd9B/zkrLvYVUIhYFOGZCwOl
-         jEA7BKl1fVSgy05v2eQ72YfmOUrYgcEpBiKMTG2ernoEGYFbNyZgmTcLG5/X1EO79bYM
-         TMFu64kkGruMkqiuNuRZSLy1I3qeoniN9pJtSiaB9HKOWY+oc5ZMexZChEQ7Oj2A+HnX
-         hTZ6qmwVV93Zn+tPQIr7u02+pSFptPq370tzWxNYkbcoFLsiC/ropRk7qxPzTbr6laVW
-         kuLQ==
-X-Gm-Message-State: AA+aEWZ2XBYSbbcB456qG0DWc/BBcZwQDg4CQhC5EKDbI0SRWAaMHVnA
-        s8Xctdrf6/mju6eU5xamitby7z1NLIk=
-X-Google-Smtp-Source: AFSGD/V/pineKuGjarGQRkXrLfygLx0LbRpIQh3szWsp1UF67UZKPLMu4Foj5yjMT7R3PiaLyI/gIg==
-X-Received: by 2002:a25:e86:: with SMTP id 128-v6mr8402675ybo.184.1543651277696;
-        Sat, 01 Dec 2018 00:01:17 -0800 (PST)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id d85sm2578946ywd.22.2018.12.01.00.01.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Dec 2018 00:01:16 -0800 (PST)
-Received: by mail-yb1-f176.google.com with SMTP id a67-v6so3276335ybg.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 00:01:16 -0800 (PST)
-X-Received: by 2002:a25:b3c6:: with SMTP id x6-v6mr8204881ybf.508.1543651275547;
- Sat, 01 Dec 2018 00:01:15 -0800 (PST)
+        Sat, 1 Dec 2018 14:17:51 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:10236 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726135AbeLATRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 14:17:51 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id C2AC8CA622C17CC4482A;
+        Sat,  1 Dec 2018 16:05:50 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB1859GX039106;
+        Sat, 1 Dec 2018 16:05:09 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120116055556-14106847 ;
+          Sat, 1 Dec 2018 16:05:55 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        "Peter Zijlstra (Intel)" <peterz@infraded.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mukesh Ojha <mojha@codeaurora.org>
+Subject: [PATCH] cpu: Bool tests don't need comparisons
+Date:   Sat, 1 Dec 2018 16:04:44 +0800
+Message-Id: <20181201080444.9305-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com> <20181130192737.15053-9-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181130192737.15053-9-jarkko.sakkinen@linux.intel.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Sat, 1 Dec 2018 00:01:04 -0800
-X-Gmail-Original-Message-ID: <CAAFQd5De7sck9DoZHngd7PRM7ap8G_kO=9Bk0WpZVXjhyZhYig@mail.gmail.com>
-Message-ID: <CAAFQd5De7sck9DoZHngd7PRM7ap8G_kO=9Bk0WpZVXjhyZhYig@mail.gmail.com>
-Subject: Re: [PATCH RFC 08/15] media: replace **** with a hug
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-01 16:05:55,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-01 16:04:50
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wB1859GX039106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:28 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> In order to comply with the CoC, replace **** with a hug. In
-> addition, fix a coding style issue (lines with over 80 chars).
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/media/i2c/bt819.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/media/i2c/bt819.c b/drivers/media/i2c/bt819.c
-> index 472e37637c8d..c0f198b764f0 100644
-> --- a/drivers/media/i2c/bt819.c
-> +++ b/drivers/media/i2c/bt819.c
-> @@ -165,9 +165,11 @@ static int bt819_init(struct v4l2_subdev *sd)
->                 0x0f, 0x00,     /* 0x0f Hue control */
->                 0x12, 0x04,     /* 0x12 Output Format */
->                 0x13, 0x20,     /* 0x13 Vertial Scaling msb 0x00
-> -                                          chroma comb OFF, line drop scaling, interlace scaling
-> -                                          BUG? Why does turning the chroma comb on fuck up color?
-> -                                          Bug in the bt819 stepping on my board?
-> +                                          chroma comb OFF, line drop scaling,
-> +                                          interlace scaling BUG? Why does
-> +                                          turning the chroma comb on hug up
+This is the patch to the file cpu.c
+which fixes the following coccinelle warning:
 
-Putting the strong language aside, this comment could actually benefit
-from rewording to make it convey more information about the problem.
-For example, wouldn't
+WARNING: Comparison to bool
 
-NOTE: The chroma comb causes a random color distortion on some boards
-(stepping of the chip?).
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+CC: Josh Poimboeuf <jpoimboe@redhat.com>
+CC: "Peter Zijlstra (Intel)" <peterz@infraded.org>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Mukesh Ojha <mojha@codeaurora.org>
+CC: linux-kernel@vger.kernel.org
+---
+ kernel/cpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-be much more meaningful? I had to guess what f**king up was supposed
-to mean here, which is obviously a problem with this comment. It could
-be extended even more by mentioning what board and chip stepping it
-was observed on.
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 91d5c38eb7e5..5bdd7e150a11 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1650,7 +1650,7 @@ int =5F=5Fcpuhp=5Fstate=5Fadd=5Finstance=5Fcpuslocked=
+(enum cpuhp=5Fstate state,
+ 	lockdep=5Fassert=5Fcpus=5Fheld();
+=20
+ 	sp =3D cpuhp=5Fget=5Fstep(state);
+-	if (sp->multi=5Finstance =3D=3D false)
++	if (!sp->multi=5Finstance)
+ 		return -EINVAL;
+=20
+ 	mutex=5Flock(&cpuhp=5Fstate=5Fmutex);
+--=20
+2.19.1
 
-Best regards,
-Tomasz
