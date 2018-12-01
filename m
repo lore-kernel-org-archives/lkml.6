@@ -2,45 +2,44 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F843C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 09:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2C0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 09:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C1E20868
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 09:57:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C1E20868
+	by mail.kernel.org (Postfix) with ESMTP id 023A020834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 09:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023A020834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbeLAVJn (ORCPT
+        id S1726716AbeLAVK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 16:09:43 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49175 "EHLO mail.bootlin.com"
+        Sat, 1 Dec 2018 16:10:28 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49191 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbeLAVJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 16:09:42 -0500
+        id S1726342AbeLAVK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 16:10:28 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 035F320742; Sat,  1 Dec 2018 10:57:33 +0100 (CET)
+        id 4657120CF7; Sat,  1 Dec 2018 10:58:18 +0100 (CET)
 Received: from collins (unknown [77.128.107.220])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BCB7120717;
-        Sat,  1 Dec 2018 10:57:22 +0100 (CET)
-Message-ID: <fb5e3339e23d0191a67d161958b83b3da99b3b30.camel@bootlin.com>
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0759020742;
+        Sat,  1 Dec 2018 10:58:08 +0100 (CET)
+Message-ID: <d001c17e817d8413d58316dcfd48ff4dcdb49e2a.camel@bootlin.com>
 Subject: Re: [PATCH v2] drm/vc4: Add a debugfs entry to disable/enable the
  load tracker
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc:     David Airlie <airlied@linux.ie>,
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Date:   Sat, 01 Dec 2018 10:58:57 +0100
-In-Reply-To: <87r2f2patf.fsf@anholt.net>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Sat, 01 Dec 2018 10:59:43 +0100
+In-Reply-To: <20181130195744.7502e9fe@bbrezillon>
 References: <20181130161104.16352-1-paul.kocialkowski@bootlin.com>
-         <87r2f2patf.fsf@anholt.net>
+         <20181130195744.7502e9fe@bbrezillon>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.2 
 Mime-Version: 1.0
@@ -50,10 +49,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hi Boris,
 
-Le vendredi 30 novembre 2018 à 12:30 -0800, Eric Anholt a écrit :
-> Paul Kocialkowski <paul.kocialkowski@bootlin.com> writes:
+Le vendredi 30 novembre 2018 à 19:57 +0100, Boris Brezillon a écrit :
+> On Fri, 30 Nov 2018 17:11:04 +0100
+> Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
 > 
 > > In order to test whether the load tracker is working as expected, we
 > > need the ability to compare the commit result with the underrun
@@ -68,27 +68,148 @@ Le vendredi 30 novembre 2018 à 12:30 -0800, Eric Anholt a écrit :
 > > tracker enabled.
 > > 
 > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> > 
+> > Changes since v1:
+> > * Moved all the debugfs-related functions and structure to vc4_debugfs.c.
+> > 
+> >  drivers/gpu/drm/vc4/vc4_debugfs.c | 58 +++++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/vc4/vc4_drv.c     |  2 ++
+> >  drivers/gpu/drm/vc4/vc4_drv.h     |  2 ++
+> >  drivers/gpu/drm/vc4/vc4_kms.c     |  6 +++-
+> >  4 files changed, 67 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vc4/vc4_debugfs.c b/drivers/gpu/drm/vc4/vc4_debugfs.c
+> > index 7a0003de71ab..8f4d7fadb226 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_debugfs.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_debugfs.c
+> > @@ -32,9 +32,67 @@ static const struct drm_info_list vc4_debugfs_list[] = {
+> >  
+> >  #define VC4_DEBUGFS_ENTRIES ARRAY_SIZE(vc4_debugfs_list)
+> >  
+> > +static int vc4_debugfs_load_tracker_get(struct seq_file *m, void *data)
+> > +{
+> > +	struct drm_device *dev = m->private;
+> > +	struct vc4_dev *vc4 = to_vc4_dev(dev);
+> > +
+> > +	if (vc4->load_tracker_enabled)
+> > +		seq_printf(m, "enabled\n");
+> > +	else
+> > +		seq_printf(m, "disabled\n");
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static ssize_t vc4_debugfs_load_tracker_set(struct file *file,
+> > +					    const char __user *ubuf,
+> > +					    size_t len, loff_t *offp)
+> > +{
+> > +	struct seq_file *m = file->private_data;
+> > +	struct drm_device *dev = m->private;
+> > +	struct vc4_dev *vc4 = to_vc4_dev(dev);
+> > +	char buf[32] = {};
+> > +
+> > +	if (len >= sizeof(buf))
+> > +		return -EINVAL;
+> > +
+> > +	if (copy_from_user(buf, ubuf, len))
+> > +		return -EFAULT;
+> > +
+> > +	if (!strncasecmp(buf, "enable", 6))
+> > +		vc4->load_tracker_enabled = true;
+> > +	else if (!strncasecmp(buf, "disable", 7))
+> > +		vc4->load_tracker_enabled = false;
+> > +	else
+> > +		return -EINVAL;
+> > +
+> > +	return len;
+> > +}
+> > +
+> > +static int vc4_debugfs_load_tracker_open(struct inode *inode, struct file *file)
+> > +{
+> > +	return single_open(file, vc4_debugfs_load_tracker_get, inode->i_private);
+> > +}
+> > +
+> > +static const struct file_operations vc4_debugfs_load_tracker_fops = {
+> > +	.owner = THIS_MODULE,
+> > +	.open = vc4_debugfs_load_tracker_open,
+> > +	.read = seq_read,
+> > +	.write = vc4_debugfs_load_tracker_set,
+> > +};
+> > +
+> >  int
+> >  vc4_debugfs_init(struct drm_minor *minor)
+> >  {
+> > +	struct dentry *dentry;
+> > +
+> > +	dentry = debugfs_create_file("load_tracker", S_IRUGO | S_IWUSR,
+> > +				     minor->debugfs_root, minor->dev,
+> > +				     &vc4_debugfs_load_tracker_fops);
+> > +	if (!dentry)
+> > +		return -ENOMEM;
 > 
-> Given that the load tracker is going to be conservative and say things
-> will underrun even when they might not in practice, will this actually
-> be useful for automated testing?  Or is the intent to make it easier to
-> tune the load tracker by disabling it so that you can experiment freely?
+> Hm, maybe you could use debugfs_create_bool() instead of
+> re-implementing it. The values won't be enabled/disabled though
+> (IIRC, it's Y or N).
 
-The intent here is to be able to compare the load tracker's result with
-the underrun indication from the HVS.
+Oh, I didn't know about that! It definitely makes more sense yes.
 
-The idea is to have the following testing scheme:
-1. enable the load tracker
-2. try a commit and get the errno if it fails
-3. disable the load tracker
-4. do the commit
-5. wait for vblank and get the underrun indication
-6. check that the underrun occurs when errno == -ENOSPC
-
-This way, we can find out when the load tracker gave us a false
-positive and refine the load calculation.
-
-Cheers,
+Thanks,
 
 Paul
+
+> > +
+> >  	return drm_debugfs_create_files(vc4_debugfs_list, VC4_DEBUGFS_ENTRIES,
+> >  					minor->debugfs_root, minor);
+> >  }
+> > diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+> > index 7195a0bcceb3..12ac971d24d6 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_drv.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_drv.c
+> > @@ -290,6 +290,8 @@ static int vc4_drm_bind(struct device *dev)
+> >  
+> >  	drm_fbdev_generic_setup(drm, 32);
+> >  
+> > +	vc4->load_tracker_enabled = true;
+> > +
+> >  	return 0;
+> >  
+> >  unbind_all:
+> > diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+> > index 11369da944b6..8d0f2f16a9e8 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_drv.h
+> > +++ b/drivers/gpu/drm/vc4/vc4_drv.h
+> > @@ -188,6 +188,8 @@ struct vc4_dev {
+> >  
+> >  	int power_refcount;
+> >  
+> > +	bool load_tracker_enabled;
+> > +
+> >  	/* Mutex controlling the power refcount. */
+> >  	struct mutex power_lock;
+> >  
+> > diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
+> > index b905a19c1470..4b2509b1b8ed 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_kms.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_kms.c
+> > @@ -473,6 +473,7 @@ static const struct drm_private_state_funcs vc4_load_tracker_state_funcs = {
+> >  static int
+> >  vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
+> >  {
+> > +	struct vc4_dev *vc4 = to_vc4_dev(dev);
+> >  	int ret;
+> >  
+> >  	ret = vc4_ctm_atomic_check(dev, state);
+> > @@ -483,7 +484,10 @@ vc4_atomic_check(struct drm_device *dev, struct drm_atomic_state *state)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	return vc4_load_tracker_atomic_check(state);
+> > +	if (vc4->load_tracker_enabled)
+> > +		return vc4_load_tracker_atomic_check(state);
+> > +
+> > +	return 0;
+> >  }
+> >  
+> >  static const struct drm_mode_config_funcs vc4_mode_funcs = {
 
