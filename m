@@ -2,106 +2,97 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFDDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7CFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F33C2081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:29:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QUojoPHw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F33C2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 664ED20867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 04:52:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664ED20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbeLAPkk (ORCPT
+        id S1726277AbeLAQD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 10:40:40 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:42780 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbeLAPkk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 10:40:40 -0500
-Received: by mail-yb1-f194.google.com with SMTP id s8so977350ybe.9
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 20:29:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KyNy40w++dlOJxJZqsTwDufOR/T3RFR2sKzGh4yWLAQ=;
-        b=QUojoPHwTd/DRQEoc0DIBuhbhlRqAPOFOaDiAKasxJPWSfubTDV8029DvkEspbOuzo
-         oTDnB2P/r+elgAtrcFoYR90eP/efbsEQYLMwRel1uVSQ4YMzr263LVe0hynHDwZjEL8f
-         oO1/HdjvDQOOiuvvjAWx2cI1NfakStBRo8/iM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KyNy40w++dlOJxJZqsTwDufOR/T3RFR2sKzGh4yWLAQ=;
-        b=bjrggZHnQgVPOZ+TaWcqf2YyOFDzfUvenSWpynNPuyF1WSPFo07WUMEszNi3R2Lb32
-         X9vokUUc+RmnybKpBoDXtmdfyDzPyzENqRbEi/FQ5SU+0GY7y7NYPuty+ceXQ1cINLp8
-         jNmGW9Yd59vbIXIbjKWOjdKhlFn4TMMMM7xjAlDUSbHDZQlo1NGAzsY1TC6ZnB1RiWGb
-         KPdYLNiU9EwIhoPkDd1q/MAHHUS1dPJilbHdTK1H525WaRdQGYX7AJgfk2fEIzxD1Dp0
-         t9uhpyPq4eEF5oQIm7kpScJpcEqy4dtGvzkk6NYPb1dX/dnB9L0ZF/dINbawwBwl/GYp
-         Uk4w==
-X-Gm-Message-State: AA+aEWZ9a4FM016b39TLX/fCVvgy1yDU9RBtA27VRwTEY+sVCT7frF1f
-        DW+jEbUJ4RdjuxxeEDEnIKKz5W2KIt4=
-X-Google-Smtp-Source: AFSGD/WvQXhOVtq4qorT8Uqr4RHjdGQAOqJskxyaH9tpgZVual2vzhtMCVjak7L8Wmig0hFcsHlfbg==
-X-Received: by 2002:a25:ab8a:: with SMTP id v10-v6mr8162711ybi.127.1543638544323;
-        Fri, 30 Nov 2018 20:29:04 -0800 (PST)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id m66sm2193066ywc.37.2018.11.30.20.29.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Nov 2018 20:29:03 -0800 (PST)
-Received: by mail-yb1-f172.google.com with SMTP id z2-v6so3139876ybj.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Nov 2018 20:29:02 -0800 (PST)
-X-Received: by 2002:a25:3502:: with SMTP id c2-v6mr8232917yba.410.1543638542467;
- Fri, 30 Nov 2018 20:29:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20181127225408.7553-1-j@bitron.ch> <20181127225408.7553-2-j@bitron.ch>
- <20181128144230.GG30395@redhat.com> <87r2f5gr9g.fsf@xmission.com>
- <20181129123409.GA10645@redhat.com> <f55261dbc41544363b4348820f67fb01c6d7aaec.camel@bitron.ch>
- <20181130103329.GB23670@redhat.com>
-In-Reply-To: <20181130103329.GB23670@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 30 Nov 2018 20:28:50 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jKmz+zDH9nmYo=dwxWRNh=gYxb--Qy4x+KrFuBaT+L31w@mail.gmail.com>
-Message-ID: <CAGXu5jKmz+zDH9nmYo=dwxWRNh=gYxb--Qy4x+KrFuBaT+L31w@mail.gmail.com>
-Subject: Re: [PATCH] prctl: add PR_{GET,SET}_KILL_DESCENDANTS_ON_EXIT
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     j@bitron.ch, "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 1 Dec 2018 11:03:57 -0500
+Received: from mout.gmx.net ([212.227.17.20]:49073 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbeLAQD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 11:03:56 -0500
+Received: from ovpn-120-135.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
+ (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0MAy40-1gctPT3x1I-009wwp; Sat, 01 Dec 2018 05:52:04 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     davem@davemloft.net
+Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@gmx.us>
+Subject: [PATCH] net/core: tidy up an error message
+Date:   Fri, 30 Nov 2018 23:51:53 -0500
+Message-Id: <20181201045153.4035-1-cai@gmx.us>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+X-Provags-ID: V03:K1:JfK0XEf9L9e3Hv/ORKO5uZxdRhHuLGb39BHrjJvvPpYwNeQHgb+
+ el9FUYbm94nZsclLnMvtQuTIHHL+vdVkWKoOAG+sZlZ4m/906bMoF12Nq6wVK0CLaHPD7dY
+ RpYwoV70xRits/Nm4mf+IqCv64P/k4VSzCKN7Ij21AubafeVlZ7KvP4wPei6pFgKZh8AIVp
+ XSoLF/YfQ+e9xWHjAZk3w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:JOfZDzfZlrI=:rzNqNKTlECsbjJ/KSNSyKd
+ +vBo1y1qb0ZGQg5hW3Ty8xvqz3i5KAUoMMtQcVd/N+2Pcqm3GBfqqX2AXH1G9aenGO3i1xx2Y
+ B7Psy6Yq5gzQvZ4Q/vMzWKlkTBc26yclWR2xO0jBusYRwxgmJNWvV/DLgeLKUB3YCx5XoeI7T
+ nDHeRdMCcF1LtVZOa2GToUfwkflT/+rJFv80ecf+rP0bDDS/sxGMkgreREmIYUbZOEzKG17s9
+ dQwokhobOe/roTIB2h7MvuBIxvKGKjWkWY590zTvbrjgPkm+lYyBoGst3b0Lc8iQ4DNiJxmtq
+ nSvdLHW4EHJNzbdqb5/YlhFcGTlGu3daVTFcwSSr7f0t5uSFSzHlt4M/PSEHILUDYatmcIuom
+ Iz0M3/hoAh/yVigA9gNqhcXYS4j38mLuQypSEeqCR/r9ncRgePeKY4KeOBFuo1oaLI9c/eINb
+ sdflF5w1rwTHI2QI+T2Ur2xmxnIjLRT3YhDU0wvoSn4295h+W1jutU/YNzSuBA7lohcUtyz8Q
+ U2embw5vWL48Z/utVIpjl0GUW++4PVnBpkKOe3jgcxEld7jFpgoY+aDEtxT8SHfeR4Y3sVFUd
+ l9rtN4rEC1cccpL7yP+k3MkrEbMdhQvxaUxRGLfBl0PIgMvNydCgvNbXvsrqtawYfrLpog+1z
+ hK/4INyJkCPjqRB6iolsCvwX17kkgKd33BalV+yo+y5rpL0m5loIDgt6it0mr402Q1AeTyC0y
+ z7YucETBNJVJRdRwn2+fMoRNCgO7WTsFdPWS8UIp0DA7HZmt9RStaBBPw3wq7L44gXwvLUIsU
+ IebLNbqiFZwCgiR19WmwjxYOTiClptE//4GwsGoXEjC9piLm5TH/xVk4dPkVy/U1lWAqtRjOh
+ Twjr+wD+C9QiKysXA2UfxGA8YSClmnUIGq57UOZJo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 2:33 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 11/29, J=C3=BCrg Billeter wrote:
-> >
-> > On Thu, 2018-11-29 at 13:34 +0100, Oleg Nesterov wrote:
-> > > So I think the patch is mostly fine, the only problem I can see is th=
-at
-> > > PR_SET_KILL_DESCENDANTS_ON_EXIT can race with PR_SET_CHILD_SUBREAPER,=
- they both
-> > > need to update the bits in the same word.
-> >
-> > Good point. I'll make it a regular bool instead of a bitfield for v2,
->
-> Agreed,
+netif_napi_add() could report an error like this below due to it allows
+to pass a format string for wildcarding before calling
+dev_get_valid_name(),
 
-Is it worth doing something for singal_struct like we did for
-task_struct with the TASK_PFA_* and atomic_flags?
+"netif_napi_add() called with weight 256 on device eth%d"
 
---=20
-Kees Cook
+For example, hns_enet_drv module does this.
+
+hns_nic_try_get_ae
+  hns_nic_init_ring_data
+    netif_napi_add
+  register_netdev
+    dev_get_valid_name
+
+Hence, make it a bit more human-readable.
+
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
+ net/core/dev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index ddc551f24ba2..bbd7cdbbbebd 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -6205,7 +6205,8 @@ void netif_napi_add(struct net_device *dev, struct napi_struct *napi,
+ 	napi->poll = poll;
+ 	if (weight > NAPI_POLL_WEIGHT)
+ 		pr_err_once("netif_napi_add() called with weight %d on device %s\n",
+-			    weight, dev->name);
++			    weight,
++			    !strchr(dev->name, '%') ? dev->name : "unknown");
+ 	napi->weight = weight;
+ 	list_add(&napi->dev_list, &dev->napi_list);
+ 	napi->dev = dev;
+-- 
+2.17.2 (Apple Git-113)
+
