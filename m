@@ -7,68 +7,64 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1155C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 11:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB71C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 11:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 658A920868
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 11:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F63320868
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 11:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="0hyE3Cfs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658A920868
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="V22XnMp4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F63320868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeLAW0b (ORCPT
+        id S1726905AbeLAW0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 17:26:31 -0500
-Received: from mail-eopbgr780080.outbound.protection.outlook.com ([40.107.78.80]:42176
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        Sat, 1 Dec 2018 17:26:10 -0500
+Received: from mail-eopbgr710068.outbound.protection.outlook.com ([40.107.71.68]:18184
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726909AbeLAW0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 17:26:11 -0500
+        id S1726747AbeLAW0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 17:26:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9l7RDY0jb/bNTwK1A9iSd2ZDibGvt4+OPlRPcHRwtEk=;
- b=0hyE3CfsRQJI3BAyC4ZZFdIfZ4Y19Q8swtfzytADZ4jhpy/+ROKWfNK4VnygU/tVwUR/yhXIpBoN1DleWYMT8qJOZ6kYcL6a0wBvAhyQZR+Su/eVD8t5zVW73j1me16AXHR/HzIyd9hBBarBEknIGpme2nJY0PJ1WRVUpXsY2O8=
-Received: from SN4PR0201CA0046.namprd02.prod.outlook.com
- (2603:10b6:803:2e::32) by SN6PR02MB4334.namprd02.prod.outlook.com
- (2603:10b6:805:a4::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.22; Sat, 1 Dec
- 2018 11:13:45 +0000
-Received: from SN1NAM02FT047.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::209) by SN4PR0201CA0046.outlook.office365.com
- (2603:10b6:803:2e::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1382.22 via Frontend
- Transport; Sat, 1 Dec 2018 11:13:45 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
+ bh=ahctcdk8rvmwpdhLPaVOMaEEMZfojjuUc4y5mbAl6kM=;
+ b=V22XnMp45u+azvqFn6coTakE3wKlfu/hDFrRcKBl3NyyvdbZELLNPdrEwTxx6ZcVVHk1WIr45L/Hp9EyNZTtZ44OmkeMXtfYuLdaYBFIowogSoGXwCqTuRiKoz3nhKp7gJj3tzUmxYP6RLyJVsW2eTMpbX4oT3cb0pVDrFvtOu0=
+Received: from CY4PR02CA0026.namprd02.prod.outlook.com (2603:10b6:903:117::12)
+ by DM5PR0201MB3510.namprd02.prod.outlook.com (2603:10b6:4:77::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.19; Sat, 1 Dec
+ 2018 11:13:46 +0000
+Received: from CY1NAM02FT039.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::205) by CY4PR02CA0026.outlook.office365.com
+ (2603:10b6:903:117::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.21 via Frontend
+ Transport; Sat, 1 Dec 2018 11:13:46 +0000
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT047.mail.protection.outlook.com (10.152.72.201) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ CY1NAM02FT039.mail.protection.outlook.com (10.152.75.140) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1382.18
- via Frontend Transport; Sat, 1 Dec 2018 11:13:44 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+ via Frontend Transport; Sat, 1 Dec 2018 11:13:45 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:46520 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1gT3DU-0002W5-FZ; Sat, 01 Dec 2018 03:13:44 -0800
+        id 1gT3DU-0005oI-Kf; Sat, 01 Dec 2018 03:13:44 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1gT3DP-0001kp-CD; Sat, 01 Dec 2018 03:13:39 -0800
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wB1BDZCY003405;
+        id 1gT3DP-0001kp-H5; Sat, 01 Dec 2018 03:13:39 -0800
+Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wB1BDYjb015261;
         Sat, 1 Dec 2018 03:13:35 -0800
 Received: from [172.23.64.8] (helo=xhdvnc108.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <anuragku@xilinx.com>)
-        id 1gT3DK-0001k0-PU; Sat, 01 Dec 2018 03:13:35 -0800
+        id 1gT3DK-0001js-Id; Sat, 01 Dec 2018 03:13:34 -0800
 Received: by xhdvnc108.xilinx.com (Postfix, from userid 15427)
-        id ED5586050E; Sat,  1 Dec 2018 16:43:33 +0530 (IST)
+        id C09B6604D5; Sat,  1 Dec 2018 16:43:33 +0530 (IST)
 From:   Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 To:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -88,9 +84,9 @@ CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Tejas Joglekar <tejas.joglekar@synopsys.com>,
         Ajay Yugalkishore Pandey <APANDEY@xilinx.com>,
         Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: [PATCH v7 07/10] usb: dwc3: check for requests in started list for stream capable endpoints
-Date:   Sat, 1 Dec 2018 16:43:28 +0530
-Message-ID: <1543662811-5194-8-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Subject: [PATCH v7 06/10] usb: dwc3: don't issue no-op trb for stream capable endpoints
+Date:   Sat, 1 Dec 2018 16:43:27 +0530
+Message-ID: <1543662811-5194-7-git-send-email-anurag.kumar.vulisha@xilinx.com>
 X-Mailer: git-send-email 2.1.1
 In-Reply-To: <1543662811-5194-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
 References: <1543662811-5194-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
@@ -99,75 +95,75 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(396003)(136003)(39850400004)(376002)(346002)(2980300002)(199004)(189003)(51416003)(356004)(186003)(478600001)(6666004)(2906002)(48376002)(476003)(305945005)(486006)(50226002)(2616005)(126002)(36386004)(26005)(8676002)(426003)(446003)(4326008)(11346002)(316002)(42186006)(107886003)(106466001)(36756003)(54906003)(81156014)(336012)(39060400002)(16586007)(106002)(90966002)(8936002)(110136005)(81166006)(63266004)(7416002)(76176011)(575784001)(103686004)(2171002)(5660300001)(14444005)(6266002)(47776003)(52956003)(50466002)(107986001)(921003)(83996005)(2101003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4334;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT047;1:xExEvVXWj/CQCsbwA0rrO/mv6E1zjHy27PK6+abi5ONjv6wktY/llhYo95yO4tYZ+2dot8t/HpcTVlSJznqLcpkuMKSDojIdxuvqNX67w53xUbrnSJLtBlHlGW933lzJ
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(396003)(39860400002)(2980300002)(3923003)(199004)(189003)(5660300001)(90966002)(36386004)(7416002)(478600001)(42186006)(103686004)(16586007)(106002)(316002)(2171002)(6266002)(48376002)(50466002)(305945005)(39060400002)(63266004)(2906002)(4326008)(486006)(126002)(6666004)(2616005)(356004)(476003)(446003)(426003)(11346002)(336012)(106466001)(107886003)(36756003)(51416003)(26005)(6346003)(186003)(47776003)(81166006)(54906003)(50226002)(14444005)(575784001)(8936002)(110136005)(8676002)(52956003)(81156014)(76176011)(107986001)(921003)(5001870100001)(1121003)(2101003)(83996005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0201MB3510;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT039;1:5rpPmfYddxvi1Wsw+KSjrznPSD4VzxE65bfrgQ1R5hKXaq/tksDfAqtQ7qchpfa8ndKLdqsHYvEZ33xHDYEWeDA9i6hUu5qWCZ5IHea5QFHT66/wEgls5jKjbsRg3nlk
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8b929a3b-36e7-4232-821b-08d6577e0f78
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR02MB4334;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4334;3:OmZ0HFzF8+Lqwy1PY7z//DpTJ6lWEHDYxntvsT0ZGvDrRMwSdggp8imOf/s4V/LOx3buGG5vMpHAPhqTjXJ0MPB2T3L9t3RDhGps8IR5mxYij071ok4ZGgJWwz0WxX7LqyC1tmqwoWD/Thw2tJTYbO/XNpk2Cnkpr+yPI89CJLe7QjwWPeqpv1u992b88OUg2Wb8e4Ejb/mEIfZKaMR5aPQvZCJjJVFgs5uJ8NTJoa4p1N1idDk4R0lEqZiHQdqK/kpFChN1oY+6QQYuMO2t+in6jZ62Wl/AWe5TzihNinSFdOgUHK+aqNu6Cpg9uwg80GOJHF/KJiSk1g1Ksww2hXHqfkhfDjyJIvNV5xjjK70=;25:JderzwMqXGxfZEQckPdJyjRRG+U8te/axtjMH+jK+A51K/o4FbDHSyFuttqEwDi1UroEPwGQNY5EsiXY5Ve4PbqE4SFNTnOkcmDiMnEGRk+/7vfPDmx5PqIYvbExgCPHaA+Q56HcGgldEL3pfqNiESBAZnpKPHj+R118oXrVASy/vxR2kTfKwgY49uUS999UjpYheaytrxqc5gMAmf0/hjW6bqg/26H/tpS0b0jq9PqNZdbwKLma9coomv9Nayj6vCHiPQLTclkkssH9zWp5mWTVkE5H3iaRUYpifrC3kok7daaxQACH+QeUQN2ACf727pJWiES2RR7L2eg4X+JWQQ==
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4334:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4334;31:Y6RCxFPCYEk8IFzONvVRudD08E6qNg5I2IC/85xGWKAScDYGcw1ouLIUPgnkAGOiCrnslKEyobA5WyQ8QYO6WnTJFZ9FId7OHendaZ8shAU/fH2J+vJqUiVizZL815OICi6t0Z9SmGIkXQpYNrajHvJ+DochUC637nWXc51CRge6mU7oRTX1o5yU/YraZbCq5FPURrtH0A0P7lMv9XlJy5T2RSKe8ISwenfZqkWaP6U=;20:p/68svC6Fd2zoX6dEyskd+nHIFBof2XJrK+DazFTdmjKt+4gz/IWJs/AAXyptCLapDnB0bqiB7Lr5dUr6epmfvYgp+LlfRqNF20od2hR4L7LiKxNB8DjqufoWba5si40H78Fh0DKGVPJNBZYKyWd9GltF+lbm81mqKMyc3VX2omVW/YAYPf8gb8uXrhW/Cf60uANJAA5guZqEd2ZsToFhev2stcI2EP1ag6TTdSMbWe42r8MVNyd+16GkkkfQv6lcNSURdWA9WTVW5IAC8k6u/cTnhvhAuzGqKffTb5Uq1EJ73JyWFd4ZdAAOHkRGkPcfiHkoJSMIw1Q6Syl6b68XB9WMbMA+gzsju8ueIGGkQHza+zi0z5i2Y39mSyF/DOJWAKgP96E68Ti5yIIOri0A71sx9P+LYA7rjFiF7Ygj/mrV9iDsIs/LbmDy4q9NXf87tzgoitjF7bn81DfZFjL1B/I/BZoumeSTZ0xHyaF64pkKQTZfcww6AzQPShI7p7i
+X-MS-Office365-Filtering-Correlation-Id: da52f029-1170-4163-76e3-08d6577e0fbf
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:DM5PR0201MB3510;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3510;3:ZMkVcli3AX1SZLTv/tn3KnLsLfK2xOIw5RmCSoMrum540FGD4yvgogr98D00vDNa4oEG+gFStFUpuKKuPFOKN36JQbv3zQ23rA250q3y2PArQN4MNSdGh8Mnl2cKVLl9Ywf7IUGx5FKQrobEsE8B2e/X56PLvGrc0uN7zGH7mNa49907EXPhzNHh9Y4GAmfsa5dHBo3GFtvA/ikVQyAa1jAQ3d+3B7K2+zcuA7v/82jYYjCdVdA9CP5tM6ZBabMPilO55cahsX8U//ukL27ds/OayucZxI84b11MU1XUe70ik2VTYERuQlfEo13Q9nwPre8CYgiOsFH+wbl9wOjAK/irA7QunUyYFgPaAyCrOWA=;25:LAOv8CSrE10dBSYVBPZWMaGiup063KmHUKJfwh19bKXyubdkatUn3iN5Vh3lQ/LC8wNBq+/LK/eUVe4JLym61lL+VdPIxfDHKXY/5HAi+nv3j1WBMLxVbPvW+163e4qOh73oEmpAThDHIySams3GBI+7og5na/sAiALM7KsBpW1CiSFoswmlyuyFHoWQiMqEHb/nDgF4qVLbQpfCGZFShZLhek7RRZVMJLxOjBCpIzjxDowXMthRk9GWtP7YA7tqadtxm6Pm69YOCJM6c4OmftKOT9nU/WqdHlkfA4pXWMx0xb/4nab1QZG3WtLCD59bj8lltg6mWRKWAXfQEaLlag==
+X-MS-TrafficTypeDiagnostic: DM5PR0201MB3510:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3510;31:W3SSRDDEBXeDnE/RGPudo0kNCNWKwylYH74A6h+65zdvvzPlaKxKEzOWeS4s29sqD4fXPuV13vneicXOtRytbpjjBErRWKHZFEDcFntqIRx8RPYSVc/KXzqB3qhOqbSyJAjvu7pXVokos98qBeHwalo7ztCzoKhzDKGhL4Uh4yfAZOdEGoWYju6y6I+wK5hEAQpQQDLSkz7/iROhD4LZUh6YOL7yJ/WNMlPUbnDqgD0=;20:wrG/7ES55ZJ6QS0EQdRvuZ1fXkrNRQHzRJE/0pbssUy4452fSfMT9zijIRiH2I3KaSF4FtCyzK+X9ijeZVNEl1KSLZVXSkN6hkvKdqEmltqudpjRFdOrNr4UQPSCYpNW2BAq6R+DeNQdI+/gX/OJqOXAHywfxcvmIcRGGQdQdphMMIQgLhg8tPaYHOK9WN/9Uih4QMf2pVLk/+aJ0ALyfPsUrtUjUf2uoDRy+mWE8LppC+Z3Cb4hIBjvPAEBLkVECcULH9yBGBg7fzuqSOj1DcNy6SHzZzsylR8O6ZQCXcQsj30htz0lWQd2zfLIF+PrtefveKVi/p9eAQPhLQvWHkNGVEcWt38cgG+36GHQ+HAYCzwg3MOh5MEVwPM94cnmCdE5mGTX47KAnSkmSS3ofXwsbX6AfHFWEWIUbNNxP/f0PCyFEf1sAkfEhYcwzjV2OLYHWTnnJvlfp3WCBz2GfiVn4yIZtSXkV9ojQCZdwRTfhMi//ddhLTXaXsotwgbc
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN6PR02MB433440DA387E19CC3C079F23A7AC0@SN6PR02MB4334.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DM5PR0201MB35101A425CCA446C545CC7E3A7AC0@DM5PR0201MB3510.namprd02.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231454)(999002)(944501475)(52105112)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6PR02MB4334;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB4334;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4334;4:AfbyxyqsOOzdCabu+sN/yEWdhG+BXgU+zAFbGgx5Z1AHwifM84UVuRckoziZ6TmRLTMaNaXysMPigC7eiBMRMjqUgIQUtV4qHyTOAvrZevrTrEG61hn29p7u2RQ4d1U1DvgY2lqDAnKmn7vIfUDsDB+dKIXioMwZhVQMSK9JyKHyUmtBP9QDa7dXeqLaom2is7OJKOYNbO/3R4fve/SLeAXwazduySUV7kEa4N6whjqNtO7rAWRDbkKxX6JkBGNsVY73CwvhAKWEbbiMjOsd0A==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3002001)(10201501046)(3231454)(999002)(944501475)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM5PR0201MB3510;BCL:0;PCL:0;RULEID:;SRVR:DM5PR0201MB3510;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3510;4:lfH3/7Lakq33LS979gX3zKN5f+niZ9TuDIDwBFCYmXwbWxbHME3gLIX6HxenVs0czOofrqOgPCf03XHvt1Gq0I0C2IYrptfCyT95aDIb+WJuafccVnB5CnH8nPtrKheLAU0VEqrEpPIRwf6gbBCDFaTad3IGxWOpC66S8HzvIeUzEdo1HKFM8y8DSFt+tmH/Limo+qRoP22xy2sPqj0zbazMr+8k8MMG01KuNPMJ6ikDbNfOwhy/5SbOHO3PugfpzuxOvfC03ZetInB9ReMEQA==
 X-Forefront-PRVS: 087396016C
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB4334;23:ZCp7Kluer8feQBJdCNjw0ik/vkN0iFgCRafuF+i5v?=
- =?us-ascii?Q?JZcFLBBRg8QaW4fu6mms1p6MevC7bW8zAqP4h4NyQ3yuq84Xmca1QV1SQHZh?=
- =?us-ascii?Q?H7rRl4xjT9uJ1U9YV11cpzymSn4UNHh1xZclb5G370zZTfeGjAHsrAVQu//c?=
- =?us-ascii?Q?PbCRjReKBXWKwoT4e6bXw/vSds6vGjgiuGxe2ezU+ZAkIrmGTrFWmZUWZZGS?=
- =?us-ascii?Q?4GSq+xjPTKP0QIeDD3ajUl/TZUrm9LRBAjcf87Ozui6iLu0UIeImU2Vs0CLn?=
- =?us-ascii?Q?FD8CsL03DhGz40DzDQs0VSZvX6i3w5qq9wq/kJzKHPrEfZgAgIAOq+lfHmam?=
- =?us-ascii?Q?tpfFPokMVZRcKBWdKxjp15PrsVQvzWCnVtx+xYEr8hP7wPpatHHzEzlBntUj?=
- =?us-ascii?Q?cpeTMvMoBexWiS6zMJmjbpnu0tTFCgy6DrE5/L+UZq6d7s8uPWc4ffSJAwjC?=
- =?us-ascii?Q?tfj8Uiwcja5oX17ofY60yE1y+g5sVuGH7ALc1cT7ESqmIllQ19ng5pk9SQtt?=
- =?us-ascii?Q?SmKgfQNtCYIjsBFz5+Q/avOT6IPIW3QpkbI7ipfxgACKHCFKHYH88rAfZH6E?=
- =?us-ascii?Q?G7MxsYi1L5hc6zvKUc93D4gWeCN6z3ehxW/9vZBRtCJoptnmBr2F0T1gmtxP?=
- =?us-ascii?Q?a31DwLWl9UU/8MSefeh4yimEhzYmn0HBep+0HBe8MgqmB9IS+SklDdfmxrVK?=
- =?us-ascii?Q?aCR1utmbjD6+2dMskYyLL32eyR0FE7zgklE6JdvsFcaMG99EgDdfNemlSOcN?=
- =?us-ascii?Q?LIH+xoDcbLk1l/Z3ILRB9aDGdDyzCkzKUR3enFJKalVSoi4WQXEVrohdWI+b?=
- =?us-ascii?Q?2SvaJ0OrY3UWjNa9ybEIDaLiCVnzKHcQL6MIAGMyUn7+/X6NRi90BFGzQyVc?=
- =?us-ascii?Q?tfhLnn+DmFCWGoaFtpvyOA6BFAijpAnntOdjWSyqPcO5jzyz065JbKKmQuCz?=
- =?us-ascii?Q?iWNy8e3/EIClMLOK7DXpsNQe/JiWcsYDyteHXmOhCeqmfyV+Owe0qBnJCBJs?=
- =?us-ascii?Q?WwebOIxg4oGUOqKWP6H7tG3jXxjPHjg5z61hKSi9//LdgLL0G1QHQI5u5M6d?=
- =?us-ascii?Q?lCedW7iYyvndDNWmcc10bV/PbtgezIzl8NtbaFZCUz8cDmUJ1/B1BCNAAzTU?=
- =?us-ascii?Q?0zcyrIaETMa21x50OdUB9tbgVg1vd3zrLmjm0j8B6RcucKFfwY6OTLjnoq6T?=
- =?us-ascii?Q?j2fZVQq+G+U3WK8sYJ5/43Tvijy5B80npdwYRoAuVXbJD6lyprNMB2Thp85c?=
- =?us-ascii?Q?Ctp5OIjTeJ+QYbDqJ8X6V0z6I+H8FrfS8+ykvNx/nXkat51wn4OrWoURHzkO?=
- =?us-ascii?Q?c66G38o9zG37QCyfd7zFWIPQf1MjnOWc5od2loeGgg3?=
-X-Microsoft-Antispam-Message-Info: zAufC6ZVBd5qSnb6xN1VbssY7Rg17F4GWULI7KP8o/9vaHJuGPHyAoXRxMn0sWkH7/2bgokA+glWVwvjzWgxopFXX9AbX6J2qW2x5HUxD2l8m7SbEeMKk074CKES+d3LMyJCLfyUyOaEe3+oH0BSvIcA7zHaOWi4z6UrgQ8CA8Y1cFqozi216jl15AAPAQZa0bgdNjG4Jqd+M7vktN5d3vDaxtxBuRQIyqI909XtdpuozL22wJ2b/1XVyQyYfmApVhsUE66zQS3V4p8PeNnjbqY16nn+QAl7Ns/mGUpsYsnl5umEN+PfyM89Itwv9UPoAtt9iUzAJDd4W+kv2MzU620lPuiDoL8GwFP1TcLl4Kk=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4334;6:U5npnSDWDGq93wogYqF4zNRtVxyrgiTr3/1WQgsk6LM/o2BPzBhYgdFVyQcFvKuVvSIXLaxpBiQBwtWBr+YcEAVRrShBN8IKZX100MUwMO+79V0ICKbq88I3mE79tZx9Xa7O103/DG70iqBbS+sZHZQBP5AHUD5lxqq9IcAkG4FNEGiuMxjISUpRadAGOtYZKW4vdRt0iGXvk3NFn7ScaEKLC2bVPM5F3TPvBBveiSLMjaDMOXtDqnqirH0DeHwbz6TpslPrXsGJUWJmVyUoPTJtARdlLZALZt9KezeJ9ZKUUqX9Khwiyi52+8Di3dH2U2rcKWOZREX6ULkZoeNH4jDS8x2qyxkgSQqAJ4zn4vzvKpm2FoUNWTHOnpsh9o8Lo1tzD/tvwX9PWYyHQVZWl96/7CjnxfZkF1B8KOG9+iaNhVY8nDYK0nEIGqTHexb765/nBWN+9J4Y7/VPuNw2kw==;5:K6+QzRUN/I5IgiQke+7V86ng1C3/jYxfZckVRua1Od8nLSpqJQqqOT1Epra/2svjRgGeEOfZqcIT0sdvjYeUBwpwarHwWeYzekLTucFtX13CR+lQCe1FP2F7OEy7fkOD8LEeMyx6EPBLgabeg/Jy4CjFxwlGoeQne3S4Glg7ovY=;7:nM2B5wL4/8odFWwP9u7SjMy3fadZcIHfdUiGKgV+NOU+jiUW83j8nfA8omKQCEP7zao4pyjP40TuJxe9+oH8t4S0mZkVaPrdQyfBgkzWYua1tcbgnRdb9svjjGPlvZgwypo861jlnCiMk4M+weDJtA==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR0201MB3510;23:m6MwN0BZrRA7TQfHFMe+syTf0agKjaC5KMHMGH+?=
+ =?us-ascii?Q?+W8dfOQUo+BrGdZMl6qwWZEQ2H2YhIMp4aBD+2czL1UJ/ZuS4WgA+8JHVwan?=
+ =?us-ascii?Q?kk4FrY+PwNjvGZgxqGHBc0RnMBov0tFRlBh3y7ydzXWZZpz0YZcI3qlB8FJw?=
+ =?us-ascii?Q?W9yfTMsKPWc5THQD0GiC18OwoOD52Psl+5/ycRAJ83lJzOJfoeyg4bFbrAFd?=
+ =?us-ascii?Q?lK+kHFv/jC6GW0bh2P+ILBkJXxGla/r9vIX7FtT6k6xssCjoDUxEf9enhGlr?=
+ =?us-ascii?Q?CBOLhXxfCPp56LTKK23iJDv2wmTW+1KMZsdAPrMvkQsjFsy7SOLIHKAqJqof?=
+ =?us-ascii?Q?7ERklnRfB/lTIzQpKyCKyQE/h4H918J3d0Qp1i60pBoWdrKUmfuIVZqb/10i?=
+ =?us-ascii?Q?1/EYE92HbQe2ATApKA43ww99ay8UImDkH1w1T+CtvS3ZjXuwQRWKuTX5je3s?=
+ =?us-ascii?Q?kU35/zU5LotXPtQL9TeuW6B6bb1Ywb0oEtskPgf9EaqaiGz2mQwrCRt4a4j2?=
+ =?us-ascii?Q?GP47W3VnLw6cuAkzyQW1QO8GGG4L1NtiQCEdS6A7tVWfkPGn0P99uQxo3Nr+?=
+ =?us-ascii?Q?pa11lczhfMG2kPkL9lRJR7o87LVMYlgFJkd6OktxmWuHPrhLCRcjHnY+17nE?=
+ =?us-ascii?Q?xKiKyOuSOuvbPNWooKRQjCkvAJYJ7wwjZGN1QqLzjRdkFOXIeQiEaNro5FV3?=
+ =?us-ascii?Q?e2SCiSFNveFZlK/HNLI/DBbMuFleqVm946Z6zUvon2n8h2Pm91j7oWAUf0ZH?=
+ =?us-ascii?Q?86vSiFys0Hfvmc09fj8R8lO/Dx9oVZPGfm8jDt7gyb748U2RoQ/oKKDI3fCe?=
+ =?us-ascii?Q?nWoJCDvEKwAlxuFg73KG6kUr3Apk6TrXGjzg1C/l0N2Y9QnhJuVGKh8qZIh2?=
+ =?us-ascii?Q?dYSZpUX7sG0V1tzZegXVKiRX1SGPJjPGqj/eu5YMyYD1YZ+q/NAhqDjqbzMk?=
+ =?us-ascii?Q?lLM0wdJBf7ClwOOUj8DNOKwgvh4V7A1X6TMV5ExcE7fU8uhvgb5nUDG/HGSX?=
+ =?us-ascii?Q?91v9dR6fnKWL44qVMuFYXsDJG1RE4gkXeWmuqi8miNmM8FWEeYNN96IaqEen?=
+ =?us-ascii?Q?MNfn/NI0myntOE8XvaYHlopQNRljVd1IdF7AaTESRYzDAnu6IU25VC49r34g?=
+ =?us-ascii?Q?XVbnANktU2id0qYCqqm96rOmNCv3Jw1PF47EAvzyURHCJ0t8jY9W+7Vw+maU?=
+ =?us-ascii?Q?iMLJI7V7pKnT7Yg+DG2rMdUHmRscs2367YbAQKSCnGbde0ivyHJcL72JE6X6?=
+ =?us-ascii?Q?xO45YDRN6roGo1PgP3aPRi/U7Ts98ErCNDZ9L+baCkU65V3dGr0+D+oqbObK?=
+ =?us-ascii?Q?tzL5P2RZLZ3TCJ1NrPIu+t3dUmZQL4S5Locg9PKaP8LHDgXHnQgCpxFNDCgu?=
+ =?us-ascii?Q?UKStLBoVmaAIiwGww1UfxP/L5VB4=3D?=
+X-Microsoft-Antispam-Message-Info: PPcnOUByFCjCUSg+fq5rf2VUaB+eh8sD0xwKPUTcSNl/ZOSGYbO5iIU9N6dDOloH3qfDabTBiWAFigPf4enjr+aIePVxuU7syrPSjezQ32KDUynO6NUnMq3YhVIWygMJQ52ChNKg780D47MNauQR4X2szMhkPYmBztGchxf+tCNbBGxHkOmZgMbhgsdncxzvotbf8000TyN41c774i6WLHTZXwTidoWQIqb+2UKCvzwJzslzKJRy2PUJHyyXW57GXBFJh8mBOa2/FrwqnbbxwtoiMiXqZzMwgjZiUbaXO6gJPbmD2cDXP2MBJ0Mix3PtEZEOi6Jf7rCNKsd9vL+7ujWb/ae0U6ybNPQiNtbRsGo=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0201MB3510;6:gFt1y97hDVNzgdYAdnBdOLgmmMbnVuYGrLQR4bNn2UmN0w7Ayu9DUiGqxdPE9FFQjE2cOY85lV2+bN9HSBkRrvE4vp7Lg5NZr93Q0kzp2VA/zuVJ/LfBUD7APvL0u6Iafg568Sj6KHb36/apDm+ZO63DMSgZDqwCBJ2vM+bWgzEQS/G8nnQ+MHU4WLdtzjBSvxeaBLo8ODiimD3lP/SpLe4c8KgsC+VgHvBe1exN+uysLo1G4vR+C9R1d4vGwqIucgOFK3eDx9B0//3ElWlDoYSudEGGhaQbXwrE3bsYQCzmHkMm9IWUXWSMXnyLq7hyQHsQwc1bwi3/GB7VQ9HDkf2g5P5qX15aqyJFc/IXeqlSkDgpgTtEnIvb+GIKi2cryn8/Q3W09ol+gl6jc3RRjT+gxPysvVbcV5o5Dc/a6ChqSPBQqiSP7eYHks48Yxd+sEI3iGehy4h9QWtoYngwbA==;5:SZOjj8osJQYGBy32M5flGQWkf5JMR6C6U6OSmy3hfpD73DR8e8C6627lkcW7pM7OGF/ddOGITc+2z6oXAPznXwQkbkIW7M5pldbMBYpPpEHMrAmmzxN+E/dvSuqsCy/0ec8UF7Fx64wrH1S1WAMLpu9t1HUFk1TBNP+Pc3WM/44=;7:0d5xIaGzBekHlvj3spZmYKjFpNh+tsh8lWYzrAam71E13+0+M6kKKS4hEOWgZpn5hO4QY24lgnFYNXpOzDDDlftcSHlI69e66uG/M4VbzKSpOnvm8xQfGIDrtFXej6UTRlnfrErjknVpFocPs/UVZQ==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2018 11:13:44.9367
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2018 11:13:45.1049
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b929a3b-36e7-4232-821b-08d6577e0f78
+X-MS-Exchange-CrossTenant-Network-Message-Id: da52f029-1170-4163-76e3-08d6577e0fbf
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4334
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0201MB3510
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For stream capable endpoints, uas layer can queue mulpile requests on
-single ep with different stream ids. So, there can be multiple pending
-requests waiting to be transferred. This patch changes the code to check
-for any pending requests waiting to be transferred on ep started_list and
-calls __dwc3_gadget_kick_transfer() if any.
+The stream capable endpoints require stream id to be given
+when issuing START TRANSFER. While issuing no-op trb the
+stream id is not yet known, so don't issue no-op trb's on
+stream capable endpoints.
 
 Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 ---
  Changes in v7:
-	1. Reverted to dep->stream_capable from dep->endpoint.stream_caapable
+	1. Reverted to dep->stream_capable from dep->endpoint.stream_capable
 
  Changes in v6:
-	1. Replaced dep->stream_capable with dep->endpoint.stream_caapable
+	1. Replaced dep->stream_capable with dep->endpoint.stream_capable
 
  Changes in v5:
 	1. None
@@ -181,23 +177,22 @@ Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
  Changes in v2:
 	1. None
 ---
- drivers/usb/dwc3/gadget.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/dwc3/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 78c9bc6..d0de7dc 100644
+index 3edfc0b..78c9bc6 100644
 --- a/drivers/usb/dwc3/gadget.c
 +++ b/drivers/usb/dwc3/gadget.c
-@@ -2413,6 +2413,9 @@ static void dwc3_gadget_endpoint_transfer_in_progress(struct dwc3_ep *dep,
- 
- 	dwc3_gadget_ep_cleanup_completed_requests(dep, event, status);
- 
-+	if (dep->stream_capable && !list_empty(&dep->started_list))
-+		__dwc3_gadget_kick_transfer(dep);
-+
- 	if (stop) {
- 		dwc3_stop_active_transfer(dep, true);
- 		dep->flags = DWC3_EP_ENABLED;
+@@ -673,7 +673,7 @@ static int __dwc3_gadget_ep_enable(struct dwc3_ep *dep, unsigned int action)
+ 	 * Issue StartTransfer here with no-op TRB so we can always rely on No
+ 	 * Response Update Transfer command.
+ 	 */
+-	if (usb_endpoint_xfer_bulk(desc) ||
++	if ((usb_endpoint_xfer_bulk(desc) && !dep->stream_capable) ||
+ 			usb_endpoint_xfer_int(desc)) {
+ 		struct dwc3_gadget_ep_cmd_params params;
+ 		struct dwc3_trb	*trb;
 -- 
 2.1.1
 
