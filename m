@@ -2,115 +2,115 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98602C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD208C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 513A92081D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:28:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513A92081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 80D8E2146F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:34:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRZmqATp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D8E2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbeLBCll (ORCPT
+        id S1726988AbeLBCrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 21:41:41 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:49749 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeLBClk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 21:41:40 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gT7CP-0006vj-R8; Sat, 01 Dec 2018 08:28:53 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gT7CO-0000Kq-Vl; Sat, 01 Dec 2018 08:28:53 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     christian@brauner.io, Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20181120105124.14733-1-christian@brauner.io>
-        <87in0g5aqo.fsf@oldenburg.str.redhat.com>
-        <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net>
-        <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
-        <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
-        <20181129195551.woe2bl3z3yaysqb6@brauner.io>
-        <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
-        <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
-        <87y39b2lm2.fsf@xmission.com>
-        <20181130065606.kmilbbq46oeycjp5@brauner.io>
-        <CAK8P3a0kqPii5TwFAo_JHLX=o_FDMFVKXxgzzbDjLFZ7OQ5QCQ@mail.gmail.com>
-        <87y399s3sc.fsf@xmission.com>
-Date:   Sat, 01 Dec 2018 09:28:47 -0600
-In-Reply-To: <87y399s3sc.fsf@xmission.com> (Eric W. Biederman's message of
-        "Sat, 01 Dec 2018 08:46:43 -0600")
-Message-ID: <87tvjxp8pc.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Sat, 1 Dec 2018 21:47:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726717AbeLBCrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 21:47:01 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 919B42081D;
+        Sat,  1 Dec 2018 15:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543678455;
+        bh=tGI7IcN5NnC1d9XfZ4jpIO5v1xuaoy/Mw2BTCh3agVw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VRZmqATpXc9Tg7U4Z+k9ixCFaR6TLIDnwrQqx3f1NQRgwC7Kz0OGVfWvEzAnmZutJ
+         h8Wd14GM6T2HuuDGYXh7f6uTfMc7dVVkXEhQh440nofq3UY8RNAU4H11qNEOWifW8Q
+         fvKGGjOrXtdcYObOIouQ7BnV6dp2LbcaDIL2Nxl0=
+Date:   Sat, 1 Dec 2018 15:34:10 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Matheus Tavares <matheus.bernardino@usp.br>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        kernel-usp@googlegroups.com, victorcolombo@gmail.com
+Subject: Re: [PATCH v3 1/7] staging:iio:ad2s90: Add device tree support
+Message-ID: <20181201153410.0a62c450@archlinux>
+In-Reply-To: <20181124002312.6923-2-matheus.bernardino@usp.br>
+References: <20181124002312.6923-1-matheus.bernardino@usp.br>
+        <20181124002312.6923-2-matheus.bernardino@usp.br>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gT7CO-0000Kq-Vl;;;mid=<87tvjxp8pc.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19HS7qIlAIvLkTEiMgwVFpFZY2eBO7KBg4=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 23 Nov 2018 22:23:06 -0200
+Matheus Tavares <matheus.bernardino@usp.br> wrote:
 
-It just occurs to me that the simple way to implement
-procfd_sigqueueinfo info is like:
+> This patch adds device tree support to ad2s90 with standard
+> device tree id table.
+> 
+> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-int copy_siginfo_from_user_any(kernel_siginfo_t *info, siginfo_t *uinfo)
-{
-#ifdef CONFIG_COMPAT
-	if (in_compat_syscall)
-		return copy_siginfo_from_user32(info, uinfo);
-#endif
-	return copy_siginfo_from_user(info, uinfo);                        
-}
+Thanks,
 
-long procfd_sigqueueinfo(int fd, siginfo_t *uinfo)
-{
-	kernel_siginfo info;
+Joanthan
 
-        if (copy_siginfo_from_user_any(&info, uinfo))
-        	return -EFAULT;
-	...;                
-}
-
-It looks like there is already a place in ptrace.c that already
-hand rolls copy_siginfo_from_user_any.
-
-So while I would love to figure out the subset of siginfo_t tha we can
-just pass through, as I think that would make a better more forward
-compatible copy_siginfo_from_user32.  I think for this use case we just
-add the in_compat_syscall test and then we just need to ensure this new
-system call is placed in the proper places in the syscall table.
-
-Because we will need 3 call sights: x86_64, x32 and ia32.  As the layout
-changes between those three subarchitecuters.
-
-Eric
+> ---
+> Changes in v3:
+>  - Removed of_patch_ptr from of_match_table assignment
+> 
+> Changes in v2:
+>  - none
+> 
+>  drivers/staging/iio/resolver/ad2s90.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+> index 3e257ac46f7a..fdae067ed866 100644
+> --- a/drivers/staging/iio/resolver/ad2s90.c
+> +++ b/drivers/staging/iio/resolver/ad2s90.c
+> @@ -107,6 +107,12 @@ static int ad2s90_probe(struct spi_device *spi)
+>  	return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
+>  }
+>  
+> +static const struct of_device_id ad2s90_of_match[] = {
+> +	{ .compatible = "adi,ad2s90", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, ad2s90_of_match);
+> +
+>  static const struct spi_device_id ad2s90_id[] = {
+>  	{ "ad2s90" },
+>  	{}
+> @@ -116,6 +122,7 @@ MODULE_DEVICE_TABLE(spi, ad2s90_id);
+>  static struct spi_driver ad2s90_driver = {
+>  	.driver = {
+>  		.name = "ad2s90",
+> +		.of_match_table = ad2s90_of_match,
+>  	},
+>  	.probe = ad2s90_probe,
+>  	.id_table = ad2s90_id,
 
