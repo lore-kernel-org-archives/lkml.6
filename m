@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1118AC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017FDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C837A21473
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDCCC21479
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 15:53:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j3DMkc9d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C837A21473
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KtUGzzrt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDCCC21479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeLBDF4 (ORCPT
+        id S1727248AbeLBDF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 22:05:56 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47056 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbeLBDFz (ORCPT
+        Sat, 1 Dec 2018 22:05:59 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33807 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbeLBDF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 22:05:55 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f23so6180451lfc.13
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:53:06 -0800 (PST)
+        Sat, 1 Dec 2018 22:05:58 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u6-v6so7649671ljd.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 07:53:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3iUsZ/16+oDFR/k1SSqoY5Bn/jlRg+zr47SC2D/gEWM=;
-        b=j3DMkc9ddwMjPqKCKbD7hXOMHd2rlLnPLk6WsLo2IASfy3MDmNSzo4yEfkwl6w9fDO
-         e5H5wiTmvGwZfk634qy9KHznxDvTwiL/1184WnjfTe+o6Xt6e8XJHym+JM7K/6iQuLYk
-         NgePIWkTJ7aV7V6YD0hGP37ah01Qd039ZIWJ8=
+        bh=kw5DmJYSpDmuJznmwAMRHQCtGgWe5nKFfzGdrXYI1X4=;
+        b=KtUGzzrtlk2DxLtkU0GSvQOAnNzIWPXRRGKfQe2yVbwdXt7ofrw5D7dZ8ce12OaLCS
+         unXZVIEy3vPQ16kqH5pI9yPTK5v/QOf7A0D/cUQQmPmHNSyWQnpzvMT+Mg6n5OHACWKu
+         Mu+sU2Hzi82ZRIhvlvRDcvy6bW5MtXlNd00RA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3iUsZ/16+oDFR/k1SSqoY5Bn/jlRg+zr47SC2D/gEWM=;
-        b=hkgqPTpQQaPONfpgg/4T55p+knB5L/zKfHYd7mOArP2FkahIq0nFKeyX57Bcf2Yq5I
-         HmE+chPeOJwHRFOU2QMweE/07EFtNRoRgA9ukofmk81lU47cjwcMrWsjw8/wHThSGOIT
-         L0hkhsMeAy2RfMrNREHhMeNvepvrL/D+WcFEzMO5ykztYZq/ybTEvMvij8HE5uMRl2oW
-         SBBCj9zH2YTHENkju0NPx17rFwCD6yX+xmbmAQmbLizYiOyM+zpcPYPInKbeuZU/1qny
-         9kSKFvEaD0me5wjFE1ktpue222oOVxyredFrCnxFxW39qHQfrSf94IKvG0zINVdO0Ibe
-         08VA==
-X-Gm-Message-State: AA+aEWZu7fr5BhWlq48W5l8a29qvddMD8axX+MbxtvT5OMTpz19YL85b
-        W3NBT3ur4njdGVgIBytl3qv5eg==
-X-Google-Smtp-Source: AFSGD/VzWf9Esb0CfflUQAHPI3wSVrzonO+F0mqgVT/XHH1csIcT4N4RUOCwx87P5t83mAyalLTAYA==
-X-Received: by 2002:a19:9904:: with SMTP id b4mr5610949lfe.95.1543679585544;
-        Sat, 01 Dec 2018 07:53:05 -0800 (PST)
+        bh=kw5DmJYSpDmuJznmwAMRHQCtGgWe5nKFfzGdrXYI1X4=;
+        b=KHvq9rfhICsOYHnL1U75pI36oQ55/oxT07883cNxA7trj9/Am69nZCEfB1xz41YsCa
+         CoxLXei9OOc4KoSBz4SrmNNE6nxDf2QTeVw40WKYtqZtNZ2kkMGYx+7HlAC8qgfMcVPY
+         L7wYGF/wU2YAz/FyG9MLusSKz/t7Zq4tYxdH2Pg0Joqay7mzezF8fVpK+y/GY4NEHbv0
+         51d+E5ldFknBjwMVNvmHgrmEXpCPw1+L+GOa2L8DHOaytVek4Vzm3T9DPbZyW/MqkbBG
+         PUCJ12XjgrnhASQZkxdHh9b5Qco0H1BRH8vor/KsPoh2xTxplWFYkBLIDOO6Eh7zMBAu
+         klBg==
+X-Gm-Message-State: AA+aEWYa4CNTMs355+4jd8qrYVgWP/ZEqrFyT+9uYHJvu6zqUlDXuLmc
+        y4OhKAKParS9acerRhnLSha1qw==
+X-Google-Smtp-Source: AFSGD/U3MK86JakjWAsGIAPOydF4Fu1ZuFebohW+lO98c3aYHQuBhpACEc2ZaU+lRM0KzWxfWxfRZA==
+X-Received: by 2002:a2e:6594:: with SMTP id e20-v6mr6836862ljf.123.1543679587802;
+        Sat, 01 Dec 2018 07:53:07 -0800 (PST)
 Received: from localhost.localdomain (c-ae7b71d5.014-348-6c756e10.bbcust.telenor.se. [213.113.123.174])
-        by smtp.gmail.com with ESMTPSA id 13-v6sm1365426ljj.49.2018.12.01.07.53.04
+        by smtp.gmail.com with ESMTPSA id 13-v6sm1365426ljj.49.2018.12.01.07.53.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Dec 2018 07:53:04 -0800 (PST)
+        Sat, 01 Dec 2018 07:53:06 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
@@ -64,9 +64,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 02/13 v2] regulator: fixed: Let core handle GPIO descriptor
-Date:   Sat,  1 Dec 2018 16:41:40 +0100
-Message-Id: <20181201154151.14890-3-linus.walleij@linaro.org>
+Subject: [PATCH 03/13 v2] regulator: lm363x: Let core handle GPIO descriptor
+Date:   Sat,  1 Dec 2018 16:41:41 +0100
+Message-Id: <20181201154151.14890-4-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181201154151.14890-1-linus.walleij@linaro.org>
 References: <20181201154151.14890-1-linus.walleij@linaro.org>
@@ -80,36 +80,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Use the gpiod_get() rather than the devm_* version so that the
 regulator core can handle the lifecycle of these descriptors.
 
-Fixes: efdfeb079cc3 ("regulator: fixed: Convert to use GPIO descriptor only")
+Fixes: b2d751b7f69b ("regulator: lm363x: Pass descriptor instead of GPIO number")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 ChangeLog v1->v2:
-- Drop the conditional gpiod_put() on the errorpath: the
-  regulator core will take care of that once
-  devm_regulator_register() gets called.
+- Drop the gpiod_put() on the errorpath after devm_regulator_register()
+  as this will be handled by the regulator core.
 - Put a comment in the code so maintainers knows not to
   use managed resources (devm*)
 ---
- drivers/regulator/fixed.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/regulator/lm363x-regulator.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index ccc29038f19a..9abdb9130766 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -183,7 +183,11 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 	 */
- 	gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
- 
--	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, NULL, gflags);
-+	/*
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index bbedb08d257b..8c0e8419c43f 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -224,13 +224,15 @@ static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev,
+ 	/*
+ 	 * Check LCM_EN1/2_GPIO is configured.
+ 	 * Those pins are used for enabling VPOS/VNEG LDOs.
 +	 * Do not use devm* here: the regulator core takes over the
 +	 * lifecycle management of the GPIO descriptor.
-+	 */
-+	cfg.ena_gpiod = gpiod_get_optional(&pdev->dev, NULL, gflags);
- 	if (IS_ERR(cfg.ena_gpiod))
- 		return PTR_ERR(cfg.ena_gpiod);
- 
+ 	 */
+ 	switch (id) {
+ 	case LM3632_LDO_POS:
+-		return devm_gpiod_get_index_optional(dev, "enable", 0,
++		return gpiod_get_index_optional(dev, "enable", 0,
+ 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	case LM3632_LDO_NEG:
+-		return devm_gpiod_get_index_optional(dev, "enable", 1,
++		return gpiod_get_index_optional(dev, "enable", 1,
+ 				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	default:
+ 		return NULL;
+@@ -263,6 +265,8 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
+ 					 LM3632_EXT_EN_MASK,
+ 					 LM3632_EXT_EN_MASK);
+ 		if (ret) {
++			if (gpiod)
++				gpiod_put(gpiod);
+ 			dev_err(dev, "External pin err: %d\n", ret);
+ 			return ret;
+ 		}
 -- 
 2.19.1
 
