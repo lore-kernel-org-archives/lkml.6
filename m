@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66791C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 19:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 155AFC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 19:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CAAB2082F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 19:23:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CAAB2082F
+	by mail.kernel.org (Postfix) with ESMTP id E05032082F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 19:23:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E05032082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725812AbeLBGgj (ORCPT
+        id S1725770AbeLBGgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 2 Dec 2018 01:36:39 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:41234 "EHLO mail5.wrs.com"
+Received: from mail5.windriver.com ([192.103.53.11]:41232 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725739AbeLBGgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 01:36:39 -0500
+        id S1725731AbeLBGgi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 01:36:38 -0500
 Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB1JLVBT005428
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB1JLVBU005428
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sat, 1 Dec 2018 11:21:42 -0800
+        Sat, 1 Dec 2018 11:22:07 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sat, 1 Dec 2018
- 11:21:21 -0800
+ 11:21:54 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Joerg Roedel <joro@8bytes.org>
 CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
@@ -37,9 +37,9 @@ CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
         Nate Watterson <nwatters@codeaurora.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 8/9] iommu/arm-smmu: Make arm-smmu explicitly non-modular
-Date:   Sat, 1 Dec 2018 14:19:16 -0500
-Message-ID: <1543691957-17608-9-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 9/9] iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular
+Date:   Sat, 1 Dec 2018 14:19:17 -0500
+Message-ID: <1543691957-17608-10-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543691957-17608-1-git-send-email-paul.gortmaker@windriver.com>
@@ -52,8 +52,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/iommu/Kconfig:config ARM_SMMU
-drivers/iommu/Kconfig:  bool "ARM Ltd. System MMU (SMMU) Support"
+drivers/iommu/Kconfig:config ARM_SMMU_V3
+drivers/iommu/Kconfig:  bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -76,6 +76,8 @@ We add a moduleparam.h include since the file does actually declare
 some module parameters, and leaving them as such is the easiest way
 currently to remain backwards compatible with existing use cases.
 
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
@@ -88,60 +90,45 @@ Cc: iommu@lists.linux-foundation.org
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/iommu/arm-smmu.c | 32 +++++++++++++-------------------
- 1 file changed, 13 insertions(+), 19 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 5a28ae892504..4a2e143fdf52 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -41,7 +41,8 @@
- #include <linux/io-64-nonatomic-hi-lo.h>
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 6947ccf26512..1189c06079d4 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -20,7 +20,8 @@
+ #include <linux/interrupt.h>
  #include <linux/iommu.h>
  #include <linux/iopoll.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
 +#include <linux/moduleparam.h>
+ #include <linux/msi.h>
  #include <linux/of.h>
  #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -101,6 +102,10 @@
+@@ -356,6 +357,10 @@
+ #define MSI_IOVA_BASE			0x8000000
  #define MSI_IOVA_LENGTH			0x100000
  
- static int force_stage;
 +/*
 + * not really modular, but the easiest way to keep compat with existing
-+ * bootargs behaviour is to continue using module_param() here.
++ * bootargs behaviour is to continue using module_param_named here.
 + */
- module_param(force_stage, int, S_IRUGO);
- MODULE_PARM_DESC(force_stage,
- 	"Force SMMU mappings to be installed at a particular stage of translation. A value of '1' or '2' forces the corresponding stage. All other values are ignored (i.e. no stage is forced). Note that selecting a specific stage will disable support for nested translation.");
-@@ -1964,7 +1969,6 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
- 
- #ifdef CONFIG_ACPI
- static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
-@@ -2224,24 +2228,18 @@ static int arm_smmu_legacy_bus_init(void)
+ static bool disable_bypass = 1;
+ module_param_named(disable_bypass, disable_bypass, bool, S_IRUGO);
+ MODULE_PARM_DESC(disable_bypass,
+@@ -2928,37 +2933,25 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	return 0;
  }
- device_initcall_sync(arm_smmu_legacy_bus_init);
  
 -static int arm_smmu_device_remove(struct platform_device *pdev)
 +static void arm_smmu_device_shutdown(struct platform_device *pdev)
  {
  	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
  
- 	if (!smmu)
--		return -ENODEV;
-+		return;
- 
- 	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
- 		dev_err(&pdev->dev, "removing device with active domains!\n");
- 
- 	/* Turn the thing off */
- 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+ 	arm_smmu_device_disable(smmu);
+-
 -	return 0;
 -}
 -
@@ -150,18 +137,17 @@ index 5a28ae892504..4a2e143fdf52 100644
 -	arm_smmu_device_remove(pdev);
  }
  
- static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
-@@ -2256,16 +2254,12 @@ static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v3", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
  
  static struct platform_driver arm_smmu_driver = {
  	.driver	= {
--		.name		= "arm-smmu",
--		.of_match_table	= of_match_ptr(arm_smmu_of_match),
--		.pm		= &arm_smmu_pm_ops,
-+		.name			= "arm-smmu",
-+		.of_match_table		= of_match_ptr(arm_smmu_of_match),
-+		.pm			= &arm_smmu_pm_ops,
-+		.suppress_bind_attrs	= true,
+ 		.name		= "arm-smmu-v3",
+ 		.of_match_table	= of_match_ptr(arm_smmu_of_match),
++		.suppress_bind_attrs = true,
  	},
  	.probe	= arm_smmu_device_probe,
 -	.remove	= arm_smmu_device_remove,
@@ -169,7 +155,7 @@ index 5a28ae892504..4a2e143fdf52 100644
  };
 -module_platform_driver(arm_smmu_driver);
 -
--MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
+-MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
 -MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
 -MODULE_LICENSE("GPL v2");
 +builtin_platform_driver(arm_smmu_driver);
