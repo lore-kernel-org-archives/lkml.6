@@ -2,100 +2,111 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A9BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35875C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB292147D
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB292147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EBE0A20867
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 02:49:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cyWiGAU5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE0A20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeLAOAR (ORCPT
+        id S1726748AbeLAOBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 09:00:17 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34555 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbeLAOAR (ORCPT
+        Sat, 1 Dec 2018 09:01:18 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40492 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbeLAOBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 09:00:17 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 17so3305407pgg.1;
-        Fri, 30 Nov 2018 18:48:52 -0800 (PST)
+        Sat, 1 Dec 2018 09:01:18 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so3284760pgp.7;
+        Fri, 30 Nov 2018 18:49:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=hTIRvUd5wZUekGQOF0tlh90RkXKs8zi6rQXpkbEu5zI=;
+        b=cyWiGAU5Gcd7C8DHaRAE8yBLmVqVHYS0dfQwRf7vH5eKaGKlr209o541DkFctHiboL
+         AFdV2G4SC3XTdONJ8mN8ZCxdxwOfZ8oR90lNhLVFBQNyWhz1lfRFQAABi4lPduptMI32
+         LJhDQqekCEgGTmJ2I6/SlZYmx/lpxZnKBL5jo0yZ1plO5Q8SEpP9nYv4D2TgDg2ZwlO0
+         3pUNyJ3R6nz5C/ZjNp3EqeK6J1SatXqXo3E6wYQEanPyITbVowJc7iqQhqITGokkPHmP
+         GZr3BMflc1TZBGhKDiCGbQHkixYCwuVBfuxWKgGUtfw7RZ3UcUbrxh5pilk4+MLTWZoc
+         38uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IpVFGFn4oPb1GJ9be2qP8GxiNjPayVYkeduSEQFq36E=;
-        b=WTh2/kyfIVKenYMF8dNuHHqCZFDEUeU83GWHMmiK0sMo0bBgotQT4x6l/H/7FsCGju
-         9/7GCDsA9ErKzhUKgr7A1U6t+J1zrXOW/E38FpC4fu1Bc1OTq901OVjOjKSh/ZR2JcNV
-         w5U7nw1mMp4J7Gu8hKsxuTwAv/ZLKVYkFpcO2O2DycwH8rRoU5pW1jFEKknhcoKXnf0X
-         wFjZ5uSmoG31TIAUwDzHAdYlhQ7Xi91/dw1OGUGCyCPujEYwY8wEGpggzFJOq6zyL5xS
-         AbOy2KewcCIdV8r4Z42ZheTBc8DF9nTbF3TA/8SxQPX9yB9ZcQFVspMAGhv67ywQPWlO
-         HAig==
-X-Gm-Message-State: AA+aEWaMYQAMSUhSeCW+NhjYDBSD/VX3mmzL9UURJ23ErGsQHur5eM8A
-        Z6EwpHoltrmLWB+xqoi0myM=
-X-Google-Smtp-Source: AFSGD/VJ0kNvL+KkKySO+RcQ+JewuQi3yMnCGDrg/PIwbQ3Bv/otJtSXotGo8SSMkNhLrgIf9r6P5g==
-X-Received: by 2002:a62:18ce:: with SMTP id 197mr8242638pfy.88.1543632531889;
-        Fri, 30 Nov 2018 18:48:51 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id 125sm8816950pfg.39.2018.11.30.18.48.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hTIRvUd5wZUekGQOF0tlh90RkXKs8zi6rQXpkbEu5zI=;
+        b=fyqfjH1F7acCukOQJxTf49bbdCpHXaHzC8/YflVO4LcdZP2uU4hbaxV4qcKIwRRrAz
+         H2jW99pR1rtqIVWwHVwLCOQ0+iAfPqpkl8e2cgHhAtRXmFpe59X+ooKGnuODHHZrMqWB
+         WaPnIRaFAx7rGTqLoTzuDD3Kcz91GrFPp6MI9ZrPJiBrqR3Z5jSi4lsUuZXtHu4n2OsZ
+         ZwVr+wGBk9QmXKLhlTTcpGAvZrLABczNx7t2Y+3YOOjqwIDJL10kyn7vObDNQdo9MC2y
+         uT6bWRnw+9w5Gmm+o5JOx0N0t1qs1lK7eoF5DdHQpIAfLPS5X7bLTqFgJrOCHSM343Gx
+         caiA==
+X-Gm-Message-State: AA+aEWYMbZ8EeEHV7rDrkp5o3dWBU8To+9VD+IEErOt0ptvKDMNg0qXB
+        aeO+BqQGvj1QcectOS5DbpI=
+X-Google-Smtp-Source: AFSGD/U2tYSKcn8Aslghb8ywczxnyFg+LCpffl2JiHEubYxuwaNb6fPYpNwl09Xa++eyLbZIF73zrg==
+X-Received: by 2002:a63:5346:: with SMTP id t6mr6947931pgl.40.1543632593510;
+        Fri, 30 Nov 2018 18:49:53 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id w11sm6931213pgk.16.2018.11.30.18.49.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 18:48:50 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Fri, 30 Nov 2018 18:48:47 -0800
-Date:   Fri, 30 Nov 2018 18:48:47 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        linux-nvdimm@lists.01.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
-        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
-        dave.jiang@intel.com, bvanassche@acm.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        brendanhiggins@google.com
-Subject: Re: [driver-core PATCH v7 4/9] driver core: Probe devices
- asynchronously instead of the driver
-Message-ID: <20181201024847.GH28501@garbanzo.do-not-panic.com>
-References: <154345118835.18040.17186161872550839244.stgit@ahduyck-desk1.amr.corp.intel.com>
- <154345154692.18040.8161459765233879389.stgit@ahduyck-desk1.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154345154692.18040.8161459765233879389.stgit@ahduyck-desk1.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 30 Nov 2018 18:49:52 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] HID: debug: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Fri, 30 Nov 2018 21:49:51 -0500
+Message-Id: <20181201024951.5508-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 04:32:26PM -0800, Alexander Duyck wrote:
-> Probe devices asynchronously instead of the driver.
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-> +static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
-> +{
-> +	struct device *dev = _dev;
-> +	struct device_driver *drv;
-> +
-> +	__device_driver_lock(dev, dev->parent);
-> +
-> +	/*
-> +	 * If someone attempted to bind a driver either successfully or
-> +	 * unsuccessfully before we got here we should just skip the driver
-> +	 * probe call.
-> +	 */
-> +	drv = dev_get_drv_async(dev);
-> +	if (drv && !dev->driver)
-> +		driver_probe_device(drv, dev);
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/hid/hid-debug.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-I believe this should mean drivers which have async work on probe can
-deadlock. For instance, if a driver does call async_schedule() or a
-derivative call does this for it, the kernel will call
-async_synchronize_full() and I believe we deadlock.
+diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+index b48100236df8..c530476edba6 100644
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -1072,11 +1072,6 @@ static int hid_debug_rdesc_show(struct seq_file *f, void *p)
+ 	return 0;
+ }
+ 
+-static int hid_debug_rdesc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, hid_debug_rdesc_show, inode->i_private);
+-}
+-
+ static int hid_debug_events_open(struct inode *inode, struct file *file)
+ {
+ 	int err = 0;
+@@ -1211,12 +1206,7 @@ static int hid_debug_events_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-static const struct file_operations hid_debug_rdesc_fops = {
+-	.open           = hid_debug_rdesc_open,
+-	.read           = seq_read,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(hid_debug_rdesc);
+ 
+ static const struct file_operations hid_debug_events_fops = {
+ 	.owner =        THIS_MODULE,
+-- 
+2.17.0
 
-Are we sure most subsystems which would use async probe will not have
-an async_schedule() call?
-
-  Luis
