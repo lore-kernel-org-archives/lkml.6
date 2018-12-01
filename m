@@ -2,60 +2,117 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E569FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 16:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13D8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 16:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A41B12146F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 16:47:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A41B12146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strongswan.org
+	by mail.kernel.org (Postfix) with ESMTP id 9202920834
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 16:48:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="qfTC24lv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9202920834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=blackhole.kfki.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbeLBEAA (ORCPT
+        id S1727133AbeLBEBZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 23:00:00 -0500
-Received: from sitav-80046.hsr.ch ([152.96.80.46]:41277 "EHLO
-        mail.strongswan.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbeLBEAA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 23:00:00 -0500
-Received: from book.fritz.box (unknown [IPv6:2a01:2a8:8106:7c01:b5f0:8f23:2aa:553])
-        by mail.strongswan.org (Postfix) with ESMTPSA id A978E40128;
-        Sat,  1 Dec 2018 17:47:02 +0100 (CET)
-Message-ID: <972ec5f157fc4e0b96311eafba50759b61cd4436.camel@strongswan.org>
-Subject: Re: [PATCH v2 6/6] crypto: x86/chacha - add XChaCha12 support
-From:   Martin Willi <martin@strongswan.org>
-To:     Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org
-Cc:     Paul Crowley <paulcrowley@google.com>,
-        Milan Broz <gmazyland@gmail.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 01 Dec 2018 17:47:02 +0100
-In-Reply-To: <20181129230217.158038-7-ebiggers@kernel.org>
-References: <20181129230217.158038-1-ebiggers@kernel.org>
-         <20181129230217.158038-7-ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 1 Dec 2018 23:01:25 -0500
+Received: from smtp-out.kfki.hu ([148.6.0.46]:37413 "EHLO smtp-out.kfki.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726778AbeLBEBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 23:01:25 -0500
+X-Greylist: delayed 505 seconds by postgrey-1.27 at vger.kernel.org; Sat, 01 Dec 2018 23:01:24 EST
+Received: from localhost (localhost [127.0.0.1])
+        by smtp1.kfki.hu (Postfix) with ESMTP id 31CA93C800F3;
+        Sat,  1 Dec 2018 17:40:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        blackhole.kfki.hu; h=mime-version:user-agent:references
+        :message-id:in-reply-to:from:from:date:date:received:received
+        :received; s=20151130; t=1543682401; x=1545496802; bh=odm+Gd7Vwb
+        hVWFuGc4SjaxJfmRm3HnrTaSD2hzHiNQE=; b=qfTC24lvxFZgoRX/wZxCqLbBtZ
+        FaVToZl6naD0Ur3ebokUvz3tX8ObTo+S355hVt3hdpi87Uuv6XVnBW1ZF8rfRrkT
+        fGXuMQnaUw3CByqSCHh3mF5GOY/n066+OMC2z+A0zVSLOI8pD3Bk2tsoQZNB+PrD
+        59mF7fIaYzbuwA9WI=
+X-Virus-Scanned: Debian amavisd-new at smtp1.kfki.hu
+Received: from smtp1.kfki.hu ([127.0.0.1])
+        by localhost (smtp1.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP; Sat,  1 Dec 2018 17:40:01 +0100 (CET)
+Received: from blackhole.kfki.hu (blackhole.kfki.hu [148.6.240.2])
+        by smtp1.kfki.hu (Postfix) with ESMTP id 49D6A3C800F1;
+        Sat,  1 Dec 2018 17:40:01 +0100 (CET)
+Received: by blackhole.kfki.hu (Postfix, from userid 1000)
+        id 2367C210F6; Sat,  1 Dec 2018 17:40:01 +0100 (CET)
+Date:   Sat, 1 Dec 2018 17:40:01 +0100 (CET)
+From:   Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+To:     Pan Bian <bianpan2016@163.com>
+cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: ipset: do not call ipset_nest_end after
+ nla_nest_cancel
+In-Reply-To: <1543228930-103509-1-git-send-email-bianpan2016@163.com>
+Message-ID: <alpine.DEB.2.20.1812011738550.19565@blackhole.kfki.hu>
+References: <1543228930-103509-1-git-send-email-bianpan2016@163.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-> Now that the x86_64 SIMD implementations of ChaCha20 and XChaCha20
-> have been refactored to support varying the number of rounds, add
-> support for XChaCha12.  This is identical to XChaCha20 except for the
-> number of rounds, which is 12 instead of 20.  This can be used by
-> Adiantum.
+On Mon, 26 Nov 2018, Pan Bian wrote:
+
+> In the error handling block, nla_nest_cancel(skb, atd) is called to
+> cancel the nest operation. But then, ipset_nest_end(skb, atd) is
+> unexpected called to end the nest operation. This patch calls the
+> ipset_nest_end only on the branch that nla_nest_cancel is
+> not called.
 > 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Fixes: 45040978c89("netfilter: ipset: Fix set:list type crash when
+> flush/dump set in parallel")
 
-Reviewed-by: Martin Willi <martin@strongswan.org>
+Good catch, thank you. Patch is applied in ipset git tree.
 
+Best regards,
+Jozsef
 
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+> ---
+>  net/netfilter/ipset/ip_set_list_set.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/netfilter/ipset/ip_set_list_set.c b/net/netfilter/ipset/ip_set_list_set.c
+> index 4eef55d..8da228d 100644
+> --- a/net/netfilter/ipset/ip_set_list_set.c
+> +++ b/net/netfilter/ipset/ip_set_list_set.c
+> @@ -531,8 +531,8 @@ list_set_list(const struct ip_set *set,
+>  		ret = -EMSGSIZE;
+>  	} else {
+>  		cb->args[IPSET_CB_ARG0] = i;
+> +		ipset_nest_end(skb, atd);
+>  	}
+> -	ipset_nest_end(skb, atd);
+>  out:
+>  	rcu_read_unlock();
+>  	return ret;
+> -- 
+> 2.7.4
+> 
+> 
+> 
+
+-
+E-mail  : kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.mta.hu
+PGP key : http://www.kfki.hu/~kadlec/pgp_public_key.txt
+Address : Wigner Research Centre for Physics, Hungarian Academy of Sciences
+          H-1525 Budapest 114, POB. 49, Hungary
