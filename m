@@ -2,121 +2,222 @@ Return-Path: <SRS0=0E8K=OK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B427CC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BB4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80CB42082F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:38:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF17D2082F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Dec 2018 18:38:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="GEto1Qx2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80CB42082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rTCdhprJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF17D2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725762AbeLBFv7 (ORCPT
+        id S1725787AbeLBFwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 00:51:59 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45782 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbeLBFv7 (ORCPT
+        Sun, 2 Dec 2018 00:52:03 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33000 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbeLBFwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 00:51:59 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y4so3901225pgc.12
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 10:38:52 -0800 (PST)
+        Sun, 2 Dec 2018 00:52:03 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so4420338plo.0;
+        Sat, 01 Dec 2018 10:38:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8TPks8/DpMNtGOQ+S/XT9p0zAfiBQN/YGPGFhuwiXk0=;
-        b=GEto1Qx2ozvGdjwzP8yJn7gU4xp1MAAIMn7BZKp996ruvP4jN4sr8BtKelniluZ0jh
-         8Pt4HTRxKciv7oFBShbbh1BoNnznM1qFaGc5nJVJfVsP+jZTrI8FIWz4LREnEngCCksq
-         4iuZ2CSYKvuAiNOBH1FVY61uSH45Zag832PdmlW5+giTHL8bx7cGWPzuH8FE9ngswg9c
-         GPUQFuLTrZ8/ntydPCMG6PO9GOgbnvyOWEYbbyq4u5L2lULOWoGnClqsrl9BGjUvuN62
-         8IeR8iVOtZtCfyI9bvBYfiUXdHOlpCChATx9PfAqqkNbrRqMm9Zi5q4lDWFjn4kNdBO0
-         fAWQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RDoNXB43/oI60KyOerMY86ykHP59AKhHtKTUpzUoaeI=;
+        b=rTCdhprJPk/tgdJndBdHi9Pj80P0cDfsX/EzU0+5NWH+gUSnOSh1JmwUt0YK+ocb46
+         3Htglck4l4+VzxyxGW3OVDR7E/k3HZL0jA57wlK33FS0cx3kLdHZGh5gxRzuCUpdn2mH
+         0PPz54m4JlSVWZ9HDXCFpDMQCb3J4YG49fNG2KXitEXAlu9OnCUQkuUVPJ/ianusc1WA
+         +QZssDEAosJhA5ZGiunTwLXnnEThIRqyIIEMJ1ssP3oS4PSP/hz5UDCu/4Jf3xuKb4xi
+         tDRQ4OPfEFc/54nUpExF0lhh0I86jWO4ty2MPi6e1pqmnOf8ZjrF+PAu6yjzs2Rx8WvK
+         o4aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8TPks8/DpMNtGOQ+S/XT9p0zAfiBQN/YGPGFhuwiXk0=;
-        b=gvkl4FtENhbAdX6+BXf3+2B/oqjCeEcDJevzxA9GAjbWc6MMzMVd+yJq9nRVUlCNNk
-         Mbj2XAZ9ds4A4X6Kloe94SlNsNqzeyvRugIzGgjmrkNT2iU4f+3yFQrJpsWSd1JUHsC5
-         pbTNyhlptOs1YIAmWmO0YdYbOXpkQ2XPjXNyUVparI03RmfsMbLhSdolgAPOpI660C7v
-         peV6BKtdv6AdEXaXO0B35ykt1Q7CatT7QcGChfOEGbduTNXc6wcbTPLiJx4PGaAZuXlU
-         QtP08hev936c+CwtSzJWSQG1dxVi9Hgrt1vh4AeMlANjLlV5/O1WPX0TZTyS4XvB0oAp
-         Zahg==
-X-Gm-Message-State: AA+aEWZ4BNLOEfBElQJDekNpSkpcxiLRMx/aedeONCyThBONuzJDFp0F
-        W0dWSAidMY4xwrs5PE0/x+5Zlg==
-X-Google-Smtp-Source: AFSGD/VarwMzaZ3g1E7m0PCpObZib75NXDeDSS2w+eaF1luR4uDwS5mKsAe9i1Uy6Y1/YRwJuWiH3w==
-X-Received: by 2002:a65:5a8e:: with SMTP id c14mr8444610pgt.137.1543689531625;
-        Sat, 01 Dec 2018 10:38:51 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id g15sm43045678pfj.131.2018.12.01.10.38.49
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RDoNXB43/oI60KyOerMY86ykHP59AKhHtKTUpzUoaeI=;
+        b=dNPlAJJixvwd7cV+RQ8OjaaThLhvK+Dd2IRJgWPMCnQDh3zHzYfo7nC4uGy/mq18Y9
+         J/nGLJJ1d6zs+uFhgnQJ4+8NDG7w8bCJAB6w1AOvBclGkT1Q8yowkrAc99gqu9CTMPZj
+         bkvegwjDwNZsa+TceXPmpjqUPAL7w+z7NOzOvw8aN+5RrERLJ/zrB6QkmVH4+OG5jhOG
+         rZrlzNBQuNJ/a9Ic9gushSewnYDcGlm79Udi3iqioWwRrSscYQTMXBy1+vpY7Is0YCQm
+         llqGs1+3gn74uSUBLL42Q0Cy5+vj+m58vMjRuG4LB0GK39YuB/KOnQR3bw8dNm20bB5x
+         JDMQ==
+X-Gm-Message-State: AA+aEWYGi1ObFsf9WGpO/0q97r5WmSsQdTJsFANv3OXstsU22ImiIjf7
+        4ZtDtoQrN9KwmsnK71x3XDk=
+X-Google-Smtp-Source: AFSGD/Ux0VMqR1HFMQdHTgZQgPJa3Hox/VJMV1T96h0AZHC3uU4DDofXv+W/Q/sPSHQmVxvcy7nf+g==
+X-Received: by 2002:a17:902:8607:: with SMTP id f7mr9882967plo.123.1543689535003;
+        Sat, 01 Dec 2018 10:38:55 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f32sm8448787pgf.80.2018.12.01.10.38.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Dec 2018 10:38:50 -0800 (PST)
-Subject: Re: [PATCH v2] block: Change to use DEFINE_SHOW_ATTRIBUTE macro
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     ed.cashin@acm.org, philipp.reisner@linbit.com,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-block@vger.kernel.org, josh.h.morris@us.ibm.com,
-        pjk1939@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org
-References: <20181201142414.7766-1-tiny.windzz@gmail.com>
- <5682c419-9e44-10ed-6a2e-286e6f5c5def@kernel.dk>
- <CAEExFWtJEJwgGR3gqfHDXw-c4nyA7dkQTd9fkzVsht=ROmfgMQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <92334639-9d34-5e6a-2c43-945a20077394@kernel.dk>
-Date:   Sat, 1 Dec 2018 11:38:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 01 Dec 2018 10:38:54 -0800 (PST)
+Date:   Sat, 1 Dec 2018 10:38:53 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/2] hwmon: (ntc_thermistor): add support for B57891S0103
+ from Epcos
+Message-ID: <20181201183853.GA19581@roeck-us.net>
+References: <20181117121248.32143-1-peda@axentia.se>
+ <20181117121248.32143-2-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <CAEExFWtJEJwgGR3gqfHDXw-c4nyA7dkQTd9fkzVsht=ROmfgMQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181117121248.32143-2-peda@axentia.se>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/1/18 11:31 AM, Frank Lee wrote:
-> On Sun, Dec 2, 2018 at 2:11 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 12/1/18 7:24 AM, Yangtao Li wrote:
->>> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
->>>
->>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->>> ---
->>> changes in v2:
->>> -Modify some function names to avoid compilation errors
->>
->> The fact that your previous patch didn't even compile doesn't fill me
->> with a lot of confidence in the amount of diligence and testing
->> you apply to your patches.
->>
->> Why would you send something out that you didn't even compile?
->>
->> --
->> Jens Axboe
->>
-> These changes are the same and only require a small change.
-> Most of the changes are fine, so it's a bit negligent.
+On Sat, Nov 17, 2018 at 12:13:00PM +0000, Peter Rosin wrote:
+> More of the same...
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-When someone is sending a patch for inclusion, at the very minimum
-I expect it to have been compiled, and preferably tested too. Doesn't
-matter how small the change is, even a one-liner should go through that.
+Applied to hwmon-next.
 
-That said, I'm not a huge fan of changes like this. It completely
-hides what is going on for someone reading the code, and it's not
-like there's a win on code size for example. The only win seems to
-be that driver writes can't mess it up, which is a nice benefit.
+Thanks,
+Guenter
 
--- 
-Jens Axboe
-
+> ---
+>  drivers/hwmon/Kconfig                        |  3 +-
+>  drivers/hwmon/ntc_thermistor.c               | 57 +++++++++++++++++++++++++++-
+>  include/linux/platform_data/ntc_thermistor.h |  1 +
+>  3 files changed, 58 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index f10840ad465c..5438cecace22 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -1206,7 +1206,8 @@ config SENSORS_NTC_THERMISTOR
+>  
+>  	  Currently, this driver supports
+>  	  NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, NCP15WL333,
+> -	  NCP03WF104 and NCP15XH103 from Murata and B57330V2103 from EPCOS.
+> +	  NCP03WF104 and NCP15XH103 from Murata and B57330V2103 and
+> +	  B57891S0103 from EPCOS.
+>  
+>  	  This driver can also be built as a module.  If so, the module
+>  	  will be called ntc-thermistor.
+> diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
+> index c52d07c6b49f..e0c6b2f244a6 100644
+> --- a/drivers/hwmon/ntc_thermistor.c
+> +++ b/drivers/hwmon/ntc_thermistor.c
+> @@ -55,6 +55,7 @@ static const struct platform_device_id ntc_thermistor_id[] = {
+>  	{ "b57330v2103", TYPE_B57330V2103},
+>  	{ "ncp03wf104", TYPE_NCPXXWF104 },
+>  	{ "ncp15xh103", TYPE_NCPXXXH103 },
+> +	{ "b57891s0103", TYPE_B57891S0103 },
+>  	{ },
+>  };
+>  
+> @@ -212,8 +213,8 @@ static const struct ntc_compensation ncpXXxh103[] = {
+>  };
+>  
+>  /*
+> - * The following compensation table is from the specification of EPCOS NTC
+> - * Thermistors Datasheet
+> + * The following compensation tables are from the specifications in EPCOS NTC
+> + * Thermistors Datasheets
+>   */
+>  static const struct ntc_compensation b57330v2103[] = {
+>  	{ .temp_c	= -40, .ohm	= 190030 },
+> @@ -252,6 +253,52 @@ static const struct ntc_compensation b57330v2103[] = {
+>  	{ .temp_c	= 125, .ohm	= 531 },
+>  };
+>  
+> +static const struct ntc_compensation b57891s0103[] = {
+> +	{ .temp_c	= -55.0, .ohm	= 878900 },
+> +	{ .temp_c	= -50.0, .ohm	= 617590 },
+> +	{ .temp_c	= -45.0, .ohm	= 439340 },
+> +	{ .temp_c	= -40.0, .ohm	= 316180 },
+> +	{ .temp_c	= -35.0, .ohm	= 230060 },
+> +	{ .temp_c	= -30.0, .ohm	= 169150 },
+> +	{ .temp_c	= -25.0, .ohm	= 125550 },
+> +	{ .temp_c	= -20.0, .ohm	= 94143 },
+> +	{ .temp_c	= -15.0, .ohm	= 71172 },
+> +	{ .temp_c	= -10.0, .ohm	= 54308 },
+> +	{ .temp_c	= -5.0, .ohm	= 41505 },
+> +	{ .temp_c	= 0.0, .ohm	= 32014 },
+> +	{ .temp_c	= 5.0, .ohm	= 25011 },
+> +	{ .temp_c	= 10.0, .ohm	= 19691 },
+> +	{ .temp_c	= 15.0, .ohm	= 15618 },
+> +	{ .temp_c	= 20.0, .ohm	= 12474 },
+> +	{ .temp_c	= 25.0, .ohm	= 10000 },
+> +	{ .temp_c	= 30.0, .ohm	= 8080 },
+> +	{ .temp_c	= 35.0, .ohm	= 6569 },
+> +	{ .temp_c	= 40.0, .ohm	= 5372 },
+> +	{ .temp_c	= 45.0, .ohm	= 4424 },
+> +	{ .temp_c	= 50.0, .ohm	= 3661 },
+> +	{ .temp_c	= 55.0, .ohm	= 3039 },
+> +	{ .temp_c	= 60.0, .ohm	= 2536 },
+> +	{ .temp_c	= 65.0, .ohm	= 2128 },
+> +	{ .temp_c	= 70.0, .ohm	= 1794 },
+> +	{ .temp_c	= 75.0, .ohm	= 1518 },
+> +	{ .temp_c	= 80.0, .ohm	= 1290 },
+> +	{ .temp_c	= 85.0, .ohm	= 1100 },
+> +	{ .temp_c	= 90.0, .ohm	= 942 },
+> +	{ .temp_c	= 95.0, .ohm	= 809 },
+> +	{ .temp_c	= 100.0, .ohm	= 697 },
+> +	{ .temp_c	= 105.0, .ohm	= 604 },
+> +	{ .temp_c	= 110.0, .ohm	= 525 },
+> +	{ .temp_c	= 115.0, .ohm	= 457 },
+> +	{ .temp_c	= 120.0, .ohm	= 400 },
+> +	{ .temp_c	= 125.0, .ohm	= 351 },
+> +	{ .temp_c	= 130.0, .ohm	= 308 },
+> +	{ .temp_c	= 135.0, .ohm	= 272 },
+> +	{ .temp_c	= 140.0, .ohm	= 240 },
+> +	{ .temp_c	= 145.0, .ohm	= 213 },
+> +	{ .temp_c	= 150.0, .ohm	= 189 },
+> +	{ .temp_c	= 155.0, .ohm	= 168 },
+> +};
+> +
+>  struct ntc_data {
+>  	struct ntc_thermistor_platform_data *pdata;
+>  	const struct ntc_compensation *comp;
+> @@ -296,6 +343,8 @@ static const struct of_device_id ntc_match[] = {
+>  		.data = &ntc_thermistor_id[6] },
+>  	{ .compatible = "murata,ncp15xh103",
+>  		.data = &ntc_thermistor_id[7] },
+> +	{ .compatible = "epcos,b57891s0103",
+> +		.data = &ntc_thermistor_id[8] },
+>  
+>  	/* Usage of vendor name "ntc" is deprecated */
+>  	{ .compatible = "ntc,ncp15wb473",
+> @@ -627,6 +676,10 @@ static int ntc_thermistor_probe(struct platform_device *pdev)
+>  		data->comp = ncpXXxh103;
+>  		data->n_comp = ARRAY_SIZE(ncpXXxh103);
+>  		break;
+> +	case TYPE_B57891S0103:
+> +		data->comp = b57891s0103;
+> +		data->n_comp = ARRAY_SIZE(b57891s0103);
+> +		break;
+>  	default:
+>  		dev_err(dev, "Unknown device type: %lu(%s)\n",
+>  				pdev_id->driver_data, pdev_id->name);
+> diff --git a/include/linux/platform_data/ntc_thermistor.h b/include/linux/platform_data/ntc_thermistor.h
+> index 698d0d59db76..231a27c302ec 100644
+> --- a/include/linux/platform_data/ntc_thermistor.h
+> +++ b/include/linux/platform_data/ntc_thermistor.h
+> @@ -29,6 +29,7 @@ enum ntc_thermistor_type {
+>  	TYPE_B57330V2103,
+>  	TYPE_NCPXXWF104,
+>  	TYPE_NCPXXXH103,
+> +	TYPE_B57891S0103,
+>  };
+>  
+>  struct ntc_thermistor_platform_data {
