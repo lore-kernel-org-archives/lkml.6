@@ -2,238 +2,130 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A69C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 799FCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71AAC20892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E7620834
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:30:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWZ+XVHM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71AAC20892
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsnS0myD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E7620834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725783AbeLBSKz (ORCPT
+        id S1725777AbeLBSaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 13:10:55 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38367 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbeLBSKy (ORCPT
+        Sun, 2 Dec 2018 13:30:08 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45410 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbeLBSaI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 13:10:54 -0500
-Received: by mail-qt1-f194.google.com with SMTP id p17so11363274qtl.5;
-        Sun, 02 Dec 2018 10:10:51 -0800 (PST)
+        Sun, 2 Dec 2018 13:30:08 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so7459717lfa.12;
+        Sun, 02 Dec 2018 10:30:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=g6MUn31CFLBMk8lpZj63YrEiQfbbrRgmleR05KhAnhM=;
-        b=fWZ+XVHM6qtb9com9LQF5vkmdxyNbNsIjINywSXlFhQQUhgC2p90NS1oRJuxDEY1U5
-         LGLYH0etyjuNu9hdCkcvkRDP8H/TvQq6SsFcTGeXLsbRvJszYOdQySsa0wPDoFqpwCjq
-         j3FMIt7mIgtvVuYegRpPx8TQrfQSvELOS8cUnoDxr4yg2wUskg+r2hSOWoohzgu0TiT6
-         FNu/Y3HxXh4hYID8ndX8+NC0pzOiWl+2R+x7tHDE5Uws7AIb9yDJFXwu968L2ezy1NuD
-         b0ZGlwZC/weMgmxA9XJc5HPqR7kWGsKtdXP4mkDLgpN+Lqgi2kgxVirdmmZ4Ktkh1W7e
-         F/7w==
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZXursNr3Y7FGpdsuTl0nEcaVlPiTtalREFY2a4vvFVI=;
+        b=LsnS0myDN+lLp1IoO7QFkSz8NHVSshWC+poHHnNR64sucBEce7heBM3Ewpeb2Gqgo8
+         YNSG3kx1uKf585sSvnAQ8Ei7aVL+yVVCC16NZ/xmqm4cybFEeWBTCkH/xwT59/ZasWEI
+         wYgnuh8HqGvtXVpyoPny5p86A+PkjZDa9olSKecIrTD9jQvZ7ojJwhRSBpP+o6ha63Mw
+         fC4jkgQ4aMcfiqDhZaqZMxOXBnvwAjBp19Akq258Hm2eWXnn5lZxSrxHljtavCmIrUi2
+         dGK1NZbG8DayWwxyGQsX/+ZE46RoMJ07ojsK0x+YFWE8ZzigMAxJ3jIP0GUzR9pL00j3
+         j57g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=g6MUn31CFLBMk8lpZj63YrEiQfbbrRgmleR05KhAnhM=;
-        b=tOd9CvGaLDN6V2TBggKutaIWwSwegiGFzyRfm3ztzzmVj3V/sQE8OiuH3889lyghcp
-         WsL4OJhot+sPsRW6QEL0R+GpDCxpPQL600s/CltCxgjodf34QJFQN6BMO37Bq0xgK4g5
-         bCfTSVdKyOTWhmklZsAtMWpIwLco/FWUGLNR4PC6CIJC/k9UoRowO8H0JWI3fucHnb9q
-         RvwFIUyaMUZJWKCHxXGeVrVhO1QwsuS+B7U08Pfr5Vb0d7ovyOWmD28GgXRv58aeitU2
-         +5nb9ac9uNZXwPZlzBcvDmO+e/ypEPr1Dsevk4+b8IpavG+0XLTrobdupYydR8yYTmgX
-         5n6Q==
-X-Gm-Message-State: AA+aEWbEqDebbaly+bWwBWL4ddaFgv5uq2UKnktbiwAeTKFOm5CxFdsm
-        eNdYm9pJbzPyTQDr6tvv3yg=
-X-Google-Smtp-Source: AFSGD/XR9Cxdv8j106ZiqVvFfKkyuWTjtYH9baAc7XEP2rjNba4t6AaOkN0fvFiQlUT9TY0tY/MfSA==
-X-Received: by 2002:aed:2471:: with SMTP id s46mr12507499qtc.160.1543774250782;
-        Sun, 02 Dec 2018 10:10:50 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id f2sm5945517qkj.54.2018.12.02.10.10.47
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZXursNr3Y7FGpdsuTl0nEcaVlPiTtalREFY2a4vvFVI=;
+        b=Swtw90Mw6NRd+ln2mRnh1B2sOYyl+KV91gaTxW7fd7q/hf1cIiMj5SspqIN+H1b3v3
+         GPt2HnF683W8iMNgwaujFrPTNWUA1X++xZJ0fM3AmA1zuuQePLTJUE253cFxrKFXMdyF
+         v8bB5iDxnts8aaq4g2rkUB2xtjqsdKak8odnezl0aOXAscncK5C2uBoahsm+N1awGEZ7
+         oLv7PEjaU0RwiJjpcQatI6Sf/LcPo1TWANchJXWsIOberfb+Grmz3+Kfho8YzM9EPCH7
+         F2NwAgawyTo5ywZQ0zjib5Sl6bJoL8fv8pJnMj1q0RbVHHvMcCUlW2zqZFbo5+3lgxc1
+         6S8w==
+X-Gm-Message-State: AA+aEWaxQOsUvleQ9czltpm1mLxia2NQQUMDiEpznxBPpC8TBgYfM75K
+        VPAIt/Y3WYj4MCX/JoX6H9g=
+X-Google-Smtp-Source: AFSGD/Vg3iIoRhZIvAC0fcndSh63U7CwaIanQdk7cHkrUGqVaDsmTwdzrSKSF29epGjdmKsiha8JTQ==
+X-Received: by 2002:a19:5e5d:: with SMTP id z29mr7281933lfi.105.1543775403282;
+        Sun, 02 Dec 2018 10:30:03 -0800 (PST)
+Received: from localhost (89-70-226-70.dynamic.chello.pl. [89.70.226.70])
+        by smtp.gmail.com with ESMTPSA id a18-v6sm2042659ljk.86.2018.12.02.10.30.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 10:10:50 -0800 (PST)
-Date:   Sun, 2 Dec 2018 16:10:45 -0200
-From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH] staging: iio: ad5933: replaced kfifo by triggered_buffer
-Message-ID: <20181202181045.vkdnus4ow3chdlu6@smtp.gmail.com>
-References: <20181122125347.sn2oqrw7fyb4corf@smtp.gmail.com>
- <20181125105926.4730a798@archlinux>
+        Sun, 02 Dec 2018 10:30:02 -0800 (PST)
+Date:   Sun, 2 Dec 2018 19:29:44 +0100
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 3/3] iio: chemical: sps30: add device tree support
+Message-ID: <20181202182943.GA8286@arch>
+References: <20181124221415.10081-1-tduszyns@gmail.com>
+ <20181124221415.10081-4-tduszyns@gmail.com>
+ <20181125085939.421523d6@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181125105926.4730a798@archlinux>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20181125085939.421523d6@archlinux>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/25, Jonathan Cameron wrote:
-> On Thu, 22 Nov 2018 10:53:47 -0200
-> Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
-> 
-> > Previously, there was an implicit creation of a kfifo which was replaced
-> > by a call to triggered_buffer_setup, which is already implemented in iio
-> > infrastructure.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> 
-> I'm a little surprised that this would work without screaming a lot as 
-> it will register an interrupt with no handlers. Do you have this
-> device to test?  It's rapidly heading in the direction of too complex
-> a driver to fix without test hardware.  Also, semantically this change
-> is not sensible as it implies an operating mode which the driver
-> is not using.
-> 
-
-Thanks for reviewing the patch. I'm not expert at electronics so I'm
-still studying the datasheet to understand how the ad5933 works.
-
-> There are fundamental questions about how we handle an autotriggered
-> sweep that need answering before this driver can move forwards.
-> It needs some concept of a higher level trigger rather than a per
-> sample one like we typically use in IIO.
-> 
-
-From what I've read so far it seems that we would need to have two
-operation modes: one for the frequency sweep (that need to be
-discussed yet) and another for the receive stage (in which ad5933 would
-be continuously requested for data through I2C). So my first approach
-would be to build up an abstract trigger that would allow switching
-between these two operation modes. What do you think about that?
-
-> The main focus in the short term should be around defining that ABI
-> as it may fundamentally change the structure of the driver.
-> If you want to take this on (and it'll be a big job I think!) then
-> it may be possible to source some hardware to support that effort.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-
-As a member of the FLOSS group at Universidade de São Paulo I have the
-hardware to test the driver though I didn't figure out all the steps to
-do it yet. I intend to continue development on this driver so I'm really
-thankful for all advise given.
-
-Thanks,
-
-Marcelo
-
+On Sun, Nov 25, 2018 at 08:59:39AM +0000, Jonathan Cameron wrote:
+> On Sat, 24 Nov 2018 23:14:15 +0100
+> Tomasz Duszynski <tduszyns@gmail.com> wrote:
+>
+> > Add device tree support for Sensirion SPS30 particulate
+> > matter sensor.
+> >
+> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> one comment inine, around the fact we are trying to move
+> to generic names in DT where ever possible.  Now we don't
+> have a suitable one (IIRC) yet so time to make one up ;)
+>
+> +CC Rob for his input on that.
 > > ---
-> >  .../staging/iio/impedance-analyzer/Kconfig    |  2 +-
-> >  .../staging/iio/impedance-analyzer/ad5933.c   | 25 ++++---------------
-> >  2 files changed, 6 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/drivers/staging/iio/impedance-analyzer/Kconfig b/drivers/staging/iio/impedance-analyzer/Kconfig
-> > index dd97b6bb3fd0..d0af5aa55dc0 100644
-> > --- a/drivers/staging/iio/impedance-analyzer/Kconfig
-> > +++ b/drivers/staging/iio/impedance-analyzer/Kconfig
-> > @@ -7,7 +7,7 @@ config AD5933
-> >  	tristate "Analog Devices AD5933, AD5934 driver"
-> >  	depends on I2C
-> >  	select IIO_BUFFER
-> > -	select IIO_KFIFO_BUF
-> > +	select IIO_TRIGGERED_BUFFER
-> >  	help
-> >  	  Say yes here to build support for Analog Devices Impedance Converter,
-> >  	  Network Analyzer, AD5933/4, provides direct access via sysfs.
-> > diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> > index f9bcb8310e21..edb8b540bbf1 100644
-> > --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
-> > +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> > @@ -20,7 +20,7 @@
-> >  #include <linux/iio/iio.h>
-> >  #include <linux/iio/sysfs.h>
-> >  #include <linux/iio/buffer.h>
-> > -#include <linux/iio/kfifo_buf.h>
-> > +#include <linux/iio/triggered_buffer.h>
-> >  
-> >  /* AD5933/AD5934 Registers */
-> >  #define AD5933_REG_CONTROL_HB		0x80	/* R/W, 1 byte */
-> > @@ -615,22 +615,6 @@ static const struct iio_buffer_setup_ops ad5933_ring_setup_ops = {
-> >  	.postdisable = ad5933_ring_postdisable,
-> >  };
-> >  
-> > -static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
-> > -{
-> > -	struct iio_buffer *buffer;
-> > -
-> > -	buffer = iio_kfifo_allocate();
-> > -	if (!buffer)
-> > -		return -ENOMEM;
-> > -
-> > -	iio_device_attach_buffer(indio_dev, buffer);
-> > -
-> > -	/* Ring buffer functions - here trigger setup related */
-> > -	indio_dev->setup_ops = &ad5933_ring_setup_ops;
-> > -
-> > -	return 0;
-> > -}
-> > -
-> >  static void ad5933_work(struct work_struct *work)
-> >  {
-> >  	struct ad5933_state *st = container_of(work,
-> > @@ -744,7 +728,8 @@ static int ad5933_probe(struct i2c_client *client,
-> >  	indio_dev->channels = ad5933_channels;
-> >  	indio_dev->num_channels = ARRAY_SIZE(ad5933_channels);
-> >  
-> > -	ret = ad5933_register_ring_funcs_and_init(indio_dev);
-> > +	ret = iio_triggered_buffer_setup(indio_dev, NULL, NULL,
-> > +					 &ad5933_ring_setup_ops);
-> 
-> The absence of either of the interrupt related callbacks made me
-> wonder what is going on here.  The upshot is that this device
-> isn't operating in a triggered buffer style at all so we really
-> shouldn't be using that infrastructure - even if it's convenient.
-> 
-> It'll allocate an interrupt with neither a top half nor a thread
-> function. I'm not sure what the core will do about that but it
-> seems unlikely to be happy about it!
-> 
+> >  .../bindings/iio/chemical/sensirion,sps30.txt        | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
+> > new file mode 100644
+> > index 000000000000..6eee2709b5b6
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
+> > @@ -0,0 +1,12 @@
+> > +* Sensirion SPS30 particulate matter sensor
+> > +
+> > +Required properties:
+> > +- compatible: must be "sensirion,sps30"
+> > +- reg: the I2C address of the sensor
+> > +
+> > +Example:
+> > +
+> > +sps30@69 {
+> We should define a generic type.  Rob, what would work for this
+> one?
+>
+> particlesensor@69?
+>
 
-The reason for not using triggered_buffer would be because I2C of
-communication is always started by the master device so the ad5933 would
-only wait for being requested for data. It wouldn't be capable of using
-I2C to call for master device nor it has any interrupt pin to do that.
-Is that right?
+Wouldn't air-pollution-sensor be somewhat more generic? At least
+wikipedia has some article about that. Various other names like
+particle-sensor, pm-sensor, particulate-matter-sensor,
+air-quality-sensor, tend to return more or less similar number
+of search hits. Which means there's no universal naming convention.
 
-> 
-> >  	if (ret)
-> >  		goto error_disable_reg;
-> >  
-> > @@ -759,7 +744,7 @@ static int ad5933_probe(struct i2c_client *client,
-> >  	return 0;
-> >  
-> >  error_unreg_ring:
-> > -	iio_kfifo_free(indio_dev->buffer);
-> > +	iio_triggered_buffer_cleanup(indio_dev);
-> >  error_disable_reg:
-> >  	regulator_disable(st->reg);
-> >  
-> > @@ -772,7 +757,7 @@ static int ad5933_remove(struct i2c_client *client)
-> >  	struct ad5933_state *st = iio_priv(indio_dev);
-> >  
-> >  	iio_device_unregister(indio_dev);
-> > -	iio_kfifo_free(indio_dev->buffer);
-> > +	iio_triggered_buffer_cleanup(indio_dev);
-> >  	regulator_disable(st->reg);
-> >  
-> >  	return 0;
-> 
+> > +	compatible = "sensirion,sps30";
+> > +	reg = <0x69>;
+> > +};
+>
