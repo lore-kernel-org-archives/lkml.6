@@ -2,108 +2,253 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3EBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA7FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D968D20892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:39:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D968D20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ECC782081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:40:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="hzIeVPDU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC782081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725780AbeLBRjC (ORCPT
+        id S1725786AbeLBRkr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 12:39:02 -0500
-Received: from mga12.intel.com ([192.55.52.136]:33137 "EHLO mga12.intel.com"
+        Sun, 2 Dec 2018 12:40:47 -0500
+Received: from mx.kolabnow.com ([95.128.36.41]:29082 "EHLO mx.kolabnow.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725440AbeLBRjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 12:39:01 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2018 09:38:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,307,1539673200"; 
-   d="scan'208";a="114955412"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga002.jf.intel.com with ESMTP; 02 Dec 2018 09:38:55 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gTVhm-0003mP-6x; Sun, 02 Dec 2018 19:38:54 +0200
-Date:   Sun, 2 Dec 2018 19:38:54 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/15] platform/x86: intel_cht_int33fe: Accept errors
- of i2c_acpi_new_device()
-Message-ID: <20181202173854.GG10650@smile.fi.intel.com>
-References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
- <20181128114535.80223-3-andriy.shevchenko@linux.intel.com>
- <20181202155606.16b55703@archlinux>
+        id S1725440AbeLBRkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 12:40:47 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by ext-mx-out002.mykolab.com (Postfix) with ESMTP id C688A829;
+        Sun,  2 Dec 2018 18:40:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+        content-transfer-encoding:content-type:content-type:mime-version
+        :message-id:date:date:subject:subject:from:from:received
+        :received:received; s=dkim20160331; t=1543772441; x=1545586842;
+         bh=XtBC4oqSwSp3INZkGoW8HvLIi4t3QQmjLxUPMvl99ys=; b=hzIeVPDUQTt8
+        eoZrE5/Q7ynhygdTJXFAhNa92iasyoLDVuGrX+BIlTOLVywTADomr2J+wStijIc1
+        Uv0F8Tc2MIaQ7DgymtIEbVOsC3vBW9abCs6W2ZDvHHLzU08FyFHHGJL1Tr3mdm3r
+        /aSbtIOYOxOQ2zbjXaikWvoXkgbJnaUoO9gyFXv5dIN/bX5gdnYOUOPrgWVpf0SO
+        aR5EfJb5rLE+Zpa3PMIcDtwnoiNuRQGJaUo+W4q7wq9DetGslnV5/TDN8eIdz+P1
+        MilP1GSoER1ilQVLujTTaq/luQPoevcJy2wv/QIB5HnidZTiF0iEFXHu2EWCRcID
+        Tg78MhhOlDaVmzd3mCyidyEyRfuCEsmYUm6aStKdEJrL0tH5zyh00OgdYsdOyw5S
+        C5PB4SQPB/ZRfqlKsHUwFqkrIcvm6Gs3VxYA/ZjkDrs1e65MTV/I4xINKDtQ5Ply
+        awYEPS2RgdwN6XUXjjt2qr9M627od7Y8WBxbxQKOAjl/fw4iOnX7HBSzyKNcy/a5
+        xhnM2O7f1ai8thvi/aHCZSvIQYlBqJG3OTBHfwtrDOwK0HMzYbi/8zQnfVtCovB3
+        32NxyAqZoFHcDFT3NaxrjTzJswxD240UBjvOVv0e9Kmuj3gumtQtF9tHtLhh453X
+        OHShpgb4IT0YuV5TudAiaPAGVWgxP8U=
+X-Virus-Scanned: amavisd-new at mykolab.com
+Received: from mx.kolabnow.com ([127.0.0.1])
+        by localhost (ext-mx-out002.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id EEazAwZ1BtPa; Sun,  2 Dec 2018 18:40:41 +0100 (CET)
+Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
+        by ext-mx-out002.mykolab.com (Postfix) with ESMTPS id 3CC10404;
+        Sun,  2 Dec 2018 18:40:41 +0100 (CET)
+Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
+        by int-mx001.mykolab.com (Postfix) with ESMTPS id D6DFA29F;
+        Sun,  2 Dec 2018 18:40:40 +0100 (CET)
+From:   Federico Vaga <federico.vaga@vaga.pv.it>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Alessia Mantegazza <amantegazza@vaga.pv.it>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Federico Vaga <federico.vaga@vaga.pv.it>
+Subject: [PATCH] doc:it: fixes in process/1.Intro
+Date:   Sun,  2 Dec 2018 18:40:09 +0100
+Message-Id: <20181202174010.12152-1-federico.vaga@vaga.pv.it>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181202155606.16b55703@archlinux>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 03:56:06PM +0000, Jonathan Cameron wrote:
-> On Wed, 28 Nov 2018 13:45:22 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+- fix broken links and some
+- fix some grammar errors
 
-> > In the future i2c_acpi_new_device() will return error pointer in some cases.
-> > Prepare intel_cht_int33fe driver to support that.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> Really trivial comment inline.  I haven't checked back to see if there
-> has been any previous discussion on that bit of code.
-> 
-> Otherwise looks sensible to me.
+Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+---
+ .../translations/it_IT/process/1.Intro.rst    | 54 +++++++++----------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-> >  		data->max17047 = i2c_acpi_new_device(dev, 1, &board_info);
-> > -		if (!data->max17047)
-> > -			return -EPROBE_DEFER; /* Wait for i2c-adapter to load */
-> > +		if (IS_ERR(data->max17047))
-> > +			ret = PTR_ERR(data->max17047);
-> Every so slightly nicer to just return directly in these error cases?
-> > +		else if (!data->max17047)
-> > +			ret = -EPROBE_DEFER; /* Wait for i2c-adapter to load */
-> > +		else
-> > +			ret = 0;
-
-> Particularly so as then you don't need to set this ret as it's set in all
-> paths where it is used below anyway...
-
-It doesn't matter much, since the logically it's split to 3 stages:
-- preparation
-- change API
-- drop obsoleted pieces of code
-
-This one is preparation stage. After 3rd stage it will be as you suggested.
-
-> > +		if (ret)
-> > +			return ret;
-
+diff --git a/Documentation/translations/it_IT/process/1.Intro.rst b/Documentation/translations/it_IT/process/1.Intro.rst
+index 8dfbe81627e2..c1be6dc398a7 100644
+--- a/Documentation/translations/it_IT/process/1.Intro.rst
++++ b/Documentation/translations/it_IT/process/1.Intro.rst
+@@ -11,13 +11,13 @@ Introduzione
+ Riepilogo generale
+ ------------------
+ 
+-Il resto di questa sezione riguarda la sfera del processo di sviluppo del
+-kernel e quella sorta di frustrazioni che gli sviluppatori e i loro datori
+-di lavoro affrontano.  Ci sono molte ragioni per le quali del codice per il
+-kernel debba essere incorporato nel kernel ufficiale, fra le quali:
++Il resto di questa sezione riguarda il processo di sviluppo del kernel e
++quella sorta di frustrazione che gli sviluppatori e i loro datori di lavoro
++potrebbero dover affrontare.  Ci sono molte ragioni per le quali del codice
++per il kernel debba essere incorporato nel kernel ufficiale, fra le quali:
+ disponibilità immediata agli utilizzatori, supporto della comunità in
+ differenti modalità, e la capacità di influenzare la direzione dello sviluppo
+-kernel.
++del kernel.
+ Il codice che contribuisce al kernel Linux deve essere reso disponibile sotto
+ una licenza GPL-compatibile.
+ 
+@@ -29,7 +29,7 @@ liste di discussione. Gli sviluppatori che sono in attesa di poter sviluppare
+ qualcosa per il kernel sono invitati ad individuare e sistemare bachi come
+ esercizio iniziale.
+ 
+-La sezione :ref: `it_development_early_stage` copre i primi stadi della
++La sezione :ref:`it_development_early_stage` copre i primi stadi della
+ pianificazione di un progetto di sviluppo, con particolare enfasi sul
+ coinvolgimento della comunità, il prima possibile.
+ 
+@@ -46,7 +46,7 @@ esposte, e devono essere inviate nel posto giusto. Seguire i consigli presenti
+ in questa sezione dovrebbe essere d'aiuto nell'assicurare la migliore
+ accoglienza possibile del vostro lavoro.
+ 
+-La sezione :ref: `it_development_followthrough` copre ciò che accade dopo
++La sezione :ref:`it_development_followthrough` copre ciò che accade dopo
+ la pubblicazione delle modifiche; a questo punto il lavoro è lontano
+ dall'essere concluso.  Lavorare con i revisori è una parte cruciale del
+ processo di sviluppo; questa sezione offre una serie di consigli su come
+@@ -54,11 +54,11 @@ evitare problemi in questa importante fase.  Gli sviluppatori sono diffidenti
+ nell'affermare che il lavoro è concluso quando una modifica è incorporata nei
+ sorgenti principali.
+ 
+-La sezione :ref::`it_development_advancedtopics` introduce un paio di argomenti
+-"avanzati": gestire modifiche con git e controllare le modifiche pubblicate da
+-altri.
++La sezione :ref:`it_development_advancedtopics` introduce un paio di argomenti
++"avanzati": gestire le modifiche con git e controllare le modifiche pubblicate
++da altri.
+ 
+-La sezione :ref: `it_development_conclusion` chiude il documento con dei
++La sezione :ref:`it_development_conclusion` chiude il documento con dei
+ riferimenti ad altre fonti che forniscono ulteriori informazioni sullo sviluppo
+ del kernel.
+ 
+@@ -80,14 +80,14 @@ rendendo questi prodotti attrattivi agli utenti Linux.  I produttori di
+ sistemi integrati, che usano Linux come componente di un prodotto integrato,
+ vogliono che Linux sia capace ed adeguato agli obiettivi ed il più possibile
+ alla mano. Fornitori ed altri produttori di software che basano i propri
+-prodotti su Linux hanno chiaro interesse verso capacità, prestazioni ed
++prodotti su Linux hanno un chiaro interesse verso capacità, prestazioni ed
+ affidabilità del kernel Linux.  E gli utenti finali, anche, spesso vorrebbero
+ cambiare Linux per renderlo più aderente alle proprie necessità.
+ 
+ Una delle caratteristiche più coinvolgenti di Linux è quella dell'accessibilità
+ per gli sviluppatori; chiunque con le capacità richieste può migliorare
+ Linux ed influenzarne la direzione di sviluppo.  Prodotti non open-source non
+-possono offrire questo tipo di apertura, che è una caratteristica del softwere
++possono offrire questo tipo di apertura, che è una caratteristica del software
+ libero.  Ma, anzi, il kernel è persino più aperto rispetto a molti altri
+ progetti di software libero.  Un classico ciclo di sviluppo trimestrale può
+ coinvolgere 1000 sviluppatori che lavorano per più di 100 differenti aziende
+@@ -104,9 +104,9 @@ sviluppo privati.
+ 
+ Il processo di sviluppo del Kernel può, dall'altro lato, risultare
+ intimidatorio e strano ai nuovi sviluppatori, ma ha dietro di se buone ragioni
+-e solide esperienze.  Uno sviluppatore che non comprenda i modi della comunità
++e solide esperienze.  Uno sviluppatore che non comprende i modi della comunità
+ del kernel (o, peggio, che cerchi di aggirarli o violarli) avrà un'esperienza
+-deludente nel proprio bagagliaio.  La comunità di sviluppo, sebbene sia utile
++deludente nel proprio bagaglio.  La comunità di sviluppo, sebbene sia utile
+ a coloro che cercano di imparare, ha poco tempo da dedicare a coloro che non
+ ascoltano o coloro che non sono interessati al processo di sviluppo.
+ 
+@@ -132,7 +132,7 @@ reso possibile.
+ L'importanza d'avere il codice nei sorgenti principali
+ ------------------------------------------------------
+ 
+-Alcune aziende e sviluppatori ogni tanto si domandano perchè dovrebbero
++Alcune aziende e sviluppatori ogni tanto si domandano perché dovrebbero
+ preoccuparsi di apprendere come lavorare con la comunità del kernel e di
+ inserire il loro codice nel ramo di sviluppo principale (per ramo principale
+ s'intende quello mantenuto da Linus Torvalds e usato come base dai
+@@ -144,12 +144,12 @@ codice separato ("fuori dai sorgenti", *"out-of-tree"*) è un falso risparmio.
+ Per dimostrare i costi di un codice "fuori dai sorgenti", eccovi
+ alcuni aspetti rilevanti del processo di sviluppo kernel; la maggior parte
+ di essi saranno approfonditi dettagliatamente più avanti in questo documento.
+-Pensate:
++Considerate:
+ 
+ - Il codice che è stato inserito nel ramo principale del kernel è disponibile
+   a tutti gli utilizzatori Linux. Sarà automaticamente presente in tutte le
+   distribuzioni che lo consentono. Non c'è bisogno di: driver per dischi,
+-  scaricare file, o della scocciatura del dover supportare diverse versoni di
++  scaricare file, o della scocciatura del dover supportare diverse versioni di
+   diverse distribuzioni; funziona già tutto, per gli sviluppatori e per gli
+   utilizzatori. L'inserimento nel ramo principale risolve un gran numero di
+   problemi di distribuzione e di supporto.
+@@ -166,9 +166,9 @@ Pensate:
+ 
+   Invece, il codice che si trova nel ramo principale non necessita di questo
+   tipo di lavoro poiché ad ogni sviluppatore che faccia una modifica alle
+-  interfacce viene richiesto di sistemare anche il codice che utilizza che
+-  utilizza quell'interfaccia. Quindi, il codice che è stato inserito nel
+-  ramo principale ha dei costi di mantenimento significativamente più bassi.
++  interfacce viene richiesto di sistemare anche il codice che utilizza
++  quell'interfaccia. Quindi, il codice che è stato inserito nel ramo principale
++  ha dei costi di mantenimento significativamente più bassi.
+ 
+ - Oltre a ciò, spesso il codice che è all'interno del kernel sarà migliorato da
+   altri sviluppatori. Dare pieni poteri alla vostra comunità di utenti e ai
+@@ -177,10 +177,10 @@ Pensate:
+ 
+ - Il codice kernel è soggetto a revisioni, sia prima che dopo l'inserimento
+   nel ramo principale.  Non importa quanto forti fossero le abilità dello
+-  sviluppatore originale, il processo di revisione trovà il modo di migliore
++  sviluppatore originale, il processo di revisione troverà il modo di migliore
+   il codice.  Spesso la revisione trova bachi importanti e problemi di
+   sicurezza.  Questo è particolarmente vero per il codice che è stato
+-  sviluppato in un ambiete chiuso; tale codice ottiene un forte beneficio
++  sviluppato in un ambiente chiuso; tale codice ottiene un forte beneficio
+   dalle revisioni provenienti da sviluppatori esteri. Il codice
+   "fuori dai sorgenti", invece, è un codice di bassa qualità.
+ 
+@@ -198,7 +198,7 @@ Pensate:
+   non standard "fuori dai sorgenti" per un tempo indefinito, o (2) abbandonare
+   il codice e far migrare i vostri utenti alla versione "nei sorgenti".
+ 
+-- Contribuire al codice è l'azione fondamentale che fa funzione tutto il
++- Contribuire al codice è l'azione fondamentale che fa funzionare tutto il
+   processo. Contribuendo attraverso il vostro codice potete aggiungere nuove
+   funzioni al kernel e fornire competenze ed esempi che saranno utili ad
+   altri sviluppatori.  Se avete sviluppato del codice Linux (o state pensando
+@@ -216,7 +216,7 @@ distribuzione binaria di codice kernel. Questo include che:
+   sono molto nebbiose; parecchi detentori di copyright sul kernel credono che
+   molti moduli binari siano prodotti derivati del kernel e che, come risultato,
+   la loro diffusione sia una violazione della licenza generale di GNU (della
+-  quale si parlerà più avanti).  Il vostro ideatore non è un avvocato, e
++  quale si parlerà più avanti).  L'autore qui non è un avvocato, e
+   niente in questo documento può essere considerato come un consiglio legale.
+   Il vero stato legale dei moduli proprietari può essere determinato
+   esclusivamente da un giudice. Ma l'incertezza che perseguita quei moduli
+@@ -236,7 +236,7 @@ distribuzione binaria di codice kernel. Questo include che:
+   separatamente ogni volta che aggiornano il loro kernel.
+ 
+ - Tutto ciò che è stato detto prima riguardo alla revisione del codice si
+-  applica doppiamente al codice proprietario.  Dato che questo codice non é
++  applica doppiamente al codice proprietario.  Dato che questo codice non è
+   del tutto disponibile, non può essere revisionato dalla comunità e avrà,
+   senza dubbio, seri problemi.
+ 
+@@ -271,7 +271,7 @@ kernel conserva la sua proprietà originale; ne risulta che ora il kernel abbia
+ migliaia di proprietari.
+ 
+ Una conseguenza di questa organizzazione della proprietà è che qualsiasi
+-tentativo di modifica della licenza del kernel è destinata ad quasi sicuro
++tentativo di modifica della licenza del kernel è destinata ad un quasi sicuro
+ fallimento.  Esistono alcuni scenari pratici nei quali il consenso di tutti
+ i detentori di copyright può essere ottenuto (o il loro codice verrà rimosso
+ dal kernel).  Quindi, in sostanza, non esiste la possibilità che si giunga ad
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.19.2
 
