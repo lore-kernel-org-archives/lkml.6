@@ -4,170 +4,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3575C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9D7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F632081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D20DA2082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="grYuPt+u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F632081C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nvMrjOsP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20DA2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darnok.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725857AbeLBMam (ORCPT
+        id S1725848AbeLBMmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 07:30:42 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37458 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbeLBMam (ORCPT
+        Sun, 2 Dec 2018 07:42:50 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39846 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbeLBMmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 07:30:42 -0500
-Received: by mail-qt1-f195.google.com with SMTP id z16so10860897qtq.4
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 04:30:38 -0800 (PST)
+        Sun, 2 Dec 2018 07:42:50 -0500
+Received: by mail-qt1-f193.google.com with SMTP id n21so10861560qtl.6;
+        Sun, 02 Dec 2018 04:42:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=px0ldm/IDOFB1WWV1D2qz0WktHoFTvg41ZitMVargg4=;
-        b=grYuPt+uO91AqpbuGnu+6bdFhgOf5XIw/SQ/X6qsoCZBy/bIMzY7x5omICCVQtfGk0
-         M5jr0wDDz3LRFK3R9AEtjrthTIfCfmzOjMjHEIIsCGsmClaa9SesodNX0qco9f4a5RET
-         YQ2chV6wmDLnEqR5j5BiM+07BlzgEEA2IUtR56TTo1Cmymqvd0sJ+O1uy1dF4C/gpPK3
-         PJltUUZs1JC8xe+zXzEvwSQGh/erbrkysNw2p6Uj7E9HsMc4ahG5s6pIRhmL0FfDx9Lh
-         5+9hm5afbE8+SJnxFOUqa/VvWM5mnd9fJEbyQXxI02pvWMob0sY5ICGb6R9aOIH3waVI
-         RMBQ==
+         :content-disposition:in-reply-to:user-agent;
+        bh=lEtZ8HUr5ta3aKPraRuQaLc/uiyvX7GFrTe4WWXumQI=;
+        b=nvMrjOsPdkPMzQLlt1gunKPVHCAajsFxx0tWR6GaGF7HBlewscy+eiPaX1SQpZP/nS
+         vnhJr27IuE7V4isA7367vYd3vuhRTsll1+3rA5gg8VyHUOcAEUjtBSRVEQw+hZYzgP1t
+         UxYBtIpAA5c8k4TEigeoDoqu5fnoWxGrPrm603hx3H2+5NAdttbjdDWgbZsI7ovMhLSR
+         l5IbUKsCuCwlMtSDiP4/QAo6BjTwdjHw5Bo8lY5GWkQaBUVmNu1yqTu1S4YXUes+ZsU+
+         JE0JiR3PKDnT7okU4ZU17FJmEdzcM2mJAs3I7t5mM82Vcjz1779tMprJlSleWYPdf9xD
+         l9fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=px0ldm/IDOFB1WWV1D2qz0WktHoFTvg41ZitMVargg4=;
-        b=PgAw7JG4r89WV4K5MeJdeKP5021mhXY05zuMQXYunUgN2Uqj3HfdpNMnIHImizlCI4
-         h9M5gSCN8cBNGkB3WToX2sXHFPshhz6zJ5dNrZ1DARuVabtmGLErpHAZPhg+KCUszMgd
-         WVL3KppBZe4B8Q1/CUN/EiJGTE9M1wPMNlDCkDEjv/ANswZnkY33n6WX5B0ovpjDzj7s
-         s4anD/1kk0byYHHuqVlj8FADth+bSVDF1n+GBQDXqi/g0Vadd5r6+JTsX2jaxCPHOXva
-         cbzz/+uiI0GkNwjTt3kXneEvAMmsSUSAZwZBylOIrzOjVaJK3uxnJ7wNtb7q2HUhg4UR
-         h/Hg==
-X-Gm-Message-State: AA+aEWa/kGe5fu3mu0E/mJyCPSd5WOvgQ9hpICdkDmoq4IIaMNyK07+i
-        GsePLpTUz1/ucNUqdXnyBf0=
-X-Google-Smtp-Source: AFSGD/WHw3BL/eKJ+O8hW2okvLhfvPE14kVQMrmI1TY5UozMHNFDluw9Qim5JIVfJVxAfi/e1n1O7w==
-X-Received: by 2002:ac8:6892:: with SMTP id m18mr11584608qtq.157.1543753837242;
-        Sun, 02 Dec 2018 04:30:37 -0800 (PST)
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lEtZ8HUr5ta3aKPraRuQaLc/uiyvX7GFrTe4WWXumQI=;
+        b=m4wuYQ4DxcbOWGuZBMpEp51P8M5lBnP1GK0CK+0o7XpzGaoT3HuWcUOk3Ww7GG+6PX
+         gx8qVkOqIdAPoSqyYcUXhg0NPnIBGwe0guJ0okWZ9QAME7VNQkPrEwkJvceD8Z2XLwly
+         Tw1k6U6iPfd7vJ4wLPWv+ea69RWOMr5ggA9Y4jhYWk+VBzHCdaKRFPEGLuSSHaw7VTs7
+         N49yaa+IAdRQ3601IDPnSTxYe1Zb5H1UBruNWlq1UJ9pR0miqfqqmXTz8xch2H9Df1Bp
+         XK3GW25jOGl4Dbp4Km1IlMXnyNQrgCvUZzyzPNfwt1cWQBhk1HeH5PEGvgmlgodkGO/r
+         GQzA==
+X-Gm-Message-State: AA+aEWa6DeE/4ZcVlTAjAZKPukCcHZWuNW5h52O/Pf5lWN2AFH3Nx7A8
+        cnjnUIYjs18pAfgZsmAccS8=
+X-Google-Smtp-Source: AFSGD/XJoGLFFla/kAziyV6siowbKNDg2u87EjOALppmCId+LntOL79e/BjjXr0SoIlJXgIs/OJ+yA==
+X-Received: by 2002:a05:6214:c7:: with SMTP id f7mr12527886qvs.44.1543754566450;
+        Sun, 02 Dec 2018 04:42:46 -0800 (PST)
 Received: from localhost.localdomain (209-6-36-129.s6527.c3-0.smr-cbr2.sbo-smr.ma.cable.rcncustomer.com. [209.6.36.129])
-        by smtp.gmail.com with ESMTPSA id d78sm5454819qke.94.2018.12.02.04.30.35
+        by smtp.gmail.com with ESMTPSA id s46sm6666795qtc.63.2018.12.02.04.42.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 04:30:36 -0800 (PST)
-Date:   Sun, 2 Dec 2018 07:30:34 -0500
+        Sun, 02 Dec 2018 04:42:45 -0800 (PST)
+Date:   Sun, 2 Dec 2018 07:42:42 -0500
 From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com,
-        robin.murphy@arm.com, iommu@lists.linux-foundation.org,
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jon Mason <jdmason@kudzu.us>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/dma: Fix panic caused by passing swiotlb to
- command line
-Message-ID: <20181202123032.GA3166@localhost.localdomain>
-References: <1537154831-447363-1-git-send-email-zhe.he@windriver.com>
- <c3536f4f-9bde-4f7f-a180-aa569d4e786d@windriver.com>
- <20181022192921.GA20677@dhcp-10-175-29-12.vpn.oracle.com>
- <87ee40fa-7a01-4d4c-7fa3-81aafc93e14f@windriver.com>
- <5fa82cb9-bd32-8a3f-ddca-053f544e2883@windriver.com>
+Subject: Re: [PATCH 21/23] xen-swiotlb: remove the mapping_error dma_map_ops
+ method
+Message-ID: <20181202124241.GB3166@localhost.localdomain>
+References: <20181130132231.16512-1-hch@lst.de>
+ <20181130132231.16512-22-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5fa82cb9-bd32-8a3f-ddca-053f544e2883@windriver.com>
+In-Reply-To: <20181130132231.16512-22-hch@lst.de>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 07:06:10PM +0800, He Zhe wrote:
+On Fri, Nov 30, 2018 at 02:22:29PM +0100, Christoph Hellwig wrote:
+> Return DMA_MAPPING_ERROR instead of 0 on a dma mapping failure and let
+> the core dma-mapping code handle the rest.
 > 
-> 
-> On 2018/10/23 19:14, He Zhe wrote:
-> >
-> > On 2018/10/23 03:29, Konrad Rzeszutek Wilk wrote:
-> >> On Sat, Sep 22, 2018 at 08:56:58PM +0800, He Zhe wrote:
-> >>> May I have your input?
-> >> Alternatively would it make more sense for it to assume some default
-> >> value?
-> > Maybe, but the original code has no default value and I have no idea
-> > what default value is proper here.
-> 
-> Can anyone give some suggestions? Though I'd prefer to do nothing when
-> no option is provided.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-One provided the paramter for a reason. I would just do a small one, say
-4MB.
+Reviewed-by: Konrad Rzeszutek Wilk <konrad@darnok.org>
+> ---
+>  drivers/xen/swiotlb-xen.c | 12 ++----------
+>  1 file changed, 2 insertions(+), 10 deletions(-)
 > 
-> Thanks,
-> Zhe
-> 
-> >
-> > Zhe
-> >
-> >>> Thanks,
-> >>> Zhe
-> >>>
-> >>> On 2018年09月17日 11:27, zhe.he@windriver.com wrote:
-> >>>> From: He Zhe <zhe.he@windriver.com>
-> >>>>
-> >>>> setup_io_tlb_npages does not check input argument before passing it
-> >>>> to isdigit. The argument would be a NULL pointer if "swiotlb", without
-> >>>> its value, is set in command line and thus causes the following panic.
-> >>>>
-> >>>> PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
-> >>>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
-> >>>> [    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
-> >>>> ...
-> >>>> [    0.000000] Call Trace:
-> >>>> [    0.000000]  do_early_param+0x57/0x8e
-> >>>> [    0.000000]  parse_args+0x208/0x320
-> >>>> [    0.000000]  ? rdinit_setup+0x30/0x30
-> >>>> [    0.000000]  parse_early_options+0x29/0x2d
-> >>>> [    0.000000]  ? rdinit_setup+0x30/0x30
-> >>>> [    0.000000]  parse_early_param+0x36/0x4d
-> >>>> [    0.000000]  setup_arch+0x336/0x99e
-> >>>> [    0.000000]  start_kernel+0x6f/0x4e6
-> >>>> [    0.000000]  x86_64_start_reservations+0x24/0x26
-> >>>> [    0.000000]  x86_64_start_kernel+0x6f/0x72
-> >>>> [    0.000000]  secondary_startup_64+0xa4/0xb0
-> >>>>
-> >>>> This patch adds a check to prevent the panic.
-> >>>>
-> >>>> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> >>>> Cc: stable@vger.kernel.org
-> >>>> Cc: konrad.wilk@oracle.com
-> >>>> Cc: hch@lst.de
-> >>>> Cc: m.szyprowski@samsung.com
-> >>>> Cc: robin.murphy@arm.com
-> >>>> ---
-> >>>>  kernel/dma/swiotlb.c | 5 +++++
-> >>>>  1 file changed, 5 insertions(+)
-> >>>>
-> >>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> >>>> index 4f8a6db..46fc34e 100644
-> >>>> --- a/kernel/dma/swiotlb.c
-> >>>> +++ b/kernel/dma/swiotlb.c
-> >>>> @@ -109,6 +109,11 @@ static int late_alloc;
-> >>>>  static int __init
-> >>>>  setup_io_tlb_npages(char *str)
-> >>>>  {
-> >>>> +	if (!str) {
-> >>>> +		pr_err("Config string not provided\n");
-> >>>> +		return -EINVAL;
-> >>>> +	}
-> >>>> +
-> >>>>  	if (isdigit(*str)) {
-> >>>>  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
-> >>>>  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
-> >>> _______________________________________________
-> >>> iommu mailing list
-> >>> iommu@lists.linux-foundation.org
-> >>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> >
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index 2a7f545bd0b5..6dc969d5ea2f 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -53,8 +53,6 @@
+>   * API.
+>   */
+>  
+> -#define XEN_SWIOTLB_ERROR_CODE	(~(dma_addr_t)0x0)
+> -
+>  static char *xen_io_tlb_start, *xen_io_tlb_end;
+>  static unsigned long xen_io_tlb_nslabs;
+>  /*
+> @@ -406,7 +404,7 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
+>  	map = swiotlb_tbl_map_single(dev, start_dma_addr, phys, size, dir,
+>  				     attrs);
+>  	if (map == SWIOTLB_MAP_ERROR)
+> -		return XEN_SWIOTLB_ERROR_CODE;
+> +		return DMA_MAPPING_ERROR;
+>  
+>  	dev_addr = xen_phys_to_bus(map);
+>  	xen_dma_map_page(dev, pfn_to_page(map >> PAGE_SHIFT),
+> @@ -421,7 +419,7 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
+>  	attrs |= DMA_ATTR_SKIP_CPU_SYNC;
+>  	swiotlb_tbl_unmap_single(dev, map, size, dir, attrs);
+>  
+> -	return XEN_SWIOTLB_ERROR_CODE;
+> +	return DMA_MAPPING_ERROR;
+>  }
+>  
+>  /*
+> @@ -700,11 +698,6 @@ xen_swiotlb_get_sgtable(struct device *dev, struct sg_table *sgt,
+>  	return dma_common_get_sgtable(dev, sgt, cpu_addr, handle, size, attrs);
+>  }
+>  
+> -static int xen_swiotlb_mapping_error(struct device *dev, dma_addr_t dma_addr)
+> -{
+> -	return dma_addr == XEN_SWIOTLB_ERROR_CODE;
+> -}
+> -
+>  const struct dma_map_ops xen_swiotlb_dma_ops = {
+>  	.alloc = xen_swiotlb_alloc_coherent,
+>  	.free = xen_swiotlb_free_coherent,
+> @@ -719,5 +712,4 @@ const struct dma_map_ops xen_swiotlb_dma_ops = {
+>  	.dma_supported = xen_swiotlb_dma_supported,
+>  	.mmap = xen_swiotlb_dma_mmap,
+>  	.get_sgtable = xen_swiotlb_get_sgtable,
+> -	.mapping_error	= xen_swiotlb_mapping_error,
+>  };
+> -- 
+> 2.19.1
 > 
