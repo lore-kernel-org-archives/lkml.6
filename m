@@ -8,66 +8,66 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F982C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 511DCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA64E20834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:23:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7622082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:24:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBK5v4eT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA64E20834
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhXPEcwi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7622082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725808AbeLBGX4 (ORCPT
+        id S1725816AbeLBGYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 01:23:56 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35473 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbeLBGX4 (ORCPT
+        Sun, 2 Dec 2018 01:24:35 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41011 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbeLBGYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 01:23:56 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p8so4846207plo.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 22:23:53 -0800 (PST)
+        Sun, 2 Dec 2018 01:24:35 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u6so4818660plm.8
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 22:24:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=w2N1lFnP7lwgyibZCv3zxC5CB8Y6AOTQeCb4v428osI=;
-        b=jBK5v4eTeFUcYgaR+VLRi9deC6Tupa9Mqh0p6nmBGPzYYWw2U743+twg2EQuBBpceD
-         JgfOJYhqiH2frDarCFg4yosdUP8Xn8XfB7jh+RN4O4NCn0/1yE8FMtJTK4kKjq7rZ2U6
-         lSqGXiLyfwYVjNi4wZpH78wgwZSNG/TubSbCzTjLT+KR2qhliCcWtIGI3i6GjVtqSwKT
-         u/uayvqLwk1peAvdSgMWAIXxqOFTN34B+E2B8iZOpQUKwxGGlU1LqYAo7YfQ6v06V9Qa
-         EaWl8geGVUvW8EQsIRoYf9dYnZUrBrH+U8j+P9IvAKaM99rd1ol8BrbajXXKBYukaQpz
-         Z12g==
+        bh=QkAoEj0L9qsuE5G4ssoKQbBfw8UWUhYAoif7GyqYqTE=;
+        b=NhXPEcwiMw1Jo0Yi0g97yLtSrgjmPBYmW2vb685ioI+U4hCQGjrF1FY5BLpoyPhG2J
+         aUK/Za6Fh/zreav+EGci9N6H6yIIMZ+efw1GT2E+D78DGnWX1JQwYy2ispB3kuDU0tG+
+         xUzPWz/+xnR6UuC8tUJ+XwhbHAGxt1er8Vj3nl/GgaDT6CNHr9/7ahNkvNZUK/S5Gq1L
+         gr5iVu096dfzeK99TmuYocmpCw8kcKaSuWkguFSJWw2FXhFO5TH9Vkdezq6zXr7JtEIJ
+         lF25ikfMrQW4LCt7tuE7lPEyYftBR/y143U7oi/ufYCkU4nNecNMZWxk13mIn3EdR/VS
+         Lafw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=w2N1lFnP7lwgyibZCv3zxC5CB8Y6AOTQeCb4v428osI=;
-        b=Go61EtRbynZuxFaoSins1WLqh54t6LG9IBO3Mi9B2dMBLjUn+bQR67+AwyTHeLW0n1
-         RvS8QiJVZju7z28bPMsqBsTTGKC5YsAFbQkl9CMmX9k1umrUSnlvYLGMfKay/nZJX3YM
-         6iMXz8b7IUO0GZ8030QvakjCAh9vIzFw2fUh60Hte7Z86+Vli3fpcQ9/EwmE68Yy057G
-         fJUPdeExbL3Mzbb830k37chXdF1U5ocGP/95tzdCYNOol2zKbcDmsoBTgSdQQYSk4RCk
-         /fIgTtTFUCsaKZuYBKe0SsX2l37jU3oCm2ho/Ra/WkdwWcFJus1GzzWQtCHY/4AZo0A0
-         hJUw==
-X-Gm-Message-State: AA+aEWbHHQZY3NFBOSNI0TcmLbOBjMayu+piIvAMlw6nMEt8IPoewlMM
-        70fPchP4XFQ4KYGTC+HqeFViBF10
-X-Google-Smtp-Source: AFSGD/U5NpFo3BqmiepkzNLs4Uga3ZdburK9tg+IUhPNMqIBo3/fxHs2QepB5StkiSWDXo/iRcM3xw==
-X-Received: by 2002:a17:902:8ec8:: with SMTP id x8mr11611998plo.210.1543731832939;
-        Sat, 01 Dec 2018 22:23:52 -0800 (PST)
+        bh=QkAoEj0L9qsuE5G4ssoKQbBfw8UWUhYAoif7GyqYqTE=;
+        b=af4qZjOANxV4P/YDCtgGZQ9jV3VjJKNBUkXyoPhBgGG3Ye7gErMHHRaA6Qcyyf72H7
+         EHgeK1xnf0DlREa4tnRM7H7S4fv9CrPh9TMZo6hNH4q4L6jVIl0M3Fvh/xZi2Oiz1gDr
+         YpB2l4I5QzjlXbw5MFRJJwnmIvYC/zdgqAv/+aXoLvxViAsl5i+mLDJrHph/eVX5mSM6
+         w+bUQLA3xsb7fY4ex6M+yE8YG+E+iqyGynWkdjWZMflacqDNyE+92VCIRY1wx4IDDeqz
+         MTC/9QPYyRoD4dOdsygkhguwqajTjszs67QP/8b4FF33DvOojoTtpnu1eYp1Hq1k4y0s
+         EUMg==
+X-Gm-Message-State: AA+aEWYNWdTAD0U8Fj5sGOr0XPyXSBLfFaQQEqqIpPj9H80S0opPAIiM
+        +aykaYz41M+4sqVP3rWXBNo=
+X-Google-Smtp-Source: AFSGD/VHmonIx00YX3S79mkkjHjj09llEDbImZVH68eWMhHUiHmKjvuUEmzCzMegTtM0KXbGzxmF+w==
+X-Received: by 2002:a17:902:4c85:: with SMTP id b5mr10986893ple.226.1543731872839;
+        Sat, 01 Dec 2018 22:24:32 -0800 (PST)
 Received: from jordon-HP-15-Notebook-PC ([103.227.99.148])
-        by smtp.gmail.com with ESMTPSA id n70sm12795687pfi.185.2018.12.01.22.23.51
+        by smtp.gmail.com with ESMTPSA id r83sm18648620pfc.115.2018.12.01.22.24.31
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 01 Dec 2018 22:23:51 -0800 (PST)
-Date:   Sun, 2 Dec 2018 11:57:37 +0530
+        Sat, 01 Dec 2018 22:24:32 -0800 (PST)
+Date:   Sun, 2 Dec 2018 11:58:17 +0530
 From:   Souptick Joarder <jrdr.linux@gmail.com>
 To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
         boris.ostrovsky@oracle.com, jgross@suse.com
 Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH v2 8/9] xen/gntdev.c: Convert to use vm_insert_range
-Message-ID: <20181202062736.GA3240@jordon-HP-15-Notebook-PC>
+Subject: [PATCH v2 9/9] xen/privcmd-buf.c: Convert to use vm_insert_range
+Message-ID: <20181202062816.GA3256@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -84,38 +84,28 @@ Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 Reviewed-by: Matthew Wilcox <willy@infradead.org>
 Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 ---
- drivers/xen/gntdev.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/xen/privcmd-buf.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index b0b02a5..430d4cb 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -1084,7 +1084,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 	int index = vma->vm_pgoff;
- 	int count = vma_pages(vma);
- 	struct gntdev_grant_map *map;
--	int i, err = -EINVAL;
-+	int err = -EINVAL;
- 
- 	if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
- 		return -EINVAL;
-@@ -1145,12 +1145,9 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 		goto out_put_map;
- 
- 	if (!use_ptemod) {
--		for (i = 0; i < count; i++) {
--			err = vm_insert_page(vma, vma->vm_start + i*PAGE_SIZE,
--				map->pages[i]);
--			if (err)
--				goto out_put_map;
+diff --git a/drivers/xen/privcmd-buf.c b/drivers/xen/privcmd-buf.c
+index df1ed37..8d8255b 100644
+--- a/drivers/xen/privcmd-buf.c
++++ b/drivers/xen/privcmd-buf.c
+@@ -180,12 +180,8 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	if (vma_priv->n_pages != count)
+ 		ret = -ENOMEM;
+ 	else
+-		for (i = 0; i < vma_priv->n_pages; i++) {
+-			ret = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
+-					     vma_priv->pages[i]);
+-			if (ret)
+-				break;
 -		}
-+		err = vm_insert_range(vma, vma->vm_start, map->pages, count);
-+		if (err)
-+			goto out_put_map;
- 	} else {
- #ifdef CONFIG_X86
- 		/*
++		ret = vm_insert_range(vma, vma->vm_start, vma_priv->pages,
++				vma_priv->n_pages);
+ 
+ 	if (ret)
+ 		privcmd_buf_vmapriv_free(vma_priv);
 -- 
 1.9.1
 
