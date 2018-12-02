@@ -2,141 +2,261 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FBBC65BAE
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A634EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A771E20834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:57:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A771E20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 61149206B7
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:59:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uTDhgVUk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61149206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725766AbeLBG5n convert rfc822-to-8bit (ORCPT
+        id S1725779AbeLBG7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 01:57:43 -0500
-Received: from mga05.intel.com ([192.55.52.43]:1952 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725379AbeLBG5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 01:57:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Dec 2018 22:57:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,305,1539673200"; 
-   d="scan'208";a="122193112"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Dec 2018 22:57:39 -0800
-Received: from fmsmsx157.amr.corp.intel.com (10.18.116.73) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Sat, 1 Dec 2018 22:57:39 -0800
-Received: from hasmsx106.ger.corp.intel.com (10.184.198.20) by
- FMSMSX157.amr.corp.intel.com (10.18.116.73) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Sat, 1 Dec 2018 22:57:38 -0800
-Received: from hasmsx112.ger.corp.intel.com ([169.254.11.97]) by
- HASMSX106.ger.corp.intel.com ([169.254.10.88]) with mapi id 14.03.0415.000;
- Sun, 2 Dec 2018 08:57:36 +0200
-From:   "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        "bjorn@helgaas.com" <bjorn@helgaas.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Mertarg10@gmail.com" <Mertarg10@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
- detected but bluetooth works
-Thread-Topic: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
- detected but bluetooth works
-Thread-Index: AQHUh2ApCc7lmNGfg0mZ5cTxRsuvBaVrCVdw
-Date:   Sun, 2 Dec 2018 06:57:35 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB3013373E4A3@HASMSX112.ger.corp.intel.com>
-References: <bug-201647-193951@https.bugzilla.kernel.org/>
- <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
- <20181128211959.GB178809@google.com>
-In-Reply-To: <20181128211959.GB178809@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjIwY2I2ZDUtNTFiMy00NjQyLTkxZDQtNzg2MWU5YTIxYTQwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieTJzNDNLcUpBTFlGdm1OOU8rdGNqVk96UHRudkZRbzhmdDQ0ZVpYZHVoc3NJTkFIWlVSVHRxUW80TlVEeTJhRyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.85.151]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Sun, 2 Dec 2018 01:59:20 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43408 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbeLBG7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 01:59:20 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so4798524pfk.10;
+        Sat, 01 Dec 2018 22:59:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=gUqqp6ntqbUTModFv8ymqQ+wmczs9IhawQehCqR6DXw=;
+        b=uTDhgVUkKlSxoLSuefTKtDaGMMik6z2sJrnjGpvwwALgKsxq8O9T0WxLo/DyJC85Tz
+         R/4w6vRBMxFU7/PEo/Ebz3+23GkNBdjzTUL7AULa4y4pPZLB0rWkwCQN8R0O9ll6U9iT
+         lXzDPcIpct7r9CCzLpc0DciAmS81Mwwf34gB+xcHZF9YnVxyvCTeyaTqP7TcnRQVYgPD
+         vvAalIdpDVjei0ZvOkdJC1+03MSNbXyn8C45Fy/A5Tckn834HvHuc/mVm9vGZjHc+J0c
+         6bj0pN3g7Wl7kqKzGXILvtya3dBse9JC7RW+CvLewuWwfiazpxvLhpWtmEnZYU/S1hhI
+         5/Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gUqqp6ntqbUTModFv8ymqQ+wmczs9IhawQehCqR6DXw=;
+        b=QxOTv0p9gEbsYzm4D9oXJqRlj0nUjBpdBJp7mmkNRHt85JpdbMeYhYD3Luw4eEv50U
+         5zONbabp/vrWR3ZZ3gekRLfBRc8m6aTjDZXgANvZCwvDze6hIAz1fC04b0+lCrNHlcCu
+         ZTIU0pOvRM5P6ZnA1mKARj6YwN+5x0S+QdnVoaqD93SQ3zBjMmyIGTtNKVupgGr0zxUT
+         iUA+TNSjF+2ttv3k54pSkg04CKCntRePQt9dxo9YPkc7KNDu1k2OY6XskR29q1yt+1RT
+         1nfV3BglJn5lHuOw6h0K3a8yusyDY2IDLQmb9l0zb/Y2k9D22g5UpBVCwHDFpopZcNgB
+         O9RQ==
+X-Gm-Message-State: AA+aEWYYoa3Yf3hP1v8DfqwqAhBgBb0i2N72gpB/fG0KuSsaiR7Du4RB
+        Qh+r+iXl1JlzAuHac2qLp30=
+X-Google-Smtp-Source: AFSGD/V2PdX5zFaZy1lntCnIDWFFyvW8Rd+b7CyF3FcT86X0oAAOTXB5zO9Fjxl1f0OWCBKjvM9HAQ==
+X-Received: by 2002:a62:7e93:: with SMTP id z141mr11272782pfc.239.1543733956138;
+        Sat, 01 Dec 2018 22:59:16 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id t90sm20572134pfj.23.2018.12.01.22.59.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Dec 2018 22:59:15 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     qla2xxx-upstream@qlogic.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, kartilak@cisco.com, sebaddel@cisco.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] scsi: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Sun,  2 Dec 2018 01:59:13 -0500
+Message-Id: <20181202065913.10377-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> [+cc Emmanuel, LKML]
-> 
-> On Fri, Nov 09, 2018 at 03:43:06PM -0600, Bjorn Helgaas wrote:
-> > ---------- Forwarded message ---------
-> > From: <bugzilla-daemon@bugzilla.kernel.org>
-> > Date: Fri, Nov 9, 2018 at 4:10 AM
-> > Subject: [Bug 201647] New: Intel Wireless card 3165 does not get
-> > detected but bluetooth works
-> >
-> > https://bugzilla.kernel.org/show_bug.cgi?id=201647
-> >
-> >             Bug ID: 201647
-> >            Summary: Intel Wireless card 3165 does not get detected but
-> >                     bluetooth works
-> >            Product: Drivers
-> >            Version: 2.5
-> >     Kernel Version: 4.19.1
-> >           Hardware: Intel
-> >                 OS: Linux
-> >               Tree: Mainline
-> >             Status: NEW
-> >           Severity: high
-> >           Priority: P1
-> >          Component: PCI
-> >           Assignee: drivers_pci@kernel-bugs.osdl.org
-> >           Reporter: Mertarg10@gmail.com
-> >         Regression: No
-> >
-> > This bug affects most of the devices with a Celeron N4000 and an Intel
-> > wifi 3165 Ac adapter.
-> >
-> > When using Linux wifi is not working however, Bluetooth is working
-> > fine.  Also, Bluetooth part of this chip is connected via btusb and
-> > the wifi part of this chip is connected via PCIe.
-> 
-> Can you attach a screenshot of the Windows 10 device manager info for the
-> wifi adapter to the bugzilla?  If you can get a raw hex dump of its config
-> space, that would be awesome.
-> 
-> Also attach a copy of your kernel .config file (typically in /boot/).
-> 
-> My only guess is that maybe the system keeps wifi completely powered
-> down and uses hotplug to add it when needed.  [1] mentions wifi being on
-> pcibus 1 under Windows.  Your lspci does show bridge 00:13.0 leading to bus
-> 01, but Linux doesn't find any devices on bus 01.
-> 
-> Hotplug could be done via either acpiphp (ACPI mediated hotplug) or pciehp
-> (native PCIe hotplug).  Your dmesg shows you do have acpiphp.
-> 
-> I can't tell about pciehp (your .config will show that), but I think pciehp will
-> only claim bridges where SltCap contains HotPlug+, and yours shows HotPlug-
-> , so I don't think pciehp will do anything on your system.
-> 
-> Even if the system does use hotplug, I don't know what mechanism the OS
-> would use to wake up the device, since we don't know it even exists.  I guess
-> there could be some magic switch accessible via USB.
-> But if that were the case, I'm sure Emmanuel would know about it.
-> 
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Hm... Don't be so sure... :)
-I don't think we have anything as fancy as this.
-I guess you can try to dig into the BIOS settings?
-I have heard of such a switch that would make the device disappear.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/scsi/qla2xxx/qla_dfs.c   | 77 +++++---------------------------
+ drivers/scsi/snic/snic_debugfs.c | 20 +--------
+ 2 files changed, 13 insertions(+), 84 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_dfs.c b/drivers/scsi/qla2xxx/qla_dfs.c
+index 0b190082aa8d..5703650a9e51 100644
+--- a/drivers/scsi/qla2xxx/qla_dfs.c
++++ b/drivers/scsi/qla2xxx/qla_dfs.c
+@@ -12,8 +12,7 @@
+ static struct dentry *qla2x00_dfs_root;
+ static atomic_t qla2x00_dfs_root_count;
+ 
+-static int
+-qla2x00_dfs_tgt_sess_show(struct seq_file *s, void *unused)
++static int dfs_tgt_sess_show(struct seq_file *s, void *unused)
+ {
+ 	scsi_qla_host_t *vha = s->private;
+ 	struct qla_hw_data *ha = vha->hw;
+@@ -37,22 +36,9 @@ qla2x00_dfs_tgt_sess_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int
+-qla2x00_dfs_tgt_sess_open(struct inode *inode, struct file *file)
+-{
+-	scsi_qla_host_t *vha = inode->i_private;
+-	return single_open(file, qla2x00_dfs_tgt_sess_show, vha);
+-}
+-
+-static const struct file_operations dfs_tgt_sess_ops = {
+-	.open		= qla2x00_dfs_tgt_sess_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(dfs_tgt_sess);
+ 
+-static int
+-qla2x00_dfs_tgt_port_database_show(struct seq_file *s, void *unused)
++static int dfs_tgt_port_database_show(struct seq_file *s, void *unused)
+ {
+ 	scsi_qla_host_t *vha = s->private;
+ 	struct qla_hw_data *ha = vha->hw;
+@@ -108,23 +94,9 @@ qla2x00_dfs_tgt_port_database_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int
+-qla2x00_dfs_tgt_port_database_open(struct inode *inode, struct file *file)
+-{
+-	scsi_qla_host_t *vha = inode->i_private;
++DEFINE_SHOW_ATTRIBUTE(dfs_tgt_port_database);
+ 
+-	return single_open(file, qla2x00_dfs_tgt_port_database_show, vha);
+-}
+-
+-static const struct file_operations dfs_tgt_port_database_ops = {
+-	.open		= qla2x00_dfs_tgt_port_database_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-static int
+-qla_dfs_fw_resource_cnt_show(struct seq_file *s, void *unused)
++static int dfs_fw_resource_cnt_show(struct seq_file *s, void *unused)
+ {
+ 	struct scsi_qla_host *vha = s->private;
+ 	uint16_t mb[MAX_IOCB_MB_REG];
+@@ -157,22 +129,9 @@ qla_dfs_fw_resource_cnt_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int
+-qla_dfs_fw_resource_cnt_open(struct inode *inode, struct file *file)
+-{
+-	struct scsi_qla_host *vha = inode->i_private;
+-	return single_open(file, qla_dfs_fw_resource_cnt_show, vha);
+-}
++DEFINE_SHOW_ATTRIBUTE(dfs_fw_resource_cnt);
+ 
+-static const struct file_operations dfs_fw_resource_cnt_ops = {
+-	.open           = qla_dfs_fw_resource_cnt_open,
+-	.read           = seq_read,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
+-
+-static int
+-qla_dfs_tgt_counters_show(struct seq_file *s, void *unused)
++static int dfs_tgt_counters_show(struct seq_file *s, void *unused)
+ {
+ 	struct scsi_qla_host *vha = s->private;
+ 	struct qla_qpair *qpair = vha->hw->base_qpair;
+@@ -244,19 +203,7 @@ qla_dfs_tgt_counters_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int
+-qla_dfs_tgt_counters_open(struct inode *inode, struct file *file)
+-{
+-	struct scsi_qla_host *vha = inode->i_private;
+-	return single_open(file, qla_dfs_tgt_counters_show, vha);
+-}
+-
+-static const struct file_operations dfs_tgt_counters_ops = {
+-	.open           = qla_dfs_tgt_counters_open,
+-	.read           = seq_read,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(dfs_tgt_counters);
+ 
+ static int
+ qla2x00_dfs_fce_show(struct seq_file *s, void *unused)
+@@ -468,7 +415,7 @@ qla2x00_dfs_setup(scsi_qla_host_t *vha)
+ 
+ create_nodes:
+ 	ha->dfs_fw_resource_cnt = debugfs_create_file("fw_resource_count",
+-	    S_IRUSR, ha->dfs_dir, vha, &dfs_fw_resource_cnt_ops);
++	    S_IRUSR, ha->dfs_dir, vha, &dfs_fw_resource_cnt_fops);
+ 	if (!ha->dfs_fw_resource_cnt) {
+ 		ql_log(ql_log_warn, vha, 0x00fd,
+ 		    "Unable to create debugFS fw_resource_count node.\n");
+@@ -476,7 +423,7 @@ qla2x00_dfs_setup(scsi_qla_host_t *vha)
+ 	}
+ 
+ 	ha->dfs_tgt_counters = debugfs_create_file("tgt_counters", S_IRUSR,
+-	    ha->dfs_dir, vha, &dfs_tgt_counters_ops);
++	    ha->dfs_dir, vha, &dfs_tgt_counters_fops);
+ 	if (!ha->dfs_tgt_counters) {
+ 		ql_log(ql_log_warn, vha, 0xd301,
+ 		    "Unable to create debugFS tgt_counters node.\n");
+@@ -484,7 +431,7 @@ qla2x00_dfs_setup(scsi_qla_host_t *vha)
+ 	}
+ 
+ 	ha->tgt.dfs_tgt_port_database = debugfs_create_file("tgt_port_database",
+-	    S_IRUSR,  ha->dfs_dir, vha, &dfs_tgt_port_database_ops);
++	    S_IRUSR,  ha->dfs_dir, vha, &dfs_tgt_port_database_fops);
+ 	if (!ha->tgt.dfs_tgt_port_database) {
+ 		ql_log(ql_log_warn, vha, 0xd03f,
+ 		    "Unable to create debugFS tgt_port_database node.\n");
+@@ -500,7 +447,7 @@ qla2x00_dfs_setup(scsi_qla_host_t *vha)
+ 	}
+ 
+ 	ha->tgt.dfs_tgt_sess = debugfs_create_file("tgt_sess",
+-		S_IRUSR, ha->dfs_dir, vha, &dfs_tgt_sess_ops);
++		S_IRUSR, ha->dfs_dir, vha, &dfs_tgt_sess_fops);
+ 	if (!ha->tgt.dfs_tgt_sess) {
+ 		ql_log(ql_log_warn, vha, 0xd040,
+ 		    "Unable to create debugFS tgt_sess node.\n");
+diff --git a/drivers/scsi/snic/snic_debugfs.c b/drivers/scsi/snic/snic_debugfs.c
+index 0abe17c1a73b..268b5075a6f5 100644
+--- a/drivers/scsi/snic/snic_debugfs.c
++++ b/drivers/scsi/snic/snic_debugfs.c
+@@ -354,25 +354,7 @@ snic_stats_show(struct seq_file *sfp, void *data)
+ 	return 0;
+ }
+ 
+-/*
+- * snic_stats_open - Open the stats file for specific host
+- *
+- * Description:
+- * This routine opens a debugfs file stats of specific host
+- */
+-static int
+-snic_stats_open(struct inode *inode, struct file *filp)
+-{
+-	return single_open(filp, snic_stats_show, inode->i_private);
+-}
+-
+-static const struct file_operations snic_stats_fops = {
+-	.owner	= THIS_MODULE,
+-	.open	= snic_stats_open,
+-	.read	= seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(snic_stats);
+ 
+ static const struct file_operations snic_reset_stats_fops = {
+ 	.owner = THIS_MODULE,
+-- 
+2.17.0
 
