@@ -2,619 +2,114 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB57AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A123C65BAE
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 13:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E9B20834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D69B92082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 13:32:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="SG4vRHFZ";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="cs76tsz4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E9B20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="I9DaivqK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69B92082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725856AbeLBMwi (ORCPT
+        id S1725871AbeLBNc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 07:52:38 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:53964 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725801AbeLBMwi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 07:52:38 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB2CnlJI030060;
-        Sun, 2 Dec 2018 04:52:16 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=4FDZFsrkdT9Z68/qR6bjbWUHXuiDYs9CZSpNGGfHzLo=;
- b=SG4vRHFZxdpQUTkgpMgf3lYgvOTEsYIhie7kLT8WNQKPzgo8wnb8T71QNlznFXxKmXa2
- tru1CyVMJYA8v0cqjbHuLu5TB7SRspcWevy0Jj67W2mOwVfyYBeEW9znolbBRXYljLQA
- 1KyPukmFboeJpJbQI9J5ATibyLrv3A/gksWtUaT8tWW/w+bh5000e/S+AL3BsA/yzjAP
- YvJMoQsuAhcovFfRJ13F9SxjekjjEf4eNRfHH67Y1omJI5i2CGK+Pd/5wJnZ3SiRAvpg
- frqgelXQDMZWc9ZqMWVkTBS6dhhEcTpzBuUtES4pwoXz2rm2kF/n4FAh/kt2B3qEdvhL sg== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam05-by2-obe.outbound.protection.outlook.com (mail-by2nam05lp2054.outbound.protection.outlook.com [104.47.50.54])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2p3ps2ds3y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 02 Dec 2018 04:52:15 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
+        Sun, 2 Dec 2018 08:32:59 -0500
+Received: from mail-eopbgr50064.outbound.protection.outlook.com ([40.107.5.64]:17152
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725846AbeLBNc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 08:32:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4FDZFsrkdT9Z68/qR6bjbWUHXuiDYs9CZSpNGGfHzLo=;
- b=cs76tsz44LvToHeGJ4N9jPgop1qyEfEjuh7aWo0p+rhLigC26t6AcBKLArY4bAltynHlS/LcKUeg09fAax8xofgOnvbLSgrHSsAZPRdxK5SODgmPzGIzBpAZj1Io8585hBWwpKdxH5l8+sKeVMVfd7/CXiKm3UaJSWdWabTm4Cs=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB4519.namprd07.prod.outlook.com (52.135.225.140) with Microsoft SMTP
+ bh=cOKVN4Dq3wEdSArHjs+K3j36zFWT87jOax261FrYp7U=;
+ b=I9DaivqKK/TcJqEVB5muyfX+vxCE6XLCfzf5otwrnr0sR8GpEv7hGxiqx9lEMiKki8D9qjVCs1YvLG67xRGJFG/24HpgXnrPpB7ULMPtCEATzbNB+BzhfZ5nxcOLbpSs/hc6J7lsxYUT/I/oOfk/9vRY7yCTzr5xLgnyh64lVFA=
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
+ AM6PR04MB4999.eurprd04.prod.outlook.com (20.177.33.218) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Sun, 2 Dec 2018 12:52:12 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e0dc:ebd5:e248:d644]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e0dc:ebd5:e248:d644%6]) with mapi id 15.20.1382.020; Sun, 2 Dec 2018
- 12:52:10 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Roger Quadros <rogerq@ti.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ 15.20.1382.22; Sun, 2 Dec 2018 13:32:38 +0000
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::29b5:b3ed:3854:cf1c]) by AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::29b5:b3ed:3854:cf1c%5]) with mapi id 15.20.1382.020; Sun, 2 Dec 2018
+ 13:32:38 +0000
+From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
+To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [RFC PATCH v2 11/15] usb:cdns3: Implements ISR functionality.
-Thread-Topic: [RFC PATCH v2 11/15] usb:cdns3: Implements ISR functionality.
-Thread-Index: AQHUfycbSqacYB4L1k+qmHxKGhjP3aVlViQAgAYBSACAABwkkA==
-Date:   Sun, 2 Dec 2018 12:52:10 +0000
-Message-ID: <BYAPR07MB4709FDBE165221D7CAD5722EDDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
- <1542535751-16079-12-git-send-email-pawell@cadence.com>
- <5BFEAC14.1030408@ti.com>
- <BYAPR07MB47093C38AD7B880371A6D735DDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
-In-Reply-To: <BYAPR07MB47093C38AD7B880371A6D735DDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
-Accept-Language: en-US
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>
+CC:     Leo Li <leoyang.li@nxp.com>, "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>,
+        "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Subject: [PATCH 0/2] PCI: ls_pcie_g4: add 2 workarounds
+Thread-Topic: [PATCH 0/2] PCI: ls_pcie_g4: add 2 workarounds
+Thread-Index: AQHUikN+67Rwke2mpUeJS1AYJ6IiLQ==
+Date:   Sun, 2 Dec 2018 13:32:38 +0000
+Message-ID: <20181202133303.33988-1-Zhiqiang.Hou@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctMTI4YWM3NWYtZjYzMS0xMWU4LTg3MjYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDEyOGFjNzYwLWY2MzEtMTFlOC04NzI2LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTU5NDkiIHQ9IjEzMTg4MjI4NzI3MTU1NTc5OSIgaD0iYVhRR2J4NGtWUEU3RlJ3ZkRRMDRRWm0rT3ZVPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
+x-clientproxiedby: HK2PR02CA0210.apcprd02.prod.outlook.com
+ (2603:1096:201:20::22) To AM6PR04MB5781.eurprd04.prod.outlook.com
+ (2603:10a6:20b:aa::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=zhiqiang.hou@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.73]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB4519;20:cED8bH87MCRHagNSq16GhN9SmkcrfrzG7FtHwOi9SjuJaLuoAtNlY9exjbvLfSNt/eCfWFdDfBgexjmUAOAZ+/x3p2eZS3A7tewq+oWqxcgnnrRD6EdYMJeO9fWjAsR/+U+U0b3WfrHWxGNsrooSU2Zpk30KDrg6biv43zFjc31/zleDRrS/FxXfzHcX1YCrhHgeYExgdVVa/1lxwJ8fPavb9NC5uaWgtt5bvsr4D+STVIvGcAnbpVLNcGwC0uxy
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39850400004)(366004)(396003)(53234004)(51444003)(199004)(189003)(36092001)(66066001)(14444005)(256004)(26005)(33656002)(25786009)(6436002)(4326008)(229853002)(14454004)(186003)(575784001)(86362001)(316002)(102836004)(93886005)(53946003)(6506007)(68736007)(6246003)(107886003)(105586002)(9686003)(106356001)(8676002)(8936002)(81166006)(81156014)(53936002)(54906003)(7696005)(93156006)(99286004)(76176011)(71190400001)(3846002)(71200400001)(4744004)(74316002)(2906002)(7736002)(305945005)(6116002)(55016002)(97736004)(110136005)(217873002)(2501003)(5660300001)(2940100002)(486006)(476003)(446003)(11346002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4519;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 93782153-5c10-4947-26bc-08d65854f9a3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4519;
-x-ms-traffictypediagnostic: BYAPR07MB4519:
-x-microsoft-antispam-prvs: <BYAPR07MB451944637DBE8725A9445029DDAD0@BYAPR07MB4519.namprd07.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB4999;6:w7Fn8UrQ87JUd9joU/c276pYXnt6coRnljJQFfLTJ24MImuwYj4UwK63zgU5RW4ToOAJFoq8TZGTdZ0EgXJDKV2N32WA0UzeKgyVJNVcnqZFBd7qUH9GTvorcsn+PpFjFSu7wuppmkGm+amqnnhpWEeeZ6G8BvDpgjxUhEzK6lWlWCq9e+dlZkCC4aiYjXu3QAX5uJhdNIfEYhZtplg0nf154NvS1/bbnrreCfUojOtOMBnRl6qeF7I3VFXz+s6bNq2t+hjJMoVxO3D2iQRYTxrOhJW799Zu6HLq6pDcdWMnjomAvlVCxF1a4S3CisS8dgY2Rk9m1ILhsAiyHbddawjJvT4SWm8WzQWGoIyNPVF8Ufi1KNZOgk7zJ2reBSgyCtXBVYXnWyGaPWQ5zJPhCA3ahWmS55kUTPdVwfoYERLpaYfxNoN1XOrfZKCq1cN0LwKwN4/qrlqzMNiJ7vYNPg==;5:unnwJONZaVNxuV4sPkYAXVJGMWt6+Mr1Pa8LJ8MxtEgSo5QaRNCS0ZBgZeCsZH3HIi6WbLYOLOvKzpSHPO7uuSwxP8dFMnDLQQHY/gdjr4qx0ipxrpMC7NgOL2nLKvk/oNGOK4p4zjRrKE5HrPj/xg3oo9n+UQoaI6IkC2h9ZKc=;7:iqR6L0XskEQXdaPIyFTbLMaIE/i8s+mdTd6cpWI7z1Z5ScNupuKvTbvU8oqC5WaeNP64q2Ha1AmtyskWFar/wPFyHTXmAnm/7AKMdp2E9vNAfdpXwb1yHr1gEFb0aiAEA5FrbWBqNtPkZVfbYedPaQ==
+x-ms-office365-filtering-correlation-id: 761796cd-f1eb-4959-99af-08d6585aa061
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4999;
+x-ms-traffictypediagnostic: AM6PR04MB4999:
+x-microsoft-antispam-prvs: <AM6PR04MB499952C725EF6FFA95C91B9C84AD0@AM6PR04MB4999.eurprd04.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231455)(999002)(944501488)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4519;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4519;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(944501489)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4999;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4999;
 x-forefront-prvs: 087474FBFA
-received-spf: None (protection.outlook.com: cadence.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(136003)(376002)(199004)(189003)(6306002)(256004)(99286004)(14444005)(186003)(52116002)(53936002)(36756003)(4326008)(25786009)(66066001)(6436002)(2201001)(6486002)(486006)(5660300001)(478600001)(86362001)(14454004)(476003)(2616005)(26005)(6512007)(2501003)(106356001)(105586002)(2906002)(1076002)(8936002)(7736002)(81166006)(81156014)(110136005)(6116002)(3846002)(8676002)(71190400001)(71200400001)(966005)(102836004)(386003)(6506007)(97736004)(54906003)(305945005)(68736007)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4999;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: BeTpElOhVE/rgLWv45U05hV8mxLDXqqcksju2G9wDBwruAFFZgTnF7wFbSr2uhMp+hyJTTzAJ3Fpbw3eUZ1g9fHCWstjXk7wVmaee+fKBH0VdIgBSF9c+c2nO9aWRqRROkylatd0ibTz3l694bABvvUJYsMBRFjZZ7DXqtyelkI6/jO25W++9sOIGd3UZzVUK41LF7O4/7XkSFCOyB8AoRuhYnrjjkvA8vZ9DAthJ3Yg25/xory4eKJA6JaIxeCpxhloqWil5ZuwCfeIVF5PrxmCxt7rMtOQLSDrzLLAJTDDBqrHcvZGAvTK+88JX9kubaKnqoEU6khZKNglhzuBYgkF9tNue1CJP/EyQmwPRxs=
+x-microsoft-antispam-message-info: DCQcUdLD8Dwj3KkaIN6Zh4i+77HG1oZeqNuFfrbo9I2rJmspBKzsAjpFRQhz4uP4TZzs7LPz8xxR77VYWEql+f/sxB1TOrdcmqpZtZCzhHZl/KNW1LGyzo5FgEj8ztZGG7Kef1jeimlqjSGv3vekGlEOt0PvN8KRywZHot9i178Y/aVCVvd8+OtKNSDWxi9e1FIGxFNm/gGqLnfSdeHxb6z3adu73QxcUIGmRNp8pKQhvpEAWCCkcfmVWxAjTiGeO2YILFvCKHQEUOF7gaFKBwiVpmp5NWa9YYYiWQtn/5dL8jFJZxOgE6biCcYJG1bE7Rgkges64wpAXKiUYI5T3ITre4DFzHc8wwWhCPXqFZI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93782153-5c10-4947-26bc-08d65854f9a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2018 12:52:10.7109
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 761796cd-f1eb-4959-99af-08d6585aa061
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2018 13:32:38.7030
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4519
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-02_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812020125
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4999
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->Hi,
->
->>> Patch adds set of generic functions used for handling interrupts
->>> generated by controller. Interrupt related functions are divided
->>> into three groups. The first is related to ep0 and is placed in ep0.c.
->>> The second is responsible for non-default endpoints and is
->>> implemented in gadget.c file. The last group is not related to
->>> endpoints interrupts and is placed in gadget.c.
->>> All groups have common entry point in cdns3_irq_handler_thread function=
-.
->>>
->>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->>> ---
->>>  drivers/usb/cdns3/ep0.c    |  63 +++++++++++
->>>  drivers/usb/cdns3/gadget.c | 224 ++++++++++++++++++++++++++++++++++++-
->>>  drivers/usb/cdns3/gadget.h |   1 +
->>>  3 files changed, 287 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
->>> index d05169e73631..eb92fd234bd7 100644
->>> --- a/drivers/usb/cdns3/ep0.c
->>> +++ b/drivers/usb/cdns3/ep0.c
->>> @@ -90,6 +90,69 @@ static void cdns3_set_hw_configuration(struct cdns3_=
-device *priv_dev)
->>>  	}
->>>  }
->>>
->>> +static void __pending_setup_status_handler(struct cdns3_device *priv_d=
-ev)
->>> +{
->>> +	//TODO: Implements this function
->>> +}
->>> +
->>> +/**
->>> + * cdns3_ep0_setup_phase - Handling setup USB requests
->>> + * @priv_dev: extended gadget object
->>> + */
->>> +static void cdns3_ep0_setup_phase(struct cdns3_device *priv_dev)
->>> +{
->>> +	//TODO: Implements this function.
->>> +}
->>> +
->>> +static void cdns3_transfer_completed(struct cdns3_device *priv_dev)
->>> +{
->>> +	//TODO: Implements this function
->>> +}
->>> +
->>> +/**
->>> + * cdns3_check_ep0_interrupt_proceed - Processes interrupt related to =
-endpoint 0
->>> + * @priv_dev: extended gadget object
->>> + * @dir: 1 for IN direction, 0 for OUT direction
->>> + */
->>> +void cdns3_check_ep0_interrupt_proceed(struct cdns3_device *priv_dev, =
-int dir)
->>> +{
->>> +	struct cdns3_usb_regs __iomem *regs =3D priv_dev->regs;
->>> +	u32 ep_sts_reg;
->>> +
->>> +	cdns3_select_ep(priv_dev, 0 | (dir ? USB_DIR_IN : USB_DIR_OUT));
->>> +	ep_sts_reg =3D readl(&regs->ep_sts);
->>> +
->>> +	__pending_setup_status_handler(priv_dev);
->>> +
->>> +	if ((ep_sts_reg & EP_STS_SETUP) && dir =3D=3D 0) {
->>> +		struct usb_ctrlrequest *setup =3D priv_dev->setup;
->>> +
->>> +		writel(EP_STS_SETUP | EP_STS_IOC | EP_STS_ISP, &regs->ep_sts);
->>
->>instead you can just clear all events at the end of this function by
->>	writel(ep_sts_reg, &regs->ep_sts);
->
->But I can delete events that can appear during processing this function.
->I think that safer is to add this fragment at the beginning, below line
->ep_sts_reg =3D readl(&regs->ep_sts);
->
->
->>> +
->>> +		priv_dev->ep0_data_dir =3D setup->bRequestType & USB_DIR_IN;
->>> +		cdns3_ep0_setup_phase(priv_dev);
->>> +		ep_sts_reg &=3D ~(EP_STS_SETUP | EP_STS_IOC | EP_STS_ISP);
->>
->>Not required.
->Why not ? I must clear at least EP_STS_IOC | EP_STS_ISP.
->I don't want to handle  the last condition in this function, of course if =
-SETUP was reported.
->
->Of course I can also change the construction of function and then I could =
-delete this statement.
->>
->>> +	}
->>> +
->>> +	if (ep_sts_reg & EP_STS_TRBERR)
->>> +		writel(EP_STS_TRBERR, &priv_dev->regs->ep_sts);
->>
->>Can be omitted.
->>> +
->>> +	if (ep_sts_reg & EP_STS_DESCMIS) {
->>> +		writel(EP_STS_DESCMIS, &priv_dev->regs->ep_sts);
->>
->>This as well.
->>> +
->>> +		if (dir =3D=3D 0 && !priv_dev->setup_pending) {
->>> +			priv_dev->ep0_data_dir =3D 0;
->>> +			cdns3_ep0_run_transfer(priv_dev, priv_dev->setup_dma,
->>> +					       8, 0);
->>> +		}
->>> +	}
->>> +
->>> +	if ((ep_sts_reg & EP_STS_IOC) || (ep_sts_reg & EP_STS_ISP)) {
->>> +		writel(EP_STS_IOC, &priv_dev->regs->ep_sts);
->>
->>this write can be omitted.
->>> +		cdns3_transfer_completed(priv_dev);
->>> +	}
->>
->>here you can do
->>	writel(ep_sts_reg, &regs->ep_sts);
->>> +}
->>> +
->>>  /**
->>>   * cdns3_gadget_ep0_enable
->>>   * Function shouldn't be called by gadget driver,
->>> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
->>> index c965da16c0c8..309202474e57 100644
->>> --- a/drivers/usb/cdns3/gadget.c
->>> +++ b/drivers/usb/cdns3/gadget.c
->>> @@ -58,6 +58,18 @@ void cdns3_set_register_bit(void __iomem *ptr, u32 m=
-ask)
->>>  	writel(mask, ptr);
->>>  }
->>>
->>> +/**
->>> + * cdns3_ep_reg_pos_to_index - Macro converts bit position of ep_ists =
-register
->>> + * to index of endpoint object in cdns3_device.eps[] container
->>> + * @i: bit position of endpoint for which endpoint object is required
->>> + *
->>> + * Remember that endpoint container doesn't contain default endpoint
->>> + */
->>> +static u8 cdns3_ep_reg_pos_to_index(int i)
->>> +{
->>> +	return ((i / 16) + (((i % 16) - 2) * 2));
->>> +}
->>> +
->>>  /**
->>>   * cdns3_next_request - returns next request from list
->>>   * @list: list containing requests
->>> @@ -188,6 +200,21 @@ static void cdns3_ep_stall_flush(struct cdns3_endp=
-oint *priv_ep)
->>>  	priv_ep->flags |=3D EP_STALL;
->>>  }
->>>
->>> +/**
->>> + * cdns3_gadget_unconfig - reset device configuration
->>> + * @priv_dev: extended gadget object
->>> + */
->>> +void cdns3_gadget_unconfig(struct cdns3_device *priv_dev)
->>> +{
->>> +	/* RESET CONFIGURATION */
->>> +	writel(USB_CONF_CFGRST, &priv_dev->regs->usb_conf);
->>> +
->>> +	cdns3_enable_l1(priv_dev, 0);
->>> +	priv_dev->hw_configured_flag =3D 0;
->>> +	priv_dev->onchip_mem_allocated_size =3D 0;
->>> +	priv_dev->out_mem_is_allocated =3D 0;
->>> +}
->>> +
->>>  void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable)
->>>  {
->>>  	if (enable)
->>> @@ -196,6 +223,23 @@ void cdns3_enable_l1(struct cdns3_device *priv_dev=
-, int enable)
->>>  		writel(USB_CONF_L1DS, &priv_dev->regs->usb_conf);
->>>  }
->>>
->>> +static enum usb_device_speed cdns3_get_speed(struct cdns3_device *priv=
-_dev)
->>> +{
->>> +	u32 reg;
->>> +
->>> +	reg =3D readl(&priv_dev->regs->usb_sts);
->>> +
->>> +	if (DEV_SUPERSPEED(reg))
->>> +		return USB_SPEED_SUPER;
->>> +	else if (DEV_HIGHSPEED(reg))
->>> +		return USB_SPEED_HIGH;
->>> +	else if (DEV_FULLSPEED(reg))
->>> +		return USB_SPEED_FULL;
->>> +	else if (DEV_LOWSPEED(reg))
->>> +		return USB_SPEED_LOW;
->>> +	return USB_SPEED_UNKNOWN;
->>> +}
->>> +
->>>  /**
->>>   * cdns3_gadget_giveback - call struct usb_request's ->complete callba=
-ck
->>>   * @priv_ep: The endpoint to whom the request belongs to
->>> @@ -221,12 +265,136 @@ void cdns3_gadget_giveback(struct cdns3_endpoint=
- *priv_ep,
->>>   */
->>>  int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
->>>  			  struct usb_request *request)
->>> +{
->>> +	return 0;
->>> +}
->>> +
->>> +static void cdns3_transfer_completed(struct cdns3_device *priv_dev,
->>> +				     struct cdns3_endpoint *priv_ep)
->>>  {
->>>  	//TODO: Implements this function.
->>> +}
->>> +
->>> +/**
->>> + * cdns3_check_ep_interrupt_proceed - Processes interrupt related to e=
-ndpoint
->>> + * @priv_ep: endpoint object
->>> + *
->>> + * Returns 0
->>> + */
->>> +static int cdns3_check_ep_interrupt_proceed(struct cdns3_endpoint *pri=
-v_ep)
->>> +{
->>> +	struct cdns3_device *priv_dev =3D priv_ep->cdns3_dev;
->>> +	struct cdns3_usb_regs __iomem *regs;
->>> +	u32 ep_sts_reg;
->>> +
->>> +	regs =3D priv_dev->regs;
->>> +
->>> +	cdns3_select_ep(priv_dev, priv_ep->endpoint.address);
->>> +	ep_sts_reg =3D readl(&regs->ep_sts);
->>> +
->>> +	if (ep_sts_reg & EP_STS_TRBERR)
->>> +		writel(EP_STS_TRBERR, &regs->ep_sts);
->>> +
->>> +	if (ep_sts_reg & EP_STS_ISOERR)
->>> +		writel(EP_STS_ISOERR, &regs->ep_sts);
->>> +
->>> +	if (ep_sts_reg & EP_STS_OUTSMM)
->>> +		writel(EP_STS_OUTSMM, &regs->ep_sts);
->>> +
->>> +	if (ep_sts_reg & EP_STS_NRDY)
->>> +		writel(EP_STS_NRDY, &regs->ep_sts);
->>
->>Why check for each bit when you are not doing anything. Instead at the en=
-d
->>you could just do
->>	writel(ep_sts_reg, &regs->ep_sts)
->>to clear all pending events.
->
->Some time ago I had in these conditions debug messages, but then
->I created the cdns3_decode_epx_irq and I removed them from there.
->
->I will remove them.
->
->>> +
->>> +	if ((ep_sts_reg & EP_STS_IOC) || (ep_sts_reg & EP_STS_ISP)) {
->>> +		writel(EP_STS_IOC | EP_STS_ISP, &regs->ep_sts);
->>> +		cdns3_transfer_completed(priv_dev, priv_ep);
->>> +	}
->>> +
->>> +	if (ep_sts_reg & EP_STS_DESCMIS)
->>> +		writel(EP_STS_DESCMIS, &regs->ep_sts);
->>>
->>>  	return 0;
->>>  }
->>>
->>> +/**
->>> + * cdns3_check_usb_interrupt_proceed - Processes interrupt related to =
-device
->>> + * @priv_dev: extended gadget object
->>> + * @usb_ists: bitmap representation of device's reported interrupts
->>> + * (usb_ists register value)
->>> + */
->>> +static void cdns3_check_usb_interrupt_proceed(struct cdns3_device *pri=
-v_dev,
->>> +					      u32 usb_ists)
->>> +{
->>> +	struct cdns3_usb_regs __iomem *regs;
->>> +	int speed =3D 0;
->>> +
->>> +	regs =3D priv_dev->regs;
->>> +
->>> +	/* Connection detected */
->>> +	if (usb_ists & (USB_ISTS_CON2I | USB_ISTS_CONI)) {
->>> +		writel(USB_ISTS_CON2I | USB_ISTS_CONI, &regs->usb_ists);
->>> +		speed =3D cdns3_get_speed(priv_dev);
->>> +
->>> +		dev_dbg(&priv_dev->dev, "Connection detected at speed: %s %d\n",
->>> +			usb_speed_string(speed), speed);
->>> +
->>> +		priv_dev->gadget.speed =3D speed;
->>> +		priv_dev->is_connected =3D 1;
->>> +		usb_gadget_set_state(&priv_dev->gadget, USB_STATE_POWERED);
->>> +		cdns3_ep0_config(priv_dev);
->>> +	}
->>> +
->>> +	/* SS Disconnection detected */
->>> +	if (usb_ists & (USB_ISTS_DIS2I | USB_ISTS_DISI)) {
->>> +		dev_dbg(&priv_dev->dev, "Disconnection detected\n");
->>> +
->>> +		writel(USB_ISTS_DIS2I | USB_ISTS_DISI, &regs->usb_ists);
->>> +		if (priv_dev->gadget_driver &&
->>> +		    priv_dev->gadget_driver->disconnect) {
->>> +			spin_unlock(&priv_dev->lock);
->>> +			priv_dev->gadget_driver->disconnect(&priv_dev->gadget);
->>> +			spin_lock(&priv_dev->lock);
->>> +		}
->>> +		priv_dev->gadget.speed =3D USB_SPEED_UNKNOWN;
->>> +		usb_gadget_set_state(&priv_dev->gadget, USB_STATE_NOTATTACHED);
->>> +		priv_dev->is_connected =3D 0;
->>> +		cdns3_gadget_unconfig(priv_dev);
->>> +	}
->>
->>What about non Super-Speed disconnects?
->
->I connect 2 conditions and I forgot to change  the comment.
->USB_ISTS_DIS2I - HS/FS disconnection
->USB_ISTS_DISI) - SS disconnection
->
->>
->>> +
->>> +	if (usb_ists & USB_ISTS_L2ENTI) {
->>> +		dev_dbg(&priv_dev->dev, "Device suspended\n");
->>> +		writel(USB_ISTS_L2ENTI, &regs->usb_ists);
->>> +	}
->>> +
->>> +	/* Exit from standby mode on L2 exit (Suspend in HS/FS or SS) */
->>> +	if (usb_ists & USB_ISTS_L2EXTI) {
->>> +		dev_dbg(&priv_dev->dev, "[Interrupt] L2 exit detected\n");
->>> +		writel(USB_ISTS_L2EXTI, &regs->usb_ists);
->>> +	}
->>> +
->>> +	/* Exit from standby mode on U3 exit (Suspend in HS/FS or SS). */
->>> +	if (usb_ists & USB_ISTS_U3EXTI) {
->>> +		dev_dbg(&priv_dev->dev, "U3 exit detected\n");
->>> +		writel(USB_ISTS_U3EXTI, &regs->usb_ists);
->>> +	}
->>> +
->>> +	/* resets cases */
->>> +	if (usb_ists & (USB_ISTS_UWRESI | USB_ISTS_UHRESI | USB_ISTS_U2RESI))=
- {
->>> +		writel(USB_ISTS_U2RESI | USB_ISTS_UWRESI | USB_ISTS_UHRESI,
->>> +		       &regs->usb_ists);
->>> +
->>> +		/*read again to check the actuall speed*/
->>> +		speed =3D cdns3_get_speed(priv_dev);
->>> +
->>> +		dev_dbg(&priv_dev->dev, "Reset detected at speed: %s %d\n",
->>> +			usb_speed_string(speed), speed);
->>> +
->>> +		usb_gadget_set_state(&priv_dev->gadget, USB_STATE_DEFAULT);
->>> +		priv_dev->gadget.speed =3D speed;
->>> +		cdns3_gadget_unconfig(priv_dev);
->>> +		cdns3_ep0_config(priv_dev);
->>> +	}
->>> +}
->>> +
->>>  /**
->>>   * cdns3_irq_handler - irq line interrupt handler
->>>   * @cdns: cdns3 instance
->>> @@ -237,8 +405,62 @@ int cdns3_ep_run_transfer(struct cdns3_endpoint *p=
-riv_ep,
->>>   */
->>>  static irqreturn_t cdns3_irq_handler_thread(struct cdns3 *cdns)
->>>  {
->>> +	struct cdns3_device *priv_dev;
->>>  	irqreturn_t ret =3D IRQ_NONE;
->>> -	//TODO: implements this function
->>> +	unsigned long flags;
->>> +	u32 reg;
->>> +
->>> +	priv_dev =3D container_of(cdns->gadget_dev, struct cdns3_device, dev)=
-;
->>> +	spin_lock_irqsave(&priv_dev->lock, flags);
->>> +
->>> +	/* check USB device interrupt */
->>> +	reg =3D readl(&priv_dev->regs->usb_ists);
->>> +	if (reg) {
->>> +		dev_dbg(&priv_dev->dev, "IRQ: usb_ists: %08X\n", reg);
->>
->>dev_dbg will be terribly slow to be useful. Tracepoints?
->
->It will be moved to Tracepoint.
->>
->>> +		cdns3_check_usb_interrupt_proceed(priv_dev, reg);
->>> +		ret =3D IRQ_HANDLED;
->>> +	}
->>> +
->>> +	/* check endpoint interrupt */
->>> +	reg =3D readl(&priv_dev->regs->ep_ists);
->>> +	if (reg !=3D 0) {
->>> +		dev_dbg(&priv_dev->dev, "IRQ ep_ists: %08X\n", reg);
->>> +	} else {
->>> +		if (USB_STS_CFGSTS(readl(&priv_dev->regs->usb_sts)))
->>> +			ret =3D IRQ_HANDLED;
->>
->>Why is this done. We don't seem to be handling anything here.
->>Don't we need to clear the usb_sts?
->
->This check CFGSTS bit. From controller spec:
->Configuration status -
->1 - device is in the configured state
->0 - device is not configured
->This bit set during SET_CONFIGURATION
->request means that status stage of this
->request was finished successfully, thus device
->configuration was finished successfully
->
->And again, the setting related with setting endpoint configuration.
->
->The author did not mention anything about setting alternate setting
->that require reconfiguring endpoints.
->
->I think that this fragment protects against handling epx before setting co=
-nfiguration.
->
->I think that I can omit this fragment, but I need to test it with Command =
-Verifier.
->
->Regarding clearing usb_sts,  it's cleared but in other functions  invoked =
-from this one.
->Maybe it could be better to pass to these other function content of usb_is=
-ts and do
->clearing in one place. It could limit access to registers and make the cod=
-e more readable
+From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-Sorry, I am little confused.=20
-We have ep_sts, usb_ists and  ep_ists=20
-usb_ists - must be cleared by software=20
-ep_ists -  we don't have to clear this register. It's RO. I think that clea=
-ring it by software could=20
- 	   cause some racing.=20
->>
->>> +		goto irqend;
->>> +	}
->>> +
->>> +	/* handle default endpoint OUT */
->>> +	if (reg & EP_ISTS_EP_OUT0) {
->>> +		cdns3_check_ep0_interrupt_proceed(priv_dev, 0);
->>> +		ret =3D IRQ_HANDLED;
->>> +	}
->>> +
->>> +	/* handle default endpoint IN */
->>> +	if (reg & EP_ISTS_EP_IN0) {
->>> +		cdns3_check_ep0_interrupt_proceed(priv_dev, 1);
->>> +		ret =3D IRQ_HANDLED;
->>> +	}
->>> +
->>> +	/* check if interrupt from non default endpoint, if no exit */
->>> +	reg &=3D ~(EP_ISTS_EP_OUT0 | EP_ISTS_EP_IN0);
->>> +	if (!reg)
->>> +		goto irqend;
->>> +
->>> +	do {
->>> +		unsigned int bit_pos =3D ffs(reg);
->>> +		u32 bit_mask =3D 1 << (bit_pos - 1);
->>> +		int index;
->>> +
->>> +		index =3D cdns3_ep_reg_pos_to_index(bit_pos);
->>> +		cdns3_check_ep_interrupt_proceed(priv_dev->eps[index]);
->>> +		reg &=3D ~bit_mask;
->>> +		ret =3D IRQ_HANDLED;
->>> +	} while (reg);
->>> +
->>> +irqend:
->>> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
->>>  	return ret;
->>>  }
->>>
->>> diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
->>> index 224f6b830bc9..8c2f363f9340 100644
->>> --- a/drivers/usb/cdns3/gadget.h
->>> +++ b/drivers/usb/cdns3/gadget.h
->>> @@ -1072,6 +1072,7 @@ int cdns3_handshake(void __iomem *ptr, u32 mask, =
-u32 done, int usec);
->>>  void cdns3_set_register_bit(void __iomem *ptr, u32 mask);
->>>  int cdns3_init_ep0(struct cdns3_device *priv_dev);
->>>  void cdns3_ep0_config(struct cdns3_device *priv_dev);
->>> +void cdns3_check_ep0_interrupt_proceed(struct cdns3_device *priv_dev, =
-int dir);
->>>  void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep);
->>>  void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable);
->>>  struct usb_request *cdns3_next_request(struct list_head *list);
->>>
->
->Thanks
->Cheers,
->Pawel
+This patchset adds 2 workarounds for NXP Layerscape Gen4 PCIe controller
+driver.
+
+Hou Zhiqiang (2):
+  PCI: mobiveil: ls_pcie_g4: add Workaround for A-011577
+  PCI: mobiveil: ls_pcie_g4: add Workaround for A-011451
+
+depends on patchset:
+ https://patchwork.ozlabs.org/project/linux-pci/list/?series=3D76942
+
+ .../controller/mobiveil/pci-layerscape-gen4.c | 38 +++++++++++++++++++
+ .../controller/mobiveil/pcie-mobiveil-host.c  | 13 ++++++-
+ .../pci/controller/mobiveil/pcie-mobiveil.h   |  6 +++
+ 3 files changed, 56 insertions(+), 1 deletion(-)
+
+--=20
+2.17.1
+
