@@ -2,469 +2,440 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF29C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 03:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B596C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 03:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08A82064A
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 03:17:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08A82064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D904520672
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 03:19:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qgy+jXGt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D904520672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725780AbeLBDRw (ORCPT
+        id S1725791AbeLBDTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Dec 2018 22:17:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52374 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725290AbeLBDRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Dec 2018 22:17:52 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D0F2181F12;
-        Sun,  2 Dec 2018 03:09:05 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-75.pek2.redhat.com [10.72.12.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 595116A6AF;
-        Sun,  2 Dec 2018 03:08:54 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, akpm@linux-foundation.org,
-        bhe@redhat.com, dyoung@redhat.com
-Subject: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
-Date:   Sun,  2 Dec 2018 11:08:38 +0800
-Message-Id: <20181202030839.29945-2-lijiang@redhat.com>
-In-Reply-To: <20181202030839.29945-1-lijiang@redhat.com>
-References: <20181202030839.29945-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sun, 02 Dec 2018 03:09:05 +0000 (UTC)
+        Sat, 1 Dec 2018 22:19:17 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41823 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725290AbeLBDTR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Dec 2018 22:19:17 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 70so4187242pgh.8;
+        Sat, 01 Dec 2018 19:19:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JbMipT4beD2NxGSzj++LCMz3H0vLVY/MGpnwAsfx8OY=;
+        b=Qgy+jXGtpmAln9LEKKfN9x1G5nwBm/NF0sf+V5R67RP73bub8Rl2bw7eJIwx996btR
+         7oxaMnoIk9QI2zHOFx5JKZgFKgkuqFKBibaODLwziRu67Ybffxmv+1P6jTJ3UV+uX69I
+         9N3Q5YTG5AQBFiFtjze/uqjzjFB8MZEiQYYOEBtOkSqWGWlEw92/yMVfOnyT0IvdhAoV
+         3bhAKA7FSKfQqIzfgtFML5P5apd8QKYXeSgzfVwz2a+8lAn8RqNw8CQ/cphp9n4EXOMN
+         5Dryk76QOhUEJpyOdFF+MvTDpNC5eb8szLl8a5W1ZdU+5W4MfT/1WY+JNkEwOeHeseOu
+         bCoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JbMipT4beD2NxGSzj++LCMz3H0vLVY/MGpnwAsfx8OY=;
+        b=Cf9mXL+ARluobLydgWh8dkBDUpg4Ly67yKtohmAbIqdgyCJEysC8VPR9a99IqyVvkc
+         YlQWdGF9BFP277ycu3IWNh+9oCSikjcaXwCQY7WHFG/CTXYkJZdKx5SOVarNOHHKZxP+
+         jjmK19UU5jmP39JC9fbMfCAugsvpUnW4Q9XRBFqn+jHYUFYAD94k7qkRxacmtVp8WeL9
+         Q7EJ7tz4h3R18SfgZE9kx72I6WjPvhiKnPhJsSyvCyt9DbjL9Q2LsbSe+Wflp+nwIDR4
+         y9luvFGbkNGwswIlMKku2+M9HBmAQR/eggRYOJPJkc5kOCoCQTsvk2U/2vCjid4d/sxu
+         bZ9g==
+X-Gm-Message-State: AA+aEWbDNO7v9HzRZbnjLP2Yhn1q1863rcx5lOOc6uuxGFlNZ4L/lurL
+        zGUnMZs/xK89qWSx3PdtJPk=
+X-Google-Smtp-Source: AFSGD/Xdzs/DiinMbbWtxQxcyIKN9aTXJLrN2ifuZH7zkg1MZNHubbiHONLIlaspziCfIUXtSttN4w==
+X-Received: by 2002:a62:178f:: with SMTP id 137mr11100855pfx.226.1543720754730;
+        Sat, 01 Dec 2018 19:19:14 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id z7sm20538115pga.6.2018.12.01.19.19.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Dec 2018 19:19:13 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     arnd@arndb.de, abhinavk@codeaurora.org, bzwang@chromium.org,
+        colin.king@canonical.com, airlied@linux.ie, jsanka@codeaurora.org,
+        jcrouse@codeaurora.org, ryadav@codeaurora.org, robdclark@gmail.com,
+        linux@armlinux.org.uk, swboyd@chromium.org,
+        skolluku@codeaurora.org, seanpaul@chromium.org,
+        thierry.reding@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] gpu/drm: remove DEFINE_DPU_DEBUGFS_SEQ_FOPS()
+Date:   Sat,  1 Dec 2018 22:19:11 -0500
+Message-Id: <20181202031912.9736-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This document lists some variables that export to vmcoreinfo, and briefly
-describles what these variables indicate. It should be instructive for
-many people who do not know the vmcoreinfo, and it also normalizes the
-exported variable as a standard ABI between kernel and use-space.
+We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
+such a macro separately,so remove DEFINE_DPU_DEBUGFS_SEQ_FOPS.
+Also use DEFINE_SHOW_ATTRIBUTE to simplify some code.
 
-Suggested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- Documentation/kdump/vmcoreinfo.txt | 400 +++++++++++++++++++++++++++++
- 1 file changed, 400 insertions(+)
- create mode 100644 Documentation/kdump/vmcoreinfo.txt
+ drivers/gpu/drm/armada/armada_debugfs.c      | 21 ++++--------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c | 14 +-------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c     | 33 +++---------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c  | 17 ++-------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c      | 36 ++++----------------
+ drivers/gpu/host1x/debug.c                   | 34 ++++--------------
+ 6 files changed, 29 insertions(+), 126 deletions(-)
 
-diff --git a/Documentation/kdump/vmcoreinfo.txt b/Documentation/kdump/vmcoreinfo.txt
-new file mode 100644
-index 000000000000..c6759be14af7
---- /dev/null
-+++ b/Documentation/kdump/vmcoreinfo.txt
-@@ -0,0 +1,400 @@
-+================================================================
-+		Documentation for Vmcoreinfo
-+================================================================
-+
-+=======================
-+What is the vmcoreinfo?
-+=======================
-+The vmcoreinfo contains the first kernel's various information, for
-+example, structure size, page size, symbol values and field offset,
-+etc. These data are encapsulated into an elf format, and these data
-+will also help user-space tools(e.g. makedumpfile, crash) analyze the
-+first kernel's memory usage.
-+
-+================
-+Common variables
-+================
-+
-+init_uts_ns.name.release
-+========================
-+The number of OS release.
-+
-+PAGE_SIZE
-+=========
-+The size of a page. It is usually 4k bytes.
-+
-+init_uts_ns
-+===========
-+This is the UTS namespace, which is used to isolate two specific elements
-+of the system that relate to the uname system call. The UTS namespace is
-+named after the data structure used to store information returned by the
-+uname system call.
-+
-+node_online_map
-+===============
-+It is a macro definition, actually it is an arrary node_states[N_ONLINE],
-+and it represents the set of online node in a system, one bit position
-+per node number.
-+
-+swapper_pg_dir
-+=============
-+It is always an array, it gerenally stands for the pgd for the kernel.
-+When mmu is enabled in config file, the 'swapper_pg_dir' is valid.
-+
-+_stext
-+======
-+It is an assemble directive that defines the beginning of the text section.
-+In gerenal, the '_stext' indicates the kernel start address.
-+
-+vmap_area_list
-+==============
-+It stores the virtual area list, makedumpfile can get the vmalloc start
-+value according to this variable.
-+
-+mem_map
-+=======
-+Physical addresses are translated to struct pages by treating them as an
-+index into the mem_map array. Shifting a physical address PAGE_SHIFT bits
-+to the right will treat it as a PFN from physical address 0, which is also
-+an index within the mem_map array.
-+
-+In a word, it can map the address to struct page.
-+
-+contig_page_data
-+================
-+Makedumpfile can get the pglist_data structure according to this symbol
-+'contig_page_data'. The pglist_data structure is used to describe the
-+memory layout.
-+
-+mem_section|(mem_section, NR_SECTION_ROOTS)|(mem_section, section_mem_map)
-+==========================================================================
-+Export the address of 'mem_section' array, and it's length, structure size,
-+and the 'section_mem_map' offset.
-+
-+It exists in the sparse memory mapping model, and it is also somewhat
-+similar to the mem_map variable, both of them will help to translate
-+the address.
-+
-+page
-+====
-+The size of a 'page' structure.
-+
-+pglist_data
-+===========
-+The size of a 'pglist_data' structure.
-+
-+zone
-+====
-+The size of a 'zone' structure.
-+
-+free_area
-+=========
-+The size of a 'free_area' structure.
-+
-+list_head
-+=========
-+The size of a 'list_head' structure.
-+
-+nodemask_t
-+==========
-+The size of a 'nodemask_t' type.
-+
-+(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
-+       compound_order|compound_head)
-+===================================================================
-+The page structure is a familiar concept for most of linuxer, there is no
-+need to explain too much. To know more information, please refer to the
-+definition of the page struct(include/linux/mm_types.h).
-+
-+(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
-+              spanned_pages|node_id)
-+===================================================================
-+On NUMA machines, each NUMA node would have a pg_data_t to describe
-+it's memory layout. On UMA machines there is a single pglist_data which
-+describes the whole memory.
-+
-+The pglist_data structure contains these varibales, here export their
-+offset in the pglist_data structure, which is defined in this file
-+"include/linux/mmzone.h".
-+
-+(zone, free_area|vm_stat|spanned_pages)
-+=======================================
-+The offset of these variables in the structure zone.
-+
-+Each node is divided up into a number of blocks called zones which
-+represent ranges within memory. A zone is described by a structure zone.
-+Each zone type is suitable for a different type of usage.
-+
-+(free_area, free_list)
-+======================
-+The offset of 'free_list' in the structure free_area.
-+
-+Each zone has a free_area structure array called free_area[MAX_ORDER].
-+The fields in this structure are simple, the free_list repsents a linked
-+list of free page blocks.
-+
-+(list_head, next|prev)
-+======================
-+The offset of 'next' and 'prev' in structure list_head.
-+
-+In general, this structure list_head is used to define a circular linked
-+list.
-+
-+(vmap_area, va_start|list)
-+==========================
-+The offset of 'va_start' and 'list' in the structure 'vmap_area'. They
-+stand for the vmalloc layer information. Makedumpfile can get the start
-+address of vmalloc region.
-+
-+(zone.free_area, MAX_ORDER)
-+===========================
-+The length of a free_area structure array, this macro is defined in the
-+file 'include/linux/mmzone.h'.
-+
-+log_buf
-+=======
-+In general, console output is written to the ring buffer 'log_buf' at
-+index 'log_first_idx'.
-+
-+log_buf_len
-+===========
-+Length of a 'log_buf'.
-+
-+log_first_idx
-+=============
-+Index of the first record stored in the buffer 'log_buf'.
-+
-+clear_idx
-+=========
-+The index that the next printk record to read after the last 'clear'
-+command.
-+
-+log_next_idx
-+============
-+The index of the next record to store in the buffer 'log_buf'.
-+
-+printk_log
-+==========
-+The size of a structure 'printk_log'.
-+
-+(printk_log, ts_nsec|len|text_len|dict_len)
-+===========================================
-+It represents these field offsets in the structure 'printk_log'. User
-+space tools can parse it and detect any changes to structure down the
-+line.
-+
-+(free_area.free_list, MIGRATE_TYPES)
-+====================================
-+The number of migrate types for pages.
-+
-+NR_FREE_PAGES
-+=============
-+On linux-2.6.21 or later, the number of free_pages is in
-+vm_stat[NR_FREE_PAGES].
-+
-+PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|
-+PG_hwpoision|PG_head_mask
-+=====================================================
-+It stands for the attribute of a page, which is defined in this file
-+'include/linux/page-flags.h'.
-+
-+PAGE_BUDDY_MAPCOUNT_VALUE or ~PG_buddy
-+======================================
-+The 'PG_buddy' flag indicates that the page is free and in the buddy
-+system. Makedumpfile can exclude the free pages managed by a buddy.
-+
-+HUGETLB_PAGE_DTOR
-+=================
-+The 'HUGETLB_PAGE_DTOR' flag indicates the hugetlbfs pages. Makedumpfile
-+will exclude these pages.
-+
-+================
-+x86_64 variables
-+================
-+
-+phys_base
-+=========
-+In x86_64, it is necessary to convert virtual address of exported kernel
-+symbol to physical address.
-+
-+init_top_pgt
-+============
-+The 'init_top_pgt' used to walk through the whole page table and convert
-+vitrual address to physical address.
-+
-+pgtable_l5_enabled
-+==================
-+User-space tools need to know whether the crash kernel was in 5-level
-+paging mode or not.
-+
-+node_data
-+=========
-+This is a struct 'pglist_data' array, it stores all numa nodes
-+information.
-+
-+(node_data, MAX_NUMNODES)
-+=========================
-+The number of this 'node_data' array.
-+
-+KERNELOFFSET
-+============
-+Randomize the address of the kernel image. This is the offset of KASLR in
-+VMCOREINFO ELF notes. It is used to compute the page offset in x86_64. If
-+KASLE is disabled, this value is zero.
-+
-+KERNEL_IMAGE_SIZE
-+=================
-+The size of 'KERNEL_IMAGE_SIZE', currently unused.
-+
-+The old MODULES_VADDR need be decided by KERNEL_IMAGE_SIZE when kaslr
-+enabled. Now MODULES_VADDR is not needed any more since Pratyush makes
-+all VA to PA converting done by page table lookup.
-+
-+PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
-+========================================
-+The value of 'PG_offline' flag can be used for marking pages as logically
-+offline. Makedumpfile can directly skip pages that are logically offline.
-+
-+sme_mask
-+========
-+For AMD machine with SME feature, it stands for the secure memory
-+encryption mask. Makedumpfile tools need to know whether the crash kernel
-+was encrypted or not. If SME is enabled in the first kernel, the crash
-+kernel's page table(pgd/pud/pmd/pte) contains the memory encryption mask,
-+so need to remove the sme mask to obtain the true physical address.
-+
-+=============
-+x86 variables
-+=============
-+
-+X86_PAE
-+=======
-+It means the physical address extension. It has the cost of more
-+pagetable lookup overhead, and also consumes more pagetable space
-+per process.
-+
-+==============
-+ia64 variables
-+==============
-+
-+pgdat_list|(pgdat_list, MAX_NUMNODES)
-+=====================================
-+This is a struct 'pg_data_t' array, it stores all numa nodes information.
-+And the 'MAX_NUMNODES' indicates the number of array 'pgdat_list'.
-+
-+node_memblk|(node_memblk, NR_NODE_MEMBLKS)
-+==========================================
-+List of node memory chunks. Filled when parsing SRAT table to obtain
-+information about memory nodes. The 'NR_NODE_MEMBLKS' indicates the number
-+of node memory chunks.
-+
-+node_memblk_s|(node_memblk_s, start_paddr)|(node_memblk_s, size)
-+================================================================
-+The size of a struct 'node_memblk_s', and the offset of 'start_paddr' and
-+'size'.
-+
-+PGTABLE_3|PGTABLE_4
-+===================
-+User-space tools need to know whether the crash kernel was in 3-level or
-+4-level paging mode.
-+
-+===============
-+arm64 variables
-+===============
-+
-+VA_BITS
-+=======
-+The maximum number of bits for virtual addresses.
-+
-+kimage_voffset
-+==============
-+The offset between the kernel virtual and physical mappings.
-+
-+PHYS_OFFSET
-+===========
-+The physical address of the start of memory.
-+
-+KERNELOFFSET
-+============
-+It is similar to x86_64.
-+
-+=============
-+arm variables
-+=============
-+
-+ARM_LPAE
-+========
-+It indicates whether the crash kernel support the large physical address
-+extension.
-+
-+==============
-+s390 variables
-+==============
-+
-+lowcore_ptr
-+==========
-+An array with a pointer to the lowcore of every CPU.
-+
-+high_memory
-+===========
-+It indicates the vmalloc_start address.
-+
-+(lowcore_ptr, NR_CPUS)
-+======================
-+The maximum number of cpus.
-+
-+S390_lowcore.vmcore_info
-+========================
-+It is the physical address of 'vmcoreinfo_note'.
-+
-+powerpc variables
-+=================
-+
-+node_data|(node_data, MAX_NUMNODES)
-+===================================
-+Please refer to common variables.
-+
-+contig_page_data
-+================
-+Please refer to common variables.
-+
-+vmemmap_list
-+============
-+The 'vmemmap_list' maintains the entire vmemmap physical mapping.
-+
-+mmu_vmemmap_psize
-+=================
-+The size of a page. It will try to use this page sizes for vmemmap if
-+support.
-+
-+mmu_psize_defs
-+==============
-+It stores a variety of pages, such as ths page size is 4k, 64k, or 16M.
-+
-+vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|
-+(vmemmap_backing, virt_addr)
-+================================================================
-+The vmemmap virtual address space management does not have a traditonal
-+page table to track which virtual struct pages are backed by physical
-+mapping. The virtual to physical mappings are tracked in a simple linked
-+list format.
-+
-+And user-space tools need to know the offset of 'list', 'phys' and
-+'virt_addr'.
-+
-+mmu_psize_def|(mmu_psize_def, shift)
-+====================================
-+The size of a struct 'mmu_psize_def', and the offset of 'shift' in this
-+structure.
-+
-+============
-+sh variables
-+============
-+
-+node_data|(node_data, MAX_NUMNODES)
-+===================================
-+It is similar to X86_64, please refer to above description.
-+
-+X2TLB
-+=====
-+It indicated whether the crash kernel enables the extended mode of the SH.
+diff --git a/drivers/gpu/drm/armada/armada_debugfs.c b/drivers/gpu/drm/armada/armada_debugfs.c
+index 6758c3a83de2..64dccb7c8be2 100644
+--- a/drivers/gpu/drm/armada/armada_debugfs.c
++++ b/drivers/gpu/drm/armada/armada_debugfs.c
+@@ -28,7 +28,7 @@ static int armada_debugfs_gem_linear_show(struct seq_file *m, void *data)
+ 	return 0;
+ }
+ 
+-static int armada_debugfs_reg_show(struct seq_file *m, void *data)
++static int reg_show(struct seq_file *m, void *data)
+ {
+ 	struct drm_device *dev = m->private;
+ 	struct armada_private *priv = dev->dev_private;
+@@ -50,18 +50,7 @@ static int armada_debugfs_reg_show(struct seq_file *m, void *data)
+ 	return 0;
+ }
+ 
+-static int armada_debugfs_reg_r_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, armada_debugfs_reg_show, inode->i_private);
+-}
+-
+-static const struct file_operations fops_reg_r = {
+-	.owner = THIS_MODULE,
+-	.open = armada_debugfs_reg_r_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(reg);
+ 
+ static int armada_debugfs_write(struct file *file, const char __user *ptr,
+ 	size_t len, loff_t *off)
+@@ -119,12 +108,14 @@ int armada_drm_debugfs_init(struct drm_minor *minor)
+ 		return ret;
+ 
+ 	de = debugfs_create_file("reg", S_IFREG | S_IRUSR,
+-				 minor->debugfs_root, minor->dev, &fops_reg_r);
++				 minor->debugfs_root, minor->dev,
++				 &reg_fops);
+ 	if (!de)
+ 		return -ENOMEM;
+ 
+ 	de = debugfs_create_file("reg_wr", S_IFREG | S_IWUSR,
+-				 minor->debugfs_root, minor->dev, &fops_reg_w);
++				 minor->debugfs_root, minor->dev,
++				 &fops_reg_w);
+ 	if (!de)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
+index 879c13fe74e0..7607aac9449c 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c
+@@ -299,18 +299,6 @@ static void dpu_disable_all_irqs(struct dpu_kms *dpu_kms)
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-#define DEFINE_DPU_DEBUGFS_SEQ_FOPS(__prefix)				\
+-static int __prefix ## _open(struct inode *inode, struct file *file)	\
+-{									\
+-	return single_open(file, __prefix ## _show, inode->i_private);	\
+-}									\
+-static const struct file_operations __prefix ## _fops = {		\
+-	.owner = THIS_MODULE,						\
+-	.open = __prefix ## _open,					\
+-	.release = single_release,					\
+-	.read = seq_read,						\
+-	.llseek = seq_lseek,						\
+-}
+ 
+ static int dpu_debugfs_core_irq_show(struct seq_file *s, void *v)
+ {
+@@ -341,7 +329,7 @@ static int dpu_debugfs_core_irq_show(struct seq_file *s, void *v)
+ 	return 0;
+ }
+ 
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_debugfs_core_irq);
++DEFINE_SHOW_ATTRIBUTE(dpu_debugfs_core_irq);
+ 
+ int dpu_debugfs_core_irq_init(struct dpu_kms *dpu_kms,
+ 		struct dentry *parent)
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index d4530d60767b..e705bad980ee 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -1309,7 +1309,7 @@ int dpu_crtc_vblank(struct drm_crtc *crtc, bool en)
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
++static int status_show(struct seq_file *s, void *data)
+ {
+ 	struct dpu_crtc *dpu_crtc;
+ 	struct dpu_plane_state *pstate = NULL;
+@@ -1428,24 +1428,6 @@ static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int _dpu_debugfs_status_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, _dpu_debugfs_status_show, inode->i_private);
+-}
+-
+-#define DEFINE_DPU_DEBUGFS_SEQ_FOPS(__prefix)                          \
+-static int __prefix ## _open(struct inode *inode, struct file *file)	\
+-{									\
+-	return single_open(file, __prefix ## _show, inode->i_private);	\
+-}									\
+-static const struct file_operations __prefix ## _fops = {		\
+-	.owner = THIS_MODULE,						\
+-	.open = __prefix ## _open,					\
+-	.release = single_release,					\
+-	.read = seq_read,						\
+-	.llseek = seq_lseek,						\
+-}
+-
+ static int dpu_crtc_debugfs_state_show(struct seq_file *s, void *v)
+ {
+ 	struct drm_crtc *crtc = (struct drm_crtc *) s->private;
+@@ -1468,20 +1450,15 @@ static int dpu_crtc_debugfs_state_show(struct seq_file *s, void *v)
+ 
+ 	return 0;
+ }
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_crtc_debugfs_state);
++
++DEFINE_SHOW_ATTRIBUTE(dpu_crtc_debugfs_state);
++DEFINE_SHOW_ATTRIBUTE(status);
+ 
+ static int _dpu_crtc_init_debugfs(struct drm_crtc *crtc)
+ {
+ 	struct dpu_crtc *dpu_crtc;
+ 	struct dpu_kms *dpu_kms;
+ 
+-	static const struct file_operations debugfs_status_fops = {
+-		.open =		_dpu_debugfs_status_open,
+-		.read =		seq_read,
+-		.llseek =	seq_lseek,
+-		.release =	single_release,
+-	};
+-
+ 	if (!crtc)
+ 		return -EINVAL;
+ 	dpu_crtc = to_dpu_crtc(crtc);
+@@ -1496,7 +1473,7 @@ static int _dpu_crtc_init_debugfs(struct drm_crtc *crtc)
+ 	/* don't error check these */
+ 	debugfs_create_file("status", 0400,
+ 			dpu_crtc->debugfs_root,
+-			dpu_crtc, &debugfs_status_fops);
++			dpu_crtc, &status_fops);
+ 	debugfs_create_file("state", 0600,
+ 			dpu_crtc->debugfs_root,
+ 			&dpu_crtc->base,
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 96cdf06e7da2..a36f9f72da87 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1873,7 +1873,7 @@ void dpu_encoder_prepare_commit(struct drm_encoder *drm_enc)
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static int _dpu_encoder_status_show(struct seq_file *s, void *data)
++static int status_show(struct seq_file *s, void *data)
+ {
+ 	struct dpu_encoder_virt *dpu_enc;
+ 	int i;
+@@ -1912,11 +1912,7 @@ static int _dpu_encoder_status_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int _dpu_encoder_debugfs_status_open(struct inode *inode,
+-		struct file *file)
+-{
+-	return single_open(file, _dpu_encoder_status_show, inode->i_private);
+-}
++DEFINE_SHOW_ATTRIBUTE(status);
+ 
+ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ {
+@@ -1925,13 +1921,6 @@ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ 	struct dpu_kms *dpu_kms;
+ 	int i;
+ 
+-	static const struct file_operations debugfs_status_fops = {
+-		.open =		_dpu_encoder_debugfs_status_open,
+-		.read =		seq_read,
+-		.llseek =	seq_lseek,
+-		.release =	single_release,
+-	};
+-
+ 	char name[DPU_NAME_SIZE];
+ 
+ 	if (!drm_enc || !drm_enc->dev || !drm_enc->dev->dev_private) {
+@@ -1953,7 +1942,7 @@ static int _dpu_encoder_init_debugfs(struct drm_encoder *drm_enc)
+ 
+ 	/* don't error check these */
+ 	debugfs_create_file("status", 0600,
+-		dpu_enc->debugfs_root, dpu_enc, &debugfs_status_fops);
++		dpu_enc->debugfs_root, dpu_enc, &status_fops);
+ 
+ 	for (i = 0; i < dpu_enc->num_phys_encs; i++)
+ 		if (dpu_enc->phys_encs[i] &&
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index 0a683e65a9f3..c3f036095c53 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -113,30 +113,19 @@ static int _dpu_danger_signal_status(struct seq_file *s,
+ 	return 0;
+ }
+ 
+-#define DEFINE_DPU_DEBUGFS_SEQ_FOPS(__prefix)				\
+-static int __prefix ## _open(struct inode *inode, struct file *file)	\
+-{									\
+-	return single_open(file, __prefix ## _show, inode->i_private);	\
+-}									\
+-static const struct file_operations __prefix ## _fops = {		\
+-	.owner = THIS_MODULE,						\
+-	.open = __prefix ## _open,					\
+-	.release = single_release,					\
+-	.read = seq_read,						\
+-	.llseek = seq_lseek,						\
+-}
+-
+ static int dpu_debugfs_danger_stats_show(struct seq_file *s, void *v)
+ {
+ 	return _dpu_danger_signal_status(s, true);
+ }
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_debugfs_danger_stats);
++
++DEFINE_SHOW_ATTRIBUTE(dpu_debugfs_danger_stats);
+ 
+ static int dpu_debugfs_safe_stats_show(struct seq_file *s, void *v)
+ {
+ 	return _dpu_danger_signal_status(s, false);
+ }
+-DEFINE_DPU_DEBUGFS_SEQ_FOPS(dpu_debugfs_safe_stats);
++
++DEFINE_SHOW_ATTRIBUTE(dpu_debugfs_safe_stats);
+ 
+ static void dpu_debugfs_danger_destroy(struct dpu_kms *dpu_kms)
+ {
+@@ -162,7 +151,7 @@ static int dpu_debugfs_danger_init(struct dpu_kms *dpu_kms,
+ 	return 0;
+ }
+ 
+-static int _dpu_debugfs_show_regset32(struct seq_file *s, void *data)
++static int dpu_regset32_show(struct seq_file *s, void *data)
+ {
+ 	struct dpu_debugfs_regset32 *regset;
+ 	struct dpu_kms *dpu_kms;
+@@ -212,18 +201,7 @@ static int _dpu_debugfs_show_regset32(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int dpu_debugfs_open_regset32(struct inode *inode,
+-		struct file *file)
+-{
+-	return single_open(file, _dpu_debugfs_show_regset32, inode->i_private);
+-}
+-
+-static const struct file_operations dpu_fops_regset32 = {
+-	.open =		dpu_debugfs_open_regset32,
+-	.read =		seq_read,
+-	.llseek =	seq_lseek,
+-	.release =	single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(dpu_regset32);
+ 
+ void dpu_debugfs_setup_regset32(struct dpu_debugfs_regset32 *regset,
+ 		uint32_t offset, uint32_t length, struct dpu_kms *dpu_kms)
+@@ -245,7 +223,7 @@ void *dpu_debugfs_create_regset32(const char *name, umode_t mode,
+ 	regset->offset = round_down(regset->offset, 4);
+ 
+ 	return debugfs_create_file(name, mode, parent,
+-			regset, &dpu_fops_regset32);
++			regset, &dpu_regset32_fops);
+ }
+ 
+ static int _dpu_debugfs_init(struct dpu_kms *dpu_kms)
+diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+index 329e4a3d8ae7..de7f020e2932 100644
+--- a/drivers/gpu/host1x/debug.c
++++ b/drivers/gpu/host1x/debug.c
+@@ -119,7 +119,7 @@ static void show_all(struct host1x *m, struct output *o, bool show_fifo)
+ 	}
+ }
+ 
+-static int host1x_debug_show_all(struct seq_file *s, void *unused)
++static int host1x_all_show(struct seq_file *s, void *unused)
+ {
+ 	struct output o = {
+ 		.fn = write_to_seqfile,
+@@ -131,7 +131,7 @@ static int host1x_debug_show_all(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int host1x_debug_show(struct seq_file *s, void *unused)
++static int host1x_show(struct seq_file *s, void *unused)
+ {
+ 	struct output o = {
+ 		.fn = write_to_seqfile,
+@@ -143,29 +143,8 @@ static int host1x_debug_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int host1x_debug_open_all(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, host1x_debug_show_all, inode->i_private);
+-}
+-
+-static const struct file_operations host1x_debug_all_fops = {
+-	.open = host1x_debug_open_all,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+-static int host1x_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, host1x_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations host1x_debug_fops = {
+-	.open = host1x_debug_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(host1x_all);
++DEFINE_SHOW_ATTRIBUTE(host1x);
+ 
+ static void host1x_debugfs_init(struct host1x *host1x)
+ {
+@@ -177,9 +156,10 @@ static void host1x_debugfs_init(struct host1x *host1x)
+ 	/* Store the created entry */
+ 	host1x->debugfs = de;
+ 
+-	debugfs_create_file("status", S_IRUGO, de, host1x, &host1x_debug_fops);
++	debugfs_create_file("status", S_IRUGO, de, host1x,
++			   &host1x_fops);
+ 	debugfs_create_file("status_all", S_IRUGO, de, host1x,
+-			    &host1x_debug_all_fops);
++			    &host1x_all_fops);
+ 
+ 	debugfs_create_u32("trace_cmdbuf", S_IRUGO|S_IWUSR, de,
+ 			   &host1x_debug_trace_cmdbuf);
 -- 
-2.17.1
+2.17.0
 
