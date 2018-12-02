@@ -7,67 +7,83 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D31BFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF5DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E05020851
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B00F20851
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:47:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbLgmbQX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E05020851
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJVCvp1Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B00F20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725781AbeLBTlc (ORCPT
+        id S1725782AbeLBTrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 14:41:32 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35147 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbeLBTlc (ORCPT
+        Sun, 2 Dec 2018 14:47:24 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39076 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbeLBTrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 14:41:32 -0500
-Received: by mail-pf1-f196.google.com with SMTP id z9so5248998pfi.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 11:41:29 -0800 (PST)
+        Sun, 2 Dec 2018 14:47:24 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b14so8936228edt.6;
+        Sun, 02 Dec 2018 11:47:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=PWqF3tMaWLmDxYGNgvdYHYOXwtyqYXJ5fdLlu6YJzVI=;
-        b=CbLgmbQX4viZbfrfxqNX6tdwjz1Owi/rSQTCjizJ9LWlSaJVdhsBWbT6addt8p7GBV
-         O9bmGgpkBE65tYs5QzAArxqpNAsCexDwMNrmyEQWIbYBf4IJ8JfBcvQWfbrk/fUMmfPl
-         jc5Pms1OCoexXM/VXdRC4W8+Ad219emheTquiIwY2YsfUDcnbFh8c2usuIjKhgl7Vt6+
-         LuN+dvwRAAS0Il9BcDoDS9qCksmhB3usAfmjjETaCxRf3MYw+PYLpuUDWyN+r3xJ3DPu
-         QU4xW409mZlmkSXQdiav079qYnGYm8+wo5WlG6SfVCgPrX6IYiq8b1b+OzZnrxCgc362
-         hHfg==
+        bh=Vla8uBSZUkPFDG7ZJBxr9yKrfY2d7vmchRDMnstFLbs=;
+        b=HJVCvp1Z0oliL+jbdmMfe5ndEiQo5Buo5WmcutrIeEIg/WpRcQsRooRJERc4kcNWPu
+         ZCoDchTxncIegohV6e9ySMx6HSis9bmexKw4CCAp/exyKWIkNqZSMEB19CTMmUXHN3nW
+         w00BfRSOnsp7lWbfCQRN4R40nHp8a0J1UHQfo5IO78P2dzYmiohG29xxk77avobw0kYm
+         +kM5TCUJZnYgrEyCcktUB4CDaBPu1/8hxMrCc1PZGHYdL9CQRos+qCIcqYxPg9wlrIZP
+         0CNQRMWmdzRXeXDfWjdepJS3wqttBzXcL8h5Q0l1nqL+NRRLrbmuEWv524gcThpUDNO2
+         P7PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=PWqF3tMaWLmDxYGNgvdYHYOXwtyqYXJ5fdLlu6YJzVI=;
-        b=AwbF2mahOVKnz4ksB9PneNtOUErZodDtPoeJjNvOBFk0eRiTaaNhsr54EOEZAu/zyr
-         Fem1TKlNr24YEMtbr6JgWSyyEzLooCkabGSMH+bWRh81NVNhUQ8dq3LeOii5eQvdBV0+
-         3NNjJWyLNjJvQuE1RLmTYRYSiBuaOhYX7xVPDmlnMepOpVasqlEVa04OXm3FDb3fFH/S
-         EJc1MIQ0OdPZy/xB1D/O+NMMcZA0Dcfx/v4ew0pRRMFaOft9+EPjrQKJzcU2KEPoX+KC
-         F9MFRu0NMwERZUg/EZA31X+xjfDrjkIotT3qG8a1ccA/uiVjp58UnwvzmXSkLnhigd3T
-         1+SQ==
-X-Gm-Message-State: AA+aEWYB2HSkOso9Y3f8v2hjmmYZWgHbzzLOzjOMStpswlxOfk0V5WkE
-        bBXef2nShnwrGXFq+s4BcPY=
-X-Google-Smtp-Source: AFSGD/W+RDCIThzvp4nDKR5IXO+Z+cqRUvKatzS6qPO5A2O3znWiFGM3JkLhJ3IgBDseZuzDgmLIwg==
-X-Received: by 2002:aa7:87ce:: with SMTP id i14mr13154120pfo.20.1543779688610;
-        Sun, 02 Dec 2018 11:41:28 -0800 (PST)
+        bh=Vla8uBSZUkPFDG7ZJBxr9yKrfY2d7vmchRDMnstFLbs=;
+        b=EFparqXzya3TezTvTGuUXeEg1ES2rOfya/GxrtPbeCMHDJN+IjeuhORvMkL0LaBTA2
+         6C7udVSHR/2/OXdeF5sTi7TGpeS2tqW1huX7YaIrnd1pADv8bUyXW4KHQ8q5KTA3LSQf
+         RPi3r1+q7G6CQTW9azK7ziZo3xBrkLsCzPPfMFdiGz0tOVNpCDChNNM4TH9l+utM5gmo
+         AHv1sxxAQGESyU649cM5Ox4/SaYcZlt1HyMbN52L9gE0BFT9yYbY4TssD6qbLl2lARM4
+         2E78E0yrR/NUObNBYomdcEe99F3zoynUOH7Q5RJg/kgLzV2OyeT8UfMC6dg0WEEHI5f6
+         RcEQ==
+X-Gm-Message-State: AA+aEWZQ59RCk5SPVij+8ux6pLrPgfjdwjDpWgkLtREZFCHQAYy5UQ+e
+        tQth4FBXRvDSdDBwHCPm7c4=
+X-Google-Smtp-Source: AFSGD/UJiSiNz8s66R+psmIB0tIhaGwrIJfbopQ9KAf5JJver8lbEaqjIudrOKPnRzVvqdu4jZ8p9w==
+X-Received: by 2002:a50:a246:: with SMTP id 64mr12516862edl.43.1543780040689;
+        Sun, 02 Dec 2018 11:47:20 -0800 (PST)
 Received: from ziggy.stardust ([93.176.147.153])
-        by smtp.gmail.com with ESMTPSA id f64sm40364226pfh.0.2018.12.02.11.41.25
+        by smtp.gmail.com with ESMTPSA id n16-v6sm1828026eja.6.2018.12.02.11.47.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Dec 2018 11:41:27 -0800 (PST)
-Subject: Re: [PATCH] MAINTAINERS: mediatek: Update SoC entry
-To:     arnd@arndb.de, gregkh@linuxfoundation.org,
-        mchehab+samsung@kernel.org, davem@davemloft.net,
-        akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, arm-soc <arm@kernel.org>
-References: <20181016145758.12995-1-matthias.bgg@gmail.com>
+        Sun, 02 Dec 2018 11:47:20 -0800 (PST)
+Subject: Re: [PATCH v27 1/2] arm64: dts: mt8173: Add GCE node
+To:     Houlong Wei <houlong.wei@mediatek.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        CK HU <ck.hu@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Monica Wang <monica.wang@mediatek.com>,
+        HS Liao <hs.liao@mediatek.com>, ginny.chen@mediatek.com,
+        enzhu.wang@mediatek.com, kendrick.hsu@mediatek.com
+References: <1543462629-32746-1-git-send-email-houlong.wei@mediatek.com>
+ <1543462629-32746-2-git-send-email-houlong.wei@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -113,12 +129,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <2529be64-7737-6237-7558-fb15dd22b513@gmail.com>
-Date:   Sun, 2 Dec 2018 20:39:13 +0100
+Message-ID: <99c858af-f9dd-0fa6-6554-a624d71a1967@gmail.com>
+Date:   Sun, 2 Dec 2018 20:47:18 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181016145758.12995-1-matthias.bgg@gmail.com>
+In-Reply-To: <1543462629-32746-2-git-send-email-houlong.wei@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -129,43 +145,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 16/10/2018 16:57, Matthias Brugger wrote:
-> Add IRC channel and URL of the wiki.
-> Also add soc drivers folder and regex to catch more
-> mediatek components.
+On 29/11/2018 04:37, Houlong Wei wrote:
+> This patch adds the device node of the GCE hardware for CMDQ module.
 > 
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+> Signed-off-by: HS Liao <hs.liao@mediatek.com>
 > ---
-
-Any comments on this patch?
-Through which tree should it go?
-
-Regards,
-Matthias
-
->  MAINTAINERS | 4 ++++
->  1 file changed, 4 insertions(+)
+>  arch/arm64/boot/dts/mediatek/mt8173.dtsi |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6ac000cc006d..66782dad6487 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1676,13 +1676,17 @@ ARM/Mediatek SoC support
->  M:	Matthias Brugger <matthias.bgg@gmail.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
-> +W:	https://mtk.bcnfs.org/
-> +C:	irc://chat.freenode.net/linux-mediatek
->  S:	Maintained
->  F:	arch/arm/boot/dts/mt6*
->  F:	arch/arm/boot/dts/mt7*
->  F:	arch/arm/boot/dts/mt8*
->  F:	arch/arm/mach-mediatek/
->  F:	arch/arm64/boot/dts/mediatek/
-> +F:	drivers/soc/mediatek/
->  N:	mtk
-> +N:	mt[678]
->  K:	mediatek
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> index abd2f15..412ffd4 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+
+Applied to v4.20-next/dts64
+
+Thanks a lot, it was a long journey :)
+
+> @@ -18,6 +18,7 @@
+>  #include <dt-bindings/phy/phy.h>
+>  #include <dt-bindings/power/mt8173-power.h>
+>  #include <dt-bindings/reset/mt8173-resets.h>
+> +#include <dt-bindings/gce/mt8173-gce.h>
+>  #include "mt8173-pinfunc.h"
 >  
->  ARM/Mediatek USB3 PHY DRIVER
+>  / {
+> @@ -521,6 +522,15 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		gce: mailbox@10212000 {
+> +			compatible = "mediatek,mt8173-gce";
+> +			reg = <0 0x10212000 0 0x1000>;
+> +			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
+> +			clocks = <&infracfg CLK_INFRA_GCE>;
+> +			clock-names = "gce";
+> +			#mbox-cells = <3>;
+> +		};
+> +
+>  		mipi_tx0: mipi-dphy@10215000 {
+>  			compatible = "mediatek,mt8173-mipi-tx";
+>  			reg = <0 0x10215000 0 0x1000>;
 > 
