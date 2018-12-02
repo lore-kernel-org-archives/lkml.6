@@ -2,92 +2,172 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A4AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3575C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D22222081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:29:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22222081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 74F632081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:30:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="grYuPt+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F632081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darnok.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbeLBM3K (ORCPT
+        id S1725857AbeLBMam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 07:29:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:51386 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbeLBM3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 07:29:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3347980D;
-        Sun,  2 Dec 2018 04:29:06 -0800 (PST)
-Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 899533F5A0;
-        Sun,  2 Dec 2018 04:29:04 -0800 (PST)
-Date:   Sun, 2 Dec 2018 12:29:00 +0000
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Message-ID: <20181202122900.79922c91@why.wild-wind.fr.eu.org>
-In-Reply-To: <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com>
-References: <20181120134032.31645-1-brgl@bgdev.pl>
-        <20181120134032.31645-2-brgl@bgdev.pl>
-        <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
-        <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
-        <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
-        <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
-        <20181125211854.idnqxz4pco3r7ydr@pengutronix.de>
-        <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
-        <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com>
-Organization: ARM Ltd
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Sun, 2 Dec 2018 07:30:42 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37458 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbeLBMam (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 07:30:42 -0500
+Received: by mail-qt1-f195.google.com with SMTP id z16so10860897qtq.4
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 04:30:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=px0ldm/IDOFB1WWV1D2qz0WktHoFTvg41ZitMVargg4=;
+        b=grYuPt+uO91AqpbuGnu+6bdFhgOf5XIw/SQ/X6qsoCZBy/bIMzY7x5omICCVQtfGk0
+         M5jr0wDDz3LRFK3R9AEtjrthTIfCfmzOjMjHEIIsCGsmClaa9SesodNX0qco9f4a5RET
+         YQ2chV6wmDLnEqR5j5BiM+07BlzgEEA2IUtR56TTo1Cmymqvd0sJ+O1uy1dF4C/gpPK3
+         PJltUUZs1JC8xe+zXzEvwSQGh/erbrkysNw2p6Uj7E9HsMc4ahG5s6pIRhmL0FfDx9Lh
+         5+9hm5afbE8+SJnxFOUqa/VvWM5mnd9fJEbyQXxI02pvWMob0sY5ICGb6R9aOIH3waVI
+         RMBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=px0ldm/IDOFB1WWV1D2qz0WktHoFTvg41ZitMVargg4=;
+        b=PgAw7JG4r89WV4K5MeJdeKP5021mhXY05zuMQXYunUgN2Uqj3HfdpNMnIHImizlCI4
+         h9M5gSCN8cBNGkB3WToX2sXHFPshhz6zJ5dNrZ1DARuVabtmGLErpHAZPhg+KCUszMgd
+         WVL3KppBZe4B8Q1/CUN/EiJGTE9M1wPMNlDCkDEjv/ANswZnkY33n6WX5B0ovpjDzj7s
+         s4anD/1kk0byYHHuqVlj8FADth+bSVDF1n+GBQDXqi/g0Vadd5r6+JTsX2jaxCPHOXva
+         cbzz/+uiI0GkNwjTt3kXneEvAMmsSUSAZwZBylOIrzOjVaJK3uxnJ7wNtb7q2HUhg4UR
+         h/Hg==
+X-Gm-Message-State: AA+aEWa/kGe5fu3mu0E/mJyCPSd5WOvgQ9hpICdkDmoq4IIaMNyK07+i
+        GsePLpTUz1/ucNUqdXnyBf0=
+X-Google-Smtp-Source: AFSGD/WHw3BL/eKJ+O8hW2okvLhfvPE14kVQMrmI1TY5UozMHNFDluw9Qim5JIVfJVxAfi/e1n1O7w==
+X-Received: by 2002:ac8:6892:: with SMTP id m18mr11584608qtq.157.1543753837242;
+        Sun, 02 Dec 2018 04:30:37 -0800 (PST)
+Received: from localhost.localdomain (209-6-36-129.s6527.c3-0.smr-cbr2.sbo-smr.ma.cable.rcncustomer.com. [209.6.36.129])
+        by smtp.gmail.com with ESMTPSA id d78sm5454819qke.94.2018.12.02.04.30.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Dec 2018 04:30:36 -0800 (PST)
+Date:   Sun, 2 Dec 2018 07:30:34 -0500
+From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/dma: Fix panic caused by passing swiotlb to
+ command line
+Message-ID: <20181202123032.GA3166@localhost.localdomain>
+References: <1537154831-447363-1-git-send-email-zhe.he@windriver.com>
+ <c3536f4f-9bde-4f7f-a180-aa569d4e786d@windriver.com>
+ <20181022192921.GA20677@dhcp-10-175-29-12.vpn.oracle.com>
+ <87ee40fa-7a01-4d4c-7fa3-81aafc93e14f@windriver.com>
+ <5fa82cb9-bd32-8a3f-ddca-053f544e2883@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5fa82cb9-bd32-8a3f-ddca-053f544e2883@windriver.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 23:26:25 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
-
-> On Thu, Nov 29, 2018 at 7:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Tue, Oct 30, 2018 at 07:06:10PM +0800, He Zhe wrote:
 > 
-> > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
-> > sharing for userspace") some libgpiod tests are failing because we can
-> > no longer depend on reading the value of a dummy GPIO after detecting
-> > an interrupt to know the edge of the interrupt. While these interrupts
-> > are triggered from debugfs and debugfs is not required to maintain
-> > compatibility, I thing having a working test suite for the GPIO
-> > subsystem and uAPI is worth applying these two patches and also the
-> > previous one[1].
+> 
+> On 2018/10/23 19:14, He Zhe wrote:
 > >
-> > Can we have them applied for 4.20 or are there any objections?  
+> > On 2018/10/23 03:29, Konrad Rzeszutek Wilk wrote:
+> >> On Sat, Sep 22, 2018 at 08:56:58PM +0800, He Zhe wrote:
+> >>> May I have your input?
+> >> Alternatively would it make more sense for it to assume some default
+> >> value?
+> > Maybe, but the original code has no default value and I have no idea
+> > what default value is proper here.
 > 
-> I'm fine with applying them if I can just get an ACK from one of the IRQ
-> maintainers (Thomas, Marc).
+> Can anyone give some suggestions? Though I'd prefer to do nothing when
+> no option is provided.
 
-I'm fine with that patch, with the provision that (nitpick) the edge
-field is turned into a bool instead of an int.
-
-With that,
-
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-
-Thanks,
-
-	M.
--- 
-Without deviation from the norm, progress is not possible.
+One provided the paramter for a reason. I would just do a small one, say
+4MB.
+> 
+> Thanks,
+> Zhe
+> 
+> >
+> > Zhe
+> >
+> >>> Thanks,
+> >>> Zhe
+> >>>
+> >>> On 2018年09月17日 11:27, zhe.he@windriver.com wrote:
+> >>>> From: He Zhe <zhe.he@windriver.com>
+> >>>>
+> >>>> setup_io_tlb_npages does not check input argument before passing it
+> >>>> to isdigit. The argument would be a NULL pointer if "swiotlb", without
+> >>>> its value, is set in command line and thus causes the following panic.
+> >>>>
+> >>>> PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
+> >>>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
+> >>>> [    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
+> >>>> ...
+> >>>> [    0.000000] Call Trace:
+> >>>> [    0.000000]  do_early_param+0x57/0x8e
+> >>>> [    0.000000]  parse_args+0x208/0x320
+> >>>> [    0.000000]  ? rdinit_setup+0x30/0x30
+> >>>> [    0.000000]  parse_early_options+0x29/0x2d
+> >>>> [    0.000000]  ? rdinit_setup+0x30/0x30
+> >>>> [    0.000000]  parse_early_param+0x36/0x4d
+> >>>> [    0.000000]  setup_arch+0x336/0x99e
+> >>>> [    0.000000]  start_kernel+0x6f/0x4e6
+> >>>> [    0.000000]  x86_64_start_reservations+0x24/0x26
+> >>>> [    0.000000]  x86_64_start_kernel+0x6f/0x72
+> >>>> [    0.000000]  secondary_startup_64+0xa4/0xb0
+> >>>>
+> >>>> This patch adds a check to prevent the panic.
+> >>>>
+> >>>> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> >>>> Cc: stable@vger.kernel.org
+> >>>> Cc: konrad.wilk@oracle.com
+> >>>> Cc: hch@lst.de
+> >>>> Cc: m.szyprowski@samsung.com
+> >>>> Cc: robin.murphy@arm.com
+> >>>> ---
+> >>>>  kernel/dma/swiotlb.c | 5 +++++
+> >>>>  1 file changed, 5 insertions(+)
+> >>>>
+> >>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> >>>> index 4f8a6db..46fc34e 100644
+> >>>> --- a/kernel/dma/swiotlb.c
+> >>>> +++ b/kernel/dma/swiotlb.c
+> >>>> @@ -109,6 +109,11 @@ static int late_alloc;
+> >>>>  static int __init
+> >>>>  setup_io_tlb_npages(char *str)
+> >>>>  {
+> >>>> +	if (!str) {
+> >>>> +		pr_err("Config string not provided\n");
+> >>>> +		return -EINVAL;
+> >>>> +	}
+> >>>> +
+> >>>>  	if (isdigit(*str)) {
+> >>>>  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+> >>>>  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+> >>> _______________________________________________
+> >>> iommu mailing list
+> >>> iommu@lists.linux-foundation.org
+> >>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> >
+> 
