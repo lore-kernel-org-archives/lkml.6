@@ -2,188 +2,122 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A149C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 02:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4D1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 02:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B19F2081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 02:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76D032081D
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 02:24:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGJaLXGG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B19F2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GJ2HdwEI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hccufbbr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D032081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725750AbeLBNbJ (ORCPT
+        id S1725759AbeLBCYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 08:31:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42780 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725727AbeLBNbI (ORCPT
+        Sat, 1 Dec 2018 21:24:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36634 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725731AbeLBCYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 08:31:08 -0500
-Received: by mail-pl1-f193.google.com with SMTP id x21-v6so4679395pln.9
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 18:17:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=74FtgDJCxbK06huEL3MZAZ7K0y7aPnoVSsRLCnp83Ec=;
-        b=EGJaLXGG7Jll2uq2jTGzWkE8djO+6X7yw0TdMuT2i8V6sQ887ptkAWGY6FRKCDqecC
-         JrjiVRsswyItHgLPbliKP7UA7Ug2y0E9jxa321BATtAX8yRKkA4NDBpqa/UMip3OKwKa
-         dIiN9x3QrhUFeLK+IDP8ZiUM7+5XutMVpuzxF5mCN8fu1FGGVJ2IQazGP4Qe3V2fJ3HD
-         hsgcvGUm5dTUcYfMJD952Bi+484Qyko78a/AigsmaSkLtHvlV+6lpCbD3fQMmVLKHuXa
-         bmU6CZ55Lf1Q6bqRFFlr2bThs8HFCbN4+IBoQJ+lnZzk4Nz1wsIhLLtLL8ts9mvDtmPy
-         hKYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=74FtgDJCxbK06huEL3MZAZ7K0y7aPnoVSsRLCnp83Ec=;
-        b=YKOuXnP8ro0qN8Sd0J19Uj+IzMmUNx9MUH9oRy7Nbj+o3RfEnj6ocvtldBFWVtyG3o
-         eqLAocXBUpbRRmhRj11oEDtgs+Eh7AdIYam4DPuHp5uruf9gUx7xZF65XwxCjlL3uPIa
-         BvfJdo+W2K+FtTGd0HXugqNE6NKhPArkreY9n6ay0xtN24IV8hS3Sv2DFVvNG0RyJWBg
-         PPlcVMUHkpsIsiJ73ltnCrnLd3QrMr9LrWCPPZ9uy0OcTDMZpcbug6p5NBTNF2141nY8
-         Bx7FNAUyqamW7b6pfNSFxIwJrIak+RNeApw3pCehQiyTVrKT5Vq8oYcGUe2c6ESIPtKU
-         D+TA==
-X-Gm-Message-State: AA+aEWa3zCjrU+YhgRTwfneIX/PtuZlPoMveFzzN4q1grqn9eT1Om9a5
-        1oI6BKvVllFco+Q52Yafl6s=
-X-Google-Smtp-Source: AFSGD/U60wrNZPIKrxzonQI8BBmQ39wcKYN3FCZcRYCL3ZtVt4qTXvQH/dx/frJ5rSnvDqcRt4qcRg==
-X-Received: by 2002:a17:902:704b:: with SMTP id h11mr11177183plt.157.1543717032500;
-        Sat, 01 Dec 2018 18:17:12 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id v76sm24947293pfj.145.2018.12.01.18.17.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Dec 2018 18:17:11 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     linus.walleij@linaro.org, lee.jones@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] mfd: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Sat,  1 Dec 2018 21:17:10 -0500
-Message-Id: <20181202021710.9307-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 1 Dec 2018 21:24:44 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7165160A9B; Sun,  2 Dec 2018 02:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543717482;
+        bh=k15vZyvNADly0cPqm+XJLMvhlWerI7txNOIFSaVZfck=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GJ2HdwEIT9N+DxWKI8nXg5jb3roRh+AfW2gokDohJGR+8/hZsg0RlhEKcLoEKTtVf
+         kQDnZRnmQ6A/1HbK7P85gR55u6mqIGz5IhAvacoRYFnrCDnarnikKXIeAqImn/ugWl
+         gbzDHll/Ur7qju+PBBom6iM3N/v3oDYLGw9YgPLo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C661E60350;
+        Sun,  2 Dec 2018 02:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543717481;
+        bh=k15vZyvNADly0cPqm+XJLMvhlWerI7txNOIFSaVZfck=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HccufbbrubefAwnkGyHVxuv+ctluLG83YHBrfyS8idrw7GWXgeKCX+8HKDLVtRx0g
+         yGfJTN5nOzJJmLY2u9AsNMiLpsoyu3JMXEnyKPzgFglxVKxdQuxgPEPVi0D4jM6t7i
+         jwxhlrBmnPFT/oUtxBX3qd554ZoRi7mwkbKgka04=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 01 Dec 2018 18:24:41 -0800
+From:   Jeykumar Sankaran <jsanka@codeaurora.org>
+To:     Jayant Shekhar <jshekhar@codeaurora.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        abhinavk@codeaurora.org, chandanu@codeaurora.org,
+        nganji@codeaurora.org
+Subject: =?UTF-8?Q?Re=3A_=5BPatch_v3=C2=A0=5D_drm/msm/dpu=3A_Correct_dpu_?=
+ =?UTF-8?Q?destroy_and_disable_order?=
+In-Reply-To: <1542608738-3315-1-git-send-email-jshekhar@codeaurora.org>
+References: <1542608738-3315-1-git-send-email-jshekhar@codeaurora.org>
+Message-ID: <2b15d68ebafebe0c7f40bcb09b3d1ba6@codeaurora.org>
+X-Sender: jsanka@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On 2018-11-18 22:25, Jayant Shekhar wrote:
+> In case of msm drm bind failure, pm runtime put sync
+> is called from dsi driver which issues an asynchronous
+> put on mdss device. Subsequently when dpu_mdss_destroy
+> is triggered the change will make sure to put the mdss
+> device in suspend and clearing pending work if not
+> scheduled.
+> 
+> Changes in v2:
+>    - Removed double spacings [Jeykumar]
+> 
+> Changes in v3:
+>    - Fix clock on issue during bootup [Rajendra]
+> 
+> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
+> ---
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/mfd/ab3100-core.c | 15 ++-------------
- drivers/mfd/ab3100-otp.c  | 16 +++-------------
- drivers/mfd/tps65010.c    | 14 ++------------
- 3 files changed, 7 insertions(+), 38 deletions(-)
+Acked-by: Jeykumar Sankaran <jsanka@codeaurora.org>
 
-diff --git a/drivers/mfd/ab3100-core.c b/drivers/mfd/ab3100-core.c
-index 099635bed188..3fe448a29389 100644
---- a/drivers/mfd/ab3100-core.c
-+++ b/drivers/mfd/ab3100-core.c
-@@ -451,7 +451,7 @@ static irqreturn_t ab3100_irq_handler(int irq, void *data)
- /*
-  * Some debugfs entries only exposed if we're using debug
-  */
--static int ab3100_registers_print(struct seq_file *s, void *p)
-+static int ab3100_registers_show(struct seq_file *s, void *p)
- {
- 	struct ab3100 *ab3100 = s->private;
- 	u8 value;
-@@ -466,18 +466,7 @@ static int ab3100_registers_print(struct seq_file *s, void *p)
- 	return 0;
- }
- 
--static int ab3100_registers_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ab3100_registers_print, inode->i_private);
--}
--
--static const struct file_operations ab3100_registers_fops = {
--	.open = ab3100_registers_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--	.owner = THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(ab3100_registers);
- 
- struct ab3100_get_set_reg_priv {
- 	struct ab3100 *ab3100;
-diff --git a/drivers/mfd/ab3100-otp.c b/drivers/mfd/ab3100-otp.c
-index 55b207a4b336..24873e1ae865 100644
---- a/drivers/mfd/ab3100-otp.c
-+++ b/drivers/mfd/ab3100-otp.c
-@@ -96,7 +96,7 @@ static int __init ab3100_otp_read(struct ab3100_otp *otp)
-  * the contents of the OTP.
-  */
- #ifdef CONFIG_DEBUG_FS
--static int ab3100_show_otp(struct seq_file *s, void *v)
-+static int ab3100_otp_show(struct seq_file *s, void *v)
- {
- 	struct ab3100_otp *otp = s->private;
- 
-@@ -110,24 +110,14 @@ static int ab3100_show_otp(struct seq_file *s, void *v)
- 	return 0;
- }
- 
--static int ab3100_otp_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ab3100_show_otp, inode->i_private);
--}
--
--static const struct file_operations ab3100_otp_operations = {
--	.open		= ab3100_otp_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(ab3100_otp);
- 
- static int __init ab3100_otp_init_debugfs(struct device *dev,
- 					  struct ab3100_otp *otp)
- {
- 	otp->debugfs = debugfs_create_file("ab3100_otp", S_IFREG | S_IRUGO,
- 					   NULL, otp,
--					   &ab3100_otp_operations);
-+					   &ab3100_otp_fops);
- 	if (!otp->debugfs) {
- 		dev_err(dev, "AB3100 debugfs OTP file registration failed!\n");
- 		return -ENOENT;
-diff --git a/drivers/mfd/tps65010.c b/drivers/mfd/tps65010.c
-index 2ab67386b4ef..4202b5c40f18 100644
---- a/drivers/mfd/tps65010.c
-+++ b/drivers/mfd/tps65010.c
-@@ -192,7 +192,7 @@ static inline void show_chgconfig(int por, const char *label, u8 chgconfig) { }
- 
- #ifdef	CONFIG_DEBUG_FS
- 
--static int dbg_show(struct seq_file *s, void *_)
-+static int debug_show(struct seq_file *s, void *_)
- {
- 	struct tps65010	*tps = s->private;
- 	u8		value, v2;
-@@ -296,17 +296,7 @@ static int dbg_show(struct seq_file *s, void *_)
- 	return 0;
- }
- 
--static int dbg_tps_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, dbg_show, inode->i_private);
--}
--
--static const struct file_operations debug_fops = {
--	.open		= dbg_tps_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(debug);
- 
- #define	DEBUG_FOPS	&debug_fops
- 
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> index fd9c893..df8127b 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> @@ -156,18 +156,16 @@ static void dpu_mdss_destroy(struct drm_device 
+> *dev)
+>  	struct dpu_mdss *dpu_mdss = to_dpu_mdss(priv->mdss);
+>  	struct dss_module_power *mp = &dpu_mdss->mp;
+> 
+> +	pm_runtime_suspend(dev->dev);
+> +	pm_runtime_disable(dev->dev);
+>  	_dpu_mdss_irq_domain_fini(dpu_mdss);
+> -
+>  	free_irq(platform_get_irq(pdev, 0), dpu_mdss);
+> -
+>  	msm_dss_put_clk(mp->clk_config, mp->num_clk);
+>  	devm_kfree(&pdev->dev, mp->clk_config);
+> 
+>  	if (dpu_mdss->mmio)
+>  		devm_iounmap(&pdev->dev, dpu_mdss->mmio);
+>  	dpu_mdss->mmio = NULL;
+> -
+> -	pm_runtime_disable(dev->dev);
+>  	priv->mdss = NULL;
+>  }
+
 -- 
-2.17.0
-
+Jeykumar S
