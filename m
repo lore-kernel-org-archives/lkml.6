@@ -2,87 +2,101 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD44FC65BAE
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 09:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0872CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 09:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89E9320834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 09:42:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89E9320834
+	by mail.kernel.org (Postfix) with ESMTP id BD8752082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 09:50:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8752082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725814AbeLBJmU (ORCPT
+        id S1725821AbeLBJuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 04:42:20 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:34179 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbeLBJmT (ORCPT
+        Sun, 2 Dec 2018 04:50:04 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:45672 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeLBJuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 04:42:19 -0500
-Received: by mail-ua1-f67.google.com with SMTP id z23so3405049uam.1;
-        Sun, 02 Dec 2018 01:42:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ba+mnw0Tk07q3FL6hJbBOPC+6yVlQ3wEke/zKGlvDm8=;
-        b=RyDYbOEBF9LCwGu1xZeSN9xNzVyUPn8741KqEdv4rP5/S9ND9oyLDLqqEgrgtfw4PX
-         u0zOAYL1WvDBClaASGMRAu5HoEC83ajSVWkCqBZxcrmO94CdZR+vmTePA65i0Pq90eLM
-         Usy95ig7dyjCjRWc355FHPw08pUT6fGdE4vXNZuSbCXgXQX13Z6/CVGmNAT/KBkILhk6
-         3dUTBL0PX3A1OIIjtYK13omVAsZN/WpKbGJgflLbkUloMk55p57tsdWp1Zmh8IYMoJaD
-         3puLus3jL8xhCXHgrOzKSNWZ69eqWfzXaaQIwtl8IoKwFl5aR0F63Q6FMyqmxrfr5XSb
-         4Viw==
-X-Gm-Message-State: AA+aEWZef1z7G0VksJZX3BOx7JnBS0Dz4PpaDW2tXLDWLJOwUjYNRmkQ
-        Y0AzdN/PcGD9jZ9xfld9PRofUtskwPBdwj2eXJE=
-X-Google-Smtp-Source: AFSGD/XjxVBVLfBhsYxcLR3wcv7hrJ0aZulbIfIyt/zt0+Rw4w72P6W2oYmoR4Go0nE+Nmy/6Dm/S1gzsiWRLJRg9Rs=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr5589150uap.0.1543743737052;
- Sun, 02 Dec 2018 01:42:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20181129105956.25933-1-andriy.shevchenko@linux.intel.com> <20181129105956.25933-21-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20181129105956.25933-21-andriy.shevchenko@linux.intel.com>
+        Sun, 2 Dec 2018 04:50:04 -0500
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id 6xpy1z0083XaVaC01xpy3m; Sun, 02 Dec 2018 10:49:59 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gTONy-0003vg-Jx; Sun, 02 Dec 2018 10:49:58 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gTO7c-00012d-GU; Sun, 02 Dec 2018 10:33:04 +0100
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 2 Dec 2018 10:42:05 +0100
-Message-ID: <CAMuHMdWpb-xCewVbwNq7-gbh5OFq7LFOqjn2UvEOWgByomOa-w@mail.gmail.com>
-Subject: Re: [PATCH v5 20/21] m68k/mac: Switch to use %ptR
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Joe Perches <joe@perches.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@iki.fi>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v3] code-of-conduct: Remove explicit list of discrimination factors
+Date:   Sun,  2 Dec 2018 10:32:57 +0100
+Message-Id: <20181202093257.3918-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 12:04 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> Use %ptR instead of open coded variant to print content of
-> struct rtc_time in human readable format.
->
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: linux-m68k <linux-m68k@lists.linux-m68k.org>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Providing an explicit list of discrimination factors may give the false
+impression that discrimination based on other unlisted factors would be
+allowed.
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Furthermore, this list is already overly long, polarizing,
+politically-laden, and reinstating the concept of human races.
+None of these is related to the goals of the Linux kernel project.
 
-Gr{oetje,eeting}s,
+Avoid any ambiguity or political undertone by removing the list, to
+ensure "a harassment-free experience for everyone", period.
 
-                        Geert
+Fixes: 8a104f8b5867c682 ("Code of Conduct: Let's revamp it.")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Frank Rowand <frowand.list@gmail.com>
+Acked-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Acked-by: Tomi Valkeinen <tomi.valkeinen@iki.fi>
+Acked-by: Bart Van Assche <bvanassche@acm.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+---
+v3:
+  - Add 2 Acked-bys,
+  - Add more rationale to the patch description.
 
+v2:
+  - Add 3 Acked-bys.
+---
+ Documentation/process/code-of-conduct.rst | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/Documentation/process/code-of-conduct.rst b/Documentation/process/code-of-conduct.rst
+index be50294aebd5db37..4379cce85faa804d 100644
+--- a/Documentation/process/code-of-conduct.rst
++++ b/Documentation/process/code-of-conduct.rst
+@@ -8,10 +8,7 @@ Our Pledge
+ 
+ In the interest of fostering an open and welcoming environment, we as
+ contributors and maintainers pledge to making participation in our project and
+-our community a harassment-free experience for everyone, regardless of age, body
+-size, disability, ethnicity, sex characteristics, gender identity and
+-expression, level of experience, education, socio-economic status, nationality,
+-personal appearance, race, religion, or sexual identity and orientation.
++our community a harassment-free experience for everyone.
+ 
+ Our Standards
+ =============
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
