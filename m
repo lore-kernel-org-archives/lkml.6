@@ -2,490 +2,220 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67963C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 08:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A49DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 08:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E862C2081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 08:47:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="eFEwzyGI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E862C2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id D3B172081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 08:47:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B172081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725826AbeLBIrS (ORCPT
+        id S1725835AbeLBIrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 03:47:18 -0500
-Received: from mail-eopbgr1320111.outbound.protection.outlook.com ([40.107.132.111]:58138
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725812AbeLBIrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 03:47:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YUDNeOOgt2mMZxnpI3+ABnBrCtKYCzzcEdPRp7/i+So=;
- b=eFEwzyGIyYj00myo9e8BTBA2ot0++WHTrM40Rby3wVIdQ3bsDCOhgNw/FZ+w6JNe5wxKVca2f2r858pIciq/vYL/YDf++N9poi2cirzWZaXm36ikwhs3i3zUpVXrekTi2awe2Rebsel4Jm1E9TCb7s64fIrYShvPgRzC274rKCI=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0172.APCP153.PROD.OUTLOOK.COM (10.170.189.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.2; Sun, 2 Dec 2018 08:47:03 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::3d50:29f2:1244:8b4b]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::3d50:29f2:1244:8b4b%8]) with mapi id 15.20.1425.000; Sun, 2 Dec 2018
- 08:47:03 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: RE: [PATCH] [repost] Drivers: hv: vmbus: Offload the handling of
- channels to two workqueues
-Thread-Topic: [PATCH] [repost] Drivers: hv: vmbus: Offload the handling of
- channels to two workqueues
-Thread-Index: AdSHnLf8sFQRqiTYT1imO/A1WbZ3vgAGqdqAAACQe+AARPSgcAACV9+QAE6h+oAAAjt60A==
-Date:   Sun, 2 Dec 2018 08:47:03 +0000
-Message-ID: <PU1P153MB0169244CF3902294F42D114DBFAD0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <PU1P153MB016946D99D63F9713E32B99ABFD20@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181129074435.GA12347@kroah.com>
- <PU1P153MB01695E455F77117812AA0D1ABFD20@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <SN4PR2101MB0815A8C285162E3B48CD209AA0D30@SN4PR2101MB0815.namprd21.prod.outlook.com>
- <PU1P153MB016907FDC34F47CFE71B82EABFD30@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181202073345.GC31761@kroah.com>
-In-Reply-To: <20181202073345.GC31761@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-12-02T08:46:58.4514913Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [2601:600:a27f:df20:c018:1e0:4be3:b7dd]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0172;6:afEwqpHr9xgHkclsne2jGP3vSSsb+8wNCrLCqPBkcDwiI3lNtmr8tU4kS9t0EX8W3Aj0K0XkjbV2KtNGZwDvU3tV1HaUy26upzODvcRQV3LDU6A4TK86G9lNOCjP09CF2TppuAgcHa8Bopy139CBYVbaJ9q4mY/D1yYKZBuXnmvI9A8T0sQ1bSY+p4wg8SCfXix0U6tuVlyq2bhCbTJNxTRl4d57akwpZDdUJc1vwsUn35AJAKH13KIhLZEZzduPKIQ5DY7GAbTgzCCIxaWIyhbkYa2rYSlo0vLCSTN5V+LiBoZTqDn47X9u03BEfufAsi8UDZz0Za1OwxFxRSsTElZL/ida0bIBtc0DScanRABJ/xe2t+1QJahLDB03eRx7boDwH4xp9p6D6s8Z3yxk+UcRMljImhOP/aMJRIjZZ9muCV8F5WYWkv3DPXoy57lOvCBZfzESFmk83OA+Ff01Gw==;5:dO4c/FXthEQQw8rCsF4Ojc5heEDRh+qkV46l86BnZug/VKLdi1SY1oDz0Tsd44gCq76X/wLrTVQPoQISpXVWk1SjKw0LqF8klvtLkgNj98/rL90WStgR8H+VcKmWDqQHtQZgBEZBcRDg3FXF0uVAmzsgakNBnF3nq4AvEK81LoE=;7:ywi8UR8s7SwfLxw/iKFsCmngV4vWMo2rGgyq5PBBKr/fxP2J8LyNi69DrpmtFOmG042CfBW7qWiwgQfWdgGeJxkn2Sx/EosrBHGzaDdDPWPy3DTE/fm3graJGvbPShGAsc0GjFM/3RzaszOUD8ovVA==
-x-ms-office365-filtering-correlation-id: 7f0f0a72-c044-4219-6928-08d65832bb76
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(49563074)(7193020);SRVR:PU1P153MB0172;
-x-ms-traffictypediagnostic: PU1P153MB0172:
-x-ms-exchange-purlcount: -3
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <PU1P153MB01721439B6D5EA25EC46027CBFAD0@PU1P153MB0172.APCP153.PROD.OUTLOOK.COM>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(8220035)(2401047)(8121501046)(5005006)(3231455)(999002)(944501486)(2280197)(4983020)(2018427008)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:PU1P153MB0172;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0172;
-x-forefront-prvs: 087474FBFA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(39850400004)(136003)(396003)(189003)(199004)(5024004)(6116002)(81166006)(256004)(14444005)(81156014)(1730700003)(107886003)(102836004)(6506007)(53546011)(6916009)(8676002)(54906003)(4326008)(53936002)(7736002)(74316002)(71190400001)(71200400001)(305945005)(14454004)(229853002)(8936002)(97736004)(9686003)(6246003)(86612001)(6436002)(316002)(68736007)(106356001)(446003)(478600001)(2501003)(105586002)(10290500003)(86362001)(5640700003)(22452003)(55016002)(5660300001)(2906002)(476003)(76176011)(7696005)(8990500004)(46003)(33656002)(93886005)(99936001)(99286004)(2351001)(186003)(11346002)(486006)(25786009)(10090500001)(60540400001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0172;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: nLrne9nFuFwb1twTgwGvnVK+0nsnd1OUKVrFxd/qMrmpR+szmfVoCvu7U1SOLS5/LOBfcjT8X8TShxsw/fCgAMSuZRjcxwRot0M3Pb9mjg9r2mLRU7UDoBJt/BM1zBCbLtgQD/2HXt93BntwZhp8lJvAXG/oWk1W8FFQzo7uXG18y/z6glR8AjXpHvcWkMl/7V1gm3KXmqsBaRIesYhfOWBpKCfOg1C0Qd/tJfeskdqLYGKSMkfT/+6BDn/XZHbUSbaxeh+9RZav26UkXZ+7Ao1I7Ow8q11A+7XVTBPoSftebOmJ4iavf7AuDLWB3oDcWt4XTrF/R3ENB3Ay7dS3fGy5P3IHqy7L2Vnpe0K1eYFARrBvXpAZhHOzPzCGuXRxdzk2W1Fxl6quNM9qXy4Pcw150qXMJVKftp/V/LrXpe29sgjIY3J7fTTOQqr5r0q/Q/mHp8t2nGO5Ae+3qpr6CHbvMdl57a5Aqp6tfmILLdubpUpjNbdgBQjfJfforEhq8GVqWaN/t/SKi3jSwYLxsQ==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/mixed;
-        boundary="_002_PU1P153MB0169244CF3902294F42D114DBFAD0PU1P153MB0169APCP_"
+        Sun, 2 Dec 2018 03:47:37 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:58635 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbeLBIrg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 03:47:36 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4371wK5lY3z1qwdt;
+        Sun,  2 Dec 2018 09:47:29 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4371wK4Wyvz1qtfC;
+        Sun,  2 Dec 2018 09:47:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id ALciLQp4YCUn; Sun,  2 Dec 2018 09:47:27 +0100 (CET)
+X-Auth-Info: JfZ1ozKI+ABIEXyGvXnGJ/9ia3GCwFIenP0RcOsOWa4=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Sun,  2 Dec 2018 09:47:27 +0100 (CET)
+Date:   Sun, 2 Dec 2018 09:47:17 +0100
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>,
+        Martin =?UTF-8?B?SHVuZGViw7hsbA==?= <martin@geanix.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: Re: [PATCHv3] ARM: dspi: Provide support for DSPI slave mode
+ operation (Vybryd vf610)
+Message-ID: <20181202094717.7ddc88e8@jawa>
+In-Reply-To: <20181113120631.13514-1-lukma@denx.de>
+References: <20180927150709.17010-1-lukma@denx.de>
+        <20181113120631.13514-1-lukma@denx.de>
+Organization: denx.de
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f0f0a72-c044-4219-6928-08d65832bb76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2018 08:47:03.1329
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0172
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/k325Tbu2Xw.1f8=ALzyDmPe"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---_002_PU1P153MB0169244CF3902294F42D114DBFAD0PU1P153MB0169APCP_
-Content-Type: text/plain; charset="us-ascii"
+--Sig_/k325Tbu2Xw.1f8=ALzyDmPe
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-> From: gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>
-> Sent: Saturday, December 1, 2018 11:34 PM
-> To: Dexuan Cui <decui@microsoft.com>
-> Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
-> <haiyangz@microsoft.com>; Stephen Hemminger
-> <sthemmin@microsoft.com>; linux-kernel@vger.kernel.org;
-> devel@linuxdriverproject.org; apw@canonical.com; vkuznets
-> <vkuznets@redhat.com>; olaf@aepfle.de; jasowang@redhat.com; Michael
-> Kelley <mikelley@microsoft.com>
-> Subject: Re: [PATCH] [repost] Drivers: hv: vmbus: Offload the handling of
-> channels to two workqueues
+Dear All,
+
+> The NXP's Vybryd vf610 can work as a SPI slave device (the CS and
+> clock signals are provided by master).
 >=20
-> On Fri, Nov 30, 2018 at 06:09:54PM +0000, Dexuan Cui wrote:
-> > > From: KY Srinivasan <kys@microsoft.com>
-> > > Sent: Friday, November 30, 2018 9:31 AM
-> > > > From: Dexuan Cui <decui@microsoft.com>
-> > > > Sent: Thursday, November 29, 2018 12:17 AM
-> > > > To: gregkh@linuxfoundation.org
-> > > > Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
-> > > > <haiyangz@microsoft.com>; Stephen Hemminger
-> > > > <sthemmin@microsoft.com>; linux-kernel@vger.kernel.org;
-> > > > devel@linuxdriverproject.org; apw@canonical.com; vkuznets
-> > > > <vkuznets@redhat.com>; olaf@aepfle.de; jasowang@redhat.com;
-> Michael
-> > > > Kelley <mikelley@microsoft.com>
-> > > > Subject: RE: [PATCH] [repost] Drivers: hv: vmbus: Offload the handl=
-ing of
-> > > > channels to two workqueues
-> > > >
-> > > > > From: gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>
-> > > > > Sent: Wednesday, November 28, 2018 11:45 PM
-> > > > > >
-> > > > > > There is no change in this repost. I just rebased this patch to=
- today's
-> > > > > > char-misc's char-misc-next branch. Previously KY posted the pat=
-ch
-> with
-> > > > his
-> > > > > > Signed-off-by (which is kept in this repost), but there was a c=
-onflict
-> issue.
-> > > > > >
-> > > > > > Note: the patch can't be cleanly applied to char-misc's
-> char-misc-linus
-> > > > branch
-> > > > > --
-> > > > > > to do that, we need to cherry-pick the supporting patch first:
-> > > > > > 4d3c5c69191f ("Drivers: hv: vmbus: Remove the useless API
-> > > > > vmbus_get_outgoing_channel()")
-> > > > >
-> > > > > That is not going to work for the obvious reason that this depend=
-ant
-> > > > > patch is not going to be merged into 4.20-final.
-> > > >
-> > > > It looks the dependent patch (4d3c5c69191f) is going to miss the v4=
-.20
-> > > > release.
-> > > > This is not a big issue, as the dependent patch isn't really import=
-ant.
-> > > >
-> > > > > So, what do you expect us to do here?  The only way this can be
-> accepted
-> > > > > is to have it go into my -next branch, which means it will show u=
-p in
-> > > > > 4.21-rc1, is that ok?
-> > > >
-> > > > Is there any chance for this patch ("Drivers: hv: vmbus: Offload th=
-e
-> handling
-> > > > ...") to
-> > > > go into v4.20?
-> > > >
-> > > > If yes, I can quickly do a rebase to char-misc's char-misc-linus br=
-anch,
-> > > > because actually the conflict can be very easily fixed. And I can h=
-elp to
-> fix any
-> > > > conflict when the dependent patch is backported to v4.20.1.
-> > >
-> > > This patch fixes an important bug while the patch this depends on is =
-not
-> > > critical.
-> > > I suggest we revert the patch that this patch depends on
-> > > and we can submit a new version of this patch that can go in now - in=
-to
-> 4.20
-> > > release.
-> > >
-> > > K. Y
-> >
-> > I agree.
-> >
-> > Hi Greg,
-> > Please let us know what we can do to try to push this important fix int=
-o
-> v4.20.
-> >
-> > Actually it's straightforward, though it looks big. And, we ave done a =
-full
-> testing
-> > with the patch.
+> It is possible to specify a single device to work in that mode. As we
+> do use DMA for transferring data, the RX channel must be prepared for
+> incoming data.
+> Moreover, in slave mode we just set a subset of control fields in
+> configuration registers (CTAR0, PUSHR).
 >=20
-> Ok, you all need to figure this out on your own, sorry.  Please give me
-> a patch that I can actually apply to the tree if you need it merged into
-> 4.20-final.  This shouldn't be tough, you all have been doing this long
-> enough by now...
+> For testing the spidev_test program has been used.
+> Test script for this patch can be found here:
+> https://github.com/lmajewski/tests-spi/blob/master/tests/spi/spi_tests.sh
+
+Gentle ping on this patch. Comments are more than welcome.
+
 >=20
-> I have no bandwidth to do this myself for you,
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+> Changes for v3:
 >=20
-> greg k-h
+> - Rebase to v4.20-rc2 (no code changes needed)
+>=20
+> Changes for v2:
+>=20
+> - Remove patch which adds extra NXP specific DTS property to support
+> slave mode and reuse the generic one (spi-slave)
+> - Remove patch which brings back the mcr_register local copy. It is
+> not needed as generic SPI slave infrastructure is used.
+> - Rewrite the code to use spi_controller_is_slave() helper functions
+> ---
+>  drivers/spi/spi-fsl-dspi.c | 40
+> ++++++++++++++++++++++++++++++---------- 1 file changed, 30
+> insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+> index 3082e72e4f6c..94b6a9690062 100644
+> --- a/drivers/spi/spi-fsl-dspi.c
+> +++ b/drivers/spi/spi-fsl-dspi.c
+> @@ -233,6 +233,9 @@ static u32 dspi_pop_tx_pushr(struct fsl_dspi
+> *dspi) {
+>  	u16 cmd =3D dspi->tx_cmd, data =3D dspi_pop_tx(dspi);
+> =20
+> +	if (spi_controller_is_slave(dspi->master))
+> +		return data;
+> +
+>  	if (dspi->len > 0)
+>  		cmd |=3D SPI_PUSHR_CMD_CONT;
+>  	return cmd << 16 | data;
+> @@ -329,6 +332,11 @@ static int dspi_next_xfer_dma_submit(struct
+> fsl_dspi *dspi) dma_async_issue_pending(dma->chan_rx);
+>  	dma_async_issue_pending(dma->chan_tx);
+> =20
+> +	if (spi_controller_is_slave(dspi->master)) {
+> +
+> wait_for_completion_interruptible(&dspi->dma->cmd_rx_complete);
+> +		return 0;
+> +	}
+> +
+>  	time_left =3D
+> wait_for_completion_timeout(&dspi->dma->cmd_tx_complete,
+> DMA_COMPLETION_TIMEOUT); if (time_left =3D=3D 0) {
+> @@ -798,14 +806,18 @@ static int dspi_setup(struct spi_device *spi)
+>  	ns_delay_scale(&pasc, &asc, sck_cs_delay, clkrate);
+> =20
+>  	chip->ctar_val =3D SPI_CTAR_CPOL(spi->mode & SPI_CPOL ? 1 : 0)
+> -		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0)
+> -		| SPI_CTAR_LSBFE(spi->mode & SPI_LSB_FIRST ? 1 : 0)
+> -		| SPI_CTAR_PCSSCK(pcssck)
+> -		| SPI_CTAR_CSSCK(cssck)
+> -		| SPI_CTAR_PASC(pasc)
+> -		| SPI_CTAR_ASC(asc)
+> -		| SPI_CTAR_PBR(pbr)
+> -		| SPI_CTAR_BR(br);
+> +		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0);
+> +
+> +	if (!spi_controller_is_slave(dspi->master)) {
+> +		chip->ctar_val |=3D SPI_CTAR_LSBFE(spi->mode &
+> +						 SPI_LSB_FIRST ? 1 :
+> 0)
+> +			| SPI_CTAR_PCSSCK(pcssck)
+> +			| SPI_CTAR_CSSCK(cssck)
+> +			| SPI_CTAR_PASC(pasc)
+> +			| SPI_CTAR_ASC(asc)
+> +			| SPI_CTAR_PBR(pbr)
+> +			| SPI_CTAR_BR(br);
+> +	}
+> =20
+>  	spi_set_ctldata(spi, chip);
+> =20
+> @@ -970,8 +982,13 @@ static const struct regmap_config
+> dspi_xspi_regmap_config[] =3D {=20
+>  static void dspi_init(struct fsl_dspi *dspi)
+>  {
+> -	regmap_write(dspi->regmap, SPI_MCR, SPI_MCR_MASTER |
+> SPI_MCR_PCSIS |
+> -		     (dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI :
+> 0));
+> +	unsigned int mcr =3D SPI_MCR_PCSIS |
+> +		(dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0);
+> +
+> +	if (!spi_controller_is_slave(dspi->master))
+> +		mcr |=3D SPI_MCR_MASTER;
+> +
+> +	regmap_write(dspi->regmap, SPI_MCR, mcr);
+>  	regmap_write(dspi->regmap, SPI_SR, SPI_SR_CLEAR);
+>  	if (dspi->devtype_data->xspi_mode)
+>  		regmap_write(dspi->regmap, SPI_CTARE(0),
+> @@ -1027,6 +1044,9 @@ static int dspi_probe(struct platform_device
+> *pdev) }
+>  		master->bus_num =3D bus_num;
+> =20
+> +		if (of_property_read_bool(np, "spi-slave"))
+> +			master->slave =3D true;
+> +
+>  		dspi->devtype_data =3D
+> of_device_get_match_data(&pdev->dev); if (!dspi->devtype_data) {
+>  			dev_err(&pdev->dev, "can't get
+> devtype_data\n");
 
-Hi Greg,
-Please use the attached patch: I rebased the patch to today's char-misc's
-char-misc-linus branch. It can also cleanly apply to Linus's master branch
-today.
-
-Please let me know in case you need me to re-post the patch in a new mail
-(rather than the attachment here) or you need me to rebase the patch to
-a different tree/branch.
-
-Thanks,
-Dexuan
 
 
---_002_PU1P153MB0169244CF3902294F42D114DBFAD0PU1P153MB0169APCP_
-Content-Type: application/octet-stream;
-	name="0001-Drivers-hv-vmbus-Offload-the-handling-of-channels-to.patch"
-Content-Description:
- 0001-Drivers-hv-vmbus-Offload-the-handling-of-channels-to.patch
-Content-Disposition: attachment;
-	filename="0001-Drivers-hv-vmbus-Offload-the-handling-of-channels-to.patch";
-	size=13367; creation-date="Sun, 02 Dec 2018 08:37:43 GMT";
-	modification-date="Sun, 02 Dec 2018 08:37:43 GMT"
-Content-Transfer-Encoding: base64
 
-RnJvbSBmMzQyOTdkN2ZlNjFlM2FhMDhhNGI4YTM0Zjg4OTg1MGM1ZjE1NjdmIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBEZXh1YW4gQ3VpIDxkZWN1aUBtaWNyb3NvZnQuY29tPgpEYXRl
-OiBTdW4sIDIgRGVjIDIwMTggMDA6MzU6MTYgLTA4MDAKU3ViamVjdDogW1BBVENIXSBEcml2ZXJz
-OiBodjogdm1idXM6IE9mZmxvYWQgdGhlIGhhbmRsaW5nIG9mIGNoYW5uZWxzIHRvIHR3bwogd29y
-a3F1ZXVlcwoKdm1idXNfcHJvY2Vzc19vZmZlcigpIG11c3RuJ3QgY2FsbCBjaGFubmVsLT5zY19j
-cmVhdGlvbl9jYWxsYmFjaygpCmRpcmVjdGx5IGZvciBzdWItY2hhbm5lbHMsIGJlY2F1c2Ugc2Nf
-Y3JlYXRpb25fY2FsbGJhY2soKSAtPgp2bWJ1c19vcGVuKCkgbWF5IG5ldmVyIGdldCB0aGUgaG9z
-dCdzIHJlc3BvbnNlIHRvIHRoZQpPUEVOX0NIQU5ORUwgbWVzc2FnZSAodGhlIGhvc3QgbWF5IHJl
-c2NpbmQgYSBjaGFubmVsIGF0IGFueSB0aW1lLAplLmcuIGluIHRoZSBjYXNlIG9mIGhvdCByZW1v
-dmluZyBhIE5JQyksIGFuZCB2bWJ1c19vbm9mZmVyX3Jlc2NpbmQoKQptYXkgbm90IHdha2UgdXAg
-dGhlIHZtYnVzX29wZW4oKSBhcyBpdCdzIGJsb2NrZWQgZHVlIHRvIGEgbm9uLXplcm8Kdm1idXNf
-Y29ubmVjdGlvbi5vZmZlcl9pbl9wcm9ncmVzcywgYW5kIGZpbmFsbHkgd2UgaGF2ZSBhIGRlYWRs
-b2NrLgoKVGhlIGFib3ZlIGlzIGFsc28gdHJ1ZSBmb3IgcHJpbWFyeSBjaGFubmVscywgaWYgdGhl
-IHJlbGF0ZWQgZGV2aWNlCmRyaXZlcnMgdXNlIHN5bmMgcHJvYmluZyBtb2RlIGJ5IGRlZmF1bHQu
-CgpBbmQsIHVzdWFsbHkgdGhlIGhhbmRsaW5nIG9mIHByaW1hcnkgY2hhbm5lbHMgYW5kIHN1Yi1j
-aGFubmVscyBjYW4KZGVwZW5kIG9uIGVhY2ggb3RoZXIsIHNvIHdlIHNob3VsZCBvZmZsb2FkIHRo
-ZW0gdG8gZGlmZmVyZW50CndvcmtxdWV1ZXMgdG8gYXZvaWQgcG9zc2libGUgZGVhZGxvY2ssIGUu
-Zy4gaW4gc3luYy1wcm9iaW5nIG1vZGUsCk5JQzEncyBuZXR2c2Nfc3ViY2hhbl93b3JrKCkgY2Fu
-IHJhY2Ugd2l0aCBOSUMyJ3MgbmV0dnNjX3Byb2JlKCkgLT4KcnRubF9sb2NrKCksIGFuZCBjYXVz
-ZXMgZGVhZGxvY2s6IHRoZSBmb3JtZXIgZ2V0cyB0aGUgcnRubF9sb2NrCmFuZCB3YWl0cyBmb3Ig
-YWxsIHRoZSBzdWItY2hhbm5lbHMgdG8gYXBwZWFyLCBidXQgdGhlIGxhdHRlcgpjYW4ndCBnZXQg
-dGhlIHJ0bmxfbG9jayBhbmQgdGhpcyBibG9ja3MgdGhlIGhhbmRsaW5nIG9mIHN1Yi1jaGFubmVs
-cy4KClRoZSBwYXRjaCBjYW4gZml4IHRoZSBtdWx0aXBsZS1OSUMgZGVhZGxvY2sgZGVzY3JpYmVk
-IGFib3ZlIGZvcgp2My54IGtlcm5lbHMgKGUuZy4gUkhFTCA3LngpIHdoaWNoIGRvbid0IHN1cHBv
-cnQgYXN5bmMtcHJvYmluZwpvZiBkZXZpY2VzLCBhbmQgdjQuNCwgdjQuOSwgdjQuMTQgYW5kIHY0
-LjE4IHdoaWNoIHN1cHBvcnQgYXN5bmMtcHJvYmluZwpidXQgZG9uJ3QgZW5hYmxlIGFzeW5jLXBy
-b2JpbmcgZm9yIEh5cGVyLVYgZHJpdmVycyAoeWV0KS4KClRoZSBwYXRjaCBjYW4gYWxzbyBmaXgg
-dGhlIGhhbmcgaXNzdWUgaW4gc3ViLWNoYW5uZWwncyBoYW5kbGluZyBkZXNjcmliZWQKYWJvdmUg
-Zm9yIGFsbCB2ZXJzaW9ucyBvZiBrZXJuZWxzLCBpbmNsdWRpbmcgdjQuMTkgYW5kIHY0LjIwLXJj
-NC4KClNvIGFjdHVhbGx5IHRoZSBwYXRjaCBzaG91bGQgYmUgYXBwbGllZCB0byBhbGwgdGhlIGV4
-aXN0aW5nIGtlcm5lbHMsCm5vdCBvbmx5IHRoZSBrZXJuZWxzIHRoYXQgaGF2ZSA4MTk1YjEzOTZl
-YzguCgpGaXhlczogODE5NWIxMzk2ZWM4ICgiaHZfbmV0dnNjOiBmaXggZGVhZGxvY2sgb24gaG90
-cGx1ZyIpCkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnCkNjOiBTdGVwaGVuIEhlbW1pbmdlciA8
-c3RoZW1taW5AbWljcm9zb2Z0LmNvbT4KQ2M6IEsuIFkuIFNyaW5pdmFzYW4gPGt5c0BtaWNyb3Nv
-ZnQuY29tPgpDYzogSGFpeWFuZyBaaGFuZyA8aGFpeWFuZ3pAbWljcm9zb2Z0LmNvbT4KU2lnbmVk
-LW9mZi1ieTogRGV4dWFuIEN1aSA8ZGVjdWlAbWljcm9zb2Z0LmNvbT4KU2lnbmVkLW9mZi1ieTog
-Sy4gWS4gU3Jpbml2YXNhbiA8a3lzQG1pY3Jvc29mdC5jb20+Ci0tLQoKW0RlYy4gMiwgMjAxOF0g
-RGV4dWFuOiBJIHJlYmFzZWQgdGhpcyBwYXRjaCB0byB0b2RheSdzIGNoYXItbWlzYydzCmNoYXIt
-bWlzYy1saW51cyBicmFuY2gsIHdob3NlIHRvcCBjb21taXQgaXM6CmQ4ZjE5MGVlODM2YSAoIk1l
-cmdlIGJyYW5jaCAnYWtwbScgKHBhdGNoZXMgZnJvbSBBbmRyZXcpIikKClByZXZpb3VzbHkgS1kg
-cG9zdGVkIHRoZSBwYXRjaCB3aXRoIGhpcyBTaWduZWQtb2ZmLWJ5ICh3aGljaCBpcyBrZXB0IGlu
-IHRoaXMKcmVwb3N0KSwgYnV0IHRoZXJlIHdhcyBhIGNvbmZsaWN0IGlzc3VlLgoKV2UgaGF2ZSBk
-b25lIGEgZnVsbCB0ZXN0aW5nIHdpdGggdGhlIHBhdGNoLgpXZSBob3BlIHRoZSBpbXBvcnRhbnQg
-cGF0Y2ggY2FuIGJlIGluIHRoZSBmaW5hbCB2NC4yMC4gVGhhbmtzIQoKIGRyaXZlcnMvaHYvY2hh
-bm5lbF9tZ210LmMgfCAxODkgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
-LS0tLS0tLQogZHJpdmVycy9odi9jb25uZWN0aW9uLmMgICB8ICAyNCArKysrKy0KIGRyaXZlcnMv
-aHYvaHlwZXJ2X3ZtYnVzLmggfCAgIDcgKysKIGluY2x1ZGUvbGludXgvaHlwZXJ2LmggICAgfCAg
-IDcgKysKIDQgZmlsZXMgY2hhbmdlZCwgMTYxIGluc2VydGlvbnMoKyksIDY2IGRlbGV0aW9ucygt
-KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvaHYvY2hhbm5lbF9tZ210LmMgYi9kcml2ZXJzL2h2L2No
-YW5uZWxfbWdtdC5jCmluZGV4IDYyNzc1OTdkLi5lZGQzNGMxIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2h2L2NoYW5uZWxfbWdtdC5jCisrKyBiL2RyaXZlcnMvaHYvY2hhbm5lbF9tZ210LmMKQEAgLTQz
-NSw2MSArNDM1LDE2IEBAIHZvaWQgdm1idXNfZnJlZV9jaGFubmVscyh2b2lkKQogCX0KIH0KIAot
-LyoKLSAqIHZtYnVzX3Byb2Nlc3Nfb2ZmZXIgLSBQcm9jZXNzIHRoZSBvZmZlciBieSBjcmVhdGlu
-ZyBhIGNoYW5uZWwvZGV2aWNlCi0gKiBhc3NvY2lhdGVkIHdpdGggdGhpcyBvZmZlcgotICovCi1z
-dGF0aWMgdm9pZCB2bWJ1c19wcm9jZXNzX29mZmVyKHN0cnVjdCB2bWJ1c19jaGFubmVsICpuZXdj
-aGFubmVsKQorLyogTm90ZTogdGhlIGZ1bmN0aW9uIGNhbiBydW4gY29uY3VycmVudGx5IGZvciBw
-cmltYXJ5L3N1YiBjaGFubmVscy4gKi8KK3N0YXRpYyB2b2lkIHZtYnVzX2FkZF9jaGFubmVsX3dv
-cmsoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQogewotCXN0cnVjdCB2bWJ1c19jaGFubmVsICpj
-aGFubmVsOwotCWJvb2wgZm5ldyA9IHRydWU7CisJc3RydWN0IHZtYnVzX2NoYW5uZWwgKm5ld2No
-YW5uZWwgPQorCQljb250YWluZXJfb2Yod29yaywgc3RydWN0IHZtYnVzX2NoYW5uZWwsIGFkZF9j
-aGFubmVsX3dvcmspOworCXN0cnVjdCB2bWJ1c19jaGFubmVsICpwcmltYXJ5X2NoYW5uZWwgPSBu
-ZXdjaGFubmVsLT5wcmltYXJ5X2NoYW5uZWw7CiAJdW5zaWduZWQgbG9uZyBmbGFnczsKIAl1MTYg
-ZGV2X3R5cGU7CiAJaW50IHJldDsKIAotCS8qIE1ha2Ugc3VyZSB0aGlzIGlzIGEgbmV3IG9mZmVy
-ICovCi0JbXV0ZXhfbG9jaygmdm1idXNfY29ubmVjdGlvbi5jaGFubmVsX211dGV4KTsKLQotCS8q
-Ci0JICogTm93IHRoYXQgd2UgaGF2ZSBhY3F1aXJlZCB0aGUgY2hhbm5lbF9tdXRleCwKLQkgKiB3
-ZSBjYW4gcmVsZWFzZSB0aGUgcG90ZW50aWFsbHkgcmFjaW5nIHJlc2NpbmQgdGhyZWFkLgotCSAq
-LwotCWF0b21pY19kZWMoJnZtYnVzX2Nvbm5lY3Rpb24ub2ZmZXJfaW5fcHJvZ3Jlc3MpOwotCi0J
-bGlzdF9mb3JfZWFjaF9lbnRyeShjaGFubmVsLCAmdm1idXNfY29ubmVjdGlvbi5jaG5fbGlzdCwg
-bGlzdGVudHJ5KSB7Ci0JCWlmICghdXVpZF9sZV9jbXAoY2hhbm5lbC0+b2ZmZXJtc2cub2ZmZXIu
-aWZfdHlwZSwKLQkJCW5ld2NoYW5uZWwtPm9mZmVybXNnLm9mZmVyLmlmX3R5cGUpICYmCi0JCQkh
-dXVpZF9sZV9jbXAoY2hhbm5lbC0+b2ZmZXJtc2cub2ZmZXIuaWZfaW5zdGFuY2UsCi0JCQkJbmV3
-Y2hhbm5lbC0+b2ZmZXJtc2cub2ZmZXIuaWZfaW5zdGFuY2UpKSB7Ci0JCQlmbmV3ID0gZmFsc2U7
-Ci0JCQlicmVhazsKLQkJfQotCX0KLQotCWlmIChmbmV3KQotCQlsaXN0X2FkZF90YWlsKCZuZXdj
-aGFubmVsLT5saXN0ZW50cnksCi0JCQkgICAgICAmdm1idXNfY29ubmVjdGlvbi5jaG5fbGlzdCk7
-Ci0KLQltdXRleF91bmxvY2soJnZtYnVzX2Nvbm5lY3Rpb24uY2hhbm5lbF9tdXRleCk7Ci0KLQlp
-ZiAoIWZuZXcpIHsKLQkJLyoKLQkJICogQ2hlY2sgdG8gc2VlIGlmIHRoaXMgaXMgYSBzdWItY2hh
-bm5lbC4KLQkJICovCi0JCWlmIChuZXdjaGFubmVsLT5vZmZlcm1zZy5vZmZlci5zdWJfY2hhbm5l
-bF9pbmRleCAhPSAwKSB7Ci0JCQkvKgotCQkJICogUHJvY2VzcyB0aGUgc3ViLWNoYW5uZWwuCi0J
-CQkgKi8KLQkJCW5ld2NoYW5uZWwtPnByaW1hcnlfY2hhbm5lbCA9IGNoYW5uZWw7Ci0JCQlzcGlu
-X2xvY2tfaXJxc2F2ZSgmY2hhbm5lbC0+bG9jaywgZmxhZ3MpOwotCQkJbGlzdF9hZGRfdGFpbCgm
-bmV3Y2hhbm5lbC0+c2NfbGlzdCwgJmNoYW5uZWwtPnNjX2xpc3QpOwotCQkJY2hhbm5lbC0+bnVt
-X3NjKys7Ci0JCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjaGFubmVsLT5sb2NrLCBmbGFncyk7
-Ci0JCX0gZWxzZSB7Ci0JCQlnb3RvIGVycl9mcmVlX2NoYW47Ci0JCX0KLQl9Ci0KIAlkZXZfdHlw
-ZSA9IGh2X2dldF9kZXZfdHlwZShuZXdjaGFubmVsKTsKIAogCWluaXRfdnBfaW5kZXgobmV3Y2hh
-bm5lbCwgZGV2X3R5cGUpOwpAQCAtNTA3LDI3ICs0NjIsMjYgQEAgc3RhdGljIHZvaWQgdm1idXNf
-cHJvY2Vzc19vZmZlcihzdHJ1Y3Qgdm1idXNfY2hhbm5lbCAqbmV3Y2hhbm5lbCkKIAkvKgogCSAq
-IFRoaXMgc3RhdGUgaXMgdXNlZCB0byBpbmRpY2F0ZSBhIHN1Y2Nlc3NmdWwgb3BlbgogCSAqIHNv
-IHRoYXQgd2hlbiB3ZSBkbyBjbG9zZSB0aGUgY2hhbm5lbCBub3JtYWxseSwgd2UKLQkgKiBjYW4g
-Y2xlYW51cCBwcm9wZXJseQorCSAqIGNhbiBjbGVhbnVwIHByb3Blcmx5LgogCSAqLwogCW5ld2No
-YW5uZWwtPnN0YXRlID0gQ0hBTk5FTF9PUEVOX1NUQVRFOwogCi0JaWYgKCFmbmV3KSB7Ci0JCXN0
-cnVjdCBodl9kZXZpY2UgKmRldgotCQkJPSBuZXdjaGFubmVsLT5wcmltYXJ5X2NoYW5uZWwtPmRl
-dmljZV9vYmo7CisJaWYgKHByaW1hcnlfY2hhbm5lbCAhPSBOVUxMKSB7CisJCS8qIG5ld2NoYW5u
-ZWwgaXMgYSBzdWItY2hhbm5lbC4gKi8KKwkJc3RydWN0IGh2X2RldmljZSAqZGV2ID0gcHJpbWFy
-eV9jaGFubmVsLT5kZXZpY2Vfb2JqOwogCiAJCWlmICh2bWJ1c19hZGRfY2hhbm5lbF9rb2JqKGRl
-diwgbmV3Y2hhbm5lbCkpCi0JCQlnb3RvIGVycl9mcmVlX2NoYW47CisJCQlnb3RvIGVycl9kZXFf
-Y2hhbjsKKworCQlpZiAocHJpbWFyeV9jaGFubmVsLT5zY19jcmVhdGlvbl9jYWxsYmFjayAhPSBO
-VUxMKQorCQkJcHJpbWFyeV9jaGFubmVsLT5zY19jcmVhdGlvbl9jYWxsYmFjayhuZXdjaGFubmVs
-KTsKIAotCQlpZiAoY2hhbm5lbC0+c2NfY3JlYXRpb25fY2FsbGJhY2sgIT0gTlVMTCkKLQkJCWNo
-YW5uZWwtPnNjX2NyZWF0aW9uX2NhbGxiYWNrKG5ld2NoYW5uZWwpOwogCQluZXdjaGFubmVsLT5w
-cm9iZV9kb25lID0gdHJ1ZTsKIAkJcmV0dXJuOwogCX0KIAogCS8qCi0JICogU3RhcnQgdGhlIHBy
-b2Nlc3Mgb2YgYmluZGluZyB0aGlzIG9mZmVyIHRvIHRoZSBkcml2ZXIKLQkgKiBXZSBuZWVkIHRv
-IHNldCB0aGUgRGV2aWNlT2JqZWN0IGZpZWxkIGJlZm9yZSBjYWxsaW5nCi0JICogdm1idXNfY2hp
-bGRfZGV2X2FkZCgpCisJICogU3RhcnQgdGhlIHByb2Nlc3Mgb2YgYmluZGluZyB0aGUgcHJpbWFy
-eSBjaGFubmVsIHRvIHRoZSBkcml2ZXIKIAkgKi8KIAluZXdjaGFubmVsLT5kZXZpY2Vfb2JqID0g
-dm1idXNfZGV2aWNlX2NyZWF0ZSgKIAkJJm5ld2NoYW5uZWwtPm9mZmVybXNnLm9mZmVyLmlmX3R5
-cGUsCkBAIC01NTYsMTMgKzUxMCwyOCBAQCBzdGF0aWMgdm9pZCB2bWJ1c19wcm9jZXNzX29mZmVy
-KHN0cnVjdCB2bWJ1c19jaGFubmVsICpuZXdjaGFubmVsKQogCiBlcnJfZGVxX2NoYW46CiAJbXV0
-ZXhfbG9jaygmdm1idXNfY29ubmVjdGlvbi5jaGFubmVsX211dGV4KTsKLQlsaXN0X2RlbCgmbmV3
-Y2hhbm5lbC0+bGlzdGVudHJ5KTsKKworCS8qCisJICogV2UgbmVlZCB0byBzZXQgdGhlIGZsYWcs
-IG90aGVyd2lzZQorCSAqIHZtYnVzX29ub2ZmZXJfcmVzY2luZCgpIGNhbiBiZSBibG9ja2VkLgor
-CSAqLworCW5ld2NoYW5uZWwtPnByb2JlX2RvbmUgPSB0cnVlOworCisJaWYgKHByaW1hcnlfY2hh
-bm5lbCA9PSBOVUxMKSB7CisJCWxpc3RfZGVsKCZuZXdjaGFubmVsLT5saXN0ZW50cnkpOworCX0g
-ZWxzZSB7CisJCXNwaW5fbG9ja19pcnFzYXZlKCZwcmltYXJ5X2NoYW5uZWwtPmxvY2ssIGZsYWdz
-KTsKKwkJbGlzdF9kZWwoJm5ld2NoYW5uZWwtPnNjX2xpc3QpOworCQlzcGluX3VubG9ja19pcnFy
-ZXN0b3JlKCZwcmltYXJ5X2NoYW5uZWwtPmxvY2ssIGZsYWdzKTsKKwl9CisKIAltdXRleF91bmxv
-Y2soJnZtYnVzX2Nvbm5lY3Rpb24uY2hhbm5lbF9tdXRleCk7CiAKIAlpZiAobmV3Y2hhbm5lbC0+
-dGFyZ2V0X2NwdSAhPSBnZXRfY3B1KCkpIHsKIAkJcHV0X2NwdSgpOwogCQlzbXBfY2FsbF9mdW5j
-dGlvbl9zaW5nbGUobmV3Y2hhbm5lbC0+dGFyZ2V0X2NwdSwKLQkJCQkJIHBlcmNwdV9jaGFubmVs
-X2RlcSwgbmV3Y2hhbm5lbCwgdHJ1ZSk7CisJCQkJCSBwZXJjcHVfY2hhbm5lbF9kZXEsCisJCQkJ
-CSBuZXdjaGFubmVsLCB0cnVlKTsKIAl9IGVsc2UgewogCQlwZXJjcHVfY2hhbm5lbF9kZXEobmV3
-Y2hhbm5lbCk7CiAJCXB1dF9jcHUoKTsKQEAgLTU3MCwxNCArNTM5LDEwNCBAQCBzdGF0aWMgdm9p
-ZCB2bWJ1c19wcm9jZXNzX29mZmVyKHN0cnVjdCB2bWJ1c19jaGFubmVsICpuZXdjaGFubmVsKQog
-CiAJdm1idXNfcmVsZWFzZV9yZWxpZChuZXdjaGFubmVsLT5vZmZlcm1zZy5jaGlsZF9yZWxpZCk7
-CiAKLWVycl9mcmVlX2NoYW46CiAJZnJlZV9jaGFubmVsKG5ld2NoYW5uZWwpOwogfQogCiAvKgor
-ICogdm1idXNfcHJvY2Vzc19vZmZlciAtIFByb2Nlc3MgdGhlIG9mZmVyIGJ5IGNyZWF0aW5nIGEg
-Y2hhbm5lbC9kZXZpY2UKKyAqIGFzc29jaWF0ZWQgd2l0aCB0aGlzIG9mZmVyCisgKi8KK3N0YXRp
-YyB2b2lkIHZtYnVzX3Byb2Nlc3Nfb2ZmZXIoc3RydWN0IHZtYnVzX2NoYW5uZWwgKm5ld2NoYW5u
-ZWwpCit7CisJc3RydWN0IHZtYnVzX2NoYW5uZWwgKmNoYW5uZWw7CisJc3RydWN0IHdvcmtxdWV1
-ZV9zdHJ1Y3QgKndxOworCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CisJYm9vbCBmbmV3ID0gdHJ1ZTsK
-KworCW11dGV4X2xvY2soJnZtYnVzX2Nvbm5lY3Rpb24uY2hhbm5lbF9tdXRleCk7CisKKwkvKgor
-CSAqIE5vdyB0aGF0IHdlIGhhdmUgYWNxdWlyZWQgdGhlIGNoYW5uZWxfbXV0ZXgsCisJICogd2Ug
-Y2FuIHJlbGVhc2UgdGhlIHBvdGVudGlhbGx5IHJhY2luZyByZXNjaW5kIHRocmVhZC4KKwkgKi8K
-KwlhdG9taWNfZGVjKCZ2bWJ1c19jb25uZWN0aW9uLm9mZmVyX2luX3Byb2dyZXNzKTsKKworCWxp
-c3RfZm9yX2VhY2hfZW50cnkoY2hhbm5lbCwgJnZtYnVzX2Nvbm5lY3Rpb24uY2huX2xpc3QsIGxp
-c3RlbnRyeSkgeworCQlpZiAoIXV1aWRfbGVfY21wKGNoYW5uZWwtPm9mZmVybXNnLm9mZmVyLmlm
-X3R5cGUsCisJCQkJIG5ld2NoYW5uZWwtPm9mZmVybXNnLm9mZmVyLmlmX3R5cGUpICYmCisJCSAg
-ICAhdXVpZF9sZV9jbXAoY2hhbm5lbC0+b2ZmZXJtc2cub2ZmZXIuaWZfaW5zdGFuY2UsCisJCQkJ
-IG5ld2NoYW5uZWwtPm9mZmVybXNnLm9mZmVyLmlmX2luc3RhbmNlKSkgeworCQkJZm5ldyA9IGZh
-bHNlOworCQkJYnJlYWs7CisJCX0KKwl9CisKKwlpZiAoZm5ldykKKwkJbGlzdF9hZGRfdGFpbCgm
-bmV3Y2hhbm5lbC0+bGlzdGVudHJ5LAorCQkJICAgICAgJnZtYnVzX2Nvbm5lY3Rpb24uY2huX2xp
-c3QpOworCWVsc2UgeworCQkvKgorCQkgKiBDaGVjayB0byBzZWUgaWYgdGhpcyBpcyBhIHZhbGlk
-IHN1Yi1jaGFubmVsLgorCQkgKi8KKwkJaWYgKG5ld2NoYW5uZWwtPm9mZmVybXNnLm9mZmVyLnN1
-Yl9jaGFubmVsX2luZGV4ID09IDApIHsKKwkJCW11dGV4X3VubG9jaygmdm1idXNfY29ubmVjdGlv
-bi5jaGFubmVsX211dGV4KTsKKwkJCS8qCisJCQkgKiBEb24ndCBjYWxsIGZyZWVfY2hhbm5lbCgp
-LCBiZWNhdXNlIG5ld2NoYW5uZWwtPmtvYmoKKwkJCSAqIGlzIG5vdCBpbml0aWFsaXplZCB5ZXQu
-CisJCQkgKi8KKwkJCWtmcmVlKG5ld2NoYW5uZWwpOworCQkJV0FSTl9PTl9PTkNFKDEpOworCQkJ
-cmV0dXJuOworCQl9CisJCS8qCisJCSAqIFByb2Nlc3MgdGhlIHN1Yi1jaGFubmVsLgorCQkgKi8K
-KwkJbmV3Y2hhbm5lbC0+cHJpbWFyeV9jaGFubmVsID0gY2hhbm5lbDsKKwkJc3Bpbl9sb2NrX2ly
-cXNhdmUoJmNoYW5uZWwtPmxvY2ssIGZsYWdzKTsKKwkJbGlzdF9hZGRfdGFpbCgmbmV3Y2hhbm5l
-bC0+c2NfbGlzdCwgJmNoYW5uZWwtPnNjX2xpc3QpOworCQlzcGluX3VubG9ja19pcnFyZXN0b3Jl
-KCZjaGFubmVsLT5sb2NrLCBmbGFncyk7CisJfQorCisJbXV0ZXhfdW5sb2NrKCZ2bWJ1c19jb25u
-ZWN0aW9uLmNoYW5uZWxfbXV0ZXgpOworCisJLyoKKwkgKiB2bWJ1c19wcm9jZXNzX29mZmVyKCkg
-bXVzdG4ndCBjYWxsIGNoYW5uZWwtPnNjX2NyZWF0aW9uX2NhbGxiYWNrKCkKKwkgKiBkaXJlY3Rs
-eSBmb3Igc3ViLWNoYW5uZWxzLCBiZWNhdXNlIHNjX2NyZWF0aW9uX2NhbGxiYWNrKCkgLT4KKwkg
-KiB2bWJ1c19vcGVuKCkgbWF5IG5ldmVyIGdldCB0aGUgaG9zdCdzIHJlc3BvbnNlIHRvIHRoZQor
-CSAqIE9QRU5fQ0hBTk5FTCBtZXNzYWdlICh0aGUgaG9zdCBtYXkgcmVzY2luZCBhIGNoYW5uZWwg
-YXQgYW55IHRpbWUsCisJICogZS5nLiBpbiB0aGUgY2FzZSBvZiBob3QgcmVtb3ZpbmcgYSBOSUMp
-LCBhbmQgdm1idXNfb25vZmZlcl9yZXNjaW5kKCkKKwkgKiBtYXkgbm90IHdha2UgdXAgdGhlIHZt
-YnVzX29wZW4oKSBhcyBpdCdzIGJsb2NrZWQgZHVlIHRvIGEgbm9uLXplcm8KKwkgKiB2bWJ1c19j
-b25uZWN0aW9uLm9mZmVyX2luX3Byb2dyZXNzLCBhbmQgZmluYWxseSB3ZSBoYXZlIGEgZGVhZGxv
-Y2suCisJICoKKwkgKiBUaGUgYWJvdmUgaXMgYWxzbyB0cnVlIGZvciBwcmltYXJ5IGNoYW5uZWxz
-LCBpZiB0aGUgcmVsYXRlZCBkZXZpY2UKKwkgKiBkcml2ZXJzIHVzZSBzeW5jIHByb2JpbmcgbW9k
-ZSBieSBkZWZhdWx0LgorCSAqCisJICogQW5kLCB1c3VhbGx5IHRoZSBoYW5kbGluZyBvZiBwcmlt
-YXJ5IGNoYW5uZWxzIGFuZCBzdWItY2hhbm5lbHMgY2FuCisJICogZGVwZW5kIG9uIGVhY2ggb3Ro
-ZXIsIHNvIHdlIHNob3VsZCBvZmZsb2FkIHRoZW0gdG8gZGlmZmVyZW50CisJICogd29ya3F1ZXVl
-cyB0byBhdm9pZCBwb3NzaWJsZSBkZWFkbG9jaywgZS5nLiBpbiBzeW5jLXByb2JpbmcgbW9kZSwK
-KwkgKiBOSUMxJ3MgbmV0dnNjX3N1YmNoYW5fd29yaygpIGNhbiByYWNlIHdpdGggTklDMidzIG5l
-dHZzY19wcm9iZSgpIC0+CisJICogcnRubF9sb2NrKCksIGFuZCBjYXVzZXMgZGVhZGxvY2s6IHRo
-ZSBmb3JtZXIgZ2V0cyB0aGUgcnRubF9sb2NrCisJICogYW5kIHdhaXRzIGZvciBhbGwgdGhlIHN1
-Yi1jaGFubmVscyB0byBhcHBlYXIsIGJ1dCB0aGUgbGF0dGVyCisJICogY2FuJ3QgZ2V0IHRoZSBy
-dG5sX2xvY2sgYW5kIHRoaXMgYmxvY2tzIHRoZSBoYW5kbGluZyBvZgorCSAqIHN1Yi1jaGFubmVs
-cy4KKwkgKi8KKwlJTklUX1dPUksoJm5ld2NoYW5uZWwtPmFkZF9jaGFubmVsX3dvcmssIHZtYnVz
-X2FkZF9jaGFubmVsX3dvcmspOworCXdxID0gZm5ldyA/IHZtYnVzX2Nvbm5lY3Rpb24uaGFuZGxl
-X3ByaW1hcnlfY2hhbl93cSA6CisJCSAgICB2bWJ1c19jb25uZWN0aW9uLmhhbmRsZV9zdWJfY2hh
-bl93cTsKKwlxdWV1ZV93b3JrKHdxLCAmbmV3Y2hhbm5lbC0+YWRkX2NoYW5uZWxfd29yayk7Cit9
-CisKKy8qCiAgKiBXZSB1c2UgdGhpcyBzdGF0ZSB0byBzdGF0aWNhbGx5IGRpc3RyaWJ1dGUgdGhl
-IGNoYW5uZWwgaW50ZXJydXB0IGxvYWQuCiAgKi8KIHN0YXRpYyBpbnQgbmV4dF9udW1hX25vZGVf
-aWQ7CisvKgorICogaW5pdF92cF9pbmRleCgpIGFjY2Vzc2VzIGdsb2JhbCB2YXJpYWJsZXMgbGlr
-ZSBuZXh0X251bWFfbm9kZV9pZCwgYW5kCisgKiBpdCBjYW4gcnVuIGNvbmN1cnJlbnRseSBmb3Ig
-cHJpbWFyeSBjaGFubmVscyBhbmQgc3ViLWNoYW5uZWxzOiBzZWUKKyAqIHZtYnVzX3Byb2Nlc3Nf
-b2ZmZXIoKSwgc28gd2UgbmVlZCB0aGUgbG9jayB0byBwcm90ZWN0IHRoZSBnbG9iYWwKKyAqIHZh
-cmlhYmxlcy4KKyAqLworc3RhdGljIERFRklORV9TUElOTE9DSyhiaW5kX2NoYW5uZWxfdG9fY3B1
-X2xvY2spOwogCiAvKgogICogU3RhcnRpbmcgd2l0aCBXaW44LCB3ZSBjYW4gc3RhdGljYWxseSBk
-aXN0cmlidXRlIHRoZSBpbmNvbWluZwpAQCAtNjEzLDYgKzY3Miw4IEBAIHN0YXRpYyB2b2lkIGlu
-aXRfdnBfaW5kZXgoc3RydWN0IHZtYnVzX2NoYW5uZWwgKmNoYW5uZWwsIHUxNiBkZXZfdHlwZSkK
-IAkJcmV0dXJuOwogCX0KIAorCXNwaW5fbG9jaygmYmluZF9jaGFubmVsX3RvX2NwdV9sb2NrKTsK
-KwogCS8qCiAJICogQmFzZWQgb24gdGhlIGNoYW5uZWwgYWZmaW5pdHkgcG9saWN5LCB3ZSB3aWxs
-IGFzc2lnbiB0aGUgTlVNQQogCSAqIG5vZGVzLgpAQCAtNjk1LDYgKzc1Niw4IEBAIHN0YXRpYyB2
-b2lkIGluaXRfdnBfaW5kZXgoc3RydWN0IHZtYnVzX2NoYW5uZWwgKmNoYW5uZWwsIHUxNiBkZXZf
-dHlwZSkKIAljaGFubmVsLT50YXJnZXRfY3B1ID0gY3VyX2NwdTsKIAljaGFubmVsLT50YXJnZXRf
-dnAgPSBodl9jcHVfbnVtYmVyX3RvX3ZwX251bWJlcihjdXJfY3B1KTsKIAorCXNwaW5fdW5sb2Nr
-KCZiaW5kX2NoYW5uZWxfdG9fY3B1X2xvY2spOworCiAJZnJlZV9jcHVtYXNrX3ZhcihhdmFpbGFi
-bGVfbWFzayk7CiB9CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvaHYvY29ubmVjdGlvbi5jIGIvZHJp
-dmVycy9odi9jb25uZWN0aW9uLmMKaW5kZXggZjRkMDhjOC4uNGZlMTE3YjcgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvaHYvY29ubmVjdGlvbi5jCisrKyBiL2RyaXZlcnMvaHYvY29ubmVjdGlvbi5jCkBA
-IC0xOTAsNiArMTkwLDIwIEBAIGludCB2bWJ1c19jb25uZWN0KHZvaWQpCiAJCWdvdG8gY2xlYW51
-cDsKIAl9CiAKKwl2bWJ1c19jb25uZWN0aW9uLmhhbmRsZV9wcmltYXJ5X2NoYW5fd3EgPQorCQlj
-cmVhdGVfd29ya3F1ZXVlKCJodl9wcmlfY2hhbiIpOworCWlmICghdm1idXNfY29ubmVjdGlvbi5o
-YW5kbGVfcHJpbWFyeV9jaGFuX3dxKSB7CisJCXJldCA9IC1FTk9NRU07CisJCWdvdG8gY2xlYW51
-cDsKKwl9CisKKwl2bWJ1c19jb25uZWN0aW9uLmhhbmRsZV9zdWJfY2hhbl93cSA9CisJCWNyZWF0
-ZV93b3JrcXVldWUoImh2X3N1Yl9jaGFuIik7CisJaWYgKCF2bWJ1c19jb25uZWN0aW9uLmhhbmRs
-ZV9zdWJfY2hhbl93cSkgeworCQlyZXQgPSAtRU5PTUVNOworCQlnb3RvIGNsZWFudXA7CisJfQor
-CiAJSU5JVF9MSVNUX0hFQUQoJnZtYnVzX2Nvbm5lY3Rpb24uY2huX21zZ19saXN0KTsKIAlzcGlu
-X2xvY2tfaW5pdCgmdm1idXNfY29ubmVjdGlvbi5jaGFubmVsbXNnX2xvY2spOwogCkBAIC0yODAs
-MTAgKzI5NCwxNCBAQCB2b2lkIHZtYnVzX2Rpc2Nvbm5lY3Qodm9pZCkKIAkgKi8KIAl2bWJ1c19p
-bml0aWF0ZV91bmxvYWQoZmFsc2UpOwogCi0JaWYgKHZtYnVzX2Nvbm5lY3Rpb24ud29ya19xdWV1
-ZSkgewotCQlkcmFpbl93b3JrcXVldWUodm1idXNfY29ubmVjdGlvbi53b3JrX3F1ZXVlKTsKKwlp
-ZiAodm1idXNfY29ubmVjdGlvbi5oYW5kbGVfc3ViX2NoYW5fd3EpCisJCWRlc3Ryb3lfd29ya3F1
-ZXVlKHZtYnVzX2Nvbm5lY3Rpb24uaGFuZGxlX3N1Yl9jaGFuX3dxKTsKKworCWlmICh2bWJ1c19j
-b25uZWN0aW9uLmhhbmRsZV9wcmltYXJ5X2NoYW5fd3EpCisJCWRlc3Ryb3lfd29ya3F1ZXVlKHZt
-YnVzX2Nvbm5lY3Rpb24uaGFuZGxlX3ByaW1hcnlfY2hhbl93cSk7CisKKwlpZiAodm1idXNfY29u
-bmVjdGlvbi53b3JrX3F1ZXVlKQogCQlkZXN0cm95X3dvcmtxdWV1ZSh2bWJ1c19jb25uZWN0aW9u
-LndvcmtfcXVldWUpOwotCX0KIAogCWlmICh2bWJ1c19jb25uZWN0aW9uLmludF9wYWdlKSB7CiAJ
-CWZyZWVfcGFnZXMoKHVuc2lnbmVkIGxvbmcpdm1idXNfY29ubmVjdGlvbi5pbnRfcGFnZSwgMCk7
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2h2L2h5cGVydl92bWJ1cy5oIGIvZHJpdmVycy9odi9oeXBl
-cnZfdm1idXMuaAppbmRleCA3MmVhYmEzLi44N2QzZDdkIDEwMDY0NAotLS0gYS9kcml2ZXJzL2h2
-L2h5cGVydl92bWJ1cy5oCisrKyBiL2RyaXZlcnMvaHYvaHlwZXJ2X3ZtYnVzLmgKQEAgLTMzNSw3
-ICszMzUsMTQgQEAgc3RydWN0IHZtYnVzX2Nvbm5lY3Rpb24gewogCXN0cnVjdCBsaXN0X2hlYWQg
-Y2huX2xpc3Q7CiAJc3RydWN0IG11dGV4IGNoYW5uZWxfbXV0ZXg7CiAKKwkvKgorCSAqIEFuIG9m
-ZmVyIG1lc3NhZ2UgaXMgaGFuZGxlZCBmaXJzdCBvbiB0aGUgd29ya19xdWV1ZSwgYW5kIHRoZW4K
-KwkgKiBpcyBmdXJ0aGVyIGhhbmRsZWQgb24gaGFuZGxlX3ByaW1hcnlfY2hhbl93cSBvcgorCSAq
-IGhhbmRsZV9zdWJfY2hhbl93cS4KKwkgKi8KIAlzdHJ1Y3Qgd29ya3F1ZXVlX3N0cnVjdCAqd29y
-a19xdWV1ZTsKKwlzdHJ1Y3Qgd29ya3F1ZXVlX3N0cnVjdCAqaGFuZGxlX3ByaW1hcnlfY2hhbl93
-cTsKKwlzdHJ1Y3Qgd29ya3F1ZXVlX3N0cnVjdCAqaGFuZGxlX3N1Yl9jaGFuX3dxOwogfTsKIAog
-CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2h5cGVydi5oIGIvaW5jbHVkZS9saW51eC9oeXBl
-cnYuaAppbmRleCBiM2UyNDM2Li4xNDEzMWI2IDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2h5
-cGVydi5oCisrKyBiL2luY2x1ZGUvbGludXgvaHlwZXJ2LmgKQEAgLTkwNSw2ICs5MDUsMTMgQEAg
-c3RydWN0IHZtYnVzX2NoYW5uZWwgewogCiAJYm9vbCBwcm9iZV9kb25lOwogCisJLyoKKwkgKiBX
-ZSBtdXN0IG9mZmxvYWQgdGhlIGhhbmRsaW5nIG9mIHRoZSBwcmltYXJ5L3N1YiBjaGFubmVscwor
-CSAqIGZyb20gdGhlIHNpbmdsZS10aHJlYWRlZCB2bWJ1c19jb25uZWN0aW9uLndvcmtfcXVldWUg
-dG8KKwkgKiB0d28gZGlmZmVyZW50IHdvcmtxdWV1ZSwgb3RoZXJ3aXNlIHdlIGNhbiBibG9jawor
-CSAqIHZtYnVzX2Nvbm5lY3Rpb24ud29ya19xdWV1ZSBhbmQgaGFuZzogc2VlIHZtYnVzX3Byb2Nl
-c3Nfb2ZmZXIoKS4KKwkgKi8KKwlzdHJ1Y3Qgd29ya19zdHJ1Y3QgYWRkX2NoYW5uZWxfd29yazsK
-IH07CiAKIHN0YXRpYyBpbmxpbmUgYm9vbCBpc19odnNvY2tfY2hhbm5lbChjb25zdCBzdHJ1Y3Qg
-dm1idXNfY2hhbm5lbCAqYykKLS0gCjIuNy40Cgo=
+Best regards,
 
---_002_PU1P153MB0169244CF3902294F42D114DBFAD0PU1P153MB0169APCP_--
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/k325Tbu2Xw.1f8=ALzyDmPe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlwDnBYACgkQAR8vZIA0
+zr3uhQgAsmDCC10y9hbm6A8a4xYAh3hjEWBRCK/sBM8H6TxBHvfEeBReHcuEgyLf
+dXmvbXYhHTnkrkupFWC0b62Sgu4n0+Hvt+J4qy6Gkxq0JZIRsBFtaboWt5iHfdsG
+4ztMwEIt3u9vOJE96FVeZ/cyxoUDuxyMsjB7S14y2jQDzbhoCY7k+z5w969+rrSw
+CrUe0ROi2wdxt+fkk+CMN2MaPDQCp3L5CCsEA/bgUhlkZzCg42YfRQ6V+Wcxvvtz
+b5a6V+5DiaOxdXW7GfapZb1yu4dK+WVwGDyUSKAGZjb/U5BvCWvGL+faNwMZpGDs
+L4zLfsIrJ+BAcisSSmVDvtgynBN/6g==
+=UVPt
+-----END PGP SIGNATURE-----
+
+--Sig_/k325Tbu2Xw.1f8=ALzyDmPe--
