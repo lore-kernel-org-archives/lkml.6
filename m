@@ -2,146 +2,93 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C82DC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAABC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33ED20892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:16:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33ED20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de
+	by mail.kernel.org (Postfix) with ESMTP id 9B9EE20645
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:18:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9EE20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbeLBVQE (ORCPT
+        id S1725795AbeLBVSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:16:04 -0500
-Received: from www17.your-server.de ([213.133.104.17]:57720 "EHLO
-        www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbeLBVQC (ORCPT
+        Sun, 2 Dec 2018 16:18:22 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35702 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbeLBVSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:16:02 -0500
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www17.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <thomas@m3y3r.de>)
-        id 1gTYlp-00015z-Dz; Sun, 02 Dec 2018 21:55:17 +0100
-Received: from [2a02:908:4c28:3f60:fff6:43c5:695c:41d6] (helo=localhost.localdomain)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <thomas@m3y3r.de>)
-        id 1gTYlp-0002e9-8B; Sun, 02 Dec 2018 21:55:17 +0100
-Subject: [PATCH] scsi: megaraid_sas: NULL check before some freeing
- functions is not needed.
-From:   Thomas Meyer <thomas@m3y3r.de>
-To:     kashyap.desai@broadcom.com, sumit.saxena@broadcom.com,
-        shivasharan.srikanteshwara@broadcom.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, megaraidlinux.pdl@broadcom.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-X-Patch: Cocci
-X-Mailer: DiffSplit
-Message-ID: <1543760930052-918941928-10-diffsplit-thomas@m3y3r.de>
-References: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
-In-Reply-To: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
-X-Serial-No: 10
-Date:   Sun, 02 Dec 2018 21:52:11 +0100
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: thomas@m3y3r.de
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25173/Sun Dec  2 15:13:44 2018)
+        Sun, 2 Dec 2018 16:18:22 -0500
+Received: by mail-qt1-f195.google.com with SMTP id v11so11663353qtc.2;
+        Sun, 02 Dec 2018 13:18:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :organization:content-transfer-encoding;
+        bh=szIh8gw70n+F9+dWRHbfAXM24tY8O25KZb7v6Yad9WY=;
+        b=uAoIzUmSmJsf08MWkxM73ahzw7LhouNHWNvIjP5tnSMpVTzPlxabOqRVFE9xJIaniS
+         eSVpHNcJrOFedWrE0b1gJsXas1c0bSAJCT9xhhYBifXw2T0ZxsI0XgObbT5hyGfP4vYi
+         elT4PHoiwVUFeRf9TaUXMLePyAHYg4O/u0SL6pvYKKDV5pyr2DXYyPg+ubsik6JKxN7y
+         NNJ41Bs4oIvqGtMhbNpSeps/xltXAwRdzOzA4bHpNH34+/3LTJP96LC7+UKV/+SNkQhZ
+         NFkeVgR0k39Dpgr2IqDCbxgqYK6qexgu78Ft1yqZ9l78OcJZ9sq9hMO7FNDfobDqNQh0
+         TSLQ==
+X-Gm-Message-State: AA+aEWbl2u+fJdtrPE4X0aKL3VR5B/s+IXx7PAvfz7xMNv06N2itwePJ
+        8lghn2rBo3e6bPUg+Gza+ZU=
+X-Google-Smtp-Source: AFSGD/V3bn2oANDsOARPFEl+JNLjktupR/5Ymo9kB3o+nSbo0dmj5mTR+o8EZ593JSp1h4idRm6Z9A==
+X-Received: by 2002:a0c:ec50:: with SMTP id n16mr13733662qvq.105.1543785501110;
+        Sun, 02 Dec 2018 13:18:21 -0800 (PST)
+Received: from localhost.localdomain ([181.220.65.91])
+        by smtp.gmail.com with ESMTPSA id j38sm10247135qtj.72.2018.12.02.13.18.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Dec 2018 13:18:20 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:18:13 -0200
+From:   Otavio Salvador <otavio@ossystems.com.br>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Otavio Salvador <otavio@ossystems.com.br>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: [PATCH 0/5] Improvements for i.MX6UL PICO SoM and its baseboards
+Date:   Sun,  2 Dec 2018 19:18:04 -0200
+Message-Id: <20181202211809.11621-1-otavio@ossystems.com.br>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Organization: O.S. Systems Software LTDA.
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NULL check before some freeing functions is not needed.
+This patchset rework the imx6ul-pico SoM, its Hobbit baseboard
+and add the Pi baseboard support as well.
 
-Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
----
 
-diff -u -p a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
---- a/drivers/scsi/megaraid/megaraid_mbox.c
-+++ b/drivers/scsi/megaraid/megaraid_mbox.c
-@@ -1243,8 +1243,7 @@ megaraid_mbox_teardown_dma_pools(adapter
- 		dma_pool_free(raid_dev->sg_pool_handle, sg_pci_blk[i].vaddr,
- 			sg_pci_blk[i].dma_addr);
- 	}
--	if (raid_dev->sg_pool_handle)
--		dma_pool_destroy(raid_dev->sg_pool_handle);
-+	dma_pool_destroy(raid_dev->sg_pool_handle);
- 
- 
- 	epthru_pci_blk = raid_dev->epthru_pool;
-@@ -1252,8 +1251,7 @@ megaraid_mbox_teardown_dma_pools(adapter
- 		dma_pool_free(raid_dev->epthru_pool_handle,
- 			epthru_pci_blk[i].vaddr, epthru_pci_blk[i].dma_addr);
- 	}
--	if (raid_dev->epthru_pool_handle)
--		dma_pool_destroy(raid_dev->epthru_pool_handle);
-+	dma_pool_destroy(raid_dev->epthru_pool_handle);
- 
- 
- 	mbox_pci_blk = raid_dev->mbox_pool;
-@@ -1261,8 +1259,7 @@ megaraid_mbox_teardown_dma_pools(adapter
- 		dma_pool_free(raid_dev->mbox_pool_handle,
- 			mbox_pci_blk[i].vaddr, mbox_pci_blk[i].dma_addr);
- 	}
--	if (raid_dev->mbox_pool_handle)
--		dma_pool_destroy(raid_dev->mbox_pool_handle);
-+	dma_pool_destroy(raid_dev->mbox_pool_handle);
- 
- 	return;
- }
-diff -u -p a/drivers/scsi/megaraid/megaraid_mm.c b/drivers/scsi/megaraid/megaraid_mm.c
---- a/drivers/scsi/megaraid/megaraid_mm.c
-+++ b/drivers/scsi/megaraid/megaraid_mm.c
-@@ -1017,8 +1017,7 @@ memalloc_error:
- 	kfree(adapter->kioc_list);
- 	kfree(adapter->mbox_list);
- 
--	if (adapter->pthru_dma_pool)
--		dma_pool_destroy(adapter->pthru_dma_pool);
-+	dma_pool_destroy(adapter->pthru_dma_pool);
- 
- 	kfree(adapter);
- 
-diff -u -p a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -807,10 +807,8 @@ megasas_free_rdpq_fusion(struct megasas_
- 
- 	}
- 
--	if (fusion->reply_frames_desc_pool)
--		dma_pool_destroy(fusion->reply_frames_desc_pool);
--	if (fusion->reply_frames_desc_pool_align)
--		dma_pool_destroy(fusion->reply_frames_desc_pool_align);
-+	dma_pool_destroy(fusion->reply_frames_desc_pool);
-+	dma_pool_destroy(fusion->reply_frames_desc_pool_align);
- 
- 	if (fusion->rdpq_virt)
- 		dma_free_coherent(&instance->pdev->dev,
-@@ -830,8 +828,7 @@ megasas_free_reply_fusion(struct megasas
- 			fusion->reply_frames_desc[0],
- 			fusion->reply_frames_desc_phys[0]);
- 
--	if (fusion->reply_frames_desc_pool)
--		dma_pool_destroy(fusion->reply_frames_desc_pool);
-+	dma_pool_destroy(fusion->reply_frames_desc_pool);
- 
- }
- 
-@@ -1627,8 +1624,7 @@ static inline void megasas_free_ioc_init
- 				  fusion->ioc_init_cmd->frame,
- 				  fusion->ioc_init_cmd->frame_phys_addr);
- 
--	if (fusion->ioc_init_cmd)
--		kfree(fusion->ioc_init_cmd);
-+	kfree(fusion->ioc_init_cmd);
- }
- 
- /**
+Fabio Estevam (5):
+  ARM: dts: imx6ul-pico-hobbit: Switch to SPDX identifier
+  ARM: dts: imx6ul-pico-hobbit: Move SoM related part to
+    imx6ul-pico.dtsi
+  ARM: dts: imx6ul-pico-hobbit: Make the child led nodes standard
+  ARM: dts: imx6ul-pico-hobbit: Extend peripherals support
+  ARM: dts: imx6ul-pico: Add the imx6ul-pico-pi variant
+
+ arch/arm/boot/dts/Makefile               |   1 +
+ arch/arm/boot/dts/imx6ul-pico-hobbit.dts | 535 ++---------------------
+ arch/arm/boot/dts/imx6ul-pico-pi.dts     |  97 ++++
+ arch/arm/boot/dts/imx6ul-pico.dtsi       | 461 +++++++++++++++++++
+ 4 files changed, 601 insertions(+), 493 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6ul-pico-pi.dts
+ create mode 100644 arch/arm/boot/dts/imx6ul-pico.dtsi
+
+-- 
+2.19.2
+
