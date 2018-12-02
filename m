@@ -2,143 +2,148 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2742C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B43C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9152C20834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4923620834
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:09:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XJYtbi2d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9152C20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="K1tWG2B4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4923620834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725800AbeLBWGw (ORCPT
+        id S1725835AbeLBWJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 17:06:52 -0500
-Received: from ozlabs.org ([203.11.71.1]:58329 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbeLBWGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 17:06:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 437MfZ49clz9s47;
-        Mon,  3 Dec 2018 09:06:46 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543788407;
-        bh=eEz2kkIDsi2/9hZg1L1GBQdIh9gCmM8uEVy0TX6LW0s=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XJYtbi2dIzFDY5waTEnSyoZRGOVXziatf6p4yN+e4eLS7p8PVq9ObPkC4Xjs4Bhyv
-         Pvk44lH74VtdQlZrJBi5sZVUyHTj+9kV4YTEFafTH7yxLCxagqLSSQsZsvdyGa3s5V
-         BiZkJuBtnLk0/tYg/Wf6EbfvjgIijL9B9ADgPHVwaVZpEO+9ZYixYCJ/hBzILJ729G
-         JB2AIp42XKijnU/Eo2a1tuHIB10mPX/HSpjpv90fOYKQpGxQKk7YTxvbYvRsNX4tjy
-         3fBNtSimN2twocYUfXNU2M8jFpjbGqrkZhsgH3cpXbtLWHfpxa7eaMpciA+EEAOFUv
-         I06dDFAvz6PkA==
-Date:   Mon, 3 Dec 2018 09:06:40 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        =?UTF-8?B?Q2zDqW1lbnQg?= =?UTF-8?B?UMOpcm9u?= 
-        <peron.clem@gmail.com>
-Subject: linux-next: manual merge of the arm-soc tree with the kbuild tree
-Message-ID: <20181203090640.487321e0@canb.auug.org.au>
+        Sun, 2 Dec 2018 17:09:01 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39226 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbeLBWJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 17:09:01 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f81so1396061wmd.4;
+        Sun, 02 Dec 2018 14:08:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sVFm4iQFARb7LSpeEYqu6l+42fPoWzaNkx6zpzMl+0I=;
+        b=K1tWG2B4/2q6qBnbeh5tSNzG+hXAYd+XsWRhHn/ZtANd09DBEFd1fEPsPGOCBt59eO
+         toGQGVaeV6NgFtNOUhfL2kuWZIYTGyWB+wUxwPlaW5evhav1DKjDTuiP/Jc0Kmw4l5bq
+         Pg/gcxGBLq9351OUvlVoE0p+qqeyo7IyLzzfrMfe2XoY2xbugDzoLn5b3mnkYwoZYX0T
+         Maff9JbGsBxY4zqKAnaCpWMPKx2dYwKhcsLxU/yMaIbSywgQwonDg7nNNoQGPm4rbvGz
+         L3gQaHkjP2vXJanla3dz9TlTQjiJFFUNDe7TAS4BPNXPDgUAYBczBSIIhiiagAWETuMN
+         VGng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sVFm4iQFARb7LSpeEYqu6l+42fPoWzaNkx6zpzMl+0I=;
+        b=J6wrWgh5YFars0AfhVRPfVVzEQCVfg9c+R5ZMwkhJvhGrDhwlXc8mJYSgpUbChg+lw
+         eBnSAWfQ4prffHDymk/SgDvO8WmlHs8KxU1pQ0JqhQRDtopbP+WEgeP5WMo85HjS5w1u
+         Wq4gZf0z9pO2HTbg+GptnilsH8x80yPMdH9gab+De1mbIkbnhhPXFZPU+d2B4Ia0X1SW
+         rV84gXxXQWqgDMwAHHCATr3X0E3ZXc9bn0vJQEAhD4UGCYF/2jWOrt5OeYFFCNGfVbSC
+         hHm0Dge6QeAmLOkWIEHLTHJa9NDDPlJ8KiWLwuDZ1PDZIbNcL6ProsplyH0ylf12Nl6K
+         NTfQ==
+X-Gm-Message-State: AA+aEWbWeC3s7jvpAxwpfIlR4D4hjivPkV1Vj4bpfWm3Fkxv0311ccob
+        1pttMSdHadnre+IWT0Ui/xA=
+X-Google-Smtp-Source: AFSGD/VFDdu+XpEtmybrNxO2yDzk+pu1fJsQJjF2YxYrJy4CXKcyNH399hdbb18P2N6ydbzJyg6Mjw==
+X-Received: by 2002:a1c:cc3:: with SMTP id 186mr437276wmm.143.1543788536654;
+        Sun, 02 Dec 2018 14:08:56 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD73FBA00B1CC0EB38CD20A4E.dip0.t-ipconnect.de. [2003:dc:d73f:ba00:b1cc:eb3:8cd2:a4e])
+        by smtp.googlemail.com with ESMTPSA id m15sm8503351wrr.95.2018.12.02.14.08.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Dec 2018 14:08:56 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+        alexandre.belloni@bootlin.com, a.zummo@towertech.it
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ben.dooks@codethink.co.uk, ccaione@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v5 0/2] Amlogic Meson6/8/8b/8m2 SoC RTC driver
+Date:   Sun,  2 Dec 2018 23:08:45 +0100
+Message-Id: <20181202220847.24364-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Y35zpDCRjxf=8rLb+CbrFfj"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Y35zpDCRjxf=8rLb+CbrFfj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series adds support for the RTC on the 32-bit Amlogic Meson SoCs.
 
-Hi all,
+The series does not have any build dependencies, but does require
+device-tree entries for the relevant boards.
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
+The series is tested by myself on the Meson8b EC-100 board. Earlier
+versions of this series were tested on an Odroid-C1 board with a
+battery pack attached by Ben Dooks and Kevin Hilman.
 
-  arch/arm/mach-socfpga/Kconfig
+I will send the DT changes in a second series so that they can be
+merged once the dependencies have been satisfied.
 
-between commit:
 
-  2eac9c2dfb2b ("PCI: consolidate the PCI_DOMAINS and PCI_DOMAINS_GENERIC c=
-onfig options")
+Changes since v4 at [0]:
+- resurrected Ben's patches after 2 years: first I made it apply
+  onto linux-next again
+- I decided to update the author of the patch to my own name since I
+  made a lot of changes compared to Ben's implementation (list of
+  changes below, the diff-stat was: 223 insertions, 163 deletions)
+- make the dt-bindings file name (rtc-meson.txt) match the driver name
+- add a Meson8m2 compatible
+- add the clocks and vdd-supply properties to the match the actual IP
+  block implementation
+- make the resets and interrupts properties mandatory to match the
+  actual IP block implementation
+- removed the status property from the dt-bindings example
+- fix MODULE_LICENSE to match the actual license (GPL v2)
+- switch to SPDX-License-Identifier
+- sort the Kconfig option alphabetically
+- use BIT() and GENMASK() macros consistenly
+- replace #define RTC_REG(x) with actual #defines which match the names
+  from the public S805 datasheet
+- adjust existing #defines to align with the public S805 datasheet
+- add support for the 4x32bit NVMEM (regmem) data
+- implement regmap_bus to access the serial registers. this allows
+  getting rid of the custom locking code and makes the NVMEM
+  implementation much easier.
+- use regmap also for accessing the peripheral registers to make the
+  code shorter
+- add support for the vdd-supply regulator
+- switch from devm_rtc_device_register to devm_rtc_allocate_device and
+  rtc_register_device
+- set range_max to U32_MAX
+- use rtc_time64_to_tm and rtc_tm_to_time64
+- simplify timeout handling and use shorter timeouts (the driver from
+  the 3.10 BSP kernel uses udelay resolution (100us after the reset, 5us
+  for the "comm delay") as well as busy-looping from 0..40000 to wait
+  for "s_ready"
+- removed debug messages which are only printing register values (as
+  these can now be seen in
+  <debugfs>/regmap/c8100740.rtc-peripheral-registers/registers)
 
-from the kbuild tree and commit:
 
-  fbc125afdc50 ("ARM: socfpga: Turn on ARM errata for L2 cache")
+[0] https://www.spinics.net/lists/devicetree/msg135413.html
 
-from the arm-soc tree.
 
-I fixed it up (see below - I also resorted the select lines since they
-seemed to be so before the former latter commit) and can carry the fix
-as necessary. This is now fixed as far as linux-next is concerned, but
-any non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+Martin Blumenstingl (2):
+  dt-bindings: rtc: add device-tree bindings for the Amlogic Meson RTC
+  rtc: support for the Amlogic Meson RTC
 
---=20
-Cheers,
-Stephen Rothwell
+ .../devicetree/bindings/rtc/rtc-meson.txt     |  32 ++
+ drivers/rtc/Kconfig                           |  11 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-meson.c                       | 409 ++++++++++++++++++
+ 4 files changed, 453 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-meson.txt
+ create mode 100644 drivers/rtc/rtc-meson.c
 
-diff --cc arch/arm/mach-socfpga/Kconfig
-index d43798defdba,a04660918d71..000000000000
---- a/arch/arm/mach-socfpga/Kconfig
-+++ b/arch/arm/mach-socfpga/Kconfig
-@@@ -3,6 -3,6 +3,9 @@@ menuconfig ARCH_SOCFPG
-  	depends on ARCH_MULTI_V7
-  	select ARCH_SUPPORTS_BIG_ENDIAN
-  	select ARM_AMBA
-++	select ARM_ERRATA_754322
-++	select ARM_ERRATA_764369 if SMP
-++	select ARM_ERRATA_775420
-  	select ARM_GIC
-  	select CACHE_L2X0
-  	select DW_APB_TIMER_OF
-@@@ -10,7 -10,14 +13,11 @@@
-  	select HAVE_ARM_SCU
-  	select HAVE_ARM_TWD if SMP
-  	select MFD_SYSCON
- -	select PCI_DOMAINS if PCI
- -	select ARM_ERRATA_754322
- -	select ARM_ERRATA_764369 if SMP
- -	select ARM_ERRATA_775420
- +	select PCI_DOMAINS_GENERIC if PCI
-+ 	select PL310_ERRATA_588369
-+ 	select PL310_ERRATA_727915
-+ 	select PL310_ERRATA_753970 if PL310
-+ 	select PL310_ERRATA_769419
- =20
-  if ARCH_SOCFPGA
-  config SOCFPGA_SUSPEND
+-- 
+2.19.2
 
---Sig_/Y35zpDCRjxf=8rLb+CbrFfj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEV3AACgkQAVBC80lX
-0GzvuwgAoC2WyAKFyQtmka9DPSfzrpWvkOBV9RwC4bEcGcgAFnVXmICcMbqlRFlE
-EIlvhsf28ioSE+OPWQ3g82xssuDncpY83TncnkayI8Uf9rjYlIKkvoi3fcl+tc0Y
-jcbL1TbeAwzn1miS8UU+nste/65lSQdxG+qYV1Rkv+b77++YVQxX02z6gCvtJx7/
-o2SmoA86IVhrkgl1KDwVsqjYA4iRrkWqWiP9B6nn5LsayZLSWF2b9HV7AzfctCMz
-sFaAKvuNgueVTfd66lvY6aFxZ0rI1VQmdk4PIVXXs6h3Iuz530SQf9vz6mzY3+If
-BEjVoQ27vrjIJM7Ut9+n4jD3jbPsWA==
-=UN20
------END PGP SIGNATURE-----
-
---Sig_/Y35zpDCRjxf=8rLb+CbrFfj--
