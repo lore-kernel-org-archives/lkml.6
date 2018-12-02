@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F112C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1723AC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B3520892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:14:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B3520892
+	by mail.kernel.org (Postfix) with ESMTP id D8F6D20892
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:14:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F6D20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725812AbeLBVOj (ORCPT
+        id S1725826AbeLBVOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:14:39 -0500
-Received: from www17.your-server.de ([213.133.104.17]:57316 "EHLO
+        Sun, 2 Dec 2018 16:14:42 -0500
+Received: from www17.your-server.de ([213.133.104.17]:57338 "EHLO
         www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeLBVOi (ORCPT
+        with ESMTP id S1725778AbeLBVOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:14:38 -0500
-X-Greylist: delayed 1159 seconds by postgrey-1.27 at vger.kernel.org; Sun, 02 Dec 2018 16:14:38 EST
+        Sun, 2 Dec 2018 16:14:41 -0500
+X-Greylist: delayed 1159 seconds by postgrey-1.27 at vger.kernel.org; Sun, 02 Dec 2018 16:14:41 EST
 Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
         by www17.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.89_1)
         (envelope-from <thomas@m3y3r.de>)
-        id 1gTYlq-00016L-FZ; Sun, 02 Dec 2018 21:55:18 +0100
+        id 1gTYlr-00016V-3v; Sun, 02 Dec 2018 21:55:19 +0100
 Received: from [2a02:908:4c28:3f60:fff6:43c5:695c:41d6] (helo=localhost.localdomain)
         by sslproxy06.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.89)
         (envelope-from <thomas@m3y3r.de>)
-        id 1gTYlq-0002jz-A8; Sun, 02 Dec 2018 21:55:18 +0100
-Subject: [PATCH] scsi: csiostor: NULL check before some freeing functions
- is not needed.
+        id 1gTYlq-0002mQ-U0; Sun, 02 Dec 2018 21:55:18 +0100
+Subject: [PATCH] KVM: PPC: Book3S HV: NULL check before some freeing
+ functions is not needed.
 From:   Thomas Meyer <thomas@m3y3r.de>
-To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 X-Patch: Cocci
 X-Mailer: DiffSplit
-Message-ID: <1543760930051-584546236-8-diffsplit-thomas@m3y3r.de>
+Message-ID: <1543760930051-2094322096-1-diffsplit-thomas@m3y3r.de>
 References: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
 In-Reply-To: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
-X-Serial-No: 8
+X-Serial-No: 1
 Date:   Sun, 02 Dec 2018 21:52:11 +0100
 User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
 Content-Transfer-Encoding: 7bit
@@ -62,16 +63,16 @@ NULL check before some freeing functions is not needed.
 Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
 ---
 
-diff -u -p a/drivers/scsi/csiostor/csio_init.c b/drivers/scsi/csiostor/csio_init.c
---- a/drivers/scsi/csiostor/csio_init.c
-+++ b/drivers/scsi/csiostor/csio_init.c
-@@ -157,8 +157,7 @@ csio_dfs_create(struct csio_hw *hw)
- static int
- csio_dfs_destroy(struct csio_hw *hw)
- {
--	if (hw->debugfs_root)
--		debugfs_remove_recursive(hw->debugfs_root);
-+	debugfs_remove_recursive(hw->debugfs_root);
+diff -u -p a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
+--- a/arch/powerpc/kvm/book3s_hv_nested.c
++++ b/arch/powerpc/kvm/book3s_hv_nested.c
+@@ -1252,8 +1252,7 @@ static long int __kvmhv_nested_page_faul
+ 	rmapp = &memslot->arch.rmap[gfn - memslot->base_gfn];
+ 	ret = kvmppc_create_pte(kvm, gp->shadow_pgtable, pte, n_gpa, level,
+ 				mmu_seq, gp->shadow_lpid, rmapp, &n_rmap);
+-	if (n_rmap)
+-		kfree(n_rmap);
++	kfree(n_rmap);
+ 	if (ret == -EAGAIN)
+ 		ret = RESUME_GUEST;	/* Let the guest try again */
  
- 	return 0;
- }
