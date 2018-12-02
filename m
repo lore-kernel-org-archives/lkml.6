@@ -3,174 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A67AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A4AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50AA2081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50AA2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D22222081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 12:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22222081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725841AbeLBMZg (ORCPT
+        id S1725851AbeLBM3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 07:25:36 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33634 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeLBMZg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 07:25:36 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so4927589wmh.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 04:25:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z/rcIo0VlNcTpCi1nNOj3vKciFxUK8im07qbOJ3nXHU=;
-        b=YvZCzA8BCHoLS8voz4a5hWC+PvKXst5UJ+cU+EXUoGsG4PyCs++GM7XyOQm03XEIih
-         CejhutsTQEfQ8CanYWEQUUTBdUBpumg6JhQhFjvtLMfTMi4G5yv/1jYLbE+Xc+wb3bv6
-         v5UbumPOjcXVvENdwN2NUfmIzVuAqvkdmlnUU2bXbjtv9fZYHiIVtFBbVrDylgBMHFTr
-         txzkjxEHop7yfXhmCW9oNkFcMPH/9g5bUy3/WXxuuLlZmQum8p/rMvUeLC9U8C3igPVI
-         Y52X1bn4BsqEPh5qs3zX+WbSEk0nBj2tvmmoYxFUWB8BXB3UDq7KHY7UFlkc8ye6Lq7Y
-         mBfQ==
-X-Gm-Message-State: AA+aEWavx5rGWLLpX7fwF9JF8yE/uvxB4Iuw0aoK6zNoFePFBE4r/PB0
-        vbkC56+FmW2+morAImdvtQ/7bUKmXz0=
-X-Google-Smtp-Source: AFSGD/UpJdUYlOLypz1bInuRmjTDj6gtuoVCD6vhqQNAkt91eBtp1WwDmF5zLPwgLex2IGCymB5dfg==
-X-Received: by 2002:a1c:a485:: with SMTP id n127mr1484505wme.15.1543753531176;
-        Sun, 02 Dec 2018 04:25:31 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id l2sm11886162wma.33.2018.12.02.04.25.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Dec 2018 04:25:30 -0800 (PST)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
- <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
- <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
- <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
- <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
- <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
- <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
-Date:   Sun, 2 Dec 2018 13:25:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sun, 2 Dec 2018 07:29:10 -0500
+Received: from foss.arm.com ([217.140.101.70]:51386 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbeLBM3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 07:29:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3347980D;
+        Sun,  2 Dec 2018 04:29:06 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 899533F5A0;
+        Sun,  2 Dec 2018 04:29:04 -0800 (PST)
+Date:   Sun, 2 Dec 2018 12:29:00 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+Message-ID: <20181202122900.79922c91@why.wild-wind.fr.eu.org>
+In-Reply-To: <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com>
+References: <20181120134032.31645-1-brgl@bgdev.pl>
+        <20181120134032.31645-2-brgl@bgdev.pl>
+        <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+        <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+        <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
+        <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
+        <20181125211854.idnqxz4pco3r7ydr@pengutronix.de>
+        <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+        <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 30 Nov 2018 23:26:25 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On 01-11-18 07:55, Mogens Jensen wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Wednesday, October 31, 2018 9:29 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> On Thu, Nov 29, 2018 at 7:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > 
->> Hi,
->>
->> On 31-10-18 07:02, Mogens Jensen wrote:
->>
->>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
->>> On Tuesday, October 30, 2018 7:10 PM, Hans de Goede hdegoede@redhat.com wrote:
->>>
->>>> Hi,
->>>> On 30-10-18 19:56, Mogens Jensen wrote:
->>>>
->>>>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
->>>>> On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@redhat.com wrote:
->>>>>
->>>>>> Hi,
->>>>>> On 30-10-18 16:46, Hans de Goede wrote:
->>>>>>
->>>>>>> Hi,
->>>>>>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->>>>>>>
->>>>>>>> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though,
->>>>>>>
->>>>>>> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
->>>>>>> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
->>>>>>> one does not seem like a good plan.
->>>>>>
->>>>>> Dean, Mogens,
->>>>>> To write a proper patch for this I'm going to need DMI strings
->>>>>> from your devices.
->>>>>> Can you please run (as normal user):
->>>>>> grep . /sys/class/dmi/id/* 2> /dev/null
->>>>>> And reply with the output of this command?
->>>>>> I have attached the output from a coreboot seabios based clapper.
->>>>
->>>> Thank you.
->>>>
->>>>> Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean? There seems to have been some development in the case since that request was made.
->>>>
->>>> Yes please test that, I expect that to also fix things for the
->>>> Clapper, but I need to have that confirmed before submitting a
->>>> patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
->>>> instead of pmc_plt_clk_3.
->>>> Regards,
->>>> Hans
->>>
->>> Unfortunately I only have access to longterm kernel 4.14 for building/running on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.14 be created?
->>
->> Can you run (as root):
->>
->> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
->>
->> When running a kernel with working audio?
->>
->> Then I can confirm that the Clapper is also using pmc_plt_clk_0, so that I can
->> fix this for the clapper for 4.18+
->>
->> I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
->> driver does not support mclk control yet, so for the 4.14 kernel the only way to
->> fix this is to revert the 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
->> commit.
->>
->> Regards,
->>
->> Hans
->>
-> Here is the output from the Clapper with 4.14.78 and working sound:
+> > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
+> > sharing for userspace") some libgpiod tests are failing because we can
+> > no longer depend on reading the value of a dummy GPIO after detecting
+> > an interrupt to know the edge of the interrupt. While these interrupts
+> > are triggered from debugfs and debugfs is not required to maintain
+> > compatibility, I thing having a working test suite for the GPIO
+> > subsystem and uAPI is worth applying these two patches and also the
+> > previous one[1].
+> >
+> > Can we have them applied for 4.20 or are there any objections?  
 > 
-> /sys/kernel/debug/clk/pmc_plt_clk_0: 0x00000800
-> /sys/kernel/debug/clk/pmc_plt_clk_1: 0x00000000
-> /sys/kernel/debug/clk/pmc_plt_clk_2: 0x00000000
-> /sys/kernel/debug/clk/pmc_plt_clk_3: 0x00000000
-> /sys/kernel/debug/clk/pmc_plt_clk_4: 0x00000000
-> /sys/kernel/debug/clk/pmc_plt_clk_5: 0x00000000
+> I'm fine with applying them if I can just get an ACK from one of the IRQ
+> maintainers (Thomas, Marc).
 
-Ok, so your Clapper model indeed is also using clk 0 and not clk 3 as
-expected. I've just submitted a patch upstream adding a quirk for this.
+I'm fine with that patch, with the provision that (nitpick) the edge
+field is turned into a bool instead of an int.
 
-As for what the plan is with 4.14, I don't know. I believe that
-reverting the commit causing the issue there is fine.
+With that,
 
-Regards,
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-Hans
+Thanks,
 
-
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
