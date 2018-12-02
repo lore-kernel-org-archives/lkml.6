@@ -2,215 +2,112 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F40C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208DDC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507D820834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507D820834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	by mail.kernel.org (Postfix) with ESMTP id D170E20834
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:34:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="HEe/STH8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PmYsrPj9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D170E20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbeLBV0j (ORCPT
+        id S1725812AbeLBVek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:26:39 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46211 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeLBV0j (ORCPT
+        Sun, 2 Dec 2018 16:34:40 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:44623 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725788AbeLBVek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:26:39 -0500
-Received: by mail-qt1-f193.google.com with SMTP id y20so11629546qtm.13;
-        Sun, 02 Dec 2018 13:26:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:organization:content-transfer-encoding;
-        bh=Qo7I0hRRs35AV7fENb0Vk9rw2AwMZH8coRuKvX4vsgI=;
-        b=Nw92BpCEA8MfZWQB5+zToXTFRxKktwdl/vV0lQ6xI71qyvfIknQLs2UpYW9HhEJZ9N
-         say5h0HTZS7691bSQZ0aOEj5il2bzjkxuwhunQh3N+cNLWbkIzFaHuVmMKvTG8omUhLb
-         W6nDqnfMsvBm8SBgz0HilObAre5xN9NL3vZrBltNFORoV/HKhMY4F37JLpnxMx2ktwGN
-         VPrWd27bnY5AcSj2T39aWcAYO2XfN9eBYgJqMgeq+/h6QUeE8duO91r8JagMqI5AOjfQ
-         Uyc8U6iCZ6dl5brEQnOy9KxJpjGQd/NzIPIR1jFxmYEZJBTDYjRc7cmhzNOu+qXLzGzJ
-         zdvg==
-X-Gm-Message-State: AA+aEWajFI+UerKPKNTLNB4lrnQvvDWAb0/+cYmmdn3Vmb0/Fela9vao
-        JakY0FkkRk/qr/JS8F6w6wU=
-X-Google-Smtp-Source: AFSGD/UZWOI5aKtuRxi5ertS3+vtnX7PTK3VjKoYKyAR+vPdaCvgqAG6PIHdKlkGNMt8SeWZHxWuBg==
-X-Received: by 2002:ac8:4709:: with SMTP id f9mr12903211qtp.58.1543785994987;
-        Sun, 02 Dec 2018 13:26:34 -0800 (PST)
-Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id n72sm8178607qki.26.2018.12.02.13.26.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 13:26:34 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:26:27 -0200
-From:   Otavio Salvador <otavio@ossystems.com.br>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 9/9] ARM: dts: imx7d-pico: Add the imx7d-pico-hobbit variant
-Date:   Sun,  2 Dec 2018 19:25:20 -0200
-Message-Id: <20181202212520.16650-10-otavio@ossystems.com.br>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181202212520.16650-1-otavio@ossystems.com.br>
-References: <20181202212520.16650-1-otavio@ossystems.com.br>
+        Sun, 2 Dec 2018 16:34:40 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id C1671286;
+        Sun,  2 Dec 2018 16:34:34 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 02 Dec 2018 16:34:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=w9fPF0CgiqAC5KRgtPujhOhkKMF
+        btYrkaBpbk+W90BY=; b=HEe/STH8zVipU2uJkTlhlRRkKqyyCEb8X7kOPViLdaP
+        wyV6iaDo4Bm7r30YTV32D9DTwukiGWmf8jY1LjYN2i0/YjWhCVfO/3UoQ/AbF8qI
+        8fKPMAgS962nHHBxl4yjkC7dCaaSIuUU6Xo0WWDkmxgTp/25huP5bBadzJsxF2va
+        6tkDzYg+9wKHAOhWNXhXYmXtOjJBVkLurawBOY5yA0T0j42f1f1RBl+7QvVwtUPV
+        sJhPn0Tp7VRJm7Q8pzs/dWahIC3RLZXnECcaLD4OODYhaNEXmDurmbdReD6dTvpD
+        msZIZ7AzTA33OWYkMmthb4O6eRPnyiGRVd16lMyi04g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=w9fPF0
+        CgiqAC5KRgtPujhOhkKMFbtYrkaBpbk+W90BY=; b=PmYsrPj9SCsz9QUgpZuHOq
+        VFfYjc2NzCqRDtcyl0LZ2lFaoN4yOsVC0SOvgOGx7E1OvZ0p6wb1TJhEHdHxz6oJ
+        s9fa6QaQagE6fSrT4+jTHdW42wHmSiI/8VFlgioWqd9XzYvlpiITfm1Ybkt/7Lsb
+        UCpkpQjQCYDYtc1YzL6uIFeCHRoTzsRiCuNLJuYGTavqJ8FgbQ6lBomcqJsM7vNV
+        4WsZfM03IJuaTMj0V9xaJZTMzs+TMmFdxrzzewdhZ0ru+lEWC5juXVyY7KMBOLss
+        X4wsSpwbPjP1NOCATeig1e7rl7/4FjUvi85nHdkOPVOX4he7oWBn/S1JzXe5xkoA
+        ==
+X-ME-Sender: <xms:6U8EXFoSxkASJj6fe9LkGfkOfvVvbqwma2tDHmNCVNtT0xgcZHhxtQ>
+X-ME-Proxy: <xmx:6U8EXLJLHkoDAR0WyFpHNPtzLmGXrcFakv1G0R4mBQfcky9pRX0HFg>
+    <xmx:6U8EXCFFAftQkTJ5PFw_AGFPO53AAXOV1ukcoz1lUVbnYQaciWWXmw>
+    <xmx:6U8EXL5p2rgqqj0VTtuzVFqa-oLAb43bySDiZrlzAtDZAXgzzKnUwQ>
+    <xmx:6U8EXDNeIcz8pU-H1irbWsJOgVshgFBz2tdE7ZAKzq6yIuycsQD-9A>
+    <xmx:6U8EXBJLrhIpTgVUdzPf4VL4Sk0zm6IE46Gt1YE66E-jdlHokWEqTQ>
+    <xmx:6k8EXFduIyTxBUbBLvGeLHsyoMl7TY-P7KOGpMyRwT9in5AYgqf_YA>
+Received: from localhost (pa49-181-174-11.pa.nsw.optusnet.com.au [49.181.174.11])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 44435E40A1;
+        Sun,  2 Dec 2018 16:34:31 -0500 (EST)
+Date:   Mon, 3 Dec 2018 08:34:28 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH RFC 14/15] lib: replace **** with a hug
+Message-ID: <20181202213428.GA17607@caerus>
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+ <20181130192737.15053-15-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Organization: O.S. Systems Software LTDA.
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130192737.15053-15-jarkko.sakkinen@linux.intel.com>
+X-Mailer: Mutt 1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+On Fri, Nov 30, 2018 at 11:27:23AM -0800, Jarkko Sakkinen wrote:
+> In order to comply with the CoC, replace **** with a hug.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  lib/vsprintf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 37a54a6dd594..b7a92f5d47bb 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -6,7 +6,7 @@
+>  
+>  /* vsprintf.c -- Lars Wirzenius & Linus Torvalds. */
+>  /*
+> - * Wirzenius wrote this portably, Torvalds fucked it up :-)
 
-The imx7d-pico-hobbit contains a imx7d-pico SoM and a hobbit baseboard.
+This is my favourite comment to date in the kernel source tree.  Surely
+there are still some people working on the kernel that do so for fun.  I
+actually laughed out loud when I first stumbled upon this file.
 
-Add support for it.
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
----
-
- arch/arm/boot/dts/Makefile              |   1 +
- arch/arm/boot/dts/imx7d-pico-hobbit.dts | 105 ++++++++++++++++++++++++
- 2 files changed, 106 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx7d-pico-hobbit.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b0e966d625b9..12a3cfb7d280 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -569,6 +569,7 @@ dtb-$(CONFIG_SOC_IMX7D) += \
- 	imx7d-colibri-emmc-eval-v3.dtb \
- 	imx7d-colibri-eval-v3.dtb \
- 	imx7d-nitrogen7.dtb \
-+	imx7d-pico-hobbit.dtb \
- 	imx7d-pico-pi.dtb \
- 	imx7d-sbc-imx7.dtb \
- 	imx7d-sdb.dtb \
-diff --git a/arch/arm/boot/dts/imx7d-pico-hobbit.dts b/arch/arm/boot/dts/imx7d-pico-hobbit.dts
-new file mode 100644
-index 000000000000..7b2198a9372c
---- /dev/null
-+++ b/arch/arm/boot/dts/imx7d-pico-hobbit.dts
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+//
-+// Copyright 2017 NXP
-+
-+#include "imx7d-pico.dtsi"
-+
-+/ {
-+	model = "TechNexion PICO-IMX7D Board using Hobbit baseboard";
-+	compatible = "technexion,imx7d-pico-hobbit", "fsl,imx7d";
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_leds>;
-+
-+		led {
-+			label = "gpio-led";
-+			gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "imx7-sgtl5000";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&dailink_master>;
-+		simple-audio-card,frame-master = <&dailink_master>;
-+		simple-audio-card,cpu {
-+			sound-dai = <&sai1>;
-+		};
-+
-+		dailink_master: simple-audio-card,codec {
-+			sound-dai = <&sgtl5000>;
-+			clocks = <&clks IMX7D_AUDIO_MCLK_ROOT_CLK>;
-+		};
-+	};
-+};
-+
-+&i2c1 {
-+	sgtl5000: codec@a {
-+		#sound-dai-cells = <0>;
-+		reg = <0x0a>;
-+		compatible = "fsl,sgtl5000";
-+		clocks = <&clks IMX7D_AUDIO_MCLK_ROOT_CLK>;
-+		VDDA-supply = <&reg_2p5v>;
-+		VDDIO-supply = <&reg_vref_1v8>;
-+	};
-+};
-+
-+&i2c4 {
-+	status = "okay";
-+
-+	adc081c: adc@50 {
-+		compatible = "ti,adc081c";
-+		reg = <0x50>;
-+		vref-supply = <&reg_3p3v>;
-+	};
-+};
-+
-+&ecspi3 {
-+	ads7846@0 {
-+		reg = <0>;
-+		compatible = "ti,ads7846";
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <7 0>;
-+		spi-max-frequency = <1000000>;
-+		pendown-gpio = <&gpio2 7 0>;
-+		vcc-supply = <&reg_3p3v>;
-+		ti,x-min = /bits/ 16 <0>;
-+		ti,x-max = /bits/ 16 <4095>;
-+		ti,y-min = /bits/ 16 <0>;
-+		ti,y-max = /bits/ 16 <4095>;
-+		ti,pressure-max = /bits/ 16 <1024>;
-+		ti,x-plate-ohms = /bits/ 16 <90>;
-+		ti,y-plate-ohms = /bits/ 16 <90>;
-+		ti,debounce-max = /bits/ 16 <70>;
-+		ti,debounce-tol = /bits/ 16 <3>;
-+		ti,debounce-rep = /bits/ 16 <2>;
-+		ti,settle-delay-usec = /bits/ 16 <150>;
-+		wakeup-source;
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <
-+			MX7D_PAD_EPDC_DATA00__GPIO2_IO0		0x14
-+			MX7D_PAD_EPDC_DATA01__GPIO2_IO1		0x14
-+			MX7D_PAD_EPDC_DATA02__GPIO2_IO2		0x14
-+			MX7D_PAD_EPDC_DATA03__GPIO2_IO3		0x14
-+			MX7D_PAD_EPDC_DATA05__GPIO2_IO5		0x14
-+			MX7D_PAD_EPDC_DATA12__GPIO2_IO12	0x14
-+			MX7D_PAD_EPDC_DATA07__GPIO2_IO7		0x14
-+		>;
-+	};
-+
-+	pinctrl_gpio_leds: gpioledsgrp {
-+		fsl,pins = <
-+			MX7D_PAD_EPDC_DATA13__GPIO2_IO13	0x14
-+		>;
-+	};
-+};
--- 
-2.19.2
-
+	 Tobin
+	 
