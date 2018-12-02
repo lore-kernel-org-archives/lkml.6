@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B676CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9CBC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 846CE20892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 846CE20892
+	by mail.kernel.org (Postfix) with ESMTP id 63DAC20892
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:18:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DAC20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbeLBVSq (ORCPT
+        id S1725877AbeLBVSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:18:46 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39626 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbeLBVSp (ORCPT
+        Sun, 2 Dec 2018 16:18:53 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45096 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbeLBVSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:18:45 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q70so6221893qkh.6;
-        Sun, 02 Dec 2018 13:18:44 -0800 (PST)
+        Sun, 2 Dec 2018 16:18:53 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y78so6206704qka.12;
+        Sun, 02 Dec 2018 13:18:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:organization:content-transfer-encoding;
-        bh=kMmCdcHh817VaRsjdnnuJ2NzdFpse3gt0nZG9kO//8k=;
-        b=AO/zA+EHmVA2jBj6bcr9/Fu0Zwop8WmL3B2P8ETyr/s5L0INmLYWRYhOCd1AEIWAf4
-         U3QTCyzxcs9OFBphx9Gv6VpY3amjq3QDjqAhId6xMYtBfPKtrnmzq5sDQHbCQZEx+VC5
-         kN2+C4lTqIA83yIaqYgE9U5rXcH0GSyytlYpaSh/eQuFK55NVqz1iHi0/thHr6Tr/1I6
-         H/uACJ6+KnJpbn6g2dCCCqSCumIIQkFQ/2zTu++XQlzwhy+VHyXaxoPegPAvhhQKLvs9
-         HBlBJdUXp0z0ZJ8Se3qBOejoTe9I8krJpflalzUCa533STEHj8Oud+15NQsio7wr2EBZ
-         5SRg==
-X-Gm-Message-State: AA+aEWalJSwBA3mwjSANmHUkJ4rc31Sum55iVDk7+GX5DvKLDHS72qlN
-        m6e7Pze04qBYCD2qlupR7qc=
-X-Google-Smtp-Source: AFSGD/VUdFF9ST2bE1mVu/A1aHDJAuATO2XuJ3SVegrszEr2sMBgvEacIDdqLoHXEk6c83BT73s7Aw==
-X-Received: by 2002:a37:6749:: with SMTP id b70mr12652812qkc.41.1543785523843;
-        Sun, 02 Dec 2018 13:18:43 -0800 (PST)
+        bh=kF8o7Epwdu0dEA3UUb5PAzGLGYppW/4YWqYMcTCaLOc=;
+        b=LcTN1UyiQxKmMgYdZXkeXh7TcVJBcnuI2afa/Z1IoLs1coKP4osYnbJ+Ya7PXxagsg
+         8FpBa7lmiHQ4CESt9YqEJ4nFN7YKlTHOE7LuiNdfUPyECGpCR1vkzexQ1Gu41N7Hctba
+         KLKdPKOmLQJ2qqDXxtZ4XqUuYrZ4V4HJw1ZDeWjgQjpdJA8ZHmhPLkZblqvsvebZZVRa
+         +o2cCf9tkGhGHM9s4Kg+CZu6c3eEovFDo9hvBhKsCrbtbk50CcVItXHpwjKj7VQ8+Gyt
+         WRqdTiSghSATI0LUTA9kfM72Z8UZ7thqdk6ZqR4kW3ry+BwrPRzoTsuGFE2CfAkCbYKJ
+         jfbg==
+X-Gm-Message-State: AA+aEWb7hS8+21hItK9EfKFyoDU8cRKhp17oHABM+k9CUiXKFCil8eah
+        k0dSVtQizQFazRdnabppQGg=
+X-Google-Smtp-Source: AFSGD/UvyLZGz/r+GwgCgbwSAHh35VTrREwcL+2T/yJFhdNoVAZk5XrnD1vtFiC2YwPta1Dx4LwIew==
+X-Received: by 2002:a37:4289:: with SMTP id p131mr12678332qka.3.1543785531314;
+        Sun, 02 Dec 2018 13:18:51 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id m1sm9610025qkh.15.2018.12.02.13.18.39
+        by smtp.gmail.com with ESMTPSA id j38sm10247759qtj.72.2018.12.02.13.18.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 13:18:43 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:18:36 -0200
+        Sun, 02 Dec 2018 13:18:50 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:18:44 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Fabio Estevam <festevam@gmail.com>,
@@ -58,9 +58,9 @@ Cc:     Fabio Estevam <festevam@gmail.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH 3/5] ARM: dts: imx6ul-pico-hobbit: Make the child led nodes standard
-Date:   Sun,  2 Dec 2018 19:18:07 -0200
-Message-Id: <20181202211809.11621-4-otavio@ossystems.com.br>
+Subject: [PATCH 4/5] ARM: dts: imx6ul-pico-hobbit: Extend peripherals support
+Date:   Sun,  2 Dec 2018 19:18:08 -0200
+Message-Id: <20181202211809.11621-5-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181202211809.11621-1-otavio@ossystems.com.br>
 References: <20181202211809.11621-1-otavio@ossystems.com.br>
@@ -74,31 +74,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fabio Estevam <festevam@gmail.com>
 
-Use the same child led node and label name as used in the
-imx7d-pico-hobbit board.
+This adds following peripherals support:
+
+ - ADC
+ - GPIO LED
+ - GPIOs
 
 Signed-off-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 ---
 
- arch/arm/boot/dts/imx6ul-pico-hobbit.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx6ul-pico-hobbit.dts | 30 ++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx6ul-pico-hobbit.dts b/arch/arm/boot/dts/imx6ul-pico-hobbit.dts
-index 3cc04dd6f341..8656ccbb5a06 100644
+index 8656ccbb5a06..f2dd6945e98c 100644
 --- a/arch/arm/boot/dts/imx6ul-pico-hobbit.dts
 +++ b/arch/arm/boot/dts/imx6ul-pico-hobbit.dts
-@@ -15,8 +15,8 @@
+@@ -14,6 +14,8 @@
+ 
  	leds {
  		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_leds>;
  
--		hobbitled {
--			label = "hobbitled";
-+		led {
-+			label = "gpio-led";
- 			gpios = <&gpio1 29 GPIO_ACTIVE_LOW>;
- 		};
+ 		led {
+ 			label = "gpio-led";
+@@ -58,6 +60,12 @@
+ &i2c3 {
+ 	status = "okay";
+ 
++	adc081c: adc@50 {
++		compatible = "ti,adc081c";
++		reg = <0x50>;
++		vref-supply = <&reg_3p3v>;
++	};
++
+ 	polytouch: touchscreen@38 {
+ 		compatible = "edt,edt-ft5x06";
+ 		reg = <0x38>;
+@@ -68,3 +76,25 @@
+ 		touchscreen-size-y = <480>;
  	};
+ };
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog>;
++
++	pinctrl_hog: hoggrp {
++		fsl,pins = <
++			MX6UL_PAD_CSI_VSYNC__GPIO4_IO19		0x10b0
++			MX6UL_PAD_CSI_DATA00__GPIO4_IO21	0x10b0
++			MX6UL_PAD_CSI_DATA01__GPIO4_IO22	0x10b0
++			MX6UL_PAD_CSI_DATA02__GPIO4_IO23	0x10b0
++			MX6UL_PAD_UART1_CTS_B__GPIO1_IO18	0x10b0
++			MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x10b0
++		>;
++	};
++
++	pinctrl_gpio_leds: gpioledsgrp {
++		fsl,pins = <
++			MX6UL_PAD_UART4_RX_DATA__GPIO1_IO29	0x10b0
++		>;
++	};
++};
 -- 
 2.19.2
 
