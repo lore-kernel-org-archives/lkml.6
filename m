@@ -2,122 +2,119 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D0DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 16:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2585C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC4E208A3
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 16:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 899C02081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M9w+fouf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EC4E208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="IVUOOiZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899C02081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725788AbeLBQ5T (ORCPT
+        id S1725780AbeLBRAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 11:57:19 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37053 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbeLBQ5T (ORCPT
+        Sun, 2 Dec 2018 12:00:36 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42988 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbeLBRAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 11:57:19 -0500
-Received: by mail-qt1-f193.google.com with SMTP id z16so11259441qtq.4;
-        Sun, 02 Dec 2018 08:57:17 -0800 (PST)
+        Sun, 2 Dec 2018 12:00:36 -0500
+Received: by mail-io1-f66.google.com with SMTP id x6so8484412ioa.9
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 09:00:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=XuOrIdOrWdJpHvjAxch16kFCeUkFwdVXYlmRt8TRW/0=;
-        b=M9w+foufTMjekB5QUDTSZnlFctnBiuNnnwCgxC6sX0hTzrA50ILCwxOarJrpfK5FaK
-         +bOFP2ktKInACbJ2VYNphh4lU1Un0+peL7+B6cXsA3ATrbJnSGgQ6Cv+JF43bwkdDS7E
-         mz4CGQ81DHW+QMQDMAvm7muHV3Kiojm5/lWOKZgBAGeVbmpTzztzDle6U2bkhgWAfCrj
-         dopoPzv/B9RSVeULO4F0b60CDPBnZZcAh+JT/R9Y0yjjeuhn4E6ITc3E+uU1xTxjc50z
-         k0+lb7MlxGaQ5UaHR+YXasQczxhFINDFMpoWxT2Zg7/QYHEWrlrQLht0HCdA/3GVkgEE
-         9bPg==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Oisxvrn8vwMyiwpK5R9JK86kA7nCnXCgxvtMALgRayo=;
+        b=IVUOOiZMsqKBhkdeKRpuWF9XfJtF9U43/ou7tPPYEhF3r13D72lyjHyiyOicvBQb52
+         ZcHvPiaT2/TMHZJidhbWdCge8WRfBb75tL0slbNL8m80qnrCqgsYmZ0mJsnVKx+lhoz0
+         sdF28+zyY6dpGS25EJU++8r/gzVOtdtk384Q5Y01kVDCI5UWK7dvE5Ni55QHWlMKcAfP
+         74GiwqEsUg2P/NdhKRThdF25QF3cE0+775T1kSuSsc+Idg9JH+grGfq0yUUyx22KndhF
+         Os14sc5CvTbTzZfs2y7QFACvIqtd9atugHEaMsqaZLdDm4Ym69Ndk/hKxNikv657UAOU
+         eAlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=XuOrIdOrWdJpHvjAxch16kFCeUkFwdVXYlmRt8TRW/0=;
-        b=Bn6jra1EPoUX80QhVlJB8CFST1qIv6g9Gsixngxtxa+uxxFmHBrsNLGzIbR7ot89lt
-         mLLFNFribuy6HnQHDMwVUsP8VPGHbx2XQjmYAroy9XFMSaH3wOavuJ/k+t+jmnpREeRS
-         pFhpSoOS+qK/p14gYxp1dQ5WMh+PRnJ1PNSq267YhYk37ijNlBslJ1bDI9yfsAQ0BRbM
-         jihCSuLzPMKK/BI3KUc0wLddmcP7WQCXTihYk5IUbPfzjXonjrZsxUimnbJAqRp32IFo
-         C3eMa6AcrwYPpTy4XCEZqDxuFGZ0Z0KtwmLVQfCIJMywxjjwQ6DzGqENEOkE7OTpq3qd
-         QiHw==
-X-Gm-Message-State: AA+aEWbmJMgj/fGmU3QGWyEhHw+cjQPIWWCe0YY67HV28oDOxP2q3y2w
-        31ATxk2YOkRXe9cTfsW9oQI=
-X-Google-Smtp-Source: AFSGD/VYVcKSJTwcpFcv9DFfFenealG8guzajSeCPASi2IjrQwbxYkqKeEjA42RIEo7R216OVjMUYg==
-X-Received: by 2002:ac8:13c5:: with SMTP id i5mr6968516qtj.365.1543769837299;
-        Sun, 02 Dec 2018 08:57:17 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id q2sm5026514qkc.68.2018.12.02.08.57.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 08:57:16 -0800 (PST)
-Date:   Sun, 2 Dec 2018 14:57:12 -0200
-From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH] staging: iio: ad5933: add binding doc for ad5933
-Message-ID: <20181202165712.t6pd6ygq57llf2lr@smtp.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Oisxvrn8vwMyiwpK5R9JK86kA7nCnXCgxvtMALgRayo=;
+        b=ju3NIbAD79/l/GMMuyN357OZB7wN+/y+8Y14CbPUFuP4NOFBlh4pgt0w2MEncxZGut
+         MmxK9BR9xzbDCSWasudx1G0pl+QD71feQcehs3qsvjqObYGWK9eUNSj3M6YHwa9zbc+Y
+         0/IG+F1Z0ftorVrZNxzeCP+ERzYlem8euRGa7I9NG2Wzw97us8O8yf7CTE/rCNYlXUbn
+         jAwFY/SotWNiG2XnCbC150BwwCGrqhxXocbsBBv+8dljAguIefKxfNY2NF45d+n4iTeX
+         FgSs1s055J7/FI88sTLREo/rZP1oW9cy1uV21UqtBU+0V8HeN+9fuFScfrnHD2UYKnC9
+         71Vw==
+X-Gm-Message-State: AA+aEWa54ItCCBeRM+oQoGqYkF1GoTp7wZFkAh62GaJA2FO8IvGSQcQj
+        MCbNmjRvDTArr0uEENjdA3nrXIbLNfkOokdofYtAUA==
+X-Google-Smtp-Source: AFSGD/U99JXA7FVJ/6/yK/spGjS0zK3aY6++9Zc7XYD1AyZnz9bfNz6wWeamUjKs4RxxsT59LDkrp5bLxXoT5oGdkIQ=
+X-Received: by 2002:a5e:aa06:: with SMTP id s6mr11385852ioe.187.1543770033491;
+ Sun, 02 Dec 2018 09:00:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
+ <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+ <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
+ <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+ <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com> <20181202122900.79922c91@why.wild-wind.fr.eu.org>
+In-Reply-To: <20181202122900.79922c91@why.wild-wind.fr.eu.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Sun, 2 Dec 2018 18:00:22 +0100
+Message-ID: <CAMRc=MczHf3Q+826QDMMNAFU3WMKHR3L-Tj=Da4ydVRDcZThCA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a devicetree documentation for the ad5933 and ad5934 impedance
-converter, network analyzer.
+niedz., 2 gru 2018 o 13:29 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82=
+(a):
+>
+> On Fri, 30 Nov 2018 23:26:25 +0100
+> Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> > On Thu, Nov 29, 2018 at 7:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wro=
+te:
+> >
+> > > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
+> > > sharing for userspace") some libgpiod tests are failing because we ca=
+n
+> > > no longer depend on reading the value of a dummy GPIO after detecting
+> > > an interrupt to know the edge of the interrupt. While these interrupt=
+s
+> > > are triggered from debugfs and debugfs is not required to maintain
+> > > compatibility, I thing having a working test suite for the GPIO
+> > > subsystem and uAPI is worth applying these two patches and also the
+> > > previous one[1].
+> > >
+> > > Can we have them applied for 4.20 or are there any objections?
+> >
+> > I'm fine with applying them if I can just get an ACK from one of the IR=
+Q
+> > maintainers (Thomas, Marc).
+>
+> I'm fine with that patch, with the provision that (nitpick) the edge
+> field is turned into a bool instead of an int.
+>
+> With that,
+>
+> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+>
 
-Co-Developed-by: Gabriel Capella <gabriel@capella.pro>
+I wanted to reuse the already existing IRQ_TYPE_EDGE_RISING/FALLING
+defines which I think makes more sense here than a boolean.
 
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Signed-off-by: Gabriel Capella <gabriel@capella.pro>
----
- .../iio/impedance-analyzer/ad5933.txt         | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt
-
-diff --git a/Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt b/Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt
-new file mode 100644
-index 000000000000..d9ae2babf016
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt
-@@ -0,0 +1,23 @@
-+Analog Devices AD5933/AD5934 Impedance Converter, Network Analyzer
-+
-+https://www.analog.com/media/en/technical-documentation/data-sheets/AD5933.pdf
-+https://www.analog.com/media/en/technical-documentation/data-sheets/AD5934.pdf
-+
-+Required properties:
-+ - compatible : should be one of
-+		"adi,ad5933"
-+		"adi,ad5934"
-+ - reg : the I2C address
-+ - vdd-supply : supply reference for the device.
-+
-+Optional properties:
-+ - vref_mv : default voltage reference.
-+ - ext_clk_hz : external master clock for the system.
-+
-+Example:
-+
-+	impedance-analyzer@0d {
-+		compatible = "adi,ad5933";
-+		reg = <0x0d>;
-+		vdd-supply = <&vdd_supply>;
-+	};
--- 
-2.17.1
-
+Bart
