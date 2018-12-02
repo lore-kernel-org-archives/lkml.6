@@ -2,258 +2,132 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E74ECC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68CBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A597C20892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:19:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A597C20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	by mail.kernel.org (Postfix) with ESMTP id 8DDCB21473
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZsJd0ab"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DDCB21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725893AbeLBVTB (ORCPT
+        id S1725804AbeLBVXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:19:01 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40915 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbeLBVTB (ORCPT
+        Sun, 2 Dec 2018 16:23:34 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44028 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbeLBVXd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:19:01 -0500
-Received: by mail-qt1-f194.google.com with SMTP id k12so11632905qtf.7;
-        Sun, 02 Dec 2018 13:18:59 -0800 (PST)
+        Sun, 2 Dec 2018 16:23:33 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so10112771wrs.10;
+        Sun, 02 Dec 2018 13:23:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=y4Pigh91c3qMXMgWaohLTWbgGJ76Vl21itHuMEWGe2Y=;
+        b=SZsJd0abWfXSSoJwmX9Qgu7FaiLkulvVrqRj652ySMDdDzG2ea9+jxsPA5ZVeonFph
+         je79w+GNz2mqZz4NXHXj9YH7csrodLbBvHksMcm2TZlVrVZiucpklaOZrY/6aJ+rCdKp
+         PeXBUSHHAfHxrNM+9i4HQA1DXupT4nekNRa/rK1Yn3Iy8ZqUU13R6fNc9q3C7BPsKIVy
+         5Wheif6BivE/iATa0s5K3nF71SikMN2Oc0A/RsdQ1hVPd/PzMaBCbGENqsiK2txpkpHB
+         U/NAnP2G5Ms/n8BGd5BOz7fvcqmQ+LFjehfsN2t4xnzn66Ve9m07FnpWgzIVBtopd6w5
+         gImQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:organization:content-transfer-encoding;
-        bh=55pQVhEpgT5gvpJTmZIDiBlXiFeCfhLW8JmA+NU3SGU=;
-        b=XDdwsryO/nv0Qp46ELDvntpRkmWoPrtpplvMFn1qAlH4GKgOaaLFMF54vf0BS9Pzoy
-         FfQi30e0YdT/01V53lRksg0ynqVhKWJ7ZGuPYT1dyyYGLaqn1V+RgXsyzmQOqakpsi6O
-         JvBJDbezynugpMhKLSNxu9cqYWQaO+YlgZ55Wj9h+/E+e3XLYxUeeSHywU4eks28ugtE
-         hE5dkzaZXI7uQcuTN38ClX/s0DmyN38ShvOlfIumBCjm2ye2E0rutMFmSRHpaLF4t2wk
-         3RJBP8ELnCtQW3bAp217+iJLoiFr6Fa2AfZjhU7XGXDsJ2lOAstv/9TiLmbEuf3oUKk6
-         cEuw==
-X-Gm-Message-State: AA+aEWYhp/i51Qaj01SC9s+3JxpR4n/rUhBqt1blOgD1NzxWB2i/Tnou
-        vDV62A2gQQi3ASoAF4FG9Q4=
-X-Google-Smtp-Source: AFSGD/XT1vTeuR6YazMkcoMhEgarJmuWBWvnHJgqR0WTVfXsX7ASEPbCsVPTkKa3bJIA/14/icUxjg==
-X-Received: by 2002:aed:34e6:: with SMTP id x93mr13622285qtd.156.1543785538864;
-        Sun, 02 Dec 2018 13:18:58 -0800 (PST)
-Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id l12sm5524343qkk.40.2018.12.02.13.18.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 13:18:57 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:18:51 -0200
-From:   Otavio Salvador <otavio@ossystems.com.br>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=y4Pigh91c3qMXMgWaohLTWbgGJ76Vl21itHuMEWGe2Y=;
+        b=I26ojTIOgiamDbL5VuIO9VscPWb5Iejs+CdwJEG4M39/e+swHITosapT0dCKKbD/4+
+         c6qrIuXT/uTKkhS/rDrWHKv+JkGwkTkg/JwuymZTE9co/+lvvUNNiefSQCE2LtjZa+FU
+         ZglUTAC/nvxzpNuNHjgh2B1UBOtLvpiMZm+qP95q31IYP9qOShdrQ2I2se7EmRJrXMav
+         Byf48o1J2Bdr23qt3hNUUNzLdufcgz96PjkcBlIQhyOb3HXW0EnmloWzjY5jWbMsi3AM
+         SR0xCGo474GEiNxCSp79PH45sVovbhB4WeiaBRKiYoJg34kJlesrePBU4wNmwqSOGjcg
+         zCHw==
+X-Gm-Message-State: AA+aEWZfqWfP72aUfYm+tQ3G9hdrdZ2nVd1NoAZzXswYgO7FrE6V17ft
+        UcOgzrjfLen8KRyMs5gRWIzOmYQGYh4=
+X-Google-Smtp-Source: AFSGD/URshyVaqMcmEPLl6bVYviO3uoCEO0X9JpSRaRjTrOeIUeSH84v5c29LQm0fjrHKfieStuxVQ==
+X-Received: by 2002:adf:e284:: with SMTP id v4mr7253944wri.26.1543785810325;
+        Sun, 02 Dec 2018 13:23:30 -0800 (PST)
+Received: from ThinkPad.home ([185.219.177.152])
+        by smtp.gmail.com with ESMTPSA id d2sm9551043wrs.97.2018.12.02.13.23.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 02 Dec 2018 13:23:29 -0800 (PST)
+From:   Mesih Kilinc <mesihkilinc@gmail.com>
+To:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-sunxi@googlegroups.com
+Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 5/5] ARM: dts: imx6ul-pico: Add the imx6ul-pico-pi variant
-Date:   Sun,  2 Dec 2018 19:18:09 -0200
-Message-Id: <20181202211809.11621-6-otavio@ossystems.com.br>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181202211809.11621-1-otavio@ossystems.com.br>
-References: <20181202211809.11621-1-otavio@ossystems.com.br>
-MIME-Version: 1.0
-Organization: O.S. Systems Software LTDA.
-Content-Transfer-Encoding: 8bit
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: [RFC PATCH 00/10] Add support for DMA and audio codec of F1C100s
+Date:   Mon,  3 Dec 2018 00:23:07 +0300
+Message-Id: <cover.1543782328.git.mesihkilinc@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+This is RFC patchset for Allwinner suniv F1C100s to support DMA and
+audio codec.
 
-The imx6ul-pico-pi contains a imx6ul-pico SoM and a pi baseboard:
-https://www.technexion.com/products/pico-baseboards/detail/PICO-PI
+Allwinner F1C100s has a audio codec that has necessary digital and
+analog parts. It has r-l headphone output and microphone, line, r-l
+FM inputs. ADC can capture any inputs and also output channels via mux.
+Any input channels or DAC samples can feed output channels. 
 
-Add support for it.
+Add support for this audio codec.
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
----
+F1C100s utilizes DMA channels to send and receive ADC-DAC samples. So
+DMA support needed. Patch 1~5 adds support for DMA. Suniv F1C100s has 
+very similar DMA to sun4i. But there is some dissimilarities also. 
+Suniv features a DMA reset bit in clock  control unit. It has smaller 
+number of DMA channels. Several registers has different addresses. 
+It's max burst size is 4 instead of 8. Also DMA endpoint numbers are 
+different.
 
- arch/arm/boot/dts/Makefile           |  1 +
- arch/arm/boot/dts/imx6ul-pico-pi.dts | 97 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/imx6ul-pico.dtsi   | 32 ---------
- 3 files changed, 98 insertions(+), 32 deletions(-)
- create mode 100644 arch/arm/boot/dts/imx6ul-pico-pi.dts
+Patch 6 adds DMA max burst option to sun4i-codec.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 12a3cfb7d280..f26591295497 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -557,6 +557,7 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ul-liteboard.dtb \
- 	imx6ul-opos6uldev.dtb \
- 	imx6ul-pico-hobbit.dtb \
-+	imx6ul-pico-pi.dtb \
- 	imx6ul-tx6ul-0010.dtb \
- 	imx6ul-tx6ul-0011.dtb \
- 	imx6ul-tx6ul-mainboard.dtb \
-diff --git a/arch/arm/boot/dts/imx6ul-pico-pi.dts b/arch/arm/boot/dts/imx6ul-pico-pi.dts
-new file mode 100644
-index 000000000000..de07357b27fc
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-pico-pi.dts
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Copyright 2015 Technexion Ltd.
-+//
-+// Author: Wig Cheng  <wig.cheng@technexion.com>
-+//	   Richard Hu <richard.hu@technexion.com>
-+//	   Tapani Utriainen <tapani@technexion.com>
-+/dts-v1/;
-+
-+#include "imx6ul-pico.dtsi"
-+/ {
-+	model = "TechNexion PICO-IMX6UL and PI baseboard";
-+	compatible = "technexion,imx6ul-pico-pi", "fsl,imx6ul";
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_leds>;
-+
-+		led {
-+			label = "gpio-led";
-+			gpios = <&gpio4 20 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	sound {
-+		compatible = "fsl,imx-audio-sgtl5000";
-+		model = "imx6ul-sgtl5000";
-+		audio-cpu = <&sai1>;
-+		audio-codec = <&sgtl5000>;
-+		audio-routing =
-+			"LINE_IN", "Line In Jack",
-+			"MIC_IN", "Mic Jack",
-+			"Mic Jack", "Mic Bias",
-+			"Headphone Jack", "HP_OUT";
-+	};
-+
-+	sys_mclk: clock-sys-mclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24576000>;
-+	};
-+};
-+
-+&i2c2 {
-+	clock_frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	status = "okay";
-+
-+	sgtl5000: codec@a {
-+		reg = <0x0a>;
-+		compatible = "fsl,sgtl5000";
-+		clocks = <&sys_mclk>;
-+		VDDA-supply = <&reg_2p5v>;
-+		VDDIO-supply = <&reg_3p3v>;
-+	};
-+};
-+
-+&i2c3 {
-+	clock_frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	status = "okay";
-+
-+	polytouch: touchscreen@38 {
-+		compatible = "edt,edt-ft5x06";
-+		reg = <0x38>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio4 24 GPIO_ACTIVE_LOW>;
-+		touchscreen-size-x = <800>;
-+		touchscreen-size-y = <480>;
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <
-+			MX6UL_PAD_CSI_VSYNC__GPIO4_IO19		0x10b0
-+			MX6UL_PAD_CSI_DATA00__GPIO4_IO21	0x10b0
-+			MX6UL_PAD_CSI_DATA01__GPIO4_IO22	0x10b0
-+			MX6UL_PAD_CSI_DATA02__GPIO4_IO23	0x10b0
-+			MX6UL_PAD_UART1_CTS_B__GPIO1_IO18	0x10b0
-+			MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x10b0
-+		>;
-+	};
-+
-+	pinctrl_gpio_leds: gpioledsgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_CSI_HSYNC__GPIO4_IO20		0x10b0
-+		>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/imx6ul-pico.dtsi b/arch/arm/boot/dts/imx6ul-pico.dtsi
-index 89269955440b..de9f83189ba8 100644
---- a/arch/arm/boot/dts/imx6ul-pico.dtsi
-+++ b/arch/arm/boot/dts/imx6ul-pico.dtsi
-@@ -72,24 +72,6 @@
- 		regulator-max-microvolt = <3300000>;
- 		startup-delay-us = <200000>;
- 	};
--
--	sound {
--		compatible = "fsl,imx-audio-sgtl5000";
--		model = "imx6ul-sgtl5000";
--		audio-cpu = <&sai1>;
--		audio-codec = <&codec>;
--		audio-routing =
--			"LINE_IN", "Line In Jack",
--			"MIC_IN", "Mic Jack",
--			"Mic Jack", "Mic Bias",
--			"Headphone Jack", "HP_OUT";
--	};
--
--	sys_mclk: clock-sys-mclk {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <24576000>;
--	};
- };
+Patch 7~8 Add support for suniv F1C100s audio codec.
+
+Patch 9 adds audio codec to suniv-f1c100s.dtsi
+
+Patch 10 adds audio codec support to Lichee Pi Nano board.
  
- &can1 {
-@@ -169,20 +151,6 @@
- 	};
- };
- 
--&i2c2 {
--	clock_frequency = <100000>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_i2c2>;
--	status = "okay";
--};
--
--&i2c3 {
--	clock_frequency = <100000>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_i2c3>;
--	status = "okay";
--};
--
- &lcdif {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_lcdif_dat &pinctrl_lcdif_ctrl>;
+Thanks!
+
+Mesih Kilinc (10):
+  dma-engine: sun4i: Add a quirk to support different chips
+  dma-engine: sun4i: Add has_reset option to quirk
+  dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA
+  dma-engine: sun4i: Add support for Allwinner suniv F1C100s
+  ARM: dts: suniv: f1c100s: Add support for DMA
+  ASoC: sun4i-codec: Add DMA Max Burst field
+  dt-bindigs: sound: Add Allwinner suniv F1C100s Audio Codec
+  ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
+  ARM: dts: suniv: f1c100s: Add support for Audio Codec
+  ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
+
+ .../devicetree/bindings/dma/sun4i-dma.txt          |   4 +-
+ .../devicetree/bindings/sound/sun4i-codec.txt      |   5 +
+ arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |   8 +
+ arch/arm/boot/dts/suniv-f1c100s.dtsi               |  25 ++
+ drivers/dma/Kconfig                                |   4 +-
+ drivers/dma/sun4i-dma.c                            | 221 ++++++++++--
+ sound/soc/sunxi/sun4i-codec.c                      | 371 ++++++++++++++++++++-
+ 7 files changed, 601 insertions(+), 37 deletions(-)
+
 -- 
-2.19.2
+2.7.4
 
