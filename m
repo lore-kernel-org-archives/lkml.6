@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0387DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D794C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50322082F
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50322082F
+	by mail.kernel.org (Postfix) with ESMTP id 5A98A2082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A98A2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbeLBV0C (ORCPT
+        id S1726025AbeLBV0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:26:02 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35367 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeLBV0B (ORCPT
+        Sun, 2 Dec 2018 16:26:09 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45184 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbeLBV0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:26:01 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v11so11674513qtc.2;
-        Sun, 02 Dec 2018 13:25:58 -0800 (PST)
+        Sun, 2 Dec 2018 16:26:09 -0500
+Received: by mail-qt1-f195.google.com with SMTP id e5so11624024qtr.12;
+        Sun, 02 Dec 2018 13:26:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:organization:content-transfer-encoding;
-        bh=Ucrg0FmBQWhPhP3EvzOr0Lyei3/PizNO0LDkOiMRUHU=;
-        b=qzaC0mOurbSL8ZVHe/CoPJwg/eHzcDkH07OeKfTsuLNU5xiBP018DQe2Jd0IxfRwyx
-         Xnv92JtYTkAoeMm5AFhWTKjpnOYbv1mWDnFhoXL6E6v91n4eBU+MUAmLd0dbN1R7+kl4
-         vJfaQwk42atctlYEftsjA8/Fg0asN2HEbCUJhajQdGVF6JOevWHKbn3KrAXL9WvytQ1w
-         6sV7NYBnqcpcr3tR9nDf0e3mOYAz8zhGV7z3qpmgVKVCaw9a8NBYGxHK5gcweBHX/7td
-         7BtWAPK6LG3rOqBUGX7qLltyYNkH1KCVpsAbpz1L9caqITordf7bEDchNRAPgPqlOKfU
-         gf8g==
-X-Gm-Message-State: AA+aEWYTpjlMbrt4RAbVyge2LMH650bdvFocbNjw++1rx+dAzEFQB0RM
-        Xei1U45WNUipGHjPfhabvrI=
-X-Google-Smtp-Source: AFSGD/WyXdn17bQ1wucLDBQKF0jVrb+UGwZ7yQbXQrqTGjkDGmhSymaNJvu4lGSnXg5h9lyMaWu0Bg==
-X-Received: by 2002:a0c:b919:: with SMTP id u25mr13566244qvf.104.1543785958509;
-        Sun, 02 Dec 2018 13:25:58 -0800 (PST)
+        bh=oOtyVZYPYhVv1dTbriat0rjkh3usuIjl8Abih+y5lwA=;
+        b=aX90D67zVmwK1AvOBQOPHWXau71b5bbN3PaSWd+QpxH1UYXm2lBCS1RLA0bp8Z9L/C
+         hD+f0oLhYPfPxErMSjAiojH1iwI1STYWKZAoHj4U7I74i8Mjn6JfCGMmOMwbQayBexsg
+         ntB7CbwwPJ146LsuaaJ9twrVa5CJBtt/PhMjtZskN6nwsTTKYRnm/ebOY98ijDbhucFD
+         Zs1gtjfVJ/fcTb7xVaJCCWGB+CLkhD1YAlo2+cTw/5t+aYolVT94Es/tkUJanmObvmoY
+         GmGDtx95V3wET3G7V1GGj/Z/UjUHSyAtpTdnRLwtVLu33sTH1DUhv74CEYAtedsbijb9
+         71+w==
+X-Gm-Message-State: AA+aEWYnWcsMg3902AWp8MHHGQXkmYO3+PxRQN+UCSaN1zkZIlvAuRTa
+        RwxWyOhwsEi854NwfxJy1wY=
+X-Google-Smtp-Source: AFSGD/XOPV73f+FYO/Jxt9YfndoQbo9x4BDGAQs3Sd2ABn7y+FY4lbufVCrVLC7fZkF5jDiM0tKEpQ==
+X-Received: by 2002:ac8:4454:: with SMTP id m20mr12774285qtn.381.1543785965805;
+        Sun, 02 Dec 2018 13:26:05 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id e26sm6077085qtg.69.2018.12.02.13.25.53
+        by smtp.gmail.com with ESMTPSA id o48sm7583933qtb.87.2018.12.02.13.26.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 13:25:57 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:25:51 -0200
+        Sun, 02 Dec 2018 13:26:05 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:25:58 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Fabio Estevam <festevam@gmail.com>,
@@ -58,9 +58,9 @@ Cc:     Fabio Estevam <festevam@gmail.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH 4/9] ARM: dts: imx7d-pico: Pass the USBOTG1_PWR pinctrl
-Date:   Sun,  2 Dec 2018 19:25:15 -0200
-Message-Id: <20181202212520.16650-5-otavio@ossystems.com.br>
+Subject: [PATCH 5/9] ARM: dts: imx7d-pico: Pass the Ethernet PHY reset GPIO
+Date:   Sun,  2 Dec 2018 19:25:16 -0200
+Message-Id: <20181202212520.16650-6-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181202212520.16650-1-otavio@ossystems.com.br>
 References: <20181202212520.16650-1-otavio@ossystems.com.br>
@@ -74,8 +74,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fabio Estevam <festevam@gmail.com>
 
-Pass the USBOTG1_PWR pinctrl description in the USBOTG GPIO
-controlled regulator.
+Pass the "phy-reset-gpios" property in order to describe the GPIO
+that performs the Ethernet PHY reset.
 
 Signed-off-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
@@ -85,18 +85,25 @@ Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
  1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx7d-pico.dtsi b/arch/arm/boot/dts/imx7d-pico.dtsi
-index 7319e2ecec5c..cb30bded1e4a 100644
+index cb30bded1e4a..35791a1adabf 100644
 --- a/arch/arm/boot/dts/imx7d-pico.dtsi
 +++ b/arch/arm/boot/dts/imx7d-pico.dtsi
-@@ -41,6 +41,8 @@
+@@ -88,6 +88,7 @@
+ 	phy-mode = "rgmii";
+ 	phy-handle = <&ethphy0>;
+ 	fsl,magic-packet;
++	phy-reset-gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ 
+ 	mdio {
+@@ -290,6 +291,7 @@
+ 			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x1
+ 			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x1
+ 			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x1
++			MX7D_PAD_SD3_RESET_B__GPIO6_IO11                0x1  /* Ethernet reset */
+ 		>;
  	};
  
- 	reg_usb_otg1_vbus: regulator-usb-otg1-vbus {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usbotg1_pwr>;
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb_otg1_vbus";
- 		regulator-min-microvolt = <5000000>;
 -- 
 2.19.2
 
