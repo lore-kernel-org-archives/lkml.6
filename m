@@ -2,132 +2,100 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03575C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF9EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBB8720892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:35:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WHvpqN98"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBB8720892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C9A020892
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:35:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9A020892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725850AbeLBXfU (ORCPT
+        id S1725893AbeLBXfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 18:35:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36908 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbeLBXfU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 18:35:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0kH665vhbUf2eI9G20oKpGZ49nFsld92hekZ4ynOsw8=; b=WHvpqN98tUZtK89Zu/93Yr5F/
-        omOuwCxdZDDzr7zf8zVtueZIdvKVTZhtlUZGFYk0XtTI4T+lb3d8G3hGPTNIB6uOXQP6uC/3a14r2
-        J97HNNmp5ZkIgCqKRMPsZDwne6+shve7PGghAOTlBrSJX4ZNmRITChGMjOU3tAM3u4YGNcwWHtfLj
-        a34xi2JS1pnigGioOA5D9SC7R6e+pcOGr+++SxI3NgPKeOVo/eiVA0kq/Vii6rAQifSuMRGXI5+Dx
-        aTUsmQ2PsQDXth+ashoFrP58FMl9KyvbiUL57CUIP6I6SwhM1RWqvbdUvwgFH0HxGXPR+AwDPlrbe
-        /4LJ7Qy7g==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTbGN-0004uO-CA; Sun, 02 Dec 2018 23:34:59 +0000
-Date:   Sun, 2 Dec 2018 15:34:58 -0800
-From:   Darren Hart <dvhart@infradead.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Cameron <quozl@laptop.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 17/17] power: supply: olpc_battery: Add OLPC XO 1.75
- support
-Message-ID: <20181202233458.GE23087@wrath>
-References: <20181116162403.49854-1-lkundrak@v3.sk>
- <20181116162403.49854-18-lkundrak@v3.sk>
+        Sun, 2 Dec 2018 18:35:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40092 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725786AbeLBXfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 18:35:46 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 173123082125;
+        Sun,  2 Dec 2018 23:35:44 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-16.brq.redhat.com [10.40.204.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 843255D75E;
+        Sun,  2 Dec 2018 23:35:34 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] x86/hyper-v: Mark TLFS structures packed
+In-Reply-To: <DC5975C2-6517-4D20-9DC9-574C5439C426@gmail.com>
+References: <20181130125422.21494-1-vkuznets@redhat.com> <DC5975C2-6517-4D20-9DC9-574C5439C426@gmail.com>
+Date:   Mon, 03 Dec 2018 00:35:35 +0100
+Message-ID: <87k1krh588.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116162403.49854-18-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Sun, 02 Dec 2018 23:35:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 05:24:03PM +0100, Lubomir Rintel wrote:
-> The battery and the protocol are essentially the same as OLPC XO 1.5,
-> but the responses from the EC are LSB first.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
-> ---
-> Changes since v1:
-> - s/s16 ecword_to_cpu/u16 ecword_to_cpu/
-> - s/u16 ec_byte/u16 ec_word/
-> 
->  drivers/power/supply/olpc_battery.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/olpc_battery.c
+Nadav Amit <nadav.amit@gmail.com> writes:
 
-...
+[skip]
 
-> @@ -626,6 +635,10 @@ static int olpc_battery_probe(struct platform_device *pdev)
->  	if (ecver > 0x44) {
->  		/* XO 1 or 1.5 with a new EC firmware. */
->  		data->new_proto = 1;
-> +	} else if (of_find_compatible_node(NULL, NULL, "olpc,xo1.75-ec")) {
+>
+> Having said that, something else is sort of strange in the TLFS definitions,
+> I think (I really know little about this whole protocol). Look at the
+> following definitions from hyperv-tlfs.h:
+>
+>> struct hv_vpset {
+>>         u64 format;
+>>         u64 valid_bank_mask;
+>>         u64 bank_contents[];
+>> };
+>> 
+>> struct hv_tlb_flush_ex {
+>>         u64 address_space;
+>>         u64 flags;
+>>         struct hv_vpset hv_vp_set;
+>>         u64 gva_list[];
+>> };
+>
+> It seems you have two flexible array members at the end of hv_tlb_flush_ex.
+> This causes bank_contents[x] and gva_list[x] to overlap. So unless they have
+> the same meaning, this asks for trouble IMHO.
+>
 
-This if/else blocks concerns me a bit, but I might just be missing some
-context.
+This is weird but intentional :-) We're just following Hyper-V spec
+here.
 
-This tests both ecver as well as the OF compatible string, is this reliable? Do
-we know that for all xo1.75-ec compatible nodes the ecver will be <= 0x44? Or,
-is ecver undefined? If the latter, then perhaps this test should be performed
-first?
+E.g. HvFlushVirtualAddressListEx hypercall has the following input ABI:
 
-if (of_find_compatible_node....x01.75-ec...)
-	...
-else if (ecver > 0x44)
-	...
-else
-	...
+[Fixed len head][[Fixed len VP set spec]Var len VP set][Var len addr List]
 
-And what happens when ecver == 0x44? We test for > and < but not ==, <=,
-or >= in this block
+"Fixed len VP set spec" defines the true length of "Var len VP set" and
+"Address List" starts right after that. The length of the whole
+structure is also known.
 
-> +		/* XO 1.75 */
-> +		data->new_proto = 1;
-> +		data->little_endian = 1;
->  	} else if (ecver < 0x44) {
->  		/*
->  		 * We've seen a number of EC protocol changes; this driver
-> -- 
-> 2.19.1
-> 
-> 
+So bank_contents[] and gva_list[] do overlap (and have different
+meaning). We take special precautions when forming the structure
+(e.g. fill_gva_list() takes 'offset').
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+Vitaly
