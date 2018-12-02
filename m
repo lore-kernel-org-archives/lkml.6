@@ -2,206 +2,145 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC19C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3E7C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C74520851
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:12:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C74520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2100620851
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:13:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U32Qj4dd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2100620851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725874AbeLBXLS (ORCPT
+        id S1725878AbeLBXNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 18:11:18 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15624 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725785AbeLBXLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 18:11:17 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 089E658FDAD5;
-        Mon,  3 Dec 2018 07:11:13 +0800 (CST)
-Received: from S00293818-DELL1.china.huawei.com (10.47.90.156) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 3 Dec 2018 07:11:05 +0800
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [RFC net-next 1/9] net: hns3: Add "bd info" query function
-Date:   Sun, 2 Dec 2018 23:09:25 +0000
-Message-ID: <20181202230933.15560-2-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20181202230933.15560-1-salil.mehta@huawei.com>
-References: <20181202230933.15560-1-salil.mehta@huawei.com>
+        Sun, 2 Dec 2018 18:13:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58058 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeLBXNs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 18:13:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=468YkyHmHjR8WB7h95DaFqwpn95HUihY+kX1qINkW4w=; b=U32Qj4ddjxP6zeVxMXnkZWsmj
+        MErZQMTDjKPcO/r1Ym9+hxyRhSJAY4mnREWoh634gdPq2wJBlmpzFCsc01HYY5T0dw/lE49MRe3/M
+        cgFHhH6tYQEw4SpSQTuMCsSxMHd4QZqWdbQm+AavGD3eDQVrZIW/5Jxwo5acEjJ0yNCKURkF/hP8K
+        DYJI29etr7M3jzIrmsbntkADkVmge3sSI3+3ANGcQQseZjgsjAJ2VI/pmwo42fAAaKKfCIOzfBwbv
+        gHmyea+5W+P/o1couyFrEubX9S77vG/BilklWIlZmUEihTlXZv2P+9jZVHj8JRUJwp7r+sw4LZLTq
+        0T/czN0TQ==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gTavZ-0005hw-6v; Sun, 02 Dec 2018 23:13:29 +0000
+Date:   Sun, 2 Dec 2018 15:13:28 -0800
+From:   Darren Hart <dvhart@infradead.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Shevchenko <andy@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Cameron <quozl@laptop.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 06/17] Platform: OLPC: Add XO-1.75 EC driver
+Message-ID: <20181202231328.GB23087@wrath>
+References: <20181116162403.49854-1-lkundrak@v3.sk>
+ <20181116162403.49854-7-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.47.90.156]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116162403.49854-7-lkundrak@v3.sk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: liuzhongzhu <liuzhongzhu@huawei.com>
+On Fri, Nov 16, 2018 at 05:23:52PM +0100, Lubomir Rintel wrote:
+> It's based off the driver from the OLPC kernel sources. Somewhat
+> modernized and cleaned up, for better or worse.
+> 
+> Modified to plug into the olpc-ec driver infrastructure (so that battery
+> interface and debugfs could be reused) and the SPI slave framework.
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> 
 
-This patch prints Sending and receiving
-packet descriptor information.
+Hi Lubomir,
 
-debugfs command:
-echo dump bd info 1 > cmd
+You asked for some tips on how to incorporate the changes in a patch
+series like this.
 
-Sample Command:
-root@(none)# echo bd info 1 > cmd
-hns3 0000:7d:00.0: TX Queue Num: 0, BD Index: 0
-hns3 0000:7d:00.0: (TX) addr: 0x0
-hns3 0000:7d:00.0: (TX)vlan_tag: 0
-hns3 0000:7d:00.0: (TX)send_size: 0
-hns3 0000:7d:00.0: (TX)vlan_tso: 0
-hns3 0000:7d:00.0: (TX)l2_len: 0
-hns3 0000:7d:00.0: (TX)l3_len: 0
-hns3 0000:7d:00.0: (TX)l4_len: 0
-hns3 0000:7d:00.0: (TX)vlan_tag: 0
-hns3 0000:7d:00.0: (TX)tv: 0
-hns3 0000:7d:00.0: (TX)vlan_msec: 0
-hns3 0000:7d:00.0: (TX)ol2_len: 0
-hns3 0000:7d:00.0: (TX)ol3_len: 0
-hns3 0000:7d:00.0: (TX)ol4_len: 0
-hns3 0000:7d:00.0: (TX)paylen: 0
-hns3 0000:7d:00.0: (TX)vld_ra_ri: 0
-hns3 0000:7d:00.0: (TX)mss: 0
-hns3 0000:7d:00.0: RX Queue Num: 0, BD Index: 120
-hns3 0000:7d:00.0: (RX)addr: 0xffee7000
-hns3 0000:7d:00.0: (RX)pkt_len: 0
-hns3 0000:7d:00.0: (RX)size: 0
-hns3 0000:7d:00.0: (RX)rss_hash: 0
-hns3 0000:7d:00.0: (RX)fd_id: 0
-hns3 0000:7d:00.0: (RX)vlan_tag: 0
-hns3 0000:7d:00.0: (RX)o_dm_vlan_id_fb: 0
-hns3 0000:7d:00.0: (RX)ot_vlan_tag: 0
-hns3 0000:7d:00.0: (RX)bd_base_info: 0
+Keep in mind that each patch should create an independent small
+functional change. This makes it easier to review the patch and verify
+that what you said you were going to do matches what the patch does. For
+example, if you separate out the style, whitespace, ordering of
+declarations into an initial first patch, then all that noise is removed
+when the reviewer goes to check to implementation of one of the features
+below.
 
-Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 79 +++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+This is a large patch, and should most certainly be broken up into
+several smaller patches. Do cleanups first, followed by functional
+changes. This ordering ensure that when a "git blame" is used in the
+future to understand why a given line is what it is, the first hit will
+be a functional change, and not a cleanup.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index 86d667a3730a..9a026556df0e 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -52,7 +52,7 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
- 		    test_bit(HNS3_NIC_STATE_RESETTING, &priv->state))
- 			return -EPERM;
- 
--		ring = ring_data[i + h->kinfo.num_tqps].ring;
-+		ring = ring_data[(u32)(i + h->kinfo.num_tqps)].ring;
- 		base_add_h = readl_relaxed(ring->tqp->io_base +
- 					   HNS3_RING_RX_RING_BASEADDR_H_REG);
- 		base_add_l = readl_relaxed(ring->tqp->io_base +
-@@ -125,10 +125,85 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
- 	return 0;
- }
- 
-+static int hns3_dbg_bd_info(struct hnae3_handle *h, char *cmd_buf)
-+{
-+	struct hns3_nic_priv *priv = h->priv;
-+	struct hns3_nic_ring_data *ring_data;
-+	struct hns3_desc *rx_desc, *tx_desc;
-+	struct device *dev = &h->pdev->dev;
-+	struct hns3_enet_ring *ring;
-+	u32 tx_index, rx_index;
-+	u32 q_num, value;
-+	int cnt;
-+
-+	cnt = sscanf(&cmd_buf[8], "%u %u", &q_num, &tx_index);
-+	if (cnt == 2) {
-+		rx_index = tx_index;
-+	} else if (cnt != 1) {
-+		dev_err(dev, "bd info: bad command string, cnt=%d\n", cnt);
-+		return -EINVAL;
-+	}
-+
-+	if (q_num >= h->kinfo.num_tqps) {
-+		dev_err(dev, "Queue number(%u) is out of range(%u)\n", q_num,
-+			h->kinfo.num_tqps - 1);
-+		return -EINVAL;
-+	}
-+
-+	ring_data = priv->ring_data;
-+	ring  = ring_data[q_num].ring;
-+	value = readl_relaxed(ring->tqp->io_base + HNS3_RING_TX_RING_TAIL_REG);
-+	tx_index = (cnt == 1) ? value : tx_index;
-+
-+	if (tx_index >= ring->desc_num) {
-+		dev_err(dev, "bd index (%u) is out of range(%u)\n", tx_index,
-+			ring->desc_num - 1);
-+		return -EINVAL;
-+	}
-+
-+	tx_desc = &ring->desc[tx_index];
-+	dev_info(dev, "TX Queue Num: %u, BD Index: %u\n", q_num, tx_index);
-+	dev_info(dev, "(TX) addr: 0x%llx\n", tx_desc->addr);
-+	dev_info(dev, "(TX)vlan_tag: %u\n", tx_desc->tx.vlan_tag);
-+	dev_info(dev, "(TX)send_size: %u\n", tx_desc->tx.send_size);
-+	dev_info(dev, "(TX)vlan_tso: %u\n", tx_desc->tx.type_cs_vlan_tso);
-+	dev_info(dev, "(TX)l2_len: %u\n", tx_desc->tx.l2_len);
-+	dev_info(dev, "(TX)l3_len: %u\n", tx_desc->tx.l3_len);
-+	dev_info(dev, "(TX)l4_len: %u\n", tx_desc->tx.l4_len);
-+	dev_info(dev, "(TX)vlan_tag: %u\n", tx_desc->tx.outer_vlan_tag);
-+	dev_info(dev, "(TX)tv: %u\n", tx_desc->tx.tv);
-+	dev_info(dev, "(TX)vlan_msec: %u\n", tx_desc->tx.ol_type_vlan_msec);
-+	dev_info(dev, "(TX)ol2_len: %u\n", tx_desc->tx.ol2_len);
-+	dev_info(dev, "(TX)ol3_len: %u\n", tx_desc->tx.ol3_len);
-+	dev_info(dev, "(TX)ol4_len: %u\n", tx_desc->tx.ol4_len);
-+	dev_info(dev, "(TX)paylen: %u\n", tx_desc->tx.paylen);
-+	dev_info(dev, "(TX)vld_ra_ri: %u\n", tx_desc->tx.bdtp_fe_sc_vld_ra_ri);
-+	dev_info(dev, "(TX)mss: %u\n", tx_desc->tx.mss);
-+
-+	ring  = ring_data[q_num + h->kinfo.num_tqps].ring;
-+	value = readl_relaxed(ring->tqp->io_base + HNS3_RING_RX_RING_TAIL_REG);
-+	rx_index = (cnt == 1) ? value : tx_index;
-+	rx_desc	 = &ring->desc[rx_index];
-+
-+	dev_info(dev, "RX Queue Num: %u, BD Index: %u\n", q_num, rx_index);
-+	dev_info(dev, "(RX)addr: 0x%llx\n", rx_desc->addr);
-+	dev_info(dev, "(RX)pkt_len: %u\n", rx_desc->rx.pkt_len);
-+	dev_info(dev, "(RX)size: %u\n", rx_desc->rx.size);
-+	dev_info(dev, "(RX)rss_hash: %u\n", rx_desc->rx.rss_hash);
-+	dev_info(dev, "(RX)fd_id: %u\n", rx_desc->rx.fd_id);
-+	dev_info(dev, "(RX)vlan_tag: %u\n", rx_desc->rx.vlan_tag);
-+	dev_info(dev, "(RX)o_dm_vlan_id_fb: %u\n", rx_desc->rx.o_dm_vlan_id_fb);
-+	dev_info(dev, "(RX)ot_vlan_tag: %u\n", rx_desc->rx.ot_vlan_tag);
-+	dev_info(dev, "(RX)bd_base_info: %u\n", rx_desc->rx.bd_base_info);
-+
-+	return 0;
-+}
-+
- static void hns3_dbg_help(struct hnae3_handle *h)
- {
- 	dev_info(&h->pdev->dev, "available commands\n");
- 	dev_info(&h->pdev->dev, "queue info [number]\n");
-+	dev_info(&h->pdev->dev, "bd info [q_num] <bd index>\n");
- 	dev_info(&h->pdev->dev, "dump fd tcam\n");
- 	dev_info(&h->pdev->dev, "dump tc\n");
- 	dev_info(&h->pdev->dev, "dump tm\n");
-@@ -205,6 +280,8 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
- 		hns3_dbg_help(handle);
- 	else if (strncmp(cmd_buf, "queue info", 10) == 0)
- 		ret = hns3_dbg_queue_info(handle, cmd_buf);
-+	else if (strncmp(cmd_buf, "bd info", 7) == 0)
-+		ret = hns3_dbg_bd_info(handle, cmd_buf);
- 	else if (handle->ae_algo->ops->dbg_run_cmd)
- 		ret = handle->ae_algo->ops->dbg_run_cmd(handle, cmd_buf);
- 
+> ---
+> Changes since v1:
+> - Cosmetic style changes; whitespace, ordering of declarations and
+>   #includes, remoted extra comas from sentinels
+
+Please make this a separate change, possibly more than one, depending on
+how many of these there are. This will reduce the size of the subsequent
+patches, making them easier to review.
+
+> - Count the terminating NUL in LOG_BUF_SIZE
+> - Make olpc_xo175_ec_is_valid_cmd() return -EINVAL instead of -1
+>   on error
+> - Spell keyboard/touchpad in full for CHAN_KEYBOARD/TOUCHPAD messages
+> - Use a #define for PM wakeup processing time
+> - Log a message on unknown event
+> - Escape logging payload with %*pE
+> - Replace an open-coded min()
+> - Correct an error code on short read
+> - replaced PM callback #ifdefs with __maybe_unusedm SET_RUNTIME_PM_OPS
+>   and SET_NOIRQ_SYSTEM_SLEEP_PM_OPS
+> - dev_get_drvdata() instead of a round-trip through platform device
+> - s/unsigned char x/u8 x/ in olpc_xo175_ec_resume()
+> - Use GENMASK() instead of 0xffff for the event mask
+> - Replace cmd tx/resp rx buffers with structures
+> - Turned suspend hint arguments into a struct, and tidied up the comment
+
+Just from these comments, each of these could be a separate patch. You
+can group related things together, or those that change the same line or
+function for example. Order them with cleanups / non-functional-changes
+first, followed by functional changes.
+
+> 
+> Basically all of the above is based on the review by Andy Shevchenko.
+
+Andy, what was your intent for Lubomir here? From the above, this looks
+like it should be several patches to me.
+
+Thanks,
+
 -- 
-2.11.0
-
-
+Darren Hart
+VMware Open Source Technology Center
