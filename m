@@ -8,68 +8,68 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90894C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCCEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555362054F
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CDD720881
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 06:19:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ob52eAyb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 555362054F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uy2BvgZZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDD720881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725796AbeLBGSP (ORCPT
+        id S1725798AbeLBGTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 01:18:15 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36185 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbeLBGSP (ORCPT
+        Sun, 2 Dec 2018 01:19:13 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42946 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLBGTM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 01:18:15 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n2so4290279pgm.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 22:18:13 -0800 (PST)
+        Sun, 2 Dec 2018 01:19:12 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y1so13045plp.9
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Dec 2018 22:19:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=pFA19XQqRIOonXczeaJc1JMDfCxsc2SPHw+vTN0jttk=;
-        b=Ob52eAybZ+ukSyGdY8U/Z1jdhXxFQFle/dMi4Et2nQndtm7MZ2i4ONnKsVDEIcjDDz
-         9W38WqOW1p9mt0J7xkQxfLmLL/jnq1/LcrLmoOqnc9m337jYRgsykPHqvssdhQ8pmZqy
-         AcyrBFinNSivTuQmUI01wz1gKLQW9G1svEowGTi2+SAQF6CW3SbPSPNlOgF5HsoRXG/R
-         9K9JQ52ZvaqN5BHcgkhczNdO8IQ5qGjOakvBGCY0Sm0g3u6hbovABd7E77bu2Yv2l4eb
-         Ba8iBaRv7cN2h5YB8JO3+4IihJv60g16Rfz+y3KC66wo+3y0mJ60ov/ncoRJ0hAIFPOQ
-         x9gA==
+        bh=ng6k7XN2+E7qu+YJG+ewVaHjUak4Dnv0s5kVr6uQuLI=;
+        b=Uy2BvgZZkqOXNK7hWBYo3ARMJUfASECRH1vDxiNUgHBWwBso/Dw5MVQ3h240LKOn9r
+         NhpjK25eGn1477k5XxEo8EOyY+Y9o+E/DUJKbzrcAxAiamgY14sFBQ5e4pPJJZIPgx0x
+         NzFau/vgdlUWyYjWlRMcagejTL6DGAwAmAsSxpCb68yXr9XBuwp/SaCrwZvvzqcGm0L3
+         4PgcxWbXzJwKYve3R9DhlAzPDVVBxKO/xslBA5HeS47vJGvTrlgakEwa4L493x3uvLwo
+         PdxNdGZOUlyPHJ+JMUkdbANMZcGvWiGUFFuBO0DsdK/adiQyQW7EAu9QSeBXHtYH1PiP
+         vFeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=pFA19XQqRIOonXczeaJc1JMDfCxsc2SPHw+vTN0jttk=;
-        b=NgQFwLnG9Ko6FBeThPYPkNz34GUMdSRpdOnuPZBPjK1BIp5U2HcW/FUzI5xAjONTQ4
-         BID8lMdyapT/dOjjoAT+ORfk3bAbjEnBCDyV5STIIHgAKRHEB+9a1ErRmOLaHpDC7UMH
-         HrYbTKyKAFiI+RMYeX7EIuCIuzyUe6CXUl0v2By+hf5+LJkevOoqjFfL93x56XGoTvkg
-         GyI1TMQ7U4ipMYYq+VYUdtZogMKG6DPTRT0Jc2v6K/8ScshDP+g/+BP6sykkNAWDBLe9
-         WnGwcNkMa+PPhbOtUWoyWPVdegaPtG6K3iT14wDG+dhGBLrEik+F/P4FGFSvaV/N2pXr
-         iO4Q==
-X-Gm-Message-State: AA+aEWZ2MriDlbROHwUpFq2IYiPtAmPz46n1ia7eUAuixYsIUgFaiE9i
-        c775vPbYxnOd0blT88tKVP4=
-X-Google-Smtp-Source: AFSGD/UHCJICHgiE0m052Ybq6CARBcS+P92LNUcrBDatOdJIiC6ahi3tnqCNt66ImpC9ArLD+LG41w==
-X-Received: by 2002:a62:546:: with SMTP id 67mr11166313pff.99.1543731493182;
-        Sat, 01 Dec 2018 22:18:13 -0800 (PST)
+        bh=ng6k7XN2+E7qu+YJG+ewVaHjUak4Dnv0s5kVr6uQuLI=;
+        b=ug4erC5koMOytZLCipCzswbWzhFFn4bWS6OdHX77ldtmFKkS/HimP75PE2XnKpdHf1
+         0DPXM9wCykiP8WpBjAszz3sW3GbsZ2fvq82IzkNImIyAT40YoLdoU2Wur5Go8Jk/R1SN
+         Hn86DOA2eK6rKIad1wgh5HO7fuTCtRPP8HZKjX6p9Gra8GLjSRsCksqne6gD3QGUCvr5
+         pFG9Qp8pOkEhiTdMfTZZvawsSQG8dDHmwnit7O2s9dXzOFuhGiqLY5SHTmP5v7CDEfwV
+         +pBet/AiMv0M0ELYe/E12qPxQwxDajmMwczFowdwibriYHXenSWVbPJWhpTZp4EIOyRf
+         IZfA==
+X-Gm-Message-State: AA+aEWbXJfhh8aTcyP0hQdg9+mXftGNsd9LDfjg5D8LF17Fr/mk2J8JK
+        J81XrgNgc3dSLs+bCyQPzuQ=
+X-Google-Smtp-Source: AFSGD/WRNjFD6zB7/hjn8Xn+aoz1dyOHhd/PEH2NIgt7PDmUyJF+fZfXXjivwgpQAMMMOqZJ+B9xkw==
+X-Received: by 2002:a17:902:e085:: with SMTP id cb5mr11348736plb.24.1543731551018;
+        Sat, 01 Dec 2018 22:19:11 -0800 (PST)
 Received: from jordon-HP-15-Notebook-PC ([103.227.99.148])
-        by smtp.gmail.com with ESMTPSA id g15sm46055783pfj.131.2018.12.01.22.18.11
+        by smtp.gmail.com with ESMTPSA id n73sm14870007pfj.148.2018.12.01.22.19.09
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 01 Dec 2018 22:18:12 -0800 (PST)
-Date:   Sun, 2 Dec 2018 11:51:56 +0530
+        Sat, 01 Dec 2018 22:19:10 -0800 (PST)
+Date:   Sun, 2 Dec 2018 11:52:55 +0530
 From:   Souptick Joarder <jrdr.linux@gmail.com>
 To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        stefanr@s5r6.in-berlin.de
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net
-Subject: [PATCH v2 3/9] drivers/firewire/core-iso.c: Convert to use
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
  vm_insert_range
-Message-ID: <20181202062156.GA3131@jordon-HP-15-Notebook-PC>
+Message-ID: <20181202062255.GA3159@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -79,41 +79,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert to use vm_insert_range to map range of kernel memory
-to user vma.
+Convert to use vm_insert_range() to map range of kernel
+memory to user vma.
 
 Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/firewire/core-iso.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
-index 35e784c..7bf28bb 100644
---- a/drivers/firewire/core-iso.c
-+++ b/drivers/firewire/core-iso.c
-@@ -107,19 +107,8 @@ int fw_iso_buffer_init(struct fw_iso_buffer *buffer, struct fw_card *card,
- int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
- 			  struct vm_area_struct *vma)
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index a8db758..2cb83bb 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -221,26 +221,10 @@ static int rockchip_drm_gem_object_mmap_iommu(struct drm_gem_object *obj,
+ 					      struct vm_area_struct *vma)
  {
--	unsigned long uaddr;
--	int i, err;
+ 	struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
+-	unsigned int i, count = obj->size >> PAGE_SHIFT;
+ 	unsigned long user_count = vma_pages(vma);
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long offset = vma->vm_pgoff;
+-	unsigned long end = user_count + offset;
+-	int ret;
 -
--	uaddr = vma->vm_start;
--	for (i = 0; i < buffer->page_count; i++) {
--		err = vm_insert_page(vma, uaddr, buffer->pages[i]);
--		if (err)
--			return err;
--
+-	if (user_count == 0)
+-		return -ENXIO;
+-	if (end > count)
+-		return -ENXIO;
+ 
+-	for (i = offset; i < end; i++) {
+-		ret = vm_insert_page(vma, uaddr, rk_obj->pages[i]);
+-		if (ret)
+-			return ret;
 -		uaddr += PAGE_SIZE;
 -	}
 -
 -	return 0;
-+	return vm_insert_range(vma, vma->vm_start, buffer->pages,
-+				buffer->page_count);
++	return vm_insert_range(vma, vma->vm_start, rk_obj->pages,
++				user_count);
  }
  
- void fw_iso_buffer_destroy(struct fw_iso_buffer *buffer,
+ static int rockchip_drm_gem_object_mmap_dma(struct drm_gem_object *obj,
 -- 
 1.9.1
 
