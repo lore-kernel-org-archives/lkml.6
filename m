@@ -2,140 +2,111 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9D7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F68C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BCE20892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:24:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2867420892
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:25:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k4t21EEA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3BCE20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=laptop-org.20150623.gappssmtp.com header.i=@laptop-org.20150623.gappssmtp.com header.b="TBcxg8Wv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2867420892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=laptop.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725867AbeLBXYl (ORCPT
+        id S1725887AbeLBXZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 18:24:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33220 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbeLBXYl (ORCPT
+        Sun, 2 Dec 2018 18:25:03 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37111 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbeLBXZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 18:24:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yiaJgZq1AOWbaBs/Y66t+jplY6uCpT1lmW04p/9tYbU=; b=k4t21EEAnN2PaZ9TUVNMI0OYC
-        bB/QLvAOcysQCDf2Sa3NjrcpQfCU/yDrKz3YO4Z/Zak5sJbLyVz1PX83I9sheHUY62p9iutjSl4B4
-        2K/FlJ489pEwNLx1ddVEZ3rx+p0THcJ9IP/hQhD5WulFF3Tm7YJhqEVuzHAZ6hKTNODExKvozInQu
-        5lUts4b6BVRiSTyLJLWSvonBZ/LXYFntJQi19+fZnMmLywOsbT5Inn9z9R3sT6ALSEHcPvyTVWS9j
-        zD0lnu2JO7MJ0sI75uDw1B2PTtpEZQWFcPBbkSgeQORjvWg1aCvt4wBaQEXnn9X3Chq68NolYtGNi
-        8G/deYlzw==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTb6C-000191-Mt; Sun, 02 Dec 2018 23:24:28 +0000
-Date:   Sun, 2 Dec 2018 15:24:27 -0800
-From:   Darren Hart <dvhart@infradead.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Cameron <quozl@laptop.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Sun, 2 Dec 2018 18:25:03 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 80so4846928pge.4
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 15:25:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=laptop-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aElEMZ/2oXcO1UAaewUAxe9TlLURM5XdAWKdXdvBChQ=;
+        b=TBcxg8WvJzWZ9PUCBRwSB/vREyo4LL/aQVqsmUSpADVh9bUS47ZSHIAmZjtdwd7V3r
+         R7PB5LQCMzXKUcagdT3HVZdKFVPJ/R0cOM+WuHmk9I8COtt+ovKQQZOcTIJLgiBchWcP
+         TcR6A1PJ6FlBnwU8fu/7mo3e65R3u7jhvAFzWc6hvDU6xuz6DFgVC3WkRKIpK1RdV0F9
+         pCDj76/OKgi3zPDnQ4hZY4414iJIrUpzlqFBz9retvY/O4M0NJYF34msGKZYcwvrg5cc
+         TnG5VrVXWjgsZoTw4ZfHwxOME4WYZbVKf0EDwcqTGz4MbLu4ounRckUXeCHCr/uORRjp
+         zMOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aElEMZ/2oXcO1UAaewUAxe9TlLURM5XdAWKdXdvBChQ=;
+        b=rDDtCk+rwTmyziQrBpCpRTUtJuptF2uhJAf2vqNX/HzZ0ROSY9JYHoUpHZ+zd6ovR7
+         OU6eZ9E8iCcYBTmK7ZPl/Ia6ymA0W2iAQhuoUcbMVQi25VKf/31P/eJvUEHq1nVH4Gkh
+         ULzhOXB8DpJYwFKxC5jQRuDi11XAuME2PJoWS0JzW9LnKkkWPGUJz9tIjI2zJSKzCEvI
+         WukKlLgmZSxy7dHCdGjN0qZBBIdkI0w1yo5SagoRsTkr4duz+xw/olBLT9KMF3PVqQa0
+         kAeA++gnw/5lf56f4KGdytzjvktXJCQQl+lAdZVShYAWrkiQe+cmn5F7Bj4/5ReiIpW6
+         0c/Q==
+X-Gm-Message-State: AA+aEWa55EltcYFU1PcIa35X5k0asr/5CytHnqGH+gPn7ekMzk/NK6nI
+        MOTxytEXjN4SCVXIGdrAAsPbPg==
+X-Google-Smtp-Source: AFSGD/UjAuli8dvY09Ns+79X/Fr0cD1UrZUTUuY8JJ8L00KBeN8Wk3sQfWqweBDT6yQHCQHqu6sDKA==
+X-Received: by 2002:a63:d157:: with SMTP id c23mr11392358pgj.170.1543793101653;
+        Sun, 02 Dec 2018 15:25:01 -0800 (PST)
+Received: from esk.lan ([1.144.139.38])
+        by smtp.gmail.com with ESMTPSA id c65sm26657231pfa.90.2018.12.02.15.25.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Dec 2018 15:25:01 -0800 (PST)
+Received: from james by esk.lan with local (Exim 4.86_2)
+        (envelope-from <quozl@laptop.org>)
+        id 1gTb6e-0004gF-9K; Mon, 03 Dec 2018 10:24:56 +1100
+Date:   Mon, 3 Dec 2018 10:24:56 +1100
+From:   James Cameron <quozl@laptop.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        lkundrak@v3.sk, arm-soc <arm@kernel.org>,
         Eric Miao <eric.y.miao@gmail.com>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
         Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 13/17] power: supply: olpc_battery: Use DT to get
- battery version
-Message-ID: <20181202232427.GD23087@wrath>
-References: <20181116162403.49854-1-lkundrak@v3.sk>
- <20181116162403.49854-14-lkundrak@v3.sk>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/20] MMP platform fixes
+Message-ID: <20181202232456.GE12222@laptop.org>
+References: <20181128175324.163202-1-lkundrak@v3.sk>
+ <CAK8P3a0jN1PBy1oKHrx5abX4OKHVxjgevbUcXbUDPbU+VdvUPg@mail.gmail.com>
+ <20181130234424.vx5y46wqvziywbk2@localhost>
+ <20181202222930.GB29467@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181116162403.49854-14-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181202222930.GB29467@amd>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 05:23:59PM +0100, Lubomir Rintel wrote:
-> Avoid using the x86 OLPC platform specific call to get the board
-> version. It won't work on FDT-based ARM MMP2 platform.
+On Sun, Dec 02, 2018 at 11:29:30PM +0100, Pavel Machek wrote:
+> Hi!
 > 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > > The patch set has been tested on an OLPC XO-1.75 laptop.
+> > > 
+> > > Excellent!
+> > 
+> > OOooh, I have one of those... somewhere.
 > 
-> ---
-> Changes since v1:
-> - Sort the new include a bit higher
-> 
->  drivers/power/supply/olpc_battery.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/olpc_battery.c
-> index 5a97e42a3547..5323987d9284 100644
-> --- a/drivers/power/supply/olpc_battery.c
-> +++ b/drivers/power/supply/olpc_battery.c
-> @@ -14,6 +14,7 @@
->  #include <linux/types.h>
->  #include <linux/err.h>
->  #include <linux/device.h>
-> +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/power_supply.h>
->  #include <linux/jiffies.h>
-> @@ -622,11 +623,13 @@ static int olpc_battery_probe(struct platform_device *pdev)
->  	olpc_ac = power_supply_register(&pdev->dev, &olpc_ac_desc, NULL);
->  	if (IS_ERR(olpc_ac))
->  		return PTR_ERR(olpc_ac);
-> -
-> -	if (olpc_board_at_least(olpc_board_pre(0xd0))) { /* XO-1.5 */
-> +	if (of_property_match_string(pdev->dev.of_node, "compatible",
-> +					"olpc,xo1.5-battery") >= 0) {
-> +		/* XO-1.5 */
->  		olpc_bat_desc.properties = olpc_xo15_bat_props;
->  		olpc_bat_desc.num_properties = ARRAY_SIZE(olpc_xo15_bat_props);
-> -	} else { /* XO-1 */
-> +	} else {
-> +		/* XO-1 */
->  		olpc_bat_desc.properties = olpc_xo1_bat_props;
->  		olpc_bat_desc.num_properties = ARRAY_SIZE(olpc_xo1_bat_props);
->  	}
-> @@ -672,6 +675,7 @@ static int olpc_battery_remove(struct platform_device *pdev)
->  
->  static const struct of_device_id olpc_battery_ids[] = {
->  	{ .compatible = "olpc,xo1-battery" },
-> +	{ .compatible = "olpc,xo1.5-battery" },
+> Time to find it :-). It is still pretty great machine, can last 8?
+> hours on battery, sunlight readable screen, and if you meet a tiger
+> you can hit him on the head with it ... and it is still likely to work
+> afterwards :-).
 
-The code previously supported xo1.5 (it seems), and the commit message doesn't
-mention changing the compatible string. Was this an intentional change? If so,
-it should be mentioned in the commit message.
-
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, olpc_battery_ids);
-> -- 
-> 2.19.1
-> 
-> 
+Yes.  Best configuration is with laptop closed, ears locked, firmly
+held by handle, and use the narrow side edge to hit with.  Users have
+tried the large flat surface behind the display, but the display tends
+to fail after five to ten hits.  It will depend on the tiger.
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+James Cameron
+http://quozl.netrek.org/
