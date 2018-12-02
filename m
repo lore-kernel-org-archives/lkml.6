@@ -2,95 +2,90 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0FCC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 14:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE57C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 14:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 581A620881
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 14:35:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmf8j7+p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581A620881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C2DF20881
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 14:35:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C2DF20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725885AbeLBOfu (ORCPT
+        id S1725899AbeLBOf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 09:35:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbeLBOfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 09:35:50 -0500
-Received: from localhost (unknown [213.57.143.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E9C12081C;
-        Sun,  2 Dec 2018 14:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543761346;
-        bh=HFjynd9/tRh8MEcfx+KdS+ZjtVAh7rEKNU92/kCUMZ8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bmf8j7+p425QE0+CXctW8DLBBp2fS8BBBVkmPcXVHAe7h4ydOWtTbi1a/GebB4S6g
-         v+LSdEADjPut6Qkqs23spHaX5XlHCqMTvNG560WTMZ4nGObUfc6F4ETaMNIgox4F2D
-         nzH8lZp5QVAVTydQx0mGRSHpx6pci8ALHNsgVbb8=
-Date:   Sun, 2 Dec 2018 09:35:43 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        martin.kepplinger@ginzinger.com, Stable <stable@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Juergen <juergen.lachmann@harman.com>
-Subject: Re: [PATCH] ubi: fastmap: Check each mapping only once
-Message-ID: <20181202143543.GE221015@sasha-vm>
-References: <20181126103842.3249-1-martin.kepplinger@ginzinger.com>
- <20181129080923.GE13859@kroah.com>
- <1676802.TThbbZSlzy@blindfold>
- <CADVatmP1h7GJJRVURkinwSM44Y4iooMP-U_7zew4V+zsMva4Vw@mail.gmail.com>
+        Sun, 2 Dec 2018 09:35:59 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40067 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbeLBOf7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 09:35:59 -0500
+Received: by mail-vs1-f65.google.com with SMTP id z3so6009248vsf.7
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 06:35:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=efe/ihQjNKCVCXdV181LMVrwQRSc5VmP3rmoepq8e3g=;
+        b=hsKk7VS343YNhy94eHl5qfxB6pb+XPn8seS6XrlWNTj+RV8mciCnDAz+GX1vNMFHQc
+         sLB0OZYuFAWfLK5+gCGs6TdV8+AmOhlTZweN0vgRolX1wda8WqMEtaSBvUBtHA0HKcUq
+         SsIjAk4rTIUE1MGAsvupME9mzdLdIN0qecN2rpUaenzDk7yVYZ7zRWqeE8iynA9txoVj
+         +r308Rs7as6WtF+jzsup98+WzLrphYcqT2ax7p6okfw1qcK4TckeSTl+mZP/wTx3M9YR
+         YxGwx2gs+bEsIC+c7VVUo7Mavjf5Ab1rGeqgCojl2GblSs/GkVa5Uk1EgwAq9W6ez04j
+         1dMg==
+X-Gm-Message-State: AA+aEWZ/dhnFtIyxNbbbQI8LYLXBtfXw178F7RYfQbGvncbhyiZPheqV
+        SuapEDbjVubWRGx3KUP4x8I30QsAmzWv71hdFG7OxbTW
+X-Google-Smtp-Source: AFSGD/VfX9Usnj2szjJbN8tkULMu4Z1seqGYz8ua/k6+J49CtdinsPKa7oRvaP4nrkEYdw7f3UGYZsqlkUJ9fOSn7F8=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr5529388vsp.166.1543761354938;
+ Sun, 02 Dec 2018 06:35:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CADVatmP1h7GJJRVURkinwSM44Y4iooMP-U_7zew4V+zsMva4Vw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <201812022249.YKYfTJ9F%fengguang.wu@intel.com>
+In-Reply-To: <201812022249.YKYfTJ9F%fengguang.wu@intel.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 2 Dec 2018 15:35:43 +0100
+Message-ID: <CAMuHMdWtZCAE5TX-hpz-c5WGfjJwy9b=_+c1Av8Y15ZFuq4T-w@mail.gmail.com>
+Subject: Re: ERROR: "__udivdi3" [drivers/md/dm-thin-pool.ko] undefined!
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Joe Thornber <ejt@redhat.com>, kbuild-all@01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 11:50:33AM +0000, Sudip Mukherjee wrote:
->Hi Greg,
+On Sun, Dec 2, 2018 at 3:06 PM kbuild test robot <lkp@intel.com> wrote:
+> FYI, the error/warning still remains.
 >
->On Sun, Dec 2, 2018 at 8:51 AM Richard Weinberger <richard@nod.at> wrote:
->>
->> Greg,
->>
->> Am Donnerstag, 29. November 2018, 09:09:23 CET schrieb Greg KH:
->> > On Mon, Nov 26, 2018 at 11:38:42AM +0100, Martin Kepplinger wrote:
->> > > From: Richard Weinberger <richard@nod.at>
->> > >
->> > > [ Upstream commit 34653fd8c46e771585fce5975e4243f8fd401914 ]
->> > >
-><snip>
->> >
->> > Now queued up for 4.14.y, thanks.
->>
->> can you *please* slow a little down?
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   4b78317679c4f3782a3cff0ddb269c1fcfde7621
+> commit: 3ab91828166895600efd9cdc3a0eb32001f7204a dm thin metadata: try to avoid ever aborting transactions
+> date:   3 months ago
+> config: i386-randconfig-j0-12020939 (attached as .config)
+> compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
+> reproduce:
+>         git checkout 3ab91828166895600efd9cdc3a0eb32001f7204a
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
 >
->True. It will really help if you can have some sort of fixed schedule
->for stable release, like maybe stablerc is ready on Thursday or Friday
->and release the stable on Monday. Having a weekend in stablerc will be
->helpful for people like me who only get the time in weekends for
->upstream or stable kernel.
+> All errors (new ones prefixed by >>):
+>
+> >> ERROR: "__udivdi3" [drivers/md/dm-thin-pool.ko] undefined!
 
-Any sort of schedule will never work for everyone (for example, if it's
-part of your paid job - you don't necessarily want to review stuff over
-the weekend).
+Wasn't that fixed in v4.19-rc7 by commit 013ad043906b2bef ("dm thin
+metadata: fix __udivdi3 undefined on 32-bit")?
 
---
-Thanks,
-Sasha
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
