@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D794C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3265C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A98A2082F
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A98A2082F
+	by mail.kernel.org (Postfix) with ESMTP id 71D892082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D892082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbeLBV0J (ORCPT
+        id S1726033AbeLBV0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:26:09 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45184 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeLBV0J (ORCPT
+        Sun, 2 Dec 2018 16:26:16 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42470 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbeLBV0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:26:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id e5so11624024qtr.12;
-        Sun, 02 Dec 2018 13:26:06 -0800 (PST)
+        Sun, 2 Dec 2018 16:26:16 -0500
+Received: by mail-qk1-f196.google.com with SMTP id m5so6206170qka.9;
+        Sun, 02 Dec 2018 13:26:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:organization:content-transfer-encoding;
-        bh=oOtyVZYPYhVv1dTbriat0rjkh3usuIjl8Abih+y5lwA=;
-        b=aX90D67zVmwK1AvOBQOPHWXau71b5bbN3PaSWd+QpxH1UYXm2lBCS1RLA0bp8Z9L/C
-         hD+f0oLhYPfPxErMSjAiojH1iwI1STYWKZAoHj4U7I74i8Mjn6JfCGMmOMwbQayBexsg
-         ntB7CbwwPJ146LsuaaJ9twrVa5CJBtt/PhMjtZskN6nwsTTKYRnm/ebOY98ijDbhucFD
-         Zs1gtjfVJ/fcTb7xVaJCCWGB+CLkhD1YAlo2+cTw/5t+aYolVT94Es/tkUJanmObvmoY
-         GmGDtx95V3wET3G7V1GGj/Z/UjUHSyAtpTdnRLwtVLu33sTH1DUhv74CEYAtedsbijb9
-         71+w==
-X-Gm-Message-State: AA+aEWYnWcsMg3902AWp8MHHGQXkmYO3+PxRQN+UCSaN1zkZIlvAuRTa
-        RwxWyOhwsEi854NwfxJy1wY=
-X-Google-Smtp-Source: AFSGD/XOPV73f+FYO/Jxt9YfndoQbo9x4BDGAQs3Sd2ABn7y+FY4lbufVCrVLC7fZkF5jDiM0tKEpQ==
-X-Received: by 2002:ac8:4454:: with SMTP id m20mr12774285qtn.381.1543785965805;
-        Sun, 02 Dec 2018 13:26:05 -0800 (PST)
+        bh=SSJcnJIlvA4z4mukhMH1EJTr/0iElpSHaSOrD3HzAZg=;
+        b=IXBD8FBR3OlYm6K1wEGwqf6ZpLOv5blI2W30h32u3N21yCmNo91KiurMbuflWNwXGg
+         OmZKs+A3nO+DonEEUkrJEJkmdULzp+wSlOwMmPscx1+6+AumZG9x67XWWg1RhEDYebYo
+         m4jAIffpmlDMXG3fkHvqa7gzIWk+XCY30mlNclDF6bszUPZcpmZIUdvh6qQMSgJ+8KET
+         qaQfvuVHDaJRF8O+qTFkvLXaTLpz0a+0HQ5zV04Ajtp47rm1IqY/04iTYjsa77SqSriW
+         pLE4e18GKTwI6Db6Tw7eigxgoQhGiaAUUTsPW80LTUbb4GBROScBw30/cxSaszlGAPMQ
+         fUnw==
+X-Gm-Message-State: AA+aEWa3vwRTtZBN0LIjQDXeAJo/TbDF3lvDiYjJQ1V8LzWAG730g2eR
+        xLnvcIYaFQuJWtTEwz/3dSpnNYBe
+X-Google-Smtp-Source: AFSGD/UU7E+CEOKGvU9LmjKiLwMWvJTFo6OgPGEo9uSi8ADcHcxaK9h3Rq/du2jaYVq2eN1++HWvrQ==
+X-Received: by 2002:a37:d91:: with SMTP id 139mr13066177qkn.26.1543785972922;
+        Sun, 02 Dec 2018 13:26:12 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id o48sm7583933qtb.87.2018.12.02.13.26.01
+        by smtp.gmail.com with ESMTPSA id s9sm7408116qta.35.2018.12.02.13.26.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 13:26:05 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:25:58 -0200
+        Sun, 02 Dec 2018 13:26:12 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:26:06 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-arm-kernel@lists.infradead.org
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
+Cc:     Otavio Salvador <otavio@ossystems.com.br>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
@@ -58,9 +57,9 @@ Cc:     Fabio Estevam <festevam@gmail.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH 5/9] ARM: dts: imx7d-pico: Pass the Ethernet PHY reset GPIO
-Date:   Sun,  2 Dec 2018 19:25:16 -0200
-Message-Id: <20181202212520.16650-6-otavio@ossystems.com.br>
+Subject: [PATCH 6/9] ARM: dts: imx7d-pico: Improve WiFi regulator name
+Date:   Sun,  2 Dec 2018 19:25:17 -0200
+Message-Id: <20181202212520.16650-7-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181202212520.16650-1-otavio@ossystems.com.br>
 References: <20181202212520.16650-1-otavio@ossystems.com.br>
@@ -72,38 +71,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+There are different models of WiFi being used in the SoM and the
+handle name was too restrictive. This reworks it to a more generic and
+meaningful name.
 
-Pass the "phy-reset-gpios" property in order to describe the GPIO
-that performs the Ethernet PHY reset.
-
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 ---
 
- arch/arm/boot/dts/imx7d-pico.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/imx7d-pico.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/boot/dts/imx7d-pico.dtsi b/arch/arm/boot/dts/imx7d-pico.dtsi
-index cb30bded1e4a..35791a1adabf 100644
+index 35791a1adabf..417f034fb354 100644
 --- a/arch/arm/boot/dts/imx7d-pico.dtsi
 +++ b/arch/arm/boot/dts/imx7d-pico.dtsi
-@@ -88,6 +88,7 @@
- 	phy-mode = "rgmii";
- 	phy-handle = <&ethphy0>;
- 	fsl,magic-packet;
-+	phy-reset-gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
- 	status = "okay";
+@@ -13,11 +13,11 @@
+ 		reg = <0x80000000 0>;
+ 	};
  
- 	mdio {
-@@ -290,6 +291,7 @@
- 			MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x1
- 			MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x1
- 			MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x1
-+			MX7D_PAD_SD3_RESET_B__GPIO6_IO11                0x1  /* Ethernet reset */
+-	reg_ap6212: regulator-ap6212 {
++	reg_wlreg_on: regulator-wlreg_on {
+ 		compatible = "regulator-fixed";
+ 		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_reg_ap6212>;
+-		regulator-name = "AP6212";
++		pinctrl-0 = <&pinctrl_reg_wlreg_on>;
++		regulator-name = "wlreg_on";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		gpio = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+@@ -241,7 +241,7 @@
+ 	non-removable;
+ 	keep-power-in-suspend;
+ 	wakeup-source;
+-	vmmc-supply = <&reg_ap6212>;
++	vmmc-supply = <&reg_wlreg_on>;
+ 	mmc-pwrseq = <&usdhc2_pwrseq>;
+ 	status = "okay";
+ };
+@@ -302,7 +302,7 @@
  		>;
  	};
  
+-	pinctrl_reg_ap6212: regap6212grp {
++	pinctrl_reg_wlreg_on: regregongrp {
+ 		fsl,pins = <
+ 			MX7D_PAD_ECSPI1_SCLK__GPIO4_IO16	0x59
+ 		>;
 -- 
 2.19.2
 
