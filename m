@@ -2,51 +2,50 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C69AC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413B8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD002082F
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD002082F
+	by mail.kernel.org (Postfix) with ESMTP id 104EC2082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:26:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 104EC2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbeLBV0Y (ORCPT
+        id S1726047AbeLBV0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:26:24 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42255 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeLBV0Y (ORCPT
+        Sun, 2 Dec 2018 16:26:32 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39052 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbeLBV0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:26:24 -0500
-Received: by mail-qt1-f196.google.com with SMTP id d19so11646057qtq.9;
-        Sun, 02 Dec 2018 13:26:20 -0800 (PST)
+        Sun, 2 Dec 2018 16:26:31 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n21so11654056qtl.6;
+        Sun, 02 Dec 2018 13:26:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:organization:content-transfer-encoding;
-        bh=fGEc1kNsVdjialDo7Zh7TuJC/qFAJNtJfYxwQMewdeo=;
-        b=nShoE4Qf0x1M9z0qpMtyWBJtnUv5eeB3JVnK7XwIakdeNKH9RtIj3IPYVMOw5i3D2N
-         FvAT63URlPRALS5uyQYDE7UX3pmaSDeG/r3LkMtx6DzWlIdg+iZxEErIh6FcpWog/r0B
-         ENA06rnASqTExBnXl4xBiZv4IE02JVuW8WGCS1Jhj1GYHSU9Wze6pQ/O82pXxU0786SB
-         1N9sflneF26VeT6ZKX2sGn0mr5TyFjk7SmY7vghofnaKZ6E6auILHAYVs1uT7FARPTEJ
-         t59gzh5JkHvtUifmu/3C1RdYoQeAlIHBkiv3rV8Dwnivn4nGc5DPhirZ1W+uggthHggk
-         pASA==
-X-Gm-Message-State: AA+aEWbHKRuAscV/ndNeNls8R1/G4I+lqR8lHWYy5ivdSx+opF+kpEud
-        HZ74rbryAQQROSeCgiJ+p5w=
-X-Google-Smtp-Source: AFSGD/VBYTkqqDz0F0JpSZHKRmvasXNRQVJSoDrrDSdPXA0f9EfC9mO5D0+5rfWKroYaw1xoTAQNRA==
-X-Received: by 2002:ac8:5509:: with SMTP id j9mr12616264qtq.287.1543785980235;
-        Sun, 02 Dec 2018 13:26:20 -0800 (PST)
+        bh=6+EbYhMNCoRKxIlDp8uCMOsfP2XKpOLu0mPsX2uEr0Y=;
+        b=ie/rUb9gV16dyHv3M/4oGy+IZ9Al8rfcqvMegomtogdm4FofgTiA2yIAI5pX6Yt6C9
+         PxgIrEpfaCj79zxtJR4ruLfInwK1bVdRJAWbmN0Y7/7aRlV2cAs9Zl1vzyYrvzAWOKrP
+         WqHt5T6OccEV2JMtfJ+GfPTYG82V8OjtN6uaidrIrBN4ofiFdt/H8XwQuXfoMMGMR3bs
+         w8FUJcjAnxueU54GnTg7zJdcY3NpqsP/GLRZRKJGBfCC1P04s6zQzCImqXuDpCArmRV0
+         5Hqqtk8xL03CSsh4rzAoEC4C1JBKOw/PuenPh5mrZP3he4eDhVsxDYuoFgfuY1ot9R7C
+         j6VA==
+X-Gm-Message-State: AA+aEWZVQ42L05i09EPnoYeD0SJncxRho+0ilMdaq2qGMq6JpqYM8GKx
+        0PytW0ZCNGn8l89UzODeikQ=
+X-Google-Smtp-Source: AFSGD/X9ZRGM0qOwJ4MB+T9xQymKRBArWEpveQVyfU6rzEl86KWCrNSJqURWowg6wu2DcmbHWg6/Wg==
+X-Received: by 2002:ac8:208a:: with SMTP id 10mr13176419qtd.79.1543785987524;
+        Sun, 02 Dec 2018 13:26:27 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id 86sm9103593qky.92.2018.12.02.13.26.15
+        by smtp.gmail.com with ESMTPSA id f19sm7804498qtf.1.2018.12.02.13.26.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 13:26:19 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:26:13 -0200
+        Sun, 02 Dec 2018 13:26:26 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 02 Dec 2018 19:26:20 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Fabio Estevam <festevam@gmail.com>,
@@ -59,9 +58,9 @@ Cc:     Fabio Estevam <festevam@gmail.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH 7/9] ARM: dts: imx7d-pico: Extend peripherals support
-Date:   Sun,  2 Dec 2018 19:25:18 -0200
-Message-Id: <20181202212520.16650-8-otavio@ossystems.com.br>
+Subject: [PATCH 8/9] ARM: dts: imx7d-pico-pi: Extend peripherals support
+Date:   Sun,  2 Dec 2018 19:25:19 -0200
+Message-Id: <20181202212520.16650-9-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181202212520.16650-1-otavio@ossystems.com.br>
 References: <20181202212520.16650-1-otavio@ossystems.com.br>
@@ -75,293 +74,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fabio Estevam <festevam@gmail.com>
 
-This extends the peripherals supported by the imx7d-pico.dtsi. It
-adds:
+This adds following peripherals for the imx7d-pico-pi as:
 
- - I2C2
- - Flexcan (flexcan1 and flexcan2 ports)
- - USDHC1
- - UART (6 and 7 ports)
- - PWM (4 ports)
- - eCSPI3
+ - LED
+ - Touchscreen
+ - GPIO
 
 Signed-off-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 ---
 
- arch/arm/boot/dts/imx7d-pico.dtsi | 183 ++++++++++++++++++++++++++++++
- 1 file changed, 183 insertions(+)
+ arch/arm/boot/dts/imx7d-pico-pi.dts | 56 +++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx7d-pico.dtsi b/arch/arm/boot/dts/imx7d-pico.dtsi
-index 417f034fb354..6c7581336f96 100644
---- a/arch/arm/boot/dts/imx7d-pico.dtsi
-+++ b/arch/arm/boot/dts/imx7d-pico.dtsi
-@@ -78,6 +78,13 @@
- 	assigned-clock-rates = <0>, <32768>;
- };
+diff --git a/arch/arm/boot/dts/imx7d-pico-pi.dts b/arch/arm/boot/dts/imx7d-pico-pi.dts
+index 039c17066fe0..70bea95c06d8 100644
+--- a/arch/arm/boot/dts/imx7d-pico-pi.dts
++++ b/arch/arm/boot/dts/imx7d-pico-pi.dts
+@@ -8,6 +8,17 @@
+ 	model = "TechNexion PICO-IMX7D Board and PI baseboard";
+ 	compatible = "technexion,imx7d-pico-pi", "fsl,imx7d";
  
-+&ecspi3 {
-+	cs-gpios = <&gpio4 11 GPIO_ACTIVE_LOW>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi3>;
-+	status = "okay";
-+};
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_leds>;
 +
- &fec1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet1>;
-@@ -103,6 +110,18 @@
++		led {
++			label = "gpio-led";
++			gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "imx7-sgtl5000";
+@@ -35,3 +46,48 @@
+ 		VDDIO-supply = <&reg_vref_1v8>;
  	};
  };
- 
-+&flexcan1 {
++
++&i2c4 {
++	polytouch: touchscreen@38 {
++		compatible = "edt,edt-ft5x06";
++		reg = <0x38>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_touchscreen>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
++		touchscreen-size-x = <800>;
++		touchscreen-size-y = <480>;
++	};
++};
++
++&iomuxc {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_can1>;
-+	status = "okay";
++	pinctrl-0 = <&pinctrl_hog>;
++
++	pinctrl_hog: hoggrp {
++		fsl,pins = <
++			MX7D_PAD_EPDC_DATA00__GPIO2_IO0		0x14
++			MX7D_PAD_EPDC_DATA01__GPIO2_IO1		0x14
++			MX7D_PAD_EPDC_DATA02__GPIO2_IO2		0x14
++			MX7D_PAD_EPDC_DATA03__GPIO2_IO3		0x14
++			MX7D_PAD_EPDC_DATA05__GPIO2_IO5		0x14
++			MX7D_PAD_EPDC_DATA12__GPIO2_IO12	0x14
++			MX7D_PAD_EPDC_DATA07__GPIO2_IO7		0x14
++		>;
++	};
++
++	pinctrl_gpio_leds: gpioledsgrp {
++		fsl,pins = <
++			MX7D_PAD_EPDC_DATA06__GPIO2_IO6		0x14
++		>;
++	};
++
++	pinctrl_touchscreen: touchscreengrp {
++		fsl,pins = <
++			MX7D_PAD_EPDC_DATA04__GPIO2_IO4		0x14
++			MX7D_PAD_EPDC_DATA13__GPIO2_IO13	0x14
++		>;
++	};
++
 +};
-+
-+&flexcan2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_can2>;
-+	status = "okay";
-+};
-+
- &i2c1 {
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
-@@ -110,6 +129,12 @@
- 	status = "okay";
- };
- 
-+&i2c2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	status = "okay";
-+};
-+
- &i2c4 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_i2c4>;
-@@ -215,6 +240,29 @@
- 	status = "okay";
- };
- 
-+
-+&pwm1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm1>;
-+	status = "okay";
-+};
-+
-+&pwm2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm2>;
-+	status = "okay";
-+};
-+
-+&pwm3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm3>;
-+	status = "okay";
-+};
-+
-+&pwm4 { /* Backlight */
-+	status = "okay";
-+};
-+
- &uart5 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart5>;
-@@ -223,6 +271,24 @@
- 	status = "okay";
- };
- 
-+&uart6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart6>;
-+	assigned-clocks = <&clks IMX7D_UART6_ROOT_SRC>;
-+	assigned-clock-parents = <&clks IMX7D_OSC_24M_CLK>;
-+	fsl,uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&uart7 { /* Bluetooth */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart7>;
-+	assigned-clocks = <&clks IMX7D_UART7_ROOT_SRC>;
-+	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
-+	fsl,uart-has-rtscts;
-+	status = "okay";
-+};
-+
- &usbotg1 {
- 	vbus-supply = <&reg_usb_otg1_vbus>;
- 	status = "okay";
-@@ -234,6 +300,21 @@
- 	status = "okay";
- };
- 
-+&usdhc1 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-+	cd-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
-+	bus-width = <4>;
-+	tuning-step = <2>;
-+	vmmc-supply = <&reg_3p3v>;
-+	wakeup-source;
-+	no-1-8-v;
-+	keep-power-in-suspend;
-+	status = "okay";
-+};
-+
- &usdhc2 { /* Wifi SDIO */
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usdhc2 &pinctrl_wifi_clk>;
-@@ -268,6 +349,15 @@
- };
- 
- &iomuxc {
-+	pinctrl_ecspi3: ecspi3grp {
-+		fsl,pins = <
-+			MX7D_PAD_I2C1_SCL__ECSPI3_MISO		0x2
-+			MX7D_PAD_I2C1_SDA__ECSPI3_MOSI		0x2
-+			MX7D_PAD_I2C2_SCL__ECSPI3_SCLK		0x2
-+			MX7D_PAD_I2C2_SDA__GPIO4_IO11		0x14
-+		>;
-+	};
-+
- 	pinctrl_i2c1: i2c1grp {
- 		fsl,pins = <
- 			MX7D_PAD_UART1_TX_DATA__I2C1_SDA	0x4000007f
-@@ -275,6 +365,13 @@
- 		>;
- 	};
- 
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <
-+			MX7D_PAD_UART2_TX_DATA__I2C2_SDA	0x4000007f
-+			MX7D_PAD_UART2_RX_DATA__I2C2_SCL	0x4000007f
-+		>;
-+	};
-+
- 	pinctrl_enet1: enet1grp {
- 		fsl,pins = <
- 			MX7D_PAD_SD2_CD_B__ENET1_MDIO			0x3
-@@ -295,6 +392,20 @@
- 		>;
- 	};
- 
-+	pinctrl_can1: can1frp {
-+		fsl,pins = <
-+			MX7D_PAD_SAI1_RX_DATA__FLEXCAN1_RX	0x59
-+			MX7D_PAD_SAI1_TX_BCLK__FLEXCAN1_TX	0x59
-+		>;
-+	};
-+
-+	pinctrl_can2: can2frp {
-+		fsl,pins = <
-+			MX7D_PAD_SAI1_TX_SYNC__FLEXCAN2_RX	0x59
-+			MX7D_PAD_SAI1_TX_DATA__FLEXCAN2_TX	0x59
-+		>;
-+	};
-+
- 	pinctrl_i2c4: i2c4grp {
- 		fsl,pins = <
- 			MX7D_PAD_SAI1_RX_BCLK__I2C4_SDA		0x4000007f
-@@ -302,6 +413,24 @@
- 		>;
- 	};
- 
-+	pinctrl_pwm1: pwm1 {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO08__PWM1_OUT   0x7f
-+		>;
-+	};
-+
-+	pinctrl_pwm2: pwm2 {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO09__PWM2_OUT   0x7f
-+		>;
-+	};
-+
-+	pinctrl_pwm3: pwm3 {
-+		fsl,pins = <
-+			MX7D_PAD_GPIO1_IO10__PWM3_OUT   0x7f
-+		>;
-+	};
-+
- 	pinctrl_reg_wlreg_on: regregongrp {
- 		fsl,pins = <
- 			MX7D_PAD_ECSPI1_SCLK__GPIO4_IO16	0x59
-@@ -324,12 +453,66 @@
- 		>;
- 	};
- 
-+	pinctrl_uart6: uart6grp {
-+		fsl,pins = <
-+			MX7D_PAD_EPDC_DATA08__UART6_DCE_RX	0x79
-+			MX7D_PAD_EPDC_DATA09__UART6_DCE_TX	0x79
-+			MX7D_PAD_EPDC_DATA10__UART6_DCE_RTS	0x79
-+			MX7D_PAD_EPDC_DATA11__UART6_DCE_CTS	0x79
-+		>;
-+	};
-+
-+	pinctrl_uart7: uart7grp {
-+		fsl,pins = <
-+			MX7D_PAD_ECSPI2_MOSI__UART7_DCE_TX	0x79
-+			MX7D_PAD_ECSPI2_SCLK__UART7_DCE_RX	0x79
-+			MX7D_PAD_ECSPI2_SS0__UART7_DCE_CTS	0x79
-+			MX7D_PAD_ECSPI2_MISO__UART7_DCE_RTS	0x79
-+		>;
-+	};
-+
- 	pinctrl_usbotg1_pwr: usbotg_pwr {
- 		fsl,pins = <
- 			MX7D_PAD_UART3_TX_DATA__GPIO4_IO5	0x14
- 		>;
- 	};
- 
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX7D_PAD_SD1_CMD__SD1_CMD		0x59
-+			MX7D_PAD_SD1_CLK__SD1_CLK		0x19
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0		0x59
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1		0x59
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2		0x59
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3		0x59
-+			MX7D_PAD_SD1_CD_B__GPIO5_IO0		0x15
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_100mhz: usdhc1grp_100mhz {
-+		fsl,pins = <
-+			MX7D_PAD_SD1_CMD__SD1_CMD		0x5a
-+			MX7D_PAD_SD1_CLK__SD1_CLK		0x1a
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0		0x5a
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1		0x5a
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2		0x5a
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3		0x5a
-+			MX7D_PAD_SD1_CD_B__GPIO5_IO0		0x15
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_200mhz: usdhc1grp_200mhz {
-+		fsl,pins = <
-+			MX7D_PAD_SD1_CMD__SD1_CMD		0x5b
-+			MX7D_PAD_SD1_CLK__SD1_CLK		0x1b
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0		0x5b
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1		0x5b
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2		0x5b
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3		0x5b
-+			MX7D_PAD_SD1_CD_B__GPIO5_IO0		0x15
-+		>;
-+	};
-+
- 	pinctrl_usdhc2: usdhc2grp {
- 		fsl,pins = <
- 			MX7D_PAD_SD2_CMD__SD2_CMD		0x59
 -- 
 2.19.2
 
