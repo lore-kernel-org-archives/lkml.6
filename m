@@ -2,529 +2,188 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F0EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 10:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D9EC65BAE
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 10:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBCA20834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 10:35:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="FDZvwHNW";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="nm2zL1AN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EBCA20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C4A920881
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 10:44:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4A920881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rempel-privat.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725860AbeLBKfX (ORCPT
+        id S1725855AbeLBKoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 05:35:23 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:50998 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725801AbeLBKfW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 05:35:22 -0500
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB2AWHXu008595;
-        Sun, 2 Dec 2018 02:35:00 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=b5wNUdcMJRVbiLXumuPWZULoUdd+M09Qm6Fi7FyPV3g=;
- b=FDZvwHNWqR+8NVcTcyG/jWeME55NOj++UZcCSkb0dnzdnFGP+AkMR/4iGFGsdYdEjK0H
- F1DNv0+3M/Bz6pAhnRshWFO2hadXX7EuiF+8rZZsdmMTQyFsr3F1VqXZmGlQpnnK/obK
- AONXIeoJModaWAtGCe1BN5KAkjbfm92FRGaG8BKs71THvy52b1iVefMt7ZwD+N1zCrS3
- jQL6eDghHjlaNGt6NaKibcAC8zcOAlXGva/PoSegrS6p3TmyJG3EE6B60wFrhTBoKlj8
- MM77m8Qi8xWtsZEYO7JyOf52w5VfhUoZrds1c00pkL5mGp/iSMuN6SKRSFi3OX+igdvN hQ== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2059.outbound.protection.outlook.com [104.47.41.59])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2p3qr14xts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 02 Dec 2018 02:35:00 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b5wNUdcMJRVbiLXumuPWZULoUdd+M09Qm6Fi7FyPV3g=;
- b=nm2zL1AN0OO9z8rONL5DpsP8CU+BXA3w+KpbSnKZusUNj88wZjddltXZPduoAM3XD/28WoB1BV7J/7s5GAJk3pjHTZNspX+AYc72avZzb+cvUb8K9Bh4qICBzaY3TZFUMXVlgJWgoWVpj7g/AeBI611XBjxITWCg4paJTiwue+c=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB6326.namprd07.prod.outlook.com (20.179.88.93) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Sun, 2 Dec 2018 10:34:56 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e0dc:ebd5:e248:d644]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e0dc:ebd5:e248:d644%6]) with mapi id 15.20.1382.020; Sun, 2 Dec 2018
- 10:34:55 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Roger Quadros <rogerq@ti.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [RFC PATCH v2 10/15] usb:cdns3: Ep0 operations part of the API
-Thread-Topic: [RFC PATCH v2 10/15] usb:cdns3: Ep0 operations part of the API
-Thread-Index: AQHUfyccne481cNzbkurkW6MlkPa3aVlT98AgASue1A=
-Date:   Sun, 2 Dec 2018 10:34:54 +0000
-Message-ID: <BYAPR07MB47091013A58927991F7E2C1DDDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
- <1542535751-16079-11-git-send-email-pawell@cadence.com>
- <5BFEA6D2.9010906@ti.com>
-In-Reply-To: <5BFEA6D2.9010906@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-tag-bcast: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctZTcxZTM2MWQtZjYxZC0xMWU4LTg3MjYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGU3MWUzNjFlLWY2MWQtMTFlOC04NzI2LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTM0ODAiIHQ9IjEzMTg4MjIwNDkzODYzMDU1MCIgaD0iU2I0THp0V3doSm4xWkFHUS8xeStTMFdGSTdZPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
-x-dg-paste: 
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB6326;20:0MeYrjY4SuFURjtOq/zffzJnIl/9sXcYiuFDzkpB/2cp5ItikIq5AIwlg9dNJTPB7UNJx82GDKieszwBJnQhiOiNZyb0Brqt/FrhoAhc+AlmB1UlZREt0ajuTkPMxJBomsHM47rEfYUyiJ8bnrq7M5GG+qJu6cOhdnDWb26t2sjnMGGlIMfvqZyznqnxhUNuOFx6+BMY55TlOpdNTQPXZfTP+vtMJZp7frMQloQ0vRhFtTKFGtg4g4CLPffbAfqW
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(346002)(39850400004)(396003)(376002)(366004)(36092001)(51444003)(199004)(189003)(2906002)(8936002)(5660300001)(478600001)(6506007)(8676002)(186003)(33656002)(7696005)(26005)(76176011)(68736007)(102836004)(81166006)(81156014)(106356001)(105586002)(55016002)(53936002)(4326008)(6246003)(14454004)(316002)(6436002)(71190400001)(71200400001)(476003)(107886003)(9686003)(446003)(11346002)(486006)(19627235002)(25786009)(229853002)(217873002)(2501003)(110136005)(6116002)(3846002)(305945005)(4744004)(54906003)(14444005)(97736004)(256004)(99286004)(7736002)(86362001)(575784001)(74316002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB6326;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 16274091-8559-4c3c-1200-08d65841ccbc
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB6326;
-x-ms-traffictypediagnostic: BYAPR07MB6326:
-x-microsoft-antispam-prvs: <BYAPR07MB6326DA25CAED360E3C97C524DDAD0@BYAPR07MB6326.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501487)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB6326;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB6326;
-x-forefront-prvs: 087474FBFA
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: FVu6uM3Tn6PeL4C5W5q1wmLssF1hgOXDNUkX6UWFucPgkXWH0mzWJIxj4vyhLU2fJ3sN5fonL5iGkeDLxaVNVF17Lpw8dx5Ik7MglXEgXXdwysNA8YGCHlyyAv0V4kB9Tsze1lstSg5VxSQJDwul3h/+f0kWys4/Q4+qcuiQmDr1xjj4rX0fPFuZLi1dwlJL1KzeQ8rQj9PlNcUaJg9nl1shb7908K0gfVKlPkx1qTmP0SZ63SNP32l+oFq+WBGwb96Sz3yZQDHEA3AkIiopDdwyuiYIG9AieUmRfE/o0NzJSaJmRk6CHrcxb14MtQnUAymqfNJeXwWFdp58VXeQn1CtIs10v4HryCgf/i3UOz8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 2 Dec 2018 05:44:30 -0500
+Received: from mout.gmx.net ([212.227.17.20]:43625 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725801AbeLBKoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 05:44:30 -0500
+Received: from [192.168.1.241] ([31.18.251.131]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MZxch-1gnY75389P-00LlKF; Sun, 02
+ Dec 2018 11:44:08 +0100
+Subject: Re: [PATCH v6 1/2] misc: cardreader: add new Alcor Micro Cardreader
+ PCI driver
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     kernel@pengutronix.de, linux-mmc@vger.kernel.org,
+        peter.wein@gmx.de, drake@endlessm.com, chiu@endlessm.com,
+        linux@endlessm.com, morling.huang@alcorlink.com,
+        bob@alcormicro.com, jin.tsai@alcorlink.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181202103046.29377-1-linux@rempel-privat.de>
+From:   Oleksij Rempel <linux@rempel-privat.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=linux@rempel-privat.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c61aab2e-67b1-2cab-253c-bc78b3ff384a@rempel-privat.de>
+Date:   Sun, 2 Dec 2018 11:44:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16274091-8559-4c3c-1200-08d65841ccbc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2018 10:34:54.7587
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB6326
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-02_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812020104
+In-Reply-To: <20181202103046.29377-1-linux@rempel-privat.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="BuRi53VjqypJJK4pfLGMVsJQZH1eVXaAr"
+X-Provags-ID: V03:K1:rpfpXTCZtulU2Tf5v76tZUUBedxxFnpyNH3pWDsK5fwOvqoUFg2
+ i5j5Ux07OKGqZju5jxYCEElIuA52/RYSPnYqMTlKtkM8PIoFX2Hag5yHRXsuGflBcSEoOhf
+ E5zF1N0577cEmf+p3avhWNeLOn4L1p73UjdTLl9pNH5+eCBeYlGDodXeYeSGpxm8qTSizmC
+ qgf85vySyzwKRw5/mJVtA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7aJt3UDDpA8=:0Me9HneO6L3h3VvAPSeIRM
+ +lFMhSdRoZRa+vGGRCWhOe4PI1Xp90BhBXP+fT9RkJxB82Zms4FO/p//V2/2w3OE1D2s0E5Xi
+ P2dk5LPq1knUjoJ88XEgWMFoaPBBw0qCV/ljA6nDQxgMes5K8prhOcbNjbY44feBiTyMRr7ja
+ vKZKOC/VDcKWOYAf6UlbN3tBU8F/lWVXvTe8ijB5lSpZbadoGP1emrQbYN5gpGs958KjgGGV2
+ /KIBS+Cod0+DrKyjjUNvTR0E47ZnoJGryrFAkMO1FAjFiVfNIHg18Bn6MEOkSzlot3gbMfkbI
+ Ah28kRyBC4cvkLTpuiohmZ0PoWyFV8JkOzUZVjOcrXzV3fYZjHvHsHcz//tkR6Jw53Tu3WddL
+ 1c0Y6oqmSvPQbv3glILpdvj/HLlwnXadU9MwKXUWzBGoGrmvGB2StXEjy3FEXlDxGn/eCSpYn
+ FONgnMyaDWO1Bzg3w3b8x5Ee2QBRCMsGdlf5Bpvq+lxUcEI0cM7LBKTLP3un3NdNARG5Wtpim
+ W/DHUdhLdcDfsEha392sv4uC+4u4ZZS3/i3XLpfLIx5sV8L9RmYMAUQUn5Qx954eQK4FQOLuM
+ IXfxlfQZN573ah/YdoynhKid98OgAcBRFrlRRRIPffmIXIjWjGV+63b5WU/3GtHt4e6CYDew0
+ PhY8ntm3oMbCCGVcfKnVa9g/F2Qnb9VfncoXaluvdjNRm/JryLl0uhYL2KdO/Gv3WNOyqEvoD
+ fKVvWHQiTxVXH+efRPYOQ+vbb7UuZ15tEA8Xb6wjO/XBjyJN1T1aPnmVy9HfQMfu0absSnoTJ
+ Iw+Gws6r/QbI5aAWdUIvDxcLJjVuaYl4TYANwTInGJ9kzH1sUyxMHjOO73NIGP4HH7B2yOjVc
+ A3560xV7D4hB7DfGBnXDNx5SqguBb34BR2poerW2do4Z6DPfIuShPCfmHcJHlr
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--BuRi53VjqypJJK4pfLGMVsJQZH1eVXaAr
+Content-Type: multipart/mixed; boundary="b0CoB1SiiHs1gUzIX5qni7VQYS6dFUB3D";
+ protected-headers="v1"
+From: Oleksij Rempel <linux@rempel-privat.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: kernel@pengutronix.de, linux-mmc@vger.kernel.org, peter.wein@gmx.de,
+ drake@endlessm.com, chiu@endlessm.com, linux@endlessm.com,
+ morling.huang@alcorlink.com, bob@alcormicro.com, jin.tsai@alcorlink.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <c61aab2e-67b1-2cab-253c-bc78b3ff384a@rempel-privat.de>
+Subject: Re: [PATCH v6 1/2] misc: cardreader: add new Alcor Micro Cardreader
+ PCI driver
+References: <20181202103046.29377-1-linux@rempel-privat.de>
+In-Reply-To: <20181202103046.29377-1-linux@rempel-privat.de>
 
->> Patch implements related to default endpoint callback functions
->> defined in usb_ep_ops object
->>
->> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->> ---
->>  drivers/usb/cdns3/ep0.c    | 191 ++++++++++++++++++++++++++++++++++++-
->>  drivers/usb/cdns3/gadget.c |   8 ++
->>  drivers/usb/cdns3/gadget.h |  10 ++
->>  3 files changed, 207 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
->> index ca1795467155..d05169e73631 100644
->> --- a/drivers/usb/cdns3/ep0.c
->> +++ b/drivers/usb/cdns3/ep0.c
->> @@ -18,11 +18,185 @@ static struct usb_endpoint_descriptor cdns3_gadget_=
-ep0_desc =3D {
->>  	.bmAttributes =3D	USB_ENDPOINT_XFER_CONTROL,
->>  };
->>
->> +/**
->> + * cdns3_ep0_run_transfer - Do transfer on default endpoint hardware
->> + * @priv_dev: extended gadget object
->> + * @dma_addr: physical address where data is/will be stored
->> + * @length: data length
->> + * @erdy: set it to 1 when ERDY packet should be sent -
->> + *        exit from flow control state
->> + */
->> +static void cdns3_ep0_run_transfer(struct cdns3_device *priv_dev,
->> +				   dma_addr_t dma_addr,
->> +				   unsigned int length, int erdy)
->> +{
->> +	struct cdns3_usb_regs __iomem *regs =3D priv_dev->regs;
->> +
->> +	priv_dev->trb_ep0->buffer =3D TRB_BUFFER(dma_addr);
->> +	priv_dev->trb_ep0->length =3D TRB_LEN(length);
->> +	priv_dev->trb_ep0->control =3D TRB_CYCLE | TRB_IOC | TRB_TYPE(TRB_NORM=
-AL);
->> +
->> +	cdns3_select_ep(priv_dev,
->> +			priv_dev->ep0_data_dir ? USB_DIR_IN : USB_DIR_OUT);
->> +
->> +	writel(EP_STS_TRBERR, &regs->ep_sts);
->> +	writel(EP_TRADDR_TRADDR(priv_dev->trb_ep0_dma), &regs->ep_traddr);
->> +
->> +	dev_dbg(&priv_dev->dev, "//Ding Dong ep0%s\n",
->> +		priv_dev->ep0_data_dir ? "IN" : "OUT");
->> +
->> +	/* TRB should be prepared before starting transfer */
->> +	writel(EP_CMD_DRDY, &regs->ep_cmd);
->> +
->> +	if (erdy)
->> +		writel(EP_CMD_ERDY, &priv_dev->regs->ep_cmd);
->> +}
->> +
->>  static void cdns3_prepare_setup_packet(struct cdns3_device *priv_dev)
->>  {
->>  	//TODO: Implements this function
->>  }
->>
->> +static void cdns3_set_hw_configuration(struct cdns3_device *priv_dev)
->
->Is this going to be used only for ep0?
->If yes then let's have ep0 in the name.
->If not then this function should be in gadget.c
+--b0CoB1SiiHs1gUzIX5qni7VQYS6dFUB3D
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-It going to be used only in ep0.c file but general it's related to all non-=
-control endpoints.=20
+Am 02.12.18 um 11:30 schrieb Oleksij Rempel:
+> This driver provides support for Alcor Micro AU6601 and AU6621
+> card readers.
+>=20
+> This is single LUN HW and it is expected to work with following standar=
+ds:
+> - Support SDR104 / SDR50
+> - MultiMedia Card (MMC)
+> - Memory Stick (MS)
+> - Memory Stick PRO (MS_Pro)
+>=20
+> Since it is a PCIe controller, it should work on any architecture
+> supporting PCIe. For now, it was developed and tested only on x86_64.
+>=20
+> This driver is a result of RE work and was created without any
+> documentation or real knowledge of HW internals.
+>=20
+> Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
 
-The controller has one strange limitation, namely endpoints configuration i=
-n controller=20
-can be set only once. and this function inform control about this.
+Forgot to add a changelog for this patchset:
+20181202 v6:
+- split one patch to two patches: cardreader and mmc
+- use SIMPLE_DEV_PM_OPS in mmc driver
+- use ida_simple_get/remove
+- move DRV_NAME_ALCOR_PCI to cardreader driver. Other defines are shared
+between drivers.
+- fix some typos
+- rebase against 4.20-rc4 and test it.
 
-II think that, will be better to move this function to gadget.c then adding=
- ep0 to name.
->
->> +{
->> +	struct cdns3_endpoint *priv_ep;
->> +	struct usb_request *request;
->> +	struct usb_ep *ep;
->> +	int result =3D 0;
->> +
->> +	if (priv_dev->hw_configured_flag)
->> +		return;
->> +
->> +	writel(USB_CONF_CFGSET, &priv_dev->regs->usb_conf);
->> +	writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL, &priv_dev->regs->ep_cmd);
->> +
->> +	cdns3_set_register_bit(&priv_dev->regs->usb_conf,
->> +			       USB_CONF_U1EN | USB_CONF_U2EN);
->
->Shouldn't U1/U2 be enabled only if the USB_DEVICE_U1_ENABLE/USB_DEVICE_U2_=
-ENABLE
->device request was received?
 
-These bits only inform the controller that it should enter to U1/U2 only if=
- host asks for such a transition.
+--=20
+Regards,
+Oleksij
 
-Device to force transition to U1/U2 must use other bits.=20
 
->> +
->> +	/* wait until configuration set */
->> +	result =3D cdns3_handshake(&priv_dev->regs->usb_sts,
->> +				 USB_STS_CFGSTS_MASK, 1, 100);
->> +
->> +	priv_dev->hw_configured_flag =3D 1;
->> +	cdns3_enable_l1(priv_dev, 1);
->> +
->> +	list_for_each_entry(ep, &priv_dev->gadget.ep_list, ep_list) {
->> +		if (ep->enabled) {
->> +			priv_ep =3D ep_to_cdns3_ep(ep);
->> +			request =3D cdns3_next_request(&priv_ep->request_list);
->> +			if (request)
->> +				cdns3_ep_run_transfer(priv_ep, request);
->
->why are you starting transfers in a function that is supposed to set hw co=
-nfiguration only.
+--b0CoB1SiiHs1gUzIX5qni7VQYS6dFUB3D--
 
-Because we can't start transfer before configuring endpoints in hardware.=20
-Also we can't configure each endpoint separately  in cdns3_gadget_ep_enable=
- because=20
-USB_CONF_CFGSET can be set only once. It's the reason why transfer are defe=
-rred.=20
-It is disadvantage of this controller witch causes some problems.=20
->
->> +		}
->> +	}
->> +}
->> +
->> +/**
->> + * cdns3_gadget_ep0_enable
->> + * Function shouldn't be called by gadget driver,
->> + * endpoint 0 is allways active
->> + */
->> +static int cdns3_gadget_ep0_enable(struct usb_ep *ep,
->> +				   const struct usb_endpoint_descriptor *desc)
->> +{
->> +	return -EINVAL;
->> +}
->> +
->> +/**
->> + * cdns3_gadget_ep0_disable
->> + * Function shouldn't be called by gadget driver,
->> + * endpoint 0 is allways active
->> + */
->> +static int cdns3_gadget_ep0_disable(struct usb_ep *ep)
->> +{
->> +	return -EINVAL;
->> +}
->> +
->> +/**
->> + * cdns3_gadget_ep0_set_halt
->> + * @ep: pointer to endpoint zero object
->> + * @value: 1 for set stall, 0 for clear stall
->> + *
->> + * Returns 0
->> + */
->> +static int cdns3_gadget_ep0_set_halt(struct usb_ep *ep, int value)
->> +{
->> +	/* TODO */
->> +	return 0;
->> +}
->> +
->> +/**
->> + * cdns3_gadget_ep0_queue Transfer data on endpoint zero
->> + * @ep: pointer to endpoint zero object
->> + * @request: pointer to request object
->> + * @gfp_flags: gfp flags
->> + *
->> + * Returns 0 on success, error code elsewhere
->> + */
->> +static int cdns3_gadget_ep0_queue(struct usb_ep *ep,
->> +				  struct usb_request *request,
->> +				  gfp_t gfp_flags)
->> +{
->> +	struct cdns3_endpoint *priv_ep =3D ep_to_cdns3_ep(ep);
->> +	struct cdns3_device *priv_dev =3D priv_ep->cdns3_dev;
->> +	unsigned long flags;
->> +	int erdy_sent =3D 0;
->> +	int ret =3D 0;
->> +
->> +	dev_dbg(&priv_dev->dev, "Queue to Ep0%s L: %d\n",
->> +		priv_dev->ep0_data_dir ? "IN" : "OUT",
->> +		request->length);
->> +
->> +	/* send STATUS stage */
->> +	if (request->length =3D=3D 0 && request->zero =3D=3D 0) {
->
->Is this check sufficient to know STATUS stage?
->It might be normal for vendor specific control request to have
->request->length =3D 0 and request->zero =3D 0.
+--BuRi53VjqypJJK4pfLGMVsJQZH1eVXaAr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-It's sufficient. =20
-cdns3_gadget_ep0_queue is invoked by gadget driver only for DATA stage=20
-or deferred STATUS stage (e.g during SET_CONFIGURATION request).=20
-In DATA stage driver shall send a number of date specified in SETUP packet
-and it should not be zero.=20
-If wLength in SETUP packet is 0 then we don't have DATA stage, only SETUP a=
-nd STATUS stage
+-----BEGIN PGP SIGNATURE-----
 
->
->
->> +		spin_lock_irqsave(&priv_dev->lock, flags);
->> +		cdns3_select_ep(priv_dev, 0x00);
->> +
->> +		erdy_sent =3D !priv_dev->hw_configured_flag;
->> +		cdns3_set_hw_configuration(priv_dev);
->
->What if we're still busy with DATA stage of previous ep0_queue?
->
->if (!list_empty(&priv_ep->request_list)) should be done as the first thing=
- in this function.
->
-The SETUP hast to be handled. If the previous one has not been finished the=
-n controller
-driver must abort the previous one and start handling the new one.
-I know, and I can't find code responsible for this behavior.
-I will add some protection against such situation.=20
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlwDt3YACgkQdQOiSHVI
+77TowQf/XmHatoSDzOtQayi6Q8Opi2VhhQOeyxLNn0b/8mlI3Wq9QZpda61JR9ot
+3FjGg0gHqgOPpoIPQhWFpiLnbw/nhhTAvY+EWlP84H3nuxjqHSU61rM6zxYvrBx3
+pQXlDFwU8LvpLMWr5vEXfTOlAe+q1aaHZxzyWG7kKKDCFTgBQQ3lKSjQXAy8dLQC
+tu0H5OY8KVunh4UkPUJDXi8v5diCYOqcqEwBPHRVPi9IG0733QGfU0V8FUeo42RH
+gvCtKUpBu1kvsfnZqh1UM6Yapox5d8VBUWmvJT2ulQqQ9an/QgeljMgIFFXyc9wo
+6CsVAwOEFqRVEYK1D/s1Muw1ApUgww==
+=VK1e
+-----END PGP SIGNATURE-----
 
->> +
->> +		if (!erdy_sent)
->> +			writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL,
->> +			       &priv_dev->regs->ep_cmd);
->> +
->> +		cdns3_prepare_setup_packet(priv_dev);
->> +		request->actual =3D 0;
->> +		priv_dev->status_completion_no_call =3D true;
->> +		priv_dev->pending_status_request =3D request;
->> +		spin_unlock_irqrestore(&priv_dev->lock, flags);
->> +
->> +		/*
->> +		 * Since there is no completion interrupt for status stage,
->> +		 * it needs to call ->completion in software after
->> +		 * ep0_queue is back.
->> +		 */
->> +		queue_work(system_freezable_wq, &priv_dev->pending_status_wq);
->> +		return 0;
->> +	}
->> +
->> +	spin_lock_irqsave(&priv_dev->lock, flags);
->> +	if (!list_empty(&priv_ep->request_list)) {
->> +		dev_err(&priv_dev->dev,
->> +			"can't handle multiple requests for ep0\n");
->> +		spin_unlock_irqrestore(&priv_dev->lock, flags);
->> +		return -EOPNOTSUPP;
->
->-EBUSY?
->
->> +	}
->> +
->> +	ret =3D usb_gadget_map_request_by_dev(priv_dev->sysdev, request,
->> +					    priv_dev->ep0_data_dir);
->> +	if (ret) {
->> +		spin_unlock_irqrestore(&priv_dev->lock, flags);
->> +		dev_err(&priv_dev->dev, "failed to map request\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	priv_dev->ep0_request =3D request;
->> +	list_add_tail(&request->list, &priv_ep->request_list);
->> +	cdns3_ep0_run_transfer(priv_dev, request->dma, request->length, 1);
->> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
->> +
->> +	return ret;
->> +}
->> +
->>  /**
->>   * cdns3_gadget_ep_set_wedge Set wedge on selected endpoint
->>   * @ep: endpoint object
->> @@ -41,6 +215,17 @@ int cdns3_gadget_ep_set_wedge(struct usb_ep *ep)
->>  	return 0;
->>  }
->>
->> +const struct usb_ep_ops cdns3_gadget_ep0_ops =3D {
->> +	.enable =3D cdns3_gadget_ep0_enable,
->> +	.disable =3D cdns3_gadget_ep0_disable,
->> +	.alloc_request =3D cdns3_gadget_ep_alloc_request,
->> +	.free_request =3D cdns3_gadget_ep_free_request,
->> +	.queue =3D cdns3_gadget_ep0_queue,
->> +	.dequeue =3D cdns3_gadget_ep_dequeue,
->> +	.set_halt =3D cdns3_gadget_ep0_set_halt,
->> +	.set_wedge =3D cdns3_gadget_ep_set_wedge,
->> +};
->> +
->>  /**
->>   * cdns3_ep0_config - Configures default endpoint
->>   * @priv_dev: extended gadget object
->> @@ -62,6 +247,9 @@ void cdns3_ep0_config(struct cdns3_device *priv_dev)
->>  		priv_dev->ep0_request =3D NULL;
->>  	}
->>
->> +	priv_dev->u1_allowed =3D 0;
->> +	priv_dev->u2_allowed =3D 0;
->> +
->
->where do you set these?
-
-In function cdns3_ep0_feature_handle_device in patch 12.=20
-It was stupid  idea to split this driver into series of patches.=20
-I thought that it was  required for such big driver.=20
-The next will be posted as single patch.=20
->
->>  	priv_dev->gadget.ep0->maxpacket =3D max_packet_size;
->>  	cdns3_gadget_ep0_desc.wMaxPacketSize =3D cpu_to_le16(max_packet_size);
->>
->> @@ -106,8 +294,7 @@ int cdns3_init_ep0(struct cdns3_device *priv_dev)
->>  	sprintf(ep0->name, "ep0");
->>
->>  	/* fill linux fields */
->> -	//TODO: implements cdns3_gadget_ep0_ops object
->> -	//ep0->endpoint.ops =3D &cdns3_gadget_ep0_ops;
->> +	ep0->endpoint.ops =3D &cdns3_gadget_ep0_ops;
->>  	ep0->endpoint.maxburst =3D 1;
->>  	usb_ep_set_maxpacket_limit(&ep0->endpoint, ENDPOINT0_MAX_PACKET_LIMIT)=
-;
->>  	ep0->endpoint.address =3D 0;
->> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
->> index 1f2a434486dc..c965da16c0c8 100644
->> --- a/drivers/usb/cdns3/gadget.c
->> +++ b/drivers/usb/cdns3/gadget.c
->> @@ -188,6 +188,14 @@ static void cdns3_ep_stall_flush(struct cdns3_endpo=
-int *priv_ep)
->>  	priv_ep->flags |=3D EP_STALL;
->>  }
->>
->
->> +void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable)
->
->Some comment might help as to what L1 is.
-
-I even had to check what it meant.
-
-From controller specification:=20
-"
-After receiving Extended Token packet, the USBSS-DEV answers with:
-- ACK handshake when accepts transition to the Sleep state (L1 mode is turn=
-ed on by setting
-L1EN in USB_CONF) or
-- NYET handshake when is not ready to make transition to the Sleep state (L=
-1 mode is turned
-off (default) by setting L1DS in USB_CONF )
-- STALL handshake when doesn't recognize requested link state (bLinkState v=
-alue). The only
-supported bLinkState value is "0001" (Sleep state).
-If L1 mode is enabled, then the status bit 'L1ENS' in 'USB_STS' is asserted=
-."
-
-So I think that the name of function should look like:=20
-cdns3_allow_enable_l1
-
-I will add comment to function and change the name.
->
->> +{
->> +	if (enable)
->> +		writel(USB_CONF_L1EN, &priv_dev->regs->usb_conf);
->> +	else
->> +		writel(USB_CONF_L1DS, &priv_dev->regs->usb_conf);
->> +}
->> +
->>  /**
->>   * cdns3_gadget_giveback - call struct usb_request's ->complete callbac=
-k
->>   * @priv_ep: The endpoint to whom the request belongs to
->> diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
->> index a4be288b34cb..224f6b830bc9 100644
->> --- a/drivers/usb/cdns3/gadget.h
->> +++ b/drivers/usb/cdns3/gadget.h
->> @@ -1068,11 +1068,21 @@ struct cdns3_device {
->>  	struct usb_request		*pending_status_request;
->>  };
->>
->> +int cdns3_handshake(void __iomem *ptr, u32 mask, u32 done, int usec);
->>  void cdns3_set_register_bit(void __iomem *ptr, u32 mask);
->>  int cdns3_init_ep0(struct cdns3_device *priv_dev);
->>  void cdns3_ep0_config(struct cdns3_device *priv_dev);
->>  void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep);
->> +void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable);
->> +struct usb_request *cdns3_next_request(struct list_head *list);
->> +int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
->> +			  struct usb_request *request);
->>  int cdns3_gadget_ep_set_wedge(struct usb_ep *ep);
->>  int cdns3_gadget_ep_set_halt(struct usb_ep *ep, int value);
->> +struct usb_request *cdns3_gadget_ep_alloc_request(struct usb_ep *ep,
->> +						  gfp_t gfp_flags);
->> +void cdns3_gadget_ep_free_request(struct usb_ep *ep,
->> +				  struct usb_request *request);
->> +int cdns3_gadget_ep_dequeue(struct usb_ep *ep, struct usb_request *requ=
-est);
->>
->>  #endif /* __LINUX_CDNS3_GADGET */
->>
->
->cheers,
->-roger
->
->--
->Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+--BuRi53VjqypJJK4pfLGMVsJQZH1eVXaAr--
