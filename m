@@ -2,117 +2,110 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DDDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 20:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CD4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 20:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467D620881
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 20:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B8342082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 20:13:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVBBqXX4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 467D620881
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNwuKGjV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B8342082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725818AbeLBULz (ORCPT
+        id S1725796AbeLBUNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 15:11:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54944 "EHLO mail.kernel.org"
+        Sun, 2 Dec 2018 15:13:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbeLBULy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 15:11:54 -0500
+        id S1725730AbeLBUNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 15:13:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3D3A2082F;
-        Sun,  2 Dec 2018 20:11:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0874620672;
+        Sun,  2 Dec 2018 20:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543781512;
-        bh=L71Ae8si39BEk9VHIJN+fM8z+JLm31UdzZhupuli/q4=;
+        s=default; t=1543781617;
+        bh=mJVQTJas2JbkR/KMswP7ex6+NZt2CaUzagYTZRTC9Pk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GVBBqXX4+GQ6TbTFCUfYHP4VuCV04DXCkfZnCHeHT/jDJHYff0D2/8T913fSn+w5b
-         g3K1pnc7CNP041+NlGSPlW+EAQnPa+6SlQVoBfKrRCF1KsheKE/uDvoYLcGG9yJtMA
-         wQ3/ApO8UJZuXInNNOE7jsmFvOHHAojNWdu8g8fU=
-Date:   Sun, 2 Dec 2018 21:11:50 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: Re: [PATCH 3.18 14/83] ARM: make lookup_processor_type() non-__init
-Message-ID: <20181202201150.GC3932@kroah.com>
-References: <20181129140138.002176596@linuxfoundation.org>
- <20181129140138.869602566@linuxfoundation.org>
- <20181129142817.GW30658@n2100.armlinux.org.uk>
- <20181130151554.GA29005@kroah.com>
- <20181130151843.GB29005@kroah.com>
- <20181202151732.GH221015@sasha-vm>
- <20181202161535.GA27166@kroah.com>
- <20181202162532.GK221015@sasha-vm>
+        b=lNwuKGjVvNPpoQOZjo2Sq1Js9pDTcTJWU/+yWL46lkqxpuZBTMAE3y5Ztg9nOruXF
+         wj9Q6hkr/3o03ssjdIXve9lCrj9xVOeyMjZRSD0FE408eD8kvD5gG6kwpUOyw0zJ3s
+         b6KXM0fVJvbPqVwf7/inTWYBntYhOpDFCRXLG8XE=
+Date:   Sun, 2 Dec 2018 21:13:35 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Tigran Aivazian <aivazian.tigran@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH 4.19.6] BFS: static inode bitmap and extra sanity checking
+Message-ID: <20181202201335.GB4314@kroah.com>
+References: <20181129135921.231283053@linuxfoundation.org>
+ <20181129135922.602882966@linuxfoundation.org>
+ <CAK+_RLmVyVzL3G6++xOxfyEqEHL=bfZZx_Yj-TFNf5a7_oUoXw@mail.gmail.com>
+ <20181129160722.GA31919@kroah.com>
+ <CAK+_RLnbpu+nYsr8sVpHBVUcATDbqQoeH=+tu=tK1EKTHk6L9A@mail.gmail.com>
+ <20181129171038.GA4651@kroah.com>
+ <CAK+_RLk4cxamNasZyvLRunR23CTR-fASvF3=Ryt9WGeFoBVtqQ@mail.gmail.com>
+ <CAK+_RLmt0ba_ARo+SrOGJph-SPn3kBRybRqncki=Oqz1TcF21Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181202162532.GK221015@sasha-vm>
+In-Reply-To: <CAK+_RLmt0ba_ARo+SrOGJph-SPn3kBRybRqncki=Oqz1TcF21Q@mail.gmail.com>
 User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 11:25:32AM -0500, Sasha Levin wrote:
-> On Sun, Dec 02, 2018 at 05:15:35PM +0100, Greg Kroah-Hartman wrote:
-> > On Sun, Dec 02, 2018 at 10:17:32AM -0500, Sasha Levin wrote:
-> > > On Fri, Nov 30, 2018 at 04:18:43PM +0100, Greg Kroah-Hartman wrote:
-> > > > On Fri, Nov 30, 2018 at 04:15:54PM +0100, Greg Kroah-Hartman wrote:
-> > > > > On Thu, Nov 29, 2018 at 02:28:18PM +0000, Russell King - ARM Linux wrote:
-> > > > > > Hi,
-> > > > > >
-> > > > > > As I've already fed back to Sascha about this, this patch on its own
-> > > > > > does not fix anything, and is not a stable kernel candidate without
-> > > > > > a patch that makes use of it (iow, the spectre fixes.)  It is a
-> > > > > > preparatory patch for mainline commit 383fb3ee8024.
-> > > > > >
-> > > > > > Every commit in:
-> > > > > >
-> > > > > > $ git rev-list v4.16..383fb3ee8024
-> > > > > >
-> > > > > > are the ARM spectre fixes, which are being back-ported by David Long.
-> > > > > >
-> > > > > > Please do not cherry-pick commits from within this series for _any_
-> > > > > > stable kernel, but please wait for David to send you the back-ported
-> > > > > > patches.
-> > > > >
-> > > > > Ugh, ok, that's a bunch here.
-> > > >
-> > > > Ok, not that bad, only 4:
-> > > > 	383fb3ee8024 ("ARM: spectre-v2: per-CPU vtables to work around big.Little systems")
-> > > > 	e209950fdd06 ("ARM: add PROC_VTABLE and PROC_TABLE macros")
-> > > > 	945aceb1db88 ("ARM: clean up per-processor check_bugs method call")
-> > > > 	899a42f83667 ("ARM: make lookup_processor_type() non-__init")
-> > > >
-> > > > I'll go drop them all from the trees now.  Turns out for 4.14 one of
-> > > > these patches broke the build anyway.  Sasha, how did that past your
-> > > > builder tests?
-> > > 
-> > > Because it builds :)
-> > 
-> > Really?  It broke Guenter's builds...
+On Sun, Dec 02, 2018 at 06:57:10PM +0000, Tigran Aivazian wrote:
+> Hello,
 > 
-> I might be missing something, but Guenter's reply to this -rc thread
-> (https://www.spinics.net/lists/stable/msg272294.html) was:
+> Please find a patch attached which contains the following changes:
 > 
-> > For v3.18.127-83-gc3953c334bf6:
-> > 
-> > Build results:
-> > 	total: 160 pass: 160 fail: 0
-> > Qemu test results:
-> > 	total: 223 pass: 223 fail: 0
+> 1. Simplifies inode bitmap allocation by making it static.
+> 2. Supersedes the changes to BFS that went into 4.19.6 with stronger checking.
+> 3. Other changes are trivial (like whitespace cleanup, warning messages etc).
+> 
+> Fully tested under 4.19.6 kernel.
+> 
+> Kind regards,
+> Tigran
 
-The breakage happened on the 4.14 tree with one of the patches above,
-which caused me to do a -rc2.
+> From: Tigran Aivazian <aivazian.tigran@gmail.com>
+> Subject: [PATCH 4.19.6] BFS: static inode bitmap and extra sanity checking
+> 
+> Strengthen validation of BFS superblock against corruption.
+> Make in-core inode bitmap static part of superblock info structure.
+> Print a warning when mounting a BFS filesystem created with "-N 512"
+> option as only 510 files can be created in the root directory.
+> Make the kernel messages more uniform. Update the 'prefix' passed to
+> bfs_dump_imap() to match the current naming of operations.
+> White space and comments cleanup.
+> 
+> Signed-off-by: Tigran Aivazian <aivazian.tigran@gmail.com>
+> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+> 
+>  fs/bfs/bfs.h                |   11 ++++++-
+>  fs/bfs/dir.c                |    4 +-
+>  fs/bfs/file.c               |    2 -
+>  fs/bfs/inode.c              |   65 ++++++++++++++++++--------------------------
+>  include/uapi/linux/bfs_fs.h |    2 -
+>  5 files changed, 41 insertions(+), 43 deletions(-)
+
+What is the git commit id of this patch in Linus's tree?
 
 thanks,
 
