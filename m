@@ -2,113 +2,188 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87508C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 16:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF24C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 16:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EAE420892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 16:41:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLSGk6b+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EAE420892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C8482081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 16:57:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8482081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725925AbeLBQlM (ORCPT
+        id S1725770AbeLBQ5L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 11:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbeLBQlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 11:41:12 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7E8820851;
-        Sun,  2 Dec 2018 16:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543768870;
-        bh=qcnJ1ynZFQp8ZBJeUIHAu3ZZoT0Ph/WMfI/qwNzObao=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FLSGk6b+7mG4n5/QBdibZQUmXzPoRzvf5HjShzHl8OBLDomTxYGAFRjXBi6rcGw8k
-         WEr3vVR1iOqL9WsPRmiwMJ5Hg/xx4KDKnWFwVwq1FNyzQSquI3mUscfwihke3kUsMV
-         bydojegu1G4m0yt0ahTByIv57gaOz77jwvU8Gy2A=
-Date:   Sun, 2 Dec 2018 16:41:05 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v5 15/15] iio: inv_mpu6050: Use
- i2c_acpi_get_i2c_resource() helper
-Message-ID: <20181202164105.17155c72@archlinux>
-In-Reply-To: <20181128114535.80223-16-andriy.shevchenko@linux.intel.com>
-References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
-        <20181128114535.80223-16-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 2 Dec 2018 11:57:11 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:40051 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbeLBQ5K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 11:57:10 -0500
+Received: by mail-yb1-f193.google.com with SMTP id c15so980839ybf.7
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 08:57:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mNtSXtFyE7IFZNhc0PfoZYS59/v4cWYORa/esC6bpWw=;
+        b=goFEaOBJHgWxBoA5qXr0M1hI+UKKd7ahjuQ8dJ5GGzVFlLpj8LilGlQACtACWBKT31
+         RXX17+Dzj5TTP0rSAxAzpoI3cTNe5/fQd2gVbNNg7nR3ezare9djZLuCoO6OPD2pHCok
+         9/80QcZJvylQU4F7ylHpwQgVaY+KQOybAjrgex609SQJpaFLw2JHtwamndRVmEphE8VM
+         d2pf7Nlxx+omOfzsQr4JUhHTTG9gZHXabtt/FIk8G2QecwCh1Y7wMVjhOPRhXaFdVSZ/
+         wEY/rziIMc9tLNfAqfaEZ6aa6KFu/Jfy0YnF9+lwDtsO9ppyBCM85NfFHn4aUMbzPF/s
+         7lYA==
+X-Gm-Message-State: AA+aEWaV7sNAR8HAFmmsrDUb3avrcaqLt5hRAhxEQRJmBz9olU9Suz2I
+        ZvBhcYo0UC31MRevZv8pclvki5M8Cuw=
+X-Google-Smtp-Source: AFSGD/VCo2b2GUg6/r/Lz4TQMLVUYsUj7JmIBAqMo6np/X41ucanaPajunvRSWxPw66S0tCVpUW5vw==
+X-Received: by 2002:a25:5f4c:: with SMTP id h12-v6mr12437191ybm.402.1543769828377;
+        Sun, 02 Dec 2018 08:57:08 -0800 (PST)
+Received: from laptop.jcline.org ([2605:a601:a204:5901:8717:bd34:acd6:5cb7])
+        by smtp.gmail.com with ESMTPSA id l9sm3951911ywc.81.2018.12.02.08.57.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Dec 2018 08:57:07 -0800 (PST)
+Subject: Re: Regression: very quiet speakers on Thinkpad T570s
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Kailang Yang <kailang@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Tim Van den Eynde <redhat@vdeynde.com>,
+        alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <bbba2653-d57b-5fab-8c06-5fd22ae80aa5@redhat.com>
+ <s5h36riy2qh.wl-tiwai@suse.de>
+ <f14c37de-29ce-529b-8b37-40efd29ff1cb@redhat.com>
+ <s5hmupp1f33.wl-tiwai@suse.de>
+From:   Jeremy Cline <jcline@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jcline@redhat.com; keydata=
+ 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
+ X/87hZ4pdW/aOXUAgQ==
+Message-ID: <dd981d45-7e2c-5a93-4c36-83433a7aa9ff@redhat.com>
+Date:   Sun, 2 Dec 2018 11:57:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <s5hmupp1f33.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-+CC linux-iio mostly so I can track it and because others may care.
-
-On Wed, 28 Nov 2018 13:45:35 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> ACPI provides a generic helper to get I2C Serial Bus resources.
-> Use it instead of open coded variant.
+On 12/1/18 9:44 AM, Takashi Iwai wrote:
+> On Fri, 30 Nov 2018 17:51:33 +0100,
+> Jeremy Cline wrote:
+>>
+>> On 11/30/18 11:00 AM, Takashi Iwai wrote:
+>>> On Fri, 30 Nov 2018 15:49:17 +0100,
+>>> Jeremy Cline wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> Some folks have reported on the Fedora bug tracker[0] that the laptop
+>>>> speaker volume is very low on the Thinkpad T570 when running a kernel
+>>>> that includes commit 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad
+>>>> Dock device for ALC298 platform").
+>>>>
+>>>> alsa-info.sh from v4.15.4 (just before commit 61fcf8ece9b6 arrived in
+>>>> stable) and v4.19.4 with the issue present are attached to the bugzilla.
+>>>> I've also Cc'd Tim, who uploaded them and has the laptop in question.
+>>>>
+>>>> [0] https://bugzilla.redhat.com/show_bug.cgi?id=1554304
+>>>
+>>> Could you pinpoint which kernel version started showing the
+>>> regression, at least?  The diffs are fairly wide between 4.15 and
+>>> 4.19.
+>>
+>> Ah, sorry for not being more clear. The regression appears to be
+>> introduced by commit 61fcf8ece9b6, which got backported to v4.15.5
+>> because it addressed a bug with the dock[0]. v4.19.4 with that commit
+>> reverted works, according to the bug reporter.
+>>
+>> [0] https://bugzilla.kernel.org/show_bug.cgi?id=195161
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> OK, then this seems to be the change of DAC assignment.
+> 
+> Maybe the hardware has some implicit assumption of NID 0x03 bound with
+> the speaker pin.  Below is a patch for fixing the pin / DAC mapping.
+> Please give it a try.
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> ---
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+> index 06f93032d0cc..50bc2e97d799 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -4988,9 +4988,14 @@ static void alc_fixup_tpt470_dock(struct hda_codec *codec,
+>  		{ 0x19, 0x21a11010 }, /* dock mic */
+>  		{ }
+>  	};
+> +	static hda_nid_t preferred_pairs[] = {
+> +		0x14, 0x03, 0x17, 0x02, 0x21, 0x02,
+> +		0
+> +	};
+>  	struct alc_spec *spec = codec->spec;
+>  
+>  	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
+> +		spec->gen.preferred_dacs = preferred_pairs;
+>  		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
+>  		snd_hda_apply_pincfgs(codec, pincfgs);
+>  	} else if (action == HDA_FIXUP_ACT_INIT) {
+> 
+
+That patch does indeed fix the problem according to the original
+reporter.
 
 Thanks,
-
-Jonathan
-> ---
->  drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c | 16 ++++++----------
->  1 file changed, 6 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c
-> index d78a10403bac..a961b5a06fe6 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c
-> @@ -91,18 +91,14 @@ static int asus_acpi_get_sensor_info(struct acpi_device *adev,
->  
->  static int acpi_i2c_check_resource(struct acpi_resource *ares, void *data)
->  {
-> +	struct acpi_resource_i2c_serialbus *sb;
->  	u32 *addr = data;
->  
-> -	if (ares->type == ACPI_RESOURCE_TYPE_SERIAL_BUS) {
-> -		struct acpi_resource_i2c_serialbus *sb;
-> -
-> -		sb = &ares->data.i2c_serial_bus;
-> -		if (sb->type == ACPI_RESOURCE_SERIAL_TYPE_I2C) {
-> -			if (*addr)
-> -				*addr |= (sb->slave_address << 16);
-> -			else
-> -				*addr = sb->slave_address;
-> -		}
-> +	if (i2c_acpi_get_i2c_resource(ares, &sb)) {
-> +		if (*addr)
-> +			*addr |= (sb->slave_address << 16);
-> +		else
-> +			*addr = sb->slave_address;
->  	}
->  
->  	/* Tell the ACPI core that we already copied this address */
-
+Jeremy
