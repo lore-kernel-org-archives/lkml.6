@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3241C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC19C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97CBC20834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:12:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CBC20834
+	by mail.kernel.org (Postfix) with ESMTP id 7C74520851
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:12:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C74520851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbeLBXL3 (ORCPT
+        id S1725874AbeLBXLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 18:11:29 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15187 "EHLO huawei.com"
+        Sun, 2 Dec 2018 18:11:18 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15624 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725913AbeLBXL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 18:11:27 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 45B1FF51A21DE;
-        Mon,  3 Dec 2018 07:11:23 +0800 (CST)
+        id S1725785AbeLBXLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 18:11:17 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 089E658FDAD5;
+        Mon,  3 Dec 2018 07:11:13 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.47.90.156) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 3 Dec 2018 07:11:14 +0800
+ 14.3.408.0; Mon, 3 Dec 2018 07:11:05 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [RFC net-next 4/9] net: hns3: Add "vf vlan table" information query function
-Date:   Sun, 2 Dec 2018 23:09:28 +0000
-Message-ID: <20181202230933.15560-5-salil.mehta@huawei.com>
+Subject: [RFC net-next 1/9] net: hns3: Add "bd info" query function
+Date:   Sun, 2 Dec 2018 23:09:25 +0000
+Message-ID: <20181202230933.15560-2-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181202230933.15560-1-salil.mehta@huawei.com>
 References: <20181202230933.15560-1-salil.mehta@huawei.com>
@@ -51,147 +51,156 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-This patch prints vf vlan table information.
+This patch prints Sending and receiving
+packet descriptor information.
 
 debugfs command:
-echo dump port vlan tbl 0 > cmd
+echo dump bd info 1 > cmd
 
 Sample Command:
-root@(none)# echo dump vf vlan tbl 0 > cmd
-vlan | vf filter bitMap:
-0000 | 00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000001
-root@(none)#
+root@(none)# echo bd info 1 > cmd
+hns3 0000:7d:00.0: TX Queue Num: 0, BD Index: 0
+hns3 0000:7d:00.0: (TX) addr: 0x0
+hns3 0000:7d:00.0: (TX)vlan_tag: 0
+hns3 0000:7d:00.0: (TX)send_size: 0
+hns3 0000:7d:00.0: (TX)vlan_tso: 0
+hns3 0000:7d:00.0: (TX)l2_len: 0
+hns3 0000:7d:00.0: (TX)l3_len: 0
+hns3 0000:7d:00.0: (TX)l4_len: 0
+hns3 0000:7d:00.0: (TX)vlan_tag: 0
+hns3 0000:7d:00.0: (TX)tv: 0
+hns3 0000:7d:00.0: (TX)vlan_msec: 0
+hns3 0000:7d:00.0: (TX)ol2_len: 0
+hns3 0000:7d:00.0: (TX)ol3_len: 0
+hns3 0000:7d:00.0: (TX)ol4_len: 0
+hns3 0000:7d:00.0: (TX)paylen: 0
+hns3 0000:7d:00.0: (TX)vld_ra_ri: 0
+hns3 0000:7d:00.0: (TX)mss: 0
+hns3 0000:7d:00.0: RX Queue Num: 0, BD Index: 120
+hns3 0000:7d:00.0: (RX)addr: 0xffee7000
+hns3 0000:7d:00.0: (RX)pkt_len: 0
+hns3 0000:7d:00.0: (RX)size: 0
+hns3 0000:7d:00.0: (RX)rss_hash: 0
+hns3 0000:7d:00.0: (RX)fd_id: 0
+hns3 0000:7d:00.0: (RX)vlan_tag: 0
+hns3 0000:7d:00.0: (RX)o_dm_vlan_id_fb: 0
+hns3 0000:7d:00.0: (RX)ot_vlan_tag: 0
+hns3 0000:7d:00.0: (RX)bd_base_info: 0
 
 Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  1 +
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 93 ++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 79 +++++++++++++++++++++-
+ 1 file changed, 78 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index 51af55f34e55..80a081e87b96 100644
+index 86d667a3730a..9a026556df0e 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -212,6 +212,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
- 	dev_info(&h->pdev->dev, "dump qos buf cfg\n");
- 	dev_info(&h->pdev->dev, "dump mac tbl\n");
- 	dev_info(&h->pdev->dev, "dump port vlan tbl\n");
-+	dev_info(&h->pdev->dev, "dump vf vlan tbl [vf id]\n");
+@@ -52,7 +52,7 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
+ 		    test_bit(HNS3_NIC_STATE_RESETTING, &priv->state))
+ 			return -EPERM;
+ 
+-		ring = ring_data[i + h->kinfo.num_tqps].ring;
++		ring = ring_data[(u32)(i + h->kinfo.num_tqps)].ring;
+ 		base_add_h = readl_relaxed(ring->tqp->io_base +
+ 					   HNS3_RING_RX_RING_BASEADDR_H_REG);
+ 		base_add_l = readl_relaxed(ring->tqp->io_base +
+@@ -125,10 +125,85 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
+ 	return 0;
  }
  
- static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-index 4a034a59fcb2..20e64abe7c5a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-@@ -608,6 +608,97 @@ static void hclge_dbg_dump_port_vlan_table(struct hclge_dev *hdev)
- 	kfree(vlan_bitmap);
- }
- 
-+static void hclge_dbg_dump_vf_vlan_table(struct hclge_dev *hdev, char *cmd_buf)
++static int hns3_dbg_bd_info(struct hnae3_handle *h, char *cmd_buf)
 +{
-+	struct hclge_vlan_filter_vf_cfg_cmd *req0;
-+	struct hclge_vlan_filter_vf_cfg_cmd *req1;
-+	char printf_buf[HCLGE_DBG_BUF_LEN];
-+	struct hclge_desc desc[2];
-+	u32 *vlan_bitmap;
-+	u8 vf_byte_val;
-+	u8 vf_bitmap;
-+	int vlan_len;
-+	u32 vlan_id;
-+	int ret, i;
-+	bool flag;
-+	u16 vf_id;
++	struct hns3_nic_priv *priv = h->priv;
++	struct hns3_nic_ring_data *ring_data;
++	struct hns3_desc *rx_desc, *tx_desc;
++	struct device *dev = &h->pdev->dev;
++	struct hns3_enet_ring *ring;
++	u32 tx_index, rx_index;
++	u32 q_num, value;
++	int cnt;
 +
-+	ret = kstrtou16(&cmd_buf[17], 10, &vf_id);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev,
-+			"vf id failed. vf id max: %d\n", hdev->num_alloc_vfs);
-+		return;
++	cnt = sscanf(&cmd_buf[8], "%u %u", &q_num, &tx_index);
++	if (cnt == 2) {
++		rx_index = tx_index;
++	} else if (cnt != 1) {
++		dev_err(dev, "bd info: bad command string, cnt=%d\n", cnt);
++		return -EINVAL;
 +	}
 +
-+	vlan_len = HCLGE_DBG_VLAN_ID_MAX / 8;
-+	vlan_bitmap = kzalloc(vlan_len, GFP_KERNEL);
-+	if (!vlan_bitmap) {
-+		dev_err(&hdev->pdev->dev,
-+			"port vlan table alloc memory failed\n");
-+		return;
++	if (q_num >= h->kinfo.num_tqps) {
++		dev_err(dev, "Queue number(%u) is out of range(%u)\n", q_num,
++			h->kinfo.num_tqps - 1);
++		return -EINVAL;
 +	}
 +
-+	for (vlan_id = 0; vlan_id < HCLGE_DBG_VLAN_ID_MAX; vlan_id++) {
-+		/* Prevent long-term occupation of the command channel. */
-+		if ((vlan_id % 100) == 0)
-+			msleep(100);
++	ring_data = priv->ring_data;
++	ring  = ring_data[q_num].ring;
++	value = readl_relaxed(ring->tqp->io_base + HNS3_RING_TX_RING_TAIL_REG);
++	tx_index = (cnt == 1) ? value : tx_index;
 +
-+		hclge_cmd_setup_basic_desc(&desc[0],
-+					   HCLGE_OPC_VLAN_FILTER_VF_CFG, true);
-+		desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+		hclge_cmd_setup_basic_desc(&desc[1],
-+					   HCLGE_OPC_VLAN_FILTER_VF_CFG, true);
-+
-+		req0 = (struct hclge_vlan_filter_vf_cfg_cmd *)desc[0].data;
-+		req1 = (struct hclge_vlan_filter_vf_cfg_cmd *)desc[1].data;
-+		req0->vlan_id = cpu_to_le16(vlan_id);
-+
-+		ret = hclge_cmd_send(&hdev->hw, desc, 2);
-+		if (ret) {
-+			dev_err(&hdev->pdev->dev,
-+				"call hclge_cmd_send fail, ret = %d\n", ret);
-+			kfree(vlan_bitmap);
-+			return;
-+		}
-+
-+		if (vf_id < 128)
-+			vf_bitmap = req0->vf_bitmap[vf_id / 8];
-+		else
-+			vf_bitmap = req1->vf_bitmap[(vf_id - 128) / 8];
-+
-+		vf_byte_val = 1 << (vf_id % 8);
-+
-+		if (vf_bitmap & vf_byte_val)
-+			vlan_bitmap[(u32)(vlan_id / 32)] |= 1 << (vlan_id % 32);
++	if (tx_index >= ring->desc_num) {
++		dev_err(dev, "bd index (%u) is out of range(%u)\n", tx_index,
++			ring->desc_num - 1);
++		return -EINVAL;
 +	}
 +
-+	dev_info(&hdev->pdev->dev, "vlan | vf filter bitMap:\n");
++	tx_desc = &ring->desc[tx_index];
++	dev_info(dev, "TX Queue Num: %u, BD Index: %u\n", q_num, tx_index);
++	dev_info(dev, "(TX) addr: 0x%llx\n", tx_desc->addr);
++	dev_info(dev, "(TX)vlan_tag: %u\n", tx_desc->tx.vlan_tag);
++	dev_info(dev, "(TX)send_size: %u\n", tx_desc->tx.send_size);
++	dev_info(dev, "(TX)vlan_tso: %u\n", tx_desc->tx.type_cs_vlan_tso);
++	dev_info(dev, "(TX)l2_len: %u\n", tx_desc->tx.l2_len);
++	dev_info(dev, "(TX)l3_len: %u\n", tx_desc->tx.l3_len);
++	dev_info(dev, "(TX)l4_len: %u\n", tx_desc->tx.l4_len);
++	dev_info(dev, "(TX)vlan_tag: %u\n", tx_desc->tx.outer_vlan_tag);
++	dev_info(dev, "(TX)tv: %u\n", tx_desc->tx.tv);
++	dev_info(dev, "(TX)vlan_msec: %u\n", tx_desc->tx.ol_type_vlan_msec);
++	dev_info(dev, "(TX)ol2_len: %u\n", tx_desc->tx.ol2_len);
++	dev_info(dev, "(TX)ol3_len: %u\n", tx_desc->tx.ol3_len);
++	dev_info(dev, "(TX)ol4_len: %u\n", tx_desc->tx.ol4_len);
++	dev_info(dev, "(TX)paylen: %u\n", tx_desc->tx.paylen);
++	dev_info(dev, "(TX)vld_ra_ri: %u\n", tx_desc->tx.bdtp_fe_sc_vld_ra_ri);
++	dev_info(dev, "(TX)mss: %u\n", tx_desc->tx.mss);
 +
-+	for (vlan_id = 0; vlan_id < HCLGE_DBG_VLAN_ID_MAX / 32; vlan_id += 8) {
-+		memset(printf_buf, 0, HCLGE_DBG_BUF_LEN);
-+		snprintf(printf_buf, HCLGE_DBG_BUF_LEN,
-+			 "%04d | ", vlan_id * 32);
++	ring  = ring_data[q_num + h->kinfo.num_tqps].ring;
++	value = readl_relaxed(ring->tqp->io_base + HNS3_RING_RX_RING_TAIL_REG);
++	rx_index = (cnt == 1) ? value : tx_index;
++	rx_desc	 = &ring->desc[rx_index];
 +
-+		flag = false;
++	dev_info(dev, "RX Queue Num: %u, BD Index: %u\n", q_num, rx_index);
++	dev_info(dev, "(RX)addr: 0x%llx\n", rx_desc->addr);
++	dev_info(dev, "(RX)pkt_len: %u\n", rx_desc->rx.pkt_len);
++	dev_info(dev, "(RX)size: %u\n", rx_desc->rx.size);
++	dev_info(dev, "(RX)rss_hash: %u\n", rx_desc->rx.rss_hash);
++	dev_info(dev, "(RX)fd_id: %u\n", rx_desc->rx.fd_id);
++	dev_info(dev, "(RX)vlan_tag: %u\n", rx_desc->rx.vlan_tag);
++	dev_info(dev, "(RX)o_dm_vlan_id_fb: %u\n", rx_desc->rx.o_dm_vlan_id_fb);
++	dev_info(dev, "(RX)ot_vlan_tag: %u\n", rx_desc->rx.ot_vlan_tag);
++	dev_info(dev, "(RX)bd_base_info: %u\n", rx_desc->rx.bd_base_info);
 +
-+		for (i = 7; i >= 0; i--) {
-+			snprintf(printf_buf + strlen(printf_buf),
-+				 HCLGE_DBG_BUF_LEN - strlen(printf_buf),
-+				 "%08x:", vlan_bitmap[(u32)(vlan_id + i)]);
-+
-+			if (vlan_bitmap[(u32)(vlan_id + i)] > 0)
-+				flag = true;
-+		}
-+
-+		printf_buf[strlen(printf_buf) - 1] = '\n';
-+
-+		if (flag)
-+			dev_info(&hdev->pdev->dev, "%s", printf_buf);
-+	}
-+
-+	kfree(vlan_bitmap);
++	return 0;
 +}
 +
- static void hclge_dbg_fd_tcam_read(struct hclge_dev *hdev, u8 stage,
- 				   bool sel_x, u32 loc)
+ static void hns3_dbg_help(struct hnae3_handle *h)
  {
-@@ -683,6 +774,8 @@ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
- 		hclge_dbg_dump_mac_table(hdev);
- 	} else if (strncmp(cmd_buf, "dump port vlan tbl", 18) == 0) {
- 		hclge_dbg_dump_port_vlan_table(hdev);
-+	} else if (strncmp(cmd_buf, "dump vf vlan tbl", 16) == 0) {
-+		hclge_dbg_dump_vf_vlan_table(hdev, cmd_buf);
- 	} else {
- 		dev_info(&hdev->pdev->dev, "unknown command\n");
- 		return -EINVAL;
+ 	dev_info(&h->pdev->dev, "available commands\n");
+ 	dev_info(&h->pdev->dev, "queue info [number]\n");
++	dev_info(&h->pdev->dev, "bd info [q_num] <bd index>\n");
+ 	dev_info(&h->pdev->dev, "dump fd tcam\n");
+ 	dev_info(&h->pdev->dev, "dump tc\n");
+ 	dev_info(&h->pdev->dev, "dump tm\n");
+@@ -205,6 +280,8 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
+ 		hns3_dbg_help(handle);
+ 	else if (strncmp(cmd_buf, "queue info", 10) == 0)
+ 		ret = hns3_dbg_queue_info(handle, cmd_buf);
++	else if (strncmp(cmd_buf, "bd info", 7) == 0)
++		ret = hns3_dbg_bd_info(handle, cmd_buf);
+ 	else if (handle->ae_algo->ops->dbg_run_cmd)
+ 		ret = handle->ae_algo->ops->dbg_run_cmd(handle, cmd_buf);
+ 
 -- 
 2.11.0
 
