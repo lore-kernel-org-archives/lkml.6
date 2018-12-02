@@ -3,89 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC57C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 360D4C65BAE
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 559802081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559802081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id F194821473
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 23:04:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F194821473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725832AbeLBW3e (ORCPT
+        id S1725811AbeLBXE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 17:29:34 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50866 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeLBW3e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 17:29:34 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id B022480A37; Sun,  2 Dec 2018 23:29:27 +0100 (CET)
-Date:   Sun, 2 Dec 2018 23:29:30 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, lkundrak@v3.sk,
-        arm-soc <arm@kernel.org>, Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Robert Jarzmik <robert.jarzmik@free.fr>, quozl@laptop.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/20] MMP platform fixes
-Message-ID: <20181202222930.GB29467@amd>
-References: <20181128175324.163202-1-lkundrak@v3.sk>
- <CAK8P3a0jN1PBy1oKHrx5abX4OKHVxjgevbUcXbUDPbU+VdvUPg@mail.gmail.com>
- <20181130234424.vx5y46wqvziywbk2@localhost>
+        Sun, 2 Dec 2018 18:04:29 -0500
+Received: from mga07.intel.com ([134.134.136.100]:64623 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbeLBXE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 18:04:29 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2018 15:04:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,308,1539673200"; 
+   d="scan'208";a="104104321"
+Received: from trhammer-mobl.amr.corp.intel.com (HELO localhost) ([10.254.49.188])
+  by fmsmga007.fm.intel.com with ESMTP; 02 Dec 2018 15:04:26 -0800
+Date:   Sun, 2 Dec 2018 15:04:26 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
+Message-ID: <20181202230426.GA6718@linux.intel.com>
+References: <20181019101758.1569-1-stefanb@linux.ibm.com>
+ <20181106164603.w46wspmdj5e4slwe@cantor>
+ <1541528254.8568.48.camel@linux.ibm.com>
+ <20181130234507.GA3792@linux.intel.com>
+ <20181130234646.GB3792@linux.intel.com>
+ <1543763436.4216.196.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181130234424.vx5y46wqvziywbk2@localhost>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1543763436.4216.196.camel@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 02, 2018 at 10:10:36AM -0500, Mimi Zohar wrote:
+> Are you asking about coordinating staging the trusted key patches to
+> be upstreamed or about moving portions of the encrypted keys code out
+> of the keyring subsystem?
+> 
+> I'm not sure there needs to be a separate encrypted-keys pull request.
+>  Either they can be upstreamed via the TPM or the integrity subsystem
+> for now.
 
---6sX45UoQRIJXqkqR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Nothing that ought to be rushed.
 
-Hi!
+I'm speaking about this situation:
 
-> > > The patch set has been tested on an OLPC XO-1.75 laptop.
-> >=20
-> > Excellent!
->=20
-> OOooh, I have one of those... somewhere.
+1. TPM 1.x trusted keys code is inside keyring subsystem.
+2. TPM 2.0 trusted keys code is inside tpm subsystem.
 
-Time to find it :-). It is still pretty great machine, can last 8?
-hours on battery, sunlight readable screen, and if you meet a tiger
-you can hit him on the head with it ... and it is still likely to work
-afterwards :-).
+We are doing effort to make TPM subsystem more friendly to send custom
+commands outside (tpm_buf, my unnesting effort in progress, Tomas' clean
+ups for TPM 1.x code) so I'm more dilated to the 2nd option.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---6sX45UoQRIJXqkqR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwEXMoACgkQMOfwapXb+vJSpQCeKebrZ/+Vbx7ea0pcpey6t2yw
-KuwAnR/ZWplg03vCd9ASNFl/fuR/3cDb
-=FGWe
------END PGP SIGNATURE-----
-
---6sX45UoQRIJXqkqR--
+/Jarkko
