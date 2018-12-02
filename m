@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD71C65BAE
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B715CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E08C2082F
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C5FC2082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSrXGWXr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E08C2082F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/KCqhGM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C5FC2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbeLBVXu (ORCPT
+        id S1725968AbeLBVXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:23:50 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43018 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLBVXt (ORCPT
+        Sun, 2 Dec 2018 16:23:53 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40874 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbeLBVXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:23:49 -0500
-Received: by mail-wr1-f67.google.com with SMTP id r10so10113098wrs.10;
-        Sun, 02 Dec 2018 13:23:46 -0800 (PST)
+        Sun, 2 Dec 2018 16:23:52 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q26so3723746wmf.5;
+        Sun, 02 Dec 2018 13:23:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6LxUnav0zIyn7lCfJyICRwEWEm6FUE24Ta1FtH9WUg0=;
-        b=GSrXGWXrOqtYtYyb8EOJeB8iD7RCnNokxW2iXm8cK2okjT7DaYq1on3gZA6qB5yvNM
-         gKRD3bjQKjU3ZwQCc3jc9CEuhweFJ+bCdgajKLkucJRddwZEuvSLz2vk9nnvLm/8F5+Q
-         qTdD4xMc22DfTdtTjIMDEZ4Vg34ZwEe9c2fgsdbEvSjA6IhKWR93spm0AMmKaNsf76Ko
-         PPrFtuZeEwS2jCTqVrEF9WBfZ1HuYHNu4LMXpq0Qb+QwLpniaw+CzywCTAkKiP/p0fT5
-         h7H9uwneXP2dRMHlbNfCzIKgGBUE7EZZZ3YAW08ZkhQ+KC3Xxc1GBKVhYotrSf/5QUJF
-         iNog==
+        bh=321l4njH4VKx1kXcZRO12v94G6OHeKZhCHKTSWfxtGw=;
+        b=c/KCqhGMlJRWoAy0adHmP/uhcwsLnoDcS82IjHwJKQoG/kYnmPB+Y1utTr6x5pAyov
+         f+RUXTAC+rfWumUm2W9df6BQfsDs3soW/+ArqYdu8NLtCjEcgpnnNYneqmev1HIE8Z4R
+         BInFXhhLPNJD/ffVmOKdoQQ20FciNI8VEhOJqbqu9TV9OkCt7IF0C5+3VMwd9ZufYEaB
+         XVwVz7yg06QT5hlhUeUxz3lnjdwRlOSJwgGa8759CeCh8hfnfW5RioAXB3oNeGTrlKRI
+         yN5PW6XrpDvsLYrV6ZsUNt6P3SKJSm7w/e0Nd9be123lDTALFEL9Fb2dEJgG4Zl/Vhrn
+         a0uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6LxUnav0zIyn7lCfJyICRwEWEm6FUE24Ta1FtH9WUg0=;
-        b=IpytsHR7pLgJKlQzBLOqp2jTs9WlUAZqE8O1I/6ngdZ/1HNkym8XoIGpljGT51A8CE
-         EywhINhZreP3yh9tYRmTLx6KE84fZNaoRxmiccclyi8gDKHKLAuezKEYgw3tTzyVy0nq
-         l4IQfU2KNdvDH4nAFf6R/QYRo4xZfp3jkexf85JUmwRu+QDKYrZK6YbeNKLGD4j4oxz4
-         0j4eRiJGdmbBfOhP8oOMj0AQSHyokLreG9vLKDdyfuBYkE/ZbFCrRXr5X8AL6M45SKKJ
-         nTHZs3G1JuALB8cbvRD93/fdh9PNbLpu52UD/d21SSrA8U1hkwZe8udflZba6B8KEQuU
-         fbOA==
-X-Gm-Message-State: AA+aEWZ+4RuDNgsogSng0Ye7lzeVLuBQ0hw8BrDWHFOVSeChGq4RN+/9
-        EG1//pWf7NoT+84GcooNZ6Lo7nly8cc=
-X-Google-Smtp-Source: AFSGD/UXqTlLRnQ9qFyi7CzYKDOg0vCB0/xVT+soOuMlleGNZ0QEam8bkTB8W6Uvggfp79R/8Pfxtg==
-X-Received: by 2002:adf:a743:: with SMTP id e3mr11378257wrd.56.1543785826048;
-        Sun, 02 Dec 2018 13:23:46 -0800 (PST)
+        bh=321l4njH4VKx1kXcZRO12v94G6OHeKZhCHKTSWfxtGw=;
+        b=W52wIsDbgqKwxEXQjTvJTs2Mb1M4FY6jc67knbosmpi8N/g5efwUY2bM6NhVfc3dqP
+         cEGC7DqBmrndMP6fKFV6XWv0eHJTeM7+bNg8WEgwRgVVGjfSTeoE9pRNGtS5XIHcE+KM
+         5J/mWlZBlk8bZFwa2jYRGaHxd7O5N0FC2NkjJICtC3mTlaO4zFmaQVfJMlE4XfOEONDZ
+         H7u7T4cBIW4NeMqu9VP+06QsTWeLvw4nlCHzo+LNDiEE2c2YxnNbbp2Rprjfb5OLiOn9
+         rv+9K5Pnfsu44lzRoEeIul3sNY50WNaPRQ/kMmLhQ32EIpYC6LYyz2SJyKo3jfpy2umA
+         SdRA==
+X-Gm-Message-State: AA+aEWZwzuE/NKITLC6R5eFNSLxlxlLdabadilVcIof2ZoqtbNeY2x/n
+        sJrc+RpR8WAz31FuoPmKllkugQoCkJI=
+X-Google-Smtp-Source: AFSGD/UFiJgDOUG3QDNwHWa5gq+EOo3BLWA/KPHD5LPyqkAK+EC7gjFf4e40y2GkJe47hvXvBg5D8A==
+X-Received: by 2002:a1c:1a90:: with SMTP id a138mr6208939wma.109.1543785827957;
+        Sun, 02 Dec 2018 13:23:47 -0800 (PST)
 Received: from ThinkPad.home ([185.219.177.152])
-        by smtp.gmail.com with ESMTPSA id d2sm9551043wrs.97.2018.12.02.13.23.44
+        by smtp.gmail.com with ESMTPSA id d2sm9551043wrs.97.2018.12.02.13.23.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 02 Dec 2018 13:23:45 -0800 (PST)
+        Sun, 02 Dec 2018 13:23:47 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Subject: [RFC PATCH 09/10] ARM: dts: suniv: f1c100s: Add support for Audio Codec
-Date:   Mon,  3 Dec 2018 00:23:16 +0300
-Message-Id: <5f9f6c3e7c21a33c425396717211601f4460c488.1543782328.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH 10/10] ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
+Date:   Mon,  3 Dec 2018 00:23:17 +0300
+Message-Id: <11eb58fbfd223e041d03b6cec3363a7d08bdad45.1543782328.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543782328.git.mesihkilinc@gmail.com>
 References: <cover.1543782328.git.mesihkilinc@gmail.com>
@@ -82,38 +82,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner suniv F1C100s now has basic audio codec support. Enable it
-under device tree.
+Allwinner suniv F1C100s now has basic audio codec support. Activate it
+for Lichee Pi Nano board.
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- arch/arm/boot/dts/suniv-f1c100s.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-index 4c96a9e..130d31e 100644
---- a/arch/arm/boot/dts/suniv-f1c100s.dtsi
-+++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-@@ -154,5 +154,19 @@
- 			resets = <&ccu 26>;
- 			status = "disabled";
- 		};
-+
-+		codec: codec@1c23c00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,suniv-f1c100s-codec";
-+			reg = <0x01c23c00 0x400>;
-+			interrupts = <21>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_CODEC>;
-+			clock-names = "apb", "codec";
-+			dmas = <&dma SUN4I_DMA_NORMAL 12>,
-+			       <&dma SUN4I_DMA_NORMAL 12>;
-+			dma-names = "rx", "tx";
-+			resets = <&ccu RST_BUS_CODEC>;
-+			status = "disabled";
-+		};
- 	};
+diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+index a1154e6..7618f8c 100644
+--- a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
++++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+@@ -24,3 +24,11 @@
+ 	pinctrl-0 = <&uart0_pe_pins>;
+ 	status = "okay";
  };
++
++&codec {
++	allwinner,audio-routing =
++		"Headphone", "HP",
++		"Headphone", "HPCOM",
++		"MIC", "Mic";
++	status = "okay";
++};
 -- 
 2.7.4
 
