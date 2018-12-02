@@ -2,117 +2,151 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B81CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3680EC64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C55262081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:20:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bAIw4L5M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55262081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 0686D2081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 22:20:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0686D2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725806AbeLBWUm (ORCPT
+        id S1725829AbeLBWUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 17:20:42 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44651 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeLBWUl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 17:20:41 -0500
-Received: by mail-io1-f68.google.com with SMTP id r200so8817003iod.11
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 14:20:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7kz8kaWF7Kv2T4TuI2aZ/QGeznkKe29o+BBM4Y9DnWg=;
-        b=bAIw4L5MLHG7hQ5iqgylg8DJXIOAXvPk28nvxTTeFkkAOifRkK3LzAS/RWdNhWZqDe
-         nr51uLE3r++rQID/JT7olYOcLEobIeygyLPl/905kGR7VHHZGQzGDVEevPg0r02kXG43
-         3I7OntwDhN1wdowTKzKmBdlPFkt9/z13nws1ikbxjYEUK33UwPbVxs2EKBuo1ha+eEze
-         0jf57i9oG1J9DdeJ0UNJnOYjvE6oOTs5G2YO7OpY/rK3uT3MFWrKzctf2B8DGmmHM6YP
-         JG5RgEvh8P4l3YA3Y/9t2emUuHQ0dtg9woTlGzq7xvj6Lf4U9WbBn63pM/JCBhgMC7yO
-         EVgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7kz8kaWF7Kv2T4TuI2aZ/QGeznkKe29o+BBM4Y9DnWg=;
-        b=JGMZZ7eBfEgbIBHNQaMRY2rTJBpOogOxeJr3WzamtjXQzREh387DMmXWXh7wzG4ySJ
-         yJC8g1Dy2a2IxsnmIRGDH8PEFAERSfQueC3H4jLpCe69dcrTcxw6Sa+rbasjQ/G7H610
-         OP6mJT4/Jth8UtAqUOBRNor4GMB7bHAwaF7p3xHmw8+zL0hofinfK7H7PwgO8hs4AxXP
-         DluurWSPUIiUE4OYXN5oI1o+tbhaJAxSsKQXbc7vmZNVCRTH7s0VDuGJgptal2fABVVl
-         G+R1WWjmpfSWX7mF0z0PGv21v5aUxPnGOkNU+rJzo0EdpCQmWIKEWcdIB8o51ryeZ3CQ
-         uJag==
-X-Gm-Message-State: AA+aEWbDKhWyr9eR9rZgWcZh5VgnxvJRgHD6lqIbXkJETzmu63LkXpGB
-        LP1AHVxRVbJM3w0XaBwpk3upOogh4RuS6Vues25sIg==
-X-Google-Smtp-Source: AFSGD/XDHTbJAPS5zWEfTUeSJvn06ttmebZgU12m5SFNTIbKuyCvBgNYOTO7bQl86DbwUFC+l/WqUxQrhOWxEJLmGLM=
-X-Received: by 2002:a5d:8c89:: with SMTP id g9mr12699670ion.111.1543789237868;
- Sun, 02 Dec 2018 14:20:37 -0800 (PST)
+        Sun, 2 Dec 2018 17:20:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57828 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725781AbeLBWUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 17:20:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 976F7AF4D;
+        Sun,  2 Dec 2018 22:20:39 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Mon, 03 Dec 2018 09:20:23 +1100
+Cc:     David Miller <davem@davemloft.net>, tgraf@suug.ch,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eric.dumazet@gmail.com
+Subject: Re: [PATCH v3] rhashtable: detect when object movement between tables might have invalidated a lookup
+In-Reply-To: <20181201084727.6mfh46yshxdoba4h@gondor.apana.org.au>
+References: <87muqbtev6.fsf@notabene.neil.brown.name> <20181116055551.zxfydbpoicslsfkg@gondor.apana.org.au> <878t1tece0.fsf@notabene.neil.brown.name> <87pnuno479.fsf@notabene.neil.brown.name> <20181201084727.6mfh46yshxdoba4h@gondor.apana.org.au>
+Message-ID: <878t17o9js.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
-In-Reply-To: <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sun, 2 Dec 2018 23:20:27 +0100
-Message-ID: <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-niedz., 2 gru 2018 o 22:56 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Dec 01 2018, Herbert Xu wrote:
+
+> On Fri, Nov 30, 2018 at 10:26:50AM +1100, NeilBrown wrote:
+>>
+>> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+>> index 30526afa8343..852ffa5160f1 100644
+>> --- a/lib/rhashtable.c
+>> +++ b/lib/rhashtable.c
+>> @@ -1179,8 +1179,7 @@ struct rhash_head __rcu **rht_bucket_nested(const =
+struct bucket_table *tbl,
+>>  					    unsigned int hash)
+>>  {
+>>  	const unsigned int shift =3D PAGE_SHIFT - ilog2(sizeof(void *));
+>> -	static struct rhash_head __rcu *rhnull =3D
+>> -		(struct rhash_head __rcu *)NULLS_MARKER(0);
+>> +	static struct rhash_head __rcu *rhnull;
+>>  	unsigned int index =3D hash & ((1 << tbl->nest) - 1);
+>>  	unsigned int size =3D tbl->size >> tbl->nest;
+>>  	unsigned int subhash =3D hash;
+>> @@ -1198,8 +1197,11 @@ struct rhash_head __rcu **rht_bucket_nested(const=
+ struct bucket_table *tbl,
+>>  		subhash >>=3D shift;
+>>  	}
+>>=20=20
+>> -	if (!ntbl)
+>> +	if (!ntbl) {
+>> +		if (!rhnull)
+>> +			INIT_RHT_NULLS_HEAD(rhnull);
+>>  		return &rhnull;
+>> +	}
 >
-> Hello,
+> I think you missed my earlier reply beause of bouncing emails.
+
+Yeah, sorry about that.  I should have looked through an lkml archive
+once I realized that was happening - I have now.
+
 >
-> On Thu, Nov 29, 2018 at 07:14:45PM +0100, Bartosz Golaszewski wrote:
-> > We're getting too much into details of how to handle simulated
-> > interrupts and we can continue discussing it, but meanwhile I'd like
-> > to address a different thing:
-> >
-> > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
-> > sharing for userspace") some libgpiod tests are failing because we can
-> > no longer depend on reading the value of a dummy GPIO after detecting
-> > an interrupt to know the edge of the interrupt. While these interrupts
-> > are triggered from debugfs and debugfs is not required to maintain
-> > compatibility, I thing having a working test suite for the GPIO
-> > subsystem and uAPI is worth applying these two patches and also the
-> > previous one[1].
-> >
-> > Can we have them applied for 4.20 or are there any objections?
+> I think this is unnecessary because
 >
-> Just for the record: I objected the patch, Bartosz agrees to discuss
-> further and but because this is too much detail the patch should now be
-> applied anyhow to fix the test suite of an external project. This seems
-> wrong to me.
+> 	RHT_NULLS_MARKER(RHT_NULLS_MARKER(0)) =3D RHT_NULLS_MARKER(0)
 >
 
-Just to look at it from a different perspective: we have a project
-whose tests rely on a behavior that was changed by Uwe's patch. While
-the patch is fine, we need to find a correct way of testing the GPIO
-user API. This may take a long time. In order to not break the tests
-of an external project in 4.20 I propose to patch the interrupt
-simulator (a component only used for testing) for now and to revisit
-it later without time pressure.
+I don't understand how this is relevant.
 
-Best regards,
-Bartosz
+I think you are saying that when rht_bucket_nested() finds that the
+target page hasn't been allocated, it should return a pointer to a
+static variable which contains RHT_NULLS_MARKER(0)
+
+ static struct rhash_head *rhnull =3D RHT_NULLS_MARKER(0);
+
+Then in __rhashtable_lookup(),
+	head =3D rht_bucket(tbl, hash);
+
+would result in 'head' having the value '&rhnull'.
+
+Then
+		rht_for_each_rcu_continue(he, *head, tbl, hash) {
+
+would result in 'he' having the value RHT_NULLS_MARKER(0)
+
+Then
+	} while (he !=3D RHT_NULLS_MARKER(head));
+
+will compare RHT_NULLS_MARKER(0) with RHT_NULLS_MARKED(&rhnull)
+and they will be different, so it will loop indefinitely.
+
+With respect to the shifting, you wrote:
+
+> The top-bit is most likely to be fixed and offer no real value.
+
+While this might be likely, it is not certain, so not relevant.
+On a 32bit machine with more than 2GB of physical memory, some memory
+addresses will have 0 in the msb, some will have 1.
+It is possible (however unlikely) that two hash buckets in different
+tables will have the same address except for the msb.  If we ignore the
+msb, we might incorrectly determine that we have reached the end of the
+chain from the first bucket, whereas we actually reached the end of the
+chain from the second bucket.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwEWqsACgkQOeye3VZi
+gbm+hw//TTRkiV4JY0ksig2gHFTyDTIjqyZajks5Tg3ZHyt2Ry3TWrAoYMoDd2+/
+iyHbknxYy3zXBLC/QEhNsUvh/fZtCBSPGh/9qpnTNJm6d8+E+btnBIh1poWRyxoH
+VCQu4+RyNwgLjtIAfw3v++ku1uj00OQ1R+whs1DXu9R+VVI3DRAJmRrHldgp5nDl
+QNrtUP4wYZOTj7RCPIIcaTjaYJYK1eqzquEIB0rYzhDqT3mEkFGHHJoRy6ifkRTL
+xMy6Z8PdsKAL0oWAOQ7xMXIdNPR9vuqmoSv0cLRExyYxqn9RhkYzVjWij2EdH0mB
+acH3VTMFkpAIee2Ppp82gwMdwqIrQUhaJvKshab7nxQlW+Nd2RmylJMZfdnGV7bM
+oF9WJuqEnWoAFAo1IlTz4DaamUYQHWYqvgQ4xq9gl204SHdwOfYrYNJGyV3+dgIX
+/+bidcSjJM5ugYHQJQzgd3WSjjDS+jQsZ5IXwD3+qoxEw+xs11Z+cOr1OK482LVp
+6gGkQLTD1feQnqZQo1OpWp9mcTZWff7CANMBdSjDIegtvXfsSYr92o8L4myjSmFA
+48eU3/tTq4Xb3LkhW4Zh7VRYl6zXPwUVJ/3iQDuqNAC6g4bGTjqiBjJU4jPW1L3B
+SOuQWEzSMckoi8BQSJAp+lABnhRdY9RrejSuWgfMHPrrJkZrP7s=
+=y12K
+-----END PGP SIGNATURE-----
+--=-=-=--
