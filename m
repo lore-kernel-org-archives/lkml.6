@@ -2,62 +2,63 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 984EDC64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37818C64EB4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5437420851
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5ABE20834
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:23:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSodrmB7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5437420851
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pv7kgQ5t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ABE20834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbeLBVXo (ORCPT
+        id S1725936AbeLBVXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:23:44 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36492 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbeLBVXm (ORCPT
+        Sun, 2 Dec 2018 16:23:47 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42184 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbeLBVXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:23:42 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a18so3762734wmj.1;
-        Sun, 02 Dec 2018 13:23:38 -0800 (PST)
+        Sun, 2 Dec 2018 16:23:46 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q18so10133019wrx.9;
+        Sun, 02 Dec 2018 13:23:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7yyznife34qc5hftjhmlPj2tKij05JG3MZXRdWCCZxQ=;
-        b=hSodrmB7WNhYM3hepxJhG1wSZHTijT3Gbx2FV/H4g9443iGNczH6BCaRngFkTJU7UH
-         mKfOg+nl7tbkbvcjQ6UeeH5D28YFZWezCy7llRmdQ+WPSGRb07k9dxB/iS++QO9GpeHY
-         pS3sJOgnEOWiNFyYMEtI6oBBVRiu9tWGmppSKrGsky+qIXcGtVVdyzFMUYed6qNYR6vG
-         NbA5DGKB/MEEp7zgxbyVbn946gsswRWmBwbyFuMdxXuC1gdrAJnkAG605aDeHzVUhwvw
-         j31DXqi/8GlfrUNmMFLo6XoM4ofPM4O5Tc0Rg0epWvwJ0z0epKeVs94OGnf/kNSmAp5A
-         TNJQ==
+        bh=W+LxMji1rmgC9t/lu72XSjJGgts2lQWuFigEHj6EqQ0=;
+        b=pv7kgQ5tYm0WM/80+JIkCQritf3PIkUgpyqbbGK+38rYocyqk87xx0wmbVweojIq35
+         pK7DTFkO/ylyYrWoBaBU/0ZbuWt1SzxjK3Xt3hUcUF8DkkXWSnJH90HLWeZ+Jc5jl2kh
+         +gYL2hLFa6iFYXRsf9RR7QVm7gR3dSLAA2BRww2uQngWvqT9vLXHa12VaN6/VjoqnOm8
+         vpICHeA0fuavWp5jkCOPOxlah/b+XEpt0m/BFR0VpfIPr4Ni5d5GirfkrsWySBO/qPaW
+         9sW7EjaCHr04j5bgTKVosq0qkyd1WdfYMN1AU89Wu+Sh8nSMFjpEjUgjKROUDvSarW1d
+         62rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7yyznife34qc5hftjhmlPj2tKij05JG3MZXRdWCCZxQ=;
-        b=pTWNWzsKFTpzf1+zJapCccaOsgsYiTERGOHUyZFIKKSkkScWq9V/O/eT3u14bHaRGM
-         d+m+9Hsu9qYsE1+TzGZbpbYNbpVicICWFLk3Y32h5XBfspMgxDS27vUP3hQcU1hvLfTE
-         1Y5+fKZneGsRtV/9qaGGtOhH1a1ujGoZnWGPJpzMhg0Nq6raGDXQpYYQ+WTI/2vPAJ2O
-         CwQB+hFTqS/S1Gn+l1oCpPrc5uRIVphHLXetPo0FzMczXBQ04pDAFxfg4VnmzBCJjueG
-         7mt9XC7mJpBAz+h3LzqjLPUqPkDQfUghHDNlX2zonFRGaZtZGQn7/M3mYZN9IF5vhPU0
-         ph1Q==
-X-Gm-Message-State: AA+aEWZGjsXH8MUSYUzowhSZpIdNOsvSlJJgS1rmQCzpaCu5vYb2i14F
-        FjhaUgD8t9xjhH4x+LzsHf4zRIHF9cY=
-X-Google-Smtp-Source: AFSGD/V3b5skn+Nmeueq22w0VIu9mzLvFEgabPR8VlTqgRZ/sfDWX1UAvvzx1vlUrXlHhUCpW6PWDg==
-X-Received: by 2002:a1c:1903:: with SMTP id 3-v6mr5716302wmz.141.1543785817487;
-        Sun, 02 Dec 2018 13:23:37 -0800 (PST)
+        bh=W+LxMji1rmgC9t/lu72XSjJGgts2lQWuFigEHj6EqQ0=;
+        b=ZZEmBgKT4UZt9DvZ2v4/ooet1cl68Rl3M8TsZokF5sDdoKUsTQlLLY29sAlp4HYgE5
+         uBW/NDcc3rBNUpyivYEU/PWEWubyPn/sRwnhDRPWmUshXyXacJgOTFR843HC5Fm651XH
+         Ao60wRqt6FMYzG8BUNmecOxZyHwq82x/CkR1IfJxqGlFl+Rh2QeR6ojqz2I4v05kT2Lo
+         BE9DfzcTvvbU4Jmjh9/UHutN2d0Dw07pK3imhmBAKHMGJiPeCikQV0pPnAvn+4MGd79/
+         +OX2U8udZ43fm6r947mpiq8hjksisDMM+16xuD6sw9B1Zv6MYISJyBG8Khi5A5U46D0w
+         tzpQ==
+X-Gm-Message-State: AA+aEWbfOrpqMg39VqbnlWWOdambq+prZhRB0i8OhX1mqsDX3DoHKM/s
+        q76DJQbqgdBqHGFQ8WdAVTkQ+zkj8xI=
+X-Google-Smtp-Source: AFSGD/Ur4YLCDN09H9lZy5dwOP6hgbKYzs8y6dXHpKgREYU7iFhdFYvt3J3Tl/0ElcnaIq8COpOzEQ==
+X-Received: by 2002:adf:8228:: with SMTP id 37mr11440991wrb.160.1543785820865;
+        Sun, 02 Dec 2018 13:23:40 -0800 (PST)
 Received: from ThinkPad.home ([185.219.177.152])
-        by smtp.gmail.com with ESMTPSA id d2sm9551043wrs.97.2018.12.02.13.23.35
+        by smtp.gmail.com with ESMTPSA id d2sm9551043wrs.97.2018.12.02.13.23.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 02 Dec 2018 13:23:37 -0800 (PST)
+        Sun, 02 Dec 2018 13:23:40 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -71,9 +72,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Subject: [RFC PATCH 04/10] dma-engine: sun4i: Add support for Allwinner suniv F1C100s
-Date:   Mon,  3 Dec 2018 00:23:11 +0300
-Message-Id: <df1e5fbb2b04b0e5d392ce988d04a39f1d8e5f8d.1543782328.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH 06/10] ASoC: sun4i-codec: Add DMA Max Burst field
+Date:   Mon,  3 Dec 2018 00:23:13 +0300
+Message-Id: <b36cd894f89f572c44318e7999e7724b80ba857e.1543782328.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543782328.git.mesihkilinc@gmail.com>
 References: <cover.1543782328.git.mesihkilinc@gmail.com>
@@ -82,154 +83,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DMA of Allwinner suniv F1C100s is similar to sun4i. It has 4 NDMA, 4
-DDMA channels and endpoints are different. Also F1C100s has reset bit
-for DMA in CCU. Add support for it.
+Allwinner suniv F1C100s has similar DMA engine to sun4i but it has
+smaller max burst size compared to sun4i. Add a quirk field to
+differantitate between them.
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- drivers/dma/Kconfig     |  4 ++--
- drivers/dma/sun4i-dma.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 62 insertions(+), 2 deletions(-)
+ sound/soc/sunxi/sun4i-codec.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index de511db..f8a65d2 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -163,8 +163,8 @@ config DMA_SA11X0
+diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+index 9a3cb77..7a9f84e 100644
+--- a/sound/soc/sunxi/sun4i-codec.c
++++ b/sound/soc/sunxi/sun4i-codec.c
+@@ -224,6 +224,8 @@
  
- config DMA_SUN4I
- 	tristate "Allwinner A10 DMA SoCs support"
--	depends on MACH_SUN4I || MACH_SUN5I || MACH_SUN7I
--	default (MACH_SUN4I || MACH_SUN5I || MACH_SUN7I)
-+	depends on MACH_SUN4I || MACH_SUN5I || MACH_SUN7I || MACH_SUNIV
-+	default (MACH_SUN4I || MACH_SUN5I || MACH_SUN7I || MACH_SUNIV)
- 	select DMA_ENGINE
- 	select DMA_VIRTUAL_CHANNELS
- 	help
-diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
-index d267ff9..c0452c9 100644
---- a/drivers/dma/sun4i-dma.c
-+++ b/drivers/dma/sun4i-dma.c
-@@ -36,7 +36,11 @@
- #define SUN4I_DMA_CFG_SRC_ADDR_MODE(mode)	((mode) << 5)
- #define SUN4I_DMA_CFG_SRC_DRQ_TYPE(type)	(type)
+ /* TODO H3 DAP (Digital Audio Processing) bits */
  
-+#define SUNIV_DMA_CFG_DST_DATA_WIDTH(width)	((width) << 24)
-+#define SUNIV_DMA_CFG_SRC_DATA_WIDTH(width)	((width) << 8)
++#define SUN4I_DMA_MAX_BURST			(8)
 +
- #define SUN4I_MAX_BURST	8
-+#define SUNIV_MAX_BURST	4
- 
- /** Normal DMA register values **/
- 
-@@ -44,6 +48,9 @@
- #define SUN4I_NDMA_DRQ_TYPE_SDRAM		0x16
- #define SUN4I_NDMA_DRQ_TYPE_LIMIT		(0x1F + 1)
- 
-+#define SUNIV_NDMA_DRQ_TYPE_SDRAM		0x11
-+#define SUNIV_NDMA_DRQ_TYPE_LIMIT		(0x17 + 1)
-+
- /** Normal DMA register layout **/
- 
- /* Dedicated DMA source/destination address mode values */
-@@ -57,6 +64,9 @@
- #define SUN4I_NDMA_CFG_BYTE_COUNT_MODE_REMAIN	BIT(15)
- #define SUN4I_NDMA_CFG_SRC_NON_SECURE		BIT(6)
- 
-+#define SUNIV_NDMA_CFG_CONT_MODE		BIT(29)
-+#define SUNIV_NDMA_CFG_WAIT_STATE(n)		((n) << 26)
-+
- /** Dedicated DMA register values **/
- 
- /* Dedicated DMA source/destination address mode values */
-@@ -69,6 +79,9 @@
- #define SUN4I_DDMA_DRQ_TYPE_SDRAM		0x1
- #define SUN4I_DDMA_DRQ_TYPE_LIMIT		(0x1F + 1)
- 
-+#define SUNIV_DDMA_DRQ_TYPE_SDRAM		0x1
-+#define SUNIV_DDMA_DRQ_TYPE_LIMIT		(0x9 + 1)
-+
- /** Dedicated DMA register layout **/
- 
- /* Dedicated DMA configuration register layout */
-@@ -122,6 +135,11 @@
- #define SUN4I_DMA_NR_MAX_VCHANS						\
- 	(SUN4I_NDMA_NR_MAX_VCHANS + SUN4I_DDMA_NR_MAX_VCHANS)
- 
-+#define SUNIV_NDMA_NR_MAX_CHANNELS	4
-+#define SUNIV_DDMA_NR_MAX_CHANNELS	4
-+#define SUNIV_NDMA_NR_MAX_VCHANS	(24 * 2 - 1)
-+#define SUNIV_DDMA_NR_MAX_VCHANS	10
-+
- /* This set of SUN4I_DDMA timing parameters were found experimentally while
-  * working with the SPI driver and seem to make it behave correctly */
- #define SUN4I_DDMA_MAGIC_SPI_PARAMETERS \
-@@ -236,6 +254,16 @@ static void set_src_data_width_a10(u32 *p_cfg, s8 data_width)
- 	*p_cfg |= SUN4I_DMA_CFG_SRC_DATA_WIDTH(data_width);
- }
- 
-+static void set_dst_data_width_f1c100s(u32 *p_cfg, s8 data_width)
-+{
-+	*p_cfg |= SUNIV_DMA_CFG_DST_DATA_WIDTH(data_width);
-+}
-+
-+static void set_src_data_width_f1c100s(u32 *p_cfg, s8 data_width)
-+{
-+	*p_cfg |= SUNIV_DMA_CFG_SRC_DATA_WIDTH(data_width);
-+}
-+
- static int convert_burst_a10(u32 maxburst)
- {
- 	if (maxburst > 8)
-@@ -245,6 +273,15 @@ static int convert_burst_a10(u32 maxburst)
- 	return (maxburst >> 2);
- }
- 
-+static int convert_burst_f1c100s(u32 maxburst)
-+{
-+	if (maxburst > 4)
-+		return -EINVAL;
-+
-+	/* 1 -> 0, 4 -> 1 */
-+	return (maxburst >> 2);
-+}
-+
- static int convert_buswidth(enum dma_slave_buswidth addr_width)
- {
- 	if (addr_width > DMA_SLAVE_BUSWIDTH_4_BYTES)
-@@ -1364,8 +1401,31 @@ static struct sun4i_dma_config sun4i_a10_dma_cfg = {
- 	.has_reset		= false,
+ struct sun4i_codec {
+ 	struct device	*dev;
+ 	struct regmap	*regmap;
+@@ -1462,6 +1464,7 @@ struct sun4i_codec_quirks {
+ 	unsigned int reg_dac_txdata;	/* TX FIFO offset for DMA config */
+ 	unsigned int reg_adc_rxdata;	/* RX FIFO offset for DMA config */
+ 	bool has_reset;
++	u32 dma_max_burst;
  };
  
-+static struct sun4i_dma_config suniv_f1c100s_dma_cfg = {
-+	.ndma_nr_max_channels	= SUNIV_NDMA_NR_MAX_CHANNELS,
-+	.ndma_nr_max_vchans	= SUNIV_NDMA_NR_MAX_VCHANS,
-+
-+	.ddma_nr_max_channels	= SUNIV_DDMA_NR_MAX_CHANNELS,
-+	.ddma_nr_max_vchans	= SUNIV_DDMA_NR_MAX_VCHANS,
-+
-+	.dma_nr_max_channels	= SUNIV_NDMA_NR_MAX_CHANNELS +
-+		SUNIV_DDMA_NR_MAX_CHANNELS,
-+
-+	.set_dst_data_width	= set_dst_data_width_f1c100s,
-+	.set_src_data_width	= set_src_data_width_f1c100s,
-+	.convert_burst		= convert_burst_f1c100s,
-+
-+	.ndma_drq_sdram		= SUNIV_NDMA_DRQ_TYPE_SDRAM,
-+	.ddma_drq_sdram		= SUNIV_DDMA_DRQ_TYPE_SDRAM,
-+
-+	.max_burst		= SUNIV_MAX_BURST,
-+	.has_reset		= true,
-+};
-+
- static const struct of_device_id sun4i_dma_match[] = {
- 	{ .compatible = "allwinner,sun4i-a10-dma", .data = &sun4i_a10_dma_cfg },
-+	{ .compatible = "allwinner,suniv-f1c100s-dma",
-+		.data = &suniv_f1c100s_dma_cfg },
- 	{ /* sentinel */ },
+ static const struct sun4i_codec_quirks sun4i_codec_quirks = {
+@@ -1471,6 +1474,7 @@ static const struct sun4i_codec_quirks sun4i_codec_quirks = {
+ 	.reg_adc_fifoc	= REG_FIELD(SUN4I_CODEC_ADC_FIFOC, 0, 31),
+ 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
+ 	.reg_adc_rxdata	= SUN4I_CODEC_ADC_RXDATA,
++	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
  };
- MODULE_DEVICE_TABLE(of, sun4i_dma_match);
+ 
+ static const struct sun4i_codec_quirks sun6i_a31_codec_quirks = {
+@@ -1481,6 +1485,7 @@ static const struct sun4i_codec_quirks sun6i_a31_codec_quirks = {
+ 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
+ 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
+ 	.has_reset	= true,
++	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
+ };
+ 
+ static const struct sun4i_codec_quirks sun7i_codec_quirks = {
+@@ -1490,6 +1495,7 @@ static const struct sun4i_codec_quirks sun7i_codec_quirks = {
+ 	.reg_adc_fifoc	= REG_FIELD(SUN4I_CODEC_ADC_FIFOC, 0, 31),
+ 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
+ 	.reg_adc_rxdata	= SUN4I_CODEC_ADC_RXDATA,
++	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
+ };
+ 
+ static const struct sun4i_codec_quirks sun8i_a23_codec_quirks = {
+@@ -1500,6 +1506,7 @@ static const struct sun4i_codec_quirks sun8i_a23_codec_quirks = {
+ 	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
+ 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
+ 	.has_reset	= true,
++	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
+ };
+ 
+ static const struct sun4i_codec_quirks sun8i_h3_codec_quirks = {
+@@ -1515,6 +1522,7 @@ static const struct sun4i_codec_quirks sun8i_h3_codec_quirks = {
+ 	.reg_dac_txdata	= SUN8I_H3_CODEC_DAC_TXDATA,
+ 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
+ 	.has_reset	= true,
++	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
+ };
+ 
+ static const struct sun4i_codec_quirks sun8i_v3s_codec_quirks = {
+@@ -1529,6 +1537,7 @@ static const struct sun4i_codec_quirks sun8i_v3s_codec_quirks = {
+ 	.reg_dac_txdata	= SUN8I_H3_CODEC_DAC_TXDATA,
+ 	.reg_adc_rxdata	= SUN6I_CODEC_ADC_RXDATA,
+ 	.has_reset	= true,
++	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
+ };
+ 
+ static const struct of_device_id sun4i_codec_of_match[] = {
+@@ -1655,12 +1664,12 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 
+ 	/* DMA configuration for TX FIFO */
+ 	scodec->playback_dma_data.addr = res->start + quirks->reg_dac_txdata;
+-	scodec->playback_dma_data.maxburst = 8;
++	scodec->playback_dma_data.maxburst = quirks->dma_max_burst;
+ 	scodec->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
+ 
+ 	/* DMA configuration for RX FIFO */
+ 	scodec->capture_dma_data.addr = res->start + quirks->reg_adc_rxdata;
+-	scodec->capture_dma_data.maxburst = 8;
++	scodec->capture_dma_data.maxburst = quirks->dma_max_burst;
+ 	scodec->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
+ 
+ 	ret = devm_snd_soc_register_component(&pdev->dev, quirks->codec,
 -- 
 2.7.4
 
