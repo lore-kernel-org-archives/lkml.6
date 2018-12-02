@@ -2,643 +2,498 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3676C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E559DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B88620881
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FDED20881
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 19:57:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0G7LyLt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B88620881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CTpJKB3Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDED20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725796AbeLBTro (ORCPT
+        id S1725786AbeLBT53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 14:47:44 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39094 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbeLBTrn (ORCPT
+        Sun, 2 Dec 2018 14:57:29 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43191 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbeLBT53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 14:47:43 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b14so8936676edt.6;
-        Sun, 02 Dec 2018 11:47:39 -0800 (PST)
+        Sun, 2 Dec 2018 14:57:29 -0500
+Received: by mail-io1-f67.google.com with SMTP id f10so2879796iop.10
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 11:57:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hyZyF9GQ1xqzTmMsHX2JOnraF+CGzvULpqgyXQAI7jw=;
-        b=T0G7LyLtXLOIWWiZ4X/qhYyiwbh2kcp/txdXpmqm0nyiAKGlM3FLrwMLMSMymj1+pL
-         6n7TQ6EEQnlksiFAe7kAfjEzpnnwrAhAXYeaRr9eaJy5RCmV7w7k+re6gqOx9mxOHweD
-         1eyAKMUGfFtBJk30dFLS6v9WCfQqAWNzWUQ8lzvJY2W7A5iwskLKFVw0MJXnQ0fBrxk5
-         RrY1uNhKsl/icpqIHEC68qSLdc55AKYoTPx7Ev8SwAGXx/dv6ze2NR54zxsZRsRDpdDz
-         1qynoa5MGyB8aPDUN55DdEWfEisoJXfj4LVzWkA9VQ48WKH4JBETwL0T6vC9Muae0bPg
-         v/sw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oT7FrA4WVZh5UlWYxwLUSym9qcZhgcaFyM9+h+p+4jg=;
+        b=CTpJKB3YGC4bp2rlPMaeT8VuTK5k9ROBhfPSoqxZ1FHwm4QVerpZLlwcQnTkASTcul
+         sjg+FBUwib/bsrKw3qVCDl/bfs0+juqCAkqK9Kl9vinEAu96fFI8ki8Sq0q31V0S2jSE
+         RwJ4FDp8RPV5m5RVGGEpW78HZMyE1gJ4m/EaI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=hyZyF9GQ1xqzTmMsHX2JOnraF+CGzvULpqgyXQAI7jw=;
-        b=H0dPerq4tdM3n727Iv3ZoYGzZ6RojPwvJjSW7HAcU0/+oaLo7QaexHnAP0b2KbfLFV
-         cvj1f/OK9GnLJE47/fFOXq92NZhs4RyxyHLl8uou1d7qdU3s+Diu4fT2gZROzyBhmT4u
-         ufMlXGdaeZIFfkP4DSuCaV27LYKciRt72dCaFTwu75ONMS3uG37YlmnJQF9YZv6+jgpo
-         eQ7l/5xf9IvyZRl1+B1FQHSO9sQIUGpEGqH5KXBxI7/5K3AXAp3sBzawns7KxDZ732B0
-         hpg0qdN2Hq0USz3beU27vD6eOTLiUkXZAcgr+DgkZgVuAmTn8+WiPzyS0wpV0gnS7J/+
-         Lqhg==
-X-Gm-Message-State: AA+aEWY1JMYiCYInoiZlJJuNVp3AcUgInzTDwklZRJUVVMH3yRSU9+Gy
-        4VmJXXRknP92FayXExAS5fU=
-X-Google-Smtp-Source: AFSGD/Vx+W+8ml/oaQZU0JbLC3Z2qv4STrmrDfx4V0QaSI6kKLDXbLwSoZQPe+/RkiuS0O96POWtpQ==
-X-Received: by 2002:a50:a5e2:: with SMTP id b31mr12157642edc.5.1543780058908;
-        Sun, 02 Dec 2018 11:47:38 -0800 (PST)
-Received: from ziggy.stardust ([93.176.147.153])
-        by smtp.gmail.com with ESMTPSA id g3sm3382431edc.63.2018.12.02.11.47.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Dec 2018 11:47:38 -0800 (PST)
-Subject: Re: [PATCH v27 2/2] soc: mediatek: Add Mediatek CMDQ helper
-To:     Houlong Wei <houlong.wei@mediatek.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        CK HU <ck.hu@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Monica Wang <monica.wang@mediatek.com>,
-        HS Liao <hs.liao@mediatek.com>, ginny.chen@mediatek.com,
-        enzhu.wang@mediatek.com, kendrick.hsu@mediatek.com
-References: <1543462629-32746-1-git-send-email-houlong.wei@mediatek.com>
- <1543462629-32746-3-git-send-email-houlong.wei@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <c83a5c67-4470-7242-f1e4-8692ee146cea@gmail.com>
-Date:   Sun, 2 Dec 2018 20:47:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oT7FrA4WVZh5UlWYxwLUSym9qcZhgcaFyM9+h+p+4jg=;
+        b=r86R9B4E/3PjsBhcRgIzyU2ytSpNGqjtzrS2Wsj28kGpS5SYneqf7/DOQwELGUElkS
+         FHx9o25WYialI2h02wIW2q7/cP350/Z1kzexw9Bdhfdd3lFl8uJ8p/J9ofxXzfByPhsQ
+         eZwwyfr/7ttPwD8ekGU/UeXSMSCax+Mzk0NXaXxzZjwfh4dwWwrWnQbbSTzza1Bkl9Dj
+         QX48oSxX3V4C60IBhu7RC2CYV08FXy4n2LgACzf4u7k0JHyoBWxANWlqp5ciPotZTKmU
+         rxQS8q7cRq1OA2NUnsQMxBSpWTGroeGrLa4ebl+Ksib9JPWbx2QfECrrsS8nO0JO0YKX
+         EwQg==
+X-Gm-Message-State: AA+aEWaDE4oMRt8ofzURbaHPMno8P+Q9I4XI+kr1SHDqdP1lnHVotcbr
+        AAGCkQnipMJKj1WaeYTw9GGcMvQ6zAyFTfud3JDueQ==
+X-Google-Smtp-Source: AFSGD/UtTWzAH6yL5S52y/nXXTJLJoPRB9clu9tZ6Xmb9dMgLgnwQqPACd5dbbsQfLw4PG5OL9xU9l2iZcQ45Y+JXhQ=
+X-Received: by 2002:a6b:5d01:: with SMTP id r1mr11118003iob.170.1543780645075;
+ Sun, 02 Dec 2018 11:57:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1543462629-32746-3-git-send-email-houlong.wei@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181130203811.30269-1-ard.biesheuvel@linaro.org>
+In-Reply-To: <20181130203811.30269-1-ard.biesheuvel@linaro.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sun, 2 Dec 2018 20:57:13 +0100
+Message-ID: <CAKv+Gu8zFDS_hJSB916h7eni2t8Occ0-2U_eSayZDAz-=ApwQg@mail.gmail.com>
+Subject: Re: [RFC/RFT PATCH] crypto: arm64/chacha - optimize for arbitrary
+ length inputs
+To:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Martin Willi <martin@strongswan.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 29/11/2018 04:37, Houlong Wei wrote:
-> Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
-> 
-> Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-> Signed-off-by: HS Liao <hs.liao@mediatek.com>
+On Fri, 30 Nov 2018 at 21:38, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> Update the 4-way NEON ChaCha routine so it can handle input of any
+> length >64 bytes in its entirety, rather than having to call into
+> the 1-way routine and/or do memcpy()s via temp buffers to handle the
+> tail of a ChaCha invocation that is not a multiple of 256 bytes.
+>
+> On inputs that are a multiple of 256 bytes (and thus in tcrypt
+> benchmarks), performance drops by around 1% on Cortex-A57, while
+> performance for inputs drawn randomly from the range [64, 1024+64)
+> increases by around 30% (using ChaCha20). On Cortex-A72, performance
+> gains are similar. On Cortex-A53, performance improves but only by 5%.
+>
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Cc: Martin Willi <martin@strongswan.org>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 > ---
->  drivers/soc/mediatek/Kconfig           |   12 ++
->  drivers/soc/mediatek/Makefile          |    1 +
->  drivers/soc/mediatek/mtk-cmdq-helper.c |  300 ++++++++++++++++++++++++++++++++
->  include/linux/soc/mediatek/mtk-cmdq.h  |  133 ++++++++++++++
->  4 files changed, 446 insertions(+)
->  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
->  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
-> 
+> Test program after the patch.
+>
 
-Now part of v4.20-next/soc
+Perhaps a better benchmark below: I added 1472 byte blocks to the
+tcrypt template (which should reflect the VPN case IIUC), and that
+gives me (before/after)
 
-Thanks a lot!
+tcrypt: test 0 (256 bit key, 16 byte blocks): 2848103 operations in 1
+seconds (45569648 bytes)
+tcrypt: test 1 (256 bit key, 64 byte blocks): 2840030 operations in 1
+seconds (181761920 bytes)
+tcrypt: test 2 (256 bit key, 256 byte blocks): 1408404 operations in 1
+seconds (360551424 bytes)
+tcrypt: test 3 (256 bit key, 1024 byte blocks): 390180 operations in 1
+seconds (399544320 bytes)
+tcrypt: test 4 (256 bit key, 1472 byte blocks): 217175 operations in 1
+seconds (319681600 bytes)
+tcrypt: test 5 (256 bit key, 8192 byte blocks): 49271 operations in 1
+seconds (403628032 bytes)
 
-> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-> index a7d0667..17bd759 100644
-> --- a/drivers/soc/mediatek/Kconfig
-> +++ b/drivers/soc/mediatek/Kconfig
-> @@ -4,6 +4,18 @@
->  menu "MediaTek SoC drivers"
->  	depends on ARCH_MEDIATEK || COMPILE_TEST
->  
-> +config MTK_CMDQ
-> +	tristate "MediaTek CMDQ Support"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	select MAILBOX
-> +	select MTK_CMDQ_MBOX
-> +	select MTK_INFRACFG
-> +	help
-> +	  Say yes here to add support for the MediaTek Command Queue (CMDQ)
-> +	  driver. The CMDQ is used to help read/write registers with critical
-> +	  time limitation, such as updating display configuration during the
-> +	  vblank.
-> +
->  config MTK_INFRACFG
->  	bool "MediaTek INFRACFG Support"
->  	select REGMAP
-> diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
-> index 12998b0..64ce5ee 100644
-> --- a/drivers/soc/mediatek/Makefile
-> +++ b/drivers/soc/mediatek/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-helper.o
->  obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
->  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
->  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
-> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> new file mode 100644
-> index 0000000..ff9fef5
-> --- /dev/null
-> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> @@ -0,0 +1,300 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (c) 2018 MediaTek Inc.
-> +
-> +#include <linux/completion.h>
-> +#include <linux/errno.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/module.h>
-> +#include <linux/mailbox_controller.h>
-> +#include <linux/soc/mediatek/mtk-cmdq.h>
-> +
-> +#define CMDQ_ARG_A_WRITE_MASK	0xffff
-> +#define CMDQ_WRITE_ENABLE_MASK	BIT(0)
-> +#define CMDQ_EOC_IRQ_EN		BIT(0)
-> +#define CMDQ_EOC_CMD		((u64)((CMDQ_CODE_EOC << CMDQ_OP_CODE_SHIFT)) \
-> +				<< 32 | CMDQ_EOC_IRQ_EN)
-> +
-> +static void cmdq_client_timeout(struct timer_list *t)
-> +{
-> +	struct cmdq_client *client = from_timer(client, t, timer);
-> +
-> +	dev_err(client->client.dev, "cmdq timeout!\n");
-> +}
-> +
-> +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index, u32 timeout)
-> +{
-> +	struct cmdq_client *client;
-> +
-> +	client = kzalloc(sizeof(*client), GFP_KERNEL);
-> +	if (!client)
-> +		return (struct cmdq_client *)-ENOMEM;
-> +
-> +	client->timeout_ms = timeout;
-> +	if (timeout != CMDQ_NO_TIMEOUT) {
-> +		spin_lock_init(&client->lock);
-> +		timer_setup(&client->timer, cmdq_client_timeout, 0);
-> +	}
-> +	client->pkt_cnt = 0;
-> +	client->client.dev = dev;
-> +	client->client.tx_block = false;
-> +	client->chan = mbox_request_channel(&client->client, index);
-> +
-> +	if (IS_ERR(client->chan)) {
-> +		long err;
-> +
-> +		dev_err(dev, "failed to request channel\n");
-> +		err = PTR_ERR(client->chan);
-> +		kfree(client);
-> +
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return client;
-> +}
-> +EXPORT_SYMBOL(cmdq_mbox_create);
-> +
-> +void cmdq_mbox_destroy(struct cmdq_client *client)
-> +{
-> +	if (client->timeout_ms != CMDQ_NO_TIMEOUT) {
-> +		spin_lock(&client->lock);
-> +		del_timer_sync(&client->timer);
-> +		spin_unlock(&client->lock);
-> +	}
-> +	mbox_free_channel(client->chan);
-> +	kfree(client);
-> +}
-> +EXPORT_SYMBOL(cmdq_mbox_destroy);
-> +
-> +struct cmdq_pkt *cmdq_pkt_create(struct cmdq_client *client, size_t size)
-> +{
-> +	struct cmdq_pkt *pkt;
-> +	struct device *dev;
-> +	dma_addr_t dma_addr;
-> +
-> +	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
-> +	if (!pkt)
-> +		return ERR_PTR(-ENOMEM);
-> +	pkt->va_base = kzalloc(size, GFP_KERNEL);
-> +	if (!pkt->va_base) {
-> +		kfree(pkt);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +	pkt->buf_size = size;
-> +	pkt->cl = (void *)client;
-> +
-> +	dev = client->chan->mbox->dev;
-> +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->buf_size,
-> +				  DMA_TO_DEVICE);
-> +	if (dma_mapping_error(dev, dma_addr)) {
-> +		dev_err(dev, "dma map failed, size=%u\n", (u32)(u64)size);
-> +		kfree(pkt->va_base);
-> +		kfree(pkt);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	pkt->pa_base = dma_addr;
-> +
-> +	return pkt;
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_create);
-> +
-> +void cmdq_pkt_destroy(struct cmdq_pkt *pkt)
-> +{
-> +	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
-> +
-> +	dma_unmap_single(client->chan->mbox->dev, pkt->pa_base, pkt->buf_size,
-> +			 DMA_TO_DEVICE);
-> +	kfree(pkt->va_base);
-> +	kfree(pkt);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_destroy);
-> +
-> +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
-> +				   u32 arg_a, u32 arg_b)
-> +{
-> +	u64 *cmd_ptr;
-> +
-> +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
-> +		/*
-> +		 * In the case of allocated buffer size (pkt->buf_size) is used
-> +		 * up, the real required size (pkt->cmdq_buf_size) is still
-> +		 * increased, so that the user knows how much memory should be
-> +		 * ultimately allocated after appending all commands and
-> +		 * flushing the command packet. Therefor, the user can call
-> +		 * cmdq_pkt_create() again with the real required buffer size.
-> +		 */
-> +		pkt->cmd_buf_size += CMDQ_INST_SIZE;
-> +		WARN_ONCE(1, "%s: buffer size %u is too small !\n",
-> +			__func__, (u32)pkt->buf_size);
-> +		return -ENOMEM;
-> +	}
-> +	cmd_ptr = pkt->va_base + pkt->cmd_buf_size;
-> +	(*cmd_ptr) = (u64)((code << CMDQ_OP_CODE_SHIFT) | arg_a) << 32 | arg_b;
-> +	pkt->cmd_buf_size += CMDQ_INST_SIZE;
-> +
-> +	return 0;
-> +}
-> +
-> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset)
-> +{
-> +	u32 arg_a = (offset & CMDQ_ARG_A_WRITE_MASK) |
-> +		    (subsys << CMDQ_SUBSYS_SHIFT);
-> +
-> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WRITE, arg_a, value);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_write);
-> +
-> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
-> +			u32 subsys, u32 offset, u32 mask)
-> +{
-> +	u32 offset_mask = offset;
-> +	int err = 0;
-> +
-> +	if (mask != 0xffffffff) {
-> +		err = cmdq_pkt_append_command(pkt, CMDQ_CODE_MASK, 0, ~mask);
-> +		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
-> +	}
-> +	err |= cmdq_pkt_write(pkt, value, subsys, offset_mask);
-> +
-> +	return err;
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_write_mask);
-> +
-> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event)
-> +{
-> +	u32 arg_b;
-> +
-> +	if (event >= CMDQ_MAX_EVENT)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * WFE arg_b
-> +	 * bit 0-11: wait value
-> +	 * bit 15: 1 - wait, 0 - no wait
-> +	 * bit 16-27: update value
-> +	 * bit 31: 1 - update, 0 - no update
-> +	 */
-> +	arg_b = CMDQ_WFE_UPDATE | CMDQ_WFE_WAIT | CMDQ_WFE_WAIT_VALUE;
-> +
-> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE, event, arg_b);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_wfe);
-> +
-> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event)
-> +{
-> +	if (event >= CMDQ_MAX_EVENT)
-> +		return -EINVAL;
-> +
-> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE, event,
-> +				       CMDQ_WFE_UPDATE);
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_clear_event);
-> +
-> +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
-> +{
-> +	int err;
-> +
-> +	/* insert EOC and generate IRQ for each command iteration */
-> +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
-> +
-> +	/* JUMP to end */
-> +	err |= cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
-> +
-> +	return err;
-> +}
-> +
-> +static void cmdq_pkt_flush_async_cb(struct cmdq_cb_data data)
-> +{
-> +	struct cmdq_pkt *pkt = (struct cmdq_pkt *)data.data;
-> +	struct cmdq_task_cb *cb = &pkt->cb;
-> +	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
-> +
-> +	if (client->timeout_ms != CMDQ_NO_TIMEOUT) {
-> +		unsigned long flags = 0;
-> +
-> +		spin_lock_irqsave(&client->lock, flags);
-> +		if (--client->pkt_cnt == 0)
-> +			del_timer(&client->timer);
-> +		else
-> +			mod_timer(&client->timer, jiffies +
-> +				  msecs_to_jiffies(client->timeout_ms));
-> +		spin_unlock_irqrestore(&client->lock, flags);
-> +	}
-> +
-> +	dma_sync_single_for_cpu(client->chan->mbox->dev, pkt->pa_base,
-> +				pkt->cmd_buf_size, DMA_TO_DEVICE);
-> +	if (cb->cb) {
-> +		data.data = cb->data;
-> +		cb->cb(data);
-> +	}
-> +}
-> +
-> +int cmdq_pkt_flush_async(struct cmdq_pkt *pkt, cmdq_async_flush_cb cb,
-> +			 void *data)
-> +{
-> +	int err;
-> +	unsigned long flags = 0;
-> +	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
-> +
-> +	err = cmdq_pkt_finalize(pkt);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	pkt->cb.cb = cb;
-> +	pkt->cb.data = data;
-> +	pkt->async_cb.cb = cmdq_pkt_flush_async_cb;
-> +	pkt->async_cb.data = pkt;
-> +
-> +	dma_sync_single_for_device(client->chan->mbox->dev, pkt->pa_base,
-> +				   pkt->cmd_buf_size, DMA_TO_DEVICE);
-> +
-> +	if (client->timeout_ms != CMDQ_NO_TIMEOUT) {
-> +		spin_lock_irqsave(&client->lock, flags);
-> +		if (client->pkt_cnt++ == 0)
-> +			mod_timer(&client->timer, jiffies +
-> +				  msecs_to_jiffies(client->timeout_ms));
-> +		spin_unlock_irqrestore(&client->lock, flags);
-> +	}
-> +
-> +	mbox_send_message(client->chan, pkt);
-> +	/* We can send next packet immediately, so just call txdone. */
-> +	mbox_client_txdone(client->chan, 0);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_flush_async);
-> +
-> +struct cmdq_flush_completion {
-> +	struct completion cmplt;
-> +	bool err;
-> +};
-> +
-> +static void cmdq_pkt_flush_cb(struct cmdq_cb_data data)
-> +{
-> +	struct cmdq_flush_completion *cmplt;
-> +
-> +	cmplt = (struct cmdq_flush_completion *)data.data;
-> +	if (data.sta != CMDQ_CB_NORMAL)
-> +		cmplt->err = true;
-> +	else
-> +		cmplt->err = false;
-> +	complete(&cmplt->cmplt);
-> +}
-> +
-> +int cmdq_pkt_flush(struct cmdq_pkt *pkt)
-> +{
-> +	struct cmdq_flush_completion cmplt;
-> +	int err;
-> +
-> +	init_completion(&cmplt.cmplt);
-> +	err = cmdq_pkt_flush_async(pkt, cmdq_pkt_flush_cb, &cmplt);
-> +	if (err < 0)
-> +		return err;
-> +	wait_for_completion(&cmplt.cmplt);
-> +
-> +	return cmplt.err ? -EFAULT : 0;
-> +}
-> +EXPORT_SYMBOL(cmdq_pkt_flush);
-> +
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-> new file mode 100644
-> index 0000000..54ade13
-> --- /dev/null
-> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-> @@ -0,0 +1,133 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + *
-> + */
-> +
-> +#ifndef __MTK_CMDQ_H__
-> +#define __MTK_CMDQ_H__
-> +
-> +#include <linux/mailbox_client.h>
-> +#include <linux/mailbox/mtk-cmdq-mailbox.h>
-> +#include <linux/timer.h>
-> +
-> +#define CMDQ_NO_TIMEOUT		0xffffffffu
-> +
-> +/** cmdq event maximum */
-> +#define CMDQ_MAX_EVENT				0x3ff
-> +
-> +struct cmdq_pkt;
-> +
-> +struct cmdq_client {
-> +	spinlock_t lock;
-> +	u32 pkt_cnt;
-> +	struct mbox_client client;
-> +	struct mbox_chan *chan;
-> +	struct timer_list timer;
-> +	u32 timeout_ms; /* in unit of microsecond */
-> +};
-> +
-> +/**
-> + * cmdq_mbox_create() - create CMDQ mailbox client and channel
-> + * @dev:	device of CMDQ mailbox client
-> + * @index:	index of CMDQ mailbox channel
-> + * @timeout:	timeout of a pkt execution by GCE, in unit of microsecond, set
-> + *		CMDQ_NO_TIMEOUT if a timer is not used.
-> + *
-> + * Return: CMDQ mailbox client pointer
-> + */
-> +struct cmdq_client *cmdq_mbox_create(struct device *dev, int index,
-> +				     u32 timeout);
-> +
-> +/**
-> + * cmdq_mbox_destroy() - destroy CMDQ mailbox client and channel
-> + * @client:	the CMDQ mailbox client
-> + */
-> +void cmdq_mbox_destroy(struct cmdq_client *client);
-> +
-> +/**
-> + * cmdq_pkt_create() - create a CMDQ packet
-> + * @client:	the CMDQ mailbox client
-> + * @size:	required CMDQ buffer size
-> + *
-> + * Return: CMDQ packet pointer
-> + */
-> +struct cmdq_pkt *cmdq_pkt_create(struct cmdq_client *client, size_t size);
-> +
-> +/**
-> + * cmdq_pkt_destroy() - destroy the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + */
-> +void cmdq_pkt_destroy(struct cmdq_pkt *pkt);
-> +
-> +/**
-> + * cmdq_pkt_write() - append write command to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @value:	the specified target register value
-> + * @subsys:	the CMDQ sub system code
-> + * @offset:	register offset from CMDQ sub system
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset);
-> +
-> +/**
-> + * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @value:	the specified target register value
-> + * @subsys:	the CMDQ sub system code
-> + * @offset:	register offset from CMDQ sub system
-> + * @mask:	the specified target register mask
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
-> +			u32 subsys, u32 offset, u32 mask);
-> +
-> +/**
-> + * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @event:	the desired event type to "wait and CLEAR"
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
-> +
-> +/**
-> + * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + * @event:	the desired event to be cleared
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + */
-> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event);
-> +
-> +/**
-> + * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
-> + *                          packet and call back at the end of done packet
-> + * @pkt:	the CMDQ packet
-> + * @cb:		called at the end of done packet
-> + * @data:	this data will pass back to cb
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + *
-> + * Trigger CMDQ to asynchronously execute the CMDQ packet and call back
-> + * at the end of done packet. Note that this is an ASYNC function. When the
-> + * function returned, it may or may not be finished.
-> + */
-> +int cmdq_pkt_flush_async(struct cmdq_pkt *pkt, cmdq_async_flush_cb cb,
-> +			 void *data);
-> +
-> +/**
-> + * cmdq_pkt_flush() - trigger CMDQ to execute the CMDQ packet
-> + * @pkt:	the CMDQ packet
-> + *
-> + * Return: 0 for success; else the error code is returned
-> + *
-> + * Trigger CMDQ to execute the CMDQ packet. Note that this is a
-> + * synchronous flush function. When the function returned, the recorded
-> + * commands have been done.
-> + */
-> +int cmdq_pkt_flush(struct cmdq_pkt *pkt);
-> +
-> +#endif	/* __MTK_CMDQ_H__ */
-> 
+tcrypt: test 0 (256 bit key, 16 byte blocks): 2960809 operations in 1
+seconds (47372944 bytes)
+tcrypt: test 1 (256 bit key, 64 byte blocks): 2970977 operations in 1
+seconds (190142528 bytes)
+tcrypt: test 2 (256 bit key, 256 byte blocks): 1404117 operations in 1
+seconds (359453952 bytes)
+tcrypt: test 3 (256 bit key, 1024 byte blocks): 390356 operations in 1
+seconds (399724544 bytes)
+tcrypt: test 4 (256 bit key, 1472 byte blocks): 261865 operations in 1
+seconds (385465280 bytes)
+tcrypt: test 5 (256 bit key, 8192 byte blocks): 49311 operations in 1
+seconds (403955712 bytes)
+
+
+>  arch/arm64/crypto/chacha-neon-core.S | 185 ++++++++++++++++++--
+>  arch/arm64/crypto/chacha-neon-glue.c |  36 ++--
+>  2 files changed, 188 insertions(+), 33 deletions(-)
+>
+> diff --git a/arch/arm64/crypto/chacha-neon-core.S b/arch/arm64/crypto/chacha-neon-core.S
+> index 75b4e06cee79..45ffc51cb437 100644
+> --- a/arch/arm64/crypto/chacha-neon-core.S
+> +++ b/arch/arm64/crypto/chacha-neon-core.S
+> @@ -19,6 +19,7 @@
+>   */
+>
+>  #include <linux/linkage.h>
+> +#include <asm/cache.h>
+>
+>         .text
+>         .align          6
+> @@ -164,6 +165,7 @@ ENTRY(chacha_4block_xor_neon)
+>         // x1: 4 data blocks output, o
+>         // x2: 4 data blocks input, i
+>         // w3: nrounds
+> +       // x4: byte count
+>
+>         //
+>         // This function encrypts four consecutive ChaCha blocks by loading
+> @@ -177,11 +179,11 @@ ENTRY(chacha_4block_xor_neon)
+>         ld1             {v30.4s-v31.4s}, [x9]
+>
+>         // x0..15[0-3] = s0..3[0..3]
+> -       mov             x4, x0
+> -       ld4r            { v0.4s- v3.4s}, [x4], #16
+> -       ld4r            { v4.4s- v7.4s}, [x4], #16
+> -       ld4r            { v8.4s-v11.4s}, [x4], #16
+> -       ld4r            {v12.4s-v15.4s}, [x4]
+> +       mov             x8, x0
+> +       ld4r            { v0.4s- v3.4s}, [x8], #16
+> +       ld4r            { v4.4s- v7.4s}, [x8], #16
+> +       ld4r            { v8.4s-v11.4s}, [x8], #16
+> +       ld4r            {v12.4s-v15.4s}, [x8]
+>
+>         // x12 += counter values 0-3
+>         add             v12.4s, v12.4s, v30.4s
+> @@ -425,24 +427,47 @@ ENTRY(chacha_4block_xor_neon)
+>         zip1            v30.4s, v14.4s, v15.4s
+>         zip2            v31.4s, v14.4s, v15.4s
+>
+> +       mov             x3, #64
+> +       subs            x5, x4, #64
+> +       add             x6, x5, x2
+> +       csel            x3, x3, xzr, ge
+> +       csel            x2, x2, x6, ge
+> +
+>         // interleave 64-bit words in state n, n+2
+>         zip1            v0.2d, v16.2d, v18.2d
+>         zip2            v4.2d, v16.2d, v18.2d
+>         zip1            v8.2d, v17.2d, v19.2d
+>         zip2            v12.2d, v17.2d, v19.2d
+> -       ld1             {v16.16b-v19.16b}, [x2], #64
+> +       ld1             {v16.16b-v19.16b}, [x2], x3
+> +
+> +       subs            x6, x4, #128
+> +       ccmp            x3, xzr, #4, lt
+> +       add             x7, x6, x2
+> +       csel            x3, x3, xzr, eq
+> +       csel            x2, x2, x7, eq
+>
+>         zip1            v1.2d, v20.2d, v22.2d
+>         zip2            v5.2d, v20.2d, v22.2d
+>         zip1            v9.2d, v21.2d, v23.2d
+>         zip2            v13.2d, v21.2d, v23.2d
+> -       ld1             {v20.16b-v23.16b}, [x2], #64
+> +       ld1             {v20.16b-v23.16b}, [x2], x3
+> +
+> +       subs            x7, x4, #192
+> +       ccmp            x3, xzr, #4, lt
+> +       add             x8, x7, x2
+> +       csel            x3, x3, xzr, eq
+> +       csel            x2, x2, x8, eq
+>
+>         zip1            v2.2d, v24.2d, v26.2d
+>         zip2            v6.2d, v24.2d, v26.2d
+>         zip1            v10.2d, v25.2d, v27.2d
+>         zip2            v14.2d, v25.2d, v27.2d
+> -       ld1             {v24.16b-v27.16b}, [x2], #64
+> +       ld1             {v24.16b-v27.16b}, [x2], x3
+> +
+> +       subs            x8, x4, #256
+> +       ccmp            x3, xzr, #4, lt
+> +       add             x9, x8, x2
+> +       csel            x2, x2, x9, eq
+>
+>         zip1            v3.2d, v28.2d, v30.2d
+>         zip2            v7.2d, v28.2d, v30.2d
+> @@ -451,29 +476,167 @@ ENTRY(chacha_4block_xor_neon)
+>         ld1             {v28.16b-v31.16b}, [x2]
+>
+>         // xor with corresponding input, write to output
+> +       tbnz            x5, #63, 0f
+>         eor             v16.16b, v16.16b, v0.16b
+>         eor             v17.16b, v17.16b, v1.16b
+>         eor             v18.16b, v18.16b, v2.16b
+>         eor             v19.16b, v19.16b, v3.16b
+> +       st1             {v16.16b-v19.16b}, [x1], #64
+> +
+> +       tbnz            x6, #63, 1f
+>         eor             v20.16b, v20.16b, v4.16b
+>         eor             v21.16b, v21.16b, v5.16b
+> -       st1             {v16.16b-v19.16b}, [x1], #64
+>         eor             v22.16b, v22.16b, v6.16b
+>         eor             v23.16b, v23.16b, v7.16b
+> +       st1             {v20.16b-v23.16b}, [x1], #64
+> +
+> +       tbnz            x7, #63, 2f
+>         eor             v24.16b, v24.16b, v8.16b
+>         eor             v25.16b, v25.16b, v9.16b
+> -       st1             {v20.16b-v23.16b}, [x1], #64
+>         eor             v26.16b, v26.16b, v10.16b
+>         eor             v27.16b, v27.16b, v11.16b
+> -       eor             v28.16b, v28.16b, v12.16b
+>         st1             {v24.16b-v27.16b}, [x1], #64
+> +
+> +       tbnz            x8, #63, 3f
+> +       eor             v28.16b, v28.16b, v12.16b
+>         eor             v29.16b, v29.16b, v13.16b
+>         eor             v30.16b, v30.16b, v14.16b
+>         eor             v31.16b, v31.16b, v15.16b
+>         st1             {v28.16b-v31.16b}, [x1]
+>
+>         ret
+> +
+> +       // fewer than 64 bytes of in/output
+> +0:     adr             x12, .Lpermute
+> +       add             x12, x12, x5
+> +       sub             x2, x1, #64
+> +       add             x1, x1, x5
+> +       add             x13, x12, #64
+> +       ld1             {v8.16b}, [x12]
+> +       ld1             {v9.16b}, [x13]
+> +       movi            v10.16b, #16
+> +
+> +       ld1             {v16.16b-v19.16b}, [x2]
+> +       tbl             v4.16b, {v0.16b-v3.16b}, v8.16b
+> +       tbx             v20.16b, {v16.16b-v19.16b}, v9.16b
+> +       add             v8.16b, v8.16b, v10.16b
+> +       add             v9.16b, v9.16b, v10.16b
+> +       tbl             v5.16b, {v0.16b-v3.16b}, v8.16b
+> +       tbx             v21.16b, {v16.16b-v19.16b}, v9.16b
+> +       add             v8.16b, v8.16b, v10.16b
+> +       add             v9.16b, v9.16b, v10.16b
+> +       tbl             v6.16b, {v0.16b-v3.16b}, v8.16b
+> +       tbx             v22.16b, {v16.16b-v19.16b}, v9.16b
+> +       add             v8.16b, v8.16b, v10.16b
+> +       add             v9.16b, v9.16b, v10.16b
+> +       tbl             v7.16b, {v0.16b-v3.16b}, v8.16b
+> +       tbx             v23.16b, {v16.16b-v19.16b}, v9.16b
+> +
+> +       eor             v20.16b, v20.16b, v4.16b
+> +       eor             v21.16b, v21.16b, v5.16b
+> +       eor             v22.16b, v22.16b, v6.16b
+> +       eor             v23.16b, v23.16b, v7.16b
+> +       st1             {v20.16b-v23.16b}, [x1]
+> +       ret
+> +
+> +       // fewer than 128 bytes of in/output
+> +1:     adr             x12, .Lpermute
+> +       add             x12, x12, x6
+> +       add             x1, x1, x6
+> +       add             x13, x12, #64
+> +       ld1             {v8.16b}, [x12]
+> +       ld1             {v9.16b}, [x13]
+> +       movi            v10.16b, #16
+> +       tbl             v0.16b, {v4.16b-v7.16b}, v8.16b
+> +       tbx             v20.16b, {v16.16b-v19.16b}, v9.16b
+> +       add             v8.16b, v8.16b, v10.16b
+> +       add             v9.16b, v9.16b, v10.16b
+> +       tbl             v1.16b, {v4.16b-v7.16b}, v8.16b
+> +       tbx             v21.16b, {v16.16b-v19.16b}, v9.16b
+> +       add             v8.16b, v8.16b, v10.16b
+> +       add             v9.16b, v9.16b, v10.16b
+> +       tbl             v2.16b, {v4.16b-v7.16b}, v8.16b
+> +       tbx             v22.16b, {v16.16b-v19.16b}, v9.16b
+> +       add             v8.16b, v8.16b, v10.16b
+> +       add             v9.16b, v9.16b, v10.16b
+> +       tbl             v3.16b, {v4.16b-v7.16b}, v8.16b
+> +       tbx             v23.16b, {v16.16b-v19.16b}, v9.16b
+> +
+> +       eor             v20.16b, v20.16b, v0.16b
+> +       eor             v21.16b, v21.16b, v1.16b
+> +       eor             v22.16b, v22.16b, v2.16b
+> +       eor             v23.16b, v23.16b, v3.16b
+> +       st1             {v20.16b-v23.16b}, [x1]
+> +       ret
+> +
+> +       // fewer than 192 bytes of in/output
+> +2:     adr             x12, .Lpermute
+> +       add             x12, x12, x7
+> +       add             x1, x1, x7
+> +       add             x13, x12, #64
+> +       ld1             {v4.16b}, [x12]
+> +       ld1             {v5.16b}, [x13]
+> +       movi            v6.16b, #16
+> +       tbl             v0.16b, {v8.16b-v11.16b}, v4.16b
+> +       tbx             v24.16b, {v20.16b-v23.16b}, v5.16b
+> +       add             v4.16b, v4.16b, v6.16b
+> +       add             v5.16b, v5.16b, v6.16b
+> +       tbl             v1.16b, {v8.16b-v11.16b}, v4.16b
+> +       tbx             v25.16b, {v20.16b-v23.16b}, v5.16b
+> +       add             v4.16b, v4.16b, v6.16b
+> +       add             v5.16b, v5.16b, v6.16b
+> +       tbl             v2.16b, {v8.16b-v11.16b}, v4.16b
+> +       tbx             v26.16b, {v20.16b-v23.16b}, v5.16b
+> +       add             v4.16b, v4.16b, v6.16b
+> +       add             v5.16b, v5.16b, v6.16b
+> +       tbl             v3.16b, {v8.16b-v11.16b}, v4.16b
+> +       tbx             v27.16b, {v20.16b-v23.16b}, v5.16b
+> +
+> +       eor             v24.16b, v24.16b, v0.16b
+> +       eor             v25.16b, v25.16b, v1.16b
+> +       eor             v26.16b, v26.16b, v2.16b
+> +       eor             v27.16b, v27.16b, v3.16b
+> +       st1             {v24.16b-v27.16b}, [x1]
+> +       ret
+> +
+> +       // fewer than 256 bytes of in/output
+> +3:     adr             x12, .Lpermute
+> +       add             x12, x12, x8
+> +       add             x1, x1, x8
+> +       add             x13, x12, #64
+> +       ld1             {v4.16b}, [x12]
+> +       ld1             {v5.16b}, [x13]
+> +       movi            v6.16b, #16
+> +       tbl             v0.16b, {v12.16b-v15.16b}, v4.16b
+> +       tbx             v28.16b, {v24.16b-v27.16b}, v5.16b
+> +       add             v4.16b, v4.16b, v6.16b
+> +       add             v5.16b, v5.16b, v6.16b
+> +       tbl             v1.16b, {v12.16b-v15.16b}, v4.16b
+> +       tbx             v29.16b, {v24.16b-v27.16b}, v5.16b
+> +       add             v4.16b, v4.16b, v6.16b
+> +       add             v5.16b, v5.16b, v6.16b
+> +       tbl             v2.16b, {v12.16b-v15.16b}, v4.16b
+> +       tbx             v30.16b, {v24.16b-v27.16b}, v5.16b
+> +       add             v4.16b, v4.16b, v6.16b
+> +       add             v5.16b, v5.16b, v6.16b
+> +       tbl             v3.16b, {v12.16b-v15.16b}, v4.16b
+> +       tbx             v31.16b, {v24.16b-v27.16b}, v5.16b
+> +
+> +       eor             v28.16b, v28.16b, v0.16b
+> +       eor             v29.16b, v29.16b, v1.16b
+> +       eor             v30.16b, v30.16b, v2.16b
+> +       eor             v31.16b, v31.16b, v3.16b
+> +       st1             {v28.16b-v31.16b}, [x1]
+> +       ret
+>  ENDPROC(chacha_4block_xor_neon)
+>
+>  CTRINC:        .word           0, 1, 2, 3
+>  ROT8:  .word           0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
+> +
+> +       .align          L1_CACHE_SHIFT
+> +       .set            .Lpermute, . + 64
+> +       .set            .Li, 0
+> +       .rept           192
+> +       .byte           (.Li - 64)
+> +       .set            .Li, .Li + 1
+> +       .endr
+> diff --git a/arch/arm64/crypto/chacha-neon-glue.c b/arch/arm64/crypto/chacha-neon-glue.c
+> index 346eb85498a1..458d9b36cf9d 100644
+> --- a/arch/arm64/crypto/chacha-neon-glue.c
+> +++ b/arch/arm64/crypto/chacha-neon-glue.c
+> @@ -32,41 +32,33 @@
+>  asmlinkage void chacha_block_xor_neon(u32 *state, u8 *dst, const u8 *src,
+>                                       int nrounds);
+>  asmlinkage void chacha_4block_xor_neon(u32 *state, u8 *dst, const u8 *src,
+> -                                      int nrounds);
+> +                                      int nrounds, int bytes);
+>  asmlinkage void hchacha_block_neon(const u32 *state, u32 *out, int nrounds);
+>
+>  static void chacha_doneon(u32 *state, u8 *dst, const u8 *src,
+> -                         unsigned int bytes, int nrounds)
+> +                         int bytes, int nrounds)
+>  {
+>         u8 buf[CHACHA_BLOCK_SIZE];
+>
+> -       while (bytes >= CHACHA_BLOCK_SIZE * 4) {
+> +       if (bytes < CHACHA_BLOCK_SIZE) {
+> +               memcpy(buf, src, bytes);
+>                 kernel_neon_begin();
+> -               chacha_4block_xor_neon(state, dst, src, nrounds);
+> +               chacha_block_xor_neon(state, buf, buf, nrounds);
+> +               kernel_neon_end();
+> +               memcpy(dst, buf, bytes);
+> +               return;
+> +       }
+> +
+> +       while (bytes > 0) {
+> +               kernel_neon_begin();
+> +               chacha_4block_xor_neon(state, dst, src, nrounds,
+> +                                      min(bytes, CHACHA_BLOCK_SIZE * 4));
+>                 kernel_neon_end();
+>                 bytes -= CHACHA_BLOCK_SIZE * 4;
+>                 src += CHACHA_BLOCK_SIZE * 4;
+>                 dst += CHACHA_BLOCK_SIZE * 4;
+>                 state[12] += 4;
+>         }
+> -
+> -       if (!bytes)
+> -               return;
+> -
+> -       kernel_neon_begin();
+> -       while (bytes >= CHACHA_BLOCK_SIZE) {
+> -               chacha_block_xor_neon(state, dst, src, nrounds);
+> -               bytes -= CHACHA_BLOCK_SIZE;
+> -               src += CHACHA_BLOCK_SIZE;
+> -               dst += CHACHA_BLOCK_SIZE;
+> -               state[12]++;
+> -       }
+> -       if (bytes) {
+> -               memcpy(buf, src, bytes);
+> -               chacha_block_xor_neon(state, buf, buf, nrounds);
+> -               memcpy(dst, buf, bytes);
+> -       }
+> -       kernel_neon_end();
+>  }
+>
+>  static int chacha_neon_stream_xor(struct skcipher_request *req,
+> --
+> 2.19.1
+>
+>
+> #include <stdlib.h>
+> #include <string.h>
+>
+> extern void chacha_4block_xor_neon(unsigned int *state, unsigned char *dst,
+>                                    unsigned char *src, int rounds, int bytes);
+>
+> extern void chacha_block_xor_neon(unsigned int *state, unsigned char *dst,
+>                                   unsigned char *src, int rounds);
+>
+> int main(void)
+> {
+>         static char buf[1024];
+>         unsigned int state[64];
+>
+>         srand(20181130);
+>
+>         for (int i = 0; i < 10 * 1000 * 1000; i++) {
+>                 int l = 64 + rand() % (1024 - 64);
+>
+> #ifdef NEW
+>                 while (l > 0) {
+>                         chacha_4block_xor_neon(state, buf, buf, 20,
+>                                                l > 256 ? 256 : l);
+>                         l -= 256;
+>                 }
+> #else
+>                 while (l >= 256) {
+>                         chacha_4block_xor_neon(state, buf, buf, 20, 256);
+>                         l -= 256;
+>                 }
+>                 while (l >= 64) {
+>                         chacha_block_xor_neon(state, buf, buf, 20);
+>                         l -= 64;
+>                 }
+>                 if (l > 0) {
+>                         unsigned char tmp[64];
+>
+>                         memcpy(tmp, buf, l);
+>                         chacha_block_xor_neon(state, tmp, tmp, 20);
+>                         memcpy(buf, tmp, l);
+>                 }
+> #endif
+>         }
+>
+>         return 0;
+> }
