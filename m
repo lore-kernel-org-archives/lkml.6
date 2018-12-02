@@ -3,128 +3,237 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0945C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A69C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB5B921486
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71AAC20892
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:10:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CARZRSdJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5B921486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=invisiblethingslab.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWZ+XVHM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71AAC20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725808AbeLBRtH (ORCPT
+        id S1725783AbeLBSKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 12:49:07 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:40121 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725613AbeLBRtH (ORCPT
+        Sun, 2 Dec 2018 13:10:55 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38367 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbeLBSKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 12:49:07 -0500
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 74E0F21CFC;
-        Sun,  2 Dec 2018 12:49:04 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Sun, 02 Dec 2018 12:49:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:date:from:in-reply-to:in-reply-to
-        :message-id:references:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=bkazlM
-        eqSQMZGXmkvr4gNc7lrThuSBOK6guOJYB5HUo=; b=CARZRSdJTO+PosEizGkLLI
-        nKPsPdmrH8s1ksLnNhu8Uq6uNpWAyoiZxxyegLxC/bYF2uJiwa/JGum1auBemmBe
-        pwQ2gZd1f5y++dZeRwY0HNbLxx1DJobnc8O14orGJnRZXb4w0Q0A0UCwqmZ2RnDS
-        ydA57wVt+gvf9OPQwAdqREcFgNZVNUFSlLbWz188C8TwjQ+/y5SkTVZX2BmirYic
-        /DC/zY/B0HnRLfiOjDsOjefNBX2Yfb7FBafiT3y8BnzzjK3fWrjf+GXoWQX2qwfD
-        lk2fxx9Ar8kyfCnY6SAVXcKLo93D4T1ro2yXyDZi9gj0lH26aM9ljrJsiddJMBlA
-        ==
-X-ME-Sender: <xms:EBsEXPmQoJqre3gZhIa9GllcOlf4ciLjrJ-voP29EAi3RFB_c9nMBA>
-X-ME-Proxy: <xmx:EBsEXG69vk54Z_IWtouXkanTPZMMPb5l_eRrDEZaSY36D4Mzuvwu6Q>
-    <xmx:EBsEXAFyGB8X_HJ9rDDnruHNAqfH-k7BXLvQpfs5xkQmOytesYlaMQ>
-    <xmx:EBsEXHS5m1LUWyHTrnzFyxwZKzRC_DxoGYOpJe50f_sX9et9tmf4eA>
-    <xmx:EBsEXBusoo3fhFDfJ9AsBO1Raw4rNjAXxE7g0FglF-Oopij3rpnjTA>
-    <xmx:EBsEXOx0XyXTzidN_4mb0YhbFMwwg2J-T6r3OKKuQy0ZoywtXu_jDw>
-    <xmx:EBsEXKDIEWcDIpmo1N1oX9u7v1IDlTV8GN5OLmkYZPyrHO5b-olU2Q>
-Received: from localhost.localdomain (ip5b40a57c.dynamic.kabel-deutschland.de [91.64.165.124])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2AE6CE44DF;
-        Sun,  2 Dec 2018 12:49:03 -0500 (EST)
-From:   =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>,
-        Dwayne Litzenberger <dlitz@dlitz.net>
-Subject: [PATCH 2/2] xen-pciback: Allow enabling/disabling expansion ROM
-Date:   Sun,  2 Dec 2018 18:47:33 +0100
-Message-Id: <a05e3cf451d692dc4b1c81c8b5d66fc75d1fa325.1543772656.git-series.marmarek@invisiblethingslab.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
-References: <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
-In-Reply-To: <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
-References: <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
+        Sun, 2 Dec 2018 13:10:54 -0500
+Received: by mail-qt1-f194.google.com with SMTP id p17so11363274qtl.5;
+        Sun, 02 Dec 2018 10:10:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=g6MUn31CFLBMk8lpZj63YrEiQfbbrRgmleR05KhAnhM=;
+        b=fWZ+XVHM6qtb9com9LQF5vkmdxyNbNsIjINywSXlFhQQUhgC2p90NS1oRJuxDEY1U5
+         LGLYH0etyjuNu9hdCkcvkRDP8H/TvQq6SsFcTGeXLsbRvJszYOdQySsa0wPDoFqpwCjq
+         j3FMIt7mIgtvVuYegRpPx8TQrfQSvELOS8cUnoDxr4yg2wUskg+r2hSOWoohzgu0TiT6
+         FNu/Y3HxXh4hYID8ndX8+NC0pzOiWl+2R+x7tHDE5Uws7AIb9yDJFXwu968L2ezy1NuD
+         b0ZGlwZC/weMgmxA9XJc5HPqR7kWGsKtdXP4mkDLgpN+Lqgi2kgxVirdmmZ4Ktkh1W7e
+         F/7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=g6MUn31CFLBMk8lpZj63YrEiQfbbrRgmleR05KhAnhM=;
+        b=tOd9CvGaLDN6V2TBggKutaIWwSwegiGFzyRfm3ztzzmVj3V/sQE8OiuH3889lyghcp
+         WsL4OJhot+sPsRW6QEL0R+GpDCxpPQL600s/CltCxgjodf34QJFQN6BMO37Bq0xgK4g5
+         bCfTSVdKyOTWhmklZsAtMWpIwLco/FWUGLNR4PC6CIJC/k9UoRowO8H0JWI3fucHnb9q
+         RvwFIUyaMUZJWKCHxXGeVrVhO1QwsuS+B7U08Pfr5Vb0d7ovyOWmD28GgXRv58aeitU2
+         +5nb9ac9uNZXwPZlzBcvDmO+e/ypEPr1Dsevk4+b8IpavG+0XLTrobdupYydR8yYTmgX
+         5n6Q==
+X-Gm-Message-State: AA+aEWbEqDebbaly+bWwBWL4ddaFgv5uq2UKnktbiwAeTKFOm5CxFdsm
+        eNdYm9pJbzPyTQDr6tvv3yg=
+X-Google-Smtp-Source: AFSGD/XR9Cxdv8j106ZiqVvFfKkyuWTjtYH9baAc7XEP2rjNba4t6AaOkN0fvFiQlUT9TY0tY/MfSA==
+X-Received: by 2002:aed:2471:: with SMTP id s46mr12507499qtc.160.1543774250782;
+        Sun, 02 Dec 2018 10:10:50 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id f2sm5945517qkj.54.2018.12.02.10.10.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Dec 2018 10:10:50 -0800 (PST)
+Date:   Sun, 2 Dec 2018 16:10:45 -0200
+From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH] staging: iio: ad5933: replaced kfifo by triggered_buffer
+Message-ID: <20181202181045.vkdnus4ow3chdlu6@smtp.gmail.com>
+References: <20181122125347.sn2oqrw7fyb4corf@smtp.gmail.com>
+ <20181125105926.4730a798@archlinux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181125105926.4730a798@archlinux>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dwayne Litzenberger <dlitz@dlitz.net>
+On 11/25, Jonathan Cameron wrote:
+> On Thu, 22 Nov 2018 10:53:47 -0200
+> Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+> 
+> > Previously, there was an implicit creation of a kfifo which was replaced
+> > by a call to triggered_buffer_setup, which is already implemented in iio
+> > infrastructure.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> 
+> I'm a little surprised that this would work without screaming a lot as 
+> it will register an interrupt with no handlers. Do you have this
+> device to test?  It's rapidly heading in the direction of too complex
+> a driver to fix without test hardware.  Also, semantically this change
+> is not sensible as it implies an operating mode which the driver
+> is not using.
+> 
 
-Newer AMD GPUs store their initialization routines as bytecode on the
-ROM.  This fixes the following initialization error inside the VM when
-doing PCI passthrough:
+Thanks for reviewing the patch. I'm not expert at electronics so I'm
+still studying the datasheet to understand how the ad5933 works.
 
-    radeon 0000:00:05.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0xffff
-    radeon 0000:00:05.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0xffff
-    [drm:radeon_get_bios [radeon]] *ERROR* Unable to locate a BIOS ROM
-    radeon 0000:00:05.0: Fatal error during GPU init
+> There are fundamental questions about how we handle an autotriggered
+> sweep that need answering before this driver can move forwards.
+> It needs some concept of a higher level trigger rather than a per
+> sample one like we typically use in IIO.
+> 
 
-Signed-off-by: Dwayne Litzenberger <dlitz@dlitz.net>
----
- drivers/xen/xen-pciback/conf_space_header.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+From what I've read so far it seems that we would need to have two
+operation modes: one for the frequency sweep (that need to be
+discussed yet) and another for the receive stage (in which ad5933 would
+be continuously requested for data through I2C). So my first approach
+would be to build up an abstract trigger that would allow switching
+between these two operation modes. What do you think about that?
 
-diff --git a/drivers/xen/xen-pciback/conf_space_header.c b/drivers/xen/xen-pciback/conf_space_header.c
-index 697d0a8..bc145d3 100644
---- a/drivers/xen/xen-pciback/conf_space_header.c
-+++ b/drivers/xen/xen-pciback/conf_space_header.c
-@@ -150,21 +150,21 @@ static int rom_write(struct pci_dev *dev, int offset, u32 value, void *data)
- 	if ((value | ~PCI_ROM_ADDRESS_MASK) == ~0U)
- 		bar->which = 1;
- 	else {
--		u32 tmpval;
--		err = pci_read_config_dword(dev, offset, &tmpval);
-+		u32 newval = bar->val;
-+
-+		/* Allow enabling/disabling rom, if present */
-+		if (newval & PCI_ROM_ADDRESS_MASK) {
-+			newval &= ~PCI_ROM_ADDRESS_ENABLE;
-+			newval |= value & PCI_ROM_ADDRESS_ENABLE;
-+		}
-+
-+		err = pci_write_config_dword(dev, offset, newval);
- 		if (err)
- 			goto out;
--		if (tmpval != bar->val && value == bar->val) {
--			/* Allow restoration of bar value. */
--			err = pci_write_config_dword(dev, offset, bar->val);
--			if (err)
--				goto out;
--		}
-+		bar->val = newval;
- 		bar->which = 0;
- 	}
- 
--	/* Do we need to support enabling/disabling the rom address here? */
--
- out:
- 	return err;
- }
--- 
-git-series 0.9.1
+> The main focus in the short term should be around defining that ABI
+> as it may fundamentally change the structure of the driver.
+> If you want to take this on (and it'll be a big job I think!) then
+> it may be possible to source some hardware to support that effort.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+
+As a member of the FLOSS group at Universidade de São Paulo I have the
+hardware to test the driver though I didn't figure out all the steps to
+do it yet. I intend to continue development on this driver so I'm really
+thankful for all advise given.
+
+Thanks,
+
+Marcelo
+
+> > ---
+> >  .../staging/iio/impedance-analyzer/Kconfig    |  2 +-
+> >  .../staging/iio/impedance-analyzer/ad5933.c   | 25 ++++---------------
+> >  2 files changed, 6 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/staging/iio/impedance-analyzer/Kconfig b/drivers/staging/iio/impedance-analyzer/Kconfig
+> > index dd97b6bb3fd0..d0af5aa55dc0 100644
+> > --- a/drivers/staging/iio/impedance-analyzer/Kconfig
+> > +++ b/drivers/staging/iio/impedance-analyzer/Kconfig
+> > @@ -7,7 +7,7 @@ config AD5933
+> >  	tristate "Analog Devices AD5933, AD5934 driver"
+> >  	depends on I2C
+> >  	select IIO_BUFFER
+> > -	select IIO_KFIFO_BUF
+> > +	select IIO_TRIGGERED_BUFFER
+> >  	help
+> >  	  Say yes here to build support for Analog Devices Impedance Converter,
+> >  	  Network Analyzer, AD5933/4, provides direct access via sysfs.
+> > diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> > index f9bcb8310e21..edb8b540bbf1 100644
+> > --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
+> > +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> > @@ -20,7 +20,7 @@
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/iio/sysfs.h>
+> >  #include <linux/iio/buffer.h>
+> > -#include <linux/iio/kfifo_buf.h>
+> > +#include <linux/iio/triggered_buffer.h>
+> >  
+> >  /* AD5933/AD5934 Registers */
+> >  #define AD5933_REG_CONTROL_HB		0x80	/* R/W, 1 byte */
+> > @@ -615,22 +615,6 @@ static const struct iio_buffer_setup_ops ad5933_ring_setup_ops = {
+> >  	.postdisable = ad5933_ring_postdisable,
+> >  };
+> >  
+> > -static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
+> > -{
+> > -	struct iio_buffer *buffer;
+> > -
+> > -	buffer = iio_kfifo_allocate();
+> > -	if (!buffer)
+> > -		return -ENOMEM;
+> > -
+> > -	iio_device_attach_buffer(indio_dev, buffer);
+> > -
+> > -	/* Ring buffer functions - here trigger setup related */
+> > -	indio_dev->setup_ops = &ad5933_ring_setup_ops;
+> > -
+> > -	return 0;
+> > -}
+> > -
+> >  static void ad5933_work(struct work_struct *work)
+> >  {
+> >  	struct ad5933_state *st = container_of(work,
+> > @@ -744,7 +728,8 @@ static int ad5933_probe(struct i2c_client *client,
+> >  	indio_dev->channels = ad5933_channels;
+> >  	indio_dev->num_channels = ARRAY_SIZE(ad5933_channels);
+> >  
+> > -	ret = ad5933_register_ring_funcs_and_init(indio_dev);
+> > +	ret = iio_triggered_buffer_setup(indio_dev, NULL, NULL,
+> > +					 &ad5933_ring_setup_ops);
+> 
+> The absence of either of the interrupt related callbacks made me
+> wonder what is going on here.  The upshot is that this device
+> isn't operating in a triggered buffer style at all so we really
+> shouldn't be using that infrastructure - even if it's convenient.
+> 
+> It'll allocate an interrupt with neither a top half nor a thread
+> function. I'm not sure what the core will do about that but it
+> seems unlikely to be happy about it!
+> 
+
+The reason for not using triggered_buffer would be because I2C of
+communication is always started by the master device so the ad5933 would
+only wait for being requested for data. It wouldn't be capable of using
+I2C to call for master device nor it has any interrupt pin to do that.
+Is that right?
+
+> 
+> >  	if (ret)
+> >  		goto error_disable_reg;
+> >  
+> > @@ -759,7 +744,7 @@ static int ad5933_probe(struct i2c_client *client,
+> >  	return 0;
+> >  
+> >  error_unreg_ring:
+> > -	iio_kfifo_free(indio_dev->buffer);
+> > +	iio_triggered_buffer_cleanup(indio_dev);
+> >  error_disable_reg:
+> >  	regulator_disable(st->reg);
+> >  
+> > @@ -772,7 +757,7 @@ static int ad5933_remove(struct i2c_client *client)
+> >  	struct ad5933_state *st = iio_priv(indio_dev);
+> >  
+> >  	iio_device_unregister(indio_dev);
+> > -	iio_kfifo_free(indio_dev->buffer);
+> > +	iio_triggered_buffer_cleanup(indio_dev);
+> >  	regulator_disable(st->reg);
+> >  
+> >  	return 0;
+> 
