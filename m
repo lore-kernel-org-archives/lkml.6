@@ -2,121 +2,90 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379B2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 11:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C9BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 11:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09FAA2082F
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 11:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09FAA2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 6C05020834
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 11:17:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C5uSUqwM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C05020834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725862AbeLBLOk (ORCPT
+        id S1725827AbeLBLRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 06:14:40 -0500
-Received: from shell.v3.sk ([90.176.6.54]:60600 "EHLO shell.v3.sk"
+        Sun, 2 Dec 2018 06:17:45 -0500
+Received: from ozlabs.org ([203.11.71.1]:50417 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbeLBLOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 06:14:40 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id F282AC7E34;
-        Sun,  2 Dec 2018 12:14:35 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id MoKnBYLNaEnt; Sun,  2 Dec 2018 12:14:31 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id AADCFC7E36;
-        Sun,  2 Dec 2018 12:14:31 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id P9b-jlzVKqXO; Sun,  2 Dec 2018 12:14:31 +0100 (CET)
-Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id C3E3DC7E34;
-        Sun,  2 Dec 2018 12:14:30 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Cc:     Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, James Cameron <quozl@laptop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        id S1725776AbeLBLRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 06:17:44 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4375Fb4gmjz9sDF;
+        Sun,  2 Dec 2018 22:17:39 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543749459;
+        bh=4IF1DEMzabrvnZOQyDb5kowLq+GivRJxxJmQTZReQ9M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=C5uSUqwMKzp8jBp5afkkWPkq7+dmfVlfrfOyHbSRPxmPIsf2YWH5ClNlRDwGjywLr
+         lkm8/ypxLQQ3O77OSLorLFlL++hUjd3HOaUOkpKrx0luIvCygwyIlbzWCfsOQ7l4M1
+         p3XnKQqvq5S1E+A3T8s54Y5s8yIEFji2gHSQn/H+DS/Mj2fyk/yxYCRzzJzmq7yWta
+         O+eXe3oqAZbWLS+c883KwjSTwl29zOMedSv+6ZK2R5R3mp/LJlrfYNZpV0IQuJ7oyP
+         G4Je4hnVsxfYY2FEBzUjDU7FjMyccGDiSqbmHnhsjfar1SfGbsTB/hDkVphzIWhcq4
+         rHqiO/b4TrwfQ==
+Date:   Sun, 2 Dec 2018 22:17:33 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] MAINTAINERS: update entry for MMP platform
-Date:   Sun,  2 Dec 2018 12:14:28 +0100
-Message-Id: <20181202111428.1543-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.1
+        Sean Paul <seanpaul@chromium.org>
+Subject: linux-next: Signed-off-by missing for commit in the drm-msm tree
+Message-ID: <20181202221733.34f7ddcf@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6niei6bi3HC8sM3rAX0O6IQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move Eric Miao and Haojian Zhuang over to CREDITS, since they're AWOL
-for some time already. The git trees have gone away too.
+--Sig_/6niei6bi3HC8sM3rAX0O6IQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm adding myself as a reviewer. I'd like to be Cc'd on patches and will
-be able to test them, but I don't possess a data sheet thus there might
-be things I'll be unable to review. Hence the Odd-Fixes status.
+Hi Rob,
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- CREDITS     | 8 ++++++++
- MAINTAINERS | 7 ++-----
- 2 files changed, 10 insertions(+), 5 deletions(-)
+Commit
 
-diff --git a/CREDITS b/CREDITS
-index c9273393fe14..7d397ee67524 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -2541,6 +2541,10 @@ S: Ormond
- S: Victoria 3163
- S: Australia
-=20
-+N: Eric Miao
-+E: eric.y.miao@gmail.com
-+D: MMP support
-+
- N: Pauline Middelink
- E: middelin@polyware.nl
- D: General low-level bug fixes, /proc fixes, identd support
-@@ -4115,6 +4119,10 @@ S: 1507 145th Place SE #B5
- S: Bellevue, Washington 98007
- S: USA
-=20
-+N: Haojian Zhuang
-+E: haojian.zhuang@gmail.com
-+D: MMP support
-+
- N: Richard Zidlicky
- E: rz@linux-m68k.org, rdzidlic@geocities.com
- W: http://www.geocities.com/rdzidlic
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 380e43f585d3..5741ed390432 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9940,12 +9940,9 @@ S:	Odd Fixes
- F:	drivers/media/radio/radio-miropcm20*
-=20
- MMP SUPPORT
--M:	Eric Miao <eric.y.miao@gmail.com>
--M:	Haojian Zhuang <haojian.zhuang@gmail.com>
-+R:	Lubomir Rintel <lkundrak@v3.sk>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--T:	git git://github.com/hzhuang1/linux.git
--T:	git git://git.linaro.org/people/ycmiao/pxa-linux.git
--S:	Maintained
-+S:	Odd Fixes
- F:	arch/arm/boot/dts/mmp*
- F:	arch/arm/mach-mmp/
-=20
+  a288ee6eb8d0 ("drm/msm: validate display and event threads")
+
+is missing a Signed-off-by from its committer.
+
 --=20
-2.19.1
+Cheers,
+Stephen Rothwell
 
+--Sig_/6niei6bi3HC8sM3rAX0O6IQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwDv00ACgkQAVBC80lX
+0Gww0Af/XYLO8GZfq6KIVVMb6kGUORh576YbNXwlwk+lSiYIXXNUjVLk7gN2xAMW
+K75ZaaA4I1pQ2hRsjBDRPUMu5QHlGRbQB3ZIS+anXjvR5EpqumowyF7Y4zWy2SS/
+m9tlJmoht5w0aOFtp7U1OXpMU9+HOWfmnvQ/1NZ23YMtgnFhXEZKwBbWAwklkjAG
+xlcQpyPAdNjcc8gUlDJP6/BGYpG3tytvKSUJmROPyiuYiHq81in3SszUH23vB8L2
+/wmbElg2nR11mvhQ3UqvC0UJJ1hKYpDD2JihmOjXTB0duM/kxcVEW2P+lstKuq4G
+mxXI97GmpG5tTZDJSGWNHYjNK/rwJw==
+=SuLx
+-----END PGP SIGNATURE-----
+
+--Sig_/6niei6bi3HC8sM3rAX0O6IQ--
