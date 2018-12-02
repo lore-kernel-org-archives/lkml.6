@@ -2,118 +2,121 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C05C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72418C65BAE
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78DB2208A3
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:05:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5qmGPpo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78DB2208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 40AE720851
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:10:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40AE720851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbeLBPFV (ORCPT
+        id S1725901AbeLBPK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 10:05:21 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46768 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbeLBPFV (ORCPT
+        Sun, 2 Dec 2018 10:10:57 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58734 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725876AbeLBPK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 10:05:21 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x202so8704278oif.13;
-        Sun, 02 Dec 2018 07:05:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jy//Qqh5r3gLsFZoCXkRf8ZR7FcSi7TRvRvv7HQfTVQ=;
-        b=c5qmGPpoH8VTz4LVVwXpVpygip5FRODjbKRes/BxNv0O+5z7ulE21+5ULKEq/SK+QY
-         Zb1DgJDgq1BenIjhE85oYqOc3/vfxxQ0udmWFEmFe6b88eYR1OJw33caodAYgqus42O5
-         sgrbBJHVr96yAHvyZ2yPRInfPHSvd2BRSX0JC98i2u7GrfoEoz/PYeMo+tWLPY02B52T
-         DkkxGX54qSivSKh1ba5weggUYDawAVbMB8irfBPdGjJmaf/AlH6J9BAgL+YE55dYPL5a
-         CIxDGZsxkvrRfWK1457bD6MI1SqpkUBzPVZH96qkisHYVKFl0ME/obxUbVLGhcIV9UXr
-         xeYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jy//Qqh5r3gLsFZoCXkRf8ZR7FcSi7TRvRvv7HQfTVQ=;
-        b=b/3HQ9AzL+AhvuEYhlTd23SWXrjwg6KyMNx6VZ1Q6bPqpoq8mQ3QmnnZWYI6s/7utf
-         A5CPh1hOnM8IG1V/Lr6IeNp8DdKQhTrX+HabBJhnEZmNGuifp8SG4uDHZcy59Nxz4RmC
-         D9ItrPq/7TOx+V7Z97DXMj8bx1mFQDH2QFsb1aPADiY3YRP5kxSH7uaKB/EeN4UK22xa
-         EFkzGbVVOUiHbUihnEDQtnIUWf+EPqbkrpzCrt0NpUxxzIhDdlI6ohuK6LB51oWP5pb4
-         mOvsM6UpyenjYmPq3YVPp3PFNE7ezXPeNNpjL4G1LnnlaZNIx3+ZYHJIXyaqVXI03V+7
-         ZeNw==
-X-Gm-Message-State: AA+aEWZy+uxUWbjuqzyfndLka1psqTggIlxnUZrQAhV/DWUkg1x+3/9c
-        FIyBNuoI2r3jkM8rWNbI5BAsFrZXUysJhprLkhI=
-X-Google-Smtp-Source: AFSGD/V9jZt9LBlsBwrQo31lariA6QSolUgLfBct3CyHv/ebnbbrgQTCVxiV0A2pvFhNQM3P0rlb9Jk+21rMtrRvuWY=
-X-Received: by 2002:aca:7546:: with SMTP id q67mr8137432oic.300.1543763119210;
- Sun, 02 Dec 2018 07:05:19 -0800 (PST)
-MIME-Version: 1.0
-References: <20181126103842.3249-1-martin.kepplinger@ginzinger.com>
- <20181129080923.GE13859@kroah.com> <1676802.TThbbZSlzy@blindfold>
- <CADVatmP1h7GJJRVURkinwSM44Y4iooMP-U_7zew4V+zsMva4Vw@mail.gmail.com> <20181202143543.GE221015@sasha-vm>
-In-Reply-To: <20181202143543.GE221015@sasha-vm>
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date:   Sun, 2 Dec 2018 15:04:43 +0000
-Message-ID: <CADVatmOFi_S8q=Q3qvnyJ-A--NW=bZ-NgrK_fbbsmb=fJgOhbg@mail.gmail.com>
-Subject: Re: [PATCH] ubi: fastmap: Check each mapping only once
-To:     sashal@kernel.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        martin.kepplinger@ginzinger.com, Stable <stable@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Juergen <juergen.lachmann@harman.com>
+        Sun, 2 Dec 2018 10:10:57 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB2F3INm057329
+        for <linux-kernel@vger.kernel.org>; Sun, 2 Dec 2018 10:10:54 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p48u3fjjk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 10:10:54 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 2 Dec 2018 15:10:51 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 2 Dec 2018 15:10:49 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB2FAm666095160
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 2 Dec 2018 15:10:48 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0F5F242047;
+        Sun,  2 Dec 2018 15:10:48 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1102B42041;
+        Sun,  2 Dec 2018 15:10:47 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.63])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  2 Dec 2018 15:10:46 +0000 (GMT)
+Subject: Re: [PATCH] docs: Extend trusted keys documentation for TPM 2.0
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <jejb@linux.ibm.com>
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 02 Dec 2018 10:10:36 -0500
+In-Reply-To: <20181130234646.GB3792@linux.intel.com>
+References: <20181019101758.1569-1-stefanb@linux.ibm.com>
+         <20181106164603.w46wspmdj5e4slwe@cantor>
+         <1541528254.8568.48.camel@linux.ibm.com>
+         <20181130234507.GA3792@linux.intel.com>
+         <20181130234646.GB3792@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18120215-0012-0000-0000-000002D373A8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120215-0013-0000-0000-00002108C665
+Message-Id: <1543763436.4216.196.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-02_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812020145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 2, 2018 at 2:35 PM Sasha Levin <sashal@kernel.org> wrote:
->
-> On Sun, Dec 02, 2018 at 11:50:33AM +0000, Sudip Mukherjee wrote:
-> >Hi Greg,
-> >
-> >On Sun, Dec 2, 2018 at 8:51 AM Richard Weinberger <richard@nod.at> wrote:
-> >>
-> >> Greg,
-> >>
-> >> Am Donnerstag, 29. November 2018, 09:09:23 CET schrieb Greg KH:
-> >> > On Mon, Nov 26, 2018 at 11:38:42AM +0100, Martin Kepplinger wrote:
-> >> > > From: Richard Weinberger <richard@nod.at>
-> >> > >
-> >> > > [ Upstream commit 34653fd8c46e771585fce5975e4243f8fd401914 ]
-> >> > >
-> ><snip>
-> >> >
-> >> > Now queued up for 4.14.y, thanks.
-> >>
-> >> can you *please* slow a little down?
-> >
-> >True. It will really help if you can have some sort of fixed schedule
-> >for stable release, like maybe stablerc is ready on Thursday or Friday
-> >and release the stable on Monday. Having a weekend in stablerc will be
-> >helpful for people like me who only get the time in weekends for
-> >upstream or stable kernel.
->
-> Any sort of schedule will never work for everyone (for example, if it's
-> part of your paid job - you don't necessarily want to review stuff over
-> the weekend).
+On Fri, 2018-11-30 at 15:46 -0800, Jarkko Sakkinen wrote:
+> On Fri, Nov 30, 2018 at 03:45:07PM -0800, Jarkko Sakkinen wrote:
+> > On Tue, Nov 06, 2018 at 01:17:34PM -0500, Mimi Zohar wrote:
+> > > On Tue, 2018-11-06 at 09:46 -0700, Jerry Snitselaar wrote:
+> > > > On Fri Oct 19 18, Stefan Berger wrote:
+> > > > >Extend the documentation for trusted keys with documentation for how to
+> > > > >set up a key for a TPM 2.0 so it can be used with a TPM 2.0 as well.
+> > > > >
+> > > > >Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > >Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > > 
+> > > > Acked-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > 
+> > > Thanks!  This patch is now staged in the #next-integrity-queued
+> > > branch.
+> > > 
+> > > Mimi
+> > 
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Brings to mind, in the long run where the backend code for trusted keys
+> should reside.
 
-Yes, exactly. But like I said if the stablerc tree is pushed on
-Thursday, and the stable release is released on Monday then both types
-of people will get time, and hopefully everyone is happy. :)
+Are you asking about coordinating staging the trusted key patches to
+be upstreamed or about moving portions of the encrypted keys code out
+of the keyring subsystem?
 
+I'm not sure there needs to be a separate encrypted-keys pull request.
+ Either they can be upstreamed via the TPM or the integrity subsystem
+for now.
 
--- 
-Regards
-Sudip
+Mimi
+
