@@ -2,151 +2,218 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3E7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1BCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D5D20881
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:56:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E256C20851
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 15:58:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKrwRJ1j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D5D20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CT6BUfRz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E256C20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725915AbeLBP4O (ORCPT
+        id S1725912AbeLBP6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 10:56:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbeLBP4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 10:56:13 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 410A220851;
-        Sun,  2 Dec 2018 15:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543766171;
-        bh=kfB2CwL9PDdYHtwon+GTQVTrdrxlsRJSWRgVA7YykFo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MKrwRJ1j6tzrMmZRa6WwbzonlI19f4TBZBYFbXa/x3nPSaypK/704MrbmqaRQjypi
-         +ra+1tmc46bL6U4Q2mwBA4/u9vbkQaeByOPnu4oT47ItgZ4Cz9fFg8iQW6dOMp4YsJ
-         xbbE2kKUQIETFrcCgcsRL1ZR7aRo1ZIuryAS4uF8=
-Date:   Sun, 2 Dec 2018 15:56:06 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/15] platform/x86: intel_cht_int33fe: Accept errors
- of i2c_acpi_new_device()
-Message-ID: <20181202155606.16b55703@archlinux>
-In-Reply-To: <20181128114535.80223-3-andriy.shevchenko@linux.intel.com>
-References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
-        <20181128114535.80223-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 2 Dec 2018 10:58:07 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38153 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbeLBP6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 10:58:07 -0500
+Received: by mail-io1-f67.google.com with SMTP id l14so8428586ioj.5;
+        Sun, 02 Dec 2018 07:58:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XnNpHL/58Ulh4j+XcshZcSWNukesGwK19L7aclXqCis=;
+        b=CT6BUfRzcx5f9rVdH/+w7hA7O1OTwpu0n2Gnpt9gbcdsxskzzvQuuHjXPsqmToMKyi
+         ZLwUvvZf6niErvV/h5YWEyr2RkKx5fQ5VZLoVZjARLZBCIwCkVBNXl6f7HE2FNMeW3Oe
+         nWb+dRdyR1AifUICGbaeK8DvJ/TxN1mb041WZArmx3xeYikt1tj2Veb5o3bG91L5MZgR
+         POQJ+Ld+WaLBNN8aF0pslq+HXxZU36srPz4G8HbC/yDkOyBAeGBg7ncDxhp97mHtVij3
+         2LQc4pKfaWW35WLUeAF4dzOSmcKGAx7/GNj+PoKk2GpQEyW3KGtzB0VvlWF9R4l7BsLt
+         RRlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XnNpHL/58Ulh4j+XcshZcSWNukesGwK19L7aclXqCis=;
+        b=poxqckuuNFxezh+K2A8CxOZMsTq5D1mGd8O1zfpKN05D2adNtRC/lDA9YgekzeSxEm
+         CZRvQw0dKVEBhgWnB2O3djbS4e2Rs9SbRt2zwGoCYOHQ4wNWN7Wrl1vYr8Et3Ahu+wle
+         j3yi8NCyapfGY4OyDiYG/9TjN8afePw2keT4dVc0J/OR/5Uo5kv75atOnZweod6aZhzU
+         eBSVn05FuEPKL6FxsX0dk9XJSxI7SnA9UaktAp2fqwTc0Ohk+xwpQJtJdxzbNbM8GN/m
+         vcnBaCNrRSkY/IUef7ThPwPDyOh4NdBGV8XayEZlVzk7BGPBeBZdgEmSeErgo2JX4klQ
+         jH2Q==
+X-Gm-Message-State: AA+aEWbBbDbNRs2BqXFoJDiCM69SDFHC712VwyJe3YWqFMYdhYuGL1/5
+        H/K4F1ySOrNswibK3uVSyElnSB69CEeLuB4AXZnAT7DH
+X-Google-Smtp-Source: AFSGD/WXZWP5aubGgUI5+VDRbnExtu7ScYhs0ktCdrRH1lpc/5n9RErzuaT2LDnbVbYy4OdB2Qd7TkrqNoEuOFQj3Es=
+X-Received: by 2002:a6b:9156:: with SMTP id t83mr10978253iod.248.1543766283822;
+ Sun, 02 Dec 2018 07:58:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181122015237.14534-1-jonathan@marek.ca> <20181122015237.14534-5-jonathan@marek.ca>
+In-Reply-To: <20181122015237.14534-5-jonathan@marek.ca>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Sun, 2 Dec 2018 10:57:52 -0500
+Message-ID: <CAF6AEGum3tcsT5d5aw02GL5UxZdfC-cCSc=YBRF5L=Ws3Vt9vA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] drm/msm: add headless gpu device (for imx5)
+To:     Jonathan <jonathan@marek.ca>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        Chris Healy <Chris.Healy@zii.aero>,
+        Fabio Estevam <festevam@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 13:45:22 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> In the future i2c_acpi_new_device() will return error pointer in some cases.
-> Prepare intel_cht_int33fe driver to support that.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Really trivial comment inline.  I haven't checked back to see if there
-has been any previous discussion on that bit of code.
-
-Otherwise looks sensible to me.
-
-Jonathan
-
-
-
+On Wed, Nov 21, 2018 at 8:55 PM Jonathan Marek <jonathan@marek.ca> wrote:
+>
+> This patch allows using drm/msm without qcom display hardware. This is
+> especially useful for iMX5 hardware, which has a a2xx GPU but uses the
+> imx-drm driver for display.
+>
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 > ---
->  drivers/platform/x86/intel_cht_int33fe.c | 28 +++++++++++++++++++-----
->  1 file changed, 23 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-> index 431151d4e611..367d6e304ade 100644
-> --- a/drivers/platform/x86/intel_cht_int33fe.c
-> +++ b/drivers/platform/x86/intel_cht_int33fe.c
-> @@ -168,8 +168,14 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->  		board_info.dev_name = "max17047";
->  		board_info.properties = max17047_props;
->  		data->max17047 = i2c_acpi_new_device(dev, 1, &board_info);
-> -		if (!data->max17047)
-> -			return -EPROBE_DEFER; /* Wait for i2c-adapter to load */
-> +		if (IS_ERR(data->max17047))
-> +			ret = PTR_ERR(data->max17047);
-Every so slightly nicer to just return directly in these error cases?
-> +		else if (!data->max17047)
-> +			ret = -EPROBE_DEFER; /* Wait for i2c-adapter to load */
-> +		else
-> +			ret = 0;
-
-Particularly so as then you don't need to set this ret as it's set in all
-paths where it is used below anyway...
-
-> +		if (ret)
-> +			return ret;
->  	}
->  
->  	data->connections[0].endpoint[0] = "port0";
-> @@ -194,7 +200,13 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->  	board_info.irq = fusb302_irq;
->  
->  	data->fusb302 = i2c_acpi_new_device(dev, 2, &board_info);
-> -	if (!data->fusb302)
-> +	if (IS_ERR(data->fusb302))
-> +		ret = PTR_ERR(data->fusb302);
-> +	else if (!data->fusb302)
-> +		ret = -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
-> +	else
-> +		ret = 0;
-> +	if (ret)
->  		goto out_unregister_max17047;
->  
->  	memset(&board_info, 0, sizeof(board_info));
-> @@ -202,7 +214,13 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->  	strlcpy(board_info.type, "pi3usb30532", I2C_NAME_SIZE);
->  
->  	data->pi3usb30532 = i2c_acpi_new_device(dev, 3, &board_info);
-> -	if (!data->pi3usb30532)
-> +	if (IS_ERR(data->pi3usb30532))
-> +		ret = PTR_ERR(data->pi3usb30532);
-> +	else if (!data->pi3usb30532)
-> +		ret = -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
-> +	else
-> +		ret = 0;
-> +	if (ret)
->  		goto out_unregister_fusb302;
->  
->  	platform_set_drvdata(pdev, data);
-> @@ -217,7 +235,7 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->  
->  	device_connections_remove(data->connections);
->  
-> -	return -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
-> +	return ret;
+> v2: added commit message and removed unnecessary comment
+>
+>  drivers/gpu/drm/msm/Kconfig       |  4 ++--
+>  drivers/gpu/drm/msm/msm_debugfs.c |  2 +-
+>  drivers/gpu/drm/msm/msm_drv.c     | 21 +++++++++++----------
+>  3 files changed, 14 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> index 843a9d40c05e..cf549f1ed403 100644
+> --- a/drivers/gpu/drm/msm/Kconfig
+> +++ b/drivers/gpu/drm/msm/Kconfig
+> @@ -2,7 +2,7 @@
+>  config DRM_MSM
+>         tristate "MSM DRM"
+>         depends on DRM
+> -       depends on ARCH_QCOM || (ARM && COMPILE_TEST)
+> +       depends on ARCH_QCOM || SOC_IMX5 || (ARM && COMPILE_TEST)
+>         depends on OF && COMMON_CLK
+>         depends on MMU
+>         select QCOM_MDT_LOADER if ARCH_QCOM
+> @@ -11,7 +11,7 @@ config DRM_MSM
+>         select DRM_PANEL
+>         select SHMEM
+>         select TMPFS
+> -       select QCOM_SCM
+> +       select QCOM_SCM if ARCH_QCOM
+>         select WANT_DEV_COREDUMP
+>         select SND_SOC_HDMI_CODEC if SND_SOC
+>         select SYNC_FILE
+> diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
+> index f0da0d3c8a80..1ca99ca356a4 100644
+> --- a/drivers/gpu/drm/msm/msm_debugfs.c
+> +++ b/drivers/gpu/drm/msm/msm_debugfs.c
+> @@ -235,7 +235,7 @@ int msm_debugfs_init(struct drm_minor *minor)
+>         debugfs_create_file("gpu", S_IRUSR, minor->debugfs_root,
+>                 dev, &msm_gpu_fops);
+>
+> -       if (priv->kms->funcs->debugfs_init) {
+> +       if (priv->kms && priv->kms->funcs->debugfs_init) {
+>                 ret = priv->kms->funcs->debugfs_init(priv->kms, minor);
+>                 if (ret)
+>                         return ret;
+> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> index 9f219e02f3c7..3f35e57202ef 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.c
+> +++ b/drivers/gpu/drm/msm/msm_drv.c
+> @@ -344,6 +344,7 @@ static int msm_drm_uninit(struct device *dev)
+>         return 0;
 >  }
->  
->  static int cht_int33fe_remove(struct platform_device *pdev)
+>
+> +#define KMS_HEADLESS 1
+>  #define KMS_MDP4 4
+>  #define KMS_MDP5 5
+>  #define KMS_DPU  3
+> @@ -495,6 +496,9 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>         msm_gem_shrinker_init(ddev);
+>
+>         switch (get_mdp_ver(pdev)) {
+> +       case KMS_HEADLESS:
+> +               priv->kms = kms = NULL;
+> +               break;
+>         case KMS_MDP4:
+>                 kms = mdp4_kms_init(ddev);
+>                 priv->kms = kms;
+> @@ -512,12 +516,6 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>         }
+>
+>         if (IS_ERR(kms)) {
+> -               /*
+> -                * NOTE: once we have GPU support, having no kms should not
+> -                * be considered fatal.. ideally we would still support gpu
+> -                * and (for example) use dmabuf/prime to share buffers with
+> -                * imx drm driver on iMX5
+> -                */
+>                 dev_err(dev, "failed to load kms\n");
+>                 ret = PTR_ERR(kms);
+>                 goto err_msm_uninit;
+> @@ -633,7 +631,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>         drm_mode_config_reset(ddev);
+>
+>  #ifdef CONFIG_DRM_FBDEV_EMULATION
+> -       if (fbdev)
+> +       if (kms && fbdev)
+>                 priv->fbdev = msm_fbdev_init(ddev);
+>  #endif
+>
+> @@ -1315,9 +1313,11 @@ static int msm_pdev_probe(struct platform_device *pdev)
+>         struct component_match *match = NULL;
+>         int ret;
+>
+> -       ret = add_display_components(&pdev->dev, &match);
+> -       if (ret)
+> -               return ret;
+> +       if (get_mdp_ver(pdev) != KMS_HEADLESS) {
+> +               ret = add_display_components(&pdev->dev, &match);
+> +               if (ret)
+> +                       return ret;
+> +       }
+>
+>         ret = add_gpu_components(&pdev->dev, &match);
+>         if (ret)
+> @@ -1342,6 +1342,7 @@ static int msm_pdev_remove(struct platform_device *pdev)
+>  }
+>
+>  static const struct of_device_id dt_match[] = {
+> +       { .compatible = "qcom,adreno-headless", .data = (void *)KMS_HEADLESS },
 
+so, I don't really think we should have a "headless" dt node, because
+that doesn't really represent the hw.  Maybe instead for the gpu
+device node, we could use a different compatible string like:
+
+   gpu@xyz {
+      compatible = "amd,imageon-205.0", "amd,imageon";
+      ...
+   };
+
+(ie. amd,imageon instead of qcom,adreno)
+
+Then in adreno_bind() (or somewhere around there), if we have the
+amd,imageon compat string instead of qcom,adreno, then programatically
+create a dummy "headless" device that the toplevel drm driver can bind
+to.  I think something like this should be possible, and avoid needing
+a qcom,adreno-headless node in dt.
+
+BR,
+-R
+
+>         { .compatible = "qcom,mdp4", .data = (void *)KMS_MDP4 },
+>         { .compatible = "qcom,mdss", .data = (void *)KMS_MDP5 },
+>         { .compatible = "qcom,sdm845-mdss", .data = (void *)KMS_DPU },
+> --
+> 2.17.1
+>
