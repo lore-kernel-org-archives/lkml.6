@@ -2,130 +2,111 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 799FCC04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5144DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41E7620834
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1519520851
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 18:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsnS0myD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E7620834
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZ2po9/j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1519520851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725777AbeLBSaI (ORCPT
+        id S1725777AbeLBSu4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 13:30:08 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45410 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbeLBSaI (ORCPT
+        Sun, 2 Dec 2018 13:50:56 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33837 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbeLBSuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 13:30:08 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b20so7459717lfa.12;
-        Sun, 02 Dec 2018 10:30:04 -0800 (PST)
+        Sun, 2 Dec 2018 13:50:55 -0500
+Received: by mail-pl1-f193.google.com with SMTP id w4so5286598plz.1;
+        Sun, 02 Dec 2018 10:50:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ZXursNr3Y7FGpdsuTl0nEcaVlPiTtalREFY2a4vvFVI=;
-        b=LsnS0myDN+lLp1IoO7QFkSz8NHVSshWC+poHHnNR64sucBEce7heBM3Ewpeb2Gqgo8
-         YNSG3kx1uKf585sSvnAQ8Ei7aVL+yVVCC16NZ/xmqm4cybFEeWBTCkH/xwT59/ZasWEI
-         wYgnuh8HqGvtXVpyoPny5p86A+PkjZDa9olSKecIrTD9jQvZ7ojJwhRSBpP+o6ha63Mw
-         fC4jkgQ4aMcfiqDhZaqZMxOXBnvwAjBp19Akq258Hm2eWXnn5lZxSrxHljtavCmIrUi2
-         dGK1NZbG8DayWwxyGQsX/+ZE46RoMJ07ojsK0x+YFWE8ZzigMAxJ3jIP0GUzR9pL00j3
-         j57g==
+        bh=rNf34st5RBbwEPNAPoI4UJmDcemSs3UsebquzSehCHE=;
+        b=JZ2po9/jYqCgMpi90gk3oQsT+myeVou7XcgPDjNaMgQpsm13U9LlmED9pPM2dIAjU6
+         wrydUn13rj2ZIcojRMF7tLRlwQZdtmKDnifKDG//Uau6oOg/Umg6OTpJD9EdeEb/LZlR
+         5FD+LmOQ2eiaEtt+In24AfiQ5l+Kj4oZ5P3NrPDzJxb8+jg0e7LlsPmHzx37E3GI7qym
+         JgJSzV5KsOYGHg/Pul30b3rSnKqfeUKT92Z2PRpzmL2dzWJ2q4MdhgWJFiy54YzTffsW
+         AFoOxCbjWXJ07qEsVxbshAl8479YGLjqgVphb64BYtffRchmeVtlgZq9jZuWYUkRbzUB
+         qoyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZXursNr3Y7FGpdsuTl0nEcaVlPiTtalREFY2a4vvFVI=;
-        b=Swtw90Mw6NRd+ln2mRnh1B2sOYyl+KV91gaTxW7fd7q/hf1cIiMj5SspqIN+H1b3v3
-         GPt2HnF683W8iMNgwaujFrPTNWUA1X++xZJ0fM3AmA1zuuQePLTJUE253cFxrKFXMdyF
-         v8bB5iDxnts8aaq4g2rkUB2xtjqsdKak8odnezl0aOXAscncK5C2uBoahsm+N1awGEZ7
-         oLv7PEjaU0RwiJjpcQatI6Sf/LcPo1TWANchJXWsIOberfb+Grmz3+Kfho8YzM9EPCH7
-         F2NwAgawyTo5ywZQ0zjib5Sl6bJoL8fv8pJnMj1q0RbVHHvMcCUlW2zqZFbo5+3lgxc1
-         6S8w==
-X-Gm-Message-State: AA+aEWaxQOsUvleQ9czltpm1mLxia2NQQUMDiEpznxBPpC8TBgYfM75K
-        VPAIt/Y3WYj4MCX/JoX6H9g=
-X-Google-Smtp-Source: AFSGD/Vg3iIoRhZIvAC0fcndSh63U7CwaIanQdk7cHkrUGqVaDsmTwdzrSKSF29epGjdmKsiha8JTQ==
-X-Received: by 2002:a19:5e5d:: with SMTP id z29mr7281933lfi.105.1543775403282;
-        Sun, 02 Dec 2018 10:30:03 -0800 (PST)
-Received: from localhost (89-70-226-70.dynamic.chello.pl. [89.70.226.70])
-        by smtp.gmail.com with ESMTPSA id a18-v6sm2042659ljk.86.2018.12.02.10.30.02
+        bh=rNf34st5RBbwEPNAPoI4UJmDcemSs3UsebquzSehCHE=;
+        b=VtMrLF9iyuLwS3lhlqVGRwrNgb0hK1wmINYIhdYsgSc1Pc6sAksxICKAubMWRaCCkW
+         aAB2xIJBLr6uHLTvtP7wWDR5UGoC3vfDvkIVu4nO8Mr0ten5CZS0vLnyE/r5PC72sLWw
+         6MAB5NFBY+0N2zy7k7XMs+n2Qw2NrXRxI3sQ5t33chUVT0F2ErngzUVDV0JcgMT1vlij
+         jcmL3Ggxx3se7+CKnQuZPtR8VQToDM5RIttRvgmDE+pmFCd67UvZWPpI5noFp52rJ6Sj
+         gMSqkWKpJ8ieGS1Y5/qsp18ui6WH/VE7TsbznBsQ+5M84P6rWE1h9F/rhf/KObi3Lr/1
+         jQvQ==
+X-Gm-Message-State: AA+aEWb+301lYpk1b0IJcyf5i8iwlnC0cFAZ4huPr+QzRfdnbcOWayIo
+        Uu74aU4sqERAwUsmmJd04sA=
+X-Google-Smtp-Source: AFSGD/V0odeX3hLg8lKxcPneXIFvWL2FW2v1nvAIitJo+cOAT6EEbiox2C6qnw/YXmoCe+s5mLcc5Q==
+X-Received: by 2002:a17:902:9a02:: with SMTP id v2mr13489562plp.180.1543776652462;
+        Sun, 02 Dec 2018 10:50:52 -0800 (PST)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id v12sm18978926pgg.41.2018.12.02.10.50.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 10:30:02 -0800 (PST)
-Date:   Sun, 2 Dec 2018 19:29:44 +0100
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 3/3] iio: chemical: sps30: add device tree support
-Message-ID: <20181202182943.GA8286@arch>
-References: <20181124221415.10081-1-tduszyns@gmail.com>
- <20181124221415.10081-4-tduszyns@gmail.com>
- <20181125085939.421523d6@archlinux>
+        Sun, 02 Dec 2018 10:50:51 -0800 (PST)
+Date:   Mon, 3 Dec 2018 00:20:44 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>, joe@perches.com
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH] staging: iio: ad5933: add binding doc for ad5933
+Message-ID: <20181202185043.GA2007@himanshu-Vostro-3559>
+References: <20181202165712.t6pd6ygq57llf2lr@smtp.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181125085939.421523d6@archlinux>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <20181202165712.t6pd6ygq57llf2lr@smtp.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 08:59:39AM +0000, Jonathan Cameron wrote:
-> On Sat, 24 Nov 2018 23:14:15 +0100
-> Tomasz Duszynski <tduszyns@gmail.com> wrote:
->
-> > Add device tree support for Sensirion SPS30 particulate
-> > matter sensor.
-> >
-> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-> one comment inine, around the fact we are trying to move
-> to generic names in DT where ever possible.  Now we don't
-> have a suitable one (IIRC) yet so time to make one up ;)
->
-> +CC Rob for his input on that.
-> > ---
-> >  .../bindings/iio/chemical/sensirion,sps30.txt        | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
-> > new file mode 100644
-> > index 000000000000..6eee2709b5b6
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
-> > @@ -0,0 +1,12 @@
-> > +* Sensirion SPS30 particulate matter sensor
-> > +
-> > +Required properties:
-> > +- compatible: must be "sensirion,sps30"
-> > +- reg: the I2C address of the sensor
-> > +
-> > +Example:
-> > +
-> > +sps30@69 {
-> We should define a generic type.  Rob, what would work for this
-> one?
->
-> particlesensor@69?
->
+On Sun, Dec 02, 2018 at 02:57:12PM -0200, Marcelo Schmitt wrote:
+> Add a devicetree documentation for the ad5933 and ad5934 impedance
+> converter, network analyzer.
+> 
+> Co-Developed-by: Gabriel Capella <gabriel@capella.pro>
 
-Wouldn't air-pollution-sensor be somewhat more generic? At least
-wikipedia has some article about that. Various other names like
-particle-sensor, pm-sensor, particulate-matter-sensor,
-air-quality-sensor, tend to return more or less similar number
-of search hits. Which means there's no universal naming convention.
+checkpatch spits out:
 
-> > +	compatible = "sensirion,sps30";
-> > +	reg = <0x69>;
-> > +};
->
+WARNING: Non-standard signature: Co-Developed-by:
+
+Co-developed-by Vs Co-Developed-by ?
+
+Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
+Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
+
+Confusing! Don't know which one is correct.
+
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> Signed-off-by: Gabriel Capella <gabriel@capella.pro>
+> ---
+
+Use `./scripts/get_maintainer.pl <your_patch>` to list the DT
+maintainers and the relevant mailing list.
+
+
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
