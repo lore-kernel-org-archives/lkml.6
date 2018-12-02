@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD24C64EB4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A260C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6748820892
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6748820892
+	by mail.kernel.org (Postfix) with ESMTP id 06F1E208A3
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 21:15:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F1E208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725932AbeLBVPF (ORCPT
+        id S1725936AbeLBVPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 16:15:05 -0500
-Received: from www17.your-server.de ([213.133.104.17]:57444 "EHLO
+        Sun, 2 Dec 2018 16:15:48 -0500
+Received: from www17.your-server.de ([213.133.104.17]:57632 "EHLO
         www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbeLBVPE (ORCPT
+        with ESMTP id S1725779AbeLBVPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 16:15:04 -0500
+        Sun, 2 Dec 2018 16:15:48 -0500
 Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
         by www17.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.89_1)
         (envelope-from <thomas@m3y3r.de>)
-        id 1gTYlx-00017g-3L; Sun, 02 Dec 2018 21:55:25 +0100
+        id 1gTYlw-00017c-JN; Sun, 02 Dec 2018 21:55:24 +0100
 Received: from [2a02:908:4c28:3f60:fff6:43c5:695c:41d6] (helo=localhost.localdomain)
         by sslproxy06.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.89)
         (envelope-from <thomas@m3y3r.de>)
-        id 1gTYlw-0003At-Ty; Sun, 02 Dec 2018 21:55:24 +0100
-Subject: [PATCH] scsi: ipr: NULL check before some freeing functions is not
- needed.
+        id 1gTYlw-00038m-Cu; Sun, 02 Dec 2018 21:55:24 +0100
+Subject: [PATCH] drm/amdgpu: NULL check before some freeing functions is
+ not needed.
 From:   Thomas Meyer <thomas@m3y3r.de>
-To:     brking@us.ibm.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 X-Patch: Cocci
 X-Mailer: DiffSplit
-Message-ID: <1543760930052-1887660803-15-diffsplit-thomas@m3y3r.de>
+Message-ID: <1543760930051-1905796531-2-diffsplit-thomas@m3y3r.de>
 References: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
 In-Reply-To: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
-X-Serial-No: 15
+X-Serial-No: 2
 Date:   Sun, 02 Dec 2018 21:52:11 +0100
 User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
 Content-Transfer-Encoding: 7bit
@@ -62,16 +63,14 @@ NULL check before some freeing functions is not needed.
 Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
 ---
 
-diff -u -p a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
---- a/drivers/scsi/ipr.c
-+++ b/drivers/scsi/ipr.c
-@@ -9537,8 +9537,7 @@ static void ipr_free_cmd_blks(struct ipr
- 		}
- 	}
- 
--	if (ioa_cfg->ipr_cmd_pool)
--		dma_pool_destroy(ioa_cfg->ipr_cmd_pool);
-+	dma_pool_destroy(ioa_cfg->ipr_cmd_pool);
- 
- 	kfree(ioa_cfg->ipr_cmnd_list);
- 	kfree(ioa_cfg->ipr_cmnd_list_dma);
+diff -u -p a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -816,6 +816,5 @@ out:
+ void amdgpu_acpi_fini(struct amdgpu_device *adev)
+ {
+ 	unregister_acpi_notifier(&adev->acpi_nb);
+-	if (adev->atif)
+-		kfree(adev->atif);
++	kfree(adev->atif);
+ }
