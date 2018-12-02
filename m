@@ -2,77 +2,71 @@ Return-Path: <SRS0=9INQ=OL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2585C04EB8
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648E3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899C02081C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BE042081C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Dec 2018 17:02:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="IVUOOiZM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899C02081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Xb/E+0Cm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE042081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725780AbeLBRAg (ORCPT
+        id S1725781AbeLBRC5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 12:00:36 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42988 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbeLBRAg (ORCPT
+        Sun, 2 Dec 2018 12:02:57 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46457 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbeLBRC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 12:00:36 -0500
-Received: by mail-io1-f66.google.com with SMTP id x6so8484412ioa.9
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 09:00:34 -0800 (PST)
+        Sun, 2 Dec 2018 12:02:56 -0500
+Received: by mail-ot1-f68.google.com with SMTP id w25so9457462otm.13
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 09:02:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=Oisxvrn8vwMyiwpK5R9JK86kA7nCnXCgxvtMALgRayo=;
-        b=IVUOOiZMsqKBhkdeKRpuWF9XfJtF9U43/ou7tPPYEhF3r13D72lyjHyiyOicvBQb52
-         ZcHvPiaT2/TMHZJidhbWdCge8WRfBb75tL0slbNL8m80qnrCqgsYmZ0mJsnVKx+lhoz0
-         sdF28+zyY6dpGS25EJU++8r/gzVOtdtk384Q5Y01kVDCI5UWK7dvE5Ni55QHWlMKcAfP
-         74GiwqEsUg2P/NdhKRThdF25QF3cE0+775T1kSuSsc+Idg9JH+grGfq0yUUyx22KndhF
-         Os14sc5CvTbTzZfs2y7QFACvIqtd9atugHEaMsqaZLdDm4Ym69Ndk/hKxNikv657UAOU
-         eAlA==
+        bh=00HLrtqm8W1r9ik78WiiDuK7C6SV9SWCZPAJkFAh0Dk=;
+        b=Xb/E+0Cm9MxD0kpZ7MXIgeC5mh8I5f3m+iCRR2jhqDDme+7mcRpx0SR3fa2/xJmbxq
+         rMreYrDh1KQWKBp5oJg8Q/LhbkgeNWjcSlj4DIPQpsddv9YJwx9R9VAt3ByTJXneOLMz
+         hD1yFnVhR9galQAyMJo7L12n65TY3CQRNv3emSdVdCPh+SMjQNVUZdR1GSUH8xaacMG9
+         UfDgMhTlj/gd+DHCZJMwrsET/IvNMCOYBnZ65QttMd53GGmx5f/tmrwiksQJFBxEl+4K
+         KbQnyCwCtCXzwyzCJdZwhcZdkrj8FjVxmFihyiL7U+7CGbO8x0ga7PVZujpdXQC1WNiX
+         JpwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Oisxvrn8vwMyiwpK5R9JK86kA7nCnXCgxvtMALgRayo=;
-        b=ju3NIbAD79/l/GMMuyN357OZB7wN+/y+8Y14CbPUFuP4NOFBlh4pgt0w2MEncxZGut
-         MmxK9BR9xzbDCSWasudx1G0pl+QD71feQcehs3qsvjqObYGWK9eUNSj3M6YHwa9zbc+Y
-         0/IG+F1Z0ftorVrZNxzeCP+ERzYlem8euRGa7I9NG2Wzw97us8O8yf7CTE/rCNYlXUbn
-         jAwFY/SotWNiG2XnCbC150BwwCGrqhxXocbsBBv+8dljAguIefKxfNY2NF45d+n4iTeX
-         FgSs1s055J7/FI88sTLREo/rZP1oW9cy1uV21UqtBU+0V8HeN+9fuFScfrnHD2UYKnC9
-         71Vw==
-X-Gm-Message-State: AA+aEWa54ItCCBeRM+oQoGqYkF1GoTp7wZFkAh62GaJA2FO8IvGSQcQj
-        MCbNmjRvDTArr0uEENjdA3nrXIbLNfkOokdofYtAUA==
-X-Google-Smtp-Source: AFSGD/U99JXA7FVJ/6/yK/spGjS0zK3aY6++9Zc7XYD1AyZnz9bfNz6wWeamUjKs4RxxsT59LDkrp5bLxXoT5oGdkIQ=
-X-Received: by 2002:a5e:aa06:: with SMTP id s6mr11385852ioe.187.1543770033491;
- Sun, 02 Dec 2018 09:00:33 -0800 (PST)
+        bh=00HLrtqm8W1r9ik78WiiDuK7C6SV9SWCZPAJkFAh0Dk=;
+        b=BB9EJPgEuod0llSvAfvmi8GMlYWCSo9xCDNnafk5wdj3LSITRNr3P9zcZO/uyLMU6a
+         u/M0GlrgTjrwo4neErDuDh+05pvJIZO9YFUNge5Ujt4YW9XRjDElL+fzRNd5uF8Q6dig
+         LjrKXvc7E1mxcfWEeZ2clkGrn+j13yx5rqEili1tuuaqGw3ldHsUoZpY6vOrUerDzGXF
+         UALu0UkctNs9R8UvPeNZlgGDB5r4AyjCf6597zm4bcVwwC5YgNi1SSbm9OvJ2uoXCmTA
+         DIwuPL4Wz0yMCtRbITSwBpbdppDc6zNoLFeCyASHsyQX1Xk91sS8ynlxgN1IJeI5RHOR
+         JZHA==
+X-Gm-Message-State: AA+aEWYpa/SQeqK8TQtVMWwF/dlrx0dSivBJx1e7z2DkPzK0KtytXz8Y
+        khX5XVwtHfzo8f0S74OpQ3NC3EaRNZOefZJZRzSWeQ==
+X-Google-Smtp-Source: AFSGD/XW6KDTqpvxc4Luc0LNTmbeMaX/ahjCpT5Mm+pKUoKyzOX1lNjFcHCrbt02IRks4H39he3KkL2tyMgWehZXpGQ=
+X-Received: by 2002:a9d:4595:: with SMTP id x21mr8022866ote.234.1543770173456;
+ Sun, 02 Dec 2018 09:02:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com> <20181202122900.79922c91@why.wild-wind.fr.eu.org>
-In-Reply-To: <20181202122900.79922c91@why.wild-wind.fr.eu.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sun, 2 Dec 2018 18:00:22 +0100
-Message-ID: <CAMRc=MczHf3Q+826QDMMNAFU3WMKHR3L-Tj=Da4ydVRDcZThCA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20181201154151.14890-1-linus.walleij@linaro.org> <20181201154151.14890-10-linus.walleij@linaro.org>
+In-Reply-To: <20181201154151.14890-10-linus.walleij@linaro.org>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Sun, 2 Dec 2018 18:02:42 +0100
+Message-ID: <CAMpxmJXoZOJkKJRL0pO-LJ4HXxWb4qj7iADbpEoS=kfL4h-jHQ@mail.gmail.com>
+Subject: Re: [PATCH 09/13 v2] gpio: Add devm_gpiod_unhinge()
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        ckeepax@opensource.cirrus.com, m.szyprowski@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,41 +74,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-niedz., 2 gru 2018 o 13:29 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82=
-(a):
+sob., 1 gru 2018 o 16:53 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
+=82(a):
 >
-> On Fri, 30 Nov 2018 23:26:25 +0100
-> Linus Walleij <linus.walleij@linaro.org> wrote:
+> This adds a function named devm_gpiod_unhinge() that removes
+> the resource management from a GPIO descriptor.
 >
-> > On Thu, Nov 29, 2018 at 7:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wro=
-te:
-> >
-> > > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
-> > > sharing for userspace") some libgpiod tests are failing because we ca=
+> I am not sure if this is the best anglosaxon name for the
+> function, no other managed resources have an equivalent
+> currently, but I chose "unhinge" as the closest intuitive
+> thing I could imagine that fits Rusty Russell's API design
+> criterions "the obvious use is the correct one" and
+> "the name tells you how to use it".
+>
+> The idea came out of a remark from Mark Brown that it should
+> be possible to handle over management of a resource from
+> devres to the regulator core, and indeed we can do that.
+>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - New patch to be able to hand over GPIO descriptors to
+>   the regulator core.
+> - Mark: feel free to apply this to the regulator tree with
+>   the regulator tree with the rest.
+> ---
+>  Documentation/driver-model/devres.txt |  1 +
+>  drivers/gpio/gpiolib-devres.c         | 17 +++++++++++++++++
+>  include/linux/gpio/consumer.h         | 10 ++++++++++
+>  3 files changed, 28 insertions(+)
+>
+> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver=
+-model/devres.txt
+> index 43681ca0837f..fc4cc24dfb97 100644
+> --- a/Documentation/driver-model/devres.txt
+> +++ b/Documentation/driver-model/devres.txt
+> @@ -254,6 +254,7 @@ GPIO
+>    devm_gpiod_get_index_optional()
+>    devm_gpiod_get_optional()
+>    devm_gpiod_put()
+> +  devm_gpiod_unhinge()
+>    devm_gpiochip_add_data()
+>    devm_gpiochip_remove()
+>    devm_gpio_request()
+> diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.=
+c
+> index 01959369360b..5864e758d7f2 100644
+> --- a/drivers/gpio/gpiolib-devres.c
+> +++ b/drivers/gpio/gpiolib-devres.c
+> @@ -320,6 +320,23 @@ void devm_gpiod_put(struct device *dev, struct gpio_=
+desc *desc)
+>  }
+>  EXPORT_SYMBOL(devm_gpiod_put);
+>
+> +/**
+> + * devm_gpiod_unhinge - Remove resource management from a gpio descripto=
+r
+> + * @dev:       GPIO consumer
+> + * @desc:      GPIO descriptor to remove resource management from
+> + *
+> + * Remove resource management from a GPIO descriptor. This is needed whe=
 n
-> > > no longer depend on reading the value of a dummy GPIO after detecting
-> > > an interrupt to know the edge of the interrupt. While these interrupt=
-s
-> > > are triggered from debugfs and debugfs is not required to maintain
-> > > compatibility, I thing having a working test suite for the GPIO
-> > > subsystem and uAPI is worth applying these two patches and also the
-> > > previous one[1].
-> > >
-> > > Can we have them applied for 4.20 or are there any objections?
-> >
-> > I'm fine with applying them if I can just get an ACK from one of the IR=
-Q
-> > maintainers (Thomas, Marc).
+> + * you want to hand over lifecycle management of a descriptor to another
+> + * mechanism.
+> + */
+> +
+> +void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
+> +{
+> +       WARN_ON(devres_destroy(dev, devm_gpiod_release,
+> +                              devm_gpiod_match, desc));
+> +}
+> +EXPORT_SYMBOL(devm_gpiod_unhinge);
+> +
+>  /**
+>   * devm_gpiod_put_array - Resource-managed gpiod_put_array()
+>   * @dev:       GPIO consumer
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.=
+h
+> index 348885f2f3d3..8aebcf822082 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -104,6 +104,7 @@ struct gpio_descs *__must_check
+>  devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
+>                               enum gpiod_flags flags);
+>  void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
+> +void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc);
+>  void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs);
 >
-> I'm fine with that patch, with the provision that (nitpick) the edge
-> field is turned into a bool instead of an int.
+>  int gpiod_get_direction(struct gpio_desc *desc);
+> @@ -249,6 +250,15 @@ static inline void gpiod_put(struct gpio_desc *desc)
+>         WARN_ON(1);
+>  }
 >
-> With that,
->
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+> +static inline void devm_gpiod_unhinge(struct device *dev,
+> +                                     struct gpio_desc *desc)
+> +{
+> +       might_sleep();
+> +
+> +       /* GPIO can never have been requested */
+> +       WARN_ON(1);
+> +}
+> +
+>  static inline void gpiod_put_array(struct gpio_descs *descs)
+>  {
+>         might_sleep();
+> --
+> 2.19.1
 >
 
-I wanted to reuse the already existing IRQ_TYPE_EDGE_RISING/FALLING
-defines which I think makes more sense here than a boolean.
+Yes! This is much better than simply using non-devm variants of gpiod_get()=
+.
 
-Bart
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
