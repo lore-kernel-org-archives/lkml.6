@@ -2,158 +2,127 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A031C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE51BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB222082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:26:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 920782082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:26:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="bC2UnYiW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB222082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EO/InZd/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920782082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbeLCU0T (ORCPT
+        id S1726144AbeLCU0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:26:19 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34723 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeLCU0S (ORCPT
+        Mon, 3 Dec 2018 15:26:33 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33560 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeLCU0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:26:18 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w4so7051261plz.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 12:26:16 -0800 (PST)
+        Mon, 3 Dec 2018 15:26:33 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so6250486pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 12:26:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9+IcBgKidvB6Yvsd9O5agQ00SaFZhpKEVo7T4GK5Mo8=;
-        b=bC2UnYiWvt7hgtzcApdsxeBdkGfwKLEkbP4hAGnE2B99jGkmSYd5ny139BiGKwKQSu
-         6beoN8tcXxF9xfC8dVu7DM6H2geBuRMRe8dvQMt704jqzJM7oPlMdLLMZ9and+jMLvsQ
-         toG9Q1P+N3VykvQ8KkG4q8DhQHsm90In+RnBr2Bt7X4lUV6V18gA3g+nqL9WUrQYfsXg
-         WWhVnytMAoZeSKUJZ0RLNCrrbJU0cO+4PulrdIzOH5UAdWd9Z44RFal7zXrR5tWix7uz
-         Y88Ud1LONwPJilg5CNDEBzA8YhqLL/efV/PGZEhFVrJNJIlWLjtveoMQyIHuP8bOJGVb
-         TBiA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=GFASv4k38eUe55JTn7Xs8Ag9VKnmgbHychIvl/jNOAg=;
+        b=EO/InZd/dNwl5W6+zVMfPVfRFw11pqr4EtqvABf1URkuchkrWU6m5PoV8k/z+CnUlt
+         W/P/e4JJTF3kgD7bAoVKhZSoQ4RoPPjR7TgFPaOr3QUfiCn/BnlUy7HKHPRwWfYuZVqb
+         xHJueHFm709e6qSWG/K7VtqcsqcXNAPr7Hfy6lD8LFS7HKHsjleFmgQXhU7H+EbH+Ztr
+         6aJLlUKrtkUTZYbjhe6xSNvpPYErrySTTRXVYl6FYNY3lQxqL5QvRE6zTAZJyVQK+euH
+         C1hvH8/tTPjFMcY90RaHLqZwPFQu68v12+wV4rBOFzkMM9snMajRpEM1lgSm62o5wvB+
+         TpVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9+IcBgKidvB6Yvsd9O5agQ00SaFZhpKEVo7T4GK5Mo8=;
-        b=Uom0dR8hWzbYv/xOSVxnhazX2BSaUd6ctO7qC9DZf1/PTphrvkF5EDKdmM1SuI9mLF
-         NScBTUrTJlR+DCCdzIe/fbEsmQ54thMZVAUaEKDCH7MsM0UyaG7TFZOLA4kKuD9gRe7r
-         m0RtH8kIeEVwGUPI2LaBHARvHRs3wbysBoq1rv98ZpuR6KZ+il0x2tR0QYmN1uElQ+rd
-         Xxspl2g8P2Dqhy/vt+EU4Vs1NCcOc4T6l+6Rwh2spGohHOUphOs55uX2bzoiglut4wuL
-         FJWZByZM8kw0CzxmpXetospvCoaEuPF7sDeXSfTX/tFcfWmN+WcBlPB7dAP4sIQQ0H7X
-         bmdw==
-X-Gm-Message-State: AA+aEWZAnPwfVl3+AMUeYUg1vPdzSBOBtE2j85snbP/cNvMKrsZn+w+Z
-        Zg9MagJ2k0qLw8svXlAm8uXiIA==
-X-Google-Smtp-Source: AFSGD/VtUj0bXphvnXyQvgPMnIKbgiJf3ZHlh51Utv0n0QANnXFONjpamFMn4OFvrZ28Zq0YicE+Zw==
-X-Received: by 2002:a17:902:583:: with SMTP id f3mr17856836plf.202.1543868776317;
-        Mon, 03 Dec 2018 12:26:16 -0800 (PST)
-Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id q7sm16562725pgp.40.2018.12.03.12.26.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 12:26:15 -0800 (PST)
-From:   Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com, joel@joelfernandes.org
-Cc:     kernel-team@android.com, Jann Horn <jannh@google.com>,
-        Martijn Coenen <maco@android.com>
-Subject: [PATCH] binder: fix use-after-free due to fdget() optimization
-Date:   Mon,  3 Dec 2018 12:24:57 -0800
-Message-Id: <20181203202457.228972-4-tkjos@google.com>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
-In-Reply-To: <20181203202457.228972-1-tkjos@google.com>
-References: <20181203202457.228972-1-tkjos@google.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=GFASv4k38eUe55JTn7Xs8Ag9VKnmgbHychIvl/jNOAg=;
+        b=EjzfETZeg4wrb/0Bqlriv8epgzSjSXW4S/v9ZhRxA3Eo/e+guX3m+MqI92rAyDkA/4
+         Norwz79H+c7hrxbUv1CNRde7NiXSidKsEQLqUI1t4rTzN9W34ikolPpQ6s6b0E71LAZ4
+         MVUyAClFhXPuvV8HU4okN7etNGohebUIDrP+JCQ+LlVoR+jsmdoedWQG31sFwbONZXaV
+         W4FPGI1vpqDzTNJAPRrxrpLKmW7BVCt6OwAopxhxdxsZOA4SFRLRjoDWx9/3gMdmeLIQ
+         ulK0CquU08DoIRuHWHV9MQz0JRCY19yZV2JwZEysnbMequxgpyamwuLqqIN6mvSjyI6H
+         8kIg==
+X-Gm-Message-State: AA+aEWaSNZc15tx+91xDpjWOIRXRhMTqOIXopL7jUVBWRU/WgCqeQ5xH
+        G/IF9oOHpMW3UfaAKSVoA5wQjw==
+X-Google-Smtp-Source: AFSGD/WgRLPR1I/b33wMnprBvL9uz80Usm55zpAFD5/fk361ehaHfGEX2rAt+URHNT+mx/kA075G8A==
+X-Received: by 2002:a63:1e56:: with SMTP id p22mr4564172pgm.126.1543868790813;
+        Mon, 03 Dec 2018 12:26:30 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id v89sm22872289pfk.12.2018.12.03.12.26.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 12:26:29 -0800 (PST)
+Date:   Mon, 3 Dec 2018 12:26:28 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Andrea Arcangeli <aarcange@redhat.com>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+In-Reply-To: <20181203192344.GA2986@redhat.com>
+Message-ID: <alpine.DEB.2.21.1812031210490.192288@chino.kir.corp.google.com>
+References: <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com> <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com> <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
+ <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com> <20181203181456.GK31738@dhcp22.suse.cz> <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com> <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
+ <20181203185954.GM31738@dhcp22.suse.cz> <20181203192344.GA2986@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-44d8047f1d87a ("binder: use standard functions to allocate fds")
-exposed a pre-existing issue in the binder driver.
+On Mon, 3 Dec 2018, Andrea Arcangeli wrote:
 
-fdget() is used in ksys_ioctl() as a performance optimization.
-One of the rules associated with fdget() is that ksys_close() must
-not be called between the fdget() and the fdput(). There is a case
-where this requirement is not met in the binder driver (and possibly
-other drivers) which results in the reference count dropping to 0
-when the device is still in use. This can result in use-after-free
-or other issues.
+> It's trivial to reproduce the badness by running a memhog process that
+> allocates more than the RAM of 1 NUMA node, under defrag=always
+> setting (or by changing memhog to use MADV_HUGEPAGE) and it'll create
+> swap storms despite 75% of the RAM is completely free in a 4 node NUMA
+> (or 50% of RAM free in a 2 node NUMA) etc..
+> 
+> How can it be ok to push the system into gigabytes of swap by default
+> without any special capability despite 50% - 75% or more of the RAM is
+> free? That's the downside of the __GFP_THISNODE optimizaton.
+> 
 
-This was observed with the following sequence of events:
+The swap storm is the issue that is being addressed.  If your remote 
+memory is as low as local memory, the patch to clear __GFP_THISNODE has 
+done nothing to fix it: you still get swap storms and memory compaction 
+can still fail if the per-zone freeing scanner cannot utilize the 
+reclaimed memory.  Recall that this patch to clear __GFP_THISNODE was 
+measured by me to have a 40% increase in allocation latency for fragmented 
+remote memory on Haswell.  It makes the problem much, much worse.
 
-Task A and task B are connected via binder; task A has /dev/binder open at
-file descriptor number X. Both tasks are single-threaded.
+> __GFP_THISNODE helps increasing NUMA locality if your app can fit in a
+> single node which is the common David's workload. But if his workload
+> would more often than not fit in a single node, he would also run into
+> an unacceptable slowdown because of the __GFP_THISNODE.
+> 
 
-1. task B sends a binder message with a file descriptor array
-   (BINDER_TYPE_FDA) containing one file descriptor to task A
-2. task A reads the binder message with the translated file
-   descriptor number Y
-3. task A uses dup2(X, Y) to overwrite file descriptor Y with
-   the /dev/binder file
-4. task A unmaps the userspace binder memory mapping; the reference
-   count on task A's /dev/binder is now 2
-5. task A closes file descriptor X; the reference count on task
-   A's /dev/binder is now 1
-6. task A forks off a child, task C, duplicating the file descriptor
-   table; the reference count on task A's /dev/binder is now 2
-7. task A invokes the BC_FREE_BUFFER command on file descriptor X
-   to release the incoming binder message
-8. fdget() in ksys_ioctl() suppresses the reference count increment,
-   since the file descriptor table is not shared
-9. the BC_FREE_BUFFER handler removes the file descriptor table
-   entry for X and decrements the reference count of task A's
-   /dev/binder file to 1
-10.task C calls close(X), which drops the reference count of
-   task A's /dev/binder to 0 and frees it
-11.task A continues processing of the ioctl and accesses some
-   property of e.g. the binder_proc => KASAN-detectable UAF
+Which is why I have suggested that we do not do direct reclaim, as the 
+page allocator implementation expects all thp page fault allocations to 
+have __GFP_NORETRY set, because no amount of reclaim can be shown to be 
+useful to the memory compaction freeing scanner if it is iterated over by 
+the migration scanner.
 
-Fixed by using get_file() / fput() in binder_ioctl().
+> I think there's lots of room for improvement for the future, but in my
+> view that __GFP_THISNODE as it was implemented was an incomplete hack,
+> that opened the door for bad VM corner cases that should not happen.
+> 
 
-Suggested-by: Jann Horn <jannh@google.com>
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Acked-by: Martijn Coenen <maco@android.com>
----
- drivers/android/binder.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index c525b164d39d2..cbaef3b0d3078 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -4774,6 +4774,13 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	unsigned int size = _IOC_SIZE(cmd);
- 	void __user *ubuf = (void __user *)arg;
- 
-+	/*
-+	 * Need a reference on filp since ksys_close() could
-+	 * be called on binder fd and the fdget() used in
-+	 * ksys_ioctl() might have optimized out the reference.
-+	 */
-+	get_file(filp);
-+
- 	/*pr_info("binder_ioctl: %d:%d %x %lx\n",
- 			proc->pid, current->pid, cmd, arg);*/
- 
-@@ -4885,6 +4892,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		pr_info("%d:%d ioctl %x %lx returned %d\n", proc->pid, current->pid, cmd, arg, ret);
- err_unlocked:
- 	trace_binder_ioctl_done(ret);
-+	fput(filp);
- 	return ret;
- }
- 
--- 
-2.20.0.rc1.387.gf8505762e3-goog
-
+__GFP_THISNODE is intended specifically because of the remote access 
+latency increase that is encountered if you fault remote hugepages over 
+local pages of the native page size.
