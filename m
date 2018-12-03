@@ -2,111 +2,133 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175E1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584B2C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC77820878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:25:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC77820878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2773220878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:26:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2773220878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbeLCM0a (ORCPT
+        id S1726556AbeLCM0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:26:30 -0500
-Received: from mga09.intel.com ([134.134.136.24]:24968 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbeLCM03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:26:29 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 04:25:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,310,1539673200"; 
-   d="scan'208";a="126613955"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 03 Dec 2018 04:25:35 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 03 Dec 2018 14:25:34 +0200
-Date:   Mon, 3 Dec 2018 14:25:34 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     chenyu56@huawei.com, USB <linux-usb@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzhuangluan <suzhuangluan@hisilicon.com>,
-        Kongfei <kongfei@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH v1 07/12] usb: roles: Find the usb role switch by also
- matching against the device node
-Message-ID: <20181203122534.GD24338@kuha.fi.intel.com>
-References: <20181203034515.91412-1-chenyu56@huawei.com>
- <20181203034515.91412-8-chenyu56@huawei.com>
- <CAHp75VfUKAQ+Q0cQz-4-=i2JL9uACBX1bVvCeNjZLL1HStDGKQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfUKAQ+Q0cQz-4-=i2JL9uACBX1bVvCeNjZLL1HStDGKQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 3 Dec 2018 07:26:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36856 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726223AbeLCM0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:26:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E28E5AFA8;
+        Mon,  3 Dec 2018 12:25:57 +0000 (UTC)
+Message-ID: <7a75afd030cbd17c986a3ad486aab35ad3418b28.camel@suse.de>
+Subject: Re: [PATCH] firmware: arm_sdei: fix wrong of_node_put() in init
+ function
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Mon, 03 Dec 2018 13:25:55 +0100
+In-Reply-To: <08d6b9e6-7aa0-9342-193b-1ce6e0417f77@arm.com>
+References: <20181126121536.28739-1-nsaenzjulienne@suse.de>
+         <08d6b9e6-7aa0-9342-193b-1ce6e0417f77@arm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-t7AYbqLg9t8BDYsYLWC5"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Mon, Dec 03, 2018 at 10:17:20AM +0200, Andy Shevchenko wrote:
-> On Mon, Dec 3, 2018 at 5:45 AM Yu Chen <chenyu56@huawei.com> wrote:
-> >
-> > This patch adds code for supporting find usb role switch by matching against
-> > the device node described using of_graph.
-> 
-> >  #include <linux/module.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/slab.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_graph.h>
-> 
-> Keep it ordered.
-> 
-> > +static int __switch_match_by_of_node(struct device *dev, const void *name)
-> > +{
-> > +       if (!dev->parent || !dev->parent->of_node)
-> > +               return 0;
-> > +
-> > +       return of_node_name_eq(dev->parent->of_node, (const char *)name);
-> > +}
-> 
-> I think Heikki has introduced some more generic function for this.
+--=-t7AYbqLg9t8BDYsYLWC5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yes, for this I'm proposing a new function fwnode_get_name() that
-should allow us to support ACPI as well as OF platforms:
-https://lkml.org/lkml/2018/11/28/784
+Hi James, thanks for the review!=20
 
-> >         sw = device_connection_find_match(dev, "usb-role-switch", NULL,
-> >                                           usb_role_switch_match);
-> 
-> > +       sw = of_graph_find_match_by_type(dev, "usb-role-switch");
-> 
-> Why this is here?! device_connection_find_match() should take care for OF case.
+On Fri, 2018-11-30 at 18:31 +0000, James Morse wrote:
+> Hi Nicolas,
+>=20
+> On 26/11/2018 12:15, Nicolas Saenz Julienne wrote:
+> > After finding a "firmware" dt node arm_sdei tries to match it's
+> > compatible string with it. To do so it's calling
+> > of_find_matching_node()
+> > which already takes care of decreasing the refcount on the
+> > "firmware"
+> > node. We are then incorrectly decreasing the refcount on that node
+> > again.
+> >=20
+> > This patch removes the unwarranted call to of_node_put().
+> >=20
+> > Fixes: ad6eb31ef903 ("firmware: arm_sdei: Add driver for Software
+> > Delegated Exceptions")
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>=20
+> Thanks!, I agree this is unwarranted.
+> Is there a tool that picks these up? I remember sparse giving me a
+> headache, but
+> I don't remember this one... I probably cargo-culted it from
+> somewhere else.
 
-Exactly. device_connection_find_match() needs to parse the graph (OF
-and ACPI), and I already made proposal (RFC) for that:
-https://lkml.org/lkml/2018/10/24/619
+We stumbled upon this one on a test system. TBH I don't really know
+much about these tools so I can't tell. That said, I sent 4 more fixes
+on this bug (one more in drivers/firmware) so there definitively was
+some cargo-culting happening.
 
-I have prepared a more finalized version of those patches. I've been
-waiting for that fwnode_get_name() to be accepted before sending it
-out since we are going to need that function, but I'll send a new RFC
-if nothing happens soon with that fwnode_get_name() series.
+Regards,
+Nicolas
+
+>=20
+> Acked-by: James Morse <james.morse@arm.com>
+>=20
+>=20
+> Thanks,
+>=20
+> James
+>=20
+>=20
+> > ---
+> >  drivers/firmware/arm_sdei.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> >=20
+> > diff --git a/drivers/firmware/arm_sdei.c
+> > b/drivers/firmware/arm_sdei.c
+> > index 1ea71640fdc2..dffb47c6b480 100644
+> > --- a/drivers/firmware/arm_sdei.c
+> > +++ b/drivers/firmware/arm_sdei.c
+> > @@ -1017,7 +1017,6 @@ static bool __init sdei_present_dt(void)
+> >  		return false;
+> > =20
+> >  	np =3D of_find_matching_node(fw_np, sdei_of_match);
+> > -	of_node_put(fw_np);
+> >  	if (!np)
+> >  		return false;
+> > =20
+> >=20
 
 
-Br,
+--=-t7AYbqLg9t8BDYsYLWC5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
--- 
-heikki
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlwFINMACgkQlfZmHno8
+x/4MIwgAtHytTe+96hhXYF8/nhxaRJfvz0lYGsmJmhQbfPjpwkDntyvwImjoAvFr
+VqJe0LVkzJ9UgcmJfv5dKnhGkMO5Mb2pG1j8HAnOIwDu1l8JFiJdAOpxIIJoPBvJ
+0wtuGeAqq01Qu0jAqTCqNjPwUe++Mm+Hq8c/R0IHAKe8LVxNj5nCxp31lutZE1hY
+YiqopW+uLORHTBIVVm+K8rg3wYnFf8z5DfmKx/ddwF+exEENo9vt+JxQvTL6/Duk
+VdH+5JkPTS6oTMOKpcJIYc7MUnUrF09O6YzUv3RddsKpjtrJo0qXWBllzs+CAvAX
+Q4IrhMVAb178QBxt83+YJjE1xhAapQ==
+=L/YC
+-----END PGP SIGNATURE-----
+
+--=-t7AYbqLg9t8BDYsYLWC5--
+
