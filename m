@@ -2,121 +2,106 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C289C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BDEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD9DD20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:40:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD9DD20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BFBE20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:42:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFBE20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbeLCMl0 (ORCPT
+        id S1726433AbeLCMnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:41:26 -0500
-Received: from foss.arm.com ([217.140.101.70]:36488 "EHLO foss.arm.com"
+        Mon, 3 Dec 2018 07:43:13 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35703 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeLCMl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:41:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B4231688;
-        Mon,  3 Dec 2018 04:40:32 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 655A03F614;
-        Mon,  3 Dec 2018 04:40:32 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 538511AE1062; Mon,  3 Dec 2018 12:40:52 +0000 (GMT)
-Date:   Mon, 3 Dec 2018 12:40:52 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
+        id S1725975AbeLCMnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:43:13 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A53022071D; Mon,  3 Dec 2018 13:42:17 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 73E5920379;
+        Mon,  3 Dec 2018 13:42:07 +0100 (CET)
+Date:   Mon, 3 Dec 2018 13:42:07 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Tom Rini <trini@konsulko.com>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        Grant Likely <glikely@secretlab.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Olof Johansson <olof@lixom.net>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 12/36] dt-bindings: arm: Convert cpu binding to
- json-schema
-Message-ID: <20181203124039.GA25097@arm.com>
-References: <20181005165848.3474-1-robh@kernel.org>
- <20181005165848.3474-13-robh@kernel.org>
- <035ae23f-3c92-ffd9-0753-abbd604c5c02@xilinx.com>
- <CAL_JsqJJkcbxvfbVVOTPb5gavPgypO-Cd05C6qpvbvPMd1G81g@mail.gmail.com>
+        devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: gpu: add Allwinner H6 Mali Midgard
+ binding
+Message-ID: <20181203124207.qqasvbio67u7bhvz@flea>
+References: <20181127074249.15204-1-icenowy@aosc.io>
+ <20181127074249.15204-2-icenowy@aosc.io>
+ <11894938.HOUtrQJeEF@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4ojmp36grwkvkfun"
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqJJkcbxvfbVVOTPb5gavPgypO-Cd05C6qpvbvPMd1G81g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <11894938.HOUtrQJeEF@phil>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 12:00:05PM -0600, Rob Herring wrote:
-> On Thu, Nov 8, 2018 at 2:49 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> >
-> > Hi Rob,
-> >
-> > On 05. 10. 18 18:58, Rob Herring wrote:
-> > > Convert ARM CPU binding to DT schema format using json-schema.
-> > >
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> > > Cc: devicetree@vger.kernel.org
-> > > Cc: linux-arm-kernel@lists.infradead.org
-> > > Cc: linux-mediatek@lists.infradead.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >  .../devicetree/bindings/arm/cpus.txt          | 490 -----------------
-> > >  .../devicetree/bindings/arm/cpus.yaml         | 503 ++++++++++++++++++
-> > >  2 files changed, 503 insertions(+), 490 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/cpus.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/arm/cpus.yaml
-> 
-> [...]
-> 
-> > I have take a look at xilinx part of this and try to build it for arm64
-> > platforms and I see errors coming from this cpu description.
-> > /root/linux/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dt.yaml:
-> > cpu@0:compatible: ['arm,cortex-a53', 'arm,armv8'] is too long
-> > /root/linux/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dt.yaml:
-> > cpu@0:compatible: Additional items are not allowed ('arm,armv8' was
-> > unexpected)
-> 
-> Thanks for actually giving this a spin!
-> 
-> > Based on grep this is used in a lot of places
-> > compatible = "arm,cortex-a53", "arm,armv8";
-> >
-> > Should this be moved to just simple?
-> > compatible = "arm,cortex-a53";
-> 
-> I'd normally go with the majority which would be to keep it. However,
-> 'arm,armv8' is of questionable value, isn't actually documented, and
-> doesn't exist for any other version of the architecture. So we should
-> kill it IMO.
 
-I'd prefer to keep it around, since that's what's used to describe the CPUs
-on the fastmodel iirc.
+--4ojmp36grwkvkfun
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will
+On Mon, Dec 03, 2018 at 01:25:21PM +0100, Heiko Stuebner wrote:
+> >  - reg : Physical base address of the device and length of the register=
+ area.
+> > =20
+> > @@ -44,6 +45,18 @@ Optional properties:
+> >    for details.
+> > =20
+> > =20
+> > +Vendor-specific bindings
+> > +------------------------
+> > +
+> > +The Mali GPU is integrated very differently from one SoC to
+> > +another. In order to accomodate those differences, you have the option
+> > +to specify one more vendor-specific compatible, among:
+> > +
+> > +  - allwinner,sun50i-h6-mali
+> > +    Required properties:
+> > +      * resets: phandle to the reset line for the GPU
+>=20
+> While this paragraph is similar to how it is done in Utgard, I'm
+> wondering why we cannot just describe the "resets" as regular
+> optional property above that.
+
+Because it's not really optional, it's mandatory on some platforms
+(like this one) and has no significance on others.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--4ojmp36grwkvkfun
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAUkmwAKCRDj7w1vZxhR
+xfl8AP9eEXNY5xIbtx2dqNcTn12a+QC2Iv3/9PHj3/jjTVNebAEAiX2EcPiPUGlv
+v0/MyAv2hBilA+flGAcN2PAqrG39pgU=
+=3fvL
+-----END PGP SIGNATURE-----
+
+--4ojmp36grwkvkfun--
