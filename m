@@ -2,123 +2,104 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D368C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FE8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59A0920848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97D572146D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:39:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="esrzBH+T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A0920848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uhZOdu7l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D572146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeLCSfv (ORCPT
+        id S1726933AbeLCSjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:35:51 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34249 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeLCSfj (ORCPT
+        Mon, 3 Dec 2018 13:39:13 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46272 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbeLCSjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:35:39 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 17so6115798pgg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:35:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bxN1Bkl0sGb272jZKTW/rlZvTSKF7fLwHr1tSNNpIkc=;
-        b=esrzBH+TR03Yy7QOusnb+0P1SrHFpIi0TVavFVtlBPKbVlyFYq4iYN7Fsg4zEEbh5W
-         uSpfrXJdJUU9O2Ls+iBGF8JMV8lfCZp0rg+Cp9Hd+QCeaL7yFeyKIu4Fb4Kd1NXbfab4
-         3GhPc0Y+WLfD7Z0U/bUv7MtCcVghKhRbgSVvQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bxN1Bkl0sGb272jZKTW/rlZvTSKF7fLwHr1tSNNpIkc=;
-        b=Z6/ymRxDCqiMlt1JFYxA5sxxgBsQCFPJvkiYcwKEdZpqcHdZRNiV6Biz9sdCkix3PZ
-         mAiNaqScK5JQxrlOyWNeyr5/Ia6IYE02CrSFIjNQwiMJ/QxQLJRxTlcy/E1tdKoDC8cW
-         caCchHKjxlav6D5+He5rVPYrAaLC78Fxwx3nkLsEYZK/1A5t9ErHw6Z25e7sCt78JAXc
-         LHMJD4PsBGZm1M+KWeflEQ+vWUxjk7TTVVgTIzfD0xwuMdogRjb360BlD9r7+t2KalZE
-         Neho+Hb2hC3CDoy7MOk0cMhkqCgTlmC7CA3sDSApwsrluI9Am9gya0iVh9kmlHEx0Dze
-         zRqQ==
-X-Gm-Message-State: AA+aEWZ85f2D90kLk4kZnzJpBRLenLUBEbhQ8EJLEj3Nhd3iT2P6EmPE
-        xYl56l6oPB4X/AaU5fCS7aCIWg==
-X-Google-Smtp-Source: AFSGD/X0fR33u/afdE+r130QvsGiknKIxRH0fEK+aHC4oKOXL1r07JFLlffvvX3fHbPxnmD3a+rznQ==
-X-Received: by 2002:a63:a91a:: with SMTP id u26mr13944081pge.349.1543862135802;
-        Mon, 03 Dec 2018 10:35:35 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f6sm20180969pfg.188.2018.12.03.10.35.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 10:35:35 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: [PATCH v2 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
-Date:   Mon,  3 Dec 2018 10:33:29 -0800
-Message-Id: <20181203183330.2073-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181203183330.2073-1-bjorn.andersson@linaro.org>
-References: <20181203183330.2073-1-bjorn.andersson@linaro.org>
+        Mon, 3 Dec 2018 13:39:12 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB3IcwgE013673;
+        Mon, 3 Dec 2018 18:38:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=lQR75RHIbNeJOgYq9t5iJE/0WJ71p3vFgYCK3+FwrGM=;
+ b=uhZOdu7ln/28v2Nvv3cPXquB4mdye6kqTDMYJ/q0XBdP38e2LsKo72ScBWuD3zG5JdMa
+ ZfP/gvCKqdSRsybRSz//W/NpFp76oE1ui6ntBaYMvN/BcUgrVAodgENsHaNrWbhJC8fE
+ YzJhNdJbFNcaSlOuXE3/xKdNFAsLfb1pJlqVp7CMLx1FbtGaEsQBpQkjCDSjhn2S2Z4Y
+ 4S8yOR2ji/grlf9CUWmp1wVguHvNuDJnkjR3SG8gcXcOmynPtwPRDUoFbBZpzeljtl1S
+ FE4Wk9pCdQWbTWHYzOTLdCEWAm+GSQDdEcs9mDfvOBB4tgGwAiWyLyxLKHIKwvdchHXo xg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2p3jxr82ah-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Dec 2018 18:38:57 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB3Icugs010819
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Dec 2018 18:38:56 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB3IctHL014157;
+        Mon, 3 Dec 2018 18:38:55 GMT
+Received: from unbuntlaptop (/197.157.0.63)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 Dec 2018 10:38:55 -0800
+Date:   Mon, 3 Dec 2018 21:41:00 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     "olaf@aepfle.de" <olaf@aepfle.de>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        vkuznets <vkuznets@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] [repost] Drivers: hv: vmbus: Offload the handling of
+ channels to two workqueues
+Message-ID: <20181203184100.GF3073@unbuntlaptop>
+References: <PU1P153MB016946D99D63F9713E32B99ABFD20@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20181129074435.GA12347@kroah.com>
+ <20181203115019.GG3095@unbuntlaptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203115019.GG3095@unbuntlaptop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812030172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the halt check of the UFS symbol clocks, in accordance with other
-platforms. This makes clk_disable_unused() happy and makes it possible
-to turn the clocks on again without an error.
+On Mon, Dec 03, 2018 at 02:50:19PM +0300, Dan Carpenter wrote:
+> The list is still rejecting @microsoft.com patches...  :(
+> 
+> I mentioned this last time when you guys were complaining that no one
+> reads your patches and someone sent me a link to marc.info.  I want to
+> help but obviously no one has time to look at patches on marc.info...
+> 
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+Oh... Hm.  Sorry, my bad.  They're making it to the list but somehow
+gmail is eating them.  I search my spam folder and they're not there
+either.  :(
 
-Changes since v1:
-- None
+I don't know what's going on.
 
- drivers/clk/qcom/gcc-msm8998.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index aed7f1f92614..792b431f9945 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2375,7 +2375,7 @@ static struct clk_branch gcc_ufs_phy_aux_clk = {
- 
- static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
- 	.halt_reg = 0x75014,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x75014,
- 		.enable_mask = BIT(0),
-@@ -2388,7 +2388,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
- 
- static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
- 	.halt_reg = 0x7605c,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x7605c,
- 		.enable_mask = BIT(0),
-@@ -2401,7 +2401,7 @@ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
- 
- static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
- 	.halt_reg = 0x75010,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x75010,
- 		.enable_mask = BIT(0),
--- 
-2.18.0
+regards,
+dan carpenter
 
