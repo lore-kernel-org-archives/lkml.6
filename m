@@ -2,167 +2,144 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C864C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C63C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 705A1206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705A1206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 01BB0206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:22:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iub4ZF/L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01BB0206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbeLCOWa (ORCPT
+        id S1726595AbeLCOXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:22:30 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38298 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbeLCOWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:22:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 053341682;
-        Mon,  3 Dec 2018 06:21:19 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F0663F614;
-        Mon,  3 Dec 2018 06:21:17 -0800 (PST)
-Subject: Re: [PATCH v9 4/8] KVM: arm64: Support dirty page tracking for PUD
- hugepages
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        kvmarm@lists.cs.columbia.edu
-Cc:     marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>, punitagrawal@gmail.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-5-punit.agrawal@arm.com>
- <0d5f2d45-b09d-d43e-4320-98113d79cb18@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <215abd97-7919-25da-7164-9f9465a8d8ba@arm.com>
-Date:   Mon, 3 Dec 2018 14:21:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <0d5f2d45-b09d-d43e-4320-98113d79cb18@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Dec 2018 09:23:24 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42399 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeLCOXX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:23:23 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y1so1740233plp.9;
+        Mon, 03 Dec 2018 06:22:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4YfiQXJj4yKrRnSl7nTTGshx8IYMROHD4JklpRJUxbw=;
+        b=iub4ZF/LhjqW8D9jXPm752i4U4u+beZheyvvA8dOo8ug9yWELtwyP4fAsynnk46xOW
+         oXG/gBvL97UJsPxWWl6HsbsL0Ac+oKix48fJ3zOThdVnO266ZRFR9zRtdHtvzrvlj4iE
+         4T+5fFRAz5Da0oRTY4uzThMD/JG8B+Xn5lsXYgACEWgL29AVC9uk0xtPF9yKKBv2wPn0
+         Nl7aTlD6f8FHfNg0gqG/lu+42KmV5oR6feekrU3HjKGZF4tkgSeJ6R/F02RPAIke7GLd
+         U5rxjEhlUwCN5kNTjphcDA0Ox5IUt+JSwPbghGpiTCzBGEIep9MWRcqWxDtGH50D4Sj2
+         b74A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4YfiQXJj4yKrRnSl7nTTGshx8IYMROHD4JklpRJUxbw=;
+        b=roTjgph1QWNZiaFgVZp0uHvs5dpj+/gRWqJoMCSLX8I1F10XLcP9Ae8OizwybSUvj8
+         z250tHuhFzvXXnetm9eTz4WbOYoGjiAh9/USAvl8qua+YpgDIu3RCTXxD62iZSonXoV1
+         A0x+BeHf6VEuXdDNILfbLeK3KSkv9iY5VcDfwJ0A2nDDzKJwbwGf9OYQMPq2sEQ8SDyZ
+         NCrhJgSLoQZYTHO3ilEhViRMS4iQXY3orzL0fOWkj1gtrLny/RgMs1IMN5c4tYX30ify
+         672IfwedNh9wZ7zqaX82zJuakrZhfcNVHkMZvJBlNlNabf0uZo0W9No4dSWCxlYd4zFk
+         rnMw==
+X-Gm-Message-State: AA+aEWZ3G6ps0QSGPzGGBB9NafYbRLXslYanrsKYWOzmnt/UKRTT6Ftx
+        XMmzb2NxeKVuhcWzHULJid0=
+X-Google-Smtp-Source: AFSGD/Xp1J/ADngiBb8D/QBTRYHAKdnXfwAaff9FmSpn2imvcTAVk8/ycPwTMKbjZDY/gukoqOBp2w==
+X-Received: by 2002:a17:902:298a:: with SMTP id h10mr16275009plb.312.1543846931773;
+        Mon, 03 Dec 2018 06:22:11 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id j70sm19325775pfc.43.2018.12.03.06.22.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 06:22:11 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] net: stmmac: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Mon,  3 Dec 2018 09:22:09 -0500
+Message-Id: <20181203142209.13044-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 34 +++----------------
+ 1 file changed, 4 insertions(+), 30 deletions(-)
 
-On 03/12/2018 14:17, Anshuman Khandual wrote:
-> 
-> 
-> On 10/31/2018 11:27 PM, Punit Agrawal wrote:
->> In preparation for creating PUD hugepages at stage 2, add support for
->> write protecting PUD hugepages when they are encountered. Write
->> protecting guest tables is used to track dirty pages when migrating
->> VMs.
->>
->> Also, provide trivial implementations of required kvm_s2pud_* helpers
->> to allow sharing of code with arm32.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
->> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>   arch/arm/include/asm/kvm_mmu.h   | 15 +++++++++++++++
->>   arch/arm64/include/asm/kvm_mmu.h | 10 ++++++++++
->>   virt/kvm/arm/mmu.c               | 11 +++++++----
->>   3 files changed, 32 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
->> index e6eff8bf5d7f..37bf85d39607 100644
->> --- a/arch/arm/include/asm/kvm_mmu.h
->> +++ b/arch/arm/include/asm/kvm_mmu.h
->> @@ -87,6 +87,21 @@ void kvm_clear_hyp_idmap(void);
->>   
->>   #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
->>   
->> +/*
->> + * The following kvm_*pud*() functions are provided strictly to allow
->> + * sharing code with arm64. They should never be called in practice.
->> + */
->> +static inline void kvm_set_s2pud_readonly(pud_t *pud)
->> +{
->> +	BUG();
->> +}
->> +
->> +static inline bool kvm_s2pud_readonly(pud_t *pud)
->> +{
->> +	BUG();
->> +	return false;
->> +}
-> 
-> As arm32 does not support direct manipulation of PUD entries.
-> 
->> +
->>   static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->>   {
->>   	pte_val(pte) |= L_PTE_S2_RDWR;
->> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
->> index 13d482710292..8da6d1b2a196 100644
->> --- a/arch/arm64/include/asm/kvm_mmu.h
->> +++ b/arch/arm64/include/asm/kvm_mmu.h
->> @@ -251,6 +251,16 @@ static inline bool kvm_s2pmd_exec(pmd_t *pmdp)
->>   	return !(READ_ONCE(pmd_val(*pmdp)) & PMD_S2_XN);
->>   }
->>   
->> +static inline void kvm_set_s2pud_readonly(pud_t *pudp)
->> +{
->> +	kvm_set_s2pte_readonly((pte_t *)pudp);
->> +}
->> +
->> +static inline bool kvm_s2pud_readonly(pud_t *pudp)
->> +{
->> +	return kvm_s2pte_readonly((pte_t *)pudp);
->> +}
->> +
->>   #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
->>   
->>   #ifdef __PAGETABLE_PMD_FOLDED
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index fb5325f7a1ac..1c669c3c1208 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1347,9 +1347,12 @@ static void  stage2_wp_puds(struct kvm *kvm, pgd_t *pgd,
->>   	do {
->>   		next = stage2_pud_addr_end(kvm, addr, end);
->>   		if (!stage2_pud_none(kvm, *pud)) {
->> -			/* TODO:PUD not supported, revisit later if supported */
->> -			BUG_ON(stage2_pud_huge(kvm, *pud));
->> -			stage2_wp_pmds(kvm, pud, addr, next);
->> +			if (stage2_pud_huge(kvm, *pud)) {
->> +				if (!kvm_s2pud_readonly(pud))
->> +					kvm_set_s2pud_readonly(pud);
->> +			} else {
->> +				stage2_wp_pmds(kvm, pud, addr, next);
->> +			}
-> 
-> As this series is enabling PUD related changes in multiple places, it is
-> reasonable to enable PGD level support as well even if it might not be
-> used much at the moment. I dont see much extra code to enable PGD, then
-> why not ? Even just to make the HugeTLB support matrix complete.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 076a8be18d67..c728ed1375b2 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3891,7 +3891,7 @@ static void sysfs_display_ring(void *head, int size, int extend_desc,
+ 	}
+ }
+ 
+-static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
++static int stmmac_rings_status_show(struct seq_file *seq, void *v)
+ {
+ 	struct net_device *dev = seq->private;
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+@@ -3933,23 +3933,9 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
+ 
+ 	return 0;
+ }
++DEFINE_SHOW_ATTRIBUTE(stmmac_rings_status);
+ 
+-static int stmmac_sysfs_ring_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, stmmac_sysfs_ring_read, inode->i_private);
+-}
+-
+-/* Debugfs files, should appear in /sys/kernel/debug/stmmaceth/eth0 */
+-
+-static const struct file_operations stmmac_rings_status_fops = {
+-	.owner = THIS_MODULE,
+-	.open = stmmac_sysfs_ring_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
+-
+-static int stmmac_sysfs_dma_cap_read(struct seq_file *seq, void *v)
++static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
+ {
+ 	struct net_device *dev = seq->private;
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+@@ -4012,19 +3998,7 @@ static int stmmac_sysfs_dma_cap_read(struct seq_file *seq, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int stmmac_sysfs_dma_cap_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, stmmac_sysfs_dma_cap_read, inode->i_private);
+-}
+-
+-static const struct file_operations stmmac_dma_cap_fops = {
+-	.owner = THIS_MODULE,
+-	.open = stmmac_sysfs_dma_cap_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(stmmac_dma_cap);
+ 
+ static int stmmac_init_fs(struct net_device *dev)
+ {
+-- 
+2.17.0
 
-Architecturally, we have hugepages at PUD/PMD (Level1 and Level2). PGD
-is a variable level which could be L0 or L1 (when PUD is folded) or L2(when
-PMD is folded). So if we enabled PUD/PMD hugepages, that would make sure
-that the PGD hugepages (i.e, when one of the levels are folded) are supported.
-We don't have L0 huge pages in arm64. Does that make sense ?
-
-Cheers
-Suzuki
-
-
-
-> 
