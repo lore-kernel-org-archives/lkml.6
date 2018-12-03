@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C7DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C799FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9192620850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:03:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9192620850
+	by mail.kernel.org (Postfix) with ESMTP id 89F8A20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F8A20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbeLCVDT (ORCPT
+        id S1726053AbeLCVEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:03:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33415 "EHLO
+        Mon, 3 Dec 2018 16:04:34 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51903 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbeLCVDS (ORCPT
+        with ESMTP id S1725908AbeLCVEd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:03:18 -0500
+        Mon, 3 Dec 2018 16:04:33 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L2exu594443
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L2656594411
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Dec 2018 13:02:40 -0800
+        Mon, 3 Dec 2018 13:02:06 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L2eQU594440;
-        Mon, 3 Dec 2018 13:02:40 -0800
-Date:   Mon, 3 Dec 2018 13:02:40 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L26F3594407;
+        Mon, 3 Dec 2018 13:02:06 -0800
+Date:   Mon, 3 Dec 2018 13:02:06 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-1a4226efaf808fe9079ea3b29919883008918297@git.kernel.org>
-Cc:     mingo@redhat.com, kvm@vger.kernel.org, luto@kernel.org,
-        x86@kernel.org, bp@suse.de, rkrcmar@redhat.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, hpa@zytor.com, riel@surriel.com,
-        pbonzini@redhat.com, dave.hansen@linux.intel.com,
-        bigeasy@linutronix.de, Jason@zx2c4.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, peterz@infradead.org, bp@suse.de,
-          rkrcmar@redhat.com, pbonzini@redhat.com,
-          dave.hansen@linux.intel.com, bigeasy@linutronix.de,
-          Jason@zx2c4.com, hpa@zytor.com, riel@surriel.com,
-          kvm@vger.kernel.org, mingo@redhat.com, luto@kernel.org,
-          x86@kernel.org
-In-Reply-To: <20181128222035.2996-5-bigeasy@linutronix.de>
-References: <20181128222035.2996-5-bigeasy@linutronix.de>
+Message-ID: <tip-d23650e06299e9b2d04e090ab8c625cdf24465bf@git.kernel.org>
+Cc:     pbonzini@redhat.com, bigeasy@linutronix.de, rkrcmar@redhat.com,
+        dhowells@redhat.com, dave.hansen@linux.intel.com, mingo@redhat.com,
+        konrad.wilk@oracle.com, mingo@kernel.org, hpa@zytor.com,
+        Jason@zx2c4.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        riel@surriel.com, x86@kernel.org, bp@suse.de,
+        tim.c.chen@linux.intel.com, luto@kernel.org, tglx@linutronix.de
+Reply-To: rkrcmar@redhat.com, dhowells@redhat.com, pbonzini@redhat.com,
+          bigeasy@linutronix.de, konrad.wilk@oracle.com, mingo@redhat.com,
+          dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+          kvm@vger.kernel.org, hpa@zytor.com, Jason@zx2c4.com,
+          mingo@kernel.org, riel@surriel.com, x86@kernel.org,
+          tglx@linutronix.de, luto@kernel.org, tim.c.chen@linux.intel.com,
+          bp@suse.de
+In-Reply-To: <20181128222035.2996-4-bigeasy@linutronix.de>
+References: <20181128222035.2996-4-bigeasy@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/fpu] x86/pkeys: Make init_pkru_value static
-Git-Commit-ID: 1a4226efaf808fe9079ea3b29919883008918297
+Subject: [tip:x86/fpu] x86/thread_info: Remove _TIF_ALLWORK_MASK
+Git-Commit-ID: d23650e06299e9b2d04e090ab8c625cdf24465bf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -66,46 +66,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1a4226efaf808fe9079ea3b29919883008918297
-Gitweb:     https://git.kernel.org/tip/1a4226efaf808fe9079ea3b29919883008918297
+Commit-ID:  d23650e06299e9b2d04e090ab8c625cdf24465bf
+Gitweb:     https://git.kernel.org/tip/d23650e06299e9b2d04e090ab8c625cdf24465bf
 Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Wed, 28 Nov 2018 23:20:10 +0100
+AuthorDate: Wed, 28 Nov 2018 23:20:09 +0100
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Mon, 3 Dec 2018 19:10:18 +0100
+CommitDate: Mon, 3 Dec 2018 19:00:28 +0100
 
-x86/pkeys: Make init_pkru_value static
+x86/thread_info: Remove _TIF_ALLWORK_MASK
 
-The variable init_pkru_value isn't used outside of this file.
-Make it static.
+There is no user of _TIF_ALLWORK_MASK since commit
+
+  21d375b6b34ff ("x86/entry/64: Remove the SYSCALL64 fast path").
+
+Remove the unused define _TIF_ALLWORK_MASK.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Rik van Riel <riel@surriel.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Howells <dhowells@redhat.com>
 Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: kvm ML <kvm@vger.kernel.org>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181128222035.2996-5-bigeasy@linutronix.de
+Link: https://lkml.kernel.org/r/20181128222035.2996-4-bigeasy@linutronix.de
 ---
- arch/x86/mm/pkeys.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/thread_info.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-index 6e98e0a7c923..047a77f6a10c 100644
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -131,6 +131,7 @@ int __arch_override_mprotect_pkey(struct vm_area_struct *vma, int prot, int pkey
-  * in the process's lifetime will not accidentally get access
-  * to data which is pkey-protected later on.
-  */
-+static
- u32 init_pkru_value = PKRU_AD_KEY( 1) | PKRU_AD_KEY( 2) | PKRU_AD_KEY( 3) |
- 		      PKRU_AD_KEY( 4) | PKRU_AD_KEY( 5) | PKRU_AD_KEY( 6) |
- 		      PKRU_AD_KEY( 7) | PKRU_AD_KEY( 8) | PKRU_AD_KEY( 9) |
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 82b73b75d67c..e0eccbcb8447 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -140,14 +140,6 @@ struct thread_info {
+ 	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT |	\
+ 	 _TIF_NOHZ)
+ 
+-/* work to do on any return to user space */
+-#define _TIF_ALLWORK_MASK						\
+-	(_TIF_SYSCALL_TRACE | _TIF_NOTIFY_RESUME | _TIF_SIGPENDING |	\
+-	 _TIF_NEED_RESCHED | _TIF_SINGLESTEP | _TIF_SYSCALL_EMU |	\
+-	 _TIF_SYSCALL_AUDIT | _TIF_USER_RETURN_NOTIFY | _TIF_UPROBE |	\
+-	 _TIF_PATCH_PENDING | _TIF_NOHZ | _TIF_SYSCALL_TRACEPOINT |	\
+-	 _TIF_FSCHECK)
+-
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW_BASE						\
+ 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
