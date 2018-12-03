@@ -2,89 +2,90 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36670C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1841CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08B620672
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:43:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aC8Vw6Jy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08B620672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CF4F22082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:44:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4F22082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbeLCNoc (ORCPT
+        id S1726246AbeLCNpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:44:32 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35903 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeLCNoc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:44:32 -0500
-Received: by mail-io1-f68.google.com with SMTP id m19so10499180ioh.3;
-        Mon, 03 Dec 2018 05:43:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gW+KSjqs2PpYMSyO9GU3uPBiVRo78NGjBZEO4gEST0A=;
-        b=aC8Vw6JyayR8N1/lD1rLtgH7CR1CJPshEIxuIgGM6M/9sa1YpfgR3O4u0GcX7uBECv
-         dEEJS8MxVJusxl5OE4wIJJJKg/HnqtJX6UhCqW9jLv/0DsnMunv9jgDB6RPrPmYD2bvJ
-         c4iebTbwbO0NeBssQ06GS0H8fnFSLEz8T79oMPzpa22CkJPsEiN/KvNm8Uk9UPW6SflK
-         X0Yms8b0JypGQS5yWxB2+EY9cNE+X1YxbrYtGjHrXnmRdnpZP5+VT9biAcZbEYbQ4FF8
-         wcdWzDls3DPgesle5HKGdZDZRQ4OZiUqP4BcjccRDlMXEmSAeYW/Jxili+pHRXb/MQ3S
-         T39A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gW+KSjqs2PpYMSyO9GU3uPBiVRo78NGjBZEO4gEST0A=;
-        b=Own5dcMywzQRmgjj4X46fdZJ9ZohaO3hVqi2DtyNai0CcswsChPd8vLhad+3iTczV3
-         HRlc9Ya8YjS3FEcqXoHDnUIl2drpwV8B2xtLQQt2uadz9001H/BPPplfh9lrzgx58GXS
-         T7EhEWoxtS6gsypBvmt3ed0OxX3EXq6nbt0CgHdzbNfvTO9vf1tG8nM3ak/m5OPPgjQw
-         4VoVJbqsuiiDBU7PeOppbZhNSMafV7Oj4GwyDk9e0RZw0ZYC/sIUUfUA6bfI094O5pka
-         sq/dz/RKOCGbRMA6uscP5OhbCNR207tL78XfnEeRnsOfSgxr4wovHBQnvzviZDr0CCGM
-         DARA==
-X-Gm-Message-State: AA+aEWaw85qoMfLQ3hgyKxigA62dEVAQZ5nvAbroIMPwy8zUvB+pWs4Z
-        lz58LX/NmLqiKg2NlXkZEU0fnrOmdMBHskxvr84=
-X-Google-Smtp-Source: AFSGD/URe4rUXKdGyT+7yoaEGPsgvX33p8pMrVLChUAMe0951iU5BickBs5nnnJ7+Ln7qdXAjqBEu0QopmoGaHW8JGk=
-X-Received: by 2002:a6b:ba0a:: with SMTP id k10mr14349634iof.40.1543844606681;
- Mon, 03 Dec 2018 05:43:26 -0800 (PST)
+        Mon, 3 Dec 2018 08:45:19 -0500
+Received: from 8bytes.org ([81.169.241.247]:51232 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725861AbeLCNpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:45:19 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 4E013402; Mon,  3 Dec 2018 14:44:13 +0100 (CET)
+Date:   Mon, 3 Dec 2018 14:44:12 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
+        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
+        peterx@redhat.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v5 02/12] iommu/vt-d: Manage scalalble mode PASID tables
+Message-ID: <20181203134411.lejlkbnagxml54ro@8bytes.org>
+References: <20181128035449.10226-1-baolu.lu@linux.intel.com>
+ <20181128035449.10226-3-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
-References: <20181203133145.12430-1-tiny.windzz@gmail.com> <87zhtmenno.fsf@codeaurora.org>
-In-Reply-To: <87zhtmenno.fsf@codeaurora.org>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Mon, 3 Dec 2018 21:43:04 +0800
-Message-ID: <CAEExFWusB4uNfqvyk-zbQeCJnizgFf73qK3a79NhEMGrTnnfqg@mail.gmail.com>
-Subject: Re: [PATCH] wireless/cw1200: convert to DEFINE_SHOW_ATTRIBUTE
-To:     kvalo@codeaurora.org
-Cc:     Solomon Peachy <pizza@shaftnet.org>, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128035449.10226-3-baolu.lu@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 9:38 PM Kalle Valo <kvalo@codeaurora.org> wrote:
->
-> Yangtao Li <tiny.windzz@gmail.com> writes:
->
-> > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->
-> The prefix should be "cw1200:", I can fix that.
->
-> --
-> Kalle Valo
-OK.
+Hi Baolu,
 
-Thanks,
-Yangtao
+On Wed, Nov 28, 2018 at 11:54:39AM +0800, Lu Baolu wrote:
+> @@ -2482,12 +2482,13 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+>  	if (dev)
+>  		dev->archdata.iommu = info;
+>  
+> -	if (dev && dev_is_pci(dev) && info->pasid_supported) {
+> +	/* PASID table is mandatory for a PCI device in scalable mode. */
+> +	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
+
+This will also allocate a PASID table if the device does not support
+PASIDs, right? Will the table not be used in that case or will the
+device just use the fallback PASID? Isn't it better in that case to have
+no PASID table?
+
+> @@ -143,18 +143,20 @@ int intel_pasid_alloc_table(struct device *dev)
+>  		return -ENOMEM;
+>  	INIT_LIST_HEAD(&pasid_table->dev);
+>  
+> -	size = sizeof(struct pasid_entry);
+> -	count = min_t(int, pci_max_pasids(to_pci_dev(dev)), intel_pasid_max_id);
+> -	order = get_order(size * count);
+> +	if (info->pasid_supported)
+> +		max_pasid = min_t(int, pci_max_pasids(to_pci_dev(dev)),
+> +				  intel_pasid_max_id);
+> +
+> +	size = max_pasid >> (PASID_PDE_SHIFT - 3);
+> +	order = size ? get_order(size) : 0;
+>  	pages = alloc_pages_node(info->iommu->node,
+> -				 GFP_ATOMIC | __GFP_ZERO,
+> -				 order);
+> +				 GFP_ATOMIC | __GFP_ZERO, order);
+
+This is a simple data structure allocation path, does it need
+GFP_ATOMIC?
+
+
+
+	Joerg
+
