@@ -2,153 +2,102 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4D3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BFAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CBF2146D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:45:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA4B2146D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:45:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MpvNoSUA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51CBF2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qk2cF7u+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA4B2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeLCSpS (ORCPT
+        id S1726917AbeLCSqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:45:18 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38551 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbeLCSpS (ORCPT
+        Mon, 3 Dec 2018 13:46:02 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35000 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeLCSqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:45:18 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e5so6911085plb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:45:13 -0800 (PST)
+        Mon, 3 Dec 2018 13:46:02 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so12416905ljb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:45:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Vz4RpNkAFts865UAXW8DwCyoEd+dqjleopIGrH/AuTc=;
-        b=MpvNoSUAkZNzT9UDKsFED7+PSWmlGIKGTyin/3c6lY09+HFuDaQiWQZlGcbjXfjrKM
-         d3tveLhB+nGuR45U8IoYFsgJfykUgiwxWmXc5D1UzwwviIw1QKD4HPyWI8aJZnP7pin9
-         QN6Gwoim2yL0kCFeAO71NeL4r5SSUkypfyUyYf5+ZTuzCNnBUOj1RhgGYnpGU8w30r6P
-         FVFtLNtynLG253MLslHNvI9r1gHvQnX1h3dTzE8VlS8wtjmYhHhi0IK31sVW1H2AmMmo
-         uhUO5gJW9c4XLYzMi8xWDD7TSi9RyIbeux5xTzu8j6CbawpKsLAfqYpjA4bn7LJr9uvM
-         SFaA==
+        bh=6KIlQjAqF0ozKgjQePbTy2uj3vHmuUQ0WI6HBneVUec=;
+        b=Qk2cF7u+4AEeu7eJQErfzfnIthN7En1GdAGPigsy71nypbznIVbM1Znkg7D8vNMs2A
+         3qZqNMksYgHHtBfExXWkrMy8yxIKwZP1Ij7Oggh9ZmiQaN5DRklVzNv3g4ZR4d5wv+WV
+         xSu7PsuHmMXBOF8EDRu63wT8ya9iwADcE7JWE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Vz4RpNkAFts865UAXW8DwCyoEd+dqjleopIGrH/AuTc=;
-        b=d0XTOnnv/kcH+HJnfm1EIDj+0KJfe9ATPNhvfOFUc8ndux+e8++7Inuf4uD6It0cJH
-         5aoXdYxnxsB3amaGbkNU1ejK8vWxGG1WWt75ihBJGmM+mStlfBDckJJGV8D7GhO7jbJP
-         NCVr2S6x9WH1ia/NO1pWnbgWoZiz7EEv38sqSc/Me0NwgfhEdPVSWLeBrJXlPN6v2fYS
-         zpQjHnfxqDCxiaMxpM327k6HMsg/CxEl6VAD2uet/x+eih2DpyOwfdqgcKwHqjN0TTnH
-         qby6nd3bcGRMBwKt3AFI0+Xw40ZV0Jm3iBd1C3BLxPJP64dcJxxIH9JGC5BZ4aa/Omax
-         eWlw==
-X-Gm-Message-State: AA+aEWbM2qu7/7Wy4f6+0uy+y4TbgZCpjo/gVWEPMIdns0T85q65Yy5c
-        zD2HjPYB4gZLLkwb4ebnyu6uoFVw8DfsHb49pT5prFsWyWg=
-X-Google-Smtp-Source: AFSGD/UyFqTohNcPZfT+W/QTh6VZmuq/cE0JrDEfs+Q4pUtX4iT0u0B6XCvx2oumEIfzz5lmOmcv2l8nb5iIVvCnpzk=
-X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr16898432plb.238.1543862712734;
- Mon, 03 Dec 2018 10:45:12 -0800 (PST)
+        bh=6KIlQjAqF0ozKgjQePbTy2uj3vHmuUQ0WI6HBneVUec=;
+        b=BTH/rRRxL1ncg9/rvMTCv/19nZNTKKFPPf6I76QCLwJNASa6lXc0hjVKoEjdashwgA
+         zFO2MR203eczAludk3jgPmbZZ+5qVJhNifuOVmj8Oaao71HjzOnsViBkqmBwTHDCIZMM
+         3/I6Eb2kzMLwdDN/PNpsPTBLp5xyJt7QtlqgRw2pyES7boae6R8x0nVEtnT9t6x0yXLi
+         QBLRogPZ67YOEaw/sL+GIRaPJX5lHd8W35aft86aWBKgi+fxzX4/g7Rg7gnq7eMkCeCr
+         P0hbKh53N4NZYJ72oAbZC6Nb5+D+6E5d0gPdRrqNL28Qb14vKg5jPyvdrseWbSNgokr8
+         nNjw==
+X-Gm-Message-State: AA+aEWZRL7CxanloqEbFmMYiOkKZzn3Nwcrrhxxuf569wDEpPPhvC0l/
+        TrahCXdqh34E6uJeG5wc2+IFN7D0GKI=
+X-Google-Smtp-Source: AFSGD/WBqB2H77u1GxhQ8yHI2sTybPWvjNvwqAzyzliJ2UQVkIpRd2qQGJdfCCpaRCX2c8YJCMJHJw==
+X-Received: by 2002:a2e:8347:: with SMTP id l7-v6mr7624307ljh.152.1543862755105;
+        Mon, 03 Dec 2018 10:45:55 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id i127-v6sm2616724lji.3.2018.12.03.10.45.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 10:45:53 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id z13so9952836lfe.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:45:52 -0800 (PST)
+X-Received: by 2002:a19:4287:: with SMTP id p129mr10423849lfa.135.1543862751988;
+ Mon, 03 Dec 2018 10:45:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20181102004455.10157-1-joel@jms.id.au> <CAKwvOdni_iJ4beAWYkUUpZss_PYZezMGR7hN9k1rm9J0iB0gHQ@mail.gmail.com>
- <CACPK8XdbWzb=52iFV_fj0Y5KMWPgsRv_A8PZgfKn9vm96y3LOw@mail.gmail.com>
-In-Reply-To: <CACPK8XdbWzb=52iFV_fj0Y5KMWPgsRv_A8PZgfKn9vm96y3LOw@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 3 Dec 2018 10:45:01 -0800
-Message-ID: <CAKwvOdndyeRZApOqbp-6evEpYgzHyGo4qqaMKd_DQ4U9x8_5wA@mail.gmail.com>
-Subject: Re: [PATCH v2] raid6/ppc: Fix build for clang
-To:     joel@jms.id.au
-Cc:     mpe@ellerman.id.au, LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>, jji@us.ibm.com
+References: <20181127062503.GH6163@shao2-debian> <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
+ <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com>
+ <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
+ <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
+ <20181203181456.GK31738@dhcp22.suse.cz> <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
+ <20181203183050.GL31738@dhcp22.suse.cz>
+In-Reply-To: <20181203183050.GL31738@dhcp22.suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 3 Dec 2018 10:45:35 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
+Message-ID: <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
+To:     mhocko@kernel.org
+Cc:     ying.huang@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
+        s.priebe@profihost.ag, mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org,
+        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 2:24 AM Joel Stanley <joel@jms.id.au> wrote:
+On Mon, Dec 3, 2018 at 10:30 AM Michal Hocko <mhocko@kernel.org> wrote:
 >
-> On Sat, 3 Nov 2018 at 04:04, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> >
-> > On Thu, Nov 1, 2018 at 5:45 PM Joel Stanley <joel@jms.id.au> wrote:
-> > >
-> > > We cannot build these files with clang as it does not allow altivec
-> > > instructions in assembly when -msoft-float is passed.
-> > >
-> > > Jinsong Ji <jji@us.ibm.com> wrote:
-> > > > We currently disable Altivec/VSX support when enabling soft-float.  So
-> > > > any usage of vector builtins will break.
-> > > >
-> > > > Enable Altivec/VSX with soft-float may need quite some clean up work, so
-> > > > I guess this is currently a limitation.
-> > > >
-> > > > Removing -msoft-float will make it work (and we are lucky that no
-> > > > floating point instructions will be generated as well).
-> > >
-> > > This is a workaround until the issue is resolved in clang.
-> > >
-> > > Link: https://bugs.llvm.org/show_bug.cgi?id=31177
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/239
-> > > Signed-off-by: Joel Stanley <joel@jms.id.au>
-> > > ---
-> > > v2: fix typo in comment, thanks Jinsong
-> > >
-> > >  lib/raid6/Makefile | 15 +++++++++++++++
-> > >  1 file changed, 15 insertions(+)
-> > >
-> > > diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
-> > > index 2f8b61dfd9b0..7ed43eaa02ef 100644
-> > > --- a/lib/raid6/Makefile
-> > > +++ b/lib/raid6/Makefile
-> > > @@ -18,6 +18,21 @@ quiet_cmd_unroll = UNROLL  $@
-> > >
-> > >  ifeq ($(CONFIG_ALTIVEC),y)
-> > >  altivec_flags := -maltivec $(call cc-option,-mabi=altivec)
-> > > +
-> > > +ifdef CONFIG_CC_IS_CLANG
-> > > +# clang ppc port does not yet support -maltivec when -msoft-float is
-> > > +# enabled. A future release of clang will resolve this
-> > > +# https://bugs.llvm.org/show_bug.cgi?id=31177
-> > > +CFLAGS_REMOVE_altivec1.o  += -msoft-float
-> > > +CFLAGS_REMOVE_altivec2.o  += -msoft-float
-> > > +CFLAGS_REMOVE_altivec4.o  += -msoft-float
-> > > +CFLAGS_REMOVE_altivec8.o  += -msoft-float
-> > > +CFLAGS_REMOVE_altivec8.o  += -msoft-float
-> > > +CFLAGS_REMOVE_vpermxor1.o += -msoft-float
-> > > +CFLAGS_REMOVE_vpermxor2.o += -msoft-float
-> > > +CFLAGS_REMOVE_vpermxor4.o += -msoft-float
-> > > +CFLAGS_REMOVE_vpermxor8.o += -msoft-float
-> > > +endif
-> >
-> > Hi Joel, thanks for this patch!  My same thoughts about
-> > CONFIG_CC_IS_CLANG vs cc-option from
-> > https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-November/180939.html
-> > apply here as well.  I don't feel strongly about either though.  What
-> > are your thoughts?
->
-> I'm not sure that we can test for this one with cc-option. The result
-> of having -maltivec with -msoft-float is a error about the internals
-> of clang, which isn't something that kbuild is set up to test for.
+> I do not get it. 5265047ac301 which this patch effectively reverts has
+> regressed kvm workloads. People started to notice only later because
+> they were not running on kernels with that commit until later. We have
+> 4.4 based kernels reports. What do you propose to do for those people?
 
-As in clang itself crashes, and cc-option/kbuild can't handle that gracefully?
+We have at least two patches that others claim to fix things.
 
->
-> When clang is fixed to allow this combination we will still build this
-> code in the same way, so in that sense it fails "open".
->
-> Cheers,
->
-> Joel
+You dismissed them and said "can't be done".
 
+As a result, I'm not really interested in this discussion.
 
-
--- 
-Thanks,
-~Nick Desaulniers
+                Linus
