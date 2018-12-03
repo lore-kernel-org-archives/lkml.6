@@ -2,144 +2,83 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C63C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 863B2C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01BB0206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:22:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iub4ZF/L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01BB0206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5577420851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:22:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5577420851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeLCOXY (ORCPT
+        id S1726620AbeLCOXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:23:24 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42399 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbeLCOXX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:23:23 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so1740233plp.9;
-        Mon, 03 Dec 2018 06:22:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4YfiQXJj4yKrRnSl7nTTGshx8IYMROHD4JklpRJUxbw=;
-        b=iub4ZF/LhjqW8D9jXPm752i4U4u+beZheyvvA8dOo8ug9yWELtwyP4fAsynnk46xOW
-         oXG/gBvL97UJsPxWWl6HsbsL0Ac+oKix48fJ3zOThdVnO266ZRFR9zRtdHtvzrvlj4iE
-         4T+5fFRAz5Da0oRTY4uzThMD/JG8B+Xn5lsXYgACEWgL29AVC9uk0xtPF9yKKBv2wPn0
-         Nl7aTlD6f8FHfNg0gqG/lu+42KmV5oR6feekrU3HjKGZF4tkgSeJ6R/F02RPAIke7GLd
-         U5rxjEhlUwCN5kNTjphcDA0Ox5IUt+JSwPbghGpiTCzBGEIep9MWRcqWxDtGH50D4Sj2
-         b74A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4YfiQXJj4yKrRnSl7nTTGshx8IYMROHD4JklpRJUxbw=;
-        b=roTjgph1QWNZiaFgVZp0uHvs5dpj+/gRWqJoMCSLX8I1F10XLcP9Ae8OizwybSUvj8
-         z250tHuhFzvXXnetm9eTz4WbOYoGjiAh9/USAvl8qua+YpgDIu3RCTXxD62iZSonXoV1
-         A0x+BeHf6VEuXdDNILfbLeK3KSkv9iY5VcDfwJ0A2nDDzKJwbwGf9OYQMPq2sEQ8SDyZ
-         NCrhJgSLoQZYTHO3ilEhViRMS4iQXY3orzL0fOWkj1gtrLny/RgMs1IMN5c4tYX30ify
-         672IfwedNh9wZ7zqaX82zJuakrZhfcNVHkMZvJBlNlNabf0uZo0W9No4dSWCxlYd4zFk
-         rnMw==
-X-Gm-Message-State: AA+aEWZ3G6ps0QSGPzGGBB9NafYbRLXslYanrsKYWOzmnt/UKRTT6Ftx
-        XMmzb2NxeKVuhcWzHULJid0=
-X-Google-Smtp-Source: AFSGD/Xp1J/ADngiBb8D/QBTRYHAKdnXfwAaff9FmSpn2imvcTAVk8/ycPwTMKbjZDY/gukoqOBp2w==
-X-Received: by 2002:a17:902:298a:: with SMTP id h10mr16275009plb.312.1543846931773;
-        Mon, 03 Dec 2018 06:22:11 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id j70sm19325775pfc.43.2018.12.03.06.22.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 06:22:11 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, davem@davemloft.net,
-        mcoquelin.stm32@gmail.com
-Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] net: stmmac: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Mon,  3 Dec 2018 09:22:09 -0500
-Message-Id: <20181203142209.13044-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 3 Dec 2018 09:23:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57968 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725918AbeLCOXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:23:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 57119AF66;
+        Mon,  3 Dec 2018 14:22:21 +0000 (UTC)
+Date:   Mon, 03 Dec 2018 15:22:20 +0100
+Message-ID: <s5hlg56y9k3.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Hui Wang <hui.wang@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kailang Yang <kailang@realtek.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH v8 2/3] x86: add support for Huawei WMI hotkeys.
+In-Reply-To: <CAHp75Vf7WW8ezL_H_iw_=nSVARuvhugUY5sTkQ=usU96Wj2YSA@mail.gmail.com>
+References: <20181129235742.14332-1-ayman.bagabas@gmail.com>
+        <20181129235742.14332-3-ayman.bagabas@gmail.com>
+        <s5hftvezupj.wl-tiwai@suse.de>
+        <CAHp75Vf7WW8ezL_H_iw_=nSVARuvhugUY5sTkQ=usU96Wj2YSA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On Mon, 03 Dec 2018 15:18:54 +0100,
+Andy Shevchenko wrote:
+> 
+> On Mon, Dec 3, 2018 at 2:00 PM Takashi Iwai <tiwai@suse.de> wrote:
+> > On Fri, 30 Nov 2018 00:57:37 +0100,
+> > Ayman Bagabas wrote:
+> 
+> > > +struct huawei_wmi_priv {
+> > > +     struct input_dev *idev;
+> > > +     struct led_classdev cdev;
+> > > +     acpi_handle handle;
+> >
+> > Is this handle set in anywhere?  I couldn't see it in your patch.
+> > If it's supposed to be NULL, passing NULL explicitly makes your
+> > intention clearer.
+> 
+> Isn't below an answer?
+> 
+> > > +     // Skip registering LED subsystem if no ACPI method was found.
+> > > +     status = acpi_get_handle(priv->handle, "\\_SB.PCI0.LPCB.EC0", &priv->handle);
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 34 +++----------------
- 1 file changed, 4 insertions(+), 30 deletions(-)
+Oh indeed, but why it passes priv->handle at the first argument...?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 076a8be18d67..c728ed1375b2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3891,7 +3891,7 @@ static void sysfs_display_ring(void *head, int size, int extend_desc,
- 	}
- }
- 
--static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
-+static int stmmac_rings_status_show(struct seq_file *seq, void *v)
- {
- 	struct net_device *dev = seq->private;
- 	struct stmmac_priv *priv = netdev_priv(dev);
-@@ -3933,23 +3933,9 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(stmmac_rings_status);
- 
--static int stmmac_sysfs_ring_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, stmmac_sysfs_ring_read, inode->i_private);
--}
--
--/* Debugfs files, should appear in /sys/kernel/debug/stmmaceth/eth0 */
--
--static const struct file_operations stmmac_rings_status_fops = {
--	.owner = THIS_MODULE,
--	.open = stmmac_sysfs_ring_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
--
--static int stmmac_sysfs_dma_cap_read(struct seq_file *seq, void *v)
-+static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
- {
- 	struct net_device *dev = seq->private;
- 	struct stmmac_priv *priv = netdev_priv(dev);
-@@ -4012,19 +3998,7 @@ static int stmmac_sysfs_dma_cap_read(struct seq_file *seq, void *v)
- 
- 	return 0;
- }
--
--static int stmmac_sysfs_dma_cap_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, stmmac_sysfs_dma_cap_read, inode->i_private);
--}
--
--static const struct file_operations stmmac_dma_cap_fops = {
--	.owner = THIS_MODULE,
--	.open = stmmac_sysfs_dma_cap_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(stmmac_dma_cap);
- 
- static int stmmac_init_fs(struct net_device *dev)
- {
--- 
-2.17.0
 
+thanks,
+
+Takashi
