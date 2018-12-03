@@ -6,170 +6,123 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E24EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 431DCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F012082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:08:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F012082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 0ACD02082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:11:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACD02082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbeLCIIW (ORCPT
+        id S1725870AbeLCILE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 03:08:22 -0500
-Received: from mx.socionext.com ([202.248.49.38]:48892 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbeLCIIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 03:08:22 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 03 Dec 2018 17:08:17 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id EB98160062;
-        Mon,  3 Dec 2018 17:08:16 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 3 Dec 2018 17:08:16 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 4522940394;
-        Mon,  3 Dec 2018 17:08:16 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 24EAB120455;
-        Mon,  3 Dec 2018 17:08:16 +0900 (JST)
-Subject: Re: [PATCH 06/14] dt-bindings: clock: milbeaut: add Milbeaut clock
- description
-To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-7-git-send-email-sugaya.taichi@socionext.com>
- <154356596981.88331.14415961625410424962@swboyd.mtv.corp.google.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <15178a7c-7d12-7c10-6093-192754827b5a@socionext.com>
-Date:   Mon, 3 Dec 2018 17:08:15 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <154356596981.88331.14415961625410424962@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Dec 2018 03:11:04 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43978 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725830AbeLCILD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 03:11:03 -0500
+X-Greylist: delayed 458 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Dec 2018 03:11:03 EST
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 49AC787A84;
+        Mon,  3 Dec 2018 08:03:22 +0000 (UTC)
+Received: from master.localdomain.com (unknown [10.64.242.98])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C7D02166BA2;
+        Mon,  3 Dec 2018 08:03:20 +0000 (UTC)
+From:   Masatake YAMATO <yamato@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, yamato@redhat.com
+Subject: [PATCH resend] eventfd: make eventfd files distinguishable in /proc/$PID/fd
+Date:   Mon,  3 Dec 2018 17:03:17 +0900
+Message-Id: <20181203080317.1028-1-yamato@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 03 Dec 2018 08:03:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 03 Dec 2018 08:03:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'yamato@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Finding endpoints of an IPC channel is one of essential task to
+understand how a user program works. Procfs and netlink socket provide
+enough hints to find endpoints for IPC channels like pipes, unix
+sockets, and pseudo terminals. However, there is no simple way to find
+endpoints for an eventfd file from userland. An inode number doesn't
+hint. Unlike pipe, all eventfd files shares one inode object.
 
-Thank you for your comments.
+To provide the way to find endpoints of an eventfd file, this patch
+adds eventfd identifiers to the output of 'ls -l /proc/$pid/fd' like:
 
-On 2018/11/30 17:19, Stephen Boyd wrote:
-> Quoting Sugaya Taichi (2018-11-18 17:01:11)
->> Add DT bindings document for Milbeaut clock.
->>
->> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
->> ---
->>   .../devicetree/bindings/clock/milbeaut-clock.txt   | 93 ++++++++++++++++++++++
->>   1 file changed, 93 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/milbeaut-clock.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.txt b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
->> new file mode 100644
->> index 0000000..5c093c8
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
->> @@ -0,0 +1,93 @@
->> +Milbeaut M10V Clock Controller Binding
->> +----------------------------------------
->> +Milbeaut clock controller is consists of few oscillators, PLL, multiplexer
->> +and few divider modules
->> +
->> +This binding uses common clock bindings
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Required properties:
->> +- compatible: shall be "socionext,milbeaut-m10v-clk-regs"
->> +- reg: shall contain base address and length of clock registers
->> +- #clock-cells: shall be 0
->> +
->> +Example:
->> +       m10v-clk-tree@ {
->> +               compatible = "socionext,milbeaut-m10v-clk-regs";
->> +               reg = <0x1d021000 0x4000>;
->> +
->> +               clocks {
->> +                       #address-cells = <0>;
->> +                       #size-cells = <0>;
->> +
->> +                       uclk40xi: uclk40xi {
->> +                               compatible = "fixed-clock";
->> +                               #clock-cells = <0>;
->> +                               clock-frequency = <40000000>;
->> +                       };
->> +               };
-> 
-> This style of binding is highly discouraged. We don't describe each and
-> every clk in DT, we describe clk controllers and their outputs and
-> inputs in DT. The driver is the place where the clock controller
-> describes the internal clk topology of that controller. Also, fixed
-> frequency clks are typically oscillators and those would come from the
-> board dts file, but otherwise I wouldn't expect to see fixed frequency
-> clks in DT.
+  ...
+  lrwx------. 1 qemu qemu 64 May 20 04:49 93 -> 'anon_inode:[eventfd:130]'
+  lrwx------. 1 qemu qemu 64 May 20 04:49 94 -> 'anon_inode:[eventfd:131]'
+  ...
 
-I understand. Received the similar comment from Rob in the DT part also.
+Here "130" and "131" are added as identifiers newly added.
+In the case that ida_simple_get returns an error, this change doesn't add
+an identifier; just use "[eventfd]" as before.
 
-> 
->> +       }
->> +
->> +The clock consumer shall specify the desired clock-output of the clock
->> +controller (as defined in [2]) by specifying output-id in its "clock"
->> +phandle cell
->> +[2] arch/arm/boot/dts/milbeaut-m10v-clk.h
->> +
-> [...]
->> +
->> +Example
->> +       piclk_mux_0: spiclk_mux_0 {
->> +               compatible = "socionext,m10v-clk-div";
->> +               #clock-cells = <0>;
->> +               clocks = <&pll10_div_1_2>;
->> +               offset = <bSPICLK>;
->> +               mask = <0x3>;
->> +               ratios = <4 0x5 2 0x4>;
->> +       };
->> +
->> +       pll10: pll10 {
->> +               compatible = "socionext,m10v-pll-fixed-factor";
->> +               #clock-cells = <0>;
->> +               clocks = <&uclk40xi>;
->> +               offset = <10>;
->> +               clock-div = <5>;
->> +               clock-mult = <108>;
->> +       };
->> +
->> +       emmcclk: emmcclk {
->> +               compatible = "socionext,m10v-clk-div";
->> +               #clock-cells = <0>;
->> +               clocks = <&pll11>;
->> +               offset = <bEMMCCLK>;
->> +               mask = <0x3>;
->> +               ratios = <15 0x7 10 0x6 9 0x5 8 0x4>;
-> 
-> Yeah, please no. This whole binding needs a rewrite to not have one node
-> per clk.
+Signed-off-by: Masatake YAMATO <yamato@redhat.com>
+---
+ fs/eventfd.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-OK, I will renew the binding.
-
-Thanks.
-Sugaya Taichi
-
-> 
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 08d3bd602f73..c18952948110 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -21,6 +21,11 @@
+ #include <linux/eventfd.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
++#include <linux/idr.h>
++
++/* Worst case buffer size needed for holding an integer. */
++#define ITOA_MAX_LEN 12
++DEFINE_IDA(eventfd_ida);
+ 
+ struct eventfd_ctx {
+ 	struct kref kref;
+@@ -35,6 +40,7 @@ struct eventfd_ctx {
+ 	 */
+ 	__u64 count;
+ 	unsigned int flags;
++	int id;
+ };
+ 
+ /**
+@@ -69,6 +75,8 @@ EXPORT_SYMBOL_GPL(eventfd_signal);
+ 
+ static void eventfd_free_ctx(struct eventfd_ctx *ctx)
+ {
++	if (ctx->id >= 0)
++		ida_simple_remove(&eventfd_ida, ctx->id);
+ 	kfree(ctx);
+ }
+ 
+@@ -384,6 +392,7 @@ static int do_eventfd(unsigned int count, int flags)
+ {
+ 	struct eventfd_ctx *ctx;
+ 	int fd;
++	char name[1 + 8 + ITOA_MAX_LEN + 1 + 1] = "[eventfd]";
+ 
+ 	/* Check the EFD_* constants for consistency.  */
+ 	BUILD_BUG_ON(EFD_CLOEXEC != O_CLOEXEC);
+@@ -400,8 +409,11 @@ static int do_eventfd(unsigned int count, int flags)
+ 	init_waitqueue_head(&ctx->wqh);
+ 	ctx->count = count;
+ 	ctx->flags = flags;
++	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
+ 
+-	fd = anon_inode_getfd("[eventfd]", &eventfd_fops, ctx,
++	if (ctx->id >= 0)
++		snprintf(name, sizeof(name), "[eventfd:%d]", ctx->id);
++	fd = anon_inode_getfd(name, &eventfd_fops, ctx,
+ 			      O_RDWR | (flags & EFD_SHARED_FCNTL_FLAGS));
+ 	if (fd < 0)
+ 		eventfd_free_ctx(ctx);
+-- 
+2.17.0
 
