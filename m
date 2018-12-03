@@ -2,93 +2,152 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2D8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D69C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C129920850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:49:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l6xL+Koj";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FRaQB/Dx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C129920850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 37BD120850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:49:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BD120850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbeLCMuD (ORCPT
+        id S1726591AbeLCMuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:50:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39602 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbeLCMuD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:50:03 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6E20E60B62; Mon,  3 Dec 2018 12:49:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543841348;
-        bh=9jY/kiaNNMyuigDJmz1eK4j/O9SP9k5USUl2K97IftM=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=l6xL+KojIsTinvJIk1XSKFWGn24xMtUsiayAGBJYErfNR4yTZpJAjHPK31SECRb6A
-         xvCVbsxz5bSjsiBuPUMHyF68lJbCl8KblFrJqbM83+T0m4F07nNSfzr6Xe2+QVhOMC
-         ry+ihdQfyykr7TZG2Nxv25Kk2ukVM86ugGQvmMMo=
-Received: from x230.qca.qualcomm.com (37-33-92-201.bb.dnainternet.fi [37.33.92.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1BC396021A;
-        Mon,  3 Dec 2018 12:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543841347;
-        bh=9jY/kiaNNMyuigDJmz1eK4j/O9SP9k5USUl2K97IftM=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=FRaQB/Dxl20YvbKVBFdF6t9IbsvG1okIIh8Hlr6mtLQQcBPOV95qJlLpf9VgTodvX
-         qaVZ5FW9ZN2203ZjVpyLkbL7EwLf+KkE3JRtbZXemdIem57N5v7hUu7YNnN7ynJUrh
-         ZhhbZI55AOe+BN45IlH0Eqazd9ypzBglbQ2qHGMM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BC396021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     merez@codeaurora.org, davem@davemloft.net, kubakici@wp.pl,
-        pizza@shaftnet.org, matthias.bgg@gmail.com,
-        lorenzo.bianconi@redhat.com, nbd@nbd.name, sgruszka@redhat.com,
-        joe@perches.com, linux-wireless@vger.kernel.org,
-        wil6210@qti.qualcomm.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] wireless: convert to DEFINE_SHOW_ATTRIBUTE
-References: <20181202093047.11174-1-tiny.windzz@gmail.com>
-Date:   Mon, 03 Dec 2018 14:49:01 +0200
-In-Reply-To: <20181202093047.11174-1-tiny.windzz@gmail.com> (Yangtao Li's
-        message of "Sun, 2 Dec 2018 04:30:47 -0500")
-Message-ID: <87d0qig4hu.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 3 Dec 2018 07:50:06 -0500
+Received: from foss.arm.com ([217.140.101.70]:36616 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726570AbeLCMuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:50:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0CDE1688;
+        Mon,  3 Dec 2018 04:49:10 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AF9A53F614;
+        Mon,  3 Dec 2018 04:49:10 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id A0DA11AE1062; Mon,  3 Dec 2018 12:49:30 +0000 (GMT)
+Date:   Mon, 3 Dec 2018 12:49:30 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] arm64/bpf: don't allocate BPF JIT programs in
+ module memory
+Message-ID: <20181203124930.GB25097@arm.com>
+References: <20181123221804.440-1-ard.biesheuvel@linaro.org>
+ <20181123221804.440-3-ard.biesheuvel@linaro.org>
+ <20181130182629.GA16085@arm.com>
+ <CAKv+Gu9QVHLWu5H3Ok1Kbm=vtzd1KaHUn2VEij6oToW5aPR9uA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu9QVHLWu5H3Ok1Kbm=vtzd1KaHUn2VEij6oToW5aPR9uA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yangtao Li <tiny.windzz@gmail.com> writes:
+On Fri, Nov 30, 2018 at 08:20:06PM +0100, Ard Biesheuvel wrote:
+> On Fri, 30 Nov 2018 at 19:26, Will Deacon <will.deacon@arm.com> wrote:
+> >
+> > On Fri, Nov 23, 2018 at 11:18:04PM +0100, Ard Biesheuvel wrote:
+> > > The arm64 module region is a 128 MB region that is kept close to
+> > > the core kernel, in order to ensure that relative branches are
+> > > always in range. So using the same region for programs that do
+> > > not have this restriction is wasteful, and preferably avoided.
+> > >
+> > > Now that the core BPF JIT code permits the alloc/free routines to
+> > > be overridden, implement them by vmalloc()/vfree() calls from a
+> > > dedicated 128 MB region set aside for BPF programs. This ensures
+> > > that BPF programs are still in branching range of each other, which
+> > > is something the JIT currently depends upon (and is not guaranteed
+> > > when using module_alloc() on KASLR kernels like we do currently).
+> > > It also ensures that placement of BPF programs does not correlate
+> > > with the placement of the core kernel or modules, making it less
+> > > likely that leaking the former will reveal the latter.
+> > >
+> > > This also solves an issue under KASAN, where shadow memory is
+> > > needlessly allocated for all BPF programs (which don't require KASAN
+> > > shadow pages since they are not KASAN instrumented)
+> > >
+> > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > ---
+> > >  arch/arm64/include/asm/memory.h |  5 ++++-
+> > >  arch/arm64/net/bpf_jit_comp.c   | 13 +++++++++++++
+> > >  2 files changed, 17 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> > > index b96442960aea..ee20fc63899c 100644
+> > > --- a/arch/arm64/include/asm/memory.h
+> > > +++ b/arch/arm64/include/asm/memory.h
+> > > @@ -62,8 +62,11 @@
+> > >  #define PAGE_OFFSET          (UL(0xffffffffffffffff) - \
+> > >       (UL(1) << (VA_BITS - 1)) + 1)
+> > >  #define KIMAGE_VADDR         (MODULES_END)
+> > > +#define BPF_JIT_REGION_START (VA_START + KASAN_SHADOW_SIZE)
+> > > +#define BPF_JIT_REGION_SIZE  (SZ_128M)
+> > > +#define BPF_JIT_REGION_END   (BPF_JIT_REGION_START + BPF_JIT_REGION_SIZE)
+> > >  #define MODULES_END          (MODULES_VADDR + MODULES_VSIZE)
+> > > -#define MODULES_VADDR                (VA_START + KASAN_SHADOW_SIZE)
+> > > +#define MODULES_VADDR                (BPF_JIT_REGION_END)
+> > >  #define MODULES_VSIZE                (SZ_128M)
+> > >  #define VMEMMAP_START                (PAGE_OFFSET - VMEMMAP_SIZE)
+> > >  #define PCI_IO_END           (VMEMMAP_START - SZ_2M)
+> > > diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+> > > index a6fdaea07c63..76c2ab40c02d 100644
+> > > --- a/arch/arm64/net/bpf_jit_comp.c
+> > > +++ b/arch/arm64/net/bpf_jit_comp.c
+> > > @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+> > >                                          tmp : orig_prog);
+> > >       return prog;
+> > >  }
+> > > +
+> > > +void *bpf_jit_alloc_exec(unsigned long size)
+> > > +{
+> > > +     return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_START,
+> > > +                                 BPF_JIT_REGION_END, GFP_KERNEL,
+> > > +                                 PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+> > > +                                 __builtin_return_address(0));
+> >
+> > I guess we'll want VM_IMMEDIATE_UNMAP here if Rich gets that merged.
+> 
+> I think akpm already queued up that patch.
+> 
+> > In the
+> > meantime, I wonder if it's worth zeroing the region in bpf_jit_free_exec()?
+> > (although we'd need the size information...).
+> >
+> 
+> Not sure. What exactly would that achieve?
 
-> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
->
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/net/wireless/ath/wil6210/debugfs.c    | 240 +++---------------
->  .../wireless/mediatek/mt76/mt76x0/debugfs.c   |  20 +-
->  .../wireless/mediatek/mt76/mt76x2/debugfs.c   |  38 +--
->  .../net/wireless/mediatek/mt7601u/debugfs.c   |  40 +--
->  drivers/net/wireless/st/cw1200/debug.c        |  32 +--
->  5 files changed, 64 insertions(+), 306 deletions(-)
+I think the zero encoding is guaranteed to be undefined, so it would limit
+the usefulness of any stale, executable TLB entries. However, we'd also need
+cache maintenance to make that stuff visible to the I side, so it's probably
+not worth it, especially if akpm has queued the stuff from Rich.
 
-This is rather large cleanup so please split these per driver (wil6210,
-mt76 and cw1200).
+Maybe just add an:
 
--- 
-Kalle Valo
+/* FIXME: Remove this when VM_IMMEDIATE_UNMAP is supported */
+#ifndef VM_IMMEDIATE_UNMAP
+#define VM_IMMEDIATE_UNMAP	0
+#endif
+
+so we remember to come back and sort this out? Up to you.
+
+Will
