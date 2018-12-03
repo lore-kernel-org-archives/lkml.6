@@ -2,87 +2,87 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DDBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A57C7C65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C33A921473
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:59:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33A921473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 7491C21473
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:59:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7491C21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbeLCJ7k (ORCPT
+        id S1726139AbeLCJ7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:59:40 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24624 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725945AbeLCJ7k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:59:40 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB39p7Cp021675;
-        Mon, 3 Dec 2018 10:58:56 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2p3uhmgrvc-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 03 Dec 2018 10:58:56 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 51B1838;
-        Mon,  3 Dec 2018 09:58:55 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 27A4D1325;
-        Mon,  3 Dec 2018 09:58:55 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.47) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 3 Dec
- 2018 10:58:54 +0100
-Subject: Re: [PATCH v2] ARM: multi_v7_defconfig: enable STM32 analog & timer
- drivers
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <arnd@arndb.de>,
-        <mcoquelin.stm32@gmail.com>
-CC:     <linux@armlinux.org.uk>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1538577689-22847-1-git-send-email-fabrice.gasnier@st.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <0e4b96e9-e4de-bd88-ed87-b6a411fdb8fa@st.com>
-Date:   Mon, 3 Dec 2018 10:58:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 3 Dec 2018 04:59:43 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32789 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725945AbeLCJ7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 04:59:42 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 1D36A7FE4866D;
+        Mon,  3 Dec 2018 09:59:18 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 3 Dec
+ 2018 09:59:11 +0000
+Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+ <20181114153108.12907-3-roberto.sassu@huawei.com>
+ <20181116133851.GB4163@linux.intel.com>
+ <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
+ <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
+ <20181130194149.GA18584@linux.intel.com>
+ <20181130194527.GB18584@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <95aa61ad-6319-8d9a-dc08-153d80402dfa@huawei.com>
+Date:   Mon, 3 Dec 2018 10:59:10 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1538577689-22847-1-git-send-email-fabrice.gasnier@st.com>
+In-Reply-To: <20181130194527.GB18584@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_05:,,
- signatures=0
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrice,
-
-On 10/3/18 4:41 PM, Fabrice Gasnier wrote:
-> This enables drivers for STM32 timer, low power timer and analog hardware
-> that can be used on STM32MP1 SoC:
-> - Timer & LP Timer MFD core, PWM, trigger & encoder drivers
-> - IIO ADC/DAC/DFSDM
-> - vrefbuf regu driver (voltage reference buffer).
+On 11/30/2018 8:45 PM, Jarkko Sakkinen wrote:
+> On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
+>> Even after looking at the spec the last field does not make sense as the
+>> event after digests and digests are not in union. It is just not right.
+>>
+>> The comment does not fix that.
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> ---
->   arch/arm/configs/multi_v7_defconfig | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> You should remove the last field and rename the struct as maybe
+> struct tcg_pcr_event2_head. If we ever need the very last field
+> we can create struct *_tail.
+> 
+> Not your fault but there is clear bug in the struct definition
+> that should be fixed in a commit of its own.
 
-Applied on stm32-next.
+Given that I explain the problem in the new patch, I would also remove
+TPM2_ACTIVE_PCR_BANKS in the same patch. Is it ok?
 
-Thanks.
-Alex
+Thanks
+
+Roberto
+
+> No new comments are needed.
+> 
+> /Jarkko
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
