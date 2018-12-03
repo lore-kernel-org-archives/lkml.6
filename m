@@ -2,152 +2,87 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0E4C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85728C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6D920850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:58:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C6D920850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 499FE20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:00:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499FE20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbeLCU6s (ORCPT
+        id S1726025AbeLCVAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:58:48 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35081 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeLCU6r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:58:47 -0500
-Received: by mail-qk1-f195.google.com with SMTP id w204so8276089qka.2;
-        Mon, 03 Dec 2018 12:58:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=g9C1/r4c63to+g32lsRVecYhxr1QWtG5M1qbNkaLgcA=;
-        b=J2Uq+VCxmsOZTsF+k+gwya/bQR4hPdNOg2v4S7Z8R5Giv3HEdIwx9k03XznESMVicg
-         /OjH7mZNcBi31waf8XttkyK2eogeRdNzfaL5l8zomTHxBisd3q1oJoB5CAwL5sYHi4B/
-         Lq0Q83KrLGKTwD0RNllabJswrvAkKzplllFpV6b3T7AJsF5XEv+TSP2ELCKpGD0C+uBS
-         63dQnytbjv7nRLou5w9Wi7RNbx9/y48FgP5/OWdQ9fA+TrdWmRYAvKiCTsB8LeWSxzHA
-         Z9i227pB+Gp0Mxn2wN2XZcghum0fA6snc+/e0SD7mnnG/brImO7q2NyqnNu+uxZPJhG1
-         5VsQ==
-X-Gm-Message-State: AA+aEWYTDN5zZ12BvfpywWNb5uVHfebZzVVzKxQuSqo9qtRZcQsgFQe0
-        0hFJqb9QFCPirh2xi6h1qNo=
-X-Google-Smtp-Source: AFSGD/VqDQscYuJ8ALNwzh27HqgKOVYYtpdEPy2pZrvviMmp2qu3DbroicydTvMWekEl/qLtJTN6Xg==
-X-Received: by 2002:a37:6a42:: with SMTP id f63mr16354369qkc.224.1543870726289;
-        Mon, 03 Dec 2018 12:58:46 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::7:e729])
-        by smtp.gmail.com with ESMTPSA id z8sm9848396qth.34.2018.12.03.12.58.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 12:58:45 -0800 (PST)
-Date:   Mon, 3 Dec 2018 15:58:42 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/13] blkcg: introduce common blkg association logic
-Message-ID: <20181203205842.GA90035@dennisz-mbp.dhcp.thefacebook.com>
-References: <20181126211946.77067-1-dennis@kernel.org>
- <20181126211946.77067-5-dennis@kernel.org>
- <20181130095209.GA17103@infradead.org>
+        Mon, 3 Dec 2018 16:00:39 -0500
+Received: from sauhun.de ([88.99.104.3]:58484 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbeLCVAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:00:39 -0500
+Received: from localhost (p54B3353C.dip0.t-ipconnect.de [84.179.53.60])
+        by pokefinder.org (Postfix) with ESMTPSA id 519753E17CF;
+        Mon,  3 Dec 2018 22:00:36 +0100 (CET)
+Date:   Mon, 3 Dec 2018 22:00:35 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Peter Rosin <peda@axentia.se>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: i2c: Use correct vendor prefix for Atmel
+Message-ID: <20181203210035.GA4611@kunai>
+References: <20181123121009.17213-1-thierry.reding@gmail.com>
+ <20181123125138.22489-1-thierry.reding@gmail.com>
+ <20181127125050.GO1107@kunai>
+ <CAL_JsqJZJVMvd0aQJ8eDXBqiZ=quLrNGr3hhqePm8fCushHxxQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
 Content-Disposition: inline
-In-Reply-To: <20181130095209.GA17103@infradead.org>
+In-Reply-To: <CAL_JsqJZJVMvd0aQJ8eDXBqiZ=quLrNGr3hhqePm8fCushHxxQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
 
-On Fri, Nov 30, 2018 at 01:52:09AM -0800, Christoph Hellwig wrote:
-> >  EXPORT_SYMBOL_GPL(bio_associate_blkcg);
-> >  
-> >  /**
-> > - * bio_associate_blkg - associate a bio with the a blkg
-> > + * bio_has_queue - required check for blkg association
-> > + * @bio: target bio
-> > + *
-> > + * A blkg represents the relationship between a blkcg and a request_queue.
-> > + * If there is no request_queue, there is no blkg and therefore nothing to
-> > + * associate with.
-> > + */
-> > +static inline bool bio_has_queue(struct bio *bio)
-> > +{
-> > +	return bio->bi_disk && bio->bi_disk->queue;
-> > +}
-> 
-> How do you ever see a bio without a queue?  We can't even do I/O in
-> that case.
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The case I found was with the flush bio in dm which is statically
-allocated in dm_alloc(). The issue issue is that bio_set_dev() is called
-on a bdev that isn't opened. So, the bdev wasn't pointing to a genhd.
-I've fixed the issue with the patch below, which will be added in v5.
 
-I think I was being overly cautious with the change and have taken this
-out in v5. It seems that this should be a one-off case which should work
-with the patch below.
+> Didn't we agree that I take trivial devices changes? Normally, it
+> doesn't really matter, but I'll have to delay landing the json-schema
+> conversion because this will conflict.
 
-Thanks,
-Dennis
+Oh, sorry, I missed that! I haven't send my pull request to Linus, so I
+can easily drop this patch again and apply a version not touching
+trivial-devices instead.
 
----
-From 3ee13402af369ee8618549b63593d68ffca574ca Mon Sep 17 00:00:00 2001
-From: Dennis Zhou <dennis@kernel.org>
-Date: Mon, 3 Dec 2018 10:56:34 -0800
-Subject: [PATCH 05/14] dm: set flush bio device on demand
 
-The next patch changes the macro bio_set_dev() to associate a bio with a
-blkg based on the device set. However, dm creates a static bio to be
-used as the basis for cloning empty flush bios on creation. This
-association is with a not-opened bdev so bd_disk is %NULL. To easily get
-around this, we will set the device on the static bio every time and use
-that to copy to the other bios.
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
----
- drivers/md/dm.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index a733e4c920af..b5e996c5c709 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1417,10 +1417,14 @@ static int __send_empty_flush(struct clone_info *ci)
- 	unsigned target_nr = 0;
- 	struct dm_target *ti;
- 
-+	bio_set_dev(ci->bio, ci->io->md->bdev);
-+
- 	BUG_ON(bio_has_data(ci->bio));
- 	while ((ti = dm_table_get_target(ci->map, target_nr++)))
- 		__send_duplicate_bios(ci, ti, ti->num_flush_bios, NULL);
- 
-+	bio_disassociate_blkg(ci->bio);
-+
- 	return 0;
- }
- 
-@@ -1939,7 +1943,6 @@ static struct mapped_device *alloc_dev(int minor)
- 		goto bad;
- 
- 	bio_init(&md->flush_bio, NULL, 0);
--	bio_set_dev(&md->flush_bio, md->bdev);
- 	md->flush_bio.bi_opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
- 
- 	dm_stats_init(&md->stats);
--- 
-2.17.1
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwFmW8ACgkQFA3kzBSg
+KbbjEA/+OKQ7MdMHGblhl5HTt3byGdsdKyB36y6xbG2jtRbs79sZI7YbEk6hDyaZ
+e1MiKL32PtkaxTGCQZRyMwFolO463ESYuN+KsrzDKkb6vv3KZieTJh17WOFmD9gP
+1o4q9PINNf4HkjgFRbJEKRZCnYI6jYhDgPHduTib7c1K3J9FH/DNOVfj4Vdpw6UO
+BPmtdyyauDkUBlkdTM1fFk8Y8zhg8bd/8gqa0oIFsKVKM2DocCoRCojtIBB9QQZA
+LR7ponmAL4bChhccnE4op9BYCiD+Nv6fAq2mZSmYAF/nl93y+YwchbAY9oBmONSf
+xhG7BwhJag5UnIbPgrVFd8XL9+UO1dLijUezAJd9WVDLICOmb6wL65G4iZzIN4Tq
+3eRhfgaUumP1vIgGZwSQ9c7MmZ3rpKgQvaes5dl33cwIKJD9JqFdbo102aO0ntHD
+n66b2KbEknyYYQvC08o2EZMOqt5RI1IoPY+vI7x1UH860Z6SRWpO+wMuH2PPiH81
+TZjdJFGM409DADjbrIdaAN/XqJ9F8Qkne4iCWJ+YX+e4k3O0oBEsrTuYDlyBT6kq
+D4VdyR6UkeGAAbOZoPNdoWXrZib6OufsIglU9opQPMWuMRNryYak4ooKsxM5nY6R
+SHFPNLstdHTsXNd4YYqXFWDG4nQAFqLM95KtnFA9w5ZbMNWea6Q=
+=g2RM
+-----END PGP SIGNATURE-----
 
+--4Ckj6UjgE2iN1+kY--
