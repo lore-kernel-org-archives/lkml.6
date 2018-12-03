@@ -2,58 +2,59 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B75B6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72ADC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A052146D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8744720850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:55:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjElAK8T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A052146D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RrOlJSG+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8744720850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbeLCWzA (ORCPT
+        id S1726109AbeLCWzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:55:00 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45669 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbeLCWy7 (ORCPT
+        Mon, 3 Dec 2018 17:55:07 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41581 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeLCWzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:54:59 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a14so7202767plm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:54:59 -0800 (PST)
+        Mon, 3 Dec 2018 17:55:03 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so7128494pfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:55:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ksGSE6Cc9VG/A00Ld7RPZ1CW6RRFzM/pQBtwpovt2X4=;
-        b=EjElAK8T7sc3RlBItuETx3nTXgWFHr9nCABkxA218Abq/dx48F5iaSIeddLSCPX6nq
-         +PQuDPIWvlxSJNwzkIQBGwDXQle5xlG8fOxi9EwD8Ysj6GeW7niyPBHvC1lPLsQcUf++
-         MZw2sN8I+m2IsI/ajfl2KSM38fiILd8Xx2Wkw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=BBqRtwO6PGFlctrxGALj04LHSsu+aeiHiAedSoB+rfE=;
+        b=RrOlJSG+Y3gW+Hafk4V78OWWfljaTZ5GM8h7jKFhNzSrBGauShndYBsxuAvE5uJLyO
+         4DyEUr9wBXtcSPvf43JR49GhFDGwG0cvN3+CK3ONl/CwdPAtZJjuIT6zg2bZoVSPDpuv
+         870pz5JUGRNp4Yo84G2tgEbopj8SYXZGe+XCI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ksGSE6Cc9VG/A00Ld7RPZ1CW6RRFzM/pQBtwpovt2X4=;
-        b=foBAcBmbCdqwSBYMvrfPJaf4PR4sa6LS1W7wwF3H4tj6jvNPmvAkM4SC7mSqoI6IbY
-         kC3NVwlLz50g/sgTOGsnjAi18074yGIGadmngizNTVN4jqdW2ei+YP6U8UMmOZoSX0+k
-         foVtJIq2w4LKCn4gpeXXgTyEUH6IR5OomYAr0Z5X/HSkJYrF3peM07LCvdnURkxV/hSi
-         vEt5JixoiLkVMH6EZ7KUKSRK/VxFFACKr+57MT4b207tQq9EOM1Y8/iZBd8+Ukd0lKKD
-         qGkoRop3Of4BDxI/Evqz4KG/MmmsUQuqiBFpuraZ1j5SZSX50Rlq2V7yOBbgEAjeWVfl
-         Fbsg==
-X-Gm-Message-State: AA+aEWYVq/SnKAwXZxwre0TqKe9WouzSa/oByTpaaucEnOhXaX2R4DPz
-        WziMWtCdOLp+gRuKPm4Rt6eEZA==
-X-Google-Smtp-Source: AFSGD/Ww4eM+LZIWxdpW1D9qjHHHG7bAP0l5nJVoGhm4sibL/3GhitseWLv+7fxMz918qVGiK6mqKQ==
-X-Received: by 2002:a17:902:8a91:: with SMTP id p17mr17698810plo.316.1543877699012;
-        Mon, 03 Dec 2018 14:54:59 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=BBqRtwO6PGFlctrxGALj04LHSsu+aeiHiAedSoB+rfE=;
+        b=k3GlnJGt5b44/U9qFYM2Yny4KCpyE84Bf6JVZju23FgDZPOlVU9Fmz+5bRS2Ufs0Sc
+         XzDaREY2lGlrj8m4gNK2/24HzHwao2eHGNt2f1WZqTi2keVc927S0CU8/V/IQV/WpNgS
+         u2A6rezNAeyVFsLTKFcvCAnd/lTW5iJcyJd/JInVoMo2LCMMfThXub3R2Lw76lh9o/FN
+         o02BLAoXFCnAk7E1EDIGvMOwrCiT0IXDYomUBeTCoRIILf4lM8ZY95WknfuE2MGcWNIr
+         a8dAmvikKmN20R9oeo/XQ3MGHtp5SR7JaVAiIoIJJDUznhuCNa91uQwPdpqU9Cs/fUub
+         2mnA==
+X-Gm-Message-State: AA+aEWaOmF990AzvZqiKEUBv/y3dTcdqxJvDHqdFSHeoWXMJ35UNDinP
+        WB8OxfyTOS9seA3nhvD1lJECQg==
+X-Google-Smtp-Source: AFSGD/W5+iPnfp7wUKDIF0Ne85dncUb/tNL7nN1NSX3EyKppb1J6RLDsXadxXHnnvCeNj5LeEqLDfw==
+X-Received: by 2002:a63:c10f:: with SMTP id w15mr14594722pgf.199.1543877702346;
+        Mon, 03 Dec 2018 14:55:02 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id v9sm20933057pfg.144.2018.12.03.14.54.57
+        by smtp.gmail.com with ESMTPSA id v9sm20933057pfg.144.2018.12.03.14.55.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 03 Dec 2018 14:54:58 -0800 (PST)
+        Mon, 03 Dec 2018 14:55:01 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     acme@kernel.org, peterz@infradead.org, gregkh@linuxfoundation.org
 Cc:     mingo@redhat.com, tglx@linutronix.de,
@@ -63,94 +64,204 @@ Cc:     mingo@redhat.com, tglx@linutronix.de,
         adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
         suzuki.poulosi@arm.com, linux-s390@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 0/6] perf: Add ioctl for PMU driver configuration 
-Date:   Mon,  3 Dec 2018 15:54:50 -0700
-Message-Id: <1543877696-17174-1-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH v5 2/6] perf/core: Use ioctl to communicate driver configuration to kernel
+Date:   Mon,  3 Dec 2018 15:54:52 -0700
+Message-Id: <1543877696-17174-3-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543877696-17174-1-git-send-email-mathieu.poirier@linaro.org>
+References: <1543877696-17174-1-git-send-email-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the coresight world there can be more than one sink to aggregate
-trace data generated by CPUs, hence the need for users to select which
-one to use from the perf command line.
+This patch adds the mechanic needed for user space to send PMU specific
+configuration to the kernel driver using an ioctl() command.  That way
+events can keep track of options that don't fit in the perf_event_attr
+structure like the selection of a CoreSight sink to use for the session.
 
-Up until now sysfs was used to communicate sink information to the
-kernel but that was never the right way to proceed because it breaks
-when more than one perf session are created at the same time.  The
-situation was manageable when working with per-thread scenarios where
-a single HW trace event is created but in CPU-wide mode a HW trace
-event is created for each CPU that is specified on the perf command
-line, taking us back to the concurrency problem we have when dealing
-with multiple per-thread session.
-
-This work fits in a wider scheme to support CPU-wide trace scenarios on
-CoreSight that is available here [1]. The first step in that venture is
-to address sysfs concurrency issues, which this patchset does.
-
-The main difference with V4 is the usage of a CoreSight sink's HW start
-address (u64) to uniquely identify a sink, negating the need to use the
-component's name (char *).
-
-By using a u64 we can theoretically add the sink information to the
-perf_event_attr structure, avoiding the need to add a new perf ioctl().
-On flip side it would introduce a very specific CoreSight field
-to a structure that is generic.  I have opted for the ioctl() method,
-let me know if you want me to proceed with the latter.
-
-Regards,
-Mathieu
-
-# Before this set: 
-
-root@juno:/home/linaro# perf record -e cs_etm/@20070000.etr/ -C 2,3 sleep 1
-failed to mmap with 12 (Cannot allocate memory)
-
-# After this set:
-
-root@juno:/home/linaro# perf record -e cs_etm/@20070000.etr/ -C 2,3 sleep 1
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 4.145 MB perf.data ]
-
-[1]. https://git.linaro.org/people/mathieu.poirier/coresight.git/log/?h=cpu-wide-coresight
-
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
-Changes for V5:
-. Went from a char * to a u64 for ioctl argument (GKH).
-. Added a better description of the problem being fixed to
-  the cover letter (GKH).
+ include/linux/perf_event.h | 38 ++++++++++++++++++++++++++
+ kernel/events/core.c       | 67 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 105 insertions(+)
 
-Changes for V4:
-. Made passing of information between ioctl() and PMU simpler.
-
-Mathieu Poirier (6):
-  perf: Introduce ioctl to communicate driver configuration to kernel
-  perf/core: Use ioctl to communicate driver configuration to kernel
-  perf/aux: Make perf_event accessible to setup_aux()
-  coresight: Use PMU driver configuration for sink selection
-  perf tools: Make perf_evsel accessible to PMU driver configuration
-    code
-  perf tools: Use ioctl function to send sink information to kernel
-
- arch/s390/kernel/perf_cpum_sf.c                  |  6 +-
- arch/x86/events/intel/bts.c                      |  4 +-
- arch/x86/events/intel/pt.c                       |  5 +-
- drivers/hwtracing/coresight/coresight-etm-perf.c | 80 +++++++++++++++++-----
- drivers/perf/arm_spe_pmu.c                       |  6 +-
- include/linux/perf_event.h                       | 40 ++++++++++-
- include/uapi/linux/perf_event.h                  |  1 +
- kernel/events/core.c                             | 67 +++++++++++++++++++
- kernel/events/ring_buffer.c                      |  2 +-
- tools/include/uapi/linux/perf_event.h            |  1 +
- tools/perf/arch/arm/util/cs-etm.c                | 84 +++++++++++++++++++++++-
- tools/perf/arch/arm/util/cs-etm.h                |  3 +-
- tools/perf/util/drv_configs.c                    | 30 ++-------
- tools/perf/util/evsel.c                          |  6 ++
- tools/perf/util/evsel.h                          |  1 +
- tools/perf/util/pmu.h                            |  3 +-
- 16 files changed, 287 insertions(+), 52 deletions(-)
-
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 53c500f0ca79..8e69b7e309e7 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -114,6 +114,14 @@ struct hw_perf_event_extra {
+ 	int		idx;	/* index in shared_regs->regs[] */
+ };
+ 
++/*
++ * PMU driver configuration
++ */
++struct pmu_drv_config {
++	void		*config;
++	raw_spinlock_t	lock;
++};
++
+ /**
+  * struct hw_perf_event - performance event hardware details:
+  */
+@@ -178,6 +186,9 @@ struct hw_perf_event {
+ 	/* Last sync'ed generation of filters */
+ 	unsigned long			addr_filters_gen;
+ 
++	/* PMU driver configuration */
++	struct pmu_drv_config		drv_config;
++
+ /*
+  * hw_perf_event::state flags; used to track the PERF_EF_* state.
+  */
+@@ -447,6 +458,17 @@ struct pmu {
+ 	 * Filter events for PMU-specific reasons.
+ 	 */
+ 	int (*filter_match)		(struct perf_event *event); /* optional */
++
++	/*
++	 * Validate complex PMU configuration that don't fit in the
++	 * perf_event_attr struct.  Returns a PMU specific pointer or an error
++	 * value < 0.
++	 *
++	 * As with addr_filters_validate(), runs in the context of the ioctl()
++	 * process and is not serialized with the rest of the PMU callbacks.
++	 */
++	void *(*drv_config_validate)	(struct perf_event *event,
++					 u64 value);
+ };
+ 
+ enum perf_addr_filter_action_t {
+@@ -1235,6 +1257,11 @@ static inline bool has_addr_filter(struct perf_event *event)
+ 	return event->pmu->nr_addr_filters;
+ }
+ 
++static inline bool has_drv_config(struct perf_event *event)
++{
++	return event->pmu->drv_config_validate;
++}
++
+ /*
+  * An inherited event uses parent's filters
+  */
+@@ -1249,6 +1276,17 @@ perf_event_addr_filters(struct perf_event *event)
+ 	return ifh;
+ }
+ 
++static inline struct pmu_drv_config *
++perf_event_get_drv_config(struct perf_event *event)
++{
++	struct pmu_drv_config *cfg = &event->hw.drv_config;
++
++	if (event->parent)
++		cfg = &event->parent->hw.drv_config;
++
++	return cfg;
++}
++
+ extern void perf_event_addr_filters_sync(struct perf_event *event);
+ 
+ extern int perf_output_begin(struct perf_output_handle *handle,
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 84530ab358c3..af7a53c97744 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5003,6 +5003,8 @@ static inline int perf_fget_light(int fd, struct fd *p)
+ static int perf_event_set_output(struct perf_event *event,
+ 				 struct perf_event *output_event);
+ static int perf_event_set_filter(struct perf_event *event, void __user *arg);
++static int perf_event_set_drv_config(struct perf_event *event,
++				     void __user *arg);
+ static int perf_event_set_bpf_prog(struct perf_event *event, u32 prog_fd);
+ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ 			  struct perf_event_attr *attr);
+@@ -5089,6 +5091,10 @@ static long _perf_ioctl(struct perf_event *event, unsigned int cmd, unsigned lon
+ 
+ 		return perf_event_modify_attr(event,  &new_attr);
+ 	}
++
++	case PERF_EVENT_IOC_SET_DRV_CONFIG:
++		return perf_event_set_drv_config(event, (void __user *)arg);
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -9128,6 +9134,66 @@ static int perf_event_set_filter(struct perf_event *event, void __user *arg)
+ 	return ret;
+ }
+ 
++static void perf_drv_config_replace(struct perf_event *event, void *drv_data)
++{
++	unsigned long flags;
++	struct pmu_drv_config *drv_config = &event->hw.drv_config;
++
++	if (!has_drv_config(event))
++		return;
++
++	/* Children take their configuration from their parent */
++	if (event->parent)
++		return;
++
++	/* Make sure the PMU doesn't get a handle on the data */
++	raw_spin_lock_irqsave(&drv_config->lock, flags);
++	drv_config->config = drv_data;
++	raw_spin_unlock_irqrestore(&drv_config->lock, flags);
++}
++
++static int
++perf_event_process_drv_config(struct perf_event *event, u64 value)
++{
++	int ret = -EINVAL;
++	void *drv_data;
++
++	/* Make sure ctx.mutex is held */
++	lockdep_assert_held(&event->ctx->mutex);
++
++	/* Children take their configuration from their parent */
++	if (WARN_ON_ONCE(event->parent))
++		goto out;
++
++	drv_data = event->pmu->drv_config_validate(event, value);
++	if (IS_ERR(drv_data)) {
++		ret = PTR_ERR(drv_data);
++		goto out;
++	}
++
++	perf_drv_config_replace(event, drv_data);
++
++	ret = 0;
++out:
++	return ret;
++}
++
++static int perf_event_set_drv_config(struct perf_event *event, void __user *arg)
++{
++	int ret;
++	u64 value;
++
++	if (!has_drv_config(event))
++		return -EINVAL;
++
++	if (copy_from_user(&value, arg, sizeof(value)))
++		return -EFAULT;
++
++	ret = perf_event_process_drv_config(event, value);
++
++	return ret;
++}
++
+ /*
+  * hrtimer based swevent callback
+  */
+@@ -10052,6 +10118,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	if (attr->freq && attr->sample_freq)
+ 		hwc->sample_period = 1;
+ 	hwc->last_period = hwc->sample_period;
++	raw_spin_lock_init(&hwc->drv_config.lock);
+ 
+ 	local64_set(&hwc->period_left, hwc->sample_period);
+ 
 -- 
 2.7.4
 
