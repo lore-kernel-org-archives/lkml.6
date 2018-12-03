@@ -4,74 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9FBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E99C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62DF20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77A4220864
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:21:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="I+PROe60"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62DF20666
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="KTJEG6/p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A4220864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbeLCVVR (ORCPT
+        id S1726102AbeLCVVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:21:17 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33484 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeLCVVO (ORCPT
+        Mon, 3 Dec 2018 16:21:22 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39669 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbeLCVVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:21:14 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l11so15637096qtp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 13:21:13 -0800 (PST)
+        Mon, 3 Dec 2018 16:21:15 -0500
+Received: by mail-qt1-f196.google.com with SMTP id n21so15594716qtl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 13:21:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=marek-ca.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nMp+bo1u4Ju+AOZGqXFZCxG0+uZcT9bJyW5D89nvzhA=;
-        b=I+PROe60zQA5ADbfyckKEzfxpEDsdMkGmOItO9vIXfBEtul48SXSPgAChUGLlh4Ixn
-         Y6dFPEOVSu7Ze6agvJOr7WrrccBkes5hDKTc1g9zbA1ALUEXR0niaX8nq2MEs5AQlYcH
-         Wt7tUTVrtkunyf6g2DyTwdAOB40/3GS6dPvXvuMBov1EPiGNaNK8eAaZ9YTEZTNnpXpy
-         Tr+9xxLmGesxy+hQho7Ok/QpThAiUWkF5QM/9fSxKhvdtlwo/agz6nRC1m7YHCw9IuMX
-         blkyzT0B1hovbWgb/wSeSO08ecv2Jem/9eui63fee4ggSmUUhBBz9OwFEq92PqEOyyTl
-         diOA==
+        bh=nESaeaha8h52I+/daK2v+IFiza8HEsTIFWyRHl7bcl4=;
+        b=KTJEG6/pmpCBQHZi/S0+c2+4iN1lmItwIGA3kvNgX4W3UaesMSiD85++dw5oEuFsZ6
+         o7Wiwz2GhKoZgcxhfcgXxt+k1A0Or23UsLWRVCx+K/D00ngY5+XCVUJY1/h9adm1cU0Y
+         T8L4zLDtiykvvRYkUmoVNbeMl33dJIUxWRqUVexXWlhaKgyJlYLobKk1GD8pvSYk9srj
+         wlD8t+sIRxZ1+oDoBHPd69BrMI03tZHhstcDcyBZ5KWVwoofCgDjLnEaOMstaHiDyXpA
+         i+TZ5EXRfQAe/TXrOUlcYcITBCXffHDhaaAKYkbyyyaj2InDfi6zIjA0RYse5+j9nbij
+         OVPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nMp+bo1u4Ju+AOZGqXFZCxG0+uZcT9bJyW5D89nvzhA=;
-        b=r5VqAA2n/8hVdJpqB8TB4TCm1CZsDQHhkdsq2pAofYKYTGGL75JNGA0IOlOrl3BDjN
-         2hn/ieTlXBis58eiCg4ZLousfidY4BFGA8VBxeqxnemaKy58HGi0WscdyzSSUAfVRjUk
-         rKH8tv6QyReMtIy/ZQzo42XZEDV8Zn7+4cRYvl3jrChmg+0PGnSsp0AMnMBAHrRa/1gT
-         +5AjBFqzGOZXtLtbc+7akDIzqvfYnVgiiGqGXHmylcs0u8eIqwYzRYSe0Hv4Os5kN9Oi
-         0VW27G1ynfkoBOQnVvV3sE0hQCkV+RCRKd5fh+Axxs0ae6rgLXIsmQR+6KZ6RoZaMdYR
-         zIqA==
-X-Gm-Message-State: AA+aEWbmwbVHjD+8p05VG0hwFTUiDBS6j6jJ0P0GRGhPlwOYCOtJNTGj
-        G/BOP8yxx/nKc44PEA7PbmvNpw==
-X-Google-Smtp-Source: AFSGD/UudsWnt/DoYEW2/Yf6qcZEh9EktY3t5v/ilTja8ihdWbyqKWjjAh7WJ1Z+u9o4FQEdRO42ww==
-X-Received: by 2002:aed:2b64:: with SMTP id p91mr15819613qtd.94.1543872072631;
-        Mon, 03 Dec 2018 13:21:12 -0800 (PST)
+        bh=nESaeaha8h52I+/daK2v+IFiza8HEsTIFWyRHl7bcl4=;
+        b=KmddPwkzciJj/TS1zKIYxsbIrom6qK5N2OZsI5+NnWSy2eWmjOoQjyOv++dy76c+bl
+         oLQzSOzxzP8SpNJ1VMDQbjLUk8AeWilqNl9SWIRi0Y+HFgp2jVn7pmmMIr0X8FFyCdPu
+         PhwOmM95iMj3Vc+blpS8LF3Qq1dbWu7ZSUTjgadlPl/pDwpN/nH1WfXGkMvhiXCuW/Yr
+         HKtkzh5/994Eos1+oMjHZatl2lbm7QCJ5/xWSNCHZR5xA45awD4orVgJ4mfKMqc74yGg
+         02CEBST/7PhiPByvfJZ6jZe0B6b2/KXowUFHyUlBjwPC1vxgK5BINlISi5PvVgoKr99V
+         FxlQ==
+X-Gm-Message-State: AA+aEWaI+lPdgQ8yJ0SHTR0xLAqJOc1ptxn05CAe8WS3FsP+Q4xKebsv
+        wy+gFySiqJ9PSdOYR9S2UY+Lfg==
+X-Google-Smtp-Source: AFSGD/W68sSsiIY627/Hp7yaghpXz85KuqKq+KhvmoO2nlO6YgIh7eYJ2AsfYS/yh+qNm3/+YdAEuw==
+X-Received: by 2002:ac8:c7:: with SMTP id d7mr16495109qtg.326.1543872074162;
+        Mon, 03 Dec 2018 13:21:14 -0800 (PST)
 Received: from localhost.localdomain (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
-        by smtp.gmail.com with ESMTPSA id l33sm10567353qta.57.2018.12.03.13.21.11
+        by smtp.gmail.com with ESMTPSA id l33sm10567353qta.57.2018.12.03.13.21.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 13:21:12 -0800 (PST)
+        Mon, 03 Dec 2018 13:21:13 -0800 (PST)
 From:   Jonathan Marek <jonathan@marek.ca>
 To:     freedreno@lists.freedesktop.org
 Cc:     Chris.Healy@zii.aero, festevam@gmail.com,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU)
-Subject: [PATCH v3 3/4] drm/msm: implement a2xx mmu
-Date:   Mon,  3 Dec 2018 16:18:15 -0500
-Message-Id: <20181203211816.5129-3-jonathan@marek.ca>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
+        / MXC ARM ARCHITECTURE),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 4/4] ARM: dts: imx5: add gpu nodes
+Date:   Mon,  3 Dec 2018 16:18:16 -0500
+Message-Id: <20181203211816.5129-4-jonathan@marek.ca>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181203211816.5129-1-jonathan@marek.ca>
 References: <20181203211816.5129-1-jonathan@marek.ca>
@@ -80,482 +83,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A2XX has its own very simple MMU.
-
-Added a msm_use_mmu() function because we can't rely on iommu_present to
-decide to use MMU or not.
-
 Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
-v3: rebased on msm-next-staging and moved is_a2xx initialization earlier
+ arch/arm/boot/dts/imx51.dtsi | 17 +++++++++++++++++
+ arch/arm/boot/dts/imx53.dtsi | 17 +++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
- drivers/gpu/drm/msm/Makefile               |   3 +-
- drivers/gpu/drm/msm/adreno/a2xx_gpu.c      |  50 ++++++++-
- drivers/gpu/drm/msm/adreno/adreno_device.c |   3 +
- drivers/gpu/drm/msm/adreno/adreno_gpu.c    |   3 +
- drivers/gpu/drm/msm/msm_drv.c              |  11 +-
- drivers/gpu/drm/msm/msm_drv.h              |   8 ++
- drivers/gpu/drm/msm/msm_gem.c              |   4 +-
- drivers/gpu/drm/msm/msm_gem_vma.c          |  23 ++++
- drivers/gpu/drm/msm/msm_gpu.c              |  31 ++++--
- drivers/gpu/drm/msm/msm_gpummu.c           | 122 +++++++++++++++++++++
- drivers/gpu/drm/msm/msm_mmu.h              |   3 +
- 11 files changed, 241 insertions(+), 20 deletions(-)
- create mode 100644 drivers/gpu/drm/msm/msm_gpummu.c
-
-diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
-index 61e76f87a..1b26c4105 100644
---- a/drivers/gpu/drm/msm/Makefile
-+++ b/drivers/gpu/drm/msm/Makefile
-@@ -93,7 +93,8 @@ msm-y := \
- 	msm_rd.o \
- 	msm_ringbuffer.o \
- 	msm_submitqueue.o \
--	msm_gpu_tracepoints.o
-+	msm_gpu_tracepoints.o \
-+	msm_gpummu.o
- 
- msm-$(CONFIG_DEBUG_FS) += adreno/a5xx_debugfs.o \
- 			  disp/dpu1/dpu_dbg.o
-diff --git a/drivers/gpu/drm/msm/adreno/a2xx_gpu.c b/drivers/gpu/drm/msm/adreno/a2xx_gpu.c
-index 5eddcf14e..1f83bc18d 100644
---- a/drivers/gpu/drm/msm/adreno/a2xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a2xx_gpu.c
-@@ -2,6 +2,8 @@
- /* Copyright (c) 2018 The Linux Foundation. All rights reserved. */
- 
- #include "a2xx_gpu.h"
-+#include "msm_gem.h"
-+#include "msm_mmu.h"
- 
- extern bool hang_debug;
- 
-@@ -58,9 +60,12 @@ static bool a2xx_me_init(struct msm_gpu *gpu)
- static int a2xx_hw_init(struct msm_gpu *gpu)
- {
- 	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-+	dma_addr_t pt_base, tran_error;
- 	uint32_t *ptr, len;
- 	int i, ret;
- 
-+	msm_gpummu_params(gpu->aspace->mmu, &pt_base, &tran_error);
+diff --git a/arch/arm/boot/dts/imx51.dtsi b/arch/arm/boot/dts/imx51.dtsi
+index 67d462715..e9a7bbce9 100644
+--- a/arch/arm/boot/dts/imx51.dtsi
++++ b/arch/arm/boot/dts/imx51.dtsi
+@@ -628,5 +628,22 @@
+ 				clock-names = "ipg", "ahb";
+ 			};
+ 		};
 +
- 	DBG("%s", gpu->name);
- 
- 	/* halt ME to avoid ucode upload issues on a20x */
-@@ -80,9 +85,34 @@ static int a2xx_hw_init(struct msm_gpu *gpu)
- 	/* note: kgsl uses 0x0000ffff for a20x */
- 	gpu_write(gpu, REG_A2XX_RBBM_CNTL, 0x00004442);
- 
--	gpu_write(gpu, REG_A2XX_MH_MMU_CONFIG, 0);
--	gpu_write(gpu, REG_A2XX_MH_MMU_MPU_BASE, 0);
-+	/* MPU: physical range */
-+	gpu_write(gpu, REG_A2XX_MH_MMU_MPU_BASE, 0x00000000);
- 	gpu_write(gpu, REG_A2XX_MH_MMU_MPU_END, 0xfffff000);
++		gpu: gpu@30000000 {
++			compatible = "amd,imageon-200.1", "amd,imageon";
++			reg = <0x30000000 0x20000>;
++			reg-names = "kgsl_3d0_reg_memory";
++			interrupts = <12>;
++			interrupt-names = "kgsl_3d0_irq";
++			clocks = <&clks IMX5_CLK_GPU3D_GATE>, <&clks IMX5_CLK_GARB_GATE>;
++			clock-names = "core_clk", "mem_iface_clk";
 +
-+	gpu_write(gpu, REG_A2XX_MH_MMU_CONFIG, A2XX_MH_MMU_CONFIG_MMU_ENABLE |
-+		A2XX_MH_MMU_CONFIG_RB_W_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_CP_W_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_CP_R0_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_CP_R1_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_CP_R2_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_CP_R3_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_CP_R4_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_VGT_R0_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_VGT_R1_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_TC_R_CLNT_BEHAVIOR(BEH_TRAN_RNG) |
-+		A2XX_MH_MMU_CONFIG_PA_W_CLNT_BEHAVIOR(BEH_TRAN_RNG));
++			qcom,gpu-pwrlevels {
++				compatible = "qcom,gpu-pwrlevels";
++				qcom,gpu-pwrlevel@0 {
++					qcom,gpu-freq = <166250000>;
++				};
++			};
++		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/imx53.dtsi b/arch/arm/boot/dts/imx53.dtsi
+index 207eb557c..586d45586 100644
+--- a/arch/arm/boot/dts/imx53.dtsi
++++ b/arch/arm/boot/dts/imx53.dtsi
+@@ -838,5 +838,22 @@
+ 			reg = <0xf8000000 0x20000>;
+ 			clocks = <&clks IMX5_CLK_OCRAM>;
+ 		};
 +
-+	/* same as parameters in adreno_gpu */
-+	gpu_write(gpu, REG_A2XX_MH_MMU_VA_RANGE, SZ_16M |
-+		A2XX_MH_MMU_VA_RANGE_NUM_64KB_REGIONS(0xfff));
++		gpu: gpu@30000000 {
++			compatible = "amd,imageon-200.0", "amd,imageon";
++			reg = <0x30000000 0x20000>;
++			reg-names = "kgsl_3d0_reg_memory";
++			interrupts = <12>;
++			interrupt-names = "kgsl_3d0_irq";
++			clocks = <&clks IMX5_CLK_GPU3D_GATE>, <&clks IMX5_CLK_GARB_GATE>;
++			clock-names = "core_clk", "mem_iface_clk";
 +
-+	gpu_write(gpu, REG_A2XX_MH_MMU_PT_BASE, pt_base);
-+	gpu_write(gpu, REG_A2XX_MH_MMU_TRAN_ERROR, tran_error);
-+
-+	gpu_write(gpu, REG_A2XX_MH_MMU_INVALIDATE,
-+		A2XX_MH_MMU_INVALIDATE_INVALIDATE_ALL |
-+		A2XX_MH_MMU_INVALIDATE_INVALIDATE_TC);
-+
- 	gpu_write(gpu, REG_A2XX_MH_ARBITER_CONFIG,
- 		A2XX_MH_ARBITER_CONFIG_SAME_PAGE_LIMIT(16) |
- 		A2XX_MH_ARBITER_CONFIG_L1_ARB_ENABLE |
-@@ -109,9 +139,21 @@ static int a2xx_hw_init(struct msm_gpu *gpu)
- 	/* note: gsl doesn't set this */
- 	gpu_write(gpu, REG_A2XX_RBBM_DEBUG, 0x00080000);
- 
--	gpu_write(gpu, REG_A2XX_RBBM_INT_CNTL, 0);
--	gpu_write(gpu, REG_AXXX_CP_INT_CNTL, 0x80000000); /* RB INT */
-+	gpu_write(gpu, REG_A2XX_RBBM_INT_CNTL,
-+		A2XX_RBBM_INT_CNTL_RDERR_INT_MASK);
-+	gpu_write(gpu, REG_AXXX_CP_INT_CNTL,
-+		AXXX_CP_INT_CNTL_T0_PACKET_IN_IB_MASK |
-+		AXXX_CP_INT_CNTL_OPCODE_ERROR_MASK |
-+		AXXX_CP_INT_CNTL_PROTECTED_MODE_ERROR_MASK |
-+		AXXX_CP_INT_CNTL_RESERVED_BIT_ERROR_MASK |
-+		AXXX_CP_INT_CNTL_IB_ERROR_MASK |
-+		AXXX_CP_INT_CNTL_IB1_INT_MASK |
-+		AXXX_CP_INT_CNTL_RB_INT_MASK);
- 	gpu_write(gpu, REG_A2XX_SQ_INT_CNTL, 0);
-+	gpu_write(gpu, REG_A2XX_MH_INTERRUPT_MASK,
-+		A2XX_MH_INTERRUPT_MASK_AXI_READ_ERROR |
-+		A2XX_MH_INTERRUPT_MASK_AXI_WRITE_ERROR |
-+		A2XX_MH_INTERRUPT_MASK_MMU_PAGE_FAULT);
- 
- 	for (i = 3; i <= 5; i++)
- 		if ((SZ_16K << i) == adreno_gpu->gmem)
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-index 99e363c3d..714ed6505 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-@@ -308,6 +308,7 @@ static int adreno_bind(struct device *dev, struct device *master, void *data)
- 	static struct adreno_platform_config config = {};
- 	const struct adreno_info *info;
- 	struct drm_device *drm = dev_get_drvdata(master);
-+	struct msm_drm_private *priv = drm->dev_private;
- 	struct msm_gpu *gpu;
- 	int ret;
- 
-@@ -330,6 +331,8 @@ static int adreno_bind(struct device *dev, struct device *master, void *data)
- 	DBG("Found GPU: %u.%u.%u.%u", config.rev.core, config.rev.major,
- 		config.rev.minor, config.rev.patchid);
- 
-+	priv->is_a2xx = config.rev.core == 2;
-+
- 	gpu = info->init(drm);
- 	if (IS_ERR(gpu)) {
- 		dev_warn(drm->dev, "failed to load adreno gpu\n");
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index 9ab67dd1b..2e4372ef1 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -769,6 +769,9 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
- 
- 	adreno_gpu_config.va_start = SZ_16M;
- 	adreno_gpu_config.va_end = 0xffffffff;
-+	/* maximum range of a2xx mmu */
-+	if (adreno_is_a2xx(adreno_gpu))
-+		adreno_gpu_config.va_end = SZ_16M + 0xfff * SZ_64K;
- 
- 	adreno_gpu_config.nr_rings = nr_rings;
- 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 7842518a9..271f1df61 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -26,6 +26,7 @@
- #include "msm_gem.h"
- #include "msm_gpu.h"
- #include "msm_kms.h"
-+#include "adreno/adreno_gpu.h"
- 
- 
- /*
-@@ -360,6 +361,14 @@ static int get_mdp_ver(struct platform_device *pdev)
- 
- #include <linux/of_address.h>
- 
-+bool msm_use_mmu(struct drm_device *dev)
-+{
-+	struct msm_drm_private *priv = dev->dev_private;
-+
-+	/* a2xx comes with its own MMU */
-+	return priv->is_a2xx || iommu_present(&platform_bus_type);
-+}
-+
- static int msm_init_vram(struct drm_device *dev)
- {
- 	struct msm_drm_private *priv = dev->dev_private;
-@@ -398,7 +407,7 @@ static int msm_init_vram(struct drm_device *dev)
- 		 * Grab the entire CMA chunk carved out in early startup in
- 		 * mach-msm:
- 		 */
--	} else if (!iommu_present(&platform_bus_type)) {
-+	} else if (!msm_use_mmu(dev)) {
- 		DRM_INFO("using %s VRAM carveout\n", vram);
- 		size = memparse(vram, NULL);
- 	}
-diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
-index 71a03ce21..9cd6a96c6 100644
---- a/drivers/gpu/drm/msm/msm_drv.h
-+++ b/drivers/gpu/drm/msm/msm_drv.h
-@@ -179,6 +179,8 @@ struct msm_drm_private {
- 	/* when we have more than one 'msm_gpu' these need to be an array: */
- 	struct msm_gpu *gpu;
- 	struct msm_file_private *lastctx;
-+	/* gpu is only set on open(), but we need this info earlier */
-+	bool is_a2xx;
- 
- 	struct drm_fb_helper *fbdev;
- 
-@@ -258,9 +260,15 @@ struct msm_gem_address_space *
- msm_gem_address_space_create(struct device *dev, struct iommu_domain *domain,
- 		const char *name);
- 
-+struct msm_gem_address_space *
-+msm_gem_address_space_create_a2xx(struct device *dev, struct msm_gpu *gpu,
-+		const char *name, uint64_t va_start, uint64_t va_end);
-+
- int msm_register_mmu(struct drm_device *dev, struct msm_mmu *mmu);
- void msm_unregister_mmu(struct drm_device *dev, struct msm_mmu *mmu);
- 
-+bool msm_use_mmu(struct drm_device *dev);
-+
- void msm_gem_submit_free(struct msm_gem_submit *submit);
- int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
- 		struct drm_file *file);
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index 38b7f4e9e..51a95da69 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -975,7 +975,7 @@ static struct drm_gem_object *_msm_gem_new(struct drm_device *dev,
- 
- 	size = PAGE_ALIGN(size);
- 
--	if (!iommu_present(&platform_bus_type))
-+	if (!msm_use_mmu(dev))
- 		use_vram = true;
- 	else if ((flags & (MSM_BO_STOLEN | MSM_BO_SCANOUT)) && priv->vram.size)
- 		use_vram = true;
-@@ -1052,7 +1052,7 @@ struct drm_gem_object *msm_gem_import(struct drm_device *dev,
- 	int ret, npages;
- 
- 	/* if we don't have IOMMU, don't bother pretending we can import: */
--	if (!iommu_present(&platform_bus_type)) {
-+	if (!msm_use_mmu(dev)) {
- 		DRM_DEV_ERROR(dev->dev, "cannot import without IOMMU\n");
- 		return ERR_PTR(-EINVAL);
- 	}
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index ee46d8321..557360788 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -159,3 +159,26 @@ msm_gem_address_space_create(struct device *dev, struct iommu_domain *domain,
- 
- 	return aspace;
- }
-+
-+struct msm_gem_address_space *
-+msm_gem_address_space_create_a2xx(struct device *dev, struct msm_gpu *gpu,
-+		const char *name, uint64_t va_start, uint64_t va_end)
-+{
-+	struct msm_gem_address_space *aspace;
-+	u64 size = va_end - va_start;
-+
-+	aspace = kzalloc(sizeof(*aspace), GFP_KERNEL);
-+	if (!aspace)
-+		return ERR_PTR(-ENOMEM);
-+
-+	spin_lock_init(&aspace->lock);
-+	aspace->name = name;
-+	aspace->mmu = msm_gpummu_new(dev, gpu);
-+
-+	drm_mm_init(&aspace->mm, (va_start >> PAGE_SHIFT),
-+		size >> PAGE_SHIFT);
-+
-+	kref_init(&aspace->kref);
-+
-+	return aspace;
-+}
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index c1968d63b..5f3eff304 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -20,6 +20,7 @@
- #include "msm_mmu.h"
- #include "msm_fence.h"
- #include "msm_gpu_trace.h"
-+#include "adreno/adreno_gpu.h"
- 
- #include <generated/utsrelease.h>
- #include <linux/string_helpers.h>
-@@ -825,7 +826,6 @@ static struct msm_gem_address_space *
- msm_gpu_create_address_space(struct msm_gpu *gpu, struct platform_device *pdev,
- 		uint64_t va_start, uint64_t va_end)
- {
--	struct iommu_domain *iommu;
- 	struct msm_gem_address_space *aspace;
- 	int ret;
- 
-@@ -834,20 +834,27 @@ msm_gpu_create_address_space(struct msm_gpu *gpu, struct platform_device *pdev,
- 	 * and have separate page tables per context.  For now, to keep things
- 	 * simple and to get something working, just use a single address space:
- 	 */
--	iommu = iommu_domain_alloc(&platform_bus_type);
--	if (!iommu)
--		return NULL;
--
--	iommu->geometry.aperture_start = va_start;
--	iommu->geometry.aperture_end = va_end;
--
--	DRM_DEV_INFO(gpu->dev->dev, "%s: using IOMMU\n", gpu->name);
-+	if (!adreno_is_a2xx(to_adreno_gpu(gpu))) {
-+		struct iommu_domain *iommu = iommu_domain_alloc(&platform_bus_type);
-+		if (!iommu)
-+			return NULL;
-+
-+		iommu->geometry.aperture_start = va_start;
-+		iommu->geometry.aperture_end = va_end;
-+
-+		DRM_DEV_INFO(gpu->dev->dev, "%s: using IOMMU\n", gpu->name);
-+
-+		aspace = msm_gem_address_space_create(&pdev->dev, iommu, "gpu");
-+		if (IS_ERR(aspace))
-+			iommu_domain_free(iommu);
-+	} else {
-+		aspace = msm_gem_address_space_create_a2xx(&pdev->dev, gpu, "gpu",
-+			va_start, va_end);
-+	}
- 
--	aspace = msm_gem_address_space_create(&pdev->dev, iommu, "gpu");
- 	if (IS_ERR(aspace)) {
--		DRM_DEV_ERROR(gpu->dev->dev, "failed to init iommu: %ld\n",
-+		DRM_DEV_ERROR(gpu->dev->dev, "failed to init mmu: %ld\n",
- 			PTR_ERR(aspace));
--		iommu_domain_free(iommu);
- 		return ERR_CAST(aspace);
- 	}
- 
-diff --git a/drivers/gpu/drm/msm/msm_gpummu.c b/drivers/gpu/drm/msm/msm_gpummu.c
-new file mode 100644
-index 000000000..a04a64faa
---- /dev/null
-+++ b/drivers/gpu/drm/msm/msm_gpummu.c
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2018 The Linux Foundation. All rights reserved. */
-+
-+#include "msm_drv.h"
-+#include "msm_mmu.h"
-+#include "adreno/adreno_gpu.h"
-+#include "adreno/a2xx.xml.h"
-+
-+struct msm_gpummu {
-+	struct msm_mmu base;
-+	struct msm_gpu *gpu;
-+	dma_addr_t pt_base;
-+	uint32_t *table;
-+};
-+#define to_msm_gpummu(x) container_of(x, struct msm_gpummu, base)
-+
-+#define VA_START SZ_16M
-+#define VA_RANGE (0xfff * SZ_64K)
-+#define MMU_PAGE_SIZE SZ_4K
-+#define TABLE_SIZE (sizeof(uint32_t) * VA_RANGE / MMU_PAGE_SIZE)
-+
-+static int msm_gpummu_attach(struct msm_mmu *mmu, const char * const *names,
-+		int cnt)
-+{
-+	return 0;
-+}
-+
-+static void msm_gpummu_detach(struct msm_mmu *mmu, const char * const *names,
-+		int cnt)
-+{
-+}
-+
-+static void update_pt(struct msm_mmu *mmu, uint64_t iova,
-+		struct sg_table *sgt, unsigned len, unsigned prot)
-+{
-+	struct msm_gpummu *gpummu = to_msm_gpummu(mmu);
-+	unsigned idx = (iova - VA_START) / MMU_PAGE_SIZE;
-+	struct scatterlist *sg;
-+	unsigned i, j;
-+
-+	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
-+		dma_addr_t addr = sg->dma_address;
-+		for (j = 0; j < sg->length / MMU_PAGE_SIZE; j++, idx++) {
-+			gpummu->table[idx] = prot ? addr | prot : 0;
-+			addr += MMU_PAGE_SIZE;
-+		}
-+	}
-+
-+	/* flush the tlb everytime the page table is updated
-+	 * we can probably do something smarter
-+	 */
-+	gpu_write(gpummu->gpu, REG_A2XX_MH_MMU_INVALIDATE,
-+		A2XX_MH_MMU_INVALIDATE_INVALIDATE_ALL |
-+		A2XX_MH_MMU_INVALIDATE_INVALIDATE_TC);
-+}
-+
-+static int msm_gpummu_map(struct msm_mmu *mmu, uint64_t iova,
-+		struct sg_table *sgt, unsigned len, int prot)
-+{
-+	unsigned prot_bits = 0;
-+	if (prot & IOMMU_WRITE)
-+		prot_bits |= 1;
-+	if (prot & IOMMU_READ)
-+		prot_bits |= 2;
-+	update_pt(mmu, iova, sgt, len, prot_bits);
-+	return 0;
-+}
-+
-+static int msm_gpummu_unmap(struct msm_mmu *mmu, uint64_t iova,
-+		struct sg_table *sgt, unsigned len)
-+{
-+	update_pt(mmu, iova, sgt, len, 0);
-+	return 0;
-+}
-+
-+static void msm_gpummu_destroy(struct msm_mmu *mmu)
-+{
-+	struct msm_gpummu *gpummu = to_msm_gpummu(mmu);
-+
-+	dma_free_attrs(mmu->dev, TABLE_SIZE, gpummu->table, gpummu->pt_base,
-+		DMA_ATTR_FORCE_CONTIGUOUS);
-+
-+	kfree(gpummu);
-+}
-+
-+static const struct msm_mmu_funcs funcs = {
-+		.attach = msm_gpummu_attach,
-+		.detach = msm_gpummu_detach,
-+		.map = msm_gpummu_map,
-+		.unmap = msm_gpummu_unmap,
-+		.destroy = msm_gpummu_destroy,
-+};
-+
-+struct msm_mmu *msm_gpummu_new(struct device *dev, struct msm_gpu *gpu)
-+{
-+	struct msm_gpummu *gpummu;
-+
-+	gpummu = kzalloc(sizeof(*gpummu), GFP_KERNEL);
-+	if (!gpummu)
-+		return ERR_PTR(-ENOMEM);
-+
-+	gpummu->table = dma_alloc_attrs(dev, TABLE_SIZE + 32, &gpummu->pt_base,
-+		GFP_KERNEL | __GFP_ZERO, DMA_ATTR_FORCE_CONTIGUOUS);
-+	if (!gpummu->table) {
-+		kfree(gpummu);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	gpummu->gpu = gpu;
-+	msm_mmu_init(&gpummu->base, dev, &funcs);
-+
-+	return &gpummu->base;
-+}
-+
-+void msm_gpummu_params(struct msm_mmu *mmu, dma_addr_t *pt_base,
-+		dma_addr_t *tran_error)
-+{
-+	dma_addr_t base = to_msm_gpummu(mmu)->pt_base;
-+
-+	*pt_base = base;
-+	*tran_error = base + TABLE_SIZE; /* 32-byte aligned */
-+}
-diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
-index 94c0b83d8..d21b26604 100644
---- a/drivers/gpu/drm/msm/msm_mmu.h
-+++ b/drivers/gpu/drm/msm/msm_mmu.h
-@@ -53,4 +53,7 @@ static inline void msm_mmu_set_fault_handler(struct msm_mmu *mmu, void *arg,
- 	mmu->handler = handler;
- }
- 
-+void msm_gpummu_params(struct msm_mmu *mmu, dma_addr_t *pt_base,
-+		dma_addr_t *tran_error);
-+
- #endif /* __MSM_MMU_H__ */
++			qcom,gpu-pwrlevels {
++				compatible = "qcom,gpu-pwrlevels";
++				qcom,gpu-pwrlevel@0 {
++					qcom,gpu-freq = <200000000>;
++				};
++			};
++		};
+ 	};
+ };
 -- 
 2.17.1
 
