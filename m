@@ -2,141 +2,79 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D88DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88AEC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 327112087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E06A208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:46:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TzjRTYf+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 327112087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qp5Dqw7n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E06A208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbeLCRos (ORCPT
+        id S1726882AbeLCRqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:44:48 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:33731 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeLCRos (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:44:48 -0500
-Received: by mail-it1-f195.google.com with SMTP id m8so9013451itk.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:44:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vePMyb35njo9Q/1fS/MXk3qMdTWSgBmpTI6xzm1xoLQ=;
-        b=TzjRTYf+0tBx/0onTmsLwawNJwOGyF4gTOBBs/OmbaB6SIfH2nspeqWpJdjgTKYBZ/
-         3MsloZQVyvkBMy/WO7+6ymJY8Yz7I4ha+x57MuBcnAomwpJ6oeRJHxMnQoY0R8Ny0UFo
-         yjQdCVazdtq6+8gsJkPObIKx1Oxf+iNNaLPhQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vePMyb35njo9Q/1fS/MXk3qMdTWSgBmpTI6xzm1xoLQ=;
-        b=Id7zjW8ql3WKg7382B91t4ih/g54l8SUDQ4l8ArU+28iq4Q5RJfOss8iGusmESdhBu
-         PilD765hgTVHAxCC/1gCc/VsK2Hc9KB3TrSf4Iba4ep3E4JoeCnlGE9FBjc/SnH3DRV4
-         TDYF41dh1D6KJPO4ssd1AbTi6r0aeTHLFzqm88LIyJLvNFqcw3U9U1LqmIq8SRsWP3EM
-         umaOKn0Fj+/xMfCXAzt3bjfK/ozcz4ZVa0bT5dSjib5iA6qIG9kizy83j3ICymdusVXP
-         ukX6tEfn3XrELHjOR8/OhRsa6tMnDJoWb2hkqWU5FfADtegZdlpHaKtYhyj379iD213c
-         lppg==
-X-Gm-Message-State: AA+aEWZLFKz3o3LaH3i9Oq3Z3tStNQetQUh8/UvYEv24Pw+cSuYbu2YK
-        wjBPgRMge3dz5jS0r3DksKxgghdbT3S2xQizh/jALA==
-X-Google-Smtp-Source: AFSGD/Xqb+8VI0yXXP3POQxnjWijfhuC/fSRnap/bfwZyBZN1A4soQ1THtosMW2ZOmRDDPCsKLpyQWIxqbRsyYBXaO8=
-X-Received: by 2002:a24:4e0d:: with SMTP id r13mr8237884ita.140.1543859085591;
- Mon, 03 Dec 2018 09:44:45 -0800 (PST)
+        Mon, 3 Dec 2018 12:46:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726433AbeLCRqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:46:04 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F25E42087F;
+        Mon,  3 Dec 2018 17:46:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543859162;
+        bh=AAPuM5qgkSx1WQ4xtaRzRFiUZq4YKSqvPxRjBsTUblM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=Qp5Dqw7n2O5Vs/x7viHXtEqcuarVqRgpBYmZZfzJS56uvvMmvtrgj8uKLzoPgxVS6
+         fRiJ6sXtQsK6R60CnplxCrmuzZMHrzP+z6YwvVckHG4I4s7VPOI8yX7uyHTXS1MAm2
+         Yj3g6wnKba5iLsAWPeDF9vv7bqsZ7a8Ezs8mkr44=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181201005759.28093-1-eric@anholt.net> <20181201005759.28093-2-eric@anholt.net>
-In-Reply-To: <20181201005759.28093-2-eric@anholt.net>
-From:   Dave Emett <david.emett@broadcom.com>
-Date:   Mon, 3 Dec 2018 17:44:34 +0000
-Message-ID: <CAApk1dWzDOXqyUegibhjMYam-7k5Rn5KLRaYHrxu3mCeHRaznA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] drm/v3d: Drop unused v3d_flush_caches().
-To:     Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Thomas Spurden <thomas.spurden@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1543602089-21086-3-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1543602089-21086-1-git-send-email-tdas@codeaurora.org>
+ <1543602089-21086-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <154385916141.88331.12696569463331774426@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v11 2/3] dt-bindings: clock: Introduce QCOM LPASS clock bindings
+Date:   Mon, 03 Dec 2018 09:46:01 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It will be needed for the CSD, which does not have a way to clean the
-L1T/L2T before reporting completion.
-In any case it's unused now, so I don't see a problem with removing it.
+Quoting Taniya Das (2018-11-30 10:21:28)
+> Add device tree bindings for Low Power Audio subsystem clock controller f=
+or
+> Qualcomm Technology Inc's SDM845 SoCs.
+> =
 
-On Sat, 1 Dec 2018 at 00:58, Eric Anholt <eric@anholt.net> wrote:
->
-> Now that I've specified how the end-of-pipeline flushing should work,
-> we're never going to use this function.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-
-Reviewed-by: Dave Emett <david.emett@broadcom.com>
-
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->  drivers/gpu/drm/v3d/v3d_drv.h |  1 -
->  drivers/gpu/drm/v3d/v3d_gem.c | 21 ---------------------
->  2 files changed, 22 deletions(-)
->
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-> index bcd3d567bec2..239b56d76f3e 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> @@ -314,7 +314,6 @@ void v3d_exec_put(struct v3d_exec_info *exec);
->  void v3d_tfu_job_put(struct v3d_tfu_job *exec);
->  void v3d_reset(struct v3d_dev *v3d);
->  void v3d_invalidate_caches(struct v3d_dev *v3d);
-> -void v3d_flush_caches(struct v3d_dev *v3d);
->
->  /* v3d_irq.c */
->  void v3d_irq_init(struct v3d_dev *v3d);
-> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-> index 8b4af512450f..34103205b7cb 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> @@ -175,20 +175,6 @@ v3d_invalidate_slices(struct v3d_dev *v3d, int core)
->                        V3D_SET_FIELD(0xf, V3D_SLCACTL_ICC));
->  }
->
-> -/* Invalidates texture L2 cachelines */
-> -static void
-> -v3d_invalidate_l2t(struct v3d_dev *v3d, int core)
-> -{
-> -       V3D_CORE_WRITE(core,
-> -                      V3D_CTL_L2TCACTL,
-> -                      V3D_L2TCACTL_L2TFLS |
-> -                      V3D_SET_FIELD(V3D_L2TCACTL_FLM_CLEAR, V3D_L2TCACTL_FLM));
-> -       if (wait_for(!(V3D_CORE_READ(core, V3D_CTL_L2TCACTL) &
-> -                      V3D_L2TCACTL_L2TFLS), 100)) {
-> -               DRM_ERROR("Timeout waiting for L2T invalidate\n");
-> -       }
-> -}
-> -
->  void
->  v3d_invalidate_caches(struct v3d_dev *v3d)
->  {
-> @@ -199,13 +185,6 @@ v3d_invalidate_caches(struct v3d_dev *v3d)
->         v3d_flush_l2t(v3d, 0);
->  }
->
-> -void
-> -v3d_flush_caches(struct v3d_dev *v3d)
-> -{
-> -       v3d_invalidate_l1td(v3d, 0);
-> -       v3d_invalidate_l2t(v3d, 0);
-> -}
-> -
->  static void
->  v3d_attach_object_fences(struct v3d_bo **bos, int bo_count,
->                          struct dma_fence *fence)
-> --
-> 2.20.0.rc1
->
+
+Applied to clk-next
+
+I noticed that a #define was lost after some revisions for some always
+on clk, but I suspect we never care and will never need to turn it on so
+I just went with it and dropped it too. Let's cross fingers and hope
+that doesn't come back to haunt us!
+
