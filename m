@@ -2,101 +2,107 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04643C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB35C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C695920881
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:45:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C695920881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7687E20834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:46:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="s4lueP4X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7687E20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbeLCGpb (ORCPT
+        id S1725830AbeLCGq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 01:45:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40638 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725818AbeLCGpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 01:45:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 21F68AE3D;
-        Mon,  3 Dec 2018 06:45:28 +0000 (UTC)
-Subject: Re: [PATCH -next] xen/pvcalls: remove set but not used variable
- 'bedata'
-To:     YueHaibing <yuehaibing@huawei.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <1543630209-135108-1-git-send-email-yuehaibing@huawei.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <91ea5a9e-a644-d535-066c-529ba23ba978@suse.com>
-Date:   Mon, 3 Dec 2018 07:45:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <1543630209-135108-1-git-send-email-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Dec 2018 01:46:29 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37598 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbeLCGq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 01:46:29 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so5958319plr.4
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 22:46:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=NzrGkHPfMw5PpRz7JX5QXHjmYPGlb8Ry+SBoB6V49Io=;
+        b=s4lueP4Xt7kL0VZh1u9KdXTuMLDIPsNFuuRkiQYz7bXfxUALSuUYiGL3kjKpcz8sRH
+         gfR7dizrzh5ExJ7nwmrd+24yt5SsEKGjX/LCelaie3i2Mg8/5SFuDMGCPDAL+1IZDUFI
+         k+CHVv2Bb+QV6G6K21N4OotDq3USPmsYMtuuMfYjrR2OwTh7nMcSivZ8GvH1xTEqkn/n
+         vLN77UZjSFghiHWblrWuxkGBb3JJkXPKpEBxserWOO5PM738yT7LPjsL1qEj7o5VACNA
+         jj98Q1KAmVvIcotQL+yYqIu/unf6+bMQnOKgnnc8V0UBh/XcAGUSGHAgfoRc/bkEyp8a
+         0mUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NzrGkHPfMw5PpRz7JX5QXHjmYPGlb8Ry+SBoB6V49Io=;
+        b=tLoGkKW3+EMb9Y/cD0ALIsg6fjsVEq4XBW+CiTedsRN8k2DdERzmD2ptTuiU7RA5k6
+         rC+vrsIeTf/8p12/cvI8TjaQhOAnIV81al+B22jYBA+SK6Ywps5zC3GIOsqIvqb/5/vT
+         ity5PQgt6Ej/x2jm0jtC53W4OFqG1m5zISq62q/CRpCX19d53DHOrneDIurFYcvbQOx2
+         ob8HvoSTqoVlSiiAwD9kYQPFLdqqjmmidloLa3DCpVX3PHqgs3PflPyaWQPb8fZ9Y4A/
+         v/iKvhatMQel/rxFOP79d1XWgzAREDZ0O+Fg7uOHRa0+OLS0as8O3DQOIGTfggh/xXRm
+         thMA==
+X-Gm-Message-State: AA+aEWZUPCDpn7H9GH69l+2jpiR4wxBK8WMWyAnz5m4q9FaEGBpMwK2S
+        +YZAmHuqq7LLkU3YeqmKEha9Ag==
+X-Google-Smtp-Source: AFSGD/WoDaFCDw3AFwYAPtqQi4WV1jGAHocJGNRVPpMvxEFKZdjU5cjcr3pOuFJw/1vhHFuBRHlvGg==
+X-Received: by 2002:a17:902:a58a:: with SMTP id az10mr15260269plb.151.1543819587140;
+        Sun, 02 Dec 2018 22:46:27 -0800 (PST)
+Received: from localhost.localdomain (220-133-8-225.HINET-IP.hinet.net. [220.133.8.225])
+        by smtp.gmail.com with ESMTPSA id v70sm22692874pfa.152.2018.12.02.22.46.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 02 Dec 2018 22:46:26 -0800 (PST)
+From:   Chris Chiu <chiu@endlessm.com>
+To:     jikos@kernel.org, benjamin.tissoires@redhat.com,
+        rydberg@bitmath.org
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com
+Subject: [PATCH 1/2] HID: use macros in IS_INPUT_APPLICATION
+Date:   Mon,  3 Dec 2018 14:46:20 +0800
+Message-Id: <20181203064621.69876-1-chiu@endlessm.com>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/12/2018 03:10, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/xen/pvcalls-front.c: In function 'pvcalls_front_sendmsg':
-> drivers/xen/pvcalls-front.c:506:25: warning:
->  variable 'bedata' set but not used [-Wunused-but-set-variable]
-> 
-> drivers/xen/pvcalls-front.c: In function 'pvcalls_front_recvmsg':
-> drivers/xen/pvcalls-front.c:603:25: warning:
->  variable 'bedata' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Add missing definition for HID_DG_WHITEBOARD then replace the hid
+usage hex with macros for better readibility.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+---
+ include/linux/hid.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index a355d61940f2..ce5f996c8d3d 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -238,6 +238,7 @@ struct hid_item {
+ #define HID_DG_LIGHTPEN		0x000d0003
+ #define HID_DG_TOUCHSCREEN	0x000d0004
+ #define HID_DG_TOUCHPAD		0x000d0005
++#define HID_DG_WHITEBOARD	0x000d0006
+ #define HID_DG_STYLUS		0x000d0020
+ #define HID_DG_PUCK		0x000d0021
+ #define HID_DG_FINGER		0x000d0022
+@@ -836,7 +837,10 @@ static inline bool hid_is_using_ll_driver(struct hid_device *hdev,
+ 
+ /* Applications from HID Usage Tables 4/8/99 Version 1.1 */
+ /* We ignore a few input applications that are not widely used */
+-#define IS_INPUT_APPLICATION(a) (((a >= 0x00010000) && (a <= 0x00010008)) || (a == 0x00010080) || (a == 0x000c0001) || ((a >= 0x000d0002) && (a <= 0x000d0006)))
++#define IS_INPUT_APPLICATION(a) \
++		(((a >= HID_UP_GENDESK) && (a <= HID_GD_MULTIAXIS)) \
++		|| ((a >= HID_DG_PEN) && (a <= HID_DG_WHITEBOARD)) \
++		|| (a == HID_GD_SYSTEM_CONTROL) || (a == HID_CP_CONSUMER_CONTROL))
+ 
+ /* HID core API */
+ 
+-- 
+2.19.1
 
-Juergen
