@@ -2,93 +2,140 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA158C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DC4C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB09020834
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:00:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB09020834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E9ACC20834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:02:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZuXxnAh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9ACC20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeLCRAH (ORCPT
+        id S1726852AbeLCRC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:00:07 -0500
-Received: from foss.arm.com ([217.140.101.70]:42118 "EHLO foss.arm.com"
+        Mon, 3 Dec 2018 12:02:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeLCRAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:00:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5FD81682;
-        Mon,  3 Dec 2018 09:00:03 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42E053F59C;
-        Mon,  3 Dec 2018 09:00:00 -0800 (PST)
-Date:   Mon, 3 Dec 2018 16:59:57 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        devicetree@vger.kernel.org,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFT PATCH v1 4/4] RISC-V: Parse cpu topology during boot.
-Message-ID: <20181203165957.GC17883@e107155-lin>
-References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
- <1543534100-3654-5-git-send-email-atish.patra@wdc.com>
+        id S1726637AbeLCRC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:02:28 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED96E20834;
+        Mon,  3 Dec 2018 17:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543856544;
+        bh=yJDeNwpYlx5g3Uw5JboeHYoJgFsWV5cS8GbXSvaA8xs=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=VZuXxnAhYxaK9riYCu8OqZGpmIlVnB7JqRyobg536ACG9d4kuMsQFiu7CMwLqAQJW
+         oG1OKrYTEGEmHkqX9j6k+VpkoOvcz+BKdVszIFDebk2aPp9ii0B7rVEOImVzL1S5hp
+         p8I4zvTT1Zq5O8xEnJXzQi4RNrn+0JuLYs8ZgzJM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543534100-3654-5-git-send-email-atish.patra@wdc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <711fb66a-a408-08e2-c0c2-6addf1510937@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
+ <20181203155538.GQ2225@minitux>
+ <711fb66a-a408-08e2-c0c2-6addf1510937@codeaurora.org>
+Message-ID: <154385654317.88331.9077579060059188717@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: qcom: Fix MSM8998 resets
+Date:   Mon, 03 Dec 2018 09:02:23 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:28:20PM -0800, Atish Patra wrote:
-> Currently, there are no topology defined for RISC-V.
-> Parse the cpu-map node from device tree and setup the
-> cpu topology.
->
-> CPU topology after applying the patch.
-> $cat /sys/devices/system/cpu/cpu2/topology/core_siblings_list
-> 0-3
-> $cat /sys/devices/system/cpu/cpu3/topology/core_siblings_list
-> 0-3
-> $cat /sys/devices/system/cpu/cpu3/topology/physical_package_id
-> 0
-> $cat /sys/devices/system/cpu/cpu3/topology/core_id
-> 3
->
+Quoting Jeffrey Hugo (2018-12-03 08:08:46)
+> On 12/3/2018 8:55 AM, Bjorn Andersson wrote:
+> > On Mon 03 Dec 07:34 PST 2018, Jeffrey Hugo wrote:
+> > =
 
-That looks simple. Good reuse and thanks for unifying.
+> >> The offsets for the defined BCR reset registers does not match the har=
+dware
+> >> documentation.  Update the values to match the hardware documentation.
+> >>
+> > =
 
-FWIW,
+> > Sorry for not spotting this before.
+> > =
 
-Acked-by:Sudeep Holla <sudeep.holla@arm.com>
+> >> Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC)=
+ driver)
+> >> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> >> ---
+> >>   drivers/clk/qcom/gcc-msm8998.c | 38 +++++++++++++++++++-------------=
+------
+> >>   1 file changed, 19 insertions(+), 19 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm=
+8998.c
+> >> index 9f0ae40..01cc555 100644
+> >> --- a/drivers/clk/qcom/gcc-msm8998.c
+> >> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> >> @@ -2742,25 +2742,25 @@ enum {
+> >>   };
+> >>   =
 
---
-Regards,
-Sudeep
+> >>   static const struct qcom_reset_map gcc_msm8998_resets[] =3D {
+> >> -    [GCC_BLSP1_QUP1_BCR] =3D { 0x102400 },
+> >> -    [GCC_BLSP1_QUP2_BCR] =3D { 0x110592 },
+> >> -    [GCC_BLSP1_QUP3_BCR] =3D { 0x118784 },
+> >> -    [GCC_BLSP1_QUP4_BCR] =3D { 0x126976 },
+> >> -    [GCC_BLSP1_QUP5_BCR] =3D { 0x135168 },
+> >> -    [GCC_BLSP1_QUP6_BCR] =3D { 0x143360 },
+> >> -    [GCC_BLSP2_QUP1_BCR] =3D { 0x155648 },
+> >> -    [GCC_BLSP2_QUP2_BCR] =3D { 0x163840 },
+> >> -    [GCC_BLSP2_QUP3_BCR] =3D { 0x172032 },
+> >> -    [GCC_BLSP2_QUP4_BCR] =3D { 0x180224 },
+> >> -    [GCC_BLSP2_QUP5_BCR] =3D { 0x188416 },
+> >> -    [GCC_BLSP2_QUP6_BCR] =3D { 0x196608 },
+> >> -    [GCC_PCIE_0_BCR] =3D { 0x438272 },
+> >> -    [GCC_PDM_BCR] =3D { 0x208896 },
+> >> -    [GCC_SDCC2_BCR] =3D { 0x81920 },
+> >> -    [GCC_SDCC4_BCR] =3D { 0x90112 },
+> >> -    [GCC_TSIF_BCR] =3D { 0x221184 },
+> >> -    [GCC_UFS_BCR] =3D { 0x479232 },
+> >> -    [GCC_USB_30_BCR] =3D { 0x61440 },
+> >> +    [GCC_BLSP1_QUP1_BCR] =3D { 0x19000 },
+> >> +    [GCC_BLSP1_QUP2_BCR] =3D { 0x1b000 },
+> >> +    [GCC_BLSP1_QUP3_BCR] =3D { 0x1d000 },
+> >> +    [GCC_BLSP1_QUP4_BCR] =3D { 0x1f000 },
+> >> +    [GCC_BLSP1_QUP5_BCR] =3D { 0x21000 },
+> >> +    [GCC_BLSP1_QUP6_BCR] =3D { 0x23000 },
+> >> +    [GCC_BLSP2_QUP1_BCR] =3D { 0x26000 },
+> >> +    [GCC_BLSP2_QUP2_BCR] =3D { 0x28000 },
+> >> +    [GCC_BLSP2_QUP3_BCR] =3D { 0x2a000 },
+> >> +    [GCC_BLSP2_QUP4_BCR] =3D { 0x2c000 },
+> >> +    [GCC_BLSP2_QUP5_BCR] =3D { 0x2e000 },
+> >> +    [GCC_BLSP2_QUP6_BCR] =3D { 0x30000 },
+> >> +    [GCC_PCIE_0_BCR] =3D { 0x6c01c },
+> > =
+
+> > I find GCC_PCIE_0_BCR at 0x6b000 and then GCC_PCIE_0_PHY_BCR at 0x6c01c.
+> =
+
+> Doh.  Thanks for the double check.  GCC_PCIE_0_PHY_BCR is not defined in =
+
+> include/dt-bindings/clock/qcom,gcc-msm8998.h so I plan to leave it out =
+
+> until later.
+> =
+
+> Expect a v2 shortly.
+
+Will you add GCC_PCIE0_PHY_BCR shortly so we don't have to add it later
+on when it becomes critical?
+
