@@ -3,93 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36A3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CEDC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD7720864
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF34A214C1
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZNj2O9PF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FD7720864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5duhuq8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF34A214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbeLCWit (ORCPT
+        id S1725947AbeLCWpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:38:49 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37786 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbeLCWis (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:38:48 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so7208725plr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:38:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=gcEANpm6IyLrQJyUoSOHUgWNmtpCovZ8ca5EgDqLNvY=;
-        b=ZNj2O9PFGLl4zit9lRL/2x5uBOvqEiof8YOy1rvWYP7CcAJLcu4N6LZdEzQJ6lQNcO
-         UmrnW0jYOOXa5zsPCezCUUPdDXPmHgQh8TnUVwBTylN/Ht4cezLPMvQVgufbyVUFFFVP
-         hh9/4OGyPZZwBlECDh8JT9IEGkxJ/SyEtJzNE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=gcEANpm6IyLrQJyUoSOHUgWNmtpCovZ8ca5EgDqLNvY=;
-        b=B82I/KdcTDUixZb5OHVeglFHM7V3L0hZasYrMdCgbcBFHPOgKnowtK2ZB4bbFYwXTp
-         K7xspkl47l3UV2oXR9jbm4+gU85sle1klOcnQ0a2A7pMUbP2bmz7H7lXRjyu8joDyURK
-         9b5OuSfCrhyRioDQPX32Q4epJGBRJ2dla8up2UyXQPG9rNCAPL9S4EQKfIjFj/YYDylm
-         Fbf6uq5VjhiRZzvt7rDebgZ6oC9ZWH1rv0WFC0FQ2PcfcLevWfQsCfpI716lgsl85Wci
-         hPK3ooqD1nIK5OmrPFajL4bImJJ8Dj2rFMKgLr85AltiAHJnXlQdGK5I5rjgdZ5Hh5+z
-         b14Q==
-X-Gm-Message-State: AA+aEWbnb9d55cA87GCbtDTjE/8JFXiw8437CG01OpU+qyv5c5yppQPH
-        Op3twr30mUdIybkbJgTMOJat+Q==
-X-Google-Smtp-Source: AFSGD/XP09ibj2By5ofgCjDVz5aTWX6av+n9QSBtMt2HTRBwRJXxpoQh6JsEd+FGIt2C55LfoXXSkQ==
-X-Received: by 2002:a17:902:8e8a:: with SMTP id bg10mr17815585plb.192.1543876728450;
-        Mon, 03 Dec 2018 14:38:48 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id l85sm38211657pfg.161.2018.12.03.14.38.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 14:38:47 -0800 (PST)
+        Mon, 3 Dec 2018 17:45:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725858AbeLCWpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:45:35 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62BD820864;
+        Mon,  3 Dec 2018 22:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543877134;
+        bh=Tv5xntpOFZLjgLVDbFFAyXgVlC5/NfqIbqNPTujsV6s=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=N5duhuq8ug/rks25GN9PUAoJdOlqrnzTa+pX1SIe/aqRJS0NZTFEnc4EA7MHs8lph
+         FrYw7DT3kBUrXltShu+tqZbY0NSRwu0Em5TGTFkzSVpkAdl94GMvciZLU13NuyHxp5
+         GGPymSABAW/MEs37wqnu/pX9HIviK+vUgWinA9aQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181129221357.67417-5-evgreen@chromium.org>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh@kernel.org>, Can Guo <cang@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Manu Gautam <mgautam@codeaurora.org>
-References: <20181129221357.67417-1-evgreen@chromium.org>
- <20181129221357.67417-5-evgreen@chromium.org>
-Message-ID: <154387672722.88331.10663388522762144439@swboyd.mtv.corp.google.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1542284312-55418-3-git-send-email-jianxin.pan@amlogic.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
+ <1542284312-55418-3-git-send-email-jianxin.pan@amlogic.com>
+Message-ID: <154387713374.88331.16436869339024592009@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v1 4/4] phy: qcom-qmp: Expose provided clocks to DT
-Date:   Mon, 03 Dec 2018 14:38:47 -0800
+Subject: Re: [PATCH v7 2/4] clk: meson: add DT documentation for emmc clock controller
+Date:   Mon, 03 Dec 2018 14:45:33 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2018-11-29 14:13:57)
-> Register a simple clock provider for the PHY pipe clock sources so that
-> device tree users can point at these clocks via phandles to the lane
-> nodes.
-> =
+Quoting Jianxin Pan (2018-11-15 04:18:30)
+> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bi=
+ndings/clock/amlogic,mmc-clkc.h
+> new file mode 100644
+> index 0000000..162b949
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Meson MMC sub clock tree IDs
+> + *
+> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + */
+> +
+> +#ifndef __MMC_CLKC_H
+> +#define __MMC_CLKC_H
+> +
+> +#define CLKID_MMC_DIV                          1
 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
+Why does the define numbering start with 1 instead of 0?
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
+> +#define CLKID_MMC_PHASE_CORE                   2
+> +#define CLKID_MMC_PHASE_TX                     3
+> +#define CLKID_MMC_PHASE_RX                     4
+> +
