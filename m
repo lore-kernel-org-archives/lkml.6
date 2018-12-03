@@ -2,310 +2,307 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237E4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB8AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4A712147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:05:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j5lOUEsp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A712147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 40C1C20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:06:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C1C20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbeLCOGY (ORCPT
+        id S1726523AbeLCOHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:06:24 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37419 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeLCOGY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:06:24 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181203140514euoutp023d5cf79e4cffba73cd500f5f6c7c6cb0~s164PWkcL2491924919euoutp024
-        for <linux-kernel@vger.kernel.org>; Mon,  3 Dec 2018 14:05:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181203140514euoutp023d5cf79e4cffba73cd500f5f6c7c6cb0~s164PWkcL2491924919euoutp024
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1543845914;
-        bh=4XTGEwSLqTxYOaFkZGwe6FCXg8g2lq0yX2XPPQZs+kE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=j5lOUEspNMwTJZLpPQXjj4u7iNA5XBQQSKRJk1fzM9Wq0bSSGQ62jyvF8v25EeKBR
-         KPjCJ7rA40R02eNoYw0Ik2/gTM3HEuo/Rgms5kY2kIOQywioKGuWMTxsWTwaq23PM2
-         p5yKVLhxlxJXCdBLiZYJErAZLmpqMLUQPKQjQbNY=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181203140513eucas1p1d5807c493d4fbe8f07d3ba8b8a9f3576~s163KQ7uE3174631746eucas1p1w;
-        Mon,  3 Dec 2018 14:05:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6D.50.04806.918350C5; Mon,  3
-        Dec 2018 14:05:13 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181203140512eucas1p19d36dff812fd391107d679e180f230cf~s162a71z91445614456eucas1p1h;
-        Mon,  3 Dec 2018 14:05:12 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181203140512eusmtrp147fc00d887152dfba7092c09d4af13a9~s162KvK1v0748507485eusmtrp1j;
-        Mon,  3 Dec 2018 14:05:12 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-92-5c0538199710
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C1.D4.04128.818350C5; Mon,  3
-        Dec 2018 14:05:12 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181203140511eusmtip2d53337947f88fa5271296a6d674f8e92~s161NcpWc3120731207eusmtip2F;
-        Mon,  3 Dec 2018 14:05:11 +0000 (GMT)
-Subject: Re: [PATCH 3/6] devfreq: add support for suspend/resume of a
- devfreq device
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <1aaf315b-f262-dad1-0e82-548410d10b5e@partner.samsung.com>
-Date:   Mon, 3 Dec 2018 15:05:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+        Mon, 3 Dec 2018 09:07:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33264 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725888AbeLCOHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:07:52 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C2512C049593;
+        Mon,  3 Dec 2018 14:06:42 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D9BB86A52A;
+        Mon,  3 Dec 2018 14:06:37 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v3] x86/hyper-v: Mark TLFS structures packed
+Date:   Mon,  3 Dec 2018 15:06:36 +0100
+Message-Id: <20181203140636.21912-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <5BFB3C17.40502@samsung.com>
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se1BMcRj1u+8am2uL/eS94w+ZUQjzGxpv5prxB2YYQ6NW3Um0qb2FMCPP
-        Qmgw1HrEbJIts6xtrWqLpJ1tS+URQiE0HmuwnsPEXjej/853znfmO2fm40j1KSaUS0xOEw3J
-        uiQtE0jZ637cGjsI09Hj7rWH4utlYfhSnoXGVy59pfH9z100Lqi9ReMdJguDG/bp8cHOtyRu
-        arrI4sbt71hsPOIksLWzlcZ3yk8w2Le/FuG8pioCX6h9wuKz91sI/GhbMYOf1N/0+z23abzL
-        Wcvi3SUfaPyuuZ2aoRHsFXZaKD1VioTjmS2UkHvwExJMla8JwWrewwjVJ0tZ4XLhVqG7jhVs
-        97Io4YDNjITikm+s4LMOW6haHhgVLyYlrhcNEdNiA1d/tN0lU86HbXQb85hM1DZiLwrggJ8I
-        bstDYi8K5NR8MYJ20ytaFtT8ZwTdBWGK4EOQt6+M+udo6vBSinAOganoGVIGL4LWnJd/7cH8
-        Uiiu/M7KQgjvQVBdXcPIA8nvIqH7g80/cBzDh4PDnCobVPw8OFBVRciY4kdB+dU2VsYD+GWQ
-        3VHCKDv9wZ3/4m+MAD4M3hdWIBmTvAbaXhQQCh4OO8qOk/It4B9zcO3nIVbJPQcuWtp7cDC8
-        cdl68BDwHM7p6SZBY7aZUfAWyHI7enamwg1XCy1nJv2HLeURCj0TXI+crEwDHwQPvP2VCEFw
-        yH6MVGgVZO9WK9ujwZbTTCh4IJwrPcrmIq2xVzFjrzLGXmWM/++eRpQZacR0SZ8gSpHJ4oZw
-        SaeX0pMTwuPW6a3I/7WebtcXB6r6taoG8RzS9lXNiKGi1bRuvZShr0HAkdoQVUqqn1LF6zI2
-        iYZ1MYb0JFGqQYM5SqtRbe7zdIWaT9CliWtFMUU0/FMJLiA0Exmw41NWVH65ZWNL2RR7aHb9
-        Q/PdqLmFi2efHop9I7L6dax5vCV2QUxqUdexAScyPEfprabl84sS3COrmyctiW8cSiyY3Nmg
-        qXBclqbPcXmtXYN2JvqO1DtzG+oKIxYFjdq+M/h9qzNu1vMb3tw0YcjsCSvv/O7nZM88i34Q
-        2XAm8mZfLSWt1o0fQxok3R+H5bCDsQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXfO2TlKq9O0fDEoW33IwOm8voaJBMWJgqSii5lz6GmKzunO
-        JtkXNVNrXdSQsHmL5XVa5pz3NBpm5GVTKyUvXdAK06SylKBGmyPw2+95/s+PhwceChO2EJ5U
-        YoqaVaXIkkV8V3zQ9vytD0REtJ8xexd62uqNmkuaCNTevEKgiZ+fCVTZZyFQzv0mPhq6rkAF
-        swsYslofkWj48iKJdMU9PGScHSfQy64yPlq+2QdQibWXhx70zZCoemKUh6ay6/hoZuCZ3R8c
-        I1BuTx+J8hq+EWhx5C0e4cG0dbcRTGNFI2BKs0ZxprDgB2DuP57nMUbDNT7zpLyRZFqqMhlb
-        P8mYXufjzC2TATB1Dasks2zcHimIEoeplBo165Wg5NT7ReckyF8sCUVi/8BQsSQg5Pw+/yCR
-        b3hYPJucmM6qfMNjxQnfTa+w1Hrviy90JfwsMOmlBS4UpAOh9d1XXAtcKSFdDaBFX4Q5g63w
-        dm876WQ3+Gdcy3cOLQC4+v4O4Qjc6FNQe+Mv6Qjc6UEAi60DPEeB0bkYnP+qB06lA4NvJhfs
-        SyiKT4thhyHNYQvoQ/BWby/PwTi9G3Z1Tq6t20KfgcPzD4FzZjN8cXcOd7AL7Q2XqrrX+hgd
-        DCtaPmBO9oCTc5U8J++AOa2lWCEQ6tbpunWKbp2iW6fcA7gBuLMaTiFXcP5iTqbgNClycZxS
-        YQT2h2nr/23qANqlE2ZAU0C0QRAhxaOFhCydy1CYAaQwkbsgNc3eEsTLMi6xKqVUpUlmOTMI
-        sh9XhHluiVPa3y9FLZUESUJQqCQkICQgGIk8BFa/jCghLZep2SSWTWVV/z0e5eKZBTbFH6/x
-        01QpRhRHzaba7Uxn/cbOhj3DJqkc1E/XvLu0UNg/EfxRH5F/weZ5BNR1dedXZflMmYtO2k4f
-        CzqYViaNia88XLuUYxvOMazmjnkV0eUrv5IiLWExQ2flv6t9GvK+WLSxmcT0rPsBdcunbVcS
-        9dlXd1q8TtQLlm+GW+dEOJcgk+zFVJzsH13OnWxGAwAA
-X-CMS-MailID: 20181203140512eucas1p19d36dff812fd391107d679e180f230cf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
-References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382@eucas1p1.samsung.com>
-        <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
-        <5BF61B3A.9050402@samsung.com>
-        <cce4f194-b574-a12c-e876-f11a6f245940@partner.samsung.com>
-        <5BF7419E.90006@samsung.com>
-        <734d0941-c885-4d36-274b-23843d6626c1@partner.samsung.com>
-        <5BFB3C17.40502@samsung.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 03 Dec 2018 14:06:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo Choi,
+The TLFS structures are used for hypervisor-guest communication and must
+exactly meet the specification.
 
-On 11/26/18 1:19 AM, Chanwoo Choi wrote:
-> Hi Lukasz,
-> 
-> I add the one more comment for devfreq_resume_device()
-> 
-> On 2018년 11월 23일 19:01, Lukasz Luba wrote:
->> Hi Chanwoo Choi,
->>
->> On 11/23/18 12:54 AM, Chanwoo Choi wrote:
->>> Hi Lukasz,
->>>
->>> I add one more comment about devfreq_resume_device().
->>>
->>> On 2018년 11월 22일 20:00, Lukasz Luba wrote:
->>>>
->>>>
->>>> On 11/22/18 3:58 AM, Chanwoo Choi wrote:
->>>>> On 2018년 11월 22일 03:01, Lukasz Luba wrote:
->>>>>> The patch adds support for handling suspend/resume process.
->>>>>> It uses atomic variables to make sure no race condition
->>>>>> affects the process.
->>>>>>
->>>>>> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
->>>>>> solve issue with devfreq device's frequency during suspend/resume.
->>>>>> During the discussion on LKML some corner cases and comments appeared
->>>>>> related to the design. This patch address them keeping in mind suggestions
->>>>>> from Chanwoo Choi.
->>>>>
->>>>> Please remove the duplicate information about patch history.
->>>>>
->>>>>>
->>>>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>>>> ---
->>>>>>     drivers/devfreq/devfreq.c | 45 +++++++++++++++++++++++++++++++++++++++------
->>>>>>     1 file changed, 39 insertions(+), 6 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>>>>> index cf9c643..7e09de8 100644
->>>>>> --- a/drivers/devfreq/devfreq.c
->>>>>> +++ b/drivers/devfreq/devfreq.c
->>>>>> @@ -872,14 +872,33 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
->>>>>>      */
->>>>>>     int devfreq_suspend_device(struct devfreq *devfreq)
->>>>>>     {
->>>>>> -	if (!devfreq)
->>>>>> -		return -EINVAL;
->>>>>> +        int ret;
->>>>>
->>>>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->>>>> because 'ret' is used if suspend_freq isn't zero.
->>>> Not only there, 6 lines above 'ret' is used for
->>>> devfreq->governor->event_handler().
->>>
->>> OK.
->>>
->>>>>
->>>>>> +        unsigned long prev_freq;
->>>>>> +        u32 flags = 0;
->>>>>> +
->>>>>> +        if (!devfreq)
->>>>>> +                return -EINVAL;
->>>>>> +
->>>>>> +        if (devfreq->governor) {
->>>>>> +		ret = devfreq->governor->event_handler(devfreq,
->>>>>> +					DEVFREQ_GOV_SUSPEND, NULL);
->>>>>> +		if (ret)
->>>>>> +			return ret;
->>>>>> +	}
->>>>>>     
->>>>>> -	if (!devfreq->governor)
->>>>>> -		return 0;
->>>>>> +	if (devfreq->suspend_freq) {
->>>>>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
->>>>>> +			return 0;
->>>>>>     
->>>>>> -	return devfreq->governor->event_handler(devfreq,
->>>>>> -				DEVFREQ_GOV_SUSPEND, NULL);
->>>>>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq,
->>>>>> +					 &prev_freq, flags);
->>>>>
->>>>> Remove the 'prev_freq' parameter.
->>>> OK
->>>>>
->>>>>> +		if (ret)
->>>>>> +			return ret;
->>>>>> +
->>>>>> +		devfreq->resume_freq = prev_freq;
->>>>>
->>>>> As I commented on patch2, if devfreq_set_taget save the current frequency
->>>>> to 'devfreq->resume_freq', this line is not needed.
->>>> OK
->>>>>
->>>>>
->>>>>> +	}
->>>>>> +
->>>>>> +        return 0;
->>>>>>     }
->>>>>>     EXPORT_SYMBOL(devfreq_suspend_device);
->>>>>>     
->>>>>> @@ -893,9 +912,23 @@ EXPORT_SYMBOL(devfreq_suspend_device);
->>>>>>      */
->>>>>>     int devfreq_resume_device(struct devfreq *devfreq)
->>>>>>     {
->>>>>> +        int ret;
->>>>>
->>>>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->>>>> because 'ret' is used if suspend_freq isn't zero.
->>>> OK
->>>
->>> If you change the devfreq_resume_device() according to my new comment,
->>> please ignore it.
->>>
->>>>>
->>>>>> +        unsigned long prev_freq;
->>>>>
->>>>> Remove prev_freq variable which is not used on this function.
->>>>> After calling devfreq_set_target, prev_freq is not used.
->>>> OK
->>>>>
->>>>>> +        u32 flags = 0;
->>>>>> +
->>>>>>     	if (!devfreq)
->>>>>>     		return -EINVAL;
->>>>>>     
->>>>>> +	if (devfreq->suspend_freq) {
-> 
-> In devfreq_resume_device(), it should check the 'devfreq->resume_freq'
-> instead of 'devfreq->suspend_freq'.
-OK, I will fix it.
+Compilers can add alignment padding to structures or reorder struct members
+for randomization and optimization, which would break the hypervisor ABI.
 
-Regards,
-Lukasz
+Mark the structures as packed to prevent this.
 
-> 
-> 
->>>>>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
->>>>>> +			return 0;
->>>>>> +
->>>>>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq,
->>>>>> +					 &prev_freq, flags);
->>>>>
->>>>> Remove the 'prev_freq' parameter.
->>>> OK
->>>>>
->>>>>> +		if (ret)
->>>>>> +			return ret;
->>>>>> +	}
->>>>>> +
->>>>>>     	if (!devfreq->governor)
->>>>>>     		return 0;
->>>
->>> Please change the code as following because you uses the following type
->>> in the devfreq_suspend_device(). If there is any special issue, please
->>> keep the same format in order to improve the readability.
->>>
->>> 	if (devfreq->governor) {
->>> 		ret = devfreq->governor->event_handler(devfreq,
->>> 				DEVFREQ_GOV_RESUME, NULL);
->>> 		if (ret)
->>> 			return ret;
->>> 	}
->>>
->>>
->> OK, I will change the code to keep the same format.
->> Thank you for the review.
->>
->> Regards,
->> Lukasz
->>
->>
->>
-> 
-> 
+Suggested-by: Nadav Amit <nadav.amit@gmail.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Nadav Amit <nadav.amit@gmail.com>
+---
+- Changes since v2:
+ - add __packed to struct 'u' defined within union 'hv_port_id'
+   [Michael Kelley]
+
+- This is a follow-up to my "[PATCH v2 0/4] x86/kvm/hyper-v: Implement
+ Direct Mode for synthetic timers" series, as suggested by Thomas I'm
+ routing it to KVM tree to avoid merge conflicts.
+---
+ arch/x86/include/asm/hyperv-tlfs.h | 52 +++++++++++++++---------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index ebfed56976d2..be5cae160ace 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -271,7 +271,7 @@ union hv_x64_msr_hypercall_contents {
+ 		u64 enable:1;
+ 		u64 reserved:11;
+ 		u64 guest_physical_address:52;
+-	};
++	} __packed;
+ };
+ 
+ /*
+@@ -283,7 +283,7 @@ struct ms_hyperv_tsc_page {
+ 	volatile u64 tsc_scale;
+ 	volatile s64 tsc_offset;
+ 	u64 reserved2[509];
+-};
++}  __packed;
+ 
+ /*
+  * The guest OS needs to register the guest ID with the hypervisor.
+@@ -324,7 +324,7 @@ struct hv_reenlightenment_control {
+ 	__u64 enabled:1;
+ 	__u64 reserved2:15;
+ 	__u64 target_vp:32;
+-};
++}  __packed;
+ 
+ #define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
+ #define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
+@@ -332,12 +332,12 @@ struct hv_reenlightenment_control {
+ struct hv_tsc_emulation_control {
+ 	__u64 enabled:1;
+ 	__u64 reserved:63;
+-};
++} __packed;
+ 
+ struct hv_tsc_emulation_status {
+ 	__u64 inprogress:1;
+ 	__u64 reserved:63;
+-};
++} __packed;
+ 
+ #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
+ #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT	12
+@@ -409,7 +409,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
+ 	__u32 res1;
+ 	__u64 tsc_scale;
+ 	__s64 tsc_offset;
+-} HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
++}  __packed HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
+ 
+ /* Define the number of synthetic interrupt sources. */
+ #define HV_SYNIC_SINT_COUNT		(16)
+@@ -466,7 +466,7 @@ union hv_message_flags {
+ 	struct {
+ 		__u8 msg_pending:1;
+ 		__u8 reserved:7;
+-	};
++	} __packed;
+ };
+ 
+ /* Define port identifier type. */
+@@ -475,7 +475,7 @@ union hv_port_id {
+ 	struct {
+ 		__u32 id:24;
+ 		__u32 reserved:8;
+-	} u;
++	} __packed u;
+ };
+ 
+ /* Define synthetic interrupt controller message header. */
+@@ -488,7 +488,7 @@ struct hv_message_header {
+ 		__u64 sender;
+ 		union hv_port_id port;
+ 	};
+-};
++} __packed;
+ 
+ /* Define synthetic interrupt controller message format. */
+ struct hv_message {
+@@ -496,12 +496,12 @@ struct hv_message {
+ 	union {
+ 		__u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
+ 	} u;
+-};
++} __packed;
+ 
+ /* Define the synthetic interrupt message page layout. */
+ struct hv_message_page {
+ 	struct hv_message sint_message[HV_SYNIC_SINT_COUNT];
+-};
++} __packed;
+ 
+ /* Define timer message payload structure. */
+ struct hv_timer_message_payload {
+@@ -509,7 +509,7 @@ struct hv_timer_message_payload {
+ 	__u32 reserved;
+ 	__u64 expiration_time;	/* When the timer expired */
+ 	__u64 delivery_time;	/* When the message was delivered */
+-};
++} __packed;
+ 
+ /* Define virtual processor assist page structure. */
+ struct hv_vp_assist_page {
+@@ -519,7 +519,7 @@ struct hv_vp_assist_page {
+ 	__u64 nested_enlightenments_control[2];
+ 	__u32 enlighten_vmentry;
+ 	__u64 current_nested_vmcs;
+-};
++} __packed;
+ 
+ struct hv_enlightened_vmcs {
+ 	u32 revision_id;
+@@ -693,7 +693,7 @@ struct hv_enlightened_vmcs {
+ 		u32 nested_flush_hypercall:1;
+ 		u32 msr_bitmap:1;
+ 		u32 reserved:30;
+-	} hv_enlightenments_control;
++	}  __packed hv_enlightenments_control;
+ 	u32 hv_vp_id;
+ 
+ 	u64 hv_vm_id;
+@@ -703,7 +703,7 @@ struct hv_enlightened_vmcs {
+ 	u64 padding64_5[7];
+ 	u64 xss_exit_bitmap;
+ 	u64 padding64_6[7];
+-};
++} __packed;
+ 
+ #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE			0
+ #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP		BIT(0)
+@@ -744,7 +744,7 @@ union hv_stimer_config {
+ 		u64 reserved_z0:3;
+ 		u64 sintx:4;
+ 		u64 reserved_z1:44;
+-	};
++	} __packed;
+ };
+ 
+ 
+@@ -759,7 +759,7 @@ union hv_synic_scontrol {
+ 	struct {
+ 		u64 enable:1;
+ 		u64 reserved:63;
+-	};
++	} __packed;
+ };
+ 
+ /* Define synthetic interrupt source. */
+@@ -771,7 +771,7 @@ union hv_synic_sint {
+ 		u64 masked:1;
+ 		u64 auto_eoi:1;
+ 		u64 reserved2:46;
+-	};
++	} __packed;
+ };
+ 
+ /* Define the format of the SIMP register */
+@@ -781,7 +781,7 @@ union hv_synic_simp {
+ 		u64 simp_enabled:1;
+ 		u64 preserved:11;
+ 		u64 base_simp_gpa:52;
+-	};
++	} __packed;
+ };
+ 
+ /* Define the format of the SIEFP register */
+@@ -791,34 +791,34 @@ union hv_synic_siefp {
+ 		u64 siefp_enabled:1;
+ 		u64 preserved:11;
+ 		u64 base_siefp_gpa:52;
+-	};
++	} __packed;
+ };
+ 
+ struct hv_vpset {
+ 	u64 format;
+ 	u64 valid_bank_mask;
+ 	u64 bank_contents[];
+-};
++} __packed;
+ 
+ /* HvCallSendSyntheticClusterIpi hypercall */
+ struct hv_send_ipi {
+ 	u32 vector;
+ 	u32 reserved;
+ 	u64 cpu_mask;
+-};
++} __packed;
+ 
+ /* HvCallSendSyntheticClusterIpiEx hypercall */
+ struct hv_send_ipi_ex {
+ 	u32 vector;
+ 	u32 reserved;
+ 	struct hv_vpset vp_set;
+-};
++} __packed;
+ 
+ /* HvFlushGuestPhysicalAddressSpace hypercalls */
+ struct hv_guest_mapping_flush {
+ 	u64 address_space;
+ 	u64 flags;
+-};
++} __packed;
+ 
+ /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
+ struct hv_tlb_flush {
+@@ -826,7 +826,7 @@ struct hv_tlb_flush {
+ 	u64 flags;
+ 	u64 processor_mask;
+ 	u64 gva_list[];
+-};
++} __packed;
+ 
+ /* HvFlushVirtualAddressSpaceEx, HvFlushVirtualAddressListEx hypercalls */
+ struct hv_tlb_flush_ex {
+@@ -834,6 +834,6 @@ struct hv_tlb_flush_ex {
+ 	u64 flags;
+ 	struct hv_vpset hv_vp_set;
+ 	u64 gva_list[];
+-};
++} __packed;
+ 
+ #endif
+-- 
+2.19.2
+
