@@ -2,142 +2,182 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BF9C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEC4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2BA2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:59:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2BA2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D107214DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D107214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbeLCK7y (ORCPT
+        id S1726294AbeLCLBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:59:54 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59556 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725907AbeLCK7y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:59:54 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3AwkoK098199
-        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 05:59:20 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p51xdkp94-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:59:20 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <maier@linux.ibm.com>;
-        Mon, 3 Dec 2018 10:59:18 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Dec 2018 10:59:17 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3AxG9h1442264
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Dec 2018 10:59:16 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53A1252050;
-        Mon,  3 Dec 2018 10:59:16 +0000 (GMT)
-Received: from oc4120165700.ibm.com (unknown [9.152.97.55])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1B5325204E;
-        Mon,  3 Dec 2018 10:59:16 +0000 (GMT)
-Subject: Re: [PATCH] [SCSI] zfcp: NULL check before some freeing functions is
- not needed.
-To:     Thomas Meyer <thomas@m3y3r.de>, bblock@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
- <1543760930051-347492467-5-diffsplit-thomas@m3y3r.de>
-From:   Steffen Maier <maier@linux.ibm.com>
-Date:   Mon, 3 Dec 2018 11:59:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Dec 2018 06:01:36 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58866 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725907AbeLCLBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:01:36 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5D61C206A1; Mon,  3 Dec 2018 12:01:01 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 272DA206FF;
+        Mon,  3 Dec 2018 12:00:51 +0100 (CET)
+Date:   Mon, 3 Dec 2018 12:00:51 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-sunxi@googlegroups.com,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [RFC PATCH 04/10] dma-engine: sun4i: Add support for Allwinner
+ suniv F1C100s
+Message-ID: <20181203110051.gp2ajxrmflvlyx7k@flea>
+References: <cover.1543782328.git.mesihkilinc@gmail.com>
+ <df1e5fbb2b04b0e5d392ce988d04a39f1d8e5f8d.1543782328.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1543760930051-347492467-5-diffsplit-thomas@m3y3r.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18120310-0020-0000-0000-000002F14C8C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120310-0021-0000-0000-00002140BD58
-Message-Id: <28bf96ec-4dff-29bd-f628-1a30e189aea8@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812030107
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ncgakdes6smr5r7x"
+Content-Disposition: inline
+In-Reply-To: <df1e5fbb2b04b0e5d392ce988d04a39f1d8e5f8d.1543782328.git.mesihkilinc@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, this was already submitted for v4.12 with
-https://www.spinics.net/lists/linux-scsi/msg125190.html
-based on
-https://www.spinics.net/lists/linux-s390/msg21307.html
 
-Also, previously seen in
-https://www.spinics.net/lists/linux-s390/msg22035.html
+--ncgakdes6smr5r7x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/02/2018 09:52 PM, Thomas Meyer wrote:
-> NULL check before some freeing functions is not needed.
-> 
-> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+On Mon, Dec 03, 2018 at 12:23:11AM +0300, Mesih Kilinc wrote:
+> DMA of Allwinner suniv F1C100s is similar to sun4i. It has 4 NDMA, 4
+> DDMA channels and endpoints are different. Also F1C100s has reset bit
+> for DMA in CCU. Add support for it.
+>=20
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 > ---
-> 
-> diff -u -p a/drivers/s390/scsi/zfcp_aux.c b/drivers/s390/scsi/zfcp_aux.c
-> --- a/drivers/s390/scsi/zfcp_aux.c
-> +++ b/drivers/s390/scsi/zfcp_aux.c
-> @@ -248,20 +248,13 @@ static int zfcp_allocate_low_mem_buffers
->   
->   static void zfcp_free_low_mem_buffers(struct zfcp_adapter *adapter)
->   {
-> -	if (adapter->pool.erp_req)
-> -		mempool_destroy(adapter->pool.erp_req);
-> -	if (adapter->pool.scsi_req)
-> -		mempool_destroy(adapter->pool.scsi_req);
-> -	if (adapter->pool.scsi_abort)
-> -		mempool_destroy(adapter->pool.scsi_abort);
-> -	if (adapter->pool.qtcb_pool)
-> -		mempool_destroy(adapter->pool.qtcb_pool);
-> -	if (adapter->pool.status_read_req)
-> -		mempool_destroy(adapter->pool.status_read_req);
-> -	if (adapter->pool.sr_data)
-> -		mempool_destroy(adapter->pool.sr_data);
-> -	if (adapter->pool.gid_pn)
-> -		mempool_destroy(adapter->pool.gid_pn);
-> +	mempool_destroy(adapter->pool.erp_req);
-> +	mempool_destroy(adapter->pool.scsi_req);
-> +	mempool_destroy(adapter->pool.scsi_abort);
-> +	mempool_destroy(adapter->pool.qtcb_pool);
-> +	mempool_destroy(adapter->pool.status_read_req);
-> +	mempool_destroy(adapter->pool.sr_data);
-> +	mempool_destroy(adapter->pool.gid_pn);
->   }
->   
->   /**
-> 
+>  drivers/dma/Kconfig     |  4 ++--
+>  drivers/dma/sun4i-dma.c | 60 +++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 62 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+> index de511db..f8a65d2 100644
+> --- a/drivers/dma/Kconfig
+> +++ b/drivers/dma/Kconfig
+> @@ -163,8 +163,8 @@ config DMA_SA11X0
+> =20
+>  config DMA_SUN4I
+>  	tristate "Allwinner A10 DMA SoCs support"
+> -	depends on MACH_SUN4I || MACH_SUN5I || MACH_SUN7I
+> -	default (MACH_SUN4I || MACH_SUN5I || MACH_SUN7I)
+> +	depends on MACH_SUN4I || MACH_SUN5I || MACH_SUN7I || MACH_SUNIV
+> +	default (MACH_SUN4I || MACH_SUN5I || MACH_SUN7I || MACH_SUNIV)
+>  	select DMA_ENGINE
+>  	select DMA_VIRTUAL_CHANNELS
+>  	help
+> diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
+> index d267ff9..c0452c9 100644
+> --- a/drivers/dma/sun4i-dma.c
+> +++ b/drivers/dma/sun4i-dma.c
+> @@ -36,7 +36,11 @@
+>  #define SUN4I_DMA_CFG_SRC_ADDR_MODE(mode)	((mode) << 5)
+>  #define SUN4I_DMA_CFG_SRC_DRQ_TYPE(type)	(type)
+> =20
+> +#define SUNIV_DMA_CFG_DST_DATA_WIDTH(width)	((width) << 24)
+> +#define SUNIV_DMA_CFG_SRC_DATA_WIDTH(width)	((width) << 8)
+> +
+>  #define SUN4I_MAX_BURST	8
+> +#define SUNIV_MAX_BURST	4
+> =20
+>  /** Normal DMA register values **/
+> =20
+> @@ -44,6 +48,9 @@
+>  #define SUN4I_NDMA_DRQ_TYPE_SDRAM		0x16
+>  #define SUN4I_NDMA_DRQ_TYPE_LIMIT		(0x1F + 1)
+> =20
+> +#define SUNIV_NDMA_DRQ_TYPE_SDRAM		0x11
+> +#define SUNIV_NDMA_DRQ_TYPE_LIMIT		(0x17 + 1)
 
+Also, you're not using that define anywhere
 
--- 
-Mit freundlichen Gruessen / Kind regards
-Steffen Maier
+> +
+>  /** Normal DMA register layout **/
+> =20
+>  /* Dedicated DMA source/destination address mode values */
+> @@ -57,6 +64,9 @@
+>  #define SUN4I_NDMA_CFG_BYTE_COUNT_MODE_REMAIN	BIT(15)
+>  #define SUN4I_NDMA_CFG_SRC_NON_SECURE		BIT(6)
+> =20
+> +#define SUNIV_NDMA_CFG_CONT_MODE		BIT(29)
+> +#define SUNIV_NDMA_CFG_WAIT_STATE(n)		((n) << 26)
+> +
 
-Linux on IBM Z Development
+Or those two.
 
-IBM Deutschland Research & Development GmbH
-Vorsitzende des Aufsichtsrats: Martina Koederitz
-Geschaeftsfuehrung: Dirk Wittkopp
-Sitz der Gesellschaft: Boeblingen
-Registergericht: Amtsgericht Stuttgart, HRB 243294
+>  /** Dedicated DMA register values **/
+> =20
+>  /* Dedicated DMA source/destination address mode values */
+> @@ -69,6 +79,9 @@
+>  #define SUN4I_DDMA_DRQ_TYPE_SDRAM		0x1
+>  #define SUN4I_DDMA_DRQ_TYPE_LIMIT		(0x1F + 1)
+> =20
+> +#define SUNIV_DDMA_DRQ_TYPE_SDRAM		0x1
 
+This is the same value
+
+> +#define SUNIV_DDMA_DRQ_TYPE_LIMIT		(0x9 + 1)
+> +
+
+And this one isn't used
+
+>  /** Dedicated DMA register layout **/
+> =20
+>  /* Dedicated DMA configuration register layout */
+> @@ -122,6 +135,11 @@
+>  #define SUN4I_DMA_NR_MAX_VCHANS						\
+>  	(SUN4I_NDMA_NR_MAX_VCHANS + SUN4I_DDMA_NR_MAX_VCHANS)
+> =20
+> +#define SUNIV_NDMA_NR_MAX_CHANNELS	4
+> +#define SUNIV_DDMA_NR_MAX_CHANNELS	4
+> +#define SUNIV_NDMA_NR_MAX_VCHANS	(24 * 2 - 1)
+> +#define SUNIV_DDMA_NR_MAX_VCHANS	10
+> +
+
+I'm not sure we need those, you can just use the raw value in the
+structure.
+
+Also, how was the number of vchans calculated?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ncgakdes6smr5r7x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAUM4wAKCRDj7w1vZxhR
+xXvaAP4q0IVo0aBkrqfLNgNJsPqTB0H7lp/ABFeB2ABnUXJ0zAEAnXU+pZY9h+L6
+wwNQloZ6VxSY9N62QCnBZ+elsCfZSw8=
+=VKIv
+-----END PGP SIGNATURE-----
+
+--ncgakdes6smr5r7x--
