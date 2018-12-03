@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA13C65BAF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C3DC65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D894820851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAA1220851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:55:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bxARJM6H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D894820851
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iknTI2Cm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAA1220851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725893AbeLCFze (ORCPT
+        id S1725910AbeLCFzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 00:55:34 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10631 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbeLCFzd (ORCPT
+        Mon, 3 Dec 2018 00:55:36 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17067 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeLCFzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 00:55:33 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c04c5190000>; Sun, 02 Dec 2018 21:54:33 -0800
+        Mon, 3 Dec 2018 00:55:35 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c04c5530000>; Sun, 02 Dec 2018 21:55:32 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 02 Dec 2018 21:55:30 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 02 Dec 2018 21:55:32 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 02 Dec 2018 21:55:30 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 3 Dec
- 2018 05:55:29 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Mon, 3 Dec 2018 05:55:29 +0000
+        by hqpgpgate101.nvidia.com on Sun, 02 Dec 2018 21:55:32 -0800
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 3 Dec
+ 2018 05:55:31 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Mon, 3 Dec 2018 05:55:31 +0000
 Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c04c5500000>; Sun, 02 Dec 2018 21:55:29 -0800
+        id <B5c04c5520000>; Sun, 02 Dec 2018 21:55:31 -0800
 From:   Wei Ni <wni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
         <linux-tegra@vger.kernel.org>
 CC:     <rui.zhang@intel.com>, <edubezval@gmail.com>, <srikars@nvidia.com>,
         <linux-kernel@vger.kernel.org>, Wei Ni <wni@nvidia.com>
-Subject: [PATCH v5 1/3] thermal: tegra: remove unnecessary warnings
-Date:   Mon, 3 Dec 2018 13:55:21 +0800
-Message-ID: <1543816523-10525-2-git-send-email-wni@nvidia.com>
+Subject: [PATCH v5 2/3] thermal: tegra: fix memory allocation
+Date:   Mon, 3 Dec 2018 13:55:22 +0800
+Message-ID: <1543816523-10525-3-git-send-email-wni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543816523-10525-1-git-send-email-wni@nvidia.com>
 References: <1543816523-10525-1-git-send-email-wni@nvidia.com>
@@ -56,51 +56,43 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543816473; bh=CIAOn2sEPPbyAd05vU8yMm8rjqYHhrJH/s8j68mzeFE=;
+        t=1543816532; bh=mfJ0UbyhFDpIIbPv2Zct+34m55gu5ZXsTwWqKRVEna8=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=bxARJM6HNKfEgc1+KdlcugeShVgeMNImyDZbJpNUFu0IxgpLDQdDbB7nvj088b1Jz
-         MT0nf5WVH9bEfUbW6yw0OF3IsfVd+/sWOXNXd5tWfoya+YnhZRo3M/o8l167oU4Hhf
-         JZjlbT0ZW72Z8cD/KS0Vu0YuVczAy35Ngc8MPAKXozZ/8MqUqgBjdhAFI7RzjLeZDZ
-         JIY6tIOY4qopdGKxlErZUwt4VshxjnpODU6H70/uf5VMHV5/VjAKioknEOf2yv+U3U
-         bGEMNuu7umk80Qw/D54H13nNy7MprmXqyCACwlSO/zErTVITmi6woXJzIa44Iqwymv
-         4JpgPcDtaECeA==
+        b=iknTI2CmFF80+PZx0fvRdDiCsUvuNrxuiCR+CeIeBF8Y/jA2Tpo8IvRwKEwyzXfM3
+         Rmtdivshg9UKPYDI88GKEAKRMMeRJQaVkYFgnLC0AoUn4x/kAc6URoaTTAru18Q/5A
+         SVioet33STEdqKRQTQ0p2RUz3jDQWV0bLVmzuFFdFy//UL6R8kiHMOtFbYnpDTDu/G
+         194zrz9VhoQQmEBNOVi93n0+WR8AM1JuuzfOjXy+RU7rt649HFtoE3lO7Ni9IQ0Fqx
+         BLm6phnqzmhJWzEonZcPORfUzHVPkZvb7vm6nmNOtSE2cJVqQSLAmNS2UjtDaMaAEQ
+         1iCGyBtwP8EQQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert warnings to info as not all platforms may
-have all the thresholds and sensors enabled.
+Fix memory allocation to store the pointers to
+thermal_zone_device.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/thermal/tegra/soctherm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index ed28110a3535..f07de8258e93 100644
+index f07de8258e93..fd2703c0cfc5 100644
 --- a/drivers/thermal/tegra/soctherm.c
 +++ b/drivers/thermal/tegra/soctherm.c
-@@ -569,7 +569,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- set_throttle:
- 	ret = get_hot_temp(tz, &trip, &temperature);
- 	if (ret) {
--		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
-+		dev_info(dev, "throttrip: %s: missing hot temperature\n",
- 			 sg->name);
- 		return 0;
- 	}
-@@ -600,7 +600,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+@@ -1339,7 +1339,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
  	}
  
- 	if (i == THROTTLE_SIZE)
--		dev_warn(dev, "throttrip: %s: missing throttle cdev\n",
-+		dev_info(dev, "throttrip: %s: missing throttle cdev\n",
- 			 sg->name);
- 
- 	return 0;
+ 	tegra->thermctl_tzs = devm_kcalloc(&pdev->dev,
+-					   soc->num_ttgs, sizeof(*z),
++					   soc->num_ttgs, sizeof(z),
+ 					   GFP_KERNEL);
+ 	if (!tegra->thermctl_tzs)
+ 		return -ENOMEM;
 -- 
 2.7.4
 
