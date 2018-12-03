@@ -2,257 +2,85 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9008C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58876C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787CD206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:00:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="l0Ahszl/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787CD206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	by mail.kernel.org (Postfix) with ESMTP id 26D3E206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:03:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D3E206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbeLCOBJ (ORCPT
+        id S1726331AbeLCOEW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:01:09 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:6434 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeLCOBI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:01:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1543845600; x=1575381600;
-  h=from:to:cc:subject:date:message-id;
-  bh=b3PioOpWZC0Lv0PKTU7qcolmIFBuZUQ/XS+VXrRk9IA=;
-  b=l0Ahszl/rNFOCwA9BiT+kWjCiI5WdfvLdav/1rX8u4CPkMIv3wsQICPh
-   PC5Ao/f+gUY2wjZGS+i1uujhH3dU8obAVIiGtFutI6aT/vmtKm41oCZT1
-   HHVZernr9aap/5eps0CqFcP55v0DUKX3C+keBNNfiU/qVC68tXL8pC7KT
-   s=;
-X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
-   d="scan'208";a="645691084"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Dec 2018 13:59:57 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wB3Dxr0E023008
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 3 Dec 2018 13:59:55 GMT
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wB3DxqEF004627;
-        Mon, 3 Dec 2018 14:59:52 +0100
-Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id wB3Dxpej004622;
-        Mon, 3 Dec 2018 14:59:51 +0100
-From:   KarimAllah Ahmed <karahmed@amazon.de>
-To:     rkrcmar@redhat.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        jmattson@google.com
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH] KVM/nVMX: Stop mapping the "APIC-access address" page into the kernel
-Date:   Mon,  3 Dec 2018 14:59:11 +0100
-Message-Id: <1543845551-4403-1-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
+        Mon, 3 Dec 2018 09:04:22 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38004 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725897AbeLCOEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:04:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 499F61682;
+        Mon,  3 Dec 2018 06:03:14 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9FA363F614;
+        Mon,  3 Dec 2018 06:03:12 -0800 (PST)
+Subject: Re: [PATCH v9 3/8] KVM: arm/arm64: Introduce helpers to manipulate
+ page table entries
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        kvmarm@lists.cs.columbia.edu
+Cc:     marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>, punitagrawal@gmail.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-4-punit.agrawal@arm.com>
+ <396402d5-fddf-ab72-01c4-80dd1a0d4d44@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <a57e690e-0b93-faf4-9d90-9ba0cc388936@arm.com>
+Date:   Mon, 3 Dec 2018 14:03:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <396402d5-fddf-ab72-01c4-80dd1a0d4d44@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "APIC-access address" is simply a token that the hypervisor puts into
-the PFN of a 4K EPTE (or PTE if using shadow paging) that triggers APIC
-virtualization whenever a page walk terminates with that PFN. This address
-has to be a legal address (i.e.  within the physical address supported by
-the CPU), but it need not have WB memory behind it. In fact, it need not
-have anything at all behind it. When bit 31 ("activate secondary controls")
-of the primary processor-based VM-execution controls is set and bit 0
-("virtualize APIC accesses") of the secondary processor-based VM-execution
-controls is set, the PFN recorded in the VMCS "APIC-access address" field
-will never be touched. (Instead, the access triggers APIC virtualization,
-which may access the PFN recorded in the "Virtual-APIC address" field of
-the VMCS.)
+Hi Anshuman,
 
-So stop mapping the "APIC-access address" page into the kernel and even
-drop the requirements to have a valid page backing it. Instead, just use
-some token that:
+On 03/12/2018 13:50, Anshuman Khandual wrote:
+> 
+> 
+> On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+>> Introduce helpers to abstract architectural handling of the conversion
+>> of pfn to page table entries and marking a PMD page table entry as a
+>> block entry.
+> 
+> Why is this necessary ? we would still need to access PMD, PUD as is
+> without any conversion. IOW KVM knows the breakdown of the page table
+> at various levels. Is this something required from generic KVM code ?
 
-1) Not one of the valid guest pages.
-2) Within the physical address supported by the CPU.
+The KVM MMU code is shared for arm32 and arm64. Hence we need arch specific
+helpers to hide how we deal with the levels. e.g, PUD never exists for
+arm32.
 
-Suggested-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
----
+>    
+>>
+>> The helpers are introduced in preparation for supporting PUD hugepages
+>> at stage 2 - which are supported on arm64 but do not exist on arm.
+> 
+> Some of these patches (including the earlier two) are good on it's
+> own. Do we have still mention in commit message about the incoming PUD
+> enablement as the reason for these cleanup patches ?
+> 
 
-Thanks Jim for the commit message :)
----
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/mmu.c              | 10 ++++++
- arch/x86/kvm/vmx.c              | 71 ++++++++++++++++++-----------------------
- 3 files changed, 42 insertions(+), 40 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index fbda5a9..7e50196 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1077,6 +1077,7 @@ struct kvm_x86_ops {
- 	void (*load_eoi_exitmap)(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap);
- 	void (*set_virtual_apic_mode)(struct kvm_vcpu *vcpu);
- 	void (*set_apic_access_page_addr)(struct kvm_vcpu *vcpu, hpa_t hpa);
-+	bool (*nested_apic_access_addr)(struct kvm_vcpu *vcpu, gpa_t gpa, hpa_t *hpa);
- 	void (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
- 	int (*sync_pir_to_irr)(struct kvm_vcpu *vcpu);
- 	int (*set_tss_addr)(struct kvm *kvm, unsigned int addr);
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 7c03c0f..ae46a8d 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -3962,9 +3962,19 @@ bool kvm_can_do_async_pf(struct kvm_vcpu *vcpu)
- static bool try_async_pf(struct kvm_vcpu *vcpu, bool prefault, gfn_t gfn,
- 			 gva_t gva, kvm_pfn_t *pfn, bool write, bool *writable)
- {
-+	hpa_t hpa;
- 	struct kvm_memory_slot *slot;
- 	bool async;
- 
-+	if (is_guest_mode(vcpu) &&
-+	    kvm_x86_ops->nested_apic_access_addr &&
-+	    kvm_x86_ops->nested_apic_access_addr(vcpu, gfn_to_gpa(gfn), &hpa)) {
-+		*pfn = hpa >> PAGE_SHIFT;
-+		if (writable)
-+			*writable = true;
-+		return false;
-+	}
-+
- 	/*
- 	 * Don't expose private memslots to L2.
- 	 */
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 83a614f..340cf56 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -864,7 +864,6 @@ struct nested_vmx {
- 	 * Guest pages referred to in the vmcs02 with host-physical
- 	 * pointers, so we must keep them pinned while L2 runs.
- 	 */
--	struct page *apic_access_page;
- 	struct kvm_host_map virtual_apic_map;
- 	struct kvm_host_map pi_desc_map;
- 	struct kvm_host_map msr_bitmap_map;
-@@ -8512,10 +8511,6 @@ static void free_nested(struct kvm_vcpu *vcpu)
- 	kfree(vmx->nested.cached_vmcs12);
- 	kfree(vmx->nested.cached_shadow_vmcs12);
- 	/* Unpin physical memory we referred to in the vmcs02 */
--	if (vmx->nested.apic_access_page) {
--		kvm_release_page_dirty(vmx->nested.apic_access_page);
--		vmx->nested.apic_access_page = NULL;
--	}
- 	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
- 	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
- 	vmx->nested.pi_desc = NULL;
-@@ -11901,41 +11896,27 @@ static void vmx_inject_page_fault_nested(struct kvm_vcpu *vcpu,
- static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
- 						 struct vmcs12 *vmcs12);
- 
-+static hpa_t vmx_apic_access_addr(void)
-+{
-+	/*
-+	 * The physical address choosen here has to:
-+	 * 1) Never be an address that could be assigned to a guest.
-+	 * 2) Within the maximum physical limits of the CPU.
-+	 *
-+	 * So our choice below is completely random, but at least it follows
-+	 * these two rules.
-+	 */
-+	return __pa_symbol(_text) & PAGE_MASK;
-+}
-+
- static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
- {
- 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	struct kvm_host_map *map;
--	struct page *page;
--	u64 hpa;
- 
--	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
--		/*
--		 * Translate L1 physical address to host physical
--		 * address for vmcs02. Keep the page pinned, so this
--		 * physical address remains valid. We keep a reference
--		 * to it so we can release it later.
--		 */
--		if (vmx->nested.apic_access_page) { /* shouldn't happen */
--			kvm_release_page_dirty(vmx->nested.apic_access_page);
--			vmx->nested.apic_access_page = NULL;
--		}
--		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->apic_access_addr);
--		/*
--		 * If translation failed, no matter: This feature asks
--		 * to exit when accessing the given address, and if it
--		 * can never be accessed, this feature won't do
--		 * anything anyway.
--		 */
--		if (!is_error_page(page)) {
--			vmx->nested.apic_access_page = page;
--			hpa = page_to_phys(vmx->nested.apic_access_page);
--			vmcs_write64(APIC_ACCESS_ADDR, hpa);
--		} else {
--			vmcs_clear_bits(SECONDARY_VM_EXEC_CONTROL,
--					SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES);
--		}
--	}
-+	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES))
-+		vmcs_write64(APIC_ACCESS_ADDR, vmx_apic_access_addr());
- 
- 	if (nested_cpu_has(vmcs12, CPU_BASED_TPR_SHADOW)) {
- 		map = &vmx->nested.virtual_apic_map;
-@@ -14196,12 +14177,6 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 	/* This is needed for same reason as it was needed in prepare_vmcs02 */
- 	vmx->host_rsp = 0;
- 
--	/* Unpin physical memory we referred to in vmcs02 */
--	if (vmx->nested.apic_access_page) {
--		kvm_release_page_dirty(vmx->nested.apic_access_page);
--		vmx->nested.apic_access_page = NULL;
--	}
--
- 	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
- 	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
- 	vmx->nested.pi_desc = NULL;
-@@ -14949,6 +14924,21 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
- 	return 0;
- }
- 
-+static bool vmx_nested_apic_access_addr(struct kvm_vcpu *vcpu,
-+					gpa_t gpa, hpa_t *hpa)
-+{
-+	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-+
-+	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES) &&
-+	    page_address_valid(vcpu, vmcs12->apic_access_addr) &&
-+	    (gpa_to_gfn(gpa) == gpa_to_gfn(vmcs12->apic_access_addr))) {
-+		*hpa = vmx_apic_access_addr();
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.cpu_has_kvm_support = cpu_has_kvm_support,
- 	.disabled_by_bios = vmx_disabled_by_bios,
-@@ -15022,6 +15012,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.update_cr8_intercept = update_cr8_intercept,
- 	.set_virtual_apic_mode = vmx_set_virtual_apic_mode,
- 	.set_apic_access_page_addr = vmx_set_apic_access_page_addr,
-+	.nested_apic_access_addr = vmx_nested_apic_access_addr,
- 	.get_enable_apicv = vmx_get_enable_apicv,
- 	.refresh_apicv_exec_ctrl = vmx_refresh_apicv_exec_ctrl,
- 	.load_eoi_exitmap = vmx_load_eoi_exitmap,
--- 
-2.7.4
-
+Cheers
+Suzuki
