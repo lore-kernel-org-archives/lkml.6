@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06623C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D112C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E14206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:00:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E14206B7
+	by mail.kernel.org (Postfix) with ESMTP id 2A5CD20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:00:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A5CD20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbeLCMA5 (ORCPT
+        id S1726419AbeLCMBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:00:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60588 "EHLO mx1.suse.de"
+        Mon, 3 Dec 2018 07:01:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60678 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725975AbeLCMA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:00:57 -0500
+        id S1725883AbeLCMBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:01:36 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 89DF8AFBE;
-        Mon,  3 Dec 2018 12:00:09 +0000 (UTC)
-Date:   Mon, 03 Dec 2018 13:00:08 +0100
-Message-ID: <s5hftvezupj.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 239A8AFC0;
+        Mon,  3 Dec 2018 12:00:50 +0000 (UTC)
+Date:   Mon, 03 Dec 2018 13:00:50 +0100
+Message-ID: <s5hefayzuod.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Ayman Bagabas" <ayman.bagabas@gmail.com>
 Cc:     <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
@@ -37,10 +37,10 @@ Cc:     <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
         "Kailang Yang" <kailang@realtek.com>,
         <linux-kernel@vger.kernel.org>,
         <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH v8 2/3] x86: add support for Huawei WMI hotkeys.
-In-Reply-To: <20181129235742.14332-3-ayman.bagabas@gmail.com>
+Subject: Re: [PATCH v8 3/3] ALSA: hda: add support for Huawei WMI micmute LED
+In-Reply-To: <20181129235742.14332-4-ayman.bagabas@gmail.com>
 References: <20181129235742.14332-1-ayman.bagabas@gmail.com>
-        <20181129235742.14332-3-ayman.bagabas@gmail.com>
+        <20181129235742.14332-4-ayman.bagabas@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -51,89 +51,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 00:57:37 +0100,
+On Fri, 30 Nov 2018 00:57:38 +0100,
 Ayman Bagabas wrote:
 > 
-> This driver adds support for missing hotkeys on some Huawei laptops.
-> Laptops such as the Matebook X have non functioning hotkeys. Whereas
-> newer laptops such as the Matebook X Pro come with working hotkeys out
-> of the box.
-> 
-> Old laptops, such as the Matebook X, report hotkey events through ACPI
-> device "\WMI0". However, new laptops, such as the Matebook X Pro,
-> does not have this WMI device.
-> 
-> All the hotkeys on the Matebook X Pro work fine
-> without this patch except (micmute, wlan, and huawei key). These keys
-> and the brightness keys report events to "\AMW0" ACPI device. One
-> problem is that brightness keys on the Matebook X Pro work without this
-> patch. This results in reporting two brightness key press
-> events one is captured by ACPI and another by this driver.
-> 
-> A solution would be to check if such event came from the "\AMW0" WMI driver
-> then skip reporting event. Another solution would be to leave this to user-space to handle. Which
-> can be achieved by using "hwdb" tables and remap those keys to "unknown".
-> This solution seems more natural to me because it leaves the decision to
-> user-space.
+> Some of Huawei laptops come with a LED in the micmute key. This patch
+> enables the use of micmute LED for these devices:
+> 1. Matebook X (19e5:3200), (19e5:3201)
+> 2. Matebook X Pro (19e5:3204)
 > 
 > Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 
-The new patch looks much better than the previous one, thanks for
-working on it.
-
-Just a few comments:
-
-> +struct huawei_wmi_priv {
-> +	struct input_dev *idev;
-> +	struct led_classdev cdev;
-> +	acpi_handle handle;
-
-Is this handle set in anywhere?  I couldn't see it in your patch.
-If it's supposed to be NULL, passing NULL explicitly makes your
-intention clearer.
-
-
-> +static int huawei_wmi_leds_setup(struct wmi_device *wdev)
-> +{
-> +	struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
-> +	acpi_status status;
-> +
-> +	// Skip registering LED subsystem if no ACPI method was found.
-> +	status = acpi_get_handle(priv->handle, "\\_SB.PCI0.LPCB.EC0", &priv->handle);
-> +	if (ACPI_FAILURE(status))
-> +		return 0;
-> +
-> +	if (acpi_has_method(priv->handle, "SPIN"))
-> +		priv->acpi_method = "SPIN";
-> +	else if (acpi_has_method(priv->handle, "WPIN"))
-> +		priv->acpi_method = "WPIN";
-> +	else
-> +		return 0;
-> +
-> +	priv->cdev.name = "platform::micmute";
-> +	priv->cdev.max_brightness = 1;
-> +	priv->cdev.brightness_set_blocking = huawei_wmi_micmute_led_set;
-> +	priv->cdev.default_trigger = "audio-micmute";
-> +	priv->cdev.brightness = ledtrig_audio_get(LED_AUDIO_MICMUTE);
-> +	priv->cdev.dev = &wdev->dev;
-
-What about suspend/resume?
-When the driver is bound wit HD-audio, the HD-audio will restore the
-state at resume, so it would work.  But, by providing the LED class
-device, it is supposed to work even without HD-audio, so it might make
-sense to pass LED_CORE_SUSPENDRESUME, too.
-
-
-> +static int __init huawei_wmi_init(void)
-> +{
-> +	if (!(wmi_has_guid(WMI0_EVENT_GUID) || wmi_has_guid(AMW0_EVENT_GUID))) {
-> +		pr_debug("Compatible WMI GUID not found\n");
-> +		return -ENODEV;
-> +	}
-
-This is superfluous when you implement with wmi_driver.
-In theory, the supported GUID can be added dynamically via sysfs,
-too.
+Feel free to take my ack
+  Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
 
 thanks,
