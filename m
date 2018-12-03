@@ -3,40 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92A1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31682C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EE5920848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE5920848
+	by mail.kernel.org (Postfix) with ESMTP id F194E20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F194E20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbeLCE2H (ORCPT
+        id S1725998AbeLCE2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:28:07 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:55248 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbeLCE2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:28:06 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB34R7Qi018287
+        Sun, 2 Dec 2018 23:28:50 -0500
+Received: from mail.windriver.com ([147.11.1.11]:62690 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbeLCE2u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 23:28:50 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34Slh1026799
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 2 Dec 2018 20:27:23 -0800
+        Sun, 2 Dec 2018 20:28:47 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 2 Dec 2018
- 20:26:57 -0800
+ 20:28:46 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         <patches@opensource.cirrus.com>
-Subject: [PATCH 17/22] mfd: wm831x-spi: Make it explicitly non-modular
-Date:   Sun, 2 Dec 2018 23:23:24 -0500
-Message-ID: <1543811009-15112-18-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 21/22] mfd: wm8350-core: drop unused MODULE_ tags from non-modular code
+Date:   Sun, 2 Dec 2018 23:23:28 -0500
+Message-ID: <1543811009-15112-22-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
@@ -49,95 +51,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_WM831X_SPI
-drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM831x/2x PMICs with SPI"
+drivers/mfd/Kconfig:config MFD_WM8350
+drivers/mfd/Kconfig:    bool
 
 ...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the modular code that is essentially orphaned, so that
+Lets remove the couple traces of modular infrastructure use, so that
 when reading the driver there is no doubt it is builtin-only.
 
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
+We delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
+We replace module.h with init.h and export.h ; the latter since the
+file does export some symbols.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Lee Jones <lee.jones@linaro.org>
 Cc: patches@opensource.cirrus.com
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/wm831x-spi.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ drivers/mfd/wm8350-core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/wm831x-spi.c b/drivers/mfd/wm831x-spi.c
-index 018ce652ae57..dd4dab419940 100644
---- a/drivers/mfd/wm831x-spi.c
-+++ b/drivers/mfd/wm831x-spi.c
-@@ -13,7 +13,7 @@
+diff --git a/drivers/mfd/wm8350-core.c b/drivers/mfd/wm8350-core.c
+index 8a07c5634aee..e6434a4d7439 100644
+--- a/drivers/mfd/wm8350-core.c
++++ b/drivers/mfd/wm8350-core.c
+@@ -13,7 +13,8 @@
   */
  
  #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/pm.h>
-@@ -67,15 +67,6 @@ static int wm831x_spi_probe(struct spi_device *spi)
- 	return wm831x_device_init(wm831x, spi->irq);
++#include <linux/export.h>
+ #include <linux/slab.h>
+ #include <linux/bug.h>
+ #include <linux/device.h>
+@@ -466,6 +467,3 @@ void wm8350_device_exit(struct wm8350 *wm8350)
+ 	wm8350_irq_exit(wm8350);
  }
- 
--static int wm831x_spi_remove(struct spi_device *spi)
--{
--	struct wm831x *wm831x = spi_get_drvdata(spi);
+ EXPORT_SYMBOL_GPL(wm8350_device_exit);
 -
--	wm831x_device_exit(wm831x);
--
--	return 0;
--}
--
- static int wm831x_spi_suspend(struct device *dev)
- {
- 	struct wm831x *wm831x = dev_get_drvdata(dev);
-@@ -108,17 +99,16 @@ static const struct spi_device_id wm831x_spi_ids[] = {
- 	{ "wm8326", WM8326 },
- 	{ },
- };
--MODULE_DEVICE_TABLE(spi, wm831x_spi_ids);
- 
- static struct spi_driver wm831x_spi_driver = {
- 	.driver = {
- 		.name	= "wm831x",
- 		.pm	= &wm831x_spi_pm,
- 		.of_match_table = of_match_ptr(wm831x_of_match),
-+		.suppress_bind_attrs = true,
- 	},
- 	.id_table	= wm831x_spi_ids,
- 	.probe		= wm831x_spi_probe,
--	.remove		= wm831x_spi_remove,
- };
- 
- static int __init wm831x_spi_init(void)
-@@ -132,13 +122,3 @@ static int __init wm831x_spi_init(void)
- 	return 0;
- }
- subsys_initcall(wm831x_spi_init);
--
--static void __exit wm831x_spi_exit(void)
--{
--	spi_unregister_driver(&wm831x_spi_driver);
--}
--module_exit(wm831x_spi_exit);
--
--MODULE_DESCRIPTION("SPI support for WM831x/2x AudioPlus PMICs");
+-MODULE_DESCRIPTION("WM8350 AudioPlus PMIC core driver");
 -MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Mark Brown");
 -- 
 2.7.4
 
