@@ -2,97 +2,160 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEFAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBE3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC922087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:10:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC922087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 8157720851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:11:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kI7eFcq7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8157720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbeLCKKX convert rfc822-to-8bit (ORCPT
+        id S1726150AbeLCKLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:10:23 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:23247 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726023AbeLCKKW (ORCPT
+        Mon, 3 Dec 2018 05:11:23 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36087 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbeLCKLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:10:22 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-32-M9eBV3i6N5mXzexFWVvs2A-1; Mon, 03 Dec 2018 10:09:56 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
- 3 Dec 2018 10:10:05 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 3 Dec 2018 10:10:05 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Vineet Gupta' <vineet.gupta1@synopsys.com>,
-        'Arnd Bergmann' <arnd@arndb.de>,
-        "jose.abreu@synopsys.com" <jose.abreu@synopsys.com>
-CC:     "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        "Vitor Soares" <vitor.soares@synopsys.com>
-Subject: RE: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
-Thread-Topic: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
-Thread-Index: AQHUh+/vHIi8Q+1XAUeZFbx1QKnaT6Vsz5DQ
-Date:   Mon, 3 Dec 2018 10:10:05 +0000
-Message-ID: <a668562bf3cb410e90484eb0d4a436a7@AcuMS.aculab.com>
-References: <19fb2e394afcb073bbc109e432417fbbc03323f6.1543499759.git.joabreu@synopsys.com>
- <ff1e11923e92405d883474d715008c0a@AcuMS.aculab.com>
- <89122bd8-bca2-2ae1-0dd0-160abbebcace@synopsys.com>
- <d2d133e5-267c-c42a-7329-22892bbbdee4@synopsys.com>
- <CAK8P3a2U3ft3crF2SiAuc=PQdDooEUaVAN9gQDyxsxvBn5+xRw@mail.gmail.com>
- <57437493-31bb-eced-032c-1f54470b030e@synopsys.com>
- <CAK8P3a2mqEb4_F4wB1DvL5jJJobLhOg6-bW3ZDNGhvbv-_qW3A@mail.gmail.com>
- <3afe0e1bbf2d42d3bb178ec789553c28@AcuMS.aculab.com>
- <C2D7FE5348E1B147BCA15975FBA23075014641A413@US01WEMBX2.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075014641A413@US01WEMBX2.internal.synopsys.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 3 Dec 2018 05:11:23 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u3so11463023wrs.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:10:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mvaKlhv8OlNGQazGyVnaJD/NLE9F36VZF3LvCNtcvNo=;
+        b=kI7eFcq7k83mU2Dx2T97v/UCxJUvaKSL7ZjlS6wUqH70c6PDSpyFkK8TMv2WEHbdOx
+         VmBp6G7yMYq8aXzhf/s6gnF1GDlnxYNRqKDXBtmzS62PrNPENGfIRyGoukU4kRZR+jx/
+         R2bBPk6NNP+z157O4dsESnHFjubEzBfYFDwo1pxIE7tY4hIy7Q89VqBHv810GaLF7RX2
+         iul9PNjbQx00UvxOznKAGuaNN7Aqmjs+YB4eXVTY+uE91ClvFjbwRHvZkcDzVRaac5LX
+         00MRm/OR0O8y4bQiNcbDZNThUapz2k8bHtphLRueNjBsgcGByto6bXbjsqyxGV88VS/G
+         xqmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mvaKlhv8OlNGQazGyVnaJD/NLE9F36VZF3LvCNtcvNo=;
+        b=d2bCHauPNgDXdgUuK0hksu8bzMOa38EQbe7SOE1+1WN56WAK9RGuRQXlASQNhGYiXz
+         34+iGvlLzQpOTFp1DwU2a/d5s2AqyBtrgauOcY0KkNumrjykmhCW7wK9qJLZJVArzz8+
+         Ngr1hOala2N4Z1Ood3zBKREp7GUVH2VE6z/3lZyHXGX0eD3tznemxvmP9j47W9nEvc3k
+         MZynQ5QHPRt3Un5K4yZYafEatmMCAShVIcncrmHeaIVq44bvgJe+Ih1hkGTTxsFZ3Tph
+         T23Fx39y+580dsz7yZoiB8Kp+t3P6HUdIrYXNJHEeDjbPRnNxn/ODCB41TLt5TI9zyiB
+         CZhw==
+X-Gm-Message-State: AA+aEWZkSt5VwXrXWgubr2GgiSgmECPdIpjJXhPFB1ygMaupoQV1dKq3
+        Z+VrsPUEqJtfCoDAj3bEiWsavYz2YF7Iow==
+X-Google-Smtp-Source: AFSGD/UaQ3ggxqXbSsQWy9L+9V25bMT1uWvPNDVNpsnk/j/u2ENGNXih0qWqMuDnDPeVydP24MAdVg==
+X-Received: by 2002:a5d:4586:: with SMTP id p6mr13036672wrq.69.1543831858905;
+        Mon, 03 Dec 2018 02:10:58 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id u204sm5346968wmu.30.2018.12.03.02.10.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 02:10:58 -0800 (PST)
+Subject: Re: [PATCH v2] drm/meson: Fix an Alpha Primary Plane bug on Meson
+ GXL/GXM SoCs
+To:     Maxime Jourdan <mjourdan@baylibre.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20181128100734.6536-1-narmstrong@baylibre.com>
+ <CAMO6nawdGnr2nPvsZGT4WcnuetdvN=-e7j0SNWbCRvDBFw8GJw@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <2f948a4a-5a9e-529f-0810-a4ddc3387b15@baylibre.com>
+Date:   Mon, 3 Dec 2018 11:10:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MC-Unique: M9eBV3i6N5mXzexFWVvs2A-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAMO6nawdGnr2nPvsZGT4WcnuetdvN=-e7j0SNWbCRvDBFw8GJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vineet Gupta
-...
-> > It also seems to have used a different type of loop to the
-> > other example, probably less efficient.
-> > (Not that I'm an expert on ARC opcodes.)
+On 03/12/2018 10:04, Maxime Jourdan wrote:
+> Hi Neil,
+> On Wed, Nov 28, 2018 at 11:07 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>
+>> On the Amlogic GXL & GXM SoCs, a bug occurs on the primary plane when
+>> alpha is used where the alpha is not aligned with the pixel content.
+>>
+>> The woraround Amlogic implemented is to reset the OSD1 plane hardware
+>> block each time the plane is (re)enabled, solving the issue.
+>>
 > 
-> The difference is due to ISA and ensuing ARC gcc backends. ARCompact based cores
-> don't support unaligned access and the loop there was ZOL (Zero delay loop). In
-> ARCv2 based cores, the gcc backend has been tweaked to generate fewer ZOLs hence
-> you see the more canonical tst and branch style loop.
+> typo: woraround -> workaround
 
-Is this another case of the hardware implementing 'hardware' loop
-instructions that execute slower than ones made of simple instructions?
+I'll fix when applying !
 
-The worst example has to be the x86 'loop' (dec cx and jump nz)
-instruction which is microcoded on intel cpus.
-That makes it very difficult to use the new addx instruction to
-get two dependency chains through a loop.
+> 
+>> In the reset, we still need to save the content of 2 registers which
+>> depends on the status of the plane, in addition to reload the scaler
+>> conversion matrix at the same time.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>> Changes since v1 at [1]:
+>> - Fix flickering and shaking by moving reset when plane is disabled
+>>
+>> [1] https://patchwork.freedesktop.org/patch/263550/
+>>
+>>  drivers/gpu/drm/meson/meson_plane.c | 12 ++++++++++++
+>>  drivers/gpu/drm/meson/meson_viu.c   | 27 +++++++++++++++++++++++++++
+>>  drivers/gpu/drm/meson/meson_viu.h   |  1 +
+>>  3 files changed, 40 insertions(+)
+>>
+> 
+> I can confirm the fix works on GXL (aml-s905x-cc), tested with
+> LibreElec, 1080p resolution.
+> 
+> Anything using alpha on the primary plane used to be randomly
+> "shifted" with black patches, and this was particularly visible with
+> subtitles.
+> 
+> Things seem OK now. Thanks!
+> 
+> Tested-by: Maxime Jourdan <mjourdan@baylibre.com>
+> Reviewed-by: Maxime Jourdan <mjourdan@baylibre.com>
+> 
 
-	David
+Thanks,
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Applied on drm-misc-next
 
+Neil
