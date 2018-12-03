@@ -2,310 +2,354 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BFDC65BAF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892F0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8421C20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32BEA2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:50:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgXmLfZ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8421C20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WC3vY87l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BEA2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbeLCItx (ORCPT
+        id S1725948AbeLCIuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 03:49:53 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41195 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeLCItx (ORCPT
+        Mon, 3 Dec 2018 03:50:46 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42483 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbeLCIup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 03:49:53 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so11175423wrs.8;
-        Mon, 03 Dec 2018 00:49:47 -0800 (PST)
+        Mon, 3 Dec 2018 03:50:45 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so5397254pga.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 00:50:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=VOEh866ZbANo3Ge5n4GDOewNeDwEmttJjoNgAq7uD50=;
-        b=GgXmLfZ6SHxjM+zhaUo9mUB2y1RBXQ9arvSR/g0fECPwbaBhfd0MvjwTbqhsOTubs0
-         VIfYuOrlA/39RcfhmNcEsel+RnUyXSHmu/4eKdXgyGTXRrW3oJXZg5iCVMtpnD0uPXZ5
-         9xMyg+J6m6LoDCyZ+tSBytWvY20hrbDUkAjshrJ/hC9niScu9flL1Q+mWdEjHqsKaMkR
-         NwEsQp5yUtxl+YsiP3/hamXrR0DhfWZP9x+Uj4XMjNbRBONKUlQ1hS9sCOluFmsPYHjz
-         SvuwFaa/24jjk9lJSnu6cJQnWCCQDTExhlWcs2jLJlFA2mq+xRZTUvNNEoAoF98D/Vn9
-         FxCw==
+        bh=1uH9MxkuXbcZplIw2PhRu0J/rnKp74L6usGhPd7FOU0=;
+        b=WC3vY87lKBVZi7eIxbE5F2hEVZZumszQ22ibYQzI1aRIcq9qPlMAykfWpQiBagMoQc
+         MRyXaeBsrM53mHZtvC2O4RpsPFGvcNK+w5NG355Hvq3FLDlxW4i23y3PL3l/lh167Irq
+         UGQiIT7mbo7UuXywj/Uu4gYJWEZNnZcAZwOrM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VOEh866ZbANo3Ge5n4GDOewNeDwEmttJjoNgAq7uD50=;
-        b=U2VUJh0vROeE6YQ/q6ywqwl/oCaowYiqNjqFRvPp9iPXXktMsm5G81mmatanZj9OqT
-         l+T1CkrGJ87zd2Z6KMtUXNMCw0UR2x9zrYe2eEJmu8MrBse9ZysJPD1HL4F1XwsrLAq6
-         /8YBbCU5jjAfbF+oGzHGlof6Ulyd4vCbYZ9VYVu6kiRs3PUM996ew9xEOApUMHOH9C29
-         5k1mUD10qtVAOP6WuJRF1ZCKYblbFijTgooU3ATeKoZAMGdNl8qzLQ2MXklItbVwSJ03
-         4fwqErWrD6el123dGfyQm90j0trKrRVBURoJ2ToThQemhOemUdTvZBUfLSpM3z+MWiEc
-         shWQ==
-X-Gm-Message-State: AA+aEWbguf/Lx7OpGicuT1lKp3VTI6m/y1ATd2Yb5F1uf/5uuQyKnJSP
-        i47LCv20OhBbI4ZRHRvXcNA=
-X-Google-Smtp-Source: AFSGD/V/bFNMLrYoXGG3QKGEo1CfsXD80lBSMKtXFqRWQ1J6WLAZQbJTB6zNYF9pdGIyFVROGUhfwQ==
-X-Received: by 2002:adf:fe8f:: with SMTP id l15mr12573387wrr.313.1543826986302;
-        Mon, 03 Dec 2018 00:49:46 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id m4sm8524516wrw.67.2018.12.03.00.49.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 00:49:45 -0800 (PST)
-Date:   Mon, 3 Dec 2018 09:49:43 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>
-Subject: [PATCH] x86/pci: Clean up the asm/pci_x86.h header a bit
-Message-ID: <20181203084943.GA56168@gmail.com>
-References: <20181203082140.GA15318@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1uH9MxkuXbcZplIw2PhRu0J/rnKp74L6usGhPd7FOU0=;
+        b=KEIYdpzF8rthZWKhBBTnt9Zs77d0V6Bpi3zCr/GokAMyiGQ6GneQOqxvzZ2tIJd06T
+         mGk4cfv6XxOBVl7CqwXoljDScx8vsebxU4G8p/Uk3N1Z6EHdXZkFuxA+lph4TyeKawHD
+         QIqAwQo50kD9sNskFbr4saFKr1t3KNvcwUnvRLpB9q6/2MUGOS+X4x+HcyO3zNQ5YPgB
+         wFPkydeWbfrGSpAUnfpOtXx3U/i5aF9MAUOiJzCcq/xf8lRgu5ZC3YTEMR7rRoYQqKN5
+         kSOdNZcE7fA5g6M+v3iiygFkz0D/Wv69fb6TpvOSUivvsKWGr42NbHuhRPAJvHLZmPxB
+         s8/Q==
+X-Gm-Message-State: AA+aEWYLkS5VV2lTu/okof+FO9Pxrljt93HXeMhF+5KuRGIaFt2lFOMc
+        n5T9YiueN87/aXUVxvByyDvaig==
+X-Google-Smtp-Source: AFSGD/UEHFH9musf+u+IP/mze0FfmlLsVsSEPgguagvmWy+E669qjIgi2KxRc8Gq1V7K1KIZ7qr1CA==
+X-Received: by 2002:a63:2c0e:: with SMTP id s14mr12752893pgs.132.1543827039820;
+        Mon, 03 Dec 2018 00:50:39 -0800 (PST)
+Received: from localhost ([122.172.23.29])
+        by smtp.gmail.com with ESMTPSA id 134sm14722657pgb.78.2018.12.03.00.50.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 00:50:38 -0800 (PST)
+Date:   Mon, 3 Dec 2018 14:20:36 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 5/5] PM / Domains: Propagate performance state updates
+Message-ID: <20181203085036.et2rfzxi6cbivv3j@vireshk-i7>
+References: <cover.1543219386.git.viresh.kumar@linaro.org>
+ <5a29ceb2704239a8efb4db2e47ca155a422a6e57.1543219386.git.viresh.kumar@linaro.org>
+ <CAPDyKFpp1iPQ08QQjoi9b4RGUo2Zw_L_vjy8xtnSpg34gn--eA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181203082140.GA15318@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAPDyKFpp1iPQ08QQjoi9b4RGUo2Zw_L_vjy8xtnSpg34gn--eA@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Ingo Molnar <mingo@kernel.org> wrote:
-
-> From 22b71f970f18f5f38161be028ab7ce7cd1f769f7 Mon Sep 17 00:00:00 2001
-> From: Ingo Molnar <mingo@kernel.org>
-> Date: Mon, 3 Dec 2018 09:15:40 +0100
-> Subject: [PATCH] x86/pci: Remove the dead-code DBG() macro
+On 30-11-18, 10:44, Ulf Hansson wrote:
+> On Mon, 26 Nov 2018 at 09:10, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > +static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+> > +                                          unsigned int state, int depth);
+> > +
 > 
-> While reading arch/x86/include/asm/pci_x86.h I noticed that we have ancient
-> residuals of debugging code, which is never actually enabled via any regular
-> Kconfig mechanism:
+> I don't like forward declarations like these, as in most cases it
+> means that the code can be re-worked and improved.
+> 
+> However, because of the recursiveness code in genpd, I understand that
+> it may be needed for some cases. Anyway, please have look and see if
+> you can rid of it.
 
-I also noticed that the PCI_CHECK_ENABLE_AMD_MMCONF line added eons ago 
-looked weird, so did a quick cleanup pass of the header.
+I tried, but I couldn't figure out a way to avoid this thing because of
+recursion. Even if I break some of the parts out to another routine, then also
+the dependency stays as is.
 
-Thanks,
+Below is the new diff after making all the changes you suggested.
 
-	Ingo
+-- 
+viresh
 
-================>
-From: Ingo Molnar <mingo@kernel.org>
-Date: Mon, 3 Dec 2018 09:42:40 +0100
-Subject: [PATCH] x86/pci: Clean up the asm/pci_x86.h header a bit
+-------------------------8<-------------------------
+Subject: [PATCH] PM / Domains: Propagate performance state updates
 
-- The addition of PCI_CHECK_ENABLE_AMD_MMCONF broke the tabulation of the
-  enumeration - fix the tabulation and also extend it with zeroes to make
-  it clearer how the bits relate, and to make it easier to check that
-  there's no accidental overlap.
+This commit updates genpd core to start propagating performance state
+updates to master domains that have their set_performance_state()
+callback set.
 
-- Remove unnecessary and out of date comments referring to file names that
-  do not exist with that name anymore.
+Currently a genpd only handles the performance state requirements from
+the devices under its control. This commit extends that to also handle
+the performance state requirement(s) put on the master genpd by its
+sub-domains. There is a separate value required for each master that
+the genpd has and so a new field is added to the struct gpd_link
+(link->performance_state), which represents the link between a genpd and
+its master. The struct gpd_link also got another field
+prev_performance_state, which is used by genpd core as a temporary
+variable during transitions.
 
-- Fix non-standard comment lines.
+We need to propagate setting performance state while powering-on a genpd
+as well, as we ignore performance state requirements from sub-domains
+which are powered-off. For this reason _genpd_power_on() also received
+the additional parameter, depth, which is used for hierarchical locking
+within genpd.
 
-- Add 'extern' to global scope variables/functions that don't have it.
+We can't take the genpd lock sometimes when _genpd_power_on() is called
+from genpd_sync_power_on() and to take care of that several routine got
+an additional parameter use_lock. This parameter is always set to true
+if the call isn't initiated from genpd_sync_power_on(), else it receives
+the use_lock parameter of genpd_sync_power_on() as is.
 
-- Fix typo.
-
-- Tabulate 'struct pci_mmcfg_region', similarly to the other structure
-  definitions in this header.
-
-- Move the x86_default_pci_* definitions closer to their usage site
-  in arch/x86/kernel/x86_init.c, they are not used anywhere else,
-  so it's unnecessary to include it in 30+ .c files.
-
-No change to functionality intended.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/x86/include/asm/pci_x86.h | 101 +++++++++++++++--------------------------
- arch/x86/kernel/x86_init.c     |  14 ++++++
- 2 files changed, 51 insertions(+), 64 deletions(-)
+ drivers/base/power/domain.c | 122 ++++++++++++++++++++++++++++++------
+ include/linux/pm_domain.h   |   4 ++
+ 2 files changed, 107 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
-index 3f8d9c75b9ee..3448f24282c7 100644
---- a/arch/x86/include/asm/pci_x86.h
-+++ b/arch/x86/include/asm/pci_x86.h
-@@ -7,26 +7,26 @@
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index d6b389a9f678..165a04646657 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -239,24 +239,97 @@ static void genpd_update_accounting(struct generic_pm_domain *genpd)
+ static inline void genpd_update_accounting(struct generic_pm_domain *genpd) {}
+ #endif
  
- #include <linux/ioport.h>
- 
--#define PCI_PROBE_BIOS		0x0001
--#define PCI_PROBE_CONF1		0x0002
--#define PCI_PROBE_CONF2		0x0004
--#define PCI_PROBE_MMCONF	0x0008
--#define PCI_PROBE_MASK		0x000f
--#define PCI_PROBE_NOEARLY	0x0010
--
--#define PCI_NO_CHECKS		0x0400
--#define PCI_USE_PIRQ_MASK	0x0800
--#define PCI_ASSIGN_ROMS		0x1000
--#define PCI_BIOS_IRQ_SCAN	0x2000
--#define PCI_ASSIGN_ALL_BUSSES	0x4000
--#define PCI_CAN_SKIP_ISA_ALIGN	0x8000
--#define PCI_USE__CRS		0x10000
--#define PCI_CHECK_ENABLE_AMD_MMCONF	0x20000
--#define PCI_HAS_IO_ECS		0x40000
--#define PCI_NOASSIGN_ROMS	0x80000
--#define PCI_ROOT_NO_CRS		0x100000
--#define PCI_NOASSIGN_BARS	0x200000
--#define PCI_BIG_ROOT_WINDOW	0x400000
-+#define PCI_PROBE_BIOS			0x000001
-+#define PCI_PROBE_CONF1			0x000002
-+#define PCI_PROBE_CONF2			0x000004
-+#define PCI_PROBE_MMCONF		0x000008
-+#define PCI_PROBE_MASK			0x00000f
-+#define PCI_PROBE_NOEARLY		0x000010
++static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
++					   unsigned int state, int depth,
++					   bool use_lock);
 +
-+#define PCI_NO_CHECKS			0x000400
-+#define PCI_USE_PIRQ_MASK		0x000800
-+#define PCI_ASSIGN_ROMS			0x001000
-+#define PCI_BIOS_IRQ_SCAN		0x002000
-+#define PCI_ASSIGN_ALL_BUSSES		0x004000
-+#define PCI_CAN_SKIP_ISA_ALIGN		0x008000
-+#define PCI_USE__CRS			0x010000
-+#define PCI_CHECK_ENABLE_AMD_MMCONF	0x020000
-+#define PCI_HAS_IO_ECS			0x040000
-+#define PCI_NOASSIGN_ROMS		0x080000
-+#define PCI_ROOT_NO_CRS			0x100000
-+#define PCI_NOASSIGN_BARS		0x200000
-+#define PCI_BIG_ROOT_WINDOW		0x400000
- 
- extern unsigned int pci_probe;
- extern unsigned long pirq_table_addr;
-@@ -38,28 +38,19 @@ enum pci_bf_sort_state {
- 	pci_dmi_bf,
- };
- 
--/* pci-i386.c */
--
--void pcibios_resource_survey(void);
--void pcibios_set_cache_line_size(void);
--
--/* pci-pc.c */
--
-+extern void pcibios_resource_survey(void);
-+extern void pcibios_set_cache_line_size(void);
- extern int pcibios_last_bus;
- extern struct pci_ops pci_root_ops;
--
--void pcibios_scan_specific_bus(int busn);
--
--/* pci-irq.c */
-+extern void pcibios_scan_specific_bus(int busn);
- 
- struct irq_info {
- 	u8 bus, devfn;			/* Bus, device and function */
- 	struct {
--		u8 link;		/* IRQ line ID, chipset dependent,
--					   0 = not routed */
-+		u8 link;		/* IRQ line ID, chipset dependent, 0 = not routed */
- 		u16 bitmap;		/* Available IRQs */
--	} __attribute__((packed)) irq[4];
--	u8 slot;			/* Slot number, 0=onboard */
-+	} __packed irq[4];
-+	u8 slot;			/* Slot number, 0 = onboard */
- 	u8 rfu;
- } __attribute__((packed));
- 
-@@ -68,10 +59,8 @@ struct irq_routing_table {
- 	u16 version;			/* PIRQ_VERSION */
- 	u16 size;			/* Table size in bytes */
- 	u8 rtr_bus, rtr_devfn;		/* Where the interrupt router lies */
--	u16 exclusive_irqs;		/* IRQs devoted exclusively to
--					   PCI usage */
--	u16 rtr_vendor, rtr_device;	/* Vendor and device ID of
--					   interrupt router */
-+	u16 exclusive_irqs;		/* IRQs devoted exclusively to PCI usage */
-+	u16 rtr_vendor, rtr_device;	/* Vendor and device ID of interrupt router */
- 	u32 miniport_data;		/* Crap */
- 	u8 rfu[11];
- 	u8 checksum;			/* Modulo 256 checksum must give 0 */
-@@ -108,27 +97,25 @@ extern void pci_pcbios_init(void);
- extern void __init dmi_check_pciprobe(void);
- extern void __init dmi_check_skip_isa_align(void);
- 
--/* some common used subsys_initcalls */
-+/* some commonly used subsys_initcalls */
- extern int __init pci_acpi_init(void);
- extern void __init pcibios_irq_init(void);
- extern int __init pcibios_init(void);
- extern int pci_legacy_init(void);
- extern void pcibios_fixup_irqs(void);
- 
--/* pci-mmconfig.c */
--
- /* "PCI MMCONFIG %04x [bus %02x-%02x]" */
- #define PCI_MMCFG_RESOURCE_NAME_LEN (22 + 4 + 2 + 2)
- 
- struct pci_mmcfg_region {
--	struct list_head list;
--	struct resource res;
--	u64 address;
--	char __iomem *virt;
--	u16 segment;
--	u8 start_bus;
--	u8 end_bus;
--	char name[PCI_MMCFG_RESOURCE_NAME_LEN];
-+	struct list_head	list;
-+	struct resource		res;
-+	u64			address;
-+	char __iomem		*virt;
-+	u16			segment;
-+	u8			start_bus;
-+	u8			end_bus;
-+	char			name[PCI_MMCFG_RESOURCE_NAME_LEN];
- };
- 
- extern int __init pci_mmcfg_arch_init(void);
-@@ -188,17 +175,3 @@ static inline void mmio_config_writel(void __iomem *pos, u32 val)
+ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
+-					unsigned int state)
++					unsigned int state, int depth,
++					bool use_lock)
  {
- 	asm volatile("movl %%eax,(%1)" : : "a" (val), "r" (pos) : "memory");
- }
--
--#ifdef CONFIG_PCI
--# ifdef CONFIG_ACPI
--#  define x86_default_pci_init		pci_acpi_init
--# else
--#  define x86_default_pci_init		pci_legacy_init
--# endif
--# define x86_default_pci_init_irq	pcibios_irq_init
--# define x86_default_pci_fixup_irqs	pcibios_fixup_irqs
--#else
--# define x86_default_pci_init		NULL
--# define x86_default_pci_init_irq	NULL
--# define x86_default_pci_fixup_irqs	NULL
--#endif
-diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
-index 50a2b492fdd6..95f64345c416 100644
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@ -32,6 +32,20 @@ static void iommu_shutdown_noop(void) { }
- static bool __init bool_x86_init_noop(void) { return false; }
- static void x86_op_int_noop(int cpu) { }
++	struct generic_pm_domain *master;
++	struct gpd_link *link;
++	unsigned int master_state;
+ 	int ret;
  
-+#ifdef CONFIG_PCI
-+# ifdef CONFIG_ACPI
-+#  define x86_default_pci_init		pci_acpi_init
-+# else
-+#  define x86_default_pci_init		pci_legacy_init
-+# endif
-+# define x86_default_pci_init_irq	pcibios_irq_init
-+# define x86_default_pci_fixup_irqs	pcibios_fixup_irqs
-+#else
-+# define x86_default_pci_init		NULL
-+# define x86_default_pci_init_irq	NULL
-+# define x86_default_pci_fixup_irqs	NULL
-+#endif
++	/* Propagate to masters of genpd */
++	list_for_each_entry(link, &genpd->slave_links, slave_node) {
++		master = link->master;
 +
- /*
-  * The platform setup functions are preset with the default functions
-  * for standard PC hardware.
++		if (!master->set_performance_state)
++			continue;
++
++		if (unlikely(!state)) {
++			master_state = 0;
++		} else {
++			/* Find master's performance state */
++			master_state = dev_pm_opp_xlate_performance_state(genpd->opp_table,
++						master->opp_table, state);
++			if (unlikely(!master_state)) {
++				ret = -EINVAL;
++				goto err;
++			}
++		}
++
++		if (use_lock)
++			genpd_lock_nested(master, depth + 1);
++
++		link->prev_performance_state = link->performance_state;
++		link->performance_state = master_state;
++		ret = _genpd_reeval_performance_state(master, master_state,
++						      depth + 1, use_lock);
++		if (ret)
++			link->performance_state = link->prev_performance_state;
++
++		if (use_lock)
++			genpd_unlock(master);
++
++		if (ret)
++			goto err;
++	}
++
+ 	ret = genpd->set_performance_state(genpd, state);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 
+ 	genpd->performance_state = state;
+ 	return 0;
++
++err:
++	/* Encountered an error, lets rollback */
++	list_for_each_entry_continue_reverse(link, &genpd->slave_links,
++					     slave_node) {
++		master = link->master;
++
++		if (!master->set_performance_state)
++			continue;
++
++		if (use_lock)
++			genpd_lock_nested(master, depth + 1);
++
++		master_state = link->prev_performance_state;
++		link->performance_state = master_state;
++
++		if (_genpd_reeval_performance_state(master, master_state,
++						    depth + 1, use_lock)) {
++			pr_err("%s: Failed to roll back to %d performance state\n",
++			       master->name, master_state);
++		}
++
++		if (use_lock)
++			genpd_unlock(master);
++	}
++
++	return ret;
+ }
+ 
+ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+-					   unsigned int state)
++					   unsigned int state, int depth,
++					   bool use_lock)
+ {
+ 	struct generic_pm_domain_data *pd_data;
+ 	struct pm_domain_data *pdd;
++	struct gpd_link *link;
+ 
+ 	/* New requested state is same as Max requested state */
+ 	if (state == genpd->performance_state)
+@@ -274,18 +347,27 @@ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+ 			state = pd_data->performance_state;
+ 	}
+ 
+-	if (state == genpd->performance_state)
+-		return 0;
+-
+ 	/*
+-	 * We aren't propagating performance state changes of a subdomain to its
+-	 * masters as we don't have hardware that needs it. Over that, the
+-	 * performance states of subdomain and its masters may not have
+-	 * one-to-one mapping and would require additional information. We can
+-	 * get back to this once we have hardware that needs it. For that
+-	 * reason, we don't have to consider performance state of the subdomains
+-	 * of genpd here.
++	 * Traverse all powered-on subdomains within the domain. This can be
++	 * done without any additional locking as the link->performance_state
++	 * field is protected by the master genpd->lock, which is already taken.
++	 *
++	 * Also note that link->performance_state (subdomain's performance state
++	 * requirement to master domain) is different from
++	 * link->slave->performance_state (current performance state requirement
++	 * of the devices/sub-domains of the subdomain) and so can have a
++	 * different value.
+ 	 */
++	list_for_each_entry(link, &genpd->master_links, master_node) {
++		if (!genpd_status_on(link->slave))
++			continue;
++
++		if (link->performance_state > state)
++			state = link->performance_state;
++	}
++
++	if (state == genpd->performance_state)
++		return 0;
+ 
+ update_state:
+ 	if (!genpd_status_on(genpd)) {
+@@ -293,7 +375,7 @@ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+ 		return 0;
+ 	}
+ 
+-	return _genpd_set_performance_state(genpd, state);
++	return _genpd_set_performance_state(genpd, state, depth, use_lock);
+ }
+ 
+ /**
+@@ -337,7 +419,7 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+ 	prev = gpd_data->performance_state;
+ 	gpd_data->performance_state = state;
+ 
+-	ret = _genpd_reeval_performance_state(genpd, state);
++	ret = _genpd_reeval_performance_state(genpd, state, 0, true);
+ 	if (ret)
+ 		gpd_data->performance_state = prev;
+ 
+@@ -347,7 +429,8 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_genpd_set_performance_state);
+ 
+-static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
++static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed,
++			   int depth, bool use_lock)
+ {
+ 	unsigned int state_idx = genpd->state_idx;
+ 	ktime_t time_start;
+@@ -368,7 +451,8 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+ 	elapsed_ns = ktime_to_ns(ktime_sub(ktime_get(), time_start));
+ 
+ 	if (unlikely(genpd->set_performance_state)) {
+-		ret = genpd->set_performance_state(genpd, genpd->performance_state);
++		ret = _genpd_set_performance_state(genpd,
++				genpd->performance_state, depth, use_lock);
+ 		if (ret) {
+ 			pr_warn("%s: Failed to set performance state %d (%d)\n",
+ 				genpd->name, genpd->performance_state, ret);
+@@ -558,7 +642,7 @@ static int genpd_power_on(struct generic_pm_domain *genpd, unsigned int depth)
+ 		}
+ 	}
+ 
+-	ret = _genpd_power_on(genpd, true);
++	ret = _genpd_power_on(genpd, true, depth, true);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -963,7 +1047,7 @@ static void genpd_sync_power_on(struct generic_pm_domain *genpd, bool use_lock,
+ 			genpd_unlock(link->master);
+ 	}
+ 
+-	_genpd_power_on(genpd, false);
++	_genpd_power_on(genpd, false, depth, use_lock);
+ 
+ 	genpd->status = GPD_STATE_ACTIVE;
+ }
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 9ad101362aef..dd364abb649a 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -136,6 +136,10 @@ struct gpd_link {
+ 	struct list_head master_node;
+ 	struct generic_pm_domain *slave;
+ 	struct list_head slave_node;
++
++	/* Sub-domain's per-master domain performance state */
++	unsigned int performance_state;
++	unsigned int prev_performance_state;
+ };
+ 
+ struct gpd_timing_data {
