@@ -2,89 +2,170 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3A3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1F4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E48420848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:04:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E48420848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D71F20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:05:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhptneei"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D71F20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbeLCSEt (ORCPT
+        id S1726870AbeLCSF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:04:49 -0500
-Received: from mga14.intel.com ([192.55.52.115]:25319 "EHLO mga14.intel.com"
+        Mon, 3 Dec 2018 13:05:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726394AbeLCSEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:04:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 10:04:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="98294605"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 03 Dec 2018 10:04:40 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id EC4389F; Mon,  3 Dec 2018 20:04:39 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] driver core: platform: Respect return code of platform_device_register_full()
-Date:   Mon,  3 Dec 2018 20:04:38 +0200
-Message-Id: <20181203180438.85261-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.19.2
+        id S1726221AbeLCSF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 13:05:29 -0500
+Received: from localhost (unknown [62.119.166.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3211220850;
+        Mon,  3 Dec 2018 18:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543860326;
+        bh=2ivgRcZk9QiECILfE4o4lTW0ZERIpCDsRI+jjRT8ZXw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qhptneeiW0ohghymH2hSVgLQcAky77JA1ws7CRFYa44ZSCby2FEt8l2L6XAcrdMOk
+         p1XEpB3PUp1WN2bw0WQiyECzuRNHCvs3uSHFWn9gGz5t2CFosjRciqSnZLXNcjMN48
+         E2DMX5cBUiCrld2LLBxe8hWXIHMwvGigJPSwl/eU=
+Date:   Mon, 3 Dec 2018 19:05:21 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: v4.14 fix for Hikey 960 unbalanced IRQ enablement
+Message-ID: <20181203180521.GA15996@kroah.com>
+References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
+ <20181203141442.GA19335@kroah.com>
+ <dc468512-7a73-3d69-fe9e-d660db85ee5b@linaro.org>
+ <20181203151946.GG235790@sasha-vm>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203151946.GG235790@sasha-vm>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The platform_device_register_full() might return an error pointer. If we
-instantiate platform device which is optional we may simplify the routine at
-removal stage by simply calling platform_device_unregister(). For now it
-requires to check parameter for being an error pointer in each caller.
+On Mon, Dec 03, 2018 at 10:19:46AM -0500, Sasha Levin wrote:
+> On Mon, Dec 03, 2018 at 03:42:41PM +0100, Daniel Lezcano wrote:
+> > On 03/12/2018 15:14, Greg KH wrote:
+> > > On Mon, Dec 03, 2018 at 11:31:02AM -0200, Rafael David Tinoco wrote:
+> > > > Sasha, could you consider including this cherry-picked patchset in v4.14.
+> > > > 
+> > > > Kernel v4.14 might suffer from the following unbalanced enablement for the board Hikey 960:
+> > > > 
+> > > > Nov  5 12:02:54 hikey kernel: [   22.148194] Unbalanced enable for IRQ 44
+> > > > Nov  5 12:02:54 hikey kernel: [   22.152193] ------------[ cut here ]------------
+> > > > Nov  5 12:02:54 hikey kernel: [   22.156872] WARNING: CPU: 2 PID: 509 at /home/inaddy/work/sources/linux/stable/stable-linux-4.14.y/kernel/irq/manage.c:525 __enable_irq+0x78/0x80
+> > > > Nov  5 12:02:54 hikey kernel: [   22.249606] CPU: 2 PID: 509 Comm: kworker/2:2 Not tainted 4.14.79 #1
+> > > > Nov  5 12:02:54 hikey kernel: [   22.255975] Hardware name: HiKey Development Board (DT)
+> > > > Nov  5 12:02:54 hikey kernel: [   22.261248] Workqueue: events_freezable thermal_zone_device_check
+> > > > Nov  5 12:02:54 hikey kernel: [   22.267368] task: ffff8000616e0e00 task.stack: ffff00000b5f0000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.273312] PC is at __enable_irq+0x78/0x80
+> > > > Nov  5 12:02:54 hikey kernel: [   22.277516] LR is at __enable_irq+0x78/0x80
+> > > > Nov  5 12:02:54 hikey kernel: [   22.281718] pc : [<ffff00000813e010>] lr : [<ffff00000813e010>] pstate: 000001c5
+> > > > Nov  5 12:02:54 hikey kernel: [   22.289129] sp : ffff00000b5f3c80
+> > > > Nov  5 12:02:54 hikey kernel: [   22.292457] x29: ffff00000b5f3c80 x28: 0000000000000000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.297804] x27: ffff80005c139e38 x26: ffff000008a71870
+> > > > Nov  5 12:02:54 hikey kernel: [   22.303148] x25: 0000000000000000 x24: 0000000000000002
+> > > > Nov  5 12:02:54 hikey kernel: [   22.308492] x23: ffff00000b5f3d9c x22: ffff80005d565e88
+> > > > Nov  5 12:02:54 hikey kernel: [   22.313836] x21: 000000000000f980 x20: 000000000000002c
+> > > > Nov  5 12:02:54 hikey kernel: [   22.319181] x19: ffff800061726000 x18: 0000000000000010
+> > > > Nov  5 12:02:54 hikey kernel: [   22.324524] x17: 0000000000000000 x16: 0000000000000000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.329868] x15: ffffffffffffffff x14: ffff000009269c08
+> > > > Nov  5 12:02:54 hikey kernel: [   22.335213] x13: ffff00008940678f x12: ffff000009406797
+> > > > Nov  5 12:02:54 hikey kernel: [   22.340558] x11: ffff000009290000 x10: ffff00000b5f3980
+> > > > Nov  5 12:02:54 hikey kernel: [   22.345902] x9 : 00000000ffffffd0 x8 : ffff00000862c298
+> > > > Nov  5 12:02:54 hikey kernel: [   22.351246] x7 : 6c62616e65206465 x6 : 00000000000001b2
+> > > > Nov  5 12:02:54 hikey kernel: [   22.356589] x5 : 0000000000000000 x4 : 0000000000000000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.361931] x3 : 0000000000000000 x2 : ffff800063e824c8
+> > > > Nov  5 12:02:54 hikey kernel: [   22.367275] x1 : 000080005af95000 x0 : 000000000000001c
+> > > > Nov  5 12:02:54 hikey kernel: [   22.372618] Call trace:
+> > > > Nov  5 12:02:54 hikey kernel: [   22.375088] Exception stack(0xffff00000b5f3b40 to 0xffff00000b5f3c80)
+> > > > Nov  5 12:02:54 hikey kernel: [   22.381560] 3b40: 000000000000001c 000080005af95000 ffff800063e824c8 0000000000000000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.389417] 3b60: 0000000000000000 0000000000000000 00000000000001b2 6c62616e65206465
+> > > > Nov  5 12:02:54 hikey kernel: [   22.397276] 3b80: ffff00000862c298 00000000ffffffd0 ffff00000b5f3980 ffff000009290000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.405136] 3ba0: ffff000009406797 ffff00008940678f ffff000009269c08 ffffffffffffffff
+> > > > Nov  5 12:02:54 hikey kernel: [   22.412994] 3bc0: 0000000000000000 0000000000000000 0000000000000010 ffff800061726000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.420852] 3be0: 000000000000002c 000000000000f980 ffff80005d565e88 ffff00000b5f3d9c
+> > > > Nov  5 12:02:54 hikey kernel: [   22.428710] 3c00: 0000000000000002 0000000000000000 ffff000008a71870 ffff80005c139e38
+> > > > Nov  5 12:02:54 hikey kernel: [   22.436569] 3c20: 0000000000000000 ffff00000b5f3c80 ffff00000813e010 ffff00000b5f3c80
+> > > > Nov  5 12:02:54 hikey kernel: [   22.444426] 3c40: ffff00000813e010 00000000000001c5 0000000000000000 0000000000000000
+> > > > Nov  5 12:02:54 hikey kernel: [   22.452286] 3c60: ffffffffffffffff ffff800061800618 ffff00000b5f3c80 ffff00000813e010
+> > > > Nov  5 12:02:54 hikey kernel: [   22.460144] [<ffff00000813e010>] __enable_irq+0x78/0x80
+> > > > Nov  5 12:02:54 hikey kernel: [   22.465394] [<ffff00000813e058>] enable_irq+0x40/0x78
+> > > > Nov  5 12:02:54 hikey kernel: [   22.470493] [<ffff000000e228a8>] hisi_thermal_get_temp+0x1b0/0x1d8 [hisi_thermal]
+> > > > Nov  5 12:02:54 hikey kernel: [   22.478008] [<ffff0000087121a8>] of_thermal_get_temp+0x38/0x50
+> > > > Nov  5 12:02:54 hikey kernel: [   22.483869] [<ffff000008711790>] thermal_zone_get_temp+0x58/0x80
+> > > > Nov  5 12:02:54 hikey kernel: [   22.489903] [<ffff00000870e7bc>] thermal_zone_device_update.part.4+0x2c/0x1a8
+> > > > Nov  5 12:02:54 hikey kernel: [   22.497066] [<ffff00000870e9c8>] thermal_zone_device_check+0x40/0x50
+> > > > Nov  5 12:02:54 hikey kernel: [   22.503457] [<ffff0000080f1674>] process_one_work+0x19c/0x3d0
+> > > > Nov  5 12:02:54 hikey kernel: [   22.509236] [<ffff0000080f18f4>] worker_thread+0x4c/0x428
+> > > > Nov  5 12:02:54 hikey kernel: [   22.514664] [<ffff0000080f84fc>] kthread+0x134/0x138
+> > > > Nov  5 12:02:54 hikey kernel: [   22.519659] [<ffff000008085154>] ret_from_fork+0x10/0x1c
+> > > > Nov  5 12:02:54 hikey kernel: [   22.524988] ---[ end trace 328d4bb2d9b066a0 ]---
+> > > > 
+> > > > This issue was solved when "hisi_thermal_alarm_irq" function was removed so only
+> > > > "hisi_thermal_alarm_irq_thread" would exist. This has fixed the issue for the
+> > > > unbalanced enablement since there is no more:
+> > > > 
+> > > > 	disable_irq_nosync(irq);
+> > > > 	data->irq_enabled = false;
+> > > > 
+> > > > logic being done in parallel to the threaded handler AND the
+> > > > thermal_zone_device_update() call only happens now if the temperature is already
+> > > > above the threshold.
+> > > > 
+> > > 
+> > > So should we revert a patch instead of taking these new ones?  Would
+> > > that be easier and is this a "real" issue or just an annoying warning
+> > > splat in the kernel log?
+> > 
+> > Actually, this warning is introduced with the driver and all the
+> > plumbers around to fix an irq bouncing. There is no patch to revert
+> > without removing the driver.
+> 
+> Greg,
+> 
+> Patch 5 in this series seems to explain the best what is happening here:
+> 
+> > With the following changes, we fix all in one:
+> > 
+> > - Do the setup, one time, at probe time
+> > 
+> > - Add the IRQF_ONESHOT, ack the interrupt in the threaded handler
+> > 
+> > - Remove the interrupt handler
+> > 
+> > - Set the correct value for the LAG register
+> > 
+> > - Remove all the irq_enabled stuff in the code as the interruption
+> >   handling is fixed
+> > 
+> > - Remove the 3ms delay
+> > 
+> > - Reorder the initialization routine to be in the right order
+> 
+> We can't revert anything because the breakage was there since the driver
+> was introduced.
 
-To make users' life easier, check for an error pointer inside driver core.
+So the driver was broken in 4.14, why not just use 4.19 instead?  This
+isn't a 4.14 regression, it's something that obviously no one has
+noticed for a year now, so why backport these big patches to 4.14 now?
 
-Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/base/platform.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+thanks,
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 41b91af95afb..e1ba610482c0 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -234,7 +234,7 @@ struct platform_object {
-  */
- void platform_device_put(struct platform_device *pdev)
- {
--	if (pdev)
-+	if (!IS_ERR_OR_NULL(pdev))
- 		put_device(&pdev->dev);
- }
- EXPORT_SYMBOL_GPL(platform_device_put);
-@@ -447,7 +447,7 @@ void platform_device_del(struct platform_device *pdev)
- {
- 	int i;
- 
--	if (pdev) {
-+	if (!IS_ERR_OR_NULL(pdev)) {
- 		device_remove_properties(&pdev->dev);
- 		device_del(&pdev->dev);
- 
--- 
-2.19.2
-
+greg k-h
