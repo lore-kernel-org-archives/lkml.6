@@ -2,121 +2,299 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179A0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B81AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAE5920661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:21:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAE5920661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E94362082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:26:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="PzR+66SG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E94362082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726032AbeLCUVn (ORCPT
+        id S1726003AbeLCU0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:21:43 -0500
-Received: from mga09.intel.com ([134.134.136.24]:19340 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbeLCUVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:21:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 12:21:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="115613450"
-Received: from ahduyck-desk1.amr.corp.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 03 Dec 2018 12:21:42 -0800
-Message-ID: <97943d2ed62e6887f4ba51b985ef4fb5478bc586.camel@linux.intel.com>
-Subject: Re: [PATCH RFC 2/3] mm: Add support for exposing if dev_pagemap
- supports refcount pinning
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Barret Rhoden <brho@google.com>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, rkrcmar@redhat.com,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>
-Date:   Mon, 03 Dec 2018 12:21:42 -0800
-In-Reply-To: <CAPcyv4gZkx9zRsKkVhrmPG7SyjPEycp0neFnECmSADZNLuDOpQ@mail.gmail.com>
-References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <154386513120.27193.7977541941078967487.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <CAPcyv4gZkx9zRsKkVhrmPG7SyjPEycp0neFnECmSADZNLuDOpQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Dec 2018 15:26:08 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37755 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbeLCU0I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 15:26:08 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so7047892plr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 12:26:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x1XY4BjWxxiH8rvheHX9G+gMIGFbmNlTPOSK/soDkFk=;
+        b=PzR+66SGsYkW7zECxtAlN67QRmKw9sBXnsUKZCMHWsDPbOYJjERTwazRrxbIFQc5Fb
+         yL5B3EW/c2dzfrIVNCf/jBlotKyzKmKkeguI+kUW62KOBz/mWuxz03WKSvEMR9BKDARO
+         qxbgT6OSohUbnEMIQ4yLRps8E49Lsr40Dnrhc1OsMiccZr612lKRgjggTxAt18Dl++/Q
+         /IP+/l2Vd6GNd2scLsSUelXK6Ko4BkLCAl1qE3c0/G07SehH5c4KWyS11X7/u0LJlQLZ
+         3HXZKps9BPizUHcpPuZTtBqguUctvNAWAhngSOYAPVKUOsqCl5lFrevdq2imScmRm/h2
+         eiag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x1XY4BjWxxiH8rvheHX9G+gMIGFbmNlTPOSK/soDkFk=;
+        b=s7sXQuhSji+0+ZH8dtEfaO+mpb5vIh9gQ90PMC+q6ddgI2tI7UIfBLvwT1z3bi06bL
+         UWkSO1wIOIODVJQOc0aeLnhCLcN7eQBpzwJbBJXht0b9bQ+I5GUMpRj095/WAbm8OIvC
+         4mzaWPgfzk5uzzq86KcTBmdQYN2PH5KeGtXtfPF41Dg/eV/vjY6zHh3JWfMPK3BCIGCo
+         ES3SrrX4vn8IBAQJjwdCwJ1UT0S7eEJWtzIVLgV51zcdNohLm0a/73cpkb4jd4HjMqF7
+         N1BxTZ6QT/73a1NdisTYgqLXcSVwyQZgR/KacsSaBrgWs/rMZuqzs26aDcUHRkUv6HA1
+         nrVQ==
+X-Gm-Message-State: AA+aEWblyW9pecR5MOXZ4E9GNaCFpMhLdBQT6HYxvNM8KwNHM6SkIFtb
+        HvaUxDe8sUJVGFw/FIIo22Fn/r4dmS4QTw==
+X-Google-Smtp-Source: AFSGD/U+d1uBkQYXgX5VEO56zZMwhwzNwuuj8+y7Q1PP16c39+cTSYnK3s+8DP2C1OMoTrCf2imsKQ==
+X-Received: by 2002:a17:902:bd92:: with SMTP id q18mr17457504pls.167.1543868766214;
+        Mon, 03 Dec 2018 12:26:06 -0800 (PST)
+Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
+        by smtp.googlemail.com with ESMTPSA id q7sm16562725pgp.40.2018.12.03.12.26.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 12:26:05 -0800 (PST)
+From:   Todd Kjos <tkjos@android.com>
+X-Google-Original-From: Todd Kjos <tkjos@google.com>
+To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        maco@google.com, joel@joelfernandes.org
+Cc:     kernel-team@android.com
+Subject: [PATCH] binder: fix sparse warnings on locking context
+Date:   Mon,  3 Dec 2018 12:24:54 -0800
+Message-Id: <20181203202457.228972-1-tkjos@google.com>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-03 at 11:47 -0800, Dan Williams wrote:
-> On Mon, Dec 3, 2018 at 11:25 AM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
-> > 
-> > Add a means of exposing if a pagemap supports refcount pinning. I am doing
-> > this to expose if a given pagemap has backing struct pages that will allow
-> > for the reference count of the page to be incremented to lock the page
-> > into place.
-> > 
-> > The KVM code already has several spots where it was trying to use a
-> > pfn_valid check combined with a PageReserved check to determien if it could
-> > take a reference on the page. I am adding this check so in the case of the
-> > page having the reserved flag checked we can check the pagemap for the page
-> > to determine if we might fall into the special DAX case.
-> > 
-> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > ---
-> >  drivers/nvdimm/pfn_devs.c |    2 ++
-> >  include/linux/memremap.h  |    5 ++++-
-> >  include/linux/mm.h        |   11 +++++++++++
-> >  3 files changed, 17 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> > index 6f22272e8d80..7a4a85bcf7f4 100644
-> > --- a/drivers/nvdimm/pfn_devs.c
-> > +++ b/drivers/nvdimm/pfn_devs.c
-> > @@ -640,6 +640,8 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
-> >         } else
-> >                 return -ENXIO;
-> > 
-> > +       pgmap->support_refcount_pinning = true;
-> > +
-> 
-> There should be no dev_pagemap instance instance where this isn't
-> true, so I'm missing why this is needed?
+Add __acquire()/__release() annnotations to fix warnings
+in sparse context checking
 
-I thought in the case of HMM there were instances where you couldn't
-pin the page, isn't there? Specifically I am thinking of the definition
-of MEMORY_DEVICE_PUBLIC:
-  Device memory that is cache coherent from device and CPU point of 
-  view. This is use on platform that have an advance system bus (like 
-  CAPI or CCIX). A driver can hotplug the device memory using 
-  ZONE_DEVICE and with that memory type. Any page of a process can be 
-  migrated to such memory. However no one should be allow to pin such 
-  memory so that it can always be evicted.
+There is one case where the warning was due to a lack of
+a "default:" case in a switch statement where a lock was
+being released in each of the cases, so the default
+case was added.
 
-It sounds like MEMORY_DEVICE_PUBLIC and MMIO would want to fall into
-the same category here in order to allow a hot-plug event to remove the
-device and take the memory with it, or is my understanding on this not
-correct?
+Signed-off-by: Todd Kjos <tkjos@google.com>
+---
+ drivers/android/binder.c       | 43 +++++++++++++++++++++++++++++++++-
+ drivers/android/binder_alloc.c |  1 +
+ 2 files changed, 43 insertions(+), 1 deletion(-)
 
-Thanks.
-
-- Alex
-
-
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 9f1000d2a40c7..9f2059d24ae2d 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -660,6 +660,7 @@ struct binder_transaction {
+ #define binder_proc_lock(proc) _binder_proc_lock(proc, __LINE__)
+ static void
+ _binder_proc_lock(struct binder_proc *proc, int line)
++	__acquires(&proc->outer_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -675,6 +676,7 @@ _binder_proc_lock(struct binder_proc *proc, int line)
+ #define binder_proc_unlock(_proc) _binder_proc_unlock(_proc, __LINE__)
+ static void
+ _binder_proc_unlock(struct binder_proc *proc, int line)
++	__releases(&proc->outer_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -690,6 +692,7 @@ _binder_proc_unlock(struct binder_proc *proc, int line)
+ #define binder_inner_proc_lock(proc) _binder_inner_proc_lock(proc, __LINE__)
+ static void
+ _binder_inner_proc_lock(struct binder_proc *proc, int line)
++	__acquires(&proc->inner_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -705,6 +708,7 @@ _binder_inner_proc_lock(struct binder_proc *proc, int line)
+ #define binder_inner_proc_unlock(proc) _binder_inner_proc_unlock(proc, __LINE__)
+ static void
+ _binder_inner_proc_unlock(struct binder_proc *proc, int line)
++	__releases(&proc->inner_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -720,6 +724,7 @@ _binder_inner_proc_unlock(struct binder_proc *proc, int line)
+ #define binder_node_lock(node) _binder_node_lock(node, __LINE__)
+ static void
+ _binder_node_lock(struct binder_node *node, int line)
++	__acquires(&node->lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -735,6 +740,7 @@ _binder_node_lock(struct binder_node *node, int line)
+ #define binder_node_unlock(node) _binder_node_unlock(node, __LINE__)
+ static void
+ _binder_node_unlock(struct binder_node *node, int line)
++	__releases(&node->lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+@@ -751,12 +757,16 @@ _binder_node_unlock(struct binder_node *node, int line)
+ #define binder_node_inner_lock(node) _binder_node_inner_lock(node, __LINE__)
+ static void
+ _binder_node_inner_lock(struct binder_node *node, int line)
++	__acquires(&node->lock) __acquires(&node->proc->inner_lock)
+ {
+ 	binder_debug(BINDER_DEBUG_SPINLOCKS,
+ 		     "%s: line=%d\n", __func__, line);
+ 	spin_lock(&node->lock);
+ 	if (node->proc)
+ 		binder_inner_proc_lock(node->proc);
++	else
++		/* annotation for sparse */
++		__acquire(&node->proc->inner_lock);
+ }
+ 
+ /**
+@@ -768,6 +778,7 @@ _binder_node_inner_lock(struct binder_node *node, int line)
+ #define binder_node_inner_unlock(node) _binder_node_inner_unlock(node, __LINE__)
+ static void
+ _binder_node_inner_unlock(struct binder_node *node, int line)
++	__releases(&node->lock) __releases(&node->proc->inner_lock)
+ {
+ 	struct binder_proc *proc = node->proc;
+ 
+@@ -775,6 +786,9 @@ _binder_node_inner_unlock(struct binder_node *node, int line)
+ 		     "%s: line=%d\n", __func__, line);
+ 	if (proc)
+ 		binder_inner_proc_unlock(proc);
++	else
++		/* annotation for sparse */
++		__release(&node->proc->inner_lock);
+ 	spin_unlock(&node->lock);
+ }
+ 
+@@ -1384,10 +1398,14 @@ static void binder_dec_node_tmpref(struct binder_node *node)
+ 	binder_node_inner_lock(node);
+ 	if (!node->proc)
+ 		spin_lock(&binder_dead_nodes_lock);
++	else
++		__acquire(&binder_dead_nodes_lock);
+ 	node->tmp_refs--;
+ 	BUG_ON(node->tmp_refs < 0);
+ 	if (!node->proc)
+ 		spin_unlock(&binder_dead_nodes_lock);
++	else
++		__release(&binder_dead_nodes_lock);
+ 	/*
+ 	 * Call binder_dec_node() to check if all refcounts are 0
+ 	 * and cleanup is needed. Calling with strong=0 and internal=1
+@@ -1890,18 +1908,22 @@ static struct binder_thread *binder_get_txn_from(
+  */
+ static struct binder_thread *binder_get_txn_from_and_acq_inner(
+ 		struct binder_transaction *t)
++	__acquires(&t->from->proc->inner_lock)
+ {
+ 	struct binder_thread *from;
+ 
+ 	from = binder_get_txn_from(t);
+-	if (!from)
++	if (!from) {
++		__acquire(&from->proc->inner_lock);
+ 		return NULL;
++	}
+ 	binder_inner_proc_lock(from->proc);
+ 	if (t->from) {
+ 		BUG_ON(from != t->from);
+ 		return from;
+ 	}
+ 	binder_inner_proc_unlock(from->proc);
++	__acquire(&from->proc->inner_lock);
+ 	binder_thread_dec_tmpref(from);
+ 	return NULL;
+ }
+@@ -1973,6 +1995,8 @@ static void binder_send_failed_reply(struct binder_transaction *t,
+ 			binder_thread_dec_tmpref(target_thread);
+ 			binder_free_transaction(t);
+ 			return;
++		} else {
++			__release(&target_thread->proc->inner_lock);
+ 		}
+ 		next = t->from_parent;
+ 
+@@ -2394,11 +2418,15 @@ static int binder_translate_handle(struct flat_binder_object *fp,
+ 		fp->cookie = node->cookie;
+ 		if (node->proc)
+ 			binder_inner_proc_lock(node->proc);
++		else
++			__acquire(&node->proc->inner_lock);
+ 		binder_inc_node_nilocked(node,
+ 					 fp->hdr.type == BINDER_TYPE_BINDER,
+ 					 0, NULL);
+ 		if (node->proc)
+ 			binder_inner_proc_unlock(node->proc);
++		else
++			__release(&node->proc->inner_lock);
+ 		trace_binder_transaction_ref_to_node(t, node, &src_rdata);
+ 		binder_debug(BINDER_DEBUG_TRANSACTION,
+ 			     "        ref %d desc %d -> node %d u%016llx\n",
+@@ -2762,6 +2790,8 @@ static void binder_transaction(struct binder_proc *proc,
+ 		binder_set_nice(in_reply_to->saved_priority);
+ 		target_thread = binder_get_txn_from_and_acq_inner(in_reply_to);
+ 		if (target_thread == NULL) {
++			/* annotation for sparse */
++			__release(&target_thread->proc->inner_lock);
+ 			return_error = BR_DEAD_REPLY;
+ 			return_error_line = __LINE__;
+ 			goto err_dead_binder;
+@@ -4164,6 +4194,11 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			if (cmd == BR_DEAD_BINDER)
+ 				goto done; /* DEAD_BINDER notifications can cause transactions */
+ 		} break;
++		default:
++			binder_inner_proc_unlock(proc);
++			pr_err("%d:%d: bad work type %d\n",
++			       proc->pid, thread->pid, w->type);
++			break;
+ 		}
+ 
+ 		if (!t)
+@@ -4467,6 +4502,8 @@ static int binder_thread_release(struct binder_proc *proc,
+ 		spin_lock(&t->lock);
+ 		if (t->to_thread == thread)
+ 			send_reply = t;
++	} else {
++		__acquire(&t->lock);
+ 	}
+ 	thread->is_dead = true;
+ 
+@@ -4495,7 +4532,11 @@ static int binder_thread_release(struct binder_proc *proc,
+ 		spin_unlock(&last_t->lock);
+ 		if (t)
+ 			spin_lock(&t->lock);
++		else
++			__acquire(&t->lock);
+ 	}
++	/* annotation for sparse, lock not acquired in last iteration above */
++	__release(&t->lock);
+ 
+ 	/*
+ 	 * If this thread used poll, make sure we remove the waitqueue
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 030c98f35cca7..022cd80e80cc3 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -939,6 +939,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 				       struct list_lru_one *lru,
+ 				       spinlock_t *lock,
+ 				       void *cb_arg)
++	__must_hold(lock)
+ {
+ 	struct mm_struct *mm = NULL;
+ 	struct binder_lru_page *page = container_of(item,
+-- 
+2.20.0.rc1.387.gf8505762e3-goog
 
