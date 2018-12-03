@@ -2,107 +2,133 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D19C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB01C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343A420850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:32:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343A420850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C8FD20834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:34:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0nAAZJW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8FD20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbeLCOdR convert rfc822-to-8bit (ORCPT
+        id S1726650AbeLCOfa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:33:17 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40104 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbeLCOdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:33:16 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DB8422072A; Mon,  3 Dec 2018 15:32:00 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 87E53206FF;
-        Mon,  3 Dec 2018 15:32:00 +0100 (CET)
-Date:   Mon, 3 Dec 2018 15:32:00 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v2 2/4] clk: core: link consumer with clock driver
-Message-ID: <20181203153200.4f7a036c@xps13>
-In-Reply-To: <201812010856.JW2q4YnG%fengguang.wu@intel.com>
-References: <20181130153214.9058-3-miquel.raynal@bootlin.com>
-        <201812010856.JW2q4YnG%fengguang.wu@intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 3 Dec 2018 09:35:30 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44062 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeLCOf3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:35:29 -0500
+Received: by mail-pg1-f194.google.com with SMTP id t13so5780483pgr.11;
+        Mon, 03 Dec 2018 06:34:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=sSUiumMEKrKTjI9G5AoYNM+aWoBPu6gHpRnhBTlnW1Q=;
+        b=U0nAAZJWD16c8V1ZRkMOlM8XQr97XpEA0uzJHheLqmVb9Ska4edePYevd0ZcKzI62p
+         jiRchBmAceN92iBYIfJMddI+kcLYBzfFoj+XYl5Yy0zyXAlaMwicU3dRoeN9sWMjGUjl
+         5B5QVDa+mwDTcqjLX49YxU9jmJCPsz3JA/6Dx2RX9szJ35lCue1HYn1YH93VYt7JKPws
+         J0TeUaSfk3sv0vi1ooTcjQGPZn2a9uD6N9QtRPTCiTf80txrhjtoHe2sWv+G/rl6IQGw
+         neWHbVdCJadv7/tXeLp5gpAnCtuZfrWpwU0IzuquxeN6y4BRgZR0MATzzO5vUt0VTQy4
+         UcZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sSUiumMEKrKTjI9G5AoYNM+aWoBPu6gHpRnhBTlnW1Q=;
+        b=P+I8PQvdxejBk281EIK2BF8Jjq4E78ueTLHgDAAqPeNM/V4qmbzrJ3bUlP0/vOFXuw
+         aPpty+ORJavHWtzDus+Ko72HougmrYZdhXzh2iWEq2u5vewv98rtt17Z9OgpwsddJvN7
+         PKf6vY7b3rArXoy8CXXGLoZuexQQLXsQQaJSWJqWBgsxgb+FxZDE+9vxA9LSojE4llUx
+         knmkA0vAX+BEBtJAExCBRnp0zA2avw7BZGRkKRMHpUqEpCksIcpidfzBElfqWnRUenQE
+         hXqIOSjHV5bXECQJhqiQEDXYBG5ASNKu5w+fVF6MOH5d68FwiHLlnFi9laTRnpccpyAB
+         HaBQ==
+X-Gm-Message-State: AA+aEWZPqkl3PVBdbJnuG8CpovdW056lvCTkfXZH5edVEjBfor0+TFuI
+        yByI/LPwz2N+Kty5DTY2cSk=
+X-Google-Smtp-Source: AFSGD/VNBEXLkjOqmwYa7WGJ9dmRI9yTBX7M7OUm9ua4M6EFuk1YSc4syFxsXB+9z3OLfh8cg7j19g==
+X-Received: by 2002:a62:6d47:: with SMTP id i68mr16098546pfc.185.1543847654112;
+        Mon, 03 Dec 2018 06:34:14 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id v76sm37978873pfj.145.2018.12.03.06.34.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 06:34:13 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     mlindner@marvell.com, stephen@networkplumber.org,
+        davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] net: marvell: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Mon,  3 Dec 2018 09:34:11 -0500
+Message-Id: <20181203143411.13294-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-kbuild test robot <lkp@intel.com> wrote on Sat, 1 Dec 2018 08:29:05
-+0800:
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/net/ethernet/marvell/skge.c | 14 +-------------
+ drivers/net/ethernet/marvell/sky2.c | 14 +-------------
+ 2 files changed, 2 insertions(+), 26 deletions(-)
 
-> Hi Miquel,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v4.20-rc4 next-20181130]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Miquel-Raynal/Add-device-links-to-clocks/20181201-074305
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: i386-randconfig-x071-201847 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> drivers//clk/clkdev.c:115:13: error: static declaration of 'clk_link_consumer' follows non-static declaration  
->     static void clk_link_consumer(struct device *consumer, struct clk *clk) {}
->                 ^~~~~~~~~~~~~~~~~
->    In file included from drivers//clk/clkdev.c:22:0:
->    include/linux/clk-provider.h:784:6: note: previous declaration of 'clk_link_consumer' was here
->     void clk_link_consumer(struct device *consumer, struct clk *clk);
->          ^~~~~~~~~~~~~~~~~
-> >> drivers//clk/clkdev.c:116:13: error: static declaration of 'clk_unlink_consumer' follows non-static declaration  
->     static void clk_unlink_consumer(struct clk *clk) {}
->                 ^~~~~~~~~~~~~~~~~~~
->    In file included from drivers//clk/clkdev.c:22:0:
->    include/linux/clk-provider.h:785:6: note: previous declaration of 'clk_unlink_consumer' was here
->     void clk_unlink_consumer(struct clk *clk);
->          ^~~~~~~~~~~~~~~~~~~
-> 
-> vim +/clk_link_consumer +115 drivers//clk/clkdev.c
-> 
->    114	
->  > 115	static void clk_link_consumer(struct device *consumer, struct clk *clk) {}
->  > 116	static void clk_unlink_consumer(struct clk *clk) {}  
->    117	
-> 
+diff --git a/drivers/net/ethernet/marvell/skge.c b/drivers/net/ethernet/marvell/skge.c
+index 9c08c3650c02..04fd1f135011 100644
+--- a/drivers/net/ethernet/marvell/skge.c
++++ b/drivers/net/ethernet/marvell/skge.c
+@@ -3732,19 +3732,7 @@ static int skge_debug_show(struct seq_file *seq, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int skge_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, skge_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations skge_debug_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= skge_debug_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(skge_debug);
+ 
+ /*
+  * Use network device events to create/remove/rename
+diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
+index 697d9b374f5e..f4aa01ab3580 100644
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -4623,19 +4623,7 @@ static int sky2_debug_show(struct seq_file *seq, void *v)
+ 	napi_enable(&hw->napi);
+ 	return 0;
+ }
+-
+-static int sky2_debug_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, sky2_debug_show, inode->i_private);
+-}
+-
+-static const struct file_operations sky2_debug_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= sky2_debug_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(sky2_debug);
+ 
+ /*
+  * Use network device events to create/remove/rename
+-- 
+2.17.0
 
-Both functions should not be static. I will remove the keyword in a v3.
-
-
-Thanks,
-Miquèl
