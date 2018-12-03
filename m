@@ -2,207 +2,223 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1862FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC31C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D50B42145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:16:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ctOtaMPG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D50B42145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C2922145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C2922145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeLCKQv (ORCPT
+        id S1726161AbeLCKSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:16:51 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44261 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeLCKQ0 (ORCPT
+        Mon, 3 Dec 2018 05:18:21 -0500
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:55239 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726046AbeLCKSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:16:26 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z5so11482684wrt.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:16:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MX6hF1WvT6/jnjg/Hvxrw/jbX1gmvj02z43j9IhctPk=;
-        b=ctOtaMPGCmFOsRrqLmlS+E6Vf5lZ8qOMRYKnnfunQTf7jPddBD4Q5tt6umguIojCEq
-         svzBj6FKXHKdjaclTZh12ET5K/gRPnVZLmEl1EYH7z9QIKUQ5QYGqsHgSQVKfgyKZaqw
-         BCRT0CB1J7fK1u+aQQ6PLGAMYUdPKWUF/rHVU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MX6hF1WvT6/jnjg/Hvxrw/jbX1gmvj02z43j9IhctPk=;
-        b=hlZTtERG8rEiIhwBHSYOwrQ80kMLFxXSoy7cpC8twgSdgb6HqmNaQ7vA21+I0oNLnW
-         PlyXV8JxLi9lEQ5a/irR0+gy45pnzE3RFLpUfDyyCYUrSbEq/wn7JOhAGciDxpgqpjKd
-         u8BSZCxfHe8zMOPgU00iDLKbS4Vrr5vgZaq7m8MOlK9+F+sqABt1OK7/BKM5FHDzgUDz
-         CGAj9arb7NyHNGjbc+eg4YGQtV7OMQ15FEs1L0B8eldZ/Dltwf/ZdV6C8CZoCLBrgBfU
-         Ypt7x5I/7I/loV2yGWHG82+gf2tEO0YEZtiKf3YzUi1UiSfrp7x5o//HynXAJhNeiX+0
-         JVWQ==
-X-Gm-Message-State: AA+aEWYxO8EbvqzQXIsLQfcoc0Ha5Y1HbTx/4vFtEf7vfupEopDQRfmc
-        eXIdbmXuV4QGvxFD8PBTiATrjA==
-X-Google-Smtp-Source: AFSGD/XZrkrloQ5/rvxj/0OMNRHVR0EheGpmH5OuudxmqmlBlo2LoDkZaoKHippBpsUviaxdeZIqzA==
-X-Received: by 2002:a5d:448f:: with SMTP id j15mr9244659wrq.108.1543832161996;
-        Mon, 03 Dec 2018 02:16:01 -0800 (PST)
-Received: from localhost.localdomain (conf.hotelmediterraneo.com. [2.228.78.71])
-        by smtp.gmail.com with ESMTPSA id f192sm5832158wmd.12.2018.12.03.02.16.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:16:01 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>, linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 6/9] Input: goodix - Add vcc-supply regulator support
-Date:   Mon,  3 Dec 2018 15:45:44 +0530
-Message-Id: <20181203101547.16835-6-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20181203101547.16835-1-jagan@amarulasolutions.com>
-References: <20181203101547.16835-1-jagan@amarulasolutions.com>
+        Mon, 3 Dec 2018 05:18:20 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id TlITgqHuZfGaRTlIXgiIqg; Mon, 03 Dec 2018 11:17:54 +0100
+Subject: Re: [PATCH v6 0/2] media: platform: Add Aspeed Video Engine driver
+To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, robh+dt@kernel.org,
+        mchehab@kernel.org, linux-media@vger.kernel.org
+References: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ed7f7598-c2a8-2a78-3513-d80344fd51b5@xs4all.nl>
+Date:   Mon, 3 Dec 2018 11:17:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGF8kZUiFojCTH0O8EzEGaoYDWEc+FlCfH3MyNeaho3s1u8rYqoNYgvvquQgdQybpwdyLeexpspG9Xiu2GO2R5ECtV+UGW2CTVY5ASalSEGP6bwBFMRh
+ f2b/MT+OE08HjQNe87Moul7WynFhY+DqPxcKvfgMNa/9fDRgoCJIRQGZE4C/zvPwkE5bq1cEsZrm9P96bTNErUW0EGvJW2e4HQm48cLv8yX86pZnLILZ/67/
+ xxUGY4W0YsvRoFu6lpbIp1u07ik8eSAIwfUW5RNITfHyjj/HPQnDupdewWQxyZbdXQa0PeHAvOk9FliO92j/1ThZb2e34ZditZo40UeumFs2r7P8JigtcXLH
+ WtiIV4DT/aF2qnT5/bgRCfjE3BeodUB5orLLdvkxRMrvacIreAHQ6IRJfqr3QEQcC8NFXOQSbbs7Ake4EBCFqgQLzut7pQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vcc-supply property is need for some Goodix CTP controller like GT5663
-where 3.3V external pull-up regulator connected via controller VCC pin.
+On 11/27/2018 08:37 PM, Eddie James wrote:
+> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+> can capture and compress video data from digital or analog sources. With
+> the Aspeed chip acting as a service processor, the Video Engine can
+> capture the host processor graphics output.
+> 
+> This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
+> interface by way of videobuf2. Each frame, the driver triggers the hardware to
+> capture the host graphics output and compress it to JPEG format.
+> 
+> v4l2-compliance SHA: ac9596560fedb3cd29148ef90b03778d76f1cd9a, 32 bits
+> 
+> Compliance test for device /dev/video0:
+> 
+> Driver Info:
+> 	Driver name      : aspeed-video
+> 	Card type        : Aspeed Video Engine
+> 	Bus info         : platform:aspeed-video
+> 	Driver version   : 4.18.19
+> 	Capabilities     : 0x85200001
+> 		Video Capture
+> 		Read/Write
+> 		Streaming
+> 		Extended Pix Format
+> 		Device Capabilities
+> 	Device Caps      : 0x05200001
+> 		Video Capture
+> 		Read/Write
+> 		Streaming
+> 		Extended Pix Format
+> 
+> Required ioctls:
+> 	test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+> 	test second /dev/video0 open: OK
+> 	test VIDIOC_QUERYCAP: OK
+> 	test VIDIOC_G/S_PRIORITY: OK
+> 	test for unlimited opens: OK
+> 
+> Debug ioctls:
+> 	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+> 	test VIDIOC_LOG_STATUS: OK (Not Supported)
+> 
+> Input ioctls:
+> 	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+> 	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+> 	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+> 	test VIDIOC_G/S/ENUMINPUT: OK
+> 	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+> 	Inputs: 1 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+> 	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+> 	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+> 	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+> 	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+> 	Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+> 	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+> 	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+> 	test VIDIOC_DV_TIMINGS_CAP: OK
+> 	test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+> Control ioctls (Input 0):
+> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+> 	test VIDIOC_QUERYCTRL: OK
+> 	test VIDIOC_G/S_CTRL: OK
+> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+> 		fail: v4l2-test-controls.cpp(831): failed to find event for control 'Chroma Subsampling'
 
-So, enable the regulator for those it attached the vcc-supply.
+This is fixed in our master branch. Event handling was broken for a while.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/input/touchscreen/goodix.c | 39 ++++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 5 deletions(-)
+I recommend that you upgrade, since this was a nasty little bug.
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index f2d9c2c41885..7adcf1491609 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -27,6 +27,7 @@
- #include <linux/delay.h>
- #include <linux/irq.h>
- #include <linux/interrupt.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/acpi.h>
- #include <linux/of.h>
-@@ -47,6 +48,7 @@ struct goodix_ts_data {
- 	struct touchscreen_properties prop;
- 	unsigned int max_touch_num;
- 	unsigned int int_trigger_type;
-+	struct regulator *vcc;
- 	struct gpio_desc *gpiod_int;
- 	struct gpio_desc *gpiod_rst;
- 	u16 id;
-@@ -58,6 +60,7 @@ struct goodix_ts_data {
- 
- #define GOODIX_GPIO_INT_NAME		"irq"
- #define GOODIX_GPIO_RST_NAME		"reset"
-+#define GOODIX_VCC_CTP_NAME		"vcc"
- 
- #define GOODIX_MAX_HEIGHT		4096
- #define GOODIX_MAX_WIDTH		4096
-@@ -525,12 +528,24 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
- {
- 	int error;
- 	struct device *dev;
-+	struct regulator *regulator;
- 	struct gpio_desc *gpiod;
- 
- 	if (!ts->client)
- 		return -EINVAL;
- 	dev = &ts->client->dev;
- 
-+	regulator = devm_regulator_get(dev, GOODIX_VCC_CTP_NAME);
-+	if (IS_ERR(regulator)) {
-+		error = PTR_ERR(regulator);
-+		if (error != -EPROBE_DEFER)
-+			dev_err(dev, "Failed to get vcc regulator: %d\n",
-+				error);
-+		return error;
-+	}
-+
-+	ts->vcc = regulator;
-+
- 	/* Get the interrupt GPIO pin number */
- 	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_INT_NAME, GPIOD_IN);
- 	if (IS_ERR(gpiod)) {
-@@ -786,25 +801,34 @@ static int goodix_ts_probe(struct i2c_client *client,
- 	if (error)
- 		return error;
- 
-+	/* power the controller */
-+	if (ts->vcc) {
-+		error = regulator_enable(ts->vcc);
-+		if (error) {
-+			dev_err(&client->dev, "Controller fail to enable vcc\n");
-+			return error;
-+		}
-+	}
-+
- 	if (ts->gpiod_int && ts->gpiod_rst) {
- 		/* reset the controller */
- 		error = goodix_reset(ts);
- 		if (error) {
- 			dev_err(&client->dev, "Controller reset failed.\n");
--			return error;
-+			goto error;
- 		}
- 	}
- 
- 	error = goodix_i2c_test(client);
- 	if (error) {
- 		dev_err(&client->dev, "I2C communication failure: %d\n", error);
--		return error;
-+		goto error;
- 	}
- 
- 	error = goodix_read_version(ts);
- 	if (error) {
- 		dev_err(&client->dev, "Read version failed.\n");
--		return error;
-+		goto error;
- 	}
- 
- 	ts->chip = goodix_get_chip_data(ts->id);
-@@ -823,17 +847,22 @@ static int goodix_ts_probe(struct i2c_client *client,
- 			dev_err(&client->dev,
- 				"Failed to invoke firmware loader: %d\n",
- 				error);
--			return error;
-+			goto error;
- 		}
- 
- 		return 0;
- 	} else {
- 		error = goodix_configure_dev(ts);
- 		if (error)
--			return error;
-+			goto error;
- 	}
- 
- 	return 0;
-+
-+error:
-+	if (ts->vcc)
-+		regulator_disable(ts->vcc);
-+	return error;
- }
- 
- static int goodix_ts_remove(struct i2c_client *client)
--- 
-2.18.0.321.gffc6fa0e3
+Regards,
+
+	Hans
+
+> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+> 	Standard Controls: 3 Private Controls: 0
+> 
+> Format ioctls (Input 0):
+> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+> 	test VIDIOC_G/S_PARM: OK
+> 	test VIDIOC_G_FBUF: OK (Not Supported)
+> 	test VIDIOC_G_FMT: OK
+> 	test VIDIOC_TRY_FMT: OK
+> 	test VIDIOC_S_FMT: OK
+> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+> 	test Cropping: OK (Not Supported)
+> 	test Composing: OK (Not Supported)
+> 	test Scaling: OK (Not Supported)
+> 
+> Codec ioctls (Input 0):
+> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls (Input 0):
+> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+> 	test VIDIOC_EXPBUF: OK
+> 	test Requests: OK (Not Supported)
+> 
+> Test input 0:
+> 
+> Streaming ioctls:
+> 	test read/write: OK
+> 	test blocking wait: OK
+> 	test MMAP: OK                                     
+> 	test USERPTR: OK (Not Supported)
+> 	test DMABUF: Cannot test, specify --expbuf-device
+> 
+> Total: 48, Succeeded: 47, Failed: 1, Warnings: 0
+> 
+> Changes since v5:
+>  - Rework resolution change and v4l2 timings functions again with active and
+>    detected timings.
+>  - Renamed a few things.
+>  - Fixed polarities in the timings.
+> 
+> Changes since v4:
+>  - Set real min and max resolution in enum_dv_timings
+>  - Add check for vb2_is_busy before settings the timings
+>  - Set max frame rate to the actual max rather than max + 1
+>  - Correct the input status to 0.
+>  - Rework resolution change to only set the relevant h/w regs during startup or
+>    when set_timings is called.
+> 
+> Changes since v3:
+>  - Switch update reg function to use u32 clear rather than unsigned long mask
+>  - Add timing information from host VGA signal
+>  - Fix binding documentation mispelling
+>  - Fix upper case hex values
+>  - Add wait_prepare and wait_finish
+>  - Set buffer state to queued (rather than error) if streaming fails to start
+>  - Switch engine busy print statement to error
+>  - Removed a couple unecessary type assignments in v4l2 ioctls
+>  - Added query_dv_timings, fixed get_dv_timings
+>  - Corrected source change event to fire if and only if size actually changes
+>  - Locked open and release
+> 
+> Changes since v2:
+>  - Switch to streaming interface. This involved a lot of changes.
+>  - Rework memory allocation due to using videobuf2 buffers, but also only
+>    allocate the necessary size of source buffer rather than the max size
+> 
+> Changes since v1:
+>  - Removed le32_to_cpu calls for JPEG header data
+>  - Reworked v4l2 ioctls to be compliant.
+>  - Added JPEG controls
+>  - Updated devicetree docs according to Rob's suggestions.
+>  - Added myself to MAINTAINERS
+> 
+> Eddie James (2):
+>   dt-bindings: media: Add Aspeed Video Engine binding documentation
+>   media: platform: Add Aspeed Video Engine driver
+> 
+>  .../devicetree/bindings/media/aspeed-video.txt     |   26 +
+>  MAINTAINERS                                        |    8 +
+>  drivers/media/platform/Kconfig                     |    9 +
+>  drivers/media/platform/Makefile                    |    1 +
+>  drivers/media/platform/aspeed-video.c              | 1719 ++++++++++++++++++++
+>  5 files changed, 1763 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>  create mode 100644 drivers/media/platform/aspeed-video.c
+> 
 
