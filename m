@@ -2,114 +2,93 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052F4C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02332C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F4F20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B828A20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="XFD8dL/d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F4F20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PyN5MHpj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B828A20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbeLCRbe (ORCPT
+        id S1726896AbeLCRbr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:31:34 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:39494 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeLCRbd (ORCPT
+        Mon, 3 Dec 2018 12:31:47 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:36838 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbeLCRbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:31:33 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id A194010C0752;
-        Mon,  3 Dec 2018 09:31:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1543858287; bh=cwjNOLF2O1SiGXoMRRMvEo5GyTRriUa6wv6kjPUw7ys=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=XFD8dL/daEnoxR91eJ/FUjdhmnQXgjkMkuSZs3oQFHRxMn3Cl6hufffVdnkQByLDc
-         uiYvW0enVNX9xTx+3oa7JhDIHD7Z8/N+rNlnnQAIUGhRlXuitQ+lvKwJFOjMi4KCI2
-         xvK0PNhKfg0KOB/soK61PpmJ50USAir11qpwlBR55U/7B2N2ywTzIv4baovKZO2kZb
-         XLjYTkwn9H3LsMEO8tIwz5tOv7W8Y2sGHkCOCR12+z078+LExGfRp5H1cqK9PUQp+d
-         4yunqtod72QyQtK9UzEsqnuxzIGRN8IbCMkodbiCz+zuLeVOQ7oCjJ12I69lbwhUUo
-         Lz0Cy/VC9A+YQ==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id F0AED3F3D;
-        Mon,  3 Dec 2018 09:31:25 -0800 (PST)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000;
- Mon, 3 Dec 2018 09:31:25 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Arnd Bergmann' <arnd@arndb.de>,
-        "jose.abreu@synopsys.com" <jose.abreu@synopsys.com>
-CC:     "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        "Vitor Soares" <vitor.soares@synopsys.com>
-Subject: Re: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
-Thread-Topic: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
-Thread-Index: AQHUh+/oo0RKKbidaU63fw0ncGEK7A==
-Date:   Mon, 3 Dec 2018 17:31:25 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641A923@US01WEMBX2.internal.synopsys.com>
-References: <19fb2e394afcb073bbc109e432417fbbc03323f6.1543499759.git.joabreu@synopsys.com>
- <ff1e11923e92405d883474d715008c0a@AcuMS.aculab.com>
- <89122bd8-bca2-2ae1-0dd0-160abbebcace@synopsys.com>
- <d2d133e5-267c-c42a-7329-22892bbbdee4@synopsys.com>
- <CAK8P3a2U3ft3crF2SiAuc=PQdDooEUaVAN9gQDyxsxvBn5+xRw@mail.gmail.com>
- <57437493-31bb-eced-032c-1f54470b030e@synopsys.com>
- <CAK8P3a2mqEb4_F4wB1DvL5jJJobLhOg6-bW3ZDNGhvbv-_qW3A@mail.gmail.com>
- <3afe0e1bbf2d42d3bb178ec789553c28@AcuMS.aculab.com>
- <C2D7FE5348E1B147BCA15975FBA23075014641A413@US01WEMBX2.internal.synopsys.com>
- <a668562bf3cb410e90484eb0d4a436a7@AcuMS.aculab.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 3 Dec 2018 12:31:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=s5/fOkoTPwEm2o0Pae1jRb0P+S0mR2X8/we1WstPVsY=; b=PyN5MHpjpwlGU1FU6zDlO3I3I
+        8nbhFx057TfdW0bCJG6mQIVDA6JXXF9wTETggV+iIEH9+0JGYaUF4WY8VwCXL2HVrajuaos53clqL
+        rX/8aVlBVbccR2x9b5emoTnNBgCorLaK1VkmZwP/eYxb6B5BPmmqEIa8ncnR1kRb5MQdnLff9Q/Qd
+        8CKpFVia1mjUV0dIC1JeKAXFijk8mOXbwy9cAFomoAu6NaBy7De7hSz6cgEYgnMQxAkbTt9goSWYt
+        YYsm6pOAYRn9o4ZcgV9O8AxL5VHYaV1duRiwZgFiSXEknIsY6huoBpJ+wIagiVyd1z3tEJRrV+2fm
+        PDCSdd+cw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gTs4D-0001OL-Is; Mon, 03 Dec 2018 17:31:33 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 45CA62029F873; Mon,  3 Dec 2018 18:31:32 +0100 (CET)
+Date:   Mon, 3 Dec 2018 18:31:32 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 25/27] locking/lockdep: Add support for dynamic keys
+Message-ID: <20181203173132.GJ11614@hirez.programming.kicks-ass.net>
+References: <20181128234325.110011-1-bvanassche@acm.org>
+ <20181128234325.110011-26-bvanassche@acm.org>
+ <20181129101000.GF2131@hirez.programming.kicks-ass.net>
+ <1543856820.185366.159.camel@acm.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543856820.185366.159.camel@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/18 2:10 AM, David Laight wrote:=0A=
-> From: Vineet Gupta=0A=
-> ...=0A=
->>> It also seems to have used a different type of loop to the=0A=
->>> other example, probably less efficient.=0A=
->>> (Not that I'm an expert on ARC opcodes.)=0A=
->> The difference is due to ISA and ensuing ARC gcc backends. ARCompact bas=
-ed cores=0A=
->> don't support unaligned access and the loop there was ZOL (Zero delay lo=
-op). In=0A=
->> ARCv2 based cores, the gcc backend has been tweaked to generate fewer ZO=
-Ls hence=0A=
->> you see the more canonical tst and branch style loop.=0A=
-> Is this another case of the hardware implementing 'hardware' loop=0A=
-> instructions that execute slower than ones made of simple instructions?=
-=0A=
-=0A=
-Not really. ZOL allow for hardware loops with no instruction/cycle overhead=
- in=0A=
-general. However as micro-arches get more complicated there are newer "gizm=
-os"=0A=
-added to the machinery which sometimes make it harder for the compliers to=
-=0A=
-optimize for all the cases. ARCv2 ISA has a new DBNZ instruction (similar t=
-o x86=0A=
-you refer below) to implement loops and that is preferred over the ZOL.=0A=
-=0A=
-> The worst example has to be the x86 'loop' (dec cx and jump nz)=0A=
-> instruction which is microcoded on intel cpus.=0A=
-> That makes it very difficult to use the new addx instruction to=0A=
-> get two dependency chains through a loop.=0A=
-=0A=
+On Mon, Dec 03, 2018 at 09:07:00AM -0800, Bart Van Assche wrote:
+> How about adding this as an additional patch before patch 25/27?
+
+Excellent, thanks!
+
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 9a7cca6dc3d4..ce05b9b419f4 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -725,6 +725,15 @@ static bool assign_lock_key(struct lockdep_map *lock)
+>  {
+>  	unsigned long can_addr, addr = (unsigned long)lock;
+>  
+> +	/*
+> +	 * lockdep_free_key_range() assumes that struct lock_class_key
+> +	 * objects do not overlap. Since we use the address of lock
+> +	 * objects as class key for static objects, check whether the
+> +	 * size of lock_class_key objects does not exceed the size of
+> +	 * the smallest lock object.
+> +	 */
+> +	BUILD_BUG_ON(sizeof(struct lock_class_key) > sizeof(raw_spinlock_t));
+> +
+>  	if (__is_kernel_percpu_address(addr, &can_addr))
+>  		lock->key = (void *)can_addr;
+>  	else if (__is_module_percpu_address(addr, &can_addr))
+> 
+> Thanks,
+> 
+> Bart.
