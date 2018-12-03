@@ -2,222 +2,200 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13CDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F973C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860B1206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860B1206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.net
+	by mail.kernel.org (Postfix) with ESMTP id BF6A720850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:50:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF6A720850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726056AbeLCVro (ORCPT
+        id S1726030AbeLCVuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:47:44 -0500
-Received: from mout.gmx.net ([212.227.15.18]:34161 "EHLO mout.gmx.net"
+        Mon, 3 Dec 2018 16:50:12 -0500
+Received: from mga05.intel.com ([192.55.52.43]:29098 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeLCVrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:47:43 -0500
-Received: from [172.16.11.31] ([188.193.10.29]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MFtf4-1ggZ6R3Fnq-00ExSG for
- <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 22:47:42 +0100
-To:     linux-kernel@vger.kernel.org
-From:   Michael Hennig <M_Hennig@gmx.net>
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-Autocrypt: addr=M_Hennig@gmx.net; prefer-encrypt=mutual; keydata=
- xsBNBE3ENdEBCACmeeN/ITypg8ydK9gftiHbJ0IKa3ReRhq4KUtiRzRkhpxaV1MB90NGjGDi
- Rq7E58Otjn4jqIGkv3zqDtQwLc5JmHTh6Mn7uZzxOAzWFtq321XdO0JsSQCb933YLbeaMcAY
- gkroCAwHevgtcvdr/2so2Ey9YcKw2ruQG7Q/R6sIGR0PqFpyE8O7XSpGR6zkff9IEvyc1l7L
- TrIrXOBeh/bH0lgKOG5nO9eCVSpYaP3NK8X2D6ap1lBWvy/lyw1Lo1OFPcLo7OL4Nzp1lxi/
- Evl5qdhCjdKEc5+4afH4zKRrnt23Ev4KIkrJhbx7B7k1JSUEDFyTfuxwirgVC6TrQYmFABEB
- AAHNIU1pY2hhZWwgSGVubmlnIDxNX0hlbm5pZ0BnbXgubmV0PsLAeAQTAQIAIgUCTcQ10QIb
- AwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQRTgxQ7ufc7Ln4wf/RzRC+t0esHPrY0d0
- dPT3ZQlUoc/t9MEuk14BLeY87hxd14bD2K3kKeZU/1FdA309SDF8s3XQiFUevFbNgr7vu3P/
- qXYfTd5F93dOt67Pz2Y/mORy0guSQbRxEchF+Sq1NkGfyFyF3CZxAr2cIfWhyRb/feg83dUU
- /bN3VCDrlnMl+FZ75mVDx+ypMeNas1fNIaRVPBxQhFqS6hbHZ6Kk1IvDfrzmECmchzzrMlgZ
- 89Ht1H7S6G4bghXYA92rCngMHc/VGF1VzfDX4XNc9AlAWL0AL/VUDM6P6rjYFYfE1ZHR21+u
- UXgFQgeu/+iN4LL0dCyX/02Xg7F0k+V31FhJbM7ATQRNxDXRAQgA05YC7iYLvz3dyRQnFt70
- 5DqKea7MBV707OwoA0PJpY7tEO5a15TusaWQ6ETd0Utxv/1y6d1upWBAa0NJSl9ubJ9Ta3EJ
- xuajhNefTM0/tuGZ9b9whCryZuKEVUBkRAB/VyoU2y5KKmw2AS07sImvK2Cnr4CHbWHWaX/w
- 9/UIWC3XfVcdIf4K+HG5zTX3+ccAgjo8qsBGQ+922J0KD4USez8kV+cYJbpSbNO+c4K1I8/1
- Rw/gHLW4yTuMCfp/MTFyq7zz3xBaD5fwO6KIpFSTVHRxPQtHEcqv8ZYbTRvoyCLjPnbQK/dH
- v0BFxkbjbnOITV3BP2335BqFer4Um/N4NwARAQABwsBfBBgBAgAJBQJNxDXRAhsMAAoJEEU4
- MUO7n3OybG8H/2cyH3mvqofZF9sdzTMbxSF9vWQjEX5KhMAVJNkbepB6niU/fCEIQpOUAUU6
- k0p9JQVJ2fbeJ2tb3425adUWzKM8Oo/FuCd+vJ7c2TQ2z+V0Y+YQuyfX1pN8UHHKMMnE4DMi
- VBr0Dsq0oaiKhsIwr9wOFGOylYmmYk+hTyNc5w5VOnX7lpqKD3cHx162yQ1eoSM2881ZbBdB
- SHGhMPQIbRe+CaG7Vk5bd3/xK7ncS538VtlX4K57A2IZJI2sANkhRVwepFMZhCgJ4ORrH4Nw
- ht+1TeorBm8X59ro9csbAHQ/saXd/f6FY/N0bfOW9Yb4tDkI08nj/MR2wfY7FPgHu30=
-Message-ID: <019a09df-df3d-3350-a779-e51886c2691b@gmx.net>
-Date:   Mon, 3 Dec 2018 22:47:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:TCL0CIuUMezFbA0s6GCkCokeXly9XORVWZMYxI5Li1ledF8EROf
- Z+URwa43+JtQEZZKZpKHLHhGGN4Bj2h3yshAkh6bHh9KGAB1EZGgPWFSDQYtbYuIsLT1cQS
- drRHoIVZI8ZqvI0a9aPyldnGunsk/+yC2FQtw2wqxNb11HhqqJ6NswoMcRNwvNcdCMBDNoW
- JnEEuu6yxEdFGlM9UFmQQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rwuGmP/dATg=:aNGLckdJjgrgvkV0Rr/HGd
- 073m+6I+jOVBWWvlIgM+DPG+GLUfyaMdTPYaulxsTcz0vOkd6qg9R1YzGYaONZ4yIesq+eIBV
- ozcGsM4anGnxv7Gg1zaqPVDxeaMxTh7Z9eud6mKn2SpOU9tRhmr+F+b9mkWNaRg3Kikdfge+a
- 4c9H8/S/DUG9XP5twzbpkxQzVf1ShPlrQMlJHANbnEw8eN/CpX4iCgANAJdyWEsGttQi8/BkF
- 0GM1TtOR4Pt/lLMEUQHdr+yvvSRWXZEvpTrveFVgBJc0hpt8WHRZkFoK0XsXSsymvl9JkP1gk
- Gwdz2Vw3l8Kj1cCLSbFnjY+S/MUK7yaGwG8y6pDEBwCqeBKpdDyyHNnAwmihReX5Kp6s1dzz8
- /akRfMTDRLDWJa4/Vrv49eGARyoyMB8GoaCTNljAh1BhUA0+JD49qnxZJesZvB0ghebel7vKE
- 2bpWiWV+21QdrR6jxG100v7qO3/watHnGbDAadcgEYUtpPtQKi+NFXRfGU07nld4P6DGLNBs6
- OG/al7nPzvuS0pxgPjkpR77/KiNoxclbWyvnL3mXNt6A5CCCQjPEY19BISOKXVTt09gBfHApt
- +mtF34HDHk5hxlXH2ECs0KNjyXNbV1WQCJVq3dMDAG/HIoG6SZ+D3Rsg8ORK+fPAG6zYq/U+X
- xS8BwzC6GJcx4Kfri99ehBGLC6ujPppW5z5LzWXC/GLd95iBK0M4/cvxJN/tmUHXh6gtZJYoc
- RuA4XQhrz89YmxUpybIHYDF1LYw6Pl7mfu4Fl1MHbKwwB33Bd+gCtSgGuj73im/Te7HXgPACI
- 9KM+gudAIPKz2hyIY9jSt1H5anX725AhTEZSJuxCQVFrKCjrRkx5noTWsxOIWiA1XQsA6yeuC
- k3tufkfnVMNSGAKADbmTLcKPtg6WftHvIM4Ei7wpWKjwfjFTyolqQDpADd5Y8F
+        id S1725908AbeLCVuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:50:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 13:50:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
+   d="scan'208";a="106989062"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2018 13:50:11 -0800
+Message-ID: <30ab5fa569a6ede936d48c18e666bc6f718d50db.camel@linux.intel.com>
+Subject: Re: [PATCH RFC 2/3] mm: Add support for exposing if dev_pagemap
+ supports refcount pinning
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Barret Rhoden <brho@google.com>,
+        KVM list <kvm@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        Pankaj Gupta <pagupta@redhat.com>,
+        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, rkrcmar@redhat.com,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>
+Date:   Mon, 03 Dec 2018 13:50:11 -0800
+In-Reply-To: <CAPcyv4hPDjHzKd4wTh8Ujv-xL8YsJpcFXOp5ocJ-5fVJZ3=vRw@mail.gmail.com>
+References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
+         <154386513120.27193.7977541941078967487.stgit@ahduyck-desk1.amr.corp.intel.com>
+         <CAPcyv4gZkx9zRsKkVhrmPG7SyjPEycp0neFnECmSADZNLuDOpQ@mail.gmail.com>
+         <97943d2ed62e6887f4ba51b985ef4fb5478bc586.camel@linux.intel.com>
+         <CAPcyv4i=FL4f34H2_1mgWMk=UyyaXFaKPh5zJSnFNyN3cBoJhA@mail.gmail.com>
+         <2a3f70b011b56de2289e2f304b3d2d617c5658fb.camel@linux.intel.com>
+         <CAPcyv4hPDjHzKd4wTh8Ujv-xL8YsJpcFXOp5ocJ-5fVJZ3=vRw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm suffering from ext4 corruption too.
-(Ubuntu 18.10, 4.19.6-041906-generic, 64 bit)
+On Mon, 2018-12-03 at 13:05 -0800, Dan Williams wrote:
+> On Mon, Dec 3, 2018 at 12:53 PM Alexander Duyck
+> <alexander.h.duyck@linux.intel.com> wrote:
+> > 
+> > On Mon, 2018-12-03 at 12:31 -0800, Dan Williams wrote:
+> > > On Mon, Dec 3, 2018 at 12:21 PM Alexander Duyck
+> > > <alexander.h.duyck@linux.intel.com> wrote:
+> > > > 
+> > > > On Mon, 2018-12-03 at 11:47 -0800, Dan Williams wrote:
+> > > > > On Mon, Dec 3, 2018 at 11:25 AM Alexander Duyck
+> > > > > <alexander.h.duyck@linux.intel.com> wrote:
+> > > > > > 
+> > > > > > Add a means of exposing if a pagemap supports refcount pinning. I am doing
+> > > > > > this to expose if a given pagemap has backing struct pages that will allow
+> > > > > > for the reference count of the page to be incremented to lock the page
+> > > > > > into place.
+> > > > > > 
+> > > > > > The KVM code already has several spots where it was trying to use a
+> > > > > > pfn_valid check combined with a PageReserved check to determien if it could
+> > > > > > take a reference on the page. I am adding this check so in the case of the
+> > > > > > page having the reserved flag checked we can check the pagemap for the page
+> > > > > > to determine if we might fall into the special DAX case.
+> > > > > > 
+> > > > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > > > > > ---
+> > > > > >  drivers/nvdimm/pfn_devs.c |    2 ++
+> > > > > >  include/linux/memremap.h  |    5 ++++-
+> > > > > >  include/linux/mm.h        |   11 +++++++++++
+> > > > > >  3 files changed, 17 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+> > > > > > index 6f22272e8d80..7a4a85bcf7f4 100644
+> > > > > > --- a/drivers/nvdimm/pfn_devs.c
+> > > > > > +++ b/drivers/nvdimm/pfn_devs.c
+> > > > > > @@ -640,6 +640,8 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
+> > > > > >         } else
+> > > > > >                 return -ENXIO;
+> > > > > > 
+> > > > > > +       pgmap->support_refcount_pinning = true;
+> > > > > > +
+> > > > > 
+> > > > > There should be no dev_pagemap instance instance where this isn't
+> > > > > true, so I'm missing why this is needed?
+> > > > 
+> > > > I thought in the case of HMM there were instances where you couldn't
+> > > > pin the page, isn't there? Specifically I am thinking of the definition
+> > > > of MEMORY_DEVICE_PUBLIC:
+> > > >   Device memory that is cache coherent from device and CPU point of
+> > > >   view. This is use on platform that have an advance system bus (like
+> > > >   CAPI or CCIX). A driver can hotplug the device memory using
+> > > >   ZONE_DEVICE and with that memory type. Any page of a process can be
+> > > >   migrated to such memory. However no one should be allow to pin such
+> > > >   memory so that it can always be evicted.
+> > > > 
+> > > > It sounds like MEMORY_DEVICE_PUBLIC and MMIO would want to fall into
+> > > > the same category here in order to allow a hot-plug event to remove the
+> > > > device and take the memory with it, or is my understanding on this not
+> > > > correct?
+> > > 
+> > > I don't understand how HMM expects to enforce no pinning, but in any
+> > > event it should always be the expectation an elevated reference count
+> > > on a page prevents that page from disappearing. Anything else is
+> > > broken.
+> > 
+> > I don't think that is true for device MMIO though.
+> > 
+> > In the case of MMIO you have the memory region backed by a device, if
+> > that device is hot-plugged or fails in some way then that backing would
+> > go away and the reads would return and all 1's response.
+> 
+> Until p2pdma there are no struct pages for device memory, is that what
+> you're referring?
 
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484759: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484759: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484754: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484755: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
-#42484768: comm rm: checksum invalid
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484767: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484763: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
-#42484766: comm rm: checksum invalid
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484761: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484764: comm rm: bad extra_isize 58853 (inode size 256)
-22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484765: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484759: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484754: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484755: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
-#42484768: comm rm: checksum invalid
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484767: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484763: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
-#42484766: comm rm: checksum invalid
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484761: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484764: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484765: comm rm: bad extra_isize 58853 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484762: comm rsync: bad extra_isize 58853 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484761: comm rsync: bad extra_isize 58853 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484760: comm rsync: bad extra_isize 54976 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484759: comm rsync: bad extra_isize 58853 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484758: comm rsync: bad extra_isize 58853 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484757: comm rsync: bad extra_isize 58853 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484756: comm rsync: bad extra_isize 63008 (inode size 256)
-21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484755: comm rsync: bad extra_isize 58853 (inode size 256)
-21:00:31 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
-#42484754: comm rsync: bad extra_isize 58853 (inode size 256)
-21:00:31 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
-#42484753: comm rsync: checksum invalid
+Honestly I am not sure. It is possible I am getting beyond my depth.
 
+My understanding is that we have a 'struct page' for any of these pages
+that we are currently using. It is just a matter of if we want to pass
+the struct page around or not. So for example in the case of an MMIO
+page we still have a 'struct page', however the PG_reserved flag is set
+on such a page, so KVM is opting to not touch the reference count,
+modify the dirty/accessed bits, and is generally reducing performance
+as a result.
 
-Checked some of the defective inodes only to find timeshift back-upped
-files through rsync:
+> Otherwise any device driver that leaks "struct pages" into random code
+> paths in the kernel had better not expect to be able to
+> surprise-remove those pages from the system. Any dev_pagemap user
+> should expect to do a coordinated removal with the driver that waits
+> for page references to drop before the device can be physically
+> removed.
 
-debugfs 1.44.4 (18-Aug-2018)
-debugfs:  ncheck 42484759
-Inode	Pathname
-42484759
-/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
-42484759
-/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
-42484759
-/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
-42484759
-/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
-debugfs:  ncheck 42484754
-Inode	Pathname
-debugfs:  ncheck 42484755
-Inode	Pathname
-42484755
-/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
-42484755
-/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
-42484755
-/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
-42484755
-/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
-debugfs:  ncheck 42484768
-Inode	Pathname
-42484768
-/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxft2:amd64.list
-42484768
-/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxft2:amd64.list
-42484768
-/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxft2:amd64.list
-42484768
-/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxft2:amd64.list
-debugfs:  ncheck 42484767
-Inode	Pathname
-42484767
-/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
-42484767
-/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
-42484767
-/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
-42484767
-/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
-debugfs:  ncheck 42484763
-Inode	Pathname
-42484763
-/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
-42484763
-/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
-42484763
-/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
-42484763
-/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
-debugfs:  ncheck 42484753
-Inode	Pathname
-42484753
-/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
-42484753
-/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
-42484753
-/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
-42484753
-/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
+Right. This part I get. However I would imagine there still has to be
+some exception handling in the case of a PCIe backed region of memory
+so that if the device falls of the bus we clean up the dev_pagemap
+memory.
 
-Maybe timeshifts rsync is related to this?
+> > Holding a reference to the page doesn't guarantee that the backing
+> > device cannot go away.
+> 
+> Correct there is no physical guarantee, but that's not the point. It
+> needs to be coordinated, otherwise all bets are off with respect to
+> system stability.
 
+Right.
 
-Kind regards
-Michael Hennig
+> > I believe that is the origin of the original use
+> > of the PageReserved check in KVM in terms of if it will try to use the
+> > get_page/put_page functions.
+> 
+> Is it? MMIO does not typically have a corresponding 'struct page'.
+
+I think we might be talking about different things when we say 'struct
+page'. I'm pretty sure there has to be a 'struct page' for the MMIO
+region as otherwise we wouldn't be able to check for the PG_reserved
+bit in the 'struct page'. Do you maybe mean that MMIO doesn't have a
+corresponding virtual address or TLB entry? I know that is what we are
+normally generating via the ioremap family of calls in device drivers
+in order to access such memory if I am not mistaken.
+
+> > I believe this is also why
+> > MEMORY_DEVICE_PUBLIC specifically calls out that you should not allow
+> > pinning such memory.
+> 
+> I don't think that call out was referencing device hotplug, I believe
+> it was the HMM expectation that it should be able to move an HMM page
+> from device to System-RAM at will.
+
+I could be wrong. If so that would make this patch set easier since
+essentially it would just mean that any PageReserved page that matches
+is_zone_device_page would fall into this category then and I could just
+drop patch 2, and probably combine the entire fix for all of this into
+one patch as it would only really be a few additional lines.
+
