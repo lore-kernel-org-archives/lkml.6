@@ -2,141 +2,105 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8C8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070A7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087FB2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:50:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087FB2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C83182087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:51:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C83182087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbeLCPuQ (ORCPT
+        id S1726687AbeLCPvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:50:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56448 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726638AbeLCPuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:50:15 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3Fidfc134087
-        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 10:50:12 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p5677v5v7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:50:11 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 3 Dec 2018 15:47:48 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Dec 2018 15:47:40 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3Fldqi393682
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Dec 2018 15:47:39 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53C3211C050;
-        Mon,  3 Dec 2018 15:47:39 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13B0611C05E;
-        Mon,  3 Dec 2018 15:47:36 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.196])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  3 Dec 2018 15:47:35 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 03 Dec 2018 17:47:35 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Greentime Hu <green.hu@gmail.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Mark Salter <msalter@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Rich Felker <dalias@libc.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v2 4/6] openrisc: simplify pte_alloc_one_kernel()
-Date:   Mon,  3 Dec 2018 17:47:13 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
-References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18120315-0028-0000-0000-00000325602D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120315-0029-0000-0000-000023E164D7
-Message-Id: <1543852035-26634-5-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=852 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812030148
+        Mon, 3 Dec 2018 10:51:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46062 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726560AbeLCPvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:51:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A47C2AE46;
+        Mon,  3 Dec 2018 15:51:43 +0000 (UTC)
+Date:   Mon, 03 Dec 2018 16:51:43 +0100
+Message-ID: <s5h5zway5f4.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     ayman.bagabas@gmail.com
+Cc:     alsa-devel@alsa-project.org, Hui Wang <hui.wang@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kailang Yang <kailang@realtek.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v8 2/3] x86: add support for Huawei WMI hotkeys.
+In-Reply-To: <eaa9d7a8898df9487031995429ff11892c9cd0ca.camel@gmail.com>
+References: <20181129235742.14332-1-ayman.bagabas@gmail.com>
+        <20181129235742.14332-3-ayman.bagabas@gmail.com>
+        <s5hftvezupj.wl-tiwai@suse.de>
+        <eaa9d7a8898df9487031995429ff11892c9cd0ca.camel@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pte_alloc_one_kernel() function allocates a page using
-__get_free_page(GFP_KERNEL) when mm initialization is complete and
-memblock_phys_alloc() on the earlier stages. The physical address of the
-page allocated with memblock_phys_alloc() is converted to the virtual
-address and in the both cases the allocated page is cleared using
-clear_page().
+On Mon, 03 Dec 2018 16:46:01 +0100,
+ayman.bagabas@gmail.com wrote:
+> 
+> > > +	priv->cdev.name = "platform::micmute";
+> > > +	priv->cdev.max_brightness = 1;
+> > > +	priv->cdev.brightness_set_blocking =
+> > > huawei_wmi_micmute_led_set;
+> > > +	priv->cdev.default_trigger = "audio-micmute";
+> > > +	priv->cdev.brightness = ledtrig_audio_get(LED_AUDIO_MICMUTE);
+> > > +	priv->cdev.dev = &wdev->dev;
+> > 
+> > What about suspend/resume?
+> > When the driver is bound wit HD-audio, the HD-audio will restore the
+> > state at resume, so it would work.  But, by providing the LED class
+> > device, it is supposed to work even without HD-audio, so it might
+> > make
+> > sense to pass LED_CORE_SUSPENDRESUME, too.
+> 
+> Besides that, is there anything needed for wmi_device suspend/resume?
 
-The code is simplified by replacing __get_free_page() with
-get_zeroed_page() and by replacing memblock_phys_alloc() with
-memblock_alloc().
+AFAIK, the wmi_driver itself doesn't need anything.  The input also
+doesn't need, so most likely only LED.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Stafford Horne <shorne@gmail.com>
----
- arch/openrisc/mm/ioremap.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+> > > +static int __init huawei_wmi_init(void)
+> > > +{
+> > > +	if (!(wmi_has_guid(WMI0_EVENT_GUID) ||
+> > > wmi_has_guid(AMW0_EVENT_GUID))) {
+> > > +		pr_debug("Compatible WMI GUID not found\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > 
+> > This is superfluous when you implement with wmi_driver.
+> > In theory, the supported GUID can be added dynamically via sysfs,
+> > too.
+> > 
+> 
+> I left it that way so it doesn't insert the module if these GUIDs were
+> not found.
 
-diff --git a/arch/openrisc/mm/ioremap.c b/arch/openrisc/mm/ioremap.c
-index c969752..cfef989 100644
---- a/arch/openrisc/mm/ioremap.c
-+++ b/arch/openrisc/mm/ioremap.c
-@@ -123,13 +123,10 @@ pte_t __ref *pte_alloc_one_kernel(struct mm_struct *mm,
- {
- 	pte_t *pte;
- 
--	if (likely(mem_init_done)) {
--		pte = (pte_t *) __get_free_page(GFP_KERNEL);
--	} else {
--		pte = (pte_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
--	}
-+	if (likely(mem_init_done))
-+		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
-+	else
-+		pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 
--	if (pte)
--		clear_page(pte);
- 	return pte;
- }
--- 
-2.7.4
+But they aren't loaded on such devices unless you do explicitly.
+If they are done explicitly, there must be a reason to do so, hence
+you don't need to block it :)
 
+> Should I drop that and use module_wmi_driver instead?
+
+Yes, that's cleaner.  Let's try to make it as simple as possible at
+first.
+
+
+thanks,
+
+Takashi
