@@ -2,94 +2,146 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6F2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7EEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D093C2082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96ED120881
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:14:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFAo/7ka"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D093C2082F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSyaXALL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96ED120881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbeLCIMs (ORCPT
+        id S1725894AbeLCIOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 03:12:48 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40623 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbeLCIMs (ORCPT
+        Mon, 3 Dec 2018 03:14:44 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33380 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbeLCIOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 03:12:48 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q26so4589658wmf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 00:12:42 -0800 (PST)
+        Mon, 3 Dec 2018 03:14:44 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l11so12763362qtp.0;
+        Mon, 03 Dec 2018 00:14:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=unMMa9AN5ed7phn8mDqbTlDXTzG3IRr0dPibGYUg0h4=;
-        b=lFAo/7kaJGdGpH2IduXm4an1I5aa9louXkKZU5Ltr/Lce/B+f5slBjC6BLRzSY5upc
-         Tr2UTmF8ij+oRjj4Eht8PGS5GL/Ev4is3od1YeW/6rZphiEYLnY+q8bEAF1RIy8sBpkM
-         1+qwkpZJf2EP2jYsHBYB6tvDZOsrdOXrDvEWqwc0UOhpPvGRdlpVOm3tLDzJ/Uy0M2Bc
-         Tw/LKzRglS/6DOMSbLnrW84NOHpElSNLeFGbJ0Cn8LNrgMNj0PjS+f+Hghz0TYtGi1t0
-         e7nFFYVC2RbQn5qUSGoGpVAsjE9lgeyhN5Qw3YWquE2ySxBs0zO1dwRZmIa6P6H8U8Nd
-         PkCw==
+        bh=iZzRMC4CM45BgSQpZdQxsEMspQ5uuOMVoXYF0i64M28=;
+        b=YSyaXALL71meXGHh5/Nuab6nqEYdg+7It3hJZeNGWeM/ayyZOzMUu7X0S3gra2Az/V
+         jKyME26IlXLN/Z9PTAhYDizJklW8lp8r75AOs4Ea13RgmvC5sMCBoO29BFsTQC++I8sd
+         DA7OWl7VvSjz5S6fwah0bzz80RfMm+5HCdCPJXpGsKiX2di0hrqDXhYHncmlCQEFcebf
+         Zh2FCFhYj2eZatwBJ5XlmZ2087PN90+2ODe8QMjY5dXUMSt/vrT5chs2trx0GY5Vl80d
+         bsXxtNLsgQX8f3x22s42Y0B9zKsmr7M5qgITvmHvLnPVYtNf5MV/TCUbVUmrZpbLgyK4
+         Id7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=unMMa9AN5ed7phn8mDqbTlDXTzG3IRr0dPibGYUg0h4=;
-        b=RAuHDeg56F0ErgbZMGtfdZYsgt3H40gYmQrH4nLVLC2c4TEFB4r9e6L0tCCXnb6j1h
-         jTCNr69fJpWrW0cI1XyOq/J6PlHCiMynu91CY3fKq2J1PxxxpndA/z8AxOuIhNyznEyF
-         AjPOlVrjyJIwBsQH27ys+V7W66p8l/frEGDdFwxAViLmV2BQWbJm1UAAuHsUwIgjY47e
-         CI3FWSJ3yZsO4VmaIjIySvpNYVWv1XZmSyM/ZGBECp9jMRD2/W+PRzKFYhOiqdW5cxio
-         Y8dzOH2DCjMvBCQSiJUQARhCsnT31D07z0IsdJj0Az1Tx5ZqrPT+z9U3hneOBKa5acZw
-         2lFw==
-X-Gm-Message-State: AA+aEWZAyGfxDWh0Ur44fPOFMXUHVCKDAgJY3W1zldxR8ObrrV5cSpgP
-        31XtUVUpeXpzTDQsmcbFR/Jzneu1m90j/1xX1IVc68hX
-X-Google-Smtp-Source: AFSGD/UEE/iRbyw/QiyAA8jDWqmlMa9LKmKsGMEEy45co3upf+mgPR2avIAKCM6pbKoq1YoyDPuOjq8oGLFOGjL8H2s=
-X-Received: by 2002:a1c:4108:: with SMTP id o8mr6986253wma.91.1543824761945;
- Mon, 03 Dec 2018 00:12:41 -0800 (PST)
+        bh=iZzRMC4CM45BgSQpZdQxsEMspQ5uuOMVoXYF0i64M28=;
+        b=k4CG12YxUGkRYhx8Jd4oo6lLXl7kpUsq1Z+/Fo18UuVJnGgdmCsLJm+Q1xmLpOSK/R
+         PqwhOhRfQlJwI9P/tooDvL6kh00beyQTHFx+JHbZIrR8eiAvZSLGlohL4IZ1Ph5Nx7uY
+         oVSiaFJmvTRoIEdjMCcCfJ2mb2MPfxsYWoORd+xWQrqXdFm52Dt6Waiz/NIdX5ghBsmA
+         ZssxPjpC68NaxX36vgNZP5YMb2DK21FZPlhmNMzXf3EVD60Q4cdVcKXe+XB4QEJmx/Ku
+         76nnT556aKDEuEiSe1BOWXtAyndGKWLTUec+fwPk73WJJEdhChFiQrlEH3llTNeLtSNj
+         Mo6A==
+X-Gm-Message-State: AA+aEWZ3Dmgv1XMo281To3ikqY7GRwrzDc9jaaAwxxXl5zuKkf4OuvgP
+        eJhiAc9iZ5PayDsI+oOihErMhrnfq1ULAYrR1mAWMmbxjww=
+X-Google-Smtp-Source: AFSGD/XWY5/Jpe/69OROY6sXqDodaf0+Kj9WrT2dKTO7TN7nTEF6dO/E6qdLkjkLHTFbPvpddk/oQgIWqXl5j8iG07o=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr14404054qvl.180.1543824881868;
+ Mon, 03 Dec 2018 00:14:41 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20181128080244eucas1p15d9478c4fdbb0609005a12d24703d6d8@eucas1p1.samsung.com>
- <1543392134-1443-1-git-send-email-huijin.park@samsung.com>
-In-Reply-To: <1543392134-1443-1-git-send-email-huijin.park@samsung.com>
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date:   Mon, 3 Dec 2018 09:12:30 +0100
-Message-ID: <CACna6rxstGQNmr-9Bi=BEcYgcXV9QqOiXLGfNFC4Y7DmFMVryw@mail.gmail.com>
-Subject: Re: [PATCH v3] mtd: spi-nor: cast to u64 to avoid uint overflows
-To:     huijin.park@samsung.com
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+References: <20181203034515.91412-1-chenyu56@huawei.com> <20181203034515.91412-7-chenyu56@huawei.com>
+In-Reply-To: <20181203034515.91412-7-chenyu56@huawei.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 3 Dec 2018 10:14:30 +0200
+Message-ID: <CAHp75Vepvab=fD-3vps_RXewrb-Nfe8947soAmbNHatS4YQR4w@mail.gmail.com>
+Subject: Re: [PATCH v1 06/12] phy: Add usb phy support for hi3660 Soc of Hisilicon
+To:     chenyu56@huawei.com
+Cc:     USB <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-mtd@lists.infradead.org, bbanghj.park@gmail.com
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
+        lpc.li@hisilicon.com, sunjianguo1@huawei.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        xuejiancheng@hisilicon.com, John Stultz <john.stultz@linaro.org>,
+        Wangbinghui <wangbinghui@hisilicon.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 at 09:03, Huijin Park <huijin.park@samsung.com> wrote:
-> From: "huijin.park" <huijin.park@samsung.com>
+On Mon, Dec 3, 2018 at 5:47 AM Yu Chen <chenyu56@huawei.com> wrote:
 >
-> The "params->size" is defined as "u64".
-> And "info->sector_size" and "info->n_sectors" are defined as
-> unsigned int and u16.
-> Thus, u64 data might have strange data(loss data) if the result
-> overflows an unsigned int.
-> This patch casts "info->sector_size" to an u64.
->
-> Signed-off-by: huijin.park <huijin.park@samsung.com>
+> This driver handles usb phy power on and shutdown for hi3660 Soc of
+> Hisilicon.
 
-You may want to adjust your git's "user.name" config to avoid
-"malforming" your name (From and Signed-off-by) in the further
-contributions :)
+> +// SPDX-License-Identifier: GPL-2.0+
 
-Something like
-git config --global user.name "John Foo"
+Ambigous license through the code reading.
+
+
+> +#define PERI_CRG_CLK_EN4                       (0x40)
+> +#define PERI_CRG_CLK_DIS4                      (0x44)
+> +#define GT_CLK_USB3OTG_REF                     BIT(0)
+> +#define GT_ACLK_USB3OTG                                BIT(1)
+> +
+> +#define PERI_CRG_RSTEN4                                (0x90)
+> +#define PERI_CRG_RSTDIS4                       (0x94)
+> +#define IP_RST_USB3OTGPHY_POR                  BIT(3)
+> +#define IP_RST_USB3OTG                         BIT(5)
+> +
+> +#define PERI_CRG_ISODIS                                (0x148)
+> +#define USB_REFCLK_ISO_EN                      BIT(25)
+> +
+> +#define PCTRL_PERI_CTRL3                       (0x10)
+> +#define PCTRL_PERI_CTRL3_MSK_START             (16)
+> +#define USB_TCXO_EN                            BIT(1)
+> +
+> +#define PCTRL_PERI_CTRL24                      (0x64)
+> +#define SC_CLK_USB3PHY_3MUX1_SEL               BIT(25)
+> +
+> +#define USBOTG3_CTRL0                          (0x00)
+> +#define SC_USB3PHY_ABB_GT_EN                   BIT(15)
+> +
+> +#define USBOTG3_CTRL2                          (0x08)
+> +#define USBOTG3CTRL2_POWERDOWN_HSP             BIT(0)
+> +#define USBOTG3CTRL2_POWERDOWN_SSP             BIT(1)
+> +
+> +#define USBOTG3_CTRL3                          (0x0C)
+> +#define USBOTG3_CTRL3_VBUSVLDEXT               BIT(6)
+> +#define USBOTG3_CTRL3_VBUSVLDEXTSEL            BIT(5)
+> +
+> +#define USBOTG3_CTRL4                          (0x10)
+> +
+> +#define USBOTG3_CTRL7                          (0x1c)
+> +#define REF_SSP_EN                             BIT(16)
+> +
+> +#define HI3660_USB_DEFAULT_PHY_PARAM           (0x1c466e3)
+
+A lot of redundant parens.
+
+> +static const struct of_device_id hi3660_phy_of_match[] = {
+> +       {.compatible = "hisilicon,hi3660-usb-phy",},
+> +       { },
+
+No comma needed.
+
+> +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
