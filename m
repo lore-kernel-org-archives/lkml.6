@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE47C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6114BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8F3214DE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:32:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8F3214DE
+	by mail.kernel.org (Postfix) with ESMTP id 2E259214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E259214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbeLCVcu (ORCPT
+        id S1726280AbeLCVc6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:32:50 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33626 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbeLCVct (ORCPT
+        Mon, 3 Dec 2018 16:32:58 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37582 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbeLCVcz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:32:49 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c206so12387049oib.0;
-        Mon, 03 Dec 2018 13:32:48 -0800 (PST)
+        Mon, 3 Dec 2018 16:32:55 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y23so12373680oia.4;
+        Mon, 03 Dec 2018 13:32:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sPnbRFVIiMYQKirIzLX8zgOj667G6dJY549fDeFqh/4=;
-        b=k40OZ4URa10qzAEOv3OFaqY8bfQ9MJYKQ0jgwC/oX4eoSbJYxovIvR1aI5GxrUQ/xh
-         hwB1BfZzetSndc3gdQBHI6IvesYbnqGpf0MqNiCLpkYNH8TBFIv6ITPuPX39xCCCsWQS
-         FHMpmFmliwpi7Xz5n8vIW7PH6cmsNiPq9l4nZRoc/5st8AW1+sXWVXpGyHjuK2lLpnlV
-         gL/emWBmvsNCW/g+GZNqbQ2bdtTZFfOdktiSSzLPVWlbORw+/yhoUua5MGIhQryIJH0S
-         VGFWO76I3NQhXH9RGKOAXKchALKTPpEsuOTC8P2uNGswvaC0+ZMPnW4Mk1budiL8+ng4
-         6j2Q==
-X-Gm-Message-State: AA+aEWYRxXvBNzwjUjD/4Z7EfqgRjgDsGAT3yNz/qjMt3qUkqlIRCIjM
-        Liy1WK5VPuGmO5+D/rbVejmMLn0=
-X-Google-Smtp-Source: AFSGD/X3TOVbpCPz5reUwrZqOWV57jGlZUfCfJr8r40cTKaYdaSOMe2dXL7wOcdRdTW8QVjsvX77Hw==
-X-Received: by 2002:aca:4e11:: with SMTP id c17mr10540583oib.254.1543872767801;
-        Mon, 03 Dec 2018 13:32:47 -0800 (PST)
+        bh=oC6xtxPGgX0vrAEYZdrzvcerpUBFv1AQjT/XCrxTgx0=;
+        b=gKJmNsEr77qWZ8VoS1P+H6WXgEEle0+MP5kMXxtL9G9dEnKojj6GRoZXJWNyQ+ZX7d
+         UaD/AUBhsGYBLaAiaHvodrGrT+59KekZBUiwT5SAklv8jqfVh64GCo0y4e2/8hlBM0FX
+         fVSwQfyGhbtfqGJi5/7w2D53qXmluY8HY7B7sztDCt4jA0/brl8qnWkU0jIXVFgEn8Bh
+         twkkl8DYcYAvR/0fsU/Su8CAoKEolN+dgjRt8+VittM0fgjI+HAXdURGswHRexznpOsU
+         fB2GliQTSrvPZ3zVOlnQnMjhN2HyjI3MtdtRJPuGtuvX4k/OsUHPj/NdWxv3Bvf+jT6T
+         xxGw==
+X-Gm-Message-State: AA+aEWZvSopBTHTa8YxAY4kMCAhCTzGSmlibnw9L/rVTpxIrO0Rqp3tc
+        mvb6N6DEv4qfZEaBZ81W6incS4k=
+X-Google-Smtp-Source: AFSGD/U4jSE9cLoojt1F8nCYnEN25i4Ed+nmzggq5QD7npe8dCtWHghkjfbGS0jwVDUPRG4QNPbaww==
+X-Received: by 2002:aca:5b88:: with SMTP id p130mr10394553oib.96.1543872773873;
+        Mon, 03 Dec 2018 13:32:53 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.32.46
+        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.32.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 13:32:47 -0800 (PST)
+        Mon, 03 Dec 2018 13:32:53 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sean Hudson <darknighte@darknighte.com>,
@@ -52,629 +52,93 @@ Cc:     Sean Hudson <darknighte@darknighte.com>,
         linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
         Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 18/34] dt-bindings: arm: Convert FSL board/soc bindings to json-schema
-Date:   Mon,  3 Dec 2018 15:32:07 -0600
-Message-Id: <20181203213223.16986-19-robh@kernel.org>
+Subject: [PATCH v2 23/34] dt-bindings: arm: Convert Realtek board/soc bindings to json-schema
+Date:   Mon,  3 Dec 2018 15:32:12 -0600
+Message-Id: <20181203213223.16986-24-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181203213223.16986-1-robh@kernel.org>
 References: <20181203213223.16986-1-robh@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert Freescale SoC bindings to DT schema format using json-schema.
+Convert Realtek SoC bindings to DT schema format using json-schema.
 
-Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: "Andreas Färber" <afaerber@suse.de>
 Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
 Cc: devicetree@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/armadeus.txt      |   6 -
- Documentation/devicetree/bindings/arm/bhf.txt |   6 -
- .../bindings/arm/compulab-boards.txt          |  25 --
- Documentation/devicetree/bindings/arm/fsl.txt | 229 ------------------
- .../devicetree/bindings/arm/fsl.yaml          | 214 ++++++++++++++++
- .../devicetree/bindings/arm/i2se.txt          |  22 --
- .../devicetree/bindings/arm/olimex.txt        |  10 -
- .../devicetree/bindings/arm/technologic.txt   |  23 --
- 8 files changed, 214 insertions(+), 321 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/armadeus.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/bhf.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/compulab-boards.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/fsl.txt
- create mode 100644 Documentation/devicetree/bindings/arm/fsl.yaml
- delete mode 100644 Documentation/devicetree/bindings/arm/i2se.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/olimex.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/technologic.txt
+ .../devicetree/bindings/arm/realtek.txt       | 22 ------------------
+ .../devicetree/bindings/arm/realtek.yaml      | 23 +++++++++++++++++++
+ 2 files changed, 23 insertions(+), 22 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/realtek.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/realtek.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/armadeus.txt b/Documentation/devicetree/bindings/arm/armadeus.txt
+diff --git a/Documentation/devicetree/bindings/arm/realtek.txt b/Documentation/devicetree/bindings/arm/realtek.txt
 deleted file mode 100644
-index 9821283ff516..000000000000
---- a/Documentation/devicetree/bindings/arm/armadeus.txt
+index 95839e19ae92..000000000000
+--- a/Documentation/devicetree/bindings/arm/realtek.txt
 +++ /dev/null
-@@ -1,6 +0,0 @@
--Armadeus i.MX Platforms Device Tree Bindings
-------------------------------------------------
+@@ -1,22 +0,0 @@
+-Realtek platforms device tree bindings
+---------------------------------------
 -
--APF51: i.MX51 based module.
--Required root node properties:
--    - compatible = "armadeus,imx51-apf51", "fsl,imx51";
-diff --git a/Documentation/devicetree/bindings/arm/bhf.txt b/Documentation/devicetree/bindings/arm/bhf.txt
-deleted file mode 100644
-index 886b503caf9c..000000000000
---- a/Documentation/devicetree/bindings/arm/bhf.txt
-+++ /dev/null
-@@ -1,6 +0,0 @@
--Beckhoff Automation Platforms Device Tree Bindings
----------------------------------------------------
 -
--CX9020 Embedded PC
--Required root node properties:
--    - compatible = "bhf,cx9020", "fsl,imx53";
-diff --git a/Documentation/devicetree/bindings/arm/compulab-boards.txt b/Documentation/devicetree/bindings/arm/compulab-boards.txt
-deleted file mode 100644
-index 42a10285af9c..000000000000
---- a/Documentation/devicetree/bindings/arm/compulab-boards.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--CompuLab SB-SOM is a multi-module baseboard capable of carrying:
-- - CM-T43
-- - CM-T54
-- - CM-QS600
-- - CL-SOM-AM57x
-- - CL-SOM-iMX7
--modules with minor modifications to the SB-SOM assembly.
+-RTD1295 SoC
+-===========
 -
 -Required root node properties:
--    - compatible = should be "compulab,sb-som"
 -
--Compulab CL-SOM-iMX7 is a miniature System-on-Module (SoM) based on
--Freescale i.MX7 ARM Cortex-A7 System-on-Chip.
+- - compatible :  must contain "realtek,rtd1295"
 -
--Required root node properties:
--    - compatible = "compulab,cl-som-imx7", "fsl,imx7d";
 -
--Compulab SBC-iMX7 is a single board computer based on the
--Freescale i.MX7 system-on-chip. SBC-iMX7 is implemented with
--the CL-SOM-iMX7 System-on-Module providing most of the functions,
--and SB-SOM-iMX7 carrier board providing additional peripheral
--functions and connectors.
+-Root node property compatible must contain, depending on board:
 -
--Required root node properties:
--    - compatible = "compulab,sbc-imx7", "compulab,cl-som-imx7", "fsl,imx7d";
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-deleted file mode 100644
-index 5074aeecd327..000000000000
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ /dev/null
-@@ -1,229 +0,0 @@
--Freescale i.MX Platforms Device Tree Bindings
-------------------------------------------------
+- - MeLE V9: "mele,v9"
+- - ProBox2 AVA: "probox2,ava"
+- - Zidoo X9S: "zidoo,x9s"
 -
--i.MX23 Evaluation Kit
--Required root node properties:
--    - compatible = "fsl,imx23-evk", "fsl,imx23";
 -
--i.MX25 Product Development Kit
--Required root node properties:
--    - compatible = "fsl,imx25-pdk", "fsl,imx25";
+-Example:
 -
--i.MX27 Product Development Kit
--Required root node properties:
--    - compatible = "fsl,imx27-pdk", "fsl,imx27";
--
--i.MX28 Evaluation Kit
--Required root node properties:
--    - compatible = "fsl,imx28-evk", "fsl,imx28";
--
--i.MX51 Babbage Board
--Required root node properties:
--    - compatible = "fsl,imx51-babbage", "fsl,imx51";
--
--i.MX53 Automotive Reference Design Board
--Required root node properties:
--    - compatible = "fsl,imx53-ard", "fsl,imx53";
--
--i.MX53 Evaluation Kit
--Required root node properties:
--    - compatible = "fsl,imx53-evk", "fsl,imx53";
--
--i.MX53 Quick Start Board
--Required root node properties:
--    - compatible = "fsl,imx53-qsb", "fsl,imx53";
--
--i.MX53 Smart Mobile Reference Design Board
--Required root node properties:
--    - compatible = "fsl,imx53-smd", "fsl,imx53";
--
--i.MX6 Quad Armadillo2 Board
--Required root node properties:
--    - compatible = "fsl,imx6q-arm2", "fsl,imx6q";
--
--i.MX6 Quad SABRE Lite Board
--Required root node properties:
--    - compatible = "fsl,imx6q-sabrelite", "fsl,imx6q";
--
--i.MX6 Quad SABRE Smart Device Board
--Required root node properties:
--    - compatible = "fsl,imx6q-sabresd", "fsl,imx6q";
--
--i.MX6 Quad SABRE Automotive Board
--Required root node properties:
--    - compatible = "fsl,imx6q-sabreauto", "fsl,imx6q";
--
--i.MX6SLL EVK board
--Required root node properties:
--    - compatible = "fsl,imx6sll-evk", "fsl,imx6sll";
--
--i.MX6 Quad Plus SABRE Smart Device Board
--Required root node properties:
--    - compatible = "fsl,imx6qp-sabresd", "fsl,imx6qp";
--
--i.MX6 Quad Plus SABRE Automotive Board
--Required root node properties:
--    - compatible = "fsl,imx6qp-sabreauto", "fsl,imx6qp";
--
--i.MX6 DualLite SABRE Smart Device Board
--Required root node properties:
--    - compatible = "fsl,imx6dl-sabresd", "fsl,imx6dl";
--
--i.MX6 DualLite/Solo SABRE Automotive Board
--Required root node properties:
--    - compatible = "fsl,imx6dl-sabreauto", "fsl,imx6dl";
--
--i.MX6 SoloLite EVK Board
--Required root node properties:
--    - compatible = "fsl,imx6sl-evk", "fsl,imx6sl";
--
--i.MX6 UltraLite 14x14 EVK Board
--Required root node properties:
--    - compatible = "fsl,imx6ul-14x14-evk", "fsl,imx6ul";
--
--i.MX6 UltraLiteLite 14x14 EVK Board
--Required root node properties:
--    - compatible = "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
--
--i.MX6 ULZ 14x14 EVK Board
--Required root node properties:
--    - compatible = "fsl,imx6ulz-14x14-evk", "fsl,imx6ull", "fsl,imx6ulz";
--
--i.MX6 SoloX SDB Board
--Required root node properties:
--    - compatible = "fsl,imx6sx-sdb", "fsl,imx6sx";
--
--i.MX6 SoloX Sabre Auto Board
--Required root node properties:
--    - compatible = "fsl,imx6sx-sabreauto", "fsl,imx6sx";
--
--i.MX7 SabreSD Board
--Required root node properties:
--    - compatible = "fsl,imx7d-sdb", "fsl,imx7d";
--
--Generic i.MX boards
---------------------
--
--No iomux setup is done for these boards, so this must have been configured
--by the bootloader for boards to work with the generic bindings.
--
--i.MX27 generic board
--Required root node properties:
--    - compatible = "fsl,imx27";
--
--i.MX51 generic board
--Required root node properties:
--    - compatible = "fsl,imx51";
--
--i.MX53 generic board
--Required root node properties:
--    - compatible = "fsl,imx53";
--
--i.MX6q generic board
--Required root node properties:
--    - compatible = "fsl,imx6q";
--
--Freescale Vybrid Platform Device Tree Bindings
------------------------------------------------
--
--For the Vybrid SoC familiy all variants with DDR controller are supported,
--which is the VF5xx and VF6xx series. Out of historical reasons, in most
--places the kernel uses vf610 to refer to the whole familiy.
--The compatible string "fsl,vf610m4" is used for the secondary Cortex-M4
--core support.
--
--Required root node compatible property (one of them):
--    - compatible = "fsl,vf500";
--    - compatible = "fsl,vf510";
--    - compatible = "fsl,vf600";
--    - compatible = "fsl,vf610";
--    - compatible = "fsl,vf610m4";
--
--Freescale LS1021A Platform Device Tree Bindings
--------------------------------------------------
--
--Required root node compatible properties:
--  - compatible = "fsl,ls1021a";
--
--Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
------------------------------------------------------------------
--
--LS1012A SoC
--Required root node properties:
--    - compatible = "fsl,ls1012a";
--
--LS1012A ARMv8 based RDB Board
--Required root node properties:
--    - compatible = "fsl,ls1012a-rdb", "fsl,ls1012a";
--
--LS1012A ARMv8 based FRDM Board
--Required root node properties:
--    - compatible = "fsl,ls1012a-frdm", "fsl,ls1012a";
--
--LS1012A ARMv8 based QDS Board
--Required root node properties:
--    - compatible = "fsl,ls1012a-qds", "fsl,ls1012a";
--
--LS1043A SoC
--Required root node properties:
--    - compatible = "fsl,ls1043a";
--
--LS1043A ARMv8 based RDB Board
--Required root node properties:
--    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
--
--LS1043A ARMv8 based QDS Board
--Required root node properties:
--    - compatible = "fsl,ls1043a-qds", "fsl,ls1043a";
--
--LS1046A SoC
--Required root node properties:
--    - compatible = "fsl,ls1046a";
--
--LS1046A ARMv8 based QDS Board
--Required root node properties:
--    - compatible = "fsl,ls1046a-qds", "fsl,ls1046a";
--
--LS1046A ARMv8 based RDB Board
--Required root node properties:
--    - compatible = "fsl,ls1046a-rdb", "fsl,ls1046a";
--
--LS1088A SoC
--Required root node properties:
--    - compatible = "fsl,ls1088a";
--
--LS1088A ARMv8 based QDS Board
--Required root node properties:
--    - compatible = "fsl,ls1088a-qds", "fsl,ls1088a";
--
--LS1088A ARMv8 based RDB Board
--Required root node properties:
--    - compatible = "fsl,ls1088a-rdb", "fsl,ls1088a";
--
--LS2080A SoC
--Required root node properties:
--    - compatible = "fsl,ls2080a";
--
--LS2080A ARMv8 based Simulator model
--Required root node properties:
--    - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
--
--LS2080A ARMv8 based QDS Board
--Required root node properties:
--    - compatible = "fsl,ls2080a-qds", "fsl,ls2080a";
--
--LS2080A ARMv8 based RDB Board
--Required root node properties:
--    - compatible = "fsl,ls2080a-rdb", "fsl,ls2080a";
--
--LS2088A SoC
--Required root node properties:
--    - compatible = "fsl,ls2088a";
--
--LS2088A ARMv8 based QDS Board
--Required root node properties:
--    - compatible = "fsl,ls2088a-qds", "fsl,ls2088a";
--
--LS2088A ARMv8 based RDB Board
--Required root node properties:
--    - compatible = "fsl,ls2088a-rdb", "fsl,ls2088a";
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+-    compatible = "zidoo,x9s", "realtek,rtd1295";
+diff --git a/Documentation/devicetree/bindings/arm/realtek.yaml b/Documentation/devicetree/bindings/arm/realtek.yaml
 new file mode 100644
-index 000000000000..a4d625d7ff4d
+index 000000000000..84ee9b22ef7a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -0,0 +1,214 @@
++++ b/Documentation/devicetree/bindings/arm/realtek.yaml
+@@ -0,0 +1,23 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/bindings/arm/fsl.yaml#
++$id: http://devicetree.org/schemas/arm/realtek.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Freescale i.MX Platforms Device Tree Bindings
++title: Realtek platforms device tree bindings
 +
 +maintainers:
-+  - Shawn Guo <shawnguo@kernel.org>
-+  - Li Yang <leoyang.li@nxp.com>
++  - Andreas Färber <afaerber@suse.de>
 +
 +properties:
 +  $nodename:
 +    const: '/'
 +  compatible:
-+    oneOf:
-+      - description: i.MX23 based Boards
-+        items:
-+          - enum:
-+              - fsl,imx23-evk
-+              - olimex,imx23-olinuxino
-+          - const: fsl,imx23
-+
-+      - description: i.MX25 Product Development Kit
-+        items:
-+          - enum:
-+              - fsl,imx25-pdk
-+          - const: fsl,imx25
-+
-+      - description: i.MX27 Product Development Kit
-+        items:
-+          - enum:
-+              - fsl,imx27-pdk
-+          - const: fsl,imx27
-+
-+      - description: i.MX28 based Boards
-+        items:
-+          - enum:
-+              - fsl,imx28-evk
-+              - i2se,duckbill
-+              - i2se,duckbill-2
-+              - technologic,imx28-ts4600
-+          - const: fsl,imx28
-+      - description: i.MX28 Duckbill 2 based Boards
-+        items:
-+          - enum:
-+              - i2se,duckbill-2-485
-+              - i2se,duckbill-2-enocean
-+              - i2se,duckbill-2-spi
-+          - const: i2se,duckbill-2
-+          - const: fsl,imx28
-+
-+      - description: i.MX51 Babbage Board
-+        items:
-+          - enum:
-+              - armadeus,imx51-apf51
-+              - fsl,imx51-babbage
-+              - technologic,imx51-ts4800
-+          - const: fsl,imx51
-+
-+      - description: i.MX53 based Boards
-+        items:
-+          - enum:
-+              - bhf,cx9020
-+              - fsl,imx53-ard
-+              - fsl,imx53-evk
-+              - fsl,imx53-qsb
-+              - fsl,imx53-smd
-+          - const: fsl,imx53
-+
-+      - description: i.MX6Q based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6q-arm2
-+              - fsl,imx6q-sabreauto
-+              - fsl,imx6q-sabrelite
-+              - fsl,imx6q-sabresd
-+              - technologic,imx6q-ts4900
-+              - technologic,imx6q-ts7970
-+          - const: fsl,imx6q
-+
-+      - description: i.MX6QP based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6qp-sabreauto      # i.MX6 Quad Plus SABRE Automotive Board
-+              - fsl,imx6qp-sabresd        # i.MX6 Quad Plus SABRE Smart Device Board
-+          - const: fsl,imx6qp
-+
-+      - description: i.MX6DL based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6dl-sabreauto      # i.MX6 DualLite/Solo SABRE Automotive Board
-+              - fsl,imx6dl-sabresd        # i.MX6 DualLite SABRE Smart Device Board
-+              - technologic,imx6dl-ts4900
-+              - technologic,imx6dl-ts7970
-+          - const: fsl,imx6dl
-+
-+      - description: i.MX6SL based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6sl-evk            # i.MX6 SoloLite EVK Board
-+          - const: fsl,imx6sl
-+
-+      - description: i.MX6SLL based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6sll-evk
-+          - const: fsl,imx6sll
-+
-+      - description: i.MX6SX based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6sx-sabreauto      # i.MX6 SoloX Sabre Auto Board
-+              - fsl,imx6sx-sdb            # i.MX6 SoloX SDB Board
-+          - const: fsl,imx6sx
-+
-+      - description: i.MX6UL based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
-+          - const: fsl,imx6ul
-+
-+      - description: i.MX6ULL based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6ull-14x14-evk     # i.MX6 UltraLiteLite 14x14 EVK Board
-+          - const: fsl,imx6ull
-+
-+      - description: i.MX6ULZ based Boards
-+        items:
-+          - enum:
-+              - fsl,imx6ulz-14x14-evk     # i.MX6 ULZ 14x14 EVK Board
-+          - const: fsl,imx6ull # This seems odd. Should be last?
-+          - const: fsl,imx6ulz
-+
-+      - description: i.MX7D based Boards
-+        items:
-+          - enum:
-+              - fsl,imx7d-sdb             # i.MX7 SabreSD Board
-+          - const: fsl,imx7d
-+
-+      - description:
-+          Compulab SBC-iMX7 is a single board computer based on the
-+          Freescale i.MX7 system-on-chip. SBC-iMX7 is implemented with
-+          the CL-SOM-iMX7 System-on-Module providing most of the functions,
-+          and SB-SOM-iMX7 carrier board providing additional peripheral
-+          functions and connectors.
-+        items:
-+          - const: compulab,sbc-imx7
-+          - const: compulab,cl-som-imx7
-+          - const: fsl,imx7d
-+
-+      - description:
-+          Freescale Vybrid Platform Device Tree Bindings
-+
-+          For the Vybrid SoC familiy all variants with DDR controller are supported,
-+          which is the VF5xx and VF6xx series. Out of historical reasons, in most
-+          places the kernel uses vf610 to refer to the whole familiy.
-+          The compatible string "fsl,vf610m4" is used for the secondary Cortex-M4
-+          core support.
-+        items:
-+          - enum:
-+              - fsl,vf500
-+              - fsl,vf510
-+              - fsl,vf600
-+              - fsl,vf610
-+              - fsl,vf610m4
-+
-+      - description: LS1021A based Boards
-+        items:
-+          - enum:
-+              - fsl,ls1012a-rdb
-+              - fsl,ls1012a-frdm
-+              - fsl,ls1012a-qds
-+          - const: fsl,ls1021a
-+
-+      - description: LS1043A based Boards
-+        items:
-+          - enum:
-+              - fsl,ls1043a-rdb
-+              - fsl,ls1043a-qds
-+          - const: fsl,ls1043a
-+
-+      - description: LS1046A based Boards
-+        items:
-+          - enum:
-+              - fsl,ls1046a-qds
-+              - fsl,ls1046a-rdb
-+          - const: fsl,ls1046a
-+
-+      - description: LS1088A based Boards
-+        items:
-+          - enum:
-+              - fsl,ls1088a-qds
-+              - fsl,ls1088a-rdb
-+          - const: fsl,ls1088a
-+
-+      - description: LS2080A based Boards
-+        items:
-+          - enum:
-+              - fsl,ls2080a-simu
-+              - fsl,ls2080a-qds
-+              - fsl,ls2080a-rdb
-+          - const: fsl,ls2080a
-+
-+      - description: LS2088A based Boards
-+        items:
-+          - enum:
-+              - fsl,ls2088a-qds
-+              - fsl,ls2088a-rdb
-+          - const: fsl,ls2088a
-+
++    # RTD1295 SoC based boards
++    items:
++      - enum:
++          - mele,v9
++          - probox2,ava
++          - zidoo,x9s
++      - const: realtek,rtd1295
 +...
-diff --git a/Documentation/devicetree/bindings/arm/i2se.txt b/Documentation/devicetree/bindings/arm/i2se.txt
-deleted file mode 100644
-index dbd54a3aa07d..000000000000
---- a/Documentation/devicetree/bindings/arm/i2se.txt
-+++ /dev/null
-@@ -1,22 +0,0 @@
--I2SE Device Tree Bindings
---------------------------
--
--Duckbill Board
--Required root node properties:
--    - compatible = "i2se,duckbill", "fsl,imx28";
--
--Duckbill 2 Board
--Required root node properties:
--    - compatible = "i2se,duckbill-2", "fsl,imx28";
--
--Duckbill 2 485 Board
--Required root node properties:
--    - compatible = "i2se,duckbill-2-485", "i2se,duckbill-2", "fsl,imx28";
--
--Duckbill 2 EnOcean Board
--Required root node properties:
--    - compatible = "i2se,duckbill-2-enocean", "i2se,duckbill-2", "fsl,imx28";
--
--Duckbill 2 SPI Board
--Required root node properties:
--    - compatible = "i2se,duckbill-2-spi", "i2se,duckbill-2", "fsl,imx28";
-diff --git a/Documentation/devicetree/bindings/arm/olimex.txt b/Documentation/devicetree/bindings/arm/olimex.txt
-deleted file mode 100644
-index d726aeca56be..000000000000
---- a/Documentation/devicetree/bindings/arm/olimex.txt
-+++ /dev/null
-@@ -1,10 +0,0 @@
--Olimex Device Tree Bindings
-----------------------------
--
--SAM9-L9260 Board
--Required root node properties:
--    - compatible = "olimex,sam9-l9260", "atmel,at91sam9260";
--
--i.MX23 Olinuxino Low Cost Board
--Required root node properties:
--    - compatible = "olimex,imx23-olinuxino", "fsl,imx23";
-diff --git a/Documentation/devicetree/bindings/arm/technologic.txt b/Documentation/devicetree/bindings/arm/technologic.txt
-deleted file mode 100644
-index f1cedc00dcab..000000000000
---- a/Documentation/devicetree/bindings/arm/technologic.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--Technologic Systems Platforms Device Tree Bindings
----------------------------------------------------
--
--TS-4600 is a System-on-Module based on the Freescale i.MX28 System-on-Chip.
--It can be mounted on a carrier board providing additional peripheral connectors.
--Required root node properties:
--	- compatible = "technologic,imx28-ts4600", "fsl,imx28"
--
--TS-4800 board
--Required root node properties:
--	- compatible = "technologic,imx51-ts4800", "fsl,imx51";
--
--TS-4900 is a System-on-Module based on the Freescale i.MX6 System-on-Chip.
--It can be mounted on a carrier board providing additional peripheral connectors.
--Required root node properties:
--	- compatible = "technologic,imx6dl-ts4900", "fsl,imx6dl"
--	- compatible = "technologic,imx6q-ts4900", "fsl,imx6q"
--
--TS-7970 is a System-on-Module based on the Freescale i.MX6 System-on-Chip.
--It can be mounted on a carrier board providing additional peripheral connectors.
--Required root node properties:
--	- compatible = "technologic,imx6dl-ts7970", "fsl,imx6dl"
--	- compatible = "technologic,imx6q-ts7970", "fsl,imx6q"
 -- 
 2.19.1
 
