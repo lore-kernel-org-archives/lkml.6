@@ -2,261 +2,133 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1868C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB40C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 616DD20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:32:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 616DD20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D75562145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:32:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oy5c1Tnt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75562145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbeLCKcw (ORCPT
+        id S1726322AbeLCKdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:32:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52466 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbeLCKcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:32:51 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E9FE2D2BFE;
-        Mon,  3 Dec 2018 10:32:23 +0000 (UTC)
-Received: from [10.36.118.125] (unknown [10.36.118.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 164D6662D2;
-        Mon,  3 Dec 2018 10:32:17 +0000 (UTC)
-Subject: Re: [PATCH RFCv2 1/4] mm/memory_hotplug: Introduce memory block types
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devel@linuxdriverproject.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Banman <andrew.banman@hpe.com>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Michal Such??nek <msuchanek@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-References: <20181130175922.10425-1-david@redhat.com>
- <20181130175922.10425-2-david@redhat.com>
- <20181201012507.lxfscl6ho3gc6gnn@master>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <af797dbb-0537-19ec-ef31-d72a3f979791@redhat.com>
-Date:   Mon, 3 Dec 2018 11:32:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 3 Dec 2018 05:33:00 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54950 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbeLCKdA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 05:33:00 -0500
+Received: by mail-wm1-f68.google.com with SMTP id z18so5180513wmc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=chojXKWYe2518mzyGYJ7zbMzCzqr0ZX9h4tgKI/cldo=;
+        b=Oy5c1TntXyQlfLYoECSnj5gXWzCnRn0Jwf1lYaRBQJ7H5nmXZQVf81A6j5vy0HlcdR
+         9mtpLnn6+q07bgdHrVGRGcXZPxQdyRET/mCKlIOGjsS0bWJj9T71VvJzPvfBm7j8sCU0
+         vMaqjrth69PAQ7JLj9GZHu5CVKLCJm9oN4rqM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=chojXKWYe2518mzyGYJ7zbMzCzqr0ZX9h4tgKI/cldo=;
+        b=cd4JDHP7S7dcw25RsCHXQbFzUjljXtOWcJKQ9JtON8ALyc+Qda5ZrCVVDivDqkgk1J
+         ZlxPM6aWvMTGeaakTsa/IXIqcOjPa1uUAszukwGZ4EoAShOGeLtX/5kW39ymyhlAKfeA
+         /ctLDN+zlrVNsRcKT3fDcBqjo1cXnOaMrqxaUHh8FoxQeYzkDuH3JJ9ojE/N6XVHBZqI
+         6N6Rl/9UGsP1tIUJFlzqZhBqffhJvE36UnvL6foVODq6oVvK1aZmcCT5GGwRdmP9AQGo
+         ehAiT0Zhe86sx7F2CEb2l8KWNM23SH/G0DTnjhDOixJvy4hRKtriTXW7I8vJp79OTo9Y
+         IqkA==
+X-Gm-Message-State: AA+aEWYrf2Gv6DDHXE+yeJw48HMmVzyFh7n92yBc/nldQy5CEvv5eNJg
+        jRLM7sEoKvTW34R6uQ/OobTlhw==
+X-Google-Smtp-Source: AFSGD/VQKrCvzY8BOuBhwoesMN9jNFhNkZxxK2pxDJtBxVAzqf/ZDkdzxgP8xJRXj5NjCt/jcP7OCg==
+X-Received: by 2002:a1c:aecb:: with SMTP id x194mr7143502wme.96.1543833151162;
+        Mon, 03 Dec 2018 02:32:31 -0800 (PST)
+Received: from dell ([2.31.167.218])
+        by smtp.gmail.com with ESMTPSA id o4sm5462368wmo.29.2018.12.03.02.32.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 02:32:30 -0800 (PST)
+Date:   Mon, 3 Dec 2018 10:32:28 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v3 1/8] mfd / platform: cros_ec: use devm_mfd_add_devices.
+Message-ID: <20181203103228.GC26661@dell>
+References: <20181127121849.23975-1-enric.balletbo@collabora.com>
+ <20181127121849.23975-2-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20181201012507.lxfscl6ho3gc6gnn@master>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 03 Dec 2018 10:32:23 +0000 (UTC)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181127121849.23975-2-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.12.18 02:25, Wei Yang wrote:
-> On Fri, Nov 30, 2018 at 06:59:19PM +0100, David Hildenbrand wrote:
->> Memory onlining should always be handled by user space, because only user
->> space knows which use cases it wants to satisfy. E.g. memory might be
->> onlined to the MOVABLE zone even if it can never be removed from the
->> system, e.g. to make usage of huge pages more reliable.
->>
->> However to implement such rules (especially default rules in distributions)
->> we need more information about the memory that was added in user space.
->>
->> E.g. on x86 we want to online memory provided by balloon devices (e.g.
->> XEN, Hyper-V) differently (-> will not be unplugged by offlining the whole
->> block) than ordinary DIMMs (-> might eventually be unplugged by offlining
->> the whole block). This might also become relevat for other architectures.
->>
->> Also, udev rules right now check if running on s390x and treat all added
->> memory blocks as standby memory (-> don't online automatically). As soon as
->> we support other memory hotplug mechanism (e.g. virtio-mem) checks would
->> have to get more involved (e.g. also check if under KVM) but eventually
->> also wrong (e.g. if KVM ever supports standby memory we are doomed).
->>
->> I decided to allow to specify the type of memory that is getting added
->> to the system. Let's start with two types, BOOT and UNSPECIFIED to get the
->> basic infrastructure running. We'll introduce and use further types in
->> follow-up patches. For now we classify any hotplugged memory temporarily
->> as as UNSPECIFIED (which will eventually be dropped later on).
->>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Ingo Molnar <mingo@kernel.org>
->> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
->> Cc: Andrew Banman <andrew.banman@hpe.com>
->> Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
->> Cc: Oscar Salvador <osalvador@suse.com>
->> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->> Cc: Michal Hocko <mhocko@kernel.org>
->> Cc: Michal Such??nek <msuchanek@suse.de>
->> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
->> Cc: Dan Williams <dan.j.williams@intel.com>
->> Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
->> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
->> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->> drivers/base/memory.c  | 38 +++++++++++++++++++++++++++++++++++---
->> include/linux/memory.h | 27 +++++++++++++++++++++++++++
->> 2 files changed, 62 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
->> index 0c290f86ab20..17f2985c07c5 100644
->> --- a/drivers/base/memory.c
->> +++ b/drivers/base/memory.c
->> @@ -381,6 +381,29 @@ static ssize_t show_phys_device(struct device *dev,
->> 	return sprintf(buf, "%d\n", mem->phys_device);
->> }
->>
->> +static ssize_t type_show(struct device *dev, struct device_attribute *attr,
->> +			 char *buf)
->> +{
->> +	struct memory_block *mem = to_memory_block(dev);
->> +	ssize_t len = 0;
->> +
->> +	switch (mem->type) {
->> +	case MEMORY_BLOCK_UNSPECIFIED:
->> +		len = sprintf(buf, "unspecified\n");
->> +		break;
->> +	case MEMORY_BLOCK_BOOT:
->> +		len = sprintf(buf, "boot\n");
->> +		break;
->> +	default:
->> +		len = sprintf(buf, "ERROR-UNKNOWN-%ld\n",
->> +				mem->state);
->> +		WARN_ON(1);
->> +		break;
->> +	}
->> +
->> +	return len;
->> +}
->> +
->> #ifdef CONFIG_MEMORY_HOTREMOVE
->> static void print_allowed_zone(char *buf, int nid, unsigned long start_pfn,
->> 		unsigned long nr_pages, int online_type,
->> @@ -442,6 +465,7 @@ static DEVICE_ATTR(phys_index, 0444, show_mem_start_phys_index, NULL);
->> static DEVICE_ATTR(state, 0644, show_mem_state, store_mem_state);
->> static DEVICE_ATTR(phys_device, 0444, show_phys_device, NULL);
->> static DEVICE_ATTR(removable, 0444, show_mem_removable, NULL);
->> +static DEVICE_ATTR_RO(type);
+On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
+
+> Use devm_mfd_add_devices() for adding cros-ec core MFD child devices. This
+> reduces the need of remove callback from platform/chrome for removing the
+> MFD child devices.
 > 
-> This is correct, while looks not consistent with other attributes.
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
 > 
-> Not that beautiful :-)
-
-I might change the other ones first, too (or keep this one consistent to
-the existing ones). Thanks!
-
+> Changes in v3:
+> - Removed cros_ec_remove from include file.
 > 
->>
->> /*
->>  * Block size attribute stuff
->> @@ -620,6 +644,7 @@ static struct attribute *memory_memblk_attrs[] = {
->> 	&dev_attr_state.attr,
->> 	&dev_attr_phys_device.attr,
->> 	&dev_attr_removable.attr,
->> +	&dev_attr_type.attr,
->> #ifdef CONFIG_MEMORY_HOTREMOVE
->> 	&dev_attr_valid_zones.attr,
->> #endif
->> @@ -657,13 +682,17 @@ int register_memory(struct memory_block *memory)
->> }
->>
->> static int init_memory_block(struct memory_block **memory,
->> -			     struct mem_section *section, unsigned long state)
->> +			     struct mem_section *section, unsigned long state,
->> +			     int type)
->> {
->> 	struct memory_block *mem;
->> 	unsigned long start_pfn;
->> 	int scn_nr;
->> 	int ret = 0;
->>
->> +	if (type == MEMORY_BLOCK_NONE)
->> +		return -EINVAL;
+> Changes in v2:
+> - Use devm only for the cros-ec core.
 > 
-> No one will pass in this value. Can we omit this check for now?
+>  drivers/mfd/cros_ec.c                 | 14 +++-----------
+>  drivers/mfd/cros_ec_dev.c             |  1 +
+>  drivers/platform/chrome/cros_ec_i2c.c | 10 ----------
+>  drivers/platform/chrome/cros_ec_lpc.c |  4 ----
+>  drivers/platform/chrome/cros_ec_spi.c | 11 -----------
+>  include/linux/mfd/cros_ec.h           | 10 ----------
+>  6 files changed, 4 insertions(+), 46 deletions(-)
 
-I could move it to patch nr 2 I guess, but as I introduce
-MEMORY_BLOCK_NONE here it made sense to keep it in here.
+Nice patch.
 
-(and I think at least for now it makes sense to not squash patch 1 and
-2, to easier discuss the new user interface/concept introduced in this
-patch).
+Just one question:
 
-Thanks!
+[...]
+
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index 8f9d6964173e..ff788d3e6d5f 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -493,6 +493,7 @@ static int ec_device_remove(struct platform_device *pdev)
+>  
+>  	cros_ec_debugfs_remove(ec);
+>  
+> +	mfd_remove_devices(ec->dev);
+
+Why is this still required?
+
+>  	cdev_del(&ec->cdev);
+>  	device_unregister(&ec->class_dev);
+>  	return 0;
+
+[...]
 
 -- 
-
-Thanks,
-
-David / dhildenb
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
