@@ -2,59 +2,60 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7577C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A96C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDC72087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4FED214E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="D8HGrzy7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BDC72087F
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PrRwAGZp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4FED214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbeLCKIS (ORCPT
+        id S1726207AbeLCKIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:08:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41774 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbeLCKIS (ORCPT
+        Mon, 3 Dec 2018 05:08:20 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40594 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbeLCKIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:08:18 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x10so11449201wrs.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:07:55 -0800 (PST)
+        Mon, 3 Dec 2018 05:08:19 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p4so11445926wrt.7
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:07:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gylxsZ9fcYlwwbMYTHy/WVwKOtRSFqkbXsc3NH3T39A=;
-        b=D8HGrzy7OYGWo08Qc+ECKpX1y2ejt5+HrIc/yd+Vbf49JlWm2ZtoOGx6cVj697YjZB
-         ZJrcHmYFaBvGDFacfQ9PvGob03Zzvd+GFDzL/EnZ8oE6nKeKfBWveveUlZSZtvmkvRRo
-         jqqsnsC9ocZh40KMwLM4IAvllIzfpIjKgl5CU=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=RQOdFC9CjkWwFX8rp28xoDvtflvd5veREOu6vb3xEl4=;
+        b=PrRwAGZpg1WSrlH+nDKOti9QiT/ISdGKiiT4vfkKVsyTZVwnWnbKZPr7Obm0IpQlCa
+         XabiZsDcWjoAP54MnwGasjqYwpsrdMVThmbNZ97Rz+2QOjIvgzfl8XrfbrchG6syivEf
+         EPRkfutL2oPKkSfwvSzTDm2cbN7sz82/gGum8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gylxsZ9fcYlwwbMYTHy/WVwKOtRSFqkbXsc3NH3T39A=;
-        b=JFYqjnBf2wcZyJB0buUNJACfJaYrLQ1wxHQEStf2oWP59uVXZHWaKYBbdjyzcwVM5y
-         lGMTLXuexLEScQeCetkWrAe3jjVyW/FP4Py+H6ISny8pLRHRT+WE/uZHB1VOdGUC/Anw
-         PtJjH1zruNBfm2V09qGuCtLG+Uurg8Yio5kNqKgnh8xvW3vUEg7pLESlOg7rXLE4vnJx
-         mQr+pf5xTK8nU6C4XeoZCGtK4FXyygJ8WIaFDdHeY2S4Vux6B/i6A8yivOawh0zn4vxq
-         kTp82pjKIT8uy+7ABYURwfGzby+pUfVYdqDEuFU64c8YRBpemTVTBFUgh4nNgl1yAh3Z
-         cQPw==
-X-Gm-Message-State: AA+aEWaxvldG39vqHxwWv12iQudFlyfjantil7Q75Dy0FvKv8mRXlC5L
-        xNjau9PhqYr5vo5/ljnLu463rw==
-X-Google-Smtp-Source: AFSGD/X/ftP2iitUfgcxC8dWoPI4Wirc8tHDe0MCInKQ/fAjCaSEPe51HLEf83+T1guceMN9DtEBIQ==
-X-Received: by 2002:a5d:56d2:: with SMTP id m18mr14405877wrw.113.1543831675070;
-        Mon, 03 Dec 2018 02:07:55 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=RQOdFC9CjkWwFX8rp28xoDvtflvd5veREOu6vb3xEl4=;
+        b=CThMoDebvrJ9W5gqJlvS6UV6lc8jWP4aGTCospx7fD3eDzJaIg+6fkA/ZKG/Lvu7zp
+         GuVD2Mhpqg9VuUeaKTUSKeR/P3lfAgOsHLuO9Wh1rqMLTC0C/ETD9dn9DxtebfXT9InU
+         j1zVIiGJuokGz/jztApxfQEKtHpePR/p/GzCgydnrf2ywtRBeSxmvhhXsRT0sEoEnLPk
+         QO8uGqhn+NS3yyF9xoPvJTDD5n28oG3JTaHhtTpMYfdFtXvWVHZJXUgRU0FL64XH/DmB
+         yhRery7x7hhQ89cjwBHal2FwprJEm12+Pod6dXh0w6HQXiXkgZ5Oa3R90RPxcYurY3WJ
+         HVIA==
+X-Gm-Message-State: AA+aEWYI/gQsJocqwlUO0/gbbzQTXM87s+G8IiUCsvholH7yICTsEU7z
+        dG6Hnl57UpJ8lT4tjnr4ieIi/A==
+X-Google-Smtp-Source: AFSGD/VPp+6EJ1yRntChb1CpYmwMyPbxm1MNxORzNUzpMr2buG2vPfa1uRSYwFnePbVCUHlq6tSumg==
+X-Received: by 2002:a5d:45d0:: with SMTP id b16mr12686122wrs.86.1543831676559;
+        Mon, 03 Dec 2018 02:07:56 -0800 (PST)
 Received: from localhost.localdomain (conf.hotelmediterraneo.com. [2.228.78.71])
-        by smtp.gmail.com with ESMTPSA id n15sm18589236wrt.21.2018.12.03.02.07.53
+        by smtp.gmail.com with ESMTPSA id n15sm18589236wrt.21.2018.12.03.02.07.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:07:54 -0800 (PST)
+        Mon, 03 Dec 2018 02:07:55 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -65,10 +66,12 @@ To:     Yong Deng <yong.deng@magewell.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 0/5] media/sun6i: Allwinner A64 CSI support
-Date:   Mon,  3 Dec 2018 15:37:42 +0530
-Message-Id: <20181203100747.16442-1-jagan@amarulasolutions.com>
+Subject: [PATCH 1/5] dt-bindings: media: sun6i: Add A64 CSI compatible (w/ H3 fallback)
+Date:   Mon,  3 Dec 2018 15:37:43 +0530
+Message-Id: <20181203100747.16442-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20181203100747.16442-1-jagan@amarulasolutions.com>
+References: <20181203100747.16442-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,33 +79,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series support CSI on Allwinner A64.
+Allwinner A64 CSI has single channel time-multiplexed BT.656
+CMOS sensor interface like H3.
 
-The CSI controller seems similar to that of in H3, so fallback
-compatible is used to load the driver.
+Add a compatible string for it with H3 fallback compatible string,
+in this case the H3 driver can be used.
 
-Unlike other SoC's A64 has set of GPIO Pin gropus SDA, SCK intead
-of dedicated I2C controller, so this series used i2c-gpio bitbanging.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Right now the camera is able to detect, but capture images shows 
-sequence of red, blue line. any suggestion please help.
-
-Any inputs,
-Jagan.
-
-Jagan Teki (5):
-  dt-bindings: media: sun6i: Add A64 CSI compatible (w/ H3 fallback)
-  dt-bindings: media: sun6i: Add vcc-csi supply property
-  media: sun6i: Add vcc-csi supply regulator
-  arm64: dts: allwinner: a64: Add A64 CSI controller
-  arm64: dts: allwinner: a64-amarula-relic: Add OV5640 camera node
-
- .../devicetree/bindings/media/sun6i-csi.txt   |  4 ++
- .../allwinner/sun50i-a64-amarula-relic.dts    | 54 +++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 26 +++++++++
- .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 15 ++++++
- 4 files changed, 99 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+index cc37cf7fd051..e78cf4f9bc8c 100644
+--- a/Documentation/devicetree/bindings/media/sun6i-csi.txt
++++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+@@ -7,6 +7,7 @@ Required properties:
+   - compatible: value must be one of:
+     * "allwinner,sun6i-a31-csi"
+     * "allwinner,sun8i-h3-csi"
++    * "allwinner,sun50i-a64-csi", "allwinner,sun8i-h3-csi"
+     * "allwinner,sun8i-v3s-csi"
+   - reg: base address and size of the memory-mapped region.
+   - interrupts: interrupt associated to this IP
 -- 
 2.18.0.321.gffc6fa0e3
 
