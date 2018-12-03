@@ -2,127 +2,109 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A0BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BC7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 220E9206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:15:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 220E9206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id E2F1A2081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2F1A2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725840AbeLCEPZ (ORCPT
+        id S1725861AbeLCETc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:15:25 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16069 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725807AbeLCEPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:15:25 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3F2039898AC0F;
-        Mon,  3 Dec 2018 12:15:19 +0800 (CST)
-Received: from HSH1000038028.huawei.com (10.177.161.152) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 3 Dec 2018 12:15:12 +0800
-From:   Kevin Wangtao <kevin.wangtao@hisilicon.com>
-To:     <jassisinghbrar@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <leo.yan@linaro.org>,
-        <gengyanping@hisilicon.com>, <suzhuangluan@hisilicon.com>,
-        Kevin Wangtao <kevin.wangtao@hisilicon.com>
-Subject: [PATCH] mailbox: Hi3660: Fixup mailbox state machine malfunction issue
-Date:   Mon, 3 Dec 2018 11:55:09 +0800
-Message-ID: <1543809309-61169-1-git-send-email-kevin.wangtao@hisilicon.com>
-X-Mailer: git-send-email 2.8.1
+        Sun, 2 Dec 2018 23:19:32 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:37090 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725806AbeLCETc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 23:19:32 -0500
+X-IronPort-AV: E=Sophos;i="5.56,308,1539619200"; 
+   d="scan'208";a="48930142"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 03 Dec 2018 12:19:24 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id C0F204B6ED69;
+        Mon,  3 Dec 2018 12:19:24 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 3 Dec 2018 12:19:27 +0800
+Date:   Mon, 3 Dec 2018 12:19:10 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v12 4/5] x86/boot: Parse SRAT table from RSDP and store
+ immovable memory
+Message-ID: <20181203041910.GE30941@localhost.localdomain>
+References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
+ <20181129081631.11139-5-fanc.fnst@cn.fujitsu.com>
+ <20181129175520.xcmj3bv4yhdr7kk3@gabell>
+ <20181130012454.GB1527@localhost.localdomain>
+ <20181130145432.j2iwbglwrtj5xdus@gabell>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.161.152]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181130145432.j2iwbglwrtj5xdus@gabell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: C0F204B6ED69.AD9D5
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current mailbox driver of Hi3660 release the mailbox directly
-before sending a new message which may cause last message lost
-and next message sending doesn't take effect actually.
+On Fri, Nov 30, 2018 at 09:54:33AM -0500, Masayoshi Mizuma wrote:
+>On Fri, Nov 30, 2018 at 09:24:54AM +0800, Chao Fan wrote:
+>> >>  /* acpitb.c */
+>> >> +#ifdef CONFIG_RANDOMIZE_BASE
+>> >> +/* Store the amount of immovable memory regions */
+>> >> +int num_immovable_mem;
+>> >> +#endif
+>> >> +
+>> >> +#ifdef CONFIG_EARLY_PARSE_RSDP
+>> >> +void get_immovable_mem(void);
+>> >
+>> >> +/* There are 72 kinds of ACPI_SIG in head file of ACPI. */
+>> >> +#define MAX_ACPI_SIG	72
+>> >
+>> >The 72 isn't the specification of ACPI, right? So the number
+>> 
+>> Yes, it's from  ACPI code, include/acpi/actbl*h.
+>> Boris said there should be a check for the num_entries,
+>> I didn't get a good idea, so I use the max number to check it.
+>> So do you have some advice?
+>
+>Ah, got it. How about adding the check for len to prevent the wrap?
+>Like as:
+>
+>	len = header->length;
+>	if (len <= sizeof(struct acpi_table_header))
+>		return NULL;
+> 	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
 
-This patch fixs this issue by following the right progress below,
-each time before sending a message, mailbox driver will check
-whether the mailbox is in ready state, if last message has been
-acknowledged, the mailbox driver will clear the ack state to turn
-the mailbox to ready state again.
+Hi Masa,
 
-Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
----
- drivers/mailbox/hi3660-mailbox.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+Your check is right, but not exactly the same.
+I think what Boris said is to prevent num_entries from getting too large
+and the loop getting too much.
+So the 'num_entries' or 'len' can't be more than a fixed value.
 
-diff --git a/drivers/mailbox/hi3660-mailbox.c b/drivers/mailbox/hi3660-mailbox.c
-index 3eea6b6..035b71a 100644
---- a/drivers/mailbox/hi3660-mailbox.c
-+++ b/drivers/mailbox/hi3660-mailbox.c
-@@ -38,6 +38,7 @@
- #define MBOX_AUTOMATIC_ACK		1
- 
- #define MBOX_STATE_IDLE			BIT(4)
-+#define MBOX_STATE_READY		BIT(5)
- #define MBOX_STATE_ACK			BIT(7)
- 
- #define MBOX_MSG_LEN			8
-@@ -91,8 +92,8 @@ static int hi3660_mbox_check_state(struct mbox_chan *chan)
- 	unsigned long val;
- 	unsigned int ret;
- 
--	/* Mailbox is idle so directly bail out */
--	if (readl(base + MBOX_MODE_REG) & MBOX_STATE_IDLE)
-+	/* Mailbox is ready to use */
-+	if (readl(base + MBOX_MODE_REG) & MBOX_STATE_READY)
- 		return 0;
- 
- 	/* Wait for acknowledge from remote */
-@@ -103,9 +104,9 @@ static int hi3660_mbox_check_state(struct mbox_chan *chan)
- 		return ret;
- 	}
- 
--	/* Ensure channel is released */
--	writel(0xffffffff, base + MBOX_IMASK_REG);
--	writel(BIT(mchan->ack_irq), base + MBOX_SRC_REG);
-+	/* clear ack state, mailbox will get back to ready state */
-+	writel(BIT(mchan->ack_irq), base + MBOX_ICLR_REG);
-+
- 	return 0;
- }
- 
-@@ -160,10 +161,6 @@ static int hi3660_mbox_startup(struct mbox_chan *chan)
- {
- 	int ret;
- 
--	ret = hi3660_mbox_check_state(chan);
--	if (ret)
--		return ret;
--
- 	ret = hi3660_mbox_unlock(chan);
- 	if (ret)
- 		return ret;
-@@ -183,10 +180,11 @@ static int hi3660_mbox_send_data(struct mbox_chan *chan, void *msg)
- 	void __iomem *base = MBOX_BASE(mbox, ch);
- 	u32 *buf = msg;
- 	unsigned int i;
-+	int ret;
- 
--	/* Ensure channel is released */
--	writel_relaxed(0xffffffff, base + MBOX_IMASK_REG);
--	writel_relaxed(BIT(mchan->ack_irq), base + MBOX_SRC_REG);
-+	ret = hi3660_mbox_check_state(chan);
-+	if (ret)
-+		return ret;
- 
- 	/* Clear mask for destination interrupt */
- 	writel_relaxed(~BIT(mchan->dst_irq), base + MBOX_IMASK_REG);
--- 
-2.8.1
+Thanks,
+Chao Fan
+
+>
+>Thanks,
+>Masa
+>
+>
+
 
