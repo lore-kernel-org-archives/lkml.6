@@ -2,89 +2,115 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2532C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 518BBC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87D65206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:16:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D65206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 1990B206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1990B206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725937AbeLCNRd (ORCPT
+        id S1726014AbeLCNRw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:17:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46596 "EHLO mx1.suse.de"
+        Mon, 3 Dec 2018 08:17:52 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42107 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725830AbeLCNRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:17:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5DA1BAC5A;
-        Mon,  3 Dec 2018 13:16:32 +0000 (UTC)
-Date:   Mon, 3 Dec 2018 14:16:31 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: don't unconditionally shortcut print_time()
-Message-ID: <20181203131631.n4uzbh2tdlskobg5@pathway.suse.cz>
-References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
- <201811300226.wAU2Q2JG060388@www262.sakura.ne.jp>
- <20181130123027.cyqfi2k34nh2gjmx@pathway.suse.cz>
- <02b4ce85-c1e5-6601-e3a7-cecfbd5298dc@i-love.sakura.ne.jp>
- <8634f952-7a14-055d-943c-d219ab5d8c1b@i-love.sakura.ne.jp>
- <1c1de4f8-f08e-37e5-2438-47ab985d476e@i-love.sakura.ne.jp>
+        id S1725830AbeLCNRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:17:51 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 067E4A2AC0FC;
+        Mon,  3 Dec 2018 21:16:35 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Mon, 3 Dec 2018
+ 21:16:33 +0800
+Date:   Mon, 3 Dec 2018 13:16:21 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <jic23@kernel.org>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-usp@googlegroups.com>
+Subject: Re: [PATCH] staging: iio: ad5933: add binding doc for ad5933
+Message-ID: <20181203131621.00002a40@huawei.com>
+In-Reply-To: <20181202165712.t6pd6ygq57llf2lr@smtp.gmail.com>
+References: <20181202165712.t6pd6ygq57llf2lr@smtp.gmail.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c1de4f8-f08e-37e5-2438-47ab985d476e@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 2018-12-02 14:02:28, Tetsuo Handa wrote:
-> On 2018/12/02 8:49, kbuild test robot wrote:
-> >> kernel/printk/printk.c:2396:5: error: 'printk_time' undeclared (first use in this function)
->         ^~~~~~~~~~~
-> Thanks. printk_time depends on CONFIG_PRINTK=y. Added a dummy definition.
-> 
-> 
-> 
-> >From f903b9fa36159472a207f93e2405e45e3999f650 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Sun, 2 Dec 2018 13:57:01 +0900
-> Subject: [PATCH v2] printk: fix printk_time race.
-> 
-> Since printk_time can be toggled via /sys/module/printk/parameters/time ,
-> it is not safe to assume that output length does not change across
-> multiple msg_print_text() calls. If we hit this race, we can observe
-> failures such as SYSLOG_ACTION_READ_ALL writes more bytes than userspace
-> has supplied, SYSLOG_ACTION_SIZE_UNREAD returns -EFAULT when succeeded,
-> SYSLOG_ACTION_READ reads garbage memory or even triggers an kernel oops
-> at _copy_to_user() due to integer overflow.
-> 
-> To close this race, get a snapshot value of printk_time and pass it to
-> SYSLOG_ACTION_READ, SYSLOG_ACTION_READ_ALL, SYSLOG_ACTION_SIZE_UNREAD and
-> kmsg_dump_get_buffer().
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+On Sun, 2 Dec 2018 14:57:12 -0200
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-The patch looks good to me.
+> Add a devicetree documentation for the ad5933 and ad5934 impedance
+> converter, network analyzer.
+> 
+> Co-Developed-by: Gabriel Capella <gabriel@capella.pro>
 
-Acked-by: Petr Mladek <pmladek@suse.com>
+Put this in line below Gabriel's sign off - it makes script
+parsing of these easier.
 
-I'll wait few more days for an eventual feedback before I push it
-into printk.git.
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Signed-off-by: Gabriel Capella <gabriel@capella.pro>
+Co-Developed-by: Gabriel Capella <gabriel@capella.pro>
 
-Best Regards,
-Petr
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> Signed-off-by: Gabriel Capella <gabriel@capella.pro>
+> ---
+>  .../iio/impedance-analyzer/ad5933.txt         | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt b/Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt
+> new file mode 100644
+> index 000000000000..d9ae2babf016
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/impedance-analyzer/ad5933.txt
+> @@ -0,0 +1,23 @@
+> +Analog Devices AD5933/AD5934 Impedance Converter, Network Analyzer
+> +
+> +https://www.analog.com/media/en/technical-documentation/data-sheets/AD5933.pdf
+> +https://www.analog.com/media/en/technical-documentation/data-sheets/AD5934.pdf
+> +
+> +Required properties:
+> + - compatible : should be one of
+> +		"adi,ad5933"
+> +		"adi,ad5934"
+> + - reg : the I2C address
+> + - vdd-supply : supply reference for the device.
+> +
+> +Optional properties:
+> + - vref_mv : default voltage reference.
+
+Regulator framework rather than a simple voltage.
+
+> + - ext_clk_hz : external master clock for the system.
+
+Please use the clocks framework for this rather than rolling our own.
+There are fixed clocks to cover the common case, but it may be supplied by
+something smarter.
+
+> +
+> +Example:
+> +
+> +	impedance-analyzer@0d {
+> +		compatible = "adi,ad5933";
+> +		reg = <0x0d>;
+> +		vdd-supply = <&vdd_supply>;
+> +	};
+
+
