@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF00BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79729C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A2F20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A2F20851
+	by mail.kernel.org (Postfix) with ESMTP id 1519E20864
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1519E20864
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbeLCVfd (ORCPT
+        id S1726518AbeLCVfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:35:33 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34200 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLCVcg (ORCPT
+        Mon, 3 Dec 2018 16:35:42 -0500
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:45553 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCVcb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:32:36 -0500
-Received: by mail-oi1-f194.google.com with SMTP id h25so12385409oig.1;
-        Mon, 03 Dec 2018 13:32:35 -0800 (PST)
+        Mon, 3 Dec 2018 16:32:31 -0500
+Received: by mail-ot1-f48.google.com with SMTP id 32so13090317ota.12;
+        Mon, 03 Dec 2018 13:32:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EbWQDLPCbsKZ/jTml8zWdkBSWrjRpmG+Fka3SM1fKF0=;
-        b=sfCAv7K3l14dz532T5/eReU/76er8JBtTcrU5getGICwwxlOi4OZGib6/eO/U5MRFz
-         jh+yOSZC5OmvLrtC4/iXjf6+Hk11/mDOExVsegPlKJalds2B42oY8dxiwhc7/DZpRZM/
-         RNOgkbblusDGTjZ9URTY+ZPqocm/FfyaUki5bawwwjpJ5m3zcQkNiv/Zm5kHGNfU58ez
-         LUs63hf22hBCzM0E1IbAzuBQcZsjsbYYkHs3U2UiVWAl/R8HnswHkJVpD06N2kBJok7m
-         jx3Yj4QU4o/fCZQLMWhzMKzViqNtAocNZtMiNNnW63mPANd5pZdxiFOrxCm5XN4IKbPk
-         vD9Q==
-X-Gm-Message-State: AA+aEWY/70qvkooClnHDn96fjIlPW7+G6mQPp5+c6vdwaLV8bHg29mja
-        bFwGgw2Nd0YIWt/PAIOENHoN+08=
-X-Google-Smtp-Source: AFSGD/V3Vqy/ysnTec/O1sbXJSZ+zMxmTt4WYHwqKLcmvmZ7MpaOM6U142Kn2f63j+5T8IQ+skEyKQ==
-X-Received: by 2002:aca:308f:: with SMTP id w137mr11478589oiw.49.1543872754472;
-        Mon, 03 Dec 2018 13:32:34 -0800 (PST)
+        bh=XvrQWIHYfVHubKhVnmz2HJj49qMwFmyZrtkY99VSnV4=;
+        b=t7wcsPmmNKydP9gdxfxx7NzQOQjQc31/+7i87mPAuWSOzxZARzFQXHUDm5959AMers
+         bTO4G8A1iuWIgwcDH/WLxKXwSgAZb0XHw26vSURGAPpnqOwnAxTYo/vBKQyVMYOleQnC
+         CV5pHF46fFbhkYNYQf7lQigwk8T/HISVQBEK6yD2/sxcxdwNqU6Fn0MOk9QI4v/C0rYu
+         HLDvVC4HVA7nxwFvkwfvdaaFgdIynwG8Bzt/t6cMDJskSO/caveWUDYmeU4amOcvAEfo
+         viHMufnGYNh3YBbh3mcH4dagisqgHcLPpQ/4D4u1Mv2wkZmERXmQiH3d/X2RXucm4hTk
+         X2BA==
+X-Gm-Message-State: AA+aEWbX+HYROT0Bu3oPxo3AR29Sr9fz76ojRv6vAW+Nmbra1a+Cnrll
+        FgjVFj6GSjqNG89ZHdBUuoPAnbU=
+X-Google-Smtp-Source: AFSGD/Xz7nXkxmyrnIQZc/nYiAq2Rz5DtjyxeQ97GCbtjBa1r4d7BogDbShxl3gQ3QRWDrEo1N9K2g==
+X-Received: by 2002:a9d:3646:: with SMTP id w64mr10543239otb.118.1543872749461;
+        Mon, 03 Dec 2018 13:32:29 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.32.33
+        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.32.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 13:32:33 -0800 (PST)
+        Mon, 03 Dec 2018 13:32:28 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sean Hudson <darknighte@darknighte.com>,
@@ -52,1045 +52,626 @@ Cc:     Sean Hudson <darknighte@darknighte.com>,
         linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
         Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 07/34] dt-bindings: arm: Convert cpu binding to json-schema
-Date:   Mon,  3 Dec 2018 15:31:56 -0600
-Message-Id: <20181203213223.16986-8-robh@kernel.org>
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 03/34] dt-bindings: Convert trivial-devices.txt to json-schema
+Date:   Mon,  3 Dec 2018 15:31:52 -0600
+Message-Id: <20181203213223.16986-4-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181203213223.16986-1-robh@kernel.org>
 References: <20181203213223.16986-1-robh@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert ARM CPU binding to DT schema format using json-schema.
+Convert trivial-devices.txt to DT schema format using json-schema.
 
 Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
 Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mediatek@lists.infradead.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/cpus.txt          | 490 -----------------
- .../devicetree/bindings/arm/cpus.yaml         | 507 ++++++++++++++++++
- 2 files changed, 507 insertions(+), 490 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/cpus.txt
- create mode 100644 Documentation/devicetree/bindings/arm/cpus.yaml
+ .../devicetree/bindings/trivial-devices.txt   | 190 ---------
+ .../devicetree/bindings/trivial-devices.yaml  | 392 ++++++++++++++++++
+ 2 files changed, 392 insertions(+), 190 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/trivial-devices.txt
+ create mode 100644 Documentation/devicetree/bindings/trivial-devices.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
 deleted file mode 100644
-index b0198a1cf403..000000000000
---- a/Documentation/devicetree/bindings/arm/cpus.txt
+index 6ab001fa1ed4..000000000000
+--- a/Documentation/devicetree/bindings/trivial-devices.txt
 +++ /dev/null
-@@ -1,490 +0,0 @@
--=================
--ARM CPUs bindings
--=================
--
--The device tree allows to describe the layout of CPUs in a system through
--the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
--defining properties for every cpu.
--
--Bindings for CPU nodes follow the Devicetree Specification, available from:
--
--https://www.devicetree.org/specifications/
--
--with updates for 32-bit and 64-bit ARM systems provided in this document.
--
--================================
--Convention used in this document
--================================
--
--This document follows the conventions described in the Devicetree
--Specification, with the addition:
--
--- square brackets define bitfields, eg reg[7:0] value of the bitfield in
--  the reg property contained in bits 7 down to 0
--
--=====================================
--cpus and cpu node bindings definition
--=====================================
--
--The ARM architecture, in accordance with the Devicetree Specification,
--requires the cpus and cpu nodes to be present and contain the properties
--described below.
--
--- cpus node
--
--	Description: Container of cpu nodes
--
--	The node name must be "cpus".
--
--	A cpus node must define the following properties:
--
--	- #address-cells
--		Usage: required
--		Value type: <u32>
--
--		Definition depends on ARM architecture version and
--		configuration:
--
--			# On uniprocessor ARM architectures previous to v7
--			  value must be 1, to enable a simple enumeration
--			  scheme for processors that do not have a HW CPU
--			  identification register.
--			# On 32-bit ARM 11 MPcore, ARM v7 or later systems
--			  value must be 1, that corresponds to CPUID/MPIDR
--			  registers sizes.
--			# On ARM v8 64-bit systems value should be set to 2,
--			  that corresponds to the MPIDR_EL1 register size.
--			  If MPIDR_EL1[63:32] value is equal to 0 on all CPUs
--			  in the system, #address-cells can be set to 1, since
--			  MPIDR_EL1[63:32] bits are not used for CPUs
--			  identification.
--	- #size-cells
--		Usage: required
--		Value type: <u32>
--		Definition: must be set to 0
--
--- cpu node
--
--	Description: Describes a CPU in an ARM based system
--
--	PROPERTIES
--
--	- device_type
--		Usage: required
--		Value type: <string>
--		Definition: must be "cpu"
--	- reg
--		Usage and definition depend on ARM architecture version and
--		configuration:
--
--			# On uniprocessor ARM architectures previous to v7
--			  this property is required and must be set to 0.
--
--			# On ARM 11 MPcore based systems this property is
--			  required and matches the CPUID[11:0] register bits.
--
--			  Bits [11:0] in the reg cell must be set to
--			  bits [11:0] in CPU ID register.
--
--			  All other bits in the reg cell must be set to 0.
--
--			# On 32-bit ARM v7 or later systems this property is
--			  required and matches the CPU MPIDR[23:0] register
--			  bits.
--
--			  Bits [23:0] in the reg cell must be set to
--			  bits [23:0] in MPIDR.
--
--			  All other bits in the reg cell must be set to 0.
--
--			# On ARM v8 64-bit systems this property is required
--			  and matches the MPIDR_EL1 register affinity bits.
--
--			  * If cpus node's #address-cells property is set to 2
--
--			    The first reg cell bits [7:0] must be set to
--			    bits [39:32] of MPIDR_EL1.
--
--			    The second reg cell bits [23:0] must be set to
--			    bits [23:0] of MPIDR_EL1.
--
--			  * If cpus node's #address-cells property is set to 1
--
--			    The reg cell bits [23:0] must be set to bits [23:0]
--			    of MPIDR_EL1.
--
--			  All other bits in the reg cells must be set to 0.
--
--	- compatible:
--		Usage: required
--		Value type: <string>
--		Definition: should be one of:
--			    "arm,arm710t"
--			    "arm,arm720t"
--			    "arm,arm740t"
--			    "arm,arm7ej-s"
--			    "arm,arm7tdmi"
--			    "arm,arm7tdmi-s"
--			    "arm,arm9es"
--			    "arm,arm9ej-s"
--			    "arm,arm920t"
--			    "arm,arm922t"
--			    "arm,arm925"
--			    "arm,arm926e-s"
--			    "arm,arm926ej-s"
--			    "arm,arm940t"
--			    "arm,arm946e-s"
--			    "arm,arm966e-s"
--			    "arm,arm968e-s"
--			    "arm,arm9tdmi"
--			    "arm,arm1020e"
--			    "arm,arm1020t"
--			    "arm,arm1022e"
--			    "arm,arm1026ej-s"
--			    "arm,arm1136j-s"
--			    "arm,arm1136jf-s"
--			    "arm,arm1156t2-s"
--			    "arm,arm1156t2f-s"
--			    "arm,arm1176jzf"
--			    "arm,arm1176jz-s"
--			    "arm,arm1176jzf-s"
--			    "arm,arm11mpcore"
--			    "arm,cortex-a5"
--			    "arm,cortex-a7"
--			    "arm,cortex-a8"
--			    "arm,cortex-a9"
--			    "arm,cortex-a12"
--			    "arm,cortex-a15"
--			    "arm,cortex-a17"
--			    "arm,cortex-a53"
--			    "arm,cortex-a57"
--			    "arm,cortex-a72"
--			    "arm,cortex-a73"
--			    "arm,cortex-m0"
--			    "arm,cortex-m0+"
--			    "arm,cortex-m1"
--			    "arm,cortex-m3"
--			    "arm,cortex-m4"
--			    "arm,cortex-r4"
--			    "arm,cortex-r5"
--			    "arm,cortex-r7"
--			    "brcm,brahma-b15"
--			    "brcm,brahma-b53"
--			    "brcm,vulcan"
--			    "cavium,thunder"
--			    "cavium,thunder2"
--			    "faraday,fa526"
--			    "intel,sa110"
--			    "intel,sa1100"
--			    "marvell,feroceon"
--			    "marvell,mohawk"
--			    "marvell,pj4a"
--			    "marvell,pj4b"
--			    "marvell,sheeva-v5"
--			    "nvidia,tegra132-denver"
--			    "nvidia,tegra186-denver"
--			    "nvidia,tegra194-carmel"
--			    "qcom,krait"
--			    "qcom,kryo"
--			    "qcom,kryo385"
--			    "qcom,scorpion"
--	- enable-method
--		Value type: <stringlist>
--		Usage and definition depend on ARM architecture version.
--			# On ARM v8 64-bit this property is required and must
--			  be one of:
--			     "psci"
--			     "spin-table"
--			# On ARM 32-bit systems this property is optional and
--			  can be one of:
--			    "actions,s500-smp"
--			    "allwinner,sun6i-a31"
--			    "allwinner,sun8i-a23"
--			    "allwinner,sun9i-a80-smp"
--			    "amlogic,meson8-smp"
--			    "amlogic,meson8b-smp"
--			    "arm,realview-smp"
--			    "brcm,bcm11351-cpu-method"
--			    "brcm,bcm23550"
--			    "brcm,bcm2836-smp"
--			    "brcm,bcm-nsp-smp"
--			    "brcm,brahma-b15"
--			    "marvell,armada-375-smp"
--			    "marvell,armada-380-smp"
--			    "marvell,armada-390-smp"
--			    "marvell,armada-xp-smp"
--			    "marvell,98dx3236-smp"
--			    "mediatek,mt6589-smp"
--			    "mediatek,mt81xx-tz-smp"
--			    "qcom,gcc-msm8660"
--			    "qcom,kpss-acc-v1"
--			    "qcom,kpss-acc-v2"
--			    "renesas,apmu"
--			    "renesas,r9a06g032-smp"
--			    "rockchip,rk3036-smp"
--			    "rockchip,rk3066-smp"
--			    "ste,dbx500-smp"
--
--	- cpu-release-addr
--		Usage: required for systems that have an "enable-method"
--		       property value of "spin-table".
--		Value type: <prop-encoded-array>
--		Definition:
--			# On ARM v8 64-bit systems must be a two cell
--			  property identifying a 64-bit zero-initialised
--			  memory location.
--
--	- qcom,saw
--		Usage: required for systems that have an "enable-method"
--		       property value of "qcom,kpss-acc-v1" or
--		       "qcom,kpss-acc-v2"
--		Value type: <phandle>
--		Definition: Specifies the SAW[1] node associated with this CPU.
--
--	- qcom,acc
--		Usage: required for systems that have an "enable-method"
--		       property value of "qcom,kpss-acc-v1" or
--		       "qcom,kpss-acc-v2"
--		Value type: <phandle>
--		Definition: Specifies the ACC[2] node associated with this CPU.
--
--	- cpu-idle-states
--		Usage: Optional
--		Value type: <prop-encoded-array>
--		Definition:
--			# List of phandles to idle state nodes supported
--			  by this cpu [3].
--
--	- capacity-dmips-mhz
--		Usage: Optional
--		Value type: <u32>
--		Definition:
--			# u32 value representing CPU capacity [4] in
--			  DMIPS/MHz, relative to highest capacity-dmips-mhz
--			  in the system.
--
--	- rockchip,pmu
--		Usage: optional for systems that have an "enable-method"
--		       property value of "rockchip,rk3066-smp"
--		       While optional, it is the preferred way to get access to
--		       the cpu-core power-domains.
--		Value type: <phandle>
--		Definition: Specifies the syscon node controlling the cpu core
--			    power domains.
--
--	- dynamic-power-coefficient
--		Usage: optional
--		Value type: <prop-encoded-array>
--		Definition: A u32 value that represents the running time dynamic
--			    power coefficient in units of uW/MHz/V^2. The
--			    coefficient can either be calculated from power
--			    measurements or derived by analysis.
--
--			    The dynamic power consumption of the CPU  is
--			    proportional to the square of the Voltage (V) and
--			    the clock frequency (f). The coefficient is used to
--			    calculate the dynamic power as below -
--
--			    Pdyn = dynamic-power-coefficient * V^2 * f
--
--			    where voltage is in V, frequency is in MHz.
--
--Example 1 (dual-cluster big.LITTLE system 32-bit):
--
--	cpus {
--		#size-cells = <0>;
--		#address-cells = <1>;
--
--		cpu@0 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a15";
--			reg = <0x0>;
--		};
--
--		cpu@1 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a15";
--			reg = <0x1>;
--		};
--
--		cpu@100 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			reg = <0x100>;
--		};
--
--		cpu@101 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a7";
--			reg = <0x101>;
--		};
--	};
--
--Example 2 (Cortex-A8 uniprocessor 32-bit system):
--
--	cpus {
--		#size-cells = <0>;
--		#address-cells = <1>;
--
--		cpu@0 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a8";
--			reg = <0x0>;
--		};
--	};
--
--Example 3 (ARM 926EJ-S uniprocessor 32-bit system):
--
--	cpus {
--		#size-cells = <0>;
--		#address-cells = <1>;
--
--		cpu@0 {
--			device_type = "cpu";
--			compatible = "arm,arm926ej-s";
--			reg = <0x0>;
--		};
--	};
--
--Example 4 (ARM Cortex-A57 64-bit system):
--
--cpus {
--	#size-cells = <0>;
--	#address-cells = <2>;
--
--	cpu@0 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x0>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@1 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x1>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x100>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@101 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x101>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@10000 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x10000>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@10001 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x10001>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@10100 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x10100>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@10101 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x0 0x10101>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100000000 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x0>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100000001 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x1>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100000100 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x100>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100000101 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x101>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100010000 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x10000>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100010001 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x10001>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100010100 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x10100>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--
--	cpu@100010101 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x1 0x10101>;
--		enable-method = "spin-table";
--		cpu-release-addr = <0 0x20000000>;
--	};
--};
--
----
--[1] arm/msm/qcom,saw2.txt
--[2] arm/msm/qcom,kpss-acc.txt
--[3] ARM Linux kernel documentation - idle states bindings
--    Documentation/devicetree/bindings/arm/idle-states.txt
--[4] ARM Linux kernel documentation - cpu capacity bindings
--    Documentation/devicetree/bindings/arm/cpu-capacity.txt
-diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
+@@ -1,190 +0,0 @@
+-This is a list of trivial i2c devices that have simple device tree
+-bindings, consisting only of a compatible field, an address and
+-possibly an interrupt line.
+-
+-If a device needs more specific bindings, such as properties to
+-describe some aspect of it, there needs to be a specific binding
+-document for it just like any other devices.
+-
+-
+-Compatible		Vendor / Chip
+-==========		=============
+-abracon,abb5zes3		AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
+-ad,ad7414		SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over Temperature Pin
+-ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProcessor-Based Systems
+-adi,adt7461		+/-1C TDM Extended Temp Range I.C
+-adt7461			+/-1C TDM Extended Temp Range I.C
+-adi,adt7473		+/-1C TDM Extended Temp Range I.C
+-adi,adt7475		+/-1C TDM Extended Temp Range I.C
+-adi,adt7476		+/-1C TDM Extended Temp Range I.C
+-adi,adt7490		+/-1C TDM Extended Temp Range I.C
+-adi,adxl345		Three-Axis Digital Accelerometer
+-adi,adxl346		Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
+-ams,iaq-core		AMS iAQ-Core VOC Sensor
+-at,24c08		i2c serial eeprom  (24cxx)
+-atmel,at97sc3204t	i2c trusted platform module (TPM)
+-capella,cm32181		CM32181: Ambient Light Sensor
+-capella,cm3232		CM3232: Ambient Light Sensor
+-dallas,ds1374		I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
+-dallas,ds1631		High-Precision Digital Thermometer
+-dallas,ds1672		Dallas DS1672 Real-time Clock
+-dallas,ds1682		Total-Elapsed-Time Recorder with Alarm
+-dallas,ds1775		Tiny Digital Thermometer and Thermostat
+-dallas,ds3232		Extremely Accurate I²C RTC with Integrated Crystal and SRAM
+-dallas,ds4510		CPU Supervisor with Nonvolatile Memory and Programmable I/O
+-dallas,ds75		Digital Thermometer and Thermostat
+-devantech,srf02		Devantech SRF02 ultrasonic ranger in I2C mode
+-devantech,srf08		Devantech SRF08 ultrasonic ranger
+-devantech,srf10		Devantech SRF10 ultrasonic ranger
+-dlg,da9053		DA9053: flexible system level PMIC with multicore support
+-dlg,da9063		DA9063: system PMIC for quad-core application processors
+-domintech,dmard09	DMARD09: 3-axis Accelerometer
+-domintech,dmard10	DMARD10: 3-axis Accelerometer
+-epson,rx8010		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
+-epson,rx8581		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
+-emmicro,em3027		EM Microelectronic EM3027 Real-time Clock
+-fsl,mag3110		MAG3110: Xtrinsic High Accuracy, 3D Magnetometer
+-fsl,mma7660		MMA7660FC: 3-Axis Orientation/Motion Detection Sensor
+-fsl,mma8450		MMA8450Q: Xtrinsic Low-power, 3-axis Xtrinsic Accelerometer
+-fsl,mpl3115		MPL3115: Absolute Digital Pressure Sensor
+-fsl,mpr121		MPR121: Proximity Capacitive Touch Sensor Controller
+-fsl,sgtl5000		SGTL5000: Ultra Low-Power Audio Codec
+-gmt,g751		G751: Digital Temperature Sensor and Thermal Watchdog with Two-Wire Interface
+-infineon,slb9635tt	Infineon SLB9635 (Soft-) I2C TPM (old protocol, max 100khz)
+-infineon,slb9645tt	Infineon SLB9645 I2C TPM (new protocol, max 400khz)
+-infineon,tlv493d-a1b6	Infineon TLV493D-A1B6 I2C 3D Magnetic Sensor
+-isil,isl1208		Intersil ISL1208 Low Power RTC with Battery Backed SRAM
+-isil,isl1218		Intersil ISL1218 Low Power RTC with Battery Backed SRAM
+-isil,isl12022		Intersil ISL12022 Real-time Clock
+-isil,isl29028		Intersil ISL29028 Ambient Light and Proximity Sensor
+-isil,isl29030		Intersil ISL29030 Ambient Light and Proximity Sensor
+-maxim,ds1050		5 Bit Programmable, Pulse-Width Modulator
+-maxim,max1237		Low-Power, 4-/12-Channel, 2-Wire Serial, 12-Bit ADCs
+-maxim,max6621		PECI-to-I2C translator for PECI-to-SMBus/I2C protocol conversion
+-maxim,max6625		9-Bit/12-Bit Temperature Sensors with I²C-Compatible Serial Interface
+-mcube,mc3230		mCube 3-axis 8-bit digital accelerometer
+-memsic,mxc6225		MEMSIC 2-axis 8-bit digital accelerometer
+-microchip,mcp4017-502	Microchip 7-bit Single I2C Digital POT (5k)
+-microchip,mcp4017-103	Microchip 7-bit Single I2C Digital POT (10k)
+-microchip,mcp4017-503	Microchip 7-bit Single I2C Digital POT (50k)
+-microchip,mcp4017-104	Microchip 7-bit Single I2C Digital POT (100k)
+-microchip,mcp4018-502	Microchip 7-bit Single I2C Digital POT (5k)
+-microchip,mcp4018-103	Microchip 7-bit Single I2C Digital POT (10k)
+-microchip,mcp4018-503	Microchip 7-bit Single I2C Digital POT (50k)
+-microchip,mcp4018-104	Microchip 7-bit Single I2C Digital POT (100k)
+-microchip,mcp4019-502	Microchip 7-bit Single I2C Digital POT (5k)
+-microchip,mcp4019-103	Microchip 7-bit Single I2C Digital POT (10k)
+-microchip,mcp4019-503	Microchip 7-bit Single I2C Digital POT (50k)
+-microchip,mcp4019-104	Microchip 7-bit Single I2C Digital POT (100k)
+-microchip,mcp4531-502	Microchip 7-bit Single I2C Digital Potentiometer (5k)
+-microchip,mcp4531-103	Microchip 7-bit Single I2C Digital Potentiometer (10k)
+-microchip,mcp4531-503	Microchip 7-bit Single I2C Digital Potentiometer (50k)
+-microchip,mcp4531-104	Microchip 7-bit Single I2C Digital Potentiometer (100k)
+-microchip,mcp4532-502	Microchip 7-bit Single I2C Digital Potentiometer (5k)
+-microchip,mcp4532-103	Microchip 7-bit Single I2C Digital Potentiometer (10k)
+-microchip,mcp4532-503	Microchip 7-bit Single I2C Digital Potentiometer (50k)
+-microchip,mcp4532-104	Microchip 7-bit Single I2C Digital Potentiometer (100k)
+-microchip,mcp4541-502	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4541-103	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4541-503	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4541-104	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
+-microchip,mcp4542-502	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4542-103	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4542-503	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4542-104	Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
+-microchip,mcp4551-502	Microchip 8-bit Single I2C Digital Potentiometer (5k)
+-microchip,mcp4551-103	Microchip 8-bit Single I2C Digital Potentiometer (10k)
+-microchip,mcp4551-503	Microchip 8-bit Single I2C Digital Potentiometer (50k)
+-microchip,mcp4551-104	Microchip 8-bit Single I2C Digital Potentiometer (100k)
+-microchip,mcp4552-502	Microchip 8-bit Single I2C Digital Potentiometer (5k)
+-microchip,mcp4552-103	Microchip 8-bit Single I2C Digital Potentiometer (10k)
+-microchip,mcp4552-503	Microchip 8-bit Single I2C Digital Potentiometer (50k)
+-microchip,mcp4552-104	Microchip 8-bit Single I2C Digital Potentiometer (100k)
+-microchip,mcp4561-502	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4561-103	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4561-503	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4561-104	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
+-microchip,mcp4562-502	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4562-103	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4562-503	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4562-104	Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
+-microchip,mcp4631-502	Microchip 7-bit Dual I2C Digital Potentiometer (5k)
+-microchip,mcp4631-103	Microchip 7-bit Dual I2C Digital Potentiometer (10k)
+-microchip,mcp4631-503	Microchip 7-bit Dual I2C Digital Potentiometer (50k)
+-microchip,mcp4631-104	Microchip 7-bit Dual I2C Digital Potentiometer (100k)
+-microchip,mcp4632-502	Microchip 7-bit Dual I2C Digital Potentiometer (5k)
+-microchip,mcp4632-103	Microchip 7-bit Dual I2C Digital Potentiometer (10k)
+-microchip,mcp4632-503	Microchip 7-bit Dual I2C Digital Potentiometer (50k)
+-microchip,mcp4632-104	Microchip 7-bit Dual I2C Digital Potentiometer (100k)
+-microchip,mcp4641-502	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4641-103	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4641-503	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4641-104	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
+-microchip,mcp4642-502	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4642-103	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4642-503	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4642-104	Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
+-microchip,mcp4651-502	Microchip 8-bit Dual I2C Digital Potentiometer (5k)
+-microchip,mcp4651-103	Microchip 8-bit Dual I2C Digital Potentiometer (10k)
+-microchip,mcp4651-503	Microchip 8-bit Dual I2C Digital Potentiometer (50k)
+-microchip,mcp4651-104	Microchip 8-bit Dual I2C Digital Potentiometer (100k)
+-microchip,mcp4652-502	Microchip 8-bit Dual I2C Digital Potentiometer (5k)
+-microchip,mcp4652-103	Microchip 8-bit Dual I2C Digital Potentiometer (10k)
+-microchip,mcp4652-503	Microchip 8-bit Dual I2C Digital Potentiometer (50k)
+-microchip,mcp4652-104	Microchip 8-bit Dual I2C Digital Potentiometer (100k)
+-microchip,mcp4661-502	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4661-103	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4661-503	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4661-104	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
+-microchip,mcp4662-502	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
+-microchip,mcp4662-103	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
+-microchip,mcp4662-503	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
+-microchip,mcp4662-104	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
+-microchip,tc654		PWM Fan Speed Controller With Fan Fault Detection
+-microchip,tc655		PWM Fan Speed Controller With Fan Fault Detection
+-microcrystal,rv3029	Real Time Clock Module with I2C-Bus
+-miramems,da226		MiraMEMS DA226 2-axis 14-bit digital accelerometer
+-miramems,da280		MiraMEMS DA280 3-axis 14-bit digital accelerometer
+-miramems,da311		MiraMEMS DA311 3-axis 12-bit digital accelerometer
+-national,lm63		Temperature sensor with integrated fan control
+-national,lm75		I2C TEMP SENSOR
+-national,lm80		Serial Interface ACPI-Compatible Microprocessor System Hardware Monitor
+-national,lm85		Temperature sensor with integrated fan control
+-national,lm92		±0.33°C Accurate, 12-Bit + Sign Temperature Sensor and Thermal Window Comparator with Two-Wire Interface
+-nuvoton,npct501		i2c trusted platform module (TPM)
+-nuvoton,npct601		i2c trusted platform module (TPM2)
+-nuvoton,w83773g		Nuvoton Temperature Sensor
+-nxp,pca9556		Octal SMBus and I2C registered interface
+-nxp,pca9557		8-bit I2C-bus and SMBus I/O port with reset
+-nxp,pcf2127		Real-time clock
+-nxp,pcf2129		Real-time clock
+-nxp,pcf8523		Real-time Clock
+-nxp,pcf8563		Real-time clock/calendar
+-nxp,pcf85063		Tiny Real-Time Clock
+-oki,ml86v7667		OKI ML86V7667 video decoder
+-ovti,ov5642		OV5642: Color CMOS QSXGA (5-megapixel) Image Sensor with OmniBSI and Embedded TrueFocus
+-pericom,pt7c4338	Real-time Clock Module
+-plx,pex8648		48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
+-pulsedlight,lidar-lite-v2	Pulsedlight LIDAR range-finding sensor
+-ricoh,r2025sd		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+-ricoh,r2221tl		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+-ricoh,rs5c372a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+-ricoh,rs5c372b		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+-ricoh,rv5c386		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+-ricoh,rv5c387a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+-samsung,24ad0xd1	S524AD0XF1 (128K/256K-bit Serial EEPROM for Low Power)
+-sgx,vz89x		SGX Sensortech VZ89X Sensors
+-sii,s35390a		2-wire CMOS real-time clock
+-silabs,si7020		Relative Humidity and Temperature Sensors
+-skyworks,sky81452	Skyworks SKY81452: Six-Channel White LED Driver with Touch Panel Bias Supply
+-st,24c256		i2c serial eeprom  (24cxx)
+-taos,tsl2550		Ambient Light Sensor with SMBUS/Two Wire Serial Interface
+-ti,ads7828		8-Channels, 12-bit ADC
+-ti,ads7830		8-Channels, 8-bit ADC
+-ti,amc6821		Temperature Monitoring and Fan Control
+-ti,tsc2003		I2C Touch-Screen Controller
+-ti,tmp102		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
+-ti,tmp103		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
+-ti,tmp275		Digital Temperature Sensor
+-winbond,w83793		Winbond/Nuvoton H/W Monitor
+-winbond,wpct301		i2c trusted platform module (TPM)
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
 new file mode 100644
-index 000000000000..298c17b327c6
+index 000000000000..c5d31754a354
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-@@ -0,0 +1,507 @@
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -0,0 +1,392 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/cpus.yaml#
++$id: http://devicetree.org/schemas/trivial-devices.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: ARM CPUs bindings
++title: Trivial I2C and SPI devices that have simple device tree bindings
 +
 +maintainers:
-+  - Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
++  - Rob Herring <robh@kernel.org>
 +
-+description: |+
-+  The device tree allows to describe the layout of CPUs in a system through
-+  the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
-+  defining properties for every cpu.
++description: |
++  This is a list of trivial I2C and SPI devices that have simple device tree
++  bindings, consisting only of a compatible field, an address and possibly an
++  interrupt line.
 +
-+  Bindings for CPU nodes follow the Devicetree Specification, available from:
-+
-+  https://www.devicetree.org/specifications/
-+
-+  with updates for 32-bit and 64-bit ARM systems provided in this document.
-+
-+  ================================
-+  Convention used in this document
-+  ================================
-+
-+  This document follows the conventions described in the Devicetree
-+  Specification, with the addition:
-+
-+  - square brackets define bitfields, eg reg[7:0] value of the bitfield in
-+    the reg property contained in bits 7 down to 0
-+
-+  =====================================
-+  cpus and cpu node bindings definition
-+  =====================================
-+
-+  The ARM architecture, in accordance with the Devicetree Specification,
-+  requires the cpus and cpu nodes to be present and contain the properties
-+  described below.
++  If a device needs more specific bindings, such as properties to
++  describe some aspect of it, there needs to be a specific binding
++  document for it just like any other devices.
 +
 +properties:
-+  $nodename:
-+    const: cpus
-+    description: Container of cpu nodes
-+
-+  '#address-cells':
-+    enum: [1, 2]
-+    description: |
-+      Definition depends on ARM architecture version and configuration:
-+
-+      On uniprocessor ARM architectures previous to v7
-+        value must be 1, to enable a simple enumeration
-+        scheme for processors that do not have a HW CPU
-+        identification register.
-+      On 32-bit ARM 11 MPcore, ARM v7 or later systems
-+        value must be 1, that corresponds to CPUID/MPIDR
-+        registers sizes.
-+      On ARM v8 64-bit systems value should be set to 2,
-+        that corresponds to the MPIDR_EL1 register size.
-+        If MPIDR_EL1[63:32] value is equal to 0 on all CPUs
-+        in the system, #address-cells can be set to 1, since
-+        MPIDR_EL1[63:32] bits are not used for CPUs
-+        identification.
-+
-+  '#size-cells':
-+    const: 0
-+
-+patternProperties:
-+  '^cpu@[0-9a-f]+$':
-+    properties:
-+      device_type:
-+        const: cpu
-+
-+      reg:
-+        maxItems: 1
-+        description: |
-+          Usage and definition depend on ARM architecture version and
-+          configuration:
-+
-+          On uniprocessor ARM architectures previous to v7
-+          this property is required and must be set to 0.
-+
-+          On ARM 11 MPcore based systems this property is
-+            required and matches the CPUID[11:0] register bits.
-+
-+            Bits [11:0] in the reg cell must be set to
-+            bits [11:0] in CPU ID register.
-+
-+            All other bits in the reg cell must be set to 0.
-+
-+          On 32-bit ARM v7 or later systems this property is
-+            required and matches the CPU MPIDR[23:0] register
-+            bits.
-+
-+            Bits [23:0] in the reg cell must be set to
-+            bits [23:0] in MPIDR.
-+
-+            All other bits in the reg cell must be set to 0.
-+
-+          On ARM v8 64-bit systems this property is required
-+            and matches the MPIDR_EL1 register affinity bits.
-+
-+            * If cpus node's #address-cells property is set to 2
-+
-+              The first reg cell bits [7:0] must be set to
-+              bits [39:32] of MPIDR_EL1.
-+
-+              The second reg cell bits [23:0] must be set to
-+              bits [23:0] of MPIDR_EL1.
-+
-+            * If cpus node's #address-cells property is set to 1
-+
-+              The reg cell bits [23:0] must be set to bits [23:0]
-+              of MPIDR_EL1.
-+
-+          All other bits in the reg cells must be set to 0.
-+
-+      compatible:
-+        items:
-+          - enum:
-+              - arm,arm710t
-+              - arm,arm720t
-+              - arm,arm740t
-+              - arm,arm7ej-s
-+              - arm,arm7tdmi
-+              - arm,arm7tdmi-s
-+              - arm,arm9es
-+              - arm,arm9ej-s
-+              - arm,arm920t
-+              - arm,arm922t
-+              - arm,arm925
-+              - arm,arm926e-s
-+              - arm,arm926ej-s
-+              - arm,arm940t
-+              - arm,arm946e-s
-+              - arm,arm966e-s
-+              - arm,arm968e-s
-+              - arm,arm9tdmi
-+              - arm,arm1020e
-+              - arm,arm1020t
-+              - arm,arm1022e
-+              - arm,arm1026ej-s
-+              - arm,arm1136j-s
-+              - arm,arm1136jf-s
-+              - arm,arm1156t2-s
-+              - arm,arm1156t2f-s
-+              - arm,arm1176jzf
-+              - arm,arm1176jz-s
-+              - arm,arm1176jzf-s
-+              - arm,arm11mpcore
-+              - arm,armv8 # Only for s/w models
-+              - arm,cortex-a5
-+              - arm,cortex-a7
-+              - arm,cortex-a8
-+              - arm,cortex-a9
-+              - arm,cortex-a12
-+              - arm,cortex-a15
-+              - arm,cortex-a17
-+              - arm,cortex-a53
-+              - arm,cortex-a57
-+              - arm,cortex-a72
-+              - arm,cortex-a73
-+              - arm,cortex-m0
-+              - arm,cortex-m0+
-+              - arm,cortex-m1
-+              - arm,cortex-m3
-+              - arm,cortex-m4
-+              - arm,cortex-r4
-+              - arm,cortex-r5
-+              - arm,cortex-r7
-+              - brcm,brahma-b15
-+              - brcm,brahma-b53
-+              - brcm,vulcan
-+              - cavium,thunder
-+              - cavium,thunder2
-+              - faraday,fa526
-+              - intel,sa110
-+              - intel,sa1100
-+              - marvell,feroceon
-+              - marvell,mohawk
-+              - marvell,pj4a
-+              - marvell,pj4b
-+              - marvell,sheeva-v5
-+              - marvell,sheeva-v7
-+              - nvidia,tegra132-denver
-+              - nvidia,tegra186-denver
-+              - nvidia,tegra194-carmel
-+              - qcom,krait
-+              - qcom,kryo
-+              - qcom,kryo385
-+              - qcom,scorpion
-+
-+      enable-method:
-+        allOf:
-+          - $ref: '/schemas/types.yaml#/definitions/string'
-+          - oneOf:
-+            # On ARM v8 64-bit this property is required
-+            - enum:
-+                - psci
-+                - spin-table
-+            # On ARM 32-bit systems this property is optional
-+            - enum:
-+                - actions,s500-smp
-+                - allwinner,sun6i-a31
-+                - allwinner,sun8i-a23
-+                - allwinner,sun9i-a80-smp
-+                - allwinner,sun8i-a83t-smp
-+                - amlogic,meson8-smp
-+                - amlogic,meson8b-smp
-+                - arm,realview-smp
-+                - brcm,bcm11351-cpu-method
-+                - brcm,bcm23550
-+                - brcm,bcm2836-smp
-+                - brcm,bcm63138
-+                - brcm,bcm-nsp-smp
-+                - brcm,brahma-b15
-+                - marvell,armada-375-smp
-+                - marvell,armada-380-smp
-+                - marvell,armada-390-smp
-+                - marvell,armada-xp-smp
-+                - marvell,98dx3236-smp
-+                - mediatek,mt6589-smp
-+                - mediatek,mt81xx-tz-smp
-+                - qcom,gcc-msm8660
-+                - qcom,kpss-acc-v1
-+                - qcom,kpss-acc-v2
-+                - renesas,apmu
-+                - renesas,r9a06g032-smp
-+                - rockchip,rk3036-smp
-+                - rockchip,rk3066-smp
-+                - ste,dbx500-smp
-+
-+      cpu-release-addr:
-+        $ref: '/schemas/types.yaml#/definitions/uint64'
-+
-+        description:
-+          Required for systems that have an "enable-method"
-+            property value of "spin-table".
-+          On ARM v8 64-bit systems must be a two cell
-+            property identifying a 64-bit zero-initialised
-+            memory location.
-+
-+      cpu-idle-states:
-+        $ref: '/schemas/types.yaml#/definitions/phandle-array'
-+        description: |
-+          List of phandles to idle state nodes supported
-+          by this cpu (see ./idle-states.txt).
-+
-+      capacity-dmips-mhz:
-+        $ref: '/schemas/types.yaml#/definitions/uint32'
-+        description:
-+          u32 value representing CPU capacity (see ./cpu-capacity.txt) in
-+          DMIPS/MHz, relative to highest capacity-dmips-mhz
-+          in the system.
-+
-+      dynamic-power-coefficient:
-+        $ref: '/schemas/types.yaml#/definitions/uint32'
-+        description:
-+          A u32 value that represents the running time dynamic
-+          power coefficient in units of uW/MHz/V^2. The
-+          coefficient can either be calculated from power
-+          measurements or derived by analysis.
-+
-+          The dynamic power consumption of the CPU  is
-+          proportional to the square of the Voltage (V) and
-+          the clock frequency (f). The coefficient is used to
-+          calculate the dynamic power as below -
-+
-+          Pdyn = dynamic-power-coefficient * V^2 * f
-+
-+          where voltage is in V, frequency is in MHz.
-+
-+      qcom,saw:
-+        $ref: '/schemas/types.yaml#/definitions/phandle'
-+        description: |
-+          Specifies the SAW* node associated with this CPU.
-+
-+          Required for systems that have an "enable-method" property
-+          value of "qcom,kpss-acc-v1" or "qcom,kpss-acc-v2"
-+
-+          * arm/msm/qcom,saw2.txt
-+
-+      qcom,acc:
-+        $ref: '/schemas/types.yaml#/definitions/phandle'
-+        description: |
-+          Specifies the ACC* node associated with this CPU.
-+
-+          Required for systems that have an "enable-method" property
-+          value of "qcom,kpss-acc-v1" or "qcom,kpss-acc-v2"
-+
-+          * arm/msm/qcom,kpss-acc.txt
-+
-+      rockchip,pmu:
-+        $ref: '/schemas/types.yaml#/definitions/phandle'
-+        description: |
-+          Specifies the syscon node controlling the cpu core power domains.
-+
-+          Optional for systems that have an "enable-method"
-+          property value of "rockchip,rk3066-smp"
-+          While optional, it is the preferred way to get access to
-+          the cpu-core power-domains.
-+
-+    required:
-+      - device_type
-+      - reg
-+      - compatible
-+
-+    dependencies:
-+      cpu-release-addr: [enable-method]
-+      rockchip,pmu: [enable-method]
++  reg:
++    maxItems: 1
++  interrupts:
++    maxItems: 1
++  compatible:
++    items:
++      - enum:
++            # AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
++          - abracon,abb5zes3
++            # SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over Temperature Pin
++          - ad,ad7414
++            # ADM9240:  Complete System Hardware Monitor for uProcessor-Based Systems
++          - ad,adm9240
++            # +/-1C TDM Extended Temp Range I.C
++          - adi,adt7461
++            # +/-1C TDM Extended Temp Range I.C
++          - adt7461
++            # +/-1C TDM Extended Temp Range I.C
++          - adi,adt7473
++            # +/-1C TDM Extended Temp Range I.C
++          - adi,adt7475
++            # +/-1C TDM Extended Temp Range I.C
++          - adi,adt7476
++            # +/-1C TDM Extended Temp Range I.C
++          - adi,adt7490
++            # Three-Axis Digital Accelerometer
++          - adi,adxl345
++            # Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
++          - adi,adxl346
++            # AMS iAQ-Core VOC Sensor
++          - ams,iaq-core
++            # i2c serial eeprom  (24cxx)
++          - at,24c08
++            # i2c trusted platform module (TPM)
++          - atmel,at97sc3204t
++            # CM32181: Ambient Light Sensor
++          - capella,cm32181
++            # CM3232: Ambient Light Sensor
++          - capella,cm3232
++            # I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
++          - dallas,ds1374
++            # High-Precision Digital Thermometer
++          - dallas,ds1631
++            # Dallas DS1672 Real-time Clock
++          - dallas,ds1672
++            # Total-Elapsed-Time Recorder with Alarm
++          - dallas,ds1682
++            # Tiny Digital Thermometer and Thermostat
++          - dallas,ds1775
++            # Extremely Accurate I²C RTC with Integrated Crystal and SRAM
++          - dallas,ds3232
++            # CPU Supervisor with Nonvolatile Memory and Programmable I/O
++          - dallas,ds4510
++            # Digital Thermometer and Thermostat
++          - dallas,ds75
++            # Devantech SRF02 ultrasonic ranger in I2C mode
++          - devantech,srf02
++            # Devantech SRF08 ultrasonic ranger
++          - devantech,srf08
++            # Devantech SRF10 ultrasonic ranger
++          - devantech,srf10
++            # DA9053: flexible system level PMIC with multicore support
++          - dlg,da9053
++            # DA9063: system PMIC for quad-core application processors
++          - dlg,da9063
++            # DMARD09: 3-axis Accelerometer
++          - domintech,dmard09
++            # DMARD10: 3-axis Accelerometer
++          - domintech,dmard10
++            # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
++          - epson,rx8010
++            # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
++          - epson,rx8581
++            # EM Microelectronic EM3027 Real-time Clock
++          - emmicro,em3027
++            # MAG3110: Xtrinsic High Accuracy, 3D Magnetometer
++          - fsl,mag3110
++            # MMA7660FC: 3-Axis Orientation/Motion Detection Sensor
++          - fsl,mma7660
++            # MMA8450Q: Xtrinsic Low-power, 3-axis Xtrinsic Accelerometer
++          - fsl,mma8450
++            # MPL3115: Absolute Digital Pressure Sensor
++          - fsl,mpl3115
++            # MPR121: Proximity Capacitive Touch Sensor Controller
++          - fsl,mpr121
++            # SGTL5000: Ultra Low-Power Audio Codec
++          - fsl,sgtl5000
++            # G751: Digital Temperature Sensor and Thermal Watchdog with Two-Wire Interface
++          - gmt,g751
++            # Infineon SLB9635 (Soft-) I2C TPM (old protocol, max 100khz)
++          - infineon,slb9635tt
++            # Infineon SLB9645 I2C TPM (new protocol, max 400khz)
++          - infineon,slb9645tt
++            # Infineon TLV493D-A1B6 I2C 3D Magnetic Sensor
++          - infineon,tlv493d-a1b6
++            # Intersil ISL1208 Low Power RTC with Battery Backed SRAM
++          - isil,isl1208
++            # Intersil ISL1218 Low Power RTC with Battery Backed SRAM
++          - isil,isl1218
++            # Intersil ISL12022 Real-time Clock
++          - isil,isl12022
++            # Intersil ISL29028 Ambient Light and Proximity Sensor
++          - isil,isl29028
++            # Intersil ISL29030 Ambient Light and Proximity Sensor
++          - isil,isl29030
++            # 5 Bit Programmable, Pulse-Width Modulator
++          - maxim,ds1050
++            # Low-Power, 4-/12-Channel, 2-Wire Serial, 12-Bit ADCs
++          - maxim,max1237
++            # PECI-to-I2C translator for PECI-to-SMBus/I2C protocol conversion
++          - maxim,max6621
++            # 9-Bit/12-Bit Temperature Sensors with I²C-Compatible Serial Interface
++          - maxim,max6625
++            # mCube 3-axis 8-bit digital accelerometer
++          - mcube,mc3230
++            # MEMSIC 2-axis 8-bit digital accelerometer
++          - memsic,mxc6225
++            # Microchip 7-bit Single I2C Digital POT (5k)
++          - microchip,mcp4017-502
++            # Microchip 7-bit Single I2C Digital POT (10k)
++          - microchip,mcp4017-103
++            # Microchip 7-bit Single I2C Digital POT (50k)
++          - microchip,mcp4017-503
++            # Microchip 7-bit Single I2C Digital POT (100k)
++          - microchip,mcp4017-104
++            # Microchip 7-bit Single I2C Digital POT (5k)
++          - microchip,mcp4018-502
++            # Microchip 7-bit Single I2C Digital POT (10k)
++          - microchip,mcp4018-103
++            # Microchip 7-bit Single I2C Digital POT (50k)
++          - microchip,mcp4018-503
++            # Microchip 7-bit Single I2C Digital POT (100k)
++          - microchip,mcp4018-104
++            # Microchip 7-bit Single I2C Digital POT (5k)
++          - microchip,mcp4019-502
++            # Microchip 7-bit Single I2C Digital POT (10k)
++          - microchip,mcp4019-103
++            # Microchip 7-bit Single I2C Digital POT (50k)
++          - microchip,mcp4019-503
++            # Microchip 7-bit Single I2C Digital POT (100k)
++          - microchip,mcp4019-104
++            # Microchip 7-bit Single I2C Digital Potentiometer (5k)
++          - microchip,mcp4531-502
++            # Microchip 7-bit Single I2C Digital Potentiometer (10k)
++          - microchip,mcp4531-103
++            # Microchip 7-bit Single I2C Digital Potentiometer (50k)
++          - microchip,mcp4531-503
++            # Microchip 7-bit Single I2C Digital Potentiometer (100k)
++          - microchip,mcp4531-104
++            # Microchip 7-bit Single I2C Digital Potentiometer (5k)
++          - microchip,mcp4532-502
++            # Microchip 7-bit Single I2C Digital Potentiometer (10k)
++          - microchip,mcp4532-103
++            # Microchip 7-bit Single I2C Digital Potentiometer (50k)
++          - microchip,mcp4532-503
++            # Microchip 7-bit Single I2C Digital Potentiometer (100k)
++          - microchip,mcp4532-104
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4541-502
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4541-103
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4541-503
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4541-104
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4542-502
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4542-103
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4542-503
++            # Microchip 7-bit Single I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4542-104
++            # Microchip 8-bit Single I2C Digital Potentiometer (5k)
++          - microchip,mcp4551-502
++            # Microchip 8-bit Single I2C Digital Potentiometer (10k)
++          - microchip,mcp4551-103
++            # Microchip 8-bit Single I2C Digital Potentiometer (50k)
++          - microchip,mcp4551-503
++            # Microchip 8-bit Single I2C Digital Potentiometer (100k)
++          - microchip,mcp4551-104
++            # Microchip 8-bit Single I2C Digital Potentiometer (5k)
++          - microchip,mcp4552-502
++            # Microchip 8-bit Single I2C Digital Potentiometer (10k)
++          - microchip,mcp4552-103
++            # Microchip 8-bit Single I2C Digital Potentiometer (50k)
++          - microchip,mcp4552-503
++            # Microchip 8-bit Single I2C Digital Potentiometer (100k)
++          - microchip,mcp4552-104
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4561-502
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4561-103
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4561-503
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4561-104
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4562-502
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4562-103
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4562-503
++            # Microchip 8-bit Single I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4562-104
++            # Microchip 7-bit Dual I2C Digital Potentiometer (5k)
++          - microchip,mcp4631-502
++            # Microchip 7-bit Dual I2C Digital Potentiometer (10k)
++          - microchip,mcp4631-103
++            # Microchip 7-bit Dual I2C Digital Potentiometer (50k)
++          - microchip,mcp4631-503
++            # Microchip 7-bit Dual I2C Digital Potentiometer (100k)
++          - microchip,mcp4631-104
++            # Microchip 7-bit Dual I2C Digital Potentiometer (5k)
++          - microchip,mcp4632-502
++            # Microchip 7-bit Dual I2C Digital Potentiometer (10k)
++          - microchip,mcp4632-103
++            # Microchip 7-bit Dual I2C Digital Potentiometer (50k)
++          - microchip,mcp4632-503
++            # Microchip 7-bit Dual I2C Digital Potentiometer (100k)
++          - microchip,mcp4632-104
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4641-502
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4641-103
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4641-503
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4641-104
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4642-502
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4642-103
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4642-503
++            # Microchip 7-bit Dual I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4642-104
++            # Microchip 8-bit Dual I2C Digital Potentiometer (5k)
++          - microchip,mcp4651-502
++            # Microchip 8-bit Dual I2C Digital Potentiometer (10k)
++          - microchip,mcp4651-103
++            # Microchip 8-bit Dual I2C Digital Potentiometer (50k)
++          - microchip,mcp4651-503
++            # Microchip 8-bit Dual I2C Digital Potentiometer (100k)
++          - microchip,mcp4651-104
++            # Microchip 8-bit Dual I2C Digital Potentiometer (5k)
++          - microchip,mcp4652-502
++            # Microchip 8-bit Dual I2C Digital Potentiometer (10k)
++          - microchip,mcp4652-103
++            # Microchip 8-bit Dual I2C Digital Potentiometer (50k)
++          - microchip,mcp4652-503
++            # Microchip 8-bit Dual I2C Digital Potentiometer (100k)
++          - microchip,mcp4652-104
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4661-502
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4661-103
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4661-503
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4661-104
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (5k)
++          - microchip,mcp4662-502
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (10k)
++          - microchip,mcp4662-103
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (50k)
++          - microchip,mcp4662-503
++            # Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
++          - microchip,mcp4662-104
++            # PWM Fan Speed Controller With Fan Fault Detection
++          - microchip,tc654
++            # PWM Fan Speed Controller With Fan Fault Detection
++          - microchip,tc655
++            # Real Time Clock Module with I2C-Bus
++          - microcrystal,rv3029
++            # MiraMEMS DA226 2-axis 14-bit digital accelerometer
++          - miramems,da226
++            # MiraMEMS DA280 3-axis 14-bit digital accelerometer
++          - miramems,da280
++            # MiraMEMS DA311 3-axis 12-bit digital accelerometer
++          - miramems,da311
++            # Temperature sensor with integrated fan control
++          - national,lm63
++            # I2C TEMP SENSOR
++          - national,lm75
++            # Serial Interface ACPI-Compatible Microprocessor System Hardware Monitor
++          - national,lm80
++            # Temperature sensor with integrated fan control
++          - national,lm85
++            # ±0.33°C Accurate, 12-Bit + Sign Temperature Sensor and Thermal Window Comparator with Two-Wire Interface
++          - national,lm92
++            # i2c trusted platform module (TPM)
++          - nuvoton,npct501
++            # i2c trusted platform module (TPM2)
++          - nuvoton,npct601
++            # Nuvoton Temperature Sensor
++          - nuvoton,w83773g
++            # Octal SMBus and I2C registered interface
++          - nxp,pca9556
++            # 8-bit I2C-bus and SMBus I/O port with reset
++          - nxp,pca9557
++            # Real-time clock
++          - nxp,pcf2127
++            # Real-time clock
++          - nxp,pcf2129
++            # Real-time Clock
++          - nxp,pcf8523
++            # Real-time clock/calendar
++          - nxp,pcf8563
++            # Tiny Real-Time Clock
++          - nxp,pcf85063
++            # OKI ML86V7667 video decoder
++          - oki,ml86v7667
++            # OV5642: Color CMOS QSXGA (5-megapixel) Image Sensor with OmniBSI and Embedded TrueFocus
++          - ovti,ov5642
++            # Real-time Clock Module
++          - pericom,pt7c4338
++            # 48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
++          - plx,pex8648
++            # Pulsedlight LIDAR range-finding sensor
++          - pulsedlight,lidar-lite-v2
++            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
++          - ricoh,r2025sd
++            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
++          - ricoh,r2221tl
++            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
++          - ricoh,rs5c372a
++            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
++          - ricoh,rs5c372b
++            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
++          - ricoh,rv5c386
++            # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
++          - ricoh,rv5c387a
++            # S524AD0XF1 (128K/256K-bit Serial EEPROM for Low Power)
++          - samsung,24ad0xd1
++            # SGX Sensortech VZ89X Sensors
++          - sgx,vz89x
++            # 2-wire CMOS real-time clock
++          - sii,s35390a
++            # Relative Humidity and Temperature Sensors
++          - silabs,si7020
++            # Skyworks SKY81452: Six-Channel White LED Driver with Touch Panel Bias Supply
++          - skyworks,sky81452
++            # i2c serial eeprom  (24cxx)
++          - st,24c256
++            # Ambient Light Sensor with SMBUS/Two Wire Serial Interface
++          - taos,tsl2550
++            # 8-Channels, 12-bit ADC
++          - ti,ads7828
++            # 8-Channels, 8-bit ADC
++          - ti,ads7830
++            # Temperature Monitoring and Fan Control
++          - ti,amc6821
++            # I2C Touch-Screen Controller
++          - ti,tsc2003
++            # Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
++          - ti,tmp102
++            # Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
++          - ti,tmp103
++            # Digital Temperature Sensor
++          - ti,tmp275
++            # Winbond/Nuvoton H/W Monitor
++          - winbond,w83793
++            # i2c trusted platform module (TPM)
++          - winbond,wpct301
 +
 +required:
-+  - '#address-cells'
-+  - '#size-cells'
++  - compatible
++  - reg
 +
-+examples:
-+  - |
-+    cpus {
-+      #size-cells = <0>;
-+      #address-cells = <1>;
-+
-+      cpu@0 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a15";
-+        reg = <0x0>;
-+      };
-+
-+      cpu@1 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a15";
-+        reg = <0x1>;
-+      };
-+
-+      cpu@100 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a7";
-+        reg = <0x100>;
-+      };
-+
-+      cpu@101 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a7";
-+        reg = <0x101>;
-+      };
-+    };
-+
-+  - |
-+    // Example 2 (Cortex-A8 uniprocessor 32-bit system):
-+    cpus {
-+      #size-cells = <0>;
-+      #address-cells = <1>;
-+
-+      cpu@0 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a8";
-+        reg = <0x0>;
-+      };
-+    };
-+
-+  - |
-+    // Example 3 (ARM 926EJ-S uniprocessor 32-bit system):
-+    cpus {
-+      #size-cells = <0>;
-+      #address-cells = <1>;
-+
-+      cpu@0 {
-+        device_type = "cpu";
-+        compatible = "arm,arm926ej-s";
-+        reg = <0x0>;
-+      };
-+    };
-+
-+  - |
-+    //  Example 4 (ARM Cortex-A57 64-bit system):
-+    cpus {
-+      #size-cells = <0>;
-+      #address-cells = <2>;
-+
-+      cpu@0 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x0>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@1 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x1>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x100>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@101 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x101>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@10000 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x10000>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@10001 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x10001>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@10100 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x10100>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@10101 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x0 0x10101>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100000000 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x0>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100000001 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x1>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100000100 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x100>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100000101 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x101>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100010000 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x10000>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100010001 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x10001>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100010100 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x10100>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+
-+      cpu@100010101 {
-+        device_type = "cpu";
-+        compatible = "arm,cortex-a57";
-+        reg = <0x1 0x10101>;
-+        enable-method = "spin-table";
-+        cpu-release-addr = <0 0x20000000>;
-+      };
-+    };
 +...
 -- 
 2.19.1
