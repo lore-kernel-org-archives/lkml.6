@@ -2,47 +2,45 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C821C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8346C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C1DB20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:35:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C1DB20850
+	by mail.kernel.org (Postfix) with ESMTP id 8619720850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:35:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8619720850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeLCXf3 (ORCPT
+        id S1726113AbeLCXfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:35:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46164 "EHLO mx1.redhat.com"
+        Mon, 3 Dec 2018 18:35:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55814 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725915AbeLCXf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:35:29 -0500
+        id S1725915AbeLCXfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 18:35:37 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50CD82D7FB;
-        Mon,  3 Dec 2018 23:35:26 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 67A553082137;
+        Mon,  3 Dec 2018 23:35:36 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-120-188.rdu2.redhat.com [10.10.120.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 90AC7600C7;
-        Mon,  3 Dec 2018 23:35:13 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 71973600C1;
+        Mon,  3 Dec 2018 23:35:26 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
         Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
+        Balbir Singh <balbirs@au1.ibm.com>,
         "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Felix Kuehling <felix.kuehling@amd.com>,
@@ -59,17 +57,17 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Mel Gorman <mgorman@techsingularity.net>,
         Dave Airlie <airlied@redhat.com>,
         Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-Subject: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-Date:   Mon,  3 Dec 2018 18:34:55 -0500
-Message-Id: <20181203233509.20671-1-jglisse@redhat.com>
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: [RFC PATCH 01/14] mm/hms: heterogeneous memory system (sysfs infrastructure)
+Date:   Mon,  3 Dec 2018 18:34:56 -0500
+Message-Id: <20181203233509.20671-2-jglisse@redhat.com>
+In-Reply-To: <20181203233509.20671-1-jglisse@redhat.com>
+References: <20181203233509.20671-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 03 Dec 2018 23:35:28 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 03 Dec 2018 23:35:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,329 +75,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Heterogeneous memory system are becoming more and more the norm, in
-those system there is not only the main system memory for each node,
-but also device memory and|or memory hierarchy to consider. Device
-memory can comes from a device like GPU, FPGA, ... or from a memory
-only device (persistent memory, or high density memory device).
+System with complex memory topology needs a more versatile memory
+topology description than just node where a node is a collection of
+memory and CPU. In heterogeneous memory system we consider four
+types of object:
+      - target: which is any kind of memory
+      - initiator: any kind of device or CPU
+      - link: any kind of link that connects targets and initiators
+      - bridge: a bridge between two links (for some initiators)
 
-Memory hierarchy is when you not only have the main memory but also
-other type of memory like HBM (High Bandwidth Memory often stack up
-on CPU die or GPU die), peristent memory or high density memory (ie
-something slower then regular DDR DIMM but much bigger).
+Properties (like bandwidth, latency, bus width, ...) are define per
+bridge and per link. Property of a link apply to all initiators which
+are connected to that link.
 
-On top of this diversity of memories you also have to account for the
-system bus topology ie how all CPUs and devices are connected to each
-others. Userspace do not care about the exact physical topology but
-care about topology from behavior point of view ie what are all the
-paths between an initiator (anything that can initiate memory access
-like CPU, GPU, FGPA, network controller ...) and a target memory and
-what are all the properties of each of those path (bandwidth, latency,
-granularity, ...).
+Not all initiators are connected to all links thus not all initiators
+can access all targets memory (this apply to CPU too ie some CPU might
+not be able to access all target memory).
 
-This means that it is no longer sufficient to consider a flat view
-for each node in a system but for maximum performance we need to
-account for all of this new memory but also for system topology.
-This is why this proposal is unlike the HMAT proposal [1] which
-tries to extend the existing NUMA for new type of memory. Here we
-are tackling a much more profound change that depart from NUMA.
+Bridges allow initiators (that can use the bridge) to access targets
+for which they do not have a direct link with.
 
+Through this four types of object we can describe any kind of system
+memory topology. To expose this to userspace we expose a new sysfs
+hierarchy (that co-exist with the existing one):
+  - /sys/bus/hms/target/ all targets in the system
+  - /sys/bus/hms/initiator all initiators in the system
+  - /sys/bus/hms/interconnect all inter-connects in the system
+  - /sys/bus/hms/bridge all bridges in the system
 
-One of the reasons for radical change is the advance of accelerator
-like GPU or FPGA means that CPU is no longer the only piece where
-computation happens. It is becoming more and more common for an
-application to use a mix and match of different accelerator to
-perform its computation. So we can no longer satisfy our self with
-a CPU centric and flat view of a system like NUMA and NUMA distance.
+Inside each link or bridge directory they are symlinks to targets and
+initiators that are connected to that bridge or link. Properties are
+defined inside link and bridge directory.
 
+This patch only introduce core HMS infrastructure, each object type
+is added with individual patch.
 
-This patchset is a proposal to tackle this problems through three
-aspects:
-    1 - Expose complex system topology and various kind of memory
-        to user space so that application have a standard way and
-        single place to get all the information it cares about.
-    2 - A new API for user space to bind/provide hint to kernel on
-        which memory to use for range of virtual address (a new
-        mbind() syscall).
-    3 - Kernel side changes for vm policy to handle this changes
-
-This patchset is not and end to end solution but it provides enough
-pieces to be useful against nouveau (upstream open source driver for
-NVidia GPU). It is intended as a starting point for discussion so
-that we can figure out what to do. To avoid having too much topics
-to discuss i am not considering memory cgroup for now but it is
-definitely something we will want to integrate with.
-
-The rest of this emails is splits in 3 sections, the first section
-talks about complex system topology: what it is, how it is use today
-and how to describe it tomorrow. The second sections talks about
-new API to bind/provide hint to kernel for range of virtual address.
-The third section talks about new mechanism to track bind/hint
-provided by user space or device driver inside the kernel.
-
-
-1) Complex system topology and representing them
-------------------------------------------------
-
-Inside a node you can have a complex topology of memory, for instance
-you can have multiple HBM memory in a node, each HBM memory tie to a
-set of CPUs (all of which are in the same node). This means that you
-have a hierarchy of memory for CPUs. The local fast HBM but which is
-expected to be relatively small compare to main memory and then the
-main memory. New memory technology might also deepen this hierarchy
-with another level of yet slower memory but gigantic in size (some
-persistent memory technology might fall into that category). Another
-example is device memory, and device themself can have a hierarchy
-like HBM on top of device core and main device memory.
-
-On top of that you can have multiple path to access each memory and
-each path can have different properties (latency, bandwidth, ...).
-Also there is not always symmetry ie some memory might only be
-accessible by some device or CPU ie not accessible by everyone.
-
-So a flat hierarchy for each node is not capable of representing this
-kind of complexity. To simplify discussion and because we do not want
-to single out CPU from device, from here on out we will use initiator
-to refer to either CPU or device. An initiator is any kind of CPU or
-device that can access memory (ie initiate memory access).
-
-At this point a example of such system might help:
-    - 2 nodes and for each node:
-        - 1 CPU per node with 2 complex of CPUs cores per CPU
-        - one HBM memory for each complex of CPUs cores (200GB/s)
-        - CPUs cores complex are linked to each other (100GB/s)
-        - main memory is (90GB/s)
-        - 4 GPUs each with:
-            - HBM memory for each GPU (1000GB/s) (not CPU accessible)
-            - GDDR memory for each GPU (500GB/s) (CPU accessible)
-            - connected to CPU root controller (60GB/s)
-            - connected to other GPUs (even GPUs from the second
-              node) with GPU link (400GB/s)
-
-In this example we restrict our self to bandwidth and ignore bus width
-or latency, this is just to simplify discussions but obviously they
-also factor in.
-
-
-Userspace very much would like to know about this information, for
-instance HPC folks have develop complex library to manage this and
-there is wide research on the topics [2] [3] [4] [5]. Today most of
-the work is done by hardcoding thing for specific platform. Which is
-somewhat acceptable for HPC folks where the platform stays the same
-for a long period of time. But if we want a more ubiquituous support
-we should aim to provide the information needed through standard
-kernel API such as the one presented in this patchset.
-
-Roughly speaking i see two broads use case for topology information.
-First is for virtualization and vm where you want to segment your
-hardware properly for each vm (binding memory, CPU and GPU that are
-all close to each others). Second is for application, many of which
-can partition their workload to minimize exchange between partition
-allowing each partition to be bind to a subset of device and CPUs
-that are close to each others (for maximum locality). Here it is much
-more than just NUMA distance, you can leverage the memory hierarchy
-and  the system topology all-together (see [2] [3] [4] [5] for more
-references and details).
-
-So this is not exposing topology just for the sake of cool graph in
-userspace. They are active user today of such information and if we
-want to growth and broaden the usage we should provide a unified API
-to standardize how that information is accessible to every one.
-
-
-One proposal so far to handle new type of memory is to user CPU less
-node for those [6]. While same idea can apply for device memory, it is
-still hard to describe multiple path with different property in such
-scheme. While it is backward compatible and have minimum changes, it
-simplify can not convey complex topology (think any kind of random
-graph, not just a tree like graph).
-
-Thus far this kind of system have been use through device specific API
-and rely on all kind of system specific quirks. To avoid this going out
-of hands and grow into a bigger mess than it already is, this patchset
-tries to provide a common generic API that should fit various devices
-(GPU, FPGA, ...).
-
-So this patchset propose a new way to expose to userspace the system
-topology. It relies on 4 types of objects:
-    - target: any kind of memory (main memory, HBM, device, ...)
-    - initiator: CPU or device (anything that can access memory)
-    - link: anything that link initiator and target
-    - bridges: anything that allow group of initiator to access
-      remote target (ie target they are not connected with directly
-      through an link)
-
-Properties like bandwidth, latency, ... are all sets per bridges and
-links. All initiators connected to an link can access any target memory
-also connected to the same link and all with the same link properties.
-
-Link do not need to match physical hardware ie you can have a single
-physical link match a single or multiples software expose link. This
-allows to model device connected to same physical link (like PCIE
-for instance) but not with same characteristics (like number of lane
-or lane speed in PCIE). The reverse is also true ie having a single
-software expose link match multiples physical link.
-
-Bridges allows initiator to access remote link. A bridges connect two
-links to each others and is also specific to list of initiators (ie
-not all initiators connected to each of the link can use the bridge).
-Bridges have their own properties (bandwidth, latency, ...) so that
-the actual property value for each property is the lowest common
-denominator between bridge and each of the links.
-
-
-This model allows to describe any kind of directed graph and thus
-allows to describe any kind of topology we might see in the future.
-It is also easier to add new properties to each object type.
-
-Moreover it can be use to expose devices capable to do peer to peer
-between them. For that simply have all devices capable to peer to
-peer to have a common link or use the bridge object if the peer to
-peer capabilities is only one way for instance.
-
-
-This patchset use the above scheme to expose system topology through
-sysfs under /sys/bus/hms/ with:
-    - /sys/bus/hms/devices/v%version-%id-target/ : a target memory,
-      each has a UID and you can usual value in that folder (node id,
-      size, ...)
-
-    - /sys/bus/hms/devices/v%version-%id-initiator/ : an initiator
-      (CPU or device), each has a HMS UID but also a CPU id for CPU
-      (which match CPU id in (/sys/bus/cpu/). For device you have a
-      path that can be PCIE BUS ID for instance)
-
-    - /sys/bus/hms/devices/v%version-%id-link : an link, each has a
-      UID and a file per property (bandwidth, latency, ...) you also
-      find a symlink to every target and initiator connected to that
-      link.
-
-    - /sys/bus/hms/devices/v%version-%id-bridge : a bridge, each has
-      a UID and a file per property (bandwidth, latency, ...) you
-      also find a symlink to all initiators that can use that bridge.
-
-To help with forward compatibility each object as a version value and
-it is mandatory for user space to only use target or initiator with
-version supported by the user space. For instance if user space only
-knows about what version 1 means and sees a target with version 2 then
-the user space must ignore that target as if it does not exist.
-
-Mandating that allows the additions of new properties that break back-
-ward compatibility ie user space must know how this new property affect
-the object to be able to use it safely.
-
-This patchset expose main memory of each node under a common target.
-For now device driver are responsible to register memory they want to
-expose through that scheme but in the future that information might
-come from the system firmware (this is a different discussion).
-
-
-
-2) hbind() bind range of virtual address to heterogeneous memory
-----------------------------------------------------------------
-
-With this new topology description the mbind() API is too limited to
-handle which memory to picks. This is why this patchset introduce a new
-API: hbind() for heterogeneous bind. The hbind() API allows to bind any
-kind of target memory (using the HMS target uid), this can be any memory
-expose through HMS ie main memory, HBM, device memory ... 
-
-So instead of using a bitmap, hbind() take an array of uid and each uid
-is a unique memory target inside the new memory topology description.
-User space also provide an array of modifiers. This patchset only define
-some modifier. Modifier can be seen as the flags parameter of mbind()
-but here we use an array so that user space can not only supply a modifier
-but also value with it. This should allow the API to grow more features
-in the future. Kernel should return -EINVAL if it is provided with an
-unkown modifier and just ignore the call all together, forcing the user
-space to restrict itself to modifier supported by the kernel it is
-running on (i know i am dreaming about well behave user space).
-
-
-Note that none of this is exclusive of automatic memory placement like
-autonuma. I also believe that we will see something similar to autonuma
-for device memory. This patchset is just there to provide new API for
-process that wish to have a fine control over their memory placement
-because process should know better than the kernel on where to place
-thing.
-
-This patchset also add necessary bits to the nouveau open source driver
-for it to expose its memory and to allow process to bind some range to
-the GPU memory. Note that on x86 the GPU memory is not accessible by
-CPU because PCIE does not allow cache coherent access to device memory.
-Thus when using PCIE device memory on x86 it is mapped as swap out from
-CPU POV and any CPU access will triger a migration back to main memory
-(this is all part of HMM and nouveau not in this patchset).
-
-This is all done under staging so that we can experiment with the user-
-space API for a while before committing to anything. Getting this right
-is hard and it might not happen on the first try so instead of having to
-support forever an API i would rather have it leave behind staging for
-people to experiment with and once we feel confident we have something
-we can live with then convert it to a syscall.
-
-
-3) Tracking and applying heterogeneous memory policies
-------------------------------------------------------
-
-Current memory policy infrastructure is node oriented, instead of
-changing that and risking breakage and regression this patchset add a
-new heterogeneous policy tracking infra-structure. The expectation is
-that existing application can keep using mbind() and all existing
-infrastructure under-disturb and unaffected, while new application
-will use the new API and should avoid mix and matching both (as they
-can achieve the same thing with the new API).
-
-Also the policy is not directly tie to the vma structure for a few
-reasons:
-    - avoid having to split vma for policy that do not cover full vma
-    - avoid changing too much vma code
-    - avoid growing the vma structure with an extra pointer
-So instead this patchset use the mmu_notifier API to track vma liveness
-(munmap(),mremap(),...).
-
-This patchset is not tie to process memory allocation either (like said
-at the begining this is not and end to end patchset but a starting
-point). It does however demonstrate how migration to device memory can
-work under this scheme (using nouveau as a demonstration vehicle).
-
-The overall design is simple, on hbind() call a hms policy structure
-is created for the supplied range and hms use the callback associated
-with the target memory. This callback is provided by device driver
-for device memory or by core HMS for regular main memory. The callback
-can decide to migrate the range to the target memories or do nothing
-(this can be influenced by flags provided to hbind() too).
-
-
-Latter patches can tie page fault with HMS policy to direct memory
-allocation to the right target. For now i would rather postpone that
-discussion until a consensus is reach on how to move forward on all
-the topics presented in this email. Start smalls, grow big ;)
-
-Cheers,
-Jérôme Glisse
-
-https://cgit.freedesktop.org/~glisse/linux/log/?h=hms-hbind-v01
-git://people.freedesktop.org/~glisse/linux hms-hbind-v01
-
-
-[1] https://lkml.org/lkml/2018/11/15/331
-[2] https://arxiv.org/pdf/1704.08273.pdf
-[3] https://csmd.ornl.gov/highlight/sharp-unified-memory-allocator-intent-based-memory-allocator-extreme-scale-systems
-[4] https://cfwebprod.sandia.gov/cfdocs/CompResearch/docs/Trott-white-paper.pdf
-    http://cacs.usc.edu/education/cs653/Edwards-Kokkos-JPDC14.pdf
-[5] https://github.com/LLNL/Umpire
-    https://umpire.readthedocs.io/en/develop/
-[6] https://www.spinics.net/lists/hotplug/msg06171.html
-
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Rafael J. Wysocki <rafael@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Haggai Eran <haggaie@mellanox.com>
-Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Balbir Singh <balbirs@au1.ibm.com>
 Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: Felix Kuehling <felix.kuehling@amd.com>
@@ -417,73 +134,396 @@ Cc: Mel Gorman <mgorman@techsingularity.net>
 Cc: Dave Airlie <airlied@redhat.com>
 Cc: Ben Skeggs <bskeggs@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Ben Woodard <woodard@redhat.com>
-Cc: linux-acpi@vger.kernel.org
-
-Jérôme Glisse (14):
-  mm/hms: heterogeneous memory system (sysfs infrastructure)
-  mm/hms: heterogenenous memory system (HMS) documentation
-  mm/hms: add target memory to heterogeneous memory system
-    infrastructure
-  mm/hms: add initiator to heterogeneous memory system infrastructure
-  mm/hms: add link to heterogeneous memory system infrastructure
-  mm/hms: add bridge to heterogeneous memory system infrastructure
-  mm/hms: register main memory with heterogenenous memory system
-  mm/hms: register main CPUs with heterogenenous memory system
-  mm/hms: hbind() for heterogeneous memory system (aka mbind() for HMS)
-  mm/hbind: add heterogeneous memory policy tracking infrastructure
-  mm/hbind: add bind command to heterogeneous memory policy
-  mm/hbind: add migrate command to hbind() ioctl
-  drm/nouveau: register GPU under heterogeneous memory system
-  test/hms: tests for heterogeneous memory system
-
- Documentation/vm/hms.rst                      | 252 ++++++++
- drivers/base/Kconfig                          |  14 +
- drivers/base/Makefile                         |   1 +
- drivers/base/cpu.c                            |   5 +
- drivers/base/hms-bridge.c                     | 197 +++++++
- drivers/base/hms-initiator.c                  | 141 +++++
- drivers/base/hms-link.c                       | 183 ++++++
- drivers/base/hms-target.c                     | 193 +++++++
- drivers/base/hms.c                            | 199 +++++++
- drivers/base/init.c                           |   2 +
- drivers/base/node.c                           |  83 ++-
- drivers/gpu/drm/nouveau/Kbuild                |   1 +
- drivers/gpu/drm/nouveau/nouveau_hms.c         |  80 +++
- drivers/gpu/drm/nouveau/nouveau_hms.h         |  46 ++
- drivers/gpu/drm/nouveau/nouveau_svm.c         |   6 +
- include/linux/cpu.h                           |   4 +
- include/linux/hms.h                           | 219 +++++++
- include/linux/mm_types.h                      |   6 +
- include/linux/node.h                          |   6 +
- include/uapi/linux/hbind.h                    |  73 +++
- kernel/fork.c                                 |   3 +
- mm/Makefile                                   |   1 +
- mm/hms.c                                      | 545 ++++++++++++++++++
- tools/testing/hms/Makefile                    |  17 +
- tools/testing/hms/hbind-create-device-file.sh |  11 +
- tools/testing/hms/test-hms-migrate.c          |  77 +++
- tools/testing/hms/test-hms.c                  | 237 ++++++++
- tools/testing/hms/test-hms.h                  |  67 +++
- 28 files changed, 2667 insertions(+), 2 deletions(-)
+---
+ Documentation/vm/hms.rst |  35 +++++++
+ drivers/base/Kconfig     |  14 +++
+ drivers/base/Makefile    |   1 +
+ drivers/base/hms.c       | 199 +++++++++++++++++++++++++++++++++++++++
+ drivers/base/init.c      |   2 +
+ include/linux/hms.h      |  72 ++++++++++++++
+ 6 files changed, 323 insertions(+)
  create mode 100644 Documentation/vm/hms.rst
- create mode 100644 drivers/base/hms-bridge.c
- create mode 100644 drivers/base/hms-initiator.c
- create mode 100644 drivers/base/hms-link.c
- create mode 100644 drivers/base/hms-target.c
  create mode 100644 drivers/base/hms.c
- create mode 100644 drivers/gpu/drm/nouveau/nouveau_hms.c
- create mode 100644 drivers/gpu/drm/nouveau/nouveau_hms.h
  create mode 100644 include/linux/hms.h
- create mode 100644 include/uapi/linux/hbind.h
- create mode 100644 mm/hms.c
- create mode 100644 tools/testing/hms/Makefile
- create mode 100755 tools/testing/hms/hbind-create-device-file.sh
- create mode 100644 tools/testing/hms/test-hms-migrate.c
- create mode 100644 tools/testing/hms/test-hms.c
- create mode 100644 tools/testing/hms/test-hms.h
 
+diff --git a/Documentation/vm/hms.rst b/Documentation/vm/hms.rst
+new file mode 100644
+index 000000000000..dbf0f71918a9
+--- /dev/null
++++ b/Documentation/vm/hms.rst
+@@ -0,0 +1,35 @@
++.. hms:
++
++=================================
++Heterogeneous Memory System (HMS)
++=================================
++
++System with complex memory topology needs a more versatile memory topology
++description than just node where a node is a collection of memory and CPU.
++In heterogeneous memory system we consider four types of object::
++   - target: which is any kind of memory
++   - initiator: any kind of device or CPU
++   - inter-connect: any kind of links that connects target and initiator
++   - bridge: a link between two inter-connects
++
++Properties (like bandwidth, latency, bus width, ...) are define per bridge
++and per inter-connect. Property of an inter-connect apply to all initiators
++which are link to that inter-connect. Not all initiators are link to all
++inter-connect and thus not all initiators can access all memory (this apply
++to CPU too ie some CPU might not be able to access all memory).
++
++Bridges allow initiators (that can use the bridge) to access target for
++which they do not have a direct link with (ie they do not share a common
++inter-connect with the target).
++
++Through this four types of object we can describe any kind of system memory
++topology. To expose this to userspace we expose a new sysfs hierarchy (that
++co-exist with the existing one)::
++   - /sys/bus/hms/target* all targets in the system
++   - /sys/bus/hms/initiator* all initiators in the system
++   - /sys/bus/hms/interconnect* all inter-connects in the system
++   - /sys/bus/hms/bridge* all bridges in the system
++
++Inside each bridge or inter-connect directory they are symlinks to targets
++and initiators that are linked to that bridge or inter-connect. Properties
++are defined inside bridge and inter-connect directory.
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index 3e63a900b330..d46a7d47f316 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -276,4 +276,18 @@ config GENERIC_ARCH_TOPOLOGY
+ 	  appropriate scaling, sysfs interface for changing capacity values at
+ 	  runtime.
+ 
++config HMS
++	bool "Heterogeneous memory system"
++	depends on STAGING
++	default n
++	help
++	  THIS IS AN EXPERIMENTAL API DO NOT RELY ON IT ! IT IS UNSTABLE !
++	
++	  Select HMS if you want to expose heterogeneous memory system to user
++	  space. This will expose a new directory under /sys/class/bus/hms that
++	  provide a description of heterogeneous memory system.
++	
++	  See Documentations/vm/hms.rst for further informations.
++
++
+ endmenu
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index 704f44295810..92ebfacbf0dc 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -12,6 +12,7 @@ obj-y			+= power/
+ obj-$(CONFIG_ISA_BUS_API)	+= isa.o
+ obj-y				+= firmware_loader/
+ obj-$(CONFIG_NUMA)	+= node.o
++obj-$(CONFIG_HMS)	+= hms.o
+ obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
+ ifeq ($(CONFIG_SYSFS),y)
+ obj-$(CONFIG_MODULES)	+= module.o
+diff --git a/drivers/base/hms.c b/drivers/base/hms.c
+new file mode 100644
+index 000000000000..a145f00a3683
+--- /dev/null
++++ b/drivers/base/hms.c
+@@ -0,0 +1,199 @@
++/*
++ * Copyright 2018 Red Hat Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * Authors:
++ * Jérôme Glisse <jglisse@redhat.com>
++ */
++/* Heterogeneous memory system (HMS) see Documentation/vm/hms.rst */
++#include <linux/capability.h>
++#include <linux/topology.h>
++#include <linux/uaccess.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/slab.h>
++#include <linux/init.h>
++#include <linux/hms.h>
++
++
++#define HMS_CLASS_NAME "hms"
++
++static DEFINE_MUTEX(hms_sysfs_mutex);
++
++static struct bus_type hms_subsys = {
++	.name = HMS_CLASS_NAME,
++	.dev_name = NULL,
++};
++
++void hms_object_release(struct hms_object *object)
++{
++	put_device(object->parent);
++}
++
++int hms_object_init(struct hms_object *object, struct device *parent,
++		    enum hms_type type, unsigned version,
++		    void (*device_release)(struct device *device),
++		    const struct attribute_group **device_group)
++{
++	static unsigned uid = 0;
++	int ret;
++
++	mutex_lock(&hms_sysfs_mutex);
++
++	/*
++	 * For now assume we are not going to have more that (2^31)-1 objects
++	 * in a system.
++	 *
++	 * FIXME use something little less naive ...
++	 */
++	object->uid = uid++;
++
++	switch (type) {
++	case HMS_TARGET:
++		dev_set_name(&object->device, "v%u-%u-target",
++			     version, object->uid);
++		break;
++	case HMS_BRIDGE:
++		dev_set_name(&object->device, "v%u-%u-bridge",
++			     version, object->uid);
++		break;
++	case HMS_INITIATOR:
++		dev_set_name(&object->device, "v%u-%u-initiator",
++			     version, object->uid);
++		break;
++	case HMS_LINK:
++		dev_set_name(&object->device, "v%u-%u-link",
++			     version, object->uid);
++		break;
++	default:
++		mutex_unlock(&hms_sysfs_mutex);
++		return -EINVAL;
++	}
++
++	object->type = type;
++	object->version = version;
++	object->device.id = object->uid;
++	object->device.bus = &hms_subsys;
++	object->device.groups = device_group;
++	object->device.release = device_release;
++
++	ret = device_register(&object->device);
++	if (ret)
++		put_device(&object->device);
++	mutex_unlock(&hms_sysfs_mutex);
++
++	if (!ret && parent) {
++		object->parent = parent;
++		get_device(parent);
++
++		sysfs_create_link(&object->device.kobj, &parent->kobj,
++				  kobject_name(&parent->kobj));
++	}
++
++	return ret;
++}
++
++int hms_object_link(struct hms_object *objecta,
++		    struct hms_object *objectb)
++{
++	int ret;
++
++	ret = sysfs_create_link(&objecta->device.kobj,
++				&objectb->device.kobj,
++				kobject_name(&objectb->device.kobj));
++	if (ret)
++		return ret;
++	ret = sysfs_create_link(&objectb->device.kobj,
++				&objecta->device.kobj,
++				kobject_name(&objecta->device.kobj));
++	if (ret) {
++		sysfs_remove_link(&objecta->device.kobj,
++				  kobject_name(&objectb->device.kobj));
++		return ret;
++	}
++
++	return 0;
++}
++
++void hms_object_unlink(struct hms_object *objecta,
++		       struct hms_object *objectb)
++{
++	sysfs_remove_link(&objecta->device.kobj,
++			  kobject_name(&objectb->device.kobj));
++	sysfs_remove_link(&objectb->device.kobj,
++			  kobject_name(&objecta->device.kobj));
++}
++
++struct hms_object *hms_object_get(struct hms_object *object)
++{
++	if (object == NULL)
++		return NULL;
++
++	get_device(&object->device);
++	return object;
++}
++
++void hms_object_put(struct hms_object *object)
++{
++	put_device(&object->device);
++}
++
++void hms_object_unregister(struct hms_object *object)
++{
++	mutex_lock(&hms_sysfs_mutex);
++	device_unregister(&object->device);
++	mutex_unlock(&hms_sysfs_mutex);
++}
++
++struct hms_object *hms_object_find_locked(unsigned uid)
++{
++	struct device *device;
++
++	device = subsys_find_device_by_id(&hms_subsys, uid, NULL);
++	return device ? to_hms_object(device) : NULL;
++}
++
++struct hms_object *hms_object_find(unsigned uid)
++{
++	struct hms_object *object;
++
++	mutex_lock(&hms_sysfs_mutex);
++	object = hms_object_find_locked(uid);
++	mutex_unlock(&hms_sysfs_mutex);
++	return object;
++}
++
++
++static struct attribute *hms_root_attrs[] = {
++	NULL
++};
++
++static struct attribute_group hms_root_attr_group = {
++	.attrs = hms_root_attrs,
++};
++
++static const struct attribute_group *hms_root_attr_groups[] = {
++	&hms_root_attr_group,
++	NULL,
++};
++
++int __init hms_init(void)
++{
++	int ret;
++
++	ret = subsys_system_register(&hms_subsys, hms_root_attr_groups);
++	if (ret)
++		pr_err("%s() failed: %d\n", __func__, ret);
++
++	return ret;
++}
+diff --git a/drivers/base/init.c b/drivers/base/init.c
+index 908e6520e804..3b40d5899d66 100644
+--- a/drivers/base/init.c
++++ b/drivers/base/init.c
+@@ -8,6 +8,7 @@
+ #include <linux/init.h>
+ #include <linux/memory.h>
+ #include <linux/of.h>
++#include <linux/hms.h>
+ 
+ #include "base.h"
+ 
+@@ -34,5 +35,6 @@ void __init driver_init(void)
+ 	platform_bus_init();
+ 	cpu_dev_init();
+ 	memory_dev_init();
++	hms_init();
+ 	container_dev_init();
+ }
+diff --git a/include/linux/hms.h b/include/linux/hms.h
+new file mode 100644
+index 000000000000..1ab288df0158
+--- /dev/null
++++ b/include/linux/hms.h
+@@ -0,0 +1,72 @@
++/*
++ * Copyright 2018 Red Hat Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * Authors:
++ * Jérôme Glisse <jglisse@redhat.com>
++ */
++/* Heterogeneous memory system (HMS) see Documentation/vm/hms.rst */
++#ifndef HMS_H
++#define HMS_H
++#if IS_ENABLED(CONFIG_HMS)
++
++
++#include <linux/device.h>
++
++
++#define to_hms_object(device) container_of(device, struct hms_object, device)
++
++enum hms_type {
++	HMS_BRIDGE,
++	HMS_INITIATOR,
++	HMS_LINK,
++	HMS_TARGET,
++};
++
++struct hms_object {
++	struct device *parent;
++	struct device device;
++	enum hms_type type;
++	unsigned version;
++	unsigned uid;
++};
++
++void hms_object_release(struct hms_object *object);
++int hms_object_init(struct hms_object *object, struct device *parent,
++		    enum hms_type type, unsigned version,
++		    void (*device_release)(struct device *device),
++		    const struct attribute_group **device_group);
++int hms_object_link(struct hms_object *objecta,
++		    struct hms_object *objectb);
++void hms_object_unlink(struct hms_object *objecta,
++		       struct hms_object *objectb);
++struct hms_object *hms_object_get(struct hms_object *object);
++void hms_object_put(struct hms_object *object);
++void hms_object_unregister(struct hms_object *object);
++struct hms_object *hms_object_find_locked(unsigned uid);
++struct hms_object *hms_object_find(unsigned uid);
++
++
++int hms_init(void);
++
++
++#else /* IS_ENABLED(CONFIG_HMS) */
++
++
++static inline int hms_init(void)
++{
++	return 0;
++}
++
++
++#endif /* IS_ENABLED(CONFIG_HMS) */
++#endif /* HMS_H */
 -- 
 2.17.2
 
