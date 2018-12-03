@@ -3,40 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E8CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F82C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF27320848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:24:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF27320848
+	by mail.kernel.org (Postfix) with ESMTP id C7F5520848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:25:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F5520848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbeLCEYy (ORCPT
+        id S1725952AbeLCEZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:24:54 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:55198 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbeLCEYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:24:54 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB34Ntjw018201
+        Sun, 2 Dec 2018 23:25:08 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:60533 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbeLCEZI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 23:25:08 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34OIGj015514
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 2 Dec 2018 20:24:06 -0800
+        Sun, 2 Dec 2018 20:24:19 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 2 Dec 2018
- 20:23:45 -0800
+ 20:24:18 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Michael Hennerich <michael.hennerich@analog.com>
-Subject: [PATCH 02/22] mfd: adp5520: Make it explicitly non-modular
-Date:   Sun, 2 Dec 2018 23:23:09 -0500
-Message-ID: <1543811009-15112-3-git-send-email-paul.gortmaker@windriver.com>
+        Support Opensource <support.opensource@diasemi.com>,
+        Eric Miao <eric.miao@marvell.com>,
+        Mike Rapoport <mike@compulab.co.il>
+Subject: [PATCH 04/22] mfd: da903x: Make it explicitly non-modular
+Date:   Sun, 2 Dec 2018 23:23:11 -0500
+Message-ID: <1543811009-15112-5-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
@@ -47,11 +50,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Makefile/Kconfig currently controlling compilation of this code is:
+The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Makefile:obj-$(CONFIG_PMIC_ADP5520) += adp5520.o
-drivers/mfd/Kconfig:config PMIC_ADP5520
-drivers/mfd/Kconfig:    bool "Analog Devices ADP5520/01 MFD PMIC Core Support"
+drivers/mfd/Kconfig:config PMIC_DA903X
+drivers/mfd/Kconfig-    bool "Dialog Semiconductor DA9030/DA9034 PMIC Support"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -62,88 +64,85 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_i2c_driver() uses the same init level priority as
-builtin_i2c_driver() the init ordering remains unchanged with
-this commit.
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
+
+We replace module.h with init.h and export.h ; the latter since this
+file does export some syms.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
+is already contained at the top of the file in the comments.
 
-Cc: Michael Hennerich <michael.hennerich@analog.com>
+Cc: Support Opensource <support.opensource@diasemi.com>
 Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Eric Miao <eric.miao@marvell.com>
+Cc: Mike Rapoport <mike@compulab.co.il>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/adp5520.c | 30 +++++++-----------------------
- 1 file changed, 7 insertions(+), 23 deletions(-)
+ drivers/mfd/da903x.c | 26 +++-----------------------
+ 1 file changed, 3 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/mfd/adp5520.c b/drivers/mfd/adp5520.c
-index be0497b96720..2cdd39cb8a18 100644
---- a/drivers/mfd/adp5520.c
-+++ b/drivers/mfd/adp5520.c
-@@ -7,6 +7,8 @@
-  *
-  * Copyright 2009 Analog Devices Inc.
-  *
-+ * Author: Michael Hennerich <michael.hennerich@analog.com>
-+ *
-  * Derived from da903x:
-  * Copyright (C) 2008 Compulab, Ltd.
-  *	Mike Rapoport <mike@compulab.co.il>
-@@ -18,7 +20,7 @@
+diff --git a/drivers/mfd/da903x.c b/drivers/mfd/da903x.c
+index 09f367571c58..78edb0558a0f 100644
+--- a/drivers/mfd/da903x.c
++++ b/drivers/mfd/da903x.c
+@@ -13,7 +13,7 @@
   */
  
  #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
  #include <linux/interrupt.h>
-@@ -304,18 +306,6 @@ static int adp5520_probe(struct i2c_client *client,
- 	return ret;
+ #include <linux/platform_device.h>
+ #include <linux/i2c.h>
+@@ -446,7 +446,6 @@ static const struct i2c_device_id da903x_id_table[] = {
+ 	{ "da9034", 1 },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(i2c, da903x_id_table);
+ 
+ static int __remove_subdev(struct device *dev, void *unused)
+ {
+@@ -535,20 +534,12 @@ static int da903x_probe(struct i2c_client *client,
+ 	return da903x_add_subdevs(chip, pdata);
  }
  
--static int adp5520_remove(struct i2c_client *client)
+-static int da903x_remove(struct i2c_client *client)
 -{
--	struct adp5520_chip *chip = dev_get_drvdata(&client->dev);
+-	struct da903x_chip *chip = i2c_get_clientdata(client);
 -
--	if (chip->irq)
--		free_irq(chip->irq, chip);
--
--	adp5520_remove_subdevs(chip);
--	adp5520_write(chip->dev, ADP5520_MODE_STATUS, 0);
+-	da903x_remove_subdevs(chip);
 -	return 0;
 -}
 -
- #ifdef CONFIG_PM_SLEEP
- static int adp5520_suspend(struct device *dev)
- {
-@@ -346,20 +336,14 @@ static const struct i2c_device_id adp5520_id[] = {
- 	{ "pmic-adp5501", ID_ADP5501 },
- 	{ }
- };
--MODULE_DEVICE_TABLE(i2c, adp5520_id);
- 
- static struct i2c_driver adp5520_driver = {
- 	.driver = {
--		.name	= "adp5520",
--		.pm	= &adp5520_pm,
-+		.name			= "adp5520",
-+		.pm			= &adp5520_pm,
+ static struct i2c_driver da903x_driver = {
+ 	.driver	= {
+-		.name	= "da903x",
++		.name			= "da903x",
 +		.suppress_bind_attrs	= true,
  	},
- 	.probe		= adp5520_probe,
--	.remove		= adp5520_remove,
- 	.id_table	= adp5520_id,
+ 	.probe		= da903x_probe,
+-	.remove		= da903x_remove,
+ 	.id_table	= da903x_id_table,
  };
+ 
+@@ -557,14 +548,3 @@ static int __init da903x_init(void)
+ 	return i2c_add_driver(&da903x_driver);
+ }
+ subsys_initcall(da903x_init);
 -
--module_i2c_driver(adp5520_driver);
+-static void __exit da903x_exit(void)
+-{
+-	i2c_del_driver(&da903x_driver);
+-}
+-module_exit(da903x_exit);
 -
--MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
--MODULE_DESCRIPTION("ADP5520(01) PMIC-MFD Driver");
--MODULE_LICENSE("GPL");
-+builtin_i2c_driver(adp5520_driver);
+-MODULE_DESCRIPTION("PMIC Driver for Dialog Semiconductor DA9034");
+-MODULE_AUTHOR("Eric Miao <eric.miao@marvell.com>");
+-MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
