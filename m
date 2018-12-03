@@ -2,120 +2,153 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06085C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916B4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2087E2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:14:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2087E2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 4F77120672
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:18:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F77120672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726098AbeLCUO5 (ORCPT
+        id S1726007AbeLCUSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:14:57 -0500
-Received: from anholt.net ([50.246.234.109]:53288 "EHLO anholt.net"
+        Mon, 3 Dec 2018 15:18:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36822 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726003AbeLCUO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:14:57 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 6254C10A12C6;
-        Mon,  3 Dec 2018 12:14:55 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id uHojUlnKaulw; Mon,  3 Dec 2018 12:14:54 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 03AFD10A0388;
-        Mon,  3 Dec 2018 12:14:54 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 842112FE2D16; Mon,  3 Dec 2018 12:14:53 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        christian.koenig@amd.com
-Cc:     linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH] drm/sched: Fix a use-after-free when tracing the scheduler.
-Date:   Mon,  3 Dec 2018 12:14:53 -0800
-Message-Id: <20181203201453.25773-1-eric@anholt.net>
-X-Mailer: git-send-email 2.20.0.rc1
+        id S1725890AbeLCUSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 15:18:33 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE49B811C0;
+        Mon,  3 Dec 2018 20:18:31 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-122-44.rdu2.redhat.com [10.10.122.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D5876013F;
+        Mon,  3 Dec 2018 20:18:29 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH 0/3] mmu notifier contextual informations
+Date:   Mon,  3 Dec 2018 15:18:14 -0500
+Message-Id: <20181203201817.10759-1-jglisse@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 03 Dec 2018 20:18:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With DEBUG_SLAB (poisoning on free) enabled, I could quickly produce
-an oops when tracing V3D.
+From: Jérôme Glisse <jglisse@redhat.com>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
+This patchset add contextual information, why an invalidation is
+happening, to mmu notifier callback. This is necessary for user
+of mmu notifier that wish to maintains their own data structure
+without having to add new fields to struct vm_area_struct (vma).
 
-I think this patch is correct (though maybe a bigger refactor could
-avoid the extra get/put?), but I've still got this with "vblank_mode=0
-perf record -a -e v3d:.\* -e gpu_scheduler:.\* glxgears".  Any ideas?
+For instance device can have they own page table that mirror the
+process address space. When a vma is unmap (munmap() syscall) the
+device driver can free the device page table for the range.
 
-[  139.842191] Unable to handle kernel NULL pointer dereference at virtual address 00000020
-[  139.850413] pgd = eab7bb57
-[  139.854424] [00000020] *pgd=80000040004003, *pmd=00000000
-[  139.860523] Internal error: Oops: 206 [#1] SMP ARM
-[  139.865340] Modules linked in:
-[  139.868404] CPU: 0 PID: 1161 Comm: v3d_render Not tainted 4.20.0-rc4+ #552
-[  139.875287] Hardware name: Broadcom STB (Flattened Device Tree)
-[  139.881228] PC is at perf_trace_drm_sched_job_wait_dep+0xa8/0xf4
-[  139.887243] LR is at 0xe9790274
-[  139.890388] pc : [<c06e715c>]    lr : [<e9790274>]    psr: a0050013
-[  139.896662] sp : ed21dec0  ip : ed21dec0  fp : ed21df04
-[  139.901893] r10: ed267478  r9 : 00000000  r8 : ff7bde04
-[  139.907123] r7 : 00000000  r6 : 00000063  r5 : 00000000  r4 : c1208448
-[  139.913659] r3 : c1265690  r2 : ff7bf660  r1 : 00000034  r0 : ff7bf660
-[  139.920196] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-[  139.927339] Control: 30c5383d  Table: 68fa3b40  DAC: fffffffd
-[  139.933095] Process v3d_render (pid: 1161, stack limit = 0xb3c84b1b)
-[  139.939457] Stack: (0xed21dec0 to 0xed21e000)
-[  139.943821] dec0: 20050013 ffffffff eb9700cc 00000000 ec0e8e80 00000000 eb9700cc e9790274
-[  139.952009] dee0: 00000000 e2f59345 eb970078 eba8f680 c12ae00c c1208478 00000000 e8c2b048
-[  139.960197] df00: eb9700cc c06e92e4 c06e8f04 00000000 80050013 ed267478 eb970078 00000000
-[  139.968385] df20: ed267578 c0e45ae0 e9093080 c06e831c ed267630 c06e8120 c06e77d4 c1208448
-[  139.976573] df40: ee2e8acc 00000001 00000000 ee2e8640 c0272ab4 ed21df54 ed21df54 e2f59345
-[  139.984762] df60: ed21c000 ed1b4800 ed2d7840 00000000 ed21c000 ed267478 c06e8084 ee935cb0
-[  139.992950] df80: ed1b4838 c0249b44 ed21c000 ed2d7840 c02499e4 00000000 00000000 00000000
-[  140.001138] dfa0: 00000000 00000000 00000000 c02010ac 00000000 00000000 00000000 00000000
-[  140.009326] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[  140.017514] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[  140.025707] [<c06e715c>] (perf_trace_drm_sched_job_wait_dep) from [<c06e92e4>] (drm_sched_entity_pop_job+0x394/0x438)
-[  140.036332] [<c06e92e4>] (drm_sched_entity_pop_job) from [<c06e8120>] (drm_sched_main+0x9c/0x298)
-[  140.045221] [<c06e8120>] (drm_sched_main) from [<c0249b44>] (kthread+0x160/0x168)
-[  140.052716] [<c0249b44>] (kthread) from [<c02010ac>] (ret_from_fork+0x14/0x28)
+Today we do not have any information on why a mmu notifier call
+back is happening and thus device driver have to assume that it
+is always an munmap(). This is inefficient at it means that it
+needs to re-allocate device page table on next page fault and
+rebuild the whole device driver data structure for the range.
 
- drivers/gpu/drm/scheduler/sched_entity.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Other use case beside munmap() also exist, for instance it is
+pointless for device driver to invalidate the device page table
+when the invalidation is for the soft dirtyness tracking. Or
+device driver can optimize away mprotect() that change the page
+table permission access for the range.
 
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index 4463d3826ecb..0d4fc86089cb 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -440,13 +440,15 @@ struct drm_sched_job *drm_sched_entity_pop_job(struct drm_sched_entity *entity)
- 
- 	while ((entity->dependency =
- 			sched->ops->dependency(sched_job, entity))) {
--
-+		dma_fence_get(entity->dependency);
- 		if (drm_sched_entity_add_dependency_cb(entity)) {
- 
- 			trace_drm_sched_job_wait_dep(sched_job,
- 						     entity->dependency);
-+			dma_fence_put(entity->dependency);
- 			return NULL;
- 		}
-+		dma_fence_put(entity->dependency);
- 	}
- 
- 	/* skip jobs from entity that marked guilty */
+This patchset enable all this optimizations for device driver.
+I do not include any of those in this serie but other patchset
+i am posting will leverage this.
+
+
+From code point of view the patchset is pretty simple, the first
+two patches consolidate all mmu notifier arguments into a struct
+so that it is easier to add/change arguments. The last patch adds
+the contextual information (munmap, protection, soft dirty, clear,
+...).
+
+Cheers,
+Jérôme
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Christian Koenig <christian.koenig@amd.com>
+Cc: Felix Kuehling <felix.kuehling@amd.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-rdma@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+
+Jérôme Glisse (3):
+  mm/mmu_notifier: use structure for invalidate_range_start/end callback
+  mm/mmu_notifier: use structure for invalidate_range_start/end calls
+  mm/mmu_notifier: contextual information for event triggering
+    invalidation
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  |  43 ++++-----
+ drivers/gpu/drm/i915/i915_gem_userptr.c |  14 ++-
+ drivers/gpu/drm/radeon/radeon_mn.c      |  16 ++--
+ drivers/infiniband/core/umem_odp.c      |  20 ++---
+ drivers/infiniband/hw/hfi1/mmu_rb.c     |  13 ++-
+ drivers/misc/mic/scif/scif_dma.c        |  11 +--
+ drivers/misc/sgi-gru/grutlbpurge.c      |  14 ++-
+ drivers/xen/gntdev.c                    |  12 +--
+ fs/dax.c                                |  11 ++-
+ fs/proc/task_mmu.c                      |  10 ++-
+ include/linux/mm.h                      |   4 +-
+ include/linux/mmu_notifier.h            | 106 +++++++++++++++-------
+ kernel/events/uprobes.c                 |  13 +--
+ mm/hmm.c                                |  23 ++---
+ mm/huge_memory.c                        |  58 ++++++------
+ mm/hugetlb.c                            |  63 +++++++------
+ mm/khugepaged.c                         |  13 +--
+ mm/ksm.c                                |  26 +++---
+ mm/madvise.c                            |  22 ++---
+ mm/memory.c                             | 112 ++++++++++++++----------
+ mm/migrate.c                            |  30 ++++---
+ mm/mmu_notifier.c                       |  22 +++--
+ mm/mprotect.c                           |  17 ++--
+ mm/mremap.c                             |  14 +--
+ mm/oom_kill.c                           |  20 +++--
+ mm/rmap.c                               |  34 ++++---
+ virt/kvm/kvm_main.c                     |  14 ++-
+ 27 files changed, 421 insertions(+), 334 deletions(-)
+
 -- 
-2.20.0.rc1
+2.17.2
 
