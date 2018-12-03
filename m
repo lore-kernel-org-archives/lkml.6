@@ -2,135 +2,127 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB44C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236A6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6FEB2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:51:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6FEB2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DD09C2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:52:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJXMSba2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD09C2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725967AbeLCIvY (ORCPT
+        id S1725964AbeLCIwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 03:51:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16071 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725849AbeLCIvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 03:51:24 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8BADBCDDD6660;
-        Mon,  3 Dec 2018 16:51:15 +0800 (CST)
-Received: from [127.0.0.1] (10.142.63.192) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Mon, 3 Dec 2018
- 16:51:10 +0800
-CC:     <wangbinghui@hisilicon.com>, <suzhuangluan@hisilicon.com>,
-        <kongfei@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "John Stultz" <john.stultz@linaro.org>
-Subject: Re: [PATCH v1 01/12] dt-bindings: usb: add support for dwc3
- controller on HiSilicon SoCs
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181203034515.91412-1-chenyu56@huawei.com>
- <20181203034515.91412-2-chenyu56@huawei.com>
- <fde4d37b-0c4d-055b-a0ba-4e9fe87717ad@cogentembedded.com>
-From:   Chen Yu <chenyu56@huawei.com>
-Message-ID: <33cda716-d09c-28e7-d4b4-26f246786f5e@huawei.com>
-Date:   Mon, 3 Dec 2018 16:51:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Mon, 3 Dec 2018 03:52:40 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54474 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbeLCIwk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 03:52:40 -0500
+Received: by mail-wm1-f65.google.com with SMTP id z18so4817524wmc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 00:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lE9j27DvC1/srbXNmFA9deLjffoHkZ89jSlYii0k6L8=;
+        b=kJXMSba2ZEkLvqNWKpvQpy9ALpRwuGjt+f4X2ybrW9NpuiZUAy7zr8lk4+Ai8/IXsY
+         diUCRl/X4GthvWGqzRKlJfnWzAnpGPpj1KIw6REzy7irT6ZRZVs7JkUsWd5OWmBm2QNH
+         shoElaRl0w1Vk4a4GDRXqIO3ilSsHkcQLITIaB1mQDSCzsqbqJX4CRDplcagMHcB5aix
+         wdsdc2GVeOta8mXdNMyTeInucet4pK8k2VvlAz4pelLlLtUAqd1cXZpbTIhbGRViBSmq
+         Jji0I6iI9+nV/rbY9m6sHRv9OHpGk2slF7tz6lV92zt82OJ624oHh/yOFDBr+fdE8Zbq
+         JIaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lE9j27DvC1/srbXNmFA9deLjffoHkZ89jSlYii0k6L8=;
+        b=bSH/u4J8KZE0OLbPNJwv0XRwFq7F8LcvCsPyKnPgHetX6xv/8oETxS50mVkMf3diH2
+         paQ+AGV4+0AwwdNEmKQB32hAqPjuSnD1EkXrgGUkjXq3+6eWxuqTO+fcIg66vbnXJMzU
+         X63GzCqweNxT9KfgJlCqOv9WHS7Kbju6v1/jukEBjo1+i+wtkh/Kex/UEabBRyO12OF5
+         f16COVgCyBiqDI633ON3kMtTIJDVHTJI2DV+Tu4QWQan3VWbmXFe8JUme7H8V4rVIvEm
+         XGSAt3s9yeMpD5DhbpP2Q3YahmG4If+288lFpkiwm0s2LuHBOpFj75vexaZm9GvZzgzd
+         w3Og==
+X-Gm-Message-State: AA+aEWaF5FyHGuYqpm8wusko5sTdr9ADwbDzMP1FhUQRvH9dZcYTbBSc
+        2yb0/dtD7F2JjzM3JDX+t4c=
+X-Google-Smtp-Source: AFSGD/XKAxEjR5LCa4GStDlHaWRBfeOhi2COxz9KGGWfGLTdLQ57B9/2cdbdsU9A60BmxsoeYNwJwA==
+X-Received: by 2002:a1c:cbc7:: with SMTP id b190mr7899854wmg.13.1543827152787;
+        Mon, 03 Dec 2018 00:52:32 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id s202sm5985603wme.40.2018.12.03.00.52.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 00:52:32 -0800 (PST)
+Date:   Mon, 3 Dec 2018 09:52:30 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        mingo@redhat.com, will.deacon@arm.com
+Subject: Re: [PATCH] locktorture: Fix assignment of boolean variables
+Message-ID: <20181203085230.GB2516@gmail.com>
+References: <20181201083149.36972-1-wen.yang99@zte.com.cn>
+ <20181201203700.GW4170@linux.ibm.com>
+ <20181203083500.GH11614@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <fde4d37b-0c4d-055b-a0ba-4e9fe87717ad@cogentembedded.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.142.63.192]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203083500.GH11614@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 2018/12/3 16:35, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 03.12.2018 6:45, Yu Chen wrote:
-> 
->> This patch adds binding descriptions to support the dwc3 controller
->> on HiSilicon SoCs and boards like the HiKey960.
->>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: John Stultz <john.stultz@linaro.org>
->> Signed-off-by: Yu Chen <chenyu56@huawei.com>
->> ---
->>   .../devicetree/bindings/usb/dwc3-hisi.txt          | 67 ++++++++++++++++++++++
->>   1 file changed, 67 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->>
->> diff --git a/Documentation/devicetree/bindings/usb/dwc3-hisi.txt b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->> new file mode 100644
->> index 000000000000..d32d2299a0a1
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->> @@ -0,0 +1,67 @@
->> +HiSilicon DWC3 USB SoC controller
->> +
->> +This file documents the parameters for the dwc3-hisi driver.
->> +
->> +Required properties:
->> +- compatible:    should be "hisilicon,hi3660-dwc3"
->> +- clocks:    A list of phandle + clock-specifier pairs for the
->> +        clocks listed in clock-names
->> +- clock-names:    Specify clock names
->> +- resets:    list of phandle and reset specifier pairs.
->> +
->> +Sub-nodes:
->> +The dwc3 core should be added as subnode to HiSilicon DWC3 as shown in the
->> +example below. The DT binding details of dwc3 can be found in:
->> +Documentation/devicetree/bindings/usb/dwc3.txt
->> +
->> +Example:
->> +    usb3: hisi_dwc3 {
->> +        compatible = "hisilicon,hi3660-dwc3";
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +        ranges;
->> +
->> +        clocks = <&crg_ctrl HI3660_CLK_ABB_USB>,
->> +             <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
->> +        clock-names = "clk_usb3phy_ref", "aclk_usb3otg";
->> +        assigned-clocks = <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
->> +        assigned-clock-rates = <229000000>;
->> +        resets = <&crg_rst 0x90 8>,
->> +             <&crg_rst 0x90 7>,
->> +             <&crg_rst 0x90 6>,
->> +             <&crg_rst 0x90 5>;
->> +
->> +        dwc3: dwc3@ff100000 {
-> 
->     According to the DT spec, the node names should be generic, not chip specific, i.e. usb@ff100000 in this case.
-> 
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-Do you mean it should be usb@ff100000: dwc3@ff100000 ?
-
-Thanks!
-
-> [...]
+> On Sat, Dec 01, 2018 at 12:37:01PM -0800, Paul E. McKenney wrote:
+> > On Sat, Dec 01, 2018 at 04:31:49PM +0800, Wen Yang wrote:
+> > > Fix the following warnings reported by coccinelle:
+> > > 
+> > > kernel/locking/locktorture.c:703:6-10: WARNING: Assignment of bool to 0/1
+> > > kernel/locking/locktorture.c:918:2-20: WARNING: Assignment of bool to 0/1
+> > > kernel/locking/locktorture.c:949:3-20: WARNING: Assignment of bool to 0/1
+> > > kernel/locking/locktorture.c:682:2-19: WARNING: Assignment of bool to 0/1
+> > > kernel/locking/locktorture.c:688:2-19: WARNING: Assignment of bool to 0/1
+> > > kernel/locking/locktorture.c:648:2-20: WARNING: Assignment of bool to 0/1
+> > > kernel/locking/locktorture.c:654:2-20: WARNING: Assignment of bool to 0/1
+> > > 
+> > > This patch also makes the code more readable.
+> > > 
+> > > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> > > CC: Davidlohr Bueso <dave@stgolabs.net>
+> > > CC: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> > > CC: Josh Triplett <josh@joshtriplett.org>
+> > > CC: linux-kernel@vger.kernel.org
+> > 
+> > Adding the current maintainers on CC.
 > 
-> MBR, Sergei
-> 
-> .
-> 
+> So I strongly disagree with this. Anybody that has trouble with 0/1 vs
+> false/true needs to stay the heck away from C.
 
+Indeed, and it's actually *worse* to read, as 0/1 stands out more and is 
+more compact than false/true...
+
+The only reasonable case where bool is recommended is when functions are 
+returning it, to make sure there's no mishap returning something else.
+
+But for a plain .c variable? Nope.
+
+> I would suggest we delete that stupid coccinelle scripts that generates
+> these pointless warns.
+
+Ack.
+
+Thanks,
+
+	Ingo
