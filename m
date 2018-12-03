@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B86C65BAE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E85C65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 951B820881
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:13:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 951B820881
+	by mail.kernel.org (Postfix) with ESMTP id B2DDB2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:13:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2DDB2147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbeLCGNl (ORCPT
+        id S1725916AbeLCGNm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 01:13:41 -0500
+        Mon, 3 Dec 2018 01:13:42 -0500
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:48208 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeLCGNk (ORCPT
+        with ESMTP id S1725818AbeLCGNm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 01:13:40 -0500
+        Mon, 3 Dec 2018 01:13:42 -0500
 Received: from localhost.localdomain (10.28.8.22) by mail-sh2.amlogic.com
  (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Mon, 3 Dec 2018
- 14:13:52 +0800
+ 14:13:58 +0800
 From:   Xingyu Chen <xingyu.chen@amlogic.com>
 To:     Marc Zyngier <marc.zyngier@arm.com>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -39,10 +39,10 @@ CC:     Xingyu Chen <xingyu.chen@amlogic.com>,
         Rob Herring <robh@kernel.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 1/2] dt-bindings: interrupt-controller: New binding for Meson-G12A SoC
-Date:   Mon, 3 Dec 2018 14:13:23 +0800
-Message-ID: <20181203061324.36248-2-xingyu.chen@amlogic.com>
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 2/2] irqchip/meson-gpio: Add support for Meson-G12A SoC
+Date:   Mon, 3 Dec 2018 14:13:24 +0800
+Message-ID: <20181203061324.36248-3-xingyu.chen@amlogic.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181203061324.36248-1-xingyu.chen@amlogic.com>
 References: <20181203061324.36248-1-xingyu.chen@amlogic.com>
@@ -55,27 +55,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the dt-binding document to support new compatible string for the
-GPIO interrupt controller which found in Amlogic's Meson-G12A SoC.
+The Meson-G12A SoC uses the same GPIO interrupt controller IP block as the
+other Meson SoCs, A totle of 100 pins can be spied on, which is the sum of:
+
+- 223:100 undefined (no interrupt)
+- 99:97   3 pins on bank GPIOE
+- 96:77   20 pins on bank GPIOX
+- 76:61   16 pins on bank GPIOA
+- 60:53   8 pins on bank GPIOC
+- 52:37   16 pins on bank BOOT
+- 36:28   9 pins on bank GPIOH
+- 27:12   16 pins on bank GPIOZ
+- 11:0    12 pins in the AO domain
 
 Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
 Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
 ---
- .../bindings/interrupt-controller/amlogic,meson-gpio-intc.txt    | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/irqchip/irq-meson-gpio.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
-index 1502a51548bb..7d531d5fff29 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
-@@ -15,6 +15,7 @@ Required properties:
-     "amlogic,meson-gxbb-gpio-intc" for GXBB SoCs (S905) or
-     "amlogic,meson-gxl-gpio-intc" for GXL SoCs (S905X, S912)
-     "amlogic,meson-axg-gpio-intc" for AXG SoCs (A113D, A113X)
-+    "amlogic,meson-g12a-gpio-intc" for G12A SoCs (S905D2, S905X2, S905Y2)
- - reg : Specifies base physical address and size of the registers.
- - interrupt-controller : Identifies the node as an interrupt controller.
- - #interrupt-cells : Specifies the number of cells needed to encode an
+diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
+index 7b531fd075b8..971e8dea069a 100644
+--- a/drivers/irqchip/irq-meson-gpio.c
++++ b/drivers/irqchip/irq-meson-gpio.c
+@@ -67,12 +67,17 @@ static const struct meson_gpio_irq_params axg_params = {
+ 	.nr_hwirq = 100,
+ };
+ 
++static const struct meson_gpio_irq_params g12a_params = {
++	.nr_hwirq = 100,
++};
++
+ static const struct of_device_id meson_irq_gpio_matches[] = {
+ 	{ .compatible = "amlogic,meson8-gpio-intc", .data = &meson8_params },
+ 	{ .compatible = "amlogic,meson8b-gpio-intc", .data = &meson8b_params },
+ 	{ .compatible = "amlogic,meson-gxbb-gpio-intc", .data = &gxbb_params },
+ 	{ .compatible = "amlogic,meson-gxl-gpio-intc", .data = &gxl_params },
+ 	{ .compatible = "amlogic,meson-axg-gpio-intc", .data = &axg_params },
++	{ .compatible = "amlogic,meson-g12a-gpio-intc", .data = &g12a_params },
+ 	{ }
+ };
+ 
 -- 
 2.19.2
 
