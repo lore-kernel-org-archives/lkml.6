@@ -2,207 +2,118 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05066C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EBDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B651320851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:25:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B651320851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 930F52145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:25:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930F52145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbeLCKZd (ORCPT
+        id S1726318AbeLCKZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:25:33 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41580 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbeLCKZd (ORCPT
+        Mon, 3 Dec 2018 05:25:47 -0500
+Received: from mail.windriver.com ([147.11.1.11]:53892 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbeLCKZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:25:33 -0500
-Received: by mail-ed1-f67.google.com with SMTP id z28so10220978edi.8;
-        Mon, 03 Dec 2018 02:25:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lCWM0usXHMZ510hOwcbi6aXdkoyepRwcwnMM+MoSlmM=;
-        b=Gw8rkB6wBJUgcbWqJO4WNOYvZL+h2hvcb4ZvHsGWo8cCBFfiP/iuMNk5XvonQfApX9
-         0OLUQSnrGOdA8a/sVEi+EjtxzBmb/eg+TkQFTCro1Zx28mmFpjM5pH1B1VyneAzEqL+E
-         ZkZVS49035AjHLdl6t0F/wNjDk9OnFdLD1V+X7iQXgKRjBimZM40qApGQvJ+v9adVBjq
-         y0J+6zUZBBnR08/MvwvsKyxbILPkp1vKwxU4/taNWIy8/uh5SFV2vssp5LFK36I3HZEs
-         5tmy7m8w7tP1pYDuVnKjh6YWEv4i+7MJfQsw/q4nX91Gg8pFTD8s2P6gOv6m7KJvjcIW
-         4Zkg==
-X-Gm-Message-State: AA+aEWbGgMCF1E7mWCEGF6Wo+m6KP0nrjl2Qr9pq2EjY5FviMbW2GuSN
-        mA6DPRn6amHa5IJRrLUc5utPiswe8Yc=
-X-Google-Smtp-Source: AFSGD/WDNkYotvTioYL5tYNjMSwSe2EiSnS8lMZg9e+p2HkdojfTytg9Y0rVJReww+SHlEaGy7dwGQ==
-X-Received: by 2002:a50:92bc:: with SMTP id k57mr14139644eda.73.1543832705354;
-        Mon, 03 Dec 2018 02:25:05 -0800 (PST)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id gk8-v6sm2163134ejb.42.2018.12.03.02.25.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:25:04 -0800 (PST)
-Received: by mail-wr1-f42.google.com with SMTP id 96so11549948wrb.2;
-        Mon, 03 Dec 2018 02:25:04 -0800 (PST)
-X-Received: by 2002:a5d:5208:: with SMTP id j8mr13984973wrv.188.1543832704129;
- Mon, 03 Dec 2018 02:25:04 -0800 (PST)
+        Mon, 3 Dec 2018 05:25:47 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB3AMsQX029793
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 3 Dec 2018 02:22:55 -0800 (PST)
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 3 Dec 2018 02:22:54 -0800
+From:   <zhe.he@windriver.com>
+To:     <konrad@darnok.org>, <konrad.wilk@oracle.com>, <hch@lst.de>,
+        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <zhe.he@windriver.com>
+Subject: [PATCH v2] kernel/dma: Fix panic caused by passing swiotlb to command line
+Date:   Mon, 3 Dec 2018 18:22:51 +0800
+Message-ID: <1543832571-121638-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20181203100747.16442-1-jagan@amarulasolutions.com> <20181203100747.16442-6-jagan@amarulasolutions.com>
-In-Reply-To: <20181203100747.16442-6-jagan@amarulasolutions.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 3 Dec 2018 18:24:52 +0800
-X-Gmail-Original-Message-ID: <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
-Message-ID: <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: allwinner: a64-amarula-relic: Add OV5640
- camera node
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Amarula A64-Relic board by default bound with OV5640 camera,
-> so add support for it with below pin information.
->
-> - PE13, PE12 via i2c-gpio bitbanging
-> - CLK_CSI_MCLK as external clock
-> - PE1 as external clock pin muxing
-> - DLDO3 as vcc-csi supply
-> - DLDO3 as AVDD supply
-> - ALDO1 as DOVDD supply
-> - ELDO3 as DVDD supply
-> - PE14 gpio for reset pin
-> - PE15 gpio for powerdown pin
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  .../allwinner/sun50i-a64-amarula-relic.dts    | 54 +++++++++++++++++++
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  5 ++
->  2 files changed, 59 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> index 6cb2b7f0c817..9ac6d773188b 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> @@ -22,6 +22,41 @@
->                 stdout-path = "serial0:115200n8";
->         };
->
-> +       i2c-csi {
-> +               compatible = "i2c-gpio";
-> +               sda-gpios = <&pio 4 13 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-> +               scl-gpios = <&pio 4 12 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
+From: He Zhe <zhe.he@windriver.com>
 
-FYI our hardware doesn't do open drain.
+setup_io_tlb_npages does not check input argument before passing it
+to isdigit. The argument would be a NULL pointer if "swiotlb", without
+its value, is set in command line and thus causes the following panic.
 
-> +               i2c-gpio,delay-us = <5>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               ov5640: camera@3c {
-> +                       compatible = "ovti,ov5640";
-> +                       reg = <0x3c>;
-> +                       pinctrl-names = "default";
-> +                       pinctrl-0 = <&csi_mclk_pin>;
-> +                       clocks = <&ccu CLK_CSI_MCLK>;
-> +                       clock-names = "xclk";
-> +
-> +                       AVDD-supply = <&reg_dldo3>;
-> +                       DOVDD-supply = <&reg_aldo1>;
+PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
+[    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
+...
+[    0.000000] Call Trace:
+[    0.000000]  do_early_param+0x57/0x8e
+[    0.000000]  parse_args+0x208/0x320
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_options+0x29/0x2d
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_param+0x36/0x4d
+[    0.000000]  setup_arch+0x336/0x99e
+[    0.000000]  start_kernel+0x6f/0x4e6
+[    0.000000]  x86_64_start_reservations+0x24/0x26
+[    0.000000]  x86_64_start_kernel+0x6f/0x72
+[    0.000000]  secondary_startup_64+0xa4/0xb0
 
-DOVDD is the supply for I/O. You say it is ALDO1 here.
+This patch adds a check to prevent the panic and sets it for 4MB by default.
 
-> +                       DVDD-supply = <&reg_eldo3>;
-> +                       reset-gpios = <&pio 4 14 GPIO_ACTIVE_LOW>; /* CSI-RST-R: PE14 */
-> +                       powerdown-gpios = <&pio 4 15 GPIO_ACTIVE_HIGH>; /* CSI-STBY-R: PE15 */
-> +
-> +                       port {
-> +                               ov5640_ep: endpoint {
-> +                                       remote-endpoint = <&csi_ep>;
-> +                                       bus-width = <8>;
-> +                                       hsync-active = <1>; /* Active high */
-> +                                       vsync-active = <0>; /* Active low */
-> +                                       data-active = <1>;  /* Active high */
-> +                                       pclk-sample = <1>;  /* Rising */
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
->         wifi_pwrseq: wifi-pwrseq {
->                 compatible = "mmc-pwrseq-simple";
->                 clocks = <&rtc 1>;
-> @@ -30,6 +65,25 @@
->         };
->  };
->
-> +&csi {
-> +       vcc-csi-supply = <&reg_dldo3>;
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: stable@vger.kernel.org
+Cc: konrad.wilk@oracle.com
+Cc: hch@lst.de
+Cc: m.szyprowski@samsung.com
+Cc: robin.murphy@arm.com
 
-But here you say the SoC-side pins are driven from DLDO3.
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+v2: Set swiotlb for 4MB by default
 
-This is a somewhat odd mismatch.
+ kernel/dma/swiotlb.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Regardless, the ov5640 driver enables all three regulators at probe time.
-Shouldn't that be enough to get the I2C bus working? The pin voltage
-supply does not belong here.
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 045930e..0e18cd4 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -58,6 +58,9 @@
+  */
+ #define IO_TLB_MIN_SLABS ((1<<20) >> IO_TLB_SHIFT)
+ 
++#define IO_TLB_DEFAULT_MB 4
++#define IO_TLB_DEFAULT_SLABS ((IO_TLB_DEFAULT_MB<<20) >> IO_TLB_SHIFT)
++
+ enum swiotlb_force swiotlb_force;
+ 
+ /*
+@@ -103,6 +106,14 @@ static int late_alloc;
+ static int __init
+ setup_io_tlb_npages(char *str)
+ {
++	if (!str) {
++		pr_err("No value provided for swiotlb, "
++		       "set it to %d slabs for %dMB by default.\n",
++		       IO_TLB_DEFAULT_SLABS, IO_TLB_DEFAULT_MB);
++		io_tlb_nslabs = IO_TLB_DEFAULT_SLABS;
++		return 0;
++	}
++
+ 	if (isdigit(*str)) {
+ 		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+ 		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+-- 
+2.7.4
 
-> +       status = "okay";
-> +
-> +       port {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               csi_ep: endpoint {
-> +                       remote-endpoint = <&ov5640_ep>;
-> +                       bus-width = <8>;
-> +                       hsync-active = <1>; /* Active high */
-> +                       vsync-active = <0>; /* Active low */
-> +                       data-active = <1>;  /* Active high */
-> +                       pclk-sample = <1>;  /* Rising */
-> +               };
-> +       };
-> +};
-> +
->  &ehci0 {
->         status = "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> index d32ff694ac5c..844bb44a78af 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> @@ -538,6 +538,11 @@
->                                 function = "csi0";
->                         };
->
-> +                       csi_mclk_pin: csi-mclk {
-> +                               pins = "PE1";
-> +                               function = "csi0";
-> +                       };
-> +
-
-This should be a separate patch.
-
-ChenYu
-
->                         i2c0_pins: i2c0_pins {
->                                 pins = "PH0", "PH1";
->                                 function = "i2c0";
-> --
-> 2.18.0.321.gffc6fa0e3
->
