@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B668C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63823C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139E620878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:18:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139E620878
+	by mail.kernel.org (Postfix) with ESMTP id 2A57C20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A57C20878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbeLCMTC (ORCPT
+        id S1726490AbeLCMT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:19:02 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44933 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbeLCMTC (ORCPT
+        Mon, 3 Dec 2018 07:19:29 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46039 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbeLCMT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:19:02 -0500
-Received: by mail-lf1-f67.google.com with SMTP id z13so8930503lfe.11;
-        Mon, 03 Dec 2018 04:18:10 -0800 (PST)
+        Mon, 3 Dec 2018 07:19:29 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s5-v6so11126665ljd.12;
+        Mon, 03 Dec 2018 04:18:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w4m1/JlFXy+H6P73gFddGHjsLcAn5Y4uuyOJoCi2r3k=;
-        b=Yae7cjavEyHhFJU47kA2zT/6wwXgDqgWFaHqkottpOFUxTrrxBc3BCQS3UGqnV+nMP
-         XUMSd2TXRfuhKJSwbWtH32QnZRuv6ec2iu9rLM6rttZtezuGOAuB13A7mnSCBkSNu2VY
-         zVxJbP0ozVIWg6VvhxuAHfM1IPDzMhUBMuUwj2iF9V/ljthRaJa+kMM+80E4GRTf+CK4
-         PtozjEUWF4QxPzkbmQPc79zmFMo+sghJQjivOdDmJsUxZFTtRTkQ7mW/siE+fgBBfAqS
-         86ZgNbJSnIHQ5nhaDFVFLAG5QW/DmSMrqe7Shnf4CnJygjPkpRT++tfNdnnXx9hliIro
-         liCQ==
-X-Gm-Message-State: AA+aEWai+uNshWITdO+j+KYN3uIoap9NzTep5dVYyUN3kHmGCqu6v/zu
-        mPfqLgJl51D0NQOFJIzN/MMnmfbUgU0=
-X-Google-Smtp-Source: AFSGD/V6mHObKB5mLcnDnizgBwluhXfpreZyoRlZwRkMqfQpXL5Va39sEJChpyXc+e39jdqTbdDaIQ==
-X-Received: by 2002:a19:6719:: with SMTP id b25mr8361226lfc.38.1543839489901;
-        Mon, 03 Dec 2018 04:18:09 -0800 (PST)
+        bh=VuiEaW0Oj53yp3q4uxN2C3Fqx50TMkjVvsBbGOjHZUY=;
+        b=p+a9KN07rlsH7xqyVQpQHhYcO+vL9ATVT69fkFQMES90aHXI7YybK2cRZvnASqVnuu
+         tL29iGGRG9bF8WWjymK6hzPc59mZ3nvXbOL7ABe3XgIy+ry9TzaFuk1IJHya3HIah9xR
+         NALJpPXXhdMnDL0NGZxUeeIlD5BzqE6EgR1MP+MTq/E/M+Mgn2qXAdgVYcv6L3df7NA8
+         9xPCyUzHDj7SfXvf58bw1wTutiuXiSMt4qqM4imAsF5UjIPejb+JB1reM2KNRLsiqWDA
+         wgLMsTVNLV70OtDE2DUZS2mMIkIrLfjRRm0Xo5shbiKPal+xRTiEYXcSubpVk/AyS8JO
+         vWuA==
+X-Gm-Message-State: AA+aEWaKHOOKQ4irTsSEN/7zNwTOubyg6O97pbbOMSVn8pO2NiBzSzUG
+        sfLZFQ/7ubovKmGugFvoHl8=
+X-Google-Smtp-Source: AFSGD/XA0By5ECSehpqZO8rpWGHa5fzid7ZDNrkXSvC063FdQgEuCV198/ybPvKkV2wyFX5cxcZkuQ==
+X-Received: by 2002:a2e:9b52:: with SMTP id o18-v6mr9879341ljj.108.1543839517681;
+        Mon, 03 Dec 2018 04:18:37 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id r29-v6sm2382781ljd.44.2018.12.03.04.18.08
+        by smtp.gmail.com with ESMTPSA id h85-v6sm2478439ljf.68.2018.12.03.04.18.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 04:18:09 -0800 (PST)
-Date:   Mon, 3 Dec 2018 14:17:56 +0200
+        Mon, 03 Dec 2018 04:18:37 -0800 (PST)
+Date:   Mon, 3 Dec 2018 14:18:24 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
@@ -56,8 +56,8 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
         djkurtz@chromium.org, rafael.j.wysocki@intel.com,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 1/9] clkdev: add managed clkdev lookup registration
-Message-ID: <b6c5c110c482ff6a6b2378ab3518bd31c6233872.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v5 2/9] clk: of_clk - add managed provider registrations
+Message-ID: <72d98b6f8deca66d4182c37669ec4421977922b3.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -69,190 +69,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clkdev registration lacks of managed registration functions and it
-seems few drivers do not drop clkdev lookups at exit. Add
-devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
-releasing at exit.
+With MFD devices the clk properties may be contained in MFD (parent) DT
+node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
+subdevice not to MFD device (parent). Add
+devm_of_clk_add_hw_provider_parent to tackle this issue.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- Documentation/driver-model/devres.txt |   1 +
- drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++++--------
- include/linux/clkdev.h                |   4 ++
- 3 files changed, 101 insertions(+), 26 deletions(-)
+ Documentation/driver-model/devres.txt |  1 +
+ drivers/clk/clk.c                     | 65 ++++++++++++++++++++++++++++++-----
+ include/linux/clk-provider.h          | 11 ++++++
+ 3 files changed, 68 insertions(+), 9 deletions(-)
 
 diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index 43681ca0837f..dbf14326243b 100644
+index dbf14326243b..97c9c575b2af 100644
 --- a/Documentation/driver-model/devres.txt
 +++ b/Documentation/driver-model/devres.txt
 @@ -238,6 +238,7 @@ CLOCK
    devm_clk_put()
    devm_clk_hw_register()
    devm_of_clk_add_hw_provider()
-+  devm_clk_hw_register_clkdev()
++  devm_of_clk_add_parent_hw_provider()
+   devm_clk_hw_register_clkdev()
  
  DMA
-   dmaenginem_async_device_register()
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8b3988..68a1e55a60d2 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -401,6 +401,25 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
- 	return cl;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index af011974d4ec..30beb60bd8f9 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3893,12 +3893,12 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
+ 	of_clk_del_provider(*(struct device_node **)res);
  }
  
-+static int do_clk_register_clkdev(struct clk_hw *hw,
-+	struct clk_lookup **cl, const char *con_id, const char *dev_id)
-+{
-+
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	/*
-+	 * Since dev_id can be NULL, and NULL is handled specially, we must
-+	 * pass it as either a NULL format string, or with "%s".
-+	 */
-+	if (dev_id)
-+		*cl = __clk_register_clkdev(hw, con_id, "%s",
-+					   dev_id);
+-int devm_of_clk_add_hw_provider(struct device *dev,
++static int __devm_of_clk_add_hw_provider(struct device *dev,
+ 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 					      void *data),
+-			void *data)
++			struct device_node *of_node, void *data)
+ {
+-	struct device_node **ptr, *np;
++	struct device_node **ptr;
+ 	int ret;
+ 
+ 	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
+@@ -3906,19 +3906,62 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+ 	if (!ptr)
+ 		return -ENOMEM;
+ 
+-	np = dev->of_node;
+-	ret = of_clk_add_hw_provider(np, get, data);
+-	if (!ret) {
+-		*ptr = np;
++	*ptr = of_node;
++	ret = of_clk_add_hw_provider(of_node, get, data);
++	if (!ret)
+ 		devres_add(dev, ptr);
+-	} else {
 +	else
-+		*cl = __clk_register_clkdev(hw, con_id, NULL);
+ 		devres_free(ptr);
+-	}
+ 
+ 	return ret;
+ }
 +
-+	return *cl ? 0 : -ENOMEM;
++/**
++ * devm_of_clk_add_hw_provider() - Managed clk provider node registration
++ * @dev: Device acting as the clock provider. Used for DT node and lifetime.
++ * @get: callback for decoding clk_hw
++ * @data: context pointer for @get callback.
++ *
++ * Returns 0 on success or an errno on failure.
++ *
++ * Registers clock provider for given device's node. Provider is automatically
++ * released at device exit.
++ */
++int devm_of_clk_add_hw_provider(struct device *dev,
++			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++					      void *data),
++			void *data)
++{
++	return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
 +}
+ EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
+ 
++/**
++ * devm_of_clk_add_parent_hw_provider() - Managed clk provider node registration
++ * @dev: Device acting as the clock provider. Provider's DT node is parent node.
++ * @get: callback for decoding clk_hw
++ * @data: context pointer for @get callback.
++ *
++ * Returns 0 on success or an errno on failure.
++ *
++ * Registers clock provider for given device's parent node. Usable in cases
++ * where it really is the parent node that contains the provider information.
++ * Typical use-cases are MFD devices where the MFD sub-device is handling
++ * actual clock HW but the MFD node (parent) is containing the clock
++ * information.
++ *
++ * Provider is automatically released at device exit.
++ */
++int devm_of_clk_add_parent_hw_provider(struct device *dev,
++			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++					      void *data),
++			void *data)
++{
++	return __devm_of_clk_add_hw_provider(dev, get, dev->parent->of_node,
++					     data);
++}
++EXPORT_SYMBOL_GPL(devm_of_clk_add_parent_hw_provider);
 +
  /**
-  * clk_register_clkdev - register one clock lookup for a struct clk
-  * @clk: struct clk to associate with all clk_lookups
-@@ -420,20 +439,10 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
- {
- 	struct clk_lookup *cl;
- 
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
--	/*
--	 * Since dev_id can be NULL, and NULL is handled specially, we must
--	 * pass it as either a NULL format string, or with "%s".
--	 */
--	if (dev_id)
--		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
--					   dev_id);
--	else
--		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
--
--	return cl ? 0 : -ENOMEM;
-+	if (!IS_ERR(clk))
-+		return do_clk_register_clkdev(__clk_get_hw(clk), &cl, con_id,
-+					      dev_id);
-+	return PTR_ERR(clk);
+  * of_clk_del_provider() - Remove a previously registered clock provider
+  * @np: Device node pointer associated with clock provider
+@@ -3950,6 +3993,10 @@ static int devm_clk_provider_match(struct device *dev, void *res, void *data)
+ 	return *np == data;
  }
- EXPORT_SYMBOL(clk_register_clkdev);
  
-@@ -456,18 +465,79 @@ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
++/**
++ * devm_of_clk_del_provider() - Remove clock provider registered using devm
++ * @dev: Device to whose lifetime the clock provider was bound
++ */
+ void devm_of_clk_del_provider(struct device *dev)
  {
- 	struct clk_lookup *cl;
- 
--	if (IS_ERR(hw))
--		return PTR_ERR(hw);
-+	return do_clk_register_clkdev(hw, &cl, con_id, dev_id);
-+}
-+EXPORT_SYMBOL(clk_hw_register_clkdev);
- 
--	/*
--	 * Since dev_id can be NULL, and NULL is handled specially, we must
--	 * pass it as either a NULL format string, or with "%s".
--	 */
--	if (dev_id)
--		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
--	else
--		cl = __clk_register_clkdev(hw, con_id, NULL);
-+static void devm_clkdev_release(struct device *dev, void *res)
-+{
-+	clkdev_drop(*(struct clk_lookup **)res);
-+}
- 
--	return cl ? 0 : -ENOMEM;
-+static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
-+{
-+	struct clk_lookup **l = res;
-+
-+	if (!l || !*l) {
-+		WARN_ON(!l || !*l);
-+		return 0;
-+	}
-+	return *l == data;
+ 	int ret;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 60c51871b04b..a6663f084cf1 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -916,6 +916,10 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+ 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 						 void *data),
+ 			   void *data);
++int devm_of_clk_add_parent_hw_provider(struct device *dev,
++			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++						 void *data),
++			   void *data);
+ void of_clk_del_provider(struct device_node *np);
+ void devm_of_clk_del_provider(struct device *dev);
+ struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
+@@ -953,6 +957,13 @@ static inline int devm_of_clk_add_hw_provider(struct device *dev,
+ {
+ 	return 0;
  }
--EXPORT_SYMBOL(clk_hw_register_clkdev);
-+
-+/**
-+ * devm_clk_release_clkdev - Resource managed clkdev lookup release
-+ * @dev: device this lookup is bound
-+ * @con_id: connection ID string on device
-+ * @dev_id: format string describing device name
-+ *
-+ * Drop the clkdev lookup created with devm_clk_hw_register_clkdev.
-+ * Normally this function will not need to be called and the resource
-+ * management code will ensure that the resource is freed.
-+ */
-+void devm_clk_release_clkdev(struct device *dev, const char *con_id,
-+			     const char *dev_id)
++static inline int devm_of_clk_add_parent_hw_provider(struct device *dev,
++			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++						 void *data),
++			   void *data)
 +{
-+	struct clk_lookup *cl;
-+	int rval;
-+
-+	cl = clk_find(dev_id, con_id);
-+	WARN_ON(!cl);
-+	rval = devres_release(dev, devm_clkdev_release,
-+			      devm_clk_match_clkdev, cl);
-+	WARN_ON(rval);
++	return 0;
 +}
-+EXPORT_SYMBOL(devm_clk_release_clkdev);
-+
-+/**
-+ * devm_clk_hw_register_clkdev - managed clk lookup registration for clk_hw
-+ * @dev: device this lookup is bound
-+ * @hw: struct clk_hw to associate with all clk_lookups
-+ * @con_id: connection ID string on device
-+ * @dev_id: format string describing device name
-+ *
-+ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
-+ * clkdev.
-+ *
-+ * To make things easier for mass registration, we detect error clk_hws
-+ * from a previous clk_hw_register_*() call, and return the error code for
-+ * those.  This is to permit this function to be called immediately
-+ * after clk_hw_register_*().
-+ */
-+int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
-+				const char *con_id, const char *dev_id)
-+{
-+	int rval = -ENOMEM;
-+	struct clk_lookup **cl;
-+
-+	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
-+	if (cl) {
-+		rval = do_clk_register_clkdev(hw, cl, con_id, dev_id);
-+		if (!rval)
-+			devres_add(dev, cl);
-+		else
-+			devres_free(cl);
-+	}
-+	return rval;
-+}
-+EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
-diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-index 4890ff033220..ccb32af5848b 100644
---- a/include/linux/clkdev.h
-+++ b/include/linux/clkdev.h
-@@ -52,4 +52,8 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
- int clk_register_clkdev(struct clk *, const char *, const char *);
- int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
- 
-+int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
-+				const char *con_id, const char *dev_id);
-+void devm_clk_release_clkdev(struct device *dev, const char *con_id,
-+			     const char *dev_id);
- #endif
+ static inline void of_clk_del_provider(struct device_node *np) {}
+ static inline void devm_of_clk_del_provider(struct device *dev) {}
+ static inline struct clk *of_clk_src_simple_get(
 -- 
 2.14.3
 
