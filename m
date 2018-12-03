@@ -2,200 +2,136 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F973C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 795DFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF6A720850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:50:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF6A720850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4463A20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4463A20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbeLCVuM (ORCPT
+        id S1725969AbeLCVwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:50:12 -0500
-Received: from mga05.intel.com ([192.55.52.43]:29098 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLCVuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:50:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 13:50:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="106989062"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2018 13:50:11 -0800
-Message-ID: <30ab5fa569a6ede936d48c18e666bc6f718d50db.camel@linux.intel.com>
-Subject: Re: [PATCH RFC 2/3] mm: Add support for exposing if dev_pagemap
- supports refcount pinning
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Barret Rhoden <brho@google.com>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Mon, 3 Dec 2018 16:52:10 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39169 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbeLCVwK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:52:10 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n21so15694019qtl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 13:52:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wz3G1K0Wqct2QY1g8HOnYswKaEU/I5gQsQNRf+imps4=;
+        b=JYU3YzzdazN8c0b68+WCOad2QOBfor+J0jsn6QzTbSgAdIkKUuz1Wh2c4rxsJ9ZCk5
+         H03i7XpdGf0eeA36/gBMlfBy9NB0ZfqYiGbp2AqRiAAt0Zg7ThzDnlwaDt3loJFLKNb/
+         PEjSGlU/DxMwv/hhltIaYJkNt6mxa/4YZbOIT0DvlDbMFp8qp4c/sNeffWUYqM7mdMMS
+         ys8Gollf7IThM+0nE8sxL/d4c8v281mre++WebwrZChF6B6/dw/KITU05gG5Azb3tEA+
+         bjm6HLPpL2Sle165J7SF9NlaI+M0QM1VX8QxhzsEJwelRcOWLx6kSQygiI6YJ7HH0bvr
+         l7jQ==
+X-Gm-Message-State: AA+aEWbjQjkrzajotcwIZTLfLjkcpyIR3hPTBGiIMclLrJT9JViOqzuQ
+        cEBsMMcDzEkRV8b6su2AgXaICmyoWuALSAZyK+o=
+X-Google-Smtp-Source: AFSGD/VZG2VieAMQM8L8JLVwrZC2CJU9F3fdxhqwMdhMSgQv79tym8p9rpuV1A7/MFQXfKzsGg0QxctbqsJi4keAHHw=
+X-Received: by 2002:ac8:7451:: with SMTP id h17mr16754405qtr.319.1543873929119;
+ Mon, 03 Dec 2018 13:52:09 -0800 (PST)
+MIME-Version: 1.0
+References: <20181130150956.27620-1-anders.roxell@linaro.org> <20181203192228.GC29028@arm.com>
+In-Reply-To: <20181203192228.GC29028@arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 3 Dec 2018 22:51:52 +0100
+Message-ID: <CAK8P3a2gekEqUuvsC-_+ijhiqqff2bK-s2wQfkjn7z-HtNnMDQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: ftrace: add cond_resched() to func ftrace_make_(call|nop)
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kees Cook <keescook@chromium.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, rkrcmar@redhat.com,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>
-Date:   Mon, 03 Dec 2018 13:50:11 -0800
-In-Reply-To: <CAPcyv4hPDjHzKd4wTh8Ujv-xL8YsJpcFXOp5ocJ-5fVJZ3=vRw@mail.gmail.com>
-References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <154386513120.27193.7977541941078967487.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <CAPcyv4gZkx9zRsKkVhrmPG7SyjPEycp0neFnECmSADZNLuDOpQ@mail.gmail.com>
-         <97943d2ed62e6887f4ba51b985ef4fb5478bc586.camel@linux.intel.com>
-         <CAPcyv4i=FL4f34H2_1mgWMk=UyyaXFaKPh5zJSnFNyN3cBoJhA@mail.gmail.com>
-         <2a3f70b011b56de2289e2f304b3d2d617c5658fb.camel@linux.intel.com>
-         <CAPcyv4hPDjHzKd4wTh8Ujv-xL8YsJpcFXOp5ocJ-5fVJZ3=vRw@mail.gmail.com>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-03 at 13:05 -0800, Dan Williams wrote:
-> On Mon, Dec 3, 2018 at 12:53 PM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
-> > 
-> > On Mon, 2018-12-03 at 12:31 -0800, Dan Williams wrote:
-> > > On Mon, Dec 3, 2018 at 12:21 PM Alexander Duyck
-> > > <alexander.h.duyck@linux.intel.com> wrote:
-> > > > 
-> > > > On Mon, 2018-12-03 at 11:47 -0800, Dan Williams wrote:
-> > > > > On Mon, Dec 3, 2018 at 11:25 AM Alexander Duyck
-> > > > > <alexander.h.duyck@linux.intel.com> wrote:
-> > > > > > 
-> > > > > > Add a means of exposing if a pagemap supports refcount pinning. I am doing
-> > > > > > this to expose if a given pagemap has backing struct pages that will allow
-> > > > > > for the reference count of the page to be incremented to lock the page
-> > > > > > into place.
-> > > > > > 
-> > > > > > The KVM code already has several spots where it was trying to use a
-> > > > > > pfn_valid check combined with a PageReserved check to determien if it could
-> > > > > > take a reference on the page. I am adding this check so in the case of the
-> > > > > > page having the reserved flag checked we can check the pagemap for the page
-> > > > > > to determine if we might fall into the special DAX case.
-> > > > > > 
-> > > > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > > > ---
-> > > > > >  drivers/nvdimm/pfn_devs.c |    2 ++
-> > > > > >  include/linux/memremap.h  |    5 ++++-
-> > > > > >  include/linux/mm.h        |   11 +++++++++++
-> > > > > >  3 files changed, 17 insertions(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> > > > > > index 6f22272e8d80..7a4a85bcf7f4 100644
-> > > > > > --- a/drivers/nvdimm/pfn_devs.c
-> > > > > > +++ b/drivers/nvdimm/pfn_devs.c
-> > > > > > @@ -640,6 +640,8 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
-> > > > > >         } else
-> > > > > >                 return -ENXIO;
-> > > > > > 
-> > > > > > +       pgmap->support_refcount_pinning = true;
-> > > > > > +
-> > > > > 
-> > > > > There should be no dev_pagemap instance instance where this isn't
-> > > > > true, so I'm missing why this is needed?
-> > > > 
-> > > > I thought in the case of HMM there were instances where you couldn't
-> > > > pin the page, isn't there? Specifically I am thinking of the definition
-> > > > of MEMORY_DEVICE_PUBLIC:
-> > > >   Device memory that is cache coherent from device and CPU point of
-> > > >   view. This is use on platform that have an advance system bus (like
-> > > >   CAPI or CCIX). A driver can hotplug the device memory using
-> > > >   ZONE_DEVICE and with that memory type. Any page of a process can be
-> > > >   migrated to such memory. However no one should be allow to pin such
-> > > >   memory so that it can always be evicted.
-> > > > 
-> > > > It sounds like MEMORY_DEVICE_PUBLIC and MMIO would want to fall into
-> > > > the same category here in order to allow a hot-plug event to remove the
-> > > > device and take the memory with it, or is my understanding on this not
-> > > > correct?
-> > > 
-> > > I don't understand how HMM expects to enforce no pinning, but in any
-> > > event it should always be the expectation an elevated reference count
-> > > on a page prevents that page from disappearing. Anything else is
-> > > broken.
-> > 
-> > I don't think that is true for device MMIO though.
-> > 
-> > In the case of MMIO you have the memory region backed by a device, if
-> > that device is hot-plugged or fails in some way then that backing would
-> > go away and the reads would return and all 1's response.
-> 
-> Until p2pdma there are no struct pages for device memory, is that what
-> you're referring?
+On Mon, Dec 3, 2018 at 8:22 PM Will Deacon <will.deacon@arm.com> wrote:
+>
+> Hi Anders,
+>
+> On Fri, Nov 30, 2018 at 04:09:56PM +0100, Anders Roxell wrote:
+> > Both of those functions end up calling ftrace_modify_code(), which is
+> > expensive because it changes the page tables and flush caches.
+> > Microseconds add up because this is called in a loop for each dyn_ftrace
+> > record, and this triggers the softlockup watchdog unless we let it sleep
+> > occasionally.
+> > Rework so that we call cond_resched() before going into the
+> > ftrace_modify_code() function.
+> >
+> > Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  arch/arm64/kernel/ftrace.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+>
+> It sounds like you're running into issues with the existing code, but I'd
+> like to understand a bit more about exactly what you're seeing. Which part
+> of the ftrace patching is proving to be expensive?
+>
+> The page table manipulation only happens once per module when using PLTs,
+> and the cache maintenance is just a single line per patch site without an
+> IPI.
+>
+> Is it the loop in ftrace_replace_code() that is causing the hassle?
 
-Honestly I am not sure. It is possible I am getting beyond my depth.
+Yes: with an allmodconfig kernel, the ftrace selftest calls ftrace_replace_code
+to look >40000 through ftrace_make_call/ftrace_make_nop, and these
+end up calling
 
-My understanding is that we have a 'struct page' for any of these pages
-that we are currently using. It is just a matter of if we want to pass
-the struct page around or not. So for example in the case of an MMIO
-page we still have a 'struct page', however the PG_reserved flag is set
-on such a page, so KVM is opting to not touch the reference count,
-modify the dirty/accessed bits, and is generally reducing performance
-as a result.
+static int __kprobes __aarch64_insn_write(void *addr, __le32 insn)
+{
+        void *waddr = addr;
+        unsigned long flags = 0;
+        int ret;
 
-> Otherwise any device driver that leaks "struct pages" into random code
-> paths in the kernel had better not expect to be able to
-> surprise-remove those pages from the system. Any dev_pagemap user
-> should expect to do a coordinated removal with the driver that waits
-> for page references to drop before the device can be physically
-> removed.
+        raw_spin_lock_irqsave(&patch_lock, flags);
+        waddr = patch_map(addr, FIX_TEXT_POKE0);
 
-Right. This part I get. However I would imagine there still has to be
-some exception handling in the case of a PCIe backed region of memory
-so that if the device falls of the bus we clean up the dev_pagemap
-memory.
+        ret = probe_kernel_write(waddr, &insn, AARCH64_INSN_SIZE);
 
-> > Holding a reference to the page doesn't guarantee that the backing
-> > device cannot go away.
-> 
-> Correct there is no physical guarantee, but that's not the point. It
-> needs to be coordinated, otherwise all bets are off with respect to
-> system stability.
+        patch_unmap(FIX_TEXT_POKE0);
+        raw_spin_unlock_irqrestore(&patch_lock, flags);
 
-Right.
+        return ret;
+}
+int __kprobes aarch64_insn_patch_text_nosync(void *addr, u32 insn)
+{
+        u32 *tp = addr;
+        int ret;
 
-> > I believe that is the origin of the original use
-> > of the PageReserved check in KVM in terms of if it will try to use the
-> > get_page/put_page functions.
-> 
-> Is it? MMIO does not typically have a corresponding 'struct page'.
+        /* A64 instructions must be word aligned */
+        if ((uintptr_t)tp & 0x3)
+                return -EINVAL;
 
-I think we might be talking about different things when we say 'struct
-page'. I'm pretty sure there has to be a 'struct page' for the MMIO
-region as otherwise we wouldn't be able to check for the PG_reserved
-bit in the 'struct page'. Do you maybe mean that MMIO doesn't have a
-corresponding virtual address or TLB entry? I know that is what we are
-normally generating via the ioremap family of calls in device drivers
-in order to access such memory if I am not mistaken.
+        ret = aarch64_insn_write(tp, insn);
+        if (ret == 0)
+                __flush_icache_range((uintptr_t)tp,
+                                     (uintptr_t)tp + AARCH64_INSN_SIZE);
 
-> > I believe this is also why
-> > MEMORY_DEVICE_PUBLIC specifically calls out that you should not allow
-> > pinning such memory.
-> 
-> I don't think that call out was referencing device hotplug, I believe
-> it was the HMM expectation that it should be able to move an HMM page
-> from device to System-RAM at will.
+        return ret;
+}
 
-I could be wrong. If so that would make this patch set easier since
-essentially it would just mean that any PageReserved page that matches
-is_zone_device_page would fall into this category then and I could just
-drop patch 2, and probably combine the entire fix for all of this into
-one patch as it would only really be a few additional lines.
+which seems to be where the main cost is. This is with inside of
+qemu, and with lots of debugging options (in particular
+kcov and ubsan) enabled, that make each function call
+more expensive.
 
+       Arnd
