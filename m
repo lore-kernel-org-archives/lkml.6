@@ -2,202 +2,160 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977D5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 148E4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EC5120851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC5120851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B559C20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="DW5MC0yx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B559C20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbeLCKVY (ORCPT
+        id S1726185AbeLCKWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:21:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52042 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726139AbeLCKVY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:21:24 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3AJ0Wh135232
-        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 05:20:58 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p51654rmc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:20:58 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Mon, 3 Dec 2018 10:20:56 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Dec 2018 10:20:53 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3AKqsp17105138
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Dec 2018 10:20:52 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E135B52052;
-        Mon,  3 Dec 2018 10:20:51 +0000 (GMT)
-Received: from [9.145.178.193] (unknown [9.145.178.193])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E2CB452051;
-        Mon,  3 Dec 2018 10:20:37 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v2 3/3] vfio: ap: AP Queue Interrupt Control VFIO ioctl
- calls
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1542906675-7949-1-git-send-email-pmorel@linux.ibm.com>
- <1542906675-7949-4-git-send-email-pmorel@linux.ibm.com>
- <20181203110422.4d069a8c.cohuck@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Mon, 3 Dec 2018 11:20:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181203110422.4d069a8c.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 3 Dec 2018 05:22:03 -0500
+Received: from mail-eopbgr50097.outbound.protection.outlook.com ([40.107.5.97]:15393
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726039AbeLCKWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 05:22:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SAByDQP+mfQRQFw5/jDvORfGMc4k8oyV/HKt1fUXXc8=;
+ b=DW5MC0yxbCtZMPMVmfnqlRNMtbY5OLYEfccI2MumB1i1WEUn/3OHqoLdszdz7rhtN1bRsUOZQ0oEUor2/gW3F/50Mf+EdtWS1F2LDpAKED/Y0h7vmdZGUWN7Nao9u9aWSKNG/ZcDNyuVs/3TUs7vn6uQsVC9BANHwNL0/2KH0jg=
+Received: from VI1PR07MB5085.eurprd07.prod.outlook.com (20.177.203.157) by
+ VI1PR07MB5133.eurprd07.prod.outlook.com (20.178.9.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.14; Mon, 3 Dec 2018 10:20:51 +0000
+Received: from VI1PR07MB5085.eurprd07.prod.outlook.com
+ ([fe80::7d44:e1e4:2a0a:4a8f]) by VI1PR07MB5085.eurprd07.prod.outlook.com
+ ([fe80::7d44:e1e4:2a0a:4a8f%5]) with mapi id 15.20.1404.016; Mon, 3 Dec 2018
+ 10:20:51 +0000
+From:   "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        Peter Rosin <peda@axentia.se>,
+        Anders Berg <anders.berg@lsi.com>
+Subject: Re: [PATCH] i2c-axxia: properly handle master timeout
+Thread-Topic: [PATCH] i2c-axxia: properly handle master timeout
+Thread-Index: AQHUfa+0yU5CDqRvp0O+anAOl9uWAqVjnZCAgAlKpYA=
+Date:   Mon, 3 Dec 2018 10:20:51 +0000
+Message-ID: <d80cca69-26e7-8af7-bf42-8ccb0d44a374@nokia.com>
+References: <20181116132334.GA3951@localhost.localdomain>
+ <20181127122649.GL1107@kunai>
+In-Reply-To: <20181127122649.GL1107@kunai>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18120310-0012-0000-0000-000002D3C425
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120310-0013-0000-0000-0000210919BF
-Message-Id: <0119edfa-2feb-03f6-e082-e3773f4e42e2@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812030100
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR0101CA0012.eurprd01.prod.exchangelabs.com
+ (2603:10a6:3:77::22) To VI1PR07MB5085.eurprd07.prod.outlook.com
+ (2603:10a6:803:9e::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [131.228.32.168]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR07MB5133;6:ji+JZS1bB5Uhcd+jjpQ9fP17uvlB1LJ8OPZ+aDj3ZoJqUXTmYeYdqQVQ/WM7EmE3IBRsn9ijNExRDDkYK5qWPT8qrzVCT0+wmLpQhsFmjhq+qPgYkzCCuJLWszm/OC3rG+1TSfPftFZpvk+/7MPcc2bWwzYmtTnWBzup8/jZSsnI4l66Dg52W/SvHwQloW2KhtJvqL2Jus3Ef37tg5faGxjNHK9ioSQNZM3CSmTgKy2juI1NW56m2fo5Z9yZ1MHooDgGDEnLAqXV+43CfSribSwJI9EDdYN/RCCsXlp4Wz4pVkiBOwKSDrDSBochjvZz98We+dH2EKEj1T0eQWnBmvVMdbibM3StWKWUXOjVibEkopj2p0m0Zj3oZEIAlXie69g6AifGxIJy9INlJ0h1owhwAAHVwdtjrQJ//oT1GsWGtNk8g7I7eRxuu8Tl8p9YXuJf63WJyitMNe+FAqffug==;5:XwK+iatBnkKyFg/Jl82RzwJX6EHcaRxGQNpOarmciJt0pOBVOxuXhoNtA1pn3K+RpDx164SYT78YKe2+x04qUxOW6UhkIdrTXU9k1vQNWR8OOoUzcqB0H/EZz6uoBMO/SrLahJ4QDWDccwAhPi4dHJvQETjNC/Ggltzr4eVYFZ0=;7:TF7qzuWBwN6OelE4Vg+jhDI3XdfYpAe3bBOP+RSGBLQRP6xIw/aGdf0pp3axZ0q0K9/oc2/hhQ5chE07Q/9MKgZ4lXaxaWxLVFtiBBcjJSOpyENRkEx2H+yKtBNfzioKRWHGe7wDa0MENHynY1AmJg==
+x-ms-office365-filtering-correlation-id: 72d4a55c-3f42-414a-e7e2-08d65908fee8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR07MB5133;
+x-ms-traffictypediagnostic: VI1PR07MB5133:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=krzysztof.adamski@nokia.com; 
+x-microsoft-antispam-prvs: <VI1PR07MB5133887C064A1921343FBBF4EFAE0@VI1PR07MB5133.eurprd07.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(11241501185)(806100)(944501493)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR07MB5133;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB5133;
+x-forefront-prvs: 08756AC3C8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(346002)(136003)(39860400002)(199004)(189003)(51914003)(68736007)(31686004)(6486002)(105586002)(106356001)(6436002)(97736004)(486006)(99286004)(14454004)(86362001)(102836004)(71200400001)(25786009)(476003)(71190400001)(31696002)(229853002)(7736002)(478600001)(2616005)(66066001)(305945005)(186003)(36756003)(386003)(6506007)(2906002)(11346002)(53936002)(6512007)(6246003)(6916009)(4326008)(446003)(5660300001)(8676002)(52116002)(14444005)(76176011)(256004)(8936002)(26005)(54906003)(81166006)(316002)(81156014)(551934003)(3846002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB5133;H:VI1PR07MB5085.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: blGgcA+XFzRvQP+2LznaUeAd8I16z8P3NIZ4v4hm+PzhBpVO/SziGrK8f5Fv2W2BxfqFsBaGWaj9yCQ/vH48c2m6Ot+kmzksz5qFL6fvOMzknefPRfhcrf8QZ15J7eBwKdJxNeXsPmNwo09tgCLcBEMlPnMWzLPrs2cf5ZIES17TPeo1d/anXijnfXiWd40a91CVbcASac+pi0y583QykK7hg96jyfh0fHo04eH7plJYAWAJ0je1CwmGwXGL7CmbNLcWnT8qV8cuglLh+MLEEybZDEGq3k79J/DCZ+P7MRfCM1ny+OdkAkpomkbnmpFVaykncj+GW850NCn5rZ9WKK9Znf3Msy6NJyIVHHqjO8g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-2"
+Content-ID: <CB29AFA95D10254F87D8B785D9540C11@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72d4a55c-3f42-414a-e7e2-08d65908fee8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 10:20:51.6417
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB5133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 11:04, Cornelia Huck wrote:
-> On Thu, 22 Nov 2018 18:11:15 +0100
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
-> 
->> This is the implementation of the VFIO ioctl calls to handle
->> the AQIC interception and use GISA to handle interrupts.
+Hi
+
+W dniu 27.11.2018 o=A013:26, Wolfram Sang pisze:
+> On Fri, Nov 16, 2018 at 01:24:41PM +0000, Adamski, Krzysztof (Nokia - PL/=
+Wroclaw) wrote:
+>> According to Intel (R) Axxia TM Lionfish Communication Processor
+>> Peripheral Subsystem Hardware Reference Manual, the AXXIA I2C module
+>> have a programmable Master Wait Timer, which among others, checks the
+>> time between commands send in manual mode. When a timeout (25ms) passes,
+>> TSS bit is set in Master Interrupt Status register and a Stop command is
+>> issued by the hardware.
 >>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c | 110 +++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 109 insertions(+), 1 deletion(-)
+>> The axxia_i2c_xfer(), does not properly handle this situation, however.
+>> For each message a separate axxia_i2c_xfer_msg() is called and this
+>> function incorrectly assumes that any interrupt might happen only when
+>> waiting for completion. This is mostly correct but there is one
+>> exception - a master timeout can trigger if enough time has passed
+>> between individual transfers. It will, by definition, happen between
+>> transfers when the interrupts are disabled by the code. If that happens,
+>> the hardware issues Stop command.
 >>
-> 
->> +static int vfio_ap_ioctl_setirq(struct mdev_device *mdev, unsigned long arg)
->> +{
->> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->> +	struct vfio_ap_aqic parm;
->> +	struct ap_qirq_ctrl aqic_gisa = {};
->> +	struct kvm *kvm = matrix_mdev->kvm;
->> +	struct kvm_s390_gisa *gisa = kvm->arch.gisa;
->> +	struct ap_queue_status ap_status;
->> +	unsigned long nib;
->> +
->> +	if (copy_from_user(&parm, (void __user *)arg, sizeof(parm)))
->> +		return -EFAULT;
->> +
->> +	if (parm.isc > MAX_ISC)
->> +		return -EINVAL;
->> +
->> +	if (kvm->vcpus[0]->arch.sie_block->gd & 0x01)
->> +		aqic_gisa.gf = 1;
->> +
->> +	nib = vfio_ap_get_nib(kvm, &parm);
->> +	if (!nib)
->> +		return -ENODEV;
->> +
->> +	aqic_gisa.gisc = parm.isc;
->> +	aqic_gisa.isc = kvm_s390_gisc_register(kvm, parm.isc);
-> 
-> Oh, and as I just looked at the callers of these functions: You'll want
-> to check the return code here, even though the function should not fail
-> with the checking you did beforehand.
-> 
+>> The interrupt indicating timeout will not be triggered as soon as we
+>> enable them since the Master Interrupt Status is cleared when master
+>> mode is entered again (which happens before enabling irqs) meaning this
+>> error is lost and the transfer is continued even though the Stop was
+>> issued on the bus. The subsequent operations completes without error but
+>> a bogus value (0xFF in case of read) is read as the client device is
+>> confused because aborted transfer. No error is returned from
+>> master_xfer() making caller believe that a valid value was read.
+>>
+>> To fix the problem, the TSS bit (indicating timeout) in Master Interrupt
+>> Status register is checked before each transfer. If it is set, there was
+>> a timeout before this transfer and (as described above) the hardware
+>> already issued Stop command so the transaction should be aborted thus
+>> -ETIMEOUT is returned from the master_xfer() callback. In order to be
+>> sure no timeout was issued we can't just read the status just before
+>> starting new transaction as there will always be a small window of time
+>> (few CPU cycles at best) where this might still happen. For this reason
+>> we have to temporally disable the timer before checking for TSS bit.
+>> Disabling it will, however, clear the TSS bit so in order to preserve
+>> that information, we have to read it in ISR so we have to ensure that
+>> the TSS interrupt is not masked between transfers of one transaction.
+>> There is no need to call bus recovery or controller reinitialization if
+>> that happens so it's skipped.
+>>
+>> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+>> Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+> Applied to for-current, thanks!
+>
+> Since you and/or Alexander are the ones doing functional changes to this
+> driver, would you be interested in maintaining it? This would ensure you
+> get notified when someone else has patches for it.
 
-I should check.
+Thanks for the offer. Since I think I became quite familiar with
+his code and the hardware itself and we do have an interest real
+interest in this driver, I think it is a good idea. I will send
+a patch to MAINTAINERS soon.
 
-> [I assume you'll have similar code even when using a different
-> interface.]
-
-Yes.
-
-
-> 
->> +	aqic_gisa.ir = 1;
->> +	aqic_gisa.gisa = gisa->next_alert >> 4;
->> +
->> +	ap_status = ap_aqic(parm.apqn, aqic_gisa, (void *)nib);
->> +	parm.status = *(uint32_t *)(&ap_status);
->> +
->> +	if (copy_to_user((void __user *)arg, &parm, sizeof(parm))) {
->> +		kvm_s390_gisc_unregister(kvm, parm.isc);
->> +		return -EFAULT;
->> +	}
->> +
->> +	if (ap_status.response_code) {
->> +		kvm_s390_gisc_unregister(kvm, parm.isc);
->> +		return -EIO;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int vfio_ap_ioctl_clrirq(struct mdev_device *mdev, unsigned long arg)
->> +{
->> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->> +	struct vfio_ap_aqic parm;
->> +	struct ap_qirq_ctrl aqic_gisa = {};
->> +	struct ap_queue_status ap_status;
->> +	struct kvm *kvm = matrix_mdev->kvm;
->> +
->> +	if (copy_from_user(&parm, (void __user *)arg, sizeof(parm)))
->> +		return -EFAULT;
->> +
->> +	if (kvm->vcpus[0]->arch.sie_block->gd & 0x01)
->> +		aqic_gisa.gf = 1;
->> +	aqic_gisa.ir = 0;
->> +
->> +	ap_status = ap_aqic(parm.apqn, aqic_gisa, NULL);
->> +	parm.status = *(uint32_t *)(&ap_status);
->> +
->> +	kvm_s390_gisc_unregister(kvm, parm.isc);
-> 
-> Here, you don't seem to verify the sanity of parm.isc beforehand...
-> luckily the function can deal with that :)
-
-You are right.
-Anyway I will change this, because this relies on user's code which is 
-not right.
-
-
-> 
->> +
->> +	if (copy_to_user((void __user *)arg, &parm, sizeof(parm)))
->> +		return -EFAULT;
->> +
->> +	return (ap_status.response_code) ? -EIO : 0;
->> +}
->> +
-> 
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Krzysztof
