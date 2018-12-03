@@ -2,163 +2,199 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 806E0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 783A5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5126A2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5126A2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AFBB20834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:10:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFBB20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbeLCPJS (ORCPT
+        id S1726654AbeLCPKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:09:18 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:33078 "EHLO mail5.wrs.com"
+        Mon, 3 Dec 2018 10:10:47 -0500
+Received: from foss.arm.com ([217.140.101.70]:39462 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbeLCPJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:09:18 -0500
-Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB3F8DFC001748
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 3 Dec 2018 07:08:24 -0800
-Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 3 Dec 2018 07:07:57 -0800
-Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
- EA5802E0818; Mon,  3 Dec 2018 10:07:56 -0500 (EST)
-Date:   Mon, 3 Dec 2018 10:07:56 -0500
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Alessandro Rubini <rubini@gnudd.com>,
-        Davide Ciminaghi <ciminaghi@gnudd.com>
-Subject: Re: [PATCH 12/22] mfd: sta2x11: drop unused MODULE_ tags from
- non-modular code
-Message-ID: <20181203150756.GA23156@windriver.com>
-References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
- <1543811009-15112-13-git-send-email-paul.gortmaker@windriver.com>
- <20181203111442.GK26661@dell>
+        id S1726116AbeLCPKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:10:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EA0C1682;
+        Mon,  3 Dec 2018 07:10:42 -0800 (PST)
+Received: from [10.1.37.145] (p8cg001049571a15.cambridge.arm.com [10.1.37.145])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C37F43F5AF;
+        Mon,  3 Dec 2018 07:10:39 -0800 (PST)
+Subject: Re: [PATCH v9 6/8] KVM: arm64: Support handling access faults for PUD
+ hugepages
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     suzuki.poulose@arm.com, marc.zyngier@arm.com,
+        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-7-punit.agrawal@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <26fcfc2c-219a-ce04-457b-cc157301c7d3@arm.com>
+Date:   Mon, 3 Dec 2018 20:40:45 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181203111442.GK26661@dell>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181031175745.18650-7-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Re: [PATCH 12/22] mfd: sta2x11: drop unused MODULE_ tags from non-modular code] On 03/12/2018 (Mon 11:14) Lee Jones wrote:
 
-> On Sun, 02 Dec 2018, Paul Gortmaker wrote:
+
+On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+> In preparation for creating larger hugepages at Stage 2, extend the
+> access fault handling at Stage 2 to support PUD hugepages when
+> encountered.
 > 
-> > The Kconfig currently controlling compilation of this code is:
-> > 
-> > drivers/mfd/Kconfig:config MFD_STA2X11
-> > drivers/mfd/Kconfig:    bool "STMicroelectronics STA2X11"
-> > 
-> > ...meaning that it currently is not being built as a module by anyone.
-> > 
-> > Lets remove the couple traces of modular infrastructure use, so that
-> > when reading the driver there is no doubt it is builtin-only.
-
-[...]
-
-> > Cc: Lee Jones <lee.jones@linaro.org>
+> Provide trivial helpers for arm32 to allow sharing of code.
 > 
-> I think you should add some of the driver developers.
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm/include/asm/kvm_mmu.h   |  9 +++++++++
+>  arch/arm64/include/asm/kvm_mmu.h |  7 +++++++
+>  arch/arm64/include/asm/pgtable.h |  6 ++++++
+>  virt/kvm/arm/mmu.c               | 22 +++++++++++-----------
+>  4 files changed, 33 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index 839a619873d3..fea5e723e3ac 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -85,6 +85,9 @@ void kvm_clear_hyp_idmap(void);
+>  #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+>  #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
+>  
+> +#define kvm_pud_pfn(pud)	({ BUG(); 0; })
+> +
+> +
+>  #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
+>  
+>  /*
+> @@ -108,6 +111,12 @@ static inline bool kvm_s2pud_exec(pud_t *pud)
+>  	return false;
+>  }
+>  
+> +static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
+> +{
+> +	BUG();
+> +	return pud;
+> +}
+> +
+>  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+>  {
+>  	pte_val(pte) |= L_PTE_S2_RDWR;
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index c755b37b3f92..612032bbb428 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -187,6 +187,8 @@ void kvm_clear_hyp_idmap(void);
+>  #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
+>  #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
+>  
+> +#define kvm_pud_pfn(pud)		pud_pfn(pud)
+> +
+>  #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
+>  
+>  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+> @@ -266,6 +268,11 @@ static inline bool kvm_s2pud_exec(pud_t *pudp)
+>  	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
+>  }
+>  
+> +static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
+> +{
+> +	return pud_mkyoung(pud);
+> +}
+> +
+>  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
+>  
+>  #ifdef __PAGETABLE_PMD_FOLDED
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 50b1ef8584c0..f51e2271e6a3 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -314,6 +314,11 @@ static inline pte_t pud_pte(pud_t pud)
+>  	return __pte(pud_val(pud));
+>  }
+>  
+> +static inline pud_t pte_pud(pte_t pte)
+> +{
+> +	return __pud(pte_val(pte));
+> +}
+> +
 
-Fair point, but note that get_maintainers doesn't list any developers,
-and neither of the driver authors put an e-mail address in the driver.
+Yeah these would be required for PUD based THP when enabled.
 
-   
-   $ gm drivers/mfd/sta2x11-mfd.c
-   ------------------------------------------------------
-   Lee Jones <lee.jones@linaro.org> (supporter:MULTIFUNCTION DEVICES (MFD))
-   linux-kernel@vger.kernel.org (open list)
-   ------------------------------------------------------
-   Cc: Lee Jones <lee.jones@linaro.org>
-   Cc: linux-kernel@vger.kernel.org
-   ------------------------------------------------------
-   $ 
+>  static inline pmd_t pud_pmd(pud_t pud)
+>  {
+>  	return __pmd(pud_val(pud));
+> @@ -381,6 +386,7 @@ static inline int pmd_protnone(pmd_t pmd)
+>  #define pfn_pmd(pfn,prot)	__pmd(__phys_to_pmd_val((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot))
+>  #define mk_pmd(page,prot)	pfn_pmd(page_to_pfn(page),prot)
+>  
+> +#define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
+>  #define pud_write(pud)		pte_write(pud_pte(pud))
+>  
+>  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 8e44dccd1b47..bd749601195f 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1698,6 +1698,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   */
+>  static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+>  {
+> +	pud_t *pud;
+>  	pmd_t *pmd;
+>  	pte_t *pte;
+>  	kvm_pfn_t pfn;
+> @@ -1707,24 +1708,23 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+>  
+>  	spin_lock(&vcpu->kvm->mmu_lock);
+>  
+> -	pmd = stage2_get_pmd(vcpu->kvm, NULL, fault_ipa);
+> -	if (!pmd || pmd_none(*pmd))	/* Nothing there */
+> +	if (!stage2_get_leaf_entry(vcpu->kvm, fault_ipa, &pud, &pmd, &pte))
+>  		goto out;
+>  
+> -	if (pmd_thp_or_huge(*pmd)) {	/* THP, HugeTLB */
+> +	if (pud) {		/* HugeTLB */
+> +		*pud = kvm_s2pud_mkyoung(*pud);
+> +		pfn = kvm_pud_pfn(*pud);
+> +		pfn_valid = true;
+> +	} else	if (pmd) {	/* THP, HugeTLB */
+>  		*pmd = pmd_mkyoung(*pmd);
+>  		pfn = pmd_pfn(*pmd);
+>  		pfn_valid = true;
+> -		goto out;
+> +	} else {
+> +		*pte = pte_mkyoung(*pte);	/* Just a page... */
+> +		pfn = pte_pfn(*pte);
+> +		pfn_valid = true;
+>  	}
 
-Looking in git history, I was able to find two e-mail, but one hasn't
-been used in 5+ years, so hopefully it is still active.  I have added
-both to the Cc: of this e-mail and added them to the commit below.
-
-Alessandro, Davide - you can find additional context regarding why we
-are making these changes in the [00/22] e-mail that can be found here:
-
-https://lore.kernel.org/lkml/1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com/
-
-Thanks,
-Paul.
-
---
-
-From 34742ffbf343abca07f9d0d680ebfebaedd993c9 Mon Sep 17 00:00:00 2001
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Date: Wed, 6 Jul 2016 16:46:39 -0400
-Subject: [PATCH] mfd: sta2x11: drop unused MODULE_ tags from non-modular code
-
-The Kconfig currently controlling compilation of this code is:
-
-drivers/mfd/Kconfig:config MFD_STA2X11
-drivers/mfd/Kconfig:    bool "STMicroelectronics STA2X11"
-
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the couple traces of modular infrastructure use, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We replace module.h with init.h and export.h ; the latter since the
-file does export some symbols.
-
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Alessandro Rubini <rubini@gnudd.com>
-Cc: Davide Ciminaghi <ciminaghi@gnudd.com>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-diff --git a/drivers/mfd/sta2x11-mfd.c b/drivers/mfd/sta2x11-mfd.c
-index 3aeafa228baf..cab9aabcaa1f 100644
---- a/drivers/mfd/sta2x11-mfd.c
-+++ b/drivers/mfd/sta2x11-mfd.c
-@@ -1,4 +1,6 @@
- /*
-+ * STA2x11 mfd for GPIO, SCTL and APBREG
-+ *
-  * Copyright (c) 2009-2011 Wind River Systems, Inc.
-  * Copyright (c) 2011 ST Microelectronics (Alessandro Rubini, Davide Ciminaghi)
-  *
-@@ -18,7 +20,8 @@
-  */
- 
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/export.h>
- #include <linux/spinlock.h>
- #include <linux/errno.h>
- #include <linux/device.h>
-@@ -653,8 +656,3 @@ static int __init sta2x11_mfd_init(void)
-  */
- subsys_initcall(sta2x11_drivers_init);
- rootfs_initcall(sta2x11_mfd_init);
--
--MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Wind River");
--MODULE_DESCRIPTION("STA2x11 mfd for GPIO, SCTL and APBREG");
--MODULE_DEVICE_TABLE(pci, sta2x11_mfd_tbl);
--- 
-2.7.4
+As mentioned before stage2_get_leaf_entry() is not required for the previous
+patch and handle_access_fault() can definitely do without it. The existing
+page table walker flow is better than this helper which takes like three
+different arguments and makes semantics more complicated than required.
 
