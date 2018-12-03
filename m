@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31682C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E5EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F194E20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F194E20851
+	by mail.kernel.org (Postfix) with ESMTP id 7747020851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:28:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7747020851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725998AbeLCE2u (ORCPT
+        id S1726023AbeLCE2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:28:50 -0500
-Received: from mail.windriver.com ([147.11.1.11]:62690 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbeLCE2u (ORCPT
+        Sun, 2 Dec 2018 23:28:53 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:60582 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbeLCE2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:28:50 -0500
+        Sun, 2 Dec 2018 23:28:52 -0500
 Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34Slh1026799
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34Sm5E015542
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 2 Dec 2018 20:28:47 -0800 (PST)
+        Sun, 2 Dec 2018 20:28:48 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 2 Dec 2018
- 20:28:46 -0800
+ 20:28:48 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@opensource.wolfsonmicro.com>,
         <patches@opensource.cirrus.com>
-Subject: [PATCH 21/22] mfd: wm8350-core: drop unused MODULE_ tags from non-modular code
-Date:   Sun, 2 Dec 2018 23:23:28 -0500
-Message-ID: <1543811009-15112-22-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 22/22] mfd: wm8400-core: Make it explicitly non-modular
+Date:   Sun, 2 Dec 2018 23:23:29 -0500
+Message-ID: <1543811009-15112-23-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
@@ -51,49 +51,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_WM8350
-drivers/mfd/Kconfig:    bool
+drivers/mfd/Kconfig:config MFD_WM8400
+drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM8400"
 
 ...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the couple traces of modular infrastructure use, so that
+Lets remove the modular code that is essentially orphaned, so that
 when reading the driver there is no doubt it is builtin-only.
 
-We delete the MODULE_LICENSE tag etc. since all that information
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
+
+A trivial function rename from wm8400_module_init to the name
+wm8400_driver_init is also done to reduce possible confusion.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
-We replace module.h with init.h and export.h ; the latter since the
-file does export some symbols.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Cc: patches@opensource.cirrus.com
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/wm8350-core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/mfd/wm8400-core.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/mfd/wm8350-core.c b/drivers/mfd/wm8350-core.c
-index 8a07c5634aee..e6434a4d7439 100644
---- a/drivers/mfd/wm8350-core.c
-+++ b/drivers/mfd/wm8350-core.c
-@@ -13,7 +13,8 @@
+diff --git a/drivers/mfd/wm8400-core.c b/drivers/mfd/wm8400-core.c
+index 8a98a2fc74e1..79756c83f5f0 100644
+--- a/drivers/mfd/wm8400-core.c
++++ b/drivers/mfd/wm8400-core.c
+@@ -12,7 +12,7 @@
+  *
   */
  
- #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
-+#include <linux/export.h>
- #include <linux/slab.h>
  #include <linux/bug.h>
- #include <linux/device.h>
-@@ -466,6 +467,3 @@ void wm8350_device_exit(struct wm8350 *wm8350)
- 	wm8350_irq_exit(wm8350);
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+@@ -150,7 +150,6 @@ static const struct i2c_device_id wm8400_i2c_id[] = {
+        { "wm8400", 0 },
+        { }
+ };
+-MODULE_DEVICE_TABLE(i2c, wm8400_i2c_id);
+ 
+ static struct i2c_driver wm8400_i2c_driver = {
+ 	.driver = {
+@@ -161,7 +160,7 @@ static struct i2c_driver wm8400_i2c_driver = {
+ };
+ #endif
+ 
+-static int __init wm8400_module_init(void)
++static int __init wm8400_driver_init(void)
+ {
+ 	int ret = -ENODEV;
+ 
+@@ -173,15 +172,4 @@ static int __init wm8400_module_init(void)
+ 
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(wm8350_device_exit);
+-subsys_initcall(wm8400_module_init);
 -
--MODULE_DESCRIPTION("WM8350 AudioPlus PMIC core driver");
+-static void __exit wm8400_module_exit(void)
+-{
+-#if IS_ENABLED(CONFIG_I2C)
+-	i2c_del_driver(&wm8400_i2c_driver);
+-#endif
+-}
+-module_exit(wm8400_module_exit);
+-
 -MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
++subsys_initcall(wm8400_driver_init);
 -- 
 2.7.4
 
