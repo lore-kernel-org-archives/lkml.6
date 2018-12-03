@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C16EDC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCF8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B9B20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 445912087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GK3KtDCn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B9B20848
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CHvJHY0O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445912087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbeLCRPR (ORCPT
+        id S1726944AbeLCROc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:15:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54078 "EHLO
+        Mon, 3 Dec 2018 12:14:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54064 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1726664AbeLCROc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
@@ -31,24 +31,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EkOnlpyWymR4eBDz4Zf4LKWAUCpS+ahpknQ+lsJJUwg=; b=GK3KtDCncjDMtqqF/CmCtddNLb
-        PmxMbtUqtGeSSSlvjrz7v85zuKbMv0f4YR2AxOPk35ligvB94qOjdV7BpAtPwVUhHOyX+OlrQyOAu
-        tfpNAXhCnZZ0PNwDVhqYHw3zDPT9sMFpyNTV2li9NfuaJEIRKqeNcr9XD01XMnArVJNW29FOD4hHB
-        T4HYeXzZyJ5rspSZOPIJirDNKIe1AavXtexcEkJhgSP/TxExq6/1n9LVv3YlZI6yh568Qcj/i5Pdi
-        V/afs29UGUaxJa2JnRL5z0C8D8BKlAwXP/UCGo3HGCmSORdKROVkqPc24mEQC3+KZskBE1toygMiR
-        z2OkouuQ==;
+        bh=2/VfXTq7jwJkos5+u0gvYTtn0QapejP+xKaA3A+MuoY=; b=CHvJHY0O7GVmWNFXNrz0Xz237C
+        tD1j8lfAcedq6bWWRfJCkn+FKxTZ4gZJeGPhzhAL5Osn7IMb99rCfslbsqtvHa2wdqEPxumkgsEvD
+        o5qkXLdhUxaptFtxU8Exxi9Ukxc2xi6hsof6chfcRcQ0gX846SxDjO6/IcuQ/nNreg/J4kGiS7YTO
+        dc336dW4TRFHMCcuVp6Wnvj22wLFVoCY/us/4GYGnSNVTQz58XmLE9AjqtrAUwjGRL96T7ixSh2Xy
+        zN0UF5SA5BrU0wPzyXBgSgGePhTr3aS1JlRZNmtg3xmtz8Q23X0BbqbndjWwsAXF9JYAp0vJ3calH
+        DlhFucFg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTrng-0001xl-Gs; Mon, 03 Dec 2018 17:14:28 +0000
+        id 1gTrng-0001xQ-U7; Mon, 03 Dec 2018 17:14:29 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 16FCA2029FD74; Mon,  3 Dec 2018 18:14:26 +0100 (CET)
-Message-Id: <20181203171043.229119497@infradead.org>
+        id 11C9D2029FD6C; Mon,  3 Dec 2018 18:14:26 +0100 (CET)
+Message-Id: <20181203171043.162771364@infradead.org>
 User-Agent: quilt/0.65
-Date:   Mon, 03 Dec 2018 18:03:46 +0100
+Date:   Mon, 03 Dec 2018 18:03:45 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     dave.hansen@intel.com, luto@kernel.org, peterz@infradead.org
 Cc:     x86@kernel.org, Tom.StDenis@amd.com, linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 03/10] x86/mm/cpa: Add __cpa_addr() helper
+Subject: [RFC][PATCH 02/10] x86/mm/cpa: Add ARRAY and PAGES_ARRAY selftests
 References: <20181203170343.054618965@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -57,74 +57,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code to compute the virtual address of a cpa_data is duplicated;
-introduce a helper before more copies happen.
+The current pageattr-test code only uses the regular range interface,
+add code that also tests the array and pages interface.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/mm/pageattr.c |   38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ arch/x86/mm/pageattr-test.c |   28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -228,6 +228,23 @@ static bool __cpa_pfn_in_highmap(unsigne
+--- a/arch/x86/mm/pageattr-test.c
++++ b/arch/x86/mm/pageattr-test.c
+@@ -23,7 +23,8 @@
+ static __read_mostly int print = 1;
  
- #endif
+ enum {
+-	NTEST			= 400,
++	NTEST			= 3 * 100,
++	NPAGES			= 100,
+ #ifdef CONFIG_X86_64
+ 	LPS			= (1 << PMD_SHIFT),
+ #elif defined(CONFIG_X86_PAE)
+@@ -110,6 +111,9 @@ static int print_split(struct split_stat
+ static unsigned long addr[NTEST];
+ static unsigned int len[NTEST];
  
-+static unsigned long __cpa_addr(struct cpa_data *cpa, int idx)
-+{
-+	if (cpa->flags & CPA_PAGES_ARRAY) {
-+		struct page *page = cpa->pages[idx];
++static struct page *pages[NPAGES];
++static unsigned long addrs[NPAGES];
 +
-+		if (unlikely(PageHighMem(page)))
-+			return 0;
-+
-+		return (unsigned long)page_address(page);
-+	}
-+
-+	if (cpa->flags & CPA_ARRAY)
-+		return cpa->vaddr[idx];
-+
-+	return *cpa->vaddr;
-+}
-+
- /*
-  * Flushing functions
-  */
-@@ -1468,15 +1485,7 @@ static int __change_page_attr(struct cpa
- 	unsigned int level;
- 	pte_t *kpte, old_pte;
+ /* Change the global bit on random pages in the direct mapping */
+ static int pageattr_test(void)
+ {
+@@ -137,7 +141,7 @@ static int pageattr_test(void)
+ 		unsigned long pfn = prandom_u32() % max_pfn_mapped;
  
--	if (cpa->flags & CPA_PAGES_ARRAY) {
--		struct page *page = cpa->pages[cpa->curpage];
--		if (unlikely(PageHighMem(page)))
--			return 0;
--		address = (unsigned long)page_address(page);
--	} else if (cpa->flags & CPA_ARRAY)
--		address = cpa->vaddr[cpa->curpage];
--	else
--		address = *cpa->vaddr;
-+	address = __cpa_addr(cpa, cpa->curpage);
- repeat:
- 	kpte = _lookup_address_cpa(cpa, address, &level);
- 	if (!kpte)
-@@ -1557,16 +1566,7 @@ static int cpa_process_alias(struct cpa_
- 	 * No need to redo, when the primary call touched the direct
- 	 * mapping already:
- 	 */
--	if (cpa->flags & CPA_PAGES_ARRAY) {
--		struct page *page = cpa->pages[cpa->curpage];
--		if (unlikely(PageHighMem(page)))
--			return 0;
--		vaddr = (unsigned long)page_address(page);
--	} else if (cpa->flags & CPA_ARRAY)
--		vaddr = cpa->vaddr[cpa->curpage];
--	else
--		vaddr = *cpa->vaddr;
--
-+	vaddr = __cpa_addr(cpa, cpa->curpage);
- 	if (!(within(vaddr, PAGE_OFFSET,
- 		    PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT)))) {
+ 		addr[i] = (unsigned long)__va(pfn << PAGE_SHIFT);
+-		len[i] = prandom_u32() % 100;
++		len[i] = prandom_u32() % NPAGES;
+ 		len[i] = min_t(unsigned long, len[i], max_pfn_mapped - pfn - 1);
  
+ 		if (len[i] == 0)
+@@ -167,14 +171,30 @@ static int pageattr_test(void)
+ 				break;
+ 			}
+ 			__set_bit(pfn + k, bm);
++			addrs[k] = addr[i] + k*PAGE_SIZE;
++			pages[k] = pfn_to_page(pfn + k);
+ 		}
+ 		if (!addr[i] || !pte || !k) {
+ 			addr[i] = 0;
+ 			continue;
+ 		}
+ 
+-		test_addr = addr[i];
+-		err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
++		switch (i % 3) {
++		case 0:
++			test_addr = addr[i];
++			err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
++			break;
++
++		case 1:
++			err = change_page_attr_set(addrs, len[1], PAGE_CPA_TEST, 1);
++			break;
++
++		case 2:
++			err = cpa_set_pages_array(pages, len[i], PAGE_CPA_TEST);
++			break;
++		}
++
++
+ 		if (err < 0) {
+ 			printk(KERN_ERR "CPA %d failed %d\n", i, err);
+ 			failed++;
 
 
