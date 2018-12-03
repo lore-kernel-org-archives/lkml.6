@@ -2,97 +2,141 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3610BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494ADC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5462081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E83120851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:22:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fChSguaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5462081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OevCFM8J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E83120851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726066AbeLCXNZ (ORCPT
+        id S1725969AbeLCXWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:13:25 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44336 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbeLCXNZ (ORCPT
+        Mon, 3 Dec 2018 18:22:46 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38847 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCXWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:13:25 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k19-v6so13040964lji.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 15:13:24 -0800 (PST)
+        Mon, 3 Dec 2018 18:22:46 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a77so12594445oii.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 15:22:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RZmrkB51RaSK1jsKYQBfuOpcDQ4vrdeHsiKtcKqld1c=;
-        b=fChSguaSFmQniQsELUqawPYR2i1EsT9/AC2S+jpHgSx/x13b5chdYSF6trsZrGO5iG
-         jyR5XyT8CIwixb42WdiMWdxFxp/d1i0KDweijipmjf8+eum2hRBIy9R8MccyjwiK/Ysc
-         /QzItoq8RMbXgAXVqIVLq/V5V36m/fIo7lrvM=
+        bh=cYCFcJ1UdDdLdTFH8pPRXacbQNJ1dh92bXLqX6q3pYk=;
+        b=OevCFM8JY8gCnIyRJRNgg8mr7ASkqBVQ3bsPKtDpmve/0pVcAYergzBjl2Zx3GPEWO
+         M5PEbu7wdzTPS3ZU0+8pZCGR95r3VCN7mI4WPbkYbBNdaV3jRVOCc8Ll7G3c3fhhUXda
+         pUSbCJY2GXRaB3ryUyb6AuXTLAKUjsiaw51W/Q5HptR9P17ZP63WTLA+fbVK+nujVurN
+         KVaS3GrsrmyKHT+ZAQg+gB6+s7XW3+MMnhtU4opSvHfkn8U7dOnJo9ViLpmL7VrQGkHv
+         v67aj/Epz4Txzss+xyevySbDYkH+njx74aq4oUjGk6bVlj7QPcExSje//DAZUlQ3Yrej
+         Uw7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RZmrkB51RaSK1jsKYQBfuOpcDQ4vrdeHsiKtcKqld1c=;
-        b=YMCH+Bh2m+TnDbiR85tlQATBiBerfRngFiciL2Nf/5jBZ46IQOaGdNVhXIRHEyVUB8
-         CJfksBDAz1Lt+6LrtNnK2OQKAvaeub2JtKhi5mvUFnfTum2hf080gAMkYjdWBceM7Uzj
-         jcTN2LR2oGk62xvRmmC5sWIAhlPNOnysRoEg68DxSJWFSi51+6WiQ7AACtNwJsoIXi9i
-         w/IqEB5q81CGC/Iz/WGlGhC8d9kkUhA38L8vbdxShjFW5HrjuuO82y859txUxuim0ate
-         1HhzUuswtEvTy74gkNEkFX8HcsMKsbUUf8vH2KMlJ5EAHOAewNOsrSWhT8W7/bGRWsbW
-         B1ZQ==
-X-Gm-Message-State: AA+aEWZ7/cid27ZefY1QCXovvy48r80eRoNqj2mDMwSV+1/7fwW6wO9d
-        1sxEJ0fkzE0nyceXEp/i/YkkZuZjG00=
-X-Google-Smtp-Source: AFSGD/V/YKrWAsUEXNywhNbcjNG1QiX/UoxuxSXfLMmg2jefUe+E7nsEen1QjJ+rrOF/TlzUdhMisw==
-X-Received: by 2002:a2e:8449:: with SMTP id u9-v6mr12379788ljh.121.1543878803234;
-        Mon, 03 Dec 2018 15:13:23 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id a11sm2636736lfb.68.2018.12.03.15.13.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 15:13:22 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id c19-v6so13070866lja.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 15:13:21 -0800 (PST)
-X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr12280074ljh.174.1543878801281;
- Mon, 03 Dec 2018 15:13:21 -0800 (PST)
+        bh=cYCFcJ1UdDdLdTFH8pPRXacbQNJ1dh92bXLqX6q3pYk=;
+        b=abtmCQaM8q5q/Yy2/2d9HBspSIpJnK3Q8RYBlkPtwZxNjjVthEFU9wS1w8EzEAVvD8
+         koqc4SjLaFBfC/lShFO3eanlYXx4I4ukm/4wLajhtIavKd1sHpF7h0jkKSXeH7PJs9bY
+         oqd0pXWE2kdKhHBwHDsp24bmFXbkkAENRs6m2y+ydRNwXx945jrnFv4Hb6Eaqot+pnhB
+         Pxy1++C5Oj21nPvy8mI2NQR6b9G3tHgQY0AyDlhXTddSPtD9uTbtqY1+bLTGs8BgXHL2
+         lcTF4yihUOqoqgqK6AaGksq66ktJmDrSj7USXNseSOpe07+mYoozRaXumnpOJqMs48VK
+         nchg==
+X-Gm-Message-State: AA+aEWZp6ddsc/diSFg2edWRrTIDqa1/bgbUEZDonoMDwzRnKhVkci9g
+        JBO35zNL2ZFs+GlvGU3QN61kBcsIRiwZXnao16VGZQ==
+X-Google-Smtp-Source: AFSGD/Vcut7LP5rRRau7La1WiN2r6QBxUFrAW8XpW7YN/1b90lz9976AReAP7gI1smwgC/lWRW2eakQYEF0bC5gASN4=
+X-Received: by 2002:aca:be41:: with SMTP id o62mr10616674oif.206.1543879363718;
+ Mon, 03 Dec 2018 15:22:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20181129221357.67417-1-evgreen@chromium.org> <20181129221357.67417-5-evgreen@chromium.org>
- <154387672722.88331.10663388522762144439@swboyd.mtv.corp.google.com>
-In-Reply-To: <154387672722.88331.10663388522762144439@swboyd.mtv.corp.google.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Mon, 3 Dec 2018 15:12:44 -0800
-X-Gmail-Original-Message-ID: <CAE=gft58qzX5UB48c-NbESV23xLtqSUyeytGscpvo4keL4k+ww@mail.gmail.com>
-Message-ID: <CAE=gft58qzX5UB48c-NbESV23xLtqSUyeytGscpvo4keL4k+ww@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] phy: qcom-qmp: Expose provided clocks to DT
-To:     swboyd@chromium.org
-Cc:     Andy Gross <andy.gross@linaro.org>, kishon@ti.com,
-        robh+dt@kernel.org, Doug Anderson <dianders@chromium.org>,
-        robh@kernel.org, cang@codeaurora.org, linux-kernel@vger.kernel.org,
-        vivek.gautam@codeaurora.org, Manu Gautam <mgautam@codeaurora.org>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-7-brendanhiggins@google.com> <CAL_JsqJLNSg-38hej8LV+Oh-YXBM2hRGomie3b_psa9LvzoRYg@mail.gmail.com>
+ <20181130033704.GL18410@garbanzo.do-not-panic.com> <CAL_Jsq+jxHHmT5bLnABnF7S0fSBZvH72nDPyY5LHTn9Zm9hCUw@mail.gmail.com>
+ <20181130182203.GS18410@garbanzo.do-not-panic.com>
+In-Reply-To: <20181130182203.GS18410@garbanzo.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 3 Dec 2018 15:22:32 -0800
+Message-ID: <CAFd5g47ndhD+j6-_tTV-9N8eY0_48kEvEO76BzOWi-BD3GYauw@mail.gmail.com>
+Subject: Re: [RFC v3 06/19] arch: um: enable running kunit from User Mode Linux
+To:     mcgrof@kernel.org
+Cc:     Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, dan.j.williams@intel.com,
+        linux-nvdimm@lists.01.org, kieran.bingham@ideasonboard.com,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 2:38 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Fri, Nov 30, 2018 at 10:22 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
 >
-> Quoting Evan Green (2018-11-29 14:13:57)
-> > Register a simple clock provider for the PHY pipe clock sources so that
-> > device tree users can point at these clocks via phandles to the lane
-> > nodes.
-> >
-> > Signed-off-by: Evan Green <evgreen@chromium.org>
-> > ---
->
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
->
+> On Fri, Nov 30, 2018 at 08:05:34AM -0600, Rob Herring wrote:
+> > On Thu, Nov 29, 2018 at 9:37 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > >
+> > > On Wed, Nov 28, 2018 at 03:26:03PM -0600, Rob Herring wrote:
+> > > > On Wed, Nov 28, 2018 at 1:37 PM Brendan Higgins
+> > > > <brendanhiggins@google.com> wrote:
+> > > > >
+> > > > > Make minimum number of changes outside of the KUnit directories for
+> > > > > KUnit to build and run using UML.
+> > > >
+> > > > There's nothing in this patch limiting this to UML.
+> > >
+> > > Not that one, but the abort thing segv thing is, eventually.
+> > > To support other architectures we'd need to make a wrapper to that
+> > > hack which Brendan added, and then allow each os to implement
+> > > its own call, and add an asm-generic helper.
 
-Thanks! I meant to add you in the CC line on this series, sorry I missed that.
--Evan
+I think Rob is referring to the description for this patch. This patch
+previously did what you suggested, Luis, (source the KUnit kconfig
+from arch/um/) but Kees asked me to change it to how it is now (which
+probably makes sense if we are saying KUnit is not intended to be tied
+to a particular architecture, no?), and I forgot to update the commit
+description, sorry.
+
+> >
+> > I've not looked into why this is needed, but can't you make the abort
+> > support optional and arches can select it when they support it.
+>
+> Its why I have asked for it to be properly documented. The patches in no
+> way illustrate *why* such thing is done. And if we are going to
+> potentially have other archs do something similar best to make it
+> explicit.
+
+Yeah, I should better document it. I should also probably not include
+any UML specific header files in kunit/test.h; that seems like I am
+asking to get more tightly coupled if I am not careful about exactly
+what things I depend on.
+
+I think Luis is right, I need to add a wrapper around the features
+needed for the hack to support abort() and then write a UML specific
+implementation.
+
+For the asm-generic case, we could probably just have abort() call
+BUG(), with that KUnit should work on most architectures, albeit with
+pretty reduced functionality.
+
+>
+> > At
+> > least before, the DT unittests didn't need this to run and shouldn't
+> > depend on it after converting to kunit.
+
+Fair enough.
