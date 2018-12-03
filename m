@@ -2,116 +2,222 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDDEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C13CDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5050A206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:46:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="NCJHChgw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5050A206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 860B1206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:47:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860B1206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbeLCVqb (ORCPT
+        id S1726056AbeLCVro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:46:31 -0500
-Received: from mail-eopbgr810135.outbound.protection.outlook.com ([40.107.81.135]:5052
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725903AbeLCVqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:46:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sWHCiUB8NBdrpEb9Pbi9gyQ3aG9MloagXKRSpEuNhnA=;
- b=NCJHChgw+MfVsI0PB7u02IuE5fVdtPu9UDqZTjHz+sGYYqw00PSYTKi3RwAikvzrQy/jeG4QAePKMqZCejlnZHsXitqHBQPGbFeeWwuZOZFhPaMbUNvggCb4v9Wb4663/IRuWq3DWGsMr2ghl0F0Q7h8v9HRxSg2HQjOwR/n97M=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1408.namprd22.prod.outlook.com (10.172.63.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Mon, 3 Dec 2018 21:46:28 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::2d92:328e:af42:2985]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::2d92:328e:af42:2985%4]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 21:46:28 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Mathieu Malaterre <malat@debian.org>
-CC:     Paul Burton <pburton@wavecomp.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Kees Cook <keescook@google.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH] mips: annotate implicit fall throughs
-Thread-Topic: [PATCH] mips: annotate implicit fall throughs
-Thread-Index: AQHUi05/NisOW8CS0EGBC4Sd8mzpCaVtjKoA
-Date:   Mon, 3 Dec 2018 21:46:27 +0000
-Message-ID: <MWHPR2201MB12770EA2E8A372B21210DA83C1AE0@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20181203212344.9372-1-malat@debian.org>
-In-Reply-To: <20181203212344.9372-1-malat@debian.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR05CA0090.namprd05.prod.outlook.com
- (2603:10b6:104:1::16) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1408;6:LNXj1XjOiMXTu5wwNTlyVFiH74bGHKQJdiEoF8oRWknCRHePfp10TTW4pr1amIIVfDpS3pXuOLb4e3QVJS57aD6rYjN15ueSQKVaQ47FjNrfzbLNe2LpkXRfMZHD1c6fYEsISejL/49lHRXhyZ525vjlTTINVQgM9SDKKrbP/s/FhX/FHDzWXn+Bhwx+gS88M4e/S1OSmEDRAKdyim5yKm73Lsalradig12/IOr1omvDd0zuzAKhbhDZApUT9JWVAXf/5O/Dy7fZzIW092+R0aozzIpxaA4iuL704sfEle2od5cXWVdIzGfOUpQPDMgqTyCigeDrVfS2+3RbJH0va4X5Qycev4xDuQCRQMUH3CPWSDQiuWq8qX/2waBxagUyK40HiRp2KF5TrC2/k02s9sLugvQpUrA32W2ZWL/khV8w5BJLss2y7scJzZpoNN9NV3k1MTUKMDQaflYS9QsTvw==;5:tJT1s8LT86DDwBQ5Nf7POG5tRirZoHhUwBbeGzVyuNqXXGt1qaGWlfhYzMuzbcAcLaxsu5AV7tZoFA+PYaO+boG3BJDmxIi3nFsOg04UP+P1lPmcKbTPONfNLfOAbcPN32ZIIGJxx5LXyjJu6loSJsye8RV8GmCHe4+hAL3BA20=;7:cKmnPnWmNdQ8iXYBNJoisKsuwsauTDx2+fgwQ1f+NZBOPSRYm95RB9hz8fcxhTy5kvoA+UC+TJ0I6giThd2ViiwwAprgBooKAvib4qqmnOwn4QFKcOa+8N3nCcDihKk3ufmO460e9Zer3KMCvNFL5g==
-x-ms-office365-filtering-correlation-id: 77a13cdc-d31a-4d99-dcf7-08d65968c76c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1408;
-x-ms-traffictypediagnostic: MWHPR2201MB1408:
-x-microsoft-antispam-prvs: <MWHPR2201MB1408011C08CC1EFD0E8E18D8C1AE0@MWHPR2201MB1408.namprd22.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231455)(999002)(944501493)(52105112)(93006095)(10201501046)(148016)(149066)(150057)(6041310)(2016111802025)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1408;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1408;
-x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(346002)(39840400004)(366004)(199004)(189003)(5660300001)(102836004)(386003)(4326008)(6436002)(97736004)(8936002)(8676002)(81156014)(106356001)(81166006)(6916009)(229853002)(105586002)(33656002)(68736007)(446003)(508600001)(25786009)(316002)(14454004)(54906003)(71190400001)(9686003)(74316002)(71200400001)(44832011)(52116002)(99286004)(7696005)(76176011)(305945005)(6116002)(3846002)(53936002)(476003)(55016002)(66066001)(26005)(11346002)(6246003)(7736002)(186003)(42882007)(486006)(256004)(6506007)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1408;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: z8dY0m7GzHxah6YatU+heZxpHR5CzJfCI06JbyFrq9nkpDhnKWqsrpXPvfB5Q57uyrfX71VsiWe+a2a1vmeYSk169Ir8XIgUfAymnjCAk9XV0CCdwTq6mmVvR5vKBueabDWcKaIxLvhG7VJa5mj/9GqZs4lbuvBZWex05T8pjbup8/80aQUHfUaCUuf55KdYr0yCSdGB8uMj2vZFDHp8+qGqHxybj/XvfUHn7CGOp1zpJ6I2v+x3inQsaPRtM1mQcIcBeZl8pLKK+UYby7CkDyuZJqoLCpamxoHwHzM2neunFsU/L9eE9QKgi2XLY2Mj9nXgGFIgpwGzvJew0UmKSak5/d3D4yYEKDtNVTsT4UQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 3 Dec 2018 16:47:44 -0500
+Received: from mout.gmx.net ([212.227.15.18]:34161 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbeLCVrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:47:43 -0500
+Received: from [172.16.11.31] ([188.193.10.29]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MFtf4-1ggZ6R3Fnq-00ExSG for
+ <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 22:47:42 +0100
+To:     linux-kernel@vger.kernel.org
+From:   Michael Hennig <M_Hennig@gmx.net>
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+Autocrypt: addr=M_Hennig@gmx.net; prefer-encrypt=mutual; keydata=
+ xsBNBE3ENdEBCACmeeN/ITypg8ydK9gftiHbJ0IKa3ReRhq4KUtiRzRkhpxaV1MB90NGjGDi
+ Rq7E58Otjn4jqIGkv3zqDtQwLc5JmHTh6Mn7uZzxOAzWFtq321XdO0JsSQCb933YLbeaMcAY
+ gkroCAwHevgtcvdr/2so2Ey9YcKw2ruQG7Q/R6sIGR0PqFpyE8O7XSpGR6zkff9IEvyc1l7L
+ TrIrXOBeh/bH0lgKOG5nO9eCVSpYaP3NK8X2D6ap1lBWvy/lyw1Lo1OFPcLo7OL4Nzp1lxi/
+ Evl5qdhCjdKEc5+4afH4zKRrnt23Ev4KIkrJhbx7B7k1JSUEDFyTfuxwirgVC6TrQYmFABEB
+ AAHNIU1pY2hhZWwgSGVubmlnIDxNX0hlbm5pZ0BnbXgubmV0PsLAeAQTAQIAIgUCTcQ10QIb
+ AwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQRTgxQ7ufc7Ln4wf/RzRC+t0esHPrY0d0
+ dPT3ZQlUoc/t9MEuk14BLeY87hxd14bD2K3kKeZU/1FdA309SDF8s3XQiFUevFbNgr7vu3P/
+ qXYfTd5F93dOt67Pz2Y/mORy0guSQbRxEchF+Sq1NkGfyFyF3CZxAr2cIfWhyRb/feg83dUU
+ /bN3VCDrlnMl+FZ75mVDx+ypMeNas1fNIaRVPBxQhFqS6hbHZ6Kk1IvDfrzmECmchzzrMlgZ
+ 89Ht1H7S6G4bghXYA92rCngMHc/VGF1VzfDX4XNc9AlAWL0AL/VUDM6P6rjYFYfE1ZHR21+u
+ UXgFQgeu/+iN4LL0dCyX/02Xg7F0k+V31FhJbM7ATQRNxDXRAQgA05YC7iYLvz3dyRQnFt70
+ 5DqKea7MBV707OwoA0PJpY7tEO5a15TusaWQ6ETd0Utxv/1y6d1upWBAa0NJSl9ubJ9Ta3EJ
+ xuajhNefTM0/tuGZ9b9whCryZuKEVUBkRAB/VyoU2y5KKmw2AS07sImvK2Cnr4CHbWHWaX/w
+ 9/UIWC3XfVcdIf4K+HG5zTX3+ccAgjo8qsBGQ+922J0KD4USez8kV+cYJbpSbNO+c4K1I8/1
+ Rw/gHLW4yTuMCfp/MTFyq7zz3xBaD5fwO6KIpFSTVHRxPQtHEcqv8ZYbTRvoyCLjPnbQK/dH
+ v0BFxkbjbnOITV3BP2335BqFer4Um/N4NwARAQABwsBfBBgBAgAJBQJNxDXRAhsMAAoJEEU4
+ MUO7n3OybG8H/2cyH3mvqofZF9sdzTMbxSF9vWQjEX5KhMAVJNkbepB6niU/fCEIQpOUAUU6
+ k0p9JQVJ2fbeJ2tb3425adUWzKM8Oo/FuCd+vJ7c2TQ2z+V0Y+YQuyfX1pN8UHHKMMnE4DMi
+ VBr0Dsq0oaiKhsIwr9wOFGOylYmmYk+hTyNc5w5VOnX7lpqKD3cHx162yQ1eoSM2881ZbBdB
+ SHGhMPQIbRe+CaG7Vk5bd3/xK7ncS538VtlX4K57A2IZJI2sANkhRVwepFMZhCgJ4ORrH4Nw
+ ht+1TeorBm8X59ro9csbAHQ/saXd/f6FY/N0bfOW9Yb4tDkI08nj/MR2wfY7FPgHu30=
+Message-ID: <019a09df-df3d-3350-a779-e51886c2691b@gmx.net>
+Date:   Mon, 3 Dec 2018 22:47:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77a13cdc-d31a-4d99-dcf7-08d65968c76c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 21:46:28.0057
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1408
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:TCL0CIuUMezFbA0s6GCkCokeXly9XORVWZMYxI5Li1ledF8EROf
+ Z+URwa43+JtQEZZKZpKHLHhGGN4Bj2h3yshAkh6bHh9KGAB1EZGgPWFSDQYtbYuIsLT1cQS
+ drRHoIVZI8ZqvI0a9aPyldnGunsk/+yC2FQtw2wqxNb11HhqqJ6NswoMcRNwvNcdCMBDNoW
+ JnEEuu6yxEdFGlM9UFmQQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rwuGmP/dATg=:aNGLckdJjgrgvkV0Rr/HGd
+ 073m+6I+jOVBWWvlIgM+DPG+GLUfyaMdTPYaulxsTcz0vOkd6qg9R1YzGYaONZ4yIesq+eIBV
+ ozcGsM4anGnxv7Gg1zaqPVDxeaMxTh7Z9eud6mKn2SpOU9tRhmr+F+b9mkWNaRg3Kikdfge+a
+ 4c9H8/S/DUG9XP5twzbpkxQzVf1ShPlrQMlJHANbnEw8eN/CpX4iCgANAJdyWEsGttQi8/BkF
+ 0GM1TtOR4Pt/lLMEUQHdr+yvvSRWXZEvpTrveFVgBJc0hpt8WHRZkFoK0XsXSsymvl9JkP1gk
+ Gwdz2Vw3l8Kj1cCLSbFnjY+S/MUK7yaGwG8y6pDEBwCqeBKpdDyyHNnAwmihReX5Kp6s1dzz8
+ /akRfMTDRLDWJa4/Vrv49eGARyoyMB8GoaCTNljAh1BhUA0+JD49qnxZJesZvB0ghebel7vKE
+ 2bpWiWV+21QdrR6jxG100v7qO3/watHnGbDAadcgEYUtpPtQKi+NFXRfGU07nld4P6DGLNBs6
+ OG/al7nPzvuS0pxgPjkpR77/KiNoxclbWyvnL3mXNt6A5CCCQjPEY19BISOKXVTt09gBfHApt
+ +mtF34HDHk5hxlXH2ECs0KNjyXNbV1WQCJVq3dMDAG/HIoG6SZ+D3Rsg8ORK+fPAG6zYq/U+X
+ xS8BwzC6GJcx4Kfri99ehBGLC6ujPppW5z5LzWXC/GLd95iBK0M4/cvxJN/tmUHXh6gtZJYoc
+ RuA4XQhrz89YmxUpybIHYDF1LYw6Pl7mfu4Fl1MHbKwwB33Bd+gCtSgGuj73im/Te7HXgPACI
+ 9KM+gudAIPKz2hyIY9jSt1H5anX725AhTEZSJuxCQVFrKCjrRkx5noTWsxOIWiA1XQsA6yeuC
+ k3tufkfnVMNSGAKADbmTLcKPtg6WftHvIM4Ei7wpWKjwfjFTyolqQDpADd5Y8F
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+I'm suffering from ext4 corruption too.
+(Ubuntu 18.10, 4.19.6-041906-generic, 64 bit)
 
-Mathieu Malaterre wrote:
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> these places in the code produced warnings. Fix them up.
->=20
-> This patch produces no change in behaviour, but should be reviewed in
-> case these are actually bugs not intentional fallthoughs.
->=20
-> Cc: Kees Cook <keescook@google.com>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484759: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484759: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484754: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484755: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
+#42484768: comm rm: checksum invalid
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484767: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484763: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
+#42484766: comm rm: checksum invalid
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484761: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484764: comm rm: bad extra_isize 58853 (inode size 256)
+22:00:01 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484765: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484759: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484754: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484755: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
+#42484768: comm rm: checksum invalid
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484767: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484763: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
+#42484766: comm rm: checksum invalid
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484761: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484764: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:48 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484765: comm rm: bad extra_isize 58853 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484762: comm rsync: bad extra_isize 58853 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484761: comm rsync: bad extra_isize 58853 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484760: comm rsync: bad extra_isize 54976 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484759: comm rsync: bad extra_isize 58853 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484758: comm rsync: bad extra_isize 58853 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484757: comm rsync: bad extra_isize 58853 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484756: comm rsync: bad extra_isize 63008 (inode size 256)
+21:00:32 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484755: comm rsync: bad extra_isize 58853 (inode size 256)
+21:00:31 kernel: EXT4-fs error (device sda4): ext4_iget:4831: inode
+#42484754: comm rsync: bad extra_isize 58853 (inode size 256)
+21:00:31 kernel: EXT4-fs error (device sda4): ext4_iget:4851: inode
+#42484753: comm rsync: checksum invalid
 
-Applied to mips-next.
 
-Thanks,
-    Paul
+Checked some of the defective inodes only to find timeshift back-upped
+files through rsync:
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+debugfs 1.44.4 (18-Aug-2018)
+debugfs:  ncheck 42484759
+Inode	Pathname
+42484759
+/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
+42484759
+/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
+42484759
+/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
+42484759
+/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxcb1:i386.symbols
+debugfs:  ncheck 42484754
+Inode	Pathname
+debugfs:  ncheck 42484755
+Inode	Pathname
+42484755
+/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
+42484755
+/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
+42484755
+/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
+42484755
+/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.triggers
+debugfs:  ncheck 42484768
+Inode	Pathname
+42484768
+/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxft2:amd64.list
+42484768
+/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxft2:amd64.list
+42484768
+/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxft2:amd64.list
+42484768
+/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxft2:amd64.list
+debugfs:  ncheck 42484767
+Inode	Pathname
+42484767
+/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
+42484767
+/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
+42484767
+/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
+42484767
+/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxft-dev:amd64.md5sums
+debugfs:  ncheck 42484763
+Inode	Pathname
+42484763
+/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
+42484763
+/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
+42484763
+/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
+42484763
+/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxdo3:amd64.shlibs
+debugfs:  ncheck 42484753
+Inode	Pathname
+42484753
+/timeshift/snapshots/2018-11-28_20-00-02/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
+42484753
+/timeshift/snapshots/2018-11-30_18-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
+42484753
+/timeshift/snapshots/2018-12-02_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
+42484753
+/timeshift/snapshots/2018-12-01_21-00-01/localhost/var/lib/dpkg/info/libxcb1:amd64.shlibs
+
+Maybe timeshifts rsync is related to this?
+
+
+Kind regards
+Michael Hennig
