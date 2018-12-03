@@ -2,538 +2,392 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB74C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A99C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A0BB206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E338206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:29:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="CRVUcDec"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0BB206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a8kL5CY0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E338206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726003AbeLCD2y (ORCPT
+        id S1726019AbeLCD3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 22:28:54 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55026 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbeLCD2w (ORCPT
+        Sun, 2 Dec 2018 22:29:13 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57776 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbeLCD3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 22:28:52 -0500
-Received: by mail-it1-f193.google.com with SMTP id i145so7085130ita.4
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 19:28:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qEnobRo6+xYButQ0kLOrpR/Mtc0L60fnoJG2SHh2LMk=;
-        b=CRVUcDec6qwKMeKSy1YN5KjP6MJ6WbtbjhwEq9t53n4EeMwyfacGnQNd9BdGP0ye6l
-         MuWNPxoLbizM4eydLvd2loy4i4W9QX5dI6jfZBfQinzYiMaIYO5CQTTU5Vt3wwCDsRjU
-         TJ5UeOBTxJO+10VK2oGIEoANsNNsDQ4D0PusyrZYh6bAWytoaTdhiIs/wBnD+Zyea7Wt
-         01RYJDUB3tKg8q9Ocn38xG3lgHy5mrwHGs4w0IDMKQqtTvnOOMgCYjqHWZci0Oix0Lqr
-         uYIIh9Gi8NdwNaZe4TdKisMIqD66EwQXymHvWgu4ed+aKcf0e0vVeIFzsLMRVZXA1v6B
-         jVLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qEnobRo6+xYButQ0kLOrpR/Mtc0L60fnoJG2SHh2LMk=;
-        b=fxyqB+vi6pbOWXSaloud2OUTP8BN1SdjyEWI0jg4FQx5Q773tRtZtBGUgmSjgi2RIA
-         fAULWrg2AqYLUpNBC7t6smuYPPdWvAsI68QH1FooLmv34j4mTAVcTPO/ZRyGxAdv4VZP
-         4VCWrYnndPvGQN7NPSjuvKUaRtW7J4/vk1Ov8raVhYm2+2m3MUmLvy3Yf9LReXjFO3Rw
-         tcreYn2C5mX4seE1PzmtOhBjnMNi5HgEp58Z7fNPh2k9gAGfvHWDSZLx/khsiRuUCNL2
-         gac79Bw8QfmWvhLtxU+zcgjd0YrVRWCalveoYA+g1Jtzkr5PaBvKIupjbpSGnBwQzMng
-         qwNQ==
-X-Gm-Message-State: AA+aEWbg5pq89rNc7watkjMsyAgn2cpTLGe2irEvyX6fNtPTPtMre84J
-        w+7tA0jLjdq+JpgFEZd591oIHA==
-X-Google-Smtp-Source: AFSGD/XewTZ/nhx/5+vvAnRxAP7oLRl5sDFphxzZDUqE0+PEpdXuLhH3CF+24hWmUBnX3DhKiJmfow==
-X-Received: by 2002:a24:4a95:: with SMTP id k143mr6506473itb.77.1543807728249;
-        Sun, 02 Dec 2018 19:28:48 -0800 (PST)
-Received: from cisco.lan (71-218-133-134.hlrn.qwest.net. [71.218.133.134])
-        by smtp.gmail.com with ESMTPSA id n136sm3243529itb.35.2018.12.02.19.28.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Dec 2018 19:28:47 -0800 (PST)
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, Jann Horn <jannh@google.com>,
-        linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v9 4/4] samples: add an example of seccomp user trap
-Date:   Sun,  2 Dec 2018 20:28:27 -0700
-Message-Id: <20181203032827.27978-5-tycho@tycho.ws>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181203032827.27978-1-tycho@tycho.ws>
-References: <20181203032827.27978-1-tycho@tycho.ws>
+        Sun, 2 Dec 2018 22:29:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=cQkd6DmBGiqQvFDf8TR9vunIgLop7ARx95PJ7olzXHE=; b=a8kL5CY0UOUzbtKh3wlPihTp4I
+        /Al5aTK482/jQfOc+Ih2ukTF23pCh8bYvQKE4ekaxUJFtrgNrIFvnfUnkjJbRup4roUANFPsta7rS
+        1q5YAsTlC+ROKrkiVnCHro5nfGsWgnr8YTBy6lDNs9Z9IWcFKbVhLizdAfXW2rurZvkROMjINyIF2
+        YVdZCjSR2+q9c3a38j8dX+5Ena1bAi3Jygr00mhK8eut29hfzntN0Urqo/mIMMOyBOp7Y0ev5AS5p
+        +z9o8NoBQdhh5U4RiccHxY3XvuDDzVd8fh8npDimOU64fAUX2S1GJyHbnvBRA9g1QhQXkbYpgKME+
+        IjvW/3Dg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gTeup-0004Pj-Mz; Mon, 03 Dec 2018 03:29:02 +0000
+Subject: Re: [PATCH v17 22/23] x86/sgx: SGX documentation
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-23-jarkko.sakkinen@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <3e3e9338-9bf4-dbfd-e53d-ae26c39017c4@infradead.org>
+Date:   Sun, 2 Dec 2018 19:28:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181116010412.23967-23-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The idea here is just to give a demonstration of how one could safely use
-the SECCOMP_RET_USER_NOTIF feature to do mount policies. This particular
-policy is (as noted in the comment) not very interesting, but it serves to
-illustrate how one might apply a policy dodging the various TOCTOU issues.
+Hi,
+I have more editing comments below.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-CC: Kees Cook <keescook@chromium.org>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Oleg Nesterov <oleg@redhat.com>
-CC: Eric W. Biederman <ebiederm@xmission.com>
-CC: "Serge E. Hallyn" <serge@hallyn.com>
-CC: Christian Brauner <christian@brauner.io>
-CC: Tyler Hicks <tyhicks@canonical.com>
-CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
----
-v5: new in v5
-v7: updates for v7 API changes
-v8: * add some more comments about what's happening in main() (Kees)
-    * move from ptrace API to SECCOMP_FILTER_FLAG_NEW_LISTENER
-v9: * s/mknod/mount in error message
-    * switch to the SECCOMP_GET_NOTIF_SIZES API
-    * add a note about getting ENOENT from SECCOMP_IOCTL_NOTIF_SEND
----
- samples/seccomp/.gitignore  |   1 +
- samples/seccomp/Makefile    |   7 +-
- samples/seccomp/user-trap.c | 375 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 382 insertions(+), 1 deletion(-)
 
-diff --git a/samples/seccomp/.gitignore b/samples/seccomp/.gitignore
-index 78fb78184291..d1e2e817d556 100644
---- a/samples/seccomp/.gitignore
-+++ b/samples/seccomp/.gitignore
-@@ -1,3 +1,4 @@
- bpf-direct
- bpf-fancy
- dropper
-+user-trap
-diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-index cf34ff6b4065..4920903c8009 100644
---- a/samples/seccomp/Makefile
-+++ b/samples/seccomp/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- ifndef CROSS_COMPILE
--hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
-+hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct user-trap
- 
- HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
- HOSTCFLAGS_bpf-fancy.o += -idirafter $(objtree)/include
-@@ -16,6 +16,10 @@ HOSTCFLAGS_bpf-direct.o += -I$(objtree)/usr/include
- HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
- bpf-direct-objs := bpf-direct.o
- 
-+HOSTCFLAGS_user-trap.o += -I$(objtree)/usr/include
-+HOSTCFLAGS_user-trap.o += -idirafter $(objtree)/include
-+user-trap-objs := user-trap.o
-+
- # Try to match the kernel target.
- ifndef CONFIG_64BIT
- 
-@@ -33,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
- HOSTLDLIBS_bpf-direct += $(MFLAG)
- HOSTLDLIBS_bpf-fancy += $(MFLAG)
- HOSTLDLIBS_dropper += $(MFLAG)
-+HOSTLDLIBS_user-trap += $(MFLAG)
- endif
- always := $(hostprogs-m)
- endif
-diff --git a/samples/seccomp/user-trap.c b/samples/seccomp/user-trap.c
-new file mode 100644
-index 000000000000..61267cb59c8e
---- /dev/null
-+++ b/samples/seccomp/user-trap.c
-@@ -0,0 +1,375 @@
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <string.h>
-+#include <stddef.h>
-+#include <sys/sysmacros.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <sys/socket.h>
-+#include <sys/stat.h>
-+#include <sys/mman.h>
-+#include <sys/syscall.h>
-+#include <sys/user.h>
-+#include <sys/ioctl.h>
-+#include <sys/ptrace.h>
-+#include <sys/mount.h>
-+#include <linux/limits.h>
-+#include <linux/filter.h>
-+#include <linux/seccomp.h>
-+
-+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
-+
-+static int seccomp(unsigned int op, unsigned int flags, void *args)
-+{
-+	errno = 0;
-+	return syscall(__NR_seccomp, op, flags, args);
-+}
-+
-+static int send_fd(int sock, int fd)
-+{
-+	struct msghdr msg = {};
-+	struct cmsghdr *cmsg;
-+	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-+	struct iovec io = {
-+		.iov_base = &c,
-+		.iov_len = 1,
-+	};
-+
-+	msg.msg_iov = &io;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = buf;
-+	msg.msg_controllen = sizeof(buf);
-+	cmsg = CMSG_FIRSTHDR(&msg);
-+	cmsg->cmsg_level = SOL_SOCKET;
-+	cmsg->cmsg_type = SCM_RIGHTS;
-+	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-+	*((int *)CMSG_DATA(cmsg)) = fd;
-+	msg.msg_controllen = cmsg->cmsg_len;
-+
-+	if (sendmsg(sock, &msg, 0) < 0) {
-+		perror("sendmsg");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int recv_fd(int sock)
-+{
-+	struct msghdr msg = {};
-+	struct cmsghdr *cmsg;
-+	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-+	struct iovec io = {
-+		.iov_base = &c,
-+		.iov_len = 1,
-+	};
-+
-+	msg.msg_iov = &io;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = buf;
-+	msg.msg_controllen = sizeof(buf);
-+
-+	if (recvmsg(sock, &msg, 0) < 0) {
-+		perror("recvmsg");
-+		return -1;
-+	}
-+
-+	cmsg = CMSG_FIRSTHDR(&msg);
-+
-+	return *((int *)CMSG_DATA(cmsg));
-+}
-+
-+static int user_trap_syscall(int nr, unsigned int flags)
-+{
-+	struct sock_filter filter[] = {
-+		BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
-+			offsetof(struct seccomp_data, nr)),
-+		BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, nr, 0, 1),
-+		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_USER_NOTIF),
-+		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
-+	};
-+
-+	struct sock_fprog prog = {
-+		.len = (unsigned short)ARRAY_SIZE(filter),
-+		.filter = filter,
-+	};
-+
-+	return seccomp(SECCOMP_SET_MODE_FILTER, flags, &prog);
-+}
-+
-+static int handle_req(struct seccomp_notif *req,
-+		      struct seccomp_notif_resp *resp, int listener)
-+{
-+	char path[PATH_MAX], source[PATH_MAX], target[PATH_MAX];
-+	int ret = -1, mem;
-+
-+	resp->id = req->id;
-+	resp->error = -EPERM;
-+	resp->val = 0;
-+
-+	if (req->data.nr != __NR_mount) {
-+		fprintf(stderr, "huh? trapped something besides mount? %d\n", req->data.nr);
-+		return -1;
-+	}
-+
-+	/* Only allow bind mounts. */
-+	if (!(req->data.args[3] & MS_BIND))
-+		return 0;
-+
-+	/*
-+	 * Ok, let's read the task's memory to see where they wanted their
-+	 * mount to go.
-+	 */
-+	snprintf(path, sizeof(path), "/proc/%d/mem", req->pid);
-+	mem = open(path, O_RDONLY);
-+	if (mem < 0) {
-+		perror("open mem");
-+		return -1;
-+	}
-+
-+	/*
-+	 * Now we avoid a TOCTOU: we referred to a pid by its pid, but since
-+	 * the pid that made the syscall may have died, we need to confirm that
-+	 * the pid is still valid after we open its /proc/pid/mem file. We can
-+	 * ask the listener fd this as follows.
-+	 *
-+	 * Note that this check should occur *after* any task-specific
-+	 * resources are opened, to make sure that the task has not died and
-+	 * we're not wrongly reading someone else's state in order to make
-+	 * decisions.
-+	 */
-+	if (ioctl(listener, SECCOMP_IOCTL_NOTIF_ID_VALID, &req->id) < 0) {
-+		fprintf(stderr, "task died before we could map its memory\n");
-+		goto out;
-+	}
-+
-+	/*
-+	 * Phew, we've got the right /proc/pid/mem. Now we can read it. Note
-+	 * that to avoid another TOCTOU, we should read all of the pointer args
-+	 * before we decide to allow the syscall.
-+	 */
-+	if (lseek(mem, req->data.args[0], SEEK_SET) < 0) {
-+		perror("seek");
-+		goto out;
-+	}
-+
-+	ret = read(mem, source, sizeof(source));
-+	if (ret < 0) {
-+		perror("read");
-+		goto out;
-+	}
-+
-+	if (lseek(mem, req->data.args[1], SEEK_SET) < 0) {
-+		perror("seek");
-+		goto out;
-+	}
-+
-+	ret = read(mem, target, sizeof(target));
-+	if (ret < 0) {
-+		perror("read");
-+		goto out;
-+	}
-+
-+	/*
-+	 * Our policy is to only allow bind mounts inside /tmp. This isn't very
-+	 * interesting, because we could do unprivlieged bind mounts with user
-+	 * namespaces already, but you get the idea.
-+	 */
-+	if (!strncmp(source, "/tmp", 4) && !strncmp(target, "/tmp", 4)) {
-+		if (mount(source, target, NULL, req->data.args[3], NULL) < 0) {
-+			ret = -1;
-+			perror("actual mount");
-+			goto out;
-+		}
-+		resp->error = 0;
-+	}
-+
-+	/* Even if we didn't allow it because of policy, generating the
-+	 * response was be a success, because we want to tell the worker EPERM.
-+	 */
-+	ret = 0;
-+
-+out:
-+	close(mem);
-+	return ret;
-+}
-+
-+int main(void)
-+{
-+	int sk_pair[2], ret = 1, status, listener;
-+	pid_t worker = 0 , tracer = 0;
-+
-+	if (socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair) < 0) {
-+		perror("socketpair");
-+		return 1;
-+	}
-+
-+	worker = fork();
-+	if (worker < 0) {
-+		perror("fork");
-+		goto close_pair;
-+	}
-+
-+	if (worker == 0) {
-+		listener = user_trap_syscall(__NR_mount,
-+					     SECCOMP_FILTER_FLAG_NEW_LISTENER);
-+		if (listener < 0) {
-+			perror("seccomp");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Drop privileges. We definitely can't mount as uid 1000.
-+		 */
-+		if (setuid(1000) < 0) {
-+			perror("setuid");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Send the listener to the parent; also serves as
-+		 * synchronization.
-+		 */
-+		if (send_fd(sk_pair[1], listener) < 0)
-+			exit(1);
-+		close(listener);
-+
-+		if (mkdir("/tmp/foo", 0755) < 0) {
-+			perror("mkdir");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Try a bad mount just for grins.
-+		 */
-+		if (mount("/dev/sda", "/tmp/foo", NULL, 0, NULL) != -1) {
-+			fprintf(stderr, "huh? mounted /dev/sda?\n");
-+			exit(1);
-+		}
-+
-+		if (errno != EPERM) {
-+			perror("bad error from mount");
-+			exit(1);
-+		}
-+
-+		/*
-+		 * Ok, we expect this one to succeed.
-+		 */
-+		if (mount("/tmp/foo", "/tmp/foo", NULL, MS_BIND, NULL) < 0) {
-+			perror("mount");
-+			exit(1);
-+		}
-+
-+		exit(0);
-+	}
-+
-+	/*
-+	 * Get the listener from the child.
-+	 */
-+	listener = recv_fd(sk_pair[0]);
-+	if (listener < 0)
-+		goto out_kill;
-+
-+	/*
-+	 * Fork a task to handle the requests. This isn't strictly necessary,
-+	 * but it makes the particular writing of this sample easier, since we
-+	 * can just wait ofr the tracee to exit and kill the tracer.
-+	 */
-+	tracer = fork();
-+	if (tracer < 0) {
-+		perror("fork");
-+		goto out_kill;
-+	}
-+
-+	if (tracer == 0) {
-+		struct seccomp_notif *req;
-+		struct seccomp_notif_resp *resp;
-+		struct seccomp_notif_sizes sizes;
-+
-+		if (seccomp(SECCOMP_GET_NOTIF_SIZES, 0, &sizes) < 0) {
-+			perror("seccomp(GET_NOTIF_SIZES)");
-+			goto out_close;
-+		}
-+
-+		req = malloc(sizes.seccomp_notif);
-+		if (!req)
-+			goto out_close;
-+		memset(req, 0, sizeof(*req));
-+
-+		resp = malloc(sizes.seccomp_notif_resp);
-+		if (!resp)
-+			goto out_req;
-+		memset(resp, 0, sizeof(*resp));
-+
-+		while (1) {
-+			if (ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, req)) {
-+				perror("ioctl recv");
-+				goto out_resp;
-+			}
-+
-+			if (handle_req(req, resp, listener) < 0)
-+				goto out_resp;
-+
-+			/*
-+			 * ENOENT here means that the task may have gotten a
-+			 * signal and restarted the syscall. It's up to the
-+			 * handler to decide what to do in this case, but for
-+			 * the sample code, we just ignore it. Probably
-+			 * something better should happen, like undoing the
-+			 * mount, or keeping track of the args to make sure we
-+			 * don't do it again.
-+			 */
-+			if (ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, resp) < 0 &&
-+			    errno != ENOENT) {
-+				perror("ioctl send");
-+				goto out_resp;
-+			}
-+		}
-+out_resp:
-+		free(resp);
-+out_req:
-+		free(req);
-+out_close:
-+		close(listener);
-+		exit(1);
-+	}
-+
-+	close(listener);
-+
-+	if (waitpid(worker, &status, 0) != worker) {
-+		perror("waitpid");
-+		goto out_kill;
-+	}
-+
-+	if (umount2("/tmp/foo", MNT_DETACH) < 0 && errno != EINVAL) {
-+		perror("umount2");
-+		goto out_kill;
-+	}
-+
-+	if (remove("/tmp/foo") < 0 && errno != ENOENT) {
-+		perror("remove");
-+		exit(1);
-+	}
-+
-+	if (!WIFEXITED(status) || WEXITSTATUS(status)) {
-+		fprintf(stderr, "worker exited nonzero\n");
-+		goto out_kill;
-+	}
-+
-+	ret = 0;
-+
-+out_kill:
-+	if (tracer > 0)
-+		kill(tracer, SIGKILL);
-+	if (worker > 0)
-+		kill(worker, SIGKILL);
-+
-+close_pair:
-+	close(sk_pair[0]);
-+	close(sk_pair[1]);
-+	return ret;
-+}
+On 11/15/18 5:01 PM, Jarkko Sakkinen wrote:
+> Documentation of the features of the Software Guard eXtensions used
+> by the Linux kernel and basic design choices for the core and driver
+> and functionality.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  Documentation/index.rst         |   1 +
+>  Documentation/x86/index.rst     |   8 ++
+>  Documentation/x86/intel_sgx.rst | 233 ++++++++++++++++++++++++++++++++
+>  3 files changed, 242 insertions(+)
+>  create mode 100644 Documentation/x86/index.rst
+>  create mode 100644 Documentation/x86/intel_sgx.rst
+
+> diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
+> new file mode 100644
+> index 000000000000..f51b43f9e125
+> --- /dev/null
+> +++ b/Documentation/x86/intel_sgx.rst
+> @@ -0,0 +1,233 @@
+> +===================
+> +Intel(R) SGX driver
+> +===================
+> +
+> +Introduction
+> +============
+> +
+> +Intel(R) SGX is a set of CPU instructions that can be used by applications to
+> +set aside private regions of code and data. The code outside the enclave is
+> +disallowed to access the memory inside the enclave by the CPU access control.
+> +In a way you can think that SGX provides inverted sandbox. It protects the
+
+                                   provides an inverted sandbox.
+
+> +application from a malicious host.
+> +
+> +You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
+> +
+> +	``cat /proc/cpuinfo  | grep sgx``
+> +
+> +Overview of SGX
+> +===============
+> +
+> +SGX has a set of data structures to maintain information about the enclaves and
+> +their security properties. BIOS reserves a fixed size region of physical memory
+> +for these structures by setting Processor Reserved Memory Range Registers
+> +(PRMRR).
+> +
+> +This memory range is protected from outside access by the CPU and all the data
+> +coming in and out of the CPU package is encrypted by a key that is generated for
+> +each boot cycle.
+> +
+> +Enclaves execute in ring-3 in a special enclave submode using pages from the
+
+                       ring 3
+
+> +reserved memory range. A fixed logical address range for the enclave is reserved
+> +by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
+
+                                                                        referred to in
+
+> +the documentation commonly as the ELRANGE.
+> +
+> +Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
+> +executing in the enclave mode inside the enclave, #GP is raised. On the other
+> +hand, enclave code can make memory accesses both inside and outside of the
+> +ELRANGE.
+> +
+> +Enclave can only execute code inside the ELRANGE. Instructions that may cause
+
+   An enclave can only
+
+> +VMEXIT, IO instructions and instructions that require a privilege change are
+> +prohibited inside the enclave. Interrupts and exceptions always cause enclave
+
+                                                            always cause an enclave
+
+> +to exit and jump to an address outside the enclave given when the enclave is
+> +entered by using the leaf instruction ENCLS(EENTER).
+> +
+> +Protected memory
+> +----------------
+> +
+> +Enclave Page Cache (EPC)
+> +    Physical pages used with enclaves that are protected by the CPU from
+> +    unauthorized access.
+> +
+> +Enclave Page Cache Map (EPCM)
+> +    A database that describes the properties and state of the pages e.g. their
+> +    permissions or to which enclave they belong to.
+
+Drop one of those "to" words (either one).
+
+> +
+> +Memory Encryption Engine (MEE) integrity tree
+> +    Autonomously updated integrity tree. The root of the tree located in on-die
+> +    SRAM.
+> +
+> +EPC data types
+> +--------------
+> +
+> +SGX Enclave Control Structure (SECS)
+> +    Describes the global properties of an enclave. Will not be mapped to the
+> +    ELRANGE.
+> +
+> +Regular (REG)
+> +    These pages contain code and data.
+> +
+> +Thread Control Structure (TCS)
+> +    The pages that define the entry points inside an enclave. An enclave can
+> +    only be entered through these entry points and each can host a single
+> +    hardware thread at a time.
+> +
+> +Version Array (VA)
+> +   The pages contain 64-bit version numbers for pages that have been swapped
+> +   outside the enclave. Each page has the capacity of 512 version numbers.
+> +
+> +Launch control
+> +--------------
+> +
+> +To launch an enclave, two structures must be provided for ENCLS(EINIT):
+> +
+> +1. **SIGSTRUCT:** signed measurement of the enclave binary.
+> +2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
+
+                                                        with an
+
+> +   *launch key*, which is re-generated for each boot cycle.
+
+(prefer)                     regenerated
+
+> +
+> +The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
+> +IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
+> +key do not require a valid EINITTOKEN and can be authorized with special
+> +privileges. One of those privileges is ability to acquire the launch key with
+> +ENCLS(EGETKEY).
+> +
+> +**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
+
+                                        by the BIOS to configure whether
+
+> +IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
+> +feature control register and handing over control to the operating system.
+> +
+> +Enclave construction
+> +--------------------
+> +
+> +The construction is started by filling out the SECS that contains enclave
+> +address range, privileged attributes and measurement of TCS and REG pages (pages
+> +that will be mapped to the address range) among the other things. This structure
+> +is passed out to the ENCLS(ECREATE) together with a physical address of a page
+
+This would make more sense to me:
+
+   is passed to the ENCLS(ECREATE) instruction together with ...
+
+> +in EPC that will hold the SECS.
+> +
+> +The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
+
+                                                     with ENCLS(EEXTEND), i.e.
+
+> +SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
+> +
+> +After all of the pages have been added, the enclave is initialized with
+> +ENCLS(EINIT). It will check that the SIGSTRUCT is signed with the contained
+> +public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
+> +the token is valid (CMAC'd with the launch key). If the token is not valid,
+> +the CPU will check whether the enclave is signed with a key matching to the
+> +IA32_SGXLEPUBKEYHASHn MSRs.
+> +
+> +Swapping pages
+> +--------------
+> +
+> +Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
+> +addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
+> +structure (Page Crypto MetaData) as input. The VA page will seal a version
+> +number for the page. PCMD is 128 byte structure that contains tracking
+
+                                128-byte
+
+> +information for the page, most importantly its MAC. With these structures the
+> +enclave is sealed and rollback protected while it resides in the unprotected
+> +memory.
+> +
+> +Before the page can be swapped out it must not have any active TLB references.
+> +ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
+
+ The ENCLS(EBLOCK) instruction
+
+> +that no new TLB entries can be created to it by the hardware threads.
+> +
+> +After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
+> +increased counter value to the entering hardware threads. ENCLS(EWB) will
+> +return SGX_NOT_TRACKED error while there are still threads with the earlier
+> +couner value because that means that there might be hardware thread inside
+
+   counter                                                      threads
+
+
+> +the enclave with TLB entries to pages that are to be swapped.
+> +
+> +Kernel internals
+> +================
+> +
+> +Requirements
+> +------------
+> +
+> +Because SGX has an ever evolving and expanding feature set, it's possible for
+> +a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
+> +e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
+> +*not* support such a heterogeneous system configuration, nor does it even
+> +attempt to play nice in the face of a misconfigured system.  With the exception
+> +of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
+> +CPUs have a configuration that is identical to the boot CPU.
+> +
+> +
+> +Roles and responsibilities
+> +--------------------------
+> +
+> +SGX introduces system resources, e.g. EPC memory, that must be accessible to
+> +multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
+> +and KVM (to expose SGX to VMs), ideally without introducing any dependencies
+> +between each SGX entity.  To that end, the kernel owns and manages the shared
+> +system resources, i.e. the EPC and Launch Control MSRs, and defines functions
+> +that provide appropriate access to the shared resources.  SGX support for
+> +user space and VMs is left to the SGX platform driver and KVM respectively.
+> +
+> +Launching enclaves
+> +------------------
+> +
+> +The current kernel implementation supports only unlocked MSRs i.e.
+
+                                                            MSRs, i.e.
+
+> +FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
+> +MSRs to the hash of the public key modulus of the enclave signer, which is one
+> +of the fields in the SIGSTRUCT.
+> +
+> +EPC management
+> +--------------
+> +
+> +Due to the unique requirements for swapping EPC pages, and because EPC pages
+> +(currently) do not have associated page structures, management of the EPC is
+> +not handled by the standard Linux swapper.  SGX directly handles swapping
+> +of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
+> +mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
+> +implement function callbacks that can be invoked by the kernel to age,
+> +swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
+> +controls what happens and when, while the consumers (driver, KVM, etc..) do
+> +the actual work.
+> +
+> +Exception handling
+> +------------------
+> +
+> +The PF_SGX bit is set if and only if the #PF is detected by the SGX Enclave Page
+> +Cache Map (EPCM). The EPCM is a hardware-managed table that enforces accesses to
+> +an enclave's EPC pages in addition to the software-managed kernel page tables,
+> +i.e. the effective permissions for an EPC page are a logical AND of the kernel's
+> +page tables and the corresponding EPCM entry.
+> +
+> +The EPCM is consulted only after an access walks the kernel's page tables, i.e.:
+> +
+> +1. the access was allowed by the kernel
+> +2. the kernel's tables have become less restrictive than the EPCM
+> +3. the kernel cannot fixup the cause of the fault
+> +
+> +Noteably, (2) implies that either the kernel has botched the EPC mappings or the
+
+   Notably,
+
+> +EPCM has been invalidated (see below).  Regardless of why the fault occurred,
+> +userspace needs to be alerted so that it can take appropriate action, e.g.
+> +restart the enclave. This is reinforced by (3) as the kernel doesn't really
+> +have any other reasonable option, i.e. signalling SIGSEGV is actually the least
+> +severe action possible.
+> +
+> +Although the primary purpose of the EPCM is to prevent a malicious or
+> +compromised kernel from attacking an enclave, e.g. by modifying the enclave's
+> +page tables, do not WARN on a #PF w/ PF_SGX set.  The SGX architecture
+
+                                     with
+
+> +effectively allows the CPU to invalidate all EPCM entries at will and requires
+> +that software be prepared to handle an EPCM fault at any time.  The architecture
+> +defines this behavior because the EPCM is encrypted with an ephemeral key that
+> +isn't exposed to software.  As such, the EPCM entries cannot be preserved across
+> +transitions that result in a new key being used, e.g. CPU power down as part of
+> +an S3 transition or when a VM is live migrated to a new physical system.
+> +
+> +SGX uapi
+
+       UAPI
+
+> +========
+> +
+> +.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
+> +   :functions: sgx_ioc_enclave_create
+> +               sgx_ioc_enclave_add_page
+> +               sgx_ioc_enclave_init
+> +
+> +.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
+> +
+> +References
+> +==========
+> +
+> +* A Memory Encryption Engine Suitable for General Purpose Processors
+> +  <https://eprint.iacr.org/2016/204.pdf>
+> +* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
+
+
+ciao.
 -- 
-2.19.1
-
+~Randy
