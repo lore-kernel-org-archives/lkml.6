@@ -2,197 +2,108 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5798AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1BCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ABBB20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:06:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhCG5//W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ABBB20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 20AEF20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:09:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20AEF20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbeLCVGG (ORCPT
+        id S1725999AbeLCVJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:06:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLCVGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:06:05 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C18E2082F;
-        Mon,  3 Dec 2018 21:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543871164;
-        bh=PvoMyo+/n4YeOvpFXSplnX/WqoiaryB2LW1RF3g/evw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mhCG5//W7gbOuGItph8C16C7mNwe+oNwxdn95fKeeT9bydxks1FEkV3qL7myzVl5Z
-         WAVs/erdvCaFRh+8OTJLoNVz0fc3uV7cM+yQaVZfGlr+HkQqlYfEKDBL1d0pqoZz1S
-         V/JsWo1KtKIOQ5cebkyV61MqN8RBolbvHsFGwLR4=
-Date:   Mon, 3 Dec 2018 15:06:02 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        Leo Li <leoyang.li@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: Re: [PATCH 1/2] PCI: mobiveil: ls_pcie_g4: add Workaround for
- A-011577
-Message-ID: <20181203210602.GB207198@google.com>
-References: <20181202133303.33988-1-Zhiqiang.Hou@nxp.com>
- <20181202133303.33988-2-Zhiqiang.Hou@nxp.com>
+        Mon, 3 Dec 2018 16:09:42 -0500
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:52089 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725913AbeLCVJl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:09:41 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id TvTDgY6em3Hr7TvTHgKdbt; Mon, 03 Dec 2018 22:09:39 +0100
+Subject: Re: [PATCH v6 2/2] media: platform: Add Aspeed Video Engine driver
+To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, robh+dt@kernel.org,
+        mchehab@kernel.org, linux-media@vger.kernel.org
+References: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
+ <1543347457-59224-3-git-send-email-eajames@linux.ibm.com>
+ <1d5f3260-2d95-32b2-090e-2f57ae9e6833@xs4all.nl>
+ <52cae852-5a2b-ee37-3829-73de7a47df1c@linux.ibm.com>
+ <0c5dbd34-a10c-04ce-43bb-646e712f0e99@xs4all.nl>
+ <6c92cb5c-2134-e5d8-1a6b-2d311731cef3@linux.ibm.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <8b1b1f60-d21c-c0a2-2597-8bdb77f5f7c9@xs4all.nl>
+Date:   Mon, 3 Dec 2018 22:09:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181202133303.33988-2-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6c92cb5c-2134-e5d8-1a6b-2d311731cef3@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNPdJRixXxE6SiahS0gOBFVt05AJBfBv6SpXb0U43JAvqkGZ6TIJVEmXTuGiXganLLBn4yp/u5PTyNiskHCAbjfrA4TjUDawDIDYLg8zPnZsiQglKqUc
+ uMpHb9dJdkVYmavLg2xHPBun2iiE9srjacNAlTRi6Z4vwqB2UHJKtrHrHu4zcgzA9v+hd7BzGWd7OoDhJFWjITAl3R2C/QDFQAZUa3okmHfCxtr6AygYP647
+ FfnDB51XugU48RVhiII4Sw4HhrD2ZVMlpoEAeJ/ndiD96h5WnrtjFbotcbx0LcsKmocg5Vb6ycPiw235C2OBHRf6NPADx+zXYZ11tDiXO5EVlBM25WtFWxrF
+ q8Nync1gKfy6OedOi7X8HaKdoopC7uK0zpezGnoeJSiV2Oxah2n6E0Jq3U68FsR5zPOIJVsqOYAW0ExJ4MyIW5nFKJGvQA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 01:32:42PM +0000, Z.q. Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On 12/03/2018 09:37 PM, Eddie James wrote:
 
-Can we pick one driver name (either "mobiveil" or "ls_pcie_g4" (this
-seems excessively long and excessively specific), or something else)?
-I don't want to waste the space of "PCI: mobiveil: ls_pcie_g4:" in
-every future subject line.
+<snip>
 
-Then "Add workaround for ...".  I assume the "A-011577" part is
-meaningful inside NXP, but it's not useful to anybody else.  Move that
-to the changelog proper and say something about the actual issue in
-the subject.
-
-> PCIe configuration access to non-existent function triggered
-> SERROR interrupt exception.
+>>>>> +static int aspeed_video_start(struct aspeed_video *video)
+>>>>> +{
+>>>>> +	int rc;
+>>>>> +
+>>>>> +	aspeed_video_on(video);
+>>>>> +
+>>>>> +	aspeed_video_init_regs(video);
+>>>>> +
+>>>>> +	rc = aspeed_video_get_resolution(video);
+>>>>> +	if (rc)
+>>>>> +		return rc;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * Set the timings here since the device was just opened for the first
+>>>>> +	 * time.
+>>>>> +	 */
+>>>>> +	video->active_timings = video->detected_timings;
+>>>> What happens if no valid signal was detected?
+>>>>
+>>>> My recommendation is to fallback to some default timings (VGA?) if no valid
+>>>> initial timings were found.
+>>>>
+>>>> The expectation is that applications will always call QUERY_DV_TIMINGS first,
+>>>> so it is really not all that important what the initial active_timings are,
+>>>> as long as they are valid timings (valid as in: something that the hardware
+>>>> can support).
+>>> See just above, this call returns with a failure if no signal is
+>>> detected, meaning the device cannot be opened. The only valid timings
+>>> are the detected timings.
+>> That's wrong. You must ALWAYS be able to open the device. If not valid
+>> resolution is detected, just fallback to some default.
 > 
-> Workaround:
-> Disable error reporting on AXI bus during the Vendor ID read
-> transactions in enumeration.
-> 
-> This ERRATA is only for LX2160A Rev1.0, and it will be fixed
-> in Rev2.0.
-> 
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
->  .../controller/mobiveil/pci-layerscape-gen4.c | 24 +++++++++++++++++++
->  .../controller/mobiveil/pcie-mobiveil-host.c  | 13 +++++++++-
->  .../pci/controller/mobiveil/pcie-mobiveil.h   |  2 ++
->  3 files changed, 38 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
-> index 174cbcac4059..1fe56532b288 100644
-> --- a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
-> +++ b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
-> @@ -24,6 +24,9 @@
->  
->  /* LUT and PF control registers */
->  #define PCIE_LUT_OFF			(0x80000)
-> +#define PCIE_LUT_GCR			(0x28)
-> +#define PCIE_LUT_GCR_RRE		(0)
-> +
->  #define PCIE_PF_OFF			(0xc0000)
->  #define PCIE_PF_INT_STAT		(0x18)
->  #define PF_INT_STAT_PABRST		(31)
-> @@ -188,8 +191,29 @@ static void ls_pcie_g4_reset(struct work_struct *work)
->  	ls_pcie_g4_reinit_hw(pcie);
->  }
->  
-> +static int ls_pcie_g4_read_other_conf(struct pci_bus *bus, unsigned int devfn,
-> +				   int where, int size, u32 *val)
-> +{
-> +	struct mobiveil_pcie *pci = bus->sysdata;
-> +	struct ls_pcie_g4 *pcie = to_ls_pcie_g4(pci);
-> +	int ret;
-> +
-> +	if (where == PCI_VENDOR_ID)
-> +		ls_pcie_g4_lut_writel(pcie, PCIE_LUT_GCR,
-> +				      0 << PCIE_LUT_GCR_RRE);
-> +
-> +	ret = pci_generic_config_read(bus, devfn, where, size, val);
-> +
-> +	if (where == PCI_VENDOR_ID)
-> +		ls_pcie_g4_lut_writel(pcie, PCIE_LUT_GCR,
-> +				      1 << PCIE_LUT_GCR_RRE);
+> Why must open always succeed? What use is a video device that cannot 
+> provide any video?
+You always must be able to open the video device so applications can call
+QUERYCAP. In fact, any ioctl that returns state information (G_FMT, G_CTRL,
+G_INPUT, ENUM_*, etc) can always be called, regardless of whether there is
+a video signal or if video streaming is in progress.
 
-1) As a general style rule, it's better to "clear, then restore" than
-to "clear, then set" the bit.  That way if somebody elsewhere decides
-that PCIE_LUT_GCR_RRE should be cleared by default, this code won't
-stomp on that decision.  E.g.,
+With this restriction I cannot even run an application that waits for the
+SOURCE_CHANGE event to start streaming, such as 'v4l2-ctl --stream-mmap'
+does because the open() will fail immediately.
 
-  gcr = ls_pcie_g4_lut_readl(...);
-  ls_pcie_g4_lut_writel(..., 0 << PCIE_LUT_GCR_RRE);
-  ret = pci_generic_config_read(...);
-  ls_pcie_g4_lut_writel(..., gcr);
+Sorry, this is really wrong.
 
-2) I don't *think* the PCIe spec requires that the first access to a
-device be a read of the Vendor ID, so this is a 99% solution, not a
-100% solution.  A 100% solution would be to handle the SERROR so it's
-not fatal.  But I'm pretty sure Linux always does read the Vendor ID
-first (except after a reset, and when we do config reads after a
-reset, we already know the device *exists*), so this is probably
-pretty safe.
+Regards,
 
-> +	return ret;
-> +}
-> +
->  static struct mobiveil_rp_ops ls_pcie_g4_rp_ops = {
->  	.interrupt_init = ls_pcie_g4_interrupt_init,
-> +	.read_other_conf = ls_pcie_g4_read_other_conf,
->  };
->  
->  static const struct mobiveil_pab_ops ls_pcie_g4_pab_ops = {
-> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-> index c85f00d3cfcf..8b6db38320d7 100644
-> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-> @@ -79,9 +79,20 @@ static void __iomem *mobiveil_pcie_map_bus(struct pci_bus *bus,
->  	return pcie->rp.config_axi_slave_base + where;
->  }
->  
-> +static int mobiveil_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
-> +				     int where, int size, u32 *val)
-> +{
-> +	struct mobiveil_pcie *pcie = bus->sysdata;
-> +	struct root_port *rp = &pcie->rp;
-> +
-> +	if (bus->number > rp->root_bus_nr && rp->ops->read_other_conf)
-> +		return rp->ops->read_other_conf(bus, devfn, where, size, val);
-> +
-> +	return pci_generic_config_read(bus, devfn, where, size, val);
-> +}
->  static struct pci_ops mobiveil_pcie_ops = {
->  	.map_bus = mobiveil_pcie_map_bus,
-> -	.read = pci_generic_config_read,
-> +	.read = mobiveil_pcie_config_read,
->  	.write = pci_generic_config_write,
->  };
->  
-> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> index 0ccd6cee5f8f..ef93b41f4419 100644
-> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> @@ -145,6 +145,8 @@ struct mobiveil_msi {			/* MSI information */
->  
->  struct mobiveil_rp_ops {
->  	int (*interrupt_init)(struct mobiveil_pcie *pcie);
-> +	int (*read_other_conf)(struct pci_bus *bus, unsigned int devfn,
-> +			       int where, int size, u32 *val);
->  };
->  
->  struct root_port {
-> -- 
-> 2.17.1
-> 
+	Hans
