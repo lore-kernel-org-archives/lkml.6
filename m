@@ -2,123 +2,137 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06884C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CC8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B09B2208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B94CB208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:41:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KUDtwD77"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09B2208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ehBx1d8E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94CB208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726041AbeLCThm (ORCPT
+        id S1726058AbeLCTlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:37:42 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36226 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbeLCThm (ORCPT
+        Mon, 3 Dec 2018 14:41:32 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:39822 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeLCTlc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:37:42 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so6903597pfc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 11:37:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XpMyzjGkH0BtMJuD/epBPGdByPRB26CjbrPIHVKA3no=;
-        b=KUDtwD77gOhDkTcQ4iHv/XEYUPTwhPtkqZD+4pqJ3ocMck+9Suogbz8nKndXUQOk26
-         t6VgVVeI6vUdSWMeguvX0I880lLuGaXHfMZ1AtRLBAz3wD5GqZ5a2P0woZaWPQ1S/CRd
-         zycyyD5j4/GX/UEpuztpS9JV5ryC0Cfmynwlg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XpMyzjGkH0BtMJuD/epBPGdByPRB26CjbrPIHVKA3no=;
-        b=NpSEFToF6/ehDkvAwD95y/uPlxKV2hT73MoawvpqW+4ZPpksOyqr5dcAHyQnEOCjmo
-         i6XQnRP2qXSimx39cCknZM2ktaur2jqaG0FTraxuMi3W98oYlPuMMowcrs1MGhHEf3SI
-         JeHQFFcEd7noGCwby/KSlO/tkaTzkwEIo6/zl6YnH/zM2eDY10YBCqAW08SGlRGRnjuG
-         9td85ShBbyZZjY0pPNfUhrZa7Y+XvIjD24XV+iTRggbVi6bU0Cw+aI9KFfTfSXhwMPBK
-         1AEKEVJ4Y619oMnNoFTFivvOKI08vVTIIpmtcrTP3oE3vPqwWnVeyFB69peUThOvfrOm
-         cL5Q==
-X-Gm-Message-State: AA+aEWYqGbE3n89utrv5prejxUpEbTk4V5I6YDlMdWLr2xCL0Y6RDDIR
-        dOrjc4j53KH3e8KWLsVZhPuOeA==
-X-Google-Smtp-Source: AFSGD/VFBtm8Ha0A/zUxUAnxgoxre6fRn6tdxgbjN4zgGrDfkXFdl1ABQOnnuYHMG9XUPOKtgALC6A==
-X-Received: by 2002:a63:d208:: with SMTP id a8mr14089311pgg.77.1543865860957;
-        Mon, 03 Dec 2018 11:37:40 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id h64sm2792202pfc.142.2018.12.03.11.37.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 11:37:40 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: sdm845: Add videocc node
-Date:   Mon,  3 Dec 2018 11:36:29 -0800
-Message-Id: <20181203193629.58505-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
+        Mon, 3 Dec 2018 14:41:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Y1cnbX/J0Nz0q9+u6/6yEe6wMlQM7Y2RfshC0XQOvdo=; b=ehBx1d8EPWTkDEeyyMkaUW3i0J
+        nqwQgbCgKvcFsu1sjrtaud/UQjCw2iAgVihXT9D2wSyITV931n1wU9k2aJZGzqyao1EaaoaFZcg6M
+        T82Zvsr/RkFjrgFKHZlk7chFLdKHUZ6K2QGiLz3EA4/H4UQF3XSZZCqA3HHa/+44Q8ARnE7sVMAsv
+        1GhyXtaXTuKSnDv8JBvKtDC4sjEmKU9rpw+59e8wy4xGBtobqflAUOa6l5Chnf1asTnZrJBetig7H
+        fLQYKvmZS+qvtgiMSleBkeT6emwtwk83F4nxSOzdIevKzS6u4hJlgGQCZNxdRbn6p49u7gxwO6FiY
+        9zcdI/BA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gTu5t-0002YO-KG; Mon, 03 Dec 2018 19:41:25 +0000
+Subject: Re: [PATCH v9 2/3] x86: add support for Huawei WMI hotkeys.
+To:     Ayman Bagabas <ayman.bagabas@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <20181203185344.3521-1-ayman.bagabas@gmail.com>
+ <20181203185344.3521-3-ayman.bagabas@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9d6d8211-6fdf-bfe4-82b5-272d67fbae23@infradead.org>
+Date:   Mon, 3 Dec 2018 11:41:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181203185344.3521-3-ayman.bagabas@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+On 12/3/18 10:53 AM, Ayman Bagabas wrote:
+> This driver adds support for missing hotkeys on some Huawei laptops.
+> Laptops such as the Matebook X have non functioning hotkeys. Whereas
+> newer laptops such as the Matebook X Pro come with working hotkeys out
+> of the box.
+> 
+> Old laptops, such as the Matebook X, report hotkey events through ACPI
+> device "\WMI0". However, new laptops, such as the Matebook X Pro,
+> does not have this WMI device.
+> 
+> All the hotkeys on the Matebook X Pro work fine
+> without this patch except (micmute, wlan, and huawei key). These keys
+> and the brightness keys report events to "\AMW0" ACPI device. One
+> problem is that brightness keys on the Matebook X Pro work without this
+> patch. This results in reporting two brightness key press
+> events one is captured by ACPI and another by this driver.
+> 
+> A solution would be to check if such event came from the "\AMW0" WMI driver
+> then skip reporting event. Another solution would be to leave this to
+> user-space to handle. Which can be achieved by using "hwdb" tables and
+> remap those keys to "unknown". This solution seems more natural to me
+> because it leaves the decision to user-space.
+> 
+> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
+> ---
+>  drivers/platform/x86/Kconfig      |  16 +++
+>  drivers/platform/x86/Makefile     |   1 +
+>  drivers/platform/x86/huawei-wmi.c | 226 ++++++++++++++++++++++++++++++
+>  3 files changed, 243 insertions(+)
+>  create mode 100644 drivers/platform/x86/huawei-wmi.c
+> 
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 87f70e8f4dd0..27db3ce7a1e1 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1292,6 +1292,22 @@ config INTEL_ATOMISP2_PM
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called intel_atomisp2_pm.
+>  
+> +config HUAWEI_WMI
+> +	tristate "Huawei WMI hotkeys driver"
+> +	depends on ACPI_WMI
+> +	depends on INPUT
+> +	select INPUT_SPARSEKMAP
+> +	select LEDS_CLASS
 
-This adds the video clock controller node to sdm845 based on the examples
-in the bindings.
+but LEDS_CLASS is only available if NEW_LEDS is set/enabled, so it either
+depends on LEDS_CLASS... or it needs to select NEW_LEDS, which is what other
+drivers in this Kconfig file do, even though our b.d. has said a few times
+that any one driver should not "select" => enable an entire subsystem,
+so they all should be "depends on NEW_LEDS" IMHO.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+> +	select LEDS_TRIGGERS
+> +	select LEDS_TRIGGER_AUDIO
+> +	help
+> +	  This driver provides support for Huawei WMI hotkeys.
+> +	  It enables the missing keys and adds support to the micmute
+> +	  LED found on some of these laptops.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called huawei-wmi.
+> +
+>  endif # X86_PLATFORM_DEVICES
+>  
+>  config PMC_ATOM
 
-Changes in v2:
-- Add #reset-cells = <1>.
-- Sort properly.
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 1419b0098cb3..3f6bf5750918 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,videocc-sdm845.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy-qcom-qusb2.h>
- #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-@@ -1256,6 +1257,14 @@
- 			};
- 		};
- 
-+		videocc: clock-controller@ab00000 {
-+			compatible = "qcom,sdm845-videocc";
-+			reg = <0xab00000 0x10000>;
-+			#clock-cells = <1>;
-+			#power-domain-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		dispcc: clock-controller@af00000 {
- 			compatible = "qcom,sdm845-dispcc";
- 			reg = <0xaf00000 0x10000>;
 -- 
-2.20.0.rc1.387.gf8505762e3-goog
-
+~Randy
