@@ -7,68 +7,69 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20001C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AE1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FF4214C1
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A676120851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ES13xdpa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FF4214C1
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XVs0wWdi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A676120851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbeLCNc2 (ORCPT
+        id S1726048AbeLCNcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:32:28 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36153 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeLCNc1 (ORCPT
+        Mon, 3 Dec 2018 08:32:31 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39519 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeLCNca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:32:27 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o125so7285089qkf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:31:25 -0800 (PST)
+        Mon, 3 Dec 2018 08:32:30 -0500
+Received: by mail-qt1-f193.google.com with SMTP id n21so13639711qtl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:31:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nFtnXOJk34JsfWJZd01m3ADJA/D8osfUhgPthbLAvEM=;
-        b=ES13xdpahgCvbqHWUtmELY1obONm+Y+3+JXt50FkCXB/4HGKn13Z+qkCgs/EjvZ6g7
-         qmUbvuWVoc9h2x5GdehV3PvYW53kwkGzBRn/2PLyJjLhxxaUZredZoxqDJobBPFPbXwo
-         R+0EI3NNt2z8nkopYhdts/bWzPq2Yeb7deKTI=
+        bh=rPP2crPp8qfalgTp8X/h/6lTKYQZMKVyebb+n4dfJh8=;
+        b=XVs0wWdiblqeQ4DCwvDBPmwIRd3w7eI+BKqkTVcCeUOdE7axv7lbGFPzezTKVZwJPA
+         AkZR+8oVGGQiU6LfJESrkh6Vk0Sw3WOXqsPo4qSSZ3RgNe/bPHINekMzdn31kUofh3+3
+         pHk0QUrz/iQkaAHDYab/+K8nbQmN6xC0gSn6k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nFtnXOJk34JsfWJZd01m3ADJA/D8osfUhgPthbLAvEM=;
-        b=dFA1p6q4OhocTqgSQarHWr+OLCBVvdFfbeK24xOwbj9NhupUplQLD0c0GVvU+ouSNq
-         DczBO6cljAWp3X4L0Wu8MyexyQVsQQdparB21nzlxRr/zAn6isbpjHwGsCT47ux6x9EC
-         vw2JIRf8ZGerzzzJx9q5KZJoHnkr1K187AmtHosh3vR1GuhWu5KySS817c17qOrOT1YV
-         6dk+XVlVSVYoEsMN/cKr8D3re/C7CEm8NUjl1GIIC439ZyxKH0LQnUVFzXHV1xmfJI9Q
-         5Nid3eBhznjMXfzW18xGHyQBHOmR14e/4TJ+HkiTr4y7WpaokHiUyxqIHyXUzB14BANR
-         pQEQ==
-X-Gm-Message-State: AA+aEWYwmOnD9EgUX1aVliz07O8MJ0OCb0aa+XaO4Xx/KKMw2BbVD15g
-        FFtj9hyyYUdsfW3BXsa/KKrhWw==
-X-Google-Smtp-Source: AFSGD/WgGQv+2mzKg7LeioLzSmpzbvqbJL31FTj2NGBxiKAWZZ1ngKGyHacrFSjTxqImjVNDxcVtNQ==
-X-Received: by 2002:a37:6f45:: with SMTP id k66mr12779246qkc.313.1543843884761;
-        Mon, 03 Dec 2018 05:31:24 -0800 (PST)
+        bh=rPP2crPp8qfalgTp8X/h/6lTKYQZMKVyebb+n4dfJh8=;
+        b=nyysY4PfGW7CodT/mLmA6Kprnkmn3cVSoJCbOoiOQ1zFI4SrWW5KYxF2JtnvnFGnMp
+         ALY6Z9XC/DeFPsoMkymq3rUH+YDoozTRtjUthpJHOfhUdYdXtS9Ta5HTSlnbYNRulSeg
+         7XGEH8CXupnXcSEi3lN+kTO8Z6/uTgnP9GCE0S2DUuT+QVC0+AaOQcw/Ag+sqcwPWAQO
+         DTvQZgkv/oRcmf+eYlwTgob6HcwpSIiuhp4yKJ5I2oi+kYyDarUvIbT7qTrbRigBNoA8
+         kWYoKzmOFGMCnCHgiPkXoQtvwZKSTCpHgiOe8M+8WJQgWU6ZrqntA+IcLD3KZy8cl1SJ
+         bQXQ==
+X-Gm-Message-State: AA+aEWZMx2kBQXqF9uYeMsCMvEtwyEVsmUfbgEuL4c+Pv/l8xZ2C/zuU
+        mY6hGAWo9wQ/QqMu6ny2eW1uZw==
+X-Google-Smtp-Source: AFSGD/UGBgHAvkVHHqggAVAWUTN05c9cv/CKRI6qYVaXGPZ1s06ijLOqnUqIwzMalwj4RBg8uGvWdQ==
+X-Received: by 2002:a0c:d268:: with SMTP id o37mr15827714qvh.136.1543843887852;
+        Mon, 03 Dec 2018 05:31:27 -0800 (PST)
 Received: from workstation.celeiro.br ([138.204.25.29])
-        by smtp.gmail.com with ESMTPSA id r56sm8619112qtj.30.2018.12.03.05.31.21
+        by smtp.gmail.com with ESMTPSA id r56sm8619112qtj.30.2018.12.03.05.31.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 05:31:24 -0800 (PST)
+        Mon, 03 Dec 2018 05:31:27 -0800 (PST)
 From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
 To:     sashal@kernel.org
 Cc:     rafael.tinoco@linaro.org, gregkh@linuxfoundation.org,
         rui.zhang@intel.com, edubezval@gmail.com,
         daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 4/5] thermal/drivers/hisi: Fix configuration register setting
-Date:   Mon,  3 Dec 2018 11:31:06 -0200
-Message-Id: <20181203133107.4002-5-rafael.tinoco@linaro.org>
+Subject: [PATCH 5/5] thermal/drivers/hisi: Remove costly sensor inspection
+Date:   Mon,  3 Dec 2018 11:31:07 -0200
+Message-Id: <20181203133107.4002-6-rafael.tinoco@linaro.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181203133107.4002-1-rafael.tinoco@linaro.org>
 References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -77,85 +78,346 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-patch b424315a287c70eeb5f920f84c92492bd2f5658e upstream.
+commit 10d7e9a9181f4637640f388d334c6740c1b5d0e8 upstream.
 
-The TEMP0_CFG configuration register contains different field to set up the
-temperature controller. However in the code, nothing prevents a setup to
-overwrite the previous one: eg. writing the hdak value overwrites the sensor
-selection, the sensor selection overwrites the hdak value.
+The sensor is all setup, bind, resetted, acked, etc... every single second.
 
-In order to prevent such thing, use a regmap-like mechanism by reading the
-value before, set the corresponding bits and write the result.
+That was the way to workaround a problem with the interrupt bouncing again and
+again.
 
-Link: https://bugs.linaro.org/show_bug.cgi?id=4053 (PATCH 4/5)
+With the following changes, we fix all in one:
+
+ - Do the setup, one time, at probe time
+
+ - Add the IRQF_ONESHOT, ack the interrupt in the threaded handler
+
+ - Remove the interrupt handler
+
+ - Set the correct value for the LAG register
+
+ - Remove all the irq_enabled stuff in the code as the interruption
+   handling is fixed
+
+ - Remove the 3ms delay
+
+ - Reorder the initialization routine to be in the right order
+
+It ends up to a nicer code and more efficient, the 3-5ms delay is removed from
+the get_temp() path.
+
+Link: https://bugs.linaro.org/show_bug.cgi?id=4053 (PATCH 5/5)
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Tested-by: Leo Yan <leo.yan@linaro.org>
 Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit b424315a287c70eeb5f920f84c92492bd2f5658e)
+(cherry picked from commit 10d7e9a9181f4637640f388d334c6740c1b5d0e8)
 Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
 ---
- drivers/thermal/hisi_thermal.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ drivers/thermal/hisi_thermal.c | 203 +++++++++++++++------------------
+ 1 file changed, 93 insertions(+), 110 deletions(-)
 
 diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index a803043f37ae..31b52ebf426f 100644
+index 31b52ebf426f..7c5d4647cb5e 100644
 --- a/drivers/thermal/hisi_thermal.c
 +++ b/drivers/thermal/hisi_thermal.c
-@@ -30,6 +30,8 @@
- #define TEMP0_TH			(0x4)
- #define TEMP0_RST_TH			(0x8)
- #define TEMP0_CFG			(0xC)
-+#define TEMP0_CFG_SS_MSK		(0xF000)
-+#define TEMP0_CFG_HDAK_MSK		(0x30)
- #define TEMP0_EN			(0x10)
- #define TEMP0_INT_EN			(0x14)
- #define TEMP0_INT_CLR			(0x18)
-@@ -132,19 +134,41 @@ static inline void hisi_thermal_enable(void __iomem *addr, int value)
- 	writel(value, addr + TEMP0_EN);
- }
+@@ -41,6 +41,7 @@
+ #define HISI_TEMP_BASE			(-60000)
+ #define HISI_TEMP_RESET			(100000)
+ #define HISI_TEMP_STEP			(784)
++#define HISI_TEMP_LAG			(3500)
  
--static inline void hisi_thermal_sensor_select(void __iomem *addr, int sensor)
-+static inline int hisi_thermal_get_temperature(void __iomem *addr)
- {
--	writel((sensor << 12), addr + TEMP0_CFG);
-+	return hisi_thermal_step_to_temp(readl(addr + TEMP0_VALUE));
- }
+ #define HISI_MAX_SENSORS		4
+ #define HISI_DEFAULT_SENSOR		2
+@@ -60,8 +61,6 @@ struct hisi_thermal_data {
+ 	struct clk *clk;
+ 	struct hisi_thermal_sensor sensors;
+ 	int irq;
+-	bool irq_enabled;
+-
+ 	void __iomem *regs;
+ };
  
--static inline int hisi_thermal_get_temperature(void __iomem *addr)
-+/*
-+ * Temperature configuration register - Sensor selection
-+ *
-+ * Bits [19:12]
-+ *
-+ * 0x0: local sensor (default)
-+ * 0x1: remote sensor 1 (ACPU cluster 1)
-+ * 0x2: remote sensor 2 (ACPU cluster 0)
-+ * 0x3: remote sensor 3 (G3D)
-+ */
-+static inline void hisi_thermal_sensor_select(void __iomem *addr, int sensor)
- {
--	return hisi_thermal_step_to_temp(readl(addr + TEMP0_VALUE));
-+	writel((readl(addr + TEMP0_CFG) & ~TEMP0_CFG_SS_MSK) |
-+	       (sensor << 12), addr + TEMP0_CFG);
+@@ -99,9 +98,40 @@ static inline long hisi_thermal_round_temp(int temp)
+ 		hisi_thermal_temp_to_step(temp));
  }
  
 +/*
-+ * Temperature configuration register - Hdak conversion polling interval
++ * The lag register contains 5 bits encoding the temperature in steps.
 + *
-+ * Bits [5:4]
++ * Each time the temperature crosses the threshold boundary, an
++ * interrupt is raised. It could be when the temperature is going
++ * above the threshold or below. However, if the temperature is
++ * fluctuating around this value due to the load, we can receive
++ * several interrupts which may not desired.
 + *
-+ * 0x0 :   0.768 ms
-+ * 0x1 :   6.144 ms
-+ * 0x2 :  49.152 ms
-+ * 0x3 : 393.216 ms
++ * We can setup a temperature representing the delta between the
++ * threshold and the current temperature when the temperature is
++ * decreasing.
++ *
++ * For instance: the lag register is 5°C, the threshold is 65°C, when
++ * the temperature reaches 65°C an interrupt is raised and when the
++ * temperature decrease to 65°C - 5°C another interrupt is raised.
++ *
++ * A very short lag can lead to an interrupt storm, a long lag
++ * increase the latency to react to the temperature changes.  In our
++ * case, that is not really a problem as we are polling the
++ * temperature.
++ *
++ * [0:4] : lag register
++ *
++ * The temperature is coded in steps, cf. HISI_TEMP_STEP.
++ *
++ * Min : 0x00 :  0.0 °C
++ * Max : 0x1F : 24.3 °C
++ *
++ * The 'value' parameter is in milliCelsius.
 + */
- static inline void hisi_thermal_hdak_set(void __iomem *addr, int value)
+ static inline void hisi_thermal_set_lag(void __iomem *addr, int value)
  {
--	writel(value, addr + TEMP0_CFG);
-+	writel((readl(addr + TEMP0_CFG) & ~TEMP0_CFG_HDAK_MSK) |
-+	       (value << 4), addr + TEMP0_CFG);
+-	writel(value, addr + TEMP0_LAG);
++	writel((value / HISI_TEMP_STEP) & 0x1F, addr + TEMP0_LAG);
  }
  
- static long hisi_thermal_get_sensor_temp(struct hisi_thermal_data *data,
+ static inline void hisi_thermal_alarm_clear(void __iomem *addr, int value)
+@@ -171,71 +201,6 @@ static inline void hisi_thermal_hdak_set(void __iomem *addr, int value)
+ 	       (value << 4), addr + TEMP0_CFG);
+ }
+ 
+-static long hisi_thermal_get_sensor_temp(struct hisi_thermal_data *data,
+-					 struct hisi_thermal_sensor *sensor)
+-{
+-	long val;
+-
+-	mutex_lock(&data->thermal_lock);
+-
+-	/* disable interrupt */
+-	hisi_thermal_alarm_enable(data->regs, 0);
+-	hisi_thermal_alarm_clear(data->regs, 1);
+-
+-	/* disable module firstly */
+-	hisi_thermal_enable(data->regs, 0);
+-
+-	/* select sensor id */
+-	hisi_thermal_sensor_select(data->regs, sensor->id);
+-
+-	/* enable module */
+-	hisi_thermal_enable(data->regs, 1);
+-
+-	usleep_range(3000, 5000);
+-
+-	val = hisi_thermal_get_temperature(data->regs);
+-
+-	mutex_unlock(&data->thermal_lock);
+-
+-	return val;
+-}
+-
+-static void hisi_thermal_enable_bind_irq_sensor
+-			(struct hisi_thermal_data *data)
+-{
+-	struct hisi_thermal_sensor *sensor;
+-
+-	mutex_lock(&data->thermal_lock);
+-
+-	sensor = &data->sensors;
+-
+-	/* setting the hdak time */
+-	hisi_thermal_hdak_set(data->regs, 0);
+-
+-	/* disable module firstly */
+-	hisi_thermal_reset_enable(data->regs, 0);
+-	hisi_thermal_enable(data->regs, 0);
+-
+-	/* select sensor id */
+-	hisi_thermal_sensor_select(data->regs, sensor->id);
+-
+-	/* enable for interrupt */
+-	hisi_thermal_alarm_set(data->regs, sensor->thres_temp);
+-
+-	hisi_thermal_reset_set(data->regs, HISI_TEMP_RESET);
+-
+-	/* enable module */
+-	hisi_thermal_reset_enable(data->regs, 1);
+-	hisi_thermal_enable(data->regs, 1);
+-
+-	hisi_thermal_alarm_clear(data->regs, 0);
+-	hisi_thermal_alarm_enable(data->regs, 1);
+-
+-	usleep_range(3000, 5000);
+-
+-	mutex_unlock(&data->thermal_lock);
+-}
+-
+ static void hisi_thermal_disable_sensor(struct hisi_thermal_data *data)
+ {
+ 	mutex_lock(&data->thermal_lock);
+@@ -253,25 +218,10 @@ static int hisi_thermal_get_temp(void *_sensor, int *temp)
+ 	struct hisi_thermal_sensor *sensor = _sensor;
+ 	struct hisi_thermal_data *data = sensor->thermal;
+ 
+-	*temp = hisi_thermal_get_sensor_temp(data, sensor);
+-
+-	dev_dbg(&data->pdev->dev, "id=%d, irq=%d, temp=%d, thres=%d\n",
+-		sensor->id, data->irq_enabled, *temp, sensor->thres_temp);
+-	/*
+-	 * Bind irq to sensor for two cases:
+-	 *   Reenable alarm IRQ if temperature below threshold;
+-	 *   if irq has been enabled, always set it;
+-	 */
+-	if (data->irq_enabled) {
+-		hisi_thermal_enable_bind_irq_sensor(data);
+-		return 0;
+-	}
++	*temp = hisi_thermal_get_temperature(data->regs);
+ 
+-	if (*temp < sensor->thres_temp) {
+-		data->irq_enabled = true;
+-		hisi_thermal_enable_bind_irq_sensor(data);
+-		enable_irq(data->irq);
+-	}
++	dev_dbg(&data->pdev->dev, "id=%d, temp=%d, thres=%d\n",
++		sensor->id, *temp, sensor->thres_temp);
+ 
+ 	return 0;
+ }
+@@ -280,26 +230,27 @@ static const struct thermal_zone_of_device_ops hisi_of_thermal_ops = {
+ 	.get_temp = hisi_thermal_get_temp,
+ };
+ 
+-static irqreturn_t hisi_thermal_alarm_irq(int irq, void *dev)
++static irqreturn_t hisi_thermal_alarm_irq_thread(int irq, void *dev)
+ {
+ 	struct hisi_thermal_data *data = dev;
++	struct hisi_thermal_sensor *sensor = &data->sensors;
++	int temp;
+ 
+-	disable_irq_nosync(irq);
+-	data->irq_enabled = false;
++	hisi_thermal_alarm_clear(data->regs, 1);
+ 
+-	return IRQ_WAKE_THREAD;
+-}
++	temp = hisi_thermal_get_temperature(data->regs);
+ 
+-static irqreturn_t hisi_thermal_alarm_irq_thread(int irq, void *dev)
+-{
+-	struct hisi_thermal_data *data = dev;
+-	struct hisi_thermal_sensor *sensor = &data->sensors;
++	if (temp >= sensor->thres_temp) {
++		dev_crit(&data->pdev->dev, "THERMAL ALARM: %d > %d\n",
++			 temp, sensor->thres_temp);
+ 
+-	dev_crit(&data->pdev->dev, "THERMAL ALARM: T > %d\n",
+-		 sensor->thres_temp);
++		thermal_zone_device_update(data->sensors.tzd,
++					   THERMAL_EVENT_UNSPECIFIED);
+ 
+-	thermal_zone_device_update(data->sensors.tzd,
+-				   THERMAL_EVENT_UNSPECIFIED);
++	} else if (temp < sensor->thres_temp) {
++		dev_crit(&data->pdev->dev, "THERMAL ALARM stopped: %d < %d\n",
++			 temp, sensor->thres_temp);
++	}
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -352,6 +303,40 @@ static void hisi_thermal_toggle_sensor(struct hisi_thermal_sensor *sensor,
+ 		on ? THERMAL_DEVICE_ENABLED : THERMAL_DEVICE_DISABLED);
+ }
+ 
++static int hisi_thermal_setup(struct hisi_thermal_data *data)
++{
++	struct hisi_thermal_sensor *sensor;
++
++	sensor = &data->sensors;
++
++	/* disable module firstly */
++	hisi_thermal_reset_enable(data->regs, 0);
++	hisi_thermal_enable(data->regs, 0);
++
++	/* select sensor id */
++	hisi_thermal_sensor_select(data->regs, sensor->id);
++
++	/* setting the hdak time */
++	hisi_thermal_hdak_set(data->regs, 0);
++
++	/* setting lag value between current temp and the threshold */
++	hisi_thermal_set_lag(data->regs, HISI_TEMP_LAG);
++
++	/* enable for interrupt */
++	hisi_thermal_alarm_set(data->regs, sensor->thres_temp);
++
++	hisi_thermal_reset_set(data->regs, HISI_TEMP_RESET);
++
++	/* enable module */
++	hisi_thermal_reset_enable(data->regs, 1);
++	hisi_thermal_enable(data->regs, 1);
++
++	hisi_thermal_alarm_clear(data->regs, 0);
++	hisi_thermal_alarm_enable(data->regs, 1);
++
++	return 0;
++}
++
+ static int hisi_thermal_probe(struct platform_device *pdev)
+ {
+ 	struct hisi_thermal_data *data;
+@@ -394,9 +379,6 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	hisi_thermal_enable_bind_irq_sensor(data);
+-	data->irq_enabled = true;
+-
+ 	ret = hisi_thermal_register_sensor(pdev, data,
+ 					   &data->sensors,
+ 					   HISI_DEFAULT_SENSOR);
+@@ -406,10 +388,15 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = devm_request_threaded_irq(&pdev->dev, data->irq,
+-					hisi_thermal_alarm_irq,
++	ret = hisi_thermal_setup(data);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to setup the sensor: %d\n", ret);
++		return ret;
++	}
++
++	ret = devm_request_threaded_irq(&pdev->dev, data->irq, NULL,
+ 					hisi_thermal_alarm_irq_thread,
+-					0, "hisi_thermal", data);
++					IRQF_ONESHOT, "hisi_thermal", data);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to request alarm irq: %d\n", ret);
+ 		return ret;
+@@ -417,8 +404,6 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+ 
+ 	hisi_thermal_toggle_sensor(&data->sensors, true);
+ 
+-	enable_irq(data->irq);
+-
+ 	return 0;
+ }
+ 
+@@ -440,7 +425,6 @@ static int hisi_thermal_suspend(struct device *dev)
+ 	struct hisi_thermal_data *data = dev_get_drvdata(dev);
+ 
+ 	hisi_thermal_disable_sensor(data);
+-	data->irq_enabled = false;
+ 
+ 	clk_disable_unprepare(data->clk);
+ 
+@@ -456,8 +440,7 @@ static int hisi_thermal_resume(struct device *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	data->irq_enabled = true;
+-	hisi_thermal_enable_bind_irq_sensor(data);
++	hisi_thermal_setup(data);
+ 
+ 	return 0;
+ }
 -- 
 2.20.0.rc1
 
