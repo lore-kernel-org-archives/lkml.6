@@ -2,99 +2,103 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BE7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0211C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 109F420878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:25:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 109F420878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id A025420878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A025420878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726502AbeLCMZx (ORCPT
+        id S1726496AbeLCM0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:25:53 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:38930 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbeLCMZx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:25:53 -0500
-Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id 7QR01z00d3XaVaC01QR0GQ; Mon, 03 Dec 2018 13:25:01 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gTnHY-0003Ag-SP; Mon, 03 Dec 2018 13:25:00 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gTnHY-0003HH-RH; Mon, 03 Dec 2018 13:25:00 +0100
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v5] fbdev: Remove depends on HAS_DMA in case of platform dependency
-Date:   Mon,  3 Dec 2018 13:24:59 +0100
-Message-Id: <20181203122459.12558-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 3 Dec 2018 07:26:25 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:47258 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726223AbeLCM0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:26:25 -0500
+Received: from we0660.dip.tu-dresden.de ([141.76.178.148] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gTnHu-0002aR-08; Mon, 03 Dec 2018 13:25:22 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: gpu: add Allwinner H6 Mali Midgard binding
+Date:   Mon, 03 Dec 2018 13:25:21 +0100
+Message-ID: <11894938.HOUtrQJeEF@phil>
+In-Reply-To: <20181127074249.15204-2-icenowy@aosc.io>
+References: <20181127074249.15204-1-icenowy@aosc.io> <20181127074249.15204-2-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+Am Dienstag, 27. November 2018, 08:42:49 CET schrieb Icenowy Zheng:
+> Allwinner H6 SoC uses a Mali T720 GPU, which is one of the GPUs in the
+> Midgard GPU product line.
+> 
+> Add binding for the H6 Mali Midgard GPU.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  .../devicetree/bindings/gpu/arm,mali-midgard.txt    | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> index 02f870cd60e6..c897dd7be48f 100644
+> --- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+> @@ -18,6 +18,7 @@ Required properties:
+>      + "amlogic,meson-gxm-mali"
+>      + "rockchip,rk3288-mali"
+>      + "rockchip,rk3399-mali"
+> +    + "allwinner,sun50i-h6-mali"
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+I'd think you might want to keep an alphabetical sorting here, aka
+above amlogic, otherwise the list will probably become hard to read
+at some later point.
 
-This simplifies the dependencies, and allows to improve compile-testing.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v5:
-  - Rebase to v4.20-rc5,
+>  - reg : Physical base address of the device and length of the register area.
+>  
+> @@ -44,6 +45,18 @@ Optional properties:
+>    for details.
+>  
+>  
+> +Vendor-specific bindings
+> +------------------------
+> +
+> +The Mali GPU is integrated very differently from one SoC to
+> +another. In order to accomodate those differences, you have the option
+> +to specify one more vendor-specific compatible, among:
+> +
+> +  - allwinner,sun50i-h6-mali
+> +    Required properties:
+> +      * resets: phandle to the reset line for the GPU
 
-v4:
-  - Rebase to v4.18-rc1,
+While this paragraph is similar to how it is done in Utgard, I'm
+wondering why we cannot just describe the "resets" as regular
+optional property above that.
 
-v3:
-  - Add Acked-by,
-  - Rebase to v4.17-rc1,
 
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/video/fbdev/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Heiko
 
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index e413f54208f4b038..23f991340e3faccd 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -2037,7 +2037,8 @@ config FB_XILINX
- 
- config FB_GOLDFISH
- 	tristate "Goldfish Framebuffer"
--	depends on FB && HAS_DMA && (GOLDFISH || COMPILE_TEST)
-+	depends on FB
-+	depends on GOLDFISH || COMPILE_TEST
- 	select FB_CFB_FILLRECT
- 	select FB_CFB_COPYAREA
- 	select FB_CFB_IMAGEBLIT
--- 
-2.17.1
 
