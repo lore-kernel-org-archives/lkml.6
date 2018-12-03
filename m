@@ -2,171 +2,112 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCACC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C55C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A327620878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:07:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOU1LYDZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A327620878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4740C20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:10:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4740C20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbeLCNIF (ORCPT
+        id S1725916AbeLCNLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:08:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39690 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbeLCNIE (ORCPT
+        Mon, 3 Dec 2018 08:11:07 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46010 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbeLCNLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:08:04 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so11280977ljh.6;
-        Mon, 03 Dec 2018 05:07:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=YaQtv//14xvlfu+TUNMerRvDJrU67oKVWipWMWaxJEY=;
-        b=YOU1LYDZPpSq99MGLI73FZhJ6Fyx6gA0zX7BS8d8DBNGRLohPTmEfo4B80TnqUirLP
-         TQl1IroYdvOMhtVQgR16tNqt9MON9RF5Et5YOATlxW8q6b3ltGL6JIMeT8aXnbh9ZdbR
-         6AT+SN4Nlk/hkCy1T2N7TJv6yy6AgT/f8DQMcDY//kfJw8GC95k84ffcfCkXpxBh/oWH
-         zTk5nUFf83zGe/d4a9IUucV9pKSjMsBG6yDm7jCky8yRYVJcroblwjQYvs1lF6DmD7Pk
-         XHEUX4ycaBIbTpES0cf9epsYzU6K3g7nCUYlXcZHT85TAw3u9CSgydqbnnaTh8qY1DEE
-         aqPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=YaQtv//14xvlfu+TUNMerRvDJrU67oKVWipWMWaxJEY=;
-        b=UmwyXZYGHrfCxMASZQca4Q2NKLfDKY4emPHvT+UtwynwCtOnT5aYy0eihJzDrmKaOB
-         wN4L9Kb3wm3+IOAJjxlEJNwwyNch39/EI258rtHE9Ia6tlFHHp6pqMaTlnvVCc8NRDsT
-         DG4io8RKr20KWcHYrfiJ6F7NAYUUFkyeH7Fyi58HJngWJybMTFGQKpOjN5wN2c8ZkSfS
-         Rk6FXt7POwkKFXjFa10kE4xarg+VySkBylVkn0luR3CYaUZB3oO1vnWesPXVHkSHh4oh
-         jNNnQYsmlOj6K0lxmdaPl9aOpGOY6LL++rh3h+U9cMpRdrVZwrMoNxuuFUO6jyRV6BFS
-         XKyw==
-X-Gm-Message-State: AA+aEWa0POglAU+bTDhGTJjEc1sorUbyUFpF1qHolAZ/z9f4IEqKrnTR
-        2nxm7TUbWCZmZfNT3w1dATQnfu144QeniC+bL5zbEQ==
-X-Google-Smtp-Source: AFSGD/VD9VcfPqh1H8UBUSgGkLcDWRfIbC5LzTNIggCSmYqeoZvfg9Z+TY/M6Lwsbic9KTBgp9p3ste69iiprwhVekQ=
-X-Received: by 2002:a2e:9b52:: with SMTP id o18-v6mr9991336ljj.108.1543842424076;
- Mon, 03 Dec 2018 05:07:04 -0800 (PST)
+        Mon, 3 Dec 2018 08:11:06 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id AB2EA8093E; Mon,  3 Dec 2018 14:10:03 +0100 (CET)
+Date:   Mon, 3 Dec 2018 14:10:06 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux
+ 4.20-rc4)
+Message-ID: <20181203131006.GA10054@amd>
+References: <CAHk-=wgdsXyCaLsFEpyUpAeRqVS69u=xo4rzEN+cS=xwz2gajg@mail.gmail.com>
+ <20181203074700.GA21240@gmail.com>
+ <20181203083942.GF31738@dhcp22.suse.cz>
+ <20181203123149.GB31795@redhat.com>
+ <20181203123857.GS31738@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <CAA85sZthkwZ0yhfwXZ5dAJitqsod71O1478e44tz0NNLJVsvGg@mail.gmail.com>
-In-Reply-To: <CAA85sZthkwZ0yhfwXZ5dAJitqsod71O1478e44tz0NNLJVsvGg@mail.gmail.com>
-From:   Ian Kumlien <ian.kumlien@gmail.com>
-Date:   Mon, 3 Dec 2018 14:06:52 +0100
-Message-ID: <CAA85sZtt0_GWjYe_CZSzF5RdHg6Q6M+jy-bmDf4rMFZeoS1ejw@mail.gmail.com>
-Subject: Re: pcc_cpufreq: high LA
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Disposition: inline
+In-Reply-To: <20181203123857.GS31738@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No response? Should pcc_cpufreq be assumed as broken since it actually
-kills machines?
 
-Should I submit a patch that removes it?
+--TB36FDmn/VVEgNH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 20, 2018 at 3:05 PM Ian Kumlien <ian.kumlien@gmail.com> wrote:
->
-> Hi,
->
-> We've had this happen a few times now, pcc_cpufreq is loaded and the
-> machine has a LA of 33 with kworkers consuming *all CPU*
->
-> We have had this happen before, looking at it has been pushed to the
-> leaky-stack^tm in my mind and...
->
-> 32 cores:
-> processor : 31
-> vendor_id : GenuineIntel
-> cpu family : 6
-> model : 62
-> model name : Intel(R) Xeon(R) CPU E5-2650 v2 @ 2.60GHz
-> stepping : 4
-> microcode : 0x42d
-> cpu MHz : 2053.444
-> cache size : 20480 KB
-> ----
->
-> System Information:
-> Manufacturer: HP
-> Product Name: ProLiant SL210t Gen8
-> ---
->
-> The only warning I can see, which seems unrelated is:
-> [6928231.623398] WARNING: CPU: 11 PID: 0 at kernel/irq/matrix.c:371
-> irq_matrix_free+0x35/0xe0
-> [6928231.623402] Modules linked in: 8021q garp mrp ipt_MASQUERADE
-> nf_nat_masquerade_ipv4 iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4
-> nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack nf_nat
-> nf_conntrack dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio
-> libcrc32c loop bonding sb_edac x86_pkg_temp_thermal intel_powerclamp
-> coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul
-> ghash_clmulni_intel pcbc aesni_intel crypto_simd cryptd glue_helper
-> intel_cstate intel_rapl_perf iTCO_wdt iTCO_vendor_support joydev
-> input_leds acpi_power_meter pcspkr hpilo sg ipmi_si ipmi_devintf
-> ipmi_msghandler hpwdt ioatdma lpc_ich shpchp pcc_cpufreq mfd_core
-> ip_tables ext4 mbcache jbd2 raid1 sd_mod crc32c_intel serio_raw
-> drm_kms_helper ahci syscopyarea sysfillrect libahci sysimgblt
-> fb_sys_fops ttm libata drm igb
-> [6928231.623490]  i2c_algo_bit ixgbe mdio ptp pps_core dca dm_mirror
-> dm_region_hash dm_log dm_mod
-> [6928231.623507] CPU: 11 PID: 0 Comm: swapper/11 Not tainted
-> 4.17.0-1.el7.elrepo.x86_64 #1
-> [6928231.623509] Hardware name: HP ProLiant SL210t Gen8/, BIOS P83 05/21/2018
-> [6928231.623514] RIP: 0010:irq_matrix_free+0x35/0xe0
-> [6928231.623516] RSP: 0018:ffff88203f4c3f58 EFLAGS: 00010002
-> [6928231.623519] RAX: 0000000000026d00 RBX: ffff880ffaf64340 RCX:
-> 0000000000000000
-> [6928231.623521] RDX: 000000000000000b RSI: 000000000000000b RDI:
-> ffff880fff038800
-> [6928231.623523] RBP: ffff88203f4c3f80 R08: 0000000000000101 R09:
-> 0000000000000000
-> [6928231.623525] R10: 0000000000000000 R11: 0000000000000000 R12:
-> ffff88203f4c0000
-> [6928231.623527] R13: 0000000000000000 R14: 000000000000000b R15:
-> ffff880fff038800
-> [6928231.623530] FS:  0000000000000000(0000) GS:ffff88203f4c0000(0000)
-> knlGS:0000000000000000
-> [6928231.623532] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [6928231.623534] CR2: 00007fc429b73d20 CR3: 000000000220a006 CR4:
-> 00000000001606e0
-> [6928231.623537] Call Trace:
-> [6928231.623541]  <IRQ>
-> [6928231.623554]  free_moved_vector+0x58/0x110
-> [6928231.623563]  smp_irq_move_cleanup_interrupt+0xa2/0xc1
-> [6928231.623572]  irq_move_cleanup_interrupt+0xc/0x20
-> [6928231.623574]  </IRQ>
-> [6928231.623582] RIP: 0010:cpuidle_enter_state+0xdd/0x270
-> [6928231.623583] RSP: 0018:ffffc9000631fe48 EFLAGS: 00000246 ORIG_RAX:
-> ffffffffffffffdf
-> [6928231.623586] RAX: ffff88203f4e2c00 RBX: ffffe8ffff6da700 RCX:
-> 000000000000001f
-> [6928231.623588] RDX: 0000000000000000 RSI: fff0a6fbff885c1c RDI:
-> 0000000000000000
-> [6928231.623590] RBP: ffffc9000631fe80 R08: 0000000000002036 R09:
-> 00000000000043d0
-> [6928231.623592] R10: 000000000000133e R11: 0000000000000018 R12:
-> 0000000000000004
-> [6928231.623594] R13: 000000000000000b R14: ffffffff82364b60 R15:
-> 00189d309ada9b44
-> [6928231.623599]  ? cpuidle_enter_state+0xcc/0x270
-> [6928231.623603]  cpuidle_enter+0x17/0x20
-> [6928231.623611]  call_cpuidle+0x23/0x40
-> [6928231.623614]  do_idle+0x1d2/0x270
-> [6928231.623619]  cpu_startup_entry+0x73/0x80
-> [6928231.623624]  start_secondary+0x1ae/0x200
-> [6928231.623632]  secondary_startup_64+0xa5/0xb0
-> [6928231.623634] Code: 57 49 89 ff 41 56 41 89 f6 41 55 41 89 d5 89 f2
-> 41 54 4c 8b 24 d5 60 c7 12 82 53 48 8b 47 28 44 39 6f 04 77 06 44 3b
-> 6f 08 72 0d <0f> 0b 5b 41 5c 41 5d 41 5e 41 5f 5d c3 49 01 c4 44 89 e8
-> f0 49
-> [6928231.623693] ---[ end trace 6436d0c28a5009d4 ]---
+On Mon 2018-12-03 13:38:57, Michal Hocko wrote:
+> On Mon 03-12-18 13:31:49, Oleg Nesterov wrote:
+> > On 12/03, Michal Hocko wrote:
+> > >
+> > > Now, I wouldn't mind to revert this because the code is really old and
+> > > we haven't seen many bug reports about failing suspend yet. But what =
+is
+> > > the actual plan to make this work properly?
+> >=20
+> > I don't see a simple solution...
+> >=20
+> > But we need to fix exec/de_thread anyway, then we can probably reconsid=
+er
+> > this patch.
+>=20
+> My concern is that de_thread fix might be too disruptive for stable
+> kernels while we might want to have a simple enough fix for the the
+> suspend issue in the meantime. That was actually the primary reason I've
+> acked the hack even though I didn't like it.
+
+Do we care about failing sleep in stable? Does someone hit the issue there?
+
+This sounds like issue only Android is hitting, and they run very
+heavily patched kernels, far away from mainline or stable.
+
+> So can we find a way to shut the lockdep up when this is not really a
+> deadlock?  Or maybe this really is one and then we need a real fix for
+> stable as well.
+
+Shutting up the lockdep is of course possible...
+
+=2E..but lets first see what good solution looks like.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwFKy4ACgkQMOfwapXb+vIHmQCfax4puvNs55ec30fwpXKGZeXT
+ABkAoK2bf+R1El02tgKgtabd8QW7xWeP
+=QJyo
+-----END PGP SIGNATURE-----
+
+--TB36FDmn/VVEgNH/--
