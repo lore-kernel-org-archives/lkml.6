@@ -2,104 +2,167 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA66C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C864C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF54C2082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:19:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E438b8rC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF54C2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 705A1206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:21:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705A1206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbeLCOUS (ORCPT
+        id S1726565AbeLCOWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:20:18 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40463 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbeLCOUS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:20:18 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y16so7375096qki.7;
-        Mon, 03 Dec 2018 06:19:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=11CgyjIfYcJoIJiR+OmaYW83hh+a4QBxRc+hb/vKw+o=;
-        b=E438b8rCzB75P5aNz5OWES+OJtE7vYbWehSQE01qphxIcxhlbnF5lBog7jImAcPjwR
-         VfFC6vqDAR03bg0kpeJcoHGW3DVYYmek3Wlm39SZupDrVI4MFzTP6sFY4Eb/66om6afs
-         +AqrbMMDYKoLh1qjfYD9dqmaXeI/FWIplbYzNyNfnCS1b4NkZ74w4oF/116B0ZSjSL72
-         VgVoPU8Ah7WGYpKgai0Gg9ORiz0HnUAweUR7Mozl0u51VIEnqb9BPiDZziK940TMmrZr
-         D4rUD+twmMRYmPigPAOkQ4hj+OBBdBrqtuh9Z8XAdHyyiTMdBLVg0H/2ri7d79iCP1MR
-         HwFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=11CgyjIfYcJoIJiR+OmaYW83hh+a4QBxRc+hb/vKw+o=;
-        b=ulv76qYuOwE4Tmul+1enON5k6X5//wXsYH61XiH5B+kP12E+cEXEGvtqMtoN0/NsMT
-         ZrCAv8S6S7kp+i1+kt69rf1jB9d7xgCNkYPyJC6d/H/hJpMFffClCq7vDpn+EVL0ehKN
-         ZyFIy3xrcZWRlIf6Rn6bpAgM/jEs496NicfmWJjxHlSsK7aD6sZLAb5lBGmMNZgdzXeI
-         GhrBu71eAf5dlJPANOd2qsyGeRySOCgRt9abLNfonqLEiDmPdzsPxphRi+iq8PJeOxu2
-         SZemrRgIVnhASri1Muo/V4NzMnZk1CsGKV/tTWFwmEzr+uZqWz5I/+AkRHeh3NgaFn2h
-         cezw==
-X-Gm-Message-State: AA+aEWZ9YuWnYQi1wn2nVHfo2NDdizlyCecn8nrpIFf4PL/7E3WcFYlC
-        ld1MJIYg4wa2zaDvH55tU7esQhUMM8leBqZdD6c=
-X-Google-Smtp-Source: AFSGD/Vpk974RerVHTvDgvjXCuMOY9sDNawQCgfThSulywU7NUSN1VZctLlAA4T/xrfYIPu4mIeKvFwO2Ok/bX/n5ig=
-X-Received: by 2002:ae9:f50d:: with SMTP id o13mr14584025qkg.137.1543846746412;
- Mon, 03 Dec 2018 06:19:06 -0800 (PST)
+        Mon, 3 Dec 2018 09:22:30 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38298 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbeLCOWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:22:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 053341682;
+        Mon,  3 Dec 2018 06:21:19 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F0663F614;
+        Mon,  3 Dec 2018 06:21:17 -0800 (PST)
+Subject: Re: [PATCH v9 4/8] KVM: arm64: Support dirty page tracking for PUD
+ hugepages
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        kvmarm@lists.cs.columbia.edu
+Cc:     marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>, punitagrawal@gmail.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-5-punit.agrawal@arm.com>
+ <0d5f2d45-b09d-d43e-4320-98113d79cb18@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <215abd97-7919-25da-7164-9f9465a8d8ba@arm.com>
+Date:   Mon, 3 Dec 2018 14:21:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181129235742.14332-1-ayman.bagabas@gmail.com>
- <20181129235742.14332-3-ayman.bagabas@gmail.com> <s5hftvezupj.wl-tiwai@suse.de>
-In-Reply-To: <s5hftvezupj.wl-tiwai@suse.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 3 Dec 2018 16:18:54 +0200
-Message-ID: <CAHp75Vf7WW8ezL_H_iw_=nSVARuvhugUY5sTkQ=usU96Wj2YSA@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] x86: add support for Huawei WMI hotkeys.
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Hui Wang <hui.wang@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kailang Yang <kailang@realtek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0d5f2d45-b09d-d43e-4320-98113d79cb18@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 2:00 PM Takashi Iwai <tiwai@suse.de> wrote:
-> On Fri, 30 Nov 2018 00:57:37 +0100,
-> Ayman Bagabas wrote:
-
-> > +struct huawei_wmi_priv {
-> > +     struct input_dev *idev;
-> > +     struct led_classdev cdev;
-> > +     acpi_handle handle;
->
-> Is this handle set in anywhere?  I couldn't see it in your patch.
-> If it's supposed to be NULL, passing NULL explicitly makes your
-> intention clearer.
-
-Isn't below an answer?
-
-> > +     // Skip registering LED subsystem if no ACPI method was found.
-> > +     status = acpi_get_handle(priv->handle, "\\_SB.PCI0.LPCB.EC0", &priv->handle);
-> > +     if (ACPI_FAILURE(status))
-> > +             return 0;
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+On 03/12/2018 14:17, Anshuman Khandual wrote:
+> 
+> 
+> On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+>> In preparation for creating PUD hugepages at stage 2, add support for
+>> write protecting PUD hugepages when they are encountered. Write
+>> protecting guest tables is used to track dirty pages when migrating
+>> VMs.
+>>
+>> Also, provide trivial implementations of required kvm_s2pud_* helpers
+>> to allow sharing of code with arm32.
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+>> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> ---
+>>   arch/arm/include/asm/kvm_mmu.h   | 15 +++++++++++++++
+>>   arch/arm64/include/asm/kvm_mmu.h | 10 ++++++++++
+>>   virt/kvm/arm/mmu.c               | 11 +++++++----
+>>   3 files changed, 32 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+>> index e6eff8bf5d7f..37bf85d39607 100644
+>> --- a/arch/arm/include/asm/kvm_mmu.h
+>> +++ b/arch/arm/include/asm/kvm_mmu.h
+>> @@ -87,6 +87,21 @@ void kvm_clear_hyp_idmap(void);
+>>   
+>>   #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
+>>   
+>> +/*
+>> + * The following kvm_*pud*() functions are provided strictly to allow
+>> + * sharing code with arm64. They should never be called in practice.
+>> + */
+>> +static inline void kvm_set_s2pud_readonly(pud_t *pud)
+>> +{
+>> +	BUG();
+>> +}
+>> +
+>> +static inline bool kvm_s2pud_readonly(pud_t *pud)
+>> +{
+>> +	BUG();
+>> +	return false;
+>> +}
+> 
+> As arm32 does not support direct manipulation of PUD entries.
+> 
+>> +
+>>   static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+>>   {
+>>   	pte_val(pte) |= L_PTE_S2_RDWR;
+>> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+>> index 13d482710292..8da6d1b2a196 100644
+>> --- a/arch/arm64/include/asm/kvm_mmu.h
+>> +++ b/arch/arm64/include/asm/kvm_mmu.h
+>> @@ -251,6 +251,16 @@ static inline bool kvm_s2pmd_exec(pmd_t *pmdp)
+>>   	return !(READ_ONCE(pmd_val(*pmdp)) & PMD_S2_XN);
+>>   }
+>>   
+>> +static inline void kvm_set_s2pud_readonly(pud_t *pudp)
+>> +{
+>> +	kvm_set_s2pte_readonly((pte_t *)pudp);
+>> +}
+>> +
+>> +static inline bool kvm_s2pud_readonly(pud_t *pudp)
+>> +{
+>> +	return kvm_s2pte_readonly((pte_t *)pudp);
+>> +}
+>> +
+>>   #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
+>>   
+>>   #ifdef __PAGETABLE_PMD_FOLDED
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index fb5325f7a1ac..1c669c3c1208 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -1347,9 +1347,12 @@ static void  stage2_wp_puds(struct kvm *kvm, pgd_t *pgd,
+>>   	do {
+>>   		next = stage2_pud_addr_end(kvm, addr, end);
+>>   		if (!stage2_pud_none(kvm, *pud)) {
+>> -			/* TODO:PUD not supported, revisit later if supported */
+>> -			BUG_ON(stage2_pud_huge(kvm, *pud));
+>> -			stage2_wp_pmds(kvm, pud, addr, next);
+>> +			if (stage2_pud_huge(kvm, *pud)) {
+>> +				if (!kvm_s2pud_readonly(pud))
+>> +					kvm_set_s2pud_readonly(pud);
+>> +			} else {
+>> +				stage2_wp_pmds(kvm, pud, addr, next);
+>> +			}
+> 
+> As this series is enabling PUD related changes in multiple places, it is
+> reasonable to enable PGD level support as well even if it might not be
+> used much at the moment. I dont see much extra code to enable PGD, then
+> why not ? Even just to make the HugeTLB support matrix complete.
+
+Architecturally, we have hugepages at PUD/PMD (Level1 and Level2). PGD
+is a variable level which could be L0 or L1 (when PUD is folded) or L2(when
+PMD is folded). So if we enabled PUD/PMD hugepages, that would make sure
+that the PGD hugepages (i.e, when one of the levels are folded) are supported.
+We don't have L0 huge pages in arm64. Does that make sense ?
+
+Cheers
+Suzuki
+
+
+
+> 
