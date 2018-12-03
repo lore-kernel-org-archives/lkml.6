@@ -2,132 +2,111 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCF8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E06C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445912087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BC0520848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CHvJHY0O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445912087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="dmyiMPaA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC0520848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeLCROc (ORCPT
+        id S1726892AbeLCRQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:14:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54064 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeLCROc (ORCPT
+        Mon, 3 Dec 2018 12:16:15 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38515 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbeLCRQP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:14:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2/VfXTq7jwJkos5+u0gvYTtn0QapejP+xKaA3A+MuoY=; b=CHvJHY0O7GVmWNFXNrz0Xz237C
-        tD1j8lfAcedq6bWWRfJCkn+FKxTZ4gZJeGPhzhAL5Osn7IMb99rCfslbsqtvHa2wdqEPxumkgsEvD
-        o5qkXLdhUxaptFtxU8Exxi9Ukxc2xi6hsof6chfcRcQ0gX846SxDjO6/IcuQ/nNreg/J4kGiS7YTO
-        dc336dW4TRFHMCcuVp6Wnvj22wLFVoCY/us/4GYGnSNVTQz58XmLE9AjqtrAUwjGRL96T7ixSh2Xy
-        zN0UF5SA5BrU0wPzyXBgSgGePhTr3aS1JlRZNmtg3xmtz8Q23X0BbqbndjWwsAXF9JYAp0vJ3calH
-        DlhFucFg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTrng-0001xQ-U7; Mon, 03 Dec 2018 17:14:29 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 11C9D2029FD6C; Mon,  3 Dec 2018 18:14:26 +0100 (CET)
-Message-Id: <20181203171043.162771364@infradead.org>
-User-Agent: quilt/0.65
-Date:   Mon, 03 Dec 2018 18:03:45 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     dave.hansen@intel.com, luto@kernel.org, peterz@infradead.org
-Cc:     x86@kernel.org, Tom.StDenis@amd.com, linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 02/10] x86/mm/cpa: Add ARRAY and PAGES_ARRAY selftests
-References: <20181203170343.054618965@infradead.org>
+        Mon, 3 Dec 2018 12:16:15 -0500
+Received: by mail-ot1-f66.google.com with SMTP id e12so12334332otl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:16:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=R7//ouQOHJxMmF+Hv4PttcsPESm78QHjH+fq/les3KE=;
+        b=dmyiMPaAFzFy3QX1b0jps6exvCJySRySHWYW0DPVff4LBG0lKU7f4cEcZiUcvQHD1z
+         F6ehGkGKpcYQlaephvO8LqprxL9JK4FLIhspS5zDOZCbGXKwDwv4cCoGqr4AQS9eK48b
+         bxA9oOYuNMUlughk8h3eh1aU2m8qCPezagOiUQDUbKgfGAJos4BZ6Mhjs3euDr9lyCGa
+         oy5atu0yp6liTqap4eMQYz/tq6T7ZE3vPjRETb3fPmYCG2qq4z6mzDCR6ZdV9CO+82ga
+         Q//pHZXTm6XZ4MTQvFxIp9mqK7+bECogoea4hElo8yetGx1NigBE3XvOl+DnJYuvN/Vm
+         OJpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=R7//ouQOHJxMmF+Hv4PttcsPESm78QHjH+fq/les3KE=;
+        b=U6gPvceiz91INdaIAK9GJK539ETrblzS8hOla37DKX1pz6n3mHsrfgkXxoCLrz9Q5A
+         CPvQtADWEByT0/FeFRZsmzTiimH3nD6yIz+u6+mk8eBdwlTL8RekdXkgWFa8ydrHjQfu
+         4UATb7pZHt7l9UoLiNyHJJHo95phv7dsR6aEcnS8wSVnYVctM1Q7yzY0/gcROepS4QuE
+         VNafio8SMvRuW7GAU/JsUssVZsXWoJV2qWF67OmMDtrXkZzWaTyozSgp29h1ezrzuaZy
+         YfTZHHGnQC70+06ujUjzkk/3dtkmkxEbCezD4VIknHOUbrENJ8BTPlNUAiJ7FjCUyTgG
+         8NhA==
+X-Gm-Message-State: AA+aEWaaHfOAux9izUPgnuJsEvZkWb1dDf+0h/StM+tuWZbpF8hQ3wYa
+        yLpYFwcFzHHcDKvR56Xck23IlJ1szcKUEyA0BlbQ8g==
+X-Google-Smtp-Source: AFSGD/UOEXuLcWsBc9pzYf3aqSlpIpOYgtFRaVTpHLi9mFjtCOmThruWOE7Yo0+CFJ1xgdOKIxA30R5PueiX+K+dGbk=
+X-Received: by 2002:a9d:6a50:: with SMTP id h16mr9890972otn.95.1543857372870;
+ Mon, 03 Dec 2018 09:16:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20181022201317.8558C1D8@viggo.jf.intel.com> <ffeb6225-6d5c-099e-3158-4711c879ec23@gmail.com>
+ <48d78370-438d-65fa-370c-4cf61a27ed3d@intel.com>
+In-Reply-To: <48d78370-438d-65fa-370c-4cf61a27ed3d@intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 3 Dec 2018 09:16:01 -0800
+Message-ID: <CAPcyv4jU1A93J4pqme3bGHE_KJE2TZ_F9pncgesuksT8YaR-FQ@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Allow persistent memory to be used like normal RAM
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Brice Goglin <brice.goglin@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current pageattr-test code only uses the regular range interface,
-add code that also tests the array and pages interface.
+On Mon, Dec 3, 2018 at 8:56 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 12/3/18 1:22 AM, Brice Goglin wrote:
+> > Le 22/10/2018 =C3=A0 22:13, Dave Hansen a =C3=A9crit :
+> > What happens on systems without an HMAT? Does this new memory get merge=
+d
+> > into existing NUMA nodes?
+>
+> It gets merged into the persistent memory device's node, as told by the
+> firmware.  Intel's persistent memory should always be in its own node,
+> separate from DRAM.
+>
+> > Also, do you plan to have a way for applications to find out which NUMA
+> > nodes are "real DRAM" while others are "pmem-backed"? (something like a
+> > new attribute in /sys/devices/system/node/nodeX/) Or should we use HMAT
+> > performance attributes for this?
+>
+> The best way is to use the sysfs-generic interfaces to the HMAT that
+> Keith Busch is pushing.  In the end, we really think folks will only
+> care about the memory's performance properties rather than whether it's
+> *actually* persistent memory or not.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/mm/pageattr-test.c |   28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
-
---- a/arch/x86/mm/pageattr-test.c
-+++ b/arch/x86/mm/pageattr-test.c
-@@ -23,7 +23,8 @@
- static __read_mostly int print = 1;
- 
- enum {
--	NTEST			= 400,
-+	NTEST			= 3 * 100,
-+	NPAGES			= 100,
- #ifdef CONFIG_X86_64
- 	LPS			= (1 << PMD_SHIFT),
- #elif defined(CONFIG_X86_PAE)
-@@ -110,6 +111,9 @@ static int print_split(struct split_stat
- static unsigned long addr[NTEST];
- static unsigned int len[NTEST];
- 
-+static struct page *pages[NPAGES];
-+static unsigned long addrs[NPAGES];
-+
- /* Change the global bit on random pages in the direct mapping */
- static int pageattr_test(void)
- {
-@@ -137,7 +141,7 @@ static int pageattr_test(void)
- 		unsigned long pfn = prandom_u32() % max_pfn_mapped;
- 
- 		addr[i] = (unsigned long)__va(pfn << PAGE_SHIFT);
--		len[i] = prandom_u32() % 100;
-+		len[i] = prandom_u32() % NPAGES;
- 		len[i] = min_t(unsigned long, len[i], max_pfn_mapped - pfn - 1);
- 
- 		if (len[i] == 0)
-@@ -167,14 +171,30 @@ static int pageattr_test(void)
- 				break;
- 			}
- 			__set_bit(pfn + k, bm);
-+			addrs[k] = addr[i] + k*PAGE_SIZE;
-+			pages[k] = pfn_to_page(pfn + k);
- 		}
- 		if (!addr[i] || !pte || !k) {
- 			addr[i] = 0;
- 			continue;
- 		}
- 
--		test_addr = addr[i];
--		err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
-+		switch (i % 3) {
-+		case 0:
-+			test_addr = addr[i];
-+			err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
-+			break;
-+
-+		case 1:
-+			err = change_page_attr_set(addrs, len[1], PAGE_CPA_TEST, 1);
-+			break;
-+
-+		case 2:
-+			err = cpa_set_pages_array(pages, len[i], PAGE_CPA_TEST);
-+			break;
-+		}
-+
-+
- 		if (err < 0) {
- 			printk(KERN_ERR "CPA %d failed %d\n", i, err);
- 			failed++;
-
-
+It's also important to point out that "persistent memory" by itself is
+an ambiguous memory type. It's anything from new media with distinct
+performance characteristics to battery backed DRAM. I.e. the
+performance of "persistent memory" may be indistinguishable from "real
+DRAM".
