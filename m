@@ -2,223 +2,191 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC31C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBEBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C2922145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:17:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C2922145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 87D7C20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:20:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="EUhbRXJT";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="qG+bmImT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D7C20848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726161AbeLCKSV (ORCPT
+        id S1726145AbeLCKUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:18:21 -0500
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:55239 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726046AbeLCKSU (ORCPT
+        Mon, 3 Dec 2018 05:20:25 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:54274 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725947AbeLCKUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:18:20 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id TlITgqHuZfGaRTlIXgiIqg; Mon, 03 Dec 2018 11:17:54 +0100
-Subject: Re: [PATCH v6 0/2] media: platform: Add Aspeed Video Engine driver
-To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, robh+dt@kernel.org,
-        mchehab@kernel.org, linux-media@vger.kernel.org
-References: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <ed7f7598-c2a8-2a78-3513-d80344fd51b5@xs4all.nl>
-Date:   Mon, 3 Dec 2018 11:17:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 3 Dec 2018 05:20:25 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB3AIhpa018108;
+        Mon, 3 Dec 2018 02:19:51 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=Oog4wjXbmSq5ZuRftG6A4/VaXCPVpgtjLAMFOOxaCFs=;
+ b=EUhbRXJT1p2VP1u9mbPLPlPBWkmCaY25Phonw7Rq1Iqys95xGlhp/LZqCn+NEd5t+JER
+ 38XSxeb/5L5sKiTL4j7tGf5qyQj3oXNG/BnwTgQRsEL/U69GurmBwYOl+5imDYhRfvRW
+ eoKI7CzoDVLBguTu9bcFYzcdrntnUbOFQJ/i0jiCFkf1FkE+maaXdPB292JxMnzy/Qpx
+ N5sZfqsZk5VTBhJ2pgxoAEB41ByQMuezB19gdbsaY/sPzOTEWKLXAYnQdLAP9dzhXNCq
+ qHKiBnSOjjwNdD8eaqAtmGk6xpC/95eDwM5CkX0IJbMzQyGfUt3REhqedcJAb1KtcgGw /A== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2059.outbound.protection.outlook.com [104.47.36.59])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2p3ps2j61k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 03 Dec 2018 02:19:51 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oog4wjXbmSq5ZuRftG6A4/VaXCPVpgtjLAMFOOxaCFs=;
+ b=qG+bmImT5uCRV7+fSwL+xPfJn7uJNSIuPzn/sXJKoHESZnfHuj6a1ZxOmP613Otu2XkkSW/MHA1HBHHXlGp3D03sAi7zKu4ZWoyrkMNsU+Jo/3bmbYHwjBdnduE0Zt5XZ8HxOPPS+rsyAUQKIGIt3EUVoCexQWIRCNs56niyY0A=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4854.namprd07.prod.outlook.com (52.135.205.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.21; Mon, 3 Dec 2018 10:19:49 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e0dc:ebd5:e248:d644]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e0dc:ebd5:e248:d644%6]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
+ 10:19:47 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Roger Quadros <rogerq@ti.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: RE: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations part
+ of the API
+Thread-Topic: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations
+ part of the API
+Thread-Index: AQHUfycXLoLM1JyA10aQRtXGNL+S26VlK76AgAQ822CAA3ct4A==
+Date:   Mon, 3 Dec 2018 10:19:47 +0000
+Message-ID: <BYAPR07MB47098B0E57C9AF98A457D1B5DDAE0@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-9-git-send-email-pawell@cadence.com>
+ <5BFE8883.7090802@ti.com>
+ <BYAPR07MB4709BBB7E78C7A7244270215DDAC0@BYAPR07MB4709.namprd07.prod.outlook.com>
+In-Reply-To: <BYAPR07MB4709BBB7E78C7A7244270215DDAC0@BYAPR07MB4709.namprd07.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfGF8kZUiFojCTH0O8EzEGaoYDWEc+FlCfH3MyNeaho3s1u8rYqoNYgvvquQgdQybpwdyLeexpspG9Xiu2GO2R5ECtV+UGW2CTVY5ASalSEGP6bwBFMRh
- f2b/MT+OE08HjQNe87Moul7WynFhY+DqPxcKvfgMNa/9fDRgoCJIRQGZE4C/zvPwkE5bq1cEsZrm9P96bTNErUW0EGvJW2e4HQm48cLv8yX86pZnLILZ/67/
- xxUGY4W0YsvRoFu6lpbIp1u07ik8eSAIwfUW5RNITfHyjj/HPQnDupdewWQxyZbdXQa0PeHAvOk9FliO92j/1ThZb2e34ZditZo40UeumFs2r7P8JigtcXLH
- WtiIV4DT/aF2qnT5/bgRCfjE3BeodUB5orLLdvkxRMrvacIreAHQ6IRJfqr3QEQcC8NFXOQSbbs7Ake4EBCFqgQLzut7pQ==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctZjU3ZGI5YWUtZjZlNC0xMWU4LTg3MjYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGY1N2RiOWFmLWY2ZTQtMTFlOC04NzI2LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMjE3NCIgdD0iMTMxODgzMDU5ODc4MDAwNDQ0IiBoPSJOYVFJOFJwWWdQVmlldk1KbFM2aENhNmZwcW89IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB4854;20:UC1yqtsuYw9oJYXtvrmy30+1vdBDbrg7eRXKfn1v0jXgrpkmi3+pJqsa6Fi7JplWAwmphmdWzt79XgOiswxRRwv5CJtkX3+O/AgFwY3q8meckFxAkFLmT7l0QrVFxnhO7Ox3F5Q3QFpiVH/TRzYCR2mwuqld2w62YVktaIkjlx/a7gulZguQTOwCZU6VrbFJ1FkW1xlhb5qQScap9C73tVSRgpYpehHqerXwYD2p1Wxt4EJ5YcE/69fBl0jlMbwh
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(396003)(136003)(376002)(36092001)(199004)(189003)(51444003)(71190400001)(93886005)(229853002)(14454004)(6246003)(4326008)(53936002)(2906002)(2501003)(217873002)(55016002)(11346002)(3846002)(9686003)(68736007)(26005)(54906003)(110136005)(5660300001)(186003)(6436002)(478600001)(66066001)(6506007)(97736004)(446003)(81166006)(99286004)(8936002)(7416002)(316002)(476003)(86362001)(76176011)(8676002)(71200400001)(486006)(7696005)(81156014)(25786009)(105586002)(74316002)(106356001)(305945005)(33656002)(256004)(6116002)(14444005)(7736002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4854;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: ff91d4de-2e1d-4c11-7952-08d65908da58
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4854;
+x-ms-traffictypediagnostic: BYAPR07MB4854:
+x-microsoft-antispam-prvs: <BYAPR07MB4854276ABF0F53295D43612CDDAE0@BYAPR07MB4854.namprd07.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4854;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4854;
+x-forefront-prvs: 08756AC3C8
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: PRO8fZE+IQzX1omAQRTCvZdQzDYX6CDA4a5Jtkhq5FKmhV+3tsKSfxefGElVtrN1bj58OAqIso04nG0VVSRRClaZmoE9WRGB5X6pNE+46VtwKT8xgKC22QXYRNjBBDd0a1p7qUXsRV3406o4uHB9OScsB1YRr45zT9v4afRWP750KQrWy+MBeqPOK3pxmG0yWbfVKUB+sS5877189lRyH7UpbNSJzALVKU7sjlsPsDtsOP47XHCRawSQvptXv9tG1dNoy2jLPF+aW2X/Q2xA8yqns01dtPEWyJRUkyo0ZjIL5kWVRqrs8gVPUe3UsMScc+RMHHBKf/ZQQZeGZmBEmVsTNjjntqu7NzPXqH/aOYw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff91d4de-2e1d-4c11-7952-08d65908da58
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 10:19:47.6515
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4854
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/2018 08:37 PM, Eddie James wrote:
-> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
-> can capture and compress video data from digital or analog sources. With
-> the Aspeed chip acting as a service processor, the Video Engine can
-> capture the host processor graphics output.
-> 
-> This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
-> interface by way of videobuf2. Each frame, the driver triggers the hardware to
-> capture the host graphics output and compress it to JPEG format.
-> 
-> v4l2-compliance SHA: ac9596560fedb3cd29148ef90b03778d76f1cd9a, 32 bits
-> 
-> Compliance test for device /dev/video0:
-> 
-> Driver Info:
-> 	Driver name      : aspeed-video
-> 	Card type        : Aspeed Video Engine
-> 	Bus info         : platform:aspeed-video
-> 	Driver version   : 4.18.19
-> 	Capabilities     : 0x85200001
-> 		Video Capture
-> 		Read/Write
-> 		Streaming
-> 		Extended Pix Format
-> 		Device Capabilities
-> 	Device Caps      : 0x05200001
-> 		Video Capture
-> 		Read/Write
-> 		Streaming
-> 		Extended Pix Format
-> 
-> Required ioctls:
-> 	test VIDIOC_QUERYCAP: OK
-> 
-> Allow for multiple opens:
-> 	test second /dev/video0 open: OK
-> 	test VIDIOC_QUERYCAP: OK
-> 	test VIDIOC_G/S_PRIORITY: OK
-> 	test for unlimited opens: OK
-> 
-> Debug ioctls:
-> 	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-> 	test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
-> 	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> 	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-> 	test VIDIOC_ENUMAUDIO: OK (Not Supported)
-> 	test VIDIOC_G/S/ENUMINPUT: OK
-> 	test VIDIOC_G/S_AUDIO: OK (Not Supported)
-> 	Inputs: 1 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
-> 	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> 	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-> 	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-> 	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-> 	Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
-> 	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-> 	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
-> 	test VIDIOC_DV_TIMINGS_CAP: OK
-> 	test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls (Input 0):
-> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-> 	test VIDIOC_QUERYCTRL: OK
-> 	test VIDIOC_G/S_CTRL: OK
-> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-> 		fail: v4l2-test-controls.cpp(831): failed to find event for control 'Chroma Subsampling'
+Hi
+>>> +
+>>> +static struct usb_ep *cdns3_gadget_match_ep(struct usb_gadget *gadget,
+>>> +					    struct usb_endpoint_descriptor *desc,
+>>> +					    struct usb_ss_ep_comp_descriptor *comp_desc)
+>>> +{
+>>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
+>>> +	struct cdns3_endpoint *priv_ep;
+>>> +	unsigned long flags;
+>>> +
+>>> +	priv_ep =3D cdns3_find_available_ss_ep(priv_dev, desc);
+>>> +	if (IS_ERR(priv_ep)) {
+>>> +		dev_err(&priv_dev->dev, "no available ep\n");
+>>> +		return NULL;
+>>> +	}
+>>> +
+>>> +	dev_dbg(&priv_dev->dev, "match endpoint: %s\n", priv_ep->name);
+>>> +
+>>> +	spin_lock_irqsave(&priv_dev->lock, flags);
+>>> +	priv_ep->endpoint.desc =3D desc;
+>>> +	priv_ep->dir  =3D usb_endpoint_dir_in(desc) ? USB_DIR_IN : USB_DIR_OU=
+T;
+>>> +	priv_ep->type =3D usb_endpoint_type(desc);
+>>> +
+>>> +	list_add_tail(&priv_ep->ep_match_pending_list,
+>>> +		      &priv_dev->ep_match_list);
+>>> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+>>> +	return &priv_ep->endpoint;
+>>> +}
+>>
+>>Why do you need a custom match_ep?
+>>doesn't usb_ep_autoconfig suffice?
+>
+>I need to test it but at first glance it  looks like usb_ep_autoconfig suf=
+fice.
+>
+>>
+>>You can check if EP is claimed or not by checking the ep->claimed flag.
+>>
+I checked it and did not work correct. The flag claimed is set in usb_ep_au=
+toconf, but=20
+a little bit later during USB RESET this flag is cleared.=20
+So, I can't base on this flag.  I think that it's incorrect behavior in gad=
+get core driver or in function drivers.
+Maybe we should have additional flag in usb_ep object used during resetting=
+, or usb_ep_autoconf function should be called after each USB RESET.=20
 
-This is fixed in our master branch. Event handling was broken for a while.
+I notice that I can based on ep->address it is set also in usb_ep_autoconf =
+and probably is not cleared anywhere.
+It's little tricky, but It looks like it works correct. I add some comment =
+for this checking.=20
+Maybe in feature I will be able to replace it with claimed flag.
 
-I recommend that you upgrade, since this was a nasty little bug.
+Felipe what's your opinion about claimed flag.  It's should be fixed or not=
+ ?
 
-Regards,
-
-	Hans
-
-> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
-> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-> 	Standard Controls: 3 Private Controls: 0
-> 
-> Format ioctls (Input 0):
-> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-> 	test VIDIOC_G/S_PARM: OK
-> 	test VIDIOC_G_FBUF: OK (Not Supported)
-> 	test VIDIOC_G_FMT: OK
-> 	test VIDIOC_TRY_FMT: OK
-> 	test VIDIOC_S_FMT: OK
-> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-> 	test Cropping: OK (Not Supported)
-> 	test Composing: OK (Not Supported)
-> 	test Scaling: OK (Not Supported)
-> 
-> Codec ioctls (Input 0):
-> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> 
-> Buffer ioctls (Input 0):
-> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-> 	test VIDIOC_EXPBUF: OK
-> 	test Requests: OK (Not Supported)
-> 
-> Test input 0:
-> 
-> Streaming ioctls:
-> 	test read/write: OK
-> 	test blocking wait: OK
-> 	test MMAP: OK                                     
-> 	test USERPTR: OK (Not Supported)
-> 	test DMABUF: Cannot test, specify --expbuf-device
-> 
-> Total: 48, Succeeded: 47, Failed: 1, Warnings: 0
-> 
-> Changes since v5:
->  - Rework resolution change and v4l2 timings functions again with active and
->    detected timings.
->  - Renamed a few things.
->  - Fixed polarities in the timings.
-> 
-> Changes since v4:
->  - Set real min and max resolution in enum_dv_timings
->  - Add check for vb2_is_busy before settings the timings
->  - Set max frame rate to the actual max rather than max + 1
->  - Correct the input status to 0.
->  - Rework resolution change to only set the relevant h/w regs during startup or
->    when set_timings is called.
-> 
-> Changes since v3:
->  - Switch update reg function to use u32 clear rather than unsigned long mask
->  - Add timing information from host VGA signal
->  - Fix binding documentation mispelling
->  - Fix upper case hex values
->  - Add wait_prepare and wait_finish
->  - Set buffer state to queued (rather than error) if streaming fails to start
->  - Switch engine busy print statement to error
->  - Removed a couple unecessary type assignments in v4l2 ioctls
->  - Added query_dv_timings, fixed get_dv_timings
->  - Corrected source change event to fire if and only if size actually changes
->  - Locked open and release
-> 
-> Changes since v2:
->  - Switch to streaming interface. This involved a lot of changes.
->  - Rework memory allocation due to using videobuf2 buffers, but also only
->    allocate the necessary size of source buffer rather than the max size
-> 
-> Changes since v1:
->  - Removed le32_to_cpu calls for JPEG header data
->  - Reworked v4l2 ioctls to be compliant.
->  - Added JPEG controls
->  - Updated devicetree docs according to Rob's suggestions.
->  - Added myself to MAINTAINERS
-> 
-> Eddie James (2):
->   dt-bindings: media: Add Aspeed Video Engine binding documentation
->   media: platform: Add Aspeed Video Engine driver
-> 
->  .../devicetree/bindings/media/aspeed-video.txt     |   26 +
->  MAINTAINERS                                        |    8 +
->  drivers/media/platform/Kconfig                     |    9 +
->  drivers/media/platform/Makefile                    |    1 +
->  drivers/media/platform/aspeed-video.c              | 1719 ++++++++++++++++++++
->  5 files changed, 1763 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
->  create mode 100644 drivers/media/platform/aspeed-video.c
-> 
-
+Cheers
+Pawel
