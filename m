@@ -2,146 +2,96 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E24DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D90EFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45FF20661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F2E620661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:26:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="K4Z5kRRo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C45FF20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfU4f2K4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2E620661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbeLCQYO (ORCPT
+        id S1726752AbeLCQ0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:24:14 -0500
-Received: from cmta17.telus.net ([209.171.16.90]:59910 "EHLO cmta17.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbeLCQYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:24:14 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id Tr0ngcYo5P96wTr0ogEjtd; Mon, 03 Dec 2018 09:24:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1543854243; bh=AiaTQMQBvGccLcI4ClF8lUxZi5gSyNyV8P7FgwDTRMg=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=K4Z5kRRo1XAEOyJeVeg9JR0eEFl+NqoVxQwLK5QlaIP7a1Dx1bkT3qtsDtUh5DmJV
-         k5gHq36n2HmgPn/z2Yhvbj/R/0bPnUjrZCYIjQj+5uTlqSqp7OsHXhmKGaJJ8JXQ7G
-         ptdq3CIoa+VWZMLq6wIlY3QiEY25XKv6dvA5e0BsWXuCzHP6KLygJW6Bz8tsCqVPWO
-         +vscQ+4nIuCp6Igi0293sP702wcdNcba9q/hWjWledQbdNkyjgLtOQ6HOIrvJNFbEm
-         bHxr8C/YNCcifSKdOxeDE8SJpmKRqSM5RD/xuZUABe80UqLXCoQvrNbhZUrMmDUMFk
-         8Ex91adLx7Ylw==
-X-Authority-Analysis: v=2.3 cv=G5vN7Os5 c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=OuBNrd82AAAA:20
- a=6DtfcGF9F9tOB7LjX30A:9 a=QEXdDO2ut3YA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Giovanni Gherdovich'" <ggherdovich@suse.cz>
-Cc:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Frederic Weisbecker'" <frederic@kernel.org>,
-        "'Mel Gorman'" <mgorman@suse.de>,
-        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <42865872.dmYH3PmblP@aspire.rjw.lan> T62Cgz3BqpqCWT62HgcJvj
-In-Reply-To: T62Cgz3BqpqCWT62HgcJvj
-Subject: RE: [RFC/RFT][PATCH v6] cpuidle: New timer events oriented governor for tickless systems
-Date:   Mon, 3 Dec 2018 08:23:56 -0800
-Message-ID: <001a01d48b24$9aa38c00$cfeaa400$@net>
+        Mon, 3 Dec 2018 11:26:00 -0500
+Received: from mail-qk1-f174.google.com ([209.85.222.174]:36882 "EHLO
+        mail-qk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbeLCQ0A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 11:26:00 -0500
+Received: by mail-qk1-f174.google.com with SMTP id 131so7683027qkd.4;
+        Mon, 03 Dec 2018 08:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7Bsr4wedVD9JxukZDVeRReP8kYGIjt+Mgx/noLT6+wk=;
+        b=OfU4f2K4/+i0w36IQJ4ER9JlDdl0Amu+6Fi8sfliIUvurK/k311bGtZhBim0ZwLTCF
+         dDY0iqwW9W1euaFaByK2cowZhCEfNAWI15ZpZSDtRj3Hg764CmFUFhvskg636alCV0AF
+         SpDdPkRpqp/qVmFfJTW2ngefrjXvIPSk+ctflhGUWpQWAJe6sQluHFg3LQvHub0wiS3B
+         fnSo9RV93Vbza0qST2/+mzcO9CWsCEhIs9HF4UcIs9QIjDFO1q4EA8Pvrd86kgvRjAe9
+         dGg+B/ooaqL9yg0za2fx5hw5HrRp8pNsdCgdps+yKVl57zSm8UU6c8Ce3PsadBJy1CcY
+         qNHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7Bsr4wedVD9JxukZDVeRReP8kYGIjt+Mgx/noLT6+wk=;
+        b=Lyg74DR1zyh6Ngdxux4xaX0Vqf5onS4Blcj3Wwq1CBwHbgmNZ8W0+GwGZwQVxLaSRJ
+         ksgq1M1lovFMLwBFwFOsBpxRyWPE2+Rby+HMbdO7jJfKKpeClqRQT39YKPTQ/mcosFmB
+         X8rnZiLjOWFRfSlXwSOYd4mFLKiCMeYEpJ38ABhvLrSaV9F8snGPxXwpkCKPI/ETmu8J
+         jeez3dNCpOPidYgGpLzOFZdYf0+MQolUR6iieJt+7jq5IGnPf+tC20tYxp90LhSL8zbJ
+         1K9Yg8knkmZFkiHzSTg6cOWh/8u0XArMVSlYpodoZfnAXl3JfVdgTjVmKHjD8xhLpoNT
+         5NIg==
+X-Gm-Message-State: AA+aEWZpfdZqMrEk9NK4yIJpjHU3691tgkKxy3edQ3YIKPFTAiVdPMPh
+        kz1FHaw3k0+XBhpcCYOYPXU=
+X-Google-Smtp-Source: AFSGD/VptyuFX7e7g23JnNDh9LzsNwKEfWfTLvFEqOZrpj4qh5Ibc+GcYrAGuUJam163H7cDRvSrOQ==
+X-Received: by 2002:a37:9604:: with SMTP id y4mr15818063qkd.279.1543854358010;
+        Mon, 03 Dec 2018 08:25:58 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:20d7])
+        by smtp.gmail.com with ESMTPSA id y32sm16093481qth.3.2018.12.03.08.25.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 08:25:57 -0800 (PST)
+Date:   Mon, 3 Dec 2018 08:25:55 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Li Zefan <lizefan@huawei.com>, mingo@kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] cpuset: Remove set but not used variable 'cs'
+Message-ID: <20181203162555.GM2509588@devbig004.ftw2.facebook.com>
+References: <1543633976-183380-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdSJgCnCYoJejtieTwSToCb137fwhQBnN0WQ
-X-CMAE-Envelope: MS4wfHBuJfh2V9xeKhJ0qhgqeB4DSRARinAeoitl3Nzgy0RYJujgBbP48LVT5viwU3JyTAB8UDYYKYe3assPoCeJlm+tVyAGNOoU+IrKwrObkTa2GeXxpeNE
- LUq8+34iaDrdzOTjqr7bx2rVomT3A7t9TcXE8JpBZr9BQnE+02a8bc9EVj+BumAZwCfbFVQ2zoCvMHOiHxuvYw9vsIe6M8Z1lsTlVIgwGXX0pZNb+g6oGPoM
- fGjWRjtT+Qqn26mpvsqk8+bD3clNA09lWxhghFqJ8eaSX/yg3EsPpAtkx8LL0vfn3/QLhyZA093mc7lW7A60bxbMW81xp/litHcWGg/1150jDfxEToS97sfH
- Kf3J+HuLDyo1YC4LzHZUjF5+f/8fsdE6pzL4DMYZmoG6n+FEr/0H+JRXsgvl5Ao3rAMIbxQ3NEhjMbmixWwsyIfrfTTfo7xKGC+9qAzVyqKry6yIJknoLIEu
- fhfPz1nta20W6USv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543633976-183380-1-git-send-email-yuehaibing@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Giovanni,
+On Sat, Dec 01, 2018 at 03:12:56AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> kernel/cgroup/cpuset.c: In function 'cpuset_cancel_attach':
+> kernel/cgroup/cpuset.c:2167:17: warning:
+>  variable 'cs' set but not used [-Wunused-but-set-variable]
+> 
+> It never used since introduction in commit 1f7dd3e5a6e4 ("cgroup: fix handling
+> of multi-destination migration from subtree_control enabling")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Perhaps I should go off-list for this, not sure.
+Applied to cgroup/for-4.21.
 
-I had the thought that I should be able to get similar
-results as your "8x-SKYLAKE-UMA" on my test computer,
-i7-2600K. Or that at least it was worth trying, just
-to see. I couldn't find the same or similar test
-on Phoronix, and my attempts to do similar, for example,
-with iperf, didn't show differences between the baseline
-kernel and one with the teov6 patch.
+Thanks.
 
-So I tried the test set you referenced [1]:
-
-On 2018.12.01 06:18 Giovanni Gherdovich wrote:
-...
-> * netperf on loopback over TCP
->    * global-dhp__network-netperf-unbound
-
-I assume this means that I am supposed to do:
-
-cp config-global-dhp__network-netperf-unbound config
-
-from the configs directory. Anyway that config file
-looks correct. Then:
-
-./run-mmtests.sh --no-monitor 3.0-nomonitor
-
-...
-
-> * sockperf on loopback over UDP, mode "throughput"
->    * global-dhp__network-sockperf-unbound
-
-Similarly (from the appropriate directories): 
-
-cp config-global-dhp__network-sockperf-unbound config
-./run-mmtests.sh --no-monitor 3.0-nomonitor
-
-My issue is that I do not understand the output or how it
-might correlate with your tables.
-
-I get, for example:
-
-   3    1   1     0.13s     0.68s     0.80s  1003894.302 1003779.613
-   3    1   1     0.16s     0.64s     0.80s  1008900.053 1008215.336
-   3    1   1     0.14s     0.66s     0.80s  1009630.439 1008990.265
-...
-
-But I don't know what that means, nor have I been able to find
-a description anywhere.
-
-In the README file, I did see that for reporting I am 
-somehow supposed to use compare-kernels.sh, but
-I couldn't figure that out.
-
-By the way, I am running these tests as a regular user, but
-they seem to want to modify:
-
-/sys/kernel/mm/transparent_hugepage/enabled
-
-which requires root privilege. I don't really want to mess
-with that stuff for these tests.
- 
-> [1] https://github.com/gormanm/mmtests
-
-Can you help me to produce meaningful results to compare with
-your results?
-
-... Doug
-
-
+-- 
+tejun
