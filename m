@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF51C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81850C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 535DC20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 535DC20850
+	by mail.kernel.org (Postfix) with ESMTP id 3E8F820864
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8F820864
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbeLCXgC (ORCPT
+        id S1726200AbeLCXgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:36:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33518 "EHLO mx1.redhat.com"
+        Mon, 3 Dec 2018 18:36:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46462 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725968AbeLCXf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:35:59 -0500
+        id S1726182AbeLCXgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 18:36:02 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9111F315486B;
-        Mon,  3 Dec 2018 23:35:58 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 163EA2D7FB;
+        Mon,  3 Dec 2018 23:36:02 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-120-188.rdu2.redhat.com [10.10.120.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CC23604A3;
-        Mon,  3 Dec 2018 23:35:55 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B9873600C1;
+        Mon,  3 Dec 2018 23:35:58 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -58,16 +58,16 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Dave Airlie <airlied@redhat.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>
-Subject: [RFC PATCH 05/14] mm/hms: add link to heterogeneous memory system infrastructure
-Date:   Mon,  3 Dec 2018 18:35:00 -0500
-Message-Id: <20181203233509.20671-6-jglisse@redhat.com>
+Subject: [RFC PATCH 06/14] mm/hms: add bridge to heterogeneous memory system infrastructure
+Date:   Mon,  3 Dec 2018 18:35:01 -0500
+Message-Id: <20181203233509.20671-7-jglisse@redhat.com>
 In-Reply-To: <20181203233509.20671-1-jglisse@redhat.com>
 References: <20181203233509.20671-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 03 Dec 2018 23:35:59 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 03 Dec 2018 23:36:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,21 +75,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-A link connect initiators (CPUs or devices) and targets memory with
-each others. It does necessarily match one to one with a physical
-inter-connect ie a given physical inter-connect by be presented as
-multiple links or multiple physical inter-connect can be presented
-as just one link.
+A bridge connect two links with each others and apply only to listed
+initiators. With links, this allows to describe any kind of system
+topology ie any kind of directed graph.
 
-What matters is that the properties associated with the links applies
-to all initiators and targets listed as connected to that link.
-
-For example you can consider the PCIE bus if all initiators can peer
-to peer with each others than it can be presented as just one link
-with all the PCIE devices in it and the local CPU (ie CPU from which
-the PCIE lanes are coming from). If not all PCIE device can peer to
-peer than a link per peer to peer group is created and corresponding
-CPU is added to each.
+Moreover with bridges the userspace can choose to use different bridges
+to load balance bandwidth usage accross multiple paths between targets
+memory and initiators. Note that explicit path selection is not always
+under the control of user space, some system might do load balancing
+in hardware.
 
 See HMS Documentation/vm/hms.txt for detail.
 
@@ -118,31 +112,31 @@ Cc: Dave Airlie <airlied@redhat.com>
 Cc: Ben Skeggs <bskeggs@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 ---
- drivers/base/Makefile   |   2 +-
- drivers/base/hms-link.c | 183 ++++++++++++++++++++++++++++++++++++++++
- include/linux/hms.h     |  23 +++++
- 3 files changed, 207 insertions(+), 1 deletion(-)
- create mode 100644 drivers/base/hms-link.c
+ drivers/base/Makefile     |   2 +-
+ drivers/base/hms-bridge.c | 197 ++++++++++++++++++++++++++++++++++++++
+ include/linux/hms.h       |  24 +++++
+ 3 files changed, 222 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/base/hms-bridge.c
 
 diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index 6a1b5ab667bd..b8ff678fdae9 100644
+index b8ff678fdae9..62695fdcd32f 100644
 --- a/drivers/base/Makefile
 +++ b/drivers/base/Makefile
 @@ -12,7 +12,7 @@ obj-y			+= power/
  obj-$(CONFIG_ISA_BUS_API)	+= isa.o
  obj-y				+= firmware_loader/
  obj-$(CONFIG_NUMA)	+= node.o
--obj-$(CONFIG_HMS)	+= hms.o hms-target.o hms-initiator.o
-+obj-$(CONFIG_HMS)	+= hms.o hms-target.o hms-initiator.o hms-link.o
+-obj-$(CONFIG_HMS)	+= hms.o hms-target.o hms-initiator.o hms-link.o
++obj-$(CONFIG_HMS)	+= hms.o hms-target.o hms-initiator.o hms-link.o hms-bridge.o
  obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
  ifeq ($(CONFIG_SYSFS),y)
  obj-$(CONFIG_MODULES)	+= module.o
-diff --git a/drivers/base/hms-link.c b/drivers/base/hms-link.c
+diff --git a/drivers/base/hms-bridge.c b/drivers/base/hms-bridge.c
 new file mode 100644
-index 000000000000..58f4fdd8977c
+index 000000000000..64732e923fba
 --- /dev/null
-+++ b/drivers/base/hms-link.c
-@@ -0,0 +1,183 @@
++++ b/drivers/base/hms-bridge.c
+@@ -0,0 +1,197 @@
 +/*
 + * Copyright 2018 Red Hat Inc.
 + *
@@ -171,197 +165,212 @@ index 000000000000..58f4fdd8977c
 +#include <linux/hms.h>
 +
 +
-+struct hms_link *hms_object_to_link(struct hms_object *object)
++static inline struct hms_bridge *hms_object_to_bridge(struct hms_object *object)
 +{
 +	if (object == NULL)
 +		return NULL;
 +
-+	if (object->type != HMS_LINK)
++	if (object->type != HMS_BRIDGE)
 +		return NULL;
-+	return container_of(object, struct hms_link, object);
++	return container_of(object, struct hms_bridge, object);
 +}
 +
-+static inline struct hms_link *device_to_hms_link(struct device *device)
++static inline struct hms_bridge *device_to_hms_bridge(struct device *device)
 +{
 +	if (device == NULL)
 +		return NULL;
 +
-+	return hms_object_to_link(to_hms_object(device));
++	return hms_object_to_bridge(to_hms_object(device));
 +}
 +
-+struct hms_link *hms_link_find_locked(unsigned uid)
++struct hms_bridge *hms_bridge_find_locked(unsigned uid)
 +{
 +	struct hms_object *object = hms_object_find_locked(uid);
-+	struct hms_link *link;
++	struct hms_bridge *bridge;
 +
-+	link = hms_object_to_link(object);
-+	if (link)
-+		return link;
++	bridge = hms_object_to_bridge(object);
++	if (bridge)
++		return bridge;
 +	hms_object_put(object);
 +	return NULL;
 +}
 +
-+struct hms_link *hms_link_find(unsigned uid)
++struct hms_bridge *hms_bridge_find(unsigned uid)
 +{
 +	struct hms_object *object = hms_object_find(uid);
-+	struct hms_link *link;
++	struct hms_bridge *bridge;
 +
-+	link = hms_object_to_link(object);
-+	if (link)
-+		return link;
++	bridge = hms_object_to_bridge(object);
++	if (bridge)
++		return bridge;
 +	hms_object_put(object);
 +	return NULL;
 +}
 +
-+static void hms_link_release(struct device *device)
-+
++static void hms_bridge_release(struct device *device)
 +{
-+	struct hms_link *link = device_to_hms_link(device);
++	struct hms_bridge *bridge = device_to_hms_bridge(device);
 +
-+	hms_object_release(&link->object);
-+	kfree(link);
++	hms_object_put(&bridge->linka->object);
++	hms_object_put(&bridge->linkb->object);
++	hms_object_release(&bridge->object);
++	kfree(bridge);
 +}
 +
-+static ssize_t hms_link_show_uid(struct device *device,
++static ssize_t hms_bridge_show_uid(struct device *device,
 +				   struct device_attribute *attr,
 +				   char *buf)
 +{
-+	struct hms_link *link = device_to_hms_link(device);
++	struct hms_bridge *bridge = device_to_hms_bridge(device);
 +
-+	if (link == NULL)
++	if (bridge == NULL)
 +		return -EINVAL;
 +
-+	return sprintf(buf, "%d\n", link->object.uid);
++	return sprintf(buf, "%d\n", bridge->object.uid);
 +}
 +
-+static DEVICE_ATTR(uid, 0444, hms_link_show_uid, NULL);
++static DEVICE_ATTR(uid, 0444, hms_bridge_show_uid, NULL);
 +
-+static struct attribute *hms_link_attrs[] = {
++static struct attribute *hms_bridge_attrs[] = {
 +	&dev_attr_uid.attr,
 +	NULL
 +};
 +
-+static struct attribute_group hms_link_attr_group = {
-+	.attrs = hms_link_attrs,
++static struct attribute_group hms_bridge_attr_group = {
++	.attrs = hms_bridge_attrs,
 +};
 +
-+static const struct attribute_group *hms_link_attr_groups[] = {
-+	&hms_link_attr_group,
++static const struct attribute_group *hms_bridge_attr_groups[] = {
++	&hms_bridge_attr_group,
 +	NULL,
 +};
 +
-+void hms_link_register(struct hms_link **linkp, struct device *parent,
-+		       unsigned version)
++void hms_bridge_register(struct hms_bridge **bridgep,
++			 struct device *parent,
++			 struct hms_link *linka,
++			 struct hms_link *linkb,
++			 unsigned version)
 +{
-+	struct hms_link *link;
++	struct hms_bridge *bridge;
++	int ret;
 +
-+	*linkp = NULL;
-+	link = kzalloc(sizeof(*link), GFP_KERNEL);
-+	if (link == NULL)
++	*bridgep = NULL;
++
++	if (linka == NULL || linkb == NULL)
 +		return;
++	linka = hms_object_to_link(hms_object_get(&linka->object));
++	linkb = hms_object_to_link(hms_object_get(&linkb->object));
++	if (linka == NULL || linkb == NULL)
++		goto error;
 +
-+	if (hms_object_init(&link->object, parent, HMS_LINK, version,
-+			    hms_link_release, hms_link_attr_groups)) {
-+		kfree(link);
-+		link = NULL;
++	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
++	if (bridge == NULL)
++		goto error;
++
++	if (hms_object_init(&bridge->object, parent, HMS_BRIDGE, version,
++			    hms_bridge_release, hms_bridge_attr_groups)) {
++		kfree(bridge);
++		goto error;
 +	}
 +
-+	*linkp = link;
-+}
-+EXPORT_SYMBOL(hms_link_register);
++	bridge->linka = linka;
++	bridge->linkb = linkb;
 +
-+void hms_unlink_initiator(struct hms_link *link,
-+			  struct hms_initiator *initiator)
-+{
-+	if (link == NULL || initiator == NULL)
++	ret = hms_object_link(&bridge->object, &linka->object);
++	if (ret) {
++		hms_bridge_unregister(&bridge);
 +		return;
-+	if (link->object.type != HMS_LINK)
++	}
++
++	ret = hms_object_link(&bridge->object, &linkb->object);
++	if (ret) {
++		hms_bridge_unregister(&bridge);
++		return;
++	}
++
++	*bridgep = bridge;
++	return;
++
++error:
++	hms_object_put(&linka->object);
++	hms_object_put(&linkb->object);
++}
++EXPORT_SYMBOL(hms_bridge_register);
++
++void hms_unbridge_initiator(struct hms_bridge *bridge,
++			    struct hms_initiator *initiator)
++{
++	if (bridge == NULL || initiator == NULL)
++		return;
++	if (bridge->object.type != HMS_BRIDGE)
 +		return;
 +	if (initiator->object.type != HMS_INITIATOR)
 +		return;
-+	hms_object_unlink(&link->object, &initiator->object);
++	hms_object_unlink(&bridge->object, &initiator->object);
 +}
-+EXPORT_SYMBOL(hms_unlink_initiator);
++EXPORT_SYMBOL(hms_unbridge_initiator);
 +
-+void hms_unlink_target(struct hms_link *link, struct hms_target *target)
++int hms_bridge_initiator(struct hms_bridge *bridge,
++			 struct hms_initiator *initiator)
 +{
-+	if (link == NULL || target == NULL)
-+		return;
-+	if (link->object.type != HMS_LINK || target->object.type != HMS_TARGET)
-+		return;
-+	hms_object_unlink(&link->object, &target->object);
-+}
-+EXPORT_SYMBOL(hms_unlink_target);
-+
-+int hms_link_initiator(struct hms_link *link, struct hms_initiator *initiator)
-+{
-+	if (link == NULL || initiator == NULL)
++	if (bridge == NULL || initiator == NULL)
 +		return -EINVAL;
-+	if (link->object.type != HMS_LINK)
++	if (bridge->object.type != HMS_BRIDGE)
 +		return -EINVAL;
 +	if (initiator->object.type != HMS_INITIATOR)
 +		return -EINVAL;
-+	return hms_object_link(&link->object, &initiator->object);
++	return hms_object_link(&bridge->object, &initiator->object);
 +}
-+EXPORT_SYMBOL(hms_link_initiator);
++EXPORT_SYMBOL(hms_bridge_initiator);
 +
-+int hms_link_target(struct hms_link *link, struct hms_target *target)
++void hms_bridge_unregister(struct hms_bridge **bridgep)
 +{
-+	if (link == NULL || target == NULL)
-+		return -EINVAL;
-+	if (link->object.type != HMS_LINK || target->object.type != HMS_TARGET)
-+		return -EINVAL;
-+	return hms_object_link(&link->object, &target->object);
-+}
-+EXPORT_SYMBOL(hms_link_target);
++	struct hms_bridge *bridge = *bridgep;
 +
-+void hms_link_unregister(struct hms_link **linkp)
-+{
-+	struct hms_link *link = *linkp;
-+
-+	*linkp = NULL;
-+	if (link == NULL)
++	*bridgep = NULL;
++	if (bridge == NULL)
 +		return;
 +
-+	hms_object_unregister(&link->object);
++	hms_object_unregister(&bridge->object);
 +}
-+EXPORT_SYMBOL(hms_link_unregister);
++EXPORT_SYMBOL(hms_bridge_unregister);
 diff --git a/include/linux/hms.h b/include/linux/hms.h
-index 7a2823493f63..2a9e49a2d771 100644
+index 2a9e49a2d771..511b5363d8f2 100644
 --- a/include/linux/hms.h
 +++ b/include/linux/hms.h
-@@ -100,6 +100,21 @@ static inline void hms_target_put(struct hms_target *target)
- }
+@@ -115,6 +115,24 @@ void hms_link_register(struct hms_link **linkp, struct device *parent,
+ void hms_link_unregister(struct hms_link **linkp);
  
  
-+struct hms_link {
++struct hms_bridge {
 +	struct hms_object object;
++	struct hms_link *linka;
++	struct hms_link *linkb;
 +};
 +
-+struct hms_link *hms_object_to_link(struct hms_object *object);
-+void hms_unlink_initiator(struct hms_link *link,
-+			  struct hms_initiator *initiator);
-+void hms_unlink_target(struct hms_link *link, struct hms_target *target);
-+int hms_link_initiator(struct hms_link *link, struct hms_initiator *initiator);
-+int hms_link_target(struct hms_link *link, struct hms_target *target);
-+void hms_link_register(struct hms_link **linkp, struct device *parent,
-+		       unsigned version);
-+void hms_link_unregister(struct hms_link **linkp);
++void hms_unbridge_initiator(struct hms_bridge *bridge,
++			    struct hms_initiator *initiator);
++int hms_bridge_initiator(struct hms_bridge *bridge,
++			 struct hms_initiator *initiator);
++void hms_bridge_register(struct hms_bridge **bridgep,
++			 struct device *parent,
++			 struct hms_link *linka,
++			 struct hms_link *linkb,
++			 unsigned version);
++void hms_bridge_unregister(struct hms_bridge **bridgep);
 +
 +
  int hms_init(void);
  
  
-@@ -116,6 +131,14 @@ int hms_init(void);
- #define hms_target_unregister(targetp)
+@@ -139,6 +157,12 @@ int hms_init(void);
+ #define hms_link_unregister(linkp)
  
  
-+#define hms_unlink_initiator(link, initiator)
-+#define hms_unlink_target(link, target)
-+#define hms_link_initiator(link, initiator)
-+#define hms_link_target(link, target)
-+#define hms_link_register(linkp)
-+#define hms_link_unregister(linkp)
++#define hms_unbridge_initiator(bridge, initiator)
++#define hms_bridge_initiator(bridge, initiator)
++#define hms_bridge_register(bridgep)
++#define hms_bridge_unregister(bridgep)
 +
 +
  static inline int hms_init(void)
