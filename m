@@ -2,250 +2,118 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F36CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55198C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F7F20864
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:17:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0fD4zo2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F7F20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 265F320851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:17:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 265F320851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbeLCWRK (ORCPT
+        id S1726053AbeLCWRO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:17:10 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:39803 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbeLCWRJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:17:09 -0500
-Received: by mail-yw1-f65.google.com with SMTP id j6so6094772ywj.6;
-        Mon, 03 Dec 2018 14:17:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1wJ8A492wBUTcjwFZiNUwmppYHBpsX6n7kYL1QBkhrY=;
-        b=k0fD4zo2FZOetspWwoyFlnWo3WNnOwJ2bg7dD+ZGNckUzx+wTOISrKWBknZaI4vWWL
-         DqmCVaIxroyXb6eTMZM32H2kmkOvzLTuS7JffT8+ZybGhkmmCwKB7hQLK9uOFRkJZ+0F
-         avrAA6GmliNL8AqucJYi9ZuKT4/RlrK231BxwcAsjdrj+TB1p8ABiCBjQ6emRWyXcQO7
-         eVmw37VwxOH8tJvzhg28Ne8ICS7vSm8IZzmBNunid8EWLWMrZnOKcJpLZ7h+bjfxlOCn
-         MjV+MkZWW8nmwfmPt1/R0Y8ikezLI9A3iqjtf3vX/pzReg7ROg7MHB0mAsZhwb/dPgP9
-         9Akg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=1wJ8A492wBUTcjwFZiNUwmppYHBpsX6n7kYL1QBkhrY=;
-        b=cxCDEB5KPB7D3lEfP8K8dXbF/Wg2cFB8OqWAHGsLIQnnE2DByHv6pdslMWPp2/zdwf
-         EN1/CH6/mPr1hcxuxBo9m7kgGqUoHTv6EOiyXPngpJaB1vwTAjIQVV1dzHY7FiQtgcwg
-         BRiOCmIzXUSSWah6b1d9ISnMpvA43PaM/Bi9WIecz237xvgE+ATF5ddDwQJqi5esBJ68
-         SXENC0CJkbGzvJXGG+o6LExRJEi4zpX7Uih5ut3kLMOjDHC+0EjlrmPixcbQzB5qww5P
-         VppJZ3NLlWeLNKjY2CSXEBn2GMSWFcqCZwujXoPRkyIW5hepu2ExdI928+7oD0t6ioJp
-         yyJQ==
-X-Gm-Message-State: AA+aEWZ0HfVdP088AJo/PRYnqmjxCjgtpnTLTZoiYxSsQGO7e41irOqA
-        7xQYuwFlfHVzutYhYRzYZYk=
-X-Google-Smtp-Source: AFSGD/UGBeli4y9phFxBjSe+QXsmH1PK4WQ2s5o4qIJ7DttPsgnpocl9jkPitu2oWhQ7fOfOVh7Rcg==
-X-Received: by 2002:a81:4501:: with SMTP id s1mr17801592ywa.41.1543875428054;
-        Mon, 03 Dec 2018 14:17:08 -0800 (PST)
-Received: from [10.67.49.9] (igp-prod-emp-gw.vpn.broadcom.com. [192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id l9sm5164657ywc.81.2018.12.03.14.17.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 14:17:07 -0800 (PST)
-Subject: Re: [RFC PATCH net-next 2/5] net: 8021q: vlan_dev: add vid tag for uc
- and mc address lists
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, davem@davemloft.net,
-        grygorii.strashko@ti.com
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jiri@mellanox.com, andrew@lunn.ch
-References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
- <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
- 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
- X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <b2a7baa7-b334-0f6f-c119-a2f30ac68c7b@gmail.com>
-Date:   Mon, 3 Dec 2018 14:17:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 3 Dec 2018 17:17:14 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34333 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbeLCWRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:17:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A9141207AD; Mon,  3 Dec 2018 23:17:09 +0100 (CET)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A78A220379;
+        Mon,  3 Dec 2018 23:16:56 +0100 (CET)
+Date:   Mon, 3 Dec 2018 23:16:55 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
+Message-ID: <20181203231655.4e7dc330@xps13>
+In-Reply-To: <154386483105.88331.13970025193347328031@swboyd.mtv.corp.google.com>
+References: <20181122212212.16039-3-miquel.raynal@bootlin.com>
+        <201811231627.H7ojlKLL%fengguang.wu@intel.com>
+        <20181123101132.6be3829c@xps13>
+        <154356998033.88331.4426431020982838779@swboyd.mtv.corp.google.com>
+        <20181130112052.73d943ec@xps13>
+        <154386483105.88331.13970025193347328031@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/18 10:40 AM, Ivan Khoronzhuk wrote:
-> Update vlan mc and uc addresses with VID tag while propagating address
-> set to lower devices, do this only if address is not synched. It allows
-> on end driver level to distinguish address belonging to vlans.
+Hi Stephen,
 
-Underlying driver for the real device would be able to properly identify
-that you are attempting to add an address to a virtual device, which
-happens to be of VLAN kind so I am really not sure this is the right
-approach here.
+Stephen Boyd <sboyd@kernel.org> wrote on Mon, 03 Dec 2018 11:20:31
+-0800:
 
-From there, it seems to me that we have two situations:
-
-- each of your network devices expose VLAN devices directly on top of
-the real device, in which case your driver should support
-ndo_vlan_rx_add_vid and ndo_vlan_rx_kill_vid to know when VLAN devices
-are create and maintain a VLAN device to VID correspondence if it needs
-to when being called while setting the addresses
-
-- you are setting up a bridge that is VLAN aware on one of your bridge
-ports, and there you can use switchdev to learn about such events and
-know about both addresses as well as VIDs that must be programmed into
-your real device
-
-It seems to me that what you need may be something like either:
-
-- notifications on slave devices when addresses are added via
-ndo_set_rxmode()
-
-or
-
-- dev_{uc,mc}_sync() should be augmented with a "source net_device"
-argument which allows you to differentiate which network device is the
-source of the address programming. That way, no need to "hash" the MAC
-address with a VID, any network device specific information can be
-provided and in the real device driver you can do: if
-(netif_is_vlan()... etc.)
-
-Hopefully someone else will chime in.
-
+> Quoting Miquel Raynal (2018-11-30 02:20:52)
+> > Hi Stephen,
+> > 
+> > Stephen Boyd <sboyd@kernel.org> wrote on Fri, 30 Nov 2018 01:26:20
+> > -0800:
+> >   
+> > > Quoting Miquel Raynal (2018-11-23 01:11:32)  
+> > > > Would you agree with me adding dummy functions in the #else section
+> > > > like:
+> > > > 
+> > > > static inline void __clk_device_link(struct device *consumer, struct clk *clk)
+> > > > {
+> > > >        return;
+> > > > }
+> > > > 
+> > > > static inline void __clk_device_unlink(struct clk *clk)
+> > > > {
+> > > >        return;
+> > > > }
+> > > > 
+> > > > Do you want me to also declare these functions in the #if section
+> > > > (with the external keyword) to balance the above declarations?    
+> > > 
+> > > Why can't we do the linking in __clk_get() and __clk_put()?
+> > >   
+> > 
+> > Because we need the caller's 'struct device' to make the link and
+> > this is not available in __clk_get(). I tried to ad it as parameter but
+> > I don't think it is possible to retrieve a 'struct device' from the
+> > device name. The functions where this is problematic are:
+> > * clk.c:__of_clk_get_from_provider()
+> > * clkdev.c:clk_get_sys()
+> > 
+> > By the way in my new version I called the helpers:
+> > * clk_{link,unlink}_hierarchy()
+> > * clk_{link,unlink}_consumer()
+> > 
+> > I will send a new version with these helpers, but if you have anything
+> > in mind to help me achieve the above request, I will welcome the idea.
+> >   
 > 
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> ---
->  include/linux/if_vlan.h |  1 +
->  net/8021q/vlan_core.c   | 10 ++++++++++
->  net/8021q/vlan_dev.c    | 26 ++++++++++++++++++++++++++
->  3 files changed, 37 insertions(+)
-> 
-> diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
-> index 4cca4da7a6de..94657f3c483a 100644
-> --- a/include/linux/if_vlan.h
-> +++ b/include/linux/if_vlan.h
-> @@ -136,6 +136,7 @@ extern struct net_device *__vlan_find_dev_deep_rcu(struct net_device *real_dev,
->  extern int vlan_for_each(struct net_device *dev,
->  			 int (*action)(struct net_device *dev, int vid,
->  				       void *arg), void *arg);
-> +extern u16 vlan_dev_get_addr_vid(struct net_device *dev, const u8 *addr);
->  extern struct net_device *vlan_dev_real_dev(const struct net_device *dev);
->  extern u16 vlan_dev_vlan_id(const struct net_device *dev);
->  extern __be16 vlan_dev_vlan_proto(const struct net_device *dev);
-> diff --git a/net/8021q/vlan_core.c b/net/8021q/vlan_core.c
-> index a313165e7a67..5d17947d6988 100644
-> --- a/net/8021q/vlan_core.c
-> +++ b/net/8021q/vlan_core.c
-> @@ -454,6 +454,16 @@ bool vlan_uses_dev(const struct net_device *dev)
->  }
->  EXPORT_SYMBOL(vlan_uses_dev);
->  
-> +u16 vlan_dev_get_addr_vid(struct net_device *dev, const u8 *addr)
-> +{
-> +	u16 vid = 0;
-> +
-> +	vid = addr[dev->addr_len];
-> +	vid |= (addr[dev->addr_len + 1] & 0xf) << 8;
-> +	return vid;
-> +}
-> +EXPORT_SYMBOL(vlan_dev_get_addr_vid);
-> +
->  static struct sk_buff *vlan_gro_receive(struct list_head *head,
->  					struct sk_buff *skb)
->  {
-> diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-> index b2d9c8f27cd7..c05b313314b7 100644
-> --- a/net/8021q/vlan_dev.c
-> +++ b/net/8021q/vlan_dev.c
-> @@ -250,6 +250,14 @@ void vlan_dev_get_realdev_name(const struct net_device *dev, char *result)
->  	strncpy(result, vlan_dev_priv(dev)->real_dev->name, 23);
->  }
->  
-> +static void vlan_dev_set_addr_vid(struct net_device *vlan_dev, u8 *addr)
-> +{
-> +	u16 vid = vlan_dev_vlan_id(vlan_dev);
-> +
-> +	addr[vlan_dev->addr_len] = vid & 0xff;
-> +	addr[vlan_dev->addr_len + 1] = (vid >> 8) & 0xf;
-> +}
-> +
->  bool vlan_dev_inherit_address(struct net_device *dev,
->  			      struct net_device *real_dev)
->  {
-> @@ -481,8 +489,26 @@ static void vlan_dev_change_rx_flags(struct net_device *dev, int change)
->  	}
->  }
->  
-> +static void vlan_dev_align_addr_vid(struct net_device *vlan_dev)
-> +{
-> +	struct net_device *real_dev = vlan_dev_real_dev(vlan_dev);
-> +	struct netdev_hw_addr *ha;
-> +
-> +	if (!real_dev->vid_len)
-> +		return;
-> +
-> +	netdev_for_each_mc_addr(ha, vlan_dev)
-> +		if (!ha->sync_cnt)
-> +			vlan_dev_set_addr_vid(vlan_dev, ha->addr);
-> +
-> +	netdev_for_each_uc_addr(ha, vlan_dev)
-> +		if (!ha->sync_cnt)
-> +			vlan_dev_set_addr_vid(vlan_dev, ha->addr);
-> +}
-> +
->  static void vlan_dev_set_rx_mode(struct net_device *vlan_dev)
->  {
-> +	vlan_dev_align_addr_vid(vlan_dev);
->  	dev_mc_sync(vlan_dev_priv(vlan_dev)->real_dev, vlan_dev);
->  	dev_uc_sync(vlan_dev_priv(vlan_dev)->real_dev, vlan_dev);
->  }
+> We can do the linking in __clk_get() and __clk_put() if we poke into the
+> struct clk -> struct clk_core and bury the struct device into each
+> clk_core structure.
 > 
 
+I meant the consumer device's structure. Yes, from a struct clk, the
+first change in patch 1/2 let's us do clk->core->dev to get the clock
+device. But for linking I need both the clock device and the consumer
+device; and the latter will be missing in __clk_get().
 
--- 
-Florian
+
+Thanks,
+Miquèl
