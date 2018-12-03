@@ -2,142 +2,84 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FCFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D60C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91B3E20666
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:48:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C0AKAMWx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B3E20666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 21CCF20864
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:49:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CCF20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLCXsd (ORCPT
+        id S1725983AbeLCXt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:48:33 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44981 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbeLCXsc (ORCPT
+        Mon, 3 Dec 2018 18:49:29 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37691 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCXt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:48:32 -0500
-Received: by mail-pl1-f195.google.com with SMTP id k8so7268976pls.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 15:48:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=8TlFaMonp9oxMSo4me7gJfHFdO0cVi4wJZxa2g4hFaA=;
-        b=C0AKAMWxF1LoUkYkcb1QksQsdikZ2wKn4aylxyT97HJSfdO4F6SJox6tLsh48AAeak
-         dLPcO/mz/iSAvk6jl6gcfGua1nBUcaDtG9LWmx0PqgiGBYP/wCnI0MOFdH0yxH+/FGjL
-         n0WHdPPJL3108wG+W4P9JD3ZXGMO2TaE2QeGc=
+        Mon, 3 Dec 2018 18:49:27 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 40so13440486oth.4;
+        Mon, 03 Dec 2018 15:49:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=8TlFaMonp9oxMSo4me7gJfHFdO0cVi4wJZxa2g4hFaA=;
-        b=Z8u9yPSM7CU/Zeqs9KXkNtGS6U6sREj7aTuT+8gKme6rJ4Mko4MDLo38iQbSAVPXvQ
-         6OIJCy/gBRbeNJ9adTnSMC50htRPhTR4mzJesjl/xcapg2roOEtRN3nYLJJlNN/Pgl1m
-         HWAHFmi1MLdS4p9O46baVt1GxxQavkE8G1uVj8qpq59Nfmzs/6NbGH3QJqo7KGmQaiga
-         JE2rgdX22DVCbX3pIA9d5qXxQoWc0W6VXJZ2+yHc5xKAXGH1JS6OyJCmTpqt1/qpD9G4
-         QFl70V3WApEtl1JwT5Ec33Dpz1vAqvpIbLPddkYv3LrUgi+u2HU39CwpeBEGg9E0yIvI
-         mcGw==
-X-Gm-Message-State: AA+aEWYcjpE4vBUXetdQvwATasqTZPsQXZgtwPISAvY5PqKiIRP39vDz
-        P0/Q4gXBYW4DtWqWv3qB57TlmIWB2tM=
-X-Google-Smtp-Source: AFSGD/XVYPaqejMqGqj+m3rDXTzGhp6Dvp3yvTZ19oeUqGT5b3qWPYCgZI/bxfN9SyrWC6ksHjz1lA==
-X-Received: by 2002:a17:902:b707:: with SMTP id d7mr9098319pls.29.1543880911479;
-        Mon, 03 Dec 2018 15:48:31 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id z191sm17071850pgd.74.2018.12.03.15.48.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I4MvBUDwDBvP6IkbpGgbsUWMsT7O230KFaf0Js1Dqec=;
+        b=PGR98IcxQfgVgVshO/5Tc0uK+V/Demit9JAac8pQzPuo4SqrPr2kbubJP4RfWUzFAQ
+         NO+iNpcHUzIbq+hrCc5bNLyQQSBLjuVTGz98ytc3zajNWghKwnBd54f2PFcTjEg0z9nu
+         Znc7AyYTVAE00OkxVsM66d7xIBOATckSpPML+Do2U4t/FXaIlaoKyPakAEi5y/iKRu8D
+         hQBHJk4FkWoP5qf4pvrBSmhP8goLisfuHFV4l964veU49kxujpIQnXUaZ1ngHC6LH8lw
+         4l5DT9OgI3wMlY9SKpJjtwWrqgHevRViAD+o8UHVHkzB8ei61pEJnpL2V3hx4D8Qkz6Z
+         nE+w==
+X-Gm-Message-State: AA+aEWYV7kfpIE0d0qQG3M3K0RMWqLB2XbVrjjpQBj7tjRvOkKJVEq+J
+        98YAkbErwLeUSn+lK7vX5Q==
+X-Google-Smtp-Source: AFSGD/W8Xjt4nRNjWGK4y6Qflx6Ikm3pM4oTdrXfNMcrVjDgFZoTC2eO+tOouo99+oPTMRznZ+hhCg==
+X-Received: by 2002:a9d:5549:: with SMTP id h9mr10662095oti.83.1543880964976;
+        Mon, 03 Dec 2018 15:49:24 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id c19sm7513324otl.16.2018.12.03.15.49.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 15:48:30 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 03 Dec 2018 15:49:24 -0800 (PST)
+Date:   Mon, 3 Dec 2018 17:49:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mdf@kernel.org, heiko@sntech.de,
+        Heiko Stuebner <heiko.stuebner@bq.com>
+Subject: Re: [PATCH] power: reset: gpio-poweroff: add ability to specific
+ active and inactive delays
+Message-ID: <20181203234923.GA29934@bogus>
+References: <20181111214538.32477-1-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lina Iyer <ilina@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181130183317.GL18262@codeaurora.org>
-Cc:     evgreen@chromium.org, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        thierry.reding@gmail.com
-References: <20181121000648.29262-1-ilina@codeaurora.org>
- <154283618199.88331.10217252750356423959@swboyd.mtv.corp.google.com>
- <20181126161455.GA28236@codeaurora.org>
- <154330994255.88331.11409511159882116164@swboyd.mtv.corp.google.com>
- <20181127182123.GC28236@codeaurora.org>
- <154335513853.88331.9713562640538396853@swboyd.mtv.corp.google.com>
- <20181128173959.GC18262@codeaurora.org> <20181129002457.GJ24969@minitux>
- <20181129214539.GG18262@codeaurora.org>
- <20181130183317.GL18262@codeaurora.org>
-Message-ID: <154388090959.88331.13819513007141877197@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RFC v3 2/3] dt-bindings: sdm845-pinctrl: add wakeup interrupt parent
- for GPIO
-Date:   Mon, 03 Dec 2018 15:48:29 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181111214538.32477-1-heiko@sntech.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-11-30 10:33:17)
-> On Thu, Nov 29 2018 at 14:45 -0700, Lina Iyer wrote:
-> >On Wed, Nov 28 2018 at 17:25 -0700, Bjorn Andersson wrote:
-> >>On Wed 28 Nov 09:39 PST 2018, Lina Iyer wrote:
-> >>
-> >>>On Tue, Nov 27 2018 at 14:45 -0700, Stephen Boyd wrote:
-> >>>> Quoting Lina Iyer (2018-11-27 10:21:23)
-> >>>> > On Tue, Nov 27 2018 at 02:12 -0700, Stephen Boyd wrote:
-> =
+On Sun, 11 Nov 2018 22:45:38 +0100, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@bq.com>
+> 
+> Similar to gpio-reset allow to specify active and inactive delays
+> while keeping the 100ms defaults that were used previously all the time.
+> 
+> The dt-properties are named the same as in gpio-reset but get an "-ms"
+> suffix as properties should contain such a suffix specifying its unit.
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
+> ---
+>  .../devicetree/bindings/power/reset/gpio-poweroff.txt  |  2 ++
+>  drivers/power/reset/gpio-poweroff.c                    | 10 ++++++++--
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+> 
 
-> [...]
-> >BTW, I am discussing with the internal folks here on if we need to mask
-> >TLMM when the wakeup-parent is MPM. If we don't have to, we should be
-> >able to follow the same model as we done in this patch and don't even
-> >have to check the compatible or use the approach suggested by Stephen.
-> >
-> The TLMM and the MPM are not active at the same time. However, there is
-> a small chance they might be (a few clock cycles) when the system is
-> going down, but even then, since we replay the interrupt from the MPM
-> driver before the interrupts are serviced by Linux, we would not see
-> multiple GPIO interrupts.
-> =
-
-> The way we have MPM working downstream, for a wakeup GPIO IRQ -
-> =
-
-> a. Application cores gets a wakeup interrupt either from RPM or GIC (if
-> TLMM was not powered down) while still in the interrupt locked context.
-> =
-
-> b. In the hardware, apps core handshakes with the RPM and then starts
-> resuming from the platform's system idle driver.
-> =
-
-> c. The first CPU to wake up calls MPM driver from the idle driver, which
-> reads the shared memory to find the MPM pins that are set. Converts the
-> MPM pins to their corresponding linux interrupt and replays the
-> interrupt.
-> =
-
-> d. Idle driver exits and wakeup GPIO interrupt is handled.
-> =
-
-> The MPM pins are not updated after the RPM lets the application core to
-> run. Since TLMM is functional after the RPM handshake, it takes over.
-> =
-
-
-Thanks for the background info. I don't think it really changes anything
-that we've discussed though. We still need to mask the IRQ in TLMM all
-the time when we're using the PDC and we need to leave it unmasked and
-replay edges that the MPM sees when we use the MPM. Should I clean up my
-RFC patch and post it to the list? I'd like to see hierarchical gpio
-irqs work in general for this problem and also the SSBI/SPMI gpio irq
-problem that Linus pointed out last week.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
