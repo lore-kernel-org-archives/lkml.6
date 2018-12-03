@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DC6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 841F4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56FBD2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46753206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="c5TOYzRC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56FBD2145D
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="UCE81nHn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46753206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725946AbeLCD2q (ORCPT
+        id S1725970AbeLCD2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 22:28:46 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35574 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbeLCD2q (ORCPT
+        Sun, 2 Dec 2018 22:28:48 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38405 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbeLCD2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 22:28:46 -0500
-Received: by mail-it1-f196.google.com with SMTP id p197so6567525itp.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 19:28:43 -0800 (PST)
+        Sun, 2 Dec 2018 22:28:47 -0500
+Received: by mail-io1-f68.google.com with SMTP id l14so9214083ioj.5
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 19:28:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=tycho-ws.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2QRC+2J09QEmUyVLJbctrVLGJbdHDDiVfDdZtEc0W9w=;
-        b=c5TOYzRCp4/mWzloe0sZTzdbd0mVIVBLhEymzh1giVrso8alVmiPOdJdEiLFbLDU8Q
-         YWQGUT9jJUXNl3rbTK+y52hmvOdUyhTyP2MsnwgtNFPviBAAH3Jh8GeTy+7PzWrQ+hrA
-         3qgAJ5PmRVnPte2NNMiRquSZvG+067NBoob3oKCBTx4ChP/giaeTqLEBKlcwiUJjWapE
-         BBVYf8b6mZPLbi+YEQrhkyDTQP/CFAMpVTQxirBEoa8Ero+4fa+k7Ap+70Wpu1IM7cKW
-         mQKuY8IxAHthcaBymynSob8qKL9cwvyMurTpUka5ywe5uxvpsKNEgKYlEoA+KTvYL5ZH
-         /4Lg==
+        bh=1dQPDPGD9mX4mC2MQjq9uNpauIwSjlBqSmF3g+ICxLo=;
+        b=UCE81nHn+tNOwlnvpSVmqm8N6HUyunDGiPhW7RbQ7vuJRjnrsNjpFE3UvepvPQpbLW
+         BA5JkqRBmfEzP1MkKiFNQkvBcQXGXo4yCsu6X4+eaODijh0fnw+iagHbPtYgfDzt9/Fx
+         r6NBYcqBAv2dSdLDQfmwmJbAdmIvF+55qA3fdsDEdjyiKO4phMFMkpwQXMTefPBJnlH6
+         8Am7onc3jZVGMjax038/Mo6oTaR0q2J/2MjPVTWIugwaL2BGWfRUGzIpH0vwAdTmRM0e
+         8iWOlO+y62QbI2vXxt4B7XfOhMPIUQe0mXfVQ5P7TFXr3MLFczPz6+nD9+eJS0zmdZJ0
+         di7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2QRC+2J09QEmUyVLJbctrVLGJbdHDDiVfDdZtEc0W9w=;
-        b=cETYKPzub55nni5sXEHIekDunZI1B5WdG5SYjmb1yOW5OpqZFdc5yFGKoduv/ESuwy
-         RcMEIw7uN/iGP+V5GPjceqll3fQ1lvPichh5HrQAuzXgDQluQ4S4onsPBgyYpYeBE8fR
-         CRUxFZfslf2I1mjR9K9Zu/HPO6xrHG24kF5Ne/4+azGSFuJdPOvo+F2w+4q4CNgFlDLO
-         v6UhXAFI4mDNXvJCBMaD4/KAYD05CshH809mnmRDVi3vMyQPE3r6+oFTUHGyVGE5q7ZP
-         DvGBqLmbIoFE/ygWerX1Ir/uWsv6vo5AfGzxFSHbC/2l2co0LGxjugEd+3DvSAIIrX3q
-         egWg==
-X-Gm-Message-State: AA+aEWZgS7TEE6r5L1n2rS8mvnXUMeIVMFzxK1L+LBKSmTKTXeWWrZ02
-        EWpebIgzg9z85hB3pavA7kJ78g==
-X-Google-Smtp-Source: AFSGD/UqcVAmCnZCoPx2MK6xTnvrmfsYPeTTCgUkPqaXvxQkbJLQ9ug8tWZhGoFZCzf8VBRmAxM7TA==
-X-Received: by 2002:a24:bd48:: with SMTP id x69mr6262187ite.81.1543807722663;
-        Sun, 02 Dec 2018 19:28:42 -0800 (PST)
+        bh=1dQPDPGD9mX4mC2MQjq9uNpauIwSjlBqSmF3g+ICxLo=;
+        b=FF/6jYfO7yN9qEwPwSaqbMUdF+0cLgX43R+slPTQpS5N3xAss3h+RHPvWRgCi3IvQw
+         SZsuo0HCyKaMh6SOuEpeegAothU+creSLh51ifloLyPEgGGgXyX9IdS3TbXFdfzr9Xiy
+         UGxfI6CX088UZsU5AlN0qd089Rjd/2aB5Vbq21Or+u9Sdl+qavQOAWqOXGP9s6xvQt1O
+         6VpEyz9eir3knRh0ZebwmekAaFQYrxLbYf6uPeOotGM+sTkF0nJzygkfNHAszpas6NnG
+         iRqqbM2pizWduUYcl0VaAcawS8vK9Kh+B+0fIpI4Qe6s0E3tRsZyDQv0zCQjz0vOjiG+
+         STcQ==
+X-Gm-Message-State: AA+aEWZDeLR+tQ6lbOLLNbmG8YbhScs5O6RUgpT4wF4ngNYxZlS0PQcX
+        KIkRCxqSgol/OHVJTMQcNjPrAA==
+X-Google-Smtp-Source: AFSGD/WNHLmBScrlLzufuLDAh6IXEgMgRa0v8iq4MjvdzfQHSwwfprPjtcW6AOUXZSYWiHBqnHQ/cg==
+X-Received: by 2002:a6b:ab85:: with SMTP id u127mr11350076ioe.143.1543807724110;
+        Sun, 02 Dec 2018 19:28:44 -0800 (PST)
 Received: from cisco.lan (71-218-133-134.hlrn.qwest.net. [71.218.133.134])
-        by smtp.gmail.com with ESMTPSA id n136sm3243529itb.35.2018.12.02.19.28.41
+        by smtp.gmail.com with ESMTPSA id n136sm3243529itb.35.2018.12.02.19.28.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Dec 2018 19:28:42 -0800 (PST)
+        Sun, 02 Dec 2018 19:28:43 -0800 (PST)
 From:   Tycho Andersen <tycho@tycho.ws>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Andy Lutomirski <luto@amacapital.net>,
@@ -72,9 +72,9 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         linux-kernel@vger.kernel.org,
         containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v9 1/4] seccomp: hoist struct seccomp_data recalculation higher
-Date:   Sun,  2 Dec 2018 20:28:24 -0700
-Message-Id: <20181203032827.27978-2-tycho@tycho.ws>
+Subject: [PATCH v9 2/4] seccomp: switch system call argument type to void *
+Date:   Sun,  2 Dec 2018 20:28:25 -0700
+Message-Id: <20181203032827.27978-3-tycho@tycho.ws>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181203032827.27978-1-tycho@tycho.ws>
 References: <20181203032827.27978-1-tycho@tycho.ws>
@@ -85,15 +85,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the next patch, we're going to use the sd pointer passed to
-__seccomp_filter() as the data to pass to userspace. Except that in some
-cases (__seccomp_filter(SECCOMP_RET_TRACE), emulate_vsyscall(), every time
-seccomp is inovked on power, etc.) the sd pointer will be NULL in order to
-force seccomp to recompute the register data. Previously this recomputation
-happened one level lower, in seccomp_run_filters(); this patch just moves
-it up a level higher to __seccomp_filter().
+The const qualifier causes problems for any code that wants to write to the
+third argument of the seccomp syscall, as we will do in a future patch in
+this series.
 
-Thanks Oleg for spotting this.
+The third argument to the seccomp syscall is documented as void *, so
+rather than just dropping the const, let's switch everything to use void *
+as well.
+
+I believe this is safe because of 1. the documentation above, 2. there's no
+real type information exported about syscalls anywhere besides the man
+pages.
 
 Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 CC: Kees Cook <keescook@chromium.org>
@@ -105,53 +107,58 @@ CC: Christian Brauner <christian@brauner.io>
 CC: Tyler Hicks <tyhicks@canonical.com>
 CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
 ---
- kernel/seccomp.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/seccomp.h | 2 +-
+ kernel/seccomp.c        | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+index e5320f6c8654..b5103c019cf4 100644
+--- a/include/linux/seccomp.h
++++ b/include/linux/seccomp.h
+@@ -43,7 +43,7 @@ extern void secure_computing_strict(int this_syscall);
+ #endif
+ 
+ extern long prctl_get_seccomp(void);
+-extern long prctl_set_seccomp(unsigned long, char __user *);
++extern long prctl_set_seccomp(unsigned long, void __user *);
+ 
+ static inline int seccomp_mode(struct seccomp *s)
+ {
 diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index f2ae2324c232..96afc32e041d 100644
+index 96afc32e041d..393e029f778a 100644
 --- a/kernel/seccomp.c
 +++ b/kernel/seccomp.c
-@@ -188,7 +188,6 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
- static u32 seccomp_run_filters(const struct seccomp_data *sd,
- 			       struct seccomp_filter **match)
+@@ -924,7 +924,7 @@ static long seccomp_get_action_avail(const char __user *uaction)
+ 
+ /* Common entry point for both prctl and syscall. */
+ static long do_seccomp(unsigned int op, unsigned int flags,
+-		       const char __user *uargs)
++		       void __user *uargs)
  {
--	struct seccomp_data sd_local;
- 	u32 ret = SECCOMP_RET_ALLOW;
- 	/* Make sure cross-thread synced filter points somewhere sane. */
- 	struct seccomp_filter *f =
-@@ -198,11 +197,6 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd,
- 	if (WARN_ON(f == NULL))
- 		return SECCOMP_RET_KILL_PROCESS;
+ 	switch (op) {
+ 	case SECCOMP_SET_MODE_STRICT:
+@@ -944,7 +944,7 @@ static long do_seccomp(unsigned int op, unsigned int flags,
+ }
  
--	if (!sd) {
--		populate_seccomp_data(&sd_local);
--		sd = &sd_local;
--	}
--
- 	/*
- 	 * All filters in the list are evaluated and the lowest BPF return
- 	 * value always takes priority (ignoring the DATA).
-@@ -658,6 +652,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 	u32 filter_ret, action;
- 	struct seccomp_filter *match = NULL;
- 	int data;
-+	struct seccomp_data sd_local;
+ SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
+-			 const char __user *, uargs)
++			 void __user *, uargs)
+ {
+ 	return do_seccomp(op, flags, uargs);
+ }
+@@ -956,10 +956,10 @@ SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
+  *
+  * Returns 0 on success or -EINVAL on failure.
+  */
+-long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
++long prctl_set_seccomp(unsigned long seccomp_mode, void __user *filter)
+ {
+ 	unsigned int op;
+-	char __user *uargs;
++	void __user *uargs;
  
- 	/*
- 	 * Make sure that any changes to mode from another thread have
-@@ -665,6 +660,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
- 	 */
- 	rmb();
- 
-+	if (!sd) {
-+		populate_seccomp_data(&sd_local);
-+		sd = &sd_local;
-+	}
-+
- 	filter_ret = seccomp_run_filters(sd, &match);
- 	data = filter_ret & SECCOMP_RET_DATA;
- 	action = filter_ret & SECCOMP_RET_ACTION_FULL;
+ 	switch (seccomp_mode) {
+ 	case SECCOMP_MODE_STRICT:
 -- 
 2.19.1
 
