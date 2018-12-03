@@ -2,91 +2,108 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD093C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09692C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1BDC20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BDC20848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BF36A20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ksU7eEGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF36A20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeLCRQ2 (ORCPT
+        id S1726941AbeLCRQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:16:28 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42552 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbeLCRQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:16:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 797CE1682;
-        Mon,  3 Dec 2018 09:16:25 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBA883F59C;
-        Mon,  3 Dec 2018 09:16:21 -0800 (PST)
-Date:   Mon, 3 Dec 2018 17:16:19 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        devicetree@vger.kernel.org,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [RFT PATCH v1 3/4] cpu-topology: Move cpu topology code to
- common code.
-Message-ID: <20181203171619.GE17883@e107155-lin>
-References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
- <1543534100-3654-4-git-send-email-atish.patra@wdc.com>
+        Mon, 3 Dec 2018 12:16:59 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38558 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeLCRQ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:16:59 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m22so6532377wml.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XZ+dFdmZ920KJ6td8EU0wjLOULXN2OwWoR7RRNraTBU=;
+        b=ksU7eEGj9F54kVOlTPj5JfnrnrE8Cj0BFGftVr5u0YkZ4Vsldi/ja5RKJ5WEvgfR9f
+         RJUfkgtXFsDig/MSH4ngs0UO7nUpF3yinkzDBK1pzYiQa0MM2t35U2h2hTXD1Wx3iK5y
+         LBNe8HzYxn9JPExwCYbxH3aaQArwHbgi2tSD2nHHSsuDRV2tWeTduPx59e015kwbNVDg
+         iYedwUOGg85tWPTDUhgUH9A2tUWm4cc8N3Th4fDW+jZ6uxhcIJe3Zgkz1z9yy72HVZvO
+         /7GXNKzUm913DR+Y3pPRbm36IJf8PF/sMspB0R1rlMf7gsBnDARTJSivAVi+PBcZqvQ0
+         iWdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XZ+dFdmZ920KJ6td8EU0wjLOULXN2OwWoR7RRNraTBU=;
+        b=tQWZRCNhZpjJUHvh6yhA38VnMcTPoNnq/Fvi+NedE06yraHoI/WKXySO16V3a/WeHC
+         UVR5ZLRwEAzn76mjNND9oQdgXxdURHGrprFfqf3jTWFX/TMS7eI5ty5vsQDvKPKAMgsD
+         cdYMb1TsEXTPzG50mRCvaxfDfYo0ckc5eWgJgErCNZLTY6TPOTYu0phaZHC/k6XM3uoJ
+         H/0EiEtVDeI441KV9RtoI7RkZFMG9lgsN0lGAP+C7pwmLQkRkiPkqlJRGVxnppL8yrzy
+         fmpSxHI/L3ZvJFKn3UbPf6ghpQB7AvZHyfgHm3TIJ/zKm0wj3CGUyxyDxvRP7VHzcPEf
+         AsGQ==
+X-Gm-Message-State: AA+aEWYn3sXpWbvYHrwzcGnEyEeufBwjzKlBZ7YLYjq7wSE4DEfzIeK9
+        BesCF2fXDsCggED0c6Nea5A2o7W5w/4=
+X-Google-Smtp-Source: AFSGD/XmUwpnJmmwRVcRFLbLGUxdmI3PfK3cf9zrSLDk+MhUMKvxQ3kvhYGILCEGZX6k/UHziNN+/A==
+X-Received: by 2002:a1c:7706:: with SMTP id t6mr8599633wmi.57.1543857415551;
+        Mon, 03 Dec 2018 09:16:55 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id h203sm22494889wma.19.2018.12.03.09.16.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 09:16:55 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] dts: meson: add clock controllers input clocks
+Date:   Mon,  3 Dec 2018 18:16:37 +0100
+Message-Id: <20181203171640.12110-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543534100-3654-4-git-send-email-atish.patra@wdc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:28:19PM -0800, Atish Patra wrote:
-> Both RISC-V & ARM64 are using cpu-map device tree to describe
-> their cpu topology. It's better to move the relevant code to
-> a common place instead of duplicate code.
->
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> ---
->  arch/arm64/include/asm/topology.h |  22 ---
->  arch/arm64/kernel/topology.c      | 303 +-------------------------------------
->  drivers/base/arch_topology.c      | 294 ++++++++++++++++++++++++++++++++++++
->  include/linux/arch_topology.h     |  26 ++++
->  include/linux/topology.h          |   1 +
->  5 files changed, 325 insertions(+), 321 deletions(-)
->
-From a quick look and diffstat, it looks like a simple move. However
-I would like to throw this at 0-day bot to test various build configurations
-so that it's not breaking anything. I can push to a branch in my git
-@kernel.org but not sure on the build coverage. Anyways will update
-with any results on build and testing on my side ASAP.
+This patchset is the first step that needs to be done so the
+amlogic clock controllers properly claim their input clocks
+through DT instead of relying on fixed names.
 
---
-Regards,
-Sudeep
+I'll be waiting for this hit mainline before sending the related
+driver changes.
+
+Changes since v1: [0]
+- add clock-names for the main clock controller
+
+Changes since v2: [1]
+- add more inputs for the gx family external 32k references
+
+[0]: https://lkml.kernel.org/r/20181129164524.18670-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/20181203131850.31388-1-jbrunet@baylibre.com
+
+Jerome Brunet (3):
+  dt-bindings: clk: meson: add ao controller clock inputs
+  dt-bindings: clk: meson: add main controller clock input
+  arm64: dts: meson: add clock controller clock inputs
+
+ .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt  | 10 +++++++++-
+ .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt    |  5 +++++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi             |  4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi            |  4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi             |  4 ++++
+ 5 files changed, 26 insertions(+), 1 deletion(-)
+
+-- 
+2.19.1
+
