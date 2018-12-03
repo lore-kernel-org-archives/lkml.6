@@ -2,172 +2,111 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4A1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB4DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22D542087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8054B20864
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:26:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="B+YL2/0O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D542087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b9Y/Gjgq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8054B20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbeLCXZH (ORCPT
+        id S1725999AbeLCX0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:25:07 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40961 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLCXZG (ORCPT
+        Mon, 3 Dec 2018 18:26:39 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36906 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCX0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:25:06 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 189so8494942qkj.8;
-        Mon, 03 Dec 2018 15:25:05 -0800 (PST)
+        Mon, 3 Dec 2018 18:26:38 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 40so13394727oth.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 15:26:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ldKQF90m/G5zm935FjxHUATkIgg00xIePjtNug6i8VM=;
-        b=B+YL2/0ONXElrrEPv2dMfJsRSfvxC482aR/7TaJ5jRjF5EnoxkVwIKxroOdRLq2Svs
-         tA5yiTxcv6jxtfMI6y9+l/IuhVkhvxIsJiDLL1aZO7z6Dds5EyBfI68RynSISP17B6ER
-         C9wwPPLmYIr04gEUy5xugL/KooJZB5bKHEtYw=
+        bh=HPS2HFveSPDzLkXedVMY/WyPYO5TsRnFR1ztGmJoubY=;
+        b=b9Y/GjgqcB71FPRQ+UFQG9Lu7l/1X/K/VsaWQscvhEg8e0cNVX4CPb4WJajOd11IKK
+         z1RwvlhOAx0LzzdRieVC/5CrVolRpN8T3KKFP3YuxTm+jC4bV/leQWofeuhXipsR9Ya4
+         lbEV7J+r0K7hWGNK94XRAEIfYqtOc9U0U5v0YuKkgQLe/DqQj241bmTmxb4tDFzUV7Ij
+         MtuAElgJvoRTGhB2SHoCYmHMoepmSjcKB44vFVS1gIPhwsGMiMTRJetyQV+rowEELKUj
+         3vjffL0Tik/fTX0IrsSQIZV0ZP+j3UdG86dze+//Evv2G/0z7X++E5EE88noTtKwaXR+
+         hm5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ldKQF90m/G5zm935FjxHUATkIgg00xIePjtNug6i8VM=;
-        b=SfLryl5EZ0vldClCM66DFQORcHgeWhdAJI1wl0uoBNRXIPpdb6301o0GEK1Datqhv2
-         cGKzBDCLzm8+z1zsrvUyKwAX72LFrCwrgmH8+pvyS0iE2g+mYygEu7gxhklWCOFmc8zm
-         JjDbqGFYLGmZROpwTexSz5LEAqntJqKDWjizhHjXeCyCx1gCGiUo2K5dgjVvmnYVaCxp
-         wf3DfnrCY63K0oCOoRimrWeYzdwW8kBoKr8+bHc4tF3eBWPououeVpi5getvKgaxkfer
-         GZorkX8wvODqdwcyj+H45Y42Ps+Iu8WfiT/1TQ3DGfSxWkXIEEvCdQ7xmsE8VHATUolk
-         b4hg==
-X-Gm-Message-State: AA+aEWYajz4rq0itkxn//SOYsND0Sd43OX5ZyKnh80Gawp87/wOkhVXX
-        TstBr6H7GH4sc8Cyu7CvKQTIdWqp4PTXAM3SAQE=
-X-Google-Smtp-Source: AFSGD/XTrD8oOLM7poO8YPp6Ubx5mZflG66w7iTFCPTnyZRuC6G2j7hFiWR7G5gB+GZqd6+2S989N8o2DXOrmLC+89I=
-X-Received: by 2002:ae9:ef8a:: with SMTP id d132mr16176709qkg.11.1543879504998;
- Mon, 03 Dec 2018 15:25:04 -0800 (PST)
+        bh=HPS2HFveSPDzLkXedVMY/WyPYO5TsRnFR1ztGmJoubY=;
+        b=HuUrp4m/kMCXjb6zjQjfHsfO6QdR2u1jRTVomIHvSc+rWJrqt8Nw19j8262YaLRoPC
+         XnjohjjB+/VUIvlJCSRVPmytB7CwxpVcve4CiT09D6qm/gMNcv8mZUTr/LrwDzI21qFp
+         f1kQpo1IIohSGnwa95T+GvpKvQYWbyjoOSpEgVXAIUS/dMK1nyxdmv6PEjNfuGvzmMZD
+         5IT3UK9/RDTbjv5yDE7VIhsyoccm9fEkuDzTF7rxlI7eBcgp6L7iTL5Ij/4+cCF4Ls+p
+         89XfPpx/eH+sGw2FwCH2dh4a7jZRPBJDVtzhYV+0LMEZtm5IQPVI6Qlw8Se5w6zr7RKS
+         mAtQ==
+X-Gm-Message-State: AA+aEWb4IPO9MsjKUMLoK60rlxf5vCaksaRyeswVvDdF0zVZ1h+yVbon
+        vnDZ65jbsWQzkgHLWUeZGQE0Te4InEc0sMcMPqxyCw==
+X-Google-Smtp-Source: AFSGD/UQclCi88c4TOT7Y2CmQIXzN1APZo0zyYj87zPNNG/3LUk5Xu5ODNkxg5mxa0DDLX/hYL9X9sEZ+7JgiGrkov8=
+X-Received: by 2002:a9d:65c8:: with SMTP id z8mr11589524oth.338.1543879597209;
+ Mon, 03 Dec 2018 15:26:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20180612081413.323d85b8@canb.auug.org.au> <CACPK8XeDHt46rUJWQ1n=4fRWioogs9K0Z8dkxUa=E2ShfQ1Vdg@mail.gmail.com>
- <87k1lgufiw.fsf@concordia.ellerman.id.au> <20181118112244.GD21617@bubble.grove.modra.org>
-In-Reply-To: <20181118112244.GD21617@bubble.grove.modra.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 4 Dec 2018 09:54:53 +1030
-Message-ID: <CACPK8Xft3n5KkpTjN3=7_VUCXHFcK7mxvZm2Rrqu7tppcBoyOg@mail.gmail.com>
-Subject: Re: linux-next: build warnings from Linus' tree
-To:     Alan Modra <amodra@gmail.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-8-brendanhiggins@google.com> <20181130034001.GM18410@garbanzo.do-not-panic.com>
+In-Reply-To: <20181130034001.GM18410@garbanzo.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 3 Dec 2018 15:26:26 -0800
+Message-ID: <CAFd5g47CJnfE3Gqc03onidd5FiZSW43-6_dA5czb30-Rb3dyfg@mail.gmail.com>
+Subject: Re: [RFC v3 07/19] kunit: test: add initial tests
+To:     mcgrof@kernel.org
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 18 Nov 2018 at 21:52, Alan Modra <amodra@gmail.com> wrote:
+On Thu, Nov 29, 2018 at 7:40 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
 >
-> On Wed, Nov 14, 2018 at 09:20:23PM +1100, Michael Ellerman wrote:
-> > Joel Stanley <joel@jms.id.au> writes:
-> > > Hello Alan,
-> > >
-> > > On Tue, 12 Jun 2018 at 07:44, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > >> Building Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
-> > >> produced these warning:
-> > >>
-> > >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> > >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> > >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
-> > >>
-> > >> This may just be because I have started building using the native Debian
-> > >> gcc for the powerpc builds ...
-> > >
-> > > Do you know why we started creating these?
+> On Wed, Nov 28, 2018 at 11:36:24AM -0800, Brendan Higgins wrote:
+> > Add a test for string stream along with a simpler example.
 > >
-> > It's controlled by the ld option --hash-style, which AFAICS still
-> > defaults to sysv (generating .hash).
-> >
-> > But it seems gcc can be configured to have a different default, and at
-> > least my native ppc64le toolchains are passing gnu, eg:
-> >
-> >  /usr/lib/gcc/powerpc64le-linux-gnu/6/collect2 -plugin
-> >  /usr/lib/gcc/powerpc64le-linux-gnu/6/liblto_plugin.so
-> >  -plugin-opt=/usr/lib/gcc/powerpc64le-linux-gnu/6/lto-wrapper
-> >  -plugin-opt=-fresolution=/tmp/ccw1U2fF.res
-> >  -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s
-> >  -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc
-> >  -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr
-> >  -V -shared -m elf64lppc
-> >  --hash-style=gnu
-> >  ^^^^^^^^^^^^^^^^
-> >
-> > So that's presumably why we're seeing it, some GCCs are configured to
-> > use it.
-> >
-> > > If it's intentional, should we be putting including them in the same
-> > > way as .hash sections?
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/kernel/vmlinux.lds.S#n282
-> > >
-> > >   .hash : AT(ADDR(.hash) - LOAD_OFFSET) { *(.hash) }
-> >
-> > That would presumably work.
-> >
-> > My question though is do we even need it?
-> >
-> > >From what I can see for it to be useful you need the section as well as
-> > an entry in the dynamic section pointing at it, and we don't have a
-> > dynamic section at all:
-> >
-> >   $ readelf -S vmlinux | grep gnu.hash
-> >     [ 4] .gnu.hash         GNU_HASH         c000000000dbbdb0  00dcbdb0
-> >   $ readelf -d vmlinux
-> >
-> >   There is no dynamic section in this file.
-> >
-> > Compare to the vdso:
-> >
-> > $ readelf -d arch/powerpc/kernel/vdso64/vdso64.so
-> >
-> > Dynamic section at offset 0x868 contains 12 entries:
-> >   Tag        Type                         Name/Value
-> >  0x000000000000000e (SONAME)             Library soname: [linux-vdso64.so.1]
-> >  0x0000000000000004 (HASH)               0x120
-> >  0x000000006ffffef5 (GNU_HASH)           0x170
-> >  0x0000000000000005 (STRTAB)             0x320
-> >  0x0000000000000006 (SYMTAB)             0x1d0
-> >  0x000000000000000a (STRSZ)              269 (bytes)
-> >  0x000000000000000b (SYMENT)             24 (bytes)
-> >  0x0000000070000003 (PPC64_OPT)          0x0
-> >  0x000000006ffffffc (VERDEF)             0x450
-> >  0x000000006ffffffd (VERDEFNUM)          2
-> >  0x000000006ffffff0 (VERSYM)             0x42e
-> >  0x0000000000000000 (NULL)               0x0
-> >
-> >
-> > So can't we just discard .gnu.hash? And in fact do we need .hash either?
-> >
-> > Actually arm64 discards the latter, and parisc discards both.
-> >
-> > Would still be good to hear from Alan or someone else who knows anything
-> > about toolchain stuff, ie. not me :)
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+> >  kunit/Kconfig              | 12 ++++++
+> >  kunit/Makefile             |  4 ++
+> >  kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++++++
 >
-> .gnu.hash, like .hash, is used by glibc ld.so for dynamic symbol
-> lookup.  I imagine you don't need either section in a kernel, so
-> discarding both sounds reasonable.  Likely you could discard .interp
-> and .dynstr too, and .dynsym when !CONFIG_PPC32.
+> BTW if you need another more concrete but very simple example I think it
+> may be possible to port tools/testing/selftests/sysctl/sysctl.sh +
+> lib/test_sysctl.c into a kunit test. Correct me if I'm wrong.
 
-Thanks for the digging Michael, and thanks Alan for clarifying the
-details. I'll cook up a patch or two.
+I think that is pretty doable. I don't know that I want to shoot for
+that on the next revision. But I can definitely do it in a later
+revision, or a later patchset, unless you would strongly prefer it
+now, that is.
 
-Cheers,
+>
+> I think that would show the differences clearly between selftests and
+> kunit as well.
 
-Joel
+True. Maybe a good thing to shoot for once the DT tests are in order?
