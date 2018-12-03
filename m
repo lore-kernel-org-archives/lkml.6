@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EF4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EC6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 548EE20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548EE20850
+	by mail.kernel.org (Postfix) with ESMTP id F40322082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:05:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40322082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbeLCVEt (ORCPT
+        id S1726138AbeLCVFH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:04:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36291 "EHLO
+        Mon, 3 Dec 2018 16:05:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59431 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbeLCVEs (ORCPT
+        with ESMTP id S1725908AbeLCVFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:04:48 -0500
+        Mon, 3 Dec 2018 16:05:06 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L4PTj596284
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L3msh594739
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Dec 2018 13:04:25 -0800
+        Mon, 3 Dec 2018 13:03:48 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L4P4k596281;
-        Mon, 3 Dec 2018 13:04:25 -0800
-Date:   Mon, 3 Dec 2018 13:04:25 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L3mKs594736;
+        Mon, 3 Dec 2018 13:03:48 -0800
+Date:   Mon, 3 Dec 2018 13:03:48 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-7d79adb87fa79e4a4c59424fd5b5a922861fc5f6@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, rkrcmar@redhat.com,
-        tglx@linutronix.de, hpa@zytor.com, ard.biesheuvel@linaro.org,
-        bp@suse.de, luto@kernel.org, linux-efi@vger.kernel.org,
-        pbonzini@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-        riel@surriel.com, mingo@redhat.com, nstange@suse.de,
-        bigeasy@linutronix.de, kvm@vger.kernel.org, Jason@zx2c4.com
-Reply-To: dave.hansen@linux.intel.com, mingo@redhat.com, x86@kernel.org,
-          nstange@suse.de, riel@surriel.com, bigeasy@linutronix.de,
-          kvm@vger.kernel.org, Jason@zx2c4.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          rkrcmar@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-          ard.biesheuvel@linaro.org, luto@kernel.org, bp@suse.de,
-          linux-efi@vger.kernel.org, pbonzini@redhat.com
-In-Reply-To: <20181129150210.2k4mawt37ow6c2vq@linutronix.de>
-References: <20181129150210.2k4mawt37ow6c2vq@linutronix.de>
+Message-ID: <tip-2f2fcc40a961ed04f0e130803fbaa868c2899310@git.kernel.org>
+Cc:     luto@kernel.org, riel@surriel.com, bigeasy@linutronix.de,
+        hpa@zytor.com, rkrcmar@redhat.com, bp@suse.de, pbonzini@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, mingo@kernel.org,
+        kvm@vger.kernel.org, x86@kernel.org, Jason@zx2c4.com,
+        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com
+Reply-To: mingo@redhat.com, kvm@vger.kernel.org, mingo@kernel.org,
+          Jason@zx2c4.com, dave.hansen@linux.intel.com,
+          linux-kernel@vger.kernel.org, x86@kernel.org,
+          bigeasy@linutronix.de, riel@surriel.com, luto@kernel.org,
+          hpa@zytor.com, tglx@linutronix.de, pbonzini@redhat.com,
+          rkrcmar@redhat.com, bp@suse.de
+In-Reply-To: <20181128222035.2996-7-bigeasy@linutronix.de>
+References: <20181128222035.2996-7-bigeasy@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/fpu] x86/fpu: Don't export __kernel_fpu_{begin,end}()
-Git-Commit-ID: 7d79adb87fa79e4a4c59424fd5b5a922861fc5f6
+Subject: [tip:x86/fpu] x86/fpu: Update comment for __raw_xsave_addr()
+Git-Commit-ID: 2f2fcc40a961ed04f0e130803fbaa868c2899310
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -66,135 +64,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7d79adb87fa79e4a4c59424fd5b5a922861fc5f6
-Gitweb:     https://git.kernel.org/tip/7d79adb87fa79e4a4c59424fd5b5a922861fc5f6
+Commit-ID:  2f2fcc40a961ed04f0e130803fbaa868c2899310
+Gitweb:     https://git.kernel.org/tip/2f2fcc40a961ed04f0e130803fbaa868c2899310
 Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Thu, 29 Nov 2018 16:02:10 +0100
+AuthorDate: Wed, 28 Nov 2018 23:20:12 +0100
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Mon, 3 Dec 2018 19:37:27 +0100
+CommitDate: Mon, 3 Dec 2018 19:27:14 +0100
 
-x86/fpu: Don't export __kernel_fpu_{begin,end}()
+x86/fpu: Update comment for __raw_xsave_addr()
 
-There is one user of __kernel_fpu_begin() and before invoking it,
-it invokes preempt_disable(). So it could invoke kernel_fpu_begin()
-right away. The 32bit version of arch_efi_call_virt_setup() and
-arch_efi_call_virt_teardown() does this already.
+The comment above __raw_xsave_addr() claims that the function does not
+work for compacted buffers and was introduced in:
 
-The comment above *kernel_fpu*() claims that before invoking
-__kernel_fpu_begin() preemption should be disabled and that KVM is a
-good example of doing it. Well, KVM doesn't do that since commit
+  b8b9b6ba9dec3 ("x86/fpu: Allow setting of XSAVE state")
 
-  f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
+In this commit, the function was factored out of get_xsave_addr() and
+this function claims that it works with "standard format or compacted
+format of xsave area". It accesses the "xstate_comp_offsets" variable
+for the actual offset and it was introduced in commit
 
-so it is not an example anymore.
+  7496d6458fe32 ("Define kernel API to get address of each state in xsave area")
 
-With EFI gone as the last user of __kernel_fpu_{begin|end}(), both can
-be made static and not exported anymore.
+Based on the code (back then and now):
+- xstate_offsets holds the standard offset.
+- if compacted mode is not supported then xstate_comp_offsets gets the
+  xstate_offsets copied.
+- if compacted mode is supported then xstate_comp_offsets will hold the
+  offset for the compacted buffer.
 
+Based on that the function works for compacted buffers as long as the
+CPU supports it and this what we care about.
+
+Remove the "Note:" which is not accurate.
+
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Rik van Riel <riel@surriel.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Nicolai Stange <nstange@suse.de>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: kvm ML <kvm@vger.kernel.org>
-Cc: linux-efi <linux-efi@vger.kernel.org>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181129150210.2k4mawt37ow6c2vq@linutronix.de
+Link: https://lkml.kernel.org/r/20181128222035.2996-7-bigeasy@linutronix.de
 ---
- arch/x86/include/asm/efi.h     |  6 ++----
- arch/x86/include/asm/fpu/api.h | 16 ++++++----------
- arch/x86/kernel/fpu/core.c     |  6 ++----
- 3 files changed, 10 insertions(+), 18 deletions(-)
+ arch/x86/kernel/fpu/xstate.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index eea40d52ca78..45864898f7e5 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -82,8 +82,7 @@ struct efi_scratch {
- #define arch_efi_call_virt_setup()					\
- ({									\
- 	efi_sync_low_kernel_mappings();					\
--	preempt_disable();						\
--	__kernel_fpu_begin();						\
-+	kernel_fpu_begin();						\
- 	firmware_restrict_branch_speculation_start();			\
- 									\
- 	if (!efi_enabled(EFI_OLD_MEMMAP))				\
-@@ -99,8 +98,7 @@ struct efi_scratch {
- 		efi_switch_mm(efi_scratch.prev_mm);			\
- 									\
- 	firmware_restrict_branch_speculation_end();			\
--	__kernel_fpu_end();						\
--	preempt_enable();						\
-+	kernel_fpu_end();						\
- })
- 
- extern void __iomem *__init efi_ioremap(unsigned long addr, unsigned long size,
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index a9caac9d4a72..e368d8d94ca6 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -12,17 +12,13 @@
- #define _ASM_X86_FPU_API_H
- 
- /*
-- * Careful: __kernel_fpu_begin/end() must be called with preempt disabled
-- * and they don't touch the preempt state on their own.
-- * If you enable preemption after __kernel_fpu_begin(), preempt notifier
-- * should call the __kernel_fpu_end() to prevent the kernel/user FPU
-- * state from getting corrupted. KVM for example uses this model.
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 69d5740ed254..359564beab5c 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -808,8 +808,6 @@ void fpu__resume_cpu(void)
+  * Given an xstate feature mask, calculate where in the xsave
+  * buffer the state is.  Callers should ensure that the buffer
+  * is valid.
 - *
-- * All other cases use kernel_fpu_begin/end() which disable preemption
-- * during kernel FPU usage.
-+ * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
-+ * disables preemption so be careful if you intend to use it for long periods
-+ * of time.
-+ * If you intend to use the FPU in softirq you need to check first with
-+ * irq_fpu_usable() if it is possible.
-+ * Using the FPU in hardirq is not allowed.
+- * Note: does not work for compacted buffers.
   */
--extern void __kernel_fpu_begin(void);
--extern void __kernel_fpu_end(void);
- extern void kernel_fpu_begin(void);
- extern void kernel_fpu_end(void);
- extern bool irq_fpu_usable(void);
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 2ea85b32421a..2e5003fef51a 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -93,7 +93,7 @@ bool irq_fpu_usable(void)
- }
- EXPORT_SYMBOL(irq_fpu_usable);
- 
--void __kernel_fpu_begin(void)
-+static void __kernel_fpu_begin(void)
- {
- 	struct fpu *fpu = &current->thread.fpu;
- 
-@@ -111,9 +111,8 @@ void __kernel_fpu_begin(void)
- 		__cpu_invalidate_fpregs_state();
- 	}
- }
--EXPORT_SYMBOL(__kernel_fpu_begin);
- 
--void __kernel_fpu_end(void)
-+static void __kernel_fpu_end(void)
- {
- 	struct fpu *fpu = &current->thread.fpu;
- 
-@@ -122,7 +121,6 @@ void __kernel_fpu_end(void)
- 
- 	kernel_fpu_enable();
- }
--EXPORT_SYMBOL(__kernel_fpu_end);
- 
- void kernel_fpu_begin(void)
+ void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
  {
