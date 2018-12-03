@@ -2,291 +2,447 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC2AC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27195C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 851C2214C1
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:01:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OigM4/7N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851C2214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id D14622147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:03:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14622147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbeLCLCN (ORCPT
+        id S1726305AbeLCLEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:02:13 -0500
-Received: from mail-eopbgr40073.outbound.protection.outlook.com ([40.107.4.73]:18637
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        Mon, 3 Dec 2018 06:04:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51496 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725888AbeLCLCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:02:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D4/zjqjA/G6oMMUNZMcYXdwW5ngAUKu1sjiOUJLnVFQ=;
- b=OigM4/7Ncn38Xq+Ok+Tt+mjJdkx4nVfkb3Mw4EZElDVUSmi4r4e+dU6vYe+ICYXGk6bnpg4iKB+dwHhFGMy8A1aGmPdcb4+YvO7d4CJflgzjrz61uQZLqmlcARV23NDM4DY3D5qb/3Q3QxDVo35QiUClyjJhEGEfdyHLlMto2ZU=
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com (20.177.49.14) by
- VI1PR04MB4992.eurprd04.prod.outlook.com (20.177.49.221) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Mon, 3 Dec 2018 11:01:29 +0000
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a]) by VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a%2]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 11:01:29 +0000
-From:   Bharat Bhushan <bharat.bhushan@nxp.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        David Daney <david.daney@cavium.com>,
-        "jglauber@cavium.com" <jglauber@cavium.com>,
-        "mbroemme@libmpq.org" <mbroemme@libmpq.org>,
-        "chrisrblake93@gmail.com" <chrisrblake93@gmail.com>
-Subject: RE: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Topic: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Index: AQHUhi2yh4+Qm28J50ixacdSn4eZIqVjwNwAgAAJqACAALvmYIABG3kAgACEALCAAbCFAIAAAq1ggACrf4CABF3uQA==
-Date:   Mon, 3 Dec 2018 11:01:29 +0000
-Message-ID: <VI1PR04MB4845A5AAE3692EC284147E419AAE0@VI1PR04MB4845.eurprd04.prod.outlook.com>
-References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
-        <20181127153356.GA112381@google.com>    <20181127090830.084fedf1@x1.home>
-        <VI1PR04MB48457E23AA3354316C7782D69AD10@VI1PR04MB4845.eurprd04.prod.outlook.com>
-        <CAErSpo7By1t5X=M=x_+Fs8TeROACBnS3f5ujsi=Ewiogh=-wRg@mail.gmail.com>
-        <VI1PR04MB4845D4ED02E38246E71DD1A49AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
-        <20181129225606.328f7386@x1.home>
-        <VI1PR04MB48458DF3A1EBB73A4E2CDCD19AD30@VI1PR04MB4845.eurprd04.prod.outlook.com>
- <20181130091929.3eae4e99@x1.home>
-In-Reply-To: <20181130091929.3eae4e99@x1.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharat.bhushan@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4992;6:3gWW5JGt/9+tJk1vPpeJAE//lYeupLbLbq16gZc7xd7suUK+0R+slXPyOI+BmqxkCzTMDxtINaapHSYw4fX8Rn3K7H57hQrgkV61xDwOkHuXfc8wJLAxMJpeaGIXL+mQhDwGldkKHUYin/rsIWrcjhk/+mwMzKRCARWtKOg4B5C69eVOiOvvy2H6x1/sEkTmSSflwSxe/1lxfKblGY/xFRqfMuELy2QR8kPx5Wgy4ug7HsRxUeLzZu6RLAKIRBSv7d0+TmgMFQC2aek5GOyKRnECtNveBLxySOgayxG97VtFN5KvAmVFgieuokTQJqONOjUDaSuF/QXsK8+2uhHh1O2C1JUBdi+Xck99ETofuHBCQL2p3F7L9GoQK0aaRu6qhlVj94tU5ZK6NGMAJ+UbzTw3sdhxH0fcc/NBQqkUc0dcmvsOFo9VNvO1wGcVr9E3nFjEqkm2BQzTTtDCds8oig==;5:7XRhSoWQzwIVG032pr4rh545llj88griJXDJfGXcG5SqVbB3TnlM1X6HFeExXUjccx2LqniLIFrzrSzZqti/ViDcS/kmmJQZik7udDHYpjfG5Pkl0os6tSUyKsbffUq9UWYLCxhrkUokoUs67xqwX6F3KwyiSSuaL8WmZJIbiXk=;7:MMUibCjIuT6He7alUPQMvnnZeLnxzE7WlXqRbstPhmVtdyrGNZi6IyAdBeMwQHHtF7u4t8lZu3/+27D25XCZu9i8/btnRzxeDb9bR1MB3068MIAgqSh8d3hKe6Gw8vmZiBYkwZZ99c8f1DiLoPyijA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a7304b93-21f5-4ea9-d5ce-08d6590ead8a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4992;
-x-ms-traffictypediagnostic: VI1PR04MB4992:
-x-microsoft-antispam-prvs: <VI1PR04MB49922F3152B58D4C4035F0509AAE0@VI1PR04MB4992.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4992;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4992;
-x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(136003)(346002)(366004)(189003)(199004)(13464003)(486006)(7416002)(25786009)(316002)(3846002)(478600001)(26005)(55016002)(256004)(14444005)(6116002)(76176011)(7736002)(229853002)(305945005)(68736007)(99286004)(4326008)(6436002)(6246003)(86362001)(7696005)(39060400002)(105586002)(106356001)(71190400001)(14454004)(66066001)(97736004)(71200400001)(2906002)(186003)(9686003)(102836004)(6916009)(53936002)(33656002)(8676002)(81156014)(8936002)(11346002)(446003)(44832011)(81166006)(5660300001)(6506007)(54906003)(74316002)(476003)(78486014)(93886005)(55236004)(53546011)(505234006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4992;H:VI1PR04MB4845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: wv0RcmCR3EJQ6jd68TsfVDnKt1rIOa+ZHkTgNjepNVgBub+wH1KWdPZklvE3OeK3mTtklm/q90edZz97iGYlDvj8pBXrqIhaighCDE2YCRgioxc1ygdbhmDKmmdi1XHtbookDZ7NjgXJ59W4t7D+vi6oSVGKlg6DMb5PbcCPnxOkwhMaybtN5JdNqL5+SgqzH6KIuX9E0KJ49toQrHiSR8+nbNqbnGL9+Xzgbt/BUlKdQ1j/4nwKeC8LlL7oCyosxOZPXCUEn7si1BqLbzN1xQvZ2k3tXsebXMrNOH8oqCvUkTLu+IfrLhH+EmvxH3aF8w4R63/SuqXR+02HOOyK7133/hkR3UXBBEaYT0wxcag=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1725888AbeLCLEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:04:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D5CD0AE6B;
+        Mon,  3 Dec 2018 11:03:34 +0000 (UTC)
+From:   Roman Penyaev <rpenyaev@suse.de>
+Cc:     Roman Penyaev <rpenyaev@suse.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/1] epoll: use rwlock in order to reduce ep_poll_callback() contention
+Date:   Mon,  3 Dec 2018 12:02:37 +0100
+Message-Id: <20181203110237.14787-1-rpenyaev@suse.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7304b93-21f5-4ea9-d5ce-08d6590ead8a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 11:01:29.3763
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4992
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+Hi all,
 
-> -----Original Message-----
-> From: Alex Williamson <alex.williamson@redhat.com>
-> Sent: Friday, November 30, 2018 9:49 PM
-> To: Bharat Bhushan <bharat.bhushan@nxp.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>; Bjorn Helgaas
-> <helgaas@kernel.org>; linux-pci@vger.kernel.org; Linux Kernel Mailing Lis=
-t
-> <linux-kernel@vger.kernel.org>; bharatb.yadav@gmail.com; David Daney
-> <david.daney@cavium.com>; jglauber@cavium.com;
-> mbroemme@libmpq.org; chrisrblake93@gmail.com
-> Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
->=20
-> On Fri, 30 Nov 2018 06:24:16 +0000
-> Bharat Bhushan <bharat.bhushan@nxp.com> wrote:
->=20
-> > Hi Alex,
-> >
-> > > -----Original Message-----
-> > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > Sent: Friday, November 30, 2018 11:26 AM
-> > > To: Bharat Bhushan <bharat.bhushan@nxp.com>
-> > > Cc: Bjorn Helgaas <bhelgaas@google.com>; Bjorn Helgaas
-> > > <helgaas@kernel.org>; linux-pci@vger.kernel.org; Linux Kernel
-> > > Mailing List <linux-kernel@vger.kernel.org>;
-> > > bharatb.yadav@gmail.com; David Daney <david.daney@cavium.com>;
-> > > jglauber@cavium.com; mbroemme@libmpq.org;
-> chrisrblake93@gmail.com
-> > > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-> > >
-> > > On Fri, 30 Nov 2018 05:29:47 +0000
-> > > Bharat Bhushan <bharat.bhushan@nxp.com> wrote:
-> > >
-> > > > Hi,
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > > > > Sent: Thursday, November 29, 2018 1:46 AM
-> > > > > To: Bharat Bhushan <bharat.bhushan@nxp.com>
-> > > > > Cc: alex.williamson@redhat.com; Bjorn Helgaas
-> > > > > <helgaas@kernel.org>;
-> > > > > linux- pci@vger.kernel.org; Linux Kernel Mailing List <linux-
-> > > > > kernel@vger.kernel.org>; bharatb.yadav@gmail.com; David Daney
-> > > > > <david.daney@cavium.com>; jglauber@cavium.com;
-> > > mbroemme@libmpq.org;
-> > > > > chrisrblake93@gmail.com
-> > > > > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-> > > > >
-> > > > > On Tue, Nov 27, 2018 at 10:32 PM Bharat Bhushan
-> > > > > <bharat.bhushan@nxp.com> wrote:
-> > > > >
-> > > > > > > -----Original Message-----
-> > > > > > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > > > > > Sent: Tuesday, November 27, 2018 9:39 PM
-> > > > > > > To: Bjorn Helgaas <helgaas@kernel.org>
-> > > > > > > Cc: Bharat Bhushan <bharat.bhushan@nxp.com>;
-> > > > > > > linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > > > > bharatb.yadav@gmail.com; David Daney
-> > > <david.daney@cavium.com>;
-> > > > > Jan
-> > > > > > > Glauber <jglauber@cavium.com>; Maik Broemme
-> > > > > <mbroemme@libmpq.org>;
-> > > > > > > Chris Blake <chrisrblake93@gmail.com>
-> > > > > > > Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset
-> > > > > > > bus
-> > > > > > >
-> > > > > > > On Tue, 27 Nov 2018 09:33:56 -0600 Bjorn Helgaas
-> > > > > > > <helgaas@kernel.org> wrote:
-> > > > >
-> > > > > > > > 4) Is there a hardware erratum for this?  If so, please
-> > > > > > > > include the URL here.
-> > > > > >
-> > > > > > No h/w errata as of now.
-> > > > >
-> > > > > Does that mean (a) the HW folks agree this is a hardware problem
-> > > > > but they haven't written an erratum, (b) there is an erratum but
-> > > > > it isn't public, (c) we don't have any concrete evidence of a
-> > > > > hardware problem, but things just don't work if we do a bus
-> > > > > reset, (d) something
-> > > else?
-> > > >
-> > > > I will say it is (c) - not concluded to be hardware h/w issue.
-> > > >
-> > > > >
-> > > > > > In pci_reset_secondary_bus() I have tried to increase the
-> > > > > > delay after reset
-> > > > > but not helped.
-> > > > > > Do I need to add delay at some other place as well?
-> > > > >
-> > > > > No, I think the place you tried should be enough.
-> > > > >
-> > > > > You should also be able to exercise this from user-space by
-> > > > > using "setpci" to set and clear the Secondary Bus Reset bit in
-> > > > > the Bridge Control register.  Then you can also use setpci to
-> > > > > read/write config space of the NIC.  The kernel would normally
-> > > > > read the Vendor and Device IDs as the first access to the device
-> during enumeration.
-> > > > > You also might be able to learn something by using "lspci -vv"
-> > > > > on the bridge before and after the reset to see if it logs any
-> > > > > AER bits (if it
-> > > supports AER) or the other standard error logging bits.
-> > > >
-> > > > I tried below sequence for Secondary bus reset and device config
-> > > > space show 0xff
-> > > >
-> > > > root@localhost:~# lspci -x
-> > > > 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0
-> > > > (rev
-> > > > 10)
-> > > > 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> > > > 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> > > > 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> > > > 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
-> > > >
-> > > > 0002:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit
-> > > > Network Connection
-> > > > 00: 86 80 d3 10 06 04 10 00 00 00 00 02 10 00 00 00
-> > > > 10: 00 00 0c 40 00 00 00 40 01 00 00 00 00 00 0e 40
-> > > > 20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 1f a0
-> > > > 30: 00 00 24 40 c8 00 00 00 00 00 00 00 63 01 00 00
-> > > >
-> > > > root@localhost:~#  setpci -s 0002:00:00.0 0x3e.b=3D0x40
-> > > > root@localhost:~#  setpci -s 0002:00:00.0 0x3e.b=3D0x00
-> > > >
-> > > > root@localhost:~# lspci -x
-> > > > 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0
-> > > > (rev
-> > > > 10)
-> > > > 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> > > > 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> > > > 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> > > > 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
-> > >
-> > > Just for curiosity sake, what if you re-write the secondary and
-> > > subordinate bus registers here:
-> > >
-> > > # setpci -s 0002:00:00.0 0x19.b=3D0x01 # setpci -s 0002:00:00.0
-> > > 0x1a.b=3D0xff
-> >
-> > Result is same, here are logs
-> >
-> > root@localhost:~# setpci -s 0002:00:00.0 0x3e.b=3D0x40 root@localhost:~=
-#
-> > setpci -s 0002:00:00.0 0x3e.b=3D0x00 root@localhost:~# setpci -s
-> > 0002:00:00.0 0x19.b=3D0x01 root@localhost:~# setpci -s 0002:00:00.0
-> > 0x1a.b=3D0xff root@localhost:~# lspci -x
-> > 0002:00:00.0 PCI bridge: Freescale Semiconductor Inc Device 80c0 (rev
-> > 10)
-> > 00: 57 19 c0 80 07 01 10 00 10 00 04 06 08 00 01 00
-> > 10: 00 00 00 00 00 00 00 00 00 01 ff 00 01 01 00 00
-> > 20: 00 40 00 40 f1 ff 01 00 00 00 00 00 00 00 00 00
-> > 30: 00 00 00 00 40 00 00 00 00 00 00 40 63 01 00 00
-> >
-> > 0002:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit
-> > Network Connection (rev ff)
-> > 00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > 10: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > 20: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > 30: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->=20
-> Ok, thanks for scratching my itch.
->=20
-> > > IIRC the users that debugged the AMD bus reset issue re-wrote the
-> > > entire 64 bytes of the bridge config header and then further
-> > > narrowed the issue down to the two registers above.  If one bridge
-> > > implementation can have such an issue, maybe others do too.  Perhaps
-> there's common IP in use.
-> >
-> > >  Are you able
-> > > to test other endpoints besides this e1000e device with this setpci
-> > > technique?  Thanks,
-> >
-> > I tried  with " Broadcom Limited NetXtreme BCM5722 Gigabit Ethernet PCI
-> Express" I observe same issue.
->=20
-> Personally I'd exhaust talking with your hardware folks before blocking b=
-us
-> resets at the software level, it seems like a gap in PCIe compliance of t=
-he
-> device.  Thanks,
+The goal of this patch is to reduce contention of ep_poll_callback() which
+can be called concurrently from different CPUs in case of high events
+rates and many fds per epoll.  Problem can be very well reproduced by
+generating events (write to pipe or eventfd) from many threads, while
+consumer thread does polling.  In other words this patch increases the
+bandwidth of events which can be delivered from sources to the poller by
+adding poll items in a lockless way to the list.
 
-I will continue to work with our h/w team on this.
+The main change is in replacement of the spinlock with a rwlock, which is
+taken on read in ep_poll_callback(), and then by adding poll items to the
+tail of the list using xchg atomic instruction.  Write lock is taken
+everywhere else in order to stop list modifications and guarantee that list
+updates are fully completed (I assume that write side of a rwlock does not
+starve, it seems qrwlock implementation has these guarantees).
 
-Thanks
--Bharat
+The following are some microbenchmark results based on the test [1] which
+starts threads which generate N events each.  The test ends when all
+events are successfully fetched by the poller thread:
 
->=20
-> Alex
+spinlock
+========
+
+threads       run time    events per ms
+-------       ---------   -------------
+      8         13191ms         6064/ms
+     16         30758ms         5201/ms
+     32         44315ms         7220/ms
+
+rwlock + xchg
+=============
+
+threads       run time    events per ms
+-------       ---------   -------------
+      8          8581ms         9323/ms
+     16         13800ms        11594/ms
+     32         24167ms        13240/ms
+
+According to the results bandwidth of delivered events is significantly
+increased, thus execution time is reduced.
+
+This is RFC because I did not run any benchmarks comparing current
+qrwlock and spinlock implementations (4.19 kernel), although I did
+not notice any epoll performance degradations in other benchmarks.
+
+Also I'm not quite sure where to put very special lockless variant
+of adding element to the list (list_add_tail_lockless() in this
+patch).  Seems keeping it locally is safer.
+
+[1] https://github.com/rouming/test-tools/blob/master/stress-epoll.c
+
+Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/eventpoll.c | 107 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 69 insertions(+), 38 deletions(-)
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 42bbe6824b4b..89debda47aca 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -50,10 +50,10 @@
+  *
+  * 1) epmutex (mutex)
+  * 2) ep->mtx (mutex)
+- * 3) ep->wq.lock (spinlock)
++ * 3) ep->lock (rwlock)
+  *
+  * The acquire order is the one listed above, from 1 to 3.
+- * We need a spinlock (ep->wq.lock) because we manipulate objects
++ * We need a rwlock (ep->lock) because we manipulate objects
+  * from inside the poll callback, that might be triggered from
+  * a wake_up() that in turn might be called from IRQ context.
+  * So we can't sleep inside the poll callback and hence we need
+@@ -85,7 +85,7 @@
+  * of epoll file descriptors, we use the current recursion depth as
+  * the lockdep subkey.
+  * It is possible to drop the "ep->mtx" and to use the global
+- * mutex "epmutex" (together with "ep->wq.lock") to have it working,
++ * mutex "epmutex" (together with "ep->lock") to have it working,
+  * but having "ep->mtx" will make the interface more scalable.
+  * Events that require holding "epmutex" are very rare, while for
+  * normal operations the epoll private "ep->mtx" will guarantee
+@@ -182,8 +182,6 @@ struct epitem {
+  * This structure is stored inside the "private_data" member of the file
+  * structure and represents the main data structure for the eventpoll
+  * interface.
+- *
+- * Access to it is protected by the lock inside wq.
+  */
+ struct eventpoll {
+ 	/*
+@@ -203,13 +201,16 @@ struct eventpoll {
+ 	/* List of ready file descriptors */
+ 	struct list_head rdllist;
+ 
++	/* Lock which protects rdllist and ovflist */
++	rwlock_t lock;
++
+ 	/* RB tree root used to store monitored fd structs */
+ 	struct rb_root_cached rbr;
+ 
+ 	/*
+ 	 * This is a single linked list that chains all the "struct epitem" that
+ 	 * happened while transferring ready events to userspace w/out
+-	 * holding ->wq.lock.
++	 * holding ->lock.
+ 	 */
+ 	struct epitem *ovflist;
+ 
+@@ -697,17 +698,17 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
+ 	 * because we want the "sproc" callback to be able to do it
+ 	 * in a lockless way.
+ 	 */
+-	spin_lock_irq(&ep->wq.lock);
++	write_lock_irq(&ep->lock);
+ 	list_splice_init(&ep->rdllist, &txlist);
+ 	ep->ovflist = NULL;
+-	spin_unlock_irq(&ep->wq.lock);
++	write_unlock_irq(&ep->lock);
+ 
+ 	/*
+ 	 * Now call the callback function.
+ 	 */
+ 	res = (*sproc)(ep, &txlist, priv);
+ 
+-	spin_lock_irq(&ep->wq.lock);
++	write_lock_irq(&ep->lock);
+ 	/*
+ 	 * During the time we spent inside the "sproc" callback, some
+ 	 * other events might have been queued by the poll callback.
+@@ -722,7 +723,8 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
+ 		 * contain them, and the list_splice() below takes care of them.
+ 		 */
+ 		if (!ep_is_linked(epi)) {
+-			list_add_tail(&epi->rdllink, &ep->rdllist);
++			/* Reverse ->ovflist, events should be in FIFO */
++			list_add(&epi->rdllink, &ep->rdllist);
+ 			ep_pm_stay_awake(epi);
+ 		}
+ 	}
+@@ -745,11 +747,11 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
+ 		 * the ->poll() wait list (delayed after we release the lock).
+ 		 */
+ 		if (waitqueue_active(&ep->wq))
+-			wake_up_locked(&ep->wq);
++			wake_up(&ep->wq);
+ 		if (waitqueue_active(&ep->poll_wait))
+ 			pwake++;
+ 	}
+-	spin_unlock_irq(&ep->wq.lock);
++	write_unlock_irq(&ep->lock);
+ 
+ 	if (!ep_locked)
+ 		mutex_unlock(&ep->mtx);
+@@ -789,10 +791,10 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+ 
+ 	rb_erase_cached(&epi->rbn, &ep->rbr);
+ 
+-	spin_lock_irq(&ep->wq.lock);
++	write_lock_irq(&ep->lock);
+ 	if (ep_is_linked(epi))
+ 		list_del_init(&epi->rdllink);
+-	spin_unlock_irq(&ep->wq.lock);
++	write_unlock_irq(&ep->lock);
+ 
+ 	wakeup_source_unregister(ep_wakeup_source(epi));
+ 	/*
+@@ -842,7 +844,7 @@ static void ep_free(struct eventpoll *ep)
+ 	 * Walks through the whole tree by freeing each "struct epitem". At this
+ 	 * point we are sure no poll callbacks will be lingering around, and also by
+ 	 * holding "epmutex" we can be sure that no file cleanup code will hit
+-	 * us during this operation. So we can avoid the lock on "ep->wq.lock".
++	 * us during this operation. So we can avoid the lock on "ep->lock".
+ 	 * We do not need to lock ep->mtx, either, we only do it to prevent
+ 	 * a lockdep warning.
+ 	 */
+@@ -1023,6 +1025,7 @@ static int ep_alloc(struct eventpoll **pep)
+ 		goto free_uid;
+ 
+ 	mutex_init(&ep->mtx);
++	rwlock_init(&ep->lock);
+ 	init_waitqueue_head(&ep->wq);
+ 	init_waitqueue_head(&ep->poll_wait);
+ 	INIT_LIST_HEAD(&ep->rdllist);
+@@ -1112,10 +1115,38 @@ struct file *get_epoll_tfile_raw_ptr(struct file *file, int tfd,
+ }
+ #endif /* CONFIG_CHECKPOINT_RESTORE */
+ 
++/*
++ * Adds a new entry to the tail of the list in a lockless way, i.e.
++ * multiple CPUs are allowed to call this function concurrently.
++ *
++ * Beware: it is necessary to prevent any other modifications of the
++ *         existing list until all changes are completed, in other words
++ *         concurrent list_add_tail_lockless() calls should be protected
++ *         with a read lock, where write lock acts as a barrier which
++ *         makes sure all list_add_tail_lockless() calls are fully
++ *         completed.
++ */
++static inline void list_add_tail_lockless(struct list_head *new,
++					  struct list_head *head)
++{
++	struct list_head *prev;
++
++	new->next = head;
++	prev = xchg(&head->prev, new);
++	prev->next = new;
++	new->prev = prev;
++}
++
+ /*
+  * This is the callback that is passed to the wait queue wakeup
+  * mechanism. It is called by the stored file descriptors when they
+  * have events to report.
++ *
++ * This callback takes a read lock in order not to content with concurrent
++ * events from another file descriptors, thus all modifications to ->rdllist
++ * or ->ovflist are lockless.  Read lock is paired with the write lock from
++ * ep_scan_ready_list(), which stops all list modifications and guarantees
++ * that lists won't be corrupted.
+  */
+ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, void *key)
+ {
+@@ -1126,7 +1157,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 	__poll_t pollflags = key_to_poll(key);
+ 	int ewake = 0;
+ 
+-	spin_lock_irqsave(&ep->wq.lock, flags);
++	read_lock_irqsave(&ep->lock, flags);
+ 
+ 	ep_set_busy_poll_napi_id(epi);
+ 
+@@ -1156,8 +1187,8 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 	 */
+ 	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
+ 		if (epi->next == EP_UNACTIVE_PTR) {
+-			epi->next = ep->ovflist;
+-			ep->ovflist = epi;
++			/* Atomically exchange tail */
++			epi->next = xchg(&ep->ovflist, epi);
+ 			if (epi->ws) {
+ 				/*
+ 				 * Activate ep->ws since epi->ws may get
+@@ -1172,7 +1203,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 
+ 	/* If this file is already in the ready list we exit soon */
+ 	if (!ep_is_linked(epi)) {
+-		list_add_tail(&epi->rdllink, &ep->rdllist);
++		list_add_tail_lockless(&epi->rdllink, &ep->rdllist);
+ 		ep_pm_stay_awake_rcu(epi);
+ 	}
+ 
+@@ -1197,13 +1228,13 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 				break;
+ 			}
+ 		}
+-		wake_up_locked(&ep->wq);
++		wake_up(&ep->wq);
+ 	}
+ 	if (waitqueue_active(&ep->poll_wait))
+ 		pwake++;
+ 
+ out_unlock:
+-	spin_unlock_irqrestore(&ep->wq.lock, flags);
++	read_unlock_irqrestore(&ep->lock, flags);
+ 
+ 	/* We have to call this outside the lock */
+ 	if (pwake)
+@@ -1489,7 +1520,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+ 		goto error_remove_epi;
+ 
+ 	/* We have to drop the new item inside our item list to keep track of it */
+-	spin_lock_irq(&ep->wq.lock);
++	write_lock_irq(&ep->lock);
+ 
+ 	/* record NAPI ID of new item if present */
+ 	ep_set_busy_poll_napi_id(epi);
+@@ -1501,12 +1532,12 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+ 
+ 		/* Notify waiting tasks that events are available */
+ 		if (waitqueue_active(&ep->wq))
+-			wake_up_locked(&ep->wq);
++			wake_up(&ep->wq);
+ 		if (waitqueue_active(&ep->poll_wait))
+ 			pwake++;
+ 	}
+ 
+-	spin_unlock_irq(&ep->wq.lock);
++	write_unlock_irq(&ep->lock);
+ 
+ 	atomic_long_inc(&ep->user->epoll_watches);
+ 
+@@ -1532,10 +1563,10 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+ 	 * list, since that is used/cleaned only inside a section bound by "mtx".
+ 	 * And ep_insert() is called with "mtx" held.
+ 	 */
+-	spin_lock_irq(&ep->wq.lock);
++	write_lock_irq(&ep->lock);
+ 	if (ep_is_linked(epi))
+ 		list_del_init(&epi->rdllink);
+-	spin_unlock_irq(&ep->wq.lock);
++	write_unlock_irq(&ep->lock);
+ 
+ 	wakeup_source_unregister(ep_wakeup_source(epi));
+ 
+@@ -1579,9 +1610,9 @@ static int ep_modify(struct eventpoll *ep, struct epitem *epi,
+ 	 * 1) Flush epi changes above to other CPUs.  This ensures
+ 	 *    we do not miss events from ep_poll_callback if an
+ 	 *    event occurs immediately after we call f_op->poll().
+-	 *    We need this because we did not take ep->wq.lock while
++	 *    We need this because we did not take ep->lock while
+ 	 *    changing epi above (but ep_poll_callback does take
+-	 *    ep->wq.lock).
++	 *    ep->lock).
+ 	 *
+ 	 * 2) We also need to ensure we do not miss _past_ events
+ 	 *    when calling f_op->poll().  This barrier also
+@@ -1600,18 +1631,18 @@ static int ep_modify(struct eventpoll *ep, struct epitem *epi,
+ 	 * list, push it inside.
+ 	 */
+ 	if (ep_item_poll(epi, &pt, 1)) {
+-		spin_lock_irq(&ep->wq.lock);
++		write_lock_irq(&ep->lock);
+ 		if (!ep_is_linked(epi)) {
+ 			list_add_tail(&epi->rdllink, &ep->rdllist);
+ 			ep_pm_stay_awake(epi);
+ 
+ 			/* Notify waiting tasks that events are available */
+ 			if (waitqueue_active(&ep->wq))
+-				wake_up_locked(&ep->wq);
++				wake_up(&ep->wq);
+ 			if (waitqueue_active(&ep->poll_wait))
+ 				pwake++;
+ 		}
+-		spin_unlock_irq(&ep->wq.lock);
++		write_unlock_irq(&ep->lock);
+ 	}
+ 
+ 	/* We have to call this outside the lock */
+@@ -1764,7 +1795,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 		 * caller specified a non blocking operation.
+ 		 */
+ 		timed_out = 1;
+-		spin_lock_irq(&ep->wq.lock);
++		write_lock_irq(&ep->lock);
+ 		goto check_events;
+ 	}
+ 
+@@ -1773,7 +1804,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 	if (!ep_events_available(ep))
+ 		ep_busy_loop(ep, timed_out);
+ 
+-	spin_lock_irq(&ep->wq.lock);
++	write_lock_irq(&ep->lock);
+ 
+ 	if (!ep_events_available(ep)) {
+ 		/*
+@@ -1789,7 +1820,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 		 * ep_poll_callback() when events will become available.
+ 		 */
+ 		init_waitqueue_entry(&wait, current);
+-		__add_wait_queue_exclusive(&ep->wq, &wait);
++		add_wait_queue_exclusive(&ep->wq, &wait);
+ 
+ 		for (;;) {
+ 			/*
+@@ -1815,21 +1846,21 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 				break;
+ 			}
+ 
+-			spin_unlock_irq(&ep->wq.lock);
++			write_unlock_irq(&ep->lock);
+ 			if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS))
+ 				timed_out = 1;
+ 
+-			spin_lock_irq(&ep->wq.lock);
++			write_lock_irq(&ep->lock);
+ 		}
+ 
+-		__remove_wait_queue(&ep->wq, &wait);
++		remove_wait_queue(&ep->wq, &wait);
+ 		__set_current_state(TASK_RUNNING);
+ 	}
+ check_events:
+ 	/* Is it worth to try to dig for events ? */
+ 	eavail = ep_events_available(ep);
+ 
+-	spin_unlock_irq(&ep->wq.lock);
++	write_unlock_irq(&ep->lock);
+ 
+ 	/*
+ 	 * Try to transfer events to user space. In case we get 0 events and
+-- 
+2.19.1
+
