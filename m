@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2885C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0431AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD6D208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD6D208A3
+	by mail.kernel.org (Postfix) with ESMTP id C29822081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C29822081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbeLCTZg (ORCPT
+        id S1726201AbeLCTZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:25:36 -0500
-Received: from mga14.intel.com ([192.55.52.115]:36607 "EHLO mga14.intel.com"
+        Mon, 3 Dec 2018 14:25:42 -0500
+Received: from mga18.intel.com ([134.134.136.126]:5026 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbeLCTZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:25:36 -0500
+        id S1725908AbeLCTZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:25:41 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 11:25:31 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 11:25:36 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="115600505"
+   d="scan'208";a="97705143"
 Received: from ahduyck-desk1.amr.corp.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 03 Dec 2018 11:25:31 -0800
-Subject: [PATCH RFC 2/3] mm: Add support for exposing if dev_pagemap
- supports refcount pinning
+  by orsmga006.jf.intel.com with ESMTP; 03 Dec 2018 11:25:36 -0800
+Subject: [PATCH RFC 3/3] kvm: Add additional check to determine if a page is
+ refcounted
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     dan.j.williams@intel.com, pbonzini@redhat.com,
         yi.z.zhang@linux.intel.com, brho@google.com, kvm@vger.kernel.org,
@@ -41,8 +41,8 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         dave.jiang@intel.com, yu.c.zhang@intel.com, pagupta@redhat.com,
         david@redhat.com, jack@suse.cz, hch@lst.de, rkrcmar@redhat.com,
         jglisse@redhat.com
-Date:   Mon, 03 Dec 2018 11:25:31 -0800
-Message-ID: <154386513120.27193.7977541941078967487.stgit@ahduyck-desk1.amr.corp.intel.com>
+Date:   Mon, 03 Dec 2018 11:25:36 -0800
+Message-ID: <154386513636.27193.9038916677163713072.stgit@ahduyck-desk1.amr.corp.intel.com>
 In-Reply-To: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
 References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
 User-Agent: StGit/unknown-version
@@ -54,87 +54,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a means of exposing if a pagemap supports refcount pinning. I am doing
-this to expose if a given pagemap has backing struct pages that will allow
-for the reference count of the page to be incremented to lock the page
-into place.
-
-The KVM code already has several spots where it was trying to use a
-pfn_valid check combined with a PageReserved check to determien if it could
-take a reference on the page. I am adding this check so in the case of the
-page having the reserved flag checked we can check the pagemap for the page
-to determine if we might fall into the special DAX case.
+The function kvm_is_refcounted_page is used primarily to determine if KVM
+is allowed to take a reference on the page. It was using the PG_reserved
+flag to determine this previously, however in the case of DAX the page has
+the PG_reserved flag set, but supports pinning by taking a reference on
+the page. As such I have updated the check to add a special case for
+ZONE_DEVICE pages that have the new support_refcount_pinning flag set.
 
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/nvdimm/pfn_devs.c |    2 ++
- include/linux/memremap.h  |    5 ++++-
- include/linux/mm.h        |   11 +++++++++++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+ virt/kvm/kvm_main.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-index 6f22272e8d80..7a4a85bcf7f4 100644
---- a/drivers/nvdimm/pfn_devs.c
-+++ b/drivers/nvdimm/pfn_devs.c
-@@ -640,6 +640,8 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
- 	} else
- 		return -ENXIO;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 5e666df5666d..2e7e9fbb67bf 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -148,8 +148,20 @@ __weak int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
  
-+	pgmap->support_refcount_pinning = true;
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 55db66b3716f..6e7b85542208 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -109,6 +109,8 @@ typedef void (*dev_page_free_t)(struct page *page, void *data);
-  * @page_fault: callback when CPU fault on an unaddressable device page
-  * @page_free: free page callback when page refcount reaches 1
-  * @altmap: pre-allocated/reserved memory for vmemmap allocations
-+ * @altmap_valid: bitflag indicating if altmap is valid
-+ * @support_refcount_pinning: bitflag indicating if we support refcount pinning
-  * @res: physical address range covered by @ref
-  * @ref: reference count that pins the devm_memremap_pages() mapping
-  * @kill: callback to transition @ref to the dead state
-@@ -120,7 +122,8 @@ struct dev_pagemap {
- 	dev_page_fault_t page_fault;
- 	dev_page_free_t page_free;
- 	struct vmem_altmap altmap;
--	bool altmap_valid;
-+	bool altmap_valid:1;
-+	bool support_refcount_pinning:1;
- 	struct resource res;
- 	struct percpu_ref *ref;
- 	void (*kill)(struct percpu_ref *ref);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 3eb3bf7774f1..5faf66dd4559 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -970,6 +970,12 @@ static inline bool is_pci_p2pdma_page(const struct page *page)
- }
- #endif /* CONFIG_PCI_P2PDMA */
- 
-+static inline bool is_device_pinnable_page(const struct page *page)
-+{
-+	return is_zone_device_page(page) &&
-+		page->pgmap->support_refcount_pinning;
-+}
-+
- #else /* CONFIG_DEV_PAGEMAP_OPS */
- static inline void dev_pagemap_get_ops(void)
+ bool kvm_is_refcounted_pfn(kvm_pfn_t pfn)
  {
-@@ -998,6 +1004,11 @@ static inline bool is_pci_p2pdma_page(const struct page *page)
- {
+-	if (pfn_valid(pfn))
+-		return !PageReserved(pfn_to_page(pfn));
++	if (pfn_valid(pfn)) {
++		struct page *page = pfn_to_page(pfn);
++
++		/*
++		 * The reference count for MMIO pages are not updated.
++		 * Previously this was being tested for with just the
++		 * PageReserved check, however now ZONE_DEVICE pages may
++		 * also allow for the refcount to be updated for the sake
++		 * of pinning the pages so use the additional check provided
++		 * to determine if the reference count on the page can be
++		 * used to pin it.
++		 */
++		return !PageReserved(page) || is_device_pinnable_page(page);
++	}
+ 
  	return false;
  }
-+
-+static inline bool is_device_pinnable_page(const struct page *page)
-+{
-+	return false;
-+}
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
- 
- static inline void get_page(struct page *page)
 
