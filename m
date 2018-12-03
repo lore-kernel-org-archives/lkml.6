@@ -4,66 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C993C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30A0C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F9F20864
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A841020850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:57:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="CjuBsuRc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F9F20864
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="MuAxEXQr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A841020850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbeLCU5n (ORCPT
+        id S1726062AbeLCU5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:57:43 -0500
+        Mon, 3 Dec 2018 15:57:45 -0500
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:19087 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeLCU5k (ORCPT
+        with ESMTP id S1726013AbeLCU5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:57:40 -0500
+        Mon, 3 Dec 2018 15:57:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1543870660; x=1575406660;
+  t=1543870661; x=1575406661;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=3mJpoam2A2xj4ZksT23VyuZFVe6fICI7QinZh5RdjX0=;
-  b=CjuBsuRc/lJa1aUXaU8tmSUFSDmp88vQxPVjdYQHosV/yI8lNWYnfh5J
-   F7G37rlYN6wZQeGQegDr3q8Na69hWK/dkw+IQC+vWQbRgFzrFE3YDwz+l
-   ERREk4QeXM2KAa8i+ieN20jrC4kjO8gJhaNx/rdjWITKFPzeYfrYbH2ZF
-   oKTq+SxgAontDTEGlo0wgm1jIJlqykbdM2T3HPwdqT4PjZfomcdkUlzQG
-   FlVLfq9c8y6NBfOpqrDpEIhOqZfYYR2z32Rx0ClNlS3OLQBQxTfh5wL4y
-   Xv5KaU4eRFKHoNAuzJ9P1spumE935fVHqXzvrvuFh7T1uNSDldOJlNUB8
-   A==;
+  bh=BSOlOVz1k4WQ8zp+c29OSEXPkk6Skbx3t6enWZR9980=;
+  b=MuAxEXQrHwOUlXjCvNQrJeRv8ZrcR779ZE3bmpTlsb/JcnApi8kbijDC
+   jcKE8BRNQw16f3oXWJt/P9HTP9ArzvQxuwTvYmTM0FA3o15lYwoYMW27V
+   omGnbixUZwCdjYdm2KTAaOuJdhRNkFHqx6hC0y6TLuX49nvVfkuxAM2Yu
+   XOAf6n6+WcwFac3sPpZlkN1PMxElSZ2NVc3apyhWHSsvHbbfm7K9y3pN4
+   qG//BB0yRSYliM6BlEKIyjzwwY2XfJvEkdjxAEho8kHQL8S0BHpt3yS2x
+   x7bVcSnfCK1tRnht9UXJhvjb7hkundfsF0PCtMl/nLwz4NpWcrQziSBP4
+   g==;
 X-IronPort-AV: E=Sophos;i="5.56,311,1539619200"; 
-   d="scan'208";a="100519857"
+   d="scan'208";a="100519863"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2018 04:57:39 +0800
+  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2018 04:57:40 +0800
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
   by uls-op-cesaep01.wdc.com with ESMTP; 03 Dec 2018 12:39:55 -0800
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 03 Dec 2018 12:57:39 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 03 Dec 2018 12:57:40 -0800
 From:   Atish Patra <atish.patra@wdc.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Palmer Dabbelt <palmer@sifive.com>, Christoph Hellwig <hch@lst.de>,
+Cc:     Atish Patra <atish.patra@wdc.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <atish.patra@wdc.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         devicetree@vger.kernel.org,
         Dmitriy Cherkasov <dmitriy@oss-tech.org>,
         linux-riscv@lists.infradead.org,
         Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Anup Patel <anup@brainfault.org>,
         Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: [PATCH 1/4] dt-bindings: Correct RISC-V's timebase-frequency
-Date:   Mon,  3 Dec 2018 12:57:28 -0800
-Message-Id: <1543870651-16669-2-git-send-email-atish.patra@wdc.com>
+Subject: [PATCH 4/4] RISC-V: Fix non-smp kernel boot on SMP systems
+Date:   Mon,  3 Dec 2018 12:57:31 -0800
+Message-Id: <1543870651-16669-5-git-send-email-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543870651-16669-1-git-send-email-atish.patra@wdc.com>
 References: <1543870651-16669-1-git-send-email-atish.patra@wdc.com>
@@ -72,70 +71,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Palmer Dabbelt <palmer@sifive.com>
+Currently, clocksource registration happens for an invalid cpu
+for non-smp kernels. This lead to kernel panic as cpu hotplug
+registration will fail for those cpus.
 
-Someone must have read the device tree specification incorrectly,
-because we were putting timebase-frequency in the wrong place.  This
-corrects the issue, moving it from
+Do not proceed if hartid is invalid. Take this opprtunity to
+print appropriate error strings for different failure cases.
 
-/ {
-        cpus {
-                timebase-frequency = X;
-        }
-}
-
-to
-
-/ {
-        cpus {
-                cpu@0 {
-                        timebase-frequency = X;
-                }
-        }
-}
-
-This is great, because the timer's frequency should really be a per-cpu
-quantity on RISC-V systems since there's a timer per CPU.  This should
-lead to some cleanups in our timer driver.
-
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
- Documentation/devicetree/bindings/riscv/cpus.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clocksource/riscv_timer.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/riscv/cpus.txt b/Documentation/devicetree/bindings/riscv/cpus.txt
-index adf7b7af..b0b038d6 100644
---- a/Documentation/devicetree/bindings/riscv/cpus.txt
-+++ b/Documentation/devicetree/bindings/riscv/cpus.txt
-@@ -93,9 +93,9 @@ Linux is allowed to run on.
-         cpus {
-                 #address-cells = <1>;
-                 #size-cells = <0>;
--                timebase-frequency = <1000000>;
-                 cpu@0 {
-                         clock-frequency = <1600000000>;
-+                        timebase-frequency = <1000000>;
-                         compatible = "sifive,rocket0", "riscv";
-                         device_type = "cpu";
-                         i-cache-block-size = <64>;
-@@ -113,6 +113,7 @@ Linux is allowed to run on.
-                 };
-                 cpu@1 {
-                         clock-frequency = <1600000000>;
-+                        timebase-frequency = <1000000>;
-                         compatible = "sifive,rocket0", "riscv";
-                         d-cache-block-size = <64>;
-                         d-cache-sets = <64>;
-@@ -145,6 +146,7 @@ Example: Spike ISA Simulator with 1 Hart
- This device tree matches the Spike ISA golden model as run with `spike -p1`.
+diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
+index 39de6e49..4af4af47 100644
+--- a/drivers/clocksource/riscv_timer.c
++++ b/drivers/clocksource/riscv_timer.c
+@@ -108,6 +108,8 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+ 	int cpuid, hartid, error;
  
-         cpus {
-+                timebase-frequency = <1000000>;
-                 cpu@0 {
-                         device_type = "cpu";
-                         reg = <0x00000000>;
+ 	hartid = riscv_of_processor_hartid(n);
++	if (hartid < 0)
++		return hartid;
+ 	cpuid = riscv_hartid_to_cpuid(hartid);
+ 
+ 	if (cpuid != smp_processor_id())
+@@ -115,14 +117,19 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+ 
+ 	/* This should be called only for boot cpu */
+ 	riscv_timebase = riscv_timebase_frequency(n);
+-	clocksource_register_hz(&riscv_clocksource, riscv_timebase);
++	error = clocksource_register_hz(&riscv_clocksource, riscv_timebase);
+ 
++	if (error) {
++		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
++		       error, cpuid);
++		return error;
++	}
+ 	error = cpuhp_setup_state(CPUHP_AP_RISCV_TIMER_STARTING,
+ 			 "clockevents/riscv/timer:starting",
+ 			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
+ 	if (error)
+-		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
+-		       error, cpuid);
++		pr_err("cpu hp setup state failed for RISCV timer [%d]\n",
++		       error);
+ 	return error;
+ }
+ 
 -- 
 2.7.4
 
