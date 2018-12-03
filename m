@@ -2,112 +2,97 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A5BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEFAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF37420645
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:08:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="WYp4dBnq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF37420645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id BAC922087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:10:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC922087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbeLCKIn (ORCPT
+        id S1726141AbeLCKKX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:08:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52153 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbeLCKIV (ORCPT
+        Mon, 3 Dec 2018 05:10:23 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:23247 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726023AbeLCKKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:08:21 -0500
-Received: by mail-wm1-f68.google.com with SMTP id s14so5105945wmh.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:07:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pZwHMdseiN89HEVSRgqoNt8QGqFQI8aSS6wIp4a9e3c=;
-        b=WYp4dBnqnA6t8f4+3/r7Q81AkOf/D53JEKyfYAKWJED6IieqTZDwsiyXXmPKJHl1xZ
-         /RjT7/ug/RPxhzKJPKHYNYqijoS9xqNrGjrvmsOWZH9G4OWsogzCYTTqJlJaQJNndrHy
-         X2iaiTd7eBx3Cf+srP9C9KRZChXve5BWfRZUs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pZwHMdseiN89HEVSRgqoNt8QGqFQI8aSS6wIp4a9e3c=;
-        b=dSR5WjTbQgUKKCzfhH3uFCt5aCBwxo8FDcWBDLi2TEX1EEIR+XbRPjSGOvYeByQWvF
-         ElEhj8zpEl6KRbbhJtjGHMJKNthb257f7zge/FVc2NdKUhaP2Ul2AIrUV9X49+JjDBas
-         Nsa8xw7iBUQg5+tjuBGXu4JU5SFpWysw5wwfHCJnP092KqKfi1DN1cloHNm2koN/grxH
-         GDl6dHOQbG8lAQu2txFTvL13/YmoWQICPx9usblP7E803qs3WPM8s1lJzlkNHvrsOQ3D
-         6GmDDjt/9PAhq0R5I13zdAQQrzF39wFqW7TFrD2Gwih7F7Z0+IxR6z+rxtEHFLUriG05
-         gK8Q==
-X-Gm-Message-State: AA+aEWZ9SOcxblQtFLaUI44ory0D+pYl+uGxMDwS+u2/pcDNEEEuGgtP
-        Iq/jSKBr0y8Vfge8Ix9rzuas9w==
-X-Google-Smtp-Source: AFSGD/XnbFNuiD20WI4SVXVx7wsH0dmxqBf/ID0DyAkKyFtb/MOGzGfmOYAWr2InYDDaGLbjQuGBFw==
-X-Received: by 2002:a1c:307:: with SMTP id 7-v6mr7540895wmd.146.1543831677859;
-        Mon, 03 Dec 2018 02:07:57 -0800 (PST)
-Received: from localhost.localdomain (conf.hotelmediterraneo.com. [2.228.78.71])
-        by smtp.gmail.com with ESMTPSA id n15sm18589236wrt.21.2018.12.03.02.07.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:07:57 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 2/5] dt-bindings: media: sun6i: Add vcc-csi supply property
-Date:   Mon,  3 Dec 2018 15:37:44 +0530
-Message-Id: <20181203100747.16442-3-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20181203100747.16442-1-jagan@amarulasolutions.com>
-References: <20181203100747.16442-1-jagan@amarulasolutions.com>
+        Mon, 3 Dec 2018 05:10:22 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-32-M9eBV3i6N5mXzexFWVvs2A-1; Mon, 03 Dec 2018 10:09:56 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 3 Dec 2018 10:10:05 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 3 Dec 2018 10:10:05 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Vineet Gupta' <vineet.gupta1@synopsys.com>,
+        'Arnd Bergmann' <arnd@arndb.de>,
+        "jose.abreu@synopsys.com" <jose.abreu@synopsys.com>
+CC:     "open list:SYNOPSYS ARC ARCHITECTURE" 
+        <linux-snps-arc@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>,
+        Joao Pinto <joao.pinto@synopsys.com>,
+        "Vitor Soares" <vitor.soares@synopsys.com>
+Subject: RE: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
+Thread-Topic: [PATCH v2] ARC: io.h: Implement reads{x}()/writes{x}()
+Thread-Index: AQHUh+/vHIi8Q+1XAUeZFbx1QKnaT6Vsz5DQ
+Date:   Mon, 3 Dec 2018 10:10:05 +0000
+Message-ID: <a668562bf3cb410e90484eb0d4a436a7@AcuMS.aculab.com>
+References: <19fb2e394afcb073bbc109e432417fbbc03323f6.1543499759.git.joabreu@synopsys.com>
+ <ff1e11923e92405d883474d715008c0a@AcuMS.aculab.com>
+ <89122bd8-bca2-2ae1-0dd0-160abbebcace@synopsys.com>
+ <d2d133e5-267c-c42a-7329-22892bbbdee4@synopsys.com>
+ <CAK8P3a2U3ft3crF2SiAuc=PQdDooEUaVAN9gQDyxsxvBn5+xRw@mail.gmail.com>
+ <57437493-31bb-eced-032c-1f54470b030e@synopsys.com>
+ <CAK8P3a2mqEb4_F4wB1DvL5jJJobLhOg6-bW3ZDNGhvbv-_qW3A@mail.gmail.com>
+ <3afe0e1bbf2d42d3bb178ec789553c28@AcuMS.aculab.com>
+ <C2D7FE5348E1B147BCA15975FBA23075014641A413@US01WEMBX2.internal.synopsys.com>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075014641A413@US01WEMBX2.internal.synopsys.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MC-Unique: M9eBV3i6N5mXzexFWVvs2A-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of the Allwinner A64 CSI controllers are supply with
-VCC-PE pin. which need to supply for some of the boards to
-trigger the power.
+From: Vineet Gupta
+...
+> > It also seems to have used a different type of loop to the
+> > other example, probably less efficient.
+> > (Not that I'm an expert on ARC opcodes.)
+> 
+> The difference is due to ISA and ensuing ARC gcc backends. ARCompact based cores
+> don't support unaligned access and the loop there was ZOL (Zero delay loop). In
+> ARCv2 based cores, the gcc backend has been tweaked to generate fewer ZOLs hence
+> you see the more canonical tst and branch style loop.
 
-So, document the supply property as vcc-csi so-that the required
-board can eable it via device tree.
+Is this another case of the hardware implementing 'hardware' loop
+instructions that execute slower than ones made of simple instructions?
 
-Used vcc-csi instead of vcc-pe to have better naming convention
-wrt other controller pin supplies.
+The worst example has to be the x86 'loop' (dec cx and jump nz)
+instruction which is microcoded on intel cpus.
+That makes it very difficult to use the new addx instruction to
+get two dependency chains through a loop.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- Documentation/devicetree/bindings/media/sun6i-csi.txt | 3 +++
- 1 file changed, 3 insertions(+)
+	David
 
-diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-index e78cf4f9bc8c..5fb6fd4e2c7d 100644
---- a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-+++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-@@ -18,6 +18,9 @@ Required properties:
-   - clock-names: the clock names mentioned above
-   - resets: phandles to the reset line driving the CSI
- 
-+Optional properties:
-+  - vcc-csi-supply: the VCC-CSI power supply of the CSI PE group
-+
- The CSI node should contain one 'port' child node with one child 'endpoint'
- node, according to the bindings defined in
- Documentation/devicetree/bindings/media/video-interfaces.txt.
--- 
-2.18.0.321.gffc6fa0e3
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
