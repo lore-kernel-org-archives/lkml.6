@@ -2,143 +2,91 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC84C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14996C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F2120851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:22:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F2120851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id D9CB720851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:23:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9CB720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbeLCIWk (ORCPT
+        id S1725921AbeLCIXV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 03:22:40 -0500
-Received: from mx.socionext.com ([202.248.49.38]:49098 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbeLCIWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 03:22:40 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 03 Dec 2018 17:22:36 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 7BF4718005E;
-        Mon,  3 Dec 2018 17:22:36 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Mon, 3 Dec 2018 17:22:36 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id DA6ED1A1235;
-        Mon,  3 Dec 2018 17:22:35 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [RFC PATCH net v3] net: phy: Fix the issue that netif always links up after resuming
-Date:   Mon,  3 Dec 2018 17:22:29 +0900
-Message-Id: <1543825349-423-1-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 3 Dec 2018 03:23:21 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47861 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725837AbeLCIXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 03:23:20 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 80DA8A7CA58C1;
+        Mon,  3 Dec 2018 16:23:15 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Mon, 3 Dec 2018
+ 16:23:10 +0800
+CC:     <wangbinghui@hisilicon.com>, USB <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>, Felipe Balbi <balbi@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH v1 05/12] usb: dwc3: Add two quirks for Hisilicon Kirin
+ Soc Platform
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20181203034515.91412-1-chenyu56@huawei.com>
+ <20181203034515.91412-6-chenyu56@huawei.com>
+ <CAHp75VcbNumAGa8NsYp9tL-ZRP4stApuTFtY1LARHMnJjxA4dw@mail.gmail.com>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <4214e332-dd8d-a6a3-b693-54287b178c80@huawei.com>
+Date:   Mon, 3 Dec 2018 16:23:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VcbNumAGa8NsYp9tL-ZRP4stApuTFtY1LARHMnJjxA4dw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even though the link is down before entering hibernation,
-there is an issue that the network interface always links up after resuming
-from hibernation.
 
-The phydev->state is PHY_READY before enabling the network interface, so
-the link is down. After resuming from hibernation, the phydev->state is
-forcibly set to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
 
-This patch adds a new convenient function to check whether the PHY is in
-a started state, and expects to solve the issue by changing phydev->state
-to PHY_UP and calling phy_start_machine() only when the PHY is started.
+On 2018/12/3 16:02, Andy Shevchenko wrote:
+> On Mon, Dec 3, 2018 at 5:48 AM Yu Chen <chenyu56@huawei.com> wrote:
+>>
+>> There are tow quirks for DesignWare USB3 DRD Core of Hisilicon Kirin Soc.
+>> 1)SPLIT_BOUNDARY_DISABLE should be set for Host mode
+>> 2)A GCTL soft reset should be executed when switch mode
+> 
+>> +static void dwc3_gctl_core_soft_reset(struct dwc3 *dwc)
+>> +{
+> 
+>> +       int reg;
+> 
+> u32? int for register value looks confusing a bit.
 
-Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
-
-Changes since v2:
- - add mutex lock/unlock for changing phydev->state
- - check whether the mutex is locked in phy_is_started()
- 
-Changes since v1:
- - introduce a new helper function phy_is_started() and use it instead of
-   checking link status
- - replace checking phydev->state with phy_is_started() in
-   phy_stop_machine()
-
-drivers/net/phy/phy.c        |  2 +-
- drivers/net/phy/phy_device.c | 12 +++++++++---
- include/linux/phy.h          | 13 +++++++++++++
- 3 files changed, 23 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index 1d73ac3..f484d03 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -670,7 +670,7 @@ void phy_stop_machine(struct phy_device *phydev)
- 	cancel_delayed_work_sync(&phydev->state_queue);
- 
- 	mutex_lock(&phydev->lock);
--	if (phydev->state > PHY_UP && phydev->state != PHY_HALTED)
-+	if (phy_is_started(phydev))
- 		phydev->state = PHY_UP;
- 	mutex_unlock(&phydev->lock);
- }
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index ab33d17..4897d24 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -309,10 +309,16 @@ static int mdio_bus_phy_restore(struct device *dev)
- 		return ret;
- 
- 	/* The PHY needs to renegotiate. */
--	phydev->link = 0;
--	phydev->state = PHY_UP;
-+	mutex_lock(&phydev->lock);
-+	if (phy_is_started(phydev)) {
-+		phydev->state = PHY_UP;
-+		mutex_unlock(&phydev->lock);
-+		phydev->link = 0;
-+		phy_start_machine(phydev);
-+	} else {
-+		mutex_unlock(&phydev->lock);
-+	}
- 
--	phy_start_machine(phydev);
- 
- 	return 0;
- }
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 3ea87f7..dd21537 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -898,6 +898,19 @@ static inline bool phy_is_pseudo_fixed_link(struct phy_device *phydev)
- }
- 
- /**
-+ * phy_is_started - Convenience function for testing whether a PHY is in
-+ * a started state
-+ * @phydev: the phy_device struct
-+ *
-+ * The caller must have taken the phy_device mutex lock.
-+ */
-+static inline bool phy_is_started(struct phy_device *phydev)
-+{
-+	WARN_ON(!mutex_is_locked(&phydev->lock));
-+	return phydev->state >= PHY_UP && phydev->state != PHY_HALTED;
-+}
-+
-+/**
-  * phy_write_mmd - Convenience function for writing a register
-  * on an MMD on a given PHY.
-  * @phydev: The phy_device struct
--- 
-2.7.4
+Yes, it should be u32.
+> 
+>> +       reg = dwc3_readl(dwc->regs, DWC3_GCTL);
+>> +       reg |= (DWC3_GCTL_CORESOFTRESET);
+>> +       dwc3_writel(dwc->regs, DWC3_GCTL, reg);
+>> +
+>> +       reg = dwc3_readl(dwc->regs, DWC3_GCTL);
+>> +       reg &= ~(DWC3_GCTL_CORESOFTRESET);
+>> +       dwc3_writel(dwc->regs, DWC3_GCTL, reg);
+>> +}
+> 
+>> +       int reg;
+> 
+> Ditto.
+> 
 
