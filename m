@@ -2,107 +2,114 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B01AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116E1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECAB920850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2B2A2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FNgEJnrL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECAB920850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cSjiWjIk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2B2A2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbeLCRed (ORCPT
+        id S1726693AbeLCRgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:34:33 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46779 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeLCRed (ORCPT
+        Mon, 3 Dec 2018 12:36:44 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37093 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbeLCRgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:34:33 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so12167881ljh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:34:25 -0800 (PST)
+        Mon, 3 Dec 2018 12:36:44 -0500
+Received: by mail-io1-f66.google.com with SMTP id f14so5721886iol.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:36:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=broadcom.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7LcLnMk4V5PpabCgP7lHlco39TNBY8EwSdngHqUzyCc=;
-        b=FNgEJnrLY375WNyOgrlITMygyw4NqgVOkjxz4Ekqt5qRdgw7QUA4cvP/whQsH6jZIZ
-         TltdhCdhqqQ+RloEdQbMOmRY2tAkL3r9DkdqOfixL2XFcuZqv4z949rJ3mK9fSEJx506
-         ndk8MYrcpGhCLV5uP6DEaApdy0KlRdACTOsNM=
+        bh=aJByGiHI+RzUysGTZNqib4yObRx5kjhaz522l9pDvpQ=;
+        b=cSjiWjIkEJ20GAAgk5/MtwvMw8s6potu/QLcDRbTcClwa7JBk4KESjdSvejh/zTgJU
+         5p3wiCJP+5I9m8IZGisJv6xgoDJ13fgMnvMfnHhdeJQOsnZhHBWparsrDoASNTr96KvX
+         LewuLufwCd1ozxFLVGCjnnnCKoRh89SqrdVX0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7LcLnMk4V5PpabCgP7lHlco39TNBY8EwSdngHqUzyCc=;
-        b=m0XcNSuP2YLL4K3kaaYQm5r9u9Xkt6Ha7UAQ0pwnNN2wN8oEhtRrctrzD+dthvLQu7
-         SZZyVOihpmI9A9P2k5EXJPjsmgN1Umlz18Dt1/egac7QGEqs0N4BE9pHBroDEoIrRXDf
-         cPxmPqQj8R5dClqsrSlC7j4taPwETLkyDesV85AD7WV73ZE/+pZoSn+lhJ9hgs6D2p8Q
-         C7J/1H99VloA29o9JTonrktZO3TsiJ842nbWJaxKUG1JCyBaEFW+qg0ZgynplylWraa7
-         zLp39aeTmQtw4QE2pgcv/9ByIwX4k6SBUXkoTsnoRQJz4SIo/Uy8Xeew9GzvnFrKrDGY
-         WmQw==
-X-Gm-Message-State: AA+aEWbMFjbEuybGfBQm6qv86gLbVGRBidUE6Fm1UNs/xKPgQgiAYllm
-        8TmAz0oM59P1anUqaSu705XjD/2JQ1Q=
-X-Google-Smtp-Source: AFSGD/VA0PSMAhao3CyIFULE4cPJovkst5T/0jxLekCR/fsqkYvxwJO38I30k3fDADxNv7pYL3yOBw==
-X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr10272021lje.117.1543858464412;
-        Mon, 03 Dec 2018 09:34:24 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id i127-v6sm2585899lji.3.2018.12.03.09.34.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 09:34:23 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id c16so9782288lfj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:34:23 -0800 (PST)
-X-Received: by 2002:a19:3fcf:: with SMTP id m198mr9296579lfa.106.1543858462654;
- Mon, 03 Dec 2018 09:34:22 -0800 (PST)
+        bh=aJByGiHI+RzUysGTZNqib4yObRx5kjhaz522l9pDvpQ=;
+        b=KjjS5/zzQhzxTx5+fDpWJVTtGPF1TSWjvPz+tf5UqAMbJaZ7xSwGmjYyaHDMONZUOT
+         UHumBb6ux/pVVId3Oiw6gkYkcl5VHs4ehdAt3jcKCc2Hx3BqcqQcPHE6EM+UXS4jwFHe
+         I0r7PAHx10xtTMCJ3gxppLgHRqp8CdWHgq5hPS0W96FksZEVjRkR4MEJTMwHQiwB58hI
+         cQ8Kl9JtIdSQ0BAYJ5MiQ+Xlx3N0RYRQQBhhp0nE5AhnECUxs75w2yVc/89RCYfSajWc
+         6UHwI+x4B7QGQmgF/CRp1dSC/Bn5m4F7U5TQtADqAgM+e6l2u+00O6D4D29vkAWeCPVP
+         Zv1Q==
+X-Gm-Message-State: AA+aEWYtVO0mZtvuawZuNqmIaBa/Z/0h2PL6xMaIfG2MU/s7aoaPWxRn
+        +pSc/qLRYGKP/4126ttWj4kzlAl3vfG8J7t/SaVKmw==
+X-Google-Smtp-Source: AFSGD/VSLPNdOBsxIL/8TIdPPy1iSOq/UF2P5V/Utg3/2wDxiymy4lItlEKtLmRUSPVi7ZIvYLgQ1yXYONz4NuOwKNw=
+X-Received: by 2002:a6b:ce06:: with SMTP id p6mr13467753iob.189.1543858596588;
+ Mon, 03 Dec 2018 09:36:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20181203110237.14787-1-rpenyaev@suse.de>
-In-Reply-To: <20181203110237.14787-1-rpenyaev@suse.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Dec 2018 09:34:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiQX4HnBpyrxCwJmhBRff0GG65tOhsRnA=2KdYL=PBdyg@mail.gmail.com>
-Message-ID: <CAHk-=wiQX4HnBpyrxCwJmhBRff0GG65tOhsRnA=2KdYL=PBdyg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] epoll: use rwlock in order to reduce
- ep_poll_callback() contention
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20181201005759.28093-1-eric@anholt.net> <20181201005759.28093-3-eric@anholt.net>
+In-Reply-To: <20181201005759.28093-3-eric@anholt.net>
+From:   Dave Emett <david.emett@broadcom.com>
+Date:   Mon, 3 Dec 2018 17:36:25 +0000
+Message-ID: <CAApk1dXSg2dxxjiDrPc90UKfiPKh2NX62aQFPktPMUO96Z4H+g@mail.gmail.com>
+Subject: Re: [PATCH 3/6] drm/v3d: Don't bother flushing L1TD at job start.
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Thomas Spurden <thomas.spurden@broadcom.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 3:03 AM Roman Penyaev <rpenyaev@suse.de> wrote:
+On Sat, 1 Dec 2018 at 00:58, Eric Anholt <eric@anholt.net> wrote:
 >
-> Also I'm not quite sure where to put very special lockless variant
-> of adding element to the list (list_add_tail_lockless() in this
-> patch).  Seems keeping it locally is safer.
+> This is the write combiner for TMU writes.  You're supposed to flush
+> that at job end if you had dirtied any cachelines.  Flushing it at job
+> start then doesn't make any sense.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-That function is scary, and can be mis-used so easily that I
-definitely don't want to see it anywhere else.
+Reviewed-by: Dave Emett <david.emett@broadcom.com>
 
-Afaik, it's *really* important that only "add_tail" operations can be
-done in parallel.
-
-This also ends up making the memory ordering of "xchg()" very very
-important. Yes, we've documented it as being an ordering op, but I'm
-not sure we've relied on it this directly before.
-
-I also note that now we do more/different locking in the waitqueue
-handling, because the code now takes both that rwlock _and_ the
-waitqueue spinlock for wakeup. That also makes me worried that the
-"waitqueue_active()" games are no no longer reliable. I think they're
-fine (looks like they are only done under the write-lock, so it's
-effectively the same serialization anyway), but the upshoot of all of
-this is that I *really* want others to look at this patch too. A lot
-of small subtle things here.
-
-                Linus
+> Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+> ---
+>  drivers/gpu/drm/v3d/v3d_gem.c | 12 ------------
+>  1 file changed, 12 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index 34103205b7cb..cc4d025b01e0 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -139,22 +139,10 @@ v3d_invalidate_l2(struct v3d_dev *v3d, int core)
+>                        V3D_L2CACTL_L2CENA);
+>  }
+>
+> -static void
+> -v3d_invalidate_l1td(struct v3d_dev *v3d, int core)
+> -{
+> -       V3D_CORE_WRITE(core, V3D_CTL_L2TCACTL, V3D_L2TCACTL_TMUWCF);
+> -       if (wait_for(!(V3D_CORE_READ(core, V3D_CTL_L2TCACTL) &
+> -                      V3D_L2TCACTL_L2TFLS), 100)) {
+> -               DRM_ERROR("Timeout waiting for L1T write combiner flush\n");
+> -       }
+> -}
+> -
+>  /* Invalidates texture L2 cachelines */
+>  static void
+>  v3d_flush_l2t(struct v3d_dev *v3d, int core)
+>  {
+> -       v3d_invalidate_l1td(v3d, core);
+> -
+>         V3D_CORE_WRITE(core, V3D_CTL_L2TCACTL,
+>                        V3D_L2TCACTL_L2TFLS |
+>                        V3D_SET_FIELD(V3D_L2TCACTL_FLM_FLUSH, V3D_L2TCACTL_FLM));
+> --
+> 2.20.0.rc1
+>
