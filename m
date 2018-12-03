@@ -2,129 +2,83 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBEBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977D5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87D7C20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:20:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="EUhbRXJT";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="qG+bmImT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D7C20848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EC5120851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC5120851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbeLCKUZ (ORCPT
+        id S1726174AbeLCKVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:20:25 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:54274 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725947AbeLCKUZ (ORCPT
+        Mon, 3 Dec 2018 05:21:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726139AbeLCKVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:20:25 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB3AIhpa018108;
-        Mon, 3 Dec 2018 02:19:51 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=Oog4wjXbmSq5ZuRftG6A4/VaXCPVpgtjLAMFOOxaCFs=;
- b=EUhbRXJT1p2VP1u9mbPLPlPBWkmCaY25Phonw7Rq1Iqys95xGlhp/LZqCn+NEd5t+JER
- 38XSxeb/5L5sKiTL4j7tGf5qyQj3oXNG/BnwTgQRsEL/U69GurmBwYOl+5imDYhRfvRW
- eoKI7CzoDVLBguTu9bcFYzcdrntnUbOFQJ/i0jiCFkf1FkE+maaXdPB292JxMnzy/Qpx
- N5sZfqsZk5VTBhJ2pgxoAEB41ByQMuezB19gdbsaY/sPzOTEWKLXAYnQdLAP9dzhXNCq
- qHKiBnSOjjwNdD8eaqAtmGk6xpC/95eDwM5CkX0IJbMzQyGfUt3REhqedcJAb1KtcgGw /A== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2059.outbound.protection.outlook.com [104.47.36.59])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2p3ps2j61k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 03 Dec 2018 02:19:51 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Oog4wjXbmSq5ZuRftG6A4/VaXCPVpgtjLAMFOOxaCFs=;
- b=qG+bmImT5uCRV7+fSwL+xPfJn7uJNSIuPzn/sXJKoHESZnfHuj6a1ZxOmP613Otu2XkkSW/MHA1HBHHXlGp3D03sAi7zKu4ZWoyrkMNsU+Jo/3bmbYHwjBdnduE0Zt5XZ8HxOPPS+rsyAUQKIGIt3EUVoCexQWIRCNs56niyY0A=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB4854.namprd07.prod.outlook.com (52.135.205.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.21; Mon, 3 Dec 2018 10:19:49 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e0dc:ebd5:e248:d644]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e0dc:ebd5:e248:d644%6]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 10:19:47 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Roger Quadros <rogerq@ti.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: RE: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations part
- of the API
-Thread-Topic: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations
- part of the API
-Thread-Index: AQHUfycXLoLM1JyA10aQRtXGNL+S26VlK76AgAQ822CAA3ct4A==
-Date:   Mon, 3 Dec 2018 10:19:47 +0000
-Message-ID: <BYAPR07MB47098B0E57C9AF98A457D1B5DDAE0@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
- <1542535751-16079-9-git-send-email-pawell@cadence.com>
- <5BFE8883.7090802@ti.com>
- <BYAPR07MB4709BBB7E78C7A7244270215DDAC0@BYAPR07MB4709.namprd07.prod.outlook.com>
-In-Reply-To: <BYAPR07MB4709BBB7E78C7A7244270215DDAC0@BYAPR07MB4709.namprd07.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctZjU3ZGI5YWUtZjZlNC0xMWU4LTg3MjYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGY1N2RiOWFmLWY2ZTQtMTFlOC04NzI2LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMjE3NCIgdD0iMTMxODgzMDU5ODc4MDAwNDQ0IiBoPSJOYVFJOFJwWWdQVmlldk1KbFM2aENhNmZwcW89IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB4854;20:UC1yqtsuYw9oJYXtvrmy30+1vdBDbrg7eRXKfn1v0jXgrpkmi3+pJqsa6Fi7JplWAwmphmdWzt79XgOiswxRRwv5CJtkX3+O/AgFwY3q8meckFxAkFLmT7l0QrVFxnhO7Ox3F5Q3QFpiVH/TRzYCR2mwuqld2w62YVktaIkjlx/a7gulZguQTOwCZU6VrbFJ1FkW1xlhb5qQScap9C73tVSRgpYpehHqerXwYD2p1Wxt4EJ5YcE/69fBl0jlMbwh
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(396003)(136003)(376002)(36092001)(199004)(189003)(51444003)(71190400001)(93886005)(229853002)(14454004)(6246003)(4326008)(53936002)(2906002)(2501003)(217873002)(55016002)(11346002)(3846002)(9686003)(68736007)(26005)(54906003)(110136005)(5660300001)(186003)(6436002)(478600001)(66066001)(6506007)(97736004)(446003)(81166006)(99286004)(8936002)(7416002)(316002)(476003)(86362001)(76176011)(8676002)(71200400001)(486006)(7696005)(81156014)(25786009)(105586002)(74316002)(106356001)(305945005)(33656002)(256004)(6116002)(14444005)(7736002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4854;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: ff91d4de-2e1d-4c11-7952-08d65908da58
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4854;
-x-ms-traffictypediagnostic: BYAPR07MB4854:
-x-microsoft-antispam-prvs: <BYAPR07MB4854276ABF0F53295D43612CDDAE0@BYAPR07MB4854.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4854;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4854;
-x-forefront-prvs: 08756AC3C8
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: PRO8fZE+IQzX1omAQRTCvZdQzDYX6CDA4a5Jtkhq5FKmhV+3tsKSfxefGElVtrN1bj58OAqIso04nG0VVSRRClaZmoE9WRGB5X6pNE+46VtwKT8xgKC22QXYRNjBBDd0a1p7qUXsRV3406o4uHB9OScsB1YRr45zT9v4afRWP750KQrWy+MBeqPOK3pxmG0yWbfVKUB+sS5877189lRyH7UpbNSJzALVKU7sjlsPsDtsOP47XHCRawSQvptXv9tG1dNoy2jLPF+aW2X/Q2xA8yqns01dtPEWyJRUkyo0ZjIL5kWVRqrs8gVPUe3UsMScc+RMHHBKf/ZQQZeGZmBEmVsTNjjntqu7NzPXqH/aOYw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 3 Dec 2018 05:21:24 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3AJ0Wh135232
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 05:20:58 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p51654rmc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:20:58 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Mon, 3 Dec 2018 10:20:56 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 10:20:53 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3AKqsp17105138
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 10:20:52 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E135B52052;
+        Mon,  3 Dec 2018 10:20:51 +0000 (GMT)
+Received: from [9.145.178.193] (unknown [9.145.178.193])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E2CB452051;
+        Mon,  3 Dec 2018 10:20:37 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 3/3] vfio: ap: AP Queue Interrupt Control VFIO ioctl
+ calls
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1542906675-7949-1-git-send-email-pmorel@linux.ibm.com>
+ <1542906675-7949-4-git-send-email-pmorel@linux.ibm.com>
+ <20181203110422.4d069a8c.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Mon, 3 Dec 2018 11:20:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff91d4de-2e1d-4c11-7952-08d65908da58
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 10:19:47.6515
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4854
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
+In-Reply-To: <20181203110422.4d069a8c.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18120310-0012-0000-0000-000002D3C425
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120310-0013-0000-0000-0000210919BF
+Message-Id: <0119edfa-2feb-03f6-e082-e3773f4e42e2@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_05:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1812030100
 Sender: linux-kernel-owner@vger.kernel.org
@@ -132,61 +86,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
->>> +
->>> +static struct usb_ep *cdns3_gadget_match_ep(struct usb_gadget *gadget,
->>> +					    struct usb_endpoint_descriptor *desc,
->>> +					    struct usb_ss_ep_comp_descriptor *comp_desc)
->>> +{
->>> +	struct cdns3_device *priv_dev =3D gadget_to_cdns3_device(gadget);
->>> +	struct cdns3_endpoint *priv_ep;
->>> +	unsigned long flags;
->>> +
->>> +	priv_ep =3D cdns3_find_available_ss_ep(priv_dev, desc);
->>> +	if (IS_ERR(priv_ep)) {
->>> +		dev_err(&priv_dev->dev, "no available ep\n");
->>> +		return NULL;
->>> +	}
->>> +
->>> +	dev_dbg(&priv_dev->dev, "match endpoint: %s\n", priv_ep->name);
->>> +
->>> +	spin_lock_irqsave(&priv_dev->lock, flags);
->>> +	priv_ep->endpoint.desc =3D desc;
->>> +	priv_ep->dir  =3D usb_endpoint_dir_in(desc) ? USB_DIR_IN : USB_DIR_OU=
-T;
->>> +	priv_ep->type =3D usb_endpoint_type(desc);
->>> +
->>> +	list_add_tail(&priv_ep->ep_match_pending_list,
->>> +		      &priv_dev->ep_match_list);
->>> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
->>> +	return &priv_ep->endpoint;
->>> +}
+On 03/12/2018 11:04, Cornelia Huck wrote:
+> On Thu, 22 Nov 2018 18:11:15 +0100
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+> 
+>> This is the implementation of the VFIO ioctl calls to handle
+>> the AQIC interception and use GISA to handle interrupts.
 >>
->>Why do you need a custom match_ep?
->>doesn't usb_ep_autoconfig suffice?
->
->I need to test it but at first glance it  looks like usb_ep_autoconfig suf=
-fice.
->
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>> ---
+>>   drivers/s390/crypto/vfio_ap_ops.c | 110 +++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 109 insertions(+), 1 deletion(-)
 >>
->>You can check if EP is claimed or not by checking the ep->claimed flag.
->>
-I checked it and did not work correct. The flag claimed is set in usb_ep_au=
-toconf, but=20
-a little bit later during USB RESET this flag is cleared.=20
-So, I can't base on this flag.  I think that it's incorrect behavior in gad=
-get core driver or in function drivers.
-Maybe we should have additional flag in usb_ep object used during resetting=
-, or usb_ep_autoconf function should be called after each USB RESET.=20
+> 
+>> +static int vfio_ap_ioctl_setirq(struct mdev_device *mdev, unsigned long arg)
+>> +{
+>> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>> +	struct vfio_ap_aqic parm;
+>> +	struct ap_qirq_ctrl aqic_gisa = {};
+>> +	struct kvm *kvm = matrix_mdev->kvm;
+>> +	struct kvm_s390_gisa *gisa = kvm->arch.gisa;
+>> +	struct ap_queue_status ap_status;
+>> +	unsigned long nib;
+>> +
+>> +	if (copy_from_user(&parm, (void __user *)arg, sizeof(parm)))
+>> +		return -EFAULT;
+>> +
+>> +	if (parm.isc > MAX_ISC)
+>> +		return -EINVAL;
+>> +
+>> +	if (kvm->vcpus[0]->arch.sie_block->gd & 0x01)
+>> +		aqic_gisa.gf = 1;
+>> +
+>> +	nib = vfio_ap_get_nib(kvm, &parm);
+>> +	if (!nib)
+>> +		return -ENODEV;
+>> +
+>> +	aqic_gisa.gisc = parm.isc;
+>> +	aqic_gisa.isc = kvm_s390_gisc_register(kvm, parm.isc);
+> 
+> Oh, and as I just looked at the callers of these functions: You'll want
+> to check the return code here, even though the function should not fail
+> with the checking you did beforehand.
+> 
 
-I notice that I can based on ep->address it is set also in usb_ep_autoconf =
-and probably is not cleared anywhere.
-It's little tricky, but It looks like it works correct. I add some comment =
-for this checking.=20
-Maybe in feature I will be able to replace it with claimed flag.
+I should check.
 
-Felipe what's your opinion about claimed flag.  It's should be fixed or not=
- ?
+> [I assume you'll have similar code even when using a different
+> interface.]
 
-Cheers
-Pawel
+Yes.
+
+
+> 
+>> +	aqic_gisa.ir = 1;
+>> +	aqic_gisa.gisa = gisa->next_alert >> 4;
+>> +
+>> +	ap_status = ap_aqic(parm.apqn, aqic_gisa, (void *)nib);
+>> +	parm.status = *(uint32_t *)(&ap_status);
+>> +
+>> +	if (copy_to_user((void __user *)arg, &parm, sizeof(parm))) {
+>> +		kvm_s390_gisc_unregister(kvm, parm.isc);
+>> +		return -EFAULT;
+>> +	}
+>> +
+>> +	if (ap_status.response_code) {
+>> +		kvm_s390_gisc_unregister(kvm, parm.isc);
+>> +		return -EIO;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int vfio_ap_ioctl_clrirq(struct mdev_device *mdev, unsigned long arg)
+>> +{
+>> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>> +	struct vfio_ap_aqic parm;
+>> +	struct ap_qirq_ctrl aqic_gisa = {};
+>> +	struct ap_queue_status ap_status;
+>> +	struct kvm *kvm = matrix_mdev->kvm;
+>> +
+>> +	if (copy_from_user(&parm, (void __user *)arg, sizeof(parm)))
+>> +		return -EFAULT;
+>> +
+>> +	if (kvm->vcpus[0]->arch.sie_block->gd & 0x01)
+>> +		aqic_gisa.gf = 1;
+>> +	aqic_gisa.ir = 0;
+>> +
+>> +	ap_status = ap_aqic(parm.apqn, aqic_gisa, NULL);
+>> +	parm.status = *(uint32_t *)(&ap_status);
+>> +
+>> +	kvm_s390_gisc_unregister(kvm, parm.isc);
+> 
+> Here, you don't seem to verify the sanity of parm.isc beforehand...
+> luckily the function can deal with that :)
+
+You are right.
+Anyway I will change this, because this relies on user's code which is 
+not right.
+
+
+> 
+>> +
+>> +	if (copy_to_user((void __user *)arg, &parm, sizeof(parm)))
+>> +		return -EFAULT;
+>> +
+>> +	return (ap_status.response_code) ? -EIO : 0;
+>> +}
+>> +
+> 
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
