@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335ABC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF00BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED0F620851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED0F620851
+	by mail.kernel.org (Postfix) with ESMTP id 82A2F20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A2F20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbeLCVf1 (ORCPT
+        id S1726069AbeLCVfd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:35:27 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37559 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbeLCVcg (ORCPT
+        Mon, 3 Dec 2018 16:35:33 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34200 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLCVcg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Dec 2018 16:32:36 -0500
-Received: by mail-oi1-f193.google.com with SMTP id y23so12372964oia.4;
-        Mon, 03 Dec 2018 13:32:36 -0800 (PST)
+Received: by mail-oi1-f194.google.com with SMTP id h25so12385409oig.1;
+        Mon, 03 Dec 2018 13:32:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Th6PgAk+sHhcJGhBAXLbYoXMw1xn7ji2s1MXs2vABtU=;
-        b=BLDvSr5WFAFpCzhtpM/bfGq5YSKhc8RmPKPFjg8LFwgtLC0kGVSbHKgGECyPi03Exk
-         zTtJyLM0kxgPfBh908XDbRYuQd+3jnbi/J/Y6pLXrcmRJvmPekIlpQGDP96D4Mu1q4k2
-         xMx4C/aJAvTEzVxt1vmc4OoMrwPvXr+M2sLs6KrAkIh7+BWaiWYIi/bQsEb8z7fYrzmV
-         RcFdO5dlveRSr5hTy7Q6TYBCzoqwMx7RhswFQ5tu5NL7lZQeyuYQl6EB73uYRCeYRfIx
-         0aJqRAWE45fDP5WTNnjS+KT4y1uccuOoDSvS75peUdJLFqo9UX4bp3kJr4CN8FVy9dT7
-         UaKw==
-X-Gm-Message-State: AA+aEWYzI4RpcekxrnSJrDKrcsDntEoIEUBSGFEIzxnsWUZtPQ0rp14G
-        /vZJbtfMaZ0YevypXv/u6dbisGw=
-X-Google-Smtp-Source: AFSGD/UGlypVoMrSIfA19hrK4+wAhTTks5jY5hUOtbo4S5fPBErPGeCODEKoJ1h7AI+3wL/N4+ZqjQ==
-X-Received: by 2002:aca:5bc3:: with SMTP id p186mr10567400oib.130.1543872755621;
-        Mon, 03 Dec 2018 13:32:35 -0800 (PST)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.32.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=EbWQDLPCbsKZ/jTml8zWdkBSWrjRpmG+Fka3SM1fKF0=;
+        b=sfCAv7K3l14dz532T5/eReU/76er8JBtTcrU5getGICwwxlOi4OZGib6/eO/U5MRFz
+         jh+yOSZC5OmvLrtC4/iXjf6+Hk11/mDOExVsegPlKJalds2B42oY8dxiwhc7/DZpRZM/
+         RNOgkbblusDGTjZ9URTY+ZPqocm/FfyaUki5bawwwjpJ5m3zcQkNiv/Zm5kHGNfU58ez
+         LUs63hf22hBCzM0E1IbAzuBQcZsjsbYYkHs3U2UiVWAl/R8HnswHkJVpD06N2kBJok7m
+         jx3Yj4QU4o/fCZQLMWhzMKzViqNtAocNZtMiNNnW63mPANd5pZdxiFOrxCm5XN4IKbPk
+         vD9Q==
+X-Gm-Message-State: AA+aEWY/70qvkooClnHDn96fjIlPW7+G6mQPp5+c6vdwaLV8bHg29mja
+        bFwGgw2Nd0YIWt/PAIOENHoN+08=
+X-Google-Smtp-Source: AFSGD/V3Vqy/ysnTec/O1sbXJSZ+zMxmTt4WYHwqKLcmvmZ7MpaOM6U142Kn2f63j+5T8IQ+skEyKQ==
+X-Received: by 2002:aca:308f:: with SMTP id w137mr11478589oiw.49.1543872754472;
         Mon, 03 Dec 2018 13:32:34 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.32.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 13:32:33 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sean Hudson <darknighte@darknighte.com>,
@@ -52,11 +52,12 @@ Cc:     Sean Hudson <darknighte@darknighte.com>,
         linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
         Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 08/34] dt-bindings: arm: Convert PMU binding to json-schema
-Date:   Mon,  3 Dec 2018 15:31:57 -0600
-Message-Id: <20181203213223.16986-9-robh@kernel.org>
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 07/34] dt-bindings: arm: Convert cpu binding to json-schema
+Date:   Mon,  3 Dec 2018 15:31:56 -0600
+Message-Id: <20181203213223.16986-8-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181203213223.16986-1-robh@kernel.org>
 References: <20181203213223.16986-1-robh@kernel.org>
@@ -67,192 +68,1029 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert ARM PMU binding to DT schema format using json-schema.
+Convert ARM CPU binding to DT schema format using json-schema.
 
-Cc: Will Deacon <will.deacon@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
 Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mediatek@lists.infradead.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/pmu.txt | 70 --------------
- .../devicetree/bindings/arm/pmu.yaml          | 91 +++++++++++++++++++
- 2 files changed, 91 insertions(+), 70 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/pmu.txt
- create mode 100644 Documentation/devicetree/bindings/arm/pmu.yaml
+ .../devicetree/bindings/arm/cpus.txt          | 490 -----------------
+ .../devicetree/bindings/arm/cpus.yaml         | 507 ++++++++++++++++++
+ 2 files changed, 507 insertions(+), 490 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/cpus.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/cpus.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/pmu.txt b/Documentation/devicetree/bindings/arm/pmu.txt
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
 deleted file mode 100644
-index 13611a8199bb..000000000000
---- a/Documentation/devicetree/bindings/arm/pmu.txt
+index b0198a1cf403..000000000000
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
 +++ /dev/null
-@@ -1,70 +0,0 @@
--* ARM Performance Monitor Units
+@@ -1,490 +0,0 @@
+-=================
+-ARM CPUs bindings
+-=================
 -
--ARM cores often have a PMU for counting cpu and cache events like cache misses
--and hits. The interface to the PMU is part of the ARM ARM. The ARM PMU
--representation in the device tree should be done as under:-
+-The device tree allows to describe the layout of CPUs in a system through
+-the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
+-defining properties for every cpu.
 -
--Required properties:
+-Bindings for CPU nodes follow the Devicetree Specification, available from:
 -
--- compatible : should be one of
--	"apm,potenza-pmu"
--	"arm,armv8-pmuv3"
--	"arm,cortex-a73-pmu"
--	"arm,cortex-a72-pmu"
--	"arm,cortex-a57-pmu"
--	"arm,cortex-a53-pmu"
--	"arm,cortex-a35-pmu"
--	"arm,cortex-a17-pmu"
--	"arm,cortex-a15-pmu"
--	"arm,cortex-a12-pmu"
--	"arm,cortex-a9-pmu"
--	"arm,cortex-a8-pmu"
--	"arm,cortex-a7-pmu"
--	"arm,cortex-a5-pmu"
--	"arm,arm11mpcore-pmu"
--	"arm,arm1176-pmu"
--	"arm,arm1136-pmu"
--	"brcm,vulcan-pmu"
--	"cavium,thunder-pmu"
--	"qcom,scorpion-pmu"
--	"qcom,scorpion-mp-pmu"
--	"qcom,krait-pmu"
--- interrupts : 1 combined interrupt or 1 per core. If the interrupt is a per-cpu
--               interrupt (PPI) then 1 interrupt should be specified.
+-https://www.devicetree.org/specifications/
 -
--Optional properties:
+-with updates for 32-bit and 64-bit ARM systems provided in this document.
 -
--- interrupt-affinity : When using SPIs, specifies a list of phandles to CPU
--                       nodes corresponding directly to the affinity of
--		       the SPIs listed in the interrupts property.
+-================================
+-Convention used in this document
+-================================
 -
--                       When using a PPI, specifies a list of phandles to CPU
--		       nodes corresponding to the set of CPUs which have
--		       a PMU of this type signalling the PPI listed in the
--		       interrupts property, unless this is already specified
--		       by the PPI interrupt specifier itself (in which case
--		       the interrupt-affinity property shouldn't be present).
+-This document follows the conventions described in the Devicetree
+-Specification, with the addition:
 -
--                       This property should be present when there is more than
--		       a single SPI.
+-- square brackets define bitfields, eg reg[7:0] value of the bitfield in
+-  the reg property contained in bits 7 down to 0
 -
+-=====================================
+-cpus and cpu node bindings definition
+-=====================================
 -
--- qcom,no-pc-write : Indicates that this PMU doesn't support the 0xc and 0xd
--                     events.
+-The ARM architecture, in accordance with the Devicetree Specification,
+-requires the cpus and cpu nodes to be present and contain the properties
+-described below.
 -
--- secure-reg-access : Indicates that the ARMv7 Secure Debug Enable Register
--		      (SDER) is accessible. This will cause the driver to do
--		      any setup required that is only possible in ARMv7 secure
--		      state. If not present the ARMv7 SDER will not be touched,
--		      which means the PMU may fail to operate unless external
--		      code (bootloader or security monitor) has performed the
--		      appropriate initialisation. Note that this property is
--		      not valid for non-ARMv7 CPUs or ARMv7 CPUs booting Linux
--		      in Non-secure state.
+-- cpus node
 -
--Example:
+-	Description: Container of cpu nodes
 -
--pmu {
--        compatible = "arm,cortex-a9-pmu";
--        interrupts = <100 101>;
+-	The node name must be "cpus".
+-
+-	A cpus node must define the following properties:
+-
+-	- #address-cells
+-		Usage: required
+-		Value type: <u32>
+-
+-		Definition depends on ARM architecture version and
+-		configuration:
+-
+-			# On uniprocessor ARM architectures previous to v7
+-			  value must be 1, to enable a simple enumeration
+-			  scheme for processors that do not have a HW CPU
+-			  identification register.
+-			# On 32-bit ARM 11 MPcore, ARM v7 or later systems
+-			  value must be 1, that corresponds to CPUID/MPIDR
+-			  registers sizes.
+-			# On ARM v8 64-bit systems value should be set to 2,
+-			  that corresponds to the MPIDR_EL1 register size.
+-			  If MPIDR_EL1[63:32] value is equal to 0 on all CPUs
+-			  in the system, #address-cells can be set to 1, since
+-			  MPIDR_EL1[63:32] bits are not used for CPUs
+-			  identification.
+-	- #size-cells
+-		Usage: required
+-		Value type: <u32>
+-		Definition: must be set to 0
+-
+-- cpu node
+-
+-	Description: Describes a CPU in an ARM based system
+-
+-	PROPERTIES
+-
+-	- device_type
+-		Usage: required
+-		Value type: <string>
+-		Definition: must be "cpu"
+-	- reg
+-		Usage and definition depend on ARM architecture version and
+-		configuration:
+-
+-			# On uniprocessor ARM architectures previous to v7
+-			  this property is required and must be set to 0.
+-
+-			# On ARM 11 MPcore based systems this property is
+-			  required and matches the CPUID[11:0] register bits.
+-
+-			  Bits [11:0] in the reg cell must be set to
+-			  bits [11:0] in CPU ID register.
+-
+-			  All other bits in the reg cell must be set to 0.
+-
+-			# On 32-bit ARM v7 or later systems this property is
+-			  required and matches the CPU MPIDR[23:0] register
+-			  bits.
+-
+-			  Bits [23:0] in the reg cell must be set to
+-			  bits [23:0] in MPIDR.
+-
+-			  All other bits in the reg cell must be set to 0.
+-
+-			# On ARM v8 64-bit systems this property is required
+-			  and matches the MPIDR_EL1 register affinity bits.
+-
+-			  * If cpus node's #address-cells property is set to 2
+-
+-			    The first reg cell bits [7:0] must be set to
+-			    bits [39:32] of MPIDR_EL1.
+-
+-			    The second reg cell bits [23:0] must be set to
+-			    bits [23:0] of MPIDR_EL1.
+-
+-			  * If cpus node's #address-cells property is set to 1
+-
+-			    The reg cell bits [23:0] must be set to bits [23:0]
+-			    of MPIDR_EL1.
+-
+-			  All other bits in the reg cells must be set to 0.
+-
+-	- compatible:
+-		Usage: required
+-		Value type: <string>
+-		Definition: should be one of:
+-			    "arm,arm710t"
+-			    "arm,arm720t"
+-			    "arm,arm740t"
+-			    "arm,arm7ej-s"
+-			    "arm,arm7tdmi"
+-			    "arm,arm7tdmi-s"
+-			    "arm,arm9es"
+-			    "arm,arm9ej-s"
+-			    "arm,arm920t"
+-			    "arm,arm922t"
+-			    "arm,arm925"
+-			    "arm,arm926e-s"
+-			    "arm,arm926ej-s"
+-			    "arm,arm940t"
+-			    "arm,arm946e-s"
+-			    "arm,arm966e-s"
+-			    "arm,arm968e-s"
+-			    "arm,arm9tdmi"
+-			    "arm,arm1020e"
+-			    "arm,arm1020t"
+-			    "arm,arm1022e"
+-			    "arm,arm1026ej-s"
+-			    "arm,arm1136j-s"
+-			    "arm,arm1136jf-s"
+-			    "arm,arm1156t2-s"
+-			    "arm,arm1156t2f-s"
+-			    "arm,arm1176jzf"
+-			    "arm,arm1176jz-s"
+-			    "arm,arm1176jzf-s"
+-			    "arm,arm11mpcore"
+-			    "arm,cortex-a5"
+-			    "arm,cortex-a7"
+-			    "arm,cortex-a8"
+-			    "arm,cortex-a9"
+-			    "arm,cortex-a12"
+-			    "arm,cortex-a15"
+-			    "arm,cortex-a17"
+-			    "arm,cortex-a53"
+-			    "arm,cortex-a57"
+-			    "arm,cortex-a72"
+-			    "arm,cortex-a73"
+-			    "arm,cortex-m0"
+-			    "arm,cortex-m0+"
+-			    "arm,cortex-m1"
+-			    "arm,cortex-m3"
+-			    "arm,cortex-m4"
+-			    "arm,cortex-r4"
+-			    "arm,cortex-r5"
+-			    "arm,cortex-r7"
+-			    "brcm,brahma-b15"
+-			    "brcm,brahma-b53"
+-			    "brcm,vulcan"
+-			    "cavium,thunder"
+-			    "cavium,thunder2"
+-			    "faraday,fa526"
+-			    "intel,sa110"
+-			    "intel,sa1100"
+-			    "marvell,feroceon"
+-			    "marvell,mohawk"
+-			    "marvell,pj4a"
+-			    "marvell,pj4b"
+-			    "marvell,sheeva-v5"
+-			    "nvidia,tegra132-denver"
+-			    "nvidia,tegra186-denver"
+-			    "nvidia,tegra194-carmel"
+-			    "qcom,krait"
+-			    "qcom,kryo"
+-			    "qcom,kryo385"
+-			    "qcom,scorpion"
+-	- enable-method
+-		Value type: <stringlist>
+-		Usage and definition depend on ARM architecture version.
+-			# On ARM v8 64-bit this property is required and must
+-			  be one of:
+-			     "psci"
+-			     "spin-table"
+-			# On ARM 32-bit systems this property is optional and
+-			  can be one of:
+-			    "actions,s500-smp"
+-			    "allwinner,sun6i-a31"
+-			    "allwinner,sun8i-a23"
+-			    "allwinner,sun9i-a80-smp"
+-			    "amlogic,meson8-smp"
+-			    "amlogic,meson8b-smp"
+-			    "arm,realview-smp"
+-			    "brcm,bcm11351-cpu-method"
+-			    "brcm,bcm23550"
+-			    "brcm,bcm2836-smp"
+-			    "brcm,bcm-nsp-smp"
+-			    "brcm,brahma-b15"
+-			    "marvell,armada-375-smp"
+-			    "marvell,armada-380-smp"
+-			    "marvell,armada-390-smp"
+-			    "marvell,armada-xp-smp"
+-			    "marvell,98dx3236-smp"
+-			    "mediatek,mt6589-smp"
+-			    "mediatek,mt81xx-tz-smp"
+-			    "qcom,gcc-msm8660"
+-			    "qcom,kpss-acc-v1"
+-			    "qcom,kpss-acc-v2"
+-			    "renesas,apmu"
+-			    "renesas,r9a06g032-smp"
+-			    "rockchip,rk3036-smp"
+-			    "rockchip,rk3066-smp"
+-			    "ste,dbx500-smp"
+-
+-	- cpu-release-addr
+-		Usage: required for systems that have an "enable-method"
+-		       property value of "spin-table".
+-		Value type: <prop-encoded-array>
+-		Definition:
+-			# On ARM v8 64-bit systems must be a two cell
+-			  property identifying a 64-bit zero-initialised
+-			  memory location.
+-
+-	- qcom,saw
+-		Usage: required for systems that have an "enable-method"
+-		       property value of "qcom,kpss-acc-v1" or
+-		       "qcom,kpss-acc-v2"
+-		Value type: <phandle>
+-		Definition: Specifies the SAW[1] node associated with this CPU.
+-
+-	- qcom,acc
+-		Usage: required for systems that have an "enable-method"
+-		       property value of "qcom,kpss-acc-v1" or
+-		       "qcom,kpss-acc-v2"
+-		Value type: <phandle>
+-		Definition: Specifies the ACC[2] node associated with this CPU.
+-
+-	- cpu-idle-states
+-		Usage: Optional
+-		Value type: <prop-encoded-array>
+-		Definition:
+-			# List of phandles to idle state nodes supported
+-			  by this cpu [3].
+-
+-	- capacity-dmips-mhz
+-		Usage: Optional
+-		Value type: <u32>
+-		Definition:
+-			# u32 value representing CPU capacity [4] in
+-			  DMIPS/MHz, relative to highest capacity-dmips-mhz
+-			  in the system.
+-
+-	- rockchip,pmu
+-		Usage: optional for systems that have an "enable-method"
+-		       property value of "rockchip,rk3066-smp"
+-		       While optional, it is the preferred way to get access to
+-		       the cpu-core power-domains.
+-		Value type: <phandle>
+-		Definition: Specifies the syscon node controlling the cpu core
+-			    power domains.
+-
+-	- dynamic-power-coefficient
+-		Usage: optional
+-		Value type: <prop-encoded-array>
+-		Definition: A u32 value that represents the running time dynamic
+-			    power coefficient in units of uW/MHz/V^2. The
+-			    coefficient can either be calculated from power
+-			    measurements or derived by analysis.
+-
+-			    The dynamic power consumption of the CPU  is
+-			    proportional to the square of the Voltage (V) and
+-			    the clock frequency (f). The coefficient is used to
+-			    calculate the dynamic power as below -
+-
+-			    Pdyn = dynamic-power-coefficient * V^2 * f
+-
+-			    where voltage is in V, frequency is in MHz.
+-
+-Example 1 (dual-cluster big.LITTLE system 32-bit):
+-
+-	cpus {
+-		#size-cells = <0>;
+-		#address-cells = <1>;
+-
+-		cpu@0 {
+-			device_type = "cpu";
+-			compatible = "arm,cortex-a15";
+-			reg = <0x0>;
+-		};
+-
+-		cpu@1 {
+-			device_type = "cpu";
+-			compatible = "arm,cortex-a15";
+-			reg = <0x1>;
+-		};
+-
+-		cpu@100 {
+-			device_type = "cpu";
+-			compatible = "arm,cortex-a7";
+-			reg = <0x100>;
+-		};
+-
+-		cpu@101 {
+-			device_type = "cpu";
+-			compatible = "arm,cortex-a7";
+-			reg = <0x101>;
+-		};
+-	};
+-
+-Example 2 (Cortex-A8 uniprocessor 32-bit system):
+-
+-	cpus {
+-		#size-cells = <0>;
+-		#address-cells = <1>;
+-
+-		cpu@0 {
+-			device_type = "cpu";
+-			compatible = "arm,cortex-a8";
+-			reg = <0x0>;
+-		};
+-	};
+-
+-Example 3 (ARM 926EJ-S uniprocessor 32-bit system):
+-
+-	cpus {
+-		#size-cells = <0>;
+-		#address-cells = <1>;
+-
+-		cpu@0 {
+-			device_type = "cpu";
+-			compatible = "arm,arm926ej-s";
+-			reg = <0x0>;
+-		};
+-	};
+-
+-Example 4 (ARM Cortex-A57 64-bit system):
+-
+-cpus {
+-	#size-cells = <0>;
+-	#address-cells = <2>;
+-
+-	cpu@0 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x0>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@1 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x1>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@10000 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10000>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@10001 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10001>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@10100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@10101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100000000 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x0>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100000001 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x1>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100000100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100000101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100010000 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10000>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100010001 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10001>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100010100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	cpu@100010101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
 -};
-diff --git a/Documentation/devicetree/bindings/arm/pmu.yaml b/Documentation/devicetree/bindings/arm/pmu.yaml
+-
+---
+-[1] arm/msm/qcom,saw2.txt
+-[2] arm/msm/qcom,kpss-acc.txt
+-[3] ARM Linux kernel documentation - idle states bindings
+-    Documentation/devicetree/bindings/arm/idle-states.txt
+-[4] ARM Linux kernel documentation - cpu capacity bindings
+-    Documentation/devicetree/bindings/arm/cpu-capacity.txt
+diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
 new file mode 100644
-index 000000000000..3ea4abfbf276
+index 000000000000..298c17b327c6
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/pmu.yaml
-@@ -0,0 +1,91 @@
++++ b/Documentation/devicetree/bindings/arm/cpus.yaml
+@@ -0,0 +1,507 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/pmu.yaml#
++$id: http://devicetree.org/schemas/arm/cpus.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: ARM Performance Monitor Units
++title: ARM CPUs bindings
 +
 +maintainers:
-+  - Mark Rutland <mark.rutland@arm.com>
-+  - Will Deacon <will.deacon@arm.com>
++  - Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 +
 +description: |+
-+  ARM cores often have a PMU for counting cpu and cache events like cache misses
-+  and hits. The interface to the PMU is part of the ARM ARM. The ARM PMU
-+  representation in the device tree should be done as under:-
++  The device tree allows to describe the layout of CPUs in a system through
++  the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
++  defining properties for every cpu.
++
++  Bindings for CPU nodes follow the Devicetree Specification, available from:
++
++  https://www.devicetree.org/specifications/
++
++  with updates for 32-bit and 64-bit ARM systems provided in this document.
++
++  ================================
++  Convention used in this document
++  ================================
++
++  This document follows the conventions described in the Devicetree
++  Specification, with the addition:
++
++  - square brackets define bitfields, eg reg[7:0] value of the bitfield in
++    the reg property contained in bits 7 down to 0
++
++  =====================================
++  cpus and cpu node bindings definition
++  =====================================
++
++  The ARM architecture, in accordance with the Devicetree Specification,
++  requires the cpus and cpu nodes to be present and contain the properties
++  described below.
 +
 +properties:
-+  compatible:
-+    oneOf:
-+      - items:
++  $nodename:
++    const: cpus
++    description: Container of cpu nodes
++
++  '#address-cells':
++    enum: [1, 2]
++    description: |
++      Definition depends on ARM architecture version and configuration:
++
++      On uniprocessor ARM architectures previous to v7
++        value must be 1, to enable a simple enumeration
++        scheme for processors that do not have a HW CPU
++        identification register.
++      On 32-bit ARM 11 MPcore, ARM v7 or later systems
++        value must be 1, that corresponds to CPUID/MPIDR
++        registers sizes.
++      On ARM v8 64-bit systems value should be set to 2,
++        that corresponds to the MPIDR_EL1 register size.
++        If MPIDR_EL1[63:32] value is equal to 0 on all CPUs
++        in the system, #address-cells can be set to 1, since
++        MPIDR_EL1[63:32] bits are not used for CPUs
++        identification.
++
++  '#size-cells':
++    const: 0
++
++patternProperties:
++  '^cpu@[0-9a-f]+$':
++    properties:
++      device_type:
++        const: cpu
++
++      reg:
++        maxItems: 1
++        description: |
++          Usage and definition depend on ARM architecture version and
++          configuration:
++
++          On uniprocessor ARM architectures previous to v7
++          this property is required and must be set to 0.
++
++          On ARM 11 MPcore based systems this property is
++            required and matches the CPUID[11:0] register bits.
++
++            Bits [11:0] in the reg cell must be set to
++            bits [11:0] in CPU ID register.
++
++            All other bits in the reg cell must be set to 0.
++
++          On 32-bit ARM v7 or later systems this property is
++            required and matches the CPU MPIDR[23:0] register
++            bits.
++
++            Bits [23:0] in the reg cell must be set to
++            bits [23:0] in MPIDR.
++
++            All other bits in the reg cell must be set to 0.
++
++          On ARM v8 64-bit systems this property is required
++            and matches the MPIDR_EL1 register affinity bits.
++
++            * If cpus node's #address-cells property is set to 2
++
++              The first reg cell bits [7:0] must be set to
++              bits [39:32] of MPIDR_EL1.
++
++              The second reg cell bits [23:0] must be set to
++              bits [23:0] of MPIDR_EL1.
++
++            * If cpus node's #address-cells property is set to 1
++
++              The reg cell bits [23:0] must be set to bits [23:0]
++              of MPIDR_EL1.
++
++          All other bits in the reg cells must be set to 0.
++
++      compatible:
++        items:
 +          - enum:
-+              - apm,potenza-pmu
-+              - arm,armv8-pmuv3
-+              - arm,cortex-a73-pmu
-+              - arm,cortex-a72-pmu
-+              - arm,cortex-a57-pmu
-+              - arm,cortex-a53-pmu
-+              - arm,cortex-a35-pmu
-+              - arm,cortex-a17-pmu
-+              - arm,cortex-a15-pmu
-+              - arm,cortex-a12-pmu
-+              - arm,cortex-a9-pmu
-+              - arm,cortex-a8-pmu
-+              - arm,cortex-a7-pmu
-+              - arm,cortex-a5-pmu
-+              - arm,arm11mpcore-pmu
-+              - arm,arm1176-pmu
-+              - arm,arm1136-pmu
-+              - brcm,vulcan-pmu
-+              - cavium,thunder-pmu
-+              - qcom,scorpion-pmu
-+              - qcom,scorpion-mp-pmu
-+              - qcom,krait-pmu
-+      - items:
-+          - const: arm,cortex-a7-pmu
-+          - const: arm,cortex-a15-pmu
++              - arm,arm710t
++              - arm,arm720t
++              - arm,arm740t
++              - arm,arm7ej-s
++              - arm,arm7tdmi
++              - arm,arm7tdmi-s
++              - arm,arm9es
++              - arm,arm9ej-s
++              - arm,arm920t
++              - arm,arm922t
++              - arm,arm925
++              - arm,arm926e-s
++              - arm,arm926ej-s
++              - arm,arm940t
++              - arm,arm946e-s
++              - arm,arm966e-s
++              - arm,arm968e-s
++              - arm,arm9tdmi
++              - arm,arm1020e
++              - arm,arm1020t
++              - arm,arm1022e
++              - arm,arm1026ej-s
++              - arm,arm1136j-s
++              - arm,arm1136jf-s
++              - arm,arm1156t2-s
++              - arm,arm1156t2f-s
++              - arm,arm1176jzf
++              - arm,arm1176jz-s
++              - arm,arm1176jzf-s
++              - arm,arm11mpcore
++              - arm,armv8 # Only for s/w models
++              - arm,cortex-a5
++              - arm,cortex-a7
++              - arm,cortex-a8
++              - arm,cortex-a9
++              - arm,cortex-a12
++              - arm,cortex-a15
++              - arm,cortex-a17
++              - arm,cortex-a53
++              - arm,cortex-a57
++              - arm,cortex-a72
++              - arm,cortex-a73
++              - arm,cortex-m0
++              - arm,cortex-m0+
++              - arm,cortex-m1
++              - arm,cortex-m3
++              - arm,cortex-m4
++              - arm,cortex-r4
++              - arm,cortex-r5
++              - arm,cortex-r7
++              - brcm,brahma-b15
++              - brcm,brahma-b53
++              - brcm,vulcan
++              - cavium,thunder
++              - cavium,thunder2
++              - faraday,fa526
++              - intel,sa110
++              - intel,sa1100
++              - marvell,feroceon
++              - marvell,mohawk
++              - marvell,pj4a
++              - marvell,pj4b
++              - marvell,sheeva-v5
++              - marvell,sheeva-v7
++              - nvidia,tegra132-denver
++              - nvidia,tegra186-denver
++              - nvidia,tegra194-carmel
++              - qcom,krait
++              - qcom,kryo
++              - qcom,kryo385
++              - qcom,scorpion
 +
-+  interrupts:
-+    # Don't know how many CPUs, so no constraints to specify
-+    description: 1 per-cpu interrupt (PPI) or 1 interrupt per core.
++      enable-method:
++        allOf:
++          - $ref: '/schemas/types.yaml#/definitions/string'
++          - oneOf:
++            # On ARM v8 64-bit this property is required
++            - enum:
++                - psci
++                - spin-table
++            # On ARM 32-bit systems this property is optional
++            - enum:
++                - actions,s500-smp
++                - allwinner,sun6i-a31
++                - allwinner,sun8i-a23
++                - allwinner,sun9i-a80-smp
++                - allwinner,sun8i-a83t-smp
++                - amlogic,meson8-smp
++                - amlogic,meson8b-smp
++                - arm,realview-smp
++                - brcm,bcm11351-cpu-method
++                - brcm,bcm23550
++                - brcm,bcm2836-smp
++                - brcm,bcm63138
++                - brcm,bcm-nsp-smp
++                - brcm,brahma-b15
++                - marvell,armada-375-smp
++                - marvell,armada-380-smp
++                - marvell,armada-390-smp
++                - marvell,armada-xp-smp
++                - marvell,98dx3236-smp
++                - mediatek,mt6589-smp
++                - mediatek,mt81xx-tz-smp
++                - qcom,gcc-msm8660
++                - qcom,kpss-acc-v1
++                - qcom,kpss-acc-v2
++                - renesas,apmu
++                - renesas,r9a06g032-smp
++                - rockchip,rk3036-smp
++                - rockchip,rk3066-smp
++                - ste,dbx500-smp
 +
-+  interrupt-affinity:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      When using SPIs, specifies a list of phandles to CPU
-+      nodes corresponding directly to the affinity of
-+      the SPIs listed in the interrupts property.
++      cpu-release-addr:
++        $ref: '/schemas/types.yaml#/definitions/uint64'
 +
-+      When using a PPI, specifies a list of phandles to CPU
-+      nodes corresponding to the set of CPUs which have
-+      a PMU of this type signalling the PPI listed in the
-+      interrupts property, unless this is already specified
-+      by the PPI interrupt specifier itself (in which case
-+      the interrupt-affinity property shouldn't be present).
++        description:
++          Required for systems that have an "enable-method"
++            property value of "spin-table".
++          On ARM v8 64-bit systems must be a two cell
++            property identifying a 64-bit zero-initialised
++            memory location.
 +
-+      This property should be present when there is more than
-+      a single SPI.
++      cpu-idle-states:
++        $ref: '/schemas/types.yaml#/definitions/phandle-array'
++        description: |
++          List of phandles to idle state nodes supported
++          by this cpu (see ./idle-states.txt).
 +
-+  qcom,no-pc-write:
-+    type: boolean
-+    description:
-+      Indicates that this PMU doesn't support the 0xc and 0xd events.
++      capacity-dmips-mhz:
++        $ref: '/schemas/types.yaml#/definitions/uint32'
++        description:
++          u32 value representing CPU capacity (see ./cpu-capacity.txt) in
++          DMIPS/MHz, relative to highest capacity-dmips-mhz
++          in the system.
 +
-+  secure-reg-access:
-+    type: boolean
-+    description:
-+      Indicates that the ARMv7 Secure Debug Enable Register
-+      (SDER) is accessible. This will cause the driver to do
-+      any setup required that is only possible in ARMv7 secure
-+      state. If not present the ARMv7 SDER will not be touched,
-+      which means the PMU may fail to operate unless external
-+      code (bootloader or security monitor) has performed the
-+      appropriate initialisation. Note that this property is
-+      not valid for non-ARMv7 CPUs or ARMv7 CPUs booting Linux
-+      in Non-secure state.
++      dynamic-power-coefficient:
++        $ref: '/schemas/types.yaml#/definitions/uint32'
++        description:
++          A u32 value that represents the running time dynamic
++          power coefficient in units of uW/MHz/V^2. The
++          coefficient can either be calculated from power
++          measurements or derived by analysis.
++
++          The dynamic power consumption of the CPU  is
++          proportional to the square of the Voltage (V) and
++          the clock frequency (f). The coefficient is used to
++          calculate the dynamic power as below -
++
++          Pdyn = dynamic-power-coefficient * V^2 * f
++
++          where voltage is in V, frequency is in MHz.
++
++      qcom,saw:
++        $ref: '/schemas/types.yaml#/definitions/phandle'
++        description: |
++          Specifies the SAW* node associated with this CPU.
++
++          Required for systems that have an "enable-method" property
++          value of "qcom,kpss-acc-v1" or "qcom,kpss-acc-v2"
++
++          * arm/msm/qcom,saw2.txt
++
++      qcom,acc:
++        $ref: '/schemas/types.yaml#/definitions/phandle'
++        description: |
++          Specifies the ACC* node associated with this CPU.
++
++          Required for systems that have an "enable-method" property
++          value of "qcom,kpss-acc-v1" or "qcom,kpss-acc-v2"
++
++          * arm/msm/qcom,kpss-acc.txt
++
++      rockchip,pmu:
++        $ref: '/schemas/types.yaml#/definitions/phandle'
++        description: |
++          Specifies the syscon node controlling the cpu core power domains.
++
++          Optional for systems that have an "enable-method"
++          property value of "rockchip,rk3066-smp"
++          While optional, it is the preferred way to get access to
++          the cpu-core power-domains.
++
++    required:
++      - device_type
++      - reg
++      - compatible
++
++    dependencies:
++      cpu-release-addr: [enable-method]
++      rockchip,pmu: [enable-method]
 +
 +required:
-+  - compatible
++  - '#address-cells'
++  - '#size-cells'
 +
++examples:
++  - |
++    cpus {
++      #size-cells = <0>;
++      #address-cells = <1>;
++
++      cpu@0 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a15";
++        reg = <0x0>;
++      };
++
++      cpu@1 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a15";
++        reg = <0x1>;
++      };
++
++      cpu@100 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a7";
++        reg = <0x100>;
++      };
++
++      cpu@101 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a7";
++        reg = <0x101>;
++      };
++    };
++
++  - |
++    // Example 2 (Cortex-A8 uniprocessor 32-bit system):
++    cpus {
++      #size-cells = <0>;
++      #address-cells = <1>;
++
++      cpu@0 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a8";
++        reg = <0x0>;
++      };
++    };
++
++  - |
++    // Example 3 (ARM 926EJ-S uniprocessor 32-bit system):
++    cpus {
++      #size-cells = <0>;
++      #address-cells = <1>;
++
++      cpu@0 {
++        device_type = "cpu";
++        compatible = "arm,arm926ej-s";
++        reg = <0x0>;
++      };
++    };
++
++  - |
++    //  Example 4 (ARM Cortex-A57 64-bit system):
++    cpus {
++      #size-cells = <0>;
++      #address-cells = <2>;
++
++      cpu@0 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x0>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@1 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x1>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x100>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@101 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x101>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@10000 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x10000>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@10001 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x10001>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@10100 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x10100>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@10101 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x0 0x10101>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100000000 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x0>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100000001 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x1>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100000100 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x100>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100000101 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x101>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100010000 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x10000>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100010001 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x10001>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100010100 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x10100>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++
++      cpu@100010101 {
++        device_type = "cpu";
++        compatible = "arm,cortex-a57";
++        reg = <0x1 0x10101>;
++        enable-method = "spin-table";
++        cpu-release-addr = <0 0x20000000>;
++      };
++    };
 +...
 -- 
 2.19.1
