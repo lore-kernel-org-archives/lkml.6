@@ -2,194 +2,150 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 888FFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387D9C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4101F20864
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:22:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFB1D206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/3eolcV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4101F20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="PHgdoWRL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB1D206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbeLCWWG (ORCPT
+        id S1725971AbeLCWYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:22:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbeLCWWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:22:06 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20303206B7;
-        Mon,  3 Dec 2018 22:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543875725;
-        bh=i5kIsTco3f7d8sJ5mtxdBuTZ2QsDbdd07RTHJeaE+aA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=A/3eolcVuLrT1dMTTgA0ATXfjOaXpD7h6qqM6H1YP3kNRyixitZQbWSg3P5TioKjq
-         506l1Js7WJpOSVstZq6HBvHwMG0QyAixMFlITQsH7HnM8JQdBglz6SG7/BbjlcQp39
-         Ec0a88lg4jyCmtdZrrm2C6nQK1EVnOLuftRYoU+o=
-Message-ID: <1543875722.2018.22.camel@kernel.org>
-Subject: Re: [PATCH v7 05/16] tracing: Generalize hist trigger onmax and
- save action
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, kernel-team@lge.com
-Date:   Mon, 03 Dec 2018 16:22:02 -0600
-In-Reply-To: <20181123025000.GC25952@sejong>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-         <9baa2b4a9b708791b39f176e3b63c207163d8c3b.1542221863.git.tom.zanussi@linux.intel.com>
-         <20181123025000.GC25952@sejong>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        Mon, 3 Dec 2018 17:24:20 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37591 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCWYU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:24:20 -0500
+Received: by mail-qk1-f195.google.com with SMTP id 131so8425698qkd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:24:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5Qg81U+ca65JeAAqq1YakJhxYwuFlumKDwYG7cVu3Tg=;
+        b=PHgdoWRL8TZXfFZNYAig82LEES6/Czv/U+5esE0BmBow2Kocx7ZibBiCsVatbAwMaB
+         Wr7w6lKYr14y+wyNRy76NuInPz9ZF5235l2w8DaPSMCoqFppQ+hXeAAXcobhHUfquPLf
+         CMaxpYo/2Lxn63eianndOOecCrcqfQHognYdAqli3eRLCu+bDsNfkoAHnQtbg3A7+gYn
+         WFUzGvqS89r7h4vSTbpBLPBspIm1xOQeskpxZ8U5m1ohWeoEFDmBqEuJ+qS17cJtcjPh
+         oZy+mSnNL3ugAFgrxkHwfjmlpkck+Qiqazqpeh3oYzpkAbGxJjeFqu99s7KA5PRqwArK
+         rihw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Qg81U+ca65JeAAqq1YakJhxYwuFlumKDwYG7cVu3Tg=;
+        b=AqKlqDIKtSSva3r0IXGvknVD6aifzyI9Z42dzXMvceWjQgA5cnmiCpfSOdvm2/KZtS
+         KMRjRUTZ3THIIFFaxXysQLNLUmadROn5FGwt+NMhPOu/AiClAvJbg98iYaYRDBJCXAA2
+         jXmgCyjTHDTjYxYXBi6oK57dc0nsiYF+vta9GgEn2WoZYhvKwH1fBZ15zhOPARal6TSJ
+         AhnUaNB4Jb2S++665y7LV4b/ucORf54w//1Snhv+RxHbaDVuxO1lxjjh3Ct4K61PXhgp
+         WkWTdyVnh878bS63Si/illdwiqHul3kGMobjnX6LVlI6/0Z3NWyg7rXyzVHHPr+UOKXf
+         YnUA==
+X-Gm-Message-State: AA+aEWZlunfqL/U6YAtrKURw2yievcte4F6b5ZzzsTWzWOaxSAhNesYf
+        37xQJSCHUZ3ZD6QAQtv4Mlp4iiwbIWLtHA==
+X-Google-Smtp-Source: AFSGD/UpDy6lMDJrG9loWlVpLvJR7kt985EHx0qBJP1XCqaPyFmU5cnT1l4iK2rXeGuQJyDQ1yREwQ==
+X-Received: by 2002:a37:cf9b:: with SMTP id v27mr16179832qkl.160.1543875858364;
+        Mon, 03 Dec 2018 14:24:18 -0800 (PST)
+Received: from [192.168.0.189] (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
+        by smtp.gmail.com with ESMTPSA id y2sm11441367qtb.88.2018.12.03.14.24.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 14:24:17 -0800 (PST)
+Subject: Re: [PATCH v3 4/4] ARM: dts: imx5: add gpu nodes
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     freedreno@lists.freedesktop.org,
+        Chris Healy <Chris.Healy@zii.aero>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20181203211816.5129-1-jonathan@marek.ca>
+ <20181203211816.5129-4-jonathan@marek.ca>
+ <CAOMZO5B18DyZ0zvit6AgaueMifnMf2ctSo7pE_XndRpt7+bnLw@mail.gmail.com>
+From:   Jonathan marek <jonathan@marek.ca>
+Message-ID: <3e8d1f9e-ffb4-dd6a-0a68-f59b4c1134a0@marek.ca>
+Date:   Mon, 3 Dec 2018 17:21:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAOMZO5B18DyZ0zvit6AgaueMifnMf2ctSo7pE_XndRpt7+bnLw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Namhyung,
-
-On Fri, 2018-11-23 at 11:50 +0900, Namhyung Kim wrote:
-> Hi Tom,
+On 12/03/2018 05:16 PM, Fabio Estevam wrote:
+> Hi Jonathan,
 > 
-> On Wed, Nov 14, 2018 at 02:18:02PM -0600, Tom Zanussi wrote:
-> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> > 
-
-[snip]
-
-> > 
- enum handler_id {
-> >  	HANDLER_ONMATCH = 1,
-> >  	HANDLER_ONMAX,
-> > @@ -349,14 +358,18 @@ struct action_data {
-> >  
-> >  		struct {
-> >  			char			*var_str;
-> > -			unsigned int		max_var_ref_id
-> > x;
-> > -			struct hist_field	*max_var;
-> > -			struct hist_field	*var;
-> > -		} onmax;
-> > +			struct hist_field	*var_ref;
-> > +			unsigned int		var_ref_idx;
+> Thanks for working on this. Really nice to see GPU support for mx51/mx53!
 > 
-> I have a question.  It's confusing for me there are many indexes for
-> a
-> variable (ref).  The hist_field already has var.idx, var_idx and
-> var_ref_idx in it.  But you also added an external var_ref_idx along
-> with the var_ref.  Also I see another var_ref_idx in the action data.
-> Is all that really needed?  Could you please add some comment then?
+> On Mon, Dec 3, 2018 at 7:21 PM Jonathan Marek <jonathan@marek.ca> wrote:
+> 
+> Please add a commit log.
+> 
+>> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> 
+>> ---
+>>   arch/arm/boot/dts/imx51.dtsi | 17 +++++++++++++++++
+>>   arch/arm/boot/dts/imx53.dtsi | 17 +++++++++++++++++
+>>   2 files changed, 34 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/imx51.dtsi b/arch/arm/boot/dts/imx51.dtsi
+>> index 67d462715..e9a7bbce9 100644
+>> --- a/arch/arm/boot/dts/imx51.dtsi
+>> +++ b/arch/arm/boot/dts/imx51.dtsi
+>> @@ -628,5 +628,22 @@
+>>                                  clock-names = "ipg", "ahb";
+>>                          };
+>>                  };
+>> +
+>> +               gpu: gpu@30000000 {
+> 
+> We put the peripheral nodes in address order, so this one should go
+> prior to the IPU node.
+> 
+>> +                       compatible = "amd,imageon-200.1", "amd,imageon";
+> 
+> I can't find the dt-bindings for these compatible entries. Have you
+> documented them?
 > 
 
-Below is a patch with some comments I'll merge into the next version
-that I hope will help make things more clear.  Basically, the
-hist_field.var_idx isn't used so I've removed it and therefore that
-source of confusion, while var.idx is the variable's unique 'handle' in
-the tracing_map, used when getting and setting the variable.  And then
-there are the several versions of var_ref_idx used for different
-purposes depending on the context, but all of them are indices into the
-array of variable values collected when a trigger is hit.  For example,
-the var_ref_idx defined inside track_data is the index that points to
-the tracked var value, which the action can use directly, and the
-var_ref_idx alongside the synth fields in action_data is the index of
-the first param used when generating a synthetic event, and so on.
+It is the same as qcom,adreno which is documented here:
 
-Tom 
+Documentation/devicetree/bindings/display/msm/gpu.txt
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 818944391d97..5310ef73f023 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -39,6 +39,16 @@ enum field_op_id {
- 	FIELD_OP_UNARY_MINUS,
- };
- 
-+/*
-+ * A hist_var (histogram variable) contains variable information for
-+ * hist_fields having the HIST_FIELD_FL_VAR or HIST_FIELD_FL_VAR_REF
-+ * flag set.  A hist_var has a variable name e.g. ts0, and is
-+ * associated with a given histogram trigger, as specified by
-+ * hist_data.  The hist_var idx is the unique index assigned to the
-+ * variable by the hist trigger's tracing_map.  The idx is what is
-+ * used to set a variable's value and, by a variable reference, to
-+ * retrieve it.
-+ */
- struct hist_var {
- 	char				*name;
- 	struct hist_trigger_data	*hist_data;
-@@ -60,7 +70,15 @@ struct hist_field {
- 	char				*system;
- 	char				*event_name;
- 	char				*name;
--	unsigned int			var_idx;
-+
-+	/*
-+	 * When a histogram trigger is hit, if it has any references
-+	 * to variables, the values of those variables are collected
-+	 * into a var_ref_vals array by resolve_var_refs().  The
-+	 * current value of each variable is read from the tracing_map
-+	 * using the hist field's hist_var.idx and entered into the
-+	 * var_ref_idx entry i.e. var_ref_vals[var_ref_idx].
-+	 */
- 	unsigned int			var_ref_idx;
- 	bool                            read_once;
- };
-@@ -350,6 +368,14 @@ struct action_data {
- 	unsigned int		n_params;
- 	char			*params[SYNTH_FIELDS_MAX];
- 
-+	/*
-+	 * When a histogram trigger is hit, the values of any
-+	 * references to variables, including variables being passed
-+	 * as parameters to synthetic events, are collected into a
-+	 * var_ref_vals array.  This var_ref_idx is the index of the
-+	 * first param in the array to be passed to the synthetic
-+	 * event invocation.
-+	 */
- 	unsigned int		var_ref_idx;
- 	struct synth_event	*synth_event;
- 	bool			use_trace_keyword;
-@@ -362,10 +388,29 @@ struct action_data {
- 		} match_data;
- 
- 		struct {
-+			/*
-+			 * var_str and var_ref refer to the variable
-+			 * being tracked e.g onmax($var).
-+			 */
- 			char			*var_str;
- 			struct hist_field	*var_ref;
-+
-+			/*
-+			 * When a histogram trigger is hit, the values
-+			 * of any references to variables, including
-+			 * variables being tracked e.g. onmax($var),
-+			 * are collected into a var_ref_vals array.
-+			 * This var_ref_idx is the index of the
-+			 * tracked var value in var_ref_vals, which
-+			 * the action can make use of directly.
-+			 */
- 			unsigned int		var_ref_idx;
- 
-+			/*
-+			 * This track_var contains the 'invisible'
-+			 * tracking variable created to keep the
-+			 * current e.g. max value.
-+			 */
- 			struct hist_field	*track_var;
- 
- 			check_track_val_fn_t	check_val;
+I guess I should add amd,imageon there.
+
+>> +                       reg = <0x30000000 0x20000>;
+>> +                       reg-names = "kgsl_3d0_reg_memory";
+>> +                       interrupts = <12>;
+>> +                       interrupt-names = "kgsl_3d0_irq";
+>> +                       clocks = <&clks IMX5_CLK_GPU3D_GATE>, <&clks IMX5_CLK_GARB_GATE>;
+>> +                       clock-names = "core_clk", "mem_iface_clk";
+>> +
+>> +                       qcom,gpu-pwrlevels {
+>> +                               compatible = "qcom,gpu-pwrlevels";
+>> +                               qcom,gpu-pwrlevel@0 {
+> 
+> You could drop this @0
+> 
