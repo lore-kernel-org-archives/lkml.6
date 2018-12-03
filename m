@@ -2,85 +2,111 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB72C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C0CC65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 217A12145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E13182082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:57:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xzgo/Y0Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 217A12145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SjbHXnnN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13182082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725934AbeLCGrx (ORCPT
+        id S1725861AbeLCG5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 01:47:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbeLCGrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 01:47:53 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48AFD20834;
-        Mon,  3 Dec 2018 06:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543819670;
-        bh=1RRt7eL5xZRkwjBYKxIzkOWc+l2oi+GNHN2lHiM0CyU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xzgo/Y0YzhxOGjlBAyVkuXw/xEv2aDWc/ehWV5Z7CksLDtp9nRRLGHTAtyWpozi7z
-         YXHE4yiZXdXZGUVTPSJyrrRcvUpbeAyjwFd0D/BOm43AbDWIzT01hdsCVPgxnfv2eF
-         ypO4o8Tx6iJf19jWQbwIYcr0HFcosr2wWgGv5dAE=
-Date:   Mon, 3 Dec 2018 07:47:48 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tigran Aivazian <aivazian.tigran@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 4.19.6] BFS: static inode bitmap and extra sanity checking
-Message-ID: <20181203064748.GA29882@kroah.com>
-References: <20181129135921.231283053@linuxfoundation.org>
- <20181129135922.602882966@linuxfoundation.org>
- <CAK+_RLmVyVzL3G6++xOxfyEqEHL=bfZZx_Yj-TFNf5a7_oUoXw@mail.gmail.com>
- <20181129160722.GA31919@kroah.com>
- <CAK+_RLnbpu+nYsr8sVpHBVUcATDbqQoeH=+tu=tK1EKTHk6L9A@mail.gmail.com>
- <20181129171038.GA4651@kroah.com>
- <CAK+_RLk4cxamNasZyvLRunR23CTR-fASvF3=Ryt9WGeFoBVtqQ@mail.gmail.com>
- <CAK+_RLmt0ba_ARo+SrOGJph-SPn3kBRybRqncki=Oqz1TcF21Q@mail.gmail.com>
- <20181202201335.GB4314@kroah.com>
- <CAK+_RLnaPCXoBBpmCajui_U4_R6zMTNHFC3nLMsGCkY4hrHdkA@mail.gmail.com>
+        Mon, 3 Dec 2018 01:57:19 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37641 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeLCG5S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 01:57:18 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so5880015pfb.4
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 22:57:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H5n0WN2LeDS9m8Uh/o9nn4ufrk55fT2icXqasN9V6LM=;
+        b=SjbHXnnNv31Kpa+3lF/4oE+EGWFWPfJGduDjXeYvDaIHORZcKWaMmuU++PXeIWsxqz
+         UV15CndAXKVTI/QVQkKt8xvPuuXZZKytu9MtmS4Xu+dfwuZgcwZY7ZnV/4qxwQKItTWY
+         e8NOhgWdThWUzs4AN3vXs9OTJq3V84H5Aw/i4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H5n0WN2LeDS9m8Uh/o9nn4ufrk55fT2icXqasN9V6LM=;
+        b=NZ5aGi2w9QgPSZh+4gLmGz5xaN4okgywVmcR+/nIAzEtr+RbtlL35w2kLjGr/BukXm
+         VRpQTRDuMuNf3u0Uc9GvcGuou9TkYvhzAYSvKwJMwa69tpSu0Uu5vpD1NCj6E7hQLlWF
+         jhDk31tmSruWt/llFyrB4rw4RiwsdnGrkiduNPOoJNR/o7QJm/GKXsNVR4Bt2hFZX7m3
+         w1dzUsMcxDHkKEIPAHPA3qq4fal3eCKAkmo2utZH54dzSLKRIPekfM/Hjo6OVymazvYw
+         UWa2+aIriVk66pfn6LD3KE78oQYXx79MgWPPb42WOvwg2kC5okm5RV09+MJP+h4E9kwX
+         zxAQ==
+X-Gm-Message-State: AA+aEWaAUZA+AwFgTxjoKNfEmIpyN7d9gI7QYqUgEE9XA8gKSmqpnSYf
+        JQwwCrh7k948nC3iN8WowvDr6A==
+X-Google-Smtp-Source: AFSGD/VlceRRHTHLxR5JeHHyBTwqE2fgls+s4Ow6F3qYdH3PuVh3bB3ws3+fCkx63OpxMsoMPK5GVA==
+X-Received: by 2002:a63:d513:: with SMTP id c19mr12317600pgg.287.1543820234407;
+        Sun, 02 Dec 2018 22:57:14 -0800 (PST)
+Received: from localhost ([122.172.23.29])
+        by smtp.gmail.com with ESMTPSA id y29sm18401783pga.59.2018.12.02.22.57.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Dec 2018 22:57:13 -0800 (PST)
+Date:   Mon, 3 Dec 2018 12:27:11 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 3/5] PM / Domains: Save OPP table pointer in genpd
+Message-ID: <20181203065711.lugbr3a7uqtasmli@vireshk-i7>
+References: <cover.1543219386.git.viresh.kumar@linaro.org>
+ <f95b514f7b3b3ab6ac00c9871e91513c9c3a09a3.1543219386.git.viresh.kumar@linaro.org>
+ <CAPDyKFrUBwagtfwCezqw2ujPBVVtQNqz4rKgAG0Yyy18FZv+wA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK+_RLnaPCXoBBpmCajui_U4_R6zMTNHFC3nLMsGCkY4hrHdkA@mail.gmail.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <CAPDyKFrUBwagtfwCezqw2ujPBVVtQNqz4rKgAG0Yyy18FZv+wA@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 08:21:30PM +0000, Tigran Aivazian wrote:
-> On Sun, 2 Dec 2018 at 20:13, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > What is the git commit id of this patch in Linus's tree?
+On 30-11-18, 09:53, Ulf Hansson wrote:
+> On Mon, 26 Nov 2018 at 09:10, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > We will need these going forward in hotpath, i.e. from within
+> > dev_pm_genpd_set_performance_state().
 > 
-> In linux-next the commit id is
-> d2e6681167c634cfc3558991b59a6f614a31d226 , but it is not in Linus'
-> tree (i.e. at github.com/torvalds/linux) yet. It went into Andrew
-> Morton's "-mm" tree and then into "linux-next" tree.
+> Well, as for patch2, please try to be a bit more descriptive of why
+> and what this patch does.
 
-Please take a look at:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to get a patch into the stable tree.  The patch needs to be in
-Linus's tree first, linux-next does not count, sorry.
+    PM / Domains: Save OPP table pointer in genpd
+    
+    dev_pm_genpd_set_performance_state() will be required to call
+    dev_pm_opp_xlate_performance_state() going forward to translate from
+    performance state of a sub-domain to performance state of its master.
+    And dev_pm_opp_xlate_performance_state() needs pointers to the OPP
+    tables of both genpd and its master.
+    
+    Lets fetch and save them while the OPP tables are added. Fetching the
+    OPP tables should never fail as we just added the OPP tables and so add
+    a WARN_ON() for such a bug instead of full error paths.
+    
+    Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-thanks,
 
-greg k-h
+Good enough ?
+
+-- 
+viresh
