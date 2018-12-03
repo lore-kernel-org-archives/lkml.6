@@ -2,126 +2,118 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C97C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5EDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6AB32087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:39:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AB32087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C01720850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C01720850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbeLCPjW (ORCPT
+        id S1726738AbeLCPkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:39:22 -0500
-Received: from muru.com ([72.249.23.125]:56134 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbeLCPjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:39:22 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id E041880BF;
-        Mon,  3 Dec 2018 15:39:19 +0000 (UTC)
-Date:   Mon, 3 Dec 2018 07:39:10 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Tero Kristo <t-kristo@ti.com>,
-        Andreas Kemnade <andreas@kemnade.info>, bcousson@baylibre.com,
-        letux-kernel@openphoenux.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        mturquette@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-Message-ID: <20181203153910.GA6707@atomide.com>
-References: <20181110203115.13335-1-andreas@kemnade.info>
- <20181110203115.13335-3-andreas@kemnade.info>
- <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
- <20181130071534.0a6cd455@kemnade.info>
- <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
- <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
- <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
- <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
- <20181130153729.GG53235@atomide.com>
- <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
+        Mon, 3 Dec 2018 10:40:32 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.43]:41663 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726612AbeLCPkc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:40:32 -0500
+X-Greylist: delayed 1497 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Dec 2018 10:40:32 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 3B6C9D4D66
+        for <linux-kernel@vger.kernel.org>; Mon,  3 Dec 2018 09:15:30 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id TpwYgEvhGPvAdTpwYgthZE; Mon, 03 Dec 2018 09:15:30 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.78.127] (port=53140 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gTpwX-002Kjh-Kl; Mon, 03 Dec 2018 09:15:29 -0600
+Subject: Re: linux-next: build warnings after merge of the
+ wireless-drivers-next tree
+To:     Luciano Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Wireless <linux-wireless@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sara Sharon <sara.sharon@intel.com>,
+        Kees Cook <keescook@google.com>
+References: <20181130120555.1d35eb6b@canb.auug.org.au>
+ <87lg5b5glw.fsf@kamboji.qca.qualcomm.com>
+ <20181130165006.60b2545f@canb.auug.org.au>
+ <87h8fz57ty.fsf@kamboji.qca.qualcomm.com>
+ <1773a3329bcd1bde2a22c267e4c582b0149a307e.camel@intel.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <8c9a4e83-35c9-6078-8b15-f1b7895c8923@embeddedor.com>
+Date:   Mon, 3 Dec 2018 09:15:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1773a3329bcd1bde2a22c267e4c582b0149a307e.camel@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.78.127
+X-Source-L: No
+X-Exim-ID: 1gTpwX-002Kjh-Kl
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.78.127]:53140
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Stephen Boyd <sboyd@kernel.org> [181130 23:52]:
-> Quoting Tony Lindgren (2018-11-30 07:37:29)
-> > Hi,
-> > 
-> > * Tero Kristo <t-kristo@ti.com> [181130 09:21]:
-> > > On 30/11/2018 09:57, Stephen Boyd wrote:
-> > > > No that is not preferred. Can the omap2_clk_deny_idle() function be
-> > > > integrated closer into the clk framework in some way that allows it to
-> > > > be part of the clk_ops structure? And then have that take a clk_hw
-> > > > structure instead of a struct clk? I haven't looked at this in any
-> > > > detail whatsoever so I may be way off right now.
-> > > 
-> > > It could be added under the main clk_ops struct, however this would
-> > > introduce two new func pointers to it which are not used by anything else
-> > > but OMAP. Are you aware of any other platforms requiring similar feature?
-> > 
-> > From consumer usage point of view, I'm still wondering about
-> > the relationship of clk_deny_idle() and clkdm_deny_idle().
-> > 
-> > It seems that we need to allow reset control drivers call
-> > clk_deny_idle() for the duration of reset. And it seems the
-> > clk_deny_idle() should propagate to also up to the related
-> > clock domain driver to do clkdm_deny_idle().
-> > 
-> > So maybe clk_deny_idle() is could just be something like:
-> > 
-> > dev = clk_get_device(clk);
-> > ...
-> > error = pm_runtime_get(dev);
-> > ...
-> > pm_runtime_put(dev);
-> > ...
-> > 
-> > And that way it would just propagate to the parent clock
-> > domain driver and the clock framework does not need to know
-> > about clockdomains. A clockdomain could be just a genpd
-> > domain.
-> > 
-> > Or do you guys have better ideas?
-> > 
+
+
+On 12/3/18 6:38 AM, Luciano Coelho wrote:
+> On Fri, 2018-11-30 at 09:43 +0200, Kalle Valo wrote:
+>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>>
+>>> Hi Kalle,
+>>>
+>>> On Fri, 30 Nov 2018 06:33:47 +0200 Kalle Valo <kvalo@codeaurora.org
+>>>> wrote:
+>>>> I take it that -Wimplict-fallthrough is not enabled by default
+>>>> yet? So
+>>>> Dave and Linus won't see these warnings?
+>>>
+>>> Correct.
+>>>
+>>>> What I'm planning is to send a pull request to Dave today and fix
+>>>> these
+>>>> warnings in the next pull request. Does that sound good?
+>>>
+>>> That sounds fine.
+>>
+>> Great, thanks for the confirmation. I'll then send the pull request
+>> today.
 > 
-> Wouldn't the device link in clk framework patches do this for you if we
-> had the RUNTIME_PM flag passed in. If this is about keeping the clock
-> controller active when a consumer device is using it then I think it may
-> work.
+> Just FYI, I enabled this by default in our internal tree so we will
+> notice when it happens before sending the patch upstream.
+> 
 
-The consumer device stays active just fine with PM runtime
-calls. So yes, the problem is keeping a clock controller forced
-active for the period of consumer device reset. Other than
-that typically autoidle can be just kept enabled.
+That's really great.
 
-Below is a clarified suggested example usage if we wanted to
-use PM runtime on a clock controller device from a consumer
-device reset driver:
-
-error = pm_runtime_get_dev()
-...
-cdev = clk_get_device(clk);
-...
-error = pm_runtime_get(cdev);
-...
-/* Do the consumer device reset here */
-...
-pm_runtime_put(cdev);
-pm_runtime_put(dev);
-
-Regards,
-
-Tony
+Thanks, Luca
+--
+Gustavo
