@@ -2,223 +2,92 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0A0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8902FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF11020834
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:27:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF11020834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
+	by mail.kernel.org (Postfix) with ESMTP id 5959E20834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5959E20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbeLCP15 (ORCPT
+        id S1726745AbeLCP3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:27:57 -0500
-Received: from smtp3.goneo.de ([85.220.129.37]:45572 "EHLO smtp3.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726609AbeLCP14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:27:56 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 6AC3F23FF97;
-        Mon,  3 Dec 2018 16:27:51 +0100 (CET)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Hbr9RBp-gTOS; Mon,  3 Dec 2018 16:27:50 +0100 (CET)
-Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPSA id EB12023F3CC;
-        Mon,  3 Dec 2018 16:27:49 +0100 (CET)
-Date:   Mon, 3 Dec 2018 15:26:22 +0100
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH v4 4/6] nfc: pn533: add UART phy driver
-Message-ID: <20181203142622.GA8057@lem-wkst-02.lemonage>
-References: <20181101100216.613-1-poeschel@lemonage.de>
- <20181101100216.613-4-poeschel@lemonage.de>
- <20181114153517.GB19900@localhost>
+        Mon, 3 Dec 2018 10:29:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41766 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726549AbeLCP3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:29:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A3EF0ADF2;
+        Mon,  3 Dec 2018 15:29:33 +0000 (UTC)
+Date:   Mon, 3 Dec 2018 16:29:32 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 04/11] livepatch: Refuse to unload only livepatches
+ available during a forced transition
+In-Reply-To: <20181129094431.7801-5-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1812031614530.22317@pobox.suse.cz>
+References: <20181129094431.7801-1-pmladek@suse.com> <20181129094431.7801-5-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114153517.GB19900@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 04:35:17PM +0100, Johan Hovold wrote:
-> On Thu, Nov 01, 2018 at 11:02:12AM +0100, Lars Poeschel wrote:
-> > This adds the UART phy interface for the pn533 driver.
-> > The pn533 driver can be used through UART interface this way.
-> > It is implemented as a serdev device.
-> > 
-> > Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+You probably forgot to replace the subject with Josh's proposal.
+
+> module_put() is currently never called in klp_complete_transition() when
+> klp_force is set. As a result, we might keep the reference count even when
+> klp_enable_patch() fails and klp_cancel_transition() is called.
+
+Correct.
+
+> This might make an assumption that a module might get blocked in some
+> strange init state. Fortunately, it is not the case. The reference count
+> is ignored when mod->init fails and erroneous modules are always removed.
+
+I do not understand the paragraph and its connection to the problem (and I don't
+remember if I understood it previously or not and forgot to mention it).
+
+> Anyway, this might make some confusion. Instead, this patch moves
+> the global klp_forced flag into struct klp_patch. As a result,
+> we block only modules that might still be in use after a forced
+> transition. Newly loaded livepatches might be eventually completely
+> removed later.
+
+It makes sense by itself only.
+
+> It is not a big deal. But the code is at least consistent with
+> the reality.
 > 
-> Please make sure to include reviewers on CC.
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-It's hard to do all things right, about how to correctly email patches,
-patch sets and follow ups and send what to whom.
-I am still learning. Sorry about that.
 
-> > ---
-> > Changes in v4:
-> > - SPDX-License-Identifier: GPL-2.0+
-> > - Source code comments above refering items
-> > - Error check for serdev_device_write's
-> > - Change if (xxx == NULL) to if (!xxx)
-> > - Remove device name from a dev_err
-> > - move pn533_register in _probe a bit towards the end of _probe
-> > - make use of newly added dev_up / dev_down phy_ops
-> > - control send_wakeup variable from dev_up / dev_down
-> > 
-> > Changes in v3:
-> > - depend on SERIAL_DEV_BUS in Kconfig
-> > 
-> > Changes in v2:
-> > - switched from tty line discipline to serdev, resulting in many
-> >   simplifications
-> > - SPDX License Identifier
-> > 
-> >  drivers/nfc/pn533/Kconfig  |  11 ++
-> >  drivers/nfc/pn533/Makefile |   2 +
-> >  drivers/nfc/pn533/pn533.h  |   8 +
-> >  drivers/nfc/pn533/uart.c   | 311 +++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 332 insertions(+)
-> >  create mode 100644 drivers/nfc/pn533/uart.c
-> > 
-> > +static void pn532_dev_up(struct pn533 *dev)
-> > +{
-> > +	struct pn532_uart_phy *pn532 = dev->phy;
-> > +
-> > +	serdev_device_open(pn532->serdev);
-> > +	pn532->send_wakeup = PN532_SEND_LAST_WAKEUP;
-> > +}
-> > +
-> > +static void pn532_dev_down(struct pn533 *dev)
-> > +{
-> > +	struct pn532_uart_phy *pn532 = dev->phy;
-> > +
-> > +	serdev_device_close(pn532->serdev);
-> > +	pn532->send_wakeup = PN532_SEND_WAKEUP;
-> > +}
-> > +
-> > +static struct pn533_phy_ops uart_phy_ops = {
-> > +	.send_frame = pn532_uart_send_frame,
-> > +	.send_ack = pn532_uart_send_ack,
-> > +	.abort_cmd = pn532_uart_abort_cmd,
-> > +	.dev_up = pn532_dev_up,
-> > +	.dev_down = pn532_dev_down,
-> > +};
-> 
-> > +static int pn532_uart_probe(struct serdev_device *serdev)
-> > +{
-> > +	struct pn532_uart_phy *pn532;
-> > +	struct pn533 *priv;
-> > +	int err;
-> > +
-> > +	err = -ENOMEM;
-> > +	pn532 = kzalloc(sizeof(*pn532), GFP_KERNEL);
-> > +	if (!pn532)
-> > +		goto err_exit;
-> > +
-> > +	pn532->recv_skb = alloc_skb(PN532_UART_SKB_BUFF_LEN, GFP_KERNEL);
-> > +	if (!pn532->recv_skb)
-> > +		goto err_free;
-> > +
-> > +	pn532->serdev = serdev;
-> > +	serdev_device_set_drvdata(serdev, pn532);
-> > +	serdev_device_set_client_ops(serdev, &pn532_serdev_ops);
-> > +	err = serdev_device_open(serdev);
-> > +	if (err) {
-> > +		dev_err(&serdev->dev, "Unable to open device\n");
-> > +		goto err_skb;
-> > +	}
-> > +
-> > +	err = serdev_device_set_baudrate(serdev, 115200);
-> > +	if (err != 115200) {
-> > +		err = -EINVAL;
-> > +		goto err_serdev;
-> > +	}
-> > +
-> > +	serdev_device_set_flow_control(serdev, false);
-> > +	pn532->send_wakeup = PN532_SEND_WAKEUP;
-> > +	timer_setup(&pn532->cmd_timeout, pn532_cmd_timeout, 0);
-> > +	priv = pn533_register_device(PN533_DEVICE_PN532,
-> > +				     PN533_NO_TYPE_B_PROTOCOLS,
-> > +				     PN533_PROTO_REQ_ACK_RESP,
-> > +				     pn532, &uart_phy_ops, NULL,
-> > +				     &pn532->serdev->dev,
-> > +				     &serdev->dev);
-> > +	if (IS_ERR(priv)) {
-> > +		err = PTR_ERR(priv);
-> > +		goto err_serdev;
-> > +	}
-> > +
-> > +	pn532->priv = priv;
-> > +	err = pn533_finalize_setup(pn532->priv);
-> > +	if (err)
-> > +		goto err_unregister;
-> > +
-> > +	serdev_device_close(serdev);
-> 
-> This looks broken; what if the NFC interface is brought up before this
-> point? You'd get a double open, which is likely to crash things, but
-> even if you survive that, the port would not be closed despite the
-> interface being up.
+> @@ -633,5 +632,7 @@ void klp_force_transition(void)
+>  	for_each_possible_cpu(cpu)
+>  		klp_update_patch_state(idle_task(cpu));
+>  
+> -	klp_forced = true;
+> +	/* Refuse unloading all livepatches. The code might be in use. */
+> +	list_for_each_entry(patch, &klp_patches, list)
+> +		patch->forced = true;
 
-I understand the problem and would like to solve it with a mutex. I will
-not have time to work on that until next year. Please be patient. I will
-send a new patchset.
+Is the comment necessary? If yes, I'd change it to something similar to the new
+subject.
 
-> Can't you finalise your setup before registering the interface?
-
-Well, propably I can do that. But I did it the way the other drivers
-(usb and i2c) are already doing and reusing the code of the pn533 core
-driver. Since their probe works very similar to mine, I suspect them to
-have the same problems.
-I can rewrite the probe for my driver, but not for the other two. I can
-not test them.
-Would you prefer that I rewrite my own _register_device and
-_finalize_setup functions, not using the ones from the core driver ?
-
-> > +	return 0;
-> > +
-> > +err_unregister:
-> > +	pn533_unregister_device(pn532->priv);
-> > +err_serdev:
-> > +	serdev_device_close(serdev);
-> > +err_skb:
-> > +	kfree_skb(pn532->recv_skb);
-> > +err_free:
-> > +	kfree(pn532);
-> > +err_exit:
-> > +	return err;
-> > +}
-> > +
-> > +static void pn532_uart_remove(struct serdev_device *serdev)
-> > +{
-> > +	struct pn532_uart_phy *pn532 = serdev_device_get_drvdata(serdev);
-> > +
-> > +	pn533_unregister_device(pn532->priv);
-> > +	serdev_device_close(serdev);
-> 
-> This is also broken; the port should have been closed when the interface
-> was deregistered.
-
-Same as above.
-
-> > +	kfree_skb(pn532->recv_skb);
-> > +	kfree(pn532);
-> > +}
-
-Thank you for your very valuable feedback.
-
-Regards,
-Lars
+Thanks,
+Miroslav
