@@ -2,299 +2,116 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2126C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDDEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5425520851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5050A206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:46:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTAnzR3L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5425520851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="NCJHChgw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5050A206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbeLCVjw (ORCPT
+        id S1726034AbeLCVqb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:39:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeLCVjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:39:51 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D514B20672;
-        Mon,  3 Dec 2018 21:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543873190;
-        bh=9t2j9NdYFHEuBSNEPi5wpZL2KNQ6t0FuielaLR+kB84=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gTAnzR3LmHb5HPAWkh4pQ18iVZ0+PrLH/llMPFXA3+58XcTIJg8JUFVE4G1QnnCD/
-         MMFFsT/Mh69TKl9nH5LJ2l8kVsabq9FgjQJv7bhG/Ds8aa6bg+qCcVBnZ75aLXAUbA
-         Oy3Lbp3SkvHDDeLC6hs68vfqWaVJUvwBcEvzf+R4=
-Date:   Mon, 3 Dec 2018 15:39:48 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH] x86/pci: Remove dead code DBG() macro
-Message-ID: <20181203213948.GC207198@google.com>
-References: <20181203082140.GA15318@gmail.com>
+        Mon, 3 Dec 2018 16:46:31 -0500
+Received: from mail-eopbgr810135.outbound.protection.outlook.com ([40.107.81.135]:5052
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725903AbeLCVqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:46:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sWHCiUB8NBdrpEb9Pbi9gyQ3aG9MloagXKRSpEuNhnA=;
+ b=NCJHChgw+MfVsI0PB7u02IuE5fVdtPu9UDqZTjHz+sGYYqw00PSYTKi3RwAikvzrQy/jeG4QAePKMqZCejlnZHsXitqHBQPGbFeeWwuZOZFhPaMbUNvggCb4v9Wb4663/IRuWq3DWGsMr2ghl0F0Q7h8v9HRxSg2HQjOwR/n97M=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1408.namprd22.prod.outlook.com (10.172.63.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.22; Mon, 3 Dec 2018 21:46:28 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::2d92:328e:af42:2985]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::2d92:328e:af42:2985%4]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
+ 21:46:28 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Mathieu Malaterre <malat@debian.org>
+CC:     Paul Burton <pburton@wavecomp.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Kees Cook <keescook@google.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH] mips: annotate implicit fall throughs
+Thread-Topic: [PATCH] mips: annotate implicit fall throughs
+Thread-Index: AQHUi05/NisOW8CS0EGBC4Sd8mzpCaVtjKoA
+Date:   Mon, 3 Dec 2018 21:46:27 +0000
+Message-ID: <MWHPR2201MB12770EA2E8A372B21210DA83C1AE0@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <20181203212344.9372-1-malat@debian.org>
+In-Reply-To: <20181203212344.9372-1-malat@debian.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR05CA0090.namprd05.prod.outlook.com
+ (2603:10b6:104:1::16) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1408;6:LNXj1XjOiMXTu5wwNTlyVFiH74bGHKQJdiEoF8oRWknCRHePfp10TTW4pr1amIIVfDpS3pXuOLb4e3QVJS57aD6rYjN15ueSQKVaQ47FjNrfzbLNe2LpkXRfMZHD1c6fYEsISejL/49lHRXhyZ525vjlTTINVQgM9SDKKrbP/s/FhX/FHDzWXn+Bhwx+gS88M4e/S1OSmEDRAKdyim5yKm73Lsalradig12/IOr1omvDd0zuzAKhbhDZApUT9JWVAXf/5O/Dy7fZzIW092+R0aozzIpxaA4iuL704sfEle2od5cXWVdIzGfOUpQPDMgqTyCigeDrVfS2+3RbJH0va4X5Qycev4xDuQCRQMUH3CPWSDQiuWq8qX/2waBxagUyK40HiRp2KF5TrC2/k02s9sLugvQpUrA32W2ZWL/khV8w5BJLss2y7scJzZpoNN9NV3k1MTUKMDQaflYS9QsTvw==;5:tJT1s8LT86DDwBQ5Nf7POG5tRirZoHhUwBbeGzVyuNqXXGt1qaGWlfhYzMuzbcAcLaxsu5AV7tZoFA+PYaO+boG3BJDmxIi3nFsOg04UP+P1lPmcKbTPONfNLfOAbcPN32ZIIGJxx5LXyjJu6loSJsye8RV8GmCHe4+hAL3BA20=;7:cKmnPnWmNdQ8iXYBNJoisKsuwsauTDx2+fgwQ1f+NZBOPSRYm95RB9hz8fcxhTy5kvoA+UC+TJ0I6giThd2ViiwwAprgBooKAvib4qqmnOwn4QFKcOa+8N3nCcDihKk3ufmO460e9Zer3KMCvNFL5g==
+x-ms-office365-filtering-correlation-id: 77a13cdc-d31a-4d99-dcf7-08d65968c76c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1408;
+x-ms-traffictypediagnostic: MWHPR2201MB1408:
+x-microsoft-antispam-prvs: <MWHPR2201MB1408011C08CC1EFD0E8E18D8C1AE0@MWHPR2201MB1408.namprd22.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231455)(999002)(944501493)(52105112)(93006095)(10201501046)(148016)(149066)(150057)(6041310)(2016111802025)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1408;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1408;
+x-forefront-prvs: 08756AC3C8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(346002)(39840400004)(366004)(199004)(189003)(5660300001)(102836004)(386003)(4326008)(6436002)(97736004)(8936002)(8676002)(81156014)(106356001)(81166006)(6916009)(229853002)(105586002)(33656002)(68736007)(446003)(508600001)(25786009)(316002)(14454004)(54906003)(71190400001)(9686003)(74316002)(71200400001)(44832011)(52116002)(99286004)(7696005)(76176011)(305945005)(6116002)(3846002)(53936002)(476003)(55016002)(66066001)(26005)(11346002)(6246003)(7736002)(186003)(42882007)(486006)(256004)(6506007)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1408;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: z8dY0m7GzHxah6YatU+heZxpHR5CzJfCI06JbyFrq9nkpDhnKWqsrpXPvfB5Q57uyrfX71VsiWe+a2a1vmeYSk169Ir8XIgUfAymnjCAk9XV0CCdwTq6mmVvR5vKBueabDWcKaIxLvhG7VJa5mj/9GqZs4lbuvBZWex05T8pjbup8/80aQUHfUaCUuf55KdYr0yCSdGB8uMj2vZFDHp8+qGqHxybj/XvfUHn7CGOp1zpJ6I2v+x3inQsaPRtM1mQcIcBeZl8pLKK+UYby7CkDyuZJqoLCpamxoHwHzM2neunFsU/L9eE9QKgi2XLY2Mj9nXgGFIgpwGzvJew0UmKSak5/d3D4yYEKDtNVTsT4UQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203082140.GA15318@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77a13cdc-d31a-4d99-dcf7-08d65968c76c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 21:46:28.0057
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1408
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 09:21:40AM +0100, Ingo Molnar wrote:
-> From 22b71f970f18f5f38161be028ab7ce7cd1f769f7 Mon Sep 17 00:00:00 2001
-> From: Ingo Molnar <mingo@kernel.org>
-> Date: Mon, 3 Dec 2018 09:15:40 +0100
-> Subject: [PATCH] x86/pci: Remove the dead-code DBG() macro
-> 
-> While reading arch/x86/include/asm/pci_x86.h I noticed that we have ancient
-> residuals of debugging code, which is never actually enabled via any regular
-> Kconfig mechanism:
-> 
->  #undef DEBUG
-> 
->  #ifdef DEBUG
->  #define DBG(fmt, ...) printk(fmt, ##__VA_ARGS__)
->  #else
->  #define DBG(fmt, ...)                          \
->  do {                                           \
->        if (0)                                  \
->                printk(fmt, ##__VA_ARGS__);     \
->  } while (0)
->  #endif
-> 
-> Remove this and the call sites. These messages might have been
-> super interesting decades ago when the PCI code was first
-> bootstrapped, but we have better mechanisms meanwhile, and code
-> readability is king ... ;-)
-> 
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Hello,
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Mathieu Malaterre wrote:
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> these places in the code produced warnings. Fix them up.
+>=20
+> This patch produces no change in behaviour, but should be reviewed in
+> case these are actually bugs not intentional fallthoughs.
+>=20
+> Cc: Kees Cook <keescook@google.com>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-for both of these.  I have nothing in the queue for these files, so
-probably easier if you just take them.  FWIW, recent history
-capitalizes the subject lines as "x86/PCI: "
+Applied to mips-next.
 
-Thanks for all this cleanup!
+Thanks,
+    Paul
 
-> ---
->  arch/x86/include/asm/pci_x86.h | 12 ------------
->  arch/x86/pci/direct.c          |  1 -
->  arch/x86/pci/i386.c            |  2 --
->  arch/x86/pci/irq.c             | 29 +++--------------------------
->  arch/x86/pci/legacy.c          |  3 +--
->  arch/x86/pci/pcbios.c          |  9 ++-------
->  6 files changed, 6 insertions(+), 50 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
-> index 959d618dbb17..3f8d9c75b9ee 100644
-> --- a/arch/x86/include/asm/pci_x86.h
-> +++ b/arch/x86/include/asm/pci_x86.h
-> @@ -7,18 +7,6 @@
->  
->  #include <linux/ioport.h>
->  
-> -#undef DEBUG
-> -
-> -#ifdef DEBUG
-> -#define DBG(fmt, ...) printk(fmt, ##__VA_ARGS__)
-> -#else
-> -#define DBG(fmt, ...)				\
-> -do {						\
-> -	if (0)					\
-> -		printk(fmt, ##__VA_ARGS__);	\
-> -} while (0)
-> -#endif
-> -
->  #define PCI_PROBE_BIOS		0x0001
->  #define PCI_PROBE_CONF1		0x0002
->  #define PCI_PROBE_CONF2		0x0004
-> diff --git a/arch/x86/pci/direct.c b/arch/x86/pci/direct.c
-> index a51074c55982..68a115629568 100644
-> --- a/arch/x86/pci/direct.c
-> +++ b/arch/x86/pci/direct.c
-> @@ -216,7 +216,6 @@ static int __init pci_sanity_check(const struct pci_raw_ops *o)
->  			return 1;
->  	}
->  
-> -	DBG(KERN_WARNING "PCI: Sanity check failed\n");
->  	return 0;
->  }
->  
-> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
-> index 8cd66152cdb0..5c2b31315750 100644
-> --- a/arch/x86/pci/i386.c
-> +++ b/arch/x86/pci/i386.c
-> @@ -389,8 +389,6 @@ void __init pcibios_resource_survey(void)
->  {
->  	struct pci_bus *bus;
->  
-> -	DBG("PCI: Allocating resources\n");
-> -
->  	list_for_each_entry(bus, &pci_root_buses, node)
->  		pcibios_allocate_bus_resources(bus);
->  
-> diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
-> index 52e55108404e..1286f138e281 100644
-> --- a/arch/x86/pci/irq.c
-> +++ b/arch/x86/pci/irq.c
-> @@ -77,11 +77,8 @@ static inline struct irq_routing_table *pirq_check_routing_table(u8 *addr)
->  	sum = 0;
->  	for (i = 0; i < rt->size; i++)
->  		sum += addr[i];
-> -	if (!sum) {
-> -		DBG(KERN_DEBUG "PCI: Interrupt Routing Table found at 0x%p\n",
-> -			rt);
-> +	if (!sum)
->  		return rt;
-> -	}
->  	return NULL;
->  }
->  
-> @@ -126,15 +123,6 @@ static void __init pirq_peer_trick(void)
->  	memset(busmap, 0, sizeof(busmap));
->  	for (i = 0; i < (rt->size - sizeof(struct irq_routing_table)) / sizeof(struct irq_info); i++) {
->  		e = &rt->slots[i];
-> -#ifdef DEBUG
-> -		{
-> -			int j;
-> -			DBG(KERN_DEBUG "%02x:%02x slot=%02x", e->bus, e->devfn/8, e->slot);
-> -			for (j = 0; j < 4; j++)
-> -				DBG(" %d:%02x/%04x", j, e->irq[j].link, e->irq[j].bitmap);
-> -			DBG("\n");
-> -		}
-> -#endif
->  		busmap[e->bus] = 1;
->  	}
->  	for (i = 1; i < 256; i++) {
-> @@ -163,10 +151,8 @@ void elcr_set_level_irq(unsigned int irq)
->  	elcr_irq_mask |= (1 << irq);
->  	printk(KERN_DEBUG "PCI: setting IRQ %u as level-triggered\n", irq);
->  	val = inb(port);
-> -	if (!(val & mask)) {
-> -		DBG(KERN_DEBUG " -> edge");
-> +	if (!(val & mask))
->  		outb(val | mask, port);
-> -	}
->  }
->  
->  /*
-> @@ -836,16 +822,10 @@ static void __init pirq_find_router(struct irq_router *r)
->  	r->get = NULL;
->  	r->set = NULL;
->  
-> -	DBG(KERN_DEBUG "PCI: Attempting to find IRQ router for [%04x:%04x]\n",
-> -	    rt->rtr_vendor, rt->rtr_device);
-> -
->  	pirq_router_dev = pci_get_domain_bus_and_slot(0, rt->rtr_bus,
->  						      rt->rtr_devfn);
-> -	if (!pirq_router_dev) {
-> -		DBG(KERN_DEBUG "PCI: Interrupt router not found at "
-> -			"%02x:%02x\n", rt->rtr_bus, rt->rtr_devfn);
-> +	if (!pirq_router_dev)
->  		return;
-> -	}
->  
->  	for (h = pirq_routers; h->vendor; h++) {
->  		/* First look for a router match */
-> @@ -1028,7 +1008,6 @@ void __init pcibios_fixup_irqs(void)
->  	struct pci_dev *dev = NULL;
->  	u8 pin;
->  
-> -	DBG(KERN_DEBUG "PCI: IRQ fixup\n");
->  	for_each_pci_dev(dev) {
->  		/*
->  		 * If the BIOS has set an out of range IRQ number, just
-> @@ -1119,8 +1098,6 @@ static const struct dmi_system_id pciirq_dmi_table[] __initconst = {
->  
->  void __init pcibios_irq_init(void)
->  {
-> -	DBG(KERN_DEBUG "PCI: IRQ init\n");
-> -
->  	if (raw_pci_ops == NULL)
->  		return;
->  
-> diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-> index dfbe6ac38830..045089b34400 100644
-> --- a/arch/x86/pci/legacy.c
-> +++ b/arch/x86/pci/legacy.c
-> @@ -17,7 +17,6 @@ static void pcibios_fixup_peer_bridges(void)
->  
->  	if (pcibios_last_bus <= 0 || pcibios_last_bus > 0xff)
->  		return;
-> -	DBG("PCI: Peer bridge fixup\n");
->  
->  	for (n=0; n <= pcibios_last_bus; n++)
->  		pcibios_scan_specific_bus(n);
-> @@ -45,7 +44,7 @@ void pcibios_scan_specific_bus(int busn)
->  	for (devfn = 0; devfn < 256; devfn += stride) {
->  		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
->  		    l != 0x0000 && l != 0xffff) {
-> -			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
-> +
->  			pr_info("PCI: Discovered peer bus %02x\n", busn);
->  			pcibios_scan_root(busn);
->  			return;
-> diff --git a/arch/x86/pci/pcbios.c b/arch/x86/pci/pcbios.c
-> index 9c97d814125e..a6fc43aa668c 100644
-> --- a/arch/x86/pci/pcbios.c
-> +++ b/arch/x86/pci/pcbios.c
-> @@ -160,8 +160,6 @@ static int __init check_pcibios(void)
->  		minor_ver = ebx & 0xff;
->  		if (pcibios_last_bus < 0)
->  			pcibios_last_bus = ecx & 0xff;
-> -		DBG("PCI: BIOS probe returned s=%02x hw=%02x ver=%02x.%02x l=%02x\n",
-> -			status, hw_mech, major_ver, minor_ver, pcibios_last_bus);
->  		if (status || signature != PCI_SIGNATURE) {
->  			printk (KERN_ERR "PCI: BIOS BUG #%x[%08x] found\n",
->  				status, signature);
-> @@ -320,15 +318,13 @@ static const struct pci_raw_ops *__init pci_find_bios(void)
->  				check->fields.revision, check);
->  			continue;
->  		}
-> -		DBG("PCI: BIOS32 Service Directory structure at 0x%p\n", check);
->  		if (check->fields.entry >= 0x100000) {
->  			printk("PCI: BIOS32 entry (0x%p) in high memory, "
->  					"cannot use.\n", check);
->  			return NULL;
->  		} else {
->  			unsigned long bios32_entry = check->fields.entry;
-> -			DBG("PCI: BIOS32 Service Directory entry at 0x%lx\n",
-> -					bios32_entry);
-> +
->  			bios32_indirect.address = bios32_entry + PAGE_OFFSET;
->  			set_bios_x();
->  			if (check_pcibios())
-> @@ -366,7 +362,6 @@ struct irq_routing_table * pcibios_get_irq_routing_table(void)
->  	opt.size = PAGE_SIZE;
->  	opt.segment = __KERNEL_DS;
->  
-> -	DBG("PCI: Fetching IRQ routing table... ");
->  	__asm__("push %%es\n\t"
->  		"push %%ds\n\t"
->  		"pop  %%es\n\t"
-> @@ -384,7 +379,7 @@ struct irq_routing_table * pcibios_get_irq_routing_table(void)
->  		  "S" (&pci_indirect),
->  		  "m" (opt)
->  		: "memory");
-> -	DBG("OK  ret=%d, size=%d, map=%x\n", ret, opt.size, map);
-> +
->  	if (ret & 0xff00)
->  		printk(KERN_ERR "PCI: Error %02x when fetching IRQ routing table.\n", (ret >> 8) & 0xff);
->  	else if (opt.size) {
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paul.burton@mips.com to report it. ]
