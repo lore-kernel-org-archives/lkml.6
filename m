@@ -6,50 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCE0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E608DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA4220848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:47:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA4220848
+	by mail.kernel.org (Postfix) with ESMTP id A44D2214DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:47:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44D2214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeLCLsg (ORCPT
+        id S1726464AbeLCLsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:48:36 -0500
-Received: from shell.v3.sk ([90.176.6.54]:37911 "EHLO shell.v3.sk"
+        Mon, 3 Dec 2018 06:48:40 -0500
+Received: from shell.v3.sk ([90.176.6.54]:37923 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbeLCLsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:48:36 -0500
+        id S1726174AbeLCLsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:48:40 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id A4155C805D;
-        Mon,  3 Dec 2018 12:47:51 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 0A064C8131;
+        Mon,  3 Dec 2018 12:47:56 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id NooKNbXMouh5; Mon,  3 Dec 2018 12:47:44 +0100 (CET)
+        with ESMTP id 0bTGIugG3Ynz; Mon,  3 Dec 2018 12:47:47 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B7A65C80DB;
-        Mon,  3 Dec 2018 12:47:43 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id B8E46C812F;
+        Mon,  3 Dec 2018 12:47:46 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id k0cKQD8yBKnz; Mon,  3 Dec 2018 12:47:42 +0100 (CET)
+        with ESMTP id DPfHK2Rk2OYf; Mon,  3 Dec 2018 12:47:45 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 6F6EDC805C;
-        Mon,  3 Dec 2018 12:47:42 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 5E8F1C8123;
+        Mon,  3 Dec 2018 12:47:45 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Jiri Kosina <trivial@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] dt-bindings: iio: accel: use a generic node name for lis302
-Date:   Mon,  3 Dec 2018 12:47:40 +0100
-Message-Id: <20181203114740.637091-1-lkundrak@v3.sk>
+Subject: [PATCH] [media] marvell-ccic: trivial fix to the datasheet URL
+Date:   Mon,  3 Dec 2018 12:47:42 +0100
+Message-Id: <20181203114742.637165-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,37 +55,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The example should follow the practice or using a generic node name
-instead of the precise programming model, as recommended by the DTSpec.
-
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- Documentation/devicetree/bindings/iio/accel/lis302.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/marvell-ccic/cafe-driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/accel/lis302.txt b/Doc=
-umentation/devicetree/bindings/iio/accel/lis302.txt
-index dfdce67826ba..764e28ec1a0a 100644
---- a/Documentation/devicetree/bindings/iio/accel/lis302.txt
-+++ b/Documentation/devicetree/bindings/iio/accel/lis302.txt
-@@ -64,7 +64,7 @@ Optional properties for all bus drivers:
-=20
- Example for a SPI device node:
-=20
--	lis302@0 {
-+	accelerometer@0 {
- 		compatible =3D "st,lis302dl-spi";
- 		reg =3D <0>;
- 		spi-max-frequency =3D <1000000>;
-@@ -89,7 +89,7 @@ Example for a SPI device node:
-=20
- Example for a I2C device node:
-=20
--	lis331dlh: lis331dlh@18 {
-+	lis331dlh: accelerometer@18 {
- 		compatible =3D "st,lis331dlh", "st,lis3lv02d";
- 		reg =3D <0x18>;
- 		Vdd-supply =3D <&lis3_reg>;
+diff --git a/drivers/media/platform/marvell-ccic/cafe-driver.c b/drivers/=
+media/platform/marvell-ccic/cafe-driver.c
+index 2986cb4b88d0..8d00d9d8adff 100644
+--- a/drivers/media/platform/marvell-ccic/cafe-driver.c
++++ b/drivers/media/platform/marvell-ccic/cafe-driver.c
+@@ -4,7 +4,7 @@
+  * sensor.
+  *
+  * The data sheet for this device can be found at:
+- *    http://www.marvell.com/products/pc_connectivity/88alp01/
++ *    http://wiki.laptop.org/images/5/5c/88ALP01_Datasheet_July_2007.pdf
+  *
+  * Copyright 2006-11 One Laptop Per Child Association, Inc.
+  * Copyright 2006-11 Jonathan Corbet <corbet@lwn.net>
 --=20
 2.19.1
 
