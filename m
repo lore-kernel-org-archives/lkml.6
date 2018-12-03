@@ -2,135 +2,119 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2393EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44A0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA2BC2081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA2BC2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 957A62081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:52:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957A62081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbeLCXvs (ORCPT
+        id S1726158AbeLCXwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:51:48 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46956 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbeLCXvs (ORCPT
+        Mon, 3 Dec 2018 18:52:35 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:59285 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbeLCXwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:51:48 -0500
-Received: by mail-oi1-f195.google.com with SMTP id x202so12618866oif.13;
-        Mon, 03 Dec 2018 15:51:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7kz3YLuocRsmihqXQI9LLFbs+KxuNq5m0QiZgl78RUM=;
-        b=RYp4jxmPIJvvcohBxHjlSxtMtPJMrta+HaiGPOnKxsOVk/g+PiKiXHe88njto3jYK8
-         9IwHbGm/k+Ddi3br2jKQqGoHgmtlamaF7BF5XiBnAlkzoKn5SJfw0sSngZ6TvpE27U29
-         BR7Jibe1ZZCXyTzvmPMEoT97q9SZnjA3fJSgJ9vn1/D9oNZDBB9irRO3ulTyK4nzyXlT
-         rxIydtepv3EC1u6yYdLeB3ammFWehbMs4DGAdW+TJ5SyjqrMTPSVZLq9cWbn004Xlb0g
-         genBKlT7TgVJC1lzUR/PRjhMgqj7Jk7h4UOctxXN5uN0XLWdhXYPEFcaS+bt01yWs9AX
-         MH2Q==
-X-Gm-Message-State: AA+aEWYOxy4i3yPO6k9+1I187M2wGjgV+8cbCK4CcGydOBg8oyG1zfla
-        AOv2RTG19IuhPgTJPpxWvw==
-X-Google-Smtp-Source: AFSGD/Udb6j0Bb0lIP25xDOUEbDCsdgIIlkCi7QeLgHF4wEGpdR6Y8QUwikhleCMAziqOt1/yd8RDw==
-X-Received: by 2002:aca:cc8b:: with SMTP id c133mr10714955oig.256.1543881107075;
-        Mon, 03 Dec 2018 15:51:47 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o189sm5946642oif.23.2018.12.03.15.51.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 15:51:46 -0800 (PST)
-Date:   Mon, 3 Dec 2018 17:51:45 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: soc: qcom: Add AOSS QMP binding
-Message-ID: <20181203235145.GA30118@bogus>
-References: <20181112080557.22698-1-bjorn.andersson@linaro.org>
- <20181112080557.22698-2-bjorn.andersson@linaro.org>
+        Mon, 3 Dec 2018 18:52:35 -0500
+Received: from 79.184.252.87.ipv4.supernova.orange.pl (79.184.252.87) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
+ id ff620aba00623980; Tue, 4 Dec 2018 00:52:32 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     'Giovanni Gherdovich' <ggherdovich@suse.cz>,
+        'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
+        'Peter Zijlstra' <peterz@infradead.org>,
+        'LKML' <linux-kernel@vger.kernel.org>,
+        'Frederic Weisbecker' <frederic@kernel.org>,
+        'Mel Gorman' <mgorman@suse.de>,
+        'Daniel Lezcano' <daniel.lezcano@linaro.org>,
+        'Linux PM' <linux-pm@vger.kernel.org>
+Subject: Re: [RFC/RFT][PATCH v6] cpuidle: New timer events oriented governor for tickless systems
+Date:   Tue, 04 Dec 2018 00:52:22 +0100
+Message-ID: <5184824.HpJbX5HyQW@aspire.rjw.lan>
+In-Reply-To: <002c01d48770$eba6efa0$c2f4cee0$@net>
+References: <002c01d48770$eba6efa0$c2f4cee0$@net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112080557.22698-2-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 12:05:55AM -0800, Bjorn Andersson wrote:
-> Add binding for the QMP based side-channel communication mechanism to
-> the AOSS, which is used to control resources not exposed through the
-> RPMh interface.
+On Thursday, November 29, 2018 12:20:07 AM CET Doug Smythies wrote:
+> On 2018.11.23 02:36 Rafael J. Wysocki wrote:
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  .../bindings/soc/qcom/qcom,aoss-qmp.txt       | 63 +++++++++++++++++++
->  include/dt-bindings/power/qcom-aoss-qmp.h     | 15 +++++
->  2 files changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
->  create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
+> v5 -> v6:
+>  * Avoid applying poll_time_limit to non-polling idle states by mistake.
+>  * Use idle duration measured by the governor for everything (as it likely is
+>    more accurate than the one measured by the core).
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
-> new file mode 100644
-> index 000000000000..e3c8cb4372f2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
-> @@ -0,0 +1,63 @@
-> +Qualcomm Always-On Subsystem side channel binding
-> +
-> +This binding describes the hardware component responsible for side channel
-> +requests to the always-on subsystem (AOSS), used for certain power management
-> +requests that is not handled by the standard RPMh interface. Each client in the
-> +SoC has it's own block of message RAM and IRQ for communication with the AOSS.
-> +The protocol used to communicate in the message RAM is known as QMP.
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be "qcom,sdm845-aoss-qmp"
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: the base address and size of the message RAM for this
-> +		    client's communication with the AOSS
-> +
-> +- interrupts:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: should specify the AOSS message IRQ for this client
-> +
-> +- mboxes:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: reference to the mailbox representing the outgoing doorbell
-> +		    in APCS for this client, as described in mailbox/mailbox.txt
-> +
-> += AOSS Power-domains
-> +The AOSS side channel exposes control over a set of resources, used to control
-> +a set of debug related clocks and to affect the low power state of resources
-> +related to the secondary subsystems. These resources are described as a set of
-> +power-domains in a subnode of hte AOSS side channel node.
+> -- above missing-- (see follow up e-mail from Rafael)
+> 
+>  * Rename SPIKE to PULSE.
+>  * Do not run pattern detection upfront.  Instead, use recent idle duration
+>    values to refine the state selection after finding a candidate idle state.
+>  * Do not use the expected idle duration as an extra latency constraint
+>    (exit latency is less than the target residency for all of the idle states
+>    known to me anyway, so this doesn't change anything in practice).
+> 
+> Hi Rafael,
+> 
+> I did some minimal testing on teov6, using kernel 4.20-rc3 as my baseline
+> reference kernel.
+> 
+> Test 1: Phoronix bdench test, all options: 1, 6, 12, 48, 128, 256 clients.
+> 
+> Note: because it uses the disk, the dbench test is somewhat non-repeatable.
+> However, if particular attention is paid to not doing anything else with
+> the disk between tests, then it seems to be repeatable to within about 6%.
+> 
+> Anyway no significant difference observed between kernel 4.20-rc3 and the
+> same with the teov6 patch.
+> 
+> Test 2: Pipe test, non cross core. (And idle state 0 test, really)
+> I ran 4 pipe tests, 1 for each of my 4 cores, @2 CPUs per core.
+> Thus, pretty much only idle state 0 was ever used.
+> Processor package power was similar for both kernels.
+> teov6 entered/exited idle state 0 about 60,984 times/second/cpu.
+> -rc3 entered/exited idle state 0 about 62,806 times/second/cpu.
+> There was a difference in percentage time spent in idle state 0,
+> with kernel 4.20-rc3 spending 0.2441% in idle state 0 verses
+> teov6 at 0.0641%.
+> 
+> For throughput, teov6 was 1.4% faster.
 
-Why does this need to be a sub-node? Are there other sub-nodes needed?
+This may indicate that teov6 is somewhat too aggressive.
 
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be "qcom,sdm845-aoss-qmp-pd"
-> +
-> +- #power-domain-cells:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: must be 1
+> Test 3: was an attempt to sweep through a preference for
+> all idle states.
+> 
+> 40 threads were launched with nothing to do except sleep
+> for a variable duration of 1 to 500 uSec, each step was
+> run for 1 minute. With 1 minute idle before the test and a few
+> minutes idle after, the total test duration was about 505 minutes.
+> Recall that when one asks for a short sleep of 1 uSec, they actually
+> get about 50 uSec, due to overheads. So I use 40 threads in an attempt
+> to get the average time between wakeup events per CPU down somewhat.
+> 
+> The results are here:
+> http://fast.smythies.com/linux-pm/k420/k420-pn-sweep-teo6-2.htm
+
+And, so long as my understanding of the graphs is correct, the results
+here indicate that teov6 tends to prefer relatively shallow idle states
+which is good for performance (at least with some workloads), but not
+necessarily for energy-efficiency.
+
+I will send a v7 of TEO with some changes to make it a bit more
+energy-efficient with respect to the v6.
+
+Thanks,
+Rafael
+
