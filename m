@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DD7C65BAF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 301E6C65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ABE62147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1858214D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="jYjBypZA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABE62147C
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="kntaZvQl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1858214D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbeLCJb5 (ORCPT
+        id S1726245AbeLCJcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:31:57 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:14192 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbeLCJb4 (ORCPT
+        Mon, 3 Dec 2018 04:32:01 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:19046 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeLCJcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:31:56 -0500
+        Mon, 3 Dec 2018 04:32:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1543829502; x=1575365502;
+  t=1543829505; x=1575365505;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=vQj516If2d/qO/FV4xj6+LdhAUTVwnyLuNP2hkLa+Ag=;
-  b=jYjBypZARP/fleu70mU16HTVP9uM4tPnhtsV9dAkw6pwVdwAZrkC/UIG
-   brP9DQxr7XOgCIYZsnMCT/Pp8/8zp+Kwzm3M+k+k3EYJS/gzCSyCqMrw7
-   B7/L9WY4YdtWz/J+B/u+4SR1IYGVWuabQA/S+BQgEHbq2qfHYQftbw8K8
-   4=;
+  bh=MgTH4qC4gMSJFKbmlTvQXJWFwf3XPx6xsmtt6ko9D+g=;
+  b=kntaZvQlMJwpyl4YekyCYzD+2jwOxCA7QY2xofSzeMmNc7jnFzXMRgtn
+   JnSCmLt4MKsE3URQMDK4cAvIU/vU4irOWcD/Z/dYcq5h4WEJK+GWdtQDq
+   VR9RfoJbeo6LIlepIQeb2ykNnNbd+e4Lj3SgjFXrQzLpnWr30hW7JZ5kg
+   c=;
 X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
-   d="scan'208";a="645647367"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Dec 2018 09:31:30 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
-        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id wB39VPwS090722
+   d="scan'208";a="773724862"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1a-807d4a99.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Dec 2018 09:31:43 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
+        by email-inbound-relay-1a-807d4a99.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id wB39Va7o082560
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 3 Dec 2018 09:31:27 GMT
+        Mon, 3 Dec 2018 09:31:39 GMT
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wB39VOEt018112;
-        Mon, 3 Dec 2018 10:31:24 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wB39VZTf018166;
+        Mon, 3 Dec 2018 10:31:35 +0100
 Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id wB39VNhE018109;
-        Mon, 3 Dec 2018 10:31:23 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id wB39VZJX018164;
+        Mon, 3 Dec 2018 10:31:35 +0100
 From:   KarimAllah Ahmed <karahmed@amazon.de>
 To:     rkrcmar@redhat.com, pbonzini@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         jmattson@google.com
 Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v4 01/14] X86/nVMX: handle_vmon: Read 4 bytes from guest memory
-Date:   Mon,  3 Dec 2018 10:30:54 +0100
-Message-Id: <1543829467-18025-2-git-send-email-karahmed@amazon.de>
+Subject: [PATCH v4 12/14] KVM/nSVM: Use the new mapping API for mapping guest memory
+Date:   Mon,  3 Dec 2018 10:31:05 +0100
+Message-Id: <1543829467-18025-13-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543829467-18025-1-git-send-email-karahmed@amazon.de>
 References: <1543829467-18025-1-git-send-email-karahmed@amazon.de>
@@ -66,55 +66,243 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read the data directly from guest memory instead of the map->read->unmap
-sequence. This also avoids using kvm_vcpu_gpa_to_page() and kmap() which
-assumes that there is a "struct page" for guest memory.
+Use the new mapping API for mapping guest memory to avoid depending on
+"struct page".
 
-Suggested-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-
 ---
-v1 -> v2:
-- Massage commit message a bit.
----
- arch/x86/kvm/vmx.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ arch/x86/kvm/svm.c | 97 +++++++++++++++++++++++++++---------------------------
+ 1 file changed, 49 insertions(+), 48 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 02edd99..b84f230 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8358,7 +8358,7 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- {
- 	int ret;
- 	gpa_t vmptr;
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index cc6467b..005cb2c 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3053,32 +3053,6 @@ static inline bool nested_svm_nmi(struct vcpu_svm *svm)
+ 	return false;
+ }
+ 
+-static void *nested_svm_map(struct vcpu_svm *svm, u64 gpa, struct page **_page)
+-{
 -	struct page *page;
-+	uint32_t revision;
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	const u64 VMXON_NEEDED_FEATURES = FEATURE_CONTROL_LOCKED
- 		| FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX;
-@@ -8407,18 +8407,10 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 	if (!PAGE_ALIGNED(vmptr) || (vmptr >> cpuid_maxphyaddr(vcpu)))
- 		return nested_vmx_failInvalid(vcpu);
- 
--	page = kvm_vcpu_gpa_to_page(vcpu, vmptr);
--	if (is_error_page(page))
-+	if (kvm_read_guest(vcpu->kvm, vmptr, &revision, sizeof(revision)) ||
-+	    revision != VMCS12_REVISION)
- 		return nested_vmx_failInvalid(vcpu);
- 
--	if (*(u32 *)kmap(page) != VMCS12_REVISION) {
--		kunmap(page);
--		kvm_release_page_clean(page);
--		return nested_vmx_failInvalid(vcpu);
--	}
--	kunmap(page);
--	kvm_release_page_clean(page);
 -
- 	vmx->nested.vmxon_ptr = vmptr;
- 	ret = enter_vmx_operation(vcpu);
- 	if (ret)
+-	might_sleep();
+-
+-	page = kvm_vcpu_gfn_to_page(&svm->vcpu, gpa >> PAGE_SHIFT);
+-	if (is_error_page(page))
+-		goto error;
+-
+-	*_page = page;
+-
+-	return kmap(page);
+-
+-error:
+-	kvm_inject_gp(&svm->vcpu, 0);
+-
+-	return NULL;
+-}
+-
+-static void nested_svm_unmap(struct page *page)
+-{
+-	kunmap(page);
+-	kvm_release_page_dirty(page);
+-}
+-
+ static int nested_svm_intercept_ioio(struct vcpu_svm *svm)
+ {
+ 	unsigned port, size, iopm_len;
+@@ -3279,10 +3253,11 @@ static inline void copy_vmcb_control_area(struct vmcb *dst_vmcb, struct vmcb *fr
+ 
+ static int nested_svm_vmexit(struct vcpu_svm *svm)
+ {
++	int rc;
+ 	struct vmcb *nested_vmcb;
+ 	struct vmcb *hsave = svm->nested.hsave;
+ 	struct vmcb *vmcb = svm->vmcb;
+-	struct page *page;
++	struct kvm_host_map map;
+ 
+ 	trace_kvm_nested_vmexit_inject(vmcb->control.exit_code,
+ 				       vmcb->control.exit_info_1,
+@@ -3291,9 +3266,14 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
+ 				       vmcb->control.exit_int_info_err,
+ 				       KVM_ISA_SVM);
+ 
+-	nested_vmcb = nested_svm_map(svm, svm->nested.vmcb, &page);
+-	if (!nested_vmcb)
++	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(svm->nested.vmcb), &map);
++	if (rc) {
++		if (rc == -EINVAL)
++			kvm_inject_gp(&svm->vcpu, 0);
+ 		return 1;
++	}
++
++	nested_vmcb = map.hva;
+ 
+ 	/* Exit Guest-Mode */
+ 	leave_guest_mode(&svm->vcpu);
+@@ -3392,7 +3372,7 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
+ 
+ 	mark_all_dirty(svm->vmcb);
+ 
+-	nested_svm_unmap(page);
++	kvm_vcpu_unmap(&map);
+ 
+ 	nested_svm_uninit_mmu_context(&svm->vcpu);
+ 	kvm_mmu_reset_context(&svm->vcpu);
+@@ -3450,7 +3430,7 @@ static bool nested_vmcb_checks(struct vmcb *vmcb)
+ }
+ 
+ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
+-				 struct vmcb *nested_vmcb, struct page *page)
++				 struct vmcb *nested_vmcb, struct kvm_host_map *map)
+ {
+ 	if (kvm_get_rflags(&svm->vcpu) & X86_EFLAGS_IF)
+ 		svm->vcpu.arch.hflags |= HF_HIF_MASK;
+@@ -3530,7 +3510,7 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
+ 	svm->vmcb->control.event_inj = nested_vmcb->control.event_inj;
+ 	svm->vmcb->control.event_inj_err = nested_vmcb->control.event_inj_err;
+ 
+-	nested_svm_unmap(page);
++	kvm_vcpu_unmap(map);
+ 
+ 	/* Enter Guest-Mode */
+ 	enter_guest_mode(&svm->vcpu);
+@@ -3550,17 +3530,23 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
+ 
+ static bool nested_svm_vmrun(struct vcpu_svm *svm)
+ {
++	int rc;
+ 	struct vmcb *nested_vmcb;
+ 	struct vmcb *hsave = svm->nested.hsave;
+ 	struct vmcb *vmcb = svm->vmcb;
+-	struct page *page;
++	struct kvm_host_map map;
+ 	u64 vmcb_gpa;
+ 
+ 	vmcb_gpa = svm->vmcb->save.rax;
+ 
+-	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
+-	if (!nested_vmcb)
++	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(vmcb_gpa), &map);
++	if (rc) {
++		if (rc == -EINVAL)
++			kvm_inject_gp(&svm->vcpu, 0);
+ 		return false;
++	}
++
++	nested_vmcb = map.hva;
+ 
+ 	if (!nested_vmcb_checks(nested_vmcb)) {
+ 		nested_vmcb->control.exit_code    = SVM_EXIT_ERR;
+@@ -3568,7 +3554,7 @@ static bool nested_svm_vmrun(struct vcpu_svm *svm)
+ 		nested_vmcb->control.exit_info_1  = 0;
+ 		nested_vmcb->control.exit_info_2  = 0;
+ 
+-		nested_svm_unmap(page);
++		kvm_vcpu_unmap(&map);
+ 
+ 		return false;
+ 	}
+@@ -3612,7 +3598,7 @@ static bool nested_svm_vmrun(struct vcpu_svm *svm)
+ 
+ 	copy_vmcb_control_area(hsave, vmcb);
+ 
+-	enter_svm_guest_mode(svm, vmcb_gpa, nested_vmcb, page);
++	enter_svm_guest_mode(svm, vmcb_gpa, nested_vmcb, &map);
+ 
+ 	return true;
+ }
+@@ -3636,21 +3622,26 @@ static void nested_svm_vmloadsave(struct vmcb *from_vmcb, struct vmcb *to_vmcb)
+ static int vmload_interception(struct vcpu_svm *svm)
+ {
+ 	struct vmcb *nested_vmcb;
+-	struct page *page;
++	struct kvm_host_map map;
+ 	int ret;
+ 
+ 	if (nested_svm_check_permissions(svm))
+ 		return 1;
+ 
+-	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
+-	if (!nested_vmcb)
++	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->vmcb->save.rax), &map);
++	if (ret) {
++		if (ret == -EINVAL)
++			kvm_inject_gp(&svm->vcpu, 0);
+ 		return 1;
++	}
++
++	nested_vmcb = map.hva;
+ 
+ 	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
+ 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
+ 
+ 	nested_svm_vmloadsave(nested_vmcb, svm->vmcb);
+-	nested_svm_unmap(page);
++	kvm_vcpu_unmap(&map);
+ 
+ 	return ret;
+ }
+@@ -3658,21 +3649,26 @@ static int vmload_interception(struct vcpu_svm *svm)
+ static int vmsave_interception(struct vcpu_svm *svm)
+ {
+ 	struct vmcb *nested_vmcb;
+-	struct page *page;
++	struct kvm_host_map map;
+ 	int ret;
+ 
+ 	if (nested_svm_check_permissions(svm))
+ 		return 1;
+ 
+-	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
+-	if (!nested_vmcb)
++	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->vmcb->save.rax), &map);
++	if (ret) {
++		if (ret == -EINVAL)
++			kvm_inject_gp(&svm->vcpu, 0);
+ 		return 1;
++	}
++
++	nested_vmcb = map.hva;
+ 
+ 	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
+ 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
+ 
+ 	nested_svm_vmloadsave(svm->vmcb, nested_vmcb);
+-	nested_svm_unmap(page);
++	kvm_vcpu_unmap(&map);
+ 
+ 	return ret;
+ }
+@@ -6188,7 +6184,7 @@ static int svm_pre_leave_smm(struct kvm_vcpu *vcpu, u64 smbase)
+ {
+ 	struct vcpu_svm *svm = to_svm(vcpu);
+ 	struct vmcb *nested_vmcb;
+-	struct page *page;
++	struct kvm_host_map map;
+ 	struct {
+ 		u64 guest;
+ 		u64 vmcb;
+@@ -6202,11 +6198,16 @@ static int svm_pre_leave_smm(struct kvm_vcpu *vcpu, u64 smbase)
+ 
+ 	if (svm_state_save.guest) {
+ 		vcpu->arch.hflags &= ~HF_SMM_MASK;
+-		nested_vmcb = nested_svm_map(svm, svm_state_save.vmcb, &page);
++		if (kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm_state_save.vmcb), &map) == -EINVAL)
++			kvm_inject_gp(&svm->vcpu, 0);
++
++		nested_vmcb = map.hva;
++
+ 		if (nested_vmcb)
+-			enter_svm_guest_mode(svm, svm_state_save.vmcb, nested_vmcb, page);
++			enter_svm_guest_mode(svm, svm_state_save.vmcb, nested_vmcb, &map);
+ 		else
+ 			ret = 1;
++
+ 		vcpu->arch.hflags |= HF_SMM_MASK;
+ 	}
+ 	return ret;
 -- 
 2.7.4
 
