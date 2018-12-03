@@ -2,110 +2,131 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F185C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33499C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEC2C20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEC2C20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E825020850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:14:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2D7K3Iw6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E825020850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbeLCOPs (ORCPT
+        id S1726602AbeLCOP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:15:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56424 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725914AbeLCOPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:15:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7AEB1AD17;
-        Mon,  3 Dec 2018 14:14:36 +0000 (UTC)
-Date:   Mon, 3 Dec 2018 15:14:35 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: don't unconditionally shortcut print_time()
-Message-ID: <20181203141435.iyaawog4i6ecgxyi@pathway.suse.cz>
-References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
- <201811300226.wAU2Q2JG060388@www262.sakura.ne.jp>
- <20181130123027.cyqfi2k34nh2gjmx@pathway.suse.cz>
- <02b4ce85-c1e5-6601-e3a7-cecfbd5298dc@i-love.sakura.ne.jp>
+        Mon, 3 Dec 2018 09:15:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbeLCOP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:15:59 -0500
+Received: from localhost (unknown [95.98.134.160])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10B4220850;
+        Mon,  3 Dec 2018 14:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543846488;
+        bh=F+q8OrDhnmy+fKicqmrOiRGczbcFOMqHm/obRLbjmks=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2D7K3Iw6PGOke1c+hBe5PraDdgRx9ekqAj7fYBMX2aIf5w6O0Nz0+VSrGKgqHoXRO
+         fk227byB9b4OyB7yKwYq2CDSMDBxgueOsr9HrrtKztuO7lfJZ6fWVQTlyqFEv7DMrF
+         imJ9sZjLhCApIy5VnmwhiniFYsg+50enWP3jqv+g=
+Date:   Mon, 3 Dec 2018 15:14:42 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     sashal@kernel.org, rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: v4.14 fix for Hikey 960 unbalanced IRQ enablement
+Message-ID: <20181203141442.GA19335@kroah.com>
+References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <02b4ce85-c1e5-6601-e3a7-cecfbd5298dc@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20181203133107.4002-1-rafael.tinoco@linaro.org>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-11-30 23:33:39, Tetsuo Handa wrote:
-> and (I can't find the reproducer but) sometimes crashes like
+On Mon, Dec 03, 2018 at 11:31:02AM -0200, Rafael David Tinoco wrote:
+> Sasha, could you consider including this cherry-picked patchset in v4.14.
 > 
-> [  451.988242] BUG: pagefault on kernel address 0xffff8881337fa000 in non-whitelisted uaccess
-> [  451.990465] BUG: unable to handle kernel paging request at ffff8881337fa000
-> [  451.992254] PGD 3602067 P4D 3602067 PUD 3605067 PMD 13ff65067 PTE 800ffffecc805060
-> [  451.994066] Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
-> [  451.995284] CPU: 0 PID: 8147 Comm: a.out Kdump: loaded Not tainted 4.20.0-rc4+ #537
-> [  451.997268] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-> [  451.999857] RIP: 0010:copy_user_generic_unrolled+0x54/0xc0
-> [  452.001312] Code: 83 e2 3f c1 e9 06 74 4a 4c 8b 06 4c 8b 4e 08 4c 8b 56 10 4c 8b 5e 18 4c 89 07 4c 89 4f 08 4c 89 57 10 4c 89 5f 18 4c 8b 46 20 <4c> 8b 4e 28 4c 8b 56 30 4c 8b 5e 38 4c 89 47 20 4c 89 4f 28 4c 89
-> [  452.006119] RSP: 0018:ffffc90002573e90 EFLAGS: 00010202
-> [  452.007230] RAX: 0000000000701060 RBX: 0000000000100000 RCX: 0000000000002f02
-> [  452.008792] RDX: 0000000000000000 RSI: ffff8881337f9fd4 RDI: 0000000000644fe0
-> [  452.010399] RBP: 0000000000601060 R08: 8b494e7401000000 R09: 00000b88858b4900
-> [  452.011916] R10: 0f02000000c980f6 R11: b4bb830000025d85 R12: ffff8881337b6054
-> [  452.013351] R13: 0000000000601060 R14: ffff8881337b5fa8 R15: 00000000000000ac
-> [  452.014807] FS:  00007fb3c9eec740(0000) GS:ffff88813b200000(0000) knlGS:0000000000000000
-> [  452.016931] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  452.018234] CR2: ffff8881337fa000 CR3: 0000000139153002 CR4: 00000000001606f0
-> [  452.020038] Call Trace:
-> [  452.020708]  _copy_to_user+0x56/0x70
-> [  452.021580]  do_syslog+0x47d/0x7b0
-> [  452.022359]  ? syscall_trace_enter+0x1c3/0x360
-> [  452.023395]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-> [  452.024438]  ? lockdep_hardirqs_off+0x73/0xe0
-> [  452.025433]  __x64_sys_syslog+0x13/0x20
-> [  452.026363]  do_syscall_64+0x4f/0x1f0
-> [  452.027235]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> Kernel v4.14 might suffer from the following unbalanced enablement for the board Hikey 960:
 > 
-> >  			/* message fits into buffer, move forward */
-> >  			syslog_idx = log_next(syslog_idx);
+> Nov  5 12:02:54 hikey kernel: [   22.148194] Unbalanced enable for IRQ 44
+> Nov  5 12:02:54 hikey kernel: [   22.152193] ------------[ cut here ]------------
+> Nov  5 12:02:54 hikey kernel: [   22.156872] WARNING: CPU: 2 PID: 509 at /home/inaddy/work/sources/linux/stable/stable-linux-4.14.y/kernel/irq/manage.c:525 __enable_irq+0x78/0x80
+> Nov  5 12:02:54 hikey kernel: [   22.249606] CPU: 2 PID: 509 Comm: kworker/2:2 Not tainted 4.14.79 #1
+> Nov  5 12:02:54 hikey kernel: [   22.255975] Hardware name: HiKey Development Board (DT)
+> Nov  5 12:02:54 hikey kernel: [   22.261248] Workqueue: events_freezable thermal_zone_device_check
+> Nov  5 12:02:54 hikey kernel: [   22.267368] task: ffff8000616e0e00 task.stack: ffff00000b5f0000
+> Nov  5 12:02:54 hikey kernel: [   22.273312] PC is at __enable_irq+0x78/0x80
+> Nov  5 12:02:54 hikey kernel: [   22.277516] LR is at __enable_irq+0x78/0x80
+> Nov  5 12:02:54 hikey kernel: [   22.281718] pc : [<ffff00000813e010>] lr : [<ffff00000813e010>] pstate: 000001c5
+> Nov  5 12:02:54 hikey kernel: [   22.289129] sp : ffff00000b5f3c80
+> Nov  5 12:02:54 hikey kernel: [   22.292457] x29: ffff00000b5f3c80 x28: 0000000000000000 
+> Nov  5 12:02:54 hikey kernel: [   22.297804] x27: ffff80005c139e38 x26: ffff000008a71870 
+> Nov  5 12:02:54 hikey kernel: [   22.303148] x25: 0000000000000000 x24: 0000000000000002 
+> Nov  5 12:02:54 hikey kernel: [   22.308492] x23: ffff00000b5f3d9c x22: ffff80005d565e88 
+> Nov  5 12:02:54 hikey kernel: [   22.313836] x21: 000000000000f980 x20: 000000000000002c 
+> Nov  5 12:02:54 hikey kernel: [   22.319181] x19: ffff800061726000 x18: 0000000000000010 
+> Nov  5 12:02:54 hikey kernel: [   22.324524] x17: 0000000000000000 x16: 0000000000000000 
+> Nov  5 12:02:54 hikey kernel: [   22.329868] x15: ffffffffffffffff x14: ffff000009269c08 
+> Nov  5 12:02:54 hikey kernel: [   22.335213] x13: ffff00008940678f x12: ffff000009406797 
+> Nov  5 12:02:54 hikey kernel: [   22.340558] x11: ffff000009290000 x10: ffff00000b5f3980 
+> Nov  5 12:02:54 hikey kernel: [   22.345902] x9 : 00000000ffffffd0 x8 : ffff00000862c298 
+> Nov  5 12:02:54 hikey kernel: [   22.351246] x7 : 6c62616e65206465 x6 : 00000000000001b2 
+> Nov  5 12:02:54 hikey kernel: [   22.356589] x5 : 0000000000000000 x4 : 0000000000000000 
+> Nov  5 12:02:54 hikey kernel: [   22.361931] x3 : 0000000000000000 x2 : ffff800063e824c8 
+> Nov  5 12:02:54 hikey kernel: [   22.367275] x1 : 000080005af95000 x0 : 000000000000001c 
+> Nov  5 12:02:54 hikey kernel: [   22.372618] Call trace:
+> Nov  5 12:02:54 hikey kernel: [   22.375088] Exception stack(0xffff00000b5f3b40 to 0xffff00000b5f3c80)
+> Nov  5 12:02:54 hikey kernel: [   22.381560] 3b40: 000000000000001c 000080005af95000 ffff800063e824c8 0000000000000000
+> Nov  5 12:02:54 hikey kernel: [   22.389417] 3b60: 0000000000000000 0000000000000000 00000000000001b2 6c62616e65206465
+> Nov  5 12:02:54 hikey kernel: [   22.397276] 3b80: ffff00000862c298 00000000ffffffd0 ffff00000b5f3980 ffff000009290000
+> Nov  5 12:02:54 hikey kernel: [   22.405136] 3ba0: ffff000009406797 ffff00008940678f ffff000009269c08 ffffffffffffffff
+> Nov  5 12:02:54 hikey kernel: [   22.412994] 3bc0: 0000000000000000 0000000000000000 0000000000000010 ffff800061726000
+> Nov  5 12:02:54 hikey kernel: [   22.420852] 3be0: 000000000000002c 000000000000f980 ffff80005d565e88 ffff00000b5f3d9c
+> Nov  5 12:02:54 hikey kernel: [   22.428710] 3c00: 0000000000000002 0000000000000000 ffff000008a71870 ffff80005c139e38
+> Nov  5 12:02:54 hikey kernel: [   22.436569] 3c20: 0000000000000000 ffff00000b5f3c80 ffff00000813e010 ffff00000b5f3c80
+> Nov  5 12:02:54 hikey kernel: [   22.444426] 3c40: ffff00000813e010 00000000000001c5 0000000000000000 0000000000000000
+> Nov  5 12:02:54 hikey kernel: [   22.452286] 3c60: ffffffffffffffff ffff800061800618 ffff00000b5f3c80 ffff00000813e010
+> Nov  5 12:02:54 hikey kernel: [   22.460144] [<ffff00000813e010>] __enable_irq+0x78/0x80
+> Nov  5 12:02:54 hikey kernel: [   22.465394] [<ffff00000813e058>] enable_irq+0x40/0x78
+> Nov  5 12:02:54 hikey kernel: [   22.470493] [<ffff000000e228a8>] hisi_thermal_get_temp+0x1b0/0x1d8 [hisi_thermal]
+> Nov  5 12:02:54 hikey kernel: [   22.478008] [<ffff0000087121a8>] of_thermal_get_temp+0x38/0x50
+> Nov  5 12:02:54 hikey kernel: [   22.483869] [<ffff000008711790>] thermal_zone_get_temp+0x58/0x80
+> Nov  5 12:02:54 hikey kernel: [   22.489903] [<ffff00000870e7bc>] thermal_zone_device_update.part.4+0x2c/0x1a8
+> Nov  5 12:02:54 hikey kernel: [   22.497066] [<ffff00000870e9c8>] thermal_zone_device_check+0x40/0x50
+> Nov  5 12:02:54 hikey kernel: [   22.503457] [<ffff0000080f1674>] process_one_work+0x19c/0x3d0
+> Nov  5 12:02:54 hikey kernel: [   22.509236] [<ffff0000080f18f4>] worker_thread+0x4c/0x428
+> Nov  5 12:02:54 hikey kernel: [   22.514664] [<ffff0000080f84fc>] kthread+0x134/0x138
+> Nov  5 12:02:54 hikey kernel: [   22.519659] [<ffff000008085154>] ret_from_fork+0x10/0x1c
+> Nov  5 12:02:54 hikey kernel: [   22.524988] ---[ end trace 328d4bb2d9b066a0 ]---
 > 
-> But we need to make this "static bool time;" accessible from SYSLOG_ACTION_SIZE_UNREAD case
-> because syslog_partial subtraction assumes that msg_print_text() used printk_time value
-> as of syslog_print() updated syslog_partial.
+> This issue was solved when "hisi_thermal_alarm_irq" function was removed so only
+> "hisi_thermal_alarm_irq_thread" would exist. This has fixed the issue for the
+> unbalanced enablement since there is no more:
 > 
-> 	while (seq < log_next_seq) {
-> 		struct printk_log *msg = log_from_idx(idx);
+> 	disable_irq_nosync(irq);
+> 	data->irq_enabled = false;
 > 
-> 		error += msg_print_text(msg, true, NULL, 0);
-> 		idx = log_next(idx);
-> 		seq++;
-> 	}
-> 	error -= syslog_partial;
+> logic being done in parallel to the threaded handler AND the
+> thermal_zone_device_update() call only happens now if the temperature is already
+> above the threshold.
 > 
 
-Great catch.
+So should we revert a patch instead of taking these new ones?  Would
+that be easier and is this a "real" issue or just an annoying warning
+splat in the kernel log?
 
-Well, IMHO, it does not explain the pagefault above. The copy_to_user()
-could come either from syslog_print() or from syslog_print_all(). They
-both have their own checks that prevent the buf overflow.
+thanks,
 
-The code is tricky but it looks safe now. Is it possible that
-the crash was with some old, still broken, code? Or did you
-add some extra changes that you used to trigger a testing
-scenario?
-
-Best Regards,
-Petr
+greg k-h
