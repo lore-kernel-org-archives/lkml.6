@@ -2,173 +2,111 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B99DC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9367C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 142B3208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E82520848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:59:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cpA57M23";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cpA57M23"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142B3208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DQxY93Qi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E82520848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeLCR6I (ORCPT
+        id S1726837AbeLCR7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:58:08 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57550 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeLCR6I (ORCPT
+        Mon, 3 Dec 2018 12:59:23 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35933 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbeLCR7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:58:08 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 90218609F3; Mon,  3 Dec 2018 17:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543859882;
-        bh=W59OOzojtDYd5UiJ3xgMYh8h6bThdV8j4TbEISbrV6k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cpA57M23IGeeafjtSvZOXZa3BVK9+lvXwhUtGatP45iMEoKbfzwSC7kd/d2j76kc9
-         ZiAcWw6R4TchNL5fRldG3rBBamWr7PlfgRRGaejrahbgBPgqDy5SIzdPl0t9B3nKqp
-         wPX+9n41Iu6gZWPVorrSni7GsHS+4bU7SQDkC374=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 76D93602F4;
-        Mon,  3 Dec 2018 17:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543859882;
-        bh=W59OOzojtDYd5UiJ3xgMYh8h6bThdV8j4TbEISbrV6k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cpA57M23IGeeafjtSvZOXZa3BVK9+lvXwhUtGatP45iMEoKbfzwSC7kd/d2j76kc9
-         ZiAcWw6R4TchNL5fRldG3rBBamWr7PlfgRRGaejrahbgBPgqDy5SIzdPl0t9B3nKqp
-         wPX+9n41Iu6gZWPVorrSni7GsHS+4bU7SQDkC374=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76D93602F4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH] clk: qcom: Fix MSM8998 resets
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
- <20181203155538.GQ2225@minitux>
- <711fb66a-a408-08e2-c0c2-6addf1510937@codeaurora.org>
- <154385654317.88331.9077579060059188717@swboyd.mtv.corp.google.com>
- <bf2c5a96-6a29-e89b-4b16-8aaab516a7b5@codeaurora.org>
- <154385955525.88331.5713343841692637945@swboyd.mtv.corp.google.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <72534f4d-e0c9-1cf8-0010-8f689ec69f64@codeaurora.org>
-Date:   Mon, 3 Dec 2018 10:58:01 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 3 Dec 2018 12:59:22 -0500
+Received: by mail-it1-f193.google.com with SMTP id c9so9965571itj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:59:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tg51AoWSqFICnv/a09JiIf3Iy5MjdU5ikBkWJ/TTxLs=;
+        b=DQxY93QiJHAw1Yv4ZpThVkV4WSZdoQCRMw0xXUp1fHU782vErdOJ8wHa7c3t6AnVIh
+         /fGBR8KY3U79BltbVSBpYigwpZkgLlnTKOgOkD9TiuqPFA5I+otkowr2+VvQWiZQE0w4
+         zYSbwRHG/2ej4cWiIs4idknAzcIN/esOSyhf8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tg51AoWSqFICnv/a09JiIf3Iy5MjdU5ikBkWJ/TTxLs=;
+        b=BviNEX1Ejvqrb84ULpJzWyDaehis8s8k1xVJ8HFoOFpDI4ChuMWEgY1JFod++jSb4W
+         UiAa6hQBkaaKAdGjtBvLyaQb9/wi2CPInPrMZHDB1lAR/Zi1BweNNoHnNkn6JixpPPCF
+         /UHVWQ81c1DkJjAAYD/PmNKFBQGiPXFOpBAHbazsLu43zxcgNMi7hT2FMNR9+Ft8Mzmy
+         YGeGiVcnP1sZGrvihOp7MKCVA4kYp/gAV9B0zzKPvTmb+FG6l0YPGZLrt7lV8HmgAZt/
+         ZpfXuSwIARv5wfIYUQFqtFNYRfScxB9nl3Bad0XksQJFwrE1sIj7Hs6BRkhgPO0D6UeN
+         ygFg==
+X-Gm-Message-State: AA+aEWbAYtzGGOtNfDVjWJ/ol4Fgfi5kUzapIkGnOss0t4sOFAkrrCN+
+        1iCyoeUEnE0CYdfzDLYEnfgCIjJULdCvr+wYJ8zKrqQ2U4c=
+X-Google-Smtp-Source: AFSGD/VA5XdDGw/NuaGMbNd/ykSmvI79A4XNReLHNa1OcDg5AdH7sttzV8pEq6KUroMM2hiM6XGBQJDNbzD3VFmQ6xM=
+X-Received: by 2002:a24:fe41:: with SMTP id w62mr9207016ith.23.1543859957006;
+ Mon, 03 Dec 2018 09:59:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <154385955525.88331.5713343841692637945@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181201005759.28093-1-eric@anholt.net> <20181201005759.28093-4-eric@anholt.net>
+In-Reply-To: <20181201005759.28093-4-eric@anholt.net>
+From:   Dave Emett <david.emett@broadcom.com>
+Date:   Mon, 3 Dec 2018 17:59:05 +0000
+Message-ID: <CAApk1dXC5knQ7_JuknCjm4vc2Y_OfLK0Y+ci52WjCN3sFnDHdA@mail.gmail.com>
+Subject: Re: [PATCH 4/6] drm/v3d: Drop the wait for L2T flush to complete.
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Thomas Spurden <thomas.spurden@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/2018 10:52 AM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2018-12-03 09:19:20)
->> On 12/3/2018 10:02 AM, Stephen Boyd wrote:
->>> Quoting Jeffrey Hugo (2018-12-03 08:08:46)
->>>> On 12/3/2018 8:55 AM, Bjorn Andersson wrote:
->>>>> On Mon 03 Dec 07:34 PST 2018, Jeffrey Hugo wrote:
->>>>>
->>>>>> The offsets for the defined BCR reset registers does not match the hardware
->>>>>> documentation.  Update the values to match the hardware documentation.
->>>>>>
->>>>>
->>>>> Sorry for not spotting this before.
->>>>>
->>>>>> Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC) driver)
->>>>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->>>>>> ---
->>>>>>     drivers/clk/qcom/gcc-msm8998.c | 38 +++++++++++++++++++-------------------
->>>>>>     1 file changed, 19 insertions(+), 19 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
->>>>>> index 9f0ae40..01cc555 100644
->>>>>> --- a/drivers/clk/qcom/gcc-msm8998.c
->>>>>> +++ b/drivers/clk/qcom/gcc-msm8998.c
->>>>>> @@ -2742,25 +2742,25 @@ enum {
->>>>>>     };
->>>>>>     
->>>>>>     static const struct qcom_reset_map gcc_msm8998_resets[] = {
->>>>>> -    [GCC_BLSP1_QUP1_BCR] = { 0x102400 },
->>>>>> -    [GCC_BLSP1_QUP2_BCR] = { 0x110592 },
->>>>>> -    [GCC_BLSP1_QUP3_BCR] = { 0x118784 },
->>>>>> -    [GCC_BLSP1_QUP4_BCR] = { 0x126976 },
->>>>>> -    [GCC_BLSP1_QUP5_BCR] = { 0x135168 },
->>>>>> -    [GCC_BLSP1_QUP6_BCR] = { 0x143360 },
->>>>>> -    [GCC_BLSP2_QUP1_BCR] = { 0x155648 },
->>>>>> -    [GCC_BLSP2_QUP2_BCR] = { 0x163840 },
->>>>>> -    [GCC_BLSP2_QUP3_BCR] = { 0x172032 },
->>>>>> -    [GCC_BLSP2_QUP4_BCR] = { 0x180224 },
->>>>>> -    [GCC_BLSP2_QUP5_BCR] = { 0x188416 },
->>>>>> -    [GCC_BLSP2_QUP6_BCR] = { 0x196608 },
->>>>>> -    [GCC_PCIE_0_BCR] = { 0x438272 },
->>>>>> -    [GCC_PDM_BCR] = { 0x208896 },
->>>>>> -    [GCC_SDCC2_BCR] = { 0x81920 },
->>>>>> -    [GCC_SDCC4_BCR] = { 0x90112 },
->>>>>> -    [GCC_TSIF_BCR] = { 0x221184 },
->>>>>> -    [GCC_UFS_BCR] = { 0x479232 },
->>>>>> -    [GCC_USB_30_BCR] = { 0x61440 },
->>>>>> +    [GCC_BLSP1_QUP1_BCR] = { 0x19000 },
->>>>>> +    [GCC_BLSP1_QUP2_BCR] = { 0x1b000 },
->>>>>> +    [GCC_BLSP1_QUP3_BCR] = { 0x1d000 },
->>>>>> +    [GCC_BLSP1_QUP4_BCR] = { 0x1f000 },
->>>>>> +    [GCC_BLSP1_QUP5_BCR] = { 0x21000 },
->>>>>> +    [GCC_BLSP1_QUP6_BCR] = { 0x23000 },
->>>>>> +    [GCC_BLSP2_QUP1_BCR] = { 0x26000 },
->>>>>> +    [GCC_BLSP2_QUP2_BCR] = { 0x28000 },
->>>>>> +    [GCC_BLSP2_QUP3_BCR] = { 0x2a000 },
->>>>>> +    [GCC_BLSP2_QUP4_BCR] = { 0x2c000 },
->>>>>> +    [GCC_BLSP2_QUP5_BCR] = { 0x2e000 },
->>>>>> +    [GCC_BLSP2_QUP6_BCR] = { 0x30000 },
->>>>>> +    [GCC_PCIE_0_BCR] = { 0x6c01c },
->>>>>
->>>>> I find GCC_PCIE_0_BCR at 0x6b000 and then GCC_PCIE_0_PHY_BCR at 0x6c01c.
->>>>
->>>> Doh.  Thanks for the double check.  GCC_PCIE_0_PHY_BCR is not defined in
->>>> include/dt-bindings/clock/qcom,gcc-msm8998.h so I plan to leave it out
->>>> until later.
->>>>
->>>> Expect a v2 shortly.
->>>
->>> Will you add GCC_PCIE0_PHY_BCR shortly so we don't have to add it later
->>> on when it becomes critical?
->>>
->>
->> My plan was to let it sit until it becomes necessary.  I'm working on
->> USB and found that GCC_QUSB2PHY_PRIM_BCR, GCC_USB3_PHY_BCR, and
->> GCC_USB3PHY_PHY_BCR are also missing, so I suspect there are others.
->>
->> Would you prefer I send a follow up that adds the PCIE phy and the USB
->> resets?
-> 
-> Yes please send a followup patch to add all the possible defines and
-> implementations that you can find. It makes future cross-tree merges
-> simpler.
-> 
+I'm surprised this made such a big difference. It should not take a
+long time to flush the L2T -- no memory access should be involved, it
+should just be a matter of the L2T iterating over its lines clearing
+the tags. This should take thousands of V3D cycles, not milliseconds.
+So the 3-4ms stall seems worthy of more investigation to me.
 
-Ok, will do.  Will need a bit of time to review the hardware 
-documentation to enumerate a comprehensive list.  I'm thinking by the 
-end of the week.
+A comment describing why no waits are necessary would be good.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+On Sat, 1 Dec 2018 at 00:58, Eric Anholt <eric@anholt.net> wrote:
+>
+> According to Dave, once you've started an L2T flush, all L2T accesses
+> will be blocked until the flush completes.  This fixes a consistent
+> 3-4ms stall between the ioctl and running the job, and 3DMMES Taiji
+> goes from 27fps to 110fps.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+
+Reviewed-by: Dave Emett <david.emett@broadcom.com>
+
+> Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+> ---
+>  drivers/gpu/drm/v3d/v3d_gem.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index cc4d025b01e0..0bd6892e3044 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -146,10 +146,6 @@ v3d_flush_l2t(struct v3d_dev *v3d, int core)
+>         V3D_CORE_WRITE(core, V3D_CTL_L2TCACTL,
+>                        V3D_L2TCACTL_L2TFLS |
+>                        V3D_SET_FIELD(V3D_L2TCACTL_FLM_FLUSH, V3D_L2TCACTL_FLM));
+> -       if (wait_for(!(V3D_CORE_READ(core, V3D_CTL_L2TCACTL) &
+> -                      V3D_L2TCACTL_L2TFLS), 100)) {
+> -               DRM_ERROR("Timeout waiting for L2T flush\n");
+> -       }
+>  }
+>
+>  /* Invalidates the slice caches.  These are read-only caches. */
+> --
+> 2.20.0.rc1
+>
