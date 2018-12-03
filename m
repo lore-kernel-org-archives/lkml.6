@@ -2,223 +2,204 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BD3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3036C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A99021473
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F8B320892
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:16:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0RlEEqK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A99021473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qUKSH62V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8B320892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbeLCCEi (ORCPT
+        id S1725827AbeLCCQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 21:04:38 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37238 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbeLCCEi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 21:04:38 -0500
-Received: by mail-io1-f68.google.com with SMTP id f14so3625688iol.4;
-        Sun, 02 Dec 2018 18:04:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oHyJf/pk3obpSZxlLWLxrLpAd0vNW4Y4iR522ZKJUfo=;
-        b=A0RlEEqKQYARSp+BkNkZ4DogDx8OtRE5e/GeShRlult+5dFIB2KVT0E6DyMriNuOM2
-         7AOQOaUKXaoclWaSRI9NIFVVA9MXFb3YnoLPAe+QSjs9LBghb+RMm/1/9bJsvG5d/Aat
-         BMulRw8NH0cyltWU1AMnfQcIv6BazUsuer2vqoDAyQj1e+hYhSx6NPLqlHGTYNjr5LjS
-         3BlHjfU62GPnCF2jgsjDnZ0NsmlOrG/skBi5RXfOzEwqG/Iw4c+gXQt5UJl3fOsvbRm/
-         upSqUJff1AODn1CYl1iWS9UnV6qfp2GlEktJibYoPIY+Owm49jhpsqFUMqUOBMEMQrtv
-         viCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oHyJf/pk3obpSZxlLWLxrLpAd0vNW4Y4iR522ZKJUfo=;
-        b=qtPY3rkbD7txNV0LxMwNDoUPoQGDCG8BzXJXQwh8GHJ7saznA1Ws4/u351eq8CD0qZ
-         1yFKTMMZfGxBTAjHBovcfClxVeGqBSySuW5ibkut337jTxdx9MYxpOejqzsyoG7/CHab
-         txFSyPRrZVRkkzYzh4ByTBwUj7l5/RVDyNoctLekH2rETFUP/JcdgICJyCMpvFlmtAoN
-         n3iccX2SuvgiLVnFNqF0GxgRo1CpHzVuD2zXUOimlNd8qBcBMWzBCAhGbWSaP4CpSDWD
-         49Lg0wHFGI966B7VswDVWTtA140qk4UkkeR05F0ACMIdTralQpTfdomdHpr2mNbXG76Y
-         BfSA==
-X-Gm-Message-State: AA+aEWaMyl4J7YZPYeS9J1JcWy48u0hUjEcIio+2328iWtyRXN9ZOPU8
-        BZa273sch7w65vIm5JvO1ZM=
-X-Google-Smtp-Source: AFSGD/VlRJBwEaD2RnAiePJy7+kF8MV2H1wlgHCJbZy6yTwcqyNRckaqkHaiLxLHB8bAMO0Ct9CnyQ==
-X-Received: by 2002:a5d:8597:: with SMTP id f23mr12939255ioj.238.1543802675035;
-        Sun, 02 Dec 2018 18:04:35 -0800 (PST)
-Received: from ethiopia (c-73-176-50-185.hsd1.il.comcast.net. [73.176.50.185])
-        by smtp.gmail.com with ESMTPSA id u5sm3111839itb.33.2018.12.02.18.04.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 18:04:34 -0800 (PST)
-Date:   Sun, 2 Dec 2018 20:04:32 -0600
-From:   "Derald D. Woods" <woods.technical@gmail.com>
-To:     Roger Quadros <rogerq@ti.com>
-Cc:     tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com,
-        ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org,
-        s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com,
-        jreeder@ti.com, m-karicheri2@ti.com, linux-omap@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 00/17] Add support for TI PRU ICSS
-Message-ID: <20181203020431.GC18592@ethiopia>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+        Sun, 2 Dec 2018 21:16:36 -0500
+Received: from ozlabs.org ([203.11.71.1]:54505 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725793AbeLCCQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 21:16:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 437TBk08XBz9sCX;
+        Mon,  3 Dec 2018 13:16:29 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543803390;
+        bh=pIuZWNNZUnpt/AGxk7HJSyvk7lB9kbcCGa0v9iGMsd8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qUKSH62VlqsYe1zXDtTyimvT5kFDTK4dLaailbOAoJIdHG+3VjV8UxpZzgLFnoSra
+         efc2kIQKbmdvXhpUERPBaL11Yn5qfMqHdj/DLgQUTPTXBSfhjZ1lV1n1/a5hyvPJ1O
+         WvQ4ruT/fXTi9fi+QLYTxgtz4guRYlWd93B0p40yH6/wHoOc+rAYLepq4YJgTWr2B7
+         fo8g+awHOYw4dhJsgvJm01jcqe2yfEZL+X2O4OiuvhzMoiEKjFg/KaqZMi208Spu+c
+         cKWDQG6TCGIOrm4eCE7AY5UkqSNMblNFFs7pzeNXc6HnVqMqakOpDsn69KpH2UUvdp
+         U7v7eBIgUO46g==
+Date:   Mon, 3 Dec 2018 13:16:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Stringer <joe@wand.net.nz>,
+        Nitin Hande <nitin.hande@gmail.com>,
+        Vlad Dumitrescu <vladum@google.com>
+Subject: linux-next: manual merge of the net-next tree with the bpf tree
+Message-ID: <20181203131629.085324b8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/rUAHhD.nx_6ZwCaAp=zUziE"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 01:38:56PM +0200, Roger Quadros wrote:
-> Hi,
-> 
-> The Programmable Real-Time Unit and Industrial Communication Subsystem
-> (PRU-ICSS) is present on various TI SoCs such as AM335x, AM437x, AM57x,
-> Keystone 66AK2G, etc. A PRUSS consists of dual 32-bit RISC cores (Programmable
-> Real-Time Units, or PRUs), data and instruction RAMs, shard RAM, and
-> interrupt controller and some internal peripheral modules to facilitate
-> industrial communication. The programmable nature of the PRUs provide
-> flexibility to implement custom peripheral interfaces, fast real-time
-> responses, or specialized data handling. The common peripheral modules
-> include the following,
->   - an MII_RT module with two MII ports for Ethernet
->   - an MDIO port for external Ethernet PHYs
->   - an Industrial Ethernet Peripheral (IEP) to manage/generate Industrial
->     Ethernet functions
->   - an Enhanced Capture Module (eCAP)
->   - an Industrial Ethernet Timer with 7/9 capture and 16 compare events
->   - a 16550-compatible UART to support PROFIBUS
-> 
-> A typical usage scenario would be to load the application firmware into
-> one or more of the PRU cores, initialize one or more of the peripherals
-> and perform I/O through shared RAM (or MSMC RAM) from either a Kernel driver
-> or directly from userspace.
-> 
-> With this two-part series we should be able to use the kernel RPMSG driver
-> along with firmware and user-space examples in the
-> pru-software-support-package [1].
-> 
-> We will also be able to get Dual Ethernet functionality using a kernel driver
-> which will be posted later.
-> 
-> The kernel code will be split into the following sections
-> 
-> 1) soc: pruss_soc_bus: The sole purpose of this driver is to handle platform
-> specific Power management quirks and allow the child node (i.e entire PRUSS)
-> to be unbound from the default kernel driver and bound to something else. e.g. uio_pruss,
-> while allowing to manage PM in the kernel.
-> 
-> 2) soc: pruss: This is the driver for the entire ICSS. Its main purpose is
-> to populate the different modules and handle platform specific quirks.
-> It will also manage the interrupt controller and provide kernel APIs to
-> change ICSS specific knobs in the CFG space e.g. GP_MUX.
-> 
-> 3) remoteproc: pru: This provides a remoteproc interface for the PRU cores.
-> With this we can load firmware, start/stop PRU from kernel or userspace.
-> It adds support for virtio RPMSG. It also provides some kernel APIs
-> (e.g. pru_rproc_set_ctable()) that are PRU specific and required for
-> in-kernel applications (e.g. ethernet)
-> 
-> 4) ARM: OMAP: DTS:
-> Platform data and device tree files.
-> 
-> Due to the large number of patches patches are  split this into 2 email threads.
-> This thread covers (1), (3) and (4).
-> 
-> A second thread will cover the remoteproc driver (3).
-> 
-> The series only adds platform support for AM335x to keep patch count small.
-> Support for other platforms (AM43x, AM57x, K2G) will be added later.
-> 
-> Testing:
-> To test the code with example firmware you can try the LAB5 tutorial
-> http://processors.wiki.ti.com/index.php/PRU_Training:_Hands-on_Labs#LAB_5:_RPMsg_Communication_between_ARM_and_PRU
-> with the pru-software-support package at [2] and the sample rpmsg-client driver.
-> NOTE: you no longer need to build and run PRU_Halt example as shown in the tutorial.
-> 
-> cheers,
-> -roger
-> 
-> [1] https://git.ti.com/pru-software-support-package
-> 	NOTE: The repo needs update to the INTC resource data structures
-> 	The updates that are required are listed in the below repo with one example fixed.
-> [2] https://github.com/rogerq/pru-software-support-package/commits/upstream/pruss
-> 
+--Sig_/rUAHhD.nx_6ZwCaAp=zUziE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Per Roger's instructions, I was able test both patch series on the
-am335x-pocketbeagle, based on linux v4.20-rc4, with the following
-additional 'rpmsg_pru' patches:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-https://github.com/beagleboard/linux/commit/2b013313cae8659f2cbd659c314e471a71f1623c
-https://github.com/beagleboard/linux/commit/b894d492a35aa43a7b54512b971a04b9aec17814
+  net/core/filter.c
 
-Tested-by: Derald D. Woods <woods.technical@gmail.com>
+between commits:
 
+  b7df9ada9a77 ("bpf: fix pointer offsets in context for 32 bit")
+  f71c6143c203 ("bpf: Support sk lookup in netns with id 0")
 
-> Andrew F. Davis (1):
->   soc: ti: pruss: add pruss_{request,release}_mem_region() API
-> 
-> Roger Quadros (2):
->   soc: ti: pruss: add pruss_cfg_read()/update() API
->   soc: ti: pruss: export pruss_intc_configure/unconfigure APIs
-> 
-> Suman Anna (13):
->   dt-bindings: remoteproc: Add TI PRUSS bindings
->   soc: ti: pruss: Define platform data for PRUSS bus driver
->   soc: ti: pruss: Add pruss_soc_bus platform driver
->   soc: ti: pruss: Fix system suspend/MStandby config issues
->   soc: ti: pruss: Configure SYSCFG properly during probe/remove
->   soc: ti: pruss: Add a platform driver for PRUSS in TI SoCs
->   soc: ti: pruss: enable OCP master ports in SYSCFG always
->   soc: ti: pruss: Add a PRUSS irqchip driver for PRUSS interrupts
->   soc: ti: pruss_intc: Add API to trigger a PRU sysevent
->   ARM: OMAP2+: use pdata quirks for PRUSS reset lines on AM335x
->   ARM: dts: AM33xx: Add the PRU-ICSS DT nodes
->   ARM: dts: AM33xx: Add PRU system events for virtio
->   ARM: dts: am335x-*: Enable PRU-ICSS nodes
-> 
-> Tero Kristo (1):
->   soc: ti: pruss: add pruss_get()/put() API
-> 
->  .../devicetree/bindings/soc/ti/ti,pruss.txt        | 360 ++++++++++++
->  arch/arm/boot/dts/am335x-bone-common.dtsi          |   8 +
->  arch/arm/boot/dts/am335x-evm.dts                   |   8 +
->  arch/arm/boot/dts/am335x-evmsk.dts                 |   8 +
->  arch/arm/boot/dts/am335x-icev2.dts                 |   8 +
->  arch/arm/boot/dts/am33xx.dtsi                      |  78 +++
->  arch/arm/mach-omap2/pdata-quirks.c                 |  11 +
->  drivers/soc/ti/Kconfig                             |  12 +
->  drivers/soc/ti/Makefile                            |   1 +
->  drivers/soc/ti/pruss.c                             | 306 +++++++++++
->  drivers/soc/ti/pruss.h                             |  36 ++
->  drivers/soc/ti/pruss_intc.c                        | 604 +++++++++++++++++++++
->  drivers/soc/ti/pruss_soc_bus.c                     | 279 ++++++++++
->  include/linux/platform_data/ti-pruss.h             |  25 +
->  include/linux/pruss.h                              | 235 ++++++++
->  15 files changed, 1979 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->  create mode 100644 drivers/soc/ti/pruss.c
->  create mode 100644 drivers/soc/ti/pruss.h
->  create mode 100644 drivers/soc/ti/pruss_intc.c
->  create mode 100644 drivers/soc/ti/pruss_soc_bus.c
->  create mode 100644 include/linux/platform_data/ti-pruss.h
->  create mode 100644 include/linux/pruss.h
-> 
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> 
+from the bpf tree and commits:
+
+  c8123ead13a5 ("bpf: Extend the sk_lookup() helper to XDP hookpoint.")
+  f11216b24219 ("bpf: add skb->tstamp r/w access from tc clsact and cg skb =
+progs")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/core/filter.c
+index 8d2c629501e2,bd0df75dc7b6..000000000000
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@@ -4887,26 -5067,26 +5067,27 @@@ __bpf_sk_lookup(struct sk_buff *skb, st
+  	struct sock *sk =3D NULL;
+  	u8 family =3D AF_UNSPEC;
+  	struct net *net;
++ 	int sdif;
+ =20
+  	family =3D len =3D=3D sizeof(tuple->ipv4) ? AF_INET : AF_INET6;
+ -	if (unlikely(family =3D=3D AF_UNSPEC || netns_id > U32_MAX || flags))
+ +	if (unlikely(family =3D=3D AF_UNSPEC || flags ||
+ +		     !((s32)netns_id < 0 || netns_id <=3D S32_MAX)))
+  		goto out;
+ =20
+- 	if (skb->dev)
+- 		caller_net =3D dev_net(skb->dev);
++ 	if (family =3D=3D AF_INET)
++ 		sdif =3D inet_sdif(skb);
+  	else
+- 		caller_net =3D sock_net(skb->sk);
++ 		sdif =3D inet6_sdif(skb);
++=20
+ -	if (netns_id) {
+ +	if ((s32)netns_id < 0) {
+ +		net =3D caller_net;
+- 		sk =3D sk_lookup(net, tuple, skb, family, proto);
+++		sk =3D sk_lookup(net, tuple, ifindex, sdif, family, proto);
+ +	} else {
+  		net =3D get_net_ns_by_id(caller_net, netns_id);
+  		if (unlikely(!net))
+  			goto out;
+- 		sk =3D sk_lookup(net, tuple, skb, family, proto);
++ 		sk =3D sk_lookup(net, tuple, ifindex, sdif, family, proto);
+  		put_net(net);
+ -	} else {
+ -		net =3D caller_net;
+ -		sk =3D sk_lookup(net, tuple, ifindex, sdif, family, proto);
+  	}
+ =20
+  	if (sk)
+@@@ -5436,10 -5737,14 +5738,14 @@@ static bool bpf_skb_is_valid_access(in
+  		if (size !=3D size_default)
+  			return false;
+  		break;
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ -		if (size !=3D sizeof(struct bpf_flow_keys *))
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
+ +		if (size !=3D sizeof(__u64))
+  			return false;
+  		break;
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
++ 		if (size !=3D sizeof(__u64))
++ 			return false;
++ 		break;
+  	default:
+  		/* Only narrow read access allowed for now. */
+  		if (type =3D=3D BPF_WRITE) {
+@@@ -5465,8 -5770,9 +5771,9 @@@ static bool sk_filter_is_valid_access(i
+  	case bpf_ctx_range(struct __sk_buff, data):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+  	case bpf_ctx_range(struct __sk_buff, data_end):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
+  	case bpf_ctx_range_till(struct __sk_buff, family, local_port):
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
+  		return false;
+  	}
+ =20
+@@@ -5531,7 -5841,8 +5842,8 @@@ static bool lwt_is_valid_access(int off
+  	case bpf_ctx_range(struct __sk_buff, tc_classid):
+  	case bpf_ctx_range_till(struct __sk_buff, family, local_port):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
+  		return false;
+  	}
+ =20
+@@@ -5959,7 -6271,8 +6272,8 @@@ static bool sk_skb_is_valid_access(int=20
+  	switch (off) {
+  	case bpf_ctx_range(struct __sk_buff, tc_classid):
+  	case bpf_ctx_range(struct __sk_buff, data_meta):
+ -	case bpf_ctx_range(struct __sk_buff, flow_keys):
+ +	case bpf_ctx_range_ptr(struct __sk_buff, flow_keys):
++ 	case bpf_ctx_range(struct __sk_buff, tstamp):
+  		return false;
+  	}
+ =20
+
+--Sig_/rUAHhD.nx_6ZwCaAp=zUziE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwEkf0ACgkQAVBC80lX
+0Gwetwf/dvafRB9udNV2+nbY1Yb6i+nLj5jP7+08CHrP3TX2V8rlTDaeBxtGU+J9
+h/KLMtJq9e+G4mkHiBIFBnsXXaUWFvLMZKiCbAf2t0kT/rl1VY8+FZA9uOD/VAdw
+JQypiFZRWWsyBKL9FH0A7KHMGImRJ+qXSEQ5n3FGkyrdJx+Z0Ggy5Fg6jF8Eft/H
+Bryi2aaoNwcIceTA1qthPHxKf9d+xji1YS6QAItlMGLH6y3ESq+dP9YmC9IGpiRG
+vEPK1JGkJ7Nm5NNUskLrSUrJ0m5JSleEKRRv2MLoVezDsA71WLlf9dSxi9H5PYvW
+J1vJG2kxgawoX3X57mqB+p8/naX+EA==
+=Y1aZ
+-----END PGP SIGNATURE-----
+
+--Sig_/rUAHhD.nx_6ZwCaAp=zUziE--
