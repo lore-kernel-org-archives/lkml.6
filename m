@@ -2,119 +2,144 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B328FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3E7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6FB2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6FB2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A211820672
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:44:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A211820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbeLCQot (ORCPT
+        id S1726850AbeLCQoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:44:49 -0500
-Received: from mga12.intel.com ([192.55.52.136]:56867 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbeLCQot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:44:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 08:44:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="97664638"
-Received: from ahduyck-desk1.amr.corp.intel.com ([10.7.198.76])
-  by orsmga006.jf.intel.com with ESMTP; 03 Dec 2018 08:44:43 -0800
-Message-ID: <c60069cf68cd0c674f31f7690406bb97dd39c8da.camel@linux.intel.com>
-Subject: Re: [driver-core PATCH v7 4/9] driver core: Probe devices
- asynchronously instead of the driver
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        linux-nvdimm@lists.01.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
-        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
-        dave.jiang@intel.com, bvanassche@acm.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        brendanhiggins@google.com
-Date:   Mon, 03 Dec 2018 08:44:43 -0800
-In-Reply-To: <20181201024847.GH28501@garbanzo.do-not-panic.com>
-References: <154345118835.18040.17186161872550839244.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <154345154692.18040.8161459765233879389.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <20181201024847.GH28501@garbanzo.do-not-panic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Dec 2018 11:44:54 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42244 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbeLCQox (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 11:44:53 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 6E9C1260CCA
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        kernel@collabora.com, Ezequiel Garcia <ezequiel@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] kref/kobject: Improve documentation
+Date:   Mon,  3 Dec 2018 13:44:35 -0300
+Message-Id: <20181203164435.31530-1-ezequiel@collabora.com>
+X-Mailer: git-send-email 2.20.0.rc1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-30 at 18:48 -0800, Luis Chamberlain wrote:
-> On Wed, Nov 28, 2018 at 04:32:26PM -0800, Alexander Duyck wrote:
-> > Probe devices asynchronously instead of the driver.
-> > +static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
-> > +{
-> > +	struct device *dev = _dev;
-> > +	struct device_driver *drv;
-> > +
-> > +	__device_driver_lock(dev, dev->parent);
-> > +
-> > +	/*
-> > +	 * If someone attempted to bind a driver either successfully or
-> > +	 * unsuccessfully before we got here we should just skip the driver
-> > +	 * probe call.
-> > +	 */
-> > +	drv = dev_get_drv_async(dev);
-> > +	if (drv && !dev->driver)
-> > +		driver_probe_device(drv, dev);
-> 
-> I believe this should mean drivers which have async work on probe can
-> deadlock. For instance, if a driver does call async_schedule() or a
-> derivative call does this for it, the kernel will call
-> async_synchronize_full() and I believe we deadlock.
-> 
-> Are we sure most subsystems which would use async probe will not have
-> an async_schedule() call?
-> 
->   Luis
+The current kref and kobject documentation may be
+insufficient to understand these common pitfalls regarding
+object lifetime and object releasing.
 
-So the async_schedule call isn't a problem. I would only be an issue if
-they are calling async_sychronize_full while we are holding a lock
-and/or mutex. To mitigate that I believe many drivers are just using
-the domain version of things instead of using the global async calls.
+Add a bit more documentation and improve the warnings
+seen by the user, pointing to the right piece of documentation.
 
-An issue like what you have described would already exist if there is
-code like that floating around out there. As is this patch isn't
-changing the fact that a driver can load asynchronously. All it is
-doing is allowing each device to be handled asynchronously instead of
-having just one thread work its way though all the devices one at a
-time.
+Also, it's important to understand that making fun of people
+publicly is not at all helpful, doesn't provide any value,
+and it's not a healthy way of encouraging developers to do better.
 
-The earlier bug we were addressing in patch 1/9 was something like what
-you were describing where we were performing an async_synchronize_full
-while holding the device lock. I would think the requirement if you are
-going to are going to use async within a driver is to use the domain
-specific version instead of just synchronizing entire domains, or if
-you must synchronize the entire domain you should not be doing so while
-holding any locks and/or mutexs.
+"Mocking mercilessly" will, if anything, make developers feel bad
+and go away. This kind of behavior should not be encouraged or justified.
 
-One of the reasons why I am using a flag to perform the synchronization
-between the device_add and device_del in patch 2 is because technically
-any driver can be turned into an asynchronous probing driver by just
-adding the kernel parameter <driver>.async_probe. That flag is somewhat
-hidden here as dev_get_drv_async was checking for the async_probe flag
-in this version of the patch. In the future I plan to replace the
-"async_probe" flag with a "dead" flag to indicate that the device is in
-the process of doing through a device_del which should accomplish the
-same thing.
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+---
+ Documentation/kobject.txt | 10 +++++++---
+ drivers/base/core.c       |  3 +--
+ include/linux/kref.h      |  5 +----
+ lib/kobject.c             |  2 +-
+ 4 files changed, 10 insertions(+), 10 deletions(-)
 
-- Alex
+diff --git a/Documentation/kobject.txt b/Documentation/kobject.txt
+index fc9485d79061..ff4c25098119 100644
+--- a/Documentation/kobject.txt
++++ b/Documentation/kobject.txt
+@@ -279,10 +279,14 @@ such a method has a form like::
+ One important point cannot be overstated: every kobject must have a
+ release() method, and the kobject must persist (in a consistent state)
+ until that method is called. If these constraints are not met, the code is
+-flawed.  Note that the kernel will warn you if you forget to provide a
++flawed. Note that the kernel will warn you if you forget to provide a
+ release() method.  Do not try to get rid of this warning by providing an
+-"empty" release function; you will be mocked mercilessly by the kobject
+-maintainer if you attempt this.
++"empty" release function.
++
++If all your cleanup function needs to do is call kfree(), then you must
++create a wrapper function which uses container_of() to upcast to the correct
++type (as shown in the example above) and then calls kfree() on the overall
++structure.
+ 
+ Note, the name of the kobject is available in the release function, but it
+ must NOT be changed within this callback.  Otherwise there will be a memory
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index f3e6ca4170b4..1a6a161be762 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -918,8 +918,7 @@ static void device_release(struct kobject *kobj)
+ 	else if (dev->class && dev->class->dev_release)
+ 		dev->class->dev_release(dev);
+ 	else
+-		WARN(1, KERN_ERR "Device '%s' does not have a release() "
+-			"function, it is broken and must be fixed.\n",
++		WARN(1, KERN_ERR "Device '%s' does not have a release() function, it is broken and must be fixed. See Documentation/kobject.txt.\n",
+ 			dev_name(dev));
+ 	kfree(p);
+ }
+diff --git a/include/linux/kref.h b/include/linux/kref.h
+index 29220724bf1c..cb00a0268061 100644
+--- a/include/linux/kref.h
++++ b/include/linux/kref.h
+@@ -53,10 +53,7 @@ static inline void kref_get(struct kref *kref)
+  * @release: pointer to the function that will clean up the object when the
+  *	     last reference to the object is released.
+  *	     This pointer is required, and it is not acceptable to pass kfree
+- *	     in as this function.  If the caller does pass kfree to this
+- *	     function, you will be publicly mocked mercilessly by the kref
+- *	     maintainer, and anyone else who happens to notice it.  You have
+- *	     been warned.
++ *	     in as this function.
+  *
+  * Decrement the refcount, and if 0, call release().
+  * Return 1 if the object was removed, otherwise return 0.  Beware, if this
+diff --git a/lib/kobject.c b/lib/kobject.c
+index 97d86dc17c42..b72e00fd7d09 100644
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -639,7 +639,7 @@ static void kobject_cleanup(struct kobject *kobj)
+ 		 kobject_name(kobj), kobj, __func__, kobj->parent);
+ 
+ 	if (t && !t->release)
+-		pr_debug("kobject: '%s' (%p): does not have a release() function, it is broken and must be fixed.\n",
++		pr_debug("kobject: '%s' (%p): does not have a release() function, it is broken and must be fixed. See Documentation/kobject.txt.\n",
+ 			 kobject_name(kobj), kobj);
+ 
+ 	/* send "remove" if the caller did not do it but sent "add" */
+-- 
+2.20.0.rc1
 
