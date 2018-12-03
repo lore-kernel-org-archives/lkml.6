@@ -2,208 +2,104 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2028CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A909C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E224A20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:37:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E224A20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1109B20659
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:41:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msZowB5d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1109B20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbeLCOiW (ORCPT
+        id S1726566AbeLCOm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:38:22 -0500
-Received: from foss.arm.com ([217.140.101.70]:38686 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725918AbeLCOiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:38:22 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6653D1682;
-        Mon,  3 Dec 2018 06:37:07 -0800 (PST)
-Received: from [10.1.37.145] (p8cg001049571a15.cambridge.arm.com [10.1.37.145])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A6C83F5AF;
-        Mon,  3 Dec 2018 06:37:05 -0800 (PST)
-Subject: Re: [PATCH v9 5/8] KVM: arm64: Support PUD hugepage in
- stage2_is_exec()
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-6-punit.agrawal@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <ab23d99f-32fe-99d1-a255-89ef9028d660@arm.com>
-Date:   Mon, 3 Dec 2018 20:07:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Dec 2018 09:42:57 -0500
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:38406 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725918AbeLCOm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:42:57 -0500
+Received: by mail-wm1-f51.google.com with SMTP id m22so5945290wml.3;
+        Mon, 03 Dec 2018 06:41:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wro0hN2cOLy9GNrRQZfYqJvuvGHJNSeoIo1VRyy84jw=;
+        b=msZowB5dVkiOtnkkG6JG9LCa9CcepmojHAF1kBHcQ/oii0jBcGq2IEqRmrco0aE5RP
+         F7pZ03Pg2ACTG1IoTaN7AX+cJJdhhN+lfXKsbNe8wqc7FDpY4IPPuKAGem0cw0BFr+CQ
+         QRJ6W7HH0Y86xbH/HagX0rmNWtBD/0dz0C/S2Y3tCPrn35YACO4MjVK449PYIyPJedrW
+         Fih0btzLB2+yg1DHFq5oJJnhV4mQyabq4Ps95l7kyYFzvXh+PplBwyzaJ5v2y1n2JDOD
+         a28MIACn7G6nPBNL7MgFs0VfCunT/h8PWa1IlgtXltjTFSPY42fXLhfC51mWwmx3sLIt
+         jhbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wro0hN2cOLy9GNrRQZfYqJvuvGHJNSeoIo1VRyy84jw=;
+        b=fT09nY2+ZHsXovgk2A4IwnTRKFh3O86UnlvA3ydRBWde7YTquTINhbdRyLG2gst3YY
+         eCfz+ac9G7372D/Ske7MMh0T1q82APB/ayRIxB6bC+wvrIsqqdRwk2ty/8GiGe7neTq/
+         3cdqu0QvGI+NPt2Dx+feRF7jy4Ed7PDoJ1bHuv4n/aCKAp3B6gduGDm0QbpfQOvsZsb9
+         pmtXmG29DTWgyW1PK2VQKs/njiU5wqzSr+VdM6KaduMwddKY2cvYDPd6RwhIqP/QK0QL
+         RyRPUAVj0v/QtSi3WX/9Jq/xtX6qtyri5+HYwqfszULR6W7lCbmH5yg1hXGTACvrAFv2
+         kLFg==
+X-Gm-Message-State: AA+aEWawz3g78BB6elBS3UOPfI8gTscWzY2ieJ+e4oODpno/7Qzj2Z1P
+        fcfk2a0ZBOgw22AETTh4U7u6qngBx+0HjdyPAb8=
+X-Google-Smtp-Source: AFSGD/XGakvsXLoYjHUQOUvq8jGAZ8+3FlEbbCmtCe9cYh7bOgodiIkspOU4B2iY36bP25iLwwuqHoZL++g93KIxJV8=
+X-Received: by 2002:a1c:ee41:: with SMTP id m62mr2558315wmh.103.1543848099429;
+ Mon, 03 Dec 2018 06:41:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181031175745.18650-6-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181129121458.GK19305@dastard> <20181129124756.GA25945@kroah.com>
+ <20181129224019.GM19305@dastard> <20181130082203.GA26830@kroah.com>
+ <20181130101441.GA213156@sasha-vm> <20181130215005.GP19305@dastard>
+ <20181201074909.GC213156@sasha-vm> <CAOQ4uxhCH3oxVWDMVRcXMZO3JSTCA1Pp5AYnHP5pDxyNktqONw@mail.gmail.com>
+ <20181202152547.GI221015@sasha-vm> <20181202161016.GA27696@infradead.org> <20181202200819.GA3932@kroah.com>
+In-Reply-To: <20181202200819.GA3932@kroah.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Mon, 3 Dec 2018 15:41:27 +0100
+Message-ID: <CAFLxGvyx-n4fUbsv+PrAebAPRe=yGV1zLRA44XnOwtMaubS8cg@mail.gmail.com>
+Subject: Re: XFS patches for stable
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, sashal@kernel.org,
+        amir73il@gmail.com, Dave Chinner <david@fromorbit.com>,
+        stable <stable@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, dchinner@redhat.com,
+        darrick.wong@oracle.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs@vger.kernel.org, mcgrof@kernel.org,
+        linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 2, 2018 at 9:09 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Sun, Dec 02, 2018 at 08:10:16AM -0800, Christoph Hellwig wrote:
+> > As someone who has done xfs stable backports for a while I really don't
+> > think the autoselection is helpful at all.
+>
+> autoselection for xfs patches has been turned off for a while, what
+> triggered this email thread was a core vfs patch that was backported
+> that was not obvious it was created by the xfs developers due to a
+> problem they had found.
 
+Sorry for hijacking this thread.
+Can you please also disable autoselection for MTD, UBI and UBIFS?
 
-On 10/31/2018 11:27 PM, Punit Agrawal wrote:
-> In preparation for creating PUD hugepages at stage 2, add support for
-> detecting execute permissions on PUD page table entries. Faults due to
-> lack of execute permissions on page table entries is used to perform
-> i-cache invalidation on first execute.
-> 
-> Provide trivial implementations of arm32 helpers to allow sharing of
-> code.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm/include/asm/kvm_mmu.h         |  6 +++
->  arch/arm64/include/asm/kvm_mmu.h       |  5 +++
->  arch/arm64/include/asm/pgtable-hwdef.h |  2 +
->  virt/kvm/arm/mmu.c                     | 53 +++++++++++++++++++++++---
->  4 files changed, 61 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index 37bf85d39607..839a619873d3 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -102,6 +102,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
->  	return false;
->  }
->  
-> +static inline bool kvm_s2pud_exec(pud_t *pud)
-> +{
-> +	BUG();
-> +	return false;
-> +}
-> +
->  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->  {
->  	pte_val(pte) |= L_PTE_S2_RDWR;
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 8da6d1b2a196..c755b37b3f92 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -261,6 +261,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
->  	return kvm_s2pte_readonly((pte_t *)pudp);
->  }
->  
-> +static inline bool kvm_s2pud_exec(pud_t *pudp)
-> +{
-> +	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
-> +}
-> +
->  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
->  
->  #ifdef __PAGETABLE_PMD_FOLDED
-> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> index 1d7d8da2ef9b..336e24cddc87 100644
-> --- a/arch/arm64/include/asm/pgtable-hwdef.h
-> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> @@ -193,6 +193,8 @@
->  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
->  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
->  
-> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
-> +
->  /*
->   * Memory Attribute override for Stage-2 (MemAttr[3:0])
->   */
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 1c669c3c1208..8e44dccd1b47 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1083,23 +1083,66 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
->  	return 0;
->  }
->  
-> -static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
-> +/*
-> + * stage2_get_leaf_entry - walk the stage2 VM page tables and return
-> + * true if a valid and present leaf-entry is found. A pointer to the
-> + * leaf-entry is returned in the appropriate level variable - pudpp,
-> + * pmdpp, ptepp.
-> + */
-> +static bool stage2_get_leaf_entry(struct kvm *kvm, phys_addr_t addr,
-> +				  pud_t **pudpp, pmd_t **pmdpp, pte_t **ptepp)
->  {
-> +	pud_t *pudp;
->  	pmd_t *pmdp;
->  	pte_t *ptep;
->  
-> -	pmdp = stage2_get_pmd(kvm, NULL, addr);
-> +	*pudpp = NULL;
-> +	*pmdpp = NULL;
-> +	*ptepp = NULL;
-> +
-> +	pudp = stage2_get_pud(kvm, NULL, addr);
-> +	if (!pudp || stage2_pud_none(kvm, *pudp) || !stage2_pud_present(kvm, *pudp))
-> +		return false;
-> +
-> +	if (stage2_pud_huge(kvm, *pudp)) {
-> +		*pudpp = pudp;
-> +		return true;
-> +	}
-> +
-> +	pmdp = stage2_pmd_offset(kvm, pudp, addr);
->  	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
->  		return false;
->  
-> -	if (pmd_thp_or_huge(*pmdp))
-> -		return kvm_s2pmd_exec(pmdp);
-> +	if (pmd_thp_or_huge(*pmdp)) {
-> +		*pmdpp = pmdp;
-> +		return true;
-> +	}
->  
->  	ptep = pte_offset_kernel(pmdp, addr);
->  	if (!ptep || pte_none(*ptep) || !pte_present(*ptep))
->  		return false;
->  
-> -	return kvm_s2pte_exec(ptep);
-> +	*ptepp = ptep;
-> +	return true;
-> +}
-> +
-> +static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
-> +{
-> +	pud_t *pudp;
-> +	pmd_t *pmdp;
-> +	pte_t *ptep;
-> +	bool found;
-> +
-> +	found = stage2_get_leaf_entry(kvm, addr, &pudp, &pmdp, &ptep);
-> +	if (!found)
-> +		return false;
-> +
-> +	if (pudp)
-> +		return kvm_s2pud_exec(pudp);
-> +	else if (pmdp)
-> +		return kvm_s2pmd_exec(pmdp);
-> +	else
-> +		return kvm_s2pte_exec(ptep);
->  }
+fs/ubifs/
+drivers/mtd/
+include/linux/mtd/
+include/uapi/mtd/
 
-stage2_get_leaf_entry() is not really necessary as a separate function.
-It determines leaf entry and just return a true/false. At those 'true'
-return points it can just return kvm_s2XXX_exec() directly. Passing
-three  different pointers as arguments and checking for them being
-non-NULL upon return and doing a simple return then seems like a lot
-without much reason. stage2_is_exec() can just be expanded to add PUD
-support.
+-- 
+Thanks,
+//richard
