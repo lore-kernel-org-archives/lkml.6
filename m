@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D8BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF72C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C167B20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C167B20850
+	by mail.kernel.org (Postfix) with ESMTP id 2772420850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:01:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2772420850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbeLCVBU (ORCPT
+        id S1726065AbeLCVBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:01:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56831 "EHLO
+        Mon, 3 Dec 2018 16:01:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49609 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLCVBU (ORCPT
+        with ESMTP id S1725903AbeLCVBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:01:20 -0500
+        Mon, 3 Dec 2018 16:01:52 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L0uJM594262
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L1UG4594332
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Dec 2018 13:00:56 -0800
+        Mon, 3 Dec 2018 13:01:30 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L0tO4594259;
-        Mon, 3 Dec 2018 13:00:55 -0800
-Date:   Mon, 3 Dec 2018 13:00:55 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L1UD9594328;
+        Mon, 3 Dec 2018 13:01:30 -0800
+Date:   Mon, 3 Dec 2018 13:01:30 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-d08452390179710dc7989242605e3c1faa62b64f@git.kernel.org>
-Cc:     rkrcmar@redhat.com, riel@surriel.com, x86@kernel.org,
-        pbonzini@redhat.com, tglx@linutronix.de, Jason@zx2c4.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, luto@kernel.org,
+Message-ID: <tip-e08e32119b944f519664451bfb342a25b4045ead@git.kernel.org>
+Cc:     mingo@kernel.org, jroedel@suse.de, riel@surriel.com,
+        tglx@linutronix.de, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com, x86@kernel.org,
         dave.hansen@linux.intel.com, bigeasy@linutronix.de,
-        mingo@kernel.org, mingo@redhat.com, bp@suse.de, hpa@zytor.com
-Reply-To: riel@surriel.com, tglx@linutronix.de, x86@kernel.org,
-          pbonzini@redhat.com, rkrcmar@redhat.com,
-          linux-kernel@vger.kernel.org, Jason@zx2c4.com, mingo@redhat.com,
-          mingo@kernel.org, kvm@vger.kernel.org, luto@kernel.org,
-          bigeasy@linutronix.de, dave.hansen@linux.intel.com,
-          hpa@zytor.com, bp@suse.de
-In-Reply-To: <20181128222035.2996-2-bigeasy@linutronix.de>
-References: <20181128222035.2996-2-bigeasy@linutronix.de>
+        jannh@google.com, bp@suse.de, mingo@redhat.com, rkrcmar@redhat.com,
+        luto@kernel.org, hpa@zytor.com, Jason@zx2c4.com
+Reply-To: rkrcmar@redhat.com, luto@kernel.org, mingo@redhat.com,
+          hpa@zytor.com, Jason@zx2c4.com, bigeasy@linutronix.de,
+          jannh@google.com, dave.hansen@linux.intel.com, bp@suse.de,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          kvm@vger.kernel.org, pbonzini@redhat.com, x86@kernel.org,
+          jroedel@suse.de, mingo@kernel.org, riel@surriel.com
+In-Reply-To: <20181128222035.2996-3-bigeasy@linutronix.de>
+References: <20181128222035.2996-3-bigeasy@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/fpu] x86/fpu: Use unsigned long long shift in
- xfeature_uncompacted_offset()
-Git-Commit-ID: d08452390179710dc7989242605e3c1faa62b64f
+Subject: [tip:x86/fpu] x86/process/32: Remove asm/math_emu.h include
+Git-Commit-ID: e08e32119b944f519664451bfb342a25b4045ead
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -65,50 +65,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d08452390179710dc7989242605e3c1faa62b64f
-Gitweb:     https://git.kernel.org/tip/d08452390179710dc7989242605e3c1faa62b64f
+Commit-ID:  e08e32119b944f519664451bfb342a25b4045ead
+Gitweb:     https://git.kernel.org/tip/e08e32119b944f519664451bfb342a25b4045ead
 Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Wed, 28 Nov 2018 23:20:07 +0100
+AuthorDate: Wed, 28 Nov 2018 23:20:08 +0100
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Mon, 3 Dec 2018 18:40:28 +0100
+CommitDate: Mon, 3 Dec 2018 18:51:16 +0100
 
-x86/fpu: Use unsigned long long shift in xfeature_uncompacted_offset()
+x86/process/32: Remove asm/math_emu.h include
 
-The xfeature mask is 64-bit so a shift from a number to its mask should
-have ULL suffix or else bits above position 31 will be lost. This is not
-a problem now but should XFEATURE_MASK_SUPERVISOR gain a bit >31 then
-this check won't catch it.
+The math_emu.h header files contains the definition of struct
+math_emu_info which is not used in this file.
 
-Use BIT_ULL() to compute a mask from a number.
+Remove the asm/math_emu.h include.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Reviewed-by: Rik van Riel <riel@surriel.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Joerg Roedel <jroedel@suse.de>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: kvm ML <kvm@vger.kernel.org>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181128222035.2996-2-bigeasy@linutronix.de
+Link: https://lkml.kernel.org/r/20181128222035.2996-3-bigeasy@linutronix.de
 ---
- arch/x86/kernel/fpu/xstate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/process_32.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 87a57b7642d3..69d5740ed254 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -444,7 +444,7 @@ static int xfeature_uncompacted_offset(int xfeature_nr)
- 	 * format. Checking a supervisor state's uncompacted offset is
- 	 * an error.
- 	 */
--	if (XFEATURE_MASK_SUPERVISOR & (1 << xfeature_nr)) {
-+	if (XFEATURE_MASK_SUPERVISOR & BIT_ULL(xfeature_nr)) {
- 		WARN_ONCE(1, "No fixed offset for xstate %d\n", xfeature_nr);
- 		return -1;
- 	}
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index d3e593eb189f..575654db463e 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -44,9 +44,6 @@
+ #include <asm/processor.h>
+ #include <asm/fpu/internal.h>
+ #include <asm/desc.h>
+-#ifdef CONFIG_MATH_EMULATION
+-#include <asm/math_emu.h>
+-#endif
+ 
+ #include <linux/err.h>
+ 
