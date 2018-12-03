@@ -2,231 +2,466 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78AEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E24C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AFF020850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:12:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c6f3xHN6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AFF020850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8826D20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:15:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8826D20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbeLCVMc (ORCPT
+        id S1725994AbeLCVPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:12:32 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40110 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbeLCVMc (ORCPT
+        Mon, 3 Dec 2018 16:15:42 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34052 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCVPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:12:32 -0500
-Received: by mail-it1-f196.google.com with SMTP id h193so10909751ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 13:12:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yhIoV1dlJMenFm8edG2JD4Ef45e8aCymQaFOXM0M0dE=;
-        b=c6f3xHN64JNAu4OHg/gLyl2qOK/TyxhK5AoPdT8JT95w4+yCIEe4lDyPPdt1sO90Za
-         cv4m2Kb0E52NPtiVkgWSQ32NW+9TaiIl2HMvc5JGpfkHrggS9lAkq1h9D7eKAndtP4aY
-         T0UGAyBmnNVj2BsWAghwV2wrDMauz7DgGwBuA=
+        Mon, 3 Dec 2018 16:15:41 -0500
+Received: by mail-ot1-f68.google.com with SMTP id t5so13112994otk.1;
+        Mon, 03 Dec 2018 13:15:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yhIoV1dlJMenFm8edG2JD4Ef45e8aCymQaFOXM0M0dE=;
-        b=MlyhvrjFX51+LFjMjQnH64cpwrKO4lLXVPsbniiLApNASTrqQ7CUwaK8UELf8vtSnB
-         kaE7kYE+CF6PlIAMRbmbgKlFkaALkp3JOkWZ9Vw2Q4eImdfhNgW9I3dLXCzjLsl5SESL
-         g3wvS9zZGGO8xoMyTQ1qugVmBLVjVBbJwr0RputEOP9nN89MWmWV4kEZN8Px66TDdiPx
-         N8/0EGwsGAXm2S+qDZfY4SOm0skapp2W9jzDpkqDDSw5voo4fY10KObLSzUP3Z8qE39u
-         P9d61vSFdOt+HRCMmx03wzPhj3OrJcMD5J0TPE8rHSwgC8j3s/dX3KwfLq0JwB+6vmd2
-         ZNYQ==
-X-Gm-Message-State: AA+aEWYZ8wAtXhNmAIcWQ8PiWu/6U8iv2kNpWttYJfOYhsa7zBHsORka
-        9LW3jaDhh3BkT9ABmtSUO501VNahzz/c+mOYMElSAw==
-X-Google-Smtp-Source: AFSGD/VQLpPaJ+9uZg/2zjeSkDRwFa2atwtXr9CPUbBf9cO8rWtrInzY/vzT/qbZWuzlCj2nEsb/S2LZqJyXBzLo/Js=
-X-Received: by 2002:a24:edc4:: with SMTP id r187mr10260248ith.158.1543871550657;
- Mon, 03 Dec 2018 13:12:30 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=M7vpjrBQyWsFzK7YFvnRxyS3XwU251GMrmhpys78+Qk=;
+        b=cCw5OMX1UcbKD29dtzntHoqnowLWApbNNzSb5zMKFTDOm5Do0Eod1dg/opFrBCJ9nu
+         GinfvQTdnngmMf+eqwtyOsQ4l/9ql42HnSn3ad4LTM5x+LxHvGIoko0zUE5VyhyQPef7
+         o3PCimHnUgsX+BBrjeBDQavBeth1HseKGct1as/F4MCMu7IWg957Y/2bi2tebiLmrTZp
+         1R3vlYccviUXY6zIOIa+3s/squRt+IgFKSdniyrqOoycd5conntAcF0SHS+3HHX0YIjU
+         orSOOTfdp+4/FBzer3BjJgbEVAnQ1jykeO2+HhkSt7+IX1kaj7hSd5wt099KF5T+pIQz
+         +xSA==
+X-Gm-Message-State: AA+aEWaYPgKKBOxSXpqct6vqnS6SFBRLU25pSDy9ixrvZqVhyoYmvnX8
+        9brYiZlzzmt8lwmgf/d48Lan3eky+/COmkxmzE9UXjZ3
+X-Google-Smtp-Source: AFSGD/XPcr/+GPoQHwssj+YkVjGfbtGRfd+SBfTENRHMDK0KpGWgTGKW872fpp5arWd+5gyBLLQvFpxJY55kSvkuHMw=
+X-Received: by 2002:a9d:22a:: with SMTP id 39mr11723589otb.354.1543871739926;
+ Mon, 03 Dec 2018 13:15:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20181129150210.2k4mawt37ow6c2vq@linutronix.de> <tip-7d79adb87fa79e4a4c59424fd5b5a922861fc5f6@git.kernel.org>
-In-Reply-To: <tip-7d79adb87fa79e4a4c59424fd5b5a922861fc5f6@git.kernel.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 3 Dec 2018 22:12:19 +0100
-Message-ID: <CAKv+Gu-s59fSWrMevmbJWyBtNVYLkF7FATALGBD470CWsN9C1Q@mail.gmail.com>
-Subject: Re: [tip:x86/fpu] x86/fpu: Don't export __kernel_fpu_{begin,end}()
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>, nstange@suse.de,
-        Rik van Riel <riel@surriel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        KVM devel mailing list <kvm@vger.kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-tip-commits@vger.kernel.org
+References: <aeeaafbdf0357f8bdb8ffd86822a0ddfd5521fd6.1542395798.git.christophe.leroy@c-s.fr>
+ <73b5e7a43bb5979ac534d1c236adb2e04f9d6307.1542395798.git.christophe.leroy@c-s.fr>
+In-Reply-To: <73b5e7a43bb5979ac534d1c236adb2e04f9d6307.1542395798.git.christophe.leroy@c-s.fr>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Mon, 3 Dec 2018 22:15:28 +0100
+Message-ID: <CA+7wUsx3iZhPH0uwukRNXaT_ZygaqKNXaNf=kcwoJ9nGqTb2Mw@mail.gmail.com>
+Subject: Re: [PATCH 2/7] powerpc: change CONFIG_6xx to CONFIG_PPC_BOOK3S_32
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Dec 2018 at 22:04, tip-bot for Sebastian Andrzej Siewior
-<tipbot@zytor.com> wrote:
+On Sat, Nov 17, 2018 at 11:29 AM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
 >
-> Commit-ID:  7d79adb87fa79e4a4c59424fd5b5a922861fc5f6
-> Gitweb:     https://git.kernel.org/tip/7d79adb87fa79e4a4c59424fd5b5a92286=
-1fc5f6
-> Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> AuthorDate: Thu, 29 Nov 2018 16:02:10 +0100
-> Committer:  Borislav Petkov <bp@suse.de>
-> CommitDate: Mon, 3 Dec 2018 19:37:27 +0100
+> Today we have:
 >
-> x86/fpu: Don't export __kernel_fpu_{begin,end}()
+> config PPC_BOOK3S_32
+>         bool "512x/52xx/6xx/7xx/74xx/82xx/83xx/86xx"
+>         [depends on PPC32 within a choice]
 >
-> There is one user of __kernel_fpu_begin() and before invoking it,
-> it invokes preempt_disable(). So it could invoke kernel_fpu_begin()
-> right away. The 32bit version of arch_efi_call_virt_setup() and
-> arch_efi_call_virt_teardown() does this already.
+> config PPC_BOOK3S
+>         def_bool y
+>         depends on PPC_BOOK3S_32 || PPC_BOOK3S_64
 >
-> The comment above *kernel_fpu*() claims that before invoking
-> __kernel_fpu_begin() preemption should be disabled and that KVM is a
-> good example of doing it. Well, KVM doesn't do that since commit
+> config 6xx
+>         def_bool y
+>         depends on PPC32 && PPC_BOOK3S
 >
->   f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run"=
-)
+> 6xx is therefore redundant with PPC_BOOK3S_32.
 >
-> so it is not an example anymore.
+> In order to make the code clearer, lets use preferably PPC_BOOK3S_32.
+> This will allow to remove CONFIG_6xx in a later patch.
 >
-> With EFI gone as the last user of __kernel_fpu_{begin|end}(), both can
-> be made static and not exported anymore.
->
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Reviewed-by: Rik van Riel <riel@surriel.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Nicolai Stange <nstange@suse.de>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: kvm ML <kvm@vger.kernel.org>
-> Cc: linux-efi <linux-efi@vger.kernel.org>
-> Cc: x86-ml <x86@kernel.org>
-> Link: https://lkml.kernel.org/r/20181129150210.2k4mawt37ow6c2vq@linutroni=
-x.de
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 > ---
->  arch/x86/include/asm/efi.h     |  6 ++----
->  arch/x86/include/asm/fpu/api.h | 16 ++++++----------
->  arch/x86/kernel/fpu/core.c     |  6 ++----
->  3 files changed, 10 insertions(+), 18 deletions(-)
+>  arch/powerpc/Makefile                     |  2 +-
+>  arch/powerpc/include/asm/cache.h          |  2 +-
+>  arch/powerpc/include/asm/mmu.h            |  2 +-
+>  arch/powerpc/include/asm/reg.h            |  2 +-
+>  arch/powerpc/include/asm/time.h           |  2 +-
+>  arch/powerpc/kernel/Makefile              |  2 +-
+>  arch/powerpc/kernel/cpu_setup_6xx.S       |  2 +-
+>  arch/powerpc/kernel/entry_32.S            | 10 +++++-----
+>  arch/powerpc/kernel/head_32.S             | 14 +++++++-------
+>  arch/powerpc/kernel/misc_32.S             |  4 ++--
+>  arch/powerpc/kernel/pmc.c                 |  2 +-
+>  arch/powerpc/kernel/setup_32.c            |  2 +-
+>  arch/powerpc/kernel/sysfs.c               |  2 +-
+>  arch/powerpc/mm/mmu_decl.h                |  2 +-
+>  arch/powerpc/oprofile/Makefile            |  2 +-
+>  arch/powerpc/oprofile/common.c            |  2 +-
+>  arch/powerpc/platforms/powermac/cache.S   |  4 ++--
+>  arch/powerpc/platforms/powermac/feature.c |  2 +-
+>  arch/powerpc/platforms/powermac/sleep.S   |  4 ++--
+>  arch/powerpc/sysdev/Makefile              |  2 +-
+>  20 files changed, 33 insertions(+), 33 deletions(-)
 >
-> diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-> index eea40d52ca78..45864898f7e5 100644
-> --- a/arch/x86/include/asm/efi.h
-> +++ b/arch/x86/include/asm/efi.h
-> @@ -82,8 +82,7 @@ struct efi_scratch {
->  #define arch_efi_call_virt_setup()                                     \
->  ({                                                                     \
->         efi_sync_low_kernel_mappings();                                 \
-> -       preempt_disable();                                              \
-> -       __kernel_fpu_begin();                                           \
-> +       kernel_fpu_begin();                                             \
->         firmware_restrict_branch_speculation_start();                   \
->                                                                         \
->         if (!efi_enabled(EFI_OLD_MEMMAP))                               \
-> @@ -99,8 +98,7 @@ struct efi_scratch {
->                 efi_switch_mm(efi_scratch.prev_mm);                     \
->                                                                         \
->         firmware_restrict_branch_speculation_end();                     \
-> -       __kernel_fpu_end();                                             \
-> -       preempt_enable();                                               \
-> +       kernel_fpu_end();                                               \
->  })
+> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+> index 8a2ce14d68d0..e259b8a2dd44 100644
+> --- a/arch/powerpc/Makefile
+> +++ b/arch/powerpc/Makefile
+> @@ -241,7 +241,7 @@ KBUILD_CFLAGS       += $(call cc-option,-fno-dwarf2-cfi-asm)
+>  # often slow when they are implemented at all
+>  KBUILD_CFLAGS          += $(call cc-option,-mno-string)
 >
->  extern void __iomem *__init efi_ioremap(unsigned long addr, unsigned lon=
-g size,
-> diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/ap=
-i.h
-> index a9caac9d4a72..e368d8d94ca6 100644
-> --- a/arch/x86/include/asm/fpu/api.h
-> +++ b/arch/x86/include/asm/fpu/api.h
-> @@ -12,17 +12,13 @@
->  #define _ASM_X86_FPU_API_H
+> -ifdef CONFIG_6xx
+> +ifdef CONFIG_PPC_BOOK3S_32
+>  KBUILD_CFLAGS          += -mcpu=powerpc
+>  endif
+
+I never quite understood this part. Let say I want to specify 'power4'
+in arch/powerpc/platforms/Kconfig.cputype as new TARGET_CPU. The line
+above will always append -mcpu=powerpc *after* a TARGET_CPU=power4
+which defeat the whole purpose, right ?
+
+> diff --git a/arch/powerpc/include/asm/cache.h b/arch/powerpc/include/asm/cache.h
+> index 66298461b640..40ea5b3781c6 100644
+> --- a/arch/powerpc/include/asm/cache.h
+> +++ b/arch/powerpc/include/asm/cache.h
+> @@ -71,7 +71,7 @@ extern struct ppc64_caches ppc64_caches;
+>  #else
+>  #define __read_mostly __attribute__((__section__(".data..read_mostly")))
+>
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>  extern long _get_L2CR(void);
+>  extern long _get_L3CR(void);
+>  extern void _set_L2CR(unsigned long);
+> diff --git a/arch/powerpc/include/asm/mmu.h b/arch/powerpc/include/asm/mmu.h
+> index eb20eb3b8fb0..47b651deff5b 100644
+> --- a/arch/powerpc/include/asm/mmu.h
+> +++ b/arch/powerpc/include/asm/mmu.h
+> @@ -48,7 +48,7 @@
+>  #define MMU_FTR_USE_HIGH_BATS          ASM_CONST(0x00010000)
+>
+>  /* Enable >32-bit physical addresses on 32-bit processor, only used
+> - * by CONFIG_6xx currently as BookE supports that from day 1
+> + * by CONFIG_PPC_BOOK3S_32 currently as BookE supports that from day 1
+>   */
+>  #define MMU_FTR_BIG_PHYS               ASM_CONST(0x00020000)
+>
+> diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
+> index de52c3166ba4..0d2139a0d5b9 100644
+> --- a/arch/powerpc/include/asm/reg.h
+> +++ b/arch/powerpc/include/asm/reg.h
+> @@ -582,7 +582,7 @@
+>  #define HID0_POWER9_RADIX      __MASK(63 - 8)
+>
+>  #define SPRN_HID1      0x3F1           /* Hardware Implementation Register 1 */
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>  #define HID1_EMCP      (1<<31)         /* 7450 Machine Check Pin Enable */
+>  #define HID1_DFS       (1<<22)         /* 7447A Dynamic Frequency Scaling */
+>  #define HID1_PC0       (1<<16)         /* 7450 PLL_CFG[0] */
+> diff --git a/arch/powerpc/include/asm/time.h b/arch/powerpc/include/asm/time.h
+> index b80d492ceb29..54bf7e68a7e1 100644
+> --- a/arch/powerpc/include/asm/time.h
+> +++ b/arch/powerpc/include/asm/time.h
+> @@ -43,7 +43,7 @@ struct div_result {
+>
+>  /* Accessor functions for the timebase (RTC on 601) registers. */
+>  /* If one day CONFIG_POWER is added just define __USE_RTC as 1 */
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>  #define __USE_RTC()    (cpu_has_feature(CPU_FTR_USE_RTC))
+>  #else
+>  #define __USE_RTC()    0
+> diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+> index 53d4b8d5b54d..a5a6a243f3cf 100644
+> --- a/arch/powerpc/kernel/Makefile
+> +++ b/arch/powerpc/kernel/Makefile
+> @@ -69,7 +69,7 @@ obj-$(CONFIG_FA_DUMP)         += fadump.o
+>  ifdef CONFIG_PPC32
+>  obj-$(CONFIG_E500)             += idle_e500.o
+>  endif
+> -obj-$(CONFIG_6xx)              += idle_6xx.o l2cr_6xx.o cpu_setup_6xx.o
+> +obj-$(CONFIG_PPC_BOOK3S_32)    += idle_6xx.o l2cr_6xx.o cpu_setup_6xx.o
+>  obj-$(CONFIG_TAU)              += tau_6xx.o
+>  obj-$(CONFIG_HIBERNATION)      += swsusp.o suspend.o
+>  ifdef CONFIG_FSL_BOOKE
+> diff --git a/arch/powerpc/kernel/cpu_setup_6xx.S b/arch/powerpc/kernel/cpu_setup_6xx.S
+> index fa3c2c91290c..8c069e96c478 100644
+> --- a/arch/powerpc/kernel/cpu_setup_6xx.S
+> +++ b/arch/powerpc/kernel/cpu_setup_6xx.S
+> @@ -326,7 +326,7 @@ _GLOBAL(__save_cpu_setup)
+>         lis     r5,cpu_state_storage@h
+>         ori     r5,r5,cpu_state_storage@l
+>
+> -       /* Save HID0 (common to all CONFIG_6xx cpus) */
+> +       /* Save HID0 (common to all CONFIG_PPC_BOOK3S_32 cpus) */
+>         mfspr   r3,SPRN_HID0
+>         stw     r3,CS_HID0(r5)
+>
+> diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+> index 77decded1175..0768dfd8a64e 100644
+> --- a/arch/powerpc/kernel/entry_32.S
+> +++ b/arch/powerpc/kernel/entry_32.S
+> @@ -200,14 +200,14 @@ transfer_to_handler:
+>         cmplw   r1,r9                   /* if r1 <= ksp_limit */
+>         ble-    stack_ovf               /* then the kernel stack overflowed */
+>  5:
+> -#if defined(CONFIG_6xx) || defined(CONFIG_E500)
+> +#if defined(CONFIG_PPC_BOOK3S_32) || defined(CONFIG_E500)
+>         CURRENT_THREAD_INFO(r9, r1)
+>         tophys(r9,r9)                   /* check local flags */
+>         lwz     r12,TI_LOCAL_FLAGS(r9)
+>         mtcrf   0x01,r12
+>         bt-     31-TLF_NAPPING,4f
+>         bt-     31-TLF_SLEEPING,7f
+> -#endif /* CONFIG_6xx || CONFIG_E500 */
+> +#endif /* CONFIG_PPC_BOOK3S_32 || CONFIG_E500 */
+>         .globl transfer_to_handler_cont
+>  transfer_to_handler_cont:
+>  3:
+> @@ -273,7 +273,7 @@ reenable_mmu:                               /* re-enable mmu so we can */
+>         RFI                             /* jump to handler, enable MMU */
+>  #endif /* CONFIG_TRACE_IRQFLAGS */
+>
+> -#if defined (CONFIG_6xx) || defined(CONFIG_E500)
+> +#if defined (CONFIG_PPC_BOOK3S_32) || defined(CONFIG_E500)
+>  4:     rlwinm  r12,r12,0,~_TLF_NAPPING
+>         stw     r12,TI_LOCAL_FLAGS(r9)
+>         b       power_save_ppc32_restore
+> @@ -612,7 +612,7 @@ ppc_swapcontext:
+>  handle_page_fault:
+>         stw     r4,_DAR(r1)
+>         addi    r3,r1,STACK_FRAME_OVERHEAD
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>         andis.  r0,r5,DSISR_DABRMATCH@h
+>         bne-    handle_dabr_fault
+>  #endif
+> @@ -629,7 +629,7 @@ handle_page_fault:
+>         bl      bad_page_fault
+>         b       ret_from_except_full
+>
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>         /* We have a data breakpoint exception - handle it */
+>  handle_dabr_fault:
+>         SAVE_NVGPRS(r1)
+> diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+> index 61ca27929355..118c3b216e60 100644
+> --- a/arch/powerpc/kernel/head_32.S
+> +++ b/arch/powerpc/kernel/head_32.S
+> @@ -176,10 +176,10 @@ __after_mmu_off:
+>         bl      reloc_offset
+>         li      r24,0                   /* cpu# */
+>         bl      call_setup_cpu          /* Call setup_cpu for this CPU */
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>         bl      reloc_offset
+>         bl      init_idle_6xx
+> -#endif /* CONFIG_6xx */
+> +#endif /* CONFIG_PPC_BOOK3S_32 */
+>
 >
 >  /*
-> - * Careful: __kernel_fpu_begin/end() must be called with preempt disable=
-d
-> - * and they don't touch the preempt state on their own.
-> - * If you enable preemption after __kernel_fpu_begin(), preempt notifier
-> - * should call the __kernel_fpu_end() to prevent the kernel/user FPU
-> - * state from getting corrupted. KVM for example uses this model.
-> - *
-> - * All other cases use kernel_fpu_begin/end() which disable preemption
-> - * during kernel FPU usage.
-> + * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context=
-. It
-> + * disables preemption so be careful if you intend to use it for long pe=
-riods
-> + * of time.
-> + * If you intend to use the FPU in softirq you need to check first with
-> + * irq_fpu_usable() if it is possible.
-> + * Using the FPU in hardirq is not allowed.
-
-According to the documentation in x86/kernel/fpu/core.c, this is not
-true. So which one is accurate?
-
+> @@ -836,10 +836,10 @@ __secondary_start:
+>         lis     r3,-KERNELBASE@h
+>         mr      r4,r24
+>         bl      call_setup_cpu          /* Call setup_cpu for this CPU */
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>         lis     r3,-KERNELBASE@h
+>         bl      init_idle_6xx
+> -#endif /* CONFIG_6xx */
+> +#endif /* CONFIG_PPC_BOOK3S_32 */
+>
+>         /* get current_thread_info and current */
+>         lis     r1,secondary_ti@ha
+> @@ -880,14 +880,14 @@ __secondary_start:
+>
+>  /*
+>   * Those generic dummy functions are kept for CPUs not
+> - * included in CONFIG_6xx
+> + * included in CONFIG_PPC_BOOK3S_32
 >   */
-> -extern void __kernel_fpu_begin(void);
-> -extern void __kernel_fpu_end(void);
->  extern void kernel_fpu_begin(void);
->  extern void kernel_fpu_end(void);
->  extern bool irq_fpu_usable(void);
-> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-> index 2ea85b32421a..2e5003fef51a 100644
-> --- a/arch/x86/kernel/fpu/core.c
-> +++ b/arch/x86/kernel/fpu/core.c
-> @@ -93,7 +93,7 @@ bool irq_fpu_usable(void)
->  }
->  EXPORT_SYMBOL(irq_fpu_usable);
+> -#if !defined(CONFIG_6xx)
+> +#if !defined(CONFIG_PPC_BOOK3S_32)
+>  _ENTRY(__save_cpu_setup)
+>         blr
+>  _ENTRY(__restore_cpu_setup)
+>         blr
+> -#endif /* !defined(CONFIG_6xx) */
+> +#endif /* !defined(CONFIG_PPC_BOOK3S_32) */
 >
-> -void __kernel_fpu_begin(void)
-> +static void __kernel_fpu_begin(void)
+>
+>  /*
+> diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
+> index 695b24a2d954..57d2ffb2d45c 100644
+> --- a/arch/powerpc/kernel/misc_32.S
+> +++ b/arch/powerpc/kernel/misc_32.S
+> @@ -153,7 +153,7 @@ _GLOBAL(call_setup_cpu)
+>         mtctr   r5
+>         bctr
+>
+> -#if defined(CONFIG_CPU_FREQ_PMAC) && defined(CONFIG_6xx)
+> +#if defined(CONFIG_CPU_FREQ_PMAC) && defined(CONFIG_PPC_BOOK3S_32)
+>
+>  /* This gets called by via-pmu.c to switch the PLL selection
+>   * on 750fx CPU. This function should really be moved to some
+> @@ -223,7 +223,7 @@ _GLOBAL(low_choose_7447a_dfs)
+>         mtmsr   r7
+>         blr
+>
+> -#endif /* CONFIG_CPU_FREQ_PMAC && CONFIG_6xx */
+> +#endif /* CONFIG_CPU_FREQ_PMAC && CONFIG_PPC_BOOK3S_32 */
+>
+>  /*
+>   * complement mask on the msr then "or" some values on.
+> diff --git a/arch/powerpc/kernel/pmc.c b/arch/powerpc/kernel/pmc.c
+> index 58eaa3ddf7b9..2de71faca911 100644
+> --- a/arch/powerpc/kernel/pmc.c
+> +++ b/arch/powerpc/kernel/pmc.c
+> @@ -29,7 +29,7 @@ static void dummy_perf(struct pt_regs *regs)
 >  {
->         struct fpu *fpu =3D &current->thread.fpu;
+>  #if defined(CONFIG_FSL_EMB_PERFMON)
+>         mtpmr(PMRN_PMGC0, mfpmr(PMRN_PMGC0) & ~PMGC0_PMIE);
+> -#elif defined(CONFIG_PPC64) || defined(CONFIG_6xx)
+> +#elif defined(CONFIG_PPC64) || defined(CONFIG_PPC_BOOK3S_32)
+>         if (cur_cpu_spec->pmc_type == PPC_PMC_IBM)
+>                 mtspr(SPRN_MMCR0, mfspr(SPRN_MMCR0) & ~(MMCR0_PMXE|MMCR0_PMAO));
+>  #else
+> diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
+> index 81909600013a..972c98d1e208 100644
+> --- a/arch/powerpc/kernel/setup_32.c
+> +++ b/arch/powerpc/kernel/setup_32.c
+> @@ -240,7 +240,7 @@ void __init exc_lvl_early_init(void)
 >
-> @@ -111,9 +111,8 @@ void __kernel_fpu_begin(void)
->                 __cpu_invalidate_fpregs_state();
->         }
->  }
-> -EXPORT_SYMBOL(__kernel_fpu_begin);
->
-> -void __kernel_fpu_end(void)
-> +static void __kernel_fpu_end(void)
+>  void __init setup_power_save(void)
 >  {
->         struct fpu *fpu =3D &current->thread.fpu;
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>         if (cpu_has_feature(CPU_FTR_CAN_DOZE) ||
+>             cpu_has_feature(CPU_FTR_CAN_NAP))
+>                 ppc_md.power_save = ppc6xx_idle;
+> diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
+> index 755dc98a57ae..e8e93c2c7d03 100644
+> --- a/arch/powerpc/kernel/sysfs.c
+> +++ b/arch/powerpc/kernel/sysfs.c
+> @@ -457,7 +457,7 @@ static ssize_t __used \
+>  #define HAS_PPC_PMC_CLASSIC    1
+>  #define HAS_PPC_PMC_IBM                1
+>  #define HAS_PPC_PMC_PA6T       1
+> -#elif defined(CONFIG_6xx)
+> +#elif defined(CONFIG_PPC_BOOK3S_32)
+>  #define HAS_PPC_PMC_CLASSIC    1
+>  #define HAS_PPC_PMC_IBM                1
+>  #define HAS_PPC_PMC_G4         1
+> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
+> index 8574fbbc45e0..c4a717da65eb 100644
+> --- a/arch/powerpc/mm/mmu_decl.h
+> +++ b/arch/powerpc/mm/mmu_decl.h
+> @@ -155,7 +155,7 @@ struct tlbcam {
+>  };
+>  #endif
 >
-> @@ -122,7 +121,6 @@ void __kernel_fpu_end(void)
+> -#if defined(CONFIG_6xx) || defined(CONFIG_FSL_BOOKE) || defined(CONFIG_PPC_8xx)
+> +#if defined(CONFIG_PPC_BOOK3S_32) || defined(CONFIG_FSL_BOOKE) || defined(CONFIG_PPC_8xx)
+>  /* 6xx have BATS */
+>  /* FSL_BOOKE have TLBCAM */
+>  /* 8xx have LTLB */
+> diff --git a/arch/powerpc/oprofile/Makefile b/arch/powerpc/oprofile/Makefile
+> index 8d26d7416481..bb2d94c8cbe6 100644
+> --- a/arch/powerpc/oprofile/Makefile
+> +++ b/arch/powerpc/oprofile/Makefile
+> @@ -16,4 +16,4 @@ oprofile-$(CONFIG_OPROFILE_CELL) += op_model_cell.o \
+>                 cell/spu_task_sync.o
+>  oprofile-$(CONFIG_PPC_BOOK3S_64) += op_model_power4.o op_model_pa6t.o
+>  oprofile-$(CONFIG_FSL_EMB_PERFMON) += op_model_fsl_emb.o
+> -oprofile-$(CONFIG_6xx) += op_model_7450.o
+> +oprofile-$(CONFIG_PPC_BOOK3S_32) += op_model_7450.o
+> diff --git a/arch/powerpc/oprofile/common.c b/arch/powerpc/oprofile/common.c
+> index bf094c5a4bd9..a11132865504 100644
+> --- a/arch/powerpc/oprofile/common.c
+> +++ b/arch/powerpc/oprofile/common.c
+> @@ -212,7 +212,7 @@ int __init oprofile_arch_init(struct oprofile_operations *ops)
+>                         model = &op_model_pa6t;
+>                         break;
+>  #endif
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>                 case PPC_OPROFILE_G4:
+>                         model = &op_model_7450;
+>                         break;
+> diff --git a/arch/powerpc/platforms/powermac/cache.S b/arch/powerpc/platforms/powermac/cache.S
+> index 27862feee4a5..f0641b6e6075 100644
+> --- a/arch/powerpc/platforms/powermac/cache.S
+> +++ b/arch/powerpc/platforms/powermac/cache.S
+> @@ -28,7 +28,7 @@
+>   */
 >
->         kernel_fpu_enable();
->  }
-> -EXPORT_SYMBOL(__kernel_fpu_end);
+>  _GLOBAL(flush_disable_caches)
+> -#ifndef CONFIG_6xx
+> +#ifndef CONFIG_PPC_BOOK3S_32
+>         blr
+>  #else
+>  BEGIN_FTR_SECTION
+> @@ -356,4 +356,4 @@ END_FTR_SECTION_IFSET(CPU_FTR_L3CR)
+>         mtmsr   r11             /* restore DR and EE */
+>         isync
+>         blr
+> -#endif /* CONFIG_6xx */
+> +#endif /* CONFIG_PPC_BOOK3S_32 */
+> diff --git a/arch/powerpc/platforms/powermac/feature.c b/arch/powerpc/platforms/powermac/feature.c
+> index ed2f54b3f173..073ff4544083 100644
+> --- a/arch/powerpc/platforms/powermac/feature.c
+> +++ b/arch/powerpc/platforms/powermac/feature.c
+> @@ -51,7 +51,7 @@
+>  #define DBG(fmt...)
+>  #endif
 >
->  void kernel_fpu_begin(void)
->  {
+> -#ifdef CONFIG_6xx
+> +#ifdef CONFIG_PPC_BOOK3S_32
+>  extern int powersave_lowspeed;
+>  #endif
+>
+> diff --git a/arch/powerpc/platforms/powermac/sleep.S b/arch/powerpc/platforms/powermac/sleep.S
+> index f89808b9713d..fb64b09cad9d 100644
+> --- a/arch/powerpc/platforms/powermac/sleep.S
+> +++ b/arch/powerpc/platforms/powermac/sleep.S
+> @@ -56,7 +56,7 @@
+>   * vector that will be called by the ROM on wakeup
+>   */
+>  _GLOBAL(low_sleep_handler)
+> -#ifndef CONFIG_6xx
+> +#ifndef CONFIG_PPC_BOOK3S_32
+>         blr
+>  #else
+>         mflr    r0
+> @@ -394,5 +394,5 @@ sleep_storage:
+>         .long 0
+>         .balign L1_CACHE_BYTES, 0
+>
+> -#endif /* CONFIG_6xx */
+> +#endif /* CONFIG_PPC_BOOK3S_32 */
+>         .section .text
+> diff --git a/arch/powerpc/sysdev/Makefile b/arch/powerpc/sysdev/Makefile
+> index 2caa4defdfb6..aaf23283ba0c 100644
+> --- a/arch/powerpc/sysdev/Makefile
+> +++ b/arch/powerpc/sysdev/Makefile
+> @@ -48,7 +48,7 @@ obj-$(CONFIG_PPC_MPC512x)     += mpc5xxx_clocks.o
+>  obj-$(CONFIG_PPC_MPC52xx)      += mpc5xxx_clocks.o
+>
+>  ifdef CONFIG_SUSPEND
+> -obj-$(CONFIG_6xx)              += 6xx-suspend.o
+> +obj-$(CONFIG_PPC_BOOK3S_32)    += 6xx-suspend.o
+>  endif
+>
+>  obj-$(CONFIG_PPC_SCOM)         += scom.o
+> --
+> 2.13.3
+>
