@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFD3C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BADE0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9779214C1
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8565D2146D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:40:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LQjm4358"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9779214C1
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YaD4BKzh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8565D2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbeLCSkg (ORCPT
+        id S1727037AbeLCSkk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:40:36 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34274 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbeLCSkf (ORCPT
+        Mon, 3 Dec 2018 13:40:40 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42865 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeLCSkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:40:35 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u6-v6so12395724ljd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:40:29 -0800 (PST)
+        Mon, 3 Dec 2018 13:40:39 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so9935942lfh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:40:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AMUy68ozbX3Wxgvgf/jAbwoq/KidBtnHdd2vBeUgHpA=;
-        b=LQjm4358MjGTaaGg//Tuy/jwJ+OddA7BeHOLQ8fFAOX1ze4lUXIJIv4tU3EEqSSils
-         N9vIzcTBnZ1SSsiMtHZAT4RPM9u2qUVc91TSXADw8AI/XLVDgzb5yBk8+bkI897OFAvb
-         U9MV+A7+OpoeHtwnvfvNclTFr/4hfMYyWahEQ=
+        bh=AqR+/tdvN+T03MfMl2BZakLvSSDhyowAZhzj7me3ZY0=;
+        b=YaD4BKzhs0h80iAS6DLry0wrLCOm+kNnEJBcvZO8qowRaipNimLGISvXZTTISIAQBd
+         4wgK7t6/ElreUMZowwv6K6eqM/v2dATuPJg9MaTdBYCC6fG68dEbhz7Vy/by4wgPjz28
+         Ayx7AiZ6U+wjM60HgTE8O7y6xOs9aXl/b76jY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AMUy68ozbX3Wxgvgf/jAbwoq/KidBtnHdd2vBeUgHpA=;
-        b=q1tBGDcgmaTUnuStpfCoVjQdfFjzxYQLn4yDcIzkRPPE9oyv6lbf6RrpojmpDQyQFr
-         pWpOh15FgAb6wiq2frvqfI9Wj4zgFgzWlhGxz3Us8Gued4bbMtZsv8y7gUAauWJjYHmA
-         poUofCrT30RB+jqfuXdMHla+bIaVXNrFUS8XarLpYetqgwVJoHqAKpfPLiVmD7u8Z3qn
-         x7hKGIZBsUBBaZaaN5MAYwrkdEUZEKJuHzhgmwhhSGQ+GSTK/1IhU91F1mfu7E/xRdCR
-         4/lESLKjur0p5ZDR4FOPog7v7JejXlKzloBIVwPZi+8qELAGMmvzgLLY6eqxn3urDclU
-         RjUQ==
-X-Gm-Message-State: AA+aEWZ11HEJyDUACmC1NAW+qmmSpBHrORuWp0KvTlZiOFf0gSQlbZvh
-        u9NnJjaT9l2UViO5gJFGOZLLdg==
-X-Google-Smtp-Source: AFSGD/U4vMd8Cmf2BwsYaRjQNLCQAA7f2Kbr1+VQV0mFCRi1BTEnY/4+oh1GRreoyAnU9BiFAzflGw==
-X-Received: by 2002:a2e:7801:: with SMTP id t1-v6mr169890ljc.84.1543862428988;
-        Mon, 03 Dec 2018 10:40:28 -0800 (PST)
+        bh=AqR+/tdvN+T03MfMl2BZakLvSSDhyowAZhzj7me3ZY0=;
+        b=Ggd7ffGJnNuMWNNvK4P1fXe19m35Qa7eI8x4CK9WlsEpE/dYZ9tlq2u0xJ2ZHXTugh
+         bGFZHWf1pnBmuUe1jUm2vnPubWDqSiLUFllzxBI4GTqFzkItSSzh7rbF8P8nfiCDRzd+
+         a5mr3npTnUQvnqrEAOWJSs38Jx47PK+5CoikEWfgKoogjTq/LA7lZEnFzazXHW70H6PE
+         5l04K15qRb461gXPoDR34ke8rLo2bh0ocdLSTHYw7zdXEAzWkm4mcbOAnNsxar2IBLBr
+         Fe/r+CvqUkTb9gfSdcMkS/cIqNaMrjL1NzZc1487kXGQ20Dya3POsKRylp9/yKEiQNMo
+         IqZg==
+X-Gm-Message-State: AA+aEWbZKhSiAnUUzgQd3N5yn31iVG24RwT4hllJDrcOnxuOyxdtBcmF
+        N7ZVw4GAMcINtT7XO1olDMQDL1yadXyH0A==
+X-Google-Smtp-Source: AFSGD/WuA0Ki0SJfIvQBbk9ywQ8RcQEjitFRR+Gh0ivVr+aKQhOB0EyqkBXV6ldkFLi9yGuAWY8JZQ==
+X-Received: by 2002:a19:920a:: with SMTP id u10mr9678312lfd.122.1543862433315;
+        Mon, 03 Dec 2018 10:40:33 -0800 (PST)
 Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id d23sm2518513lfc.11.2018.12.03.10.40.27
+        by smtp.gmail.com with ESMTPSA id d23sm2518513lfc.11.2018.12.03.10.40.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 10:40:28 -0800 (PST)
+        Mon, 03 Dec 2018 10:40:32 -0800 (PST)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     davem@davemloft.net, grygorii.strashko@ti.com
 Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, jiri@mellanox.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [RFC PATCH net-next 1/5] net: core: dev_addr_lists: add VID to device address space
-Date:   Mon,  3 Dec 2018 20:40:19 +0200
-Message-Id: <20181203184023.3430-2-ivan.khoronzhuk@linaro.org>
+Subject: [RFC PATCH net-next 4/5] net: ethernet: add default vid len for all ehternet kind devices
+Date:   Mon,  3 Dec 2018 20:40:22 +0200
+Message-Id: <20181203184023.3430-5-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
 References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
@@ -71,339 +71,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds VID tag at the end of each address. For Ethernet
-addresses with 6 bytes long, when actual reserved address size is
-32 bytes, that's possible to add tag w/o increasing maximum address
-length. Thus each address for the case has 32 - 6 = 26 bytes to hold
-additional info, say VID for virtual device address.
+By default every ethernet netdev needs vid len = 2 bytes to be able to
+hold up to 4096 vids. So set it for every eth device to be correct,
+except vlan devs.
 
-Therefore, when addresses are synched to the address list of parent
-device the address list of latter can contain separate addresses for
-virtual devices. It allows contain separate address tables for virtual
-devices if they present and vlan be placed on any place of device
-chain as the address is propagated to to the end real device thru
-*_sync APIs.
+In order to shrink all addresses of devices above vlan, the vid_len
+for vlan dev = 0, as result all suckers sync their addresses to common
+base not taking in to account vid part (vid_len of "to" devices is
+important only). And only vlan device is the source of addresses with
+actual its vid set, propagating it to parent devices while rx_mode().
 
-If parent device doesn't want to have virtual addresses in its address
-space the vid_len has to be 0, thus its address space is "shrunk" to
-the state as before this patch.
+Also, don't bother those devices that at this moment not moved to vlan
+addressing scheme, so while end ethernet device is created - set
+vid_len to 0, thus, while syncing, its address space is concatenated
+to one dimensional like usual, and who needs vlan addresses to be
+separate - set it to VLAN_VID_TYPE_SIZE. When number of devices
+supporting new vlan addressing scheme becomes more than simple ones,
+it can be reversed, disabling it for those who don't need.
 
-The end real device, if it's allowed, can retrieve VID tag from an
-address and set it for given vlan only. By default vid 0 is used
-for real devices to distinguish it from virtual addresses (0xffff
-should be used, but for RFC is Ok). Similar approach can be used for
-passing additional information for virtual devices as allmulti flag
-or/and promisc flag, but this is separate story and could be added
-as a continuation.
+This vid_len should be placed under smth like CONFIG_8021Q_ADDR_FLT.
 
-See next patches to see how it works.
+There is another decision - is to inherit vid_len or some feature flag
+from end root device in order to all upper devices have vlan extended
+address space only if exact end real device have such capability. But
+I didn't, because it requires more changes and probably I'm not
+familiar with all places where it should be inherited, I would
+appreciate if someone can guid where it's applicable, then it could
+become a little bit more limited.
 
 Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 ---
- include/linux/netdevice.h |   5 ++
- net/core/dev_addr_lists.c | 124 +++++++++++++++++++++++++++++++-------
- 2 files changed, 106 insertions(+), 23 deletions(-)
+ net/8021q/vlan_dev.c |  1 +
+ net/ethernet/eth.c   | 15 +++++++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 94fb2e12f117..1b0f9c322b01 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1635,6 +1635,8 @@ enum netdev_priv_flags {
-  * 	@perm_addr:		Permanent hw address
-  * 	@addr_assign_type:	Hw address assignment type
-  * 	@addr_len:		Hardware address length
-+ *	@vid_len:		Virtual ID length, set only if virtual address
-+ *				filtering is supported
-  *	@neigh_priv_len:	Used in neigh_alloc()
-  * 	@dev_id:		Used to differentiate devices that share
-  * 				the same link layer address
-@@ -1864,6 +1866,7 @@ struct net_device {
- 	unsigned char		perm_addr[MAX_ADDR_LEN];
- 	unsigned char		addr_assign_type;
- 	unsigned char		addr_len;
-+	unsigned char		vid_len;
- 	unsigned short		neigh_priv_len;
- 	unsigned short          dev_id;
- 	unsigned short          dev_port;
-@@ -4092,8 +4095,10 @@ int dev_addr_init(struct net_device *dev);
+diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
+index f6bcd847509e..c2d934251e77 100644
+--- a/net/8021q/vlan_dev.c
++++ b/net/8021q/vlan_dev.c
+@@ -896,6 +896,7 @@ void vlan_setup(struct net_device *dev)
  
- /* Functions used for unicast addresses handling */
- int dev_uc_add(struct net_device *dev, const unsigned char *addr);
-+int dev_vid_uc_add(struct net_device *dev, const unsigned char *addr);
- int dev_uc_add_excl(struct net_device *dev, const unsigned char *addr);
- int dev_uc_del(struct net_device *dev, const unsigned char *addr);
-+int dev_vid_uc_del(struct net_device *dev, const unsigned char *addr);
- int dev_uc_sync(struct net_device *to, struct net_device *from);
- int dev_uc_sync_multiple(struct net_device *to, struct net_device *from);
- void dev_uc_unsync(struct net_device *to, struct net_device *from);
-diff --git a/net/core/dev_addr_lists.c b/net/core/dev_addr_lists.c
-index 81a8cd4ea3bd..82c9c347f338 100644
---- a/net/core/dev_addr_lists.c
-+++ b/net/core/dev_addr_lists.c
-@@ -542,6 +542,26 @@ int dev_addr_del(struct net_device *dev, const unsigned char *addr,
+ 	dev->min_mtu		= 0;
+ 	dev->max_mtu		= ETH_MAX_MTU;
++	dev->vid_len		= 0;
+ 
+ 	eth_zero_addr(dev->broadcast);
  }
- EXPORT_SYMBOL(dev_addr_del);
- 
-+static int get_addr_len(struct net_device *dev)
-+{
-+	return dev->addr_len + dev->vid_len;
-+}
-+
-+static int set_vid_addr(struct net_device *dev, const unsigned char *addr,
-+			unsigned char *naddr)
-+{
-+	int i;
-+
-+	if (!dev->vid_len)
-+		return dev->addr_len;
-+
-+	memcpy(naddr, addr, dev->addr_len);
-+	for (i = 0; i < dev->vid_len; i++)
-+		naddr[dev->addr_len + i] = 0;
-+
-+	return get_addr_len(dev);
-+}
-+
- /*
-  * Unicast list handling functions
-  */
-@@ -553,18 +573,22 @@ EXPORT_SYMBOL(dev_addr_del);
-  */
- int dev_uc_add_excl(struct net_device *dev, const unsigned char *addr)
+diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+index 58933fa50bb5..52f90cefb6de 100644
+--- a/net/ethernet/eth.c
++++ b/net/ethernet/eth.c
+@@ -363,6 +363,7 @@ void ether_setup(struct net_device *dev)
+ 	dev->min_mtu		= ETH_MIN_MTU;
+ 	dev->max_mtu		= ETH_DATA_LEN;
+ 	dev->addr_len		= ETH_ALEN;
++	dev->vid_len		= NET_802Q_VID_TSIZE;
+ 	dev->tx_queue_len	= DEFAULT_TX_QUEUE_LEN;
+ 	dev->flags		= IFF_BROADCAST|IFF_MULTICAST;
+ 	dev->priv_flags		|= IFF_TX_SKB_SHARING;
+@@ -390,8 +391,18 @@ EXPORT_SYMBOL(ether_setup);
+ struct net_device *alloc_etherdev_mqs(int sizeof_priv, unsigned int txqs,
+ 				      unsigned int rxqs)
  {
-+	unsigned char naddr[MAX_ADDR_LEN];
- 	struct netdev_hw_addr *ha;
--	int err;
-+	int addr_len, err;
+-	return alloc_netdev_mqs(sizeof_priv, "eth%d", NET_NAME_UNKNOWN,
+-				ether_setup, txqs, rxqs);
++	struct net_device *dev;
 +
-+	addr_len = set_vid_addr(dev, addr, naddr);
-+	addr = dev->vid_len ? naddr : addr;
- 
- 	netif_addr_lock_bh(dev);
- 	list_for_each_entry(ha, &dev->uc.list, list) {
--		if (!memcmp(ha->addr, addr, dev->addr_len) &&
-+		if (!memcmp(ha->addr, addr, addr_len) &&
- 		    ha->type == NETDEV_HW_ADDR_T_UNICAST) {
- 			err = -EEXIST;
- 			goto out;
- 		}
- 	}
--	err = __hw_addr_create_ex(&dev->uc, addr, dev->addr_len,
-+	err = __hw_addr_create_ex(&dev->uc, addr, addr_len,
- 				  NETDEV_HW_ADDR_T_UNICAST, true, false);
- 	if (!err)
- 		__dev_set_rx_mode(dev);
-@@ -575,47 +599,89 @@ int dev_uc_add_excl(struct net_device *dev, const unsigned char *addr)
- EXPORT_SYMBOL(dev_uc_add_excl);
- 
- /**
-- *	dev_uc_add - Add a secondary unicast address
-+ *	dev_vid_uc_add - Add a secondary unicast address with tag
-  *	@dev: device
-- *	@addr: address to add
-+ *	@addr: address to add, includes vid tag already
-  *
-  *	Add a secondary unicast address to the device or increase
-  *	the reference count if it already exists.
-  */
--int dev_uc_add(struct net_device *dev, const unsigned char *addr)
-+int dev_vid_uc_add(struct net_device *dev, const unsigned char *addr)
- {
- 	int err;
- 
- 	netif_addr_lock_bh(dev);
--	err = __hw_addr_add(&dev->uc, addr, dev->addr_len,
-+	err = __hw_addr_add(&dev->uc, addr, get_addr_len(dev),
- 			    NETDEV_HW_ADDR_T_UNICAST);
- 	if (!err)
- 		__dev_set_rx_mode(dev);
- 	netif_addr_unlock_bh(dev);
- 	return err;
++	dev = alloc_netdev_mqs(sizeof_priv, "eth%d", NET_NAME_UNKNOWN,
++			       ether_setup, txqs, rxqs);
++
++	/* TODO: When number of real ehternet devices supporting vlan
++	 * addressing scheme becomes more than simple ones, it should
++	 * be removed, disabling it (by dev->vid_len = 0) for those
++	 * who doesn't support it
++	 */
++	dev->vid_len = 0;
++	return dev;
  }
-+EXPORT_SYMBOL(dev_vid_uc_add);
-+
-+/**
-+ *	dev_uc_add - Add a secondary unicast address
-+ *	@dev: device
-+ *	@addr: address to add
-+ *
-+ *	Add a secondary unicast address to the device or increase
-+ *	the reference count if it already exists.
-+ */
-+int dev_uc_add(struct net_device *dev, const unsigned char *addr)
-+{
-+	unsigned char naddr[MAX_ADDR_LEN];
-+	int err;
-+
-+	set_vid_addr(dev, addr, naddr);
-+	addr = dev->vid_len ? naddr : addr;
-+
-+	err = dev_vid_uc_add(dev, addr);
-+	return err;
-+}
- EXPORT_SYMBOL(dev_uc_add);
+ EXPORT_SYMBOL(alloc_etherdev_mqs);
  
- /**
-  *	dev_uc_del - Release secondary unicast address.
-  *	@dev: device
-- *	@addr: address to delete
-+ *	@addr: address to delete, includes vid tag already
-  *
-  *	Release reference to a secondary unicast address and remove it
-  *	from the device if the reference count drops to zero.
-  */
--int dev_uc_del(struct net_device *dev, const unsigned char *addr)
-+int dev_vid_uc_del(struct net_device *dev, const unsigned char *addr)
- {
- 	int err;
- 
- 	netif_addr_lock_bh(dev);
--	err = __hw_addr_del(&dev->uc, addr, dev->addr_len,
-+	err = __hw_addr_del(&dev->uc, addr, get_addr_len(dev),
- 			    NETDEV_HW_ADDR_T_UNICAST);
- 	if (!err)
- 		__dev_set_rx_mode(dev);
- 	netif_addr_unlock_bh(dev);
- 	return err;
- }
-+EXPORT_SYMBOL(dev_vid_uc_del);
-+
-+/**
-+ *	dev_uc_del - Release secondary unicast address.
-+ *	@dev: device
-+ *	@addr: address to delete
-+ *
-+ *	Release reference to a secondary unicast address and remove it
-+ *	from the device if the reference count drops to zero.
-+ */
-+int dev_uc_del(struct net_device *dev, const unsigned char *addr)
-+{
-+	unsigned char naddr[MAX_ADDR_LEN];
-+	int err;
-+
-+	set_vid_addr(dev, addr, naddr);
-+	addr = dev->vid_len ? naddr : addr;
-+
-+	err = dev_vid_uc_del(dev, addr);
-+	return err;
-+}
- EXPORT_SYMBOL(dev_uc_del);
- 
- /**
-@@ -639,7 +705,7 @@ int dev_uc_sync(struct net_device *to, struct net_device *from)
- 		return -EINVAL;
- 
- 	netif_addr_lock_nested(to);
--	err = __hw_addr_sync(&to->uc, &from->uc, to->addr_len);
-+	err = __hw_addr_sync(&to->uc, &from->uc, get_addr_len(to));
- 	if (!err)
- 		__dev_set_rx_mode(to);
- 	netif_addr_unlock(to);
-@@ -669,7 +735,7 @@ int dev_uc_sync_multiple(struct net_device *to, struct net_device *from)
- 		return -EINVAL;
- 
- 	netif_addr_lock_nested(to);
--	err = __hw_addr_sync_multiple(&to->uc, &from->uc, to->addr_len);
-+	err = __hw_addr_sync_multiple(&to->uc, &from->uc, get_addr_len(to));
- 	if (!err)
- 		__dev_set_rx_mode(to);
- 	netif_addr_unlock(to);
-@@ -693,7 +759,7 @@ void dev_uc_unsync(struct net_device *to, struct net_device *from)
- 
- 	netif_addr_lock_bh(from);
- 	netif_addr_lock_nested(to);
--	__hw_addr_unsync(&to->uc, &from->uc, to->addr_len);
-+	__hw_addr_unsync(&to->uc, &from->uc, get_addr_len(to));
- 	__dev_set_rx_mode(to);
- 	netif_addr_unlock(to);
- 	netif_addr_unlock_bh(from);
-@@ -737,18 +803,22 @@ EXPORT_SYMBOL(dev_uc_init);
-  */
- int dev_mc_add_excl(struct net_device *dev, const unsigned char *addr)
- {
-+	unsigned char naddr[MAX_ADDR_LEN];
- 	struct netdev_hw_addr *ha;
--	int err;
-+	int addr_len, err;
-+
-+	addr_len = set_vid_addr(dev, addr, naddr);
-+	addr = dev->vid_len ? naddr : addr;
- 
- 	netif_addr_lock_bh(dev);
- 	list_for_each_entry(ha, &dev->mc.list, list) {
--		if (!memcmp(ha->addr, addr, dev->addr_len) &&
-+		if (!memcmp(ha->addr, addr, addr_len) &&
- 		    ha->type == NETDEV_HW_ADDR_T_MULTICAST) {
- 			err = -EEXIST;
- 			goto out;
- 		}
- 	}
--	err = __hw_addr_create_ex(&dev->mc, addr, dev->addr_len,
-+	err = __hw_addr_create_ex(&dev->mc, addr, addr_len,
- 				  NETDEV_HW_ADDR_T_MULTICAST, true, false);
- 	if (!err)
- 		__dev_set_rx_mode(dev);
-@@ -761,10 +831,14 @@ EXPORT_SYMBOL(dev_mc_add_excl);
- static int __dev_mc_add(struct net_device *dev, const unsigned char *addr,
- 			bool global)
- {
--	int err;
-+	unsigned char naddr[MAX_ADDR_LEN];
-+	int addr_len, err;
-+
-+	addr_len = set_vid_addr(dev, addr, naddr);
-+	addr = dev->vid_len ? naddr : addr;
- 
- 	netif_addr_lock_bh(dev);
--	err = __hw_addr_add_ex(&dev->mc, addr, dev->addr_len,
-+	err = __hw_addr_add_ex(&dev->mc, addr, addr_len,
- 			       NETDEV_HW_ADDR_T_MULTICAST, global, false, 0);
- 	if (!err)
- 		__dev_set_rx_mode(dev);
-@@ -801,10 +875,14 @@ EXPORT_SYMBOL(dev_mc_add_global);
- static int __dev_mc_del(struct net_device *dev, const unsigned char *addr,
- 			bool global)
- {
--	int err;
-+	unsigned char naddr[MAX_ADDR_LEN];
-+	int addr_len, err;
-+
-+	addr_len = set_vid_addr(dev, addr, naddr);
-+	addr = dev->vid_len ? naddr : addr;
- 
- 	netif_addr_lock_bh(dev);
--	err = __hw_addr_del_ex(&dev->mc, addr, dev->addr_len,
-+	err = __hw_addr_del_ex(&dev->mc, addr, addr_len,
- 			       NETDEV_HW_ADDR_T_MULTICAST, global, false);
- 	if (!err)
- 		__dev_set_rx_mode(dev);
-@@ -860,7 +938,7 @@ int dev_mc_sync(struct net_device *to, struct net_device *from)
- 		return -EINVAL;
- 
- 	netif_addr_lock_nested(to);
--	err = __hw_addr_sync(&to->mc, &from->mc, to->addr_len);
-+	err = __hw_addr_sync(&to->mc, &from->mc, get_addr_len(to));
- 	if (!err)
- 		__dev_set_rx_mode(to);
- 	netif_addr_unlock(to);
-@@ -890,7 +968,7 @@ int dev_mc_sync_multiple(struct net_device *to, struct net_device *from)
- 		return -EINVAL;
- 
- 	netif_addr_lock_nested(to);
--	err = __hw_addr_sync_multiple(&to->mc, &from->mc, to->addr_len);
-+	err = __hw_addr_sync_multiple(&to->mc, &from->mc, get_addr_len(to));
- 	if (!err)
- 		__dev_set_rx_mode(to);
- 	netif_addr_unlock(to);
-@@ -914,7 +992,7 @@ void dev_mc_unsync(struct net_device *to, struct net_device *from)
- 
- 	netif_addr_lock_bh(from);
- 	netif_addr_lock_nested(to);
--	__hw_addr_unsync(&to->mc, &from->mc, to->addr_len);
-+	__hw_addr_unsync(&to->mc, &from->mc, get_addr_len(to));
- 	__dev_set_rx_mode(to);
- 	netif_addr_unlock(to);
- 	netif_addr_unlock_bh(from);
 -- 
 2.17.1
 
