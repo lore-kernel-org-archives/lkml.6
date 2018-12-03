@@ -2,111 +2,171 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D600C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD8EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1A720850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:00:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1A720850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id A3F0D20864
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:05:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K9nflufy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F0D20864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725943AbeLCWAe (ORCPT
+        id S1725976AbeLCWFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:00:34 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50451 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbeLCWAd (ORCPT
+        Mon, 3 Dec 2018 17:05:02 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33965 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbeLCWFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:00:33 -0500
-Received: from 79.184.252.87.ipv4.supernova.orange.pl (79.184.252.87) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
- id 47be791860265607; Mon, 3 Dec 2018 23:00:30 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        sudeep.holla@arm.com,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
-Date:   Mon, 03 Dec 2018 23:00:20 +0100
-Message-ID: <1999610.6DN9RK2Tt3@aspire.rjw.lan>
-In-Reply-To: <20181203163846.494904f9@xps13>
-References: <20181123141831.8214-1-miquel.raynal@bootlin.com> <20181203102708.GA6090@e107981-ln.cambridge.arm.com> <20181203163846.494904f9@xps13>
+        Mon, 3 Dec 2018 17:05:01 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u6-v6so12931620ljd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:04:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ICGzCv10SUhPz/zyqjorDeeDkj5bTz4pBRwpMyj29eQ=;
+        b=K9nflufyfVmDB2iFuf4W3n4gsm8rMSUar/zsx0upLdN/uBEvdEwTVSL3klHqPtOFGa
+         akOLUCM4ZRntykg2nXAU4i5FL5bFZ5gJFAQ1lEYsQTGp77S5rLuY4lVizNc5sr7nkUfT
+         Ibg1Le87qOs0BEURUkKnSO8lUyM6ECr+XzKE8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ICGzCv10SUhPz/zyqjorDeeDkj5bTz4pBRwpMyj29eQ=;
+        b=KNBp8+f5/frlVQ4cHR7qHOGDlU+5pBiA/4pHejNhBME9267jwjhK6bpW7ZmKTncRw5
+         0+HyUIU9TOyVvAg6CODDRDhnytynyfnGfNKMXkru3TF0/GLlDA6QfBF9OZAC9W0lUO81
+         BjEOZ3O7bfn5+Ow39mpldnARVEkKNFsIzGFF2tshWzjxrUrm+jPQAkqBE5MQWw69GXGR
+         wRbH6vTVN1N4+TPBAeRfCBOFhMp+Td5iTxicSzzv465zG2VBz0uCFxJEukEodfcC31az
+         7+sjcQsfO7N4XKnemnJR1RHadP8MHQVZfcDgd/Y/TnyOtZxIGJfrb/yeb3I5O6cTUp6w
+         WwHw==
+X-Gm-Message-State: AA+aEWYkn0oBvV90SCYMc5sFdFCIHMzFgJXxKpPhA5fYdoMKI9HTvqF2
+        lVcYMy8A6xkbFncBVeX7h3Fo3QqSwFg=
+X-Google-Smtp-Source: AFSGD/VZ1KjNzV+XNPBh9OY4kt0TuOL6H/R00XuJUOkywzrRE9k+0pPhwwcJgMktf8D+0s9GoCC0Bg==
+X-Received: by 2002:a2e:55d3:: with SMTP id g80-v6mr12291498lje.78.1543874698421;
+        Mon, 03 Dec 2018 14:04:58 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id p10-v6sm2722448ljg.19.2018.12.03.14.04.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 14:04:57 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id e5-v6so12945561lja.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:04:56 -0800 (PST)
+X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr11356257ljs.118.1543874696203;
+ Mon, 03 Dec 2018 14:04:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com>
+ <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
+ <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
+ <20181203181456.GK31738@dhcp22.suse.cz> <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
+ <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
+ <20181203185954.GM31738@dhcp22.suse.cz> <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
+ <20181203201214.GB3540@redhat.com>
+In-Reply-To: <20181203201214.GB3540@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 3 Dec 2018 14:04:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
+Message-ID: <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     mhocko@kernel.org, ying.huang@intel.com, s.priebe@profihost.ag,
+        mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org,
+        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, December 3, 2018 4:38:46 PM CET Miquel Raynal wrote:
-> Hi Lorenzo,
-> 
-> Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote on Mon, 3 Dec 2018
-> 10:27:08 +0000:
-> 
-> > [+Rafael, Sudeep]
-> > 
-> > On Fri, Nov 23, 2018 at 03:18:24PM +0100, Miquel Raynal wrote:
-> > > Add suspend and resume callbacks. The priority of these are
-> > > "_noirq()", to workaround early access to the registers done by the
-> > > PCI core through the ->read()/->write() callbacks at resume time.
-> > > 
-> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > ---
-> > >  drivers/pci/controller/pci-aardvark.c | 52 +++++++++++++++++++++++++++
-> > >  1 file changed, 52 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> > > index 108b3f15c410..7ecf1ac4036b 100644
-> > > --- a/drivers/pci/controller/pci-aardvark.c
-> > > +++ b/drivers/pci/controller/pci-aardvark.c
-> > > @@ -1108,6 +1108,55 @@ static int advk_pcie_setup_clk(struct advk_pcie *pcie)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > +static int __maybe_unused advk_pcie_suspend(struct device *dev)
-> > > +{
-> > > +	struct advk_pcie *pcie = dev_get_drvdata(dev);
-> > > +
-> > > +	advk_pcie_disable_phy(pcie);
-> > > +
-> > > +	clk_disable_unprepare(pcie->clk);  
-> > 
-> > I have noticed it is common practice, still, I would like to check whether
-> > it is allowed to call functions that may sleep in a NOIRQ suspend/resume
-> > callback ?
-> 
-> You are right this is weird. I double checked and for instance,
-> pcie-mediatek.c, pci-tegra.c and pci-imx6.c do the exact same thing. There are
-> probably other cases where drivers call functions that may sleep from a NOIRQ
-> context. I am interested to know if this is valid and if not, what is the
-> alternative?
-> 
+On Mon, Dec 3, 2018 at 12:12 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+>
+> On Mon, Dec 03, 2018 at 11:28:07AM -0800, Linus Torvalds wrote:
+> >
+> > One is the patch posted by Andrea earlier in this thread, which seems
+> > to target just this known regression.
+>
+> For the short term the important thing is to fix the VM regression one
+> way or another, I don't personally mind which way.
+>
+> > The other seems to be to revert commit ac5b2c1891  and instead apply
+> >
+> >   https://lore.kernel.org/lkml/alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com/
+> >
+> > which also seems to be sensible.
+>
+> In my earlier review of David's patch, it looked runtime equivalent to
+> the __GFP_COMPACT_ONLY solution. It has the only advantage of adding a
 
-Yes, it is valid.  _noirq means that the high-level action handlers will not be
-invoked for interrupts occurring during that period, but that doesn't apply to
-timer interrupts.
+I think there's a missing "not" in the above.
 
-IOW, don't expect *your* IRQ handler to be invoked then (if this is not a timer
-IRQ), but you can sleep.
+> new gfpflag until we're sure we need it but it's the worst solution
+> available for the long term in my view. It'd be ok to apply it as
+> stop-gap measure though.
 
-Thanks,
-Rafael
+So I have no really strong opinions either way.
 
+I looking at the two options, I think I'd personally have a slight
+preference for that patch by David, not so much because it doesn't add
+a new GFP flag, but because it seems to make it a lot more explicit
+that GFP_TRANSHUGE_LIGHT automatically implies __GFP_NORETRY.
+
+I think that makes a whole lot of conceptual sense with the whole
+meaning of GFP_TRANSHUGE_LIGHT. It's all about "no
+reclaim/compaction", but honestly, doesn't __GFP_NORETRY make sense?
+
+So I look at David's patch, and I go "that makes sense", and then I
+compare it with ac5b2c18911f ("mm: thp: relax __GFP_THISNODE for
+MADV_HUGEPAGE mappings") and that makes me go "ok, that's a hack".
+
+So *if* reverting ac5b2c18911f and applying David's patch instead
+fixes the KVM latency issues (which I assume it really should do,
+simply thanks to __GFP_NORETRY), then I think that makes more sense.
+
+That said, I do agree that the
+
+        if (order == pageblock_order ...)
+
+test in __alloc_pages_slowpath() in David's patch then argues for
+"that looks hacky".  But that code *is* inside the test for
+
+                if (costly_order && (gfp_mask & __GFP_NORETRY)) {
+
+so within the context of that (not visible in the patch itself), it
+looks like a sensible model. The whole point of that block is, as the
+comment above it says
+
+                /*
+                 * Checks for costly allocations with __GFP_NORETRY, which
+                 * includes THP page fault allocations
+                 */
+
+so I think all of David's patch is somewhat sensible, even if that
+specific "order == pageblock_order" test really looks like it might
+want to be clarified.
+
+BUT.
+
+With all that said, I really don't mind that __GFP_COMPACT_ONLY
+approach either. I think David's patch makes sense in a bigger
+context, while the __GFP_COMPACT_ONLY patch makes sense in the context
+of "let's just fix this _particular_ special case.
+
+As long as both work (and apparently they do), either is perfectly find by me.
+
+Some kind of "Thunderdome for patches" is needed, with an epic soundtrack.
+
+   "Two patches enter, one patch leaves!"
+
+I don't so much care which one.
+
+             Linus
