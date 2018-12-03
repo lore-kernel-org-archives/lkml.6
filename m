@@ -6,67 +6,67 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEEEC65BAE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90405C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFAB208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:41:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43716208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 02:41:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cav2xOl2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFAB208A3
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rG4da5ne"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43716208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725956AbeLCClR (ORCPT
+        id S1725969AbeLCClU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 21:41:17 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38333 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbeLCClQ (ORCPT
+        Sun, 2 Dec 2018 21:41:20 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46404 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725833AbeLCClT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 21:41:16 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so5657515plb.5
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 18:41:12 -0800 (PST)
+        Sun, 2 Dec 2018 21:41:19 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c73so5553622pfe.13
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 18:41:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZZKbTI4RaupKgMeM0K0Oq1M7z4/V7WyolkpXJnj+pTI=;
-        b=cav2xOl2U5quzY87ZAVIp8dYmdCfyEMnDLMIjvxnkLdmCNHN7Tm6MyAARS00xhcQTS
-         ura5iAySKmHEYrCnXN6c8f/0bP8VwCScq+9UWhyFhnpgU7LpzJrNsXnxd0N2VXPVVTj0
-         UyRc/yFjbHbPV6wBohjAaIIqzHj4Y7CrMEsw31K8dCduV3ws2r2ydXm2FJkuWLd2Qfro
-         VVOR8LPL6SHYS5zWyAxLQykcFvOjCkogIr9PEHyfiL2bjOdX1TBdHgJcWv+5pK5YGxlp
-         bR37H2Jgmoq3ydYJz85eq2jPNBHqBBAHYWIMfCmMQhGbGOStNYvq5pP2yj/NBBb6riFF
-         5saQ==
+        bh=3Plp9sS9gHE/ZeUa5h5ej6xtYSbjwCZQGUmIpDWiAys=;
+        b=rG4da5neLafmpLt+dC3pJ4qd/2OOxvelz2SfEHyz3TDfsS6UWm/9C5otw44fbjwJnn
+         8o5uTBPrj7ju7hXvAITqmc0s8q9czi5NKsdiHuYOlIQXzQBo87YgQ1QxgHgmL6MmLjrc
+         5gUc/xtwFRewENBePG2QHi4J5Vxr873gWzoqdcdcQ4VrIWZV5Nt02kJYee7z4IUqEsAQ
+         ceiJjh7BZsudix4dNLYENEgLtTDbW0Eu+tzhCP2WybbPRaWZ0twsk7dSOBX54olUnuH9
+         aQB9Jh2Iperl5lSfJxfoo5e5U7b6vqWG5Bf6PJ1vjXJTayzL9wx5WHFsedL3L2rByZrk
+         Q6zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=ZZKbTI4RaupKgMeM0K0Oq1M7z4/V7WyolkpXJnj+pTI=;
-        b=akM1Bi1TUcBSHDU9nLjXVCeo+FKqEsV/eKD+IpMIkP49NHAko0MJ0rhuiBs5PIuI2E
-         1jV39T24bMG127MTl6k42OI2NCMF2OfVamnPg7IIm3t1vZqU+uEGcTYcb+XLmmiicLFm
-         Bzx2UIehbzH438oz+9KpZdQI9ezZ13qUq6DAOaskmVVd9l8B62DduYUyg525SR9mgwGw
-         OEew/FyRc9/w4jHMDHe50ob+sUd+dD/Z1YLrzFGvsbYWwdgWthmt063CE8GZIvuaSIDz
-         pnCre3Zb7pyyBxfiyDrwe6w6WyI9hWTjVNbCEmP9MmnGIoVpYnYL2QNy9Lafx5cCdxRP
-         keeA==
-X-Gm-Message-State: AA+aEWZ/1nw5TsnhBmwCYCyMYwW7dkveNUdlYnGV6ZtDPVC9vkWAWgEs
-        q1DCvah3ceNa1S7Hk7bYW8I=
-X-Google-Smtp-Source: AFSGD/XJWm7Bo3a0PyffJCPOhrP8OlKVl8ed/HzwAUosnVf2NeTQAYT8lGfIDxX0G+oAq0L96ma5BA==
-X-Received: by 2002:a17:902:584:: with SMTP id f4mr14714663plf.28.1543804872441;
-        Sun, 02 Dec 2018 18:41:12 -0800 (PST)
+        bh=3Plp9sS9gHE/ZeUa5h5ej6xtYSbjwCZQGUmIpDWiAys=;
+        b=bZFv8xsM6XFmjhfkIGwlbdo472AninxrVukAp/b1WVvtlwCREWB5mHqDv3lycmEHh5
+         yy9T0PXzF/tdXffO7znNjirLve3GX2ri7TMZPd/7kvK9VLvdAMrD4Mve3tAIRa/b8++J
+         eso9GLSiXYzDdpAdZnsv3hxbTaSD5ME9lfbbSQmkWoeeypsH0JVlC0oMvGy0S6PdZpl9
+         phIxCnwI+4Vn91rELzc/ruSAybHGBik3G6bjGIvGvaEd0fSI0tc2SxjX/NB3j4RNFx1R
+         6oceOyAFxFf8/svy0QKopmSw1Tuzf5pHtQEuGrKTBbBW9OHrk2E/OrIX1e5RqsldeZeX
+         iDFA==
+X-Gm-Message-State: AA+aEWZucCBNK3n4S24fPPzp4Omb5yCFQsTI/ooOaFakOJRS03veSiLo
+        rL2hTPgTtJcDe2IovuD+z9JeI//siq0=
+X-Google-Smtp-Source: AFSGD/WBVzajfLzq2NLRgVgBJf5UB73uidBB58wdFkLm1YtaCRKxIAQzz55PsxDBBuIHc8YBC37exg==
+X-Received: by 2002:a63:cd17:: with SMTP id i23mr11743682pgg.13.1543804875140;
+        Sun, 02 Dec 2018 18:41:15 -0800 (PST)
 Received: from bbox-2.seo.corp.google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id z62sm18805864pfi.4.2018.12.02.18.41.09
+        by smtp.gmail.com with ESMTPSA id z62sm18805864pfi.4.2018.12.02.18.41.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Dec 2018 18:41:11 -0800 (PST)
+        Sun, 02 Dec 2018 18:41:14 -0800 (PST)
 From:   Minchan Kim <minchan@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Joey Pabalinas <joeypabalinas@gmail.com>,
         Minchan Kim <minchan@kernel.org>
-Subject: [PATCH v4 6/7] zram: add bd_stat statistics
-Date:   Mon,  3 Dec 2018 11:40:44 +0900
-Message-Id: <20181203024045.153534-7-minchan@kernel.org>
+Subject: [PATCH v4 7/7] zram: writeback throttle
+Date:   Mon,  3 Dec 2018 11:40:45 +0900
+Message-Id: <20181203024045.153534-8-minchan@kernel.org>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <20181203024045.153534-1-minchan@kernel.org>
 References: <20181203024045.153534-1-minchan@kernel.org>
@@ -77,154 +77,242 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bd_stat represents things happened in backing device. Currently,
-it supports bd_counts, bd_reads and bd_writes which are helpful
-to understand wearout of flash and memory saving.
+If there are lots of write IO with flash device, it could have a
+wearout problem of storage. To overcome the problem, admin needs
+to design write limitation to guarantee flash health
+for entire product life.
+
+This patch creates a new knob "writeback_limit" on zram.
+
+writeback_limit's default value is 0 so that it doesn't limit
+any writeback. If admin want to measure writeback count in a
+certain period, he could know it via /sys/block/zram0/bd_stat's
+3rd column.
+
+If admin want to limit writeback as per-day 400M, he could do it
+like below.
+
+	MB_SHIFT=20
+	4K_SHIFT=12
+	echo $((400<<MB_SHIFT>>4K_SHIFT)) > \
+		/sys/block/zram0/writeback_limit.
+
+If admin want to allow further write again, he could do it like below
+
+	echo 0 > /sys/block/zram0/writeback_limit
+
+If admin want to see remaining writeback budget,
+
+	cat /sys/block/zram0/writeback_limit
+
+The writeback_limit count will reset whenever you reset zram(e.g.,
+system reboot, echo 1 > /sys/block/zramX/reset) so keeping how many of
+writeback happened until you reset the zram to allocate extra writeback
+budget in next setting is user's job.
 
 Signed-off-by: Minchan Kim <minchan@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-block-zram |  8 ++++++
- Documentation/blockdev/zram.txt            | 11 ++++++++
- drivers/block/zram/zram_drv.c              | 29 ++++++++++++++++++++++
- drivers/block/zram/zram_drv.h              |  5 ++++
- 4 files changed, 53 insertions(+)
+
+I removed Reviewed-by from Sergey and Joey because I modified interface
+since they had reviewed.
+
+ Documentation/ABI/testing/sysfs-block-zram |  9 ++++
+ Documentation/blockdev/zram.txt            | 31 +++++++++++++
+ drivers/block/zram/zram_drv.c              | 52 ++++++++++++++++++++--
+ drivers/block/zram/zram_drv.h              |  2 +
+ 4 files changed, 91 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/ABI/testing/sysfs-block-zram b/Documentation/ABI/testing/sysfs-block-zram
-index d1f80b077885..65fc33b2f53b 100644
+index 65fc33b2f53b..9d2339a485c8 100644
 --- a/Documentation/ABI/testing/sysfs-block-zram
 +++ b/Documentation/ABI/testing/sysfs-block-zram
-@@ -113,3 +113,11 @@ Contact:	Minchan Kim <minchan@kernel.org>
- Description:
- 		The writeback file is write-only and trigger idle and/or
- 		huge page writeback to backing device.
+@@ -121,3 +121,12 @@ Contact:	Minchan Kim <minchan@kernel.org>
+ 		The bd_stat file is read-only and represents backing device's
+ 		statistics (bd_count, bd_reads, bd_writes) in a format
+ 		similar to block layer statistics file format.
 +
-+What:		/sys/block/zram<id>/bd_stat
++What:		/sys/block/zram<id>/writeback_limit
 +Date:		November 2018
 +Contact:	Minchan Kim <minchan@kernel.org>
 +Description:
-+		The bd_stat file is read-only and represents backing device's
-+		statistics (bd_count, bd_reads, bd_writes) in a format
-+		similar to block layer statistics file format.
++		The writeback_limit file is read-write and specifies the maximum
++		amount of writeback ZRAM can do. The limit could be changed
++		in run time and "0" means disable the limit.
++		No limit is the initial state.
 diff --git a/Documentation/blockdev/zram.txt b/Documentation/blockdev/zram.txt
-index 806cdaabac83..906df97527a7 100644
+index 906df97527a7..436c5e98e1b6 100644
 --- a/Documentation/blockdev/zram.txt
 +++ b/Documentation/blockdev/zram.txt
-@@ -221,6 +221,17 @@ The stat file represents device's mm statistics. It consists of a single
-  pages_compacted  the number of pages freed during compaction
-  huge_pages	  the number of incompressible pages
+@@ -164,6 +164,8 @@ reset             WO    trigger device reset
+ mem_used_max      WO    reset the `mem_used_max' counter (see later)
+ mem_limit         WO    specifies the maximum amount of memory ZRAM can use
+                         to store the compressed data
++writeback_limit   WO    specifies the maximum amount of write IO zram can
++			write out to backing device as 4KB unit
+ max_comp_streams  RW    the number of possible concurrent compress operations
+ comp_algorithm    RW    show and change the compression algorithm
+ compact           WO    trigger memory compaction
+@@ -275,6 +277,35 @@ Admin can request writeback of those idle pages at right timing via
  
-+File /sys/block/zram<id>/bd_stat
+ With the command, zram writeback idle pages from memory to the storage.
+ 
++If there are lots of write IO with flash device, potentially, it has
++flash wearout problem so that admin needs to design write limitation
++to guarantee storage health for entire product life.
++To overcome the concern, zram supports "writeback_limit".
++The "writeback_limit"'s default value is 0 so that it doesn't limit
++any writeback. If admin want to measure writeback count in a certain
++period, he could know it via /sys/block/zram0/bd_stat's 3rd column.
 +
-+The stat file represents device's backing device statistics. It consists of
-+a single line of text and contains the following stats separated by whitespace:
-+ bd_count	size of data written in backing device.
-+		Unit: 4K bytes
-+ bd_reads	the number of reads from backing device
-+		Unit: 4K bytes
-+ bd_writes	the number of writes to backing device
-+		Unit: 4K bytes
++If admin want to limit writeback as per-day 400M, he could do it
++like below.
 +
- 9) Deactivate:
- 	swapoff /dev/zram0
- 	umount /dev/zram1
++    MB_SHIFT=20
++    4K_SHIFT=12
++    echo $((400<<MB_SHIFT>>4K_SHIFT)) > \
++	    /sys/block/zram0/writeback_limit.
++
++If admin want to allow further write again, he could do it like below
++
++    echo 0 > /sys/block/zram0/writeback_limit
++
++If admin want to see remaining writeback budget since he set,
++
++    cat /sys/block/zram0/writeback_limit
++
++The writeback_limit count will reset whenever you reset zram(e.g.,
++system reboot, echo 1 > /sys/block/zramX/reset) so keeping how many of
++writeback happened until you reset the zram to allocate extra writeback
++budget in next setting is user's job.
++
+ = memory tracking
+ 
+ With CONFIG_ZRAM_MEMORY_TRACKING, user can know information of the
 diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 6b5a886c8f32..f1832fa3ba41 100644
+index f1832fa3ba41..33c5cc879f24 100644
 --- a/drivers/block/zram/zram_drv.c
 +++ b/drivers/block/zram/zram_drv.c
-@@ -502,6 +502,7 @@ static unsigned long alloc_block_bdev(struct zram *zram)
- 	if (test_and_set_bit(blk_idx, zram->bitmap))
- 		goto retry;
- 
-+	atomic64_inc(&zram->stats.bd_count);
- 	return blk_idx;
+@@ -330,6 +330,39 @@ static ssize_t idle_store(struct device *dev,
  }
  
-@@ -511,6 +512,7 @@ static void free_block_bdev(struct zram *zram, unsigned long blk_idx)
- 
- 	was_set = test_and_clear_bit(blk_idx, zram->bitmap);
- 	WARN_ON_ONCE(!was_set);
-+	atomic64_dec(&zram->stats.bd_count);
- }
- 
- static void zram_page_end_io(struct bio *bio)
-@@ -668,6 +670,7 @@ static ssize_t writeback_store(struct device *dev,
- 			continue;
- 		}
- 
-+		atomic64_inc(&zram->stats.bd_writes);
- 		/*
- 		 * We released zram_slot_lock so need to check if the slot was
- 		 * changed. If there is freeing for the slot, we can catch it
-@@ -757,6 +760,7 @@ static int read_from_bdev_sync(struct zram *zram, struct bio_vec *bvec,
- static int read_from_bdev(struct zram *zram, struct bio_vec *bvec,
- 			unsigned long entry, struct bio *parent, bool sync)
- {
-+	atomic64_inc(&zram->stats.bd_reads);
- 	if (sync)
- 		return read_from_bdev_sync(zram, bvec, entry, parent);
- 	else
-@@ -1013,6 +1017,25 @@ static ssize_t mm_stat_show(struct device *dev,
- 	return ret;
- }
- 
-+#ifdef CONFIG_ZRAM_WRITEBACK
-+static ssize_t bd_stat_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
+ #ifdef CONFIG_ZRAM_WRITEBACK
++static ssize_t writeback_limit_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t len)
 +{
 +	struct zram *zram = dev_to_zram(dev);
-+	ssize_t ret;
++	u64 val;
++	ssize_t ret = -EINVAL;
++
++	if (kstrtoull(buf, 10, &val))
++		return ret;
 +
 +	down_read(&zram->init_lock);
-+	ret = scnprintf(buf, PAGE_SIZE,
-+		"%8llu %8llu %8llu\n",
-+		(u64)atomic64_read(&zram->stats.bd_count) * (PAGE_SHIFT - 12),
-+		(u64)atomic64_read(&zram->stats.bd_reads) * (PAGE_SHIFT - 12),
-+		(u64)atomic64_read(&zram->stats.bd_writes) * (PAGE_SHIFT - 12));
++	atomic64_set(&zram->stats.bd_wb_limit, val);
++	if (val == 0)
++		zram->stop_writeback = false;
 +	up_read(&zram->init_lock);
++	ret = len;
 +
 +	return ret;
 +}
-+#endif
 +
- static ssize_t debug_stat_show(struct device *dev,
++static ssize_t writeback_limit_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	u64 val;
++	struct zram *zram = dev_to_zram(dev);
++
++	down_read(&zram->init_lock);
++	val = atomic64_read(&zram->stats.bd_wb_limit);
++	up_read(&zram->init_lock);
++
++	return scnprintf(buf, PAGE_SIZE, "%llu\n", val);
++}
++
+ static void reset_bdev(struct zram *zram)
+ {
+ 	struct block_device *bdev;
+@@ -612,6 +645,11 @@ static ssize_t writeback_store(struct device *dev,
+ 		bvec.bv_len = PAGE_SIZE;
+ 		bvec.bv_offset = 0;
+ 
++		if (zram->stop_writeback) {
++			ret = -EIO;
++			break;
++		}
++
+ 		if (!blk_idx) {
+ 			blk_idx = alloc_block_bdev(zram);
+ 			if (!blk_idx) {
+@@ -694,6 +732,11 @@ static ssize_t writeback_store(struct device *dev,
+ 		zram_set_element(zram, index, blk_idx);
+ 		blk_idx = 0;
+ 		atomic64_inc(&zram->stats.pages_stored);
++		if (atomic64_add_unless(&zram->stats.bd_wb_limit,
++					-1 << (PAGE_SHIFT - 12), 0)) {
++			if (atomic64_read(&zram->stats.bd_wb_limit) == 0)
++				zram->stop_writeback = true;
++		}
+ next:
+ 		zram_slot_unlock(zram, index);
+ 	}
+@@ -1018,6 +1061,7 @@ static ssize_t mm_stat_show(struct device *dev,
+ }
+ 
+ #ifdef CONFIG_ZRAM_WRITEBACK
++#define FOUR_K(x) ((x) * (1 << (PAGE_SHIFT - 12)))
+ static ssize_t bd_stat_show(struct device *dev,
  		struct device_attribute *attr, char *buf)
  {
-@@ -1033,6 +1056,9 @@ static ssize_t debug_stat_show(struct device *dev,
+@@ -1027,9 +1071,9 @@ static ssize_t bd_stat_show(struct device *dev,
+ 	down_read(&zram->init_lock);
+ 	ret = scnprintf(buf, PAGE_SIZE,
+ 		"%8llu %8llu %8llu\n",
+-		(u64)atomic64_read(&zram->stats.bd_count) * (PAGE_SHIFT - 12),
+-		(u64)atomic64_read(&zram->stats.bd_reads) * (PAGE_SHIFT - 12),
+-		(u64)atomic64_read(&zram->stats.bd_writes) * (PAGE_SHIFT - 12));
++			FOUR_K((u64)atomic64_read(&zram->stats.bd_count)),
++			FOUR_K((u64)atomic64_read(&zram->stats.bd_reads)),
++			FOUR_K((u64)atomic64_read(&zram->stats.bd_writes)));
+ 	up_read(&zram->init_lock);
  
- static DEVICE_ATTR_RO(io_stat);
- static DEVICE_ATTR_RO(mm_stat);
-+#ifdef CONFIG_ZRAM_WRITEBACK
-+static DEVICE_ATTR_RO(bd_stat);
-+#endif
- static DEVICE_ATTR_RO(debug_stat);
+ 	return ret;
+@@ -1767,6 +1811,7 @@ static DEVICE_ATTR_RW(comp_algorithm);
+ #ifdef CONFIG_ZRAM_WRITEBACK
+ static DEVICE_ATTR_RW(backing_dev);
+ static DEVICE_ATTR_WO(writeback);
++static DEVICE_ATTR_RW(writeback_limit);
+ #endif
  
- static void zram_meta_free(struct zram *zram, u64 disksize)
-@@ -1759,6 +1785,9 @@ static struct attribute *zram_disk_attrs[] = {
+ static struct attribute *zram_disk_attrs[] = {
+@@ -1782,6 +1827,7 @@ static struct attribute *zram_disk_attrs[] = {
+ #ifdef CONFIG_ZRAM_WRITEBACK
+ 	&dev_attr_backing_dev.attr,
+ 	&dev_attr_writeback.attr,
++	&dev_attr_writeback_limit.attr,
  #endif
  	&dev_attr_io_stat.attr,
  	&dev_attr_mm_stat.attr,
-+#ifdef CONFIG_ZRAM_WRITEBACK
-+	&dev_attr_bd_stat.attr,
-+#endif
- 	&dev_attr_debug_stat.attr,
- 	NULL,
- };
 diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index 1ad74f030b6d..bc477803530d 100644
+index bc477803530d..4bd3afd15e83 100644
 --- a/drivers/block/zram/zram_drv.h
 +++ b/drivers/block/zram/zram_drv.h
-@@ -82,6 +82,11 @@ struct zram_stats {
- 	atomic_long_t max_used_pages;	/* no. of maximum pages stored */
- 	atomic64_t writestall;		/* no. of write slow paths */
- 	atomic64_t miss_free;		/* no. of missed free */
-+#ifdef	CONFIG_ZRAM_WRITEBACK
-+	atomic64_t bd_count;		/* no. of pages in backing device */
-+	atomic64_t bd_reads;		/* no. of reads from backing device */
-+	atomic64_t bd_writes;		/* no. of writes from backing device */
-+#endif
+@@ -86,6 +86,7 @@ struct zram_stats {
+ 	atomic64_t bd_count;		/* no. of pages in backing device */
+ 	atomic64_t bd_reads;		/* no. of reads from backing device */
+ 	atomic64_t bd_writes;		/* no. of writes from backing device */
++	atomic64_t bd_wb_limit;		/* writeback limit of backing device */
+ #endif
  };
  
- struct zram {
+@@ -113,6 +114,7 @@ struct zram {
+ 	 */
+ 	bool claim; /* Protected by bdev->bd_mutex */
+ 	struct file *backing_dev;
++	bool stop_writeback;
+ #ifdef CONFIG_ZRAM_WRITEBACK
+ 	struct block_device *bdev;
+ 	unsigned int old_block_size;
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
