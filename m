@@ -2,299 +2,343 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A925C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE78C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED8A2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A11C20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:00:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DsdaMy4L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED8A2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OwyVsF2V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A11C20848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbeLCP7q (ORCPT
+        id S1726713AbeLCQBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:59:46 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:51944 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbeLCP7q (ORCPT
+        Mon, 3 Dec 2018 11:01:01 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38443 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbeLCQBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:59:46 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB3FxC5d105547;
-        Mon, 3 Dec 2018 15:59:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=8difBb/UniRZgtWoNDRuR3Fz6uP3IfLIQMcLXKu/ucA=;
- b=DsdaMy4LjgkJvDY1eZSPv9pcGq1nyudtSvouObDUUCgsCXNAEuk52H765ksUSio0fgI/
- D9iwT3MhNpjxECaMteeKTXsjwxpbaVWL1o/uXucIoVQAePgLUY3ZBiNrNrJugR5aMT11
- pj9Lp4Wa/RO2vRnc/76KUsFr9zdLhGstWaoqr7ES2TFhI+9Y2hUe4ExRAa5fqnGZZyjz
- wB+/CJ2VjfM6FXly67PLvQE5OFXpm5kW8wH3jWed8LIfiYPUKE1V9qGHN6rd+lV6TnmZ
- 3zw1bKWBCohUlIpGcgIjSh9YhEagFVmwcTjqBQf1xZw+Za/ohodui/31bkZNSToWT6bG 8A== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p3hqtq7sg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 Dec 2018 15:59:29 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB3FxTBp004672
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Dec 2018 15:59:29 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB3FxRSp032222;
-        Mon, 3 Dec 2018 15:59:28 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 03 Dec 2018 07:59:27 -0800
-Subject: Re: [PATCH v4] pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under
- spinlock
-To:     Wen Yang <wen.yang99@zte.com.cn>, jgross@suse.com,
-        sstabellini@kernel.org
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Julia Lawall <julia.lawall@lip6.fr>
-References: <20181201063303.45089-1-wen.yang99@zte.com.cn>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <bbe2e371-97ec-42b8-bc1a-01c6019d76d6@oracle.com>
-Date:   Mon, 3 Dec 2018 10:59:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 3 Dec 2018 11:01:00 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so6240230wml.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 08:00:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LlQl10sTapvckaKcDkeHqBIHgcPLtKEdv5p1b9Bnto4=;
+        b=OwyVsF2VQ57Hdn/gtOT8NeDjj846jYMCoy9ncQlU7KhgB3zSRkSwhwcNsqDN/O2td+
+         by86L6HZK0GZqeeXDkIWYBYYUKvPqKCq5Qm3xOGd7S8/HvFGBDIo6D3fBpp/3ZxGih9i
+         Ze7zmWcp8ULY7+YBz6DEazDQxGFfebl5sAmAA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LlQl10sTapvckaKcDkeHqBIHgcPLtKEdv5p1b9Bnto4=;
+        b=E7Xr3/kGrDHAndk5/TUHdmuLZjv70I9EDfwNLOrbWt++eh4nxU9423ZbwLncisBNtk
+         dk2Dk3l68WdkX0yiDG20J2+0WL0m02JlWW7SHPZ20C+9PFxNJ3FENUMgYZskdcaa7UsE
+         sDhaXF65InvLNd/gkn6GCdj6PGGaykquMmIDZG9oULRjjic4rNqdJ4yF5FYksca0LHtK
+         hEzEEbTvYVX9YDlOw/tbCZy+YRm9wvZwLnrKdWm120gIL35hg4lJk3bznjWOgC5qMya9
+         5SkMmnenj7BmQ/oiz4j1YqTzhkiH/AeeSI0r/+GJyPW3GOn3NJjG2brSXBeZsEdY3J1G
+         bq9A==
+X-Gm-Message-State: AA+aEWacA9DqkUXGJNS6MRffImKzdfO/XMMrbRJNrQhjFzSZxZW10pt0
+        lfnkbg8CoxUuH7L5Q1Slrb+s9g==
+X-Google-Smtp-Source: AFSGD/UU0Sw7OaQwlBIyozUPHYUYP17cM9x9TQG2WMkItE220KN9RTa0FmToJgg628a3q3PyA1T+7A==
+X-Received: by 2002:a1c:8851:: with SMTP id k78mr8979378wmd.51.1543852853966;
+        Mon, 03 Dec 2018 08:00:53 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id l20sm31443927wrb.93.2018.12.03.08.00.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 08:00:53 -0800 (PST)
+Date:   Mon, 3 Dec 2018 16:00:50 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Hogan <jhogan@kernel.org>, linux-hexagon@vger.kernel.org,
+        x86@kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Huang Ying <ying.huang@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rich Felker <dalias@libc.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v6 1/4] kgdb: Remove irq flags from roundup
+Message-ID: <20181203160050.vebvvdiuki2iuczg@holly.lan>
+References: <20181127173839.34328-1-dianders@chromium.org>
+ <20181127173839.34328-2-dianders@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20181201063303.45089-1-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=52 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812030150
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127173839.34328-2-dianders@chromium.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/1/18 1:33 AM, Wen Yang wrote:
-> The problem is that we call this with a spin lock held.
-> The call tree is:
-> pvcalls_front_accept() holds bedata->socket_lock.
->     -> create_active()
->         -> __get_free_pages() uses GFP_KERNEL
->
-> The create_active() function is only called from pvcalls_front_accept()
-> with a spin_lock held, The allocation is not allowed to sleep and
-> GFP_KERNEL is not sufficient.
->
-> This issue was detected by using the Coccinelle software.
->
-> v2: Add a function doing the allocations which is called
->     outside the lock and passing the allocated data to
->     create_active().
->
-> v3: Use the matching deallocators i.e., free_page()
->     and free_pages(), respectively.
->
-> v4: It would be better to pre-populate map (struct sock_mapping),
->     rather than introducing one more new struct.
->
-> Suggested-by: Juergen Gross <jgross@suse.com>
-> Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Suggested-by: Stefano Stabellini <sstabellini@kernel.org>
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> CC: Julia Lawall <julia.lawall@lip6.fr>
-> CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> CC: Juergen Gross <jgross@suse.com>
-> CC: Stefano Stabellini <sstabellini@kernel.org>
-> CC: xen-devel@lists.xenproject.org
-> CC: linux-kernel@vger.kernel.org
+On Tue, Nov 27, 2018 at 09:38:36AM -0800, Douglas Anderson wrote:
+> The function kgdb_roundup_cpus() was passed a parameter that was
+> documented as:
+> 
+> > the flags that will be used when restoring the interrupts. There is
+> > local_irq_save() call before kgdb_roundup_cpus().
+> 
+> Nobody used those flags.  Anyone who wanted to temporarily turn on
+> interrupts just did local_irq_enable() and local_irq_disable() without
+> looking at them.  So we can definitely remove the flags.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Acked-by: Will Deacon <will.deacon@arm.com>
 > ---
->  drivers/xen/pvcalls-front.c | 57 ++++++++++++++++++++++++++++++-------
->  1 file changed, 46 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-> index 77224d8f3e6f..555c9abdf58f 100644
-> --- a/drivers/xen/pvcalls-front.c
-> +++ b/drivers/xen/pvcalls-front.c
-> @@ -335,13 +335,18 @@ int pvcalls_front_socket(struct socket *sock)
->  	return ret;
+> 
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2:
+> - Removing irq flags separated from fixing lockdep splat.
+> 
+>  arch/arc/kernel/kgdb.c     | 2 +-
+>  arch/arm/kernel/kgdb.c     | 2 +-
+>  arch/arm64/kernel/kgdb.c   | 2 +-
+>  arch/hexagon/kernel/kgdb.c | 9 ++-------
+>  arch/mips/kernel/kgdb.c    | 2 +-
+>  arch/powerpc/kernel/kgdb.c | 2 +-
+>  arch/sh/kernel/kgdb.c      | 2 +-
+>  arch/sparc/kernel/smp_64.c | 2 +-
+>  arch/x86/kernel/kgdb.c     | 9 ++-------
+
+Again, please formally Cc: the arch maintainers in the patch header
+(just after your Signed-off-by: if I'm not being explicitly clear).
+
+
+Daniel.
+
+>  include/linux/kgdb.h       | 9 ++-------
+>  kernel/debug/debug_core.c  | 2 +-
+>  11 files changed, 14 insertions(+), 29 deletions(-)
+> 
+> diff --git a/arch/arc/kernel/kgdb.c b/arch/arc/kernel/kgdb.c
+> index 9a3c34af2ae8..0932851028e0 100644
+> --- a/arch/arc/kernel/kgdb.c
+> +++ b/arch/arc/kernel/kgdb.c
+> @@ -197,7 +197,7 @@ static void kgdb_call_nmi_hook(void *ignored)
+>  	kgdb_nmicallback(raw_smp_processor_id(), NULL);
 >  }
 >  
-> -static int create_active(struct sock_mapping *map, int *evtchn)
-> +static void free_active_ring(struct sock_mapping *map)
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
 >  {
-> -	void *bytes;
-> -	int ret = -ENOMEM, irq = -1, i;
-> +	if (!map)
-> +		return;
-> +	free_pages((unsigned long)map->active.data.in,
-> +			map->active.ring->ring_order);
-> +	free_page((unsigned long)map->active.ring);
-> +}
->  
-> -	*evtchn = -1;
-> -	init_waitqueue_head(&map->active.inflight_conn_req);
-> +static int alloc_active_ring(struct sock_mapping *map)
-> +{
-> +	void *bytes;
->  
->  	map->active.ring = (struct pvcalls_data_intf *)
->  		__get_free_page(GFP_KERNEL | __GFP_ZERO);
-> @@ -352,6 +357,26 @@ static int create_active(struct sock_mapping *map, int *evtchn)
->  					PVCALLS_RING_ORDER);
->  	if (bytes == NULL)
->  		goto out_error;
-> +	map->active.data.in = bytes;
-> +	map->active.data.out = bytes +
-> +		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-> +
-> +	return 0;
-> +
-> +out_error:
-> +	free_active_ring(map);
-> +	return -ENOMEM;
-> +}
-> +
-> +static int create_active(struct sock_mapping *map, int *evtchn)
-> +{
-> +	void *bytes;
-> +	int ret = -ENOMEM, irq = -1, i;
-> +
-> +	*evtchn = -1;
-> +	init_waitqueue_head(&map->active.inflight_conn_req);
-> +
-> +	bytes = map->active.data.in;
-
-Why is this needed?
-
-I may not be be reading the diff correctly, but your patch appears to be
-whitespace-damaged and I can't apply it.
-
->  	for (i = 0; i < (1 << PVCALLS_RING_ORDER); i++)
->  		map->active.ring->ref[i] = gnttab_grant_foreign_access(
->  			pvcalls_front_dev->otherend_id,
-> @@ -361,10 +386,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
->  		pvcalls_front_dev->otherend_id,
->  		pfn_to_gfn(virt_to_pfn((void *)map->active.ring)), 0);
->  
-> -	map->active.data.in = bytes;
-> -	map->active.data.out = bytes +
-> -		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-> -
->  	ret = xenbus_alloc_evtchn(pvcalls_front_dev, evtchn);
->  	if (ret)
->  		goto out_error;
-> @@ -385,8 +406,7 @@ static int create_active(struct sock_mapping *map, int *evtchn)
->  out_error:
->  	if (*evtchn >= 0)
->  		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
-> -	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
-> -	free_page((unsigned long)map->active.ring);
-> +	free_active_ring(map);
-
-
-I think that since you are allocating the data outside of this call it
-should also be freed outside, when create_active() fails.
-
--boris
-
-
->  	return ret;
+>  	local_irq_enable();
+>  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
+> diff --git a/arch/arm/kernel/kgdb.c b/arch/arm/kernel/kgdb.c
+> index caa0dbe3dc61..f21077b077be 100644
+> --- a/arch/arm/kernel/kgdb.c
+> +++ b/arch/arm/kernel/kgdb.c
+> @@ -175,7 +175,7 @@ static void kgdb_call_nmi_hook(void *ignored)
+>         kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
 >  }
 >  
-> @@ -406,11 +426,17 @@ int pvcalls_front_connect(struct socket *sock, struct sockaddr *addr,
->  		return PTR_ERR(map);
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>         local_irq_enable();
+>         smp_call_function(kgdb_call_nmi_hook, NULL, 0);
+> diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
+> index a20de58061a8..12c339ff6e75 100644
+> --- a/arch/arm64/kernel/kgdb.c
+> +++ b/arch/arm64/kernel/kgdb.c
+> @@ -289,7 +289,7 @@ static void kgdb_call_nmi_hook(void *ignored)
+>  	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
+>  }
 >  
->  	bedata = dev_get_drvdata(&pvcalls_front_dev->dev);
-> +	ret = alloc_active_ring(map);
-> +	if (ret < 0) {
-> +		pvcalls_exit_sock(sock);
-> +		return ret;
-> +	}
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>  	local_irq_enable();
+>  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
+> diff --git a/arch/hexagon/kernel/kgdb.c b/arch/hexagon/kernel/kgdb.c
+> index 16c24b22d0b2..012e0e230ac2 100644
+> --- a/arch/hexagon/kernel/kgdb.c
+> +++ b/arch/hexagon/kernel/kgdb.c
+> @@ -119,17 +119,12 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
 >  
->  	spin_lock(&bedata->socket_lock);
->  	ret = get_request(bedata, &req_id);
->  	if (ret < 0) {
->  		spin_unlock(&bedata->socket_lock);
-> +		free_active_ring(map);
->  		pvcalls_exit_sock(sock);
->  		return ret;
->  	}
-> @@ -780,12 +806,20 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
->  		}
->  	}
+>  /**
+>   * kgdb_roundup_cpus - Get other CPUs into a holding pattern
+> - * @flags: Current IRQ state
+>   *
+>   * On SMP systems, we need to get the attention of the other CPUs
+>   * and get them be in a known state.  This should do what is needed
+>   * to get the other CPUs to call kgdb_wait(). Note that on some arches,
+>   * the NMI approach is not used for rounding up all the CPUs. For example,
+> - * in case of MIPS, smp_call_function() is used to roundup CPUs. In
+> - * this case, we have to make sure that interrupts are enabled before
+> - * calling smp_call_function(). The argument to this function is
+> - * the flags that will be used when restoring the interrupts. There is
+> - * local_irq_save() call before kgdb_roundup_cpus().
+> + * in case of MIPS, smp_call_function() is used to roundup CPUs.
+>   *
+>   * On non-SMP systems, this is not called.
+>   */
+> @@ -139,7 +134,7 @@ static void hexagon_kgdb_nmi_hook(void *ignored)
+>  	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
+>  }
 >  
-> +	ret = alloc_active_ring(map);
-> +	if (ret < 0) {
-> +		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
-> +				(void *)&map->passive.flags);
-> +		pvcalls_exit_sock(sock);
-> +		return ret;
-> +	}
->  	spin_lock(&bedata->socket_lock);
->  	ret = get_request(bedata, &req_id);
->  	if (ret < 0) {
->  		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
->  			  (void *)&map->passive.flags);
->  		spin_unlock(&bedata->socket_lock);
-> +		free_active_ring(map);
->  		pvcalls_exit_sock(sock);
->  		return ret;
->  	}
-> @@ -794,6 +828,7 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
->  		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
->  			  (void *)&map->passive.flags);
->  		spin_unlock(&bedata->socket_lock);
-> +		free_active_ring(map);
->  		pvcalls_exit_sock(sock);
->  		return -ENOMEM;
->  	}
-
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>  	local_irq_enable();
+>  	smp_call_function(hexagon_kgdb_nmi_hook, NULL, 0);
+> diff --git a/arch/mips/kernel/kgdb.c b/arch/mips/kernel/kgdb.c
+> index eb6c0d582626..2b05effc17b4 100644
+> --- a/arch/mips/kernel/kgdb.c
+> +++ b/arch/mips/kernel/kgdb.c
+> @@ -219,7 +219,7 @@ static void kgdb_call_nmi_hook(void *ignored)
+>  	set_fs(old_fs);
+>  }
+>  
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>  	local_irq_enable();
+>  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
+> diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
+> index 59c578f865aa..b0e804844be0 100644
+> --- a/arch/powerpc/kernel/kgdb.c
+> +++ b/arch/powerpc/kernel/kgdb.c
+> @@ -124,7 +124,7 @@ static int kgdb_call_nmi_hook(struct pt_regs *regs)
+>  }
+>  
+>  #ifdef CONFIG_SMP
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>  	smp_send_debugger_break();
+>  }
+> diff --git a/arch/sh/kernel/kgdb.c b/arch/sh/kernel/kgdb.c
+> index 4f04c6638a4d..cc57630f6bf2 100644
+> --- a/arch/sh/kernel/kgdb.c
+> +++ b/arch/sh/kernel/kgdb.c
+> @@ -319,7 +319,7 @@ static void kgdb_call_nmi_hook(void *ignored)
+>  	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
+>  }
+>  
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>  	local_irq_enable();
+>  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
+> diff --git a/arch/sparc/kernel/smp_64.c b/arch/sparc/kernel/smp_64.c
+> index 4792e08ad36b..f45d876983f1 100644
+> --- a/arch/sparc/kernel/smp_64.c
+> +++ b/arch/sparc/kernel/smp_64.c
+> @@ -1014,7 +1014,7 @@ void flush_dcache_page_all(struct mm_struct *mm, struct page *page)
+>  }
+>  
+>  #ifdef CONFIG_KGDB
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>  	smp_cross_call(&xcall_kgdb_capture, 0, 0, 0);
+>  }
+> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+> index 8e36f249646e..ac6291a4178d 100644
+> --- a/arch/x86/kernel/kgdb.c
+> +++ b/arch/x86/kernel/kgdb.c
+> @@ -422,21 +422,16 @@ static void kgdb_disable_hw_debug(struct pt_regs *regs)
+>  #ifdef CONFIG_SMP
+>  /**
+>   *	kgdb_roundup_cpus - Get other CPUs into a holding pattern
+> - *	@flags: Current IRQ state
+>   *
+>   *	On SMP systems, we need to get the attention of the other CPUs
+>   *	and get them be in a known state.  This should do what is needed
+>   *	to get the other CPUs to call kgdb_wait(). Note that on some arches,
+>   *	the NMI approach is not used for rounding up all the CPUs. For example,
+> - *	in case of MIPS, smp_call_function() is used to roundup CPUs. In
+> - *	this case, we have to make sure that interrupts are enabled before
+> - *	calling smp_call_function(). The argument to this function is
+> - *	the flags that will be used when restoring the interrupts. There is
+> - *	local_irq_save() call before kgdb_roundup_cpus().
+> + *	in case of MIPS, smp_call_function() is used to roundup CPUs.
+>   *
+>   *	On non-SMP systems, this is not called.
+>   */
+> -void kgdb_roundup_cpus(unsigned long flags)
+> +void kgdb_roundup_cpus(void)
+>  {
+>  	apic->send_IPI_allbutself(APIC_DM_NMI);
+>  }
+> diff --git a/include/linux/kgdb.h b/include/linux/kgdb.h
+> index e465bb15912d..05e5b2eb0d32 100644
+> --- a/include/linux/kgdb.h
+> +++ b/include/linux/kgdb.h
+> @@ -178,21 +178,16 @@ kgdb_arch_handle_exception(int vector, int signo, int err_code,
+>  
+>  /**
+>   *	kgdb_roundup_cpus - Get other CPUs into a holding pattern
+> - *	@flags: Current IRQ state
+>   *
+>   *	On SMP systems, we need to get the attention of the other CPUs
+>   *	and get them into a known state.  This should do what is needed
+>   *	to get the other CPUs to call kgdb_wait(). Note that on some arches,
+>   *	the NMI approach is not used for rounding up all the CPUs. For example,
+> - *	in case of MIPS, smp_call_function() is used to roundup CPUs. In
+> - *	this case, we have to make sure that interrupts are enabled before
+> - *	calling smp_call_function(). The argument to this function is
+> - *	the flags that will be used when restoring the interrupts. There is
+> - *	local_irq_save() call before kgdb_roundup_cpus().
+> + *	in case of MIPS, smp_call_function() is used to roundup CPUs.
+>   *
+>   *	On non-SMP systems, this is not called.
+>   */
+> -extern void kgdb_roundup_cpus(unsigned long flags);
+> +extern void kgdb_roundup_cpus(void);
+>  
+>  /**
+>   *	kgdb_arch_set_pc - Generic call back to the program counter
+> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+> index 65c0f1363788..f3cadda45f07 100644
+> --- a/kernel/debug/debug_core.c
+> +++ b/kernel/debug/debug_core.c
+> @@ -593,7 +593,7 @@ static int kgdb_cpu_enter(struct kgdb_state *ks, struct pt_regs *regs,
+>  
+>  	/* Signal the other CPUs to enter kgdb_wait() */
+>  	else if ((!kgdb_single_step) && kgdb_do_roundup)
+> -		kgdb_roundup_cpus(flags);
+> +		kgdb_roundup_cpus();
+>  #endif
+>  
+>  	/*
+> -- 
+> 2.20.0.rc0.387.gc7a69e6b6c-goog
+> 
