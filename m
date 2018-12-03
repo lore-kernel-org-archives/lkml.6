@@ -2,178 +2,148 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B58C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCADC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D7E20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:56:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D7E20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E002D206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:57:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E002D206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726588AbeLCN5u (ORCPT
+        id S1726546AbeLCN6L convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:57:50 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38088 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726146AbeLCN5u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:57:50 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3DsGAA091701
-        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 08:56:42 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p54vy2vva-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 08:56:41 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 3 Dec 2018 13:56:41 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Dec 2018 13:56:38 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3Dubq719398776
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Dec 2018 13:56:37 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44B1EB2066;
-        Mon,  3 Dec 2018 13:56:37 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0FCF6B2065;
-        Mon,  3 Dec 2018 13:56:36 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.206.214])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Dec 2018 13:56:36 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E178016C5DF5; Mon,  3 Dec 2018 05:56:38 -0800 (PST)
-Date:   Mon, 3 Dec 2018 05:56:38 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "He, Bo" <bo.he@intel.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Zhang, Jun" <jun.zhang@intel.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>
-Subject: Re: rcu_preempt caused oom
-Reply-To: paulmck@linux.ibm.com
-References: <CD6925E8781EFD4D8E11882D20FC406D52A11F61@SHSMSX104.ccr.corp.intel.com>
- <20181129130647.GG4170@linux.ibm.com>
- <20181129142712.GA16607@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A1243D@SHSMSX104.ccr.corp.intel.com>
- <20181130144317.GQ4170@linux.ibm.com>
- <20181130101631.618d955f@gandalf.local.home>
- <CD6925E8781EFD4D8E11882D20FC406D52A1263F@SHSMSX104.ccr.corp.intel.com>
- <20181130164920.GR4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A14B74@SHSMSX104.ccr.corp.intel.com>
+        Mon, 3 Dec 2018 08:58:11 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38794 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725892AbeLCN6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:58:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6C24520CFB; Mon,  3 Dec 2018 14:57:01 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9FCE920EB9;
+        Mon,  3 Dec 2018 14:56:22 +0100 (CET)
+Date:   Mon, 3 Dec 2018 14:56:22 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        linux-kernel@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/8] phy: mvebu-cp110-comphy: fix port check in
+ ->xlate()
+Message-ID: <20181203145622.0d38869d@xps13>
+In-Reply-To: <20181203003623.GJ30658@n2100.armlinux.org.uk>
+References: <20181130144743.675-1-miquel.raynal@bootlin.com>
+        <20181130144743.675-3-miquel.raynal@bootlin.com>
+        <20181130190031.GH30658@n2100.armlinux.org.uk>
+        <20181202203509.21b067c4@xps13>
+        <20181203003623.GJ30658@n2100.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A14B74@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18120313-0072-0000-0000-000003D326C4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010165; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01126388; UDB=6.00582089; IPR=6.00906523;
- MB=3.00024426; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-03 13:56:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120313-0073-0000-0000-00004A50D774
-Message-Id: <20181203135638.GG4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812030131
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 07:44:03AM +0000, He, Bo wrote:
-> Thanks, we have run the test for the whole weekend and not reproduce the issue,  so we confirm the CONFIG_RCU_BOOST can fix the issue.
+Hi Russell,
 
-Very good, that is encouraging.  Perhaps I should think about making
-CONFIG_RCU_BOOST=y the default for CONFIG_PREEMPT in mainline, at least
-for architectures for which rt_mutexes are implemented.
+Russell King - ARM Linux <linux@armlinux.org.uk> wrote on Mon, 3 Dec
+2018 00:36:23 +0000:
 
-> We have enabled the rcupdate.rcu_cpu_stall_timeout=7 and also set panic on rcu stall and will see if we can see the panic, will keep you posed with the test results.
-> echo 1 > /proc/sys/kernel/panic_on_rcu_stall
-
-Looking forward to seeing what is going on!  Of course, to reproduce, you
-will need to again build with CONFIG_RCU_BOOST=n.
-
-							Thanx, Paul
-
-> -----Original Message-----
-> From: Paul E. McKenney <paulmck@linux.ibm.com> 
-> Sent: Saturday, December 1, 2018 12:49 AM
-> To: He, Bo <bo.he@intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>
-> Subject: Re: rcu_preempt caused oom
-> 
-> On Fri, Nov 30, 2018 at 03:18:58PM +0000, He, Bo wrote:
-> > Here is the kernel cmdline:
-> 
-> Thank you!
-> 
-> > Kernel command line: androidboot.acpio_idx=0  
-> > androidboot.bootloader=efiwrapper-02_03-userdebug_kernelflinger-06_03-
-> > userdebug androidboot.diskbus=00.0 androidboot.verifiedbootstate=green 
-> > androidboot.bootreason=power-on androidboot.serialno=R1J56L6006a7bb 
-> > g_ffs.iSerialNumber=R1J56L6006a7bb no_timer_check noxsaves 
-> > reboot_panic=p,w i915.hpd_sense_invert=0x7 mem=2G nokaslr nopti 
-> > ftrace_dump_on_oops trace_buf_size=1024K intel_iommu=off gpt 
-> > loglevel=4 androidboot.hardware=gordon_peak 
-> > firmware_class.path=/vendor/firmware relative_sleep_states=1 
-> > enforcing=0 androidboot.selinux=permissive cpu_init_udelay=10 
-> > androidboot.android_dt_dir=/sys/bus/platform/devices/ANDR0001:00/prope
-> > rties/android/ pstore.backend=ramoops memmap=0x1400000$0x50000000 
-> > ramoops.mem_address=0x50000000 ramoops.mem_size=0x1400000 
-> > ramoops.record_size=0x4000 ramoops.console_size=0x1000000 
-> > ramoops.ftrace_size=0x10000 ramoops.dump_oops=1 vga=current
-> > i915.modeset=1 drm.atomic=1 i915.nuclear_pageflip=1 
-> > drm.vblankoffdelay=
-> 
-> And no sign of any suppression of RCU CPU stall warnings.  Hmmm...
-> It does take more than 21 seconds to OOM?  Or do things happen faster than that?  If they do happen faster than that, then on approach would be to add something like this to the kernel command line:
-> 
-> 	rcupdate.rcu_cpu_stall_timeout=7
-> 
-> This would set the stall timeout to seven seconds.  Note that timeouts less than three seconds are silently interpreted as three seconds.
-> 
-> 							Thanx, Paul
-> 
-> > -----Original Message-----
-> > From: Steven Rostedt <rostedt@goodmis.org>
-> > Sent: Friday, November 30, 2018 11:17 PM
-> > To: Paul E. McKenney <paulmck@linux.ibm.com>
-> > Cc: He, Bo <bo.he@intel.com>; linux-kernel@vger.kernel.org; 
-> > josh@joshtriplett.org; mathieu.desnoyers@efficios.com; 
-> > jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin 
-> > <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>
-> > Subject: Re: rcu_preempt caused oom
+> On Sun, Dec 02, 2018 at 08:35:09PM +0100, Miquel Raynal wrote:
+> > Hi Russell,
 > > 
-> > On Fri, 30 Nov 2018 06:43:17 -0800
-> > "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
+> > Russell King - ARM Linux <linux@armlinux.org.uk> wrote on Fri, 30 Nov
+> > 2018 19:00:31 +0000:
+> >   
+> > > On Fri, Nov 30, 2018 at 03:47:37PM +0100, Miquel Raynal wrote:  
+> > > > So far the PHY ->xlate() callback was checking if the port was
+> > > > "invalid" before continuing, meaning that the port has not been used
+> > > > yet. This check is not correct as there is no opposite call to    
+> > > > ->xlate() once the PHY is released by the user and the port will    
+> > > > remain "valid" after the first phy_get()/phy_put() calls. Hence, if
+> > > > this driver is built as a module, inserted, removed and inserted
+> > > > again, the PHY will appear busy and the second probe will fail.
+> > > > 
+> > > > To fix this, just drop the faulty check and instead verify that the
+> > > > port number is valid (ie. in the possible range).
+> > > > 
+> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > > ---
+> > > >  drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> > > > index 31b9a1c18345..a40b876ff214 100644
+> > > > --- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> > > > +++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> > > > @@ -567,9 +567,9 @@ static struct phy *mvebu_comphy_xlate(struct device *dev,
+> > > >  		return phy;
+> > > >  
+> > > >  	lane = phy_get_drvdata(phy);
+> > > > -	if (lane->port >= 0)
+> > > > -		return ERR_PTR(-EBUSY);
+> > > >  	lane->port = args->args[0];
+> > > > +	if (lane->port >= MVEBU_COMPHY_PORTS)
+> > > > +		return ERR_PTR(-EINVAL);    
+> > > 
+> > > Shouldn't we validate args->args[0] before doing anything?
+> > >   
 > > 
-> > > Could you please send me your list of kernel boot parameters?  They 
-> > > usually appear near the start of your console output.
-> > 
-> > Or just: cat /proc/cmdline
-> > 
-> > -- Steve
-> > 
+> > I don't understand your point, there is a check on args->args[0] as
+> > we check its value (through lane->port) right after. What do you
+> > have in mind?  
+> 
+> Right, there is already a check on args->args[0] for it being greater
+> than MVEBU_COMPHY_PORTS and returning an error (and in fact warning
+> if that is the case).  So in that case, what is the use of the above
+> additional test you are proposing to add?  The resulting code ends up
+> looking like this:
+> 
+> 	if (WARN_ON(args->args[0] >= MVEBU_COMPHY_PORTS))
+> 		return ERR_PTR(-EINVAL);
+> ...
+> 	lane->port = args->args[0];
+> +	if (lane->port >= MVEBU_COMPHY_PORTS)
+> +		return ERR_PTR(-EINVAL);  
+> 
+> which is just silly - the second test can never be evaluated as true,
+> and therefore is redundant.
+> 
+> In any case, my point was that in your patch, where you assign
+> lane->port and then validate the lane->port value, this is in
+> principle the wrong order - the order should always be: validate
+> first, then make use.
 > 
 
+You are right, this test is redundant; I forgot about the first
+check. I will just drop these additional two lines and just do:
+
+                [...]
+                lane->port = args->args[0];
+
+                return 0;
+        }
+
+Thanks,
+Miquèl
