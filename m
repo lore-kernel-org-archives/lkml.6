@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6DAC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFB3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC9920851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:08:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC9920851
+	by mail.kernel.org (Postfix) with ESMTP id 337B320851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:08:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337B320851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbeLCMJ0 (ORCPT
+        id S1726516AbeLCMJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:09:26 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48924 "EHLO huawei.com"
+        Mon, 3 Dec 2018 07:09:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48927 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725883AbeLCMJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:09:25 -0500
+        id S1726341AbeLCMJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:09:27 -0500
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1E24720C8634C;
+        by Forcepoint Email with ESMTP id 2346BB7F6D0BF;
         Mon,  3 Dec 2018 20:08:36 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 3 Dec 2018 20:08:27 +0800
+ 14.3.408.0; Mon, 3 Dec 2018 20:08:26 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-scsi@vger.kernel.org>,
         Xiang Chen <chenxiang66@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v3 3/4] scsi: hisi_sas: Make sg_tablesize consistent value
-Date:   Mon, 3 Dec 2018 20:09:53 +0800
-Message-ID: <1543838994-30028-4-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v3 2/4] scsi: hisi_sas: Relocate some code to reduce complexity
+Date:   Mon, 3 Dec 2018 20:09:52 +0800
+Message-ID: <1543838994-30028-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1543838994-30028-1-git-send-email-john.garry@huawei.com>
 References: <1543838994-30028-1-git-send-email-john.garry@huawei.com>
@@ -51,81 +51,186 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiang Chen <chenxiang66@hisilicon.com>
 
-Sht->sg_tablesize is set in the driver, and it will be assigned to
-shost->sg_tablesize in SCSI mid-layer. So it is not necessary to
-assign shost->sg_table one more time in the driver.
-
-In addition to the change, change each scsi_host_template.sg_tablesize
-to HISI_SAS_SGE_PAGE_CNT instead of SG_ALL.
+Relocate the codes related to dma_map/unmap in hisi_sas_task_prep()
+to reduce complexity, with a view to add DIF/DIX support.
 
 Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 1 -
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 2 +-
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 2 +-
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 3 +--
- 4 files changed, 3 insertions(+), 5 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 146 +++++++++++++++++++++-------------
+ 1 file changed, 90 insertions(+), 56 deletions(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 95350fd..eed7fc5 100644
+index c39c91c..95350fd 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -2410,7 +2410,6 @@ int hisi_sas_probe(struct platform_device *pdev,
- 	shost->max_lun = ~0;
- 	shost->max_channel = 1;
- 	shost->max_cmd_len = 16;
--	shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
- 	if (hisi_hba->hw->slot_index_alloc) {
- 		shost->can_queue = hisi_hba->hw->max_command_entries;
- 		shost->cmd_per_lun = hisi_hba->hw->max_command_entries;
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index 7186648..107f7c9 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -1816,7 +1816,7 @@ static int hisi_sas_v1_init(struct hisi_hba *hisi_hba)
- 	.change_queue_depth	= sas_change_queue_depth,
- 	.bios_param		= sas_bios_param,
- 	.this_id		= -1,
--	.sg_tablesize		= SG_ALL,
-+	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
- 	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
- 	.use_clustering		= ENABLE_CLUSTERING,
- 	.eh_device_reset_handler = sas_eh_device_reset_handler,
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 8580c71..8760987 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -3578,7 +3578,7 @@ static void wait_cmds_complete_timeout_v2_hw(struct hisi_hba *hisi_hba,
- 	.change_queue_depth	= sas_change_queue_depth,
- 	.bios_param		= sas_bios_param,
- 	.this_id		= -1,
--	.sg_tablesize		= SG_ALL,
-+	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
- 	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
- 	.use_clustering		= ENABLE_CLUSTERING,
- 	.eh_device_reset_handler = sas_eh_device_reset_handler,
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 59b5f64..44781e3 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2231,7 +2231,7 @@ static ssize_t intr_coal_count_v3_hw_store(struct device *dev,
- 	.change_queue_depth	= sas_change_queue_depth,
- 	.bios_param		= sas_bios_param,
- 	.this_id		= -1,
--	.sg_tablesize		= SG_ALL,
-+	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
- 	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
- 	.use_clustering		= ENABLE_CLUSTERING,
- 	.eh_device_reset_handler = sas_eh_device_reset_handler,
-@@ -2373,7 +2373,6 @@ static ssize_t intr_coal_count_v3_hw_store(struct device *dev,
- 	shost->max_lun = ~0;
- 	shost->max_channel = 1;
- 	shost->max_cmd_len = 16;
--	shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
- 	shost->can_queue = hisi_hba->hw->max_command_entries -
- 		HISI_SAS_RESERVED_IPTT_CNT;
- 	shost->cmd_per_lun = hisi_hba->hw->max_command_entries -
+@@ -296,6 +296,90 @@ static void hisi_sas_task_prep_abort(struct hisi_hba *hisi_hba,
+ 			device_id, abort_flag, tag_to_abort);
+ }
+ 
++static void hisi_sas_dma_unmap(struct hisi_hba *hisi_hba,
++			       struct sas_task *task, int n_elem,
++			       int n_elem_req, int n_elem_resp)
++{
++	struct device *dev = hisi_hba->dev;
++
++	if (!sas_protocol_ata(task->task_proto)) {
++		if (task->num_scatter) {
++			if (n_elem)
++				dma_unmap_sg(dev, task->scatter,
++					     task->num_scatter,
++					     task->data_dir);
++		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
++			if (n_elem_req)
++				dma_unmap_sg(dev, &task->smp_task.smp_req,
++					     1, DMA_TO_DEVICE);
++			if (n_elem_resp)
++				dma_unmap_sg(dev, &task->smp_task.smp_resp,
++					     1, DMA_FROM_DEVICE);
++		}
++	}
++}
++
++static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
++			    struct sas_task *task, int *n_elem,
++			    int *n_elem_req, int *n_elem_resp)
++{
++	struct device *dev = hisi_hba->dev;
++	int rc;
++
++	if (sas_protocol_ata(task->task_proto)) {
++		*n_elem = task->num_scatter;
++	} else {
++		unsigned int req_len, resp_len;
++
++		if (task->num_scatter) {
++			*n_elem = dma_map_sg(dev, task->scatter,
++					     task->num_scatter, task->data_dir);
++			if (!*n_elem) {
++				rc = -ENOMEM;
++				goto prep_out;
++			}
++		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
++			*n_elem_req = dma_map_sg(dev, &task->smp_task.smp_req,
++						 1, DMA_TO_DEVICE);
++			if (!*n_elem_req) {
++				rc = -ENOMEM;
++				goto prep_out;
++			}
++			req_len = sg_dma_len(&task->smp_task.smp_req);
++			if (req_len & 0x3) {
++				rc = -EINVAL;
++				goto err_out_dma_unmap;
++			}
++			*n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
++						  1, DMA_FROM_DEVICE);
++			if (!*n_elem_resp) {
++				rc = -ENOMEM;
++				goto err_out_dma_unmap;
++			}
++			resp_len = sg_dma_len(&task->smp_task.smp_resp);
++			if (resp_len & 0x3) {
++				rc = -EINVAL;
++				goto err_out_dma_unmap;
++			}
++		}
++	}
++
++	if (*n_elem > HISI_SAS_SGE_PAGE_CNT) {
++		dev_err(dev, "task prep: n_elem(%d) > HISI_SAS_SGE_PAGE_CNT",
++			*n_elem);
++		rc = -EINVAL;
++		goto err_out_dma_unmap;
++	}
++	return 0;
++
++err_out_dma_unmap:
++	/* It would be better to call dma_unmap_sg() here, but it's messy */
++	hisi_sas_dma_unmap(hisi_hba, task, *n_elem,
++			   *n_elem_req, *n_elem_resp);
++prep_out:
++	return rc;
++}
++
+ static int hisi_sas_task_prep(struct sas_task *task,
+ 			      struct hisi_sas_dq **dq_pointer,
+ 			      bool is_tmf, struct hisi_sas_tmf_task *tmf,
+@@ -338,49 +422,10 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 		return -ECOMM;
+ 	}
+ 
+-	if (!sas_protocol_ata(task->task_proto)) {
+-		unsigned int req_len, resp_len;
+-
+-		if (task->num_scatter) {
+-			n_elem = dma_map_sg(dev, task->scatter,
+-					    task->num_scatter, task->data_dir);
+-			if (!n_elem) {
+-				rc = -ENOMEM;
+-				goto prep_out;
+-			}
+-		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
+-			n_elem_req = dma_map_sg(dev, &task->smp_task.smp_req,
+-						1, DMA_TO_DEVICE);
+-			if (!n_elem_req) {
+-				rc = -ENOMEM;
+-				goto prep_out;
+-			}
+-			req_len = sg_dma_len(&task->smp_task.smp_req);
+-			if (req_len & 0x3) {
+-				rc = -EINVAL;
+-				goto err_out_dma_unmap;
+-			}
+-			n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
+-						 1, DMA_FROM_DEVICE);
+-			if (!n_elem_resp) {
+-				rc = -ENOMEM;
+-				goto err_out_dma_unmap;
+-			}
+-			resp_len = sg_dma_len(&task->smp_task.smp_resp);
+-			if (resp_len & 0x3) {
+-				rc = -EINVAL;
+-				goto err_out_dma_unmap;
+-			}
+-		}
+-	} else
+-		n_elem = task->num_scatter;
+-
+-	if (n_elem > HISI_SAS_SGE_PAGE_CNT) {
+-		dev_err(dev, "task prep: n_elem(%d) > HISI_SAS_SGE_PAGE_CNT",
+-			n_elem);
+-		rc = -EINVAL;
+-		goto err_out_dma_unmap;
+-	}
++	rc = hisi_sas_dma_map(hisi_hba, task, &n_elem,
++			      &n_elem_req, &n_elem_resp);
++	if (rc < 0)
++		goto prep_out;
+ 
+ 	if (hisi_hba->hw->slot_index_alloc)
+ 		rc = hisi_hba->hw->slot_index_alloc(hisi_hba, device);
+@@ -465,19 +510,8 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ err_out_tag:
+ 	hisi_sas_slot_index_free(hisi_hba, slot_idx);
+ err_out_dma_unmap:
+-	if (!sas_protocol_ata(task->task_proto)) {
+-		if (task->num_scatter) {
+-			dma_unmap_sg(dev, task->scatter, task->num_scatter,
+-			     task->data_dir);
+-		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
+-			if (n_elem_req)
+-				dma_unmap_sg(dev, &task->smp_task.smp_req,
+-					     1, DMA_TO_DEVICE);
+-			if (n_elem_resp)
+-				dma_unmap_sg(dev, &task->smp_task.smp_resp,
+-					     1, DMA_FROM_DEVICE);
+-		}
+-	}
++	hisi_sas_dma_unmap(hisi_hba, task, n_elem,
++			   n_elem_req, n_elem_resp);
+ prep_out:
+ 	dev_err(dev, "task prep: failed[%d]!\n", rc);
+ 	return rc;
 -- 
 1.9.1
 
