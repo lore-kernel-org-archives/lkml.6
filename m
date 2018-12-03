@@ -3,94 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE50C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003EFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F38A20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:36:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F38A20848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id B4FFA2147C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FFA2147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725910AbeLCHgS (ORCPT
+        id S1725868AbeLCHnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 02:36:18 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:38078 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbeLCHgR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 02:36:17 -0500
-Received: by mail-vs1-f65.google.com with SMTP id x64so6896485vsa.5
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 23:36:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W/Tcax7EnITvjeEoC/VRKi7pBLEs8Ms3pTi33Q8Lx6s=;
-        b=YzluN6Ioe6u+FFsC4JiMKQ6KkVOw+h2OM8WSKAPHzixd35/EZsp499x8CpINy5ohSs
-         5rqaV4b8kLv20cfaPpdMtu1RlEq6hFUhRwFPqIjC2WR0/kUIJ5pHEgZvLgmrC1fNZ+eS
-         Dr6SDau4oSk/mzCBLQsyiHJcN9LLo5O6l2vhkKDk5UBrBPqF+W6K48g7CwKsOqpFww7R
-         gG/8MYKbXBKW5x9uCMIyr5ofGLMk9V8JH8fVpfD7Wb9lT8x29Poho+a8ko/VF8nf93qs
-         HlK0H2CviD0czu2igA9swdO9tLLluyKWXEeA7qUD64m9IH1MylHjbfH35siFN8JEazY4
-         k8PA==
-X-Gm-Message-State: AA+aEWYuQeYSOYVx2jWaHJabFCex3VYNhbCf6pTkURLwTLH+5DPEwnM4
-        s9vDDxKG+yyc7BboFnonc1w6n5DEF/3cVdjT50c=
-X-Google-Smtp-Source: AFSGD/VgubTrKrqRiYvc5MRC7XuAJK8ItYO7lgjPYy3ui3Vc615vhrXNsO4DX6xzdTE9706zUC4kmAIo+e31zofBtwY=
-X-Received: by 2002:a67:d119:: with SMTP id u25mr5889191vsi.63.1543822575283;
- Sun, 02 Dec 2018 23:36:15 -0800 (PST)
+        Mon, 3 Dec 2018 02:43:02 -0500
+Received: from mx.socionext.com ([202.248.49.38]:48441 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbeLCHnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 02:43:01 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 03 Dec 2018 16:42:57 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 3DC5A60062;
+        Mon,  3 Dec 2018 16:42:57 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 3 Dec 2018 16:42:57 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id B222240394;
+        Mon,  3 Dec 2018 16:42:56 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 91700120304;
+        Mon,  3 Dec 2018 16:42:56 +0900 (JST)
+Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
+ description
+To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
+ <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
+ <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
+ <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
+Date:   Mon, 3 Dec 2018 16:42:56 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181120001128.GA11300@altlinux.org> <20181120001524.GF11387@altlinux.org>
- <CAMuHMdV+-Lw-mx8OAifrFP--XhbiHr8hAZ56rsG=9Ayu9BeXtw@mail.gmail.com> <20181203002436.GA9487@altlinux.org>
-In-Reply-To: <20181203002436.GA9487@altlinux.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 3 Dec 2018 08:36:03 +0100
-Message-ID: <CAMuHMdX5nR03E46u_p5+cDNYLYZzT3+ZwC0t8Wfu540BFbP5aQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/15] m68k: define syscall_get_arch()
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, lineprinter@altlinux.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+Hi,
 
-On Mon, Dec 3, 2018 at 1:24 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> On Sun, Dec 02, 2018 at 11:29:10AM +0100, Geert Uytterhoeven wrote:
-> > On Tue, Nov 20, 2018 at 1:15 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> > > syscall_get_arch() is required to be implemented on all architectures
-> > > in order to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO
-> > > request.
-> > >
-> > > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >
-> > What's your plan w.r.t. the upstreaming strategy?
-> > Do you plan to get this series in as a whole, or through individual architecture
-> > maintainers?
->
-> Given that the last patch in this series adds an argument
-> to syscall_get_arch(), my plan is to get this series in
-> as a whole along with PTRACE_GET_SYSCALL_INFO series.
+On 2018/11/30 17:16, Stephen Boyd wrote:
+> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
+>> On 2018/11/28 11:01, Stephen Boyd wrote:
+>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
+>>>>    create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>> new file mode 100644
+>>>> index 0000000..f5d906c
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>> @@ -0,0 +1,12 @@
+>>>> +Socionext M10V SMP trampoline driver binding
+>>>> +
+>>>> +This is a driver to wait for sub-cores while boot process.
+>>>> +
+>>>> +- compatible: should be "socionext,smp-trampoline"
+>>>> +- reg: should be <0x4C000100 0x100>
+>>>> +
+>>>> +EXAMPLE
+>>>> +       trampoline: trampoline@0x4C000100 {
+>>> Drop the 0x part of unit addresses.
+>>
+>> Okay.
+>>
+>>
+>>>> +               compatible = "socionext,smp-trampoline";
+>>>> +               reg = <0x4C000100 0x100>;
+>>> Looks like a software construct, which we wouldn't want to put into DT
+>>> this way. DT doesn't describe drivers.
+>> We would like to use this node only getting the address of the
+>> trampoline area
+>> in which sub-cores wait.  (They have finished to go to this area in previous
+>> bootloader process.)
+> 
+> Is this area part of memory, or a special SRAM? If it's part of memory,
+> I would expect this node to be under the reserved-memory node and
+> pointed to by some other node that uses this region. Could even be the
+> CPU nodes.
 
-Cool, thanks!
+Yes, 0x4C000100 is a part of memory under the reserved-memory node. So 
+we would like to use the SRAM ( allocated 0x00000000 ) area instead.
+BTW, sorry, the trampoline address of this example is simply wrong.  We 
+were going to use a part of the SRAM from the beginning.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> 
+>>
+>> So should we embed the constant value in source codes instead of getting
+>> from
+>> DT because the address is constant at the moment? Or is there other
+>> approach?
+>>
+> 
+> If it's constant then that also works. Why does it need to come from DT
+> at all then?
 
-Gr{oetje,eeting}s,
+We think it is not good to embed constant value in driver codes and do 
+not have another way...
+Are there better ways?
 
-                        Geert
+Thanks
+Sugaya Taichi
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
