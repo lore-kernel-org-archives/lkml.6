@@ -2,102 +2,89 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67193C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B23C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D6DA2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:28:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D6DA2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C75C20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:29:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QZL3wQ+v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C75C20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbeLCR2j (ORCPT
+        id S1726812AbeLCR3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:28:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:42910 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725852AbeLCR2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:28:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABC44168F;
-        Mon,  3 Dec 2018 09:28:32 -0800 (PST)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 55A2A3F59C;
-        Mon,  3 Dec 2018 09:28:31 -0800 (PST)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     hch@lst.de
-Cc:     m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, cai@gmx.us, salil.mehta@huawei.com,
-        john.garry@huawei.com
-Subject: [RFC 4/4] dma-debug: Make leak-like behaviour apparent
-Date:   Mon,  3 Dec 2018 17:28:09 +0000
-Message-Id: <7ec928f0bd92122f271c421e99aaeb593ccabdf5.1543856576.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.19.1.dirty
-In-Reply-To: <cover.1543856576.git.robin.murphy@arm.com>
-References: <cover.1543856576.git.robin.murphy@arm.com>
+        Mon, 3 Dec 2018 12:29:15 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:50517 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbeLCR3P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:29:15 -0500
+Received: by mail-it1-f193.google.com with SMTP id z7so10580522iti.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:29:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7JWDQuEjTBB9IBO6LdSktANapsZoe/1zjhceEpfNoVA=;
+        b=QZL3wQ+vyrW5w1j9a++jKr8hMstTytPUCxGGhqcJwWbdvx0T1gfWHVn8Ek3fQ25Rn9
+         9OTS/vrTnwdK76bU9XDRiUbXhbQ9MYn2jJ0M5NHlAjnNdFJfugMzMcEhTmRXU069dBjr
+         ItWqjrjvCsLpZCqo1lJjKFJKA94O5KHPW8TD4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7JWDQuEjTBB9IBO6LdSktANapsZoe/1zjhceEpfNoVA=;
+        b=a2n4fzJM/HCJx0ZbBHBn4RQ6zJhwmUjoWivG6FEGRAhHEbCjvHnhKXdxKedU28Laif
+         p117QuweTrZMWb5DrU8oTvkO84eeF3DwWt4KMskiIUbEHE/QhVJtfGe5jJxQiMRAAmLD
+         KGeRoShcyRfXJWnfL4RcXPBiDVggEcwiiYUAQnUHeal76y99Vs5AVIVFrP/88pOfqms2
+         Cv1AmUME/wa97U2hn7oJBo/xTFDTscXCqwudpmySgod67BIMEhB8dZBI0mQw3THFdHtY
+         fJZ/3NIuGX/1uCjgbdtZdTl+5E3GhhXqwROq0Kpn80qA4D58zzvlJmXilx9Sm8dnKwXP
+         qypQ==
+X-Gm-Message-State: AA+aEWbFkukWWK6XhXKFbog3ElcIEnf7sebGQKEoYhihGGE4Q7xvhuIq
+        XMI54BHSsVkLtQ+oc1OyblUIBzF9DlWacRe4jqReNg==
+X-Google-Smtp-Source: AFSGD/VSweZvBLVQ+0bCuuOGBFdvpQiIsYD8xHzX5l7Eqe3PWC4Q3yszw3NILSKVw4Fu3GYI79x6rWB9Z6DO0XKPQQw=
+X-Received: by 2002:a24:130a:: with SMTP id 10mr8580532itz.58.1543858149677;
+ Mon, 03 Dec 2018 09:29:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181201005759.28093-1-eric@anholt.net> <CAApk1dXwAtoFRRq971fwsE+yrbJT1kcYnjzSwShHBrXkU+nv_g@mail.gmail.com>
+In-Reply-To: <CAApk1dXwAtoFRRq971fwsE+yrbJT1kcYnjzSwShHBrXkU+nv_g@mail.gmail.com>
+From:   Dave Emett <david.emett@broadcom.com>
+Date:   Mon, 3 Dec 2018 17:28:58 +0000
+Message-ID: <CAApk1dU5+Lf3oJhGUQQuWMA3iNpM3JBhbB8Vu5+tH7nHnWHicg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] drm/v3d: Document cache flushing ABI.
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Thomas Spurden <thomas.spurden@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we can dynamically allocate DMA debug entries to cope with
-drivers maintaining excessively large numbers of live mappings, a driver
-which *does* actually have a bug leaking mappings (and is not unloaded)
-will no longer trigger the "DMA-API: debugging out of memory - disabling"
-message until it gets to actual kernel OOM conditions, which means it
-could go unnoticed for a while. To that end, let's inform the user each
-time the pool has grown to a multiple of its initial size, which should
-make it apparent that they either have a leak or might want to increase
-the preallocation size.
+On Mon, 3 Dec 2018 at 17:22, Dave Emett <david.emett@broadcom.com> wrote:
+>
+> > + * The caches (L1T, slice, and L2T) will be flushed before the job
+> > + * executes.  The TLB writes are guaranteed to have been flushed by
+>
+> I would say before *each* job executes, as the caches are flushed
+> before both bin and render.
+> I wouldn't say "the caches" as not all of the V3D caches are flushed
+> before executing a control list. In particular, the VCD cache is not
+> cleared by the kernel driver (not even sure if there is a register
+> interface to do this); it is expected that the control list will do
+> this itself (using the CLEAR_VCD_CACHE instruction).
+> On 3.3 and earlier there is a separate L2C for instructions/uniforms
+> and a GCA. These do need to be flushed, and it looks like they are, so
+> they should be mentioned here.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+Correction: on *3.2* and earlier there is a separate L2C for
+instructions/uniforms. On 3.3 and earlier there is a GCA.
 
-Tagging this one as RFC since people might think it's silly.
-
- kernel/dma/debug.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-index 46cc075aec99..c4759dab0f8c 100644
---- a/kernel/dma/debug.c
-+++ b/kernel/dma/debug.c
-@@ -696,6 +696,17 @@ static struct dma_debug_entry *__dma_entry_alloc(void)
- 	return entry;
- }
- 
-+void __dma_entry_alloc_check_leak(void)
-+{
-+	u32 tmp = nr_total_entries % nr_prealloc_entries;
-+
-+	/* Shout each time we tick over some multiple of the initial pool */
-+	if (tmp < DMA_DEBUG_DYNAMIC_ENTRIES) {
-+		pr_info("dma_debug_entry pool grown to %u00%% - possible mapping leak?\n",
-+			(nr_total_entries / nr_prealloc_entries));
-+	}
-+}
-+
- /* struct dma_entry allocator
-  *
-  * The next two functions implement the allocator for
-@@ -716,8 +727,10 @@ static struct dma_debug_entry *dma_entry_alloc(void)
- 		spin_unlock_irqrestore(&free_entries_lock, flags);
- 
- 		if (retry_count < DMA_DEBUG_DYNAMIC_RETRIES &&
--		    !prealloc_memory(DMA_DEBUG_DYNAMIC_ENTRIES))
-+		    !prealloc_memory(DMA_DEBUG_DYNAMIC_ENTRIES)) {
-+			__dma_entry_alloc_check_leak();
- 			continue;
-+		}
- 
- 		global_disable = true;
- 		pr_err("debugging out of memory - disabling\n");
--- 
-2.19.1.dirty
-
+It looks like we're currently unconditionally writing the L2C clear
+registers. We should really only be doing this on 3.2 and earlier.
