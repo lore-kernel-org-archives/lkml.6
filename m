@@ -2,133 +2,208 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90D1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1C7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEF920864
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:28:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DEC420851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcA5SClf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AEF920864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="MUA+QTYl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEC420851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbeLCX2K (ORCPT
+        id S1726078AbeLCX2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:28:10 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:47057 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLCX2J (ORCPT
+        Mon, 3 Dec 2018 18:28:14 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38644 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeLCX2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:28:09 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so7239056ply.13;
-        Mon, 03 Dec 2018 15:28:09 -0800 (PST)
+        Mon, 3 Dec 2018 18:28:12 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p86so10525699lfg.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 15:28:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=90mpTy6OIEDyBwxEjIIVh8r4GI2FCyjYZ7w+yFVs5K8=;
-        b=ZcA5SClfyjxrRiamd0Vtenqzj4xwLZLc5I4j8HEPZQp1n3t3wGairW5ZiC0zqYnqQW
-         H7Z6RwH9QjtaLI8zp18dzmQ5SKKpfnWFYSVCbiqkDzlqVmE6La4yUFYokn+UGAv4YBC7
-         kmMIIRTwJlA6eK51v+1XJWJUJdGiKAQ2Qs7LOthp+OSPgALPPdjJiL3ODfULhI/2e4UX
-         n5HubaC8IEREV0/gaH9s+QAixSPH0IEmtTtZCt1sq0IVu43skUvG5K+pVFsQW/Ai23Se
-         q/ROM0RoZ/UYKFnNjHUZrLHztfAB95FbPJLy8VHvdBswDPtDzX5Mm4q8YtP18SvBgtb0
-         U/ew==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xsnx777dnp60qOJRp6DiaP6WDfZUuGwjTpf8nB7zqFQ=;
+        b=MUA+QTYlQlsdMUPiaO/+eevkriVRWDKNWRfiPdLTUb03vwFJvce0Sgi4uez38pg0ts
+         j11r+I7AZm+lTxiLq5DEl/xanK/zEEmdeD7tjU2GjrB23ZuOWBDgurZH/Ug+InIvKjZw
+         o7wTTvX/Y80cpECHe4xb5c+HCbdCB0qMysZBrDGH1S1+2bjckaapcFE0XmEYqI5sqK3C
+         SCl6tuY/1iG4iGaJSN9++3zf5d67Y629uwRVvGEKLF6hWKq52bgLMrkvXgQbXPlDvgVv
+         YQRvEUA39qdKiZ77k2T30iCfnL23T04NlpJM48zftpS9cLQtJa0R5lWfmRpibIASu1Zo
+         xQzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=90mpTy6OIEDyBwxEjIIVh8r4GI2FCyjYZ7w+yFVs5K8=;
-        b=MyvaBfnNHmhqdeOk+LTYNgJ/70neAXA9/nIJrYWr7prVeB6i+EywjJxOH3QyHwUw8r
-         Xcd3mLXQpB3lYH8RXXm6ugjfvXdkAmLdO7xCYN/qf+wZXM7GGav4/KKUIMOhZbYJ3wsB
-         898EseQrIb/vV+C2aIdkzNNxK8dzbQZG5H2geE9TR3Cpgm0yqk565nCxg9cCG2OnUlmK
-         llIyJJqgsfjDki9oHv0GaErlvjIOdjaVHOWDC3HyB2b82cFBhVA6KMvgqfb2mcJJ/aVv
-         SZEQhmQbfyT6trHhU5IzuRfafqjti2wMu5g2zf+AZVnhB5pkVhInAbixKY9LfzkTPa04
-         XQpQ==
-X-Gm-Message-State: AA+aEWYv6bJtDLkSGWKrDDhfBNBlRelq5r/5YctCZEgjWbPC9gRDFkwR
-        9SiasO46dGltg5eAbnHEhD8=
-X-Google-Smtp-Source: AFSGD/VhTHe5JXxE6wDdnwVoqSvUVBkHafqHfWYifvECp+pb8Czh0UJVjDdnq+RXGIV6phrVx3bLvw==
-X-Received: by 2002:a17:902:d905:: with SMTP id c5mr17319635plz.43.1543879689048;
-        Mon, 03 Dec 2018 15:28:09 -0800 (PST)
-Received: from [192.168.11.4] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id q5sm23236509pfi.165.2018.12.03.15.28.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 15:28:08 -0800 (PST)
-Subject: Re: [PATCH memory-model 0/3] Updates to the formal memory model
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>, mingo@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr
-References: <20181203230411.GA27476@linux.ibm.com>
-From:   Akira Yokosawa <akiyks@gmail.com>
-Message-ID: <802d5c17-74fd-86a1-efba-5ee2825a0c3c@gmail.com>
-Date:   Tue, 4 Dec 2018 08:28:03 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xsnx777dnp60qOJRp6DiaP6WDfZUuGwjTpf8nB7zqFQ=;
+        b=SfKKMme/9R+bdVhJSC+/+dLzAblg94HncrUNaqwDz8id98NBkXXWv+ihv4NlDV3fNG
+         Pn3wPeb4sTm4MYcALQ00RSQIxgP7QPEQN1EsIyYiftRUka2nhecw/p7K1yPTSicloV1S
+         JLnzAm8fnuc2883O9fSRVbTuDpJjNYkmo3m0gZSvxJ/BjxIRPaUccPyS8Pfaw1U3uqS4
+         x2Lj8QZIkPTga7d54dfSMPx2bqTvEpcXIqukN/elytVG3VjhNjyOrelrgFr3il6ghs47
+         qKwy49nI18A/tVbQA1KZ2yrBEfTaRx8+VhoUA+JvrZ8bWbiaSa+uLODQzJRlDNwBTWHC
+         LToQ==
+X-Gm-Message-State: AA+aEWYJ66C7Ulu9roVzXrTqD0nDlTAOjbBYmNMJZGA1t2ed0qnZumK2
+        I/hiONzW0NH0IrBM8fWUzUE8WS+21EQPrzY2kPNh
+X-Google-Smtp-Source: AFSGD/XBu+cEWD6kM1tzsJkKX5nBgV9UuheQDOUZBOnXZls0NR1JAUKyUI/dREBvu1ju9nHgcdlQfVmxccbqbtoKmME=
+X-Received: by 2002:a19:a7c1:: with SMTP id q184mr9870170lfe.4.1543879689460;
+ Mon, 03 Dec 2018 15:28:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181203230411.GA27476@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com> <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+ <20181128170302.GA12405@redhat.com> <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
+ <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov> <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov> <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+ <f3a911a7-47eb-9922-a4be-25a834250e92@redhat.com>
+In-Reply-To: <f3a911a7-47eb-9922-a4be-25a834250e92@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 3 Dec 2018 18:27:57 -0500
+Message-ID: <CAHC9VhRcQdLRZoYi9g-MZzG8xPaNyFFX1nPppo7D93BTFQ6BZg@mail.gmail.com>
+Subject: Re: overlayfs access checks on underlying layers
+To:     Dan Walsh <dwalsh@redhat.com>
+Cc:     miklos@szeredi.hu, Stephen Smalley <sds@tycho.nsa.gov>,
+        vgoyal@redhat.com, omosnace@redhat.com, bfields@fieldses.org,
+        salyzyn@android.com, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/03 15:04:11 -0800, Paul E. McKenney wrote:
-> Hello, Ingo!
-> 
-> This series contains updates to the Linux kernel's formal memory model
-> in tools/memory-model.  These patches are ready for inclusion into -tip.
-> 
-> 1.	Model smp_mb__after_unlock_lock(), courtesy of Andrea Parri.
-> 
-> 2.	Add scripts to check github litmus tests.
-> 
-> 3.	Make scripts take "-j" abbreviation for "--jobs".
-> 
-> There is another series in preparation to model SRCU, but this series
-> requires hot-off-the presses changes to the herd tool that have not yet
-> been released.  This SRCU series is therefore targeting the merge window
-> after the upcoming one.  People wishing to experiment with the prototype
-> SRCU model may obtain it from my -rcu tree at branch "dev", and use
-> a bleeding-edge herd7 built from https://github.com/herd/herdtools7/,
-> version 7.51+2(dev), which is (commit 10403b24070c) or later.
+On Thu, Nov 29, 2018 at 5:22 PM Daniel Walsh <dwalsh@redhat.com> wrote:
+> On 11/29/18 2:47 PM, Miklos Szeredi wrote:
+> > On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> >
+> >> Possibly I misunderstood you, but I don't think we want to copy-up on
+> >> permission denial, as that would still allow the mounter to read/write
+> >> special files or execute regular files to which it would normally be
+> >> denied access, because the copy would inherit the context specified by
+> >> the mounter in the context mount case.  It still represents an
+> >> escalation of privilege for the mounter.  In contrast, the copy-up on
+> >> write behavior does not allow the mounter to do anything it could not do
+> >> already (i.e. read from the lower, write to the upper).
+> > Let's get this straight:  when file is copied up, it inherits label
+> > from context=, not from label of lower file?
+>
+> Yes, in the case of context mount, it will get the context mount directory.
+>
+> In the case of not context mount, it should maintain the label of  the
+> lower.
+>
+> > Next question: permission to change metadata is tied to permission to
+> > open?  Is it possible that open is denied, but metadata can be
+> > changed?
+>
+> Yes, SElinux handles open differently then setattr.  Although I am not
+> sure if any tools handle this.
+>
+> > DAC model allows this: metadata change is tied to ownership, not mode
+> > bits.   And different capability flag.
+> >
+> > If the same is true for MAC, then the pre-v4.20-rc1 is already
+> > susceptible to the privilege escalation you describe, right?
+>
+> After talking to Vivek, I am not sure their is a privilege escallation.
 
-On the master branch of herdtools7, SRCU support was added in version
-7.51+4(dev), which is commit 6ec9da1f4d58, or later.
+More on this below, but this thread doesn't have me convinced, and we
+are at -rc5 right now.  We need to come to some decision on this soon
+because we are running out of time before v4.20 is released with this
+code.
 
-        Thanks, Akira
+> For device nodes, the mounter has to have the ability to create the
+> devicenode with the context mount, if he can do this, then he can do it
+> with or without Overlay.  This might lead to users making mistakes on
+> security, but the model is sound. And I think this stands even in the
+> case of the lower is mounted NODEV and the upper is not.  If the mounter
+> can create a device on the upper with a particular label, then he does
+> not need the lower.
 
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
->  .gitignore                 |    1 
->  README                     |    2 
->  linux-kernel.bell          |    3 
->  linux-kernel.cat           |    4 -
->  linux-kernel.def           |    1 
->  scripts/README             |   70 ++++++++++++++++++++++
->  scripts/checkalllitmus.sh  |   53 +++++++----------
->  scripts/checkghlitmus.sh   |   65 ++++++++++++++++++++
->  scripts/checklitmus.sh     |   74 +++--------------------
->  scripts/checklitmushist.sh |   60 +++++++++++++++++++
->  scripts/cmplitmushist.sh   |   87 +++++++++++++++++++++++++++
->  scripts/initlitmushist.sh  |   68 +++++++++++++++++++++
->  scripts/judgelitmus.sh     |   78 +++++++++++++++++++++++++
->  scripts/newlitmushist.sh   |   61 +++++++++++++++++++
->  scripts/parseargs.sh       |  140 ++++++++++++++++++++++++++++++++++++++++++++-
->  scripts/runlitmushist.sh   |   87 +++++++++++++++++++++++++++
->  16 files changed, 757 insertions(+), 97 deletions(-)
-> 
+The problem I have when looking at the current code is that permission
+is given, regardless of what is requested, for any special_file() on
+an overlayfs mount.
 
+It also looks like the mounter's creds are used when checking
+permissions regardless of the file has been copied up or not; I would
+expect that the mounter's permissions would only used when checking
+permissions against the lower inode, no?  I think there is also some
+weird behavior if the underlying inode only allows the mounter to
+write (no read) and a write is requested at the overlayfs layer.  I'm
+sure I'm missing some subtle thing with overlayfs, but why aren't we
+doing something like the following:
+
+  int ovl_permission(...) {
+
+    if (!realinode) {
+      ...
+    }
+
+    err = generic_permission(inode, mask);
+    if (err)
+      return err;
+
+    if (upperinode) {
+      err = inode_permission(upperinode, mask);
+    } else {
+      // on the lower inode, always use the mounter's creds
+      old_cred = ovl_override_creds(...);
+
+      // check to see if we have the right perms first, if
+      // that fails switch to a read/copy-up check if we
+      // are doing a write (note: we are not bypassing the
+      // exec check, the task can change the metadata like
+      // every other fs)
+      err = inode_permission(lowerinode, mask);
+      if (err && (mask & (MAY_EXEC | MAY_APPEND))) {
+        // PM: my guess is that we also need to add a
+        // "&& !special_file(lowerinode)" to the conditional
+        // above because you can't copy-up a dev node in the
+        // normal sense, but we'll leave that as a discussion
+        // point for now...
+        // turn the write into a read (copy-up)
+        mask &= ~(MAY_WRITE | MAY_APPEND);
+        mask |= MAY_READ;
+        err = inode_permission(lowerinode, mask);
+      }
+
+      // reset the creds
+      revert_creds(old_cred);
+    }
+
+    return err;
+  }
+
+> For sockets, I see the case where a process is listening on the lower
+> level socket, the mounter mounts the overlay over the directory with the
+> socket.  Then the mounter changes the attributes of the socket,
+> performing a copy up.  If the mounter can not talk to the socket and the
+> other end is still listening, then this could be an issue.  If the
+> socket is no longer connected to the listener on the lower, then this is
+> not an issue.
+>
+> Similar for a FIFO.
+
+See my comment "// PM: my guess ..." in the pseudo code above.  I
+think the write->read permission mask conversion really should only
+apply to normal files where you can do a copy-up.
+
+> With SELinux we are also always checking not only the file access to the
+> socker, but also checking whether the label of the client is able to
+> talk to the label of the server daemon.  So we are protected by a
+> secondary check.
+
+That's making some assumptions on the LSM and the LSM's loaded policy
+and is not something I would want to rely on.
+
+-- 
+paul moore
+www.paul-moore.com
