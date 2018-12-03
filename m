@@ -3,80 +3,146 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B21C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CEEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E69D2082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:45:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E69D2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 240332082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:46:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 240332082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeLCNql (ORCPT
+        id S1726394AbeLCNrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:46:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34924 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbeLCNqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:46:40 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB2B930014D2;
-        Mon,  3 Dec 2018 13:45:35 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 702EB5C688;
-        Mon,  3 Dec 2018 13:45:30 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Michael Kelley <mikelley@microsoft.com>,
-        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: RE: [PATCH v2] x86/hyper-v: Mark TLFS structures packed
-In-Reply-To: <CY4PR21MB0773D5DFA13BFA0701771F5ED7AE0@CY4PR21MB0773.namprd21.prod.outlook.com>
-References: <20181130125422.21494-1-vkuznets@redhat.com> <CY4PR21MB0773D5DFA13BFA0701771F5ED7AE0@CY4PR21MB0773.namprd21.prod.outlook.com>
-Date:   Mon, 03 Dec 2018 14:45:28 +0100
-Message-ID: <874lbuyb9j.fsf@vitty.brq.redhat.com>
+        Mon, 3 Dec 2018 08:47:20 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37694 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725888AbeLCNrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:47:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A9F51682;
+        Mon,  3 Dec 2018 05:46:15 -0800 (PST)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2560A3F614;
+        Mon,  3 Dec 2018 05:46:10 -0800 (PST)
+Subject: Re: [PATCH V5 2/2] base/drivers/arch_topology: Default dmips-mhz if
+ they are not set in DT
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rjw@rjwysocki.net
+Cc:     linux-kernel@vger.kernel.org, viresh.kumar@linaro.org,
+        Chris Redpath <chris.redpath@linaro.org>,
+        Quentin Perret <quentin.perret@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, Olof Johansson <olof@lixom.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Russell King <linux@armlinux.org.uk>
+References: <1543325060-1599-1-git-send-email-daniel.lezcano@linaro.org>
+ <1543325060-1599-2-git-send-email-daniel.lezcano@linaro.org>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <2b050e93-f734-f2f3-ac67-a30d37bf1950@arm.com>
+Date:   Mon, 3 Dec 2018 14:46:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 03 Dec 2018 13:45:35 +0000 (UTC)
+In-Reply-To: <1543325060-1599-2-git-send-email-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Kelley <mikelley@microsoft.com> writes:
+Hi Daniel,
 
-> From: Vitaly Kuznetsov <vkuznets@redhat.com>  Sent: Friday, November 30, 2018 4:54 AM
->> 
->> @@ -466,7 +466,7 @@ union hv_message_flags {
->>  	struct {
->>  		__u8 msg_pending:1;
->>  		__u8 reserved:7;
->> -	};
->> +	} __packed;
->>  };
->> 
->>  /* Define port identifier type. */
->
-> I think __packed is also needed in the definition
-> of struct u defined within union hv_port_id.  That
-> struct has bit fields, so shouldn't it be done just like
-> union hv_message_flags above?
->
++cc: Russell King <linux@armlinux.org.uk>
 
-True, missed it, thanks! Will send v3 out shortly.
+On 11/27/18 2:24 PM, Daniel Lezcano wrote:
+> In the case of asymmetric SoC with the same micro-architecture, we
+> have a group of CPUs with smaller OPPs than the other group. One
+> example is the 96boards dragonboard 820c. There is no dmips/MHz
+> difference between both groups, so no need to specify the values in
+> the DT. Unfortunately, without these defined, there is no scaling
+> capacity computation triggered, so we need to write
+> 'capacity-dmips-mhz' for each CPU with the same value in order to
+> force the scaled capacity computation.
+> 
+> In order to fix this situation, allocate 'raw_capacity' so the pointer
+> is set and the init_cpu_capacity_callback() function can be called.
+> 
+> This was tested on db820c:
+>   - specified values in the DT (correct results)
+>   - partial values defined in the DT (error + fallback to defaults)
+>   - no specified values in the DT (correct results)
+> 
+> correct results are:
+>    cat /sys/devices/system/cpu/cpu*/cpu_capacity
+>     758
+>     758
+>    1024
+>    1024
+> 
+>    ... respectively for CPU0, CPU1, CPU2 and CPU3.
+> 
+> That reflects the capacity for the max frequencies 1593600 and 2150400.
 
--- 
-Vitaly
+[...]
+
+I'm afraid that this change is incompatible with the still existing 
+cpu_efficiency interface we have in Arm32 for A15/A7 systems like Arm TC2:
+
+In case you specify clock-frequency dt properties per cpu for such a 
+system, the cpu_capacity values are determined via the cpu_efficiency 
+code in arch/arm/kernel/topology.c.
+
+So on Arm TC2 with clock-frequency = <1000000000> [A15] and <800000000> 
+[A7] you get:
+
+root@linaro-nano:~# cat /sys/devices/system/cpu/cpu*/cpu_capacity
+606
+1441
+1441
+606
+606
+
+With your patches on top (cpu_capacity functionality in 
+drivers/base/arch_topology.c does not have to be switched on by 
+specifying capacity-dmips-mhz dt properties anymore) we end up scaling 
+by max frequency again:
+
+root@linaro-nano:~# cat /sys/devices/system/cpu/cpu*/cpu_capacity
+358
+1024
+1024
+358
+358
+
+I tried to remove the cpu_efficiency based API a year ago but Russell 
+pointed out that the compatibility has to be maintained for longer:
+
+https://lore.kernel.org/lkml/20171024102718.16113-1-dietmar.eggemann@arm.com/
+
+I assume that the capacity-dmips-mhz dt property is like a switch to 
+turn this functionality on for big.Little and so called gold/silver 
+platforms, which have cores with the same uArch but in frequency domains 
+with different max frequency values.
+
+So what's wrong with specifying capacity-dmips-mhz = <1024> for all 
+cores for those gold/silver platforms? I don't expect that there will be 
+so many of them. And normal SMP platforms (w/o frequency domains w/o 
+different max frequency values) don't have to execute this code.
+
+IMHO, at least we should remove the cpu_efficiency bits before we do 
+this change.
+
+[...]
