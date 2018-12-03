@@ -2,116 +2,132 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A88C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC73C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E8A20661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E8A20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F77B214DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:11:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="l7/aT3eX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F77B214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeLCRHI (ORCPT
+        id S1726803AbeLCRLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:07:08 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42324 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbeLCRHI (ORCPT
+        Mon, 3 Dec 2018 12:11:07 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:43731 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbeLCRLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:07:08 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so5982978pga.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:07:03 -0800 (PST)
+        Mon, 3 Dec 2018 12:11:07 -0500
+Received: by mail-yw1-f66.google.com with SMTP id l200so5675963ywe.10
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:11:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xy519ioxY8kNNqHgw43eLJw2UJslvmFbCOo+R7BOUQg=;
+        b=l7/aT3eXzVaxIb33IW5tl+/xrLc/3XYobZbHdzwvYzVF82XkWElSuT5jqrYvydaurO
+         NJ/0SC2MEjfp57p0NFXr8MtjTzH6zTv1rPhYUIew51KKf3IjM2/jZIb8CayE5k9Dtse7
+         80cDy8JrzghJPXlmfr/0HBiv4/g2k+DGRBrCUVp21ME7BJCiITPvCfbGKKReB89hgDhi
+         9dZDqcBJw5Kj2uYqU3MRUVSX4rA+OcJLdf0gEL7+tCYZ8ZjFvJ+VpB5AlRJgY4Nk+uIT
+         /7DkETnT1k3Giy6+Nja/W5fc45ARKIQ2gbSaTO9I9UYCJH4pO0jbN0fAVeaB0+UQmFZb
+         db0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zFJkM5XBvi3wb2HxvmOMvG0u+beYGog/eGkVjGSe4PQ=;
-        b=EO2kjQ1w1qk6qYSyFsjvE182nUPWSHqGYBb94vvbG6Ttv4PPP5Noe22HKkt8zLRS4b
-         zyl0HtsfaVuQrUwQfuSboRKDQXHCSfTo/cLnsiR9MFNEC9UJd8GnWKjp+ZcffuZunf9Y
-         2hBeX2vnYN1/3SEF7HYZL8cIfzG6BO2p8g6Ijy6c4Nqei70RADJ8tDxdqfibig1GMHYP
-         gTRSsEu8jGfjFjVTEe7u9YmIjv0x7o+g9LKiLgvQNCIYafkNba7OajLWRO5nLUcDlf6f
-         gRkFaotLhxCifJMq5563W9ajwI9zQ3YBgkErBi7i8PSNmgbzjnImnMXEu8airNuFx/fX
-         GsjQ==
-X-Gm-Message-State: AA+aEWbg1irbCCH+4DZZgyLVtqeP4l98lFkyqBbLaiamLzIGmkra83UU
-        xCL97Y9jODCZLpynkAnIgj0=
-X-Google-Smtp-Source: AFSGD/W8Z130Y14fmgISnscmbBCZMXHuClgvMkoIKhZDt23TR+sDLgXVxkLCwkkrFySDtq+K5kJNVg==
-X-Received: by 2002:a63:9e0a:: with SMTP id s10mr14028888pgd.239.1543856822790;
-        Mon, 03 Dec 2018 09:07:02 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id l19sm30623477pfi.71.2018.12.03.09.07.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 09:07:02 -0800 (PST)
-Message-ID: <1543856820.185366.159.camel@acm.org>
-Subject: Re: [PATCH 25/27] locking/lockdep: Add support for dynamic keys
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 03 Dec 2018 09:07:00 -0800
-In-Reply-To: <20181129101000.GF2131@hirez.programming.kicks-ass.net>
-References: <20181128234325.110011-1-bvanassche@acm.org>
-         <20181128234325.110011-26-bvanassche@acm.org>
-         <20181129101000.GF2131@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xy519ioxY8kNNqHgw43eLJw2UJslvmFbCOo+R7BOUQg=;
+        b=jY5uuQRsIVG+wDWiok1gVbSRZIXmCJrBpfrAM1/d5ywLMxGv+5e9e+cayqg4CSCOvG
+         Fn1lTOyI2QuCyHWdKxy15GBLT7079LFXBU++YAF2fkmXp3RqACfyV9akgqSJVYP8+Q3x
+         ScNPSfu6dBXF/gyBkbrQSz+WyNqyJWXmpPhVU/1CdLc6Sl/RhUpABVH9WEeDYySUh3Qt
+         XEjMVToAhimwfgni9m25DJQzkeLJFtSQV11gu3C0lauj3nHD2dHyuEzE6tUOk4grhpiU
+         RzseBbMVbkVTR9/mBapS4kT6YT6MNwauQHmNP6VSscN/fzMIoj0ZkZw5c5mWluYscS40
+         DP3g==
+X-Gm-Message-State: AA+aEWZBjMuzEDlEl1uT4X/ozG/O/u9WGtQeocELU7g48NR30Fy9Nh7e
+        r68MFNjoxPVRyW2dClq/IGwq1kJYAMrWJOLGrZD1vw==
+X-Google-Smtp-Source: AFSGD/U0iVGUmF4DalzQ6C7GkHqsUqt9JhxqgrVV/75f745a2lGw7uWaPEpPKpSP6OeyA4zOlDm+Z8WUo30UNQrRrWo=
+X-Received: by 2002:a0d:de82:: with SMTP id h124mr16135824ywe.354.1543857065651;
+ Mon, 03 Dec 2018 09:11:05 -0800 (PST)
+MIME-Version: 1.0
+References: <20181203122145.1534-1-nsaenzjulienne@suse.de> <CANk1AXRxUai9SmSFt1uMXVRcoumh+ziKCi8WHb2tCG5Wx4Txow@mail.gmail.com>
+In-Reply-To: <CANk1AXRxUai9SmSFt1uMXVRcoumh+ziKCi8WHb2tCG5Wx4Txow@mail.gmail.com>
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+Date:   Mon, 3 Dec 2018 09:01:47 -0800
+Message-ID: <CAAtXAHdWrJ3zL7sHygTD9W+trvviTh_0zMSwaU4AtNpxSxLbgg@mail.gmail.com>
+Subject: Re: [PATCH] fpga: stratix10-soc: fix wrong of_node_put() in init function
+To:     Alan Tull <atull@kernel.org>
+Cc:     nsaenzjulienne@suse.de, linux-fpga@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-29 at 11:10 +-0100, Peter Zijlstra wrote:
-+AD4 On Wed, Nov 28, 2018 at 03:43:23PM -0800, Bart Van Assche wrote:
-+AD4 +AD4 +-/+ACo hash+AF8-entry is used to keep track of dynamically allocated keys. +ACo-/
-+AD4 +AD4  struct lock+AF8-class+AF8-key +AHs
-+AD4 +AD4 +-	struct hlist+AF8-node		hash+AF8-entry+ADs
-+AD4 +AD4  	struct lockdep+AF8-subclass+AF8-key	subkeys+AFs-MAX+AF8-LOCKDEP+AF8-SUBCLASSES+AF0AOw
-+AD4 +AD4  +AH0AOw
-+AD4 
-+AD4 One consideration+ADs and maybe we should have a BUILD+AF8-BUG for that, is
-+AD4 that this object should be no larger than the smallest lock primitive.
-+AD4 
-+AD4 That typically is raw+AF8-spinlock+AF8-t, which normally is 4 bytes, but with
-+AD4 lockdep on that at least also includes struct lockdep+AF8-map.
-+AD4 
-+AD4 So what we want is:
-+AD4 
-+AD4 	sizeof(lock+AF8-class+AF8-key) +ADwAPQ sizeof(raw+AF8-spinlock+AF8-t)
-+AD4 
-+AD4 Otherwise, two consecutive spinlocks could end up with key overlap in
-+AD4 their subclass range.
-+AD4 
-+AD4 Now, I think that is still valid after this patch, but it is something
-+AD4 that gave me pause.
+Hi Nicolas,
 
-How about adding this as an additional patch before patch 25/27?
+good catch.
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 9a7cca6dc3d4..ce05b9b419f4 100644
---- a/kernel/locking/lockdep.c
-+-+-+- b/kernel/locking/lockdep.c
-+AEAAQA -725,6 +-725,15 +AEAAQA static bool assign+AF8-lock+AF8-key(struct lockdep+AF8-map +ACo-lock)
- +AHs
- 	unsigned long can+AF8-addr, addr +AD0 (unsigned long)lock+ADs
- 
-+-	/+ACo
-+-	 +ACo lockdep+AF8-free+AF8-key+AF8-range() assumes that struct lock+AF8-class+AF8-key
-+-	 +ACo objects do not overlap. Since we use the address of lock
-+-	 +ACo objects as class key for static objects, check whether the
-+-	 +ACo size of lock+AF8-class+AF8-key objects does not exceed the size of
-+-	 +ACo the smallest lock object.
-+-	 +ACo-/
-+-	BUILD+AF8-BUG+AF8-ON(sizeof(struct lock+AF8-class+AF8-key) +AD4 sizeof(raw+AF8-spinlock+AF8-t))+ADs
-+-
- 	if (+AF8AXw-is+AF8-kernel+AF8-percpu+AF8-address(addr, +ACY-can+AF8-addr))
- 		lock-+AD4-key +AD0 (void +ACo)can+AF8-addr+ADs
- 	else if (+AF8AXw-is+AF8-module+AF8-percpu+AF8-address(addr, +ACY-can+AF8-addr))
+On Mon, Dec 3, 2018 at 8:13 AM Alan Tull <atull@kernel.org> wrote:
+>
+> On Mon, Dec 3, 2018 at 6:22 AM Nicolas Saenz Julienne
+> <nsaenzjulienne@suse.de> wrote:
+>
+> Hi Nicolas,
+>
+> Thanks for catching this!  I'll fix up one formatting thing (below).
+>
+> >
+> > After finding a "firmware" dt node stratix10 tries to match it's
+> > compatible string with it. To do so it's calling of_find_matching_node()
+> > which already takes care of decreasing the refcount on the "firmware"
+> > node. We are then incorrectly decreasing the refcount on that node
+> > again.
+> >
+> > This patch removes the unwarranted call to of_node_put().
+> >
+> > Fixes: e7eef1d7633a ("fpga: add intel stratix10 soc fpga manager driver")
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+>
+> > ---
+> >  drivers/fpga/stratix10-soc.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/drivers/fpga/stratix10-soc.c b/drivers/fpga/stratix10-soc.c
+> > index a1a09e04fab8..e75dbe583152 100644
+> > --- a/drivers/fpga/stratix10-soc.c
+> > +++ b/drivers/fpga/stratix10-soc.c
+> > @@ -509,13 +509,11 @@ static int __init s10_init(void)
+> >
+> >         np = of_find_matching_node(fw_np, s10_of_match);
+> >         if (!np) {
+> > -               of_node_put(fw_np);
+> >                 return -ENODEV;
+> >         }
+>
+> We don't need the brackets anymore around the return statement.  I'll fix it up.
+>
+> Thanks,
+> Alan
+>
+> >
+> >         of_node_put(np);
+> >         ret = of_platform_populate(fw_np, s10_of_match, NULL, NULL);
+> > -       of_node_put(fw_np);
+> >         if (ret)
+> >                 return ret;
+> >
+> > --
+> > 2.19.2
+> >
 
 Thanks,
-
-Bart.
+Moritz
