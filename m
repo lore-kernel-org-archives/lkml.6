@@ -2,122 +2,91 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051D0C65BAE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB588C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9F5920666
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:43:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F5920666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id A00DA2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:44:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="XA4140bC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A00DA2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbeLCJne (ORCPT
+        id S1726073AbeLCJos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:43:34 -0500
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:7148 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeLCJne (ORCPT
+        Mon, 3 Dec 2018 04:44:48 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:33544 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725960AbeLCJor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:43:34 -0500
-X-Greylist: delayed 908 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Dec 2018 04:43:33 EST
-Received: from [10.28.18.81] (10.28.18.81) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 3 Dec 2018
- 17:28:26 +0800
-Subject: Re: [PATCH 2/2] irqchip/meson-gpio: Add support for Meson-G12A SoC
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kevin Hilman <khilman@baylibre.com>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Carlo Caione <carlo@caione.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181203061324.36248-1-xingyu.chen@amlogic.com>
- <20181203061324.36248-3-xingyu.chen@amlogic.com>
- <7a2f88d849ada782de6e27676518d0b9897e30e7.camel@baylibre.com>
-From:   Xingyu Chen <xingyu.chen@amlogic.com>
-Message-ID: <dc42e7df-a3de-7323-177f-56a08564fb60@amlogic.com>
-Date:   Mon, 3 Dec 2018 17:28:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Mon, 3 Dec 2018 04:44:47 -0500
+Received: by mail-it1-f195.google.com with SMTP id m8so7943476itk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 01:44:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3Oo32VVsYmPry9+f8DWOR0NGFz2f9fT3cn4yoPNUDcc=;
+        b=XA4140bC2ZxcXC2xZ64Iosuza5gH5DtORINToSnfBNJaWMxYt+DAobBRiVkZNi+oPM
+         Y/8NZfj6bbDOSPCGIklwiP6ssjlL55lvux56S9EudA1VIz/yd2sjnEZ6ocDGLHy6+icC
+         WLe52JhpKZGdGImq2bmpfuLFr5eWHTy/z30Kg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3Oo32VVsYmPry9+f8DWOR0NGFz2f9fT3cn4yoPNUDcc=;
+        b=iyRm5qAqQxrGRGtj0g/jP2Jr0vb+8X3vr0XqLsMEHai88lLWpJn2Fz4Q6ojIVXUNW/
+         GZ1lY8KXQq+/XSkl0s9nxdxeaV+EXq06CMZQy4vQ+hYQFFo5jV/Z8mtcP+vQklWSP4mY
+         9A2FSFv7H9uAY4LFeThm6Wm9JR6+sTpHB/CvlE2b27EjPn32VMu16AC19Y1WajqlxDJO
+         LJTX9wh4cAnoCr6zEP5TTyCIsEHlo5LyqCxewi1YFzUV8KJU4+vay8nERJg9NzXx32x7
+         dVsTjAwaBUpt0Tf9AgZBKGa49XZi0hot4MJtI+iydRfCg6UEKNm5n3TQcx1BTJ9Csr0T
+         1Mrg==
+X-Gm-Message-State: AA+aEWZs0RwXp1/QAUAL6zOGGxp5ho/lBuiGh9ZJcTp4tULIqXCR9ufF
+        7ci5Lrovr7iW1JHv70lkB/zSNVBOa3hoYtskyK3+Ow==
+X-Google-Smtp-Source: AFSGD/VQJciOD7xP2xny6eLLvKTKU4UajB7IpGIr6GX9LxJ5o08UYNknI30r5ACp9rbcberi1/Nr8XIB+iKuo0mtfx0=
+X-Received: by 2002:a24:5411:: with SMTP id t17mr6871416ita.32.1543830270402;
+ Mon, 03 Dec 2018 01:44:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <7a2f88d849ada782de6e27676518d0b9897e30e7.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.18.81]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+References: <20181130075849.16941-1-wens@csie.org> <20181130075849.16941-4-wens@csie.org>
+In-Reply-To: <20181130075849.16941-4-wens@csie.org>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 3 Dec 2018 15:14:19 +0530
+Message-ID: <CAMty3ZBFVStHNbYaBxT+Rmy6+g4jtm0cFKk8BL5BDid3c5VW-Q@mail.gmail.com>
+Subject: Re: [PATCH 3/6] ARM: dts: sunxi: h3/h5: Drop A31 fallback compatible
+ for CSI controller
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 30, 2018 at 1:29 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> The CSI controller found on the H3 (and H5) is a reduced version of the
+> one found on the A31. It only has 1 channel, instead of 4 channels for
+> time-multiplexed BT.656. Since the H3 is a reduced version, it cannot
+> "fallback" to a compatible that implements more features than it
+> supports.
+>
+> Drop the A31 fallback compatible.
+>
+> Fixes: f89120b6f554 ("ARM: dts: sun8i: Add the H3/H5 CSI controller")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
 
-
-On 2018/12/3 17:19, Jerome Brunet wrote:
-> On Mon, 2018-12-03 at 14:13 +0800, Xingyu Chen wrote:
->> The Meson-G12A SoC uses the same GPIO interrupt controller IP block as the
->> other Meson SoCs, A totle of 100 pins can be spied on, which is the sum of:
->>
->> - 223:100 undefined (no interrupt)
->> - 99:97   3 pins on bank GPIOE
->> - 96:77   20 pins on bank GPIOX
->> - 76:61   16 pins on bank GPIOA
->> - 60:53   8 pins on bank GPIOC
->> - 52:37   16 pins on bank BOOT
->> - 36:28   9 pins on bank GPIOH
->> - 27:12   16 pins on bank GPIOZ
->> - 11:0    12 pins in the AO domain
->>
->> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
->> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->> ---
->>   drivers/irqchip/irq-meson-gpio.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-
->> gpio.c
->> index 7b531fd075b8..971e8dea069a 100644
->> --- a/drivers/irqchip/irq-meson-gpio.c
->> +++ b/drivers/irqchip/irq-meson-gpio.c
->> @@ -67,12 +67,17 @@ static const struct meson_gpio_irq_params axg_params = {
->>   	.nr_hwirq = 100,
->>   };
->>   
->> +static const struct meson_gpio_irq_params g12a_params = {
->> +	.nr_hwirq = 100,
->> +};
->> +
-> 
-> Same comment as on i2c, the g12 seems compatible with the axg.
-> Is this patchset patchset really necessary ?
-> 
-Although the total number of pins is the same as the Meson-AXG SoC, the 
-gpio banks and irq numbers are different. To avoid confusion on use, i 
-think the new compatible string is needed.
->>   static const struct of_device_id meson_irq_gpio_matches[] = {
->>   	{ .compatible = "amlogic,meson8-gpio-intc", .data = &meson8_params },
->>   	{ .compatible = "amlogic,meson8b-gpio-intc", .data = &meson8b_params
->> },
->>   	{ .compatible = "amlogic,meson-gxbb-gpio-intc", .data = &gxbb_params
->> },
->>   	{ .compatible = "amlogic,meson-gxl-gpio-intc", .data = &gxl_params },
->>   	{ .compatible = "amlogic,meson-axg-gpio-intc", .data = &axg_params },
->> +	{ .compatible = "amlogic,meson-g12a-gpio-intc", .data = &g12a_params
->> },
->>   	{ }
->>   };
->>   
-> 
-> 
-> .
-> 
+Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
