@@ -2,128 +2,146 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BF7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E0CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EEA620851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EEA620851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C49A20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C49A20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbeLCJ2f (ORCPT
+        id S1726039AbeLCJ3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:28:35 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53473 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbeLCJ2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:28:35 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6EA76207B0; Mon,  3 Dec 2018 10:28:19 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 37D752039F;
-        Mon,  3 Dec 2018 10:28:09 +0100 (CET)
-Date:   Mon, 3 Dec 2018 10:28:09 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Hao Zhang <hao5781286@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, wens@csie.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, thierry.reding@gmail.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add Allwinner
- sun8i.
-Message-ID: <20181203092809.mgeaxpwg6u4s23vq@flea>
-References: <20181125161859.GA5277@arx-s1>
- <20181127075226.qo3mv3o6etqdjaop@flea>
- <20181127083523.pciie2gyaplrwiey@pengutronix.de>
- <20181127103253.ubbjjy2ji6sxc7xs@flea>
- <CAJeuY79RRzTqLpaXSe5d8TuNKGeQeYLbXraRVrZk9HBMYBf1+A@mail.gmail.com>
+        Mon, 3 Dec 2018 04:29:18 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15630 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725888AbeLCJ3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 04:29:18 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B570BE8CAC17B;
+        Mon,  3 Dec 2018 17:29:01 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Mon, 3 Dec 2018
+ 17:28:56 +0800
+CC:     <wangbinghui@hisilicon.com>, <suzhuangluan@hisilicon.com>,
+        <kongfei@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "John Stultz" <john.stultz@linaro.org>
+Subject: Re: [PATCH v1 01/12] dt-bindings: usb: add support for dwc3
+ controller on HiSilicon SoCs
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181203034515.91412-1-chenyu56@huawei.com>
+ <20181203034515.91412-2-chenyu56@huawei.com>
+ <fde4d37b-0c4d-055b-a0ba-4e9fe87717ad@cogentembedded.com>
+ <33cda716-d09c-28e7-d4b4-26f246786f5e@huawei.com>
+ <680c5b9f-e2c7-926d-7d10-4ce2cd091282@cogentembedded.com>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <bbe390f0-2fa6-515b-42c5-ede620b2b8c7@huawei.com>
+Date:   Mon, 3 Dec 2018 17:28:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zznxkq7h2qi3betk"
-Content-Disposition: inline
-In-Reply-To: <CAJeuY79RRzTqLpaXSe5d8TuNKGeQeYLbXraRVrZk9HBMYBf1+A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <680c5b9f-e2c7-926d-7d10-4ce2cd091282@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---zznxkq7h2qi3betk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/12/3 16:59, Sergei Shtylyov wrote:
+> On 03.12.2018 11:51, Chen Yu wrote:
+> 
+>>>> This patch adds binding descriptions to support the dwc3 controller
+>>>> on HiSilicon SoCs and boards like the HiKey960.
+>>>>
+>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: John Stultz <john.stultz@linaro.org>
+>>>> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+>>>> ---
+>>>>    .../devicetree/bindings/usb/dwc3-hisi.txt          | 67 ++++++++++++++++++++++
+>>>>    1 file changed, 67 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/usb/dwc3-hisi.txt b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>>>> new file mode 100644
+>>>> index 000000000000..d32d2299a0a1
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>>>> @@ -0,0 +1,67 @@
+>>>> +HiSilicon DWC3 USB SoC controller
+>>>> +
+>>>> +This file documents the parameters for the dwc3-hisi driver.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible:    should be "hisilicon,hi3660-dwc3"
+>>>> +- clocks:    A list of phandle + clock-specifier pairs for the
+>>>> +        clocks listed in clock-names
+>>>> +- clock-names:    Specify clock names
+>>>> +- resets:    list of phandle and reset specifier pairs.
+>>>> +
+>>>> +Sub-nodes:
+>>>> +The dwc3 core should be added as subnode to HiSilicon DWC3 as shown in the
+>>>> +example below. The DT binding details of dwc3 can be found in:
+>>>> +Documentation/devicetree/bindings/usb/dwc3.txt
+>>>> +
+>>>> +Example:
+>>>> +    usb3: hisi_dwc3 {
+>>>> +        compatible = "hisilicon,hi3660-dwc3";
+>>>> +        #address-cells = <2>;
+>>>> +        #size-cells = <2>;
+>>>> +        ranges;
+>>>> +
+>>>> +        clocks = <&crg_ctrl HI3660_CLK_ABB_USB>,
+>>>> +             <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
+>>>> +        clock-names = "clk_usb3phy_ref", "aclk_usb3otg";
+>>>> +        assigned-clocks = <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
+>>>> +        assigned-clock-rates = <229000000>;
+>>>> +        resets = <&crg_rst 0x90 8>,
+>>>> +             <&crg_rst 0x90 7>,
+>>>> +             <&crg_rst 0x90 6>,
+>>>> +             <&crg_rst 0x90 5>;
+>>>> +
+>>>> +        dwc3: dwc3@ff100000 {
+>>>
+>>>      According to the DT spec, the node names should be generic, not chip specific, i.e. usb@ff100000 in this case.
+>>>
+>>
+>> Do you mean it should be usb@ff100000: dwc3@ff100000 ?
+> 
+>     dwc3: usb@ff100000
+> 
+>    "dwc3:" is a label, not name.
 
-Hi!
+I use the node name "dwc3@ff100000" according to Documentation/devicetree/bindings/usb/dwc3.txt
+and documentations of vendor drivers, i.e. qcom,dwc3.txt, rockchip,dwc3.txt.
 
-(Please keep all the recipiens in Cc)
+In these documentations, the dwc3 sub-node name uses "dwc3@xxxxxxxx".
 
-On Sun, Dec 02, 2018 at 12:13:21AM +0800, Hao Zhang wrote:
-> Maxime Ripard <maxime.ripard@bootlin.com> =E4=BA=8E2018=E5=B9=B411=E6=9C=
-=8827=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=886:33=E5=86=99=E9=81=93=
-=EF=BC=9A
-> >
-> > On Tue, Nov 27, 2018 at 09:35:23AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > Hello,
-> > >
-> > > On Tue, Nov 27, 2018 at 08:52:26AM +0100, Maxime Ripard wrote:
-> > > > On Mon, Nov 26, 2018 at 12:18:59AM +0800, Hao Zhang wrote:
-> > > > > +  - clocks: From common clock binding, handle to the parent cloc=
-k.
-> > > > > +  - clock-names: Must contain the clock names described just abo=
-ve.
-> > > >
-> > > > [...]
-> > > >
-> > > > You seem to have used mux-0 and mux-1 for the clock names. I guess =
-we
-> > > > don't have to use a name there, we can simply use the position to f=
-ind
-> > > > out (as long as it's documented in the binding)
-> > >
-> > > I also wondered if the driver relies on the fact that the second clock
-> > > is the faster running one. Is this sensible?
-> >
-> > Not really, I'm not sure we can make those expectations in the DT
-> > binding, especially since clock rate can change at runtime.
->
-> How about just add one clock on DT, most of the time, 24MHZ is enough
-> (apb1 is 100MHZ)
-> other one just use as a optional.
-> clock rate change at runtime would make the same pair pwm channel
-> uncontrollable,
-> because previous one would be change by the new one different setting.
+I think it is better to be same as the other vendor's dwc3 drivers.
+> 
+>> Thanks!
+>>
+>>> [...]
+> 
+> MBR, Sergei
+> 
+> .
+> 
 
-The DT is a hardware representation. If the hardware block can use
-both clocks, it should be described.
-
-Now, you can totally use only one clock of these 2 in your driver if that's
-easier / more reasonable.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---zznxkq7h2qi3betk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAT3KQAKCRDj7w1vZxhR
-xQeYAQDbnRAmYhwUqiaSbkwrmQzprsqASJeNCuc1rI/hF22HsAD6A/smAChtdem8
-w8QGGZGN16H/E9vHXpmuF6xCPL7VDgw=
-=gmHJ
------END PGP SIGNATURE-----
-
---zznxkq7h2qi3betk--
