@@ -2,311 +2,141 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E59B4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632CCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B37C02087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:40:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B37C02087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 32C59208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:41:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bT9GXCy9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C59208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbeLCRkf (ORCPT
+        id S1726769AbeLCRlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:40:35 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:26443 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbeLCRkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:40:35 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 437shk3TSSz9v0l4;
-        Mon,  3 Dec 2018 18:40:22 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id L75VhFPAK2Al; Mon,  3 Dec 2018 18:40:22 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 437shk2sqFz9v0kx;
-        Mon,  3 Dec 2018 18:40:22 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D2DB08B7B8;
-        Mon,  3 Dec 2018 18:40:25 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 6eMBg-UmBpx2; Mon,  3 Dec 2018 18:40:25 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 87E778B79E;
-        Mon,  3 Dec 2018 18:40:25 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 35E836BF21; Mon,  3 Dec 2018 17:40:25 +0000 (UTC)
-Message-Id: <c8395ae44e636a36443283f438c9572dc8c26a09.1543858630.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4] powerpc/mm: dump block address translation on book3s/32
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon,  3 Dec 2018 17:40:25 +0000 (UTC)
+        Mon, 3 Dec 2018 12:41:06 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39255 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeLCRlF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:41:05 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so6823216pld.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:40:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BgEaxCO/470PEVlbeluTKHTbaxmkta1dSRL0CqOJKW0=;
+        b=bT9GXCy999iFGDnhUMyg8ueoUF0syZGQWV+OjFV02R5yJE6lZH4++lr6elly5LYQeH
+         AB5+g5qyalzIbBdaLmquTvrNxSvpeFrYOObuhuDSWhTCws3HjhFTMDUvOGVdYBYaaYv5
+         KdB2HPZGlIJguL1vgTxBb28H6RRxbWHk81ykwo4Rlzsf/ieP+DvLVUgUDx3soJzG5wKo
+         3LBtkkOXETRsfmowt6K+Kb9YXs6MVZjj+H3vBQk1TnoALDbPGLiGhItG11nOBDcEgJSV
+         XR6gu59T9TOAayFz6GH77TZchfT10cFlFzsLNfsIUjPUvY6SJ2jDw7fSjtBaNt6avx46
+         ogzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BgEaxCO/470PEVlbeluTKHTbaxmkta1dSRL0CqOJKW0=;
+        b=U0AUTqU9RbcycoUU0J8Mnp+caUChXIo69p2xEzrrUWq39iptZYlToPbTWj6kzc/uh4
+         ayzcqBBLWmoZdDtPejBGEhnEqDDpUpRpIWFQx4cFZUFKBN3b+gs/bnODrvW6gR+VLlWp
+         aAJqmZ01XAmPEhAYLuKKQfH9UzpkDy6bC2TBoMecgVVKoXtag+e8BHMLdYRR/Pl6sWGF
+         VI1Yxgla7Mmfbnmhrknh46B11JoaEpWuMqImJuVi1Tng8Auq37bTg8D+aL6mnAWnkclW
+         wJdKPzinjJBVD8uNqHDTJtebF+xbQHoodKnzvUeU+PtZ4HYLz7Ijp+wfaqkW1/C/M8KI
+         kD5g==
+X-Gm-Message-State: AA+aEWaKtSxI5Awy+9HG7JfkW6PQ5CLfDnTxwOsv0go/ooVgLHsMqVd4
+        ls9nHWG+JJpspxGUPBGt0SfUfg==
+X-Google-Smtp-Source: AFSGD/VOW6pRA2/GhFTOD6TCbWRIuUa37reu4ofYU1qOj0TS7d2A9IOKIz/L0tR2IM3PQu0jEjqqBw==
+X-Received: by 2002:a17:902:20c6:: with SMTP id v6mr17101855plg.156.1543858857489;
+        Mon, 03 Dec 2018 09:40:57 -0800 (PST)
+Received: from gnomeregan.cam.corp.google.com ([2620:15c:6:14:ad22:1cbb:d8fa:7d55])
+        by smtp.gmail.com with ESMTPSA id z62sm22014544pfi.4.2018.12.03.09.40.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 09:40:57 -0800 (PST)
+Date:   Mon, 3 Dec 2018 12:40:51 -0500
+From:   Barret Rhoden <brho@google.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
+        alexander.h.duyck@linux.intel.com
+Subject: Re: [PATCH v2 0/3] kvm: Use huge pages for DAX-backed files
+Message-ID: <20181203124051.05c1d2ce@gnomeregan.cam.corp.google.com>
+In-Reply-To: <CAPcyv4jga=HnsfHffWoo+JjRUBf3stD4VP3B5X5xSOZb=yh+Mw@mail.gmail.com>
+References: <20181109203921.178363-1-brho@google.com>
+        <20181114215155.259978-1-brho@google.com>
+        <CAPcyv4jga=HnsfHffWoo+JjRUBf3stD4VP3B5X5xSOZb=yh+Mw@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a debugfs file to dump block address translation:
+On 2018-11-14 at 16:55 Dan Williams <dan.j.williams@intel.com> wrote:
+> [ add Alex who is looking into removing PageReserved for DAX pages. ]
 
-~# cat /sys/kernel/debug/powerpc/block_address_translation
----[ Instruction Block Address Translations ]---
-0:         -
-1:         -
-2: 0xc0000000-0xcfffffff 0x00000000 Kernel EXEC coherent
-3: 0xd0000000-0xdfffffff 0x10000000 Kernel EXEC coherent
-4:         -
-5:         -
-6:         -
-7:         -
+Thanks.  I can keep my eye out for his patches and repost once that's
+done.  
 
----[ Data Block Address Translations ]---
-0:         -
-1:         -
-2: 0xc0000000-0xcfffffff 0x00000000 Kernel RW coherent
-3: 0xd0000000-0xdfffffff 0x10000000 Kernel RW coherent
-4:         -
-5:         -
-6:         -
-7:         -
+Alternatively, if you all want to merge this before the PageReserved /
+DAX changes, then I can repost - just Ack/Review tags.  It's harmless
+with the existing PageReserved behavior.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v4: Moved it in debugfs/powerpc
-     Added __init to bats_init()
+Thanks,
 
- v3: Fixed PHYS_BAT_ADDR() when !CONFIG_PHYS_64BIT
-     Cosmetic changes to have it look more like kernel_page_table with ---[ xxx ]---
-     Removed unnecessary includes
-     Using CPU feature to know if it is a 601 instead of SPRN_PVR
+Barret
 
- v2: Fixed phys address display for CONFIG_PHYS_64BIT
 
- arch/powerpc/include/asm/book3s/32/mmu-hash.h |   4 +
- arch/powerpc/mm/Makefile                      |   2 +-
- arch/powerpc/mm/dump_bats.c                   | 173 ++++++++++++++++++++++++++
- 3 files changed, 178 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/mm/dump_bats.c
-
-diff --git a/arch/powerpc/include/asm/book3s/32/mmu-hash.h b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-index e38c91388c40..35a990ca7173 100644
---- a/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-+++ b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-@@ -34,8 +34,12 @@
- #define BAT_PHYS_ADDR(x) ((u32)((x & 0x00000000fffe0000ULL) | \
- 				((x & 0x0000000e00000000ULL) >> 24) | \
- 				((x & 0x0000000100000000ULL) >> 30)))
-+#define PHYS_BAT_ADDR(x) (((u64)(x) & 0x00000000fffe0000ULL) | \
-+			  (((u64)(x) << 24) & 0x0000000e00000000ULL) | \
-+			  (((u64)(x) << 30) & 0x0000000100000000ULL))
- #else
- #define BAT_PHYS_ADDR(x) (x)
-+#define PHYS_BAT_ADDR(x) ((x) & 0xfffe0000)
- #endif
- 
- struct ppc_bat {
-diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
-index 1adc3d8a89cc..20c537a5c436 100644
---- a/arch/powerpc/mm/Makefile
-+++ b/arch/powerpc/mm/Makefile
-@@ -47,7 +47,7 @@ ifdef CONFIG_PPC_PTDUMP
- obj-$(CONFIG_4xx)		+= dump_linuxpagetables-generic.o
- obj-$(CONFIG_PPC_8xx)		+= dump_linuxpagetables-8xx.o
- obj-$(CONFIG_PPC_BOOK3E_MMU)	+= dump_linuxpagetables-generic.o
--obj-$(CONFIG_PPC_BOOK3S_32)	+= dump_linuxpagetables-generic.o
-+obj-$(CONFIG_PPC_BOOK3S_32)	+= dump_linuxpagetables-generic.o dump_bats.o
- obj-$(CONFIG_PPC_BOOK3S_64)	+= dump_linuxpagetables-book3s64.o
- endif
- obj-$(CONFIG_PPC_HTDUMP)	+= dump_hashpagetable.o
-diff --git a/arch/powerpc/mm/dump_bats.c b/arch/powerpc/mm/dump_bats.c
-new file mode 100644
-index 000000000000..a0d23e96e841
---- /dev/null
-+++ b/arch/powerpc/mm/dump_bats.c
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright 2018, Christophe Leroy CS S.I.
-+ * <christophe.leroy@c-s.fr>
-+ *
-+ * This dumps the content of BATS
-+ */
-+
-+#include <asm/debugfs.h>
-+#include <asm/pgtable.h>
-+#include <asm/cpu_has_feature.h>
-+
-+static char *pp_601(int k, int pp)
-+{
-+	if (pp == 0)
-+		return k ? "NA" : "RWX";
-+	if (pp == 1)
-+		return k ? "ROX" : "RWX";
-+	if (pp == 2)
-+		return k ? "RWX" : "RWX";
-+	return k ? "ROX" : "ROX";
-+}
-+
-+static void bat_show_601(struct seq_file *m, int idx, u32 lower, u32 upper)
-+{
-+	u32 blpi = upper & 0xfffe0000;
-+	u32 k = (upper >> 2) & 3;
-+	u32 pp = upper & 3;
-+	phys_addr_t pbn = PHYS_BAT_ADDR(lower);
-+	u32 bsm = lower & 0x3ff;
-+	u32 size = (bsm + 1) << 17;
-+
-+	seq_printf(m, "%d: ", idx);
-+	if (!(lower & 0x40)) {
-+		seq_puts(m, "        -\n");
-+		return;
-+	}
-+
-+	seq_printf(m, "0x%08x-0x%08x ", blpi, blpi + size - 1);
-+#ifdef CONFIG_PHYS_64BIT
-+	seq_printf(m, "0x%016llx ", pbn);
-+#else
-+	seq_printf(m, "0x%08x ", pbn);
-+#endif
-+
-+	seq_printf(m, "Kernel %s User %s", pp_601(k & 2, pp), pp_601(k & 1, pp));
-+
-+	if (lower & _PAGE_WRITETHRU)
-+		seq_puts(m, "write through ");
-+	if (lower & _PAGE_NO_CACHE)
-+		seq_puts(m, "no cache ");
-+	if (lower & _PAGE_COHERENT)
-+		seq_puts(m, "coherent ");
-+	seq_puts(m, "\n");
-+}
-+
-+#define BAT_SHOW_601(_m, _n, _l, _u) bat_show_601(_m, _n, mfspr(_l), mfspr(_u))
-+
-+static int bats_show_601(struct seq_file *m, void *v)
-+{
-+	seq_puts(m, "---[ Block Address Translation ]---\n");
-+
-+	BAT_SHOW_601(m, 0, SPRN_IBAT0L, SPRN_IBAT0U);
-+	BAT_SHOW_601(m, 1, SPRN_IBAT1L, SPRN_IBAT1U);
-+	BAT_SHOW_601(m, 2, SPRN_IBAT2L, SPRN_IBAT2U);
-+	BAT_SHOW_601(m, 3, SPRN_IBAT3L, SPRN_IBAT3U);
-+
-+	return 0;
-+}
-+
-+static void bat_show_603(struct seq_file *m, int idx, u32 lower, u32 upper, bool is_d)
-+{
-+	u32 bepi = upper & 0xfffe0000;
-+	u32 bl = (upper >> 2) & 0x7ff;
-+	u32 k = upper & 3;
-+	phys_addr_t brpn = PHYS_BAT_ADDR(lower);
-+	u32 size = (bl + 1) << 17;
-+
-+	seq_printf(m, "%d: ", idx);
-+	if (k == 0) {
-+		seq_puts(m, "        -\n");
-+		return;
-+	}
-+
-+	seq_printf(m, "0x%08x-0x%08x ", bepi, bepi + size - 1);
-+#ifdef CONFIG_PHYS_64BIT
-+	seq_printf(m, "0x%016llx ", brpn);
-+#else
-+	seq_printf(m, "0x%08x ", brpn);
-+#endif
-+
-+	if (k == 1)
-+		seq_puts(m, "User ");
-+	else if (k == 2)
-+		seq_puts(m, "Kernel ");
-+	else
-+		seq_puts(m, "Kernel/User ");
-+
-+	if (lower & BPP_RX)
-+		seq_puts(m, is_d ? "RO " : "EXEC ");
-+	else if (lower & BPP_RW)
-+		seq_puts(m, is_d ? "RW " : "EXEC ");
-+	else
-+		seq_puts(m, is_d ? "NA " : "NX   ");
-+
-+	if (lower & _PAGE_WRITETHRU)
-+		seq_puts(m, "write through ");
-+	if (lower & _PAGE_NO_CACHE)
-+		seq_puts(m, "no cache ");
-+	if (lower & _PAGE_COHERENT)
-+		seq_puts(m, "coherent ");
-+	if (lower & _PAGE_GUARDED)
-+		seq_puts(m, "guarded ");
-+	seq_puts(m, "\n");
-+}
-+
-+#define BAT_SHOW_603(_m, _n, _l, _u, _d) bat_show_603(_m, _n, mfspr(_l), mfspr(_u), _d)
-+
-+static int bats_show_603(struct seq_file *m, void *v)
-+{
-+	seq_puts(m, "---[ Instruction Block Address Translation ]---\n");
-+
-+	BAT_SHOW_603(m, 0, SPRN_IBAT0L, SPRN_IBAT0U, false);
-+	BAT_SHOW_603(m, 1, SPRN_IBAT1L, SPRN_IBAT1U, false);
-+	BAT_SHOW_603(m, 2, SPRN_IBAT2L, SPRN_IBAT2U, false);
-+	BAT_SHOW_603(m, 3, SPRN_IBAT3L, SPRN_IBAT3U, false);
-+	if (mmu_has_feature(MMU_FTR_USE_HIGH_BATS)) {
-+		BAT_SHOW_603(m, 4, SPRN_IBAT4L, SPRN_IBAT4U, false);
-+		BAT_SHOW_603(m, 5, SPRN_IBAT5L, SPRN_IBAT5U, false);
-+		BAT_SHOW_603(m, 6, SPRN_IBAT6L, SPRN_IBAT6U, false);
-+		BAT_SHOW_603(m, 7, SPRN_IBAT7L, SPRN_IBAT7U, false);
-+	}
-+
-+	seq_puts(m, "\n---[ Data Block Address Translation ]---\n");
-+
-+	BAT_SHOW_603(m, 0, SPRN_DBAT0L, SPRN_DBAT0U, true);
-+	BAT_SHOW_603(m, 1, SPRN_DBAT1L, SPRN_DBAT1U, true);
-+	BAT_SHOW_603(m, 2, SPRN_DBAT2L, SPRN_DBAT2U, true);
-+	BAT_SHOW_603(m, 3, SPRN_DBAT3L, SPRN_DBAT3U, true);
-+	if (mmu_has_feature(MMU_FTR_USE_HIGH_BATS)) {
-+		BAT_SHOW_603(m, 4, SPRN_DBAT4L, SPRN_DBAT4U, true);
-+		BAT_SHOW_603(m, 5, SPRN_DBAT5L, SPRN_DBAT5U, true);
-+		BAT_SHOW_603(m, 6, SPRN_DBAT6L, SPRN_DBAT6U, true);
-+		BAT_SHOW_603(m, 7, SPRN_DBAT7L, SPRN_DBAT7U, true);
-+	}
-+
-+	return 0;
-+}
-+
-+static int bats_open(struct inode *inode, struct file *file)
-+{
-+	if (cpu_has_feature(CPU_FTR_601))
-+		return single_open(file, bats_show_601, NULL);
-+
-+	return single_open(file, bats_show_603, NULL);
-+}
-+
-+static const struct file_operations bats_fops = {
-+	.open		= bats_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static int __init bats_init(void)
-+{
-+	struct dentry *debugfs_file;
-+
-+	debugfs_file = debugfs_create_file("block_address_translation", 0400,
-+					   powerpc_debugfs_root, NULL, &bats_fops);
-+	return debugfs_file ? 0 : -ENOMEM;
-+}
-+device_initcall(bats_init);
--- 
-2.13.3
+> On Wed, Nov 14, 2018 at 1:53 PM Barret Rhoden <brho@google.com> wrote:
+> >
+> > This patch series depends on dax pages not being PageReserved.  Once
+> > that is in place, these changes will let KVM use huge pages with
+> > dax-backed files.  Without the PageReserved change, KVM and DAX still
+> > work with these patches, simply without huge pages - which is the
+> > current situation.
+> >
+> > RFC/discussion thread:
+> > https://lore.kernel.org/lkml/20181029210716.212159-1-brho@google.com/
+> >
+> > v1 -> v2:
+> > https://lore.kernel.org/lkml/20181109203921.178363-1-brho@google.com/
+> >
+> > - Updated Acks/Reviewed-by
+> > - Minor touchups
+> > - Added patch to remove redundant PageReserved() check
+> > - Rebased onto linux-next
+> >
+> >
+> > Barret Rhoden (3):
+> >   mm: make dev_pagemap_mapping_shift() externally visible
+> >   kvm: Use huge pages for DAX-backed files
+> >   kvm: remove redundant PageReserved() check
+> >
+> >  arch/x86/kvm/mmu.c  | 33 +++++++++++++++++++++++++++++++--
+> >  include/linux/mm.h  |  3 +++
+> >  mm/memory-failure.c | 38 +++-----------------------------------
+> >  mm/util.c           | 34 ++++++++++++++++++++++++++++++++++
+> >  virt/kvm/kvm_main.c |  8 ++------
+> >  5 files changed, 73 insertions(+), 43 deletions(-)
+> >
+> > --
+> > 2.19.1.1215.g8438c0b245-goog
+> >  
 
