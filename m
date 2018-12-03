@@ -6,37 +6,41 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6749C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA178C65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C2320848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C2320848
+	by mail.kernel.org (Postfix) with ESMTP id A8D6920848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:27:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D6920848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726064AbeLCE0x (ORCPT
+        id S1726079AbeLCE1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:26:53 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:55236 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbeLCE0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:26:53 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB34PJnZ018227
+        Sun, 2 Dec 2018 23:27:00 -0500
+Received: from mail.windriver.com ([147.11.1.11]:62631 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbeLCE1A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 23:27:00 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34QtEs026729
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 2 Dec 2018 20:26:15 -0800
+        Sun, 2 Dec 2018 20:26:55 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 2 Dec 2018
- 20:26:05 -0800
+ 20:26:55 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 11/22] mfd: rc5t583: Make it explicitly non-modular
-Date:   Sun, 2 Dec 2018 23:23:18 -0500
-Message-ID: <1543811009-15112-12-git-send-email-paul.gortmaker@windriver.com>
+        Tony Lindgren <tony@atomide.com>,
+        Graeme Gregory <gg@slimlogic.co.uk>,
+        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
+        <linux-omap@vger.kernel.org>
+Subject: [PATCH 15/22] mfd: tps65910: Make it explicitly non-modular
+Date:   Sun, 2 Dec 2018 23:23:22 -0500
+Message-ID: <1543811009-15112-16-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
@@ -49,8 +53,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_RC5T583
-drivers/mfd/Kconfig:    bool "Ricoh RC5T583 Power Management system device"
+drivers/mfd/Kconfig:config MFD_TPS65910
+drivers/mfd/Kconfig-    bool "TI TPS65910 Power Management chip"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -60,54 +64,76 @@ when reading the driver there is no doubt it is builtin-only.
 Since module_init was not in use by this code, the init ordering
 remains unchanged with this commit.
 
+We don't replace module.h with init.h since the file already has that.
+We do delete an unused moduleparam.h include though.
+
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+was (or is now) contained at the top of the file in the comments.
 
+Cc: Tony Lindgren <tony@atomide.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Graeme Gregory <gg@slimlogic.co.uk>
+Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+Cc: linux-omap@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/rc5t583.c | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/mfd/tps65910.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
-index fd46de02b715..c5cc5cb3dde7 100644
---- a/drivers/mfd/rc5t583.c
-+++ b/drivers/mfd/rc5t583.c
-@@ -23,7 +23,6 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/kernel.h>
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index bf16cbe6fd88..aa3d472a10ff 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -1,5 +1,5 @@
+ /*
+- * tps65910.c  --  TI TPS6591x
++ * tps65910.c  --  TI TPS6591x chip family multi-function driver
+  *
+  * Copyright 2010 Texas Instruments Inc.
+  *
+@@ -13,8 +13,6 @@
+  *
+  */
+ 
 -#include <linux/module.h>
+-#include <linux/moduleparam.h>
  #include <linux/init.h>
  #include <linux/err.h>
  #include <linux/slab.h>
-@@ -298,8 +297,6 @@ static const struct i2c_device_id rc5t583_i2c_id[] = {
- 	{}
+@@ -374,7 +372,6 @@ static const struct of_device_id tps65910_of_match[] = {
+ 	{ .compatible = "ti,tps65911", .data = (void *)TPS65911},
+ 	{ },
  };
+-MODULE_DEVICE_TABLE(of, tps65910_of_match);
  
--MODULE_DEVICE_TABLE(i2c, rc5t583_i2c_id);
+ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
+ 						unsigned long *chip_id)
+@@ -527,8 +524,6 @@ static const struct i2c_device_id tps65910_i2c_id[] = {
+        { "tps65911", TPS65911 },
+        { }
+ };
+-MODULE_DEVICE_TABLE(i2c, tps65910_i2c_id);
 -
- static struct i2c_driver rc5t583_i2c_driver = {
+ 
+ static struct i2c_driver tps65910_i2c_driver = {
  	.driver = {
- 		   .name = "rc5t583",
-@@ -313,14 +310,3 @@ static int __init rc5t583_i2c_init(void)
- 	return i2c_add_driver(&rc5t583_i2c_driver);
+@@ -545,14 +540,3 @@ static int __init tps65910_i2c_init(void)
  }
- subsys_initcall(rc5t583_i2c_init);
+ /* init early so consumer devices can complete system boot */
+ subsys_initcall(tps65910_i2c_init);
 -
--static void __exit rc5t583_i2c_exit(void)
+-static void __exit tps65910_i2c_exit(void)
 -{
--	i2c_del_driver(&rc5t583_i2c_driver);
+-	i2c_del_driver(&tps65910_i2c_driver);
 -}
+-module_exit(tps65910_i2c_exit);
 -
--module_exit(rc5t583_i2c_exit);
--
--MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
--MODULE_DESCRIPTION("RICOH RC5T583 power management system device driver");
--MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
+-MODULE_AUTHOR("Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>");
+-MODULE_DESCRIPTION("TPS6591x chip family multi-function driver");
+-MODULE_LICENSE("GPL");
 -- 
 2.7.4
 
