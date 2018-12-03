@@ -2,108 +2,102 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A532DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F3CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F722145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9911D2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:15:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NSJDs2ls"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F722145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="RvZno6/0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9911D2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbeLCKQB (ORCPT
+        id S1726202AbeLCKQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:16:01 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39527 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbeLCKQA (ORCPT
+        Mon, 3 Dec 2018 05:16:20 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50813 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbeLCKQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:16:00 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f81so2602144wmd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:15:36 -0800 (PST)
+        Mon, 3 Dec 2018 05:16:20 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n190so2657418wmd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eyh8qLhmyzxUWr11DOnuiPDrpCJ4d/tW5WAKd3eL7y0=;
-        b=NSJDs2lsUG4KfjCHvYncROpRanDBeboUNbGniy8NN8pFMN2tGzGTOTuwgFGnDjnBGY
-         ISrbgxCW8KtlQdLuPfsES0cLgQcpfYinzMHqO5AbifUvme6necSqvFjxqSqaBHbvLPLv
-         lTvi+nXrr3Hmk4aETZBknmK2a61cE/xBwlKv0=
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5GE2KwXHdmFr5oCC22e/Lvz0b5SuqoPfxF8T36urY/E=;
+        b=RvZno6/0JHq/8Xiol/Kt3VuPZ4p/5AvZzsoU6w+UUYJ2GkP/CNSz+D4aPaIaIbydM2
+         Y2IK1Jmq3RW1WfissAlI9ayUVu1GXy0NN0a+CU1olE4c83QNfn3lztxrbLZdJ4cpr9iK
+         YEmDQcjrIhkCt7rF/pEzpix0PFBTpNIYsa6so=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=eyh8qLhmyzxUWr11DOnuiPDrpCJ4d/tW5WAKd3eL7y0=;
-        b=gJvsjVZycme6PqFOporyP+rDSVUI2JICI3D+LNJbv4auO0u9O6/BSTjWZqgZt486RO
-         Jy9A8VEyUWQ2wkmbFdZ87rFm2iXU8iPbksPW/j7bz5AjUcL1FPpuRuW0T/6IYSskz/rw
-         8D2RIxwcehMIOTEMQNZyzVX1rTRkHxohUqirtP1sI11hvqn4KxHd1PnTNEMhODNaUSnn
-         g0cBcYl2VtiywjHPT/10Wc2perx9cggHmClBewh231xQ9AKCKmaU+R6aerBuBspCVe3h
-         wIgkaieJqTQbBShE6sFJm9zIVYAI9JxcPK7vrcXuefOv4qbUH//0HE0QYmf+RhRPGldj
-         HSpw==
-X-Gm-Message-State: AA+aEWZXQ8J2v7asjNoAFuamJ3daoNJ9MijKG8aoPDT37S28XlE0Cz/D
-        3dhnFvDgEMHTtUzLEj4iREh6IE0j9V4=
-X-Google-Smtp-Source: AFSGD/X1W/N2xkRSIP/C9PJnEfA/EePfZ95zXRYHnUnr51SfHuILwOZZD5t202NlFbBuesb9WOkbGg==
-X-Received: by 2002:a7b:c44d:: with SMTP id l13mr7781980wmi.144.1543832135904;
-        Mon, 03 Dec 2018 02:15:35 -0800 (PST)
-Received: from [192.168.0.40] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id s66sm6484976wmf.34.2018.12.03.02.15.35
+        bh=5GE2KwXHdmFr5oCC22e/Lvz0b5SuqoPfxF8T36urY/E=;
+        b=Xmq77C2C/LROm3OLM8VAddQJ0TOzKWZrREmqYtmp/tHd9coChXKoxM9kelsR5nnLs3
+         eqfwpJyBGttuEqRa6mHV+Yfe0q1oaVBxpQX5sOjPEHSGzC42oJAS+LiTPkNlYdZlmo3m
+         IOi0kx3E58CGoopJ+e03YLt8gDWh/0tBL4mw/IRZFhxJspWrOo/HijbQbGFmbYmM98XE
+         UGSboyOzHeynxg7T4xIid9LhvzEpdsfdmDIbM2M1B/9ITZ4z3yei5eRhLch1MQYjC9fg
+         YgbaVxibDZ47RRcjY9+81/+KEqtYlliD5RE9UqcA/Y+dt9H5h6Gl10Ha9qgG1sFu4ifo
+         Vu1A==
+X-Gm-Message-State: AA+aEWawTsG9qx97qTWfLD+WLDXGs/gjlZ8w1jXRBtEXIbfTm+GhdGnl
+        6DqMZS2VzGrzP6X0eza8lLJShA==
+X-Google-Smtp-Source: AFSGD/WOhsI5EdV6mfsBy0JoWQcCWF0qkVDxZsqN4qBQohApKBD6fQdYmq6QY1bCO0Zsk3Lry3/Wqg==
+X-Received: by 2002:a1c:99ce:: with SMTP id b197mr1882465wme.75.1543832155599;
+        Mon, 03 Dec 2018 02:15:55 -0800 (PST)
+Received: from localhost.localdomain (conf.hotelmediterraneo.com. [2.228.78.71])
+        by smtp.gmail.com with ESMTPSA id f192sm5832158wmd.12.2018.12.03.02.15.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:15:35 -0800 (PST)
-Subject: Re: [PATCH] sched/cpufreq: Add the SPDX tags
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
-References: <1539892534-16917-1-git-send-email-daniel.lezcano@linaro.org>
- <e21423b4-ec9c-ae6e-0b1f-c33e659b3cb0@linaro.org>
- <CAJZ5v0gHDzY9W0UG9QUDGTZGDD74ovRCj4dDFbksH0b4AoMvjg@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <d8a5aef3-fd22-1ce5-37f5-1c8a9db0168e@linaro.org>
-Date:   Mon, 3 Dec 2018 11:15:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 03 Dec 2018 02:15:55 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>, linux-sunxi@googlegroups.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 1/9] dt-bindings: gpio-axp209: Add AXP803 GPIOs compatible (w/ AXP813 fallback)
+Date:   Mon,  3 Dec 2018 15:45:39 +0530
+Message-Id: <20181203101547.16835-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gHDzY9W0UG9QUDGTZGDD74ovRCj4dDFbksH0b4AoMvjg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 11:12, Rafael J. Wysocki wrote:
-> On Mon, Dec 3, 2018 at 11:07 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->>
->> On 18/10/2018 21:55, Daniel Lezcano wrote:
->>> The SPDX tags are not present in cpufreq.c and cpufreq_schedutil.c.
->>>
->>> Add them and remove the license descriptions
->>>
->>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>
->> Hi Rafael,
->>
->> I think this patch passed between the cracks.
-> 
-> Well, please resend. :-)
+AXP803 PMIC has two GPIO's which is similar to the one in
+AXP813 PMIC.
 
-I can resend, but can't you pick this one directly?
+Add a compatible string for it with AXP813 fallback compatible string, in
+this case the AXP813 driver can be used.
 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ Documentation/devicetree/bindings/gpio/gpio-axp209.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+index fc42b2caa06d..c8c5d20856c9 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+@@ -12,6 +12,7 @@ Required properties:
+ - compatible: Should be one of:
+ 	- "x-powers,axp209-gpio"
+ 	- "x-powers,axp813-gpio"
++	- "x-powers,axp803-gpio", "x-powers,axp813-gpio"
+ - #gpio-cells: Should be two. The first cell is the pin number and the
+   second is the GPIO flags.
+ - gpio-controller: Marks the device node as a GPIO controller.
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.18.0.321.gffc6fa0e3
 
