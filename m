@@ -2,160 +2,136 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 148E4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43220C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B559C20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4C3A20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:21:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="DW5MC0yx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B559C20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SS5qxOXn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4C3A20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbeLCKWD (ORCPT
+        id S1726212AbeLCKWK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:22:03 -0500
-Received: from mail-eopbgr50097.outbound.protection.outlook.com ([40.107.5.97]:15393
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726039AbeLCKWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:22:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SAByDQP+mfQRQFw5/jDvORfGMc4k8oyV/HKt1fUXXc8=;
- b=DW5MC0yxbCtZMPMVmfnqlRNMtbY5OLYEfccI2MumB1i1WEUn/3OHqoLdszdz7rhtN1bRsUOZQ0oEUor2/gW3F/50Mf+EdtWS1F2LDpAKED/Y0h7vmdZGUWN7Nao9u9aWSKNG/ZcDNyuVs/3TUs7vn6uQsVC9BANHwNL0/2KH0jg=
-Received: from VI1PR07MB5085.eurprd07.prod.outlook.com (20.177.203.157) by
- VI1PR07MB5133.eurprd07.prod.outlook.com (20.178.9.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.14; Mon, 3 Dec 2018 10:20:51 +0000
-Received: from VI1PR07MB5085.eurprd07.prod.outlook.com
- ([fe80::7d44:e1e4:2a0a:4a8f]) by VI1PR07MB5085.eurprd07.prod.outlook.com
- ([fe80::7d44:e1e4:2a0a:4a8f%5]) with mapi id 15.20.1404.016; Mon, 3 Dec 2018
- 10:20:51 +0000
-From:   "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
-        <krzysztof.adamski@nokia.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
-        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
-        Peter Rosin <peda@axentia.se>,
-        Anders Berg <anders.berg@lsi.com>
-Subject: Re: [PATCH] i2c-axxia: properly handle master timeout
-Thread-Topic: [PATCH] i2c-axxia: properly handle master timeout
-Thread-Index: AQHUfa+0yU5CDqRvp0O+anAOl9uWAqVjnZCAgAlKpYA=
-Date:   Mon, 3 Dec 2018 10:20:51 +0000
-Message-ID: <d80cca69-26e7-8af7-bf42-8ccb0d44a374@nokia.com>
-References: <20181116132334.GA3951@localhost.localdomain>
- <20181127122649.GL1107@kunai>
-In-Reply-To: <20181127122649.GL1107@kunai>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR0101CA0012.eurprd01.prod.exchangelabs.com
- (2603:10a6:3:77::22) To VI1PR07MB5085.eurprd07.prod.outlook.com
- (2603:10a6:803:9e::29)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [131.228.32.168]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR07MB5133;6:ji+JZS1bB5Uhcd+jjpQ9fP17uvlB1LJ8OPZ+aDj3ZoJqUXTmYeYdqQVQ/WM7EmE3IBRsn9ijNExRDDkYK5qWPT8qrzVCT0+wmLpQhsFmjhq+qPgYkzCCuJLWszm/OC3rG+1TSfPftFZpvk+/7MPcc2bWwzYmtTnWBzup8/jZSsnI4l66Dg52W/SvHwQloW2KhtJvqL2Jus3Ef37tg5faGxjNHK9ioSQNZM3CSmTgKy2juI1NW56m2fo5Z9yZ1MHooDgGDEnLAqXV+43CfSribSwJI9EDdYN/RCCsXlp4Wz4pVkiBOwKSDrDSBochjvZz98We+dH2EKEj1T0eQWnBmvVMdbibM3StWKWUXOjVibEkopj2p0m0Zj3oZEIAlXie69g6AifGxIJy9INlJ0h1owhwAAHVwdtjrQJ//oT1GsWGtNk8g7I7eRxuu8Tl8p9YXuJf63WJyitMNe+FAqffug==;5:XwK+iatBnkKyFg/Jl82RzwJX6EHcaRxGQNpOarmciJt0pOBVOxuXhoNtA1pn3K+RpDx164SYT78YKe2+x04qUxOW6UhkIdrTXU9k1vQNWR8OOoUzcqB0H/EZz6uoBMO/SrLahJ4QDWDccwAhPi4dHJvQETjNC/Ggltzr4eVYFZ0=;7:TF7qzuWBwN6OelE4Vg+jhDI3XdfYpAe3bBOP+RSGBLQRP6xIw/aGdf0pp3axZ0q0K9/oc2/hhQ5chE07Q/9MKgZ4lXaxaWxLVFtiBBcjJSOpyENRkEx2H+yKtBNfzioKRWHGe7wDa0MENHynY1AmJg==
-x-ms-office365-filtering-correlation-id: 72d4a55c-3f42-414a-e7e2-08d65908fee8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR07MB5133;
-x-ms-traffictypediagnostic: VI1PR07MB5133:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=krzysztof.adamski@nokia.com; 
-x-microsoft-antispam-prvs: <VI1PR07MB5133887C064A1921343FBBF4EFAE0@VI1PR07MB5133.eurprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(11241501185)(806100)(944501493)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR07MB5133;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB5133;
-x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(346002)(136003)(39860400002)(199004)(189003)(51914003)(68736007)(31686004)(6486002)(105586002)(106356001)(6436002)(97736004)(486006)(99286004)(14454004)(86362001)(102836004)(71200400001)(25786009)(476003)(71190400001)(31696002)(229853002)(7736002)(478600001)(2616005)(66066001)(305945005)(186003)(36756003)(386003)(6506007)(2906002)(11346002)(53936002)(6512007)(6246003)(6916009)(4326008)(446003)(5660300001)(8676002)(52116002)(14444005)(76176011)(256004)(8936002)(26005)(54906003)(81166006)(316002)(81156014)(551934003)(3846002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB5133;H:VI1PR07MB5085.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: blGgcA+XFzRvQP+2LznaUeAd8I16z8P3NIZ4v4hm+PzhBpVO/SziGrK8f5Fv2W2BxfqFsBaGWaj9yCQ/vH48c2m6Ot+kmzksz5qFL6fvOMzknefPRfhcrf8QZ15J7eBwKdJxNeXsPmNwo09tgCLcBEMlPnMWzLPrs2cf5ZIES17TPeo1d/anXijnfXiWd40a91CVbcASac+pi0y583QykK7hg96jyfh0fHo04eH7plJYAWAJ0je1CwmGwXGL7CmbNLcWnT8qV8cuglLh+MLEEybZDEGq3k79J/DCZ+P7MRfCM1ny+OdkAkpomkbnmpFVaykncj+GW850NCn5rZ9WKK9Znf3Msy6NJyIVHHqjO8g=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <CB29AFA95D10254F87D8B785D9540C11@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 3 Dec 2018 05:22:10 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42518 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbeLCKWK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 05:22:10 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q18so11500402wrx.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:21:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=dAllDGtUaWoHz6r8oyOzW6MC1RWTTQtcsyuCN1DIlbw=;
+        b=SS5qxOXnObMPMFZWEk0JR5yNC5KVE/IrHVMvM5UJgqGa5KXZhf2NxJVvscW8l8Hqp8
+         pEZXM0ZaGOkjomEt+CwOsZMqoPJF6kkSkuYRr85ZpAclO90TbEoCVp7zetwBaMU8PJYj
+         N/fV+4qlyWVF3DYe8RspEdllGrX9SL+sO7xtjwNPk+XnuaxY6HH6sX8np4HWbTLojGcd
+         SYz38mErBwnZulymojmO+796C54JgKwS2hkrU5KQ12JDxIQKvIyQERqR+9oEu3ksyyfV
+         AYPUeOnLykuMopCQUx7HZycfErcwJUQZTzR+zp+26TuawjpIWacosBZvq62vGWwrC9b+
+         8m4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=dAllDGtUaWoHz6r8oyOzW6MC1RWTTQtcsyuCN1DIlbw=;
+        b=WgAGwm2YYZBYTRxoPOrKehT7pcQyQVUex89TJWWC1wi1ceICuH30amYwtiychAJrP5
+         iyupEtkm91UfVjJuwJDweA7JUP/EbE85mY1kc12ceWv/RWUPAT4UuwxbNiU/TmiViedn
+         LLOVtgLax+GB0ulz+NSZMcURNVNNeA6DzgDPCD3fno//YYdd9rpeIgoW8ccJK3HDUNPS
+         2pt8fnEwd7KJWwZ9dHvlflacxBRhGlEGFuYIoMN6jL31kXSvze3mG3BIM8ieBrweN2MD
+         Hj0AWIAi4oBNX7zsjp++b4Y1z/taX43TUbIRU2f7LcSr4e5nL/jQEWlh2DW1UPhpkjMz
+         ebZA==
+X-Gm-Message-State: AA+aEWaUQHmFClDOEGTO3fhBZgGC6pfJRTKy+vh+1rwXV7UBF23wNkIZ
+        z+F+nXHu91nvV6T2dilUWWsAIA==
+X-Google-Smtp-Source: AFSGD/WA1JQWohBfUetRs4cHrJz8HMolzeu6Awef4Sc07UTBjGnF/eY8OdRuPr2zihMcmTzwGXvO+A==
+X-Received: by 2002:adf:f8d2:: with SMTP id f18mr9144845wrq.265.1543832504047;
+        Mon, 03 Dec 2018 02:21:44 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id c7sm19537562wre.64.2018.12.03.02.21.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 02:21:43 -0800 (PST)
+Subject: Re: [PATCH] MAINTAINERS: Remove myself from the list
+To:     Carlo Caione <ccaione@baylibre.com>, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, khilman@baylibre.com
+References: <20181201151749.10932-1-ccaione@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <928e27de-cb7b-cf40-b8b6-2aa43a69ee39@baylibre.com>
+Date:   Mon, 3 Dec 2018 11:21:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72d4a55c-3f42-414a-e7e2-08d65908fee8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 10:20:51.6417
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB5133
+In-Reply-To: <20181201151749.10932-1-ccaione@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On 01/12/2018 16:17, Carlo Caione wrote:
+> Kevin is basically doing all the work. Remove my name as co-maintainer.
 
-W dniu 27.11.2018 o=A013:26, Wolfram Sang pisze:
-> On Fri, Nov 16, 2018 at 01:24:41PM +0000, Adamski, Krzysztof (Nokia - PL/=
-Wroclaw) wrote:
->> According to Intel (R) Axxia TM Lionfish Communication Processor
->> Peripheral Subsystem Hardware Reference Manual, the AXXIA I2C module
->> have a programmable Master Wait Timer, which among others, checks the
->> time between commands send in manual mode. When a timeout (25ms) passes,
->> TSS bit is set in Master Interrupt Status register and a Stop command is
->> issued by the hardware.
->>
->> The axxia_i2c_xfer(), does not properly handle this situation, however.
->> For each message a separate axxia_i2c_xfer_msg() is called and this
->> function incorrectly assumes that any interrupt might happen only when
->> waiting for completion. This is mostly correct but there is one
->> exception - a master timeout can trigger if enough time has passed
->> between individual transfers. It will, by definition, happen between
->> transfers when the interrupts are disabled by the code. If that happens,
->> the hardware issues Stop command.
->>
->> The interrupt indicating timeout will not be triggered as soon as we
->> enable them since the Master Interrupt Status is cleared when master
->> mode is entered again (which happens before enabling irqs) meaning this
->> error is lost and the transfer is continued even though the Stop was
->> issued on the bus. The subsequent operations completes without error but
->> a bogus value (0xFF in case of read) is read as the client device is
->> confused because aborted transfer. No error is returned from
->> master_xfer() making caller believe that a valid value was read.
->>
->> To fix the problem, the TSS bit (indicating timeout) in Master Interrupt
->> Status register is checked before each transfer. If it is set, there was
->> a timeout before this transfer and (as described above) the hardware
->> already issued Stop command so the transaction should be aborted thus
->> -ETIMEOUT is returned from the master_xfer() callback. In order to be
->> sure no timeout was issued we can't just read the status just before
->> starting new transaction as there will always be a small window of time
->> (few CPU cycles at best) where this might still happen. For this reason
->> we have to temporally disable the timer before checking for TSS bit.
->> Disabling it will, however, clear the TSS bit so in order to preserve
->> that information, we have to read it in ISR so we have to ensure that
->> the TSS interrupt is not masked between transfers of one transaction.
->> There is no need to call bus recovery or controller reinitialization if
->> that happens so it's skipped.
->>
->> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
->> Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-> Applied to for-current, thanks!
->
-> Since you and/or Alexander are the ones doing functional changes to this
-> driver, would you be interested in maintaining it? This would ensure you
-> get notified when someone else has patches for it.
+Sure, but couldn't we move you as reviewer and add Martin as reviewer aswell since he is dedicated to the Meson8X support ?
 
-Thanks for the offer. Since I think I became quite familiar with
-his code and the hardware itself and we do have an interest real
-interest in this driver, I think it is a good idea. I will send
-a patch to MAINTAINERS soon.
+Or maybe add a separate entry with Kevin as maintainer and Martin as reviewer for Meson8X ?
 
-Krzysztof
+Neil
+
+> 
+> Signed-off-by: Carlo Caione <ccaione@baylibre.com>
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 01645edc2388..63a2ad093524 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1297,7 +1297,6 @@ F:	include/dt-bindings/clock/gxbb*
+>  F:	Documentation/devicetree/bindings/clock/amlogic*
+>  
+>  ARM/Amlogic Meson SoC support
+> -M:	Carlo Caione <carlo@caione.org>
+>  M:	Kevin Hilman <khilman@baylibre.com>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  L:	linux-amlogic@lists.infradead.org
+> 
+
