@@ -2,90 +2,235 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47854C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7079CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1323B2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:58:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1323B2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1309620834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:59:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="DJEERotV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1309620834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeLCQ6R (ORCPT
+        id S1726889AbeLCQ7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:58:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:42004 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbeLCQ6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:58:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E401A1682;
-        Mon,  3 Dec 2018 08:58:14 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B37803F59C;
-        Mon,  3 Dec 2018 08:58:14 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id AFE911AE10F1; Mon,  3 Dec 2018 16:58:34 +0000 (GMT)
-Date:   Mon, 3 Dec 2018 16:58:34 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        devicetree@vger.kernel.org,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFT PATCH v1 3/4] cpu-topology: Move cpu topology code to
- common code.
-Message-ID: <20181203165833.GA27796@arm.com>
-References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
- <1543534100-3654-4-git-send-email-atish.patra@wdc.com>
+        Mon, 3 Dec 2018 11:59:47 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:10536 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726801AbeLCQ7r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 11:59:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1543856383; x=1575392383;
+  h=from:to:subject:date:message-id:references:in-reply-to:
+   content-id:mime-version:content-transfer-encoding;
+  bh=IruNJnoJoyJsRn9F+/6KYz6XP7M6xNKCv5LQInxN3I8=;
+  b=DJEERotVpYAtaygxQiNbc3xNxlDI/ptNuC2OJAtI5NrJH8S9VvtSRTqn
+   /8J5/LE7X3AICLqITo5IK6XRBg/0+BaKf49Uot9BOOBA276itdiEau4oY
+   Oroxeqgn8gwSc0eHrEC4+o3D5JobxBaDimjMM35qknMJnwl+64PwyfK/g
+   k=;
+X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
+   d="scan'208";a="773805066"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Dec 2018 16:59:40 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id wB3Gxc39098457
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 16:59:38 GMT
+Received: from EX13D01EUB002.ant.amazon.com (10.43.166.113) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 3 Dec 2018 16:59:37 +0000
+Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
+ EX13D01EUB002.ant.amazon.com (10.43.166.113) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 3 Dec 2018 16:59:37 +0000
+Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
+ EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
+ Mon, 3 Dec 2018 16:59:37 +0000
+From:   "Raslan, KarimAllah" <karahmed@amazon.de>
+To:     "jmattson@google.com" <jmattson@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>
+Subject: Re: [PATCH] KVM/nVMX: Stop mapping the "APIC-access address" page
+ into the kernel
+Thread-Topic: [PATCH] KVM/nVMX: Stop mapping the "APIC-access address" page
+ into the kernel
+Thread-Index: AQHUixB5Uem1hy0NVUaUQeCmV+YxqqVtPQGA
+Date:   Mon, 3 Dec 2018 16:59:36 +0000
+Message-ID: <1543856375.17106.25.camel@amazon.de>
+References: <1543845551-4403-1-git-send-email-karahmed@amazon.de>
+In-Reply-To: <1543845551-4403-1-git-send-email-karahmed@amazon.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.166.129]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <91A5B2FAA405A34EB97D73C24E1BF3C5@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543534100-3654-4-git-send-email-atish.patra@wdc.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:28:19PM -0800, Atish Patra wrote:
-> Both RISC-V & ARM64 are using cpu-map device tree to describe
-> their cpu topology. It's better to move the relevant code to
-> a common place instead of duplicate code.
-> 
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> ---
->  arch/arm64/include/asm/topology.h |  22 ---
->  arch/arm64/kernel/topology.c      | 303 +-------------------------------------
->  drivers/base/arch_topology.c      | 294 ++++++++++++++++++++++++++++++++++++
+T24gTW9uLCAyMDE4LTEyLTAzIGF0IDE0OjU5ICswMTAwLCBLYXJpbUFsbGFoIEFobWVkIHdyb3Rl
+Og0KPiBUaGUgIkFQSUMtYWNjZXNzIGFkZHJlc3MiIGlzIHNpbXBseSBhIHRva2VuIHRoYXQgdGhl
+IGh5cGVydmlzb3IgcHV0cyBpbnRvDQo+IHRoZSBQRk4gb2YgYSA0SyBFUFRFIChvciBQVEUgaWYg
+dXNpbmcgc2hhZG93IHBhZ2luZykgdGhhdCB0cmlnZ2VycyBBUElDDQo+IHZpcnR1YWxpemF0aW9u
+IHdoZW5ldmVyIGEgcGFnZSB3YWxrIHRlcm1pbmF0ZXMgd2l0aCB0aGF0IFBGTi4gVGhpcyBhZGRy
+ZXNzDQo+IGhhcyB0byBiZSBhIGxlZ2FsIGFkZHJlc3MgKGkuZS4gIHdpdGhpbiB0aGUgcGh5c2lj
+YWwgYWRkcmVzcyBzdXBwb3J0ZWQgYnkNCj4gdGhlIENQVSksIGJ1dCBpdCBuZWVkIG5vdCBoYXZl
+IFdCIG1lbW9yeSBiZWhpbmQgaXQuIEluIGZhY3QsIGl0IG5lZWQgbm90DQo+IGhhdmUgYW55dGhp
+bmcgYXQgYWxsIGJlaGluZCBpdC4gV2hlbiBiaXQgMzEgKCJhY3RpdmF0ZSBzZWNvbmRhcnkgY29u
+dHJvbHMiKQ0KPiBvZiB0aGUgcHJpbWFyeSBwcm9jZXNzb3ItYmFzZWQgVk0tZXhlY3V0aW9uIGNv
+bnRyb2xzIGlzIHNldCBhbmQgYml0IDANCj4gKCJ2aXJ0dWFsaXplIEFQSUMgYWNjZXNzZXMiKSBv
+ZiB0aGUgc2Vjb25kYXJ5IHByb2Nlc3Nvci1iYXNlZCBWTS1leGVjdXRpb24NCj4gY29udHJvbHMg
+aXMgc2V0LCB0aGUgUEZOIHJlY29yZGVkIGluIHRoZSBWTUNTICJBUElDLWFjY2VzcyBhZGRyZXNz
+IiBmaWVsZA0KPiB3aWxsIG5ldmVyIGJlIHRvdWNoZWQuIChJbnN0ZWFkLCB0aGUgYWNjZXNzIHRy
+aWdnZXJzIEFQSUMgdmlydHVhbGl6YXRpb24sDQo+IHdoaWNoIG1heSBhY2Nlc3MgdGhlIFBGTiBy
+ZWNvcmRlZCBpbiB0aGUgIlZpcnR1YWwtQVBJQyBhZGRyZXNzIiBmaWVsZCBvZg0KPiB0aGUgVk1D
+Uy4pDQo+IA0KPiBTbyBzdG9wIG1hcHBpbmcgdGhlICJBUElDLWFjY2VzcyBhZGRyZXNzIiBwYWdl
+IGludG8gdGhlIGtlcm5lbCBhbmQgZXZlbg0KPiBkcm9wIHRoZSByZXF1aXJlbWVudHMgdG8gaGF2
+ZSBhIHZhbGlkIHBhZ2UgYmFja2luZyBpdC4gSW5zdGVhZCwganVzdCB1c2UNCj4gc29tZSB0b2tl
+biB0aGF0Og0KPiANCj4gMSkgTm90IG9uZSBvZiB0aGUgdmFsaWQgZ3Vlc3QgcGFnZXMuDQo+IDIp
+IFdpdGhpbiB0aGUgcGh5c2ljYWwgYWRkcmVzcyBzdXBwb3J0ZWQgYnkgdGhlIENQVS4NCj4gDQo+
+IFN1Z2dlc3RlZC1ieTogSmltIE1hdHRzb24gPGptYXR0c29uQGdvb2dsZS5jb20+DQo+IFNpZ25l
+ZC1vZmYtYnk6IEthcmltQWxsYWggQWhtZWQgPGthcmFobWVkQGFtYXpvbi5kZT4NCj4gLS0tDQo+
+IA0KPiBUaGFua3MgSmltIGZvciB0aGUgY29tbWl0IG1lc3NhZ2UgOikNCj4gLS0tDQo+ICBhcmNo
+L3g4Ni9pbmNsdWRlL2FzbS9rdm1faG9zdC5oIHwgIDEgKw0KPiAgYXJjaC94ODYva3ZtL21tdS5j
+ICAgICAgICAgICAgICB8IDEwICsrKysrKw0KPiAgYXJjaC94ODYva3ZtL3ZteC5jICAgICAgICAg
+ICAgICB8IDcxICsrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICAz
+IGZpbGVzIGNoYW5nZWQsIDQyIGluc2VydGlvbnMoKyksIDQwIGRlbGV0aW9ucygtKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2t2bV9ob3N0LmggYi9hcmNoL3g4Ni9p
+bmNsdWRlL2FzbS9rdm1faG9zdC5oDQo+IGluZGV4IGZiZGE1YTkuLjdlNTAxOTYgMTAwNjQ0DQo+
+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL2t2bV9ob3N0LmgNCj4gKysrIGIvYXJjaC94ODYv
+aW5jbHVkZS9hc20va3ZtX2hvc3QuaA0KPiBAQCAtMTA3Nyw2ICsxMDc3LDcgQEAgc3RydWN0IGt2
+bV94ODZfb3BzIHsNCj4gIAl2b2lkICgqbG9hZF9lb2lfZXhpdG1hcCkoc3RydWN0IGt2bV92Y3B1
+ICp2Y3B1LCB1NjQgKmVvaV9leGl0X2JpdG1hcCk7DQo+ICAJdm9pZCAoKnNldF92aXJ0dWFsX2Fw
+aWNfbW9kZSkoc3RydWN0IGt2bV92Y3B1ICp2Y3B1KTsNCj4gIAl2b2lkICgqc2V0X2FwaWNfYWNj
+ZXNzX3BhZ2VfYWRkcikoc3RydWN0IGt2bV92Y3B1ICp2Y3B1LCBocGFfdCBocGEpOw0KPiArCWJv
+b2wgKCpuZXN0ZWRfYXBpY19hY2Nlc3NfYWRkcikoc3RydWN0IGt2bV92Y3B1ICp2Y3B1LCBncGFf
+dCBncGEsIGhwYV90ICpocGEpOw0KPiAgCXZvaWQgKCpkZWxpdmVyX3Bvc3RlZF9pbnRlcnJ1cHQp
+KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwgaW50IHZlY3Rvcik7DQo+ICAJaW50ICgqc3luY19waXJf
+dG9faXJyKShzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpOw0KPiAgCWludCAoKnNldF90c3NfYWRkciko
+c3RydWN0IGt2bSAqa3ZtLCB1bnNpZ25lZCBpbnQgYWRkcik7DQo+IGRpZmYgLS1naXQgYS9hcmNo
+L3g4Ni9rdm0vbW11LmMgYi9hcmNoL3g4Ni9rdm0vbW11LmMNCj4gaW5kZXggN2MwM2MwZi4uYWU0
+NmE4ZCAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYva3ZtL21tdS5jDQo+ICsrKyBiL2FyY2gveDg2
+L2t2bS9tbXUuYw0KPiBAQCAtMzk2Miw5ICszOTYyLDE5IEBAIGJvb2wga3ZtX2Nhbl9kb19hc3lu
+Y19wZihzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpDQo+ICBzdGF0aWMgYm9vbCB0cnlfYXN5bmNfcGYo
+c3RydWN0IGt2bV92Y3B1ICp2Y3B1LCBib29sIHByZWZhdWx0LCBnZm5fdCBnZm4sDQo+ICAJCQkg
+Z3ZhX3QgZ3ZhLCBrdm1fcGZuX3QgKnBmbiwgYm9vbCB3cml0ZSwgYm9vbCAqd3JpdGFibGUpDQo+
+ICB7DQo+ICsJaHBhX3QgaHBhOw0KPiAgCXN0cnVjdCBrdm1fbWVtb3J5X3Nsb3QgKnNsb3Q7DQo+
+ICAJYm9vbCBhc3luYzsNCj4gIA0KPiArCWlmIChpc19ndWVzdF9tb2RlKHZjcHUpICYmDQo+ICsJ
+ICAgIGt2bV94ODZfb3BzLT5uZXN0ZWRfYXBpY19hY2Nlc3NfYWRkciAmJg0KPiArCSAgICBrdm1f
+eDg2X29wcy0+bmVzdGVkX2FwaWNfYWNjZXNzX2FkZHIodmNwdSwgZ2ZuX3RvX2dwYShnZm4pLCAm
+aHBhKSkgew0KPiArCQkqcGZuID0gaHBhID4+IFBBR0VfU0hJRlQ7DQo+ICsJCWlmICh3cml0YWJs
+ZSkNCj4gKwkJCSp3cml0YWJsZSA9IHRydWU7DQo+ICsJCXJldHVybiBmYWxzZTsNCj4gKwl9DQoN
+Ck5vdyB0aGlua2luZyBmdXJ0aGVyIGFib3V0IHRoaXMsIEkgYWN0dWFsbHkgc3RpbGwgbmVlZCB0
+byB2YWxpZGF0ZSB0aGF0IHRoZSBMMTLCoA0KRVBUIGZvciB0aGlzIGdmbiBhY3R1YWxseSBjb250
+YWlucyB0aGUgYXBpY19hY2Nlc3MgYWRkcmVzcy4gVG8gZW5zdXJlIHRoYXQgScKgDQpvbmx5IGZp
+eHVwIHRoZSBmYXVsdCB3aGVuIHRoZSBMMSBoeXBlcnZpc29yIHNldHMgdXAgYm90aCBWTUNTIEwx
+MiBBUElDX0FDQ0VTU8KgDQphbmQgTDEyIEVQVCB0byBjb250YWluIHRoZSBzYW1lIGFkZHJlc3Mu
+DQoNCldpbGwgZml4IGFuZCBzZW5kIHYyLg0KDQo+ICsNCj4gIAkvKg0KPiAgCSAqIERvbid0IGV4
+cG9zZSBwcml2YXRlIG1lbXNsb3RzIHRvIEwyLg0KPiAgCSAqLw0KPiBkaWZmIC0tZ2l0IGEvYXJj
+aC94ODYva3ZtL3ZteC5jIGIvYXJjaC94ODYva3ZtL3ZteC5jDQo+IGluZGV4IDgzYTYxNGYuLjM0
+MGNmNTYgMTAwNjQ0DQo+IC0tLSBhL2FyY2gveDg2L2t2bS92bXguYw0KPiArKysgYi9hcmNoL3g4
+Ni9rdm0vdm14LmMNCj4gQEAgLTg2NCw3ICs4NjQsNiBAQCBzdHJ1Y3QgbmVzdGVkX3ZteCB7DQo+
+ICAJICogR3Vlc3QgcGFnZXMgcmVmZXJyZWQgdG8gaW4gdGhlIHZtY3MwMiB3aXRoIGhvc3QtcGh5
+c2ljYWwNCj4gIAkgKiBwb2ludGVycywgc28gd2UgbXVzdCBrZWVwIHRoZW0gcGlubmVkIHdoaWxl
+IEwyIHJ1bnMuDQo+ICAJICovDQo+IC0Jc3RydWN0IHBhZ2UgKmFwaWNfYWNjZXNzX3BhZ2U7DQo+
+ICAJc3RydWN0IGt2bV9ob3N0X21hcCB2aXJ0dWFsX2FwaWNfbWFwOw0KPiAgCXN0cnVjdCBrdm1f
+aG9zdF9tYXAgcGlfZGVzY19tYXA7DQo+ICAJc3RydWN0IGt2bV9ob3N0X21hcCBtc3JfYml0bWFw
+X21hcDsNCj4gQEAgLTg1MTIsMTAgKzg1MTEsNiBAQCBzdGF0aWMgdm9pZCBmcmVlX25lc3RlZChz
+dHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpDQo+ICAJa2ZyZWUodm14LT5uZXN0ZWQuY2FjaGVkX3ZtY3Mx
+Mik7DQo+ICAJa2ZyZWUodm14LT5uZXN0ZWQuY2FjaGVkX3NoYWRvd192bWNzMTIpOw0KPiAgCS8q
+IFVucGluIHBoeXNpY2FsIG1lbW9yeSB3ZSByZWZlcnJlZCB0byBpbiB0aGUgdm1jczAyICovDQo+
+IC0JaWYgKHZteC0+bmVzdGVkLmFwaWNfYWNjZXNzX3BhZ2UpIHsNCj4gLQkJa3ZtX3JlbGVhc2Vf
+cGFnZV9kaXJ0eSh2bXgtPm5lc3RlZC5hcGljX2FjY2Vzc19wYWdlKTsNCj4gLQkJdm14LT5uZXN0
+ZWQuYXBpY19hY2Nlc3NfcGFnZSA9IE5VTEw7DQo+IC0JfQ0KPiAgCWt2bV92Y3B1X3VubWFwKCZ2
+bXgtPm5lc3RlZC52aXJ0dWFsX2FwaWNfbWFwKTsNCj4gIAlrdm1fdmNwdV91bm1hcCgmdm14LT5u
+ZXN0ZWQucGlfZGVzY19tYXApOw0KPiAgCXZteC0+bmVzdGVkLnBpX2Rlc2MgPSBOVUxMOw0KPiBA
+QCAtMTE5MDEsNDEgKzExODk2LDI3IEBAIHN0YXRpYyB2b2lkIHZteF9pbmplY3RfcGFnZV9mYXVs
+dF9uZXN0ZWQoc3RydWN0IGt2bV92Y3B1ICp2Y3B1LA0KPiAgc3RhdGljIGlubGluZSBib29sIG5l
+c3RlZF92bXhfcHJlcGFyZV9tc3JfYml0bWFwKHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwNCj4gIAkJ
+CQkJCSBzdHJ1Y3Qgdm1jczEyICp2bWNzMTIpOw0KPiAgDQo+ICtzdGF0aWMgaHBhX3Qgdm14X2Fw
+aWNfYWNjZXNzX2FkZHIodm9pZCkNCj4gK3sNCj4gKwkvKg0KPiArCSAqIFRoZSBwaHlzaWNhbCBh
+ZGRyZXNzIGNob29zZW4gaGVyZSBoYXMgdG86DQo+ICsJICogMSkgTmV2ZXIgYmUgYW4gYWRkcmVz
+cyB0aGF0IGNvdWxkIGJlIGFzc2lnbmVkIHRvIGEgZ3Vlc3QuDQo+ICsJICogMikgV2l0aGluIHRo
+ZSBtYXhpbXVtIHBoeXNpY2FsIGxpbWl0cyBvZiB0aGUgQ1BVLg0KPiArCSAqDQo+ICsJICogU28g
+b3VyIGNob2ljZSBiZWxvdyBpcyBjb21wbGV0ZWx5IHJhbmRvbSwgYnV0IGF0IGxlYXN0IGl0IGZv
+bGxvd3MNCj4gKwkgKiB0aGVzZSB0d28gcnVsZXMuDQo+ICsJICovDQo+ICsJcmV0dXJuIF9fcGFf
+c3ltYm9sKF90ZXh0KSAmIFBBR0VfTUFTSzsNCj4gK30NCj4gKw0KPiAgc3RhdGljIHZvaWQgbmVz
+dGVkX2dldF92bWNzMTJfcGFnZXMoc3RydWN0IGt2bV92Y3B1ICp2Y3B1KQ0KPiAgew0KPiAgCXN0
+cnVjdCB2bWNzMTIgKnZtY3MxMiA9IGdldF92bWNzMTIodmNwdSk7DQo+ICAJc3RydWN0IHZjcHVf
+dm14ICp2bXggPSB0b192bXgodmNwdSk7DQo+ICAJc3RydWN0IGt2bV9ob3N0X21hcCAqbWFwOw0K
+PiAtCXN0cnVjdCBwYWdlICpwYWdlOw0KPiAtCXU2NCBocGE7DQo+ICANCj4gLQlpZiAobmVzdGVk
+X2NwdV9oYXMyKHZtY3MxMiwgU0VDT05EQVJZX0VYRUNfVklSVFVBTElaRV9BUElDX0FDQ0VTU0VT
+KSkgew0KPiAtCQkvKg0KPiAtCQkgKiBUcmFuc2xhdGUgTDEgcGh5c2ljYWwgYWRkcmVzcyB0byBo
+b3N0IHBoeXNpY2FsDQo+IC0JCSAqIGFkZHJlc3MgZm9yIHZtY3MwMi4gS2VlcCB0aGUgcGFnZSBw
+aW5uZWQsIHNvIHRoaXMNCj4gLQkJICogcGh5c2ljYWwgYWRkcmVzcyByZW1haW5zIHZhbGlkLiBX
+ZSBrZWVwIGEgcmVmZXJlbmNlDQo+IC0JCSAqIHRvIGl0IHNvIHdlIGNhbiByZWxlYXNlIGl0IGxh
+dGVyLg0KPiAtCQkgKi8NCj4gLQkJaWYgKHZteC0+bmVzdGVkLmFwaWNfYWNjZXNzX3BhZ2UpIHsg
+Lyogc2hvdWxkbid0IGhhcHBlbiAqLw0KPiAtCQkJa3ZtX3JlbGVhc2VfcGFnZV9kaXJ0eSh2bXgt
+Pm5lc3RlZC5hcGljX2FjY2Vzc19wYWdlKTsNCj4gLQkJCXZteC0+bmVzdGVkLmFwaWNfYWNjZXNz
+X3BhZ2UgPSBOVUxMOw0KPiAtCQl9DQo+IC0JCXBhZ2UgPSBrdm1fdmNwdV9ncGFfdG9fcGFnZSh2
+Y3B1LCB2bWNzMTItPmFwaWNfYWNjZXNzX2FkZHIpOw0KPiAtCQkvKg0KPiAtCQkgKiBJZiB0cmFu
+c2xhdGlvbiBmYWlsZWQsIG5vIG1hdHRlcjogVGhpcyBmZWF0dXJlIGFza3MNCj4gLQkJICogdG8g
+ZXhpdCB3aGVuIGFjY2Vzc2luZyB0aGUgZ2l2ZW4gYWRkcmVzcywgYW5kIGlmIGl0DQo+IC0JCSAq
+IGNhbiBuZXZlciBiZSBhY2Nlc3NlZCwgdGhpcyBmZWF0dXJlIHdvbid0IGRvDQo+IC0JCSAqIGFu
+eXRoaW5nIGFueXdheS4NCj4gLQkJICovDQo+IC0JCWlmICghaXNfZXJyb3JfcGFnZShwYWdlKSkg
+ew0KPiAtCQkJdm14LT5uZXN0ZWQuYXBpY19hY2Nlc3NfcGFnZSA9IHBhZ2U7DQo+IC0JCQlocGEg
+PSBwYWdlX3RvX3BoeXModm14LT5uZXN0ZWQuYXBpY19hY2Nlc3NfcGFnZSk7DQo+IC0JCQl2bWNz
+X3dyaXRlNjQoQVBJQ19BQ0NFU1NfQUREUiwgaHBhKTsNCj4gLQkJfSBlbHNlIHsNCj4gLQkJCXZt
+Y3NfY2xlYXJfYml0cyhTRUNPTkRBUllfVk1fRVhFQ19DT05UUk9MLA0KPiAtCQkJCQlTRUNPTkRB
+UllfRVhFQ19WSVJUVUFMSVpFX0FQSUNfQUNDRVNTRVMpOw0KPiAtCQl9DQo+IC0JfQ0KPiArCWlm
+IChuZXN0ZWRfY3B1X2hhczIodm1jczEyLCBTRUNPTkRBUllfRVhFQ19WSVJUVUFMSVpFX0FQSUNf
+QUNDRVNTRVMpKQ0KPiArCQl2bWNzX3dyaXRlNjQoQVBJQ19BQ0NFU1NfQUREUiwgdm14X2FwaWNf
+YWNjZXNzX2FkZHIoKSk7DQo+ICANCj4gIAlpZiAobmVzdGVkX2NwdV9oYXModm1jczEyLCBDUFVf
+QkFTRURfVFBSX1NIQURPVykpIHsNCj4gIAkJbWFwID0gJnZteC0+bmVzdGVkLnZpcnR1YWxfYXBp
+Y19tYXA7DQo+IEBAIC0xNDE5NiwxMiArMTQxNzcsNiBAQCBzdGF0aWMgdm9pZCBuZXN0ZWRfdm14
+X3ZtZXhpdChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsIHUzMiBleGl0X3JlYXNvbiwNCj4gIAkvKiBU
+aGlzIGlzIG5lZWRlZCBmb3Igc2FtZSByZWFzb24gYXMgaXQgd2FzIG5lZWRlZCBpbiBwcmVwYXJl
+X3ZtY3MwMiAqLw0KPiAgCXZteC0+aG9zdF9yc3AgPSAwOw0KPiAgDQo+IC0JLyogVW5waW4gcGh5
+c2ljYWwgbWVtb3J5IHdlIHJlZmVycmVkIHRvIGluIHZtY3MwMiAqLw0KPiAtCWlmICh2bXgtPm5l
+c3RlZC5hcGljX2FjY2Vzc19wYWdlKSB7DQo+IC0JCWt2bV9yZWxlYXNlX3BhZ2VfZGlydHkodm14
+LT5uZXN0ZWQuYXBpY19hY2Nlc3NfcGFnZSk7DQo+IC0JCXZteC0+bmVzdGVkLmFwaWNfYWNjZXNz
+X3BhZ2UgPSBOVUxMOw0KPiAtCX0NCj4gLQ0KPiAgCWt2bV92Y3B1X3VubWFwKCZ2bXgtPm5lc3Rl
+ZC52aXJ0dWFsX2FwaWNfbWFwKTsNCj4gIAlrdm1fdmNwdV91bm1hcCgmdm14LT5uZXN0ZWQucGlf
+ZGVzY19tYXApOw0KPiAgCXZteC0+bmVzdGVkLnBpX2Rlc2MgPSBOVUxMOw0KPiBAQCAtMTQ5NDks
+NiArMTQ5MjQsMjEgQEAgc3RhdGljIGludCB2bXhfc2V0X25lc3RlZF9zdGF0ZShzdHJ1Y3Qga3Zt
+X3ZjcHUgKnZjcHUsDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+ICANCj4gK3N0YXRpYyBib29sIHZt
+eF9uZXN0ZWRfYXBpY19hY2Nlc3NfYWRkcihzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsDQo+ICsJCQkJ
+CWdwYV90IGdwYSwgaHBhX3QgKmhwYSkNCj4gK3sNCj4gKwlzdHJ1Y3Qgdm1jczEyICp2bWNzMTIg
+PSBnZXRfdm1jczEyKHZjcHUpOw0KPiArDQo+ICsJaWYgKG5lc3RlZF9jcHVfaGFzMih2bWNzMTIs
+IFNFQ09OREFSWV9FWEVDX1ZJUlRVQUxJWkVfQVBJQ19BQ0NFU1NFUykgJiYNCj4gKwkgICAgcGFn
+ZV9hZGRyZXNzX3ZhbGlkKHZjcHUsIHZtY3MxMi0+YXBpY19hY2Nlc3NfYWRkcikgJiYNCj4gKwkg
+ICAgKGdwYV90b19nZm4oZ3BhKSA9PSBncGFfdG9fZ2ZuKHZtY3MxMi0+YXBpY19hY2Nlc3NfYWRk
+cikpKSB7DQo+ICsJCSpocGEgPSB2bXhfYXBpY19hY2Nlc3NfYWRkcigpOw0KPiArCQlyZXR1cm4g
+dHJ1ZTsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gZmFsc2U7DQo+ICt9DQo+ICsNCj4gIHN0YXRp
+YyBzdHJ1Y3Qga3ZtX3g4Nl9vcHMgdm14X3g4Nl9vcHMgX19yb19hZnRlcl9pbml0ID0gew0KPiAg
+CS5jcHVfaGFzX2t2bV9zdXBwb3J0ID0gY3B1X2hhc19rdm1fc3VwcG9ydCwNCj4gIAkuZGlzYWJs
+ZWRfYnlfYmlvcyA9IHZteF9kaXNhYmxlZF9ieV9iaW9zLA0KPiBAQCAtMTUwMjIsNiArMTUwMTIs
+NyBAQCBzdGF0aWMgc3RydWN0IGt2bV94ODZfb3BzIHZteF94ODZfb3BzIF9fcm9fYWZ0ZXJfaW5p
+dCA9IHsNCj4gIAkudXBkYXRlX2NyOF9pbnRlcmNlcHQgPSB1cGRhdGVfY3I4X2ludGVyY2VwdCwN
+Cj4gIAkuc2V0X3ZpcnR1YWxfYXBpY19tb2RlID0gdm14X3NldF92aXJ0dWFsX2FwaWNfbW9kZSwN
+Cj4gIAkuc2V0X2FwaWNfYWNjZXNzX3BhZ2VfYWRkciA9IHZteF9zZXRfYXBpY19hY2Nlc3NfcGFn
+ZV9hZGRyLA0KPiArCS5uZXN0ZWRfYXBpY19hY2Nlc3NfYWRkciA9IHZteF9uZXN0ZWRfYXBpY19h
+Y2Nlc3NfYWRkciwNCj4gIAkuZ2V0X2VuYWJsZV9hcGljdiA9IHZteF9nZXRfZW5hYmxlX2FwaWN2
+LA0KPiAgCS5yZWZyZXNoX2FwaWN2X2V4ZWNfY3RybCA9IHZteF9yZWZyZXNoX2FwaWN2X2V4ZWNf
+Y3RybCwNCj4gIAkubG9hZF9lb2lfZXhpdG1hcCA9IHZteF9sb2FkX2VvaV9leGl0bWFwLA0KCgoK
+QW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJtYW55IEdtYkgKS3JhdXNlbnN0ci4gMzgKMTAx
+MTcgQmVybGluCkdlc2NoYWVmdHNmdWVocmVyOiBDaHJpc3RpYW4gU2NobGFlZ2VyLCBSYWxmIEhl
+cmJyaWNoClVzdC1JRDogREUgMjg5IDIzNyA4NzkKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmljaHQg
+Q2hhcmxvdHRlbmJ1cmcgSFJCIDE0OTE3MyBCCgo=
 
-Whilst I'm happy seeing this code moved out, I'd like to have an entry in
-MAINTAINERS so that somebody can review changes from the arm64 side without
-having to poll a load of different lists. I assume patches would still go
-via Rafael and Greg, but if we could have Sudeep added as Reviewer for this
-file, then I'd really appreciate it.
-
-Cheers,
-
-Will
