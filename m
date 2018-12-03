@@ -2,153 +2,125 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EF1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B91C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503342145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA0892064A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:59:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N16LfCd3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503342145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=ozlabs.org header.i=@ozlabs.org header.b="uVYVq1nk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA0892064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ozlabs.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbeLCW57 (ORCPT
+        id S1726030AbeLCW7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:57:59 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42766 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbeLCW56 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:57:58 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d72so6393005pga.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:57:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=y3TBDSzaWqJ9MVeD2s1ej7Eh0gHItMsgUqQKBw5chZ4=;
-        b=N16LfCd3wfrLSUDhv3Zlmd+xaE3loWDdX/O1nmWRo/sgxfaWyDhXLd79W3UgBYfuee
-         ugrOG+xnoB3LcXAPnLRQ4J+sU766VfSriEcAPJnHyG81TSuIEqJp6oBjnzAHNxbd/3sC
-         bBF8bM/YWRXzwc2OAb/9/CQ2m0njCOQXZZu6NpcLK49SHql34ddkYpV9cKqsC5bDbAqw
-         H8d0HfJUMe1UJ1sk12KnokGNDG8mPoNehcNsbGx114S//4gqwrFlZt5GqtM/2BPWXuw8
-         p2jfp8gjGwBPkrnh9Zhpyo01jrTPyfC8SyhC1N+o0Ag0B28T6qb2mZdHQLpNft+6XcPV
-         ACmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=y3TBDSzaWqJ9MVeD2s1ej7Eh0gHItMsgUqQKBw5chZ4=;
-        b=SlgPpU4RLBcfddmkpkdtVOwVKd5gAxduX0l+/VdgVQBWmoB7cDfaDlZJMeyK0aDl43
-         lTUlQ2Sjo62js2H3lOpeg2Vgn/F5h/2SJBcKK9bVhNcg9Y3ol6GuZB9rBYsIsATO1xBt
-         0kf8fKbA++dP9n0UTA7nTVeM8GVqmpolR/d8rLqllzKvx6BWgRP1v651n2OfwpAdQJBi
-         I2XbNXSNuuWWFlT/s2/2hwtGlGESfb0jswOkweXPOMkJgh+U40bN2xjUvpwwFSbGCAgq
-         YFDpC9ESYUPsWkpT9RBDpeNvSGdMdFB+u/U16Rpxry3iv8GRj95mRc3f0PSdcTd62RNd
-         pt0A==
-X-Gm-Message-State: AA+aEWZYYTOWN2q514SOmweyLjaRKxHXgRxmH+LOvhTK+shiQWiWvAHe
-        PykfRf/pffUqc10D75Qb2DsKMlZ8UH4=
-X-Google-Smtp-Source: AFSGD/VO8G9EGoXQKM12TaH5I57cJ8wAT/sILifmSO2+mWsV+vmmxVotCVq/YidLewNF62qeTn/e9w==
-X-Received: by 2002:a63:1848:: with SMTP id 8mr14658026pgy.81.1543877877435;
-        Mon, 03 Dec 2018 14:57:57 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id x3sm23131680pgk.18.2018.12.03.14.57.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 14:57:56 -0800 (PST)
-Date:   Mon, 3 Dec 2018 14:57:55 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Andrea Arcangeli <aarcange@redhat.com>, mhocko@kernel.org,
-        ying.huang@intel.com, s.priebe@profihost.ag,
-        mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-In-Reply-To: <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1812031452280.253907@chino.kir.corp.google.com>
-References: <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com> <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com> <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com> <20181203181456.GK31738@dhcp22.suse.cz>
- <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com> <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com> <20181203185954.GM31738@dhcp22.suse.cz> <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
- <20181203201214.GB3540@redhat.com> <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com> <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 3 Dec 2018 17:59:36 -0500
+Received: from ozlabs.org ([203.11.71.1]:47861 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725909AbeLCW7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:59:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4380mz4wG7z9s3Z;
+        Tue,  4 Dec 2018 09:59:31 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+        t=1543877973; bh=4IrH3sD/1eeRZTdHyhB754M2cg/D8VYQnUXpKwpuh6o=;
+        h=Date:From:To:Cc:Subject:From;
+        b=uVYVq1nk7KYtniUj+QR0wMldhCcgRLZqb8dZRk0+sspzyVcJD8PIqDPA4NLhNFwFl
+         Lf7ghIPQmdFl2JPVfGAShwgMd6jFpzKmDfRI12s0NnpbmCVLZ40oUcAvX872NLjJXU
+         lODQXw0RDUy9Bj4LKuDarQXMkgAHJwsId/44xX5zsmsFvs7utQOh5xvm9Jj7XjuXrD
+         /kQXOa+oIogYpkB260t9cSl4tTbes7nbXDYrw8GlVRPFPaHZJj59hB19YsIwgsQ4uT
+         feblNiFifDlNzL4hFLwQ8Exf6I5d+uHEy+MQzqYH8wzmYtGxCojiYuAj2sxPCDxHat
+         SdXZLfSDqFP8A==
+Date:   Tue, 4 Dec 2018 09:59:30 +1100
+From:   Anton Blanchard <anton@ozlabs.org>
+To:     npiggin@gmail.com, hannes@cmpxchg.org, mhocko@kernel.org,
+        vdavydov.dev@gmail.com, pauld@redhat.com, peterz@infradead.org,
+        srikar@linux.vnet.ibm.com, pjt@google.com
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: CFS bandwidth control hits hard lockup warnings
+Message-ID: <20181204095930.19818537@kryten>
+X-Mailer: Mutt/1.8.0 (2017-02-23)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Dec 2018, Linus Torvalds wrote:
+Hi,
 
-> Side note: I think maybe people should just look at that whole
-> compaction logic for that block, because it doesn't make much sense to
-> me:
-> 
->                 /*
->                  * Checks for costly allocations with __GFP_NORETRY, which
->                  * includes THP page fault allocations
->                  */
->                 if (costly_order && (gfp_mask & __GFP_NORETRY)) {
->                         /*
->                          * If compaction is deferred for high-order allocations,
->                          * it is because sync compaction recently failed. If
->                          * this is the case and the caller requested a THP
->                          * allocation, we do not want to heavily disrupt the
->                          * system, so we fail the allocation instead of entering
->                          * direct reclaim.
->                          */
->                         if (compact_result == COMPACT_DEFERRED)
->                                 goto nopage;
-> 
->                         /*
->                          * Looks like reclaim/compaction is worth trying, but
->                          * sync compaction could be very expensive, so keep
->                          * using async compaction.
->                          */
->                         compact_priority = INIT_COMPACT_PRIORITY;
->                 }
-> 
-> this is where David wants to add *his* odd test, and I think everybody
-> looks at that added case
-> 
-> +                       if (order == pageblock_order &&
-> +                                       !(current->flags & PF_KTHREAD))
-> +                               goto nopage;
-> 
-> and just goes "Eww".
-> 
-> But I think the real problem is that it's the "goto nopage" thing that
-> makes _sense_, and the current cases for "let's try compaction" that
-> are the odd ones, and then David adds one new special case for the
-> sensible behavior.
-> 
-> For example, why would COMPACT_DEFERRED mean "don't bother", but not
-> all the other reasons it didn't really make sense?
-> 
-> So does it really make sense to fall through AT ALL to that "retry"
-> case, when we explicitly already had (gfp_mask & __GFP_NORETRY)?
-> 
-> Maybe the real fix is to instead of adding yet another special case
-> for "goto nopage", it should just be unconditional: simply don't try
-> to compact large-pages if __GFP_NORETRY was set.
-> 
+We are seeing hard lockup warnings caused by CFS bandwidth control code. The
+test case below fails almost immediately on a reasonably large (144 thread)
+POWER9 guest with:
 
-I think what is intended, which may not be represented by the code, is 
-that if compaction is not suitable (__compaction_suitable() returns 
-COMPACT_SKIPPED because of failing watermarks) that for non-hugepage 
-allocations reclaim may be useful.  We just want to reclaim memory so that 
-memory compaction has pages available for migration targets.
+watchdog: CPU 80 Hard LOCKUP
+watchdog: CPU 80 TB:1134131922788, last heartbeat TB:1133207948315 (1804ms ago)
+Modules linked in:
+CPU: 80 PID: 0 Comm: swapper/80 Tainted: G             L    4.20.0-rc4-00156-g94f371cb7394-dirty #98
+NIP:  c00000000018f618 LR: c000000000185174 CTR: c00000000018f5f0
+REGS: c00000000fbbbd70 TRAP: 0100   Tainted: G             L     (4.20.0-rc4-00156-g94f371cb7394-dirty)
+MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 28000222  XER: 00000000
+CFAR: c000000000002440 IRQMASK: 1
+GPR00: c000000000185174 c000003fef927610 c0000000010bd500 c000003fab1dbb80
+GPR04: c000003ffe2d3000 c00000000018f5f0 c000003ffe2d3000 00000076e60d19fe
+GPR08: c000003fab1dbb80 0000000000000178 c000003fa722f800 0000000000000001
+GPR12: c00000000018f5f0 c00000000ffb3700 c000003fef927f90 0000000000000000
+GPR16: 0000000000000000 c000000000f8d468 0000000000000050 c00000000004ace0
+GPR20: c000003ffe743260 0000000000002a61 0000000000000001 0000000000000000
+GPR24: 00000076e61c5aa0 000000003b9aca00 0000000000000000 c00000000017cdb0
+GPR28: c000003fc2290000 c000003ffe2d3000 c00000000018f5f0 c000003fa74ca800
+NIP [c00000000018f618] tg_unthrottle_up+0x28/0xc0
+LR [c000000000185174] walk_tg_tree_from+0x94/0x120
+Call Trace:
+[c000003fef927610] [c000003fe3ad5000] 0xc000003fe3ad5000 (unreliable)
+[c000003fef927690] [c00000000004b8ac] smp_muxed_ipi_message_pass+0x5c/0x70
+[c000003fef9276e0] [c00000000019d828] unthrottle_cfs_rq+0xe8/0x300
+[c000003fef927770] [c00000000019dc80] distribute_cfs_runtime+0x160/0x1d0
+[c000003fef927820] [c00000000019e044] sched_cfs_period_timer+0x154/0x2f0
+[c000003fef9278a0] [c0000000001f8fc0] __hrtimer_run_queues+0x180/0x430
+[c000003fef927920] [c0000000001fa2a0] hrtimer_interrupt+0x110/0x300
+[c000003fef9279d0] [c0000000000291d4] timer_interrupt+0x104/0x2e0
+[c000003fef927a30] [c000000000009028] decrementer_common+0x108/0x110
 
-Note the same caveat I keep bringing up still applies, though: if reclaim 
-frees memory that is iterated over by the compaction migration scanner, it 
-was pointless.  That is a memory compaction implementation detail and can 
-lead to a lot of unnecessary reclaim (or even thrashing) if unmovable page 
-fragmentation cause compaction to fail even after it has migrated 
-everything it could.  I think the likelihood of that happening increases 
-by the allocation order.
+Adding CPUs, or adding empty cgroups makes the situation worse. We haven't
+had a chance to dig deeper yet.
+
+Note: The test case makes no attempt to clean up after itself and sometimes
+takes my guest down :)
+
+Thanks,
+Anton
+--
+
+#!/bin/bash -e 
+
+echo 1 > /proc/sys/kernel/nmi_watchdog
+echo 1 > /proc/sys/kernel/watchdog_thresh
+
+mkdir -p /sys/fs/cgroup/cpu/base_cgroup
+echo 1000 > /sys/fs/cgroup/cpu/base_cgroup/cpu.cfs_period_us
+echo 1000000 > /sys/fs/cgroup/cpu/base_cgroup/cpu.cfs_quota_us
+
+# Create some empty cgroups
+for i in $(seq 1 1024)
+do
+	mkdir -p /sys/fs/cgroup/cpu/base_cgroup/$i
+done
+
+# Create some cgroups with a CPU soaker
+for i in $(seq 1 144)
+do
+	(while :; do :; done ) &
+	PID=$!
+	mkdir -p /sys/fs/cgroup/cpu/base_cgroup/$PID
+	echo $PID > /sys/fs/cgroup/cpu/base_cgroup/$PID/cgroup.procs
+done
