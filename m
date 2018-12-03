@@ -2,131 +2,140 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B01C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06623C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7A0206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:58:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B7A0206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B8E14206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E14206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbeLCL7k (ORCPT
+        id S1726416AbeLCMA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:59:40 -0500
-Received: from foss.arm.com ([217.140.101.70]:35594 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeLCL7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:59:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AD81165C;
-        Mon,  3 Dec 2018 03:58:55 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3F2A3F59C;
-        Mon,  3 Dec 2018 03:58:52 -0800 (PST)
-Date:   Mon, 3 Dec 2018 11:58:50 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: Re: [PATCH 00/23] PCI: refactor the Mobiveil driver and add PCIe
- support for NXP LX SoCs
-Message-ID: <20181203115850.GB8040@e107981-ln.cambridge.arm.com>
-References: <20181106131807.29951-1-Zhiqiang.Hou@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106131807.29951-1-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 3 Dec 2018 07:00:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60588 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725975AbeLCMA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:00:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 89DF8AFBE;
+        Mon,  3 Dec 2018 12:00:09 +0000 (UTC)
+Date:   Mon, 03 Dec 2018 13:00:08 +0100
+Message-ID: <s5hftvezupj.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Ayman Bagabas" <ayman.bagabas@gmail.com>
+Cc:     <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
+        "Andy Shevchenko" <andy@infradead.org>,
+        "Darren Hart" <dvhart@infradead.org>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Kailang Yang" <kailang@realtek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH v8 2/3] x86: add support for Huawei WMI hotkeys.
+In-Reply-To: <20181129235742.14332-3-ayman.bagabas@gmail.com>
+References: <20181129235742.14332-1-ayman.bagabas@gmail.com>
+        <20181129235742.14332-3-ayman.bagabas@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 01:19:03PM +0000, Z.q. Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On Fri, 30 Nov 2018 00:57:37 +0100,
+Ayman Bagabas wrote:
 > 
-> This patch set is aim to refactor the Mobiveil driver and add
-> PCIe support for NXP LX series SoCs.
+> This driver adds support for missing hotkeys on some Huawei laptops.
+> Laptops such as the Matebook X have non functioning hotkeys. Whereas
+> newer laptops such as the Matebook X Pro come with working hotkeys out
+> of the box.
 > 
-> Hou Zhiqiang (23):
->   PCI: mobiveil: uniform the register accessors
->   PCI: mobiveil: format the code without function change
->   PCI: mobiveil: correct the returned error number
->   PCI: mobiveil: remove flag MSI_FLAG_MULTI_PCI_MSI
->   PCI: mobiveil: correct PCI base address in MEM/IO outbound windows
->   PCI: mobiveil: replace the resource list iteration function
->   PCI: mobiveil: use WIN_NUM_0 explicitly for CFG outbound window
->   PCI: mobiveil: use the 1st inbound window for MEM inbound transactions
->   PCI: mobiveil: correct the inbound/outbound window setup routine
->   PCI: mobiveil: fix the INTx process error
->   PCI: mobiveil: only fixup the Class Code field
->   PCI: mobiveil: move out the link up waiting from mobiveil_host_init
->   PCI: mobiveil: move irq chained handler setup out of DT parse
->   PCI: mobiveil: initialize Primary/Secondary/Subordinate bus number
->   dt-bindings: pci: mobiveil: change gpio_slave and apb_csr to optional
->   PCI: mobiveil: refactor the Mobiveil driver
->   PCI: mobiveil: continue to initialize the host upon no PCIe link
->   PCI: mobiveil: disabled IB and OB windows set by bootloader
->   PCI: mobiveil: add Byte and Half-Word width register accessors
->   PCI: mobiveil: change prototype of function mobiveil_host_init
->   dt-bindings: pci: Add NXP LX SoCs PCIe controller
->   PCI: mobiveil: add PCIe RC driver for NXP LX series SoCs
->   arm64: dts: freescale: lx2160a: add pcie DT nodes
+> Old laptops, such as the Matebook X, report hotkey events through ACPI
+> device "\WMI0". However, new laptops, such as the Matebook X Pro,
+> does not have this WMI device.
 > 
->  .../devicetree/bindings/pci/lx-pci.txt        |  52 ++
->  .../devicetree/bindings/pci/mobiveil-pcie.txt |   2 +
->  MAINTAINERS                                   |  10 +-
->  .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 157 ++++
->  drivers/pci/controller/Kconfig                |  11 +-
->  drivers/pci/controller/Makefile               |   2 +-
->  drivers/pci/controller/mobiveil/Kconfig       |  34 +
->  drivers/pci/controller/mobiveil/Makefile      |   5 +
->  drivers/pci/controller/mobiveil/pci-lx.c      | 222 +++++
->  .../controller/mobiveil/pcie-mobiveil-host.c  | 622 +++++++++++++
->  .../controller/mobiveil/pcie-mobiveil-plat.c  |  54 ++
->  .../pci/controller/mobiveil/pcie-mobiveil.c   | 245 +++++
->  .../pci/controller/mobiveil/pcie-mobiveil.h   | 221 +++++
->  drivers/pci/controller/pcie-mobiveil.c        | 861 ------------------
->  14 files changed, 1625 insertions(+), 873 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/lx-pci.txt
->  create mode 100644 drivers/pci/controller/mobiveil/Kconfig
->  create mode 100644 drivers/pci/controller/mobiveil/Makefile
->  create mode 100644 drivers/pci/controller/mobiveil/pci-lx.c
->  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
->  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil-plat.c
->  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil.c
->  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil.h
->  delete mode 100644 drivers/pci/controller/pcie-mobiveil.c
+> All the hotkeys on the Matebook X Pro work fine
+> without this patch except (micmute, wlan, and huawei key). These keys
+> and the brightness keys report events to "\AMW0" ACPI device. One
+> problem is that brightness keys on the Matebook X Pro work without this
+> patch. This results in reporting two brightness key press
+> events one is captured by ACPI and another by this driver.
+> 
+> A solution would be to check if such event came from the "\AMW0" WMI driver
+> then skip reporting event. Another solution would be to leave this to user-space to handle. Which
+> can be achieved by using "hwdb" tables and remap those keys to "unknown".
+> This solution seems more natural to me because it leaves the decision to
+> user-space.
+> 
+> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 
-Subrahmanya,
+The new patch looks much better than the previous one, thanks for
+working on it.
 
-for the records, this is the driver *you* are maintaining, aren't you ?
+Just a few comments:
 
-We ask developers to be added to the MAINTAINERS list in order to hold
-them accountable, merging a driver upstream means that you need to
-actively maintain it, which in turn means reviewing series affecting
-its code, like this one.
+> +struct huawei_wmi_priv {
+> +	struct input_dev *idev;
+> +	struct led_classdev cdev;
+> +	acpi_handle handle;
 
-I will have a look too but it is your responsibility to review these
-patches and ACK them accordingly.
+Is this handle set in anywhere?  I couldn't see it in your patch.
+If it's supposed to be NULL, passing NULL explicitly makes your
+intention clearer.
 
-So I strongly suggest you start doing it please.
 
-Thanks,
-Lorenzo
+> +static int huawei_wmi_leds_setup(struct wmi_device *wdev)
+> +{
+> +	struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
+> +	acpi_status status;
+> +
+> +	// Skip registering LED subsystem if no ACPI method was found.
+> +	status = acpi_get_handle(priv->handle, "\\_SB.PCI0.LPCB.EC0", &priv->handle);
+> +	if (ACPI_FAILURE(status))
+> +		return 0;
+> +
+> +	if (acpi_has_method(priv->handle, "SPIN"))
+> +		priv->acpi_method = "SPIN";
+> +	else if (acpi_has_method(priv->handle, "WPIN"))
+> +		priv->acpi_method = "WPIN";
+> +	else
+> +		return 0;
+> +
+> +	priv->cdev.name = "platform::micmute";
+> +	priv->cdev.max_brightness = 1;
+> +	priv->cdev.brightness_set_blocking = huawei_wmi_micmute_led_set;
+> +	priv->cdev.default_trigger = "audio-micmute";
+> +	priv->cdev.brightness = ledtrig_audio_get(LED_AUDIO_MICMUTE);
+> +	priv->cdev.dev = &wdev->dev;
+
+What about suspend/resume?
+When the driver is bound wit HD-audio, the HD-audio will restore the
+state at resume, so it would work.  But, by providing the LED class
+device, it is supposed to work even without HD-audio, so it might make
+sense to pass LED_CORE_SUSPENDRESUME, too.
+
+
+> +static int __init huawei_wmi_init(void)
+> +{
+> +	if (!(wmi_has_guid(WMI0_EVENT_GUID) || wmi_has_guid(AMW0_EVENT_GUID))) {
+> +		pr_debug("Compatible WMI GUID not found\n");
+> +		return -ENODEV;
+> +	}
+
+This is superfluous when you implement with wmi_driver.
+In theory, the supported GUID can be added dynamically via sysfs,
+too.
+
+
+thanks,
+
+Takashi
