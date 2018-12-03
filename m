@@ -2,102 +2,113 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 106D9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCDAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA433214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:32:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1VavgUKd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA433214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C0F4208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:35:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0F4208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbeLCTcq (ORCPT
+        id S1725982AbeLCTfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:32:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49926 "EHLO mail.kernel.org"
+        Mon, 3 Dec 2018 14:35:18 -0500
+Received: from mout.gmx.net ([212.227.17.21]:38847 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbeLCTcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:32:45 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA417208A3;
-        Mon,  3 Dec 2018 19:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543865559;
-        bh=4bP7New99I5IjCoQ+tB0VrAfQHewIzJFR3Qi+YsKEt8=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=1VavgUKdYWRYlHHR3Y23oMB+HnM54kz8Jq1di0yR18QZX+FWSFXEY7nJkB6ZihZS7
-         ykqg/6TKlTWyeW7KYLGSVI9dgzHbaSp0N4IgDUg/1+oljXSUw8XIx7GW+/Yl05OnzH
-         +j6n8tTXD7IURGTW1rfXI6JBHZWz0/PEL+TsUzik=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "A.s. Dong" <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1542200198-3017-10-git-send-email-aisheng.dong@nxp.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
- <1542200198-3017-10-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <154386555833.88331.17771094561482296098@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH V6 9/9] clk: imx: add imx7ulp clk driver
-Date:   Mon, 03 Dec 2018 11:32:38 -0800
+        id S1725890AbeLCTfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:35:17 -0500
+Received: from qcai.nay.com ([66.187.233.206]) by mail.gmx.com (mrgmx102
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 0LrZOj-1hUIBS2GRp-013KJH; Mon, 03
+ Dec 2018 20:34:28 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     mark.rutland@arm.com, marc.zyngier@arm.com
+Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
+        peterz@infradead.org, mingo@kernel.org, longman@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@gmx.us>
+Subject: [PATCH] clocksource/arm_arch_timer: fix a lockdep warning
+Date:   Mon,  3 Dec 2018 14:33:44 -0500
+Message-Id: <1543865624-17301-1-git-send-email-cai@gmx.us>
+X-Mailer: git-send-email 1.8.3.1
+X-Provags-ID: V03:K1:T3JKhvsLTMlt02j5Xa/ivotfktyAs09MImuJwRehiTtilHpq/Sl
+ QHFV3W8gGDf7joKXtImhbLUdJsrVUi2F/KgHBBqkzZmuIBJ54g5ETCslpgRs82y200AxAQh
+ CXM+QmcpkrWpS6EUpnKBVccVQPvnq0X+dDVV8uR1zh2x57Vnmm8P+ETqB00KeIeD8oK7pjX
+ 21ltqjUqt9HYPmQEFm4tQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TZBS9a4/07Y=:mipIW+jv6ooWBP2gnLQdzF
+ 6dyRZuIDBmmIni7UM8zxefWxNaSPNyfPNPAEy2QLwGPdSKZvF7OZsCeLiAgCsukWToUP3rGK1
+ nTqQLWVezoVvXaI/hpyb3fhFRPRzKKA91lvba8hBsH23yGrklAo5SHfB/4tLK3rIp7nv6HN6D
+ VBh+s1dqQvlJ/QhZETzlqcvvyVVH6b3nHx/J2ddFsAHz5PlapEdG6AiTWAyl7IAIKVQ3JbZFi
+ W4XF27cg+P5EQPUHcL0tiPlQ9WAOsYxijTSSg8UxtDcMy8P49QCR/9sHUu5FqUHheYUgJtUCu
+ lf2Yu75arT9vbQqt9xFwcZUwZpNLD+GyjyvWyI4i8At/4dSoQaLHv676L0k9cmnU2vek0+2MJ
+ z0gq1ttUsn35dIs+9aXBqut2iVygEzRDlxJAEQbPNMMKCPerU6QqQJ20bvJtCUL/mx0l/BXvv
+ OKesVyqODlTArqP8QURaPwkhF+59HjC+UyL2abs3L76OmgZlqX85WZS/SGTVfoytkDtaPZeaZ
+ BxRR4+lCo3OXG7dlDqNY9+lgG4lvfKLuqxrCJ/bjqhXiQFcLLWAohtU/SJdDMnoiPXvDP5OeJ
+ +lc+56Z1yVSN1QQVILC5u42feTJXLBYFtPxsdXrNFCNouuyVz0YadCyp9o1wOtqXCtbNicDn1
+ +EtX1JwFKqXUJ2Bd1PSZwSt0FPJAOq3jjEQ4XfplT5kitOk39lW2mcBCYtRj+CpR6v29vqrwt
+ nLhxBK2UGnv1R/5iIkYyJKa1gWasTk7pKw09KWvLpKo7vAAwGlLy0LPbObLzJpQBQZKmne1lO
+ 6y5WbthM7HbH3YC89/kOSJgtm77o2M/w+5HOKJIke0XdbaYhyxM+A0gxFoK1B6FZDTiB5R/MN
+ /15opRrc/Hw9MAAM++jH8g3wV/MzKRZbmY2Gq9Y/Y=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting A.s. Dong (2018-11-14 05:02:08)
-> i.MX7ULP Clock functions are under joint control of the System
-> Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-> modules, and Core Mode Controller (CMC)1 blocks
-> =
+Booting this Huawei TaiShan 2280 arm64 server generated this lockdep
+warning.
 
-> The clocking scheme provides clear separation between M4 domain
-> and A7 domain. Except for a few clock sources shared between two
-> domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-> and and the Fast IRC clock (FIRCLK), clock sources and clock
-> management are separated and contained within each domain.
-> =
+[    0.000000]  lockdep_assert_cpus_held+0x50/0x60
+[    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
+[    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
+[    0.000000]  arch_timer_acpi_init+0x274/0x6ac
+[    0.000000]  acpi_table_parse+0x1ac/0x218
+[    0.000000]  __acpi_probe_device_table+0x164/0x1ec
+[    0.000000]  timer_probe+0x1bc/0x254
+[    0.000000]  time_init+0x44/0x98
+[    0.000000]  start_kernel+0x4ec/0x7d4
 
-> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-> =
+This is due to the commit cb538267ea1e ("jump_label/lockdep: Assert we hold
+the hotplug lock for _cpuslocked() operations"). Therefore, it will check
+if it is really in the CPU hotplug path or not, and work around this
+problem by using cpus_read_trylock(). The chance of not getting the read
+lock is very small. If that happens, it will report a lockdep warning at
+most.
 
-> This driver only adds clock support in A7 domain.
-> =
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
+ drivers/clocksource/arm_arch_timer.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> Note that most clocks required to be operated when gated, e.g. pll,
-> pfd, pcc. And more special cases that scs/ddr/nic mux selecting
-> different clock source requires that clock to be enabled first,
-> then we need set CLK_OPS_PARENT_ENABLE flag for them properly.
-> =
-
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Anson Huang <Anson.Huang@nxp.com>
-> Cc: Bai Ping <ping.bai@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> =
-
-> ---
-
-Applied to clk-next
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 9a7d4dc..5c9acbd 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -497,11 +497,20 @@ void arch_timer_enable_workaround(const struct arch_timer_erratum_workaround *wa
+ 			per_cpu(timer_unstable_counter_workaround, i) = wa;
+ 	}
+ 
++#ifdef CONFIG_HOTPLUG_CPU
++	i = 0;
++
+ 	/*
+ 	 * Use the locked version, as we're called from the CPU
+ 	 * hotplug framework. Otherwise, we end-up in deadlock-land.
+ 	 */
++	i = cpus_read_trylock();
+ 	static_branch_enable_cpuslocked(&arch_timer_read_ool_enabled);
++	if (i)
++		cpus_read_unlock();
++#else
++	static_branch_enable(&arch_timer_read_ool_enabled);
++#endif
+ 
+ 	/*
+ 	 * Don't use the vdso fastpath if errata require using the
+-- 
+1.8.3.1
 
