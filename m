@@ -2,130 +2,106 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B65C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E0DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB3920881
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A76EB20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="na37Xu4v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB3920881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYWDlTvt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A76EB20848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbeLCPwS (ORCPT
+        id S1726762AbeLCPxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:52:18 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51426 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbeLCPwR (ORCPT
+        Mon, 3 Dec 2018 10:53:23 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42567 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbeLCPxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:52:17 -0500
-Received: by mail-it1-f196.google.com with SMTP id x19so10012489itl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 07:52:14 -0800 (PST)
+        Mon, 3 Dec 2018 10:53:23 -0500
+Received: by mail-ed1-f65.google.com with SMTP id j6so11160955edp.9;
+        Mon, 03 Dec 2018 07:53:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JF5ZHq5jYX7ctXx6B8V/rZq9pCcsLqMqEPFd89f+GH0=;
-        b=na37Xu4vo6LzEm3DxXWc/rZYBXfVojbg58nxCeTWkH6H4cVKVxnI/341YDl//S5bdJ
-         MdjPSK4T4XOKbllNYvGCP892ARC2GpJFrcHFWiVuG5vcTFXQF3hrstajYCHzf19gh5bk
-         3NwAA5u7gis79MYqvHfp3xPs404TvAEMrC0wU9PLz1TZBog/QJp0TWyF/M/N7gIh9T9t
-         0dTqR1ajHqoOrHIWez9TBpkqdQD0SSy0cc1gpQSTMZV0NFNBKeXUgjhSSXnwqun5C17S
-         darZw92mN372eNwLIwHXCoDJOtzeaIt3nAgJJkJHjcPaXLjtr2iCILgDgxqz2PkGoE92
-         atpQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DhRX7GdrWa1eintwejLB4d7a72Ap802ixvYj84okxaY=;
+        b=ZYWDlTvt+KsEiwbZFfZBZrbTL9c0VTIxw+jzuLNzSuYEaE+GO0uiphM/4tA9mt2s3U
+         ooiL7h4qqQDm5D6ohzhEjeu27XX0aCSARDEICoVhjm2Ent+DBocdILWSxh6ppaCMUofL
+         SVS8xZDl9+uoOTNEhVyVqmyBtF+1lHN0PLXwKXRDtnoGBUjPUGuSCybJn89WCE4lSPR5
+         SHFbaS0pC4W7QNy3nlw1TcDooTYwivLPVlnkE4lwXqDPi1PjTifSrEByGvGfSRt+SncY
+         33u2Ik7JXPdzyZVwBw3u6oylsYB+b0o1rx5b7ZEH6TI8ad7vXIAlIWuGgppposXsuvar
+         9mqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JF5ZHq5jYX7ctXx6B8V/rZq9pCcsLqMqEPFd89f+GH0=;
-        b=J0zYjOY+mgHhF83bsymw2CB0ukFpf1tC355ZXMK0LP3wue8nYP4YZ7Ag4BjGh9NrJC
-         sGr9c3ecEHPekUAyQ7DEuScyNA2n0gETZngOHUxNE8c9swLpWIlmMmU2xViur+uKO/xR
-         +JJVMMDlWM05LVbRe7ma2OUPzvWGhTHwKzlMOHCtGRTfQJR6L37puLyPzx/mcOCCtnsy
-         VCEALMyvJKK//1AwNz5fheTF6SE3EvfrvB7tjgGOrVevCinkcJmYpzg+/rvPE/0JAAfI
-         QbkZZ90VT6m4SUagjnKbKeIGQE7wwCob+xEeH4TsYxR3rItu38viFXr3TIOvPTP212UG
-         KSXQ==
-X-Gm-Message-State: AA+aEWb+AjTI6B5VZN7ZPCVG0cWIix5/SW3IRw4Zrg5+6ehwkX5Zaz/p
-        XGU3M4im5rSWZMKoE5SOSopZHg==
-X-Google-Smtp-Source: AFSGD/WVpiQY4GnJa4/hkG5/RHa11rheSBZRA4cxFsvQ2DsmS33+mTFkkHI8CcOr58YZcpjjaBc+Yg==
-X-Received: by 2002:a02:158d:: with SMTP id 13mr14634828jaq.97.1543852333681;
-        Mon, 03 Dec 2018 07:52:13 -0800 (PST)
-Received: from cisco (71-218-133-134.hlrn.qwest.net. [71.218.133.134])
-        by smtp.gmail.com with ESMTPSA id 21sm5543554iou.79.2018.12.03.07.52.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DhRX7GdrWa1eintwejLB4d7a72Ap802ixvYj84okxaY=;
+        b=sig5LnNdu9TOmeCE8VrZVH/aLwyBL0HqdVS9W1Q/tqmHyYxwtHq0aIlgPTz3qvcnq6
+         A1z//yi4bclvGEwRbaZElTeNsF4xxwfZNqOZF3Vvw1yf6311+eX6+Mq35A/8QLI0sOFa
+         IZLwRpQObYlR9c/xnER/MGneTTQrY/LOQIsCppc391Intxl6DYcw1CJtF8Qa/equSI0H
+         sEWr1a6BJZPXlJ2837MNsnn3OI5D9o7etZxTkOubav3SpMbp9lr0zUI/dykzAFeY6+YE
+         lY/2xVfmyplfyTFfPpcVR1MhyHn6GIHJ5XtUlARn0pFkRXRhGNmIzr8kh168O0yo7mL7
+         3Ijw==
+X-Gm-Message-State: AA+aEWYmGw98fPkhAHcmnK4vqW9SFWxFYSIcird16EduzHCFliKCKH8T
+        7Pdja+xBfJkil9Oild9k+0k=
+X-Google-Smtp-Source: AFSGD/WToOuIfWi4jl+FR7kug7YLt7Ocu6p251r9ucqWm30lff4Ix37z4fNAqPPitPknI38I7ZW35A==
+X-Received: by 2002:a50:ade7:: with SMTP id b36mr4376493edd.215.1543852398660;
+        Mon, 03 Dec 2018 07:53:18 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id b46sm3924526edc.57.2018.12.03.07.53.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 07:52:12 -0800 (PST)
-Date:   Mon, 3 Dec 2018 08:52:11 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, Jann Horn <jannh@google.com>,
-        linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v9 3/4] seccomp: add a return code to trap to userspace
-Message-ID: <20181203155211.GB3504@cisco>
-References: <20181203032827.27978-1-tycho@tycho.ws>
- <20181203032827.27978-4-tycho@tycho.ws>
- <20181203052650.GC31406@mail.hallyn.com>
+        Mon, 03 Dec 2018 07:53:18 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ALSA: hda/tegra - Probe up to 8 codecs
+Date:   Mon,  3 Dec 2018 16:53:16 +0100
+Message-Id: <20181203155317.16627-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203052650.GC31406@mail.hallyn.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 11:26:50PM -0600, Serge E. Hallyn wrote:
-> On Sun, Dec 02, 2018 at 08:28:26PM -0700, Tycho Andersen wrote:
-> > +struct seccomp_knotif {
-> > +	/* The struct pid of the task whose filter triggered the notification */
-> > +	struct task_struct *task;
-> > +
-> > +	/* The "cookie" for this request; this is unique for this filter. */
-> > +	u64 id;
-> > +
-> > +	/*
-> > +	 * The seccomp data. This pointer is valid the entire time this
-> > +	 * notification is active, since it comes from __seccomp_filter which
-> 
-> define 'active' - is a notification in state REPLIED still active?
+From: Thierry Reding <treding@nvidia.com>
 
-Yes,
+Recent devices support more than the 4 codecs that the AZX core will
+probe by default. Probe up to 8 codecs to make sure all of them are
+enumerated.
 
-> Actually while looking at that, I came to wondering - when are knotifs
-> freed?  Seems like only during seccomp_notify_release(), i.e. when the
-> tracing task stops polling for events?  Is that going to be a problem?
-> Or am I misreading this?
+Suggested-by: Sameer Pujar <spujar@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ sound/pci/hda/hda_tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-they're stack allocated in do_user_notification(). So "active" in this
-sense really means "somewhere in do_user_notification()".
+diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+index 84ea6069d28b..83befd8d43e8 100644
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -531,7 +531,7 @@ static void hda_tegra_probe_work(struct work_struct *work)
+ 		goto out_free;
+ 
+ 	/* create codec instances */
+-	err = azx_probe_codecs(chip, 0);
++	err = azx_probe_codecs(chip, 8);
+ 	if (err < 0)
+ 		goto out_free;
+ 
+-- 
+2.19.1
 
-> > +	if (ret == 0 && copy_to_user(buf, &unotif, sizeof(unotif))) {
-> > +		ret = -EFAULT;
-> > +
-> > +		/*
-> > +		 * Userspace screwed up. To make sure that we keep this
-> > +		 * notification alive, let's reset it back to INIT. It
-> 
-> Is keeping the notification alive the right thing to do?
-> 
-> If userspace has messed up in something this touchy, it seems unlikely
-> that it'll to better if we give it a do-over...  I'm not sure whether
-> killing the whole thing (victim and tracer) is the right thing or not.
-
-I suppose we could do that too. I just didn't want to get into a
-situation where the notification is lost and the task is stuck because
-userspace screwed up here.
-
-Tycho
