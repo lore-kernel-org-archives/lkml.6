@@ -2,128 +2,127 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA608C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4C6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C75B208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:23:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C75B208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 192332145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:24:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J1Epz5LC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192332145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbeLCSYD (ORCPT
+        id S1726944AbeLCSZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:24:03 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52898 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726445AbeLCSYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:24:03 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 82954B9244584;
-        Tue,  4 Dec 2018 02:23:54 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Tue, 4 Dec 2018
- 02:23:47 +0800
-Subject: Re: [PATCH 3/4] dma-debug: Dynamically expand the dma_debug_entry
- pool
-To:     Robin Murphy <robin.murphy@arm.com>, <hch@lst.de>
-References: <cover.1543856576.git.robin.murphy@arm.com>
- <f99ea022be92a99339404867bc925f4fbd2ee6c4.1543856576.git.robin.murphy@arm.com>
-CC:     <m.szyprowski@samsung.com>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <cai@gmx.us>,
-        <salil.mehta@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <a45fce07-3663-2a55-5b97-336002f21cdb@huawei.com>
-Date:   Mon, 3 Dec 2018 18:23:42 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Mon, 3 Dec 2018 13:25:00 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33345 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbeLCSZA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 13:25:00 -0500
+Received: by mail-qt1-f193.google.com with SMTP id l11so14960253qtp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:24:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:subject:to:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8S2GCIBmDhpsr9ffz2NPr17A6UX3yXgBFRtRmtKvOXk=;
+        b=J1Epz5LCK4GxDI+tYFXIzr1G5znA7Ywrd/jwMvjYH+3Razy48sX2k5ylAs5+NNshc+
+         B68SO1IlcCVuArI+oE7+iKpqZw6Uve56gWqG9WHO4RBU4qDDJd5y4Kl5N0andDZMsPy0
+         f4XtaV5He9P18+FLEOKM074pFtmHkFtAMEVKE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8S2GCIBmDhpsr9ffz2NPr17A6UX3yXgBFRtRmtKvOXk=;
+        b=nxevdW5vuqb9dhQffzLhi3SqaCZhVX3Z5e6uauF4N02SFbHUe8QGICIZYuNOlZ/0eF
+         Cw/QSQNgXV+y7v92XasKySZhimnyc5wm9ikasciqmTNi+7BCOUGWSsAzxTTLVKqoe5Vx
+         wCUIEpzpZz0KcWJOLwRRFs+sw6DAmaiPUMyB2mB43BtANDvuquk4PCVHXUEoY5ONc2d2
+         d2SBKkXvCB5xxCtqsVQkxPJSqR+vAPIhX+/x4bibet6t3x7Fq1VE8oj3X3yXPzL4QWOh
+         jU1SqNI16cutT5KyyypoVIvxOzPlcgxHmJU8zkq0LLnlGk1aCdPjdUL8jl4BQpfTLC7x
+         qGdw==
+X-Gm-Message-State: AA+aEWb4Cup2InGzD0VhwaSOCXVPMU2qTHYlH7TaHhAQxU6OKqgEQ6hq
+        pqZeC3Ghq3B/7DdL6tveKHil+A==
+X-Google-Smtp-Source: AFSGD/WKMVZMl8p2stz6rPXAyRupvk4CRUdiRupW5C6jKSwVFrTdwHk4qFbHX6nVcwqm1zlbuc5Rhg==
+X-Received: by 2002:aed:3027:: with SMTP id 36mr15949423qte.252.1543861493699;
+        Mon, 03 Dec 2018 10:24:53 -0800 (PST)
+Received: from [192.168.49.18] ([138.204.25.29])
+        by smtp.gmail.com with ESMTPSA id v2sm6540675qte.75.2018.12.03.10.24.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 10:24:52 -0800 (PST)
+Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: v4.14 fix for Hikey 960 unbalanced IRQ enablement
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
+ <20181203141442.GA19335@kroah.com>
+ <dc468512-7a73-3d69-fe9e-d660db85ee5b@linaro.org>
+ <20181203151946.GG235790@sasha-vm> <20181203180521.GA15996@kroah.com>
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+Organization: Linaro
+Message-ID: <e0eb7f46-e619-7198-eb78-2b55246b1159@linaro.org>
+Date:   Mon, 3 Dec 2018 16:24:48 -0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <f99ea022be92a99339404867bc925f4fbd2ee6c4.1543856576.git.robin.murphy@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20181203180521.GA15996@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 17:28, Robin Murphy wrote:
-> Certain drivers such as large multi-queue network adapters can use pools
-> of mapped DMA buffers larger than the default dma_debug_entry pool of
-> 65536 entries, with the result that merely probing such a device can
-> cause DMA debug to disable itself during boot unless explicitly given an
-> appropriate "dma_debug_entries=..." option.
->
-> Developers trying to debug some other driver on such a system may not be
-> immediately aware of this, and at worst it can hide bugs if they fail to
-> realise that dma-debug has already disabled itself unexpectedly by the
-> time the code of interest gets to run. Even once they do realise, it can
-> be a bit of a pain to emprirically determine a suitable number of
-> preallocated entries to configure without massively over-allocating.
->
-> There's really no need for such a static limit, though, since we can
-> quite easily expand the pool at runtime in those rare cases that the
-> preallocated entries are insufficient, which is arguably the least
-> surprising and most useful behaviour.
+>> Greg,
+>>
+>> Patch 5 in this series seems to explain the best what is happening here:
+>>
+>>> With the following changes, we fix all in one:
+>>>
+>>> - Do the setup, one time, at probe time
+>>>
+>>> - Add the IRQF_ONESHOT, ack the interrupt in the threaded handler
+>>>
+>>> - Remove the interrupt handler
+>>>
+>>> - Set the correct value for the LAG register
+>>>
+>>> - Remove all the irq_enabled stuff in the code as the interruption
+>>>   handling is fixed
+>>>
+>>> - Remove the 3ms delay
+>>>
+>>> - Reorder the initialization routine to be in the right order
+>>
+>> We can't revert anything because the breakage was there since the driver
+>> was introduced.
+> 
+> So the driver was broken in 4.14, why not just use 4.19 instead?  This
+> isn't a 4.14 regression, it's something that obviously no one has
+> noticed for a year now, so why backport these big patches to 4.14 now?
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Hi Robin,
+This was caught during our functional tests. No direct complains, but,
+since it included a trace, and there was a fix for it, I thought it
+could be accepted for upstream v4.14 (it is included in other v4.14
+kernels, like Android's).
 
-Do you have an idea on shrinking the pool again when the culprit driver 
-is removed, i.e. we have so many unused debug entries now available?
-
-Thanks,
-John
-
->
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  kernel/dma/debug.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-> index de5db800dbfc..46cc075aec99 100644
-> --- a/kernel/dma/debug.c
-> +++ b/kernel/dma/debug.c
-> @@ -47,6 +47,9 @@
->  #ifndef PREALLOC_DMA_DEBUG_ENTRIES
->  #define PREALLOC_DMA_DEBUG_ENTRIES (1 << 16)
->  #endif
-> +/* If the pool runs out, try this many times to allocate this many new entries */
-> +#define DMA_DEBUG_DYNAMIC_ENTRIES 256
-> +#define DMA_DEBUG_DYNAMIC_RETRIES 2
->
->  enum {
->  	dma_debug_single,
-> @@ -702,12 +705,21 @@ static struct dma_debug_entry *dma_entry_alloc(void)
->  {
->  	struct dma_debug_entry *entry;
->  	unsigned long flags;
-> +	int retry_count;
->
-> -	spin_lock_irqsave(&free_entries_lock, flags);
-> +	for (retry_count = 0; ; retry_count++) {
-> +		spin_lock_irqsave(&free_entries_lock, flags);
-> +
-> +		if (num_free_entries > 0)
-> +			break;
->
-> -	if (list_empty(&free_entries)) {
-> -		global_disable = true;
->  		spin_unlock_irqrestore(&free_entries_lock, flags);
-> +
-> +		if (retry_count < DMA_DEBUG_DYNAMIC_RETRIES &&
-> +		    !prealloc_memory(DMA_DEBUG_DYNAMIC_ENTRIES))
-> +			continue;
-> +
-> +		global_disable = true;
->  		pr_err("debugging out of memory - disabling\n");
->  		return NULL;
->  	}
->
-
-
+thanks!
+-- 
+Rafael D. Tinoco
+Linaro - Kernel Validation
