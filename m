@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE302C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE2DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9488920851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E772087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:16:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Dx0gfsbl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9488920851
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="CdtOUgRd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E772087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbeLCKQX (ORCPT
+        id S1726246AbeLCKQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:16:23 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55883 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbeLCKQV (ORCPT
+        Mon, 3 Dec 2018 05:16:24 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34471 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeLCKQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:16:21 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y139so5094665wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:15:57 -0800 (PST)
+        Mon, 3 Dec 2018 05:16:23 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j2so11509528wrw.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:15:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/Q2u/tsrKoFDIiu0ywRZGBRmyE9C0XxC7FQu/e+jYmo=;
-        b=Dx0gfsblRMX9FXRsJeWDOVVS1Ou2kN17Ghlg+jFLYYBX1w5e0bAAchVy7BVj//q8Bl
-         u26+f7NuhTrm7wYMrohRpsoahmqOft/uwXZBGESohEAcWfmGGeUnar/iqFeV2UiJ8DOP
-         gP+wX804ilnrQPaEE8Lwd2aK7l8A9QAQ+AZB8=
+        bh=O05pEMsjPvSm8OsI4DmhPRSk9+B31/RzfWZxO3ZP0hs=;
+        b=CdtOUgRd7fKTLnNnApGPpwX5/e1tQjDrTcncF5Me4HkjmwfnmkhMlrZz1HqvJjLXT/
+         sEKv6G9X5uUdL8V81quIJdVbM+WUzBKgHM2fX36kdItiuq3OjQSXyS/ZIa/MhVCGCYmw
+         TRFqlCEAcpVWwiiaFbpcWaf9KYTT3yQtsdKXU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/Q2u/tsrKoFDIiu0ywRZGBRmyE9C0XxC7FQu/e+jYmo=;
-        b=cowKzqpU2ZbU6Nd0dWn6RrNZ1EF4szs2tUGflwX3JgOymw7jXb+DqiAToEfiWAbTsJ
-         A7JRk8lwEM0atI4fomPWKobEIE/FH5eFWLrx8UZQfjR9wjH8FK0PutZzUQWyCv02vtd2
-         yRrywaDO5PbWZzeGglkrx/G5P1SNOw/PSCu+xEXbi8E22NO2W2tLurqciZEaau/E8Xmf
-         vxQScjVOrbT7y/Xohbc7xwRSl7UTybum+IFsoJ5yoBdh+/yI7yCJiK9Q6NrAtjUKtdj3
-         Zay1nnxZaX97ktT/gDGjjLrh8X2xdb14myvqj4l6dkSmZf+g9Jl+9M2uZImbZQ2c1e4g
-         495A==
-X-Gm-Message-State: AA+aEWZcmVNDXM+aVw3eZKAUKDeMJb6ZBrtwkze6qDQoENL68nlTGin7
-        rFxqXrdT7CxBKCCe9nhX2r2LAJ3nm9E=
-X-Google-Smtp-Source: AFSGD/Xkb2Xg2dWYgiGc5OJlhI2rqzN65UM2OiIMep0FsUPJ+jjr+tORjc21oDot04SvQjaILZV0KA==
-X-Received: by 2002:a1c:13d1:: with SMTP id 200mr4440209wmt.4.1543832156825;
-        Mon, 03 Dec 2018 02:15:56 -0800 (PST)
+        bh=O05pEMsjPvSm8OsI4DmhPRSk9+B31/RzfWZxO3ZP0hs=;
+        b=ILfBtJA56VLRMDwtmUVTOGaOh2sHQ2H+yrGeeIJ+S9rsz2i1FVwVgwZVMztECHkU31
+         Daw73uhoRr86eg+SAUS7hvlAF1c+xtG7rDobglkueTxW6Ti/M/TeCRj7Up6Lty98eY0o
+         gcFdPlW5lOYxtSOSMdrz/8RT0IWbERw1uh/sksCCsFNGeEeNPyzxg66splRiQTbXwldy
+         TQl0M9UlUP0lXlUeCKT4fJFnLwYWkJJsdeMa3lBOX0U8qj39mosMMDplVw5cKh6IFfAI
+         PrwOYPkLiIPY7Hbn4t7NDU0AtpUHJ8sj+q3TGV9ix/AEqBqQxVWPZ3qq1v6CumccLImp
+         PGhA==
+X-Gm-Message-State: AA+aEWbYOQVY12Rvwpcm4YP2JA6FuXrtKBvoilhzN692VO2/agzn8uPW
+        69yntoFjdTH8GfBfU3imeKfjcg==
+X-Google-Smtp-Source: AFSGD/Uxa3NMQLBGsOsZ0LU5sErOBIuU/IbCycZtoat/FVE7R+MSb+HMM6jhcqw7T7YHjI2wwMe62A==
+X-Received: by 2002:adf:ae1a:: with SMTP id x26mr12893016wrc.0.1543832158090;
+        Mon, 03 Dec 2018 02:15:58 -0800 (PST)
 Received: from localhost.localdomain (conf.hotelmediterraneo.com. [2.228.78.71])
-        by smtp.gmail.com with ESMTPSA id f192sm5832158wmd.12.2018.12.03.02.15.55
+        by smtp.gmail.com with ESMTPSA id f192sm5832158wmd.12.2018.12.03.02.15.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:15:56 -0800 (PST)
+        Mon, 03 Dec 2018 02:15:57 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -64,9 +64,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Lee Jones <lee.jones@linaro.org>, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 2/9] mfd: axp20x: Add GPIO/pinctrl support for AXP803
-Date:   Mon,  3 Dec 2018 15:45:40 +0530
-Message-Id: <20181203101547.16835-2-jagan@amarulasolutions.com>
+Subject: [PATCH 3/9] arm64: allwinner: dts: axp803: Add GPIO DT node
+Date:   Mon,  3 Dec 2018 15:45:41 +0530
+Message-Id: <20181203101547.16835-3-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181203101547.16835-1-jagan@amarulasolutions.com>
 References: <20181203101547.16835-1-jagan@amarulasolutions.com>
@@ -77,34 +77,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add GPIO/pinctrl support for AXP803.
-
-This will reuse the similar compatible to that of AXP813,
-since both PMIC GPIO's are same.
+Add GPIO/pinctrl node for AXP803 PMIC.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/mfd/axp20x.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/allwinner/axp803.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-index 0be511dd93d0..bc705ba49c3f 100644
---- a/drivers/mfd/axp20x.c
-+++ b/drivers/mfd/axp20x.c
-@@ -731,8 +731,12 @@ static const struct mfd_cell axp803_cells[] = {
- 		.name			= "axp221-pek",
- 		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
- 		.resources		= axp803_pek_resources,
-+	}, {
-+		.name			= "axp20x-regulator",
-+	}, {
-+		.name			= "axp20x-gpio",
-+		.of_compatible		= "x-powers,axp813-gpio",
- 	},
--	{	.name			= "axp20x-regulator" },
- };
+diff --git a/arch/arm64/boot/dts/allwinner/axp803.dtsi b/arch/arm64/boot/dts/allwinner/axp803.dtsi
+index e5eae8bafc42..c6b95980d476 100644
+--- a/arch/arm64/boot/dts/allwinner/axp803.dtsi
++++ b/arch/arm64/boot/dts/allwinner/axp803.dtsi
+@@ -49,6 +49,13 @@
+ 	interrupt-controller;
+ 	#interrupt-cells = <1>;
  
- static const struct mfd_cell axp806_self_working_cells[] = {
++	axp_gpio: axp-gpio {
++		compatible = "x-powers,axp803-gpio",
++			     "x-powers,axp813-gpio";
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
+ 	regulators {
+ 		/* Default work frequency for buck regulators */
+ 		x-powers,dcdc-freq = <3000>;
 -- 
 2.18.0.321.gffc6fa0e3
 
