@@ -2,67 +2,88 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B4FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A55C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F177520848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:43:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BO6XFo0v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F177520848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6592E20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6592E20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbeLCLoL (ORCPT
+        id S1726388AbeLCLsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:44:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44012 "EHLO mail.kernel.org"
+        Mon, 3 Dec 2018 06:48:06 -0500
+Received: from shell.v3.sk ([90.176.6.54]:37854 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbeLCLoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:44:11 -0500
-Received: from localhost (unknown [106.200.245.224])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34ABD20848;
-        Mon,  3 Dec 2018 11:43:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543837409;
-        bh=fH5fyztSZvK/7pN+2tSQxmbqZsbw5u/g4WQFQDZZOtg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BO6XFo0vvAtniWtCmSG/1JhT4vlZxUyuydosA2kVyz5/o0xdS+dpk22nrD5FUsF+G
-         p3nKwnNviERZyqAWevV5Tq6Vc9QuZsf+xhskw9myNekGQJhNIDN22fWga2i634fpHf
-         sWOBW+WsJIBjCbKBf3bNrF3rc41aWzXez1xOks5E=
-Date:   Mon, 3 Dec 2018 17:13:20 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Add pshold node
-Message-ID: <20181203114320.GV3175@vkoul-mobl.Dlink>
-References: <20181130073400.28100-1-bjorn.andersson@linaro.org>
+        id S1726174AbeLCLsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:48:06 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id E5787C80DB;
+        Mon,  3 Dec 2018 12:47:20 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id VOsIENeWdPVf; Mon,  3 Dec 2018 12:47:18 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 7C587C811D;
+        Mon,  3 Dec 2018 12:47:18 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id f8gPwLCWhKw0; Mon,  3 Dec 2018 12:47:18 +0100 (CET)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id BCF0EC80DB;
+        Mon,  3 Dec 2018 12:47:17 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Jiri Kosina <trivial@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] dt-bindings: mrvl,intc: fix a trivial typo
+Date:   Mon,  3 Dec 2018 12:47:10 +0100
+Message-Id: <20181203114710.636840-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130073400.28100-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-11-18, 23:34, Bjorn Andersson wrote:
-> The pshold block is used to drive pshold towards the PMIC, which is used
-> to trigger a configurable event, such as reboot or poweroff of the
-> QCS404 platform. Add the necessary node to enable this functionality.
+s/whold/whole/.
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Tested-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ .../devicetree/bindings/interrupt-controller/mrvl,intc.txt      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-~Vinod
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mrvl,=
+intc.txt b/Documentation/devicetree/bindings/interrupt-controller/mrvl,in=
+tc.txt
+index 8b53273cb22f..608fee15a4cf 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.tx=
+t
++++ b/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.tx=
+t
+@@ -5,7 +5,7 @@ Required properties:
+   "mrvl,mmp2-mux-intc"
+ - reg : Address and length of the register set of the interrupt controll=
+er.
+   If the interrupt controller is intc, address and length means the rang=
+e
+-  of the whold interrupt controller. If the interrupt controller is mux-=
+intc,
++  of the whole interrupt controller. If the interrupt controller is mux-=
+intc,
+   address and length means one register. Since address of mux-intc is in=
+ the
+   range of intc. mux-intc is secondary interrupt controller.
+ - reg-names : Name of the register set of the interrupt controller. It's
+--=20
+2.19.1
+
