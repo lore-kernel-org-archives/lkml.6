@@ -2,112 +2,100 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 792A3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCA3C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A0DD20645
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A4832146D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EXnMKc/w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A0DD20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGpOFkpv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4832146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725994AbeLCT2e (ORCPT
+        id S1725971AbeLCTbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:28:34 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34405 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbeLCT2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:28:34 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p6so10076158lfc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 11:28:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fcqr95NdsWGfXX2Card60ahcMyGmWKAbxTmynlD06Bc=;
-        b=EXnMKc/wc5QTDT59u9qzSx53BxE0EBEVFRf9BtNtUczEBQ/0FC0eXRCMhR6YxO4MoU
-         oxeoiCM+X++mBjjfORB4JRajgbYyJ4dBDuO9SHajQkPMxVOeXqA+7xthzvF7aGG2lWNd
-         tltMu4+0k8D7m1pdVpx6+5npuRvdgUik8OY4k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fcqr95NdsWGfXX2Card60ahcMyGmWKAbxTmynlD06Bc=;
-        b=bPMWImsU1/ahfO8u54m+RpczaENDCuhQ8H1j0ymvjHqtpHBXFxyYJ8+P8aZeLXn9by
-         SumBy25eAZO8a+r9bl/0UG8a9BJSnR3c/HlMBcZ85sPg2Oe32u/bsuW8Np3BqYPh1z2x
-         O2dtrNSrnDGTJDl5soY2RG43qHlyrp/pUom3x2GWLHT3161cIH2rOLes+90RXvlwKQiY
-         EeI9d0C3H5SBov72ekA+NsDDEhwMZ84nhs2EGGv9oKAZgYawZ9fPxOeyuSLRX9OmllZt
-         NmaBDKfEhJp9RPBR01qPBK7aeIKTcMCqYbfQpmb4h54+tnjlKDb4qp52Cpe1K8sDhW8O
-         /yxA==
-X-Gm-Message-State: AA+aEWZ1P2gCBrC8ihhRGh72OMHtkf77QSLKVD57BCJh/wZtDy4EZiT6
-        J63GfFBdKL4OA5vEDiTnT1aHGULAj3g=
-X-Google-Smtp-Source: AFSGD/UMDSk/0ys1CM1TCeso8SkT7yQVeLEIVCclamEtn0Cfv5Reo4YsuX6bzeYcRmDVVbBRrbWU5g==
-X-Received: by 2002:a19:cd50:: with SMTP id d77mr9721452lfg.125.1543865305500;
-        Mon, 03 Dec 2018 11:28:25 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id q8-v6sm2692585lji.69.2018.12.03.11.28.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 11:28:24 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id s5-v6so12498868ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 11:28:24 -0800 (PST)
-X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr11068811ljs.118.1543865303544;
- Mon, 03 Dec 2018 11:28:23 -0800 (PST)
+        Mon, 3 Dec 2018 14:31:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbeLCTbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:31:50 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6BC32081C;
+        Mon,  3 Dec 2018 19:31:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543865503;
+        bh=EpU8ahTAcUeE0VWeJAlpdwbWBlwtxLz63+h9P4QqtRw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=BGpOFkpvaybDGugOuPseg/zA7VCP9gSuVHrGZQaEtbKd2UUOG98BgLiiv74c/qd+U
+         WpRtiiAIioC6K74jKqQeLWNUuTegtEfu4Lnq2DU6IGpwv2nH/5Qw8dNozRqOu/TwqZ
+         ejX3DvMhBhbOW7BDgKQsLyE8XOGAmHYGsCW4QOUI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181127062503.GH6163@shao2-debian> <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
- <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com>
- <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
- <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
- <20181203181456.GK31738@dhcp22.suse.cz> <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
- <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
- <20181203185954.GM31738@dhcp22.suse.cz>
-In-Reply-To: <20181203185954.GM31738@dhcp22.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Dec 2018 11:28:07 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
-Message-ID: <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
-To:     mhocko@kernel.org
-Cc:     ying.huang@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
-        s.priebe@profihost.ag, mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org,
-        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <154386550302.88331.785218354920872757@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH V6 0/9] clk: add imx7ulp clk support
+Date:   Mon, 03 Dec 2018 11:31:43 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 10:59 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> You are misinterpreting my words. I haven't dismissed anything. I do
-> recognize both usecases under discussion.
->
-> I have merely said that a better THP locality needs more work and during
-> the review discussion I have even volunteered to work on that.
+Quoting A.s. Dong (2018-11-14 05:01:31)
+> This patch series intends to add imx7ulp clk support.
+> =
 
-We have two known patches that seem to have no real downsides.
+> i.MX7ULP Clock functions are under joint control of the System
+> Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+> modules, and Core Mode Controller (CMC)1 blocks
+> =
 
-One is the patch posted by Andrea earlier in this thread, which seems
-to target just this known regression.
+> The clocking scheme provides clear separation between M4 domain
+> and A7 domain. Except for a few clock sources shared between two
+> domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+> and and the Fast IRC clock (FIRCLK), clock sources and clock
+> management are separated and contained within each domain.
+> =
 
-The other seems to be to revert commit ac5b2c1891  and instead apply
+> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+> =
 
-  https://lore.kernel.org/lkml/alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com/
+> Note: this series only adds A7 clock domain support as M4 clock
+> domain will be handled by M4 seperately.
+> =
 
-which also seems to be sensible.
 
-I'm not seeing why the KVM load would react badly to either of those
-models, and they are known to fix the google local-node issue.
+I got:
 
-              Linus
+drivers/clk/imx/clk-pllv4.c:152:15: warning: symbol 'imx_clk_pllv4' was not=
+ declared. Should it be static?
+drivers/clk/imx/clk-pfdv2.c:166:15: warning: symbol 'imx_clk_pfdv2' was not=
+ declared. Should it be static?
+drivers/clk/imx/clk-divider-gate.c:174:15: warning: symbol 'imx_clk_divider=
+_gate' was not declared. Should it be static?
+drivers/clk/imx/clk-composite-7ulp.c:22:15: warning: symbol 'imx7ulp_clk_co=
+mposite' was not declared. Should it be static?
+
+which I can fix easily by throwing in clk.h into each file.
+
