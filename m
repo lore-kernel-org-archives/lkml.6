@@ -2,148 +2,257 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCADC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9008C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E002D206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:57:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E002D206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 787CD206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:00:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="l0Ahszl/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787CD206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbeLCN6L convert rfc822-to-8bit (ORCPT
+        id S1726221AbeLCOBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:58:11 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38794 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbeLCN6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:58:11 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6C24520CFB; Mon,  3 Dec 2018 14:57:01 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9FCE920EB9;
-        Mon,  3 Dec 2018 14:56:22 +0100 (CET)
-Date:   Mon, 3 Dec 2018 14:56:22 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>,
-        linux-kernel@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/8] phy: mvebu-cp110-comphy: fix port check in
- ->xlate()
-Message-ID: <20181203145622.0d38869d@xps13>
-In-Reply-To: <20181203003623.GJ30658@n2100.armlinux.org.uk>
-References: <20181130144743.675-1-miquel.raynal@bootlin.com>
-        <20181130144743.675-3-miquel.raynal@bootlin.com>
-        <20181130190031.GH30658@n2100.armlinux.org.uk>
-        <20181202203509.21b067c4@xps13>
-        <20181203003623.GJ30658@n2100.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Mon, 3 Dec 2018 09:01:09 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:6434 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbeLCOBI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:01:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1543845600; x=1575381600;
+  h=from:to:cc:subject:date:message-id;
+  bh=b3PioOpWZC0Lv0PKTU7qcolmIFBuZUQ/XS+VXrRk9IA=;
+  b=l0Ahszl/rNFOCwA9BiT+kWjCiI5WdfvLdav/1rX8u4CPkMIv3wsQICPh
+   PC5Ao/f+gUY2wjZGS+i1uujhH3dU8obAVIiGtFutI6aT/vmtKm41oCZT1
+   HHVZernr9aap/5eps0CqFcP55v0DUKX3C+keBNNfiU/qVC68tXL8pC7KT
+   s=;
+X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
+   d="scan'208";a="645691084"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Dec 2018 13:59:57 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wB3Dxr0E023008
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 3 Dec 2018 13:59:55 GMT
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wB3DxqEF004627;
+        Mon, 3 Dec 2018 14:59:52 +0100
+Received: (from karahmed@localhost)
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id wB3Dxpej004622;
+        Mon, 3 Dec 2018 14:59:51 +0100
+From:   KarimAllah Ahmed <karahmed@amazon.de>
+To:     rkrcmar@redhat.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        jmattson@google.com
+Cc:     KarimAllah Ahmed <karahmed@amazon.de>
+Subject: [PATCH] KVM/nVMX: Stop mapping the "APIC-access address" page into the kernel
+Date:   Mon,  3 Dec 2018 14:59:11 +0100
+Message-Id: <1543845551-4403-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
+The "APIC-access address" is simply a token that the hypervisor puts into
+the PFN of a 4K EPTE (or PTE if using shadow paging) that triggers APIC
+virtualization whenever a page walk terminates with that PFN. This address
+has to be a legal address (i.e.  within the physical address supported by
+the CPU), but it need not have WB memory behind it. In fact, it need not
+have anything at all behind it. When bit 31 ("activate secondary controls")
+of the primary processor-based VM-execution controls is set and bit 0
+("virtualize APIC accesses") of the secondary processor-based VM-execution
+controls is set, the PFN recorded in the VMCS "APIC-access address" field
+will never be touched. (Instead, the access triggers APIC virtualization,
+which may access the PFN recorded in the "Virtual-APIC address" field of
+the VMCS.)
 
-Russell King - ARM Linux <linux@armlinux.org.uk> wrote on Mon, 3 Dec
-2018 00:36:23 +0000:
+So stop mapping the "APIC-access address" page into the kernel and even
+drop the requirements to have a valid page backing it. Instead, just use
+some token that:
 
-> On Sun, Dec 02, 2018 at 08:35:09PM +0100, Miquel Raynal wrote:
-> > Hi Russell,
-> > 
-> > Russell King - ARM Linux <linux@armlinux.org.uk> wrote on Fri, 30 Nov
-> > 2018 19:00:31 +0000:
-> >   
-> > > On Fri, Nov 30, 2018 at 03:47:37PM +0100, Miquel Raynal wrote:  
-> > > > So far the PHY ->xlate() callback was checking if the port was
-> > > > "invalid" before continuing, meaning that the port has not been used
-> > > > yet. This check is not correct as there is no opposite call to    
-> > > > ->xlate() once the PHY is released by the user and the port will    
-> > > > remain "valid" after the first phy_get()/phy_put() calls. Hence, if
-> > > > this driver is built as a module, inserted, removed and inserted
-> > > > again, the PHY will appear busy and the second probe will fail.
-> > > > 
-> > > > To fix this, just drop the faulty check and instead verify that the
-> > > > port number is valid (ie. in the possible range).
-> > > > 
-> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > > ---
-> > > >  drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-> > > > index 31b9a1c18345..a40b876ff214 100644
-> > > > --- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-> > > > +++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-> > > > @@ -567,9 +567,9 @@ static struct phy *mvebu_comphy_xlate(struct device *dev,
-> > > >  		return phy;
-> > > >  
-> > > >  	lane = phy_get_drvdata(phy);
-> > > > -	if (lane->port >= 0)
-> > > > -		return ERR_PTR(-EBUSY);
-> > > >  	lane->port = args->args[0];
-> > > > +	if (lane->port >= MVEBU_COMPHY_PORTS)
-> > > > +		return ERR_PTR(-EINVAL);    
-> > > 
-> > > Shouldn't we validate args->args[0] before doing anything?
-> > >   
-> > 
-> > I don't understand your point, there is a check on args->args[0] as
-> > we check its value (through lane->port) right after. What do you
-> > have in mind?  
-> 
-> Right, there is already a check on args->args[0] for it being greater
-> than MVEBU_COMPHY_PORTS and returning an error (and in fact warning
-> if that is the case).  So in that case, what is the use of the above
-> additional test you are proposing to add?  The resulting code ends up
-> looking like this:
-> 
-> 	if (WARN_ON(args->args[0] >= MVEBU_COMPHY_PORTS))
-> 		return ERR_PTR(-EINVAL);
-> ...
-> 	lane->port = args->args[0];
-> +	if (lane->port >= MVEBU_COMPHY_PORTS)
-> +		return ERR_PTR(-EINVAL);  
-> 
-> which is just silly - the second test can never be evaluated as true,
-> and therefore is redundant.
-> 
-> In any case, my point was that in your patch, where you assign
-> lane->port and then validate the lane->port value, this is in
-> principle the wrong order - the order should always be: validate
-> first, then make use.
-> 
+1) Not one of the valid guest pages.
+2) Within the physical address supported by the CPU.
 
-You are right, this test is redundant; I forgot about the first
-check. I will just drop these additional two lines and just do:
+Suggested-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
 
-                [...]
-                lane->port = args->args[0];
+Thanks Jim for the commit message :)
+---
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/mmu.c              | 10 ++++++
+ arch/x86/kvm/vmx.c              | 71 ++++++++++++++++++-----------------------
+ 3 files changed, 42 insertions(+), 40 deletions(-)
 
-                return 0;
-        }
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index fbda5a9..7e50196 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1077,6 +1077,7 @@ struct kvm_x86_ops {
+ 	void (*load_eoi_exitmap)(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap);
+ 	void (*set_virtual_apic_mode)(struct kvm_vcpu *vcpu);
+ 	void (*set_apic_access_page_addr)(struct kvm_vcpu *vcpu, hpa_t hpa);
++	bool (*nested_apic_access_addr)(struct kvm_vcpu *vcpu, gpa_t gpa, hpa_t *hpa);
+ 	void (*deliver_posted_interrupt)(struct kvm_vcpu *vcpu, int vector);
+ 	int (*sync_pir_to_irr)(struct kvm_vcpu *vcpu);
+ 	int (*set_tss_addr)(struct kvm *kvm, unsigned int addr);
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 7c03c0f..ae46a8d 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3962,9 +3962,19 @@ bool kvm_can_do_async_pf(struct kvm_vcpu *vcpu)
+ static bool try_async_pf(struct kvm_vcpu *vcpu, bool prefault, gfn_t gfn,
+ 			 gva_t gva, kvm_pfn_t *pfn, bool write, bool *writable)
+ {
++	hpa_t hpa;
+ 	struct kvm_memory_slot *slot;
+ 	bool async;
+ 
++	if (is_guest_mode(vcpu) &&
++	    kvm_x86_ops->nested_apic_access_addr &&
++	    kvm_x86_ops->nested_apic_access_addr(vcpu, gfn_to_gpa(gfn), &hpa)) {
++		*pfn = hpa >> PAGE_SHIFT;
++		if (writable)
++			*writable = true;
++		return false;
++	}
++
+ 	/*
+ 	 * Don't expose private memslots to L2.
+ 	 */
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 83a614f..340cf56 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -864,7 +864,6 @@ struct nested_vmx {
+ 	 * Guest pages referred to in the vmcs02 with host-physical
+ 	 * pointers, so we must keep them pinned while L2 runs.
+ 	 */
+-	struct page *apic_access_page;
+ 	struct kvm_host_map virtual_apic_map;
+ 	struct kvm_host_map pi_desc_map;
+ 	struct kvm_host_map msr_bitmap_map;
+@@ -8512,10 +8511,6 @@ static void free_nested(struct kvm_vcpu *vcpu)
+ 	kfree(vmx->nested.cached_vmcs12);
+ 	kfree(vmx->nested.cached_shadow_vmcs12);
+ 	/* Unpin physical memory we referred to in the vmcs02 */
+-	if (vmx->nested.apic_access_page) {
+-		kvm_release_page_dirty(vmx->nested.apic_access_page);
+-		vmx->nested.apic_access_page = NULL;
+-	}
+ 	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
+ 	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
+ 	vmx->nested.pi_desc = NULL;
+@@ -11901,41 +11896,27 @@ static void vmx_inject_page_fault_nested(struct kvm_vcpu *vcpu,
+ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 						 struct vmcs12 *vmcs12);
+ 
++static hpa_t vmx_apic_access_addr(void)
++{
++	/*
++	 * The physical address choosen here has to:
++	 * 1) Never be an address that could be assigned to a guest.
++	 * 2) Within the maximum physical limits of the CPU.
++	 *
++	 * So our choice below is completely random, but at least it follows
++	 * these two rules.
++	 */
++	return __pa_symbol(_text) & PAGE_MASK;
++}
++
+ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+ {
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct kvm_host_map *map;
+-	struct page *page;
+-	u64 hpa;
+ 
+-	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES)) {
+-		/*
+-		 * Translate L1 physical address to host physical
+-		 * address for vmcs02. Keep the page pinned, so this
+-		 * physical address remains valid. We keep a reference
+-		 * to it so we can release it later.
+-		 */
+-		if (vmx->nested.apic_access_page) { /* shouldn't happen */
+-			kvm_release_page_dirty(vmx->nested.apic_access_page);
+-			vmx->nested.apic_access_page = NULL;
+-		}
+-		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->apic_access_addr);
+-		/*
+-		 * If translation failed, no matter: This feature asks
+-		 * to exit when accessing the given address, and if it
+-		 * can never be accessed, this feature won't do
+-		 * anything anyway.
+-		 */
+-		if (!is_error_page(page)) {
+-			vmx->nested.apic_access_page = page;
+-			hpa = page_to_phys(vmx->nested.apic_access_page);
+-			vmcs_write64(APIC_ACCESS_ADDR, hpa);
+-		} else {
+-			vmcs_clear_bits(SECONDARY_VM_EXEC_CONTROL,
+-					SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES);
+-		}
+-	}
++	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES))
++		vmcs_write64(APIC_ACCESS_ADDR, vmx_apic_access_addr());
+ 
+ 	if (nested_cpu_has(vmcs12, CPU_BASED_TPR_SHADOW)) {
+ 		map = &vmx->nested.virtual_apic_map;
+@@ -14196,12 +14177,6 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+ 	/* This is needed for same reason as it was needed in prepare_vmcs02 */
+ 	vmx->host_rsp = 0;
+ 
+-	/* Unpin physical memory we referred to in vmcs02 */
+-	if (vmx->nested.apic_access_page) {
+-		kvm_release_page_dirty(vmx->nested.apic_access_page);
+-		vmx->nested.apic_access_page = NULL;
+-	}
+-
+ 	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
+ 	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
+ 	vmx->nested.pi_desc = NULL;
+@@ -14949,6 +14924,21 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
+ 	return 0;
+ }
+ 
++static bool vmx_nested_apic_access_addr(struct kvm_vcpu *vcpu,
++					gpa_t gpa, hpa_t *hpa)
++{
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
++
++	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES) &&
++	    page_address_valid(vcpu, vmcs12->apic_access_addr) &&
++	    (gpa_to_gfn(gpa) == gpa_to_gfn(vmcs12->apic_access_addr))) {
++		*hpa = vmx_apic_access_addr();
++		return true;
++	}
++
++	return false;
++}
++
+ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+ 	.cpu_has_kvm_support = cpu_has_kvm_support,
+ 	.disabled_by_bios = vmx_disabled_by_bios,
+@@ -15022,6 +15012,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+ 	.update_cr8_intercept = update_cr8_intercept,
+ 	.set_virtual_apic_mode = vmx_set_virtual_apic_mode,
+ 	.set_apic_access_page_addr = vmx_set_apic_access_page_addr,
++	.nested_apic_access_addr = vmx_nested_apic_access_addr,
+ 	.get_enable_apicv = vmx_get_enable_apicv,
+ 	.refresh_apicv_exec_ctrl = vmx_refresh_apicv_exec_ctrl,
+ 	.load_eoi_exitmap = vmx_load_eoi_exitmap,
+-- 
+2.7.4
 
-Thanks,
-Miquèl
