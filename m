@@ -2,113 +2,133 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCDAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9991C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0F4208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0F4208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 769A5208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:36:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FSxNsW9L";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FSxNsW9L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769A5208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725982AbeLCTfS (ORCPT
+        id S1726017AbeLCTgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:35:18 -0500
-Received: from mout.gmx.net ([212.227.17.21]:38847 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbeLCTfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:35:17 -0500
-Received: from qcai.nay.com ([66.187.233.206]) by mail.gmx.com (mrgmx102
- [212.227.17.174]) with ESMTPSA (Nemesis) id 0LrZOj-1hUIBS2GRp-013KJH; Mon, 03
- Dec 2018 20:34:28 +0100
-From:   Qian Cai <cai@gmx.us>
-To:     mark.rutland@arm.com, marc.zyngier@arm.com
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org, longman@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@gmx.us>
-Subject: [PATCH] clocksource/arm_arch_timer: fix a lockdep warning
-Date:   Mon,  3 Dec 2018 14:33:44 -0500
-Message-Id: <1543865624-17301-1-git-send-email-cai@gmx.us>
-X-Mailer: git-send-email 1.8.3.1
-X-Provags-ID: V03:K1:T3JKhvsLTMlt02j5Xa/ivotfktyAs09MImuJwRehiTtilHpq/Sl
- QHFV3W8gGDf7joKXtImhbLUdJsrVUi2F/KgHBBqkzZmuIBJ54g5ETCslpgRs82y200AxAQh
- CXM+QmcpkrWpS6EUpnKBVccVQPvnq0X+dDVV8uR1zh2x57Vnmm8P+ETqB00KeIeD8oK7pjX
- 21ltqjUqt9HYPmQEFm4tQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TZBS9a4/07Y=:mipIW+jv6ooWBP2gnLQdzF
- 6dyRZuIDBmmIni7UM8zxefWxNaSPNyfPNPAEy2QLwGPdSKZvF7OZsCeLiAgCsukWToUP3rGK1
- nTqQLWVezoVvXaI/hpyb3fhFRPRzKKA91lvba8hBsH23yGrklAo5SHfB/4tLK3rIp7nv6HN6D
- VBh+s1dqQvlJ/QhZETzlqcvvyVVH6b3nHx/J2ddFsAHz5PlapEdG6AiTWAyl7IAIKVQ3JbZFi
- W4XF27cg+P5EQPUHcL0tiPlQ9WAOsYxijTSSg8UxtDcMy8P49QCR/9sHUu5FqUHheYUgJtUCu
- lf2Yu75arT9vbQqt9xFwcZUwZpNLD+GyjyvWyI4i8At/4dSoQaLHv676L0k9cmnU2vek0+2MJ
- z0gq1ttUsn35dIs+9aXBqut2iVygEzRDlxJAEQbPNMMKCPerU6QqQJ20bvJtCUL/mx0l/BXvv
- OKesVyqODlTArqP8QURaPwkhF+59HjC+UyL2abs3L76OmgZlqX85WZS/SGTVfoytkDtaPZeaZ
- BxRR4+lCo3OXG7dlDqNY9+lgG4lvfKLuqxrCJ/bjqhXiQFcLLWAohtU/SJdDMnoiPXvDP5OeJ
- +lc+56Z1yVSN1QQVILC5u42feTJXLBYFtPxsdXrNFCNouuyVz0YadCyp9o1wOtqXCtbNicDn1
- +EtX1JwFKqXUJ2Bd1PSZwSt0FPJAOq3jjEQ4XfplT5kitOk39lW2mcBCYtRj+CpR6v29vqrwt
- nLhxBK2UGnv1R/5iIkYyJKa1gWasTk7pKw09KWvLpKo7vAAwGlLy0LPbObLzJpQBQZKmne1lO
- 6y5WbthM7HbH3YC89/kOSJgtm77o2M/w+5HOKJIke0XdbaYhyxM+A0gxFoK1B6FZDTiB5R/MN
- /15opRrc/Hw9MAAM++jH8g3wV/MzKRZbmY2Gq9Y/Y=
+        Mon, 3 Dec 2018 14:36:21 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49316 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbeLCTgV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:36:21 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E18186130A; Mon,  3 Dec 2018 19:36:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543865779;
+        bh=C429LUGU4RujiL0uhFxLkb9tu7GRexYLkN5vub8F8tk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FSxNsW9L3i/Kx5HHEq63o8x6QO6TBzPeNvdtZf6XK7rYQPhE7j+nk0nUMbBhOb7x+
+         4Li9AgSrPTylbbsDELfN9P+lk4+4QiVVz88GfLiQ6PbMG431W64lkTGmdich+2eZ7p
+         q2G2p5FibWsaBOD8FDAES8xVqof1JyUJ1DbLvQ08=
+Received: from [10.204.79.19] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: prsood@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88E55602F4;
+        Mon,  3 Dec 2018 19:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543865779;
+        bh=C429LUGU4RujiL0uhFxLkb9tu7GRexYLkN5vub8F8tk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FSxNsW9L3i/Kx5HHEq63o8x6QO6TBzPeNvdtZf6XK7rYQPhE7j+nk0nUMbBhOb7x+
+         4Li9AgSrPTylbbsDELfN9P+lk4+4QiVVz88GfLiQ6PbMG431W64lkTGmdich+2eZ7p
+         q2G2p5FibWsaBOD8FDAES8xVqof1JyUJ1DbLvQ08=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88E55602F4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=prsood@codeaurora.org
+Subject: Re: [PATCH] percpu_rwsem: fix missed wakeup due to reordering of load
+To:     Davidlohr Bueso <dbueso@suse.de>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, sramana@codeaurora.org
+References: <1543590656-7157-1-git-send-email-prsood@codeaurora.org>
+ <734eb2ec2c3aeba1c4d054c1fceacef1@suse.de>
+From:   Prateek Sood <prsood@codeaurora.org>
+Message-ID: <7803e498-5fc8-9b72-3e1b-76005f7673a3@codeaurora.org>
+Date:   Tue, 4 Dec 2018 01:06:07 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <734eb2ec2c3aeba1c4d054c1fceacef1@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Booting this Huawei TaiShan 2280 arm64 server generated this lockdep
-warning.
+On 12/03/2018 12:08 PM, Davidlohr Bueso wrote:
+> On 2018-11-30 07:10, Prateek Sood wrote:
+>> In a scenario where cpu_hotplug_lock percpu_rw_semaphore is already
+>> acquired for read operation by P1 using percpu_down_read().
+>>
+>> Now we have P1 in the path of releaseing the cpu_hotplug_lock and P2
+>> is in the process of acquiring cpu_hotplug_lock.
+>>
+>> P1                                               P2
+>> percpu_up_read() path                      percpu_down_write() path
+>>
+>>                                           rcu_sync_enter() //gp_state=GP_PASSED
+>>
+>> rcu_sync_is_idle() //returns false        down_write(rw_sem)
+>>
+>> __percpu_up_read()
+>>
+>> [L] task = rcu_dereference(w->task) //NULL
+>>
+>> smp_rmb()                                  [S] w->task = current
+>>
+>>                                             smp_mb()
+>>
+>>                                            [L] readers_active_check() //fails
+>>                          schedule()
+>>
+>> [S] __this_cpu_dec(read_count)
+>>
+>> Since load of task can result in NULL. This can lead to missed wakeup
+>> in rcuwait_wake_up(). Above sequence violated the following constraint
+>> in rcuwait_wake_up():
+>>
+>>      WAIT                WAKE
+>> [S] tsk = current      [S] cond = true
+>> MB (A)                        MB (B)
+>> [L] cond          [L] tsk
+>>
+> 
+> Hmm yeah we don't want rcu_wake_up() to get hoisted over the __this_cpu_dec(read_count). The smp_rmb() does not make sense to me here in the first place. Did you run into this scenario by code inspection or you actually it the issue?
+> 
+> Thanks,
+> Davidlohr
 
-[    0.000000]  lockdep_assert_cpus_held+0x50/0x60
-[    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
-[    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
-[    0.000000]  arch_timer_acpi_init+0x274/0x6ac
-[    0.000000]  acpi_table_parse+0x1ac/0x218
-[    0.000000]  __acpi_probe_device_table+0x164/0x1ec
-[    0.000000]  timer_probe+0x1bc/0x254
-[    0.000000]  time_init+0x44/0x98
-[    0.000000]  start_kernel+0x4ec/0x7d4
+I have checked one issue where it seems that cpu hotplug code
+path is not able to get cpu_hotplug_lock in write mode and there
+is a reader pending for cpu hotplug path to release
+percpu_rw_semaphore->rwsem to acquire cpu_hotplug_lock.
+This caused a deadlock.
 
-This is due to the commit cb538267ea1e ("jump_label/lockdep: Assert we hold
-the hotplug lock for _cpuslocked() operations"). Therefore, it will check
-if it is really in the CPU hotplug path or not, and work around this
-problem by using cpus_read_trylock(). The chance of not getting the read
-lock is very small. If that happens, it will report a lockdep warning at
-most.
+From code inspection also it seems to be not adhering to arm64
+smp_rmb() constraint of load/load-store ordering guarantee.
 
-Signed-off-by: Qian Cai <cai@gmx.us>
----
- drivers/clocksource/arm_arch_timer.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 9a7d4dc..5c9acbd 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -497,11 +497,20 @@ void arch_timer_enable_workaround(const struct arch_timer_erratum_workaround *wa
- 			per_cpu(timer_unstable_counter_workaround, i) = wa;
- 	}
- 
-+#ifdef CONFIG_HOTPLUG_CPU
-+	i = 0;
-+
- 	/*
- 	 * Use the locked version, as we're called from the CPU
- 	 * hotplug framework. Otherwise, we end-up in deadlock-land.
- 	 */
-+	i = cpus_read_trylock();
- 	static_branch_enable_cpuslocked(&arch_timer_read_ool_enabled);
-+	if (i)
-+		cpus_read_unlock();
-+#else
-+	static_branch_enable(&arch_timer_read_ool_enabled);
-+#endif
- 
- 	/*
- 	 * Don't use the vdso fastpath if errata require using the
+Thanks,
+Prateek
+
 -- 
-1.8.3.1
-
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
