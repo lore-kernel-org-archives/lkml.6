@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F31C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF51C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4059520850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:35:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4059520850
+	by mail.kernel.org (Postfix) with ESMTP id 535DC20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 535DC20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbeLCXf6 (ORCPT
+        id S1726181AbeLCXgC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:35:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42980 "EHLO mx1.redhat.com"
+        Mon, 3 Dec 2018 18:36:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33518 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725968AbeLCXf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:35:56 -0500
+        id S1725968AbeLCXf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 18:35:59 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0EF973082193;
-        Mon,  3 Dec 2018 23:35:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9111F315486B;
+        Mon,  3 Dec 2018 23:35:58 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-120-188.rdu2.redhat.com [10.10.120.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B9833600C7;
-        Mon,  3 Dec 2018 23:35:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CC23604A3;
+        Mon,  3 Dec 2018 23:35:55 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -58,16 +58,16 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Dave Airlie <airlied@redhat.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>
-Subject: [RFC PATCH 04/14] mm/hms: add initiator to heterogeneous memory system infrastructure
-Date:   Mon,  3 Dec 2018 18:34:59 -0500
-Message-Id: <20181203233509.20671-5-jglisse@redhat.com>
+Subject: [RFC PATCH 05/14] mm/hms: add link to heterogeneous memory system infrastructure
+Date:   Mon,  3 Dec 2018 18:35:00 -0500
+Message-Id: <20181203233509.20671-6-jglisse@redhat.com>
 In-Reply-To: <20181203233509.20671-1-jglisse@redhat.com>
 References: <20181203233509.20671-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 03 Dec 2018 23:35:55 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 03 Dec 2018 23:35:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,10 +75,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-An initiator is anything that can initiate memory access, either a CPU
-or a device. Here CPUs and devices are treated as equals.
+A link connect initiators (CPUs or devices) and targets memory with
+each others. It does necessarily match one to one with a physical
+inter-connect ie a given physical inter-connect by be presented as
+multiple links or multiple physical inter-connect can be presented
+as just one link.
 
-See HMS Documentation/vm/hms.txt for further detail..
+What matters is that the properties associated with the links applies
+to all initiators and targets listed as connected to that link.
+
+For example you can consider the PCIE bus if all initiators can peer
+to peer with each others than it can be presented as just one link
+with all the PCIE devices in it and the local CPU (ie CPU from which
+the PCIE lanes are coming from). If not all PCIE device can peer to
+peer than a link per peer to peer group is created and corresponding
+CPU is added to each.
+
+See HMS Documentation/vm/hms.txt for detail.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Rafael J. Wysocki <rafael@kernel.org>
@@ -105,31 +118,31 @@ Cc: Dave Airlie <airlied@redhat.com>
 Cc: Ben Skeggs <bskeggs@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 ---
- drivers/base/Makefile        |   2 +-
- drivers/base/hms-initiator.c | 141 +++++++++++++++++++++++++++++++++++
- include/linux/hms.h          |  15 ++++
- 3 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 drivers/base/hms-initiator.c
+ drivers/base/Makefile   |   2 +-
+ drivers/base/hms-link.c | 183 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/hms.h     |  23 +++++
+ 3 files changed, 207 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/base/hms-link.c
 
 diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index 8e8092145f18..6a1b5ab667bd 100644
+index 6a1b5ab667bd..b8ff678fdae9 100644
 --- a/drivers/base/Makefile
 +++ b/drivers/base/Makefile
 @@ -12,7 +12,7 @@ obj-y			+= power/
  obj-$(CONFIG_ISA_BUS_API)	+= isa.o
  obj-y				+= firmware_loader/
  obj-$(CONFIG_NUMA)	+= node.o
--obj-$(CONFIG_HMS)	+= hms.o hms-target.o
-+obj-$(CONFIG_HMS)	+= hms.o hms-target.o hms-initiator.o
+-obj-$(CONFIG_HMS)	+= hms.o hms-target.o hms-initiator.o
++obj-$(CONFIG_HMS)	+= hms.o hms-target.o hms-initiator.o hms-link.o
  obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
  ifeq ($(CONFIG_SYSFS),y)
  obj-$(CONFIG_MODULES)	+= module.o
-diff --git a/drivers/base/hms-initiator.c b/drivers/base/hms-initiator.c
+diff --git a/drivers/base/hms-link.c b/drivers/base/hms-link.c
 new file mode 100644
-index 000000000000..08aa519427d6
+index 000000000000..58f4fdd8977c
 --- /dev/null
-+++ b/drivers/base/hms-initiator.c
-@@ -0,0 +1,141 @@
++++ b/drivers/base/hms-link.c
+@@ -0,0 +1,183 @@
 +/*
 + * Copyright 2018 Red Hat Inc.
 + *
@@ -158,152 +171,202 @@ index 000000000000..08aa519427d6
 +#include <linux/hms.h>
 +
 +
-+static inline struct hms_initiator *hms_object_to_initiator(struct hms_object *object)
++struct hms_link *hms_object_to_link(struct hms_object *object)
 +{
 +	if (object == NULL)
 +		return NULL;
 +
-+	if (object->type != HMS_INITIATOR)
++	if (object->type != HMS_LINK)
 +		return NULL;
-+	return container_of(object, struct hms_initiator, object);
++	return container_of(object, struct hms_link, object);
 +}
 +
-+static inline struct hms_initiator *device_to_hms_initiator(struct device *device)
++static inline struct hms_link *device_to_hms_link(struct device *device)
 +{
 +	if (device == NULL)
 +		return NULL;
 +
-+	return hms_object_to_initiator(to_hms_object(device));
++	return hms_object_to_link(to_hms_object(device));
 +}
 +
-+struct hms_initiator *hms_initiator_find_locked(unsigned uid)
++struct hms_link *hms_link_find_locked(unsigned uid)
 +{
 +	struct hms_object *object = hms_object_find_locked(uid);
-+	struct hms_initiator *initiator;
++	struct hms_link *link;
 +
-+	initiator = hms_object_to_initiator(object);
-+	if (initiator)
-+		return initiator;
++	link = hms_object_to_link(object);
++	if (link)
++		return link;
 +	hms_object_put(object);
 +	return NULL;
 +}
 +
-+struct hms_initiator *hms_initiator_find(unsigned uid)
++struct hms_link *hms_link_find(unsigned uid)
 +{
 +	struct hms_object *object = hms_object_find(uid);
-+	struct hms_initiator *initiator;
++	struct hms_link *link;
 +
-+	initiator = hms_object_to_initiator(object);
-+	if (initiator)
-+		return initiator;
++	link = hms_object_to_link(object);
++	if (link)
++		return link;
 +	hms_object_put(object);
 +	return NULL;
 +}
 +
-+static void hms_initiator_release(struct device *device)
-+{
-+	struct hms_initiator *initiator = device_to_hms_initiator(device);
++static void hms_link_release(struct device *device)
 +
-+	hms_object_release(&initiator->object);
-+	kfree(initiator);
++{
++	struct hms_link *link = device_to_hms_link(device);
++
++	hms_object_release(&link->object);
++	kfree(link);
 +}
 +
-+static ssize_t hms_initiator_show_uid(struct device *device,
-+				      struct device_attribute *attr,
-+				      char *buf)
++static ssize_t hms_link_show_uid(struct device *device,
++				   struct device_attribute *attr,
++				   char *buf)
 +{
-+	struct hms_initiator *initiator = device_to_hms_initiator(device);
++	struct hms_link *link = device_to_hms_link(device);
 +
-+	if (initiator == NULL)
++	if (link == NULL)
 +		return -EINVAL;
 +
-+	return sprintf(buf, "%d\n", initiator->object.uid);
++	return sprintf(buf, "%d\n", link->object.uid);
 +}
 +
-+static DEVICE_ATTR(uid, 0444, hms_initiator_show_uid, NULL);
++static DEVICE_ATTR(uid, 0444, hms_link_show_uid, NULL);
 +
-+static struct attribute *hms_initiator_attrs[] = {
++static struct attribute *hms_link_attrs[] = {
 +	&dev_attr_uid.attr,
 +	NULL
 +};
 +
-+static struct attribute_group hms_initiator_attr_group = {
-+	.attrs = hms_initiator_attrs,
++static struct attribute_group hms_link_attr_group = {
++	.attrs = hms_link_attrs,
 +};
 +
-+static const struct attribute_group *hms_initiator_attr_groups[] = {
-+	&hms_initiator_attr_group,
++static const struct attribute_group *hms_link_attr_groups[] = {
++	&hms_link_attr_group,
 +	NULL,
 +};
 +
-+void hms_initiator_register(struct hms_initiator **initiatorp,
-+			    struct device *parent, int nid,
-+			    unsigned version)
++void hms_link_register(struct hms_link **linkp, struct device *parent,
++		       unsigned version)
 +{
-+	struct hms_initiator *initiator;
++	struct hms_link *link;
 +
-+	*initiatorp = NULL;
-+	initiator = kzalloc(sizeof(*initiator), GFP_KERNEL);
-+	if (initiator == NULL)
++	*linkp = NULL;
++	link = kzalloc(sizeof(*link), GFP_KERNEL);
++	if (link == NULL)
 +		return;
 +
-+	initiator->nid = nid;
-+
-+	if (hms_object_init(&initiator->object, parent, HMS_INITIATOR, version,
-+			    hms_initiator_release, hms_initiator_attr_groups))
-+	{
-+		kfree(initiator);
-+		initiator = NULL;
++	if (hms_object_init(&link->object, parent, HMS_LINK, version,
++			    hms_link_release, hms_link_attr_groups)) {
++		kfree(link);
++		link = NULL;
 +	}
 +
-+	*initiatorp = initiator;
++	*linkp = link;
 +}
-+EXPORT_SYMBOL(hms_initiator_register);
++EXPORT_SYMBOL(hms_link_register);
 +
-+void hms_initiator_unregister(struct hms_initiator **initiatorp)
++void hms_unlink_initiator(struct hms_link *link,
++			  struct hms_initiator *initiator)
 +{
-+	struct hms_initiator *initiator = *initiatorp;
++	if (link == NULL || initiator == NULL)
++		return;
++	if (link->object.type != HMS_LINK)
++		return;
++	if (initiator->object.type != HMS_INITIATOR)
++		return;
++	hms_object_unlink(&link->object, &initiator->object);
++}
++EXPORT_SYMBOL(hms_unlink_initiator);
 +
-+	*initiatorp = NULL;
-+	if (initiator == NULL)
++void hms_unlink_target(struct hms_link *link, struct hms_target *target)
++{
++	if (link == NULL || target == NULL)
++		return;
++	if (link->object.type != HMS_LINK || target->object.type != HMS_TARGET)
++		return;
++	hms_object_unlink(&link->object, &target->object);
++}
++EXPORT_SYMBOL(hms_unlink_target);
++
++int hms_link_initiator(struct hms_link *link, struct hms_initiator *initiator)
++{
++	if (link == NULL || initiator == NULL)
++		return -EINVAL;
++	if (link->object.type != HMS_LINK)
++		return -EINVAL;
++	if (initiator->object.type != HMS_INITIATOR)
++		return -EINVAL;
++	return hms_object_link(&link->object, &initiator->object);
++}
++EXPORT_SYMBOL(hms_link_initiator);
++
++int hms_link_target(struct hms_link *link, struct hms_target *target)
++{
++	if (link == NULL || target == NULL)
++		return -EINVAL;
++	if (link->object.type != HMS_LINK || target->object.type != HMS_TARGET)
++		return -EINVAL;
++	return hms_object_link(&link->object, &target->object);
++}
++EXPORT_SYMBOL(hms_link_target);
++
++void hms_link_unregister(struct hms_link **linkp)
++{
++	struct hms_link *link = *linkp;
++
++	*linkp = NULL;
++	if (link == NULL)
 +		return;
 +
-+	hms_object_unregister(&initiator->object);
++	hms_object_unregister(&link->object);
 +}
-+EXPORT_SYMBOL(hms_initiator_unregister);
++EXPORT_SYMBOL(hms_link_unregister);
 diff --git a/include/linux/hms.h b/include/linux/hms.h
-index 0568fdf6d479..7a2823493f63 100644
+index 7a2823493f63..2a9e49a2d771 100644
 --- a/include/linux/hms.h
 +++ b/include/linux/hms.h
-@@ -67,6 +67,17 @@ struct hms_object *hms_object_find_locked(unsigned uid);
- struct hms_object *hms_object_find(unsigned uid);
+@@ -100,6 +100,21 @@ static inline void hms_target_put(struct hms_target *target)
+ }
  
  
-+struct hms_initiator {
++struct hms_link {
 +	struct hms_object object;
-+	int nid;
 +};
 +
-+void hms_initiator_register(struct hms_initiator **initiatorp,
-+			    struct device *parent, int nid,
-+			    unsigned version);
-+void hms_initiator_unregister(struct hms_initiator **initiatorp);
++struct hms_link *hms_object_to_link(struct hms_object *object);
++void hms_unlink_initiator(struct hms_link *link,
++			  struct hms_initiator *initiator);
++void hms_unlink_target(struct hms_link *link, struct hms_target *target);
++int hms_link_initiator(struct hms_link *link, struct hms_initiator *initiator);
++int hms_link_target(struct hms_link *link, struct hms_target *target);
++void hms_link_register(struct hms_link **linkp, struct device *parent,
++		       unsigned version);
++void hms_link_unregister(struct hms_link **linkp);
 +
 +
- struct hms_target {
- 	const struct hms_target_hbind *hbind;
- 	struct hms_object object;
-@@ -95,6 +106,10 @@ int hms_init(void);
- #else /* IS_ENABLED(CONFIG_HMS) */
+ int hms_init(void);
  
  
-+#define hms_initiator_register(initiatorp)
-+#define hms_initiator_unregister(initiatorp)
+@@ -116,6 +131,14 @@ int hms_init(void);
+ #define hms_target_unregister(targetp)
+ 
+ 
++#define hms_unlink_initiator(link, initiator)
++#define hms_unlink_target(link, target)
++#define hms_link_initiator(link, initiator)
++#define hms_link_target(link, target)
++#define hms_link_register(linkp)
++#define hms_link_unregister(linkp)
 +
 +
- #define hms_target_add_memory(target, size)
- #define hms_target_remove_memory(target, size)
- #define hms_target_register(targetp, nid, size)
+ static inline int hms_init(void)
+ {
+ 	return 0;
 -- 
 2.17.2
 
