@@ -2,104 +2,95 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEF6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AA6C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DBC420851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:28:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=piap.pl header.i=@piap.pl header.b="K18T5dOE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DBC420851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=piap.pl
+	by mail.kernel.org (Postfix) with ESMTP id DE0272087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:30:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0272087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbeLCN30 (ORCPT
+        id S1725960AbeLCNbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:29:26 -0500
-Received: from ni.piap.pl ([195.187.100.4]:56096 "EHLO ni.piap.pl"
+        Mon, 3 Dec 2018 08:31:46 -0500
+Received: from mga14.intel.com ([192.55.52.115]:56905 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbeLCN30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:29:26 -0500
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ni.piap.pl (Postfix) with ESMTPSA id 9EE4B443027;
-        Mon,  3 Dec 2018 14:28:19 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 9EE4B443027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=piap.pl; s=mail;
-        t=1543843699; bh=idciN5L8/LZtBaF+h1cUXZ28om2ERlcrF+dbGe8DA6c=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=K18T5dOE077ErF4/6N9thUtGKHfLoIRR1DCGjewIxS+TajkoVFA3dbQl+Lrtkyo/A
-         uaGkDrqk7lS45KxAw9fSOVNcoSbEI6dJ43WduBf6QUOBjhMI9PJ7xWBUCacjwqPZsN
-         jFWJ2LmTQA1dHXDF/6Sc5oBDU+n36ojVpMuj56pY=
-From:   khalasa@piap.pl (Krzysztof =?utf-8?Q?Ha=C5=82asa?=)
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list\:ARM\/FREESCALE IMX \/ MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH] ARM i.MX: Fix a kernel panic in i2c_imx_clk_notifier_call().
-References: <m3o9a2hni5.fsf@t19.piap.pl>
-        <CAOMZO5Bhe9t0x0Ke0VJTR3BaeT+ww9vCZBit-8ubyRQjtjM4=Q@mail.gmail.com>
-Date:   Mon, 03 Dec 2018 14:28:18 +0100
-In-Reply-To: <CAOMZO5Bhe9t0x0Ke0VJTR3BaeT+ww9vCZBit-8ubyRQjtjM4=Q@mail.gmail.com>
-        (Fabio Estevam's message of "Mon, 3 Dec 2018 09:21:32 -0200")
-Message-ID: <m3ftvehh8t.fsf@t19.piap.pl>
+        id S1725830AbeLCNbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:31:46 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 05:30:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,310,1539673200"; 
+   d="scan'208";a="95708227"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga007.jf.intel.com with ESMTP; 03 Dec 2018 05:30:42 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gToJ6-0001oo-Lb; Mon, 03 Dec 2018 15:30:40 +0200
+Date:   Mon, 3 Dec 2018 15:30:40 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
+ error values
+Message-ID: <20181203133040.GN10650@smile.fi.intel.com>
+References: <20181203111309.3709-1-phil.edworthy@renesas.com>
+ <20181203111309.3709-2-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KLMS-Rule-ID: 1
-X-KLMS-Message-Action: clean
-X-KLMS-AntiSpam-Lua-Profiles: 132422 [Dec 03 2018]
-X-KLMS-AntiSpam-Version: 5.8.3.0
-X-KLMS-AntiSpam-Envelope-From: khalasa@piap.pl
-X-KLMS-AntiSpam-Rate: 0
-X-KLMS-AntiSpam-Status: not_detected
-X-KLMS-AntiSpam-Method: none
-X-KLMS-AntiSpam-Info: LuaCore: 214 214 dd5d82bb00ca93bd3dfb46ca097df6af04819311, {Tracking_DKIM, one}, {Tracking_ sender_matches_from}, Auth:dkim=pass header.d=piap.pl, DmarcAF: none
-X-KLMS-AntiSpam-Interceptor-Info: scan successful
-X-KLMS-AntiPhishing: Clean, 2018/11/29 11:35:34
-X-KLMS-AntiVirus: Kaspersky Security 8.0 for Linux Mail Server, version 8.0.1.721, bases: 2018/12/03 09:08:00 #9343794
-X-KLMS-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203111309.3709-2-phil.edworthy@renesas.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabio,
+On Mon, Dec 03, 2018 at 11:13:08AM +0000, Phil Edworthy wrote:
+> It's not immediately obvious from the code that failure to get a
+> clock provider can return either -ENOENT or -EINVAL. Therefore, add
+> a comment to highlight this.
 
-Fabio Estevam <festevam@gmail.com> writes:
+> +/*
+> + * Beware the return values when np is valid, but no clock provider is found.
+> + * If name = NULL, the function returns -ENOENT.
+> + * If name != NULL, the function returns -EINVAL. This is because __of_clk_get()
 
-> Please provide a commit log, giving some context to your fix.
+I would start new sentence from new line
+(this will emphasize the possible variants)
 
-Well, I hope Lucas could add something here. I am uncertain how it was
-supposed to work, the ndata->clk (the pointer, not the clk pointed by
-it) can't be at the same time a member of imx_i2c_struct, and I believe
-the macro only does simple arithmetics to get to the outer struct.
+ * This is ...
 
-@@ -510,9 +510,9 @@ static int i2c_imx_clk_notifier_call(struct notifier_block *nb,
- 				     unsigned long action, void *data)
- {
- 	struct clk_notifier_data *ndata = data;
--	struct imx_i2c_struct *i2c_imx = container_of(&ndata->clk,
-+	struct imx_i2c_struct *i2c_imx = container_of(nb,
- 						      struct imx_i2c_struct,
--						      clk);
-+						      clk_change_nb);
+ Otherwise looks good to me:
 
-> Is this a regression?
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Probably (it went in between 4.16 and 4.17, commit id is
-90ad2cbe88c22d0215225ab9594eeead0eb24fde). However this part may be
-unused on many boards (apparently it only fires up if the "IPG" clock
-rate changes), so it may not manifest itself. I only hit it when I added
-a custom driver (using/requesting a special clock derived from IPG).
+> + * is called even if of_property_match_string() returns an error.
+> + */
+>  static struct clk *__of_clk_get_by_name(struct device_node *np,
+>  					const char *dev_id,
+>  					const char *name)
+> -- 
+> 2.17.1
+> 
+
 -- 
-Krzysztof Halasa
+With Best Regards,
+Andy Shevchenko
 
-Industrial Research Institute for Automation and Measurements PIAP
-Al. Jerozolimskie 202, 02-486 Warsaw, Poland
+
