@@ -2,246 +2,171 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E11C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCACC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED8420878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:06:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED8420878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A327620878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:07:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOU1LYDZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A327620878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725937AbeLCNHU convert rfc822-to-8bit (ORCPT
+        id S1726028AbeLCNIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:07:20 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15632 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725830AbeLCNHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:07:20 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7ADE6D1509F96;
-        Mon,  3 Dec 2018 21:06:18 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 3 Dec 2018
- 21:06:18 +0800
-Date:   Mon, 3 Dec 2018 13:06:06 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-CC:     Jonathan Cameron <jic23@kernel.org>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <gregkh@linuxfoundation.org>,
-        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-usp@googlegroups.com>
-Subject: Re: [PATCH] staging: iio: ad5933: replaced kfifo by
- triggered_buffer
-Message-ID: <20181203130606.00002854@huawei.com>
-In-Reply-To: <20181202181045.vkdnus4ow3chdlu6@smtp.gmail.com>
-References: <20181122125347.sn2oqrw7fyb4corf@smtp.gmail.com>
-        <20181125105926.4730a798@archlinux>
-        <20181202181045.vkdnus4ow3chdlu6@smtp.gmail.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Mon, 3 Dec 2018 08:08:05 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39690 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbeLCNIE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:08:04 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t9-v6so11280977ljh.6;
+        Mon, 03 Dec 2018 05:07:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=YaQtv//14xvlfu+TUNMerRvDJrU67oKVWipWMWaxJEY=;
+        b=YOU1LYDZPpSq99MGLI73FZhJ6Fyx6gA0zX7BS8d8DBNGRLohPTmEfo4B80TnqUirLP
+         TQl1IroYdvOMhtVQgR16tNqt9MON9RF5Et5YOATlxW8q6b3ltGL6JIMeT8aXnbh9ZdbR
+         6AT+SN4Nlk/hkCy1T2N7TJv6yy6AgT/f8DQMcDY//kfJw8GC95k84ffcfCkXpxBh/oWH
+         zTk5nUFf83zGe/d4a9IUucV9pKSjMsBG6yDm7jCky8yRYVJcroblwjQYvs1lF6DmD7Pk
+         XHEUX4ycaBIbTpES0cf9epsYzU6K3g7nCUYlXcZHT85TAw3u9CSgydqbnnaTh8qY1DEE
+         aqPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=YaQtv//14xvlfu+TUNMerRvDJrU67oKVWipWMWaxJEY=;
+        b=UmwyXZYGHrfCxMASZQca4Q2NKLfDKY4emPHvT+UtwynwCtOnT5aYy0eihJzDrmKaOB
+         wN4L9Kb3wm3+IOAJjxlEJNwwyNch39/EI258rtHE9Ia6tlFHHp6pqMaTlnvVCc8NRDsT
+         DG4io8RKr20KWcHYrfiJ6F7NAYUUFkyeH7Fyi58HJngWJybMTFGQKpOjN5wN2c8ZkSfS
+         Rk6FXt7POwkKFXjFa10kE4xarg+VySkBylVkn0luR3CYaUZB3oO1vnWesPXVHkSHh4oh
+         jNNnQYsmlOj6K0lxmdaPl9aOpGOY6LL++rh3h+U9cMpRdrVZwrMoNxuuFUO6jyRV6BFS
+         XKyw==
+X-Gm-Message-State: AA+aEWa0POglAU+bTDhGTJjEc1sorUbyUFpF1qHolAZ/z9f4IEqKrnTR
+        2nxm7TUbWCZmZfNT3w1dATQnfu144QeniC+bL5zbEQ==
+X-Google-Smtp-Source: AFSGD/VD9VcfPqh1H8UBUSgGkLcDWRfIbC5LzTNIggCSmYqeoZvfg9Z+TY/M6Lwsbic9KTBgp9p3ste69iiprwhVekQ=
+X-Received: by 2002:a2e:9b52:: with SMTP id o18-v6mr9991336ljj.108.1543842424076;
+ Mon, 03 Dec 2018 05:07:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+References: <CAA85sZthkwZ0yhfwXZ5dAJitqsod71O1478e44tz0NNLJVsvGg@mail.gmail.com>
+In-Reply-To: <CAA85sZthkwZ0yhfwXZ5dAJitqsod71O1478e44tz0NNLJVsvGg@mail.gmail.com>
+From:   Ian Kumlien <ian.kumlien@gmail.com>
+Date:   Mon, 3 Dec 2018 14:06:52 +0100
+Message-ID: <CAA85sZtt0_GWjYe_CZSzF5RdHg6Q6M+jy-bmDf4rMFZeoS1ejw@mail.gmail.com>
+Subject: Re: pcc_cpufreq: high LA
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2 Dec 2018 16:10:45 -0200
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+No response? Should pcc_cpufreq be assumed as broken since it actually
+kills machines?
 
-> On 11/25, Jonathan Cameron wrote:
-> > On Thu, 22 Nov 2018 10:53:47 -0200
-> > Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
-> >   
-> > > Previously, there was an implicit creation of a kfifo which was replaced
-> > > by a call to triggered_buffer_setup, which is already implemented in iio
-> > > infrastructure.
-> > > 
-> > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>  
-> > 
-> > I'm a little surprised that this would work without screaming a lot as 
-> > it will register an interrupt with no handlers. Do you have this
-> > device to test?  It's rapidly heading in the direction of too complex
-> > a driver to fix without test hardware.  Also, semantically this change
-> > is not sensible as it implies an operating mode which the driver
-> > is not using.
-> >   
-> 
-> Thanks for reviewing the patch. I'm not expert at electronics so I'm
-> still studying the datasheet to understand how the ad5933 works.
-> 
-> > There are fundamental questions about how we handle an autotriggered
-> > sweep that need answering before this driver can move forwards.
-> > It needs some concept of a higher level trigger rather than a per
-> > sample one like we typically use in IIO.
-> >   
-> 
-> From what I've read so far it seems that we would need to have two
-> operation modes: one for the frequency sweep (that need to be
-> discussed yet) and another for the receive stage (in which ad5933 would
-> be continuously requested for data through I2C). So my first approach
-> would be to build up an abstract trigger that would allow switching
-> between these two operation modes. What do you think about that?
+Should I submit a patch that removes it?
 
-Hmm.  I haven't looked at it in much depth yet but based largely on the intro
-to the datasheet and what you say here...
-
-Mode 1 : Sweep.
-* Controls for peak-to-peak, start, resolution, number of points.
-
-Two ways we could treat this.
-* A single buffer with no meta data and rely on start and stop signals
-  and careful sync.  This is similar to what we have previously talked
-  about doing for impact sensors.
-
-* We could present the current frequency as a channel.  At which point
-  this is a simple triple of drive frequency, real and imaginary responses.
-  It would need a start control though to get a sweep going. Also potentially
-  a control to force a waiting period for the start frequency to sweep
-  transition.  There is also the repeat option to deal with.
-
-Mode 2 : Read without changing anything?  This is just hitting the repeat
-constantly I guess as I can't immediately see another control for it.
-This could also be implemented within the above as a one step sweep with
-an indefinite repeat count (magic number such as -1).
-
-Anyhow, just some initial thoughts. I'll think more on this one as
-the best answer isn't obvious!
-
-> 
-> > The main focus in the short term should be around defining that ABI
-> > as it may fundamentally change the structure of the driver.
-> > If you want to take this on (and it'll be a big job I think!) then
-> > it may be possible to source some hardware to support that effort.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> >   
-> 
-> As a member of the FLOSS group at Universidade de São Paulo I have the
-> hardware to test the driver though I didn't figure out all the steps to
-> do it yet. I intend to continue development on this driver so I'm really
-> thankful for all advise given.
-
-Great!
-
-Jonathan
-
-> 
-> Thanks,
-> 
-> Marcelo
-> 
-> > > ---
-> > >  .../staging/iio/impedance-analyzer/Kconfig    |  2 +-
-> > >  .../staging/iio/impedance-analyzer/ad5933.c   | 25 ++++---------------
-> > >  2 files changed, 6 insertions(+), 21 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/iio/impedance-analyzer/Kconfig b/drivers/staging/iio/impedance-analyzer/Kconfig
-> > > index dd97b6bb3fd0..d0af5aa55dc0 100644
-> > > --- a/drivers/staging/iio/impedance-analyzer/Kconfig
-> > > +++ b/drivers/staging/iio/impedance-analyzer/Kconfig
-> > > @@ -7,7 +7,7 @@ config AD5933
-> > >  	tristate "Analog Devices AD5933, AD5934 driver"
-> > >  	depends on I2C
-> > >  	select IIO_BUFFER
-> > > -	select IIO_KFIFO_BUF
-> > > +	select IIO_TRIGGERED_BUFFER
-> > >  	help
-> > >  	  Say yes here to build support for Analog Devices Impedance Converter,
-> > >  	  Network Analyzer, AD5933/4, provides direct access via sysfs.
-> > > diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> > > index f9bcb8310e21..edb8b540bbf1 100644
-> > > --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
-> > > +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> > > @@ -20,7 +20,7 @@
-> > >  #include <linux/iio/iio.h>
-> > >  #include <linux/iio/sysfs.h>
-> > >  #include <linux/iio/buffer.h>
-> > > -#include <linux/iio/kfifo_buf.h>
-> > > +#include <linux/iio/triggered_buffer.h>
-> > >  
-> > >  /* AD5933/AD5934 Registers */
-> > >  #define AD5933_REG_CONTROL_HB		0x80	/* R/W, 1 byte */
-> > > @@ -615,22 +615,6 @@ static const struct iio_buffer_setup_ops ad5933_ring_setup_ops = {
-> > >  	.postdisable = ad5933_ring_postdisable,
-> > >  };
-> > >  
-> > > -static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
-> > > -{
-> > > -	struct iio_buffer *buffer;
-> > > -
-> > > -	buffer = iio_kfifo_allocate();
-> > > -	if (!buffer)
-> > > -		return -ENOMEM;
-> > > -
-> > > -	iio_device_attach_buffer(indio_dev, buffer);
-> > > -
-> > > -	/* Ring buffer functions - here trigger setup related */
-> > > -	indio_dev->setup_ops = &ad5933_ring_setup_ops;
-> > > -
-> > > -	return 0;
-> > > -}
-> > > -
-> > >  static void ad5933_work(struct work_struct *work)
-> > >  {
-> > >  	struct ad5933_state *st = container_of(work,
-> > > @@ -744,7 +728,8 @@ static int ad5933_probe(struct i2c_client *client,
-> > >  	indio_dev->channels = ad5933_channels;
-> > >  	indio_dev->num_channels = ARRAY_SIZE(ad5933_channels);
-> > >  
-> > > -	ret = ad5933_register_ring_funcs_and_init(indio_dev);
-> > > +	ret = iio_triggered_buffer_setup(indio_dev, NULL, NULL,
-> > > +					 &ad5933_ring_setup_ops);  
-> > 
-> > The absence of either of the interrupt related callbacks made me
-> > wonder what is going on here.  The upshot is that this device
-> > isn't operating in a triggered buffer style at all so we really
-> > shouldn't be using that infrastructure - even if it's convenient.
-> > 
-> > It'll allocate an interrupt with neither a top half nor a thread
-> > function. I'm not sure what the core will do about that but it
-> > seems unlikely to be happy about it!
-> >   
-> 
-> The reason for not using triggered_buffer would be because I2C of
-> communication is always started by the master device so the ad5933 would
-> only wait for being requested for data. It wouldn't be capable of using
-> I2C to call for master device nor it has any interrupt pin to do that.
-> Is that right?
-> 
-> >   
-> > >  	if (ret)
-> > >  		goto error_disable_reg;
-> > >  
-> > > @@ -759,7 +744,7 @@ static int ad5933_probe(struct i2c_client *client,
-> > >  	return 0;
-> > >  
-> > >  error_unreg_ring:
-> > > -	iio_kfifo_free(indio_dev->buffer);
-> > > +	iio_triggered_buffer_cleanup(indio_dev);
-> > >  error_disable_reg:
-> > >  	regulator_disable(st->reg);
-> > >  
-> > > @@ -772,7 +757,7 @@ static int ad5933_remove(struct i2c_client *client)
-> > >  	struct ad5933_state *st = iio_priv(indio_dev);
-> > >  
-> > >  	iio_device_unregister(indio_dev);
-> > > -	iio_kfifo_free(indio_dev->buffer);
-> > > +	iio_triggered_buffer_cleanup(indio_dev);
-> > >  	regulator_disable(st->reg);
-> > >  
-> > >  	return 0;  
-> >   
-
-
+On Tue, Nov 20, 2018 at 3:05 PM Ian Kumlien <ian.kumlien@gmail.com> wrote:
+>
+> Hi,
+>
+> We've had this happen a few times now, pcc_cpufreq is loaded and the
+> machine has a LA of 33 with kworkers consuming *all CPU*
+>
+> We have had this happen before, looking at it has been pushed to the
+> leaky-stack^tm in my mind and...
+>
+> 32 cores:
+> processor : 31
+> vendor_id : GenuineIntel
+> cpu family : 6
+> model : 62
+> model name : Intel(R) Xeon(R) CPU E5-2650 v2 @ 2.60GHz
+> stepping : 4
+> microcode : 0x42d
+> cpu MHz : 2053.444
+> cache size : 20480 KB
+> ----
+>
+> System Information:
+> Manufacturer: HP
+> Product Name: ProLiant SL210t Gen8
+> ---
+>
+> The only warning I can see, which seems unrelated is:
+> [6928231.623398] WARNING: CPU: 11 PID: 0 at kernel/irq/matrix.c:371
+> irq_matrix_free+0x35/0xe0
+> [6928231.623402] Modules linked in: 8021q garp mrp ipt_MASQUERADE
+> nf_nat_masquerade_ipv4 iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4
+> nf_nat_ipv4 xt_addrtype iptable_filter xt_conntrack nf_nat
+> nf_conntrack dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio
+> libcrc32c loop bonding sb_edac x86_pkg_temp_thermal intel_powerclamp
+> coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul
+> ghash_clmulni_intel pcbc aesni_intel crypto_simd cryptd glue_helper
+> intel_cstate intel_rapl_perf iTCO_wdt iTCO_vendor_support joydev
+> input_leds acpi_power_meter pcspkr hpilo sg ipmi_si ipmi_devintf
+> ipmi_msghandler hpwdt ioatdma lpc_ich shpchp pcc_cpufreq mfd_core
+> ip_tables ext4 mbcache jbd2 raid1 sd_mod crc32c_intel serio_raw
+> drm_kms_helper ahci syscopyarea sysfillrect libahci sysimgblt
+> fb_sys_fops ttm libata drm igb
+> [6928231.623490]  i2c_algo_bit ixgbe mdio ptp pps_core dca dm_mirror
+> dm_region_hash dm_log dm_mod
+> [6928231.623507] CPU: 11 PID: 0 Comm: swapper/11 Not tainted
+> 4.17.0-1.el7.elrepo.x86_64 #1
+> [6928231.623509] Hardware name: HP ProLiant SL210t Gen8/, BIOS P83 05/21/2018
+> [6928231.623514] RIP: 0010:irq_matrix_free+0x35/0xe0
+> [6928231.623516] RSP: 0018:ffff88203f4c3f58 EFLAGS: 00010002
+> [6928231.623519] RAX: 0000000000026d00 RBX: ffff880ffaf64340 RCX:
+> 0000000000000000
+> [6928231.623521] RDX: 000000000000000b RSI: 000000000000000b RDI:
+> ffff880fff038800
+> [6928231.623523] RBP: ffff88203f4c3f80 R08: 0000000000000101 R09:
+> 0000000000000000
+> [6928231.623525] R10: 0000000000000000 R11: 0000000000000000 R12:
+> ffff88203f4c0000
+> [6928231.623527] R13: 0000000000000000 R14: 000000000000000b R15:
+> ffff880fff038800
+> [6928231.623530] FS:  0000000000000000(0000) GS:ffff88203f4c0000(0000)
+> knlGS:0000000000000000
+> [6928231.623532] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [6928231.623534] CR2: 00007fc429b73d20 CR3: 000000000220a006 CR4:
+> 00000000001606e0
+> [6928231.623537] Call Trace:
+> [6928231.623541]  <IRQ>
+> [6928231.623554]  free_moved_vector+0x58/0x110
+> [6928231.623563]  smp_irq_move_cleanup_interrupt+0xa2/0xc1
+> [6928231.623572]  irq_move_cleanup_interrupt+0xc/0x20
+> [6928231.623574]  </IRQ>
+> [6928231.623582] RIP: 0010:cpuidle_enter_state+0xdd/0x270
+> [6928231.623583] RSP: 0018:ffffc9000631fe48 EFLAGS: 00000246 ORIG_RAX:
+> ffffffffffffffdf
+> [6928231.623586] RAX: ffff88203f4e2c00 RBX: ffffe8ffff6da700 RCX:
+> 000000000000001f
+> [6928231.623588] RDX: 0000000000000000 RSI: fff0a6fbff885c1c RDI:
+> 0000000000000000
+> [6928231.623590] RBP: ffffc9000631fe80 R08: 0000000000002036 R09:
+> 00000000000043d0
+> [6928231.623592] R10: 000000000000133e R11: 0000000000000018 R12:
+> 0000000000000004
+> [6928231.623594] R13: 000000000000000b R14: ffffffff82364b60 R15:
+> 00189d309ada9b44
+> [6928231.623599]  ? cpuidle_enter_state+0xcc/0x270
+> [6928231.623603]  cpuidle_enter+0x17/0x20
+> [6928231.623611]  call_cpuidle+0x23/0x40
+> [6928231.623614]  do_idle+0x1d2/0x270
+> [6928231.623619]  cpu_startup_entry+0x73/0x80
+> [6928231.623624]  start_secondary+0x1ae/0x200
+> [6928231.623632]  secondary_startup_64+0xa5/0xb0
+> [6928231.623634] Code: 57 49 89 ff 41 56 41 89 f6 41 55 41 89 d5 89 f2
+> 41 54 4c 8b 24 d5 60 c7 12 82 53 48 8b 47 28 44 39 6f 04 77 06 44 3b
+> 6f 08 72 0d <0f> 0b 5b 41 5c 41 5d 41 5e 41 5f 5d c3 49 01 c4 44 89 e8
+> f0 49
+> [6928231.623693] ---[ end trace 6436d0c28a5009d4 ]---
