@@ -2,155 +2,96 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF776C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1785C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BAA206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:21:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rGAOzhrS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72BAA206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E024206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:21:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E024206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725976AbeLCWVI (ORCPT
+        id S1725996AbeLCWVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:21:08 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42839 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeLCWVH (ORCPT
+        Mon, 3 Dec 2018 17:21:39 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43152 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbeLCWVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:21:07 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 64so7081939pfr.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:21:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FShRrE3TlhVT1FrEdNBkyXZ5pQaERBplFM6N/KF/21Y=;
-        b=rGAOzhrSlLmziyIwgPEWdSBfHiVmbc3Vw3MS0h/lkNpgSyhFPd74xYIdhxIX2phbjW
-         S0urWbuWhU12VRwj53/IygBra7bUhT5LCACUjWMFH4H1wcl5Pk4ppWLWTWwur9LHNCnW
-         wcUR7VQOvT5tzqe1pdNLnZQDDWbS6aI1YqSVxs0n+AyGXaDvbsLwtrLapQ0smJo0rN3T
-         wuHX1qwTkgxr26PiaGABYe2M7M3+31Uy6blCwMdvy2FBhMGqVOOsxfOPJP7Y1HxjnLoK
-         HtOMEY5ztA721OBKCYQml2IiQ7xUMcGtAT+1IktuhRTy/fXWSRjQn/MYpiwPaX/mR9iA
-         33hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FShRrE3TlhVT1FrEdNBkyXZ5pQaERBplFM6N/KF/21Y=;
-        b=F365/va6yanuHc/MJNs/4XE1t1COwef7w2HJuR4nsMhVwoOsMqLbxM9Mtqc7SV0lGp
-         URBql8n4UmuIUQ46JEzTH+WsAqu31cj23VqRTJtrRwkekaN2gR42lXhgR66xOjifrJVO
-         /q6Q8pzRQ97VjgDaWrxEIdma0r3Q/NI+b2ZGoxnbjK2D9FCLFm//TZfKkuIrFPj7fXEt
-         HVjwonAqKVRRCA79n+2maZDS2th3GXd/vF0hEBP8kj2vmV6cy2425xL65moEvMjYqaav
-         FONZ/4rN83KG2+LDEjO9Meg9CMSLucO6MuB3mbBTHRV12TA2sKDXQsEYRe6Sl99A2Sg2
-         cd2g==
-X-Gm-Message-State: AA+aEWbpmRFU7iV5KF+gWUlaZzE06ZjfbINMbxYT+KIdVYuZ3+o2HCLc
-        K46r8dQdfTgIckZLmqZtXnpcWxkpwhOxvA==
-X-Google-Smtp-Source: AFSGD/WSxnJkqq4pA60oPflptU4+1rVjrjAgEMpuUmUVzNxeWlWuwxEDNWdMMN3szrdsTtW+thPkNQ==
-X-Received: by 2002:a63:b218:: with SMTP id x24mr14278854pge.223.1543875666341;
-        Mon, 03 Dec 2018 14:21:06 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:c562:226a:6d78:2ae4])
-        by smtp.gmail.com with ESMTPSA id e123sm17768661pgc.58.2018.12.03.14.21.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 14:21:05 -0800 (PST)
-Date:   Mon, 3 Dec 2018 14:21:03 -0800
-From:   Benson Leung <bleung@google.com>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Benson Leung <bleung@chromium.org>, linux-kernel@vger.kernel.org,
-        enric.balletbo@collabora.com
-Subject: Re: [PATCH] MAINTAINERS: platform/chrome: remove myself as maintainer
-Message-ID: <20181203222103.GB128959@google.com>
-References: <20181126194259.2026-1-olof@lixom.net>
+        Mon, 3 Dec 2018 17:21:38 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id EFD932601FF
+Subject: Re: [PATCH v3 2/8] mfd / platform: cros_ec: move lightbar attributes
+ to its own driver.
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+References: <20181127121849.23975-1-enric.balletbo@collabora.com>
+ <20181127121849.23975-3-enric.balletbo@collabora.com>
+ <20181203103619.GD26661@dell>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <59c6fa0a-e5d5-0e4a-9393-0c9a8b26332d@collabora.com>
+Date:   Mon, 3 Dec 2018 23:21:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
-Content-Disposition: inline
-In-Reply-To: <20181126194259.2026-1-olof@lixom.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181203103619.GD26661@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lee,
 
---IiVenqGWf+H9Y6IX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 3/12/18 11:36, Lee Jones wrote:
+> On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
+> 
+>> The entire way how cros sysfs attibutes are created is broken.
+>> cros_ec_lightbar should be its own driver and its attributes should be
+>> associated with a lightbar driver not the mfd driver. In order to retain
+>> the path, the lightbar attributes are attached to the cros_class.
+> 
+> I'm not exactly clear on what a lightbar is, but shouldn't it live in
+> the appropriate subsystem.  Like LED for example?
+> 
 
-Hi Olof,
+The lightbar is a four-color indicator available on some Chromebook, but the
+fact that can you can program this lightbar with different sequences, including
+user defined sequences makes the device a bit special and very chrome platform
+specific. The same happens with the VBC driver.
 
+Other subdevices like, rtc, keyboard, usbpd charger,etc. are already in their
+subsystems.
 
-On Mon, Nov 26, 2018 at 11:42:59AM -0800, Olof Johansson wrote:
-> Benson has been maintaining this together with the rest of the kernel
-> team for a while now, so remove myself from the entry.
->=20
-
-It was a pleasure to work with you Olof. Good luck on your next things. :)
-Enric at Collabora has expressed interest in helping maintain this and help
-me institute an upstream-first policy for chrome-platform and the other sub
-drivers.
-
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-
-Applied for v4.21. :)
-
-
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b5a72848a3af..57764aa57437 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3547,7 +3547,6 @@ F:	drivers/input/touchscreen/chipone_icn8505.c
-> =20
->  CHROME HARDWARE PLATFORM SUPPORT
->  M:	Benson Leung <bleung@chromium.org>
-> -M:	Olof Johansson <olof@lixom.net>
->  S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platf=
-orm.git
->  F:	drivers/platform/chrome/
-> --=20
-> 2.11.0
->=20
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---IiVenqGWf+H9Y6IX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlwFrE8ACgkQHwn1ewov
-5lgJcA//eu8YBw6LT3aj4S5omHZE7+YF4k2wzrTcoOhKfUCR6cnukueffVJAjh5X
-VNkmsPDuDLPMpbAJp8Tltlmhi2+Sd7uFPR1NEt1i8Bfa3RrPOF1hSpQIfMP2dCox
-FQhZcudtvkDVE0fDD2eEtieMx1OrHYpGuUcighavxKHWwbdln1YlcNtmRkinVlAT
-auYmOT8m3eUxuh0qXLstRlnp7Rd5jv+nBD3SYH4K54JPwEdbXfOdqd9HObAXNNOo
-3GH11MmZkXE28tLsHq6yAC8umDaZ469b++rNZuO/MvNGcv5CjFDIpIoyUjo5hezC
-WEXsf4KWQw+3mspSagFkTc/qoQyqAnXbd3nNbSaQgAQQQbJJoltSD8TxtTKMNH5P
-HNamOLTYb77tHk4o/UNIf8UWIwFl+9tTam+WSW4AHxJsvS1snbf4+WDl5m2IJwJw
-77w0++aMsBrxUTTQR3tsOZzqBiAqP6bHCej336T2kR9a6la9xCdYP9gMp/vx6azJ
-bOgBkixQYzx4XTvho8aEBJtTNZw8eBofYty7hOdUiNsoD+ZfgTOmUqShu8uPnxmv
-AUsnhM3mSW0t+ZVTLe6obuSax6sUcqwTg/w7lNsH9aBZS4h3xBoRPkbsqhB9yGhI
-avfHNr8LrAKkhUDLl9pm1UbrFSSsChNBmtfr5dAwft2q2R9eYe8=
-=WlYM
------END PGP SIGNATURE-----
-
---IiVenqGWf+H9Y6IX--
+>> The patch also adds the sysfs documentation.
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>> Changes in v3:
+>> - Removed unneded check for ec_dev.
+>>
+>> Changes in v2:
+>> - Removed the two exported functions to attach/detach to the cros_class.
+>> - Use dev_warn instead of dev_err when adding the lightbar.
+>>
+>>  ...sfs-class-chromeos-driver-cros-ec-lightbar | 74 +++++++++++++++
+>>  drivers/mfd/cros_ec_dev.c                     | 24 ++---
+>>  drivers/mfd/cros_ec_dev.h                     |  6 --
+>>  drivers/platform/chrome/Kconfig               | 10 ++
+>>  drivers/platform/chrome/Makefile              |  3 +-
+>>  drivers/platform/chrome/cros_ec_lightbar.c    | 95 ++++++++++++++-----
+>>  include/linux/mfd/cros_ec.h                   |  1 -
+>>  7 files changed, 172 insertions(+), 41 deletions(-)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
+> 
