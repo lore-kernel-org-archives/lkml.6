@@ -1,135 +1,116 @@
 Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E52C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDC4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75DE62147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 298EA20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="IrTMr2qz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75DE62147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaRZCXIx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 298EA20848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbeLCKvx (ORCPT
+        id S1726289AbeLCKw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:51:53 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43803 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeLCKvw (ORCPT
+        Mon, 3 Dec 2018 05:52:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51346 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbeLCKw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:51:52 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so11587599wrs.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:51:20 -0800 (PST)
+        Mon, 3 Dec 2018 05:52:56 -0500
+Received: by mail-wm1-f66.google.com with SMTP id s14so5269515wmh.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:52:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=PpJXPEBKm0YV7zWjZGCDQm3zabwlJCEUsGi4KlSMAkQ=;
-        b=IrTMr2qzzQyg5LuhiaNjRlSxCD5NtLTVO3Pt6CVMk1Joz9tVX6FDFsiQX5mtB8EvtI
-         txS8CiiI5386/lBFzk03TNfnizkvn80m4fPgn+NqdbpvEAYLiuCZn+arFQgwe74PLtji
-         e12gK8csMJn3yk6J2K9JETgQXAFoPq4q3SCtkNZ93c9OP0KjCdiJtvu8kldsj4rGnekf
-         UtcXHm1cxQ+nNcvf/47ckLVy/iCBO6v9CazU9nhahcgj3heYXQoIxMpvSp4ee9Mb+NFp
-         Yu69jczTckD82ZROLyOvGqvy3eyGHhydycCYnhN1St0ed+m78vGJ1pnmzfGbZmNgziOm
-         6kKg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r6uB0Si4hPYNdPDLm5hKZ/qA9rvQbX0yhcqEzm42F3g=;
+        b=KaRZCXIxKj3/dg0cXM5PbV3hgd5XT9vsbAl3+uhj2QyBCn2A3MK8pqc2FngLF8WaHo
+         iLfx11ItW9Y8wonFuL/R6EW6V88cKu0/31ZkD8S4k0B6VcM3c/AWxW7hbDBTY4fuPP23
+         k4kbyu/lPrqc8RX7KnGD/CoZbEfoehs4ZrsjJuDOnWUEkqJbWlRRyoEefE6Z62nmmFZq
+         oH7JSq+EBrq+VibQxvpelpkjqVGsGHecYZkSV0+aP2w3gc9yT0xWhYxTvmpoXY4NGC/1
+         h3JJfUR+6I0bvomONZ5Uriaew1FlfHb1SAZnM21C43IoXSJATsYS3F77PmLUZJJHRsm2
+         SoIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=PpJXPEBKm0YV7zWjZGCDQm3zabwlJCEUsGi4KlSMAkQ=;
-        b=awAZEGNaNDoMVshCka4gaaikU4DhJZBROydijWcwgW2vVjcEyFOhLOT1Yj3wzpQID/
-         gp0APDEGPirkK+friXy6+2YOOGnrxXaT/UFGNyiaFsSfNVuHXJIg89a+NQUBl6UvViQz
-         uJv7vz8Yyk1OvDL5oZ6SglRQxKzfP2jgJX2pF1qz2kjdgkWn4POUzK+leNl0q+YgGgxv
-         Tb307qfAxD4xQIUmtzuqDJJpMIcPqoSUWS2/V702IATeU6NAzMblwu5SZLiZAJfRpwi/
-         92dM8toIOmtrjja3qiUTCREjDAPah6CtAYHO7ZpDCVvnrFhdSGf6B+/BmnwdlGd1Si7N
-         MFYw==
-X-Gm-Message-State: AA+aEWa9ndDdLHyGrS0MI5iQ5C4m6Q3yF+0RS9htad2xPN4fR1dQTqah
-        DTruBL8fSiTyLQcTWni51IcHbw==
-X-Google-Smtp-Source: AFSGD/VJLZG7gcXeociyEgZjIjXppPPBqbbfWpXxr9QJTcRERYQerUIETedTQcNWph4gVXQTq7Yp3w==
-X-Received: by 2002:adf:ef88:: with SMTP id d8mr13510970wro.163.1543834279625;
-        Mon, 03 Dec 2018 02:51:19 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id q185sm7198774wmg.14.2018.12.03.02.51.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:51:18 -0800 (PST)
-Subject: Re: [PATCH 0/3] - clk: meson8b: add the (read-only) video clock trees
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com
-References: <20181202214220.7715-1-martin.blumenstingl@googlemail.com>
- <d52679a197a46fa19fb44c446c52fd286ad639f2.camel@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <913fbbd7-88a3-b6a8-74d3-4687ea62bcdd@baylibre.com>
-Date:   Mon, 3 Dec 2018 11:51:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r6uB0Si4hPYNdPDLm5hKZ/qA9rvQbX0yhcqEzm42F3g=;
+        b=e7M2owTukVeGaP2lMGM0G7byfQyzOwiWzTNy4eKAx01z5/4G/KNGqsKFbUJs+9okxm
+         an8LeJ5S658EE3JOLR9CD9ekXY01UfoaNFygB34JNwsTB+zUTG7ZafDwAU7HTfz2tpwB
+         G56jv2kOWGvTA9kWukx7+5CWlvGkkDF9jf0ChKFmQk4kk2c0lfVwmImodkGujdMkd51e
+         OUJz1EXf4NEx4hoNV9+7oOaSRcsznPKkddpaF90WcFY42OX59MjIazuK3Die3MDWYAi8
+         /6WUa4dcWCieUHC4B0Sml5numVz0EcN7EcbRCpSz8ftUjFaI5JwSE6u0eh0Fm3YfKEmZ
+         irkw==
+X-Gm-Message-State: AA+aEWYeW8BY7mG2qNvP39+Btk3BMKyUtBPf3Up9Dk/1Z/WdnShjSS3Z
+        4FPZPkzKK1F8o/CjUwOrm3w=
+X-Google-Smtp-Source: AFSGD/VkcakojrnVGNYT9MIhmI/IDQOzEPDYK1JtaOrjG7AJ4DFVCYbmRm8C7zPP/moPUpIyuJfxCg==
+X-Received: by 2002:a1c:b456:: with SMTP id d83mr8249440wmf.115.1543834342881;
+        Mon, 03 Dec 2018 02:52:22 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id t131sm9776177wmt.1.2018.12.03.02.52.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 02:52:22 -0800 (PST)
+Date:   Mon, 3 Dec 2018 11:52:19 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Arnaldo Carvalho de Melo <acme@infradead.org>,
+        linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH] tools: Fix diverse typos
+Message-ID: <20181203105219.GA104329@gmail.com>
+References: <20181203102200.GA104797@gmail.com>
+ <20181203103107.GC11573@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <d52679a197a46fa19fb44c446c52fd286ad639f2.camel@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203103107.GC11573@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 10:42, Jerome Brunet wrote:
-> On Sun, 2018-12-02 at 22:42 +0100, Martin Blumenstingl wrote:
->> Martin Blumenstingl (3):
->>   - clk: meson: meson8b: fix the offset of -- vid_pll_dco's N value
->>   - clk: meson: meson8b: add the fractional divider for -- vid_pll_dco
->>   - clk: meson: meson8b: add the read-only video clock trees
->>
->>  drivers/clk/meson/meson8b.c | 746 +++++++++++++++++++++++++++++++++++-
->>  drivers/clk/meson/meson8b.h |  54 ++-
->>  2 files changed, 789 insertions(+), 11 deletions(-)
+
+* Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Mon, Dec 03, 2018 at 11:22:00AM +0100, Ingo Molnar wrote:
+> > Go over the tools/ files that are maintained in Arnaldo's tree and
+> > fix common typos: half of them were in comments, the other half
+> > in JSON files.
+> > 
+> > ( Care should be taken not to re-import these typos in the future,
+> >   if the JSON files get updated by the vendor without fixing the typos. )
 > 
-> Looks good to me
+> >  .../perf/pmu-events/arch/x86/broadwell/cache.json  |  4 +--
+> >  .../pmu-events/arch/x86/broadwell/pipeline.json    |  2 +-
+> >  .../pmu-events/arch/x86/broadwellde/cache.json     |  4 +--
+> >  .../pmu-events/arch/x86/broadwellde/pipeline.json  |  2 +-
+> >  .../perf/pmu-events/arch/x86/broadwellx/cache.json |  4 +--
+> >  .../pmu-events/arch/x86/broadwellx/pipeline.json   |  2 +-
+> >  tools/perf/pmu-events/arch/x86/jaketown/cache.json |  4 +--
+> >  .../pmu-events/arch/x86/jaketown/pipeline.json     |  2 +-
+> >  .../pmu-events/arch/x86/knightslanding/cache.json  | 30 +++++++++++-----------
+> >  .../pmu-events/arch/x86/sandybridge/cache.json     |  4 +--
+> >  .../pmu-events/arch/x86/sandybridge/pipeline.json  |  2 +-
+> >  .../pmu-events/arch/x86/skylakex/uncore-other.json | 12 ++++-----
 > 
-> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
+> Yeah, so I think those are generated from somewhere, fixing them here
+> isn't going to nessecarily help much.
 
-Same,
+It's in our source code, the output is visible to our users, so such 
+typos should be fixed.
 
-Applied to next-drivers !
+But yes, I agree that the fixes should also be applied at the Intel 
+source of the JSON definitions.
 
-I'll be great when we finally have video support on Meson8/Meson8b !
+Thanks,
 
-Neil
+	Ingo
