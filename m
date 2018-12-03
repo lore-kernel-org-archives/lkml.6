@@ -2,146 +2,130 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0556C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D6CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 624752087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F7432087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:58:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="T5H3EayT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624752087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eK2EQLqr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7432087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeLCU5z (ORCPT
+        id S1726122AbeLCU6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:57:55 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:19087 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbeLCU5k (ORCPT
+        Mon, 3 Dec 2018 15:58:40 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37076 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbeLCU6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:57:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1543870660; x=1575406660;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=lowe9NWClqF4E9Y9BpuPy3f7/a/C7Daf2aZ8bK5IdEg=;
-  b=T5H3EayTfLgQn7BluF7cj9Z++NZH/KcMymlz/7Wi/RHyy8sfuOKaS3Ni
-   4YpxGg9e2kNV2adTe+R4CQH/J5ZhYMYA26dDRgVNQTYjkJ/qb77N0T0H/
-   mOk1OaBkyN11hiVpNcmoA2BYO4r9WYjLylZ1I4OHILwoXqTzToNVax9zH
-   3y4DdhAl+u4JPZoDeshS0p/juyfnsaFnR1i1D/WTxCxoBg+CghG2pw6zL
-   xRcifJfqtG7LgU68JGtVyyd1qtTA7ICtDM99m8XwOGd+4gFHwYKFw1+Cr
-   U7AfVmlg1cpZDFb+k0QtlomBklnWol5FwfF3sUIlq5jDYtZS2UEZQinPW
-   g==;
-X-IronPort-AV: E=Sophos;i="5.56,311,1539619200"; 
-   d="scan'208";a="100519859"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2018 04:57:39 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 03 Dec 2018 12:39:55 -0800
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 03 Dec 2018 12:57:39 -0800
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Anup Patel <anup@brainfault.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: [PATCH 2/4] RISC-V: Support per-hart timebase-frequency
-Date:   Mon,  3 Dec 2018 12:57:29 -0800
-Message-Id: <1543870651-16669-3-git-send-email-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543870651-16669-1-git-send-email-atish.patra@wdc.com>
-References: <1543870651-16669-1-git-send-email-atish.patra@wdc.com>
+        Mon, 3 Dec 2018 15:58:39 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h15so12016054edb.4;
+        Mon, 03 Dec 2018 12:58:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3TjY3JWxdN3/18b9FENgNpkOG6/DFzbiy3Q1rL9wrR4=;
+        b=eK2EQLqrqT3U6tTkIigQ3nYIi9V+OJ9VoHQ72VljO5poz2VGk8+kJ8bmuXe650t1zs
+         FAMYs6LUkL1DoBh+OV6D43igmhMAIjASg1eeGp32mJx+lUP4TKfQXlvdu5m3h3SvH5Hf
+         gxNSRYKrOFEr8WpFftNNlJOwn5OUhMP3GiMH5UvcTz9Icgef7JfcbYlESseblzAyWdoN
+         K5D84KrPmTzUCOY2XNaxUFBowoWUsV4cvRyGBjRrpCoKJ0xv7arXNu+iOR7g9Cvb2X0z
+         acbwa8EzzLeilIVT1asrlBv0Ca+Sa+w5WnyFmPrsSkOtyqEhAUPevOa83ooUAkqd5qqe
+         WwPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3TjY3JWxdN3/18b9FENgNpkOG6/DFzbiy3Q1rL9wrR4=;
+        b=kjLV2G5azHAKxCyODevW1oVOtH/nhk045m67OeULnye6uabKd95CJmPJJRu7TEV0xd
+         QbLoLjNi8l5j2pAJRYazFpLG+xDNcQ+vn2SfK5tMf7/aTswBF3vw47hBssXPbUm3Cqqz
+         wreiHtV+HS0KWXYp9E06/2h9wF1367XB8sD+vkKKGSgKa3wJXtxMuCu1Q3vFg1urweqv
+         hVS1sIUHPmyFLeirce63yHw/Iv3IgmFdYe+AkRwvSmtBj09NQYj76vu8rkp48DXxIfJK
+         HN8eo8bc7S8wJRX95zoQ3+WYgsto6z1gIy/wHSMtoKdAn+CvCNN4+rrF8GD3GfiZuzGU
+         PiDw==
+X-Gm-Message-State: AA+aEWbNp6IU7u7LG3htvGwXhwfeLc2TMOZV+RiZs1k7OFTtmWbgX48J
+        D6AYAJnuM4CQtz7WI5kwqyQDCc9IDjk=
+X-Google-Smtp-Source: AFSGD/WMWTB2dTi58E5OxTsZF0JX6bmZAQwXQEDEvQe7PJaAaMdeaoN76UoT5tHsUZM+pBBwzOrllw==
+X-Received: by 2002:a50:b0e5:: with SMTP id j92mr14813776edd.188.1543870717497;
+        Mon, 03 Dec 2018 12:58:37 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id e53sm4158738ede.90.2018.12.03.12.58.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 12:58:36 -0800 (PST)
+Date:   Mon, 3 Dec 2018 20:58:36 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-acpi@vger.kernel.org,
+        devel@linuxdriverproject.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michal Such??nek <msuchanek@suse.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH RFCv2 1/4] mm/memory_hotplug: Introduce memory block types
+Message-ID: <20181203205836.7xpab6ljc3kngrqm@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181130175922.10425-1-david@redhat.com>
+ <20181130175922.10425-2-david@redhat.com>
+ <20181201012507.lxfscl6ho3gc6gnn@master>
+ <af797dbb-0537-19ec-ef31-d72a3f979791@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af797dbb-0537-19ec-ef31-d72a3f979791@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow the updated DT specs and read the timebase-frequency
-from the boot cpu. Keep the old DT reading as well for backward
-compatibility. This patch is rework of old patch from Palmer.
+[...]
+>>>
+>>> +	if (type == MEMORY_BLOCK_NONE)
+>>> +		return -EINVAL;
+>> 
+>> No one will pass in this value. Can we omit this check for now?
+>
+>I could move it to patch nr 2 I guess, but as I introduce
+>MEMORY_BLOCK_NONE here it made sense to keep it in here.
+>
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/kernel/time.c          |  9 +--------
- drivers/clocksource/riscv_timer.c | 22 ++++++++++++++++++++++
- 2 files changed, 23 insertions(+), 8 deletions(-)
+Yes, this make sense to me now.
 
-diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
-index 1911c8f6..225fe743 100644
---- a/arch/riscv/kernel/time.c
-+++ b/arch/riscv/kernel/time.c
-@@ -20,14 +20,7 @@ unsigned long riscv_timebase;
- 
- void __init time_init(void)
- {
--	struct device_node *cpu;
--	u32 prop;
--
--	cpu = of_find_node_by_path("/cpus");
--	if (!cpu || of_property_read_u32(cpu, "timebase-frequency", &prop))
--		panic(KERN_WARNING "RISC-V system with no 'timebase-frequency' in DTS\n");
--	riscv_timebase = prop;
-+	timer_probe();
- 
- 	lpj_fine = riscv_timebase / HZ;
--	timer_probe();
- }
-diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
-index 084e97dc..96af7058 100644
---- a/drivers/clocksource/riscv_timer.c
-+++ b/drivers/clocksource/riscv_timer.c
-@@ -83,6 +83,26 @@ void riscv_timer_interrupt(void)
- 	evdev->event_handler(evdev);
- }
- 
-+static long __init riscv_timebase_frequency(struct device_node *node)
-+{
-+	u32 timebase;
-+
-+	if (!of_property_read_u32(node, "timebase-frequency", &timebase))
-+		return timebase;
-+
-+	/*
-+	 * As per the DT specification, timebase-frequency should be present
-+	 * under individual cpu node. Unfortunately, there are already available
-+	 * HiFive Unleashed devices where the timebase-frequency entry is under
-+	 * CPUs. check under parent "cpus" node to cover those devices.
-+	 */
-+	if (!of_property_read_u32(node->parent, "timebase-frequency",
-+				  &timebase))
-+		return timebase;
-+
-+	panic("RISC-V system with no 'timebase-frequency' in DTS\n");
-+}
-+
- static int __init riscv_timer_init_dt(struct device_node *n)
- {
- 	int cpuid, hartid, error;
-@@ -94,6 +114,8 @@ static int __init riscv_timer_init_dt(struct device_node *n)
- 	if (cpuid != smp_processor_id())
- 		return 0;
- 
-+	/* This should be called only for boot cpu */
-+	riscv_timebase = riscv_timebase_frequency(n);
- 	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
- 	clocksource_register_hz(cs, riscv_timebase);
- 
+>(and I think at least for now it makes sense to not squash patch 1 and
+>2, to easier discuss the new user interface/concept introduced in this
+>patch).
+>
+>Thanks!
+>
+>-- 
+>
+>Thanks,
+>
+>David / dhildenb
+
 -- 
-2.7.4
-
+Wei Yang
+Help you, Help me
