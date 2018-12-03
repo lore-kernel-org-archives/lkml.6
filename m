@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E710C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C47AFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B6A214E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B6A214E0
+	by mail.kernel.org (Postfix) with ESMTP id 883C121486
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:57:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 883C121486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbeLCJ5i (ORCPT
+        id S1726279AbeLCJ5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:57:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32792 "EHLO
+        Mon, 3 Dec 2018 04:57:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32828 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbeLCJ5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:57:37 -0500
+        id S1725888AbeLCJ5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 04:57:41 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5ADF169E;
-        Mon,  3 Dec 2018 01:57:17 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F1491713;
+        Mon,  3 Dec 2018 01:57:22 -0800 (PST)
 Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 992C33F59C;
-        Mon,  3 Dec 2018 01:57:13 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F35443F59C;
+        Mon,  3 Dec 2018 01:57:17 -0800 (PST)
 From:   Quentin Perret <quentin.perret@arm.com>
 To:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
@@ -42,9 +42,9 @@ Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
         edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
         currojerez@riseup.net, javi.merino@kernel.org,
         quentin.perret@arm.com
-Subject: [PATCH v10 09/15] sched: Introduce sched_energy_present static key
-Date:   Mon,  3 Dec 2018 09:56:22 +0000
-Message-Id: <20181203095628.11858-10-quentin.perret@arm.com>
+Subject: [PATCH v10 10/15] sched: Introduce a sysctl for Energy Aware Scheduling
+Date:   Mon,  3 Dec 2018 09:56:23 +0000
+Message-Id: <20181203095628.11858-11-quentin.perret@arm.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181203095628.11858-1-quentin.perret@arm.com>
 References: <20181203095628.11858-1-quentin.perret@arm.com>
@@ -55,119 +55,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to make sure Energy Aware Scheduling (EAS) will not impact
-systems where no Energy Model is available, introduce a static key
-guarding the access to EAS code. Since EAS is enabled on a
-per-root-domain basis, the static key is enabled when at least one root
-domain meets all conditions for EAS.
+In its current state, Energy Aware Scheduling (EAS) starts automatically
+on asymmetric platforms having an Energy Model (EM). However, there are
+users who want to have an EM (for thermal management for example), but
+don't want EAS with it.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+In order to let users disable EAS explicitly, introduce a new sysctl
+called 'sched_energy_aware'. It is enabled by default so that EAS can
+start automatically on platforms where it makes sense. Flipping it to 0
+rebuilds the scheduling domains and disables EAS.
+
 Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- kernel/sched/sched.h    |  4 ++++
- kernel/sched/topology.c | 28 ++++++++++++++++++++++++----
- 2 files changed, 28 insertions(+), 4 deletions(-)
+ Documentation/sysctl/kernel.txt | 12 ++++++++++++
+ include/linux/sched/sysctl.h    |  7 +++++++
+ kernel/sched/topology.c         | 29 +++++++++++++++++++++++++++++
+ kernel/sysctl.c                 | 11 +++++++++++
+ 4 files changed, 59 insertions(+)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 6236081d68bf..8decb3bc0e3f 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2298,3 +2298,7 @@ unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned
- #else
- #define perf_domain_span(pd) NULL
- #endif
+diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
+index 37a679501ddc..36bee799ee9e 100644
+--- a/Documentation/sysctl/kernel.txt
++++ b/Documentation/sysctl/kernel.txt
+@@ -78,6 +78,7 @@ show up in /proc/sys/kernel:
+ - reboot-cmd                  [ SPARC only ]
+ - rtsig-max
+ - rtsig-nr
++- sched_energy_aware
+ - seccomp/                    ==> Documentation/userspace-api/seccomp_filter.rst
+ - sem
+ - sem_next_id		      [ sysv ipc ]
+@@ -872,6 +873,17 @@ rtsig-nr shows the number of RT signals currently queued.
+ 
+ ==============================================================
+ 
++sched_energy_aware:
 +
-+#ifdef CONFIG_SMP
-+extern struct static_key_false sched_energy_present;
++Enables/disables Energy Aware Scheduling (EAS). EAS starts
++automatically on platforms where it can run (that is,
++platforms with asymmetric CPU topologies and having an Energy
++Model available). If your platform happens to meet the
++requirements for EAS but you do not want to use it, change
++this value to 0.
++
++==============================================================
++
+ sched_schedstats:
+ 
+ Enables/disables scheduler statistics. Enabling this feature
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index a9c32daeb9d8..99ce6d728df7 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -83,4 +83,11 @@ extern int sysctl_schedstats(struct ctl_table *table, int write,
+ 				 void __user *buffer, size_t *lenp,
+ 				 loff_t *ppos);
+ 
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++extern unsigned int sysctl_sched_energy_aware;
++extern int sched_energy_aware_handler(struct ctl_table *table, int write,
++				 void __user *buffer, size_t *lenp,
++				 loff_t *ppos);
 +#endif
++
+ #endif /* _LINUX_SCHED_SYSCTL_H */
 diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 70492d4bfed6..24d211ca384d 100644
+index 24d211ca384d..1639d4a0e8b4 100644
 --- a/kernel/sched/topology.c
 +++ b/kernel/sched/topology.c
-@@ -201,6 +201,7 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
- 	return 1;
- }
+@@ -203,9 +203,35 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
  
-+DEFINE_STATIC_KEY_FALSE(sched_energy_present);
+ DEFINE_STATIC_KEY_FALSE(sched_energy_present);
  #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++unsigned int sysctl_sched_energy_aware = 1;
  DEFINE_MUTEX(sched_energy_mutex);
  bool sched_energy_update;
-@@ -273,6 +274,19 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
- 	free_pd(pd);
- }
  
-+static void sched_energy_set(bool has_eas)
++#ifdef CONFIG_PROC_SYSCTL
++int sched_energy_aware_handler(struct ctl_table *table, int write,
++			 void __user *buffer, size_t *lenp, loff_t *ppos)
 +{
-+	if (!has_eas && static_branch_unlikely(&sched_energy_present)) {
-+		if (sched_debug())
-+			pr_info("%s: stopping EAS\n", __func__);
-+		static_branch_disable_cpuslocked(&sched_energy_present);
-+	} else if (has_eas && !static_branch_unlikely(&sched_energy_present)) {
-+		if (sched_debug())
-+			pr_info("%s: starting EAS\n", __func__);
-+		static_branch_enable_cpuslocked(&sched_energy_present);
++	int ret, state;
++
++	if (write && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	if (!ret && write) {
++		state = static_branch_unlikely(&sched_energy_present);
++		if (state != sysctl_sched_energy_aware) {
++			mutex_lock(&sched_energy_mutex);
++			sched_energy_update = 1;
++			rebuild_sched_domains();
++			sched_energy_update = 0;
++			mutex_unlock(&sched_energy_mutex);
++		}
 +	}
++
++	return ret;
 +}
++#endif
 +
- /*
-  * EAS can be used on a root domain if it meets all the following conditions:
-  *    1. an Energy Model (EM) is available;
-@@ -299,7 +313,7 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
- #define EM_MAX_COMPLEXITY 2048
- 
- extern struct cpufreq_governor schedutil_gov;
--static void build_perf_domains(const struct cpumask *cpu_map)
-+static bool build_perf_domains(const struct cpumask *cpu_map)
+ static void free_pd(struct perf_domain *pd)
  {
- 	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
- 	struct perf_domain *pd = NULL, *tmp;
-@@ -365,7 +379,7 @@ static void build_perf_domains(const struct cpumask *cpu_map)
- 	if (tmp)
- 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+ 	struct perf_domain *tmp;
+@@ -322,6 +348,9 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
+ 	struct cpufreq_policy *policy;
+ 	struct cpufreq_governor *gov;
  
--	return;
-+	return !!pd;
- 
- free:
- 	free_pd(pd);
-@@ -373,6 +387,8 @@ static void build_perf_domains(const struct cpumask *cpu_map)
- 	rcu_assign_pointer(rd->pd, NULL);
- 	if (tmp)
- 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
++	if (!sysctl_sched_energy_aware)
++		goto free;
 +
-+	return false;
- }
- #else
- static void free_pd(struct perf_domain *pd) { }
-@@ -2116,6 +2132,7 @@ static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
- void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 			     struct sched_domain_attr *dattr_new)
- {
-+	bool __maybe_unused has_eas = false;
- 	int i, j, n;
- 	int new_topology;
- 
-@@ -2179,14 +2196,17 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 	for (i = 0; i < ndoms_new; i++) {
- 		for (j = 0; j < n && !sched_energy_update; j++) {
- 			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
--			    cpu_rq(cpumask_first(doms_cur[j]))->rd->pd)
-+			    cpu_rq(cpumask_first(doms_cur[j]))->rd->pd) {
-+				has_eas = true;
- 				goto match3;
-+			}
- 		}
- 		/* No match - add perf. domains for a new rd */
--		build_perf_domains(doms_new[i]);
-+		has_eas |= build_perf_domains(doms_new[i]);
- match3:
- 		;
- 	}
-+	sched_energy_set(has_eas);
+ 	/* EAS is enabled for asymmetric CPU capacity topologies. */
+ 	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
+ 		if (sched_debug()) {
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index cc02050fd0c4..481309a11174 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -466,6 +466,17 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= &one,
+ 	},
  #endif
- 
- 	/* Remember the new sched domains: */
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++	{
++		.procname	= "sched_energy_aware",
++		.data		= &sysctl_sched_energy_aware,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= sched_energy_aware_handler,
++		.extra1		= &zero,
++		.extra2		= &one,
++	},
++#endif
+ #ifdef CONFIG_PROVE_LOCKING
+ 	{
+ 		.procname	= "prove_locking",
 -- 
 2.19.2
 
