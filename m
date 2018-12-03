@@ -2,137 +2,138 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CC8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 810CEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B94CB208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:41:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ehBx1d8E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94CB208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4476620661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:44:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4476620661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726058AbeLCTlc (ORCPT
+        id S1726071AbeLCToI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:41:32 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:39822 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeLCTlc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:41:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Y1cnbX/J0Nz0q9+u6/6yEe6wMlQM7Y2RfshC0XQOvdo=; b=ehBx1d8EPWTkDEeyyMkaUW3i0J
-        nqwQgbCgKvcFsu1sjrtaud/UQjCw2iAgVihXT9D2wSyITV931n1wU9k2aJZGzqyao1EaaoaFZcg6M
-        T82Zvsr/RkFjrgFKHZlk7chFLdKHUZ6K2QGiLz3EA4/H4UQF3XSZZCqA3HHa/+44Q8ARnE7sVMAsv
-        1GhyXtaXTuKSnDv8JBvKtDC4sjEmKU9rpw+59e8wy4xGBtobqflAUOa6l5Chnf1asTnZrJBetig7H
-        fLQYKvmZS+qvtgiMSleBkeT6emwtwk83F4nxSOzdIevKzS6u4hJlgGQCZNxdRbn6p49u7gxwO6FiY
-        9zcdI/BA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTu5t-0002YO-KG; Mon, 03 Dec 2018 19:41:25 +0000
-Subject: Re: [PATCH v9 2/3] x86: add support for Huawei WMI hotkeys.
-To:     Ayman Bagabas <ayman.bagabas@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kailang Yang <kailang@realtek.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20181203185344.3521-1-ayman.bagabas@gmail.com>
- <20181203185344.3521-3-ayman.bagabas@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9d6d8211-6fdf-bfe4-82b5-272d67fbae23@infradead.org>
-Date:   Mon, 3 Dec 2018 11:41:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 3 Dec 2018 14:44:08 -0500
+Received: from mga06.intel.com ([134.134.136.31]:60580 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbeLCToH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:44:07 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 11:44:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
+   d="scan'208";a="115705703"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Dec 2018 11:44:02 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gTu8P-0005TP-E4; Mon, 03 Dec 2018 21:44:01 +0200
+Date:   Mon, 3 Dec 2018 21:44:01 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/15] i2c-multi-instantiate: Adapt for INT3515 and
+ alike
+Message-ID: <20181203194401.GA10650@smile.fi.intel.com>
+References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181203185344.3521-3-ayman.bagabas@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/18 10:53 AM, Ayman Bagabas wrote:
-> This driver adds support for missing hotkeys on some Huawei laptops.
-> Laptops such as the Matebook X have non functioning hotkeys. Whereas
-> newer laptops such as the Matebook X Pro come with working hotkeys out
-> of the box.
+On Wed, Nov 28, 2018 at 01:45:20PM +0200, Andy Shevchenko wrote:
+> Currently i2c-multi-instantiate driver does not support the case
+> of INT3515 USB PD device, where:
 > 
-> Old laptops, such as the Matebook X, report hotkey events through ACPI
-> device "\WMI0". However, new laptops, such as the Matebook X Pro,
-> does not have this WMI device.
+> - Interrupt() is used instead of GpioInt()
+> - All slaves may be the same from IP point of view
+> - There can be variadic amount of slaves
 > 
-> All the hotkeys on the Matebook X Pro work fine
-> without this patch except (micmute, wlan, and huawei key). These keys
-> and the brightness keys report events to "\AMW0" ACPI device. One
-> problem is that brightness keys on the Matebook X Pro work without this
-> patch. This results in reporting two brightness key press
-> events one is captured by ACPI and another by this driver.
+> This series is addressing all above.
 > 
-> A solution would be to check if such event came from the "\AMW0" WMI driver
-> then skip reporting event. Another solution would be to leave this to
-> user-space to handle. Which can be achieved by using "hwdb" tables and
-> remap those keys to "unknown". This solution seems more natural to me
-> because it leaves the decision to user-space.
+> Note, series has been smoke tested (Heikki would do BAT or more)
+> on Intel Coffee Lake system.
 > 
-> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
-> ---
->  drivers/platform/x86/Kconfig      |  16 +++
->  drivers/platform/x86/Makefile     |   1 +
->  drivers/platform/x86/huawei-wmi.c | 226 ++++++++++++++++++++++++++++++
->  3 files changed, 243 insertions(+)
->  create mode 100644 drivers/platform/x86/huawei-wmi.c
+> The idea is to push this either through PDx86 tree (needs Rafael's ACKs) or ACPI.
+> In any case it needs tags from Heikki, Hans, Mika, Wolfram and Jonathan.
 > 
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 87f70e8f4dd0..27db3ce7a1e1 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1292,6 +1292,22 @@ config INTEL_ATOMISP2_PM
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called intel_atomisp2_pm.
->  
-> +config HUAWEI_WMI
-> +	tristate "Huawei WMI hotkeys driver"
-> +	depends on ACPI_WMI
-> +	depends on INPUT
-> +	select INPUT_SPARSEKMAP
-> +	select LEDS_CLASS
+> Testing and comments are warmly welcome.
 
-but LEDS_CLASS is only available if NEW_LEDS is set/enabled, so it either
-depends on LEDS_CLASS... or it needs to select NEW_LEDS, which is what other
-drivers in this Kconfig file do, even though our b.d. has said a few times
-that any one driver should not "select" => enable an entire subsystem,
-so they all should be "depends on NEW_LEDS" IMHO.
+Thank you everyone, who helped with this series, pushed to my review and testing queue!
 
-> +	select LEDS_TRIGGERS
-> +	select LEDS_TRIGGER_AUDIO
-> +	help
-> +	  This driver provides support for Huawei WMI hotkeys.
-> +	  It enables the missing keys and adds support to the micmute
-> +	  LED found on some of these laptops.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called huawei-wmi.
-> +
->  endif # X86_PLATFORM_DEVICES
->  
->  config PMC_ATOM
-
+> 
+> In v5:
+> - unmess with patches 3 and 4 (there were squashed by my mistake)
+> - other than above no code change from v4
+> 
+> In v4:
+> - directly return -EPROBE_DEFER from i2c_acpi_new_device()
+> - due to above split error handling simplification to separate patches
+> 
+> In v3:
+> - revisit error codes returned by i2c_acpi_new_device() (Hans, Mika)
+> - add documentation to exported i2c_acpi_get_i2c_resource() (Mika)
+> - drop Hans' Rb tag in patch 5 due to changes
+> - append Mika's Ab tag to patch 6
+> 
+> In v2:
+> - drop patches to copy fwnode and to handle BOSC0200 device
+> - append check for amount of devices listed in the driver's mapping
+> - add Rb tag given by Hans
+> 
+> Andy Shevchenko (15):
+>   platform/x86: intel_cht_int33fe: Remove duplicate NULL check
+>   platform/x86: intel_cht_int33fe: Accept errors of
+>     i2c_acpi_new_device()
+>   platform/x86: i2c-multi-instantiate: Accept errors of
+>     i2c_acpi_new_device()
+>   platform/x86: i2c-multi-instantiate: Defer probe when no adapter found
+>   i2c: acpi: Return error pointers from i2c_acpi_new_device()
+>   platform/x86: intel_cht_int33fe: Get rid of obsolete conditional
+>   platform/x86: i2c-multi-instantiate: Get rid of obsolete conditional
+>   i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
+>   i2c: acpi: Introduce i2c_acpi_get_i2c_resource() helper
+>   platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
+>   platform/x86: i2c-multi-instantiate: Distinguish IRQ resource type
+>   platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
+>   platform/x86: i2c-multi-instantiate: Allow to have same slaves
+>   ACPI / scan: Create platform device for INT3515 ACPI nodes
+>   iio: inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
+> 
+>  drivers/acpi/scan.c                          |  1 +
+>  drivers/i2c/i2c-core-acpi.c                  | 64 +++++++++----
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c   | 16 ++--
+>  drivers/platform/x86/i2c-multi-instantiate.c | 97 ++++++++++++++++----
+>  drivers/platform/x86/intel_cht_int33fe.c     | 20 ++--
+>  drivers/usb/typec/tps6598x.c                 |  8 +-
+>  include/linux/acpi.h                         | 11 +++
+>  7 files changed, 157 insertions(+), 60 deletions(-)
+> 
+> --
+> 2.19.2
+> 
 
 -- 
-~Randy
+With Best Regards,
+Andy Shevchenko
+
+
