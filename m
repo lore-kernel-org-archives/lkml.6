@@ -2,133 +2,123 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9991C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06884C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 769A5208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B09B2208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:37:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FSxNsW9L";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FSxNsW9L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769A5208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KUDtwD77"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09B2208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbeLCTgV (ORCPT
+        id S1726041AbeLCThm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:36:21 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49316 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbeLCTgV (ORCPT
+        Mon, 3 Dec 2018 14:37:42 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36226 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbeLCThm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:36:21 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E18186130A; Mon,  3 Dec 2018 19:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543865779;
-        bh=C429LUGU4RujiL0uhFxLkb9tu7GRexYLkN5vub8F8tk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FSxNsW9L3i/Kx5HHEq63o8x6QO6TBzPeNvdtZf6XK7rYQPhE7j+nk0nUMbBhOb7x+
-         4Li9AgSrPTylbbsDELfN9P+lk4+4QiVVz88GfLiQ6PbMG431W64lkTGmdich+2eZ7p
-         q2G2p5FibWsaBOD8FDAES8xVqof1JyUJ1DbLvQ08=
-Received: from [10.204.79.19] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: prsood@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88E55602F4;
-        Mon,  3 Dec 2018 19:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543865779;
-        bh=C429LUGU4RujiL0uhFxLkb9tu7GRexYLkN5vub8F8tk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FSxNsW9L3i/Kx5HHEq63o8x6QO6TBzPeNvdtZf6XK7rYQPhE7j+nk0nUMbBhOb7x+
-         4Li9AgSrPTylbbsDELfN9P+lk4+4QiVVz88GfLiQ6PbMG431W64lkTGmdich+2eZ7p
-         q2G2p5FibWsaBOD8FDAES8xVqof1JyUJ1DbLvQ08=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88E55602F4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=prsood@codeaurora.org
-Subject: Re: [PATCH] percpu_rwsem: fix missed wakeup due to reordering of load
-To:     Davidlohr Bueso <dbueso@suse.de>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, sramana@codeaurora.org
-References: <1543590656-7157-1-git-send-email-prsood@codeaurora.org>
- <734eb2ec2c3aeba1c4d054c1fceacef1@suse.de>
-From:   Prateek Sood <prsood@codeaurora.org>
-Message-ID: <7803e498-5fc8-9b72-3e1b-76005f7673a3@codeaurora.org>
-Date:   Tue, 4 Dec 2018 01:06:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Dec 2018 14:37:42 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b85so6903597pfc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 11:37:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XpMyzjGkH0BtMJuD/epBPGdByPRB26CjbrPIHVKA3no=;
+        b=KUDtwD77gOhDkTcQ4iHv/XEYUPTwhPtkqZD+4pqJ3ocMck+9Suogbz8nKndXUQOk26
+         t6VgVVeI6vUdSWMeguvX0I880lLuGaXHfMZ1AtRLBAz3wD5GqZ5a2P0woZaWPQ1S/CRd
+         zycyyD5j4/GX/UEpuztpS9JV5ryC0Cfmynwlg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XpMyzjGkH0BtMJuD/epBPGdByPRB26CjbrPIHVKA3no=;
+        b=NpSEFToF6/ehDkvAwD95y/uPlxKV2hT73MoawvpqW+4ZPpksOyqr5dcAHyQnEOCjmo
+         i6XQnRP2qXSimx39cCknZM2ktaur2jqaG0FTraxuMi3W98oYlPuMMowcrs1MGhHEf3SI
+         JeHQFFcEd7noGCwby/KSlO/tkaTzkwEIo6/zl6YnH/zM2eDY10YBCqAW08SGlRGRnjuG
+         9td85ShBbyZZjY0pPNfUhrZa7Y+XvIjD24XV+iTRggbVi6bU0Cw+aI9KFfTfSXhwMPBK
+         1AEKEVJ4Y619oMnNoFTFivvOKI08vVTIIpmtcrTP3oE3vPqwWnVeyFB69peUThOvfrOm
+         cL5Q==
+X-Gm-Message-State: AA+aEWYqGbE3n89utrv5prejxUpEbTk4V5I6YDlMdWLr2xCL0Y6RDDIR
+        dOrjc4j53KH3e8KWLsVZhPuOeA==
+X-Google-Smtp-Source: AFSGD/VFBtm8Ha0A/zUxUAnxgoxre6fRn6tdxgbjN4zgGrDfkXFdl1ABQOnnuYHMG9XUPOKtgALC6A==
+X-Received: by 2002:a63:d208:: with SMTP id a8mr14089311pgg.77.1543865860957;
+        Mon, 03 Dec 2018 11:37:40 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id h64sm2792202pfc.142.2018.12.03.11.37.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 11:37:40 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: sdm845: Add videocc node
+Date:   Mon,  3 Dec 2018 11:36:29 -0800
+Message-Id: <20181203193629.58505-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
-In-Reply-To: <734eb2ec2c3aeba1c4d054c1fceacef1@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/2018 12:08 PM, Davidlohr Bueso wrote:
-> On 2018-11-30 07:10, Prateek Sood wrote:
->> In a scenario where cpu_hotplug_lock percpu_rw_semaphore is already
->> acquired for read operation by P1 using percpu_down_read().
->>
->> Now we have P1 in the path of releaseing the cpu_hotplug_lock and P2
->> is in the process of acquiring cpu_hotplug_lock.
->>
->> P1                                               P2
->> percpu_up_read() path                      percpu_down_write() path
->>
->>                                           rcu_sync_enter() //gp_state=GP_PASSED
->>
->> rcu_sync_is_idle() //returns false        down_write(rw_sem)
->>
->> __percpu_up_read()
->>
->> [L] task = rcu_dereference(w->task) //NULL
->>
->> smp_rmb()                                  [S] w->task = current
->>
->>                                             smp_mb()
->>
->>                                            [L] readers_active_check() //fails
->>                          schedule()
->>
->> [S] __this_cpu_dec(read_count)
->>
->> Since load of task can result in NULL. This can lead to missed wakeup
->> in rcuwait_wake_up(). Above sequence violated the following constraint
->> in rcuwait_wake_up():
->>
->>      WAIT                WAKE
->> [S] tsk = current      [S] cond = true
->> MB (A)                        MB (B)
->> [L] cond          [L] tsk
->>
-> 
-> Hmm yeah we don't want rcu_wake_up() to get hoisted over the __this_cpu_dec(read_count). The smp_rmb() does not make sense to me here in the first place. Did you run into this scenario by code inspection or you actually it the issue?
-> 
-> Thanks,
-> Davidlohr
+From: Taniya Das <tdas@codeaurora.org>
 
-I have checked one issue where it seems that cpu hotplug code
-path is not able to get cpu_hotplug_lock in write mode and there
-is a reader pending for cpu hotplug path to release
-percpu_rw_semaphore->rwsem to acquire cpu_hotplug_lock.
-This caused a deadlock.
+This adds the video clock controller node to sdm845 based on the examples
+in the bindings.
 
-From code inspection also it seems to be not adhering to arm64
-smp_rmb() constraint of load/load-store ordering guarantee.
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
+Changes in v2:
+- Add #reset-cells = <1>.
+- Sort properly.
 
-Thanks,
-Prateek
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 1419b0098cb3..3f6bf5750918 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
+ #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
++#include <dt-bindings/clock/qcom,videocc-sdm845.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/phy/phy-qcom-qusb2.h>
+ #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+@@ -1256,6 +1257,14 @@
+ 			};
+ 		};
+ 
++		videocc: clock-controller@ab00000 {
++			compatible = "qcom,sdm845-videocc";
++			reg = <0xab00000 0x10000>;
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		dispcc: clock-controller@af00000 {
+ 			compatible = "qcom,sdm845-dispcc";
+ 			reg = <0xaf00000 0x10000>;
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+2.20.0.rc1.387.gf8505762e3-goog
+
