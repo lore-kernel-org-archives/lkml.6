@@ -2,333 +2,114 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA00C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B05C4C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFFE320850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFE320850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DFF62082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:39:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OPsWPqJg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFF62082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbeLCKi5 (ORCPT
+        id S1726238AbeLCKkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:38:57 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57598 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbeLCKi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:38:56 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CD0CD20CFB; Mon,  3 Dec 2018 11:38:24 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 95F2720786;
-        Mon,  3 Dec 2018 11:38:14 +0100 (CET)
-Date:   Mon, 3 Dec 2018 11:38:14 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Hao Zhang <hao5781286@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 6/6] ARM: PWM: add allwinner sun8i R40/T3/V40 PWM
- support.
-Message-ID: <20181203103814.go7f6pftigmpb7md@flea>
-References: <20181125162319.GA5422@arx-s1>
- <20181127080733.4e6rljjta3azf2rf@flea>
- <CAJeuY7-U=EF_FCe2jmBB-Otuemp_rcMPs=g7ipPi=YP4qy5mtg@mail.gmail.com>
+        Mon, 3 Dec 2018 05:40:05 -0500
+Received: from mail-eopbgr130059.outbound.protection.outlook.com ([40.107.13.59]:64000
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725888AbeLCKkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 05:40:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Iza7EY/YdE6rH9Q99IhKXkPwdKUJgILZA70+rBpRQP8=;
+ b=OPsWPqJgW+tSAjcmwYolCCqyz9HsZnEe1ALypQFrziqH2Qg0BoegEBTOpzK7exGUKV94SesU/uROj++sXu1HV7Rrs6BYR+3q6wQJNlgkNXy8Dt5NFqih2hWMVBlENqHIIZXGiojnYbjh02K+we6nAT1vqUvFuRYy4btP1Bd8QB0=
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
+ AM6PR04MB4503.eurprd04.prod.outlook.com (20.176.242.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.22; Mon, 3 Dec 2018 10:39:33 +0000
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::29b5:b3ed:3854:cf1c]) by AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::29b5:b3ed:3854:cf1c%5]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
+ 10:39:33 +0000
+From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>
+CC:     Leo Li <leoyang.li@nxp.com>, "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>,
+        "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Subject: [PATCHv2 0/2] PCI: ls_pcie_g4: add 2 workarounds
+Thread-Topic: [PATCHv2 0/2] PCI: ls_pcie_g4: add 2 workarounds
+Thread-Index: AQHUivR6IMiPKGn5wE6sdRg0Ft7iRQ==
+Date:   Mon, 3 Dec 2018 10:39:33 +0000
+Message-ID: <20181203104000.48626-1-Zhiqiang.Hou@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR02CA0167.apcprd02.prod.outlook.com
+ (2603:1096:201:1f::27) To AM6PR04MB5781.eurprd04.prod.outlook.com
+ (2603:10a6:20b:aa::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=zhiqiang.hou@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB4503;6:Ws35877RU7KSnZan9s8o7zIxbyc6OpYEHe+0ocK82h0t6uzmT6zMhVozC2849ZMcybTgWZXJ3vMI+ZiiZO8ur1+ZmoPuMHBDKnu2bxOYf/MQ6UbqOXZb1CJ8V9qVvtzT9MUUiPHeeMJQxCw88+28rL8I/sThv9Cqkgz2mHbs3DdUT1BXiPps43SPKkQZ/2EDyuk3pI6fEQJPgGhsD2GnTnIfx3cTjFcsajiSEFi4ABaZjQ+81pZeBZWPW6RfmIDVFM6TBJvJyOA+yjS6pex9LDpcQ8LxCW6YKzYMydfbo3cMKuS50mAmHDLhubc08DcUE+Jsr7LlrKrd86+eml6XkERxonYU89Jnd7Os6npq+BPMeMPnTeCvbkHtCpnegubbODTaqWyKm6CD/p2n3iANgC5AxnaP4k1iVyOz7F4VW9rmhcGbzmohRycJdLB5igi7H6wYYiBneMPkZ0D7GE7/Gg==;5:7VSHD2N7SWqi77xh0th5hQgps8fBBz+LBj23PXphDdD7S0s5Hk2309VXcNdpDwrWYd14pqLSh5CDdTQglrtQD5NdOc3uHLlTYOaY3fHhSKOxNNWASMfhSu8f9cDMtmmpslbfgAWVOvFKf2tu6J1qbFWPreNpPwGxscyVkDd+wtg=;7:i4xRYaC/xtF+ftbLvhFZEd+2YDfAr72qGibMWGU1eN3NsW+1oylB6P+ohgvXwrABHLojzXpdjKypVK0r6UC4zIPEmLk2ogt76hPQO7i+7JMUEAx1ahLTl1fRgiBu3vpKvNCAnlzYKza+TY5I+D/ehQ==
+x-ms-office365-filtering-correlation-id: 65b24655-91cc-40f6-824c-08d6590b9c85
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4503;
+x-ms-traffictypediagnostic: AM6PR04MB4503:
+x-microsoft-antispam-prvs: <AM6PR04MB450368404983202DD034A94584AE0@AM6PR04MB4503.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4503;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4503;
+x-forefront-prvs: 08756AC3C8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(376002)(346002)(39860400002)(199004)(189003)(3846002)(2501003)(478600001)(97736004)(6116002)(53936002)(966005)(4326008)(25786009)(6512007)(5660300001)(86362001)(1076002)(7736002)(14454004)(6306002)(386003)(6506007)(186003)(26005)(256004)(486006)(102836004)(8936002)(6486002)(8676002)(2201001)(81166006)(81156014)(36756003)(99286004)(52116002)(68736007)(54906003)(14444005)(316002)(110136005)(105586002)(2906002)(106356001)(71190400001)(476003)(2616005)(6436002)(66066001)(305945005)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4503;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ppdB2Ezd6JM4VUydViK3kcw7DJ0lzL1FvkODeeGlj0onMUL2GgHeSl2uxfN5rvVWaCqYhZbMTO15yizGkGPYOEOS7ZzL1T3MlrRtkRJ0l2e1Hj9dDNGxUkQDoSYNs1LGhhrE7CNSBBsYZJHJy93gJJ6j4yVh/q5l5JcN0LmtBG397ZiAaGyb5XwiO/eIMTEMOcs5jKTVlWOkIwk1WlBbku+rUSLxJlNXasLe460DlGZrbUbnnsRbLnbAXcJS2OpiPNcuAiB/DfGWB83yUbCIdSqIo6HzSGrui/sGMxMPtm2mM5Ob6F/Q793PdcEi3aL0C8nFq/FIGCpVfV8Gecnvga/8pfKf21yS5Ab6AGRxn1M=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jarscmyeczx74665"
-Content-Disposition: inline
-In-Reply-To: <CAJeuY7-U=EF_FCe2jmBB-Otuemp_rcMPs=g7ipPi=YP4qy5mtg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65b24655-91cc-40f6-824c-08d6590b9c85
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 10:39:33.0715
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4503
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
---jarscmyeczx74665
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset adds 2 workarounds for NXP Layerscape Gen4 PCIe controller
+driver.
 
-Hi,
+Hou Zhiqiang (2):
+  PCI: mobiveil: ls_pcie_g4: add Workaround for A-011577
+  PCI: mobiveil: ls_pcie_g4: add Workaround for A-011451
 
-On Sat, Dec 01, 2018 at 11:23:40PM +0800, Hao Zhang wrote:
-> > > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > > index 504d252..6105ac8 100644
-> > > --- a/drivers/pwm/Kconfig
-> > > +++ b/drivers/pwm/Kconfig
-> > > @@ -426,7 +426,7 @@ config PWM_STMPE
-> > >         expanders.
-> > >
-> > >  config PWM_SUN4I
-> > > -     tristate "Allwinner PWM support"
-> > > +     tristate "Allwinner SUN4I PWM support"
-> >
-> > That should be a separate patch.
-> >
-> > (also, your patch series don't seem to have the threading properly
-> > configured, you might want to fix that.)
->
-> Do you mean i should fix it like this ?
-> config sunxi pwm
-> |
-> |---->config PWM_SUN4I
-> |---->config PWM_SUN8I_R40
+depends on patchset:
+ https://patchwork.ozlabs.org/project/linux-pci/list/?series=3D76942
 
-No, I meant for your mails, sorry. Each patch should be sent in reply
-to your cover letter, and they are all sent as separate mails, which
-makes it hard to track.
-
-I'm not sure how you're sending your patches, but using git send-email
-this would be using --no-chain-reply-to --thread if I remember well.
-
-> > >  config PWM_TEGRA
-> > >       tristate "NVIDIA Tegra PWM support"
-> > >       depends on ARCH_TEGRA
-> > > diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> > > index 9c676a0..32c8d2d 100644
-> > > --- a/drivers/pwm/Makefile
-> > > +++ b/drivers/pwm/Makefile
-> > > @@ -43,6 +43,7 @@ obj-$(CONFIG_PWM_STM32)             +=3D pwm-stm32.o
-> > >  obj-$(CONFIG_PWM_STM32_LP)   +=3D pwm-stm32-lp.o
-> > >  obj-$(CONFIG_PWM_STMPE)              +=3D pwm-stmpe.o
-> > >  obj-$(CONFIG_PWM_SUN4I)              +=3D pwm-sun4i.o
-> > > +obj-$(CONFIG_PWM_SUN8I)              +=3D pwm-sun8i.o
-> > >  obj-$(CONFIG_PWM_TEGRA)              +=3D pwm-tegra.o
-> > >  obj-$(CONFIG_PWM_TIECAP)     +=3D pwm-tiecap.o
-> > >  obj-$(CONFIG_PWM_TIEHRPWM)   +=3D pwm-tiehrpwm.o
-> > > diff --git a/drivers/pwm/pwm-sun8i.c b/drivers/pwm/pwm-sun8i.c
-> > > new file mode 100644
-> > > index 0000000..d8597e4
-> > > --- /dev/null
-> > > +++ b/drivers/pwm/pwm-sun8i.c
-> > > @@ -0,0 +1,418 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +// Copyright (C) 2018 Hao Zhang <hao5781286@gmail.com>
-> > > +
-> > > +#include <linux/bitops.h>
-> > > +#include <linux/clk.h>
-> > > +#include <linux/clk-provider.h>
-> > > +#include <linux/delay.h>
-> > > +#include <linux/err.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/of_device.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/pwm.h>
-> > > +#include <linux/slab.h>
-> > > +#include <linux/spinlock.h>
-> > > +#include <linux/time.h>
-> > > +#include <linux/regmap.h>
-> > > +
-> > > +#define PWM_IRQ_ENABLE_REG   0x0000
-> > > +#define PCIE(ch)             BIT(ch)
-> > > +
-> > > +#define PWM_IRQ_STATUS_REG   0x0004
-> > > +#define PIS(ch)                      BIT(ch)
-> > > +
-> > > +#define CAPTURE_IRQ_ENABLE_REG       0x0010
-> > > +#define CRIE(ch)             BIT((ch) * 2)
-> > > +#define CFIE(ch)             BIT((ch) * 2 + 1)
-> > > +
-> > > +#define CAPTURE_IRQ_STATUS_REG       0x0014
-> > > +#define CRIS(ch)             BIT((ch) * 2)
-> > > +#define CFIS(ch)             BIT((ch) * 2 + 1)
-> > > +
-> > > +#define CLK_CFG_REG(ch)              (0x0020 + ((ch) >> 1) * 4)
-> > > +#define CLK_SRC_SEL          GENMASK(8, 7)
-> > > +#define CLK_SRC_BYPASS_SEC   BIT(6)
-> > > +#define CLK_SRC_BYPASS_FIR   BIT(5)
-> > > +#define CLK_GATING           BIT(4)
-> > > +#define CLK_DIV_M            GENMASK(3, 0)
-> > > +
-> > > +#define PWM_DZ_CTR_REG(ch)   (0x0030 + ((ch) >> 1) * 4)
-> > > +#define PWM_DZ_INTV          GENMASK(15, 8)
-> > > +#define PWM_DZ_EN            BIT(0)
-> > > +
-> > > +#define PWM_ENABLE_REG               0x0040
-> > > +#define PWM_EN(ch)           BIT(ch)
-> > > +
-> > > +#define CAPTURE_ENABLE_REG   0x0044
-> > > +#define CAP_EN(ch)           BIT(ch)
-> > > +
-> > > +#define PWM_CTR_REG(ch)              (0x0060 + (ch) * 0x20)
-> > > +#define PWM_PERIOD_RDY               BIT(11)
-> > > +#define PWM_PUL_START                BIT(10)
-> > > +#define PWM_MODE             BIT(9)
-> > > +#define PWM_ACT_STA          BIT(8)
-> > > +#define PWM_PRESCAL_K                GENMASK(7, 0)
-> > > +
-> > > +#define PWM_PERIOD_REG(ch)   (0x0064 + (ch) * 0x20)
-> > > +#define PWM_ENTIRE_CYCLE     GENMASK(31, 16)
-> > > +#define PWM_ACT_CYCLE                GENMASK(15, 0)
-> > > +
-> > > +#define PWM_CNT_REG(ch)              (0x0068 + (ch) * 0x20)
-> > > +#define PWM_CNT_VAL          GENMASK(15, 0)
-> > > +
-> > > +#define CAPTURE_CTR_REG(ch)  (0x006c + (ch) * 0x20)
-> > > +#define CAPTURE_CRLF         BIT(2)
-> > > +#define CAPTURE_CFLF         BIT(1)
-> > > +#define CAPINV                       BIT(0)
-> > > +
-> > > +#define CAPTURE_RISE_REG(ch) (0x0070 + (ch) * 0x20)
-> > > +#define CAPTURE_CRLR         GENMASK(15, 0)
-> > > +
-> > > +#define CAPTURE_FALL_REG(ch) (0x0074 + (ch) * 0x20)
-> > > +#define CAPTURE_CFLR         GENMASK(15, 0)
-> > > +
-> > > +struct sun8i_pwm_chip {
-> > > +     struct pwm_chip chip;
-> > > +     struct clk *clk;
-> > > +     void __iomem *base;
-> > > +     const struct sun8i_pwm_data *data;
-> > > +     struct regmap *regmap;
-> > > +};
-> > > +
-> > > +static struct sun8i_pwm_chip *to_sun8i_pwm_chip(struct pwm_chip *chi=
-p)
-> > > +{
-> > > +     return container_of(chip, struct sun8i_pwm_chip, chip);
-> > > +}
-> > > +
-> > > +static u32 sun8i_pwm_read(struct sun8i_pwm_chip *sun8i_pwm,
-> > > +                       unsigned long offset)
-> > > +{
-> > > +     u32 val;
-> > > +
-> > > +     regmap_read(sun8i_pwm->regmap, offset, &val);
-> > > +     return val;
-> > > +}
-> > > +
-> > > +static void sun8i_pwm_set_bit(struct sun8i_pwm_chip *sun8i_pwm,
-> > > +                           unsigned long reg, u32 bit)
-> > > +{
-> > > +     regmap_update_bits(sun8i_pwm->regmap, reg, bit, bit);
-> > > +}
-> > > +
-> > > +static void sun8i_pwm_clear_bit(struct sun8i_pwm_chip *sun8i_pwm,
-> > > +                             unsigned long reg, u32 bit)
-> > > +{
-> > > +     regmap_update_bits(sun8i_pwm->regmap, reg, bit, 0);
-> > > +}
-> > > +
-> > > +static void sun8i_pwm_set_value(struct sun8i_pwm_chip *sun8i_pwm,
-> > > +                             unsigned long reg, u32 mask, u32 val)
-> > > +{
-> > > +     regmap_update_bits(sun8i_pwm->regmap, reg, mask, val);
-> > > +}
-> > > +
-> > > +static void sun8i_pwm_set_polarity(struct sun8i_pwm_chip *chip, u32 =
-ch,
-> > > +                                enum pwm_polarity polarity)
-> > > +{
-> > > +     if (polarity =3D=3D PWM_POLARITY_NORMAL)
-> > > +             sun8i_pwm_set_bit(chip, PWM_CTR_REG(ch), PWM_ACT_STA);
-> > > +     else
-> > > +             sun8i_pwm_clear_bit(chip, PWM_CTR_REG(ch), PWM_ACT_STA);
-> > > +}
-> > > +
-> > > +static int sun8i_pwm_config(struct sun8i_pwm_chip *sun8i_pwm, u8 ch,
-> > > +                         struct pwm_state *state)
-> > > +{
-> > > +     u64 clk_rate, clk_div, val;
-> > > +     u16 prescaler =3D 0;
-> > > +     u16 div_id =3D 0;
-> > > +     struct clk *clk;
-> > > +     bool is_clk;
-> > > +     int ret;
-> > > +
-> > > +     clk_rate =3D clk_get_rate(sun8i_pwm->clk);
-> > > +
-> > > +     /* check period and select clock source */
-> > > +     val =3D state->period * clk_rate;
-> > > +     do_div(val, NSEC_PER_SEC);
-> > > +     is_clk =3D devm_clk_name_match(sun8i_pwm->clk, "mux-0");
-> > > +     if (val <=3D 1 && is_clk) {
-> > > +             clk =3D devm_clk_get(sun8i_pwm->chip.dev, "mux-1");
-> > > +             if (IS_ERR(clk)) {
-> > > +                     dev_err(sun8i_pwm->chip.dev,
-> > > +                             "Period expects a larger value\n");
-> > > +                     return -EINVAL;
-> > > +             }
-> > > +
-> > > +             clk_rate =3D clk_get_rate(clk);
-> > > +             val =3D state->period * clk_rate;
-> > > +             do_div(val, NSEC_PER_SEC);
-> > > +             if (val <=3D 1) {
-> > > +                     dev_err(sun8i_pwm->chip.dev,
-> > > +                             "Period expects a larger value\n");
-> > > +                     return -EINVAL;
-> > > +             }
-> > > +
-> > > +             /* change clock source to "mux-1" */
-> > > +             clk_disable_unprepare(sun8i_pwm->clk);
-> > > +             devm_clk_put(sun8i_pwm->chip.dev, sun8i_pwm->clk);
-> > > +             sun8i_pwm->clk =3D clk;
-> > > +
-> > > +             ret =3D clk_prepare_enable(sun8i_pwm->clk);
-> > > +             if (ret) {
-> > > +                     dev_err(sun8i_pwm->chip.dev,
-> > > +                             "Failed to enable PWM clock\n");
-> > > +                     return ret;
-> > > +             }
-> > > +
-> > > +     } else {
-> > > +             dev_err(sun8i_pwm->chip.dev,
-> > > +                     "Period expects a larger value\n");
-> > > +             return -EINVAL;
-> > > +     }
-> > > +
-> > > +     is_clk =3D devm_clk_name_match(sun8i_pwm->clk, "mux-0");
-> > > +     if (is_clk)
-> > > +             sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
-> > > +                                 CLK_SRC_SEL, 0 << 7);
-> > > +     else
-> > > +             sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
-> > > +                                 CLK_SRC_SEL, 1 << 7);
-> > > +
-> > > +     dev_info(sun8i_pwm->chip.dev, "clock source freq:%lldHz\n", clk=
-_rate);
-> >
-> > This is pretty much reimplementing the clock framework. I guess you'd
-> > be better off just modeling this clock as a clock registered in the
-> > framework. It will take care by itself of the combination of muxing
-> > and rate, and making sure the parent clocks are properly enabled when
-> > needed.
->
-> Do you mean i should move it to ccu clock framwork?
-
-You don't need to move it anywhere, you can declare a clock in a
-driver, without being in drivers/clk. We're doing that in the DRM or
-the RTC drivers for example.
-
-Maxime
+ .../controller/mobiveil/pci-layerscape-gen4.c | 52 +++++++++++++++++++
+ .../controller/mobiveil/pcie-mobiveil-host.c  | 17 +++++-
+ .../pci/controller/mobiveil/pcie-mobiveil.h   |  7 +++
+ 3 files changed, 75 insertions(+), 1 deletion(-)
 
 --=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.1
 
---jarscmyeczx74665
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAUHlgAKCRDj7w1vZxhR
-xSEZAP9s8GQnJF+F077xd0Pq69DcSkeNw88GOn6HtaBuoeDbZQD/YuWukaV1aKg7
-LURT/DdEqaEHNz9Mw07ocPZNgPG+SQU=
-=P+LB
------END PGP SIGNATURE-----
-
---jarscmyeczx74665--
