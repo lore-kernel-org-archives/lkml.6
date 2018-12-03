@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B7DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20001C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E89120850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5FF4214C1
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IX1aMkR4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E89120850
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ES13xdpa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FF4214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbeLCNcZ (ORCPT
+        id S1726497AbeLCNc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:32:25 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35489 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeLCNcY (ORCPT
+        Mon, 3 Dec 2018 08:32:28 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36153 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeLCNc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:32:24 -0500
-Received: by mail-qt1-f195.google.com with SMTP id v11so13657811qtc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:31:22 -0800 (PST)
+        Mon, 3 Dec 2018 08:32:27 -0500
+Received: by mail-qk1-f194.google.com with SMTP id o125so7285089qkf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:31:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dMs6Mb/3EH6NUddI4Qk37lptneQwe896iQcc6U4t5qc=;
-        b=IX1aMkR49adgWwDGCUFOduoMyliyULnW1mVjUixl9fBhZ17qW9z3vlEpJGLUait8y6
-         /Wa3Cqp00fMO752D082/hqMoEWFtM1Zn7qLUEC1OvWH4Xb+Lwn8SUOb0y0duzXdZxGxt
-         FDZD/s2lgACH9n6j9hnUTEy4IZLirFEgy1FHI=
+        bh=nFtnXOJk34JsfWJZd01m3ADJA/D8osfUhgPthbLAvEM=;
+        b=ES13xdpahgCvbqHWUtmELY1obONm+Y+3+JXt50FkCXB/4HGKn13Z+qkCgs/EjvZ6g7
+         qmUbvuWVoc9h2x5GdehV3PvYW53kwkGzBRn/2PLyJjLhxxaUZredZoxqDJobBPFPbXwo
+         R+0EI3NNt2z8nkopYhdts/bWzPq2Yeb7deKTI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dMs6Mb/3EH6NUddI4Qk37lptneQwe896iQcc6U4t5qc=;
-        b=P56EH989vWBqeQdFgO7bqXcQXoTOXB/ayR91CeRr79HXoSGWJnuW2BXFAvEbF+rlvA
-         7SbjOzJosELi4Uh4jLzPsInBp1/sfVfbe5KwVxs84uqURNfKtwTlJ1rhMc5VUuVfHX9z
-         Lr+Yp9foODW7/q+PDbLY0pDQyR8wVyLXHRW6UGbMu3i/AIFyBgZsHam4eVZY1UnaD2e0
-         ee91y/inzi4ykfFiSYpSLMqi0wdID5xLv4OhKx7ciHyBWuqZ36aH7NeR0X+3K+WiRmRE
-         wxXob+9MdXjwoDtP/30tzG0sg4QHlmCoJMTtrx/LvMoqefVC+0vVuqFLSGhMesutEZ51
-         gNIQ==
-X-Gm-Message-State: AA+aEWZD7Yp7AWoZz4STbBi5TVKSj66DXQ9jtW9LTW2r9jr84wNE6XwJ
-        cbJdh83NEPZkTKGGrylVXpUvmg==
-X-Google-Smtp-Source: AFSGD/X57eWSm5mA9V6GnIK2ehxgh1bC3H9G0j3FZa/p/5rmmiualH8uPtmG/HHwpUd7AYLeTOrKsw==
-X-Received: by 2002:ad4:510f:: with SMTP id g15mr16041641qvp.46.1543843881781;
-        Mon, 03 Dec 2018 05:31:21 -0800 (PST)
+        bh=nFtnXOJk34JsfWJZd01m3ADJA/D8osfUhgPthbLAvEM=;
+        b=dFA1p6q4OhocTqgSQarHWr+OLCBVvdFfbeK24xOwbj9NhupUplQLD0c0GVvU+ouSNq
+         DczBO6cljAWp3X4L0Wu8MyexyQVsQQdparB21nzlxRr/zAn6isbpjHwGsCT47ux6x9EC
+         vw2JIRf8ZGerzzzJx9q5KZJoHnkr1K187AmtHosh3vR1GuhWu5KySS817c17qOrOT1YV
+         6dk+XVlVSVYoEsMN/cKr8D3re/C7CEm8NUjl1GIIC439ZyxKH0LQnUVFzXHV1xmfJI9Q
+         5Nid3eBhznjMXfzW18xGHyQBHOmR14e/4TJ+HkiTr4y7WpaokHiUyxqIHyXUzB14BANR
+         pQEQ==
+X-Gm-Message-State: AA+aEWYwmOnD9EgUX1aVliz07O8MJ0OCb0aa+XaO4Xx/KKMw2BbVD15g
+        FFtj9hyyYUdsfW3BXsa/KKrhWw==
+X-Google-Smtp-Source: AFSGD/WgGQv+2mzKg7LeioLzSmpzbvqbJL31FTj2NGBxiKAWZZ1ngKGyHacrFSjTxqImjVNDxcVtNQ==
+X-Received: by 2002:a37:6f45:: with SMTP id k66mr12779246qkc.313.1543843884761;
+        Mon, 03 Dec 2018 05:31:24 -0800 (PST)
 Received: from workstation.celeiro.br ([138.204.25.29])
-        by smtp.gmail.com with ESMTPSA id r56sm8619112qtj.30.2018.12.03.05.31.19
+        by smtp.gmail.com with ESMTPSA id r56sm8619112qtj.30.2018.12.03.05.31.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 05:31:21 -0800 (PST)
+        Mon, 03 Dec 2018 05:31:24 -0800 (PST)
 From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
 To:     sashal@kernel.org
 Cc:     rafael.tinoco@linaro.org, gregkh@linuxfoundation.org,
         rui.zhang@intel.com, edubezval@gmail.com,
         daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 3/5] thermal/drivers/hisi: Encapsulate register writes into helpers
-Date:   Mon,  3 Dec 2018 11:31:05 -0200
-Message-Id: <20181203133107.4002-4-rafael.tinoco@linaro.org>
+Subject: [PATCH 4/5] thermal/drivers/hisi: Fix configuration register setting
+Date:   Mon,  3 Dec 2018 11:31:06 -0200
+Message-Id: <20181203133107.4002-5-rafael.tinoco@linaro.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181203133107.4002-1-rafael.tinoco@linaro.org>
 References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
@@ -77,170 +77,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-commit 1e11b014271ceccb5ea04ae58f4829ac8209a86d upstream.
+patch b424315a287c70eeb5f920f84c92492bd2f5658e upstream.
 
-Hopefully, the function name can help to clarify the semantic of the operations
-when writing in the register.
+The TEMP0_CFG configuration register contains different field to set up the
+temperature controller. However in the code, nothing prevents a setup to
+overwrite the previous one: eg. writing the hdak value overwrites the sensor
+selection, the sensor selection overwrites the hdak value.
 
-Link: https://bugs.linaro.org/show_bug.cgi?id=4053 (PATCH 3/5)
+In order to prevent such thing, use a regmap-like mechanism by reading the
+value before, set the corresponding bits and write the result.
+
+Link: https://bugs.linaro.org/show_bug.cgi?id=4053 (PATCH 4/5)
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit 1e11b014271ceccb5ea04ae58f4829ac8209a86d)
+(cherry picked from commit b424315a287c70eeb5f920f84c92492bd2f5658e)
 Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
 ---
- drivers/thermal/hisi_thermal.c | 92 ++++++++++++++++++++++++++--------
- 1 file changed, 70 insertions(+), 22 deletions(-)
+ drivers/thermal/hisi_thermal.c | 34 +++++++++++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index 0c2966c285b1..a803043f37ae 100644
+index a803043f37ae..31b52ebf426f 100644
 --- a/drivers/thermal/hisi_thermal.c
 +++ b/drivers/thermal/hisi_thermal.c
-@@ -26,6 +26,7 @@
- 
- #include "thermal_core.h"
- 
-+#define TEMP0_LAG			(0x0)
+@@ -30,6 +30,8 @@
  #define TEMP0_TH			(0x4)
  #define TEMP0_RST_TH			(0x8)
  #define TEMP0_CFG			(0xC)
-@@ -96,6 +97,56 @@ static inline long hisi_thermal_round_temp(int temp)
- 		hisi_thermal_temp_to_step(temp));
++#define TEMP0_CFG_SS_MSK		(0xF000)
++#define TEMP0_CFG_HDAK_MSK		(0x30)
+ #define TEMP0_EN			(0x10)
+ #define TEMP0_INT_EN			(0x14)
+ #define TEMP0_INT_CLR			(0x18)
+@@ -132,19 +134,41 @@ static inline void hisi_thermal_enable(void __iomem *addr, int value)
+ 	writel(value, addr + TEMP0_EN);
  }
  
-+static inline void hisi_thermal_set_lag(void __iomem *addr, int value)
-+{
-+	writel(value, addr + TEMP0_LAG);
-+}
-+
-+static inline void hisi_thermal_alarm_clear(void __iomem *addr, int value)
-+{
-+	writel(value, addr + TEMP0_INT_CLR);
-+}
-+
-+static inline void hisi_thermal_alarm_enable(void __iomem *addr, int value)
-+{
-+	writel(value, addr + TEMP0_INT_EN);
-+}
-+
-+static inline void hisi_thermal_alarm_set(void __iomem *addr, int temp)
-+{
-+	writel(hisi_thermal_temp_to_step(temp) | 0x0FFFFFF00, addr + TEMP0_TH);
-+}
-+
-+static inline void hisi_thermal_reset_set(void __iomem *addr, int temp)
-+{
-+	writel(hisi_thermal_temp_to_step(temp), addr + TEMP0_RST_TH);
-+}
-+
-+static inline void hisi_thermal_reset_enable(void __iomem *addr, int value)
-+{
-+	writel(value, addr + TEMP0_RST_MSK);
-+}
-+
-+static inline void hisi_thermal_enable(void __iomem *addr, int value)
-+{
-+	writel(value, addr + TEMP0_EN);
-+}
-+
-+static inline void hisi_thermal_sensor_select(void __iomem *addr, int sensor)
-+{
-+	writel((sensor << 12), addr + TEMP0_CFG);
-+}
-+
+-static inline void hisi_thermal_sensor_select(void __iomem *addr, int sensor)
 +static inline int hisi_thermal_get_temperature(void __iomem *addr)
-+{
-+	return hisi_thermal_step_to_temp(readl(addr + TEMP0_VALUE));
-+}
-+
-+static inline void hisi_thermal_hdak_set(void __iomem *addr, int value)
-+{
-+	writel(value, addr + TEMP0_CFG);
-+}
-+
- static long hisi_thermal_get_sensor_temp(struct hisi_thermal_data *data,
- 					 struct hisi_thermal_sensor *sensor)
  {
-@@ -104,22 +155,21 @@ static long hisi_thermal_get_sensor_temp(struct hisi_thermal_data *data,
- 	mutex_lock(&data->thermal_lock);
- 
- 	/* disable interrupt */
--	writel(0x0, data->regs + TEMP0_INT_EN);
--	writel(0x1, data->regs + TEMP0_INT_CLR);
-+	hisi_thermal_alarm_enable(data->regs, 0);
-+	hisi_thermal_alarm_clear(data->regs, 1);
- 
- 	/* disable module firstly */
--	writel(0x0, data->regs + TEMP0_EN);
-+	hisi_thermal_enable(data->regs, 0);
- 
- 	/* select sensor id */
--	writel((sensor->id << 12), data->regs + TEMP0_CFG);
-+	hisi_thermal_sensor_select(data->regs, sensor->id);
- 
- 	/* enable module */
--	writel(0x1, data->regs + TEMP0_EN);
-+	hisi_thermal_enable(data->regs, 1);
- 
- 	usleep_range(3000, 5000);
- 
--	val = readl(data->regs + TEMP0_VALUE);
--	val = hisi_thermal_step_to_temp(val);
-+	val = hisi_thermal_get_temperature(data->regs);
- 
- 	mutex_unlock(&data->thermal_lock);
- 
-@@ -136,28 +186,26 @@ static void hisi_thermal_enable_bind_irq_sensor
- 	sensor = &data->sensors;
- 
- 	/* setting the hdak time */
--	writel(0x0, data->regs + TEMP0_CFG);
-+	hisi_thermal_hdak_set(data->regs, 0);
- 
- 	/* disable module firstly */
--	writel(0x0, data->regs + TEMP0_RST_MSK);
--	writel(0x0, data->regs + TEMP0_EN);
-+	hisi_thermal_reset_enable(data->regs, 0);
-+	hisi_thermal_enable(data->regs, 0);
- 
- 	/* select sensor id */
--	writel((sensor->id << 12), data->regs + TEMP0_CFG);
-+	hisi_thermal_sensor_select(data->regs, sensor->id);
- 
- 	/* enable for interrupt */
--	writel(hisi_thermal_temp_to_step(sensor->thres_temp) | 0x0FFFFFF00,
--	       data->regs + TEMP0_TH);
-+	hisi_thermal_alarm_set(data->regs, sensor->thres_temp);
- 
--	writel(hisi_thermal_temp_to_step(HISI_TEMP_RESET),
--	       data->regs + TEMP0_RST_TH);
-+	hisi_thermal_reset_set(data->regs, HISI_TEMP_RESET);
- 
- 	/* enable module */
--	writel(0x1, data->regs + TEMP0_RST_MSK);
--	writel(0x1, data->regs + TEMP0_EN);
-+	hisi_thermal_reset_enable(data->regs, 1);
-+	hisi_thermal_enable(data->regs, 1);
- 
--	writel(0x0, data->regs + TEMP0_INT_CLR);
--	writel(0x1, data->regs + TEMP0_INT_EN);
-+	hisi_thermal_alarm_clear(data->regs, 0);
-+	hisi_thermal_alarm_enable(data->regs, 1);
- 
- 	usleep_range(3000, 5000);
- 
-@@ -169,9 +217,9 @@ static void hisi_thermal_disable_sensor(struct hisi_thermal_data *data)
- 	mutex_lock(&data->thermal_lock);
- 
- 	/* disable sensor module */
--	writel(0x0, data->regs + TEMP0_INT_EN);
--	writel(0x0, data->regs + TEMP0_RST_MSK);
--	writel(0x0, data->regs + TEMP0_EN);
-+	hisi_thermal_enable(data->regs, 0);
-+	hisi_thermal_alarm_enable(data->regs, 0);
-+	hisi_thermal_reset_enable(data->regs, 0);
- 
- 	mutex_unlock(&data->thermal_lock);
+-	writel((sensor << 12), addr + TEMP0_CFG);
++	return hisi_thermal_step_to_temp(readl(addr + TEMP0_VALUE));
  }
+ 
+-static inline int hisi_thermal_get_temperature(void __iomem *addr)
++/*
++ * Temperature configuration register - Sensor selection
++ *
++ * Bits [19:12]
++ *
++ * 0x0: local sensor (default)
++ * 0x1: remote sensor 1 (ACPU cluster 1)
++ * 0x2: remote sensor 2 (ACPU cluster 0)
++ * 0x3: remote sensor 3 (G3D)
++ */
++static inline void hisi_thermal_sensor_select(void __iomem *addr, int sensor)
+ {
+-	return hisi_thermal_step_to_temp(readl(addr + TEMP0_VALUE));
++	writel((readl(addr + TEMP0_CFG) & ~TEMP0_CFG_SS_MSK) |
++	       (sensor << 12), addr + TEMP0_CFG);
+ }
+ 
++/*
++ * Temperature configuration register - Hdak conversion polling interval
++ *
++ * Bits [5:4]
++ *
++ * 0x0 :   0.768 ms
++ * 0x1 :   6.144 ms
++ * 0x2 :  49.152 ms
++ * 0x3 : 393.216 ms
++ */
+ static inline void hisi_thermal_hdak_set(void __iomem *addr, int value)
+ {
+-	writel(value, addr + TEMP0_CFG);
++	writel((readl(addr + TEMP0_CFG) & ~TEMP0_CFG_HDAK_MSK) |
++	       (value << 4), addr + TEMP0_CFG);
+ }
+ 
+ static long hisi_thermal_get_sensor_temp(struct hisi_thermal_data *data,
 -- 
 2.20.0.rc1
 
