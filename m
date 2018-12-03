@@ -2,62 +2,45 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4ACC65BAE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E469AC65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DCF20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:25:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DCF20851
+	by mail.kernel.org (Postfix) with ESMTP id B5115214C1
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5115214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbeLCEZM (ORCPT
+        id S1725987AbeLCEZQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:25:12 -0500
-Received: from mail.windriver.com ([147.11.1.11]:62545 "EHLO
+        Sun, 2 Dec 2018 23:25:16 -0500
+Received: from mail.windriver.com ([147.11.1.11]:62559 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbeLCEZL (ORCPT
+        with ESMTP id S1725790AbeLCEZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:25:11 -0500
+        Sun, 2 Dec 2018 23:25:13 -0500
 Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34Nexc026531
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34P6HT026641
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 2 Dec 2018 20:23:41 -0800 (PST)
+        Sun, 2 Dec 2018 20:25:07 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 2 Dec 2018
- 20:23:40 -0800
+ 20:25:06 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Cory Maccarrone <darkstar6262@gmail.com>,
-        David Dajun Chen <dchen@diasemi.com>,
-        Dong Aisheng <dong.aisheng@linaro.org>,
-        Eric Miao <eric.miao@marvell.com>,
-        Graeme Gregory <gg@slimlogic.co.uk>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>,
-        Jin Park <jinyoungp@nvidia.com>,
-        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@opensource.wolfsonmicro.com>,
-        Mattias Nilsson <mattias.i.nilsson@stericsson.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Mike Rapoport <mike@compulab.co.il>,
-        Tony Lindgren <tony@atomide.com>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        <linux-omap@vger.kernel.org>, <patches@opensource.cirrus.com>,
         Support Opensource <support.opensource@diasemi.com>
-Subject: [PATCH v2 00/22] mfd: demodularization of non-modular drivers
-Date:   Sun, 2 Dec 2018 23:23:07 -0500
-Message-ID: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 07/22] mfd: da9055-core: make it explicitly non-modular
+Date:   Sun, 2 Dec 2018 23:23:14 -0500
+Message-ID: <1543811009-15112-8-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
+References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,136 +48,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[v1 --> v2: add some more commits as requested by Lee (MFD maintainer),
- update the 00/NN text; re-do build and link testing on new linux-next. ]
+The Kconfig currently controlling compilation of this code is:
 
-This group of MFD drivers are all controlled by "bool" Kconfig settings,
-but contain various amounts of largely pointless uses of infrastructure
-related to modular operations, even though they can't be built modular.
+drivers/mfd/Kconfig:config MFD_DA9055
+drivers/mfd/Kconfig-    bool "Dialog Semiconductor DA9055 PMIC Support"
 
-We can easily remove/replace all of it.  We are trying to make driver
-code consistent with the Makefiles/Kconfigs that control them.  This
-means not using modular functions/macros for drivers that can never be
-built as a module.  Some of the downfalls this oversight leads to are:
+...meaning that it currently is not being built as a module by anyone.
 
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding a lot of CPP overhead.
- (4) it gets copied/replicated into other drivers and spreads quickly.
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
 
-What we see in current drivers falls into one or more of the following
-categories:
+The exit function deleted here wasn't even registered with module_exit,
+so it truly was dead code.
 
-1) include of <linux/module.h> when it simply isn't needed
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
 
-2) Use of MODULE_LICENSE, MODULE_DEVICE_TABLE,  MODULE_AUTHOR etc. 
-   macros that are no-ops for non-modular drivers.
+We replace module.h with init.h and export.h ; the latter since the
+file does export some symbols
 
-3) Creation of a module_exit() function that will be compiled and
-   linked in but never actually called for non-modular drivers.
-
-4) Addition of a platform_driver ".remove" function that is bound
-   into the struct but will never be called for non-module use cases.
-
-Solution to #1 --> #3 is simple ; we just delete the related code.
-
-The solution to #4 is similar - we delete the ".remove" function and
-the binding into the platform_driver struct.  However, since the same
-".remove" function could also be triggered by an "unbind" (such as for
-pass-through of a device to a guest instance)  - so we also explicitly
-disable any unbind for the driver.
-
-The unbind mask allows us to ensure we will see if there was some odd
-corner case out there that was relying on it.  Typically it would be a
-multi-port ethernet card passing a port through to a guest, so a
-sensible use case in MFD drivers seems highly unlikely.  This same
-solution has already been used in multiple other mainline subsystems.
-
-Build testing was done on drivers/mfd for allyesconfig on x86_64, ARM
-and ARM-64 on a recent linux-next checkout.
-
-Paul.
-
----
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Cory Maccarrone <darkstar6262@gmail.com>
-Cc: David Dajun Chen <dchen@diasemi.com>
-Cc: Dong Aisheng <dong.aisheng@linaro.org>
-Cc: Eric Miao <eric.miao@marvell.com>
-Cc: Graeme Gregory <gg@slimlogic.co.uk>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
-Cc: Jin Park <jinyoungp@nvidia.com>
-Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Mattias Nilsson <mattias.i.nilsson@stericsson.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>
-Cc: Mike Rapoport <mike@compulab.co.il>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Venu Byravarasu <vbyravarasu@nvidia.com>
-Cc: linux-omap@vger.kernel.org
-Cc: patches@opensource.cirrus.com
 Cc: Support Opensource <support.opensource@diasemi.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/mfd/da9055-core.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-
-Paul Gortmaker (22):
-  mfd: aat2870-core: Make it explicitly non-modular
-  mfd: adp5520: Make it explicitly non-modular
-  mfd: as3711: Make it explicitly non-modular
-  mfd: da903x: Make it explicitly non-modular
-  mfd: da9052-*: Make it explicitly non-modular
-  mfd: da9055-i2c: Make it explicitly non-modular
-  mfd: da9055-core: make it explicitly non-modular
-  mfd: db8500-prcmu: drop unused MODULE_ tags from non-modular code
-  mfd: htc-i2cpld: Make it explicitly non-modular
-  mfd: max8925-core: drop unused MODULE_ tags from non-modular code
-  mfd: rc5t583: Make it explicitly non-modular
-  mfd: sta2x11: drop unused MODULE_ tags from non-modular code
-  mfd: syscon: Make it explicitly non-modular
-  mfd: tps65090: Make it explicitly non-modular
-  mfd: tps65910: Make it explicitly non-modular
-  mfd: tps80031: Make it explicitly non-modular
-  mfd: wm831x-spi: Make it explicitly non-modular
-  mfd: wm831x-i2c: Make it explicitly non-modular
-  mfd: wm831x-core: drop unused MODULE_ tags from non-modular code
-  mfd: wm8350-i2c: Make it explicitly non-modular
-  mfd: wm8350-core: drop unused MODULE_ tags from non-modular code
-  mfd: wm8400-core: Make it explicitly non-modular
-
- drivers/mfd/aat2870-core.c        | 40 +++------------------------------------
- drivers/mfd/adp5520.c             | 30 +++++++----------------------
- drivers/mfd/as3711.c              | 14 --------------
- drivers/mfd/da903x.c              | 26 +++----------------------
- drivers/mfd/da9052-core.c         | 11 -----------
- drivers/mfd/da9052-i2c.c          | 22 ++-------------------
- drivers/mfd/da9052-irq.c          |  1 -
- drivers/mfd/da9052-spi.c          | 22 ++-------------------
- drivers/mfd/da9055-core.c         | 13 ++-----------
- drivers/mfd/da9055-i2c.c          | 24 ++---------------------
- drivers/mfd/db8500-prcmu.c        | 10 ++++------
- drivers/mfd/htc-i2cpld.c          | 18 +-----------------
- drivers/mfd/max8925-core.c        |  7 +------
- drivers/mfd/rc5t583.c             | 14 --------------
- drivers/mfd/sta2x11-mfd.c         | 10 ++++------
- drivers/mfd/syscon.c              | 12 +-----------
- drivers/mfd/tps65090.c            | 30 +++++------------------------
- drivers/mfd/tps65910.c            | 18 +-----------------
- drivers/mfd/tps80031.c            | 37 ++----------------------------------
- drivers/mfd/wm831x-core.c         |  7 ++-----
- drivers/mfd/wm831x-i2c.c          | 20 ++------------------
- drivers/mfd/wm831x-spi.c          | 24 ++---------------------
- drivers/mfd/wm8350-core.c         |  6 ++----
- drivers/mfd/wm8350-i2c.c          | 24 +----------------------
- drivers/mfd/wm8400-core.c         | 18 +++---------------
- include/linux/mfd/da9052/da9052.h |  1 -
- 26 files changed, 52 insertions(+), 407 deletions(-)
-
+diff --git a/drivers/mfd/da9055-core.c b/drivers/mfd/da9055-core.c
+index 177e65a12c12..b55f13061547 100644
+--- a/drivers/mfd/da9055-core.c
++++ b/drivers/mfd/da9055-core.c
+@@ -11,7 +11,8 @@
+  *  option) any later version.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/export.h>
+ #include <linux/device.h>
+ #include <linux/input.h>
+ #include <linux/irq.h>
+@@ -416,13 +417,3 @@ int da9055_device_init(struct da9055 *da9055)
+ 	mfd_remove_devices(da9055->dev);
+ 	return ret;
+ }
+-
+-void da9055_device_exit(struct da9055 *da9055)
+-{
+-	regmap_del_irq_chip(da9055->chip_irq, da9055->irq_data);
+-	mfd_remove_devices(da9055->dev);
+-}
+-
+-MODULE_DESCRIPTION("Core support for the DA9055 PMIC");
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("David Dajun Chen <dchen@diasemi.com>");
 -- 
 2.7.4
 
