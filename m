@@ -2,120 +2,133 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6E3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 895C3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09151214C1
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:41:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09151214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E7DB214C1
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:42:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vFzyy0c9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E7DB214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbeLCKmY (ORCPT
+        id S1726386AbeLCKmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:42:24 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38703 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbeLCKmX (ORCPT
+        Mon, 3 Dec 2018 05:42:32 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:49402 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbeLCKmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:42:23 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h50so10293144ede.5;
-        Mon, 03 Dec 2018 02:41:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Im80WWWkrd2/JvoAz7JLYb++LqOvBai9fapBNVVQADA=;
-        b=NpU4DfHHKjDxh6BaFOvcLqphZvLP22IGM3wV8w2e31FJy4LydRQJS/nOJNQLM+P2T2
-         89b5eYlQk3YkRxvVeMc/vTaSfGtNEztlB600Zx/TulUYvDDaUASxafOry2HRlk48tpFc
-         zlsJOVktum+RH88R3pqqC+a4AmXSfGNegi1/eCVLSa+oAVcBNA8M3ttATTmieySq4gy0
-         R2CTYMyD7CdwwhLEcvNWRHi/7RoKkz9xEW0PQALeaLzpFQ58nwKOfWNrzJUSUwY4bi1t
-         OwM61hJlFr93KtXlt10LvwgFLcsOTEbF9sGxGkjsy2ec6j9KWU33VaXJ7HJxnZD+4zue
-         JOIw==
-X-Gm-Message-State: AA+aEWZR+Dbc98xjcMCzKixfc5fi0DuSnOu3D4aajIXvGUCXYHoFSZoX
-        L9bCV4/stWd1upKVLp2i6KbALwfVuSgVyA==
-X-Google-Smtp-Source: AFSGD/V3C/Hmm7pOvVpbM0WTSBNpSt3D38Wgv0YsiVaGboZ5awKr4QS71h23vT/Y5nDmGXbh+b0svQ==
-X-Received: by 2002:a17:906:738b:: with SMTP id f11-v6mr12519377ejl.219.1543833712185;
-        Mon, 03 Dec 2018 02:41:52 -0800 (PST)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
-        by smtp.gmail.com with ESMTPSA id g37sm3970677edb.85.2018.12.03.02.41.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:41:51 -0800 (PST)
-Received: by mail-wm1-f49.google.com with SMTP id a18so5125829wmj.1;
-        Mon, 03 Dec 2018 02:41:51 -0800 (PST)
-X-Received: by 2002:a1c:e58c:: with SMTP id c134mr7543181wmh.124.1543833711378;
- Mon, 03 Dec 2018 02:41:51 -0800 (PST)
+        Mon, 3 Dec 2018 05:42:32 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB3AdXQ4187966;
+        Mon, 3 Dec 2018 10:41:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2018-07-02; bh=kXqNM+YpGULFy0VCuxdmKrUb+2+MNWPZ6fvMQXcgt/M=;
+ b=vFzyy0c90Ur5jCJ45bsCDSZwstb+0mmpKPgvNTGVK40cN9jU1gsfof1ekITH3lJZItck
+ U49ZM1vtRZA05uFsxfwEYKJAF+0t6TZgatcq4m9MEKfHhQqnTO5NbBgrydkR3Wwp0SwA
+ 7ALOtdmULuf+CS+MN6t/7zA0vtGXMqkYuWUQGNwrpYqvfvnfVVXBbWvkSz/zYM14oVnn
+ dQeTUY24h+cVRu1+1KnW5af7PVSJa0ZhnRwu0FM3L4umVBHxghLKZGsVoKSCVAWPAgqk
+ jY4JZvAIifd4sL/VGoEyMZUI3/VEimWeskrEp5ZDSfHU4krUlqSKp4E+eb5GI9VS9zhk 5w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2p3jxr5drt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Dec 2018 10:41:49 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB3Afnpx016801
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Dec 2018 10:41:49 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB3AfmGL012182;
+        Mon, 3 Dec 2018 10:41:48 GMT
+Received: from unbuntlaptop (/197.157.0.63)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 Dec 2018 02:41:48 -0800
+Date:   Mon, 3 Dec 2018 13:43:39 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Lubomir Rintel <lkundrak@v3.sk>
+Cc:     kbuild-all@01.org, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: Re: [PATCH 4/6] media: ov2680: get rid of extra ifdefs
+Message-ID: <20181203104339.GD3073@unbuntlaptop>
 MIME-Version: 1.0
-References: <20181203101547.16835-1-jagan@amarulasolutions.com> <20181203101547.16835-5-jagan@amarulasolutions.com>
-In-Reply-To: <20181203101547.16835-5-jagan@amarulasolutions.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 3 Dec 2018 18:41:39 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67ocaKL05yt68F+juBeAq8BRQ49mB4uoHWijGRy8duamw@mail.gmail.com>
-Message-ID: <CAGb2v67ocaKL05yt68F+juBeAq8BRQ49mB4uoHWijGRy8duamw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] dt-bindings: input: touchscreen: goodix: Document
- vcc-supply property
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128171918.160643-5-lkundrak@v3.sk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9095 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812030104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 6:16 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> vcc-supply property is need for some Goodix CTP controller like GT5663
-> where 3.3V external pull-up regulator connected via controller VCC pin.
+Hi Lubomir,
 
-"External pull-up regulator" sounds fishy. Chips have power supply
-pins, either combined, or separate rails for analog, digital, and I/O.
-For Goodix chips these are AVDD28, AVDD22, DVDD12, amd VDDIO. The name
-and description you provide match none of these.
+url:    https://github.com/0day-ci/linux/commits/Lubomir-Rintel/media-don-t-ifdef-v4l2_subdev_get_try_format-any-more/20181129-205631
+base:   git://linuxtv.org/media_tree.git master
 
-If a regulator is needed for pull-up resistors on the I2C bus, this
-should be referenced in either the I2C bus master node, or if the I2C
-bus goes through a pin controller, in the pin controller node.
+smatch warnings:
+drivers/media/i2c/ov2680.c:687 ov2680_get_fmt() warn: inconsistent returns 'mutex:&sensor->lock'.
+  Locked on:   line 677
+  Unlocked on: line 670
 
-Putting the reference in the slave device node is wrong, since it
-doesn't actually use it. It becomes even clearer when you have multiple
-slaves on the same bus, and you reference the same regulator in all
-of them.
+# https://github.com/0day-ci/linux/commit/45699a2f04294ea9ca96a3d178232ecae7f607ed
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 45699a2f04294ea9ca96a3d178232ecae7f607ed
+vim +687 drivers/media/i2c/ov2680.c
 
-Or, as a last resort, you could mark it as always-on with a TODO note.
+3ee47cad Rui Miguel Silva 2018-07-03  660  
+3ee47cad Rui Miguel Silva 2018-07-03  661  static int ov2680_get_fmt(struct v4l2_subdev *sd,
+3ee47cad Rui Miguel Silva 2018-07-03  662  			  struct v4l2_subdev_pad_config *cfg,
+3ee47cad Rui Miguel Silva 2018-07-03  663  			  struct v4l2_subdev_format *format)
+3ee47cad Rui Miguel Silva 2018-07-03  664  {
+3ee47cad Rui Miguel Silva 2018-07-03  665  	struct ov2680_dev *sensor = to_ov2680_dev(sd);
+3ee47cad Rui Miguel Silva 2018-07-03  666  	struct v4l2_mbus_framefmt *fmt = NULL;
+3ee47cad Rui Miguel Silva 2018-07-03  667  	int ret = 0;
+3ee47cad Rui Miguel Silva 2018-07-03  668  
+3ee47cad Rui Miguel Silva 2018-07-03  669  	if (format->pad != 0)
+3ee47cad Rui Miguel Silva 2018-07-03  670  		return -EINVAL;
+3ee47cad Rui Miguel Silva 2018-07-03  671  
+3ee47cad Rui Miguel Silva 2018-07-03  672  	mutex_lock(&sensor->lock);
+3ee47cad Rui Miguel Silva 2018-07-03  673  
+3ee47cad Rui Miguel Silva 2018-07-03  674  	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
+3ee47cad Rui Miguel Silva 2018-07-03  675  		fmt = v4l2_subdev_get_try_format(&sensor->sd, cfg, format->pad);
+45699a2f Lubomir Rintel   2018-11-28  676  		if (IS_ERR(fmt))
+45699a2f Lubomir Rintel   2018-11-28  677  			return PTR_ERR(fmt);
+                                                                ^^^^^^^^^^^^^^^^^^^
+goto unlock;
 
-ChenYu
+3ee47cad Rui Miguel Silva 2018-07-03  678  	} else {
+3ee47cad Rui Miguel Silva 2018-07-03  679  		fmt = &sensor->fmt;
+3ee47cad Rui Miguel Silva 2018-07-03  680  	}
+3ee47cad Rui Miguel Silva 2018-07-03  681  
+3ee47cad Rui Miguel Silva 2018-07-03  682  	if (fmt)
+3ee47cad Rui Miguel Silva 2018-07-03  683  		format->format = *fmt;
+3ee47cad Rui Miguel Silva 2018-07-03  684  
+3ee47cad Rui Miguel Silva 2018-07-03  685  	mutex_unlock(&sensor->lock);
+3ee47cad Rui Miguel Silva 2018-07-03  686  
+3ee47cad Rui Miguel Silva 2018-07-03 @687  	return ret;
+3ee47cad Rui Miguel Silva 2018-07-03  688  }
+3ee47cad Rui Miguel Silva 2018-07-03  689  
 
-
-> So, document the same as optional property.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> index f7e95c52f3c7..604766e347ce 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> @@ -23,6 +23,7 @@ Optional properties:
->   - touchscreen-inverted-y  : Y axis is inverted (boolean)
->   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
->                               (swapping is done after inverting the axis)
-> + - vcc-supply          : 3v3 regulator phandle for controller VCC pin
->
->  Example:
->
-> --
-> 2.18.0.321.gffc6fa0e3
->
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
