@@ -2,210 +2,133 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476CDC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3388C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6A920661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:33:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z2z98mdm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6A920661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7927A20661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:33:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7927A20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeLCSdm (ORCPT
+        id S1726979AbeLCSdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:33:42 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37757 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeLCSdl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:33:41 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so6756920wmd.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:33:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cAOpKnHAD5ns1Ky+3IfAiM0nKtdg1D+Gm77eaVPxPaI=;
-        b=Z2z98mdmJ3bsIHZ/nLo6i1c8QG6Gvagej87O0eV/eU7TNH+qQ3w96FJb9TuRpQGNoS
-         CJSJ2HbT5QDZ6mXdXmvo6jE78X8o6NRhBnYlbPaiqERGX3lStrBi8w8c/LTmQuQ2aJwi
-         Uy9b88jK3TlQzYXjcznFq8k4hJL9ZJs6zPWcU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cAOpKnHAD5ns1Ky+3IfAiM0nKtdg1D+Gm77eaVPxPaI=;
-        b=bdi74wJa+tgMeDP70nbTXfJbZbAbDztsN+ZBxeo/qqjSFQ1rKQqex79Ibgg4UwxtMd
-         9LXlkPM/xnNdsQvNmPh0MQ/zCEDC7+g5Q6Ck/LESyAjSTtM49FTXDLiwhCBYng2aEe98
-         E+XVQDtY/56wCZY5ypmao6BniEVlmosp1uydBYZ1q2BzJ9vlQ27i8VVXeIQIkjBW6HnU
-         8zETp4kvWc7ViH2ZpoQtdT5lb58cRu4GH6RAGOHg7Ezj2lOTW/wtTyF0Zsg03xAE+94B
-         rkK72Jaruw1FoI0lz0XfuymUglcJlqQi45MPA6m0A9sa7GPXOpMNAPqGrpRbddB/X4YL
-         Bu9A==
-X-Gm-Message-State: AA+aEWbqHo6CWrc4DbxFC7nwQgqs/jnOJCv+sT3ijZW3CHD0MSysfxbX
-        LSH6j7j62FIOwdvh7Mct0WwqwA==
-X-Google-Smtp-Source: AFSGD/Xni4YIOl7Xbj2epoxFnVWcf0++9wO3312dDrL3hhy7IZ8J4h8PwUboAqxyg92OjltTo4i0NA==
-X-Received: by 2002:a1c:7dd7:: with SMTP id y206mr9335620wmc.50.1543862015879;
-        Mon, 03 Dec 2018 10:33:35 -0800 (PST)
-Received: from [192.168.0.40] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id v133sm8106150wmd.4.2018.12.03.10.33.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 10:33:35 -0800 (PST)
-Subject: Re: v4.14 fix for Hikey 960 unbalanced IRQ enablement
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
-        rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
- <20181203141442.GA19335@kroah.com>
- <dc468512-7a73-3d69-fe9e-d660db85ee5b@linaro.org>
- <20181203151946.GG235790@sasha-vm> <20181203180521.GA15996@kroah.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <6be6e40e-ce45-59ed-85e6-53b338b21dda@linaro.org>
-Date:   Mon, 3 Dec 2018 19:33:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181203180521.GA15996@kroah.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 3 Dec 2018 13:33:45 -0500
+Received: from mga17.intel.com ([192.55.52.151]:60201 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726468AbeLCSdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 13:33:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 10:33:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
+   d="scan'208";a="124688921"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga004.fm.intel.com with ESMTP; 03 Dec 2018 10:33:41 -0800
+Received: from fmsmsx117.amr.corp.intel.com (10.18.116.17) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 3 Dec 2018 10:33:40 -0800
+Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.114]) by
+ fmsmsx117.amr.corp.intel.com ([169.254.3.100]) with mapi id 14.03.0415.000;
+ Mon, 3 Dec 2018 10:33:40 -0800
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Jiang, Dave" <dave.jiang@intel.com>
+Subject: Re: [PATCH 1/2] tools/testing/nvdimm: Align test resources to 128M
+Thread-Topic: [PATCH 1/2] tools/testing/nvdimm: Align test resources to 128M
+Thread-Index: AQHUhCfStNsSgVgLSk+OsXHmGZhVPqVt6zYA
+Date:   Mon, 3 Dec 2018 18:33:39 +0000
+Message-ID: <f2969130eb0ba86b862787ebc8f7e8cc3dd5498a.camel@intel.com>
+References: <154308521932.237140.13650270234597178173.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <154308521932.237140.13650270234597178173.stgit@dwillia2-desk3.amr.corp.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.232.112.170]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D22631333429A147B78D62B09BB3A3A8@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 19:05, Greg KH wrote:
-> On Mon, Dec 03, 2018 at 10:19:46AM -0500, Sasha Levin wrote:
->> On Mon, Dec 03, 2018 at 03:42:41PM +0100, Daniel Lezcano wrote:
->>> On 03/12/2018 15:14, Greg KH wrote:
->>>> On Mon, Dec 03, 2018 at 11:31:02AM -0200, Rafael David Tinoco wrote:
->>>>> Sasha, could you consider including this cherry-picked patchset in v4.14.
->>>>>
->>>>> Kernel v4.14 might suffer from the following unbalanced enablement for the board Hikey 960:
->>>>>
->>>>> Nov  5 12:02:54 hikey kernel: [   22.148194] Unbalanced enable for IRQ 44
->>>>> Nov  5 12:02:54 hikey kernel: [   22.152193] ------------[ cut here ]------------
->>>>> Nov  5 12:02:54 hikey kernel: [   22.156872] WARNING: CPU: 2 PID: 509 at /home/inaddy/work/sources/linux/stable/stable-linux-4.14.y/kernel/irq/manage.c:525 __enable_irq+0x78/0x80
->>>>> Nov  5 12:02:54 hikey kernel: [   22.249606] CPU: 2 PID: 509 Comm: kworker/2:2 Not tainted 4.14.79 #1
->>>>> Nov  5 12:02:54 hikey kernel: [   22.255975] Hardware name: HiKey Development Board (DT)
->>>>> Nov  5 12:02:54 hikey kernel: [   22.261248] Workqueue: events_freezable thermal_zone_device_check
->>>>> Nov  5 12:02:54 hikey kernel: [   22.267368] task: ffff8000616e0e00 task.stack: ffff00000b5f0000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.273312] PC is at __enable_irq+0x78/0x80
->>>>> Nov  5 12:02:54 hikey kernel: [   22.277516] LR is at __enable_irq+0x78/0x80
->>>>> Nov  5 12:02:54 hikey kernel: [   22.281718] pc : [<ffff00000813e010>] lr : [<ffff00000813e010>] pstate: 000001c5
->>>>> Nov  5 12:02:54 hikey kernel: [   22.289129] sp : ffff00000b5f3c80
->>>>> Nov  5 12:02:54 hikey kernel: [   22.292457] x29: ffff00000b5f3c80 x28: 0000000000000000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.297804] x27: ffff80005c139e38 x26: ffff000008a71870
->>>>> Nov  5 12:02:54 hikey kernel: [   22.303148] x25: 0000000000000000 x24: 0000000000000002
->>>>> Nov  5 12:02:54 hikey kernel: [   22.308492] x23: ffff00000b5f3d9c x22: ffff80005d565e88
->>>>> Nov  5 12:02:54 hikey kernel: [   22.313836] x21: 000000000000f980 x20: 000000000000002c
->>>>> Nov  5 12:02:54 hikey kernel: [   22.319181] x19: ffff800061726000 x18: 0000000000000010
->>>>> Nov  5 12:02:54 hikey kernel: [   22.324524] x17: 0000000000000000 x16: 0000000000000000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.329868] x15: ffffffffffffffff x14: ffff000009269c08
->>>>> Nov  5 12:02:54 hikey kernel: [   22.335213] x13: ffff00008940678f x12: ffff000009406797
->>>>> Nov  5 12:02:54 hikey kernel: [   22.340558] x11: ffff000009290000 x10: ffff00000b5f3980
->>>>> Nov  5 12:02:54 hikey kernel: [   22.345902] x9 : 00000000ffffffd0 x8 : ffff00000862c298
->>>>> Nov  5 12:02:54 hikey kernel: [   22.351246] x7 : 6c62616e65206465 x6 : 00000000000001b2
->>>>> Nov  5 12:02:54 hikey kernel: [   22.356589] x5 : 0000000000000000 x4 : 0000000000000000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.361931] x3 : 0000000000000000 x2 : ffff800063e824c8
->>>>> Nov  5 12:02:54 hikey kernel: [   22.367275] x1 : 000080005af95000 x0 : 000000000000001c
->>>>> Nov  5 12:02:54 hikey kernel: [   22.372618] Call trace:
->>>>> Nov  5 12:02:54 hikey kernel: [   22.375088] Exception stack(0xffff00000b5f3b40 to 0xffff00000b5f3c80)
->>>>> Nov  5 12:02:54 hikey kernel: [   22.381560] 3b40: 000000000000001c 000080005af95000 ffff800063e824c8 0000000000000000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.389417] 3b60: 0000000000000000 0000000000000000 00000000000001b2 6c62616e65206465
->>>>> Nov  5 12:02:54 hikey kernel: [   22.397276] 3b80: ffff00000862c298 00000000ffffffd0 ffff00000b5f3980 ffff000009290000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.405136] 3ba0: ffff000009406797 ffff00008940678f ffff000009269c08 ffffffffffffffff
->>>>> Nov  5 12:02:54 hikey kernel: [   22.412994] 3bc0: 0000000000000000 0000000000000000 0000000000000010 ffff800061726000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.420852] 3be0: 000000000000002c 000000000000f980 ffff80005d565e88 ffff00000b5f3d9c
->>>>> Nov  5 12:02:54 hikey kernel: [   22.428710] 3c00: 0000000000000002 0000000000000000 ffff000008a71870 ffff80005c139e38
->>>>> Nov  5 12:02:54 hikey kernel: [   22.436569] 3c20: 0000000000000000 ffff00000b5f3c80 ffff00000813e010 ffff00000b5f3c80
->>>>> Nov  5 12:02:54 hikey kernel: [   22.444426] 3c40: ffff00000813e010 00000000000001c5 0000000000000000 0000000000000000
->>>>> Nov  5 12:02:54 hikey kernel: [   22.452286] 3c60: ffffffffffffffff ffff800061800618 ffff00000b5f3c80 ffff00000813e010
->>>>> Nov  5 12:02:54 hikey kernel: [   22.460144] [<ffff00000813e010>] __enable_irq+0x78/0x80
->>>>> Nov  5 12:02:54 hikey kernel: [   22.465394] [<ffff00000813e058>] enable_irq+0x40/0x78
->>>>> Nov  5 12:02:54 hikey kernel: [   22.470493] [<ffff000000e228a8>] hisi_thermal_get_temp+0x1b0/0x1d8 [hisi_thermal]
->>>>> Nov  5 12:02:54 hikey kernel: [   22.478008] [<ffff0000087121a8>] of_thermal_get_temp+0x38/0x50
->>>>> Nov  5 12:02:54 hikey kernel: [   22.483869] [<ffff000008711790>] thermal_zone_get_temp+0x58/0x80
->>>>> Nov  5 12:02:54 hikey kernel: [   22.489903] [<ffff00000870e7bc>] thermal_zone_device_update.part.4+0x2c/0x1a8
->>>>> Nov  5 12:02:54 hikey kernel: [   22.497066] [<ffff00000870e9c8>] thermal_zone_device_check+0x40/0x50
->>>>> Nov  5 12:02:54 hikey kernel: [   22.503457] [<ffff0000080f1674>] process_one_work+0x19c/0x3d0
->>>>> Nov  5 12:02:54 hikey kernel: [   22.509236] [<ffff0000080f18f4>] worker_thread+0x4c/0x428
->>>>> Nov  5 12:02:54 hikey kernel: [   22.514664] [<ffff0000080f84fc>] kthread+0x134/0x138
->>>>> Nov  5 12:02:54 hikey kernel: [   22.519659] [<ffff000008085154>] ret_from_fork+0x10/0x1c
->>>>> Nov  5 12:02:54 hikey kernel: [   22.524988] ---[ end trace 328d4bb2d9b066a0 ]---
->>>>>
->>>>> This issue was solved when "hisi_thermal_alarm_irq" function was removed so only
->>>>> "hisi_thermal_alarm_irq_thread" would exist. This has fixed the issue for the
->>>>> unbalanced enablement since there is no more:
->>>>>
->>>>> 	disable_irq_nosync(irq);
->>>>> 	data->irq_enabled = false;
->>>>>
->>>>> logic being done in parallel to the threaded handler AND the
->>>>> thermal_zone_device_update() call only happens now if the temperature is already
->>>>> above the threshold.
->>>>>
->>>>
->>>> So should we revert a patch instead of taking these new ones?  Would
->>>> that be easier and is this a "real" issue or just an annoying warning
->>>> splat in the kernel log?
->>>
->>> Actually, this warning is introduced with the driver and all the
->>> plumbers around to fix an irq bouncing. There is no patch to revert
->>> without removing the driver.
->>
->> Greg,
->>
->> Patch 5 in this series seems to explain the best what is happening here:
->>
->>> With the following changes, we fix all in one:
->>>
->>> - Do the setup, one time, at probe time
->>>
->>> - Add the IRQF_ONESHOT, ack the interrupt in the threaded handler
->>>
->>> - Remove the interrupt handler
->>>
->>> - Set the correct value for the LAG register
->>>
->>> - Remove all the irq_enabled stuff in the code as the interruption
->>>   handling is fixed
->>>
->>> - Remove the 3ms delay
->>>
->>> - Reorder the initialization routine to be in the right order
->>
->> We can't revert anything because the breakage was there since the driver
->> was introduced.
-> 
-> So the driver was broken in 4.14, why not just use 4.19 instead?  This
-> isn't a 4.14 regression, it's something that obviously no one has
-> noticed for a year now, so why backport these big patches to 4.14 now?
-
-It was not broken before this series but wobbly with a high latency to
-read the temperature and an unusual interrupt handling scheme to work
-around an uncatched register misconfiguration.
-
-I think it was noticed but without finding the root cause of the issue.
-This one is definitively solved with these patches and the resulting
-code is consistent with the other thermal drivers.
-
-All these patches were applied to Android-4.14 if worth to mention.
-
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+DQpPbiBTYXQsIDIwMTgtMTEtMjQgYXQgMTA6NDYgLTA4MDAsIERhbiBXaWxsaWFtcyB3cm90ZToN
+Cj4gSW4gcHJlcGFyYXRpb24gZm9yIGxpYm52ZGltbSBncm93aW5nIG5ldyByZXN0cmljdGlvbnMg
+dG8gZGV0ZWN0IHNlY3Rpb24NCj4gY29uZmxpY3RzIGJldHdlZW4gcGVyc2lzdGVudCBtZW1vcnkg
+cmVnaW9ucywgZW5hYmxlIG5maXRfdGVzdCB0bw0KPiBhbGxvY2F0ZSBhbGlnbmVkIHJlc291cmNl
+cy4gVXNlIGEgZ2VuX3Bvb2wgdG8gYWxsb2NhdGUgbmZpdF90ZXN0J3MgZmFrZQ0KPiByZXNvdXJj
+ZXMgaW4gYSBzZXBhcmF0ZSBhZGRyZXNzIHNwYWNlIGZyb20gdGhlIHZpcnR1YWwgdHJhbnNsYXRp
+b24gb2YNCj4gdGhlIHNhbWUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gV2lsbGlhbXMgPGRh
+bi5qLndpbGxpYW1zQGludGVsLmNvbT4NCj4gLS0tDQo+ICB0b29scy90ZXN0aW5nL252ZGltbS90
+ZXN0L25maXQuYyB8ICAgMzYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+
+ICAxIGZpbGUgY2hhbmdlZCwgMzQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQoN
+ClRoaXMgbG9va3MgZ29vZCB0byBtZSwNClJldmlld2VkLWJ5OiBWaXNoYWwgVmVybWEgPHZpc2hh
+bC5sLnZlcm1hQGludGVsLmNvbT4NCg0KPiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9udmRp
+bW0vdGVzdC9uZml0LmMgYi90b29scy90ZXN0aW5nL252ZGltbS90ZXN0L25maXQuYw0KPiBpbmRl
+eCAwMWVjMDRiZjkxYjUuLmNhNGU2MWM4NjRkNSAxMDA2NDQNCj4gLS0tIGEvdG9vbHMvdGVzdGlu
+Zy9udmRpbW0vdGVzdC9uZml0LmMNCj4gKysrIGIvdG9vbHMvdGVzdGluZy9udmRpbW0vdGVzdC9u
+Zml0LmMNCj4gQEAgLTE1LDYgKzE1LDcgQEANCj4gICNpbmNsdWRlIDxsaW51eC9kbWEtbWFwcGlu
+Zy5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3dvcmtxdWV1ZS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4
+L2xpYm52ZGltbS5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L2dlbmFsbG9jLmg+DQo+ICAjaW5jbHVk
+ZSA8bGludXgvdm1hbGxvYy5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L2RldmljZS5oPg0KPiAgI2lu
+Y2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiBAQCAtMjE1LDYgKzIxNiw4IEBAIHN0cnVjdCBuZml0
+X3Rlc3Qgew0KPiAgDQo+ICBzdGF0aWMgc3RydWN0IHdvcmtxdWV1ZV9zdHJ1Y3QgKm5maXRfd3E7
+DQo+ICANCj4gK3N0YXRpYyBzdHJ1Y3QgZ2VuX3Bvb2wgKm5maXRfcG9vbDsNCj4gKw0KPiAgc3Rh
+dGljIHN0cnVjdCBuZml0X3Rlc3QgKnRvX25maXRfdGVzdChzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+
+ICB7DQo+ICAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IHRvX3BsYXRmb3JtX2Rldmlj
+ZShkZXYpOw0KPiBAQCAtMTEzMiw2ICsxMTM1LDkgQEAgc3RhdGljIHZvaWQgcmVsZWFzZV9uZml0
+X3Jlcyh2b2lkICpkYXRhKQ0KPiAgCWxpc3RfZGVsKCZuZml0X3Jlcy0+bGlzdCk7DQo+ICAJc3Bp
+bl91bmxvY2soJm5maXRfdGVzdF9sb2NrKTsNCj4gIA0KPiArCWlmIChyZXNvdXJjZV9zaXplKCZu
+Zml0X3Jlcy0+cmVzKSA+PSBESU1NX1NJWkUpDQo+ICsJCWdlbl9wb29sX2ZyZWUobmZpdF9wb29s
+LCBuZml0X3Jlcy0+cmVzLnN0YXJ0LA0KPiArCQkJCXJlc291cmNlX3NpemUoJm5maXRfcmVzLT5y
+ZXMpKTsNCj4gIAl2ZnJlZShuZml0X3Jlcy0+YnVmKTsNCj4gIAlrZnJlZShuZml0X3Jlcyk7DQo+
+ICB9DQo+IEBAIC0xMTQ0LDcgKzExNTAsNyBAQCBzdGF0aWMgdm9pZCAqX190ZXN0X2FsbG9jKHN0
+cnVjdCBuZml0X3Rlc3QgKnQsIHNpemVfdCBzaXplLCBkbWFfYWRkcl90ICpkbWEsDQo+ICAJCQlH
+RlBfS0VSTkVMKTsNCj4gIAlpbnQgcmM7DQo+ICANCj4gLQlpZiAoIWJ1ZiB8fCAhbmZpdF9yZXMp
+DQo+ICsJaWYgKCFidWYgfHwgIW5maXRfcmVzIHx8ICEqZG1hKQ0KPiAgCQlnb3RvIGVycjsNCj4g
+IAlyYyA9IGRldm1fYWRkX2FjdGlvbihkZXYsIHJlbGVhc2VfbmZpdF9yZXMsIG5maXRfcmVzKTsN
+Cj4gIAlpZiAocmMpDQo+IEBAIC0xMTY0LDYgKzExNzAsOCBAQCBzdGF0aWMgdm9pZCAqX190ZXN0
+X2FsbG9jKHN0cnVjdCBuZml0X3Rlc3QgKnQsIHNpemVfdCBzaXplLCBkbWFfYWRkcl90ICpkbWEs
+DQo+ICANCj4gIAlyZXR1cm4gbmZpdF9yZXMtPmJ1ZjsNCj4gICBlcnI6DQo+ICsJaWYgKCpkbWEg
+JiYgc2l6ZSA+PSBESU1NX1NJWkUpDQo+ICsJCWdlbl9wb29sX2ZyZWUobmZpdF9wb29sLCAqZG1h
+LCBzaXplKTsNCj4gIAlpZiAoYnVmKQ0KPiAgCQl2ZnJlZShidWYpOw0KPiAgCWtmcmVlKG5maXRf
+cmVzKTsNCj4gQEAgLTExNzIsOSArMTE4MCwxNiBAQCBzdGF0aWMgdm9pZCAqX190ZXN0X2FsbG9j
+KHN0cnVjdCBuZml0X3Rlc3QgKnQsIHNpemVfdCBzaXplLCBkbWFfYWRkcl90ICpkbWEsDQo+ICAN
+Cj4gIHN0YXRpYyB2b2lkICp0ZXN0X2FsbG9jKHN0cnVjdCBuZml0X3Rlc3QgKnQsIHNpemVfdCBz
+aXplLCBkbWFfYWRkcl90ICpkbWEpDQo+ICB7DQo+ICsJc3RydWN0IGdlbnBvb2xfZGF0YV9hbGln
+biBkYXRhID0gew0KPiArCQkuYWxpZ24gPSBTWl8xMjhNLA0KPiArCX07DQo+ICAJdm9pZCAqYnVm
+ID0gdm1hbGxvYyhzaXplKTsNCj4gIA0KPiAtCSpkbWEgPSAodW5zaWduZWQgbG9uZykgYnVmOw0K
+PiArCWlmIChzaXplID49IERJTU1fU0laRSkNCj4gKwkJKmRtYSA9IGdlbl9wb29sX2FsbG9jX2Fs
+Z28obmZpdF9wb29sLCBzaXplLA0KPiArCQkJCWdlbl9wb29sX2ZpcnN0X2ZpdF9hbGlnbiwgJmRh
+dGEpOw0KPiArCWVsc2UNCj4gKwkJKmRtYSA9ICh1bnNpZ25lZCBsb25nKSBidWY7DQo+ICAJcmV0
+dXJuIF9fdGVzdF9hbGxvYyh0LCBzaXplLCBkbWEsIGJ1Zik7DQo+ICB9DQo+ICANCj4gQEAgLTI4
+MzksNiArMjg1NCwxOCBAQCBzdGF0aWMgX19pbml0IGludCBuZml0X3Rlc3RfaW5pdCh2b2lkKQ0K
+PiAgCQlnb3RvIGVycl9yZWdpc3RlcjsNCj4gIAl9DQo+ICANCj4gKwluZml0X3Bvb2wgPSBnZW5f
+cG9vbF9jcmVhdGUoaWxvZzIoU1pfNE0pLCBOVU1BX05PX05PREUpOw0KPiArCWlmICghbmZpdF9w
+b29sKSB7DQo+ICsJCXJjID0gLUVOT01FTTsNCj4gKwkJZ290byBlcnJfcmVnaXN0ZXI7DQo+ICsJ
+fQ0KPiArDQo+ICsJaWYgKGdlbl9wb29sX2FkZChuZml0X3Bvb2wsIFZNQUxMT0NfU1RBUlQsDQo+
+ICsJCQkJVk1BTExPQ19FTkQgKyAxIC0gVk1BTExPQ19TVEFSVCwgTlVNQV9OT19OT0RFKSkgew0K
+PiArCQlyYyA9IC1FTk9NRU07DQo+ICsJCWdvdG8gZXJyX3JlZ2lzdGVyOw0KPiArCX0NCj4gKw0K
+PiAgCWZvciAoaSA9IDA7IGkgPCBOVU1fTkZJVFM7IGkrKykgew0KPiAgCQlzdHJ1Y3QgbmZpdF90
+ZXN0ICpuZml0X3Rlc3Q7DQo+ICAJCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXY7DQo+IEBA
+IC0yODk0LDYgKzI5MjEsOSBAQCBzdGF0aWMgX19pbml0IGludCBuZml0X3Rlc3RfaW5pdCh2b2lk
+KQ0KPiAgCXJldHVybiAwOw0KPiAgDQo+ICAgZXJyX3JlZ2lzdGVyOg0KPiArCWlmIChuZml0X3Bv
+b2wpDQo+ICsJCWdlbl9wb29sX2Rlc3Ryb3kobmZpdF9wb29sKTsNCj4gKw0KPiAgCWRlc3Ryb3lf
+d29ya3F1ZXVlKG5maXRfd3EpOw0KPiAgCWZvciAoaSA9IDA7IGkgPCBOVU1fTkZJVFM7IGkrKykN
+Cj4gIAkJaWYgKGluc3RhbmNlc1tpXSkNCj4gQEAgLTI5MTcsNiArMjk0Nyw4IEBAIHN0YXRpYyBf
+X2V4aXQgdm9pZCBuZml0X3Rlc3RfZXhpdCh2b2lkKQ0KPiAgCXBsYXRmb3JtX2RyaXZlcl91bnJl
+Z2lzdGVyKCZuZml0X3Rlc3RfZHJpdmVyKTsNCj4gIAluZml0X3Rlc3RfdGVhcmRvd24oKTsNCj4g
+IA0KPiArCWdlbl9wb29sX2Rlc3Ryb3kobmZpdF9wb29sKTsNCj4gKw0KPiAgCWZvciAoaSA9IDA7
+IGkgPCBOVU1fTkZJVFM7IGkrKykNCj4gIAkJcHV0X2RldmljZSgmaW5zdGFuY2VzW2ldLT5wZGV2
+LmRldik7DQo+ICAJY2xhc3NfZGVzdHJveShuZml0X3Rlc3RfZGltbSk7DQo+IA0KDQo=
