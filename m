@@ -3,137 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED264C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 375E4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE14D20672
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:40:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE14D20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id D9C4F20672
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C4F20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeLCQkz (ORCPT
+        id S1726837AbeLCQmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:40:55 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34558 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbeLCQkz (ORCPT
+        Mon, 3 Dec 2018 11:42:03 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44805 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbeLCQmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:40:55 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so6747004plz.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 08:40:50 -0800 (PST)
+        Mon, 3 Dec 2018 11:42:03 -0500
+Received: by mail-qt1-f196.google.com with SMTP id n32so14458850qte.11;
+        Mon, 03 Dec 2018 08:41:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SMBZOeekZb3uh8AV9mezX+bVJfI3gkOah5vXVRnPGL4=;
-        b=EG/YS6Q65ZAkDkSSukLQ8B8bq4WRmxK/MqZyQgdhE+kCm1gTq/vbiRoHoUyCQse2kr
-         9w25KyT68lI84B/+vCERle384WTmPiRfRJPM7YT/XKKOJSkVknr3VJOe7i2ppGFvDOoa
-         QACo82cRB4+FpIEibjKh3zofS8te76+Z2Ii9iyvM9pR2ifZS0IjZFnBDKwX27BMKMpO9
-         WzUXCqRbmnCvFiLz6BUv45hE7X2CDuYVjcUrYt6euDannQ/4TEsQIbGiezvrK8qyMMG+
-         eGrfFqvwwCdBTc+Kk22HKumqzJ1ZQ42YV+EyaYDnUnNi8eZIixO1wsSWeLXap7a32uzN
-         bOQQ==
-X-Gm-Message-State: AA+aEWZhRI/R0vQhZ6YnPudz+SD9i8QpOEJCz3Uix6PYAG8IOOkC99cZ
-        57PBT3NuQ0YYobnv75S5gJk=
-X-Google-Smtp-Source: AFSGD/UInCKhPYmIxYsMlC8yWNwInOoI7iXbloeLHrYVgdIPj8FQ28E2/YBeMNL4ZaOHR0c9qQ0V7A==
-X-Received: by 2002:a17:902:d806:: with SMTP id a6mr15993901plz.172.1543855250177;
-        Mon, 03 Dec 2018 08:40:50 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id d6sm20450331pgc.89.2018.12.03.08.40.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 08:40:49 -0800 (PST)
-Message-ID: <1543855248.185366.158.camel@acm.org>
-Subject: Re: [PATCH 22/27] locking/lockdep: Reuse list entries that are no
- longer in use
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 03 Dec 2018 08:40:48 -0800
-In-Reply-To: <20181201202446.GA19706@hirez.programming.kicks-ass.net>
-References: <20181128234325.110011-1-bvanassche@acm.org>
-         <20181128234325.110011-23-bvanassche@acm.org>
-         <20181129104902.GH2131@hirez.programming.kicks-ass.net>
-         <20181129120143.GG2149@hirez.programming.kicks-ass.net>
-         <1543510130.185366.139.camel@acm.org>
-         <20181201202446.GA19706@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aHGO8hd8XcJOmBaPhU6GLIJfHmo66om3Ci7ukHhGM+E=;
+        b=g4B/bWvQFTGdxwGEtriBd+TPCuH/KGo3s3pIBCeLbRCLU/w0OvKG5Dg5N4cbAXZs/0
+         +TS7j3+B0RpPFm41tyhO+91eA0G5H/ukw/sZ+BZkbNGif6CM4MRM9oJ5GQpuiarsGJfu
+         M6+wQtlDssQJsxXnNTW/55goOVu4TSMPlKgyfZL8nqCLJ5zN5DcsmPd+e/fFjLefcWzB
+         kIK30VnrzQwuC8AyqZ2CCWLMUYHyRq/CaiKwNXOW6aaRY16yrfKF7wp7Qu+jAW/g09dB
+         oWMHxCd8PAXz31wFIfiKil5GM5oY8I7Ff8/6faSUS38QbIy3i+CC723KxdzEy/ygb8Tf
+         mm0Q==
+X-Gm-Message-State: AA+aEWaIRnTgJWgq8OTKWmlwkwe4rgBANjs4QUdPEuXOS43ATROM8j3v
+        U04HZse+aDJ2KHzDGs3VcUCdFMRAFFUKI8lqNpGc0S98
+X-Google-Smtp-Source: AFSGD/UjyCS4Dl3o/qxrzkyN2234fvjxXp1wont92YE1Aiy0+TaKA1D1SWQcUXbsg25s2WcIEnqKu8tkx6CvsDz8oDU=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr15984333qvl.180.1543855317239;
+ Mon, 03 Dec 2018 08:41:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20181202134538.GA18886@gfm-note> <CAK8P3a2of9sZ5BGCKshCjFkpt8q6s-KD-9XC4SGYP2Ppj7fjEw@mail.gmail.com>
+ <c3d75256-bfdc-6f36-1e6e-ad4e5cd9b855@xs4all.nl>
+In-Reply-To: <c3d75256-bfdc-6f36-1e6e-ad4e5cd9b855@xs4all.nl>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 3 Dec 2018 17:41:40 +0100
+Message-ID: <CAK8P3a3uLxxTkTxvSZ8wqwRD5EKVWdimDuH8X6cHoWXdAGDJ+w@mail.gmail.com>
+Subject: Re: [PATCH v4] media: vivid: Improve timestamping
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     gfmandaji@gmail.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkcamp@lists.libreplanetbr.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-12-01 at 21:24 +-0100, Peter Zijlstra wrote:
-+AD4 On Thu, Nov 29, 2018 at 08:48:50AM -0800, Bart Van Assche wrote:
-+AD4 +AD4 On Thu, 2018-11-29 at 13:01 +-0100, Peter Zijlstra wrote:
-+AD4 +AD4 +AD4 On Thu, Nov 29, 2018 at 11:49:02AM +-0100, Peter Zijlstra wrote:
-+AD4 +AD4 +AD4 +AD4 On Wed, Nov 28, 2018 at 03:43:20PM -0800, Bart Van Assche wrote:
-+AD4 +AD4 +AD4 +AD4 +AD4  	/+ACo
-+AD4 +AD4 +AD4 +AD4 +AD4  	 +ACo Remove all dependencies this lock is
-+AD4 +AD4 +AD4 +AD4 +AD4  	 +ACo involved in:
-+AD4 +AD4 +AD4 +AD4 +AD4  	 +ACo-/
-+AD4 +AD4 +AD4 +AD4 +AD4 +-	list+AF8-for+AF8-each+AF8-entry+AF8-safe(entry, tmp, +ACY-all+AF8-list+AF8-entries, alloc+AF8-entry) +AHs
-+AD4 +AD4 +AD4 +AD4 +AD4  		if (entry-+AD4-class +ACEAPQ class +ACYAJg entry-+AD4-links+AF8-to +ACEAPQ class)
-+AD4 +AD4 +AD4 +AD4 +AD4  			continue+ADs
-+AD4 +AD4 +AD4 +AD4 +AD4  		links+AF8-to +AD0 entry-+AD4-links+AF8-to+ADs
-+AD4 +AD4 +AD4 +AD4 +AD4  		WARN+AF8-ON+AF8-ONCE(entry-+AD4-class +AD0APQ links+AF8-to)+ADs
-+AD4 +AD4 +AD4 +AD4 +AD4  		list+AF8-del+AF8-rcu(+ACY-entry-+AD4-lock+AF8-order+AF8-entry)+ADs
-+AD4 +AD4 +AD4 +AD4 +AD4 +-		list+AF8-move(+ACY-entry-+AD4-alloc+AF8-entry, +ACY-free+AF8-list+AF8-entries)+ADs
-+AD4 +AD4 +AD4 +AD4 +AD4  		entry-+AD4-class +AD0 NULL+ADs
-+AD4 +AD4 +AD4 +AD4 +AD4  		entry-+AD4-links+AF8-to +AD0 NULL+ADs
-+AD4 +AD4 +AD4 +AD4 +AD4  		check+AF8-free+AF8-class(zapped+AF8-classes, class)+ADs
-+AD4 +AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4 Hurm.. I'm confused here.
-+AD4 +AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4 The reason you cannot re-use lock+AF8-order+AF8-entry for the free list is
-+AD4 +AD4 +AD4 +AD4 because list+AF8-del+AF8-rcu(), right? But if so, then what ensures the
-+AD4 +AD4 +AD4 +AD4 list+AF8-entry is not re-used before it's grace-period?
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 Also+ADs if you have to grow lock+AF8-list by 16 bytes just to be able to free
-+AD4 +AD4 +AD4 it, a bitmap allocator is much cheaper, space wise.
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 Some people seem to really care about the static image size, and
-+AD4 +AD4 +AD4 lockdep's .data section does matter to them.
-+AD4 +AD4 
-+AD4 +AD4 How about addressing this by moving removed list entries to a +ACI-zapped+AF8-entries+ACI
-+AD4 +AD4 list and only moving list entries from the zapped+AF8-entries list to the
-+AD4 +AD4 free+AF8-list+AF8-entries list after an RCU grace period? I'm not sure that it is
-+AD4 +AD4 possible to implement that approach without introducing a new list+AF8-head in
-+AD4 +AD4 struct lock+AF8-list.
-+AD4 
-+AD4 I think we can do this with a free bitmap and an array of 2 pending
-+AD4 bitmaps and an index. Add newly freed entries to the pending bitmap
-+AD4 indicated by the current index, when complete flip the index -- such
-+AD4 that further new bits go to the other pending bitmap -- and call+AF8-rcu().
-+AD4 
-+AD4 Then, on the call+AF8-rcu() callback, ie. after a GP has happened, OR our
-+AD4 pending bitmap into the free bitmap, and when the other pending bitmap
-+AD4 isn't empty, flip the index again and start it all again.
-+AD4 
-+AD4 This ensures there is at least one full GP between setting a bit and it
-+AD4 landing in the free mask.
+On Mon, Dec 3, 2018 at 10:15 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 12/02/2018 09:43 PM, Arnd Bergmann wrote:
+> > On Sun, Dec 2, 2018 at 2:47 PM Gabriel Francisco Mandaji
+> > <gfmandaji@gmail.com> wrote:
+> >
+> >> @@ -667,10 +653,28 @@ static void vivid_overlay(struct vivid_dev *dev, struct vivid_buffer *buf)
+> >>         }
+> >>  }
+> >>
+> >> +static void vivid_cap_update_frame_period(struct vivid_dev *dev)
+> >> +{
+> >> +       u64 f_period;
+> >> +
+> >> +       f_period = (u64)dev->timeperframe_vid_cap.numerator * 1000000000;
+> >> +       do_div(f_period, dev->timeperframe_vid_cap.denominator);
+> >> +       if (dev->field_cap == V4L2_FIELD_ALTERNATE)
+> >> +               do_div(f_period, 2);
+> >> +       /*
+> >> +        * If "End of Frame", then offset the exposure time by 0.9
+> >> +        * of the frame period.
+> >> +        */
+> >> +       dev->cap_frame_eof_offset = f_period * 9;
+> >> +       do_div(dev->cap_frame_eof_offset, 10);
+> >> +       dev->cap_frame_period = f_period;
+> >> +}
+> >
+> > Doing two or three do_div() operations is going to make this rather
+> > expensive on 32-bit architectures, and it looks like this happens for
+> > each frame?
+> >
+> > Since each one is a multiplication followed by a division, could this
+> > be changed to using a different factor followed by a bit shift?
+>
+> The division by 2 can obviously be replaced by a shift, and the
+> 'End of Frame' calculation can be simplified as well by multiplying by
+> 7 and dividing by 8 (again a simple shift): this equals 0.875 which is
+> close enough to 0.9 (so update the comment as well).
 
-Hi Peter,
+The first division
 
-How about the following alternative which requires only two bitmaps instead
-of three:
-- Maintain two bitmaps, one for the free entries and one for the entries
-  that are being freed.
-- Protect all accesses to both bitmaps with the graph lock.
-- zap+AF8-class() sets a bit in the +ACI-being freed+ACI bitmap for the entries that
-  should be freed after a GP.
-- Instead of making free+AF8-zapped+AF8-classes() wait for a grace period by calling
-  synchronize+AF8-sched(), use call+AF8-rcu() and do the freeing work from inside the
-  RCU callback.
-- From inside the RCU callback, set a bit in the +ACI-free+ACI bitmap for all entries
-  that have a bit set in the +ACI-being freed+ACI bitmap and clears the +ACI-being freed+ACI
-  bitmap.
+      f_period = (u64)dev->timeperframe_vid_cap.numerator * 1000000000;
+      do_div(f_period, dev->timeperframe_vid_cap.denominator);
 
-Thanks,
+looks like it could be replaced with a fixed multiplication with a
+precomputed 'u64 factor = div_u64(numerator * 100000000, denominator)
 
-Bart.
+> It's all a bit overkill since this function isn't called very often,
+> but these are easy changes to make.
+
+Ah, I assumed it was called once per frame or more. If this is only done
+during initalization, it doesn't matter.
+
+        Arnd
