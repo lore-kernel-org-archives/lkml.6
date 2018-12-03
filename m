@@ -2,105 +2,162 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7C5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907DEC65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ADCB20834
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:24:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ADCB20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E25C20892
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:32:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E25C20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725893AbeLCAYn (ORCPT
+        id S1725870AbeLCAcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 19:24:43 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:37770 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbeLCAYn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 19:24:43 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 9A88D72CA65;
-        Mon,  3 Dec 2018 03:24:36 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 8DA3E7CCE9D; Mon,  3 Dec 2018 03:24:36 +0300 (MSK)
-Date:   Mon, 3 Dec 2018 03:24:36 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 06/15] m68k: define syscall_get_arch()
-Message-ID: <20181203002436.GA9487@altlinux.org>
-References: <20181120001128.GA11300@altlinux.org>
- <20181120001524.GF11387@altlinux.org>
- <CAMuHMdV+-Lw-mx8OAifrFP--XhbiHr8hAZ56rsG=9Ayu9BeXtw@mail.gmail.com>
+        Sun, 2 Dec 2018 19:32:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40764 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725785AbeLCAcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 19:32:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 35A7AAD90;
+        Mon,  3 Dec 2018 00:31:57 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Date:   Mon, 03 Dec 2018 11:30:30 +1100
+Subject: [PATCH 00/23 - V5] NFS: Remove generic RPC credentials.
+Cc:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Message-ID: <154379689752.28598.6750646657534626618.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV+-Lw-mx8OAifrFP--XhbiHr8hAZ56rsG=9Ayu9BeXtw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is the same series as posted on 07 November, modified slightly
+to match some recent code changes upstream - nothing substantial.
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+General description:
 
-Hi Geert,
+There doesn't seem to be a maintainer for the 'cred' code, so I don't
+know who to ask to approve the first 4 patches.  Maybe if the NFS
+team like them, they can just go to Linus with a note for him to look
+at them if he wants to.
 
-On Sun, Dec 02, 2018 at 11:29:10AM +0100, Geert Uytterhoeven wrote:
-> Hi Dmitry,
->=20
-> On Tue, Nov 20, 2018 at 1:15 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> > syscall_get_arch() is required to be implemented on all architectures
-> > in order to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO
-> > request.
-> >
-> > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
->=20
-> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
->=20
-> What's your plan w.r.t. the upstreaming strategy?
-> Do you plan to get this series in as a whole, or through individual archi=
-tecture
-> maintainers?
+The original motivation for this was performance.  In some
+circumstances the cred caches can get big and particularly can get
+long chains.  The hash function has been changed at least once to
+improve the hashing and it still isn't perfect.
+Rather than improving pruning of the cache, or resizing the hashtable
+etc, it is easiest to just get rid of it.
 
-Given that the last patch in this series adds an argument
-to syscall_get_arch(), my plan is to get this series in
-as a whole along with PTRACE_GET_SYSCALL_INFO series.
+As well as discarding generic credentials completely (using 'struct
+cred' instead), we also stop storing AUTH_UNIX credentials in a hash
+table - that brings no value.  Just allocate as needed and discard
+when finished with.
+So the only hash table will still have is for AUTH_GSS.
+One of the main triggers for hashtable problems was users changing
+groups a lot, so there would be many entries for the one user, each
+with a different set of groups.  That doesn't apply for
+AUTH_GSS as the groupids on the client are ignored.
+
+That was the original motivation, but as I worked on it, I realized
+that it was making a log of code simpler.
+
+ 44 files changed, 550 insertions(+), 925 deletions(-)
+
+That is sufficient motivation in itself I think.
+
+Thanks,
+NeilBrown
 
 
---=20
-ldv
+---
 
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
+NeilBrown (23):
+      cred: add cred_fscmp() for comparing creds.
+      cred: add get_cred_rcu()
+      cred: export get_task_cred().
+      cred: allow get_cred() and put_cred() to be given NULL.
+      SUNRPC: add 'struct cred *' to auth_cred and rpc_cred
+      SUNRPC: remove groupinfo from struct auth_cred.
+      SUNRPC: remove uid and gid from struct auth_cred
+      SUNRPC: remove machine_cred field from struct auth_cred
+      NFSv4: add cl_root_cred for use when machine cred is not available.
+      NFSv4: don't require lock for get_renew_cred or get_machine_cred
+      SUNRPC: discard RPC_DO_ROOTOVERRIDE()
+      NFS/SUNRPC: don't lookup machine credential until rpcauth_bindcred().
+      SUNRPC: introduce RPC_TASK_NULLCREDS to request auth_none
+      SUNRPC: add side channel to use non-generic cred for rpc call.
+      NFS: move credential expiry tracking out of SUNRPC into NFS.
+      SUNRPC: remove RPCAUTH_AUTH_NO_CRKEY_TIMEOUT
+      NFS: change access cache to use 'struct cred'.
+      NFS: struct nfs_open_dir_context: convert rpc_cred pointer to cred.
+      NFS/NFSD/SUNRPC: replace generic creds with 'struct cred'.
+      SUNRPC: remove generic cred code.
+      SUNRPC: remove crbind rpc_cred operation
+      SUNRPC: simplify auth_unix.
+      SUNRPC discard cr_uid from struct rpc_cred.
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJcBHfEAAoJEAVFT+BVnCUIv3IQANEYpjiuqjrx7/vCgL6hw4aU
-s6HDODsgDAjjBjtPQk6/f/cDxKt8PJixYYdIB/XQFIOopARMwdwMmJ9Qv11WW1Wo
-FcN2NIC74unafyWdaiss6/M5UAAstuKps7LCWPV6Lnhe7jR7Z8Imkz8ESL0070EH
-fZcl4lnqrpukaISh4XPu3E5egiSzM0emWc/CwyotRirujLJ3AvCJrGBOyOzLaJBu
-BuJo1Q3kZkPRsZvXjMn56fcWI2GfN2bjmtxxBLvmkcxFkkeQCQguhbAJ9SxYBHL7
-c7W9Ov43TX85IEy6rpsr0ohBQUMyDMPxFp1chSayODDxOh6gnSiy7yLcFjk9ufvi
-Poh0O5HUQRVlgvUcYD6spQ1xzroganvbmFdP9ypXUGw2myfQIKJ5fzeW0HcN5zgV
-VtkT2EEV4jEufpz+lSbaeBmhbC4Gk6/AALfyaJQwyey2/8tGJRzRUvonPt+smf6L
-9giJpoUP3Uj/VtoNrVbPZ6AFunOYu3/xk7WKc50ZtUjpfxs+G16B3XMw89PYNamu
-LVcVVDxcqxM+OPkOka0xe8RhgFOwG0DQbBJ7sGU4ePm/aQJ4zXwYUU/qusk6wEOQ
-9NsX9KidkeGHiKFkdPxw0Jklh618M5zcww2cTFQnrZWEAgbWuWQDt56LhTc5z5Yq
-LGGFLKlDR1Eop8GVyRbl
-=xI3X
------END PGP SIGNATURE-----
+ fs/lockd/clntproc.c                       |    6 -
+ fs/nfs/blocklayout/blocklayout.c          |    2 
+ fs/nfs/client.c                           |    9 -
+ fs/nfs/delegation.c                       |   28 +--
+ fs/nfs/delegation.h                       |   10 -
+ fs/nfs/dir.c                              |   59 ++----
+ fs/nfs/flexfilelayout/flexfilelayout.c    |   64 +++---
+ fs/nfs/flexfilelayout/flexfilelayout.h    |    8 -
+ fs/nfs/flexfilelayout/flexfilelayoutdev.c |   16 +-
+ fs/nfs/inode.c                            |   13 +
+ fs/nfs/internal.h                         |    8 -
+ fs/nfs/nfs3proc.c                         |    4 
+ fs/nfs/nfs4_fs.h                          |   65 +++---
+ fs/nfs/nfs4client.c                       |    4 
+ fs/nfs/nfs4proc.c                         |  150 +++++++--------
+ fs/nfs/nfs4renewd.c                       |    9 -
+ fs/nfs/nfs4session.c                      |    5 
+ fs/nfs/nfs4state.c                        |  129 ++++++-------
+ fs/nfs/pagelist.c                         |    2 
+ fs/nfs/pnfs.c                             |   14 +
+ fs/nfs/pnfs.h                             |   10 -
+ fs/nfs/pnfs_dev.c                         |    4 
+ fs/nfs/pnfs_nfs.c                         |    2 
+ fs/nfs/proc.c                             |    2 
+ fs/nfs/unlink.c                           |   15 -
+ fs/nfs/write.c                            |   24 ++
+ fs/nfsd/nfs4callback.c                    |   31 +--
+ fs/nfsd/state.h                           |    2 
+ include/linux/cred.h                      |   26 ++-
+ include/linux/nfs_fs.h                    |   13 +
+ include/linux/nfs_fs_sb.h                 |    2 
+ include/linux/nfs_xdr.h                   |   16 +-
+ include/linux/sunrpc/auth.h               |   51 -----
+ include/linux/sunrpc/clnt.h               |    1 
+ include/linux/sunrpc/sched.h              |    6 -
+ kernel/cred.c                             |   58 ++++++
+ net/sunrpc/Makefile                       |    2 
+ net/sunrpc/auth.c                         |  116 ++++++-----
+ net/sunrpc/auth_generic.c                 |  293 -----------------------------
+ net/sunrpc/auth_gss/auth_gss.c            |   47 +----
+ net/sunrpc/auth_null.c                    |    4 
+ net/sunrpc/auth_unix.c                    |  110 +++--------
+ net/sunrpc/clnt.c                         |   26 +--
+ net/sunrpc/sched.c                        |    5 
+ 44 files changed, 551 insertions(+), 920 deletions(-)
+ delete mode 100644 net/sunrpc/auth_generic.c
 
---VbJkn9YxBvnuCH5J--
+--
+Signature
+
