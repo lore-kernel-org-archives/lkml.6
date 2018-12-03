@@ -2,116 +2,145 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9D0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 804C7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A9F2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:53:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A9F2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C72A2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:53:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="MHjzkQ5D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C72A2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbeLCRxF (ORCPT
+        id S1726870AbeLCRxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:53:05 -0500
-Received: from mga06.intel.com ([134.134.136.31]:45922 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbeLCRxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:53:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 09:53:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="106929120"
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2018 09:53:00 -0800
-Subject: Re: [PATCH v2 3/5] generic/pgtable: Introduce set_pte_safe()
-To:     Dan Williams <dan.j.williams@intel.com>, tglx@linutronix.de
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <154362450646.2367148.16448130381211111341.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154362452184.2367148.10656843315134995636.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <4bc8cab6-4e1a-c3b9-0023-3ecde932cc70@intel.com>
-Date:   Mon, 3 Dec 2018 09:53:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 3 Dec 2018 12:53:16 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:36838 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbeLCRxQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:53:16 -0500
+Received: by mail-it1-f193.google.com with SMTP id c9so9933957itj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jrZm1EVRc3lEWmoL1Qrzl/u0xfvJ16xasMcx5rZfWPM=;
+        b=MHjzkQ5D55rQRC09jOgOH9wq3Rk8bQbipn5cgUcx8cJ2yq/xkBw6vmZ4xp9wVcrYXH
+         LsOTTGFCmVLohXxqhbWUEE8ABkEMr2Kt+MklKzDjtf6svGiVDoQMzrJ8YbAr2WfpJUFa
+         TaljyRsAWVWbpXiRRY7aj1xRG0BRLCKfbOz7yluoANdSIJ9z8L3FDaJ25unZYv9jfk/g
+         nX951/4yFCd8XqjUsxHXA05AG85dxUhRNTl3viQtVepsk+lx4ph4UV5ianzUTj0O0sDl
+         bSCfyWM11/7T/mavxDwIc6sNxyJ/bGQMtO5SWu956TQFsNEH4MoA33xisPFyrP+oxLYy
+         rB1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jrZm1EVRc3lEWmoL1Qrzl/u0xfvJ16xasMcx5rZfWPM=;
+        b=uTeSDsXsXIARr68cy0WJkyNMHVuSDY6jzGt7c5+kI+s+SsefYcZgsD3qPpJTOOQkZC
+         zvmYMFZUMRlRKwbAbjHkm2CoZ9JJ86DMM6mXX5q+Riofq6RqfPnQ2wtVddo1ms+53SyR
+         WY83L6/+Ca/Vs0EeGRlyUZj4Vn3IVJYFhAfKkKFc2c3PmEwZZMvpQYm70sjxFNP66ltW
+         Cg8QjkrTNKOIgdeOJL/umWBy+oYPPYsFtuwzmb6xjl9Xlr4icB/z2Q0eGQR4Ccv30Xg6
+         +kPJgDe9ldBD322tRPhTRz/QRfcaUIxczXCyAmqvmGYzTkyw2PrhTlVfbiM4a4sFNG7y
+         avag==
+X-Gm-Message-State: AA+aEWa1gs4MK9qZCrqJexJCNfOT2+TzrlcOXUQIcCOGJTdTE9rO78E4
+        U1Yr+mPH76wkKSf447/HRihUEzvdoxLVY2GNVcBGoA==
+X-Google-Smtp-Source: AFSGD/U3dYAM8cLPdIisk0V1q1bwKif+eSHDkiHenUVaNNbJIsqarq0U51ofWMatd8hPL+qciP6UMdEiKInK5xMqsWI=
+X-Received: by 2002:a24:ce42:: with SMTP id v63mr8519661itg.136.1543859591740;
+ Mon, 03 Dec 2018 09:53:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <154362452184.2367148.10656843315134995636.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181121033652.12247-1-manivannan.sadhasivam@linaro.org>
+ <20181121033652.12247-7-manivannan.sadhasivam@linaro.org> <CAL_JsqJ=88ORdgbRDn+VWk9=ydShidqwOxdAMfDbH4W2drnXzA@mail.gmail.com>
+ <CAOesGMgSxwcmBLDvxsvcCJ9-NvJ3-wK8fZBZV2ZNuzAa1idi3w@mail.gmail.com> <CAL_JsqLZY_5rZ35YSGeH7wmEZoLP1TjG+0n4BWGiUBwOFSq-Vw@mail.gmail.com>
+In-Reply-To: <CAL_JsqLZY_5rZ35YSGeH7wmEZoLP1TjG+0n4BWGiUBwOFSq-Vw@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 3 Dec 2018 09:53:00 -0800
+Message-ID: <CAOesGMi=qFB0jTTAzTYxBduYf_7RVwOZkKNjckpqg6tbd3sPow@mail.gmail.com>
+Subject: Re: [PATCH v2 06/15] arm: dts: Add devicetree for OrangePi 2G IoT board
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, linux-serial@vger.kernel.org,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        LinusW <linus.walleij@linaro.org>, zhao_steven@263.net,
+        overseas.sales@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/18 4:35 PM, Dan Williams wrote:
-> +/*
-> + * The _safe versions of set_{pte,pmd,pud,p4d,pgd} validate that the
-> + * entry was not populated previously. I.e. for cases where a flush-tlb
-> + * is elided, double-check that there is no stale mapping to shoot down.
-> + */
+On Mon, Dec 3, 2018 at 9:21 AM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Mon, Dec 3, 2018 at 11:11 AM Olof Johansson <olof@lixom.net> wrote:
+> >
+> > On Mon, Dec 3, 2018 at 7:54 AM Rob Herring <robh+dt@kernel.org> wrote:
+> > >
+> > > On Tue, Nov 20, 2018 at 9:38 PM Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > > Add initial devicetree support for OrangePi 2G IoT board from Xunlo=
+ng.
+> > > >
+> > > > Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.=
+org>
+> > > > ---
+> > > >  arch/arm/boot/dts/Makefile                    |  2 +
+> > > >  .../boot/dts/rda8810pl-orangepi-2g-iot.dts    | 40 +++++++++++++++=
+++++
+> > > >  2 files changed, 42 insertions(+)
+> > > >  create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefil=
+e
+> > > > index b0e966d625b9..a0fdad8f10dd 100644
+> > > > --- a/arch/arm/boot/dts/Makefile
+> > > > +++ b/arch/arm/boot/dts/Makefile
+> > > > @@ -806,6 +806,8 @@ dtb-$(CONFIG_ARCH_QCOM) +=3D \
+> > > >         qcom-msm8974-sony-xperia-castor.dtb \
+> > > >         qcom-msm8974-sony-xperia-honami.dtb \
+> > > >         qcom-mdm9615-wp8548-mangoh-green.dtb
+> > > > +dtb-$(CONFIG_ARCH_RDA) +=3D \
+> > > > +       rda8810pl-orangepi-2g-iot.dtb
+> > > >  dtb-$(CONFIG_ARCH_REALVIEW) +=3D \
+> > >
+> > > Question for Arnd/Olof: can we *please* start putting new SoC familie=
+s
+> > > in sub-dirs?
+> >
+> > I think we're at a point where it's becoming quite awkward to keep it
+> > in a flat directory, yes.
+> >
+> > Best way to handle this is usually right before the closing of a merge
+> > window, so let's do it then. It'll be a conflict-ridden mess if we try
+> > to stage something in -next, so I'd rather just do it directly in our
+> > tree as a one-shot thing.
+>
+> While I'd like to see the whole thing converted, I was only asking
+> about this one platform. That should be doable now, right?
 
-Functionally these look great to me.
+I'd rather apply this to current scheme and then move everything once,
+instead of having maintainers go "Oh, I guess I need to move mine" and
+we end up with an onslaught of conflicting pull requests to move
+things apart.
 
-The only thing I'd suggest is to make the comment more about when to use
-these, instead of what they do:
 
-	Use the set_p*_safe() version when confident that *no*
-	TLB flush will be required as a result of the "set", such
-	as setting non-present entries or when possibly superfluously
-	re-setting an entry.
-
+-Olof
