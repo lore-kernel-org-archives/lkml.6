@@ -2,79 +2,126 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA30C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D31C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE4C2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE4C2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 030FD20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:07:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="txGAbNmN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030FD20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbeLCMEN (ORCPT
+        id S1726365AbeLCMID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:04:13 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:59144 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbeLCMEM (ORCPT
+        Mon, 3 Dec 2018 07:08:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56110 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbeLCMID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:04:12 -0500
-Received: from 79.184.252.87.ipv4.supernova.orange.pl (79.184.252.87) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
- id 8a403304dd5b4437; Mon, 3 Dec 2018 13:03:25 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux 4.20-rc4)
-Date:   Mon, 03 Dec 2018 13:03:16 +0100
-Message-ID: <1718869.PGhsHE7EHz@aspire.rjw.lan>
-In-Reply-To: <20181203083942.GF31738@dhcp22.suse.cz>
-References: <CAHk-=wgdsXyCaLsFEpyUpAeRqVS69u=xo4rzEN+cS=xwz2gajg@mail.gmail.com> <20181203074700.GA21240@gmail.com> <20181203083942.GF31738@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 3 Dec 2018 07:08:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=8j0z6XaYafNDsi2SOuDixCxN43HsTi9LdkrKEXWqhMk=; b=txGAbNmNUd2y
+        X6XXA34EQSNUFTblJBxLKxU39rQuGKte9Rhu26JGzzhLKm4EUHf7GSfLnwA6ws+Zxj7hZWyDosy+p
+        lz5pXsPV4mGbQ3fx4n8UO+j17tQpzg/1NmKIiWzxzmOHiud5dWdiXlLAwdZwmImop0RZfBqH2Pj5i
+        rkpFo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gTn0K-0003T0-4E; Mon, 03 Dec 2018 12:07:12 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 92D33440080; Mon,  3 Dec 2018 12:07:11 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: dt-bindings: use a generic node name for rt5631" to the asoc tree
+In-Reply-To:  <20181203114728.636936-1-lkundrak@v3.sk>
+Message-Id: <20181203120711.92D33440080@finisterre.ee.mobilebroadband>
+Date:   Mon,  3 Dec 2018 12:07:11 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, December 3, 2018 9:39:42 AM CET Michal Hocko wrote:
-> On Mon 03-12-18 08:47:00, Ingo Molnar wrote:
-> [...]
-> > I reviewed the ->cred_guard_mutex code, and the mutex is held across all 
-> > of exec() - and we always did this.
-> 
-> Yes, this is something that has been pointed out during the review. Oleg
-> has argued that making this path freezable is really hard and that we
-> should be changing de_thread to sleep withtou cred_guard_mutex long term
-> anyway (http://lkml.kernel.org/r/20181114143705.GB13885@redhat.com).
-> 
-> Failing suspend seems like a real problem while the lockdep one doesn't
-> really reflect any real deadlock, right? So while the patch is not
-> perfect it shouldn't make the situation much worse. Lockdep splat is
-> certainly annoying but is it any worse than a suspend failing?
-> 
-> Now, I wouldn't mind to revert this because the code is really old and
-> we haven't seen many bug reports about failing suspend yet. But what is
-> the actual plan to make this work properly? Use
-> freezable_schedule_unsafe instead? Freezer code has some
-> fundamental design issues which are quite hard to get over.
+The patch
 
-I agree and we just need to look deeper into this.
+   ASoC: dt-bindings: use a generic node name for rt5631
 
-I had hoped that this would work since you and Oleg agreed with it, but since
-it doesn't, let's do a revert for now and get back to this later.
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Rafael
+Mark
+
+From 1286f930a0d7447748b398564d14e84ea5dfe890 Mon Sep 17 00:00:00 2001
+From: Lubomir Rintel <lkundrak@v3.sk>
+Date: Mon, 3 Dec 2018 12:47:28 +0100
+Subject: [PATCH] ASoC: dt-bindings: use a generic node name for rt5631
+
+The example should follow the practice or using a generic node name
+instead of the precise programming model, as recommended by the DTSpec.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/sound/rt5631.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/rt5631.txt b/Documentation/devicetree/bindings/sound/rt5631.txt
+index 92b986ca337b..56bc85232c49 100644
+--- a/Documentation/devicetree/bindings/sound/rt5631.txt
++++ b/Documentation/devicetree/bindings/sound/rt5631.txt
+@@ -35,14 +35,14 @@ Pins on the device (for linking into audio routes):
+ 
+ Example:
+ 
+-alc5631: alc5631@1a {
++alc5631: audio-codec@1a {
+ 	compatible = "realtek,alc5631";
+ 	reg = <0x1a>;
+ };
+ 
+ or
+ 
+-rt5631: rt5631@1a {
++rt5631: audio-codec@1a {
+ 	compatible = "realtek,rt5631";
+ 	reg = <0x1a>;
+ };
+-- 
+2.20.0.rc1
 
