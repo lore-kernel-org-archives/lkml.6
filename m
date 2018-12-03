@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02233C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77564C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0AC820661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:33:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0AC820661
+	by mail.kernel.org (Postfix) with ESMTP id 467DB20661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:33:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 467DB20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbeLCVdW (ORCPT
+        id S1726349AbeLCVdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:33:22 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41264 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbeLCVdH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Dec 2018 16:33:07 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j21so12345168oii.8;
-        Mon, 03 Dec 2018 13:33:07 -0800 (PST)
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43606 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeLCVdA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:33:00 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u18so12339679oie.10;
+        Mon, 03 Dec 2018 13:33:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bmY97rqmVLH/aYhI9MMshRrLQb1X3srsPldhSeApmNY=;
-        b=nI7zm80+0PNNpk/xs0KU7760L4bYt3zC+OtLsMvHjKVpoTTuJaBMcWTHBDPjuaMYyX
-         E2yxJMWWPpiNJcdM4O2ehLDzy0V3M3eCaXS8MrPqMcsl7k8nR+xH7q6Plyazzo7/9oTY
-         HaefN8kLXkelprrGOA3MKv8iowj3VV12fPNJCQpuWuCsVHMBZKIFCpTocrjP/zd4ywCp
-         yu27acO1jDE9Rnl3pT2bS2DdNgSlQsJ99hIdWAm1kpQlzMhxHlaMQG5xzbT74sPZJpuL
-         8z4KqbD5diAxcfm8pPnvBER7LKdmOJ1UOGLbiJ8WE8cTA7szx6Ua7mQEH6q57LgQ/FKJ
-         UA7g==
-X-Gm-Message-State: AA+aEWZWKw9jV/THi2KOhdRi2DxOdd4K1KLDTyWCkBFaZ/HtG8Y63CCO
-        pkADhYWScCWUqsMZBGd0QIcSdcU=
-X-Google-Smtp-Source: AFSGD/VCt7hGvmZxKqKvQyo6sGAvlI0gmsrPJbiXunL2+nUrFgxM5xIaK1eaMkx9Ocdoag5aHiHaLQ==
-X-Received: by 2002:a05:6808:287:: with SMTP id z7mr8198529oic.233.1543872786508;
-        Mon, 03 Dec 2018 13:33:06 -0800 (PST)
+        bh=C1hs7k72LLb2iEWqMGzdoCfupHeBs/tEkAC6k/rFIiI=;
+        b=ltjaPr1tnhcNCcwcjkMa1pdl0aw1AyY7EpHvr2vd0svkFnI9c0M0NLtDRLfcPQI2Yb
+         0GnyD/Dv69rjBqO0EdOIhmPyGuc/PY1Go/KSokTBgHHr2zwuDLw05tJKg3APTLhennQf
+         HwrxD3wbsgTXXZ+P0EFHC2/EO3RfZQ/ByOts8P8sjylqosxTXxWUWqeYKvJQWrSMcKxo
+         pfe7dgsidmF2zIwitcsOwXvc888Zjh7JxnsgJfW+M7TnkqZCEmQUOkavrudXAW6gtNKn
+         +SaQZprqgKDaUrpipgcoVEW0I/i4SQy5cEDCMfksFHPtD3JEHUsH0JTDocmqH5351fy8
+         scUQ==
+X-Gm-Message-State: AA+aEWZh88XkWswKRDK9+d3tHCapObsm+zJpkB3xqKRgyPbPJXliBU9M
+        bK6qPiI3uwZrKzMDFMstDxj0F/M=
+X-Google-Smtp-Source: AFSGD/XF/jfO00XsySTH7otrkTH5OwF0eFb0bV+f9h4yYvxwB/+2Vpy36YSSJwTstEYTu374WliBaw==
+X-Received: by 2002:aca:c186:: with SMTP id r128mr11603786oif.52.1543872779723;
+        Mon, 03 Dec 2018 13:32:59 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.33.05
+        by smtp.googlemail.com with ESMTPSA id c78sm8545501oig.30.2018.12.03.13.32.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 13:33:05 -0800 (PST)
+        Mon, 03 Dec 2018 13:32:58 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sean Hudson <darknighte@darknighte.com>,
@@ -52,12 +52,12 @@ Cc:     Sean Hudson <darknighte@darknighte.com>,
         linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
         Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Jun Nie <jun.nie@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH v2 34/34] dt-bindings: arm: Convert ZTE board/soc bindings to json-schema
-Date:   Mon,  3 Dec 2018 15:32:23 -0600
-Message-Id: <20181203213223.16986-35-robh@kernel.org>
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 28/34] dt-bindings: arm: Convert SPEAr board/soc bindings to json-schema
+Date:   Mon,  3 Dec 2018 15:32:17 -0600
+Message-Id: <20181203213223.16986-29-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181203213223.16986-1-robh@kernel.org>
 References: <20181203213223.16986-1-robh@kernel.org>
@@ -68,72 +68,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert ZTE SoC bindings to DT schema format using json-schema.
+Convert SPEAr SoC bindings to DT schema format using json-schema.
 
-Cc: Jun Nie <jun.nie@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>
+Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
 Cc: devicetree@vger.kernel.org
-Acked-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/zte.txt | 14 ----------
- .../devicetree/bindings/arm/zte.yaml          | 26 +++++++++++++++++++
- 2 files changed, 26 insertions(+), 14 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/zte.txt
- create mode 100644 Documentation/devicetree/bindings/arm/zte.yaml
+ .../devicetree/bindings/arm/spear.txt         | 26 -------------------
+ .../devicetree/bindings/arm/spear.yaml        | 25 ++++++++++++++++++
+ 2 files changed, 25 insertions(+), 26 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/spear.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/spear.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/zte.txt b/Documentation/devicetree/bindings/arm/zte.txt
+diff --git a/Documentation/devicetree/bindings/arm/spear.txt b/Documentation/devicetree/bindings/arm/spear.txt
 deleted file mode 100644
-index 340612794a37..000000000000
---- a/Documentation/devicetree/bindings/arm/zte.txt
+index 0d42949df6c2..000000000000
+--- a/Documentation/devicetree/bindings/arm/spear.txt
 +++ /dev/null
-@@ -1,14 +0,0 @@
--ZTE platforms device tree bindings
--
+@@ -1,26 +0,0 @@
+-ST SPEAr Platforms Device Tree Bindings
 ----------------------------------------
---  ZX296702 board:
--    Required root node properties:
--      - compatible = "zte,zx296702-ad1", "zte,zx296702"
 -
-----------------------------------------
---  ZX296718 SoC:
--    Required root node properties:
--      - compatible = "zte,zx296718"
+-Boards with the ST SPEAr600 SoC shall have the following properties:
+-Required root node property:
+-compatible = "st,spear600";
 -
--ZX296718 EVB board:
--      - "zte,zx296718-evb"
-diff --git a/Documentation/devicetree/bindings/arm/zte.yaml b/Documentation/devicetree/bindings/arm/zte.yaml
+-Boards with the ST SPEAr300 SoC shall have the following properties:
+-Required root node property:
+-compatible = "st,spear300";
+-
+-Boards with the ST SPEAr310 SoC shall have the following properties:
+-Required root node property:
+-compatible = "st,spear310";
+-
+-Boards with the ST SPEAr320 SoC shall have the following properties:
+-Required root node property:
+-compatible = "st,spear320";
+-
+-Boards with the ST SPEAr1310 SoC shall have the following properties:
+-Required root node property:
+-compatible = "st,spear1310";
+-
+-Boards with the ST SPEAr1340 SoC shall have the following properties:
+-Required root node property:
+-compatible = "st,spear1340";
+diff --git a/Documentation/devicetree/bindings/arm/spear.yaml b/Documentation/devicetree/bindings/arm/spear.yaml
 new file mode 100644
-index 000000000000..2d3fefdccdff
+index 000000000000..f6ec731c9531
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/zte.yaml
-@@ -0,0 +1,26 @@
++++ b/Documentation/devicetree/bindings/arm/spear.yaml
+@@ -0,0 +1,25 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/zte.yaml#
++$id: http://devicetree.org/schemas/arm/spear.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: ZTE platforms device tree bindings
++title: ST SPEAr Platforms Device Tree Bindings
 +
 +maintainers:
-+  - Jun Nie <jun.nie@linaro.org>
++  - Viresh Kumar <vireshk@kernel.org>
++  - Stefan Roese <sr@denx.de>
 +
 +properties:
 +  $nodename:
 +    const: '/'
 +  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - zte,zx296702-ad1
-+          - const: zte,zx296702
-+      - items:
-+          - enum:
-+              - zte,zx296718-evb
-+          - const: zte,zx296718
-+
++    items:
++      - enum:
++          - st,spear600
++          - st,spear300
++          - st,spear310
++          - st,spear320
++          - st,spear1310
++          - st,spear1340
 +...
 -- 
 2.19.1
