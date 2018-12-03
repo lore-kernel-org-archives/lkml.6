@@ -2,156 +2,142 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C66C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BF9C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A86020848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:57:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Qi3jYM64"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A86020848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id CA2BA2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:59:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2BA2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbeLCK6L (ORCPT
+        id S1726285AbeLCK7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:58:11 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42811 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLCK6K (ORCPT
+        Mon, 3 Dec 2018 05:59:54 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725907AbeLCK7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:58:10 -0500
-Received: by mail-io1-f68.google.com with SMTP id x6so10047611ioa.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:57:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pzAGF8bpBTlswVikN04sR7r5QMuSxZbyY4gYAUT/Sqg=;
-        b=Qi3jYM649xZkGS/pPyGuN/2ni2QlUkB1ev8K3vVDaUJsGAYSbc0aq7nARgdCdnnKHa
-         2LJB3h0peFsQasJwjP1E41ICMZF9/q0ahqisaq68jXkEWxnNVBHMAWfnC+Ug18icd7AO
-         zM8zxGDgEkNJgRSDBsGcRltLMbMoWXGzaUA1BXi53/LWDXWDF1ctnoO/oxcbaROP+d8U
-         tvH+yNGQRCQkt6lcQfhsMHN5i8EH5ijQu9PixBzJVLcpkiQ+uj5ch3EN6KonoZFH5NOl
-         HzZYld+IvI4vbYlELcvv3qrZkZEM/llJrWUwMqk4BtfAmNYzF/PpLUJDgjYszppMbwFM
-         SC5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pzAGF8bpBTlswVikN04sR7r5QMuSxZbyY4gYAUT/Sqg=;
-        b=Qfl3GfAXvD9ikoPEONIL1RNWzc/3OdXT5dOa3u3n9uSZ1z8UBMVnTTVyz19Qp+pxQ5
-         iFgccwNpt5bBc1p0xH/nrUyrTmcQ3xsuv3VeJTNVFv3Z6tcrRB8+n5ZbHMiIe0fyIYgd
-         83CHLVEmxt5yw87DfuekdSKuxAtNVFk8xuMyXP1PYfYI6BVyDsLtOLw675dsN4KgJkwr
-         St+4a2oG+IFpPyWolKDIG3GEqkDo4FwiBcqMTKw16XsEhERH68RQYSFdFQcahC9hxDSd
-         GEb7COEZ0zaqBeHEWLgwbN0461iL1/VGkH/ZR2uH15sE0iXWpgy8X59bWQYW0hn7N+eD
-         JPyA==
-X-Gm-Message-State: AA+aEWYpABGO4fZ6PLaqVTobGvBzeXteiVC3adod0ps81IYn5V2LTWBg
-        rA7Jl8rca3CfjgLyM/xKnBcsO49CYncuGvVJIdOTbQ==
-X-Google-Smtp-Source: AFSGD/XQBb6yxLMxKZeKQnLv1XmvxNY0pUBzYb1SY0AJpfmG0g/iZ2pFXve/c0LinVPjKgrnKV63U922i3o2JI+XmQA=
-X-Received: by 2002:a5d:8c89:: with SMTP id g9mr14211533ion.111.1543834657297;
- Mon, 03 Dec 2018 02:57:37 -0800 (PST)
+        Mon, 3 Dec 2018 05:59:54 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3AwkoK098199
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 05:59:20 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p51xdkp94-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 05:59:20 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <maier@linux.ibm.com>;
+        Mon, 3 Dec 2018 10:59:18 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 10:59:17 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3AxG9h1442264
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 10:59:16 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53A1252050;
+        Mon,  3 Dec 2018 10:59:16 +0000 (GMT)
+Received: from oc4120165700.ibm.com (unknown [9.152.97.55])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1B5325204E;
+        Mon,  3 Dec 2018 10:59:16 +0000 (GMT)
+Subject: Re: [PATCH] [SCSI] zfcp: NULL check before some freeing functions is
+ not needed.
+To:     Thomas Meyer <thomas@m3y3r.de>, bblock@linux.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
+ <1543760930051-347492467-5-diffsplit-thomas@m3y3r.de>
+From:   Steffen Maier <maier@linux.ibm.com>
+Date:   Mon, 3 Dec 2018 11:59:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181120134032.31645-2-brgl@bgdev.pl> <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
- <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de> <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
- <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com> <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de>
-In-Reply-To: <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 3 Dec 2018 11:57:26 +0100
-Message-ID: <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1543760930051-347492467-5-diffsplit-thomas@m3y3r.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18120310-0020-0000-0000-000002F14C8C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120310-0021-0000-0000-00002140BD58
+Message-Id: <28bf96ec-4dff-29bd-f628-1a30e189aea8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pon., 3 gru 2018 o 11:49 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
->
-> On Mon, Dec 03, 2018 at 11:23:38AM +0100, Bartosz Golaszewski wrote:
-> > niedz., 2 gru 2018 o 23:20 Bartosz Golaszewski <brgl@bgdev.pl> napisa=
-=C5=82(a):
-> > >
-> > > niedz., 2 gru 2018 o 22:56 Uwe Kleine-K=C3=B6nig
-> > > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> > > >
-> > > > Hello,
-> > > >
-> > > > On Thu, Nov 29, 2018 at 07:14:45PM +0100, Bartosz Golaszewski wrote=
-:
-> > > > > We're getting too much into details of how to handle simulated
-> > > > > interrupts and we can continue discussing it, but meanwhile I'd l=
-ike
-> > > > > to address a different thing:
-> > > > >
-> > > > > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support=
- irq
-> > > > > sharing for userspace") some libgpiod tests are failing because w=
-e can
-> > > > > no longer depend on reading the value of a dummy GPIO after detec=
-ting
-> > > > > an interrupt to know the edge of the interrupt. While these inter=
-rupts
-> > > > > are triggered from debugfs and debugfs is not required to maintai=
-n
-> > > > > compatibility, I thing having a working test suite for the GPIO
-> > > > > subsystem and uAPI is worth applying these two patches and also t=
-he
-> > > > > previous one[1].
-> > > > >
-> > > > > Can we have them applied for 4.20 or are there any objections?
-> > > >
-> > > > Just for the record: I objected the patch, Bartosz agrees to discus=
-s
-> > > > further and but because this is too much detail the patch should no=
-w be
-> > > > applied anyhow to fix the test suite of an external project. This s=
-eems
-> > > > wrong to me.
-> > > >
-> > >
-> > > Just to look at it from a different perspective: we have a project
-> > > whose tests rely on a behavior that was changed by Uwe's patch. While
-> > > the patch is fine, we need to find a correct way of testing the GPIO
-> > > user API. This may take a long time. In order to not break the tests
-> > > of an external project in 4.20 I propose to patch the interrupt
-> > > simulator (a component only used for testing) for now and to revisit
-> > > it later without time pressure.
-> > >
-> > > Best regards,
-> > > Bartosz
-> >
-> > In fact after re-reading this conversation I'm still not sure what
-> > your objection is exactly. You're proposing a solution that may well
-> > be nicely engineered but it's specific to your gpio-simulator.
-> > Meanwhile I'm trying to provide a more generalized API for more
-> > testing modules to use.
->
-> I think you're generalizing something that won't find any user apart
-> from your mockup driver. So I'd say the generalisation is wrong and the
-> added code could better live in the mockup driver directly.
->
+Thanks, this was already submitted for v4.12 with
+https://www.spinics.net/lists/linux-scsi/msg125190.html
+based on
+https://www.spinics.net/lists/linux-s390/msg21307.html
 
-It used to live in the gpio-mockup driver and I generalized it
-precisely because there was another driver - iio evgen - which was
-doing basically the same thing. While I don't know if there'll be more
-users (I'd guess it would be useful for testing purposes of other
-subsystems) having the same functionality implemented once is better
-than twice.
+Also, previously seen in
+https://www.spinics.net/lists/linux-s390/msg22035.html
 
-Bart
+On 12/02/2018 09:52 PM, Thomas Meyer wrote:
+> NULL check before some freeing functions is not needed.
+> 
+> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+> ---
+> 
+> diff -u -p a/drivers/s390/scsi/zfcp_aux.c b/drivers/s390/scsi/zfcp_aux.c
+> --- a/drivers/s390/scsi/zfcp_aux.c
+> +++ b/drivers/s390/scsi/zfcp_aux.c
+> @@ -248,20 +248,13 @@ static int zfcp_allocate_low_mem_buffers
+>   
+>   static void zfcp_free_low_mem_buffers(struct zfcp_adapter *adapter)
+>   {
+> -	if (adapter->pool.erp_req)
+> -		mempool_destroy(adapter->pool.erp_req);
+> -	if (adapter->pool.scsi_req)
+> -		mempool_destroy(adapter->pool.scsi_req);
+> -	if (adapter->pool.scsi_abort)
+> -		mempool_destroy(adapter->pool.scsi_abort);
+> -	if (adapter->pool.qtcb_pool)
+> -		mempool_destroy(adapter->pool.qtcb_pool);
+> -	if (adapter->pool.status_read_req)
+> -		mempool_destroy(adapter->pool.status_read_req);
+> -	if (adapter->pool.sr_data)
+> -		mempool_destroy(adapter->pool.sr_data);
+> -	if (adapter->pool.gid_pn)
+> -		mempool_destroy(adapter->pool.gid_pn);
+> +	mempool_destroy(adapter->pool.erp_req);
+> +	mempool_destroy(adapter->pool.scsi_req);
+> +	mempool_destroy(adapter->pool.scsi_abort);
+> +	mempool_destroy(adapter->pool.qtcb_pool);
+> +	mempool_destroy(adapter->pool.status_read_req);
+> +	mempool_destroy(adapter->pool.sr_data);
+> +	mempool_destroy(adapter->pool.gid_pn);
+>   }
+>   
+>   /**
+> 
+
+
+-- 
+Mit freundlichen Gruessen / Kind regards
+Steffen Maier
+
+Linux on IBM Z Development
+
+IBM Deutschland Research & Development GmbH
+Vorsitzende des Aufsichtsrats: Martina Koederitz
+Geschaeftsfuehrung: Dirk Wittkopp
+Sitz der Gesellschaft: Boeblingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
+
