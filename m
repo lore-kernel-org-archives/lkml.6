@@ -2,36 +2,37 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0966C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDD1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8273F214C1
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8273F214C1
+	by mail.kernel.org (Postfix) with ESMTP id 3D59E2081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:25:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D59E2081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbeLCTZ1 (ORCPT
+        id S1726147AbeLCTZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:25:27 -0500
+        Mon, 3 Dec 2018 14:25:31 -0500
 Received: from mga09.intel.com ([134.134.136.24]:12025 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLCTZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:25:26 -0500
+        id S1726056AbeLCTZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:25:30 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 11:25:21 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 11:25:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="115600452"
+   d="scan'208";a="115600470"
 Received: from ahduyck-desk1.amr.corp.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 03 Dec 2018 11:25:20 -0800
-Subject: [PATCH RFC 0/3] Fix KVM misinterpreting Reserved page as an MMIO
- page
+  by orsmga001.jf.intel.com with ESMTP; 03 Dec 2018 11:25:26 -0800
+Subject: [PATCH RFC 1/3] kvm: Split use cases for kvm_is_reserved_pfn to
+ kvm_is_refcounted_pfn
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     dan.j.williams@intel.com, pbonzini@redhat.com,
         yi.z.zhang@linux.intel.com, brho@google.com, kvm@vger.kernel.org,
@@ -40,8 +41,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         dave.jiang@intel.com, yu.c.zhang@intel.com, pagupta@redhat.com,
         david@redhat.com, jack@suse.cz, hch@lst.de, rkrcmar@redhat.com,
         jglisse@redhat.com
-Date:   Mon, 03 Dec 2018 11:25:20 -0800
-Message-ID: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
+Date:   Mon, 03 Dec 2018 11:25:26 -0800
+Message-ID: <154386512606.27193.13867450982940890636.stgit@ahduyck-desk1.amr.corp.intel.com>
+In-Reply-To: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
+References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,38 +54,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have loosely based this patch series off of the following patch series
-from Zhang Yi:
-https://lore.kernel.org/lkml/cover.1536342881.git.yi.z.zhang@linux.intel.com
+The function kvm_is_reserved_pfn really has two uses. One is to test for if
+we should be updating the reference count on a page when we are accessing
+it. The other is to determine if we should be updating the dirty flag or
+marking pages as accessed.
 
-The original set had attempted to address the fact that DAX pages were
-treated like MMIO pages which had resulted in reduced performance. It
-attempted to address this by ignoring the PageReserved flag if the page
-was either a DEV_DAX or FS_DAX page.
+In preparation for blurring the lines between ZONE_DEVICE and system RAM I
+am splitting out the dirty/accessed cases into their own checks. Doing this
+allows us to add ZONE_DEVICE to the list of refcounted pages without having
+to worry about us introducing possible issues with pages being marked as
+dirty or accessed and possibly causing any issues with attempted LRU
+accesses on the ZONE_DEVICE pages.
 
-I am proposing this as an alternative to that set. The main reason for this
-is because I believe there are a few issues that were overlooked with that
-original set. Specifically KVM seems to have two different uses for the
-PageReserved flag. One being whether or not we can pin the memory, the other
-being if we should be marking the pages as dirty or accessed. I believe
-only the pinning really applies so I have split the uses of
-kvm_is_reserved_pfn and updated the function uses to determine support for
-page pinning to include a check of the pgmap to see if it supports pinning.
-
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
+ arch/x86/kvm/mmu.c       |    6 +++---
+ include/linux/kvm_host.h |    2 +-
+ virt/kvm/kvm_main.c      |   22 +++++++++++++---------
+ 3 files changed, 17 insertions(+), 13 deletions(-)
 
-Alexander Duyck (3):
-      kvm: Split use cases for kvm_is_reserved_pfn to kvm_is_refcounted_pfn
-      mm: Add support for exposing if dev_pagemap supports refcount pinning
-      kvm: Add additional check to determine if a page is refcounted
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 7c03c0f35444..7c61cc260c23 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -798,7 +798,7 @@ static int mmu_spte_clear_track_bits(u64 *sptep)
+ 	 * kvm mmu, before reclaiming the page, we should
+ 	 * unmap it from mmu first.
+ 	 */
+-	WARN_ON(!kvm_is_reserved_pfn(pfn) && !page_count(pfn_to_page(pfn)));
++	WARN_ON(kvm_is_refcounted_pfn(pfn) && !page_count(pfn_to_page(pfn)));
+ 
+ 	if (is_accessed_spte(old_spte))
+ 		kvm_set_pfn_accessed(pfn);
+@@ -3166,7 +3166,7 @@ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+ 	 * PT_PAGE_TABLE_LEVEL and there would be no adjustment done
+ 	 * here.
+ 	 */
+-	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
++	if (!is_error_noslot_pfn(pfn) && kvm_is_refcounted_pfn(pfn) &&
+ 	    level == PT_PAGE_TABLE_LEVEL &&
+ 	    PageTransCompoundMap(pfn_to_page(pfn)) &&
+ 	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+@@ -5668,7 +5668,7 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+ 		 * mapping if the indirect sp has level = 1.
+ 		 */
+ 		if (sp->role.direct &&
+-			!kvm_is_reserved_pfn(pfn) &&
++			kvm_is_refcounted_pfn(pfn) &&
+ 			PageTransCompoundMap(pfn_to_page(pfn))) {
+ 			pte_list_remove(rmap_head, sptep);
+ 			need_tlb_flush = 1;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index c926698040e0..132e5dbc9049 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -906,7 +906,7 @@ void kvm_arch_sync_events(struct kvm *kvm);
+ int kvm_cpu_has_pending_timer(struct kvm_vcpu *vcpu);
+ void kvm_vcpu_kick(struct kvm_vcpu *vcpu);
+ 
+-bool kvm_is_reserved_pfn(kvm_pfn_t pfn);
++bool kvm_is_refcounted_pfn(kvm_pfn_t pfn);
+ 
+ struct kvm_irq_ack_notifier {
+ 	struct hlist_node link;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 2679e476b6c3..5e666df5666d 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -146,7 +146,15 @@ __weak int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+ 	return 0;
+ }
+ 
+-bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
++bool kvm_is_refcounted_pfn(kvm_pfn_t pfn)
++{
++	if (pfn_valid(pfn))
++		return !PageReserved(pfn_to_page(pfn));
++
++	return false;
++}
++
++static bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
+ {
+ 	if (pfn_valid(pfn))
+ 		return PageReserved(pfn_to_page(pfn));
+@@ -1678,7 +1686,7 @@ EXPORT_SYMBOL_GPL(kvm_release_page_clean);
+ 
+ void kvm_release_pfn_clean(kvm_pfn_t pfn)
+ {
+-	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn))
++	if (!is_error_noslot_pfn(pfn) && kvm_is_refcounted_pfn(pfn))
+ 		put_page(pfn_to_page(pfn));
+ }
+ EXPORT_SYMBOL_GPL(kvm_release_pfn_clean);
+@@ -1700,12 +1708,8 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty);
+ 
+ void kvm_set_pfn_dirty(kvm_pfn_t pfn)
+ {
+-	if (!kvm_is_reserved_pfn(pfn)) {
+-		struct page *page = pfn_to_page(pfn);
+-
+-		if (!PageReserved(page))
+-			SetPageDirty(page);
+-	}
++	if (!kvm_is_reserved_pfn(pfn))
++		SetPageDirty(pfn_to_page(pfn));
+ }
+ EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
+ 
+@@ -1718,7 +1722,7 @@ EXPORT_SYMBOL_GPL(kvm_set_pfn_accessed);
+ 
+ void kvm_get_pfn(kvm_pfn_t pfn)
+ {
+-	if (!kvm_is_reserved_pfn(pfn))
++	if (kvm_is_refcounted_pfn(pfn))
+ 		get_page(pfn_to_page(pfn));
+ }
+ EXPORT_SYMBOL_GPL(kvm_get_pfn);
 
-
- arch/x86/kvm/mmu.c        |    6 +++---
- drivers/nvdimm/pfn_devs.c |    2 ++
- include/linux/kvm_host.h  |    2 +-
- include/linux/memremap.h  |    5 ++++-
- include/linux/mm.h        |   11 +++++++++++
- virt/kvm/kvm_main.c       |   34 +++++++++++++++++++++++++---------
- 6 files changed, 46 insertions(+), 14 deletions(-)
-
---
