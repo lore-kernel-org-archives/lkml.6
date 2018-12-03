@@ -2,343 +2,139 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE78C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1102EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A11C20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA49C208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OwyVsF2V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A11C20848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0rdoKOrH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA49C208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbeLCQBB (ORCPT
+        id S1726735AbeLCQBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:01:01 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38443 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbeLCQBA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:01:00 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m22so6240230wml.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 08:00:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LlQl10sTapvckaKcDkeHqBIHgcPLtKEdv5p1b9Bnto4=;
-        b=OwyVsF2VQ57Hdn/gtOT8NeDjj846jYMCoy9ncQlU7KhgB3zSRkSwhwcNsqDN/O2td+
-         by86L6HZK0GZqeeXDkIWYBYYUKvPqKCq5Qm3xOGd7S8/HvFGBDIo6D3fBpp/3ZxGih9i
-         Ze7zmWcp8ULY7+YBz6DEazDQxGFfebl5sAmAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LlQl10sTapvckaKcDkeHqBIHgcPLtKEdv5p1b9Bnto4=;
-        b=E7Xr3/kGrDHAndk5/TUHdmuLZjv70I9EDfwNLOrbWt++eh4nxU9423ZbwLncisBNtk
-         dk2Dk3l68WdkX0yiDG20J2+0WL0m02JlWW7SHPZ20C+9PFxNJ3FENUMgYZskdcaa7UsE
-         sDhaXF65InvLNd/gkn6GCdj6PGGaykquMmIDZG9oULRjjic4rNqdJ4yF5FYksca0LHtK
-         hEzEEbTvYVX9YDlOw/tbCZy+YRm9wvZwLnrKdWm120gIL35hg4lJk3bznjWOgC5qMya9
-         5SkMmnenj7BmQ/oiz4j1YqTzhkiH/AeeSI0r/+GJyPW3GOn3NJjG2brSXBeZsEdY3J1G
-         bq9A==
-X-Gm-Message-State: AA+aEWacA9DqkUXGJNS6MRffImKzdfO/XMMrbRJNrQhjFzSZxZW10pt0
-        lfnkbg8CoxUuH7L5Q1Slrb+s9g==
-X-Google-Smtp-Source: AFSGD/UU0Sw7OaQwlBIyozUPHYUYP17cM9x9TQG2WMkItE220KN9RTa0FmToJgg628a3q3PyA1T+7A==
-X-Received: by 2002:a1c:8851:: with SMTP id k78mr8979378wmd.51.1543852853966;
-        Mon, 03 Dec 2018 08:00:53 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id l20sm31443927wrb.93.2018.12.03.08.00.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 08:00:53 -0800 (PST)
-Date:   Mon, 3 Dec 2018 16:00:50 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        sparclinux@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Hogan <jhogan@kernel.org>, linux-hexagon@vger.kernel.org,
-        x86@kernel.org, Vineet Gupta <vgupta@synopsys.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-snps-arc@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ingo Molnar <mingo@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Huang Ying <ying.huang@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rich Felker <dalias@libc.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v6 1/4] kgdb: Remove irq flags from roundup
-Message-ID: <20181203160050.vebvvdiuki2iuczg@holly.lan>
-References: <20181127173839.34328-1-dianders@chromium.org>
- <20181127173839.34328-2-dianders@chromium.org>
+        Mon, 3 Dec 2018 11:01:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726586AbeLCQBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 11:01:43 -0500
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51D8020881;
+        Mon,  3 Dec 2018 16:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543852897;
+        bh=gNTy8+yF8ndcLmyH9AcvmuMjGq0H+Pbnq5F+jJ5bCcs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0rdoKOrHzqj6lOG5MDcCWYaGqV0eI+rG88xIksPzWFuUDHeCtXelfgNDPxO/EXlR+
+         UVHrU9z4pr2pMHkI4DP3Tg5/QH5s/0txmKCG0+hKQ16DgjA0o0MIkTR8BM9rBUqk7z
+         EWOTO7cNmQ6HKA0jYA3PZDHwX+OwtkHHB/bI73vA=
+Received: by mail-qk1-f175.google.com with SMTP id m5so7601130qka.9;
+        Mon, 03 Dec 2018 08:01:37 -0800 (PST)
+X-Gm-Message-State: AA+aEWZNQn1G1HYNhPCyCZx7vkHhCKg2rL5l2BjxskR4sTsNbX8sfqBV
+        Mjzhdvjl4Q9WeCC5ocTE8bWg/iT/9StTzPRyaQ==
+X-Google-Smtp-Source: AFSGD/Wv039ltwptAfmD3rrwFoC2c8J583FG0AwdruQ+BiXT7GNHXZEI2gK7KyNZZlOKuzzF27ctFhvvvpsyfnApz00=
+X-Received: by 2002:a37:5686:: with SMTP id k128mr14440409qkb.29.1543852896490;
+ Mon, 03 Dec 2018 08:01:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127173839.34328-2-dianders@chromium.org>
-User-Agent: NeoMutt/20180716
+References: <20181027095820.40056-1-chenyu56@huawei.com> <20181027095820.40056-2-chenyu56@huawei.com>
+ <20181112160241.GA14074@bogus> <9fce6a58-d986-25e4-1791-ba375e4f075e@huawei.com>
+In-Reply-To: <9fce6a58-d986-25e4-1791-ba375e4f075e@huawei.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 3 Dec 2018 10:01:25 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKObFGdf5tPdv=Ss2ZWCPBgimbEUn72rkR2+L7uRbAirg@mail.gmail.com>
+Message-ID: <CAL_JsqKObFGdf5tPdv=Ss2ZWCPBgimbEUn72rkR2+L7uRbAirg@mail.gmail.com>
+Subject: Re: [PATCH 01/10] dt-bindings: usb: add support for dwc3 controller
+ on HiSilicon SoCs
+To:     Chen Yu <chenyu56@huawei.com>
+Cc:     Wangbinghui <wangbinghui@hisilicon.com>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>, kongfei@hisilicon.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        John Stultz <john.stultz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 09:38:36AM -0800, Douglas Anderson wrote:
-> The function kgdb_roundup_cpus() was passed a parameter that was
-> documented as:
-> 
-> > the flags that will be used when restoring the interrupts. There is
-> > local_irq_save() call before kgdb_roundup_cpus().
-> 
-> Nobody used those flags.  Anyone who wanted to temporarily turn on
-> interrupts just did local_irq_enable() and local_irq_disable() without
-> looking at them.  So we can definitely remove the flags.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Acked-by: Will Deacon <will.deacon@arm.com>
-> ---
-> 
-> Changes in v6: None
-> Changes in v5: None
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2:
-> - Removing irq flags separated from fixing lockdep splat.
-> 
->  arch/arc/kernel/kgdb.c     | 2 +-
->  arch/arm/kernel/kgdb.c     | 2 +-
->  arch/arm64/kernel/kgdb.c   | 2 +-
->  arch/hexagon/kernel/kgdb.c | 9 ++-------
->  arch/mips/kernel/kgdb.c    | 2 +-
->  arch/powerpc/kernel/kgdb.c | 2 +-
->  arch/sh/kernel/kgdb.c      | 2 +-
->  arch/sparc/kernel/smp_64.c | 2 +-
->  arch/x86/kernel/kgdb.c     | 9 ++-------
+On Fri, Nov 16, 2018 at 8:29 PM Chen Yu <chenyu56@huawei.com> wrote:
+>
+> Hi,
+>
+> On 2018/11/13 0:02, Rob Herring wrote:
+> > On Sat, Oct 27, 2018 at 05:58:11PM +0800, Yu Chen wrote:
+> >> This patch adds binding descriptions to support the dwc3 controller
+> >> on HiSilicon SoCs and boards like the HiKey960.
+> >>
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Cc: Rob Herring <robh+dt@kernel.org>
+> >> Cc: Mark Rutland <mark.rutland@arm.com>
+> >> Cc: John Stultz <john.stultz@linaro.org>
+> >> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+> >> ---
+> >>  .../devicetree/bindings/usb/dwc3-hisi.txt          | 53 +++++++++++++=
++++++++++
+> >>  1 file changed, 53 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/usb/dwc3-hisi.tx=
+t
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/usb/dwc3-hisi.txt b/Doc=
+umentation/devicetree/bindings/usb/dwc3-hisi.txt
+> >> new file mode 100644
+> >> index 000000000000..e715e7b1c324
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+> >> @@ -0,0 +1,53 @@
+> >> +HiSilicon DWC3 USB SoC controller
+> >> +
+> >> +This file documents the parameters for the dwc3-hisi driver.
+> >> +
+> >> +Required properties:
+> >> +- compatible:       should be "hisilicon,hi3660-dwc3"
+> >> +- clocks:   A list of phandle + clock-specifier pairs for the
+> >> +            clocks listed in clock-names
+> >> +- clock-names:      Specify clock names
+> >> +- resets:   list of phandle and reset specifier pairs.
+> >> +
+> >> +Sub-nodes:
+> >> +The dwc3 core should be added as subnode to HiSilicon DWC3 as shown i=
+n the
+> >> +example below. The DT binding details of dwc3 can be found in:
+> >> +Documentation/devicetree/bindings/usb/dwc3.txt
+> >
+> > If you only have clocks and resets and no glue registers, then you
+> > don't need a sub-node. Just make the controller one node.
+> >
+>
+> In dwc3 glue driver=EF=BC=8Cthe controller driver usually probed by call =
+of_platform_populate
+> which will search the child node of glue driver.
+> The code of function of_platform_populate is as below:
+>
+>         for_each_child_of_node(root, child) {
+>                  rc =3D of_platform_bus_create(child, matches, lookup, pa=
+rent, true);
+>                  if (rc) {
+>                          of_node_put(child);
+>                          break;
+>                  }
+>          }
+>
+> So I think the controller node should be a sub-node.
 
-Again, please formally Cc: the arch maintainers in the patch header
-(just after your Signed-off-by: if I'm not being explicitly clear).
+It was done that way, but has changed. See commit fe8abf332b8f ("usb:
+dwc3: support clocks and resets for DWC3 core").
 
-
-Daniel.
-
->  include/linux/kgdb.h       | 9 ++-------
->  kernel/debug/debug_core.c  | 2 +-
->  11 files changed, 14 insertions(+), 29 deletions(-)
-> 
-> diff --git a/arch/arc/kernel/kgdb.c b/arch/arc/kernel/kgdb.c
-> index 9a3c34af2ae8..0932851028e0 100644
-> --- a/arch/arc/kernel/kgdb.c
-> +++ b/arch/arc/kernel/kgdb.c
-> @@ -197,7 +197,7 @@ static void kgdb_call_nmi_hook(void *ignored)
->  	kgdb_nmicallback(raw_smp_processor_id(), NULL);
->  }
->  
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	local_irq_enable();
->  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> diff --git a/arch/arm/kernel/kgdb.c b/arch/arm/kernel/kgdb.c
-> index caa0dbe3dc61..f21077b077be 100644
-> --- a/arch/arm/kernel/kgdb.c
-> +++ b/arch/arm/kernel/kgdb.c
-> @@ -175,7 +175,7 @@ static void kgdb_call_nmi_hook(void *ignored)
->         kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
->  }
->  
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->         local_irq_enable();
->         smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
-> index a20de58061a8..12c339ff6e75 100644
-> --- a/arch/arm64/kernel/kgdb.c
-> +++ b/arch/arm64/kernel/kgdb.c
-> @@ -289,7 +289,7 @@ static void kgdb_call_nmi_hook(void *ignored)
->  	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
->  }
->  
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	local_irq_enable();
->  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> diff --git a/arch/hexagon/kernel/kgdb.c b/arch/hexagon/kernel/kgdb.c
-> index 16c24b22d0b2..012e0e230ac2 100644
-> --- a/arch/hexagon/kernel/kgdb.c
-> +++ b/arch/hexagon/kernel/kgdb.c
-> @@ -119,17 +119,12 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
->  
->  /**
->   * kgdb_roundup_cpus - Get other CPUs into a holding pattern
-> - * @flags: Current IRQ state
->   *
->   * On SMP systems, we need to get the attention of the other CPUs
->   * and get them be in a known state.  This should do what is needed
->   * to get the other CPUs to call kgdb_wait(). Note that on some arches,
->   * the NMI approach is not used for rounding up all the CPUs. For example,
-> - * in case of MIPS, smp_call_function() is used to roundup CPUs. In
-> - * this case, we have to make sure that interrupts are enabled before
-> - * calling smp_call_function(). The argument to this function is
-> - * the flags that will be used when restoring the interrupts. There is
-> - * local_irq_save() call before kgdb_roundup_cpus().
-> + * in case of MIPS, smp_call_function() is used to roundup CPUs.
->   *
->   * On non-SMP systems, this is not called.
->   */
-> @@ -139,7 +134,7 @@ static void hexagon_kgdb_nmi_hook(void *ignored)
->  	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
->  }
->  
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	local_irq_enable();
->  	smp_call_function(hexagon_kgdb_nmi_hook, NULL, 0);
-> diff --git a/arch/mips/kernel/kgdb.c b/arch/mips/kernel/kgdb.c
-> index eb6c0d582626..2b05effc17b4 100644
-> --- a/arch/mips/kernel/kgdb.c
-> +++ b/arch/mips/kernel/kgdb.c
-> @@ -219,7 +219,7 @@ static void kgdb_call_nmi_hook(void *ignored)
->  	set_fs(old_fs);
->  }
->  
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	local_irq_enable();
->  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
-> index 59c578f865aa..b0e804844be0 100644
-> --- a/arch/powerpc/kernel/kgdb.c
-> +++ b/arch/powerpc/kernel/kgdb.c
-> @@ -124,7 +124,7 @@ static int kgdb_call_nmi_hook(struct pt_regs *regs)
->  }
->  
->  #ifdef CONFIG_SMP
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	smp_send_debugger_break();
->  }
-> diff --git a/arch/sh/kernel/kgdb.c b/arch/sh/kernel/kgdb.c
-> index 4f04c6638a4d..cc57630f6bf2 100644
-> --- a/arch/sh/kernel/kgdb.c
-> +++ b/arch/sh/kernel/kgdb.c
-> @@ -319,7 +319,7 @@ static void kgdb_call_nmi_hook(void *ignored)
->  	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
->  }
->  
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	local_irq_enable();
->  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> diff --git a/arch/sparc/kernel/smp_64.c b/arch/sparc/kernel/smp_64.c
-> index 4792e08ad36b..f45d876983f1 100644
-> --- a/arch/sparc/kernel/smp_64.c
-> +++ b/arch/sparc/kernel/smp_64.c
-> @@ -1014,7 +1014,7 @@ void flush_dcache_page_all(struct mm_struct *mm, struct page *page)
->  }
->  
->  #ifdef CONFIG_KGDB
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	smp_cross_call(&xcall_kgdb_capture, 0, 0, 0);
->  }
-> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-> index 8e36f249646e..ac6291a4178d 100644
-> --- a/arch/x86/kernel/kgdb.c
-> +++ b/arch/x86/kernel/kgdb.c
-> @@ -422,21 +422,16 @@ static void kgdb_disable_hw_debug(struct pt_regs *regs)
->  #ifdef CONFIG_SMP
->  /**
->   *	kgdb_roundup_cpus - Get other CPUs into a holding pattern
-> - *	@flags: Current IRQ state
->   *
->   *	On SMP systems, we need to get the attention of the other CPUs
->   *	and get them be in a known state.  This should do what is needed
->   *	to get the other CPUs to call kgdb_wait(). Note that on some arches,
->   *	the NMI approach is not used for rounding up all the CPUs. For example,
-> - *	in case of MIPS, smp_call_function() is used to roundup CPUs. In
-> - *	this case, we have to make sure that interrupts are enabled before
-> - *	calling smp_call_function(). The argument to this function is
-> - *	the flags that will be used when restoring the interrupts. There is
-> - *	local_irq_save() call before kgdb_roundup_cpus().
-> + *	in case of MIPS, smp_call_function() is used to roundup CPUs.
->   *
->   *	On non-SMP systems, this is not called.
->   */
-> -void kgdb_roundup_cpus(unsigned long flags)
-> +void kgdb_roundup_cpus(void)
->  {
->  	apic->send_IPI_allbutself(APIC_DM_NMI);
->  }
-> diff --git a/include/linux/kgdb.h b/include/linux/kgdb.h
-> index e465bb15912d..05e5b2eb0d32 100644
-> --- a/include/linux/kgdb.h
-> +++ b/include/linux/kgdb.h
-> @@ -178,21 +178,16 @@ kgdb_arch_handle_exception(int vector, int signo, int err_code,
->  
->  /**
->   *	kgdb_roundup_cpus - Get other CPUs into a holding pattern
-> - *	@flags: Current IRQ state
->   *
->   *	On SMP systems, we need to get the attention of the other CPUs
->   *	and get them into a known state.  This should do what is needed
->   *	to get the other CPUs to call kgdb_wait(). Note that on some arches,
->   *	the NMI approach is not used for rounding up all the CPUs. For example,
-> - *	in case of MIPS, smp_call_function() is used to roundup CPUs. In
-> - *	this case, we have to make sure that interrupts are enabled before
-> - *	calling smp_call_function(). The argument to this function is
-> - *	the flags that will be used when restoring the interrupts. There is
-> - *	local_irq_save() call before kgdb_roundup_cpus().
-> + *	in case of MIPS, smp_call_function() is used to roundup CPUs.
->   *
->   *	On non-SMP systems, this is not called.
->   */
-> -extern void kgdb_roundup_cpus(unsigned long flags);
-> +extern void kgdb_roundup_cpus(void);
->  
->  /**
->   *	kgdb_arch_set_pc - Generic call back to the program counter
-> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-> index 65c0f1363788..f3cadda45f07 100644
-> --- a/kernel/debug/debug_core.c
-> +++ b/kernel/debug/debug_core.c
-> @@ -593,7 +593,7 @@ static int kgdb_cpu_enter(struct kgdb_state *ks, struct pt_regs *regs,
->  
->  	/* Signal the other CPUs to enter kgdb_wait() */
->  	else if ((!kgdb_single_step) && kgdb_do_roundup)
-> -		kgdb_roundup_cpus(flags);
-> +		kgdb_roundup_cpus();
->  #endif
->  
->  	/*
-> -- 
-> 2.20.0.rc0.387.gc7a69e6b6c-goog
-> 
+Rob
