@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29CFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0663C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A3A020851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:48:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A3A020851
+	by mail.kernel.org (Postfix) with ESMTP id A2F54214C1
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:48:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F54214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeLCLsn (ORCPT
+        id S1726505AbeLCLsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:48:43 -0500
-Received: from shell.v3.sk ([90.176.6.54]:37935 "EHLO shell.v3.sk"
+        Mon, 3 Dec 2018 06:48:45 -0500
+Received: from shell.v3.sk ([90.176.6.54]:37944 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbeLCLsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:48:42 -0500
+        id S1726174AbeLCLso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:48:44 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 7D2E3C8137;
-        Mon,  3 Dec 2018 12:47:57 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 909EAC8123;
+        Mon,  3 Dec 2018 12:47:59 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wizFHgYfgQl9; Mon,  3 Dec 2018 12:47:49 +0100 (CET)
+        with ESMTP id 7lCOIR_jgzxz; Mon,  3 Dec 2018 12:47:53 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 7B24BC8130;
-        Mon,  3 Dec 2018 12:47:49 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id E19DDC80DB;
+        Mon,  3 Dec 2018 12:47:52 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id tUBNTCqnCbVD; Mon,  3 Dec 2018 12:47:48 +0100 (CET)
+        with ESMTP id wK8YimR0I27F; Mon,  3 Dec 2018 12:47:51 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 18A46C805D;
-        Mon,  3 Dec 2018 12:47:48 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id A9D13C8131;
+        Mon,  3 Dec 2018 12:47:50 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Jiri Kosina <trivial@kernel.org>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] mac80211: a trivial open80211s web site URL fix
-Date:   Mon,  3 Dec 2018 12:47:45 +0100
-Message-Id: <20181203114745.637240-1-lkundrak@v3.sk>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] dt-bindings: marvell,mmp2: fix a typo in bindings doc
+Date:   Mon,  3 Dec 2018 12:47:48 +0100
+Message-Id: <20181203114748.637314-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,24 +55,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+A trivial one, but it's annoying that copy & paste of the link
+doesn't work.
+
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- net/mac80211/Kconfig | 2 +-
+ Documentation/devicetree/bindings/clock/marvell,mmp2.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mac80211/Kconfig b/net/mac80211/Kconfig
-index f869e35d0974..bbd3d30625d8 100644
---- a/net/mac80211/Kconfig
-+++ b/net/mac80211/Kconfig
-@@ -64,7 +64,7 @@ config MAC80211_MESH
- 	 The implementation is based on Draft 2.08 of the Mesh Networking
- 	 amendment.  However, no compliance with that draft is claimed or even
- 	 possible, as drafts leave a number of identifiers to be defined after
--	 ratification.  For more information visit http://o11s.org/.
-+	 ratification.  For more information visit http://open80211s.org/.
+diff --git a/Documentation/devicetree/bindings/clock/marvell,mmp2.txt b/D=
+ocumentation/devicetree/bindings/clock/marvell,mmp2.txt
+index af376a01f2b7..b0447d9896bc 100644
+--- a/Documentation/devicetree/bindings/clock/marvell,mmp2.txt
++++ b/Documentation/devicetree/bindings/clock/marvell,mmp2.txt
+@@ -18,4 +18,4 @@ Required Properties:
+ Each clock is assigned an identifier and client nodes use this identifie=
+r
+ to specify the clock which they consume.
 =20
- config MAC80211_LEDS
- 	bool "Enable LED triggers"
+-All these identifier could be found in <dt-bindings/clock/marvell-mmp2.h=
+>.
++All these identifier could be found in <dt-bindings/clock/marvell,mmp2.h=
+>.
 --=20
 2.19.1
 
