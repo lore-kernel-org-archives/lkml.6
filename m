@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E86B4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6749C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BC920848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BC920848
+	by mail.kernel.org (Postfix) with ESMTP id 85C2320848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C2320848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbeLCE0m (ORCPT
+        id S1726064AbeLCE0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:26:42 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:55232 "EHLO mail5.wrs.com"
+        Sun, 2 Dec 2018 23:26:53 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:55236 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbeLCE0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:26:42 -0500
+        id S1725790AbeLCE0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 23:26:53 -0500
 Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB34PJnX018227
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB34PJnZ018227
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 2 Dec 2018 20:26:05 -0800
+        Sun, 2 Dec 2018 20:26:15 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 2 Dec 2018
- 20:25:40 -0800
+ 20:26:05 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>
-Subject: [PATCH 10/22] mfd: max8925-core: drop unused MODULE_ tags from non-modular code
-Date:   Sun, 2 Dec 2018 23:23:17 -0500
-Message-ID: <1543811009-15112-11-git-send-email-paul.gortmaker@windriver.com>
+        Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 11/22] mfd: rc5t583: Make it explicitly non-modular
+Date:   Sun, 2 Dec 2018 23:23:18 -0500
+Message-ID: <1543811009-15112-12-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
@@ -49,46 +49,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_MAX8925
-drivers/mfd/Kconfig:    bool "Maxim Semiconductor MAX8925 PMIC Support"
+drivers/mfd/Kconfig:config MFD_RC5T583
+drivers/mfd/Kconfig:    bool "Ricoh RC5T583 Power Management system device"
 
 ...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the couple traces of modular infrastructure use, so that
+Lets remove the modular code that is essentially orphaned, so that
 when reading the driver there is no doubt it is builtin-only.
 
-We delete the MODULE_LICENSE tag etc. since all that information
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/max8925-core.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/mfd/rc5t583.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/drivers/mfd/max8925-core.c b/drivers/mfd/max8925-core.c
-index fd8b15cd84fd..87c724ba9793 100644
---- a/drivers/mfd/max8925-core.c
-+++ b/drivers/mfd/max8925-core.c
-@@ -10,7 +10,7 @@
-  */
- 
+diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
+index fd46de02b715..c5cc5cb3dde7 100644
+--- a/drivers/mfd/rc5t583.c
++++ b/drivers/mfd/rc5t583.c
+@@ -23,7 +23,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
  #include <linux/kernel.h>
 -#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/i2c.h>
- #include <linux/irq.h>
- #include <linux/interrupt.h>
-@@ -919,8 +919,3 @@ void max8925_device_exit(struct max8925_chip *chip)
- 		free_irq(chip->tsc_irq, chip);
- 	mfd_remove_devices(chip->dev);
+ #include <linux/init.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
+@@ -298,8 +297,6 @@ static const struct i2c_device_id rc5t583_i2c_id[] = {
+ 	{}
+ };
+ 
+-MODULE_DEVICE_TABLE(i2c, rc5t583_i2c_id);
+-
+ static struct i2c_driver rc5t583_i2c_driver = {
+ 	.driver = {
+ 		   .name = "rc5t583",
+@@ -313,14 +310,3 @@ static int __init rc5t583_i2c_init(void)
+ 	return i2c_add_driver(&rc5t583_i2c_driver);
  }
+ subsys_initcall(rc5t583_i2c_init);
 -
+-static void __exit rc5t583_i2c_exit(void)
+-{
+-	i2c_del_driver(&rc5t583_i2c_driver);
+-}
 -
--MODULE_DESCRIPTION("PMIC Driver for Maxim MAX8925");
--MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com");
--MODULE_LICENSE("GPL");
+-module_exit(rc5t583_i2c_exit);
+-
+-MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
+-MODULE_DESCRIPTION("RICOH RC5T583 power management system device driver");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
