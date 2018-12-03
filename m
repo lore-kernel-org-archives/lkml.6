@@ -2,132 +2,166 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC73C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8C8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F77B214DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:11:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="l7/aT3eX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F77B214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
+	by mail.kernel.org (Postfix) with ESMTP id 90CF820881
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:11:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CF820881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbeLCRLH (ORCPT
+        id S1726846AbeLCRLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:11:07 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43731 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726745AbeLCRLH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:11:07 -0500
-Received: by mail-yw1-f66.google.com with SMTP id l200so5675963ywe.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:11:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ettus-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xy519ioxY8kNNqHgw43eLJw2UJslvmFbCOo+R7BOUQg=;
-        b=l7/aT3eXzVaxIb33IW5tl+/xrLc/3XYobZbHdzwvYzVF82XkWElSuT5jqrYvydaurO
-         NJ/0SC2MEjfp57p0NFXr8MtjTzH6zTv1rPhYUIew51KKf3IjM2/jZIb8CayE5k9Dtse7
-         80cDy8JrzghJPXlmfr/0HBiv4/g2k+DGRBrCUVp21ME7BJCiITPvCfbGKKReB89hgDhi
-         9dZDqcBJw5Kj2uYqU3MRUVSX4rA+OcJLdf0gEL7+tCYZ8ZjFvJ+VpB5AlRJgY4Nk+uIT
-         /7DkETnT1k3Giy6+Nja/W5fc45ARKIQ2gbSaTO9I9UYCJH4pO0jbN0fAVeaB0+UQmFZb
-         db0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xy519ioxY8kNNqHgw43eLJw2UJslvmFbCOo+R7BOUQg=;
-        b=jY5uuQRsIVG+wDWiok1gVbSRZIXmCJrBpfrAM1/d5ywLMxGv+5e9e+cayqg4CSCOvG
-         Fn1lTOyI2QuCyHWdKxy15GBLT7079LFXBU++YAF2fkmXp3RqACfyV9akgqSJVYP8+Q3x
-         ScNPSfu6dBXF/gyBkbrQSz+WyNqyJWXmpPhVU/1CdLc6Sl/RhUpABVH9WEeDYySUh3Qt
-         XEjMVToAhimwfgni9m25DJQzkeLJFtSQV11gu3C0lauj3nHD2dHyuEzE6tUOk4grhpiU
-         RzseBbMVbkVTR9/mBapS4kT6YT6MNwauQHmNP6VSscN/fzMIoj0ZkZw5c5mWluYscS40
-         DP3g==
-X-Gm-Message-State: AA+aEWZBjMuzEDlEl1uT4X/ozG/O/u9WGtQeocELU7g48NR30Fy9Nh7e
-        r68MFNjoxPVRyW2dClq/IGwq1kJYAMrWJOLGrZD1vw==
-X-Google-Smtp-Source: AFSGD/U0iVGUmF4DalzQ6C7GkHqsUqt9JhxqgrVV/75f745a2lGw7uWaPEpPKpSP6OeyA4zOlDm+Z8WUo30UNQrRrWo=
-X-Received: by 2002:a0d:de82:: with SMTP id h124mr16135824ywe.354.1543857065651;
- Mon, 03 Dec 2018 09:11:05 -0800 (PST)
+        Mon, 3 Dec 2018 12:11:15 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:48578 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726650AbeLCRLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:11:15 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 437s315cCKz9v01m;
+        Mon,  3 Dec 2018 18:11:09 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id GJySx5LmMJoZ; Mon,  3 Dec 2018 18:11:09 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 437s315587z9tyys;
+        Mon,  3 Dec 2018 18:11:09 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0617D8B7B8;
+        Mon,  3 Dec 2018 18:11:13 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id cswXRt5T2eYE; Mon,  3 Dec 2018 18:11:12 +0100 (CET)
+Received: from [192.168.232.3] (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 59B088B79E;
+        Mon,  3 Dec 2018 18:11:12 +0100 (CET)
+Subject: Re: [RFC PATCH] mm: add probe_user_read() and probe_user_address()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Linux-MM <linux-mm@kvack.org>
+References: <336eb81e62d6c683a69d312f533899dcb6bcf770.1539959864.git.christophe.leroy@c-s.fr>
+ <CAGXu5jJzp0v_Ox4gJcSdMVT7Rzuoy4mH-J3tPfrpeyCTi4o5YQ@mail.gmail.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <a6d785e7-c01d-eb3c-89da-e960abc40c6d@c-s.fr>
+Date:   Mon, 3 Dec 2018 18:11:11 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-References: <20181203122145.1534-1-nsaenzjulienne@suse.de> <CANk1AXRxUai9SmSFt1uMXVRcoumh+ziKCi8WHb2tCG5Wx4Txow@mail.gmail.com>
-In-Reply-To: <CANk1AXRxUai9SmSFt1uMXVRcoumh+ziKCi8WHb2tCG5Wx4Txow@mail.gmail.com>
-From:   Moritz Fischer <moritz.fischer@ettus.com>
-Date:   Mon, 3 Dec 2018 09:01:47 -0800
-Message-ID: <CAAtXAHdWrJ3zL7sHygTD9W+trvviTh_0zMSwaU4AtNpxSxLbgg@mail.gmail.com>
-Subject: Re: [PATCH] fpga: stratix10-soc: fix wrong of_node_put() in init function
-To:     Alan Tull <atull@kernel.org>
-Cc:     nsaenzjulienne@suse.de, linux-fpga@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGXu5jJzp0v_Ox4gJcSdMVT7Rzuoy4mH-J3tPfrpeyCTi4o5YQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
 
-good catch.
 
-On Mon, Dec 3, 2018 at 8:13 AM Alan Tull <atull@kernel.org> wrote:
->
-> On Mon, Dec 3, 2018 at 6:22 AM Nicolas Saenz Julienne
-> <nsaenzjulienne@suse.de> wrote:
->
-> Hi Nicolas,
->
-> Thanks for catching this!  I'll fix up one formatting thing (below).
->
-> >
-> > After finding a "firmware" dt node stratix10 tries to match it's
-> > compatible string with it. To do so it's calling of_find_matching_node()
-> > which already takes care of decreasing the refcount on the "firmware"
-> > node. We are then incorrectly decreasing the refcount on that node
-> > again.
-> >
-> > This patch removes the unwarranted call to of_node_put().
-> >
-> > Fixes: e7eef1d7633a ("fpga: add intel stratix10 soc fpga manager driver")
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
->
-> > ---
-> >  drivers/fpga/stratix10-soc.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/drivers/fpga/stratix10-soc.c b/drivers/fpga/stratix10-soc.c
-> > index a1a09e04fab8..e75dbe583152 100644
-> > --- a/drivers/fpga/stratix10-soc.c
-> > +++ b/drivers/fpga/stratix10-soc.c
-> > @@ -509,13 +509,11 @@ static int __init s10_init(void)
-> >
-> >         np = of_find_matching_node(fw_np, s10_of_match);
-> >         if (!np) {
-> > -               of_node_put(fw_np);
-> >                 return -ENODEV;
-> >         }
->
-> We don't need the brackets anymore around the return statement.  I'll fix it up.
->
-> Thanks,
-> Alan
->
-> >
-> >         of_node_put(np);
-> >         ret = of_platform_populate(fw_np, s10_of_match, NULL, NULL);
-> > -       of_node_put(fw_np);
-> >         if (ret)
-> >                 return ret;
-> >
-> > --
-> > 2.19.2
-> >
+Le 19/10/2018 à 17:42, Kees Cook a écrit :
+> On Fri, Oct 19, 2018 at 8:14 AM, Christophe Leroy
+> <christophe.leroy@c-s.fr> wrote:
+>> In the powerpc, there are several places implementing safe
+>> access to user data. This is sometimes implemented using
+>> probe_kerne_address() with additional access_ok() verification,
+>> sometimes with get_user() enclosed in a pagefault_disable()/enable()
+>> pair, etc... :
+>>      show_user_instructions()
+>>      bad_stack_expansion()
+>>      p9_hmi_special_emu()
+>>      fsl_pci_mcheck_exception()
+>>      read_user_stack_64()
+>>      read_user_stack_32() on PPC64
+>>      read_user_stack_32() on PPC32
+>>      power_pmu_bhrb_to()
+>>
+>> In the same spirit as probe_kernel_read() and probe_kernel_address(),
+>> this patch adds probe_user_read() and probe_user_address().
+>>
+>> probe_user_read() does the same as probe_kernel_read() but
+>> first checks that it is really a user address.
+>>
+>> probe_user_address() is a shortcut to probe_user_read()
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   include/linux/uaccess.h | 10 ++++++++++
+>>   mm/maccess.c            | 33 +++++++++++++++++++++++++++++++++
+>>   2 files changed, 43 insertions(+)
+>>
+>> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+>> index efe79c1cdd47..fb00e3f847d7 100644
+>> --- a/include/linux/uaccess.h
+>> +++ b/include/linux/uaccess.h
+>> @@ -266,6 +266,16 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
+>>   #define probe_kernel_address(addr, retval)             \
+>>          probe_kernel_read(&retval, addr, sizeof(retval))
+>>
+>> +/**
+>> + * probe_user_address(): safely attempt to read from a user location
+>> + * @addr: address to read from
+>> + * @retval: read into this variable
+>> + *
+>> + * Returns 0 on success, or -EFAULT.
+>> + */
+>> +#define probe_user_address(addr, retval)               \
+>> +       probe_user_read(&(retval), addr, sizeof(retval))
+>> +
+>>   #ifndef user_access_begin
+>>   #define user_access_begin() do { } while (0)
+>>   #define user_access_end() do { } while (0)
+>> diff --git a/mm/maccess.c b/mm/maccess.c
+>> index ec00be51a24f..85d4a88a6917 100644
+>> --- a/mm/maccess.c
+>> +++ b/mm/maccess.c
+>> @@ -67,6 +67,39 @@ long __probe_kernel_write(void *dst, const void *src, size_t size)
+>>   EXPORT_SYMBOL_GPL(probe_kernel_write);
+>>
+>>   /**
+>> + * probe_user_read(): safely attempt to read from a user location
+>> + * @dst: pointer to the buffer that shall take the data
+>> + * @src: address to read from
+>> + * @size: size of the data chunk
+>> + *
+>> + * Safely read from address @src to the buffer at @dst.  If a kernel fault
+>> + * happens, handle that and return -EFAULT.
+>> + *
+>> + * We ensure that the copy_from_user is executed in atomic context so that
+>> + * do_page_fault() doesn't attempt to take mmap_sem.  This makes
+>> + * probe_user_read() suitable for use within regions where the caller
+>> + * already holds mmap_sem, or other locks which nest inside mmap_sem.
+>> + */
+>> +
+>> +long __weak probe_user_read(void *dst, const void *src, size_t size)
+>> +       __attribute__((alias("__probe_user_read")));
+> 
+> Let's use #defines to deal with per-arch aliases so we can keep the
+> inline I'm suggesting below...
+> 
+>> +
+>> +long __probe_user_read(void *dst, const void __user *src, size_t size)
+> 
+> Please make this __always_inline so the "size" variable can be
+> examined for const-ness by the check_object_size() in
+> __copy_from_user_inatomic().
 
-Thanks,
-Moritz
+Ok, I did as suggested in the patch I just sent.
+
+Would it be worth doing the same with the existing probe_kernel_read() 
+and probe_kernel_write() ?
+
+Christophe
+
+> 
+> -Kees
+> 
