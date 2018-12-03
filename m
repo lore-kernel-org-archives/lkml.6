@@ -2,146 +2,125 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7980C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EB3C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3FC214D9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F400C214D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:20:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0QI9psdX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3FC214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5faTbEa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F400C214D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbeLCTT2 (ORCPT
+        id S1726203AbeLCTUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:19:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42972 "EHLO mail.kernel.org"
+        Mon, 3 Dec 2018 14:20:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLCTT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:19:28 -0500
+        id S1725920AbeLCTUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:20:35 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7453D20848;
-        Mon,  3 Dec 2018 19:19:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B5D8208A3;
+        Mon,  3 Dec 2018 19:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543864763;
-        bh=loEs24ZyMoNpy+gMXQJBM7jI49KannDP3YHy75Z7URI=;
+        s=default; t=1543864831;
+        bh=H6S6MvFSSvsPpGH6+RWcgg9meLreOiqbH96RVPwsrgw=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=0QI9psdXLbnDJstfNoLdBl4aGNAlhaStszy0pkD/ATX/7QarrlIKH4bPG9feQ7FJx
-         BwQFn1UbmF7ajle++cjD4jET4lFnc2kQ9dY7JGf4XAKHgGH9cddMRjVkpV69trptoG
-         BeF6feuT7a+qYYIzZfpJjDSr+oaUpI1mW5HiryRE=
+        b=H5faTbEaDiuyorLuM7U+i/E6gKaz1LpKEldlqeqqL3PuBk4fHHKpgtCAZF86+zmrO
+         HxZ/HEE6+cVO3F1emfUXw38UoD++Svm/+1DEEfyHXnUGM51q+1RcZ9Tb3IJ+FyN2EG
+         QG91u70kQG2IA63iZOBApiBtRPK8oDsYMzpw502Y=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181203171859.GA12792@e107981-ln.cambridge.arm.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, sudeep.holla@arm.com,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+In-Reply-To: <20181130112052.73d943ec@xps13>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Michael Turquette <mturquette@baylibre.com>
-References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
- <20181123141831.8214-6-miquel.raynal@bootlin.com>
- <20181203102708.GA6090@e107981-ln.cambridge.arm.com>
- <20181203163846.494904f9@xps13>
- <20181203171859.GA12792@e107981-ln.cambridge.arm.com>
-Message-ID: <154386476279.88331.4767594304261181833@swboyd.mtv.corp.google.com>
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+References: <20181122212212.16039-3-miquel.raynal@bootlin.com>
+ <201811231627.H7ojlKLL%fengguang.wu@intel.com>
+ <20181123101132.6be3829c@xps13>
+ <154356998033.88331.4426431020982838779@swboyd.mtv.corp.google.com>
+ <20181130112052.73d943ec@xps13>
+Message-ID: <154386483105.88331.13970025193347328031@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
-Date:   Mon, 03 Dec 2018 11:19:22 -0800
+Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
+Date:   Mon, 03 Dec 2018 11:20:31 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lorenzo Pieralisi (2018-12-03 09:18:59)
-> [+Stephen, Mike]
+Quoting Miquel Raynal (2018-11-30 02:20:52)
+> Hi Stephen,
 > =
 
-> On Mon, Dec 03, 2018 at 04:38:46PM +0100, Miquel Raynal wrote:
-> > Hi Lorenzo,
-> > =
+> Stephen Boyd <sboyd@kernel.org> wrote on Fri, 30 Nov 2018 01:26:20
+> -0800:
+> =
 
-> > Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote on Mon, 3 Dec 2018
-> > 10:27:08 +0000:
-> > =
-
-> > > [+Rafael, Sudeep]
+> > Quoting Miquel Raynal (2018-11-23 01:11:32)
+> > > Would you agree with me adding dummy functions in the #else section
+> > > like:
 > > > =
 
-> > > On Fri, Nov 23, 2018 at 03:18:24PM +0100, Miquel Raynal wrote:
-> > > > Add suspend and resume callbacks. The priority of these are
-> > > > "_noirq()", to workaround early access to the registers done by the
-> > > > PCI core through the ->read()/->write() callbacks at resume time.
-> > > > =
-
-> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > > ---
-> > > >  drivers/pci/controller/pci-aardvark.c | 52 +++++++++++++++++++++++=
-++++
-> > > >  1 file changed, 52 insertions(+)
-> > > > =
-
-> > > > diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/co=
-ntroller/pci-aardvark.c
-> > > > index 108b3f15c410..7ecf1ac4036b 100644
-> > > > --- a/drivers/pci/controller/pci-aardvark.c
-> > > > +++ b/drivers/pci/controller/pci-aardvark.c
-> > > > @@ -1108,6 +1108,55 @@ static int advk_pcie_setup_clk(struct advk_p=
-cie *pcie)
-> > > >   return ret;
-> > > >  }
-> > > >  =
-
-> > > > +static int __maybe_unused advk_pcie_suspend(struct device *dev)
-> > > > +{
-> > > > + struct advk_pcie *pcie =3D dev_get_drvdata(dev);
-> > > > +
-> > > > + advk_pcie_disable_phy(pcie);
-> > > > +
-> > > > + clk_disable_unprepare(pcie->clk);  =
-
+> > > static inline void __clk_device_link(struct device *consumer, struct =
+clk *clk)
+> > > {
+> > >        return;
+> > > }
 > > > =
 
-> > > I have noticed it is common practice, still, I would like to check wh=
-ether
-> > > it is allowed to call functions that may sleep in a NOIRQ suspend/res=
-ume
-> > > callback ?
+> > > static inline void __clk_device_unlink(struct clk *clk)
+> > > {
+> > >        return;
+> > > }
+> > > =
+
+> > > Do you want me to also declare these functions in the #if section
+> > > (with the external keyword) to balance the above declarations?  =
+
 > > =
 
-> > You are right this is weird. I double checked and for instance,
-> > pcie-mediatek.c, pci-tegra.c and pci-imx6.c do the exact same thing.
-> > There are probably other cases where drivers call functions that may
-> > sleep from a NOIRQ context. I am interested to know if this is valid
-> > and if not, what is the alternative?
+> > Why can't we do the linking in __clk_get() and __clk_put()?
+> > =
+
 > =
 
-> I added Stephen and Mike, who along with Rafael can help us shed some
-> light into this, I do not have the necessary bits of info myself, I just
-> noticed.
+> Because we need the caller's 'struct device' to make the link and
+> this is not available in __clk_get(). I tried to ad it as parameter but
+> I don't think it is possible to retrieve a 'struct device' from the
+> device name. The functions where this is problematic are:
+> * clk.c:__of_clk_get_from_provider()
+> * clkdev.c:clk_get_sys()
+> =
+
+> By the way in my new version I called the helpers:
+> * clk_{link,unlink}_hierarchy()
+> * clk_{link,unlink}_consumer()
+> =
+
+> I will send a new version with these helpers, but if you have anything
+> in mind to help me achieve the above request, I will welcome the idea.
 > =
 
 
-Is the noirq phase of system suspend run with irqs disabled? Or just run
-with the device irqs disabled? I thought it was the latter, which is
-fine for this scenario because it's still running in a schedulable
-context.
+We can do the linking in __clk_get() and __clk_put() if we poke into the
+struct clk -> struct clk_core and bury the struct device into each
+clk_core structure.
 
