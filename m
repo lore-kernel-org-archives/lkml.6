@@ -2,123 +2,153 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EFDC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EF1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7332C2146D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 503342145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRcBphgE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7332C2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N16LfCd3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503342145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbeLCW5e (ORCPT
+        id S1726045AbeLCW57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:57:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbeLCW5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:57:33 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC70C2145D;
-        Mon,  3 Dec 2018 22:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543877852;
-        bh=xpUXBn7bisODtn97eXlLbqefPm16ou93J84qDoiuM3U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IRcBphgETprKlqhF149iLwCazbPU++sTOoHY1gjzgHuHQOER4n7Gwopbupdtg52FN
-         vNf/StcBGKnUukKYyI4BFKJ4uLUowG9LVzPCzTmeHl4VTrVS+dgSkfxAPbf8fGM/vE
-         X51qsIfTb2fEJZAkNInT7twUs8X3tS9F1gA2pZws=
-Date:   Mon, 3 Dec 2018 16:57:31 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Hanjie Lin <hanjie.lin@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Rob Herring <robh@kernel.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yue Wang <yue.wang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH v6 2/2] PCI: amlogic: Add the Amlogic Meson PCIe
- controller driver
-Message-ID: <20181203225731.GE207198@google.com>
-References: <1542876836-191355-1-git-send-email-hanjie.lin@amlogic.com>
- <1542876836-191355-3-git-send-email-hanjie.lin@amlogic.com>
- <20181203164150.GA11855@e107981-ln.cambridge.arm.com>
+        Mon, 3 Dec 2018 17:57:59 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42766 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbeLCW56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:57:58 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d72so6393005pga.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:57:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=y3TBDSzaWqJ9MVeD2s1ej7Eh0gHItMsgUqQKBw5chZ4=;
+        b=N16LfCd3wfrLSUDhv3Zlmd+xaE3loWDdX/O1nmWRo/sgxfaWyDhXLd79W3UgBYfuee
+         ugrOG+xnoB3LcXAPnLRQ4J+sU766VfSriEcAPJnHyG81TSuIEqJp6oBjnzAHNxbd/3sC
+         bBF8bM/YWRXzwc2OAb/9/CQ2m0njCOQXZZu6NpcLK49SHql34ddkYpV9cKqsC5bDbAqw
+         H8d0HfJUMe1UJ1sk12KnokGNDG8mPoNehcNsbGx114S//4gqwrFlZt5GqtM/2BPWXuw8
+         p2jfp8gjGwBPkrnh9Zhpyo01jrTPyfC8SyhC1N+o0Ag0B28T6qb2mZdHQLpNft+6XcPV
+         ACmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=y3TBDSzaWqJ9MVeD2s1ej7Eh0gHItMsgUqQKBw5chZ4=;
+        b=SlgPpU4RLBcfddmkpkdtVOwVKd5gAxduX0l+/VdgVQBWmoB7cDfaDlZJMeyK0aDl43
+         lTUlQ2Sjo62js2H3lOpeg2Vgn/F5h/2SJBcKK9bVhNcg9Y3ol6GuZB9rBYsIsATO1xBt
+         0kf8fKbA++dP9n0UTA7nTVeM8GVqmpolR/d8rLqllzKvx6BWgRP1v651n2OfwpAdQJBi
+         I2XbNXSNuuWWFlT/s2/2hwtGlGESfb0jswOkweXPOMkJgh+U40bN2xjUvpwwFSbGCAgq
+         YFDpC9ESYUPsWkpT9RBDpeNvSGdMdFB+u/U16Rpxry3iv8GRj95mRc3f0PSdcTd62RNd
+         pt0A==
+X-Gm-Message-State: AA+aEWZYYTOWN2q514SOmweyLjaRKxHXgRxmH+LOvhTK+shiQWiWvAHe
+        PykfRf/pffUqc10D75Qb2DsKMlZ8UH4=
+X-Google-Smtp-Source: AFSGD/VO8G9EGoXQKM12TaH5I57cJ8wAT/sILifmSO2+mWsV+vmmxVotCVq/YidLewNF62qeTn/e9w==
+X-Received: by 2002:a63:1848:: with SMTP id 8mr14658026pgy.81.1543877877435;
+        Mon, 03 Dec 2018 14:57:57 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id x3sm23131680pgk.18.2018.12.03.14.57.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 14:57:56 -0800 (PST)
+Date:   Mon, 3 Dec 2018 14:57:55 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Andrea Arcangeli <aarcange@redhat.com>, mhocko@kernel.org,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+In-Reply-To: <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1812031452280.253907@chino.kir.corp.google.com>
+References: <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com> <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com> <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com> <20181203181456.GK31738@dhcp22.suse.cz>
+ <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com> <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com> <20181203185954.GM31738@dhcp22.suse.cz> <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
+ <20181203201214.GB3540@redhat.com> <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com> <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203164150.GA11855@e107981-ln.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 04:41:50PM +0000, Lorenzo Pieralisi wrote:
-> On Thu, Nov 22, 2018 at 04:53:54PM +0800, Hanjie Lin wrote:
+On Mon, 3 Dec 2018, Linus Torvalds wrote:
+
+> Side note: I think maybe people should just look at that whole
+> compaction logic for that block, because it doesn't make much sense to
+> me:
 > 
-> [...]
+>                 /*
+>                  * Checks for costly allocations with __GFP_NORETRY, which
+>                  * includes THP page fault allocations
+>                  */
+>                 if (costly_order && (gfp_mask & __GFP_NORETRY)) {
+>                         /*
+>                          * If compaction is deferred for high-order allocations,
+>                          * it is because sync compaction recently failed. If
+>                          * this is the case and the caller requested a THP
+>                          * allocation, we do not want to heavily disrupt the
+>                          * system, so we fail the allocation instead of entering
+>                          * direct reclaim.
+>                          */
+>                         if (compact_result == COMPACT_DEFERRED)
+>                                 goto nopage;
 > 
-> > +static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
-> > +				  u32 *val)
-> > +{
-> > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > +
-> > +	/*
-> > +	 * there is a bug of MESON AXG pcie controller that software can not
-> > +	 * programe PCI_CLASS_DEVICE register, so we must return a fake right
-> > +	 * value to ensure driver could probe successfully.
-> > +	 */
-> > +	if (where == PCI_CLASS_REVISION) {
-> > +		*val = readl(pci->dbi_base + PCI_CLASS_REVISION);
-> > +		/* keep revision id */
-> > +		*val &= PCI_CLASS_REVISION_MASK;
-> > +		*val |= PCI_CLASS_BRIDGE_PCI << 16;
-> > +		return PCIBIOS_SUCCESSFUL;
-> > +	}
+>                         /*
+>                          * Looks like reclaim/compaction is worth trying, but
+>                          * sync compaction could be very expensive, so keep
+>                          * using async compaction.
+>                          */
+>                         compact_priority = INIT_COMPACT_PRIORITY;
+>                 }
 > 
-> As I said before, this looks broken. If this code (or other drivers with
-> the same broken assumptions, eg dwc/pcie-qcom.c) carries out a, say,
-> byte sized config access of eg PCI_CLASS_DEVICE you will get junk out of
-> it according to your comment above.
+> this is where David wants to add *his* odd test, and I think everybody
+> looks at that added case
 > 
-> I would like to pick Bjorn's brain on this to see what we can really do
-> to fix this (and other) drivers.
+> +                       if (order == pageblock_order &&
+> +                                       !(current->flags & PF_KTHREAD))
+> +                               goto nopage;
+> 
+> and just goes "Eww".
+> 
+> But I think the real problem is that it's the "goto nopage" thing that
+> makes _sense_, and the current cases for "let's try compaction" that
+> are the odd ones, and then David adds one new special case for the
+> sensible behavior.
+> 
+> For example, why would COMPACT_DEFERRED mean "don't bother", but not
+> all the other reasons it didn't really make sense?
+> 
+> So does it really make sense to fall through AT ALL to that "retry"
+> case, when we explicitly already had (gfp_mask & __GFP_NORETRY)?
+> 
+> Maybe the real fix is to instead of adding yet another special case
+> for "goto nopage", it should just be unconditional: simply don't try
+> to compact large-pages if __GFP_NORETRY was set.
+> 
 
-  - Check to see whether you're reading anything in the 32-bit dword at
-    offset 0x08.
+I think what is intended, which may not be represented by the code, is 
+that if compaction is not suitable (__compaction_suitable() returns 
+COMPACT_SKIPPED because of failing watermarks) that for non-hugepage 
+allocations reclaim may be useful.  We just want to reclaim memory so that 
+memory compaction has pages available for migration targets.
 
-  - Do the 32-bit readl().
-
-  - Insert the correct Sub-Class and Base Class code (you also throw
-    away the Programming Interface; not sure why that is)
-
-  - If you're reading something smaller than 32 bits, mask & shift as
-    needed.  pci_bridge_emul_conf_read() does something similar that
-    you might be able to copy.
-
-Out of curiosity, what code depends on PCI_CLASS_BRIDGE_PCI?  There
-are several places in the kernel that currently depend on it, but I
-think several of them *should* be checking dev->hdr_type to identify a
-type 1 header instead.
-
-Bjorn
+Note the same caveat I keep bringing up still applies, though: if reclaim 
+frees memory that is iterated over by the compaction migration scanner, it 
+was pointless.  That is a memory compaction implementation detail and can 
+lead to a lot of unnecessary reclaim (or even thrashing) if unmovable page 
+fragmentation cause compaction to fail even after it has migrated 
+everything it could.  I think the likelihood of that happening increases 
+by the allocation order.
