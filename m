@@ -2,151 +2,116 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D491FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F6EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A28FF20881
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:18:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A28FF20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 190782147D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:28:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 190782147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725980AbeLCDS1 (ORCPT
+        id S1725894AbeLCD1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 22:18:27 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:52920 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725803AbeLCDS0 (ORCPT
+        Sun, 2 Dec 2018 22:27:11 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:24918 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725805AbeLCD1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 22:18:26 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1509972CA65;
-        Mon,  3 Dec 2018 06:18:24 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 0C7467CCEA3; Mon,  3 Dec 2018 06:18:23 +0300 (MSK)
-Date:   Mon, 3 Dec 2018 06:18:23 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Breno Leitao <leitao@debian.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4] powerpc/ptrace: replace ptrace_report_syscall() with a
- tracehook call
-Message-ID: <20181203031823.GE11573@altlinux.org>
-References: <20181116121701.14359da0@akathisia>
- <87ftw12nyn.fsf@concordia.ellerman.id.au>
- <20181119210139.GA8360@altlinux.org>
- <87efbe166y.fsf@concordia.ellerman.id.au>
+        Sun, 2 Dec 2018 22:27:11 -0500
+X-UUID: 58567d1b71d8435eae3b1b003a4e96a8-20181203
+X-UUID: 58567d1b71d8435eae3b1b003a4e96a8-20181203
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1972276798; Mon, 03 Dec 2018 11:27:01 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 3 Dec 2018 11:27:00 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 3 Dec 2018 11:27:00 +0800
+Message-ID: <1543807620.11594.2.camel@mtksdaap41>
+Subject: Re: [PATCH] drm/mediatek: Only try to attach bridge if there is one
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Mon, 3 Dec 2018 11:27:00 +0800
+In-Reply-To: <1543210200.1796.2.camel@mtksdaap41>
+References: <20181126040737.138682-1-drinkcat@chromium.org>
+         <1543210200.1796.2.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87efbe166y.fsf@concordia.ellerman.id.au>
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Elvira Khabirova <lineprinter@altlinux.org>
+Hi, Nicolas:
 
-Arch code should use tracehook_*() helpers, as documented
-in include/linux/tracehook.h,
-ptrace_report_syscall() is not expected to be used outside that file.
+On Mon, 2018-11-26 at 13:30 +0800, CK Hu wrote:
+> Hi, Nicolas:
+> 
+> On Mon, 2018-11-26 at 12:07 +0800, Nicolas Boichat wrote:
+> > Even if dsi->bridge is NULL, we still try to call drm_bridge_attach,
+> > and print out an error message, before creating the connector.
+> > 
+> > When no bridge is provided, let's skip these 2 steps and directly
+> > create the connector.
+> 
 
-Co-authored-by: Dmitry V. Levin <ldv@altlinux.org>
-Fixes: 5521eb4bca2d ("powerpc/ptrace: Add support for PTRACE_SYSEMU")
-Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
-v4: rewritten to call tracehook_report_syscall_entry() once, compile-tested
-v3: add a descriptive comment
-v2: explicitly ignore tracehook_report_syscall_entry() return code
+Applied to mediatek-drm-fixes-4.20 [1], thanks.
 
- arch/powerpc/kernel/ptrace.c | 54 +++++++++++++++++++++++-------------
- 1 file changed, 35 insertions(+), 19 deletions(-)
+[1]
+https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-fixes-4.20
 
-diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
-index afb819f4ca68..59c8c9a3d7ea 100644
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -3263,27 +3263,43 @@ static inline int do_seccomp(struct pt_regs *regs) { return 0; }
-  */
- long do_syscall_trace_enter(struct pt_regs *regs)
- {
-+	struct thread_info *ti;
-+	u32 cached_flags;
-+
- 	user_exit();
- 
--	if (test_thread_flag(TIF_SYSCALL_EMU)) {
--		ptrace_report_syscall(regs);
--		/*
--		 * Returning -1 will skip the syscall execution. We want to
--		 * avoid clobbering any register also, thus, not 'gotoing'
--		 * skip label.
--		 */
--		return -1;
--	}
-+	ti = current_thread_info();
-+	cached_flags =
-+		READ_ONCE(ti->flags) &
-+		(TIF_SYSCALL_EMU | TIF_SYSCALL_TRACE | TIF_SYSCALL_TRACEPOINT);
- 
--	/*
--	 * The tracer may decide to abort the syscall, if so tracehook
--	 * will return !0. Note that the tracer may also just change
--	 * regs->gpr[0] to an invalid syscall number, that is handled
--	 * below on the exit path.
--	 */
--	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
--	    tracehook_report_syscall_entry(regs))
--		goto skip;
-+	if (cached_flags & (TIF_SYSCALL_EMU | TIF_SYSCALL_TRACE)) {
-+		int rc = tracehook_report_syscall_entry(regs);
-+
-+		if (unlikely(cached_flags & _TIF_SYSCALL_EMU)) {
-+			/*
-+			 * A nonzero return code from
-+			 * tracehook_report_syscall_entry() tells us
-+			 * to prevent the syscall execution, but
-+			 * we are not going to execute it anyway.
-+			 *
-+			 * Returning -1 will skip the syscall execution.
-+			 * We want to avoid clobbering any register also,
-+			 * thus, not 'gotoing' skip label.
-+			 */
-+			return -1;
-+		}
-+
-+		if (rc) {
-+			/*
-+			 * The tracer decided to abort the syscall.
-+			 * Note that the tracer may also just change
-+			 * regs->gpr[0] to an invalid syscall number,
-+			 * that is handled below on the exit path.
-+			 */
-+			goto skip;
-+		}
-+	}
- 
- 	/* Run seccomp after ptrace; allow it to set gpr[3]. */
- 	if (do_seccomp(regs))
-@@ -3293,7 +3309,7 @@ long do_syscall_trace_enter(struct pt_regs *regs)
- 	if (regs->gpr[0] >= NR_syscalls)
- 		goto skip;
- 
--	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
-+	if (unlikely(cached_flags & TIF_SYSCALL_TRACEPOINT))
- 		trace_sys_enter(regs, regs->gpr[0]);
- 
- #ifdef CONFIG_PPC64
--- 
-ldv
+Regards,
+CK
+
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> 
+> > 
+> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_dsi.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > index 66df1b17795921..27b507eb4a997d 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > @@ -818,10 +818,13 @@ static int mtk_dsi_create_conn_enc(struct drm_device *drm, struct mtk_dsi *dsi)
+> >  	dsi->encoder.possible_crtcs = 1;
+> >  
+> >  	/* If there's a bridge, attach to it and let it create the connector */
+> > -	ret = drm_bridge_attach(&dsi->encoder, dsi->bridge, NULL);
+> > -	if (ret) {
+> > -		DRM_ERROR("Failed to attach bridge to drm\n");
+> > -
+> > +	if (dsi->bridge) {
+> > +		ret = drm_bridge_attach(&dsi->encoder, dsi->bridge, NULL);
+> > +		if (ret) {
+> > +			DRM_ERROR("Failed to attach bridge to drm\n");
+> > +			goto err_encoder_cleanup;
+> > +		}
+> > +	} else {
+> >  		/* Otherwise create our own connector and attach to a panel */
+> >  		ret = mtk_dsi_create_connector(drm, dsi);
+> >  		if (ret)
+> 
+
+
