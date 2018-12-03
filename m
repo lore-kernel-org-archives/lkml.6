@@ -2,202 +2,165 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032EEC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA11C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA51B20834
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:19:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA51B20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3705420848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:20:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rtlt0qbd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3705420848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbeLCPTc (ORCPT
+        id S1726657AbeLCPUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:19:32 -0500
-Received: from foss.arm.com ([217.140.101.70]:39614 "EHLO foss.arm.com"
+        Mon, 3 Dec 2018 10:20:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbeLCPTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:19:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EAFB168F;
-        Mon,  3 Dec 2018 07:19:26 -0800 (PST)
-Received: from [10.1.37.145] (p8cg001049571a15.cambridge.arm.com [10.1.37.145])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 918683F5AF;
-        Mon,  3 Dec 2018 07:19:24 -0800 (PST)
-Subject: Re: [PATCH v9 7/8] KVM: arm64: Update age handlers to support PUD
- hugepages
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-8-punit.agrawal@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <db1e8281-a7cb-5d2a-8ad3-6d275fc49582@arm.com>
-Date:   Mon, 3 Dec 2018 20:49:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726549AbeLCPUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:20:07 -0500
+Received: from localhost (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DC0C20834;
+        Mon,  3 Dec 2018 15:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543850400;
+        bh=+zoeEPa9eNLW/RPgv1a8i4+uwultun6XcetLh5SDOSc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rtlt0qbdLf+2sIrAg4QqbBvAVeFPPIJwZ828OIiDIc8GQ05cg/32KJjpI2mQx7v4j
+         Hje7EtDxBY22XMNAUl6wGSemUNBM4CD9Riq+2L/GFhq3fvl6gt3u7aySipuzyiudxr
+         /ZNs+u4c5gomOd+PM763v9jRKGL4ML60tGlUS+hg=
+Date:   Mon, 3 Dec 2018 10:19:46 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: v4.14 fix for Hikey 960 unbalanced IRQ enablement
+Message-ID: <20181203151946.GG235790@sasha-vm>
+References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
+ <20181203141442.GA19335@kroah.com>
+ <dc468512-7a73-3d69-fe9e-d660db85ee5b@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20181031175745.18650-8-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <dc468512-7a73-3d69-fe9e-d660db85ee5b@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 03, 2018 at 03:42:41PM +0100, Daniel Lezcano wrote:
+>On 03/12/2018 15:14, Greg KH wrote:
+>> On Mon, Dec 03, 2018 at 11:31:02AM -0200, Rafael David Tinoco wrote:
+>>> Sasha, could you consider including this cherry-picked patchset in v4.14.
+>>>
+>>> Kernel v4.14 might suffer from the following unbalanced enablement for the board Hikey 960:
+>>>
+>>> Nov  5 12:02:54 hikey kernel: [   22.148194] Unbalanced enable for IRQ 44
+>>> Nov  5 12:02:54 hikey kernel: [   22.152193] ------------[ cut here ]------------
+>>> Nov  5 12:02:54 hikey kernel: [   22.156872] WARNING: CPU: 2 PID: 509 at /home/inaddy/work/sources/linux/stable/stable-linux-4.14.y/kernel/irq/manage.c:525 __enable_irq+0x78/0x80
+>>> Nov  5 12:02:54 hikey kernel: [   22.249606] CPU: 2 PID: 509 Comm: kworker/2:2 Not tainted 4.14.79 #1
+>>> Nov  5 12:02:54 hikey kernel: [   22.255975] Hardware name: HiKey Development Board (DT)
+>>> Nov  5 12:02:54 hikey kernel: [   22.261248] Workqueue: events_freezable thermal_zone_device_check
+>>> Nov  5 12:02:54 hikey kernel: [   22.267368] task: ffff8000616e0e00 task.stack: ffff00000b5f0000
+>>> Nov  5 12:02:54 hikey kernel: [   22.273312] PC is at __enable_irq+0x78/0x80
+>>> Nov  5 12:02:54 hikey kernel: [   22.277516] LR is at __enable_irq+0x78/0x80
+>>> Nov  5 12:02:54 hikey kernel: [   22.281718] pc : [<ffff00000813e010>] lr : [<ffff00000813e010>] pstate: 000001c5
+>>> Nov  5 12:02:54 hikey kernel: [   22.289129] sp : ffff00000b5f3c80
+>>> Nov  5 12:02:54 hikey kernel: [   22.292457] x29: ffff00000b5f3c80 x28: 0000000000000000
+>>> Nov  5 12:02:54 hikey kernel: [   22.297804] x27: ffff80005c139e38 x26: ffff000008a71870
+>>> Nov  5 12:02:54 hikey kernel: [   22.303148] x25: 0000000000000000 x24: 0000000000000002
+>>> Nov  5 12:02:54 hikey kernel: [   22.308492] x23: ffff00000b5f3d9c x22: ffff80005d565e88
+>>> Nov  5 12:02:54 hikey kernel: [   22.313836] x21: 000000000000f980 x20: 000000000000002c
+>>> Nov  5 12:02:54 hikey kernel: [   22.319181] x19: ffff800061726000 x18: 0000000000000010
+>>> Nov  5 12:02:54 hikey kernel: [   22.324524] x17: 0000000000000000 x16: 0000000000000000
+>>> Nov  5 12:02:54 hikey kernel: [   22.329868] x15: ffffffffffffffff x14: ffff000009269c08
+>>> Nov  5 12:02:54 hikey kernel: [   22.335213] x13: ffff00008940678f x12: ffff000009406797
+>>> Nov  5 12:02:54 hikey kernel: [   22.340558] x11: ffff000009290000 x10: ffff00000b5f3980
+>>> Nov  5 12:02:54 hikey kernel: [   22.345902] x9 : 00000000ffffffd0 x8 : ffff00000862c298
+>>> Nov  5 12:02:54 hikey kernel: [   22.351246] x7 : 6c62616e65206465 x6 : 00000000000001b2
+>>> Nov  5 12:02:54 hikey kernel: [   22.356589] x5 : 0000000000000000 x4 : 0000000000000000
+>>> Nov  5 12:02:54 hikey kernel: [   22.361931] x3 : 0000000000000000 x2 : ffff800063e824c8
+>>> Nov  5 12:02:54 hikey kernel: [   22.367275] x1 : 000080005af95000 x0 : 000000000000001c
+>>> Nov  5 12:02:54 hikey kernel: [   22.372618] Call trace:
+>>> Nov  5 12:02:54 hikey kernel: [   22.375088] Exception stack(0xffff00000b5f3b40 to 0xffff00000b5f3c80)
+>>> Nov  5 12:02:54 hikey kernel: [   22.381560] 3b40: 000000000000001c 000080005af95000 ffff800063e824c8 0000000000000000
+>>> Nov  5 12:02:54 hikey kernel: [   22.389417] 3b60: 0000000000000000 0000000000000000 00000000000001b2 6c62616e65206465
+>>> Nov  5 12:02:54 hikey kernel: [   22.397276] 3b80: ffff00000862c298 00000000ffffffd0 ffff00000b5f3980 ffff000009290000
+>>> Nov  5 12:02:54 hikey kernel: [   22.405136] 3ba0: ffff000009406797 ffff00008940678f ffff000009269c08 ffffffffffffffff
+>>> Nov  5 12:02:54 hikey kernel: [   22.412994] 3bc0: 0000000000000000 0000000000000000 0000000000000010 ffff800061726000
+>>> Nov  5 12:02:54 hikey kernel: [   22.420852] 3be0: 000000000000002c 000000000000f980 ffff80005d565e88 ffff00000b5f3d9c
+>>> Nov  5 12:02:54 hikey kernel: [   22.428710] 3c00: 0000000000000002 0000000000000000 ffff000008a71870 ffff80005c139e38
+>>> Nov  5 12:02:54 hikey kernel: [   22.436569] 3c20: 0000000000000000 ffff00000b5f3c80 ffff00000813e010 ffff00000b5f3c80
+>>> Nov  5 12:02:54 hikey kernel: [   22.444426] 3c40: ffff00000813e010 00000000000001c5 0000000000000000 0000000000000000
+>>> Nov  5 12:02:54 hikey kernel: [   22.452286] 3c60: ffffffffffffffff ffff800061800618 ffff00000b5f3c80 ffff00000813e010
+>>> Nov  5 12:02:54 hikey kernel: [   22.460144] [<ffff00000813e010>] __enable_irq+0x78/0x80
+>>> Nov  5 12:02:54 hikey kernel: [   22.465394] [<ffff00000813e058>] enable_irq+0x40/0x78
+>>> Nov  5 12:02:54 hikey kernel: [   22.470493] [<ffff000000e228a8>] hisi_thermal_get_temp+0x1b0/0x1d8 [hisi_thermal]
+>>> Nov  5 12:02:54 hikey kernel: [   22.478008] [<ffff0000087121a8>] of_thermal_get_temp+0x38/0x50
+>>> Nov  5 12:02:54 hikey kernel: [   22.483869] [<ffff000008711790>] thermal_zone_get_temp+0x58/0x80
+>>> Nov  5 12:02:54 hikey kernel: [   22.489903] [<ffff00000870e7bc>] thermal_zone_device_update.part.4+0x2c/0x1a8
+>>> Nov  5 12:02:54 hikey kernel: [   22.497066] [<ffff00000870e9c8>] thermal_zone_device_check+0x40/0x50
+>>> Nov  5 12:02:54 hikey kernel: [   22.503457] [<ffff0000080f1674>] process_one_work+0x19c/0x3d0
+>>> Nov  5 12:02:54 hikey kernel: [   22.509236] [<ffff0000080f18f4>] worker_thread+0x4c/0x428
+>>> Nov  5 12:02:54 hikey kernel: [   22.514664] [<ffff0000080f84fc>] kthread+0x134/0x138
+>>> Nov  5 12:02:54 hikey kernel: [   22.519659] [<ffff000008085154>] ret_from_fork+0x10/0x1c
+>>> Nov  5 12:02:54 hikey kernel: [   22.524988] ---[ end trace 328d4bb2d9b066a0 ]---
+>>>
+>>> This issue was solved when "hisi_thermal_alarm_irq" function was removed so only
+>>> "hisi_thermal_alarm_irq_thread" would exist. This has fixed the issue for the
+>>> unbalanced enablement since there is no more:
+>>>
+>>> 	disable_irq_nosync(irq);
+>>> 	data->irq_enabled = false;
+>>>
+>>> logic being done in parallel to the threaded handler AND the
+>>> thermal_zone_device_update() call only happens now if the temperature is already
+>>> above the threshold.
+>>>
+>>
+>> So should we revert a patch instead of taking these new ones?  Would
+>> that be easier and is this a "real" issue or just an annoying warning
+>> splat in the kernel log?
+>
+>Actually, this warning is introduced with the driver and all the
+>plumbers around to fix an irq bouncing. There is no patch to revert
+>without removing the driver.
+
+Greg,
+
+Patch 5 in this series seems to explain the best what is happening here:
+
+>With the following changes, we fix all in one:
+>
+> - Do the setup, one time, at probe time
+>
+> - Add the IRQF_ONESHOT, ack the interrupt in the threaded handler
+>
+> - Remove the interrupt handler
+>
+> - Set the correct value for the LAG register
+>
+> - Remove all the irq_enabled stuff in the code as the interruption
+>   handling is fixed
+>
+> - Remove the 3ms delay
+>
+> - Reorder the initialization routine to be in the right order
+
+We can't revert anything because the breakage was there since the driver
+was introduced.
 
 
-On 10/31/2018 11:27 PM, Punit Agrawal wrote:
-> In preparation for creating larger hugepages at Stage 2, add support
-> to the age handling notifiers for PUD hugepages when encountered.
-> 
-> Provide trivial helpers for arm32 to allow sharing code.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm/include/asm/kvm_mmu.h   |  6 +++++
->  arch/arm64/include/asm/kvm_mmu.h |  5 ++++
->  arch/arm64/include/asm/pgtable.h |  1 +
->  virt/kvm/arm/mmu.c               | 39 ++++++++++++++++----------------
->  4 files changed, 32 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index fea5e723e3ac..e62f0913ce7d 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -117,6 +117,12 @@ static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
->  	return pud;
->  }
->  
-> +static inline bool kvm_s2pud_young(pud_t pud)
-> +{
-> +	BUG();
-> +	return false;
-> +}
-> +
->  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->  {
->  	pte_val(pte) |= L_PTE_S2_RDWR;
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 612032bbb428..9f941f70775c 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -273,6 +273,11 @@ static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
->  	return pud_mkyoung(pud);
->  }
->  
-> +static inline bool kvm_s2pud_young(pud_t pud)
-> +{
-> +	return pud_young(pud);
-> +}
-> +
->  #define hyp_pte_table_empty(ptep) kvm_page_empty(ptep)
->  
->  #ifdef __PAGETABLE_PMD_FOLDED
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index f51e2271e6a3..bb0f3f17a7a9 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -386,6 +386,7 @@ static inline int pmd_protnone(pmd_t pmd)
->  #define pfn_pmd(pfn,prot)	__pmd(__phys_to_pmd_val((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot))
->  #define mk_pmd(page,prot)	pfn_pmd(page_to_pfn(page),prot)
->  
-> +#define pud_young(pud)		pte_young(pud_pte(pud))
->  #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
->  #define pud_write(pud)		pte_write(pud_pte(pud))
->  
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index bd749601195f..3893ea6a50bf 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1225,6 +1225,11 @@ static int stage2_pmdp_test_and_clear_young(pmd_t *pmd)
->  	return stage2_ptep_test_and_clear_young((pte_t *)pmd);
->  }
->  
-> +static int stage2_pudp_test_and_clear_young(pud_t *pud)
-> +{
-> +	return stage2_ptep_test_and_clear_young((pte_t *)pud);
-> +}
-> +
->  /**
->   * kvm_phys_addr_ioremap - map a device range to guest IPA
->   *
-> @@ -1932,42 +1937,38 @@ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte)
->  
->  static int kvm_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
->  {
-> +	pud_t *pud;
->  	pmd_t *pmd;
->  	pte_t *pte;
->  
-> -	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
-> -	pmd = stage2_get_pmd(kvm, NULL, gpa);
-> -	if (!pmd || pmd_none(*pmd))	/* Nothing there */
-> +	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
-> +	if (!stage2_get_leaf_entry(kvm, gpa, &pud, &pmd, &pte))
->  		return 0;
->  
-> -	if (pmd_thp_or_huge(*pmd))	/* THP, HugeTLB */
-> +	if (pud)
-> +		return stage2_pudp_test_and_clear_young(pud);
-> +	else if (pmd)
->  		return stage2_pmdp_test_and_clear_young(pmd);
-> -
-> -	pte = pte_offset_kernel(pmd, gpa);
-> -	if (pte_none(*pte))
-> -		return 0;
-> -
-> -	return stage2_ptep_test_and_clear_young(pte);
-> +	else
-> +		return stage2_ptep_test_and_clear_young(pte);
->  }
->  
->  static int kvm_test_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
->  {
-> +	pud_t *pud;
->  	pmd_t *pmd;
->  	pte_t *pte;
->  
-> -	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
-> -	pmd = stage2_get_pmd(kvm, NULL, gpa);
-> -	if (!pmd || pmd_none(*pmd))	/* Nothing there */
-> +	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
-> +	if (!stage2_get_leaf_entry(kvm, gpa, &pud, &pmd, &pte))
->  		return 0;
->  
-> -	if (pmd_thp_or_huge(*pmd))		/* THP, HugeTLB */
-> +	if (pud)
-> +		return kvm_s2pud_young(*pud);
-> +	else if (pmd)
->  		return pmd_young(*pmd);
-> -
-> -	pte = pte_offset_kernel(pmd, gpa);
-> -	if (!pte_none(*pte))		/* Just a page... */
-> +	else
->  		return pte_young(*pte);
-> -
-> -	return 0;
->  }
->  
->  int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
-> 
-
-If stage2_get_leaf_entry() is avoided (which it should be) some of the previous
-patches can be folded into just a single one like defining new HW page table
-definitions, arm32 trivial functions and PUD specific additions at various
-stage 2 page table walkers etc.
+--
+Thanks,
+Sasha
