@@ -2,87 +2,93 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A27EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A623C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521F22147C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:10:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521F22147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 48B4D20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B4D20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbeLCSKC (ORCPT
+        id S1726650AbeLCSPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:10:02 -0500
-Received: from mailoutvs6.siol.net ([185.57.226.197]:60321 "EHLO mail.siol.net"
+        Mon, 3 Dec 2018 13:15:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41594 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726221AbeLCSKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:10:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 2B3F8520937;
-        Mon,  3 Dec 2018 19:09:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id b2sP2dUmjOpo; Mon,  3 Dec 2018 19:09:54 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id BFBE852093D;
-        Mon,  3 Dec 2018 19:09:54 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 78DCA52091C;
-        Mon,  3 Dec 2018 19:09:51 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/28] Allwinner H6 DE3 and HDMI support
-Date:   Mon, 03 Dec 2018 19:09:50 +0100
-Message-ID: <14295738.m69morCfDC@jernej-laptop>
-In-Reply-To: <20181105094341.qedt7jvnxooiojki@flea>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net> <20181105094341.qedt7jvnxooiojki@flea>
+        id S1726014AbeLCSPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 13:15:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 918ECAEB7;
+        Mon,  3 Dec 2018 18:15:04 +0000 (UTC)
+Date:   Mon, 3 Dec 2018 19:14:56 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ying.huang@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
+        s.priebe@profihost.ag, mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, rientjes@google.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+Message-ID: <20181203181456.GK31738@dhcp22.suse.cz>
+References: <20181127062503.GH6163@shao2-debian>
+ <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
+ <20181127205737.GI16136@redhat.com>
+ <87tvk1yjkp.fsf@yhuang-dev.intel.com>
+ <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
+ <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 05. november 2018 ob 10:43:41 CET je Maxime Ripard napisal(a):
-> On Sun, Nov 04, 2018 at 07:26:37PM +0100, Jernej Skrabec wrote:
-> > This series adds support for Display Engine 3.0 and HDMI 2.0a, which
-> > can be found on H6 SoC.
-> > 
-> > Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
-> > displaying and processing 10-bit and AFBC formats, which are not yet
-> > supported by this series.
-> > 
-> > H6 is also the first SoC which supports IOMMU, but support for it is
-> > not yet added.
-> > 
-> > This series is based on linux-next at next-20181102.
-> > 
-> > I suggest all patches go through allwinner tree, except DRM patches,
-> > which should go through drm-misc tree.
+On Mon 03-12-18 10:01:18, Linus Torvalds wrote:
+> On Wed, Nov 28, 2018 at 8:48 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Tue, Nov 27, 2018 at 7:20 PM Huang, Ying <ying.huang@intel.com> wrote:
+> > >
+> > > In general, memory allocation fairness among processes should be a good
+> > > thing.  So I think the report should have been a "performance
+> > > improvement" instead of "performance regression".
+> >
+> > Hey, when you put it that way...
+> >
+> > Let's ignore this issue for now, and see if it shows up in some real
+> > workload and people complain.
 > 
-> Applied all patches up to the 26. The two last one however should not
-> use the clk bindings define you added in the first clk patches, since
-> clk and dt patches are going through different tree.
+> Well, David Rientjes points out that it *does* cause real problems in
+> real workloads, so it's not just this benchmark run that shows the
+> issue.
 
-I think you forgot to merge patch "drm/sun4i: Add compatible for H6 display 
-engine". At least it is not in linux-next.
+The thing is that there is no universal win here. There are two
+different types of workloads and we cannot satisfy both. This has been
+discussed at lenght during the review process. David's workload makes
+some assumptions about the MADV_HUGEPAGE numa placement. There are other
+workalods like KVM setups which do not really require that and those are
+ones which regressed.
 
-Best regards,
-Jernej
+The prevalent consensus was that a NUMA placement is not really implied
+by MADV_HUGEPAGE because a) this has never been documented or intended
+behavior and b) it is not a universal win (basically the same as
+node/zone_reclaim which used to be on by default on some NUMA setups).
 
-
-
+Reverting the patch would regress another class of workloads. As we
+cannot satisfy both I believe we should make the API clear and in favor
+of a more relaxed workloads. Those with special requirements should have
+a proper API to reflect that (this is our general NUMA policy pattern
+already).
+-- 
+Michal Hocko
+SUSE Labs
