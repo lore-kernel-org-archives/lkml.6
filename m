@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D06C65BAE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 778E5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5577A20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5577A20851
+	by mail.kernel.org (Postfix) with ESMTP id 48F8620848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:26:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F8620848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbeLCE0X (ORCPT
+        id S1726055AbeLCE0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:26:23 -0500
-Received: from mail.windriver.com ([147.11.1.11]:62597 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbeLCE0X (ORCPT
+        Sun, 2 Dec 2018 23:26:34 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:60555 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbeLCE0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:26:23 -0500
+        Sun, 2 Dec 2018 23:26:34 -0500
 Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34QLan026693
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wB34QMDp015536
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 2 Dec 2018 20:26:21 -0800 (PST)
+        Sun, 2 Dec 2018 20:26:23 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 2 Dec 2018
- 20:26:21 -0800
+ 20:26:22 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 12/22] mfd: sta2x11: drop unused MODULE_ tags from non-modular code
-Date:   Sun, 2 Dec 2018 23:23:19 -0500
-Message-ID: <1543811009-15112-13-git-send-email-paul.gortmaker@windriver.com>
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dong Aisheng <dong.aisheng@linaro.org>
+Subject: [PATCH 13/22] mfd: syscon: Make it explicitly non-modular
+Date:   Sun, 2 Dec 2018 23:23:20 -0500
+Message-ID: <1543811009-15112-14-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
@@ -49,56 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_STA2X11
-drivers/mfd/Kconfig:    bool "STMicroelectronics STA2X11"
+drivers/mfd/Kconfig:config MFD_SYSCON
+drivers/mfd/Kconfig:    bool "System Controller Register R/W Based on Regmap"
 
 ...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the couple traces of modular infrastructure use, so that
+Lets remove the modular code that is essentially orphaned, so that
 when reading the driver there is no doubt it is builtin-only.
 
-We delete the MODULE_LICENSE tag etc. since all that information
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
-We replace module.h with init.h and export.h ; the latter since the
-file does export some symbols.
-
 Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dong Aisheng <dong.aisheng@linaro.org>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/sta2x11-mfd.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/mfd/syscon.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/mfd/sta2x11-mfd.c b/drivers/mfd/sta2x11-mfd.c
-index 3aeafa228baf..cab9aabcaa1f 100644
---- a/drivers/mfd/sta2x11-mfd.c
-+++ b/drivers/mfd/sta2x11-mfd.c
-@@ -1,4 +1,6 @@
- /*
-+ * STA2x11 mfd for GPIO, SCTL and APBREG
-+ *
-  * Copyright (c) 2009-2011 Wind River Systems, Inc.
-  * Copyright (c) 2011 ST Microelectronics (Alessandro Rubini, Davide Ciminaghi)
-  *
-@@ -18,7 +20,8 @@
-  */
- 
- #include <linux/kernel.h>
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index b6d05cd934e6..0ecdffb3d967 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -15,7 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/hwspinlock.h>
+ #include <linux/io.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
-+#include <linux/export.h>
- #include <linux/spinlock.h>
- #include <linux/errno.h>
- #include <linux/device.h>
-@@ -653,8 +656,3 @@ static int __init sta2x11_mfd_init(void)
-  */
- subsys_initcall(sta2x11_drivers_init);
- rootfs_initcall(sta2x11_mfd_init);
+ #include <linux/list.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -272,13 +272,3 @@ static int __init syscon_init(void)
+ 	return platform_driver_register(&syscon_driver);
+ }
+ postcore_initcall(syscon_init);
 -
+-static void __exit syscon_exit(void)
+-{
+-	platform_driver_unregister(&syscon_driver);
+-}
+-module_exit(syscon_exit);
+-
+-MODULE_AUTHOR("Dong Aisheng <dong.aisheng@linaro.org>");
+-MODULE_DESCRIPTION("System Control driver");
 -MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Wind River");
--MODULE_DESCRIPTION("STA2x11 mfd for GPIO, SCTL and APBREG");
--MODULE_DEVICE_TABLE(pci, sta2x11_mfd_tbl);
 -- 
 2.7.4
 
