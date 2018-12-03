@@ -2,150 +2,290 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 439C6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A05C65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3E4120851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:39:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CWiMZMjf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E4120851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id BBCB62081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:40:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCB62081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbeLCIjv (ORCPT
+        id S1725973AbeLCIkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 03:39:51 -0500
-Received: from mail-eopbgr70072.outbound.protection.outlook.com ([40.107.7.72]:14962
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726016AbeLCIju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 03:39:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=48EaeEOjL/bixPEO734Ami99KOx/9DFIBEMyD3uEDck=;
- b=CWiMZMjfbihMqNaCeCCNbOlu167QrJHwxqbbLXggJWKW5kf1XrIrSTr/bNJ+/OrHziJmT3DCpzkkda1NL653Ixc+wZySOpYG8c3UPACd01D/a+Ipp5g1tCuFIrMLPLdkqxJvIZQsFQMosEPdMljnjZdqMFaWVkAJRXBrMKS5P5k=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB5631.eurprd04.prod.outlook.com (20.178.125.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Mon, 3 Dec 2018 08:39:43 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::595a:9890:8397:5d51]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::595a:9890:8397:5d51%4]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 08:39:43 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Mon, 3 Dec 2018 03:40:45 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:31320 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725888AbeLCIkp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 03:40:45 -0500
+X-UUID: 9b3c6b7c37e04bdb8b117459237d06c5-20181203
+X-UUID: 9b3c6b7c37e04bdb8b117459237d06c5-20181203
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1912111233; Mon, 03 Dec 2018 16:40:36 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 3 Dec
+ 2018 16:40:34 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 3 Dec 2018 16:40:33 +0800
+Message-ID: <1543826433.23023.34.camel@mhfsdcap03>
+Subject: Re: [PATCH v3 06/15] iommu/mediatek: Add mt8183 IOMMU support
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Rob Herring" <robh+dt@kernel.org>, Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH v5 7/7] arm64: dts: lx2160a: update fspi node
-Thread-Topic: [PATCH v5 7/7] arm64: dts: lx2160a: update fspi node
-Thread-Index: AQHUiuO8mtyO3semSU+OB8iNhPsmgQ==
-Date:   Mon, 3 Dec 2018 08:39:43 +0000
-Message-ID: <1543826226-30898-8-git-send-email-yogeshnarayan.gaur@nxp.com>
-References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-In-Reply-To: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR04CA0143.apcprd04.prod.outlook.com
- (2603:1096:3:16::27) To VI1PR04MB5726.eurprd04.prod.outlook.com
- (2603:10a6:803:e4::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [14.143.30.134]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5631;6:GexwQnmwoRUobgKR1SM4ucWyFmNPl/rwPFAZAxD2aJ05SZanmspF983OvuERp0GAZTtvVc8Qo7TfTEx32qFvSWEF3lPOCDaPxPry+V5/XUjkcudprJRLgHZr+rUhaFphThUqlndj7kNnJoNEO4OpdQbaBhniyOq6KfEFFwjjNMtxFRQZcv7CqLZq+zbbJNeXnn3ya5ngTJv7ymLn9oW4BB0dBG53jMlX++kP5538xN7JYbSohWLGYkAC+TsoqaoXhCkCvU43/njftGwGyC57l7z5MteWIQTK48dWBViSbxGbnxbkCBBtMlpvuaIrMWPdo3l8sBf8XWYNwPvaJ06RnbcWNZytklxXiT2OyYCtP93mBmQVpZtCqqx8708UycLyDua/MtZ1X6tkqGRxHH+R5D1/7bJQ5dmFIex4CwlbR/PNxHU74LXu6MzB3GBZZdKHMTFgTBrWH73VBRCBu09YOg==;5:gAmbO9FON1BvL/q+ofiT6kH2x390wk7ykYs3WALHQ9Ldu6VQVgS9IyIhEYoJkl+ipxJaxjyZYb6CNgMJCbrCxbrw+0jcShVGGRC7YzEaoOzzLorMMBxnFFSBsSoOQtfPIzTXbfJCGGriHiqFP/w70FSyPY3Sp68q7qttu/scxZ4=;7:WynQDMpcbMG3ro3kOPetbYuq0oJNiN/GFS1V8cDVVIOAasnvtRuUQnMfkIr/kXjmjbAc3dcPeFyBynqYqt2QGj0nLWAEl20gy6siJIq4Va66qPXzqVKKCNn/0Tz7llbxt2HX1QbnfURfe612OUpDDA==
-x-ms-office365-filtering-correlation-id: 0b0e485a-b07f-419a-4f6a-08d658fadf0b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5631;
-x-ms-traffictypediagnostic: VI1PR04MB5631:
-x-microsoft-antispam-prvs: <VI1PR04MB56316AA58BB43CD8C66166A399AE0@VI1PR04MB5631.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5631;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5631;
-x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(366004)(376002)(396003)(189003)(199004)(78486014)(256004)(110136005)(86362001)(6486002)(71200400001)(71190400001)(54906003)(6436002)(4326008)(39060400002)(14454004)(53936002)(5660300001)(2201001)(8936002)(99286004)(8676002)(81156014)(81166006)(6506007)(76176011)(386003)(55236004)(2501003)(52116002)(102836004)(7736002)(26005)(2616005)(66066001)(478600001)(7416002)(186003)(68736007)(305945005)(6512007)(25786009)(476003)(11346002)(486006)(36756003)(3846002)(97736004)(6116002)(105586002)(2906002)(106356001)(446003)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5631;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: b7onnGHOOrO47YTKGRqQ5S93T47AB9OYeiTUthvVM3P8RZhimwWJjCvmrGrbMUJnMYKlFLbQADPFmEExX9mWmct4+AUnxfisySR6GW9ppxFEy1Ef6xJNEsjbJj+qRV6zAocKUBHzDMbHyqWvj6H/zSzGOCqMCjMpGf3MDAIe0+TdgYRtRbkAPZET9w9MDlv0t0i9EnMiPjXZasQ9FQ64dlpYePckjFKGkDTuMoThZ8pGg11BYQv7cTAbbACmLz5re+cFJGAv9BZ+DmN6qGLNT41ToUKAbNV6YeVmVRZW0msaLr/AEn2KokmVZbngCP1Qg3bAdCbCWqZNVi31DKmG/ZlLb9wyBtCmfRBWKjmYqZ0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
+        <yingjoe.chen@mediatek.com>, <youlin.pei@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>
+Date:   Mon, 3 Dec 2018 16:40:33 +0800
+In-Reply-To: <f8528e80-e816-7901-a56a-581f88b29c83@gmail.com>
+References: <1542422142-30688-1-git-send-email-yong.wu@mediatek.com>
+         <1542422142-30688-7-git-send-email-yong.wu@mediatek.com>
+         <f8528e80-e816-7901-a56a-581f88b29c83@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b0e485a-b07f-419a-4f6a-08d658fadf0b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 08:39:43.0605
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5631
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Flash mt35xu512aba connected to FlexSPI controller supports
-1-1-8/1-8-8 protocol.
-Added flag spi-rx-bus-width and spi-tx-bus-width with values as
-8 and 8 respectively for both flashes connected at CS0 and CS1.
+Hi Matthias,
 
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
----
-Changes for v5:
-- None
-Changes for v4:
-- None
-Changes for v3:
-- None
-Changes for v2:
-- None
+     Thanks very much for your review.
 
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+On Mon, 2018-12-03 at 00:56 +0100, Matthias Brugger wrote:
+> 
+> On 17/11/2018 03:35, Yong Wu wrote:
+> > The M4U IP blocks in mt8183 is MediaTek's generation2 M4U which use
+> > the ARM Short-descriptor like mt8173, and most of the HW registers
+> > are the same.
+> > 
+> > Here list main changes in mt8183:
+> > 1) mt8183 has only one M4U HW like mt8173.
+> 
+> That's a change?
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64=
-/boot/dts/freescale/fsl-lx2160a-rdb.dts
-index 3b20c97..24cc41c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-@@ -45,6 +45,8 @@
- 		m25p,fast-read;
- 		spi-max-frequency =3D <20000000>;
- 		reg =3D <0>;
-+		spi-rx-bus-width =3D <8>;
-+		spi-tx-bus-width =3D <8>;
- 	};
-=20
- 	mt35xu512aba1: flash@1 {
-@@ -54,6 +56,8 @@
- 		m25p,fast-read;
- 		spi-max-frequency =3D <20000000>;
- 		reg =3D <1>;
-+		spi-rx-bus-width =3D <8>;
-+		spi-tx-bus-width =3D <8>;
- 	};
- };
-=20
---=20
-2.7.4
+I guess I should use "difference" rather than "changes".
+(mt8173 and mt8183 have only one M4u HW while mt2712 have two.)
+
+> 
+> > 2) mt8183 don't have its "bclk" clock, the M4U use the EMI clock
+> > which has already been enabled before kernel.
+> > 3) mt8183 can support the dram over 4GB, but it don't call this "4GB
+> > mode".
+> > 4) mt8183 pgtable base register(0x0) extend bit[1:0] which represent
+> > the bit[33:32] in the physical address of the pgtable base, But the
+> > standard ttbr0[1] means the S bit which is enabled defaultly, Hence,
+> > we add a mask.
+> > 5) mt8183 HW has a GALS modules, the SMI should add "gals" clock
+> > support.
+> > 6) the larb-id in smi-common has been remapped. This means the
+> > larb-id reported in the mtk_iommu_isr is not the real larb-id, here
+> > is the remapping relationship of mt8183:
+> 
+> This whole list is an indicator that you will need several enhancements to the
+> existing code before you can add mt8183 support.
+> Please do so in independent patches (e.g. gals modules, remap logic)
+
+OK. I will separate them into 2 new preparing patches.
+
+> Regarding making bclk optional, I think it would be better to set it to NULL for
+> mt8183 otherwise the driver will work with a broken device tree on systems that
+> actually need the bclk. Same holds for gals0 and gals1.
+
+OK. From your comment below, I will add a "has_bclk" in the platform
+data and change code like this:
+
+ if (data->plat_data->has_bclk) {
+        data->bclk = devm_clk_get();
+        if (IS_ERR(data->bclk))
+		return PTR_ERR(data->bclk).
+ } else {
+ 	data->bclk = NULL;
+ }
+
+> 
+> >                        M4U
+> >                         |
+> > ---------------------------------------------
+> > |               SMI common                  |
+> > -0-----7-----5-----6-----1-----2------3-----4- <- Id remapped
+> >  |     |     |     |     |     |      |     |
+> > larb0 larb1 IPU0  IPU1 larb4 larb5  larb6  CCU
+> > disp  vdec  img   cam   venc  img    cam
+> > As above, larb0 connects with the id 0 in smi-common.
+> >           larb1 connects with the id 7 in smi-common.
+> >           ...
+> > Take a example, if the larb-id reported in the mtk_iommu_isr is 7,
+> > actually it is larb1(vdec).
+> > 
+> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> > ---
+> >  drivers/iommu/mtk_iommu.c | 38 ++++++++++++++++++++++++++++----------
+> >  drivers/iommu/mtk_iommu.h |  5 +++++
+> >  drivers/memory/mtk-smi.c  | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 80 insertions(+), 10 deletions(-)
+> > 
+> 
+> [...]
+> 
+> > diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
+> > index a243047..e5fd8ee 100644
+> > --- a/drivers/iommu/mtk_iommu.h
+> > +++ b/drivers/iommu/mtk_iommu.h
+> > @@ -39,11 +39,16 @@ enum mtk_iommu_plat {
+> >  	M4U_MT2701,
+> >  	M4U_MT2712,
+> >  	M4U_MT8173,
+> > +	M4U_MT8183,
+> >  };
+> >  
+> >  struct mtk_iommu_plat_data {
+> >  	enum mtk_iommu_plat m4u_plat;
+> >  	bool has_4gb_mode;
+> > +
+> > +	/* The larb-id may be remapped in the smi-common. */
+> > +	bool larbid_remap_enable;
+> > +	unsigned int larbid_remapped[MTK_LARB_NR_MAX];
+> 
+> Please add new features to the driver as single patches. Don't add this kind of
+> things in the patch where you enable a new SoC.
+
+OK.
+
+> 
+> >  };
+> >  
+> >  struct mtk_iommu_domain;
+> > diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+> > index e37e54b..979153b 100644
+> > --- a/drivers/memory/mtk-smi.c
+> > +++ b/drivers/memory/mtk-smi.c
+> > @@ -59,6 +59,7 @@ struct mtk_smi_larb_gen {
+> >  struct mtk_smi {
+> >  	struct device			*dev;
+> >  	struct clk			*clk_apb, *clk_smi;
+> > +	struct clk			*clk_gals0, *clk_gals1;
+> >  	struct clk			*clk_async; /*only needed by mt2701*/
+> >  	void __iomem			*smi_ao_base;
+> >  };
+> > @@ -93,8 +94,20 @@ static int mtk_smi_enable(const struct mtk_smi *smi)
+> >  	if (ret)
+> >  		goto err_disable_apb;
+> >  
+> > +	ret = clk_prepare_enable(smi->clk_gals0);
+> > +	if (ret)
+> > +		goto err_disable_smi;
+> > +
+> > +	ret = clk_prepare_enable(smi->clk_gals1);
+> > +	if (ret)
+> > +		goto err_disable_gals0;
+> > +>  	return 0;
+> >  
+> > +err_disable_gals0:
+> > +	clk_disable_unprepare(smi->clk_gals0);
+> > +err_disable_smi:
+> > +	clk_disable_unprepare(smi->clk_smi);
+> >  err_disable_apb:
+> >  	clk_disable_unprepare(smi->clk_apb);
+> >  err_put_pm:
+> > @@ -104,6 +117,8 @@ static int mtk_smi_enable(const struct mtk_smi *smi)
+> >  
+> >  static void mtk_smi_disable(const struct mtk_smi *smi)
+> >  {
+> > +	clk_disable_unprepare(smi->clk_gals1);
+> > +	clk_disable_unprepare(smi->clk_gals0);
+> >  	clk_disable_unprepare(smi->clk_smi);
+> >  	clk_disable_unprepare(smi->clk_apb);
+> >  	pm_runtime_put_sync(smi->dev);
+> > @@ -262,6 +277,12 @@ static void mtk_smi_larb_config_port_gen1(struct device *dev)
+> >  	.larb_special_mask = BIT(8) | BIT(9), /* bdpsys */
+> >  };
+> >  
+> > +static const struct mtk_smi_larb_gen mtk_smi_larb_mt8183 = {
+> > +	.need_larbid = true,
+> > +	.config_port = mtk_smi_larb_config_port_gen2_general,
+> > +	.larb_special_mask = BIT(2) | BIT(3) | BIT(7), /* IPU0 | IPU1 | CCU */
+> > +};
+> > +
+> >  static const struct of_device_id mtk_smi_larb_of_ids[] = {
+> >  	{
+> >  		.compatible = "mediatek,mt8173-smi-larb",
+> > @@ -275,6 +296,10 @@ static void mtk_smi_larb_config_port_gen1(struct device *dev)
+> >  		.compatible = "mediatek,mt2712-smi-larb",
+> >  		.data = &mtk_smi_larb_mt2712
+> >  	},
+> > +	{
+> > +		.compatible = "mediatek,mt8183-smi-larb",
+> > +		.data = &mtk_smi_larb_mt8183
+> > +	},
+> >  	{}
+> >  };
+> >  
+> > @@ -304,6 +329,12 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
+> >  	larb->smi.clk_smi = devm_clk_get(dev, "smi");
+> >  	if (IS_ERR(larb->smi.clk_smi))
+> >  		return PTR_ERR(larb->smi.clk_smi);
+> > +
+> > +	larb->smi.clk_gals0 = devm_clk_get(dev, "gals");> +	if (PTR_ERR(larb->smi.clk_gals0) == -ENOENT)
+> > +		larb->smi.clk_gals0 = NULL;
+> > +	else if (IS_ERR(larb->smi.clk_gals0))
+> > +		return PTR_ERR(larb->smi.clk_gals0);
+> >  	larb->smi.dev = dev;
+> >  
+> >  	if (larb->larb_gen->need_larbid) {
+> > @@ -364,6 +395,10 @@ static int mtk_smi_larb_remove(struct platform_device *pdev)
+> >  		.compatible = "mediatek,mt2712-smi-common",
+> >  		.data = (void *)MTK_SMI_GEN2
+> >  	},
+> > +	{
+> > +		.compatible = "mediatek,mt8183-smi-common",
+> > +		.data = (void *)MTK_SMI_GEN2
+> > +	},
+> >  	{}
+> >  };
+> >  
+> > @@ -388,6 +423,18 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
+> >  	if (IS_ERR(common->clk_smi))
+> >  		return PTR_ERR(common->clk_smi);
+> >  
+> > +	common->clk_gals0 = devm_clk_get(dev, "gals0");
+> > +	if (PTR_ERR(common->clk_gals0) == -ENOENT)
+> > +		common->clk_gals0 = NULL;
+> > +	else if (IS_ERR(common->clk_gals0))
+> > +		return PTR_ERR(common->clk_gals0);
+> > +
+> > +	common->clk_gals1 = devm_clk_get(dev, "gals1");
+> > +	if (PTR_ERR(common->clk_gals1) == -ENOENT)
+> > +		common->clk_gals1 = NULL;
+> > +	else if (IS_ERR(common->clk_gals1))
+> > +		return PTR_ERR(common->clk_gals1);
+> > +
+> 
+> I'd prefer to check for clk_gals[01] for SoCs that need this clocks instead of
+> making them optional.
+
+OK. like "bclk", I will add a "has_gals" in the SOCs data.
+
+> 
+> Regards,
+> Matthias
+
 
