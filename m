@@ -2,118 +2,482 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FF1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCB9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95AF820834
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:56:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PlVZZo3c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AF820834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6776B20834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:57:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6776B20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbeLCM5L (ORCPT
+        id S1726604AbeLCM6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:57:11 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43325 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeLCM5L (ORCPT
+        Mon, 3 Dec 2018 07:58:34 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:43097 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeLCM6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:57:11 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r10so12028428wrs.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 04:56:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=9KBrBoOrO+XfJILgtl4j7qnaWuKkBcCyWQk1f6mH+Ns=;
-        b=PlVZZo3c2gO9uLCfUZVVJpr16CniYdmelENBbOOWAlPNiC+/UN/G4hRbnNrnAedrZS
-         1PImzadWgPPbLyxc/EpgdqP8AlagbZpOyK8c3Huzt8wv3X4BYVgVwMspZ4UQu6tbP3CB
-         jisR0EmVStHYJUr1BfUmWN6FYjDWBLg3qt8Vo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=9KBrBoOrO+XfJILgtl4j7qnaWuKkBcCyWQk1f6mH+Ns=;
-        b=VIV0BSRLeR0Y6Ml7S+Sy8Vf/6qD9AfzZqCsyI5QFRELJlu9oqKtBpfJbEHcRH3FlKz
-         o2Wh9y1pW4uahVBEAZuMpuTsCgqYrXWOQymh5x3M1nx3D/o7d3D6WXlYmD9b6YuFk5FZ
-         8SC4FrRPcXUPVyFfSaBD1JTx8RssIkWWCV2bOp301skvWP3jWzJ8Gn4FlH9cPrU2WUet
-         tcVY5Lo6/HoN1Qx10H18cY3RFb75L9OIOUBDtVw6iUkxyT6KlKKxdD8NbkVaM2Rf92yk
-         JXrRYI9V3duFrqmKKDQCdOjjQVieVvj8WWBJ4XpU2npzDsY1BJ5ksPgLgNUAqLdEiYhW
-         elkA==
-X-Gm-Message-State: AA+aEWYApz0TUM1/SayPXEv5R92dD0VJ7TqbTPUNBIiYpVJhA/zjyT+q
-        J4ld/lWj85/jnMffDLvcf9Sdyw==
-X-Google-Smtp-Source: AFSGD/Uq6JtGohyQ33oJfLxSqhdxAMWAtzz5RfNgfzCyq4KUoPhWt7h9nG/xmPBcWDabsL90f8d69g==
-X-Received: by 2002:a05:6000:10d1:: with SMTP id b17mr13881949wrx.306.1543841773676;
-        Mon, 03 Dec 2018 04:56:13 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id c10sm9814882wrw.49.2018.12.03.04.56.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 04:56:12 -0800 (PST)
-Date:   Mon, 3 Dec 2018 12:56:11 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
-        sboyd@kernel.org, cw00.choi@samsung.com, krzk@kernel.org,
-        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
-        andrew.smirnov@gmail.com, pombredanne@nexb.com,
-        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
-        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 0/9] clk: clkdev: managed clk lookup and provider
- registrations
-Message-ID: <20181203125611.GQ26661@dell>
-References: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
- <20181203121951.GP26661@dell>
- <20181203123558.GD15388@localhost.localdomain>
+        Mon, 3 Dec 2018 07:58:34 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gTnjY-0004u4-VG from Vladimir_Zapolskiy@mentor.com ; Mon, 03 Dec 2018 04:53:57 -0800
+Received: from [137.202.108.125] (137.202.0.90) by
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Mon, 3 Dec 2018 12:53:52 +0000
+Subject: Re: [PATCH linux-next v2 6/6] ASoC: rsnd: add avb clocks
+To:     <jiada_wang@mentor.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
+References: <20181203112427.18324-1-jiada_wang@mentor.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <e42bdbde-0d1a-eb1f-58af-ef4cf468ac38@mentor.com>
+Date:   Mon, 3 Dec 2018 14:53:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Icedove/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20181203112427.18324-1-jiada_wang@mentor.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181203123558.GD15388@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 03 Dec 2018, Matti Vaittinen wrote:
+Hi Jiada,
 
+On 12/03/2018 01:24 PM, jiada_wang@mentor.com wrote:
+> From: Jiada Wang <jiada_wang@mentor.com>
 > 
-> Hi de Ho Lee,
+> There are AVB Counter Clocks in ADG, each clock has 12bits integral
+> and 8 bits fractional dividers which operates with S0D1ϕ clock.
 > 
-> On Mon, Dec 03, 2018 at 12:19:51PM +0000, Lee Jones wrote:
-> > > Series add bd71837/bd71837 PMIC clock support + managed interfaces
-> > 
-> > You've send me a cover letter and no patches.
-> > 
-> I am afraid the patches may be still on their way... I added recipients
-> to git format-patch via command-line so you are probably included also
-> in patch mails :(
-
-Ah I see.  Yes, I see that they have started to come through.
-
-> > I suggest that I should not be on the addressee list at all for this.
+> This patch registers 8 AVB Counter Clocks when clock-cells of
+> rcar_sound node is 2,
 > 
-> I'm terribly sorry for spamming! I must've done some mistake with the
-> get_maintainer.pl as I copied the recipients from that output. I may
-> have accidentally included some old patch to maintainer query.
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+>  sound/soc/sh/rcar/adg.c  | 306 +++++++++++++++++++++++++++++++++++++--
+>  sound/soc/sh/rcar/gen.c  |   9 ++
+>  sound/soc/sh/rcar/rsnd.h |   9 ++
+>  3 files changed, 315 insertions(+), 9 deletions(-)
+> 
+> diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+> index 6768a66588eb..2c03d420ae76 100644
+> --- a/sound/soc/sh/rcar/adg.c
+> +++ b/sound/soc/sh/rcar/adg.c
+> @@ -5,6 +5,8 @@
+>  //  Copyright (C) 2013  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>  
+>  #include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <dt-bindings/clock/renesas-adg.h>
 
-No problem.  If you could remove me from future mails though, that
-would be appreciated.  The torrent it fierce enough without receiving
-correspondence that is not relevant to me.  Thanks.
+Drop the inclusion of the header above, see my comment to patch 5/6.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>  #include "rsnd.h"
+>  
+>  #define CLKA	0
+> @@ -21,13 +23,33 @@
+>  
+>  #define BRRx_MASK(x) (0x3FF & x)
+>  
+> +#define ADG_CLK_NAME		"adg"
+> +#define AVB_CLK_NAME		"avb"
+
+Can you please remove two macro above and replace their usage by values in 
+clk_register_avb() function?
+
+Also I don't think that it is good to hardcode parent clock name here,
+likely you should get it in runtime, see __clk_get_name().
+
+> +#define AVB_CLK_NUM		8
+> +#define AVB_CLK_NAME_SIZE	10
+
+The one macro above also can be removed in my opinion.
+
+> +#define AVB_MAX_RATE		25000000
+> +#define AVB_DIV_EN_COM		BIT(31)
+> +#define AVB_DIV_MASK		0x3ffff
+> +#define AVB_MAX_DIV		0x3ffc0
+> +
+>  static struct rsnd_mod_ops adg_ops = {
+>  	.name = "adg",
+>  };
+>  
+> +struct clk_avb {
+> +	struct clk_hw hw;
+> +	unsigned int idx;
+> +	struct rsnd_mod *mod;
+> +	/* lock reg access */
+> +	spinlock_t *lock;
+> +};
+> +
+> +#define to_clk_avb(_hw) container_of(_hw, struct clk_avb, hw)
+> +
+>  struct rsnd_adg {
+>  	struct clk *clk[CLKMAX];
+>  	struct clk *clkout[CLKOUTMAX];
+> +	struct clk *clkavb[AVB_CLK_NUM];
+>  	struct clk_onecell_data onecell;
+>  	struct rsnd_mod mod;
+>  	u32 flags;
+> @@ -37,6 +59,7 @@ struct rsnd_adg {
+>  
+>  	int rbga_rate_for_441khz; /* RBGA */
+>  	int rbgb_rate_for_48khz;  /* RBGB */
+> +	spinlock_t avb_lock;
+>  };
+>  
+>  #define LRCLK_ASYNC	(1 << 0)
+> @@ -408,6 +431,239 @@ void rsnd_adg_clk_control(struct rsnd_priv *priv, int enable)
+>  	}
+>  }
+>  
+> +static struct clk *rsnd_adg_clk_src_twocell_get(struct of_phandle_args *clkspec,
+> +						void *data)
+> +{
+> +	unsigned int clkidx = clkspec->args[1];
+> +	struct rsnd_adg *adg = data;
+> +	const char *type;
+> +	struct clk *clk;
+> +
+> +	switch (clkspec->args[0]) {
+> +	case ADG_FIX:
+> +		type = "fixed";
+
+Apparently you need 'type' local variable just to print an error message.
+
+Please remove the variable and update format strings accordingly.
+
+> +		if (clkidx >= CLKOUTMAX) {
+> +			pr_err("Invalid %s clock index %u\n", type,
+> +			       clkidx);
+> +			return ERR_PTR(-EINVAL);
+> +		}
+> +		clk = adg->clkout[clkidx];
+> +		break;
+> +	case ADG_AVB:
+> +		type = "avb";
+> +		if (clkidx >= AVB_CLK_NUM) {
+> +			pr_err("Invalid %s clock index %u\n", type,
+> +			       clkidx);
+> +			return ERR_PTR(-EINVAL);
+> +		}
+> +		clk = adg->clkavb[clkidx];
+> +		break;
+> +	default:
+> +		pr_err("Invalid ADG clock type %u\n", clkspec->args[0]);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return clk;
+> +}
+> +
+> +static void clk_avb_div_write(struct rsnd_mod *mod, u32 data, int idx)
+
+unsigned int idx to match a type of 'struct clk_avb' field.
+
+> +{
+> +	switch (idx) {
+> +	case 0:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV0, data);
+> +		break;
+> +	case 1:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV1, data);
+> +		break;
+> +	case 2:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV2, data);
+> +		break;
+> +	case 3:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV3, data);
+> +		break;
+> +	case 4:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV4, data);
+> +		break;
+> +	case 5:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV5, data);
+> +		break;
+> +	case 6:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV6, data);
+> +		break;
+> +	case 7:
+> +		rsnd_mod_write(mod, AVB_CLK_DIV7, data);
+> +		break;
+> +	}
+> +}
+> +
+> +static u32 clk_avb_div_read(struct rsnd_mod *mod, int idx)
+
+unsigned int idx to match a type of 'struct clk_avb' field.
+
+> +{
+> +	u32 val = 0;
+> +
+> +	switch (idx) {
+> +	case 0:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV0);
+> +		break;
+> +	case 1:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV1);
+> +		break;
+> +	case 2:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV2);
+> +		break;
+> +	case 3:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV3);
+> +		break;
+> +	case 4:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV4);
+> +		break;
+> +	case 5:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV5);
+> +		break;
+> +	case 6:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV6);
+> +		break;
+> +	case 7:
+> +		val = rsnd_mod_read(mod, AVB_CLK_DIV7);
+> +		break;
+> +	}
+> +
+> +	return val;
+> +}
+
+Apparently the macro nature of rsnd_mod_read() and rsnd_mod_write()
+does not allow to define a helper mapping function from index into
+RSND_REG_AVB_CLK_DIVx, okay...
+
+> +
+> +static int clk_avb_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct clk_avb *avb = to_clk_avb(hw);
+> +
+> +	return rsnd_mod_read(avb->mod, AVB_CLK_CONFIG) & BIT(avb->idx);
+> +}
+> +
+> +static int clk_avb_enabledisable(struct clk_hw *hw, int enable)
+> +{
+> +	struct clk_avb *avb = to_clk_avb(hw);
+> +	u32 val;
+> +
+> +	spin_lock(avb->lock);
+> +
+> +	val = rsnd_mod_read(avb->mod, AVB_CLK_CONFIG);
+> +	if (enable)
+> +		val |= BIT(avb->idx);
+> +	else
+> +		val &= ~BIT(avb->idx);
+> +	rsnd_mod_write(avb->mod, AVB_CLK_CONFIG,  val);
+> +
+> +	spin_unlock(avb->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_avb_enable(struct clk_hw *hw)
+> +{
+> +	return clk_avb_enabledisable(hw, 1);
+> +}
+> +
+> +static void clk_avb_disable(struct clk_hw *hw)
+> +{
+> +	clk_avb_enabledisable(hw, 0);
+> +}
+> +
+> +static unsigned long clk_avb_recalc_rate(struct clk_hw *hw,
+> +					 unsigned long parent_rate)
+> +{
+> +	struct clk_avb *avb = to_clk_avb(hw);
+> +	u32 div;
+> +
+> +	div = clk_avb_div_read(avb->mod, avb->idx) & AVB_DIV_MASK;
+> +	if (!div)
+> +		return parent_rate;
+> +
+> +	return parent_rate * 32 / div;
+> +}
+> +
+> +static unsigned int clk_avb_calc_div(unsigned long rate,
+> +				     unsigned long parent_rate)
+> +{
+> +	unsigned int div;
+> +
+> +	if (!rate)
+> +		rate = 1;
+> +
+> +	if (rate > AVB_MAX_RATE)
+> +		rate = AVB_MAX_RATE;
+> +
+> +	div = DIV_ROUND_CLOSEST(parent_rate * 32, rate);
+> +
+> +	if (div > AVB_MAX_DIV)
+> +		div = AVB_MAX_DIV;
+> +
+> +	return div;
+> +}
+> +
+> +static long clk_avb_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			       unsigned long *parent_rate)
+> +{
+> +	unsigned int div = clk_avb_calc_div(rate, *parent_rate);
+> +
+> +	return (*parent_rate * 32) / div;
+> +}
+> +
+> +static int clk_avb_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			    unsigned long parent_rate)
+> +{
+> +	struct clk_avb *avb = to_clk_avb(hw);
+> +	unsigned int div = clk_avb_calc_div(rate, parent_rate);
+> +	u32 val;
+> +
+> +	val = clk_avb_div_read(avb->mod, avb->idx) & ~AVB_DIV_MASK;
+> +	clk_avb_div_write(avb->mod, val | div, avb->idx);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops clk_avb_ops = {
+> +	.enable = clk_avb_enable,
+> +	.disable = clk_avb_disable,
+> +	.is_enabled = clk_avb_is_enabled,
+> +	.recalc_rate = clk_avb_recalc_rate,
+> +	.round_rate = clk_avb_round_rate,
+> +	.set_rate = clk_avb_set_rate,
+> +};
+> +
+> +static struct clk *clk_register_avb(struct device *dev, struct rsnd_mod *mod,
+> +				    unsigned int id, spinlock_t *lock)
+> +{
+> +	struct clk_init_data init;
+> +	struct clk_avb *avb;
+> +	struct clk *clk;
+> +	char name[AVB_CLK_NAME_SIZE];
+> +	const char *parent_name = ADG_CLK_NAME;
+> +
+> +	avb = devm_kzalloc(dev, sizeof(*avb), GFP_KERNEL);
+> +	if (!avb)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	snprintf(name, AVB_CLK_NAME_SIZE, "%s%u", AVB_CLK_NAME, id);
+> +
+> +	avb->idx = id;
+> +	avb->lock = lock;
+> +	avb->mod = mod;
+> +
+> +	/* Register the clock. */
+> +	init.name = name;
+> +	init.ops = &clk_avb_ops;
+> +	init.flags = CLK_IS_BASIC;
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +
+> +	avb->hw.init = &init;
+> +
+> +	/* init DIV to a valid state */
+> +	clk_avb_div_write(avb->mod, avb->idx, AVB_MAX_DIV);
+> +
+> +	clk = devm_clk_register(dev, &avb->hw);
+> +
+> +	return clk;
+> +}
+> +
+>  static void rsnd_adg_get_clkin(struct rsnd_priv *priv,
+>  			       struct rsnd_adg *adg)
+>  {
+> @@ -436,6 +692,7 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+>  	unsigned long req_48kHz_rate, req_441kHz_rate;
+>  	int i, req_size;
+>  	const char *parent_clk_name = NULL;
+> +	struct rsnd_mod *mod = rsnd_mod_get(adg);
+>  	static const char * const clkout_name[] = {
+>  		[CLKOUT]  = "audio_clkout",
+>  		[CLKOUT1] = "audio_clkout1",
+> @@ -540,21 +797,23 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+>  	 */
+>  
+>  	of_property_read_u32(np, "#clock-cells", &count);
+> -	/*
+> -	 * for clkout
+> -	 */
+> -	if (!count) {
+> +
+> +	switch (count) {
+> +	case 0:
+> +		/*
+> +		 * for clkout
+> +		 */
+>  		clk = clk_register_fixed_rate(dev, clkout_name[CLKOUT],
+>  					      parent_clk_name, 0, req_rate[0]);
+>  		if (!IS_ERR(clk)) {
+>  			adg->clkout[CLKOUT] = clk;
+>  			of_clk_add_provider(np, of_clk_src_simple_get, clk);
+>  		}
+> -	}
+> -	/*
+> -	 * for clkout0/1/2/3
+> -	 */
+> -	else {
+> +		break;
+> +	case 1:
+> +		/*
+> +		 * for clkout0/1/2/3
+> +		 */
+>  		for (i = 0; i < CLKOUTMAX; i++) {
+>  			clk = clk_register_fixed_rate(dev, clkout_name[i],
+>  						      parent_clk_name, 0,
+> @@ -566,6 +825,33 @@ static void rsnd_adg_get_clkout(struct rsnd_priv *priv,
+>  		adg->onecell.clk_num	= CLKOUTMAX;
+>  		of_clk_add_provider(np, of_clk_src_onecell_get,
+>  				    &adg->onecell);
+> +		break;
+> +	case 2:
+> +		/*
+> +		 * for clkout0/1/2/3 and avb clocks
+> +		 */
+> +		for (i = 0; i < CLKOUTMAX; i++) {
+> +			clk = clk_register_fixed_rate(dev, clkout_name[i],
+> +						      parent_clk_name, 0,
+> +						      req_rate[0]);
+> +			if (!IS_ERR(clk))
+> +				adg->clkout[i] = clk;
+> +		}
+> +
+> +		for (i = 0; i < AVB_CLK_NUM; i++) {
+> +			clk = clk_register_avb(dev, mod, i, &adg->avb_lock);
+> +			if (!IS_ERR(clk))
+> +				adg->clkavb[i] = clk;
+> +		}
+> +
+> +		of_clk_add_provider(np, rsnd_adg_clk_src_twocell_get, adg);
+> +
+> +		rsnd_mod_write(mod, AVB_CLK_CONFIG, AVB_DIV_EN_COM);
+> +
+> +		break;
+> +	default:
+> +		dev_err(dev, "Invalid clock-cell %d\n", count);
+> +		break;
+>  	}
+>  
+>  rsnd_adg_get_clkout_end:
+> @@ -612,6 +898,8 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
+>  	if (!adg)
+>  		return -ENOMEM;
+>  
+> +	spin_lock_init(&adg->avb_lock);
+> +
+>  	ret = rsnd_mod_init(priv, &adg->mod, &adg_ops,
+>  		      NULL, 0, 0);
+>  	if (ret)
+
+--
+Best wishes,
+Vladimir
