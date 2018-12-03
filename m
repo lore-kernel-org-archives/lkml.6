@@ -2,238 +2,167 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460DAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E5FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C985A2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:04:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9RmZEpB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C985A2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A8F202087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:07:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F202087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725977AbeLCUEO (ORCPT
+        id S1725993AbeLCUHm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:04:14 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:45765 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLCUEO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:04:14 -0500
-Received: by mail-vk1-f194.google.com with SMTP id n126so3206661vke.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 12:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bf+z+8qehLYtJhnusBsqq29RivmbzznY8dlUEsV+e1I=;
-        b=S9RmZEpBZosF5Ig8wF96BidnqcdsnIYuovzaRdhHxyRph1huFrZEa1TLi5Tyr+pyUY
-         n2hI/0rGQlKRABTh3iviTjxzeUdh9CrBQKsmCrmwnaulJlaBLj5Ze2JcOS0HxG0f4KYf
-         LdjQEvr5i3CLXc4Deq1zvigks0gdz4/qrk4rQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bf+z+8qehLYtJhnusBsqq29RivmbzznY8dlUEsV+e1I=;
-        b=FDy37FyUSMf6TfOniiuUPmTtq4UNuiN6sZ+LXCJIu6kBzkB9uSD3dj61+rDDiWIpub
-         dwTHfdLUyB5QVyfteG6FI3wYGC6dQXZ2soF7vYA2jjoG8mulAx4RWKRZY2fLyZPQ0491
-         bT1zatEi7dyMocdkqG00pcBiJ+r33ybYFmoyRoDs2PiregBC5Ju6fdodxUot3pkW4D9d
-         R7U/zHV2I1F7lcbSOLeJDgXmeY+BKUvKVlRDN5j48UI7x+U06zItsaDUSZ2vnclDP28A
-         yrGUTsfYITVLXjwS7hMCeRxKogT4eqgMWEgSaXdZlAkmfqqm/Cp+DTLny5RDJNVQ+ane
-         0aPw==
-X-Gm-Message-State: AA+aEWadmHu57LNFcSrFvds8L8d+eDd3wj4fH08tQhBqWQQRNQC+Nr7v
-        cFqG4jDbLnMRa1Nyd7PExFnPPcAgUcSek/A/UYhQ8Q==
-X-Google-Smtp-Source: AFSGD/VqsMkoS+d5KW1fgwCS8gkZHXWUtSkJ5Da40hElfzok71B0w/4SY57HcnD1KOdvGlQ46K5Kt6A1p5Oc58QhIf4=
-X-Received: by 2002:a1f:1881:: with SMTP id 123mr7504408vky.40.1543867451014;
- Mon, 03 Dec 2018 12:04:11 -0800 (PST)
+        Mon, 3 Dec 2018 15:07:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57870 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbeLCUHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 15:07:42 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A0D058E36;
+        Mon,  3 Dec 2018 20:07:39 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C18660BEC;
+        Mon,  3 Dec 2018 20:07:38 +0000 (UTC)
+Subject: Re: [PATCH] clocksource/arm_arch_timer: fix a lockdep warning
+To:     Qian Cai <cai@gmx.us>, mark.rutland@arm.com, marc.zyngier@arm.com
+Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
+        peterz@infradead.org, mingo@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1543865624-17301-1-git-send-email-cai@gmx.us>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <11876b19-ec16-c7c5-4b21-c45c2b0f7244@redhat.com>
+Date:   Mon, 3 Dec 2018 15:07:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-19-ulf.hansson@linaro.org> <20181203163717.GN18262@codeaurora.org>
-In-Reply-To: <20181203163717.GN18262@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 3 Dec 2018 21:03:34 +0100
-Message-ID: <CAPDyKFq1EQcwDqf737=t5OyhiTQ_RNyxO8rUaVShYPiN8ow3yw@mail.gmail.com>
-Subject: Re: [PATCH v10 18/27] drivers: firmware: psci: Add support for PM
- domains using genpd
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1543865624-17301-1-git-send-email-cai@gmx.us>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 03 Dec 2018 20:07:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Dec 2018 at 17:37, Lina Iyer <ilina@codeaurora.org> wrote:
+On 12/03/2018 02:33 PM, Qian Cai wrote:
+> Booting this Huawei TaiShan 2280 arm64 server generated this lockdep
+> warning.
 >
-> On Thu, Nov 29 2018 at 10:49 -0700, Ulf Hansson wrote:
-> >When the hierarchical CPU topology layout is used in DT, we need to setup
-> >the corresponding PM domain data structures, as to allow a CPU and a group
-> >of CPUs to be power managed accordingly. Let's enable this by deploying
-> >support through the genpd interface.
-> >
-> >Additionally, when the OS initiated mode is supported by the PSCI FW, let's
-> >also parse the domain idle states DT bindings as to make genpd responsible
-> >for the state selection, when the states are compatible with
-> >"domain-idle-state". Otherwise, when only Platform Coordinated mode is
-> >supported, we rely solely on the state selection to be managed through the
-> >regular cpuidle framework.
-> >
-> >If the initialization of the PM domain data structures succeeds and the OS
-> >initiated mode is supported, we try to switch to it. In case it fails,
-> >let's fall back into a degraded mode, rather than bailing out and returning
-> >an error code.
-> >
-> >Due to that the OS initiated mode may become enabled, we need to adjust to
-> >maintain backwards compatibility for a kernel started through a kexec call.
-> >Do this by explicitly switch to Platform Coordinated mode during boot.
-> >
-> >To try to initiate the PM domain data structures, the PSCI driver shall
-> >call the new function, psci_dt_init_pm_domains(). However, this is done
-> >from following changes.
-> >
-> >Cc: Lina Iyer <ilina@codeaurora.org>
-> >Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> >Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >---
-> >
-> >Changes in V10:
-> >       - Enable the PM domains to be used for both PC and OSI mode.
-> >       - Fixup error paths.
-> >       - Move the management of kexec started kernels into this patch.
-> >       - Rewrite changelog.
-> >
-> >---
-> > drivers/firmware/psci/Makefile         |   2 +-
-> > drivers/firmware/psci/psci.c           |   7 +-
-> > drivers/firmware/psci/psci.h           |   6 +
-> > drivers/firmware/psci/psci_pm_domain.c | 262 +++++++++++++++++++++++++
-> > 4 files changed, 275 insertions(+), 2 deletions(-)
-> > create mode 100644 drivers/firmware/psci/psci_pm_domain.c
-> >
-> >diff --git a/drivers/firmware/psci/Makefile b/drivers/firmware/psci/Makefile
-> >index 1956b882470f..ff300f1fec86 100644
-> >--- a/drivers/firmware/psci/Makefile
-> >+++ b/drivers/firmware/psci/Makefile
-> >@@ -1,4 +1,4 @@
-> > # SPDX-License-Identifier: GPL-2.0
-> > #
-> >-obj-$(CONFIG_ARM_PSCI_FW)     += psci.o
-> >+obj-$(CONFIG_ARM_PSCI_FW)     += psci.o psci_pm_domain.o
-> > obj-$(CONFIG_ARM_PSCI_CHECKER)        += psci_checker.o
-> >diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> >index 623591b541a4..19af2093151b 100644
-> >--- a/drivers/firmware/psci/psci.c
-> >+++ b/drivers/firmware/psci/psci.c
-> >@@ -704,9 +704,14 @@ static int __init psci_1_0_init(struct device_node *np)
-> >       if (err)
-> >               return err;
-> >
-> >-      if (psci_has_osi_support())
-> >+      if (psci_has_osi_support()) {
-> >               pr_info("OSI mode supported.\n");
-> >
-> >+              /* Make sure we default to PC mode. */
-> >+              invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
-> >+                             PSCI_1_0_SUSPEND_MODE_PC, 0, 0);
-> >+      }
-> >+
-> >       return 0;
-> > }
-> >
-> >diff --git a/drivers/firmware/psci/psci.h b/drivers/firmware/psci/psci.h
-> >index 7d9d38fd57e1..8cf6d7206fab 100644
-> >--- a/drivers/firmware/psci/psci.h
-> >+++ b/drivers/firmware/psci/psci.h
-> >@@ -11,4 +11,10 @@ void psci_set_domain_state(u32 state);
-> > bool psci_has_osi_support(void);
-> > int psci_dt_parse_state_node(struct device_node *np, u32 *state);
-> >
-> >+#ifdef CONFIG_CPU_IDLE
-> >+int psci_dt_init_pm_domains(struct device_node *np);
-> >+#else
-> >+static inline int psci_dt_init_pm_domains(struct device_node *np) { return 0; }
-> >+#endif
-> >+
-> > #endif /* __PSCI_H */
-> >diff --git a/drivers/firmware/psci/psci_pm_domain.c b/drivers/firmware/psci/psci_pm_domain.c
-> >new file mode 100644
-> >index 000000000000..d0dc38e96f85
-> >--- /dev/null
-> >+++ b/drivers/firmware/psci/psci_pm_domain.c
-> >@@ -0,0 +1,262 @@
-> >+// SPDX-License-Identifier: GPL-2.0
-> >+/*
-> >+ * PM domains for CPUs via genpd - managed by PSCI.
-> >+ *
-> >+ * Copyright (C) 2018 Linaro Ltd.
-> >+ * Author: Ulf Hansson <ulf.hansson@linaro.org>
-> >+ *
-> >+ */
-> >+
-> >+#define pr_fmt(fmt) "psci: " fmt
-> >+
-> >+#include <linux/device.h>
-> >+#include <linux/kernel.h>
-> >+#include <linux/pm_domain.h>
-> >+#include <linux/slab.h>
-> >+#include <linux/string.h>
-> >+
-> >+#include "psci.h"
-> >+
-> >+#ifdef CONFIG_CPU_IDLE
-> >+
-> >+struct psci_pd_provider {
-> >+      struct list_head link;
-> >+      struct device_node *node;
-> >+};
-> >+
-> >+static LIST_HEAD(psci_pd_providers);
-> >+static bool osi_mode_enabled;
-> >+
-> >+static int psci_pd_power_off(struct generic_pm_domain *pd)
-> >+{
-> >+      struct genpd_power_state *state = &pd->states[pd->state_idx];
-> >+      u32 *pd_state;
-> >+      u32 composite_pd_state;
-> >+
-> >+      /* If we have failed to enable OSI mode, then abort power off. */
-> >+      if (psci_has_osi_support() && !osi_mode_enabled)
-> >+              return -EBUSY;
-> >+
-> >+      if (!state->data)
-> >+              return 0;
-> >+
-> >+      /* When OSI mode is enabled, set the corresponding domain state. */
-> >+      pd_state = state->data;
-> >+      composite_pd_state = *pd_state | psci_get_domain_state();
-> This should not be needed. The domain_state should be 0x0 being set
-> after coming out of idle.
-> >+      psci_set_domain_state(composite_pd_state);
-> The three lines can be summarized as:
->         psci_set_domain_state(*state->data);
+> [    0.000000]  lockdep_assert_cpus_held+0x50/0x60
+> [    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
+> [    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
+> [    0.000000]  arch_timer_acpi_init+0x274/0x6ac
+> [    0.000000]  acpi_table_parse+0x1ac/0x218
+> [    0.000000]  __acpi_probe_device_table+0x164/0x1ec
+> [    0.000000]  timer_probe+0x1bc/0x254
+> [    0.000000]  time_init+0x44/0x98
+> [    0.000000]  start_kernel+0x4ec/0x7d4
+>
+> This is due to the commit cb538267ea1e ("jump_label/lockdep: Assert we hold
+> the hotplug lock for _cpuslocked() operations"). Therefore, it will check
+> if it is really in the CPU hotplug path or not, and work around this
+> problem by using cpus_read_trylock(). The chance of not getting the read
+> lock is very small. If that happens, it will report a lockdep warning at
+> most.
+>
+> Signed-off-by: Qian Cai <cai@gmx.us>
+> ---
+>  drivers/clocksource/arm_arch_timer.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+> index 9a7d4dc..5c9acbd 100644
+> --- a/drivers/clocksource/arm_arch_timer.c
+> +++ b/drivers/clocksource/arm_arch_timer.c
+> @@ -497,11 +497,20 @@ void arch_timer_enable_workaround(const struct arch_timer_erratum_workaround *wa
+>  			per_cpu(timer_unstable_counter_workaround, i) = wa;
+>  	}
+>  
+> +#ifdef CONFIG_HOTPLUG_CPU
 
-Sure, let me change accordingly and thanks for spotting this!
+If HOTPLUG_CPU isn't defined, all the cpus_lock() and related functions
+are just no-op. You don't need to use conditional compilation directive
+here.
 
-Kind regards
-Uffe
+> +	i = 0;
+> +
+>  	/*
+>  	 * Use the locked version, as we're called from the CPU
+>  	 * hotplug framework. Otherwise, we end-up in deadlock-land.
+>  	 */
+
+I think the main problem is the above comment may not be true anymore or
+is only occasionally true. We need to audit the code to find the root cause.
+
+> +	i = cpus_read_trylock();
+>  	static_branch_enable_cpuslocked(&arch_timer_read_ool_enabled);
+> +	if (i)
+> +		cpus_read_unlock();
+
+This is not the right way of fixing the lockdep splash.
+
+> +#else
+> +	static_branch_enable(&arch_timer_read_ool_enabled);
+> +#endif
+>  
+>  	/*
+>  	 * Don't use the vdso fastpath if errata require using the
+
+Cheers,
+Longman
+
+
