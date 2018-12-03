@@ -2,239 +2,178 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C01A2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FB8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC5F2054F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2135D2054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 00:12:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="faXAjvLA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC5F2054F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a+VydDo1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2135D2054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725870AbeLCAKv (ORCPT
+        id S1725890AbeLCAMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 19:10:51 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:38047 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbeLCAKu (ORCPT
+        Sun, 2 Dec 2018 19:12:36 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40413 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbeLCAMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 19:10:50 -0500
-Received: by mail-yb1-f195.google.com with SMTP id u103-v6so4596882ybi.5
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 16:10:48 -0800 (PST)
+        Sun, 2 Dec 2018 19:12:35 -0500
+Received: by mail-yw1-f67.google.com with SMTP id r130so4703287ywg.7
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 16:12:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TRG9PABcW8mA5DBgv77eBT82q3qIyQcDamaw/SXw0hY=;
-        b=faXAjvLAgkg4V7MqNaIC5IxEew6k/YIYlQ+IHIQcZ9YistQbr2o5Cv6zxoie9JXb+L
-         J7eygIH96uOxqWJ1+X0NQdPg4HBuAJ0p9bFVc34aSBUSMBvrbxDD+bDHYUHYxBdR+5fI
-         D9atOvhRPEsbEy1v1TdXNML0vhm49d1q1DnAw=
+        bh=1wQlO2xDy+CwEhyGREVmB297Z8Zc+aVNLGTeB72WWkY=;
+        b=a+VydDo1yLrVrSnqDqRCnbFCKFMOvZRRIRFC29iDJS9Dex7WcN8vWY3MDr3mhtbe9c
+         ZM4IWSBOwQly1knaEdzDxzK6Xj6KyvN1XHKd8ClpF9qiPQPLm91e6oL0sS2cBU+0aWfq
+         PNbySr7gYfrItfYdZyHExUQ/YuUGj3gc+3LBE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TRG9PABcW8mA5DBgv77eBT82q3qIyQcDamaw/SXw0hY=;
-        b=XaOtUPAd4DsCflbTQq+YZZe8tiw5cP6+jIFhUJe6cjDDoD8MkViZf/CcKymx/rCyTR
-         rmBWvtSxamBa86SYuvVbBXAy5aOAYvRZ2D2MhsFev1VIpQFp1yT5WyTu1ySycCFsnBDA
-         sKMW+s2kmx09Y3ItaEMDPaCy5eOmRMGmsH0h7kmbbVT5EDyCjghe0sporwFiscHettN5
-         FhCfvLAHfwcHtNNgrw54WIAjB+nx0DZtDmiRZT4PjPMBE96WNOQcGCnDWWtkm5p7naLc
-         09I+Ua1/O0M2xn+RKJvmoTdmORbC2G7tlotI8w8v81y1iU+81GwRTBHJY61SNfAPa1ar
-         u/wQ==
-X-Gm-Message-State: AA+aEWb2q6Q7nO8VgKM8pV+Z09i66dzMvFSOVqCkzyRFT3nXnW5KwnEb
-        Zjms3Yih5WoPMVzkWkAL2VNmnL980yk=
-X-Google-Smtp-Source: AFSGD/XKWYO5vvGs7QAOfv87OUfb78El3vPqiWthc7UlgfdfrM68D4nR0OdNKpW9tgAexRFdFFhwkA==
-X-Received: by 2002:a25:7e04:: with SMTP id z4-v6mr9846518ybc.118.1543795848025;
-        Sun, 02 Dec 2018 16:10:48 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id c127sm3882011ywb.67.2018.12.02.16.10.45
+        bh=1wQlO2xDy+CwEhyGREVmB297Z8Zc+aVNLGTeB72WWkY=;
+        b=Uf+a00+BaBRYzbiZM6A4LaZfTCj/JT8DB7o06487aSrrzHyXHc95QQsY/TwP6pivYa
+         LJX6GqcoPijkz4sOJM5/47nES8kAvYwNMno5XR+IU56ldQD2IIqi5xbfXYjBNW0GYdZA
+         RIoNAGfJQQV7Sj3Zu6rl70xm3pWK2M7a/c/AsYuR8OhyyEFSryCJVUJwTszjyNZZasSi
+         y67NjU2NkvorZ/U2nocRGLaDS+FclQBz9f6TLu6pVR3GISr4kaSoWp6Kk5t7eiXLpGO+
+         pTo8DtPPbhLFpAK5m3S0mRaqN+LqCrVGSDCcPuZ2xFOrnI5CxqKo0hLqf4T+YMhGM8PO
+         6HGg==
+X-Gm-Message-State: AA+aEWY7MDIuHaksPHWoAF8pfQb9zqRfq1Pyq99N4lEICv3iwqS+Zub7
+        nNX5NONl8XxuUZBVC5YW228k3O/1nq8=
+X-Google-Smtp-Source: AFSGD/WyRX7LxxASoJpT2nz0YNZk9AL6xA1TXctJqlN4jSEu86ZNPUercbDdmM2U4SYUeIljspUIVw==
+X-Received: by 2002:a81:3753:: with SMTP id e80mr14017125ywa.505.1543795952549;
+        Sun, 02 Dec 2018 16:12:32 -0800 (PST)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id 137sm1923260ywv.108.2018.12.02.16.12.31
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Dec 2018 16:10:46 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id a67-v6so4615469ybg.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 16:10:45 -0800 (PST)
-X-Received: by 2002:a25:d68b:: with SMTP id n133mr686241ybg.204.1543795844971;
- Sun, 02 Dec 2018 16:10:44 -0800 (PST)
+        Sun, 02 Dec 2018 16:12:31 -0800 (PST)
+Received: by mail-yw1-f52.google.com with SMTP id f65so4705039ywc.8
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 16:12:31 -0800 (PST)
+X-Received: by 2002:a81:8103:: with SMTP id r3-v6mr13758602ywf.403.1543795950703;
+ Sun, 02 Dec 2018 16:12:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20181201165348.24140-1-robdclark@gmail.com>
-In-Reply-To: <20181201165348.24140-1-robdclark@gmail.com>
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
+ <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
+ <CAF6AEGu65Vvzpy6K7eF+Kk4YdYBPEKFX5ct8GxG0pw-KNwM5eA@mail.gmail.com>
+ <20181129155418.GB26537@lst.de> <CAF6AEGufdp5jRtUZ_+VRQg3ZXH36hNHvbWZQeJDArp8N5SZ3Lg@mail.gmail.com>
+ <20181129194029.GE17663@jcrouse-lnx.qualcomm.com> <CAAFQd5D139pNx9aEpO8745R4kfVYCBDyqyJNR_HDDXvKt7NZjw@mail.gmail.com>
+ <06747338-b0fb-eef6-634a-0641e81ed3c1@arm.com> <CAAFQd5CEXZU5x+Fi5kRHZFfBwPkUbpo=-UBTARiaAoLqV-tMww@mail.gmail.com>
+ <CAAFQd5DMgGDPcK=4DktfC7T9O0MrU1VBqJqR+6VYpOh_DdEXUg@mail.gmail.com> <CAF6AEGujyP78PjOMwTmdHcJKpsrgmRGage=pFniad98peMBrDw@mail.gmail.com>
+In-Reply-To: <CAF6AEGujyP78PjOMwTmdHcJKpsrgmRGage=pFniad98peMBrDw@mail.gmail.com>
 From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Sun, 2 Dec 2018 16:10:33 -0800
-X-Gmail-Original-Message-ID: <CAAFQd5CWRKGA2=TEpYvnLuBzu6=2h1i_YtmN_FusyFuLy5BpdQ@mail.gmail.com>
-Message-ID: <CAAFQd5CWRKGA2=TEpYvnLuBzu6=2h1i_YtmN_FusyFuLy5BpdQ@mail.gmail.com>
-Subject: Re: [PATCH] of/device: add blacklist for iommu dma_ops
+Date:   Sun, 2 Dec 2018 16:12:19 -0800
+X-Gmail-Original-Message-ID: <CAAFQd5AdGafW0h1r6bZ84T5WCxkynCYjTe82uJDTna=W=FpLPg@mail.gmail.com>
+Message-ID: <CAAFQd5AdGafW0h1r6bZ84T5WCxkynCYjTe82uJDTna=W=FpLPg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
 To:     Rob Clark <robdclark@gmail.com>
-Cc:     "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Christoph Hellwig <hch@lst.de>,
+Cc:     Christoph Hellwig <hch@lst.de>,
         Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
         David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         freedreno <freedreno@lists.freedesktop.org>,
         Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>, frowand.list@gmail.com,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 1, 2018 at 8:54 AM Rob Clark <robdclark@gmail.com> wrote:
+On Sat, Dec 1, 2018 at 3:47 AM Rob Clark <robdclark@gmail.com> wrote:
 >
-> This solves a problem we see with drm/msm, caused by getting
-> iommu_dma_ops while we attach our own domain and manage it directly at
-> the iommu API level:
+> On Fri, Nov 30, 2018 at 9:05 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> >
+> > On Thu, Nov 29, 2018 at 4:23 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> > >
+> > > On Thu, Nov 29, 2018 at 12:03 PM Robin Murphy <robin.murphy@arm.com> wrote:
+> > > >
+> > > > On 29/11/2018 19:57, Tomasz Figa wrote:
+> > > > > On Thu, Nov 29, 2018 at 11:40 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> > > > >>
+> > > > >> On Thu, Nov 29, 2018 at 01:48:15PM -0500, Rob Clark wrote:
+> > > > >>> On Thu, Nov 29, 2018 at 10:54 AM Christoph Hellwig <hch@lst.de> wrote:
+> > > > >>>>
+> > > > >>>> On Thu, Nov 29, 2018 at 09:42:50AM -0500, Rob Clark wrote:
+> > > > >>>>> Maybe the thing we need to do is just implement a blacklist of
+> > > > >>>>> compatible strings for devices which should skip the automatic
+> > > > >>>>> iommu/dma hookup.  Maybe a bit ugly, but it would also solve a problem
+> > > > >>>>> preventing us from enabling per-process pagetables for a5xx (where we
+> > > > >>>>> need to control the domain/context-bank that is allocated by the dma
+> > > > >>>>> api).
+> > > > >>>>
+> > > > >>>> You can detach from the dma map attachment using arm_iommu_detach_device,
+> > > > >>>> which a few drm drivers do, but I don't think this is the problem.
+> > > > >>>
+> > > > >>> I think even with detach, we wouldn't end up with the context-bank
+> > > > >>> that the gpu firmware was hard-coded to expect, and so it would
+> > > > >>> overwrite the incorrect page table address register.  (I could be
+> > > > >>> mis-remembering that, Jordan spent more time looking at that.  But it
+> > > > >>> was something along those lines.)
+> > > > >>
+> > > > >> Right - basically the DMA domain steals context bank 0 and the GPU is hard coded
+> > > > >> to use that context bank for pagetable switching.
+> > > > >>
+> > > > >> I believe the Tegra guys also had a similar problem with a hard coded context
+> > > > >> bank.
+> > > >
+> > > > AIUI, they don't need a specific hardware context, they just need to
+> > > > know which one they're actually using, which the domain abstraction hides.
+> > > >
+> > > > > Wait, if we detach the GPU/display struct device from the default
+> > > > > domain and attach it to a newly allocated domain, wouldn't the newly
+> > > > > allocated domain use the context bank we need? Note that we're already
+> > > >
+> > > > The arm-smmu driver doesn't, but there's no fundamental reason it
+> > > > couldn't. That should just need code to refcount domain users and
+> > > > release hardware contexts for domains with no devices currently attached.
+> > > >
+> > > > Robin.
+> > > >
+> > > > > doing that, except that we're doing it behind the back of the DMA
+> > > > > mapping subsystem, so that it keeps using the IOMMU version of the DMA
+> > > > > ops for the device and doing any mapping operations on the default
+> > > > > domain. If we ask the DMA mapping to detach, wouldn't it essentially
+> > > > > solve the problem?
+> > >
+> > > Thanks Robin.
+> > >
+> > > Still, my point is that the MSM DRM driver attaches the GPU struct
+> > > device to a new domain it allocates using iommu_domain_alloc() and it
+> > > seems to work fine, so I believe it's not the problem we're looking
+> > > into with this patch.
+> >
+> > Could we just make the MSM DRM call arch_teardown_dma_ops() and then
+> > arch_setup_dma_ops() with the `iommu` argument set to NULL and be done
+> > with it?
 >
->   [0000000000000038] user address but active_mm is swapper
->   Internal error: Oops: 96000005 [#1] PREEMPT SMP
->   Modules linked in:
->   CPU: 7 PID: 70 Comm: kworker/7:1 Tainted: G        W         4.19.3 #90
->   Hardware name: xxx (DT)
->   Workqueue: events deferred_probe_work_func
->   pstate: 80c00009 (Nzcv daif +PAN +UAO)
->   pc : iommu_dma_map_sg+0x7c/0x2c8
->   lr : iommu_dma_map_sg+0x40/0x2c8
->   sp : ffffff80095eb4f0
->   x29: ffffff80095eb4f0 x28: 0000000000000000
->   x27: ffffffc0f9431578 x26: 0000000000000000
->   x25: 00000000ffffffff x24: 0000000000000003
->   x23: 0000000000000001 x22: ffffffc0fa9ac010
->   x21: 0000000000000000 x20: ffffffc0fab40980
->   x19: ffffffc0fab40980 x18: 0000000000000003
->   x17: 00000000000001c4 x16: 0000000000000007
->   x15: 000000000000000e x14: ffffffffffffffff
->   x13: ffff000000000000 x12: 0000000000000028
->   x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
->   x9 : 0000000000000000 x8 : ffffffc0fab409a0
->   x7 : 0000000000000000 x6 : 0000000000000002
->   x5 : 0000000100000000 x4 : 0000000000000000
->   x3 : 0000000000000001 x2 : 0000000000000002
->   x1 : ffffffc0f9431578 x0 : 0000000000000000
->   Process kworker/7:1 (pid: 70, stack limit = 0x0000000017d08ffb)
->   Call trace:
->    iommu_dma_map_sg+0x7c/0x2c8
->    __iommu_map_sg_attrs+0x70/0x84
->    get_pages+0x170/0x1e8
->    msm_gem_get_iova+0x8c/0x128
->    _msm_gem_kernel_new+0x6c/0xc8
->    msm_gem_kernel_new+0x4c/0x58
->    dsi_tx_buf_alloc_6g+0x4c/0x8c
->    msm_dsi_host_modeset_init+0xc8/0x108
->    msm_dsi_modeset_init+0x54/0x18c
->    _dpu_kms_drm_obj_init+0x430/0x474
->    dpu_kms_hw_init+0x5f8/0x6b4
->    msm_drm_bind+0x360/0x6c8
->    try_to_bring_up_master.part.7+0x28/0x70
->    component_master_add_with_match+0xe8/0x124
->    msm_pdev_probe+0x294/0x2b4
->    platform_drv_probe+0x58/0xa4
->    really_probe+0x150/0x294
->    driver_probe_device+0xac/0xe8
->    __device_attach_driver+0xa4/0xb4
->    bus_for_each_drv+0x98/0xc8
->    __device_attach+0xac/0x12c
->    device_initial_probe+0x24/0x30
->    bus_probe_device+0x38/0x98
->    deferred_probe_work_func+0x78/0xa4
->    process_one_work+0x24c/0x3dc
->    worker_thread+0x280/0x360
->    kthread+0x134/0x13c
->    ret_from_fork+0x10/0x18
->   Code: d2800004 91000725 6b17039f 5400048a (f9401f40)
->   ---[ end trace f22dda57f3648e2c ]---
->   Kernel panic - not syncing: Fatal exception
->   SMP: stopping secondary CPUs
->   Kernel Offset: disabled
->   CPU features: 0x0,22802a18
->   Memory Limit: none
->
-> The problem is that when drm/msm does it's own iommu_attach_device(),
-> now the domain returned by iommu_get_domain_for_dev() is drm/msm's
-> domain, and it doesn't have domain->iova_cookie.
->
-> We kind of avoided this problem prior to sdm845/dpu because the iommu
-> was attached to the mdp node in dt, which is a child of the toplevel
-> mdss node (which corresponds to the dev passed in dma_map_sg()).  But
-> with sdm845, now the iommu is attached at the mdss level so we hit the
-> iommu_dma_ops in dma_map_sg().
->
-> But auto allocating/attaching a domain before the driver is probed was
-> already a blocking problem for enabling per-context pagetables for the
-> GPU.  This problem is also now solved with this patch.
->
-> Fixes: 97890ba9289c dma-mapping: detect and configure IOMMU in of_dma_configure
-> Tested-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Rob Clark <robdclark@gmail.com>
-> ---
-> This is an alternative/replacement for [1].  What it lacks in elegance
-> it makes up for in practicality ;-)
->
-> [1] https://patchwork.freedesktop.org/patch/264930/
->
->  drivers/of/device.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/drivers/of/device.c b/drivers/of/device.c
-> index 5957cd4fa262..15ffee00fb22 100644
-> --- a/drivers/of/device.c
-> +++ b/drivers/of/device.c
-> @@ -72,6 +72,14 @@ int of_device_add(struct platform_device *ofdev)
->         return device_add(&ofdev->dev);
->  }
->
-> +static const struct of_device_id iommu_blacklist[] = {
-> +       { .compatible = "qcom,mdp4" },
-> +       { .compatible = "qcom,mdss" },
-> +       { .compatible = "qcom,sdm845-mdss" },
-> +       { .compatible = "qcom,adreno" },
-> +       {}
-> +};
-> +
->  /**
->   * of_dma_configure - Setup DMA configuration
->   * @dev:       Device to apply DMA configuration
-> @@ -164,6 +172,20 @@ int of_dma_configure(struct device *dev, struct device_node *np, bool force_dma)
->         dev_dbg(dev, "device is%sbehind an iommu\n",
->                 iommu ? " " : " not ");
->
-> +       /*
-> +        * There is at least one case where the driver wants to directly
-> +        * manage the IOMMU, but if we end up with iommu dma_ops, that
-> +        * interferes with the drivers ability to use dma_map_sg() for
-> +        * cache operations.  Since we don't currently have a better
-> +        * solution, and this code runs before the driver is probed and
-> +        * has a chance to intervene, use a simple blacklist to avoid
-> +        * ending up with iommu dma_ops:
-> +        */
-> +       if (of_match_device(iommu_blacklist, dev)) {
-> +               dev_dbg(dev, "skipping iommu hookup\n");
-> +               iommu = NULL;
-> +       }
-> +
->         arch_setup_dma_ops(dev, dma_addr, size, iommu, coherent);
->
->         return 0;
-> --
-> 2.19.2
+> I don't think those are exported to modules?
 >
 
-+Marek Szyprowski who I believe had a similar problem with Exynos DRM before.
+Indeed, if we compile MSM DRM as modules, it wouldn't work...
 
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> I have actually a simpler patch, that adds a small blacklist to check
+> in of_dma_configure() before calling arch_setup_dma_ops(), which can
+> replace this patch.  It also solves the problem of dma api allocating
+> the context bank that he gpu wants to use for context-switching, and
+> should be a simple thing to backport to stable branches.
+>
+> I was just spending some time trying to figure out what changed
+> recently to start causing dma_map_sg() to opps on boot for us, so I
+> could write a more detailed commit msg.
+
+Yeah, that sounds much better, thanks. Reviewed that patch.
 
 Best regards,
 Tomasz
