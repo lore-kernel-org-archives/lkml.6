@@ -2,401 +2,166 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C75C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E21C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C0A220850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:46:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C0A220850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DEC9020850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:47:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEC9020850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbeLCPqx (ORCPT
+        id S1726715AbeLCPr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:46:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:40210 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbeLCPqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:46:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C15E41682;
-        Mon,  3 Dec 2018 07:46:50 -0800 (PST)
-Received: from [10.1.37.145] (p8cg001049571a15.cambridge.arm.com [10.1.37.145])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2D243F5AF;
-        Mon,  3 Dec 2018 07:46:48 -0800 (PST)
-Subject: Re: [PATCH v9 8/8] KVM: arm64: Add support for creating PUD hugepages
- at stage 2
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-9-punit.agrawal@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <3c37af59-6936-20fb-b3a3-eaa10f3ada53@arm.com>
-Date:   Mon, 3 Dec 2018 21:16:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181031175745.18650-9-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Dec 2018 10:47:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44382 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726637AbeLCPr4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:47:56 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3FiExm064795
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 10:47:53 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p56u7tatp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:47:53 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 3 Dec 2018 15:47:44 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 15:47:36 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3FlZJg49676318
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 15:47:35 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3522342047;
+        Mon,  3 Dec 2018 15:47:35 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E966142045;
+        Mon,  3 Dec 2018 15:47:31 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.196])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  3 Dec 2018 15:47:31 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 03 Dec 2018 17:47:31 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2 3/6] sh: prefer memblock APIs returning virtual address
+Date:   Mon,  3 Dec 2018 17:47:12 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18120315-0008-0000-0000-0000029C39CF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120315-0009-0000-0000-000022069463
+Message-Id: <1543852035-26634-4-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=937 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Rather than use the memblock_alloc_base that returns a physical address and
+then convert this address to the virtual one, use appropriate memblock
+function that returns a virtual address.
 
+There is a small functional change in the allocation of then NODE_DATA().
+Instead of panicing if the local allocation failed, the non-local
+allocation attempt will be made.
 
-On 10/31/2018 11:27 PM, Punit Agrawal wrote:
-> KVM only supports PMD hugepages at stage 2. Now that the various page
-> handling routines are updated, extend the stage 2 fault handling to
-> map in PUD hugepages.
-> 
-> Addition of PUD hugepage support enables additional page sizes (e.g.,
-> 1G with 4K granule) which can be useful on cores that support mapping
-> larger block sizes in the TLB entries.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm/include/asm/kvm_mmu.h         |  20 +++++
->  arch/arm/include/asm/stage2_pgtable.h  |   5 ++
->  arch/arm64/include/asm/kvm_mmu.h       |  16 ++++
->  arch/arm64/include/asm/pgtable-hwdef.h |   2 +
->  arch/arm64/include/asm/pgtable.h       |   2 +
->  virt/kvm/arm/mmu.c                     | 104 +++++++++++++++++++++++--
->  6 files changed, 143 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index e62f0913ce7d..6336319a0d5b 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -84,11 +84,14 @@ void kvm_clear_hyp_idmap(void);
->  
->  #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
->  #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
-> +#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ arch/sh/mm/init.c | 18 +++++-------------
+ arch/sh/mm/numa.c |  5 ++---
+ 2 files changed, 7 insertions(+), 16 deletions(-)
 
-This makes sense. Was not enabled before and getting added here.
+diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+index c8c13c77..3576b5f 100644
+--- a/arch/sh/mm/init.c
++++ b/arch/sh/mm/init.c
+@@ -192,24 +192,16 @@ void __init page_table_range_init(unsigned long start, unsigned long end,
+ void __init allocate_pgdat(unsigned int nid)
+ {
+ 	unsigned long start_pfn, end_pfn;
+-#ifdef CONFIG_NEED_MULTIPLE_NODES
+-	unsigned long phys;
+-#endif
+ 
+ 	get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
+ 
+ #ifdef CONFIG_NEED_MULTIPLE_NODES
+-	phys = __memblock_alloc_base(sizeof(struct pglist_data),
+-				SMP_CACHE_BYTES, end_pfn << PAGE_SHIFT);
+-	/* Retry with all of system memory */
+-	if (!phys)
+-		phys = __memblock_alloc_base(sizeof(struct pglist_data),
+-					SMP_CACHE_BYTES, memblock_end_of_DRAM());
+-	if (!phys)
++	NODE_DATA(nid) = memblock_alloc_try_nid_nopanic(
++				sizeof(struct pglist_data),
++				SMP_CACHE_BYTES, MEMBLOCK_LOW_LIMIT,
++				MEMBLOCK_ALLOC_ACCESSIBLE, nid);
++	if (!NODE_DATA(nid))
+ 		panic("Can't allocate pgdat for node %d\n", nid);
+-
+-	NODE_DATA(nid) = __va(phys);
+-	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+ #endif
+ 
+ 	NODE_DATA(nid)->node_start_pfn = start_pfn;
+diff --git a/arch/sh/mm/numa.c b/arch/sh/mm/numa.c
+index 830e8b3..c4bde61 100644
+--- a/arch/sh/mm/numa.c
++++ b/arch/sh/mm/numa.c
+@@ -41,9 +41,8 @@ void __init setup_bootmem_node(int nid, unsigned long start, unsigned long end)
+ 	__add_active_range(nid, start_pfn, end_pfn);
+ 
+ 	/* Node-local pgdat */
+-	NODE_DATA(nid) = __va(memblock_alloc_base(sizeof(struct pglist_data),
+-					     SMP_CACHE_BYTES, end));
+-	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
++	NODE_DATA(nid) = memblock_alloc_node(sizeof(struct pglist_data),
++					     SMP_CACHE_BYTES, nid);
+ 
+ 	NODE_DATA(nid)->node_start_pfn = start_pfn;
+ 	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
+-- 
+2.7.4
 
->  
->  #define kvm_pud_pfn(pud)	({ BUG(); 0; })
->  
->  
->  #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
-> +/* No support for pud hugepages */
-> +#define kvm_pud_mkhuge(pud)	( {BUG(); pud; })
->  
->  /*
->   * The following kvm_*pud*() functions are provided strictly to allow
-> @@ -105,6 +108,23 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
->  	return false;
->  }
->  
-> +static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
-> +{
-> +	BUG();
-> +}
-> +
-> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-> +{
-> +	BUG();
-> +	return pud;
-> +}
-> +
-> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-> +{
-> +	BUG();
-> +	return pud;
-> +}
-> +
-
-But the previous patches have been adding some of these helpers
-as well. Needs consolidation.
-
->  static inline bool kvm_s2pud_exec(pud_t *pud)
->  {
->  	BUG();
-> diff --git a/arch/arm/include/asm/stage2_pgtable.h b/arch/arm/include/asm/stage2_pgtable.h
-> index f6a7ea805232..f9017167a8d1 100644
-> --- a/arch/arm/include/asm/stage2_pgtable.h
-> +++ b/arch/arm/include/asm/stage2_pgtable.h
-> @@ -68,4 +68,9 @@ stage2_pmd_addr_end(struct kvm *kvm, phys_addr_t addr, phys_addr_t end)
->  #define stage2_pmd_table_empty(kvm, pmdp)	kvm_page_empty(pmdp)
->  #define stage2_pud_table_empty(kvm, pudp)	false
->  
-> +static inline bool kvm_stage2_has_pud(struct kvm *kvm)
-> +{
-> +	return false;
-> +}
->
-
-Makes sense. Disabled on arm32.
-
- +
->  #endif	/* __ARM_S2_PGTABLE_H_ */
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 9f941f70775c..8af4b1befa42 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -184,12 +184,16 @@ void kvm_clear_hyp_idmap(void);
->  #define kvm_mk_pgd(pudp)					\
->  	__pgd(__phys_to_pgd_val(__pa(pudp)) | PUD_TYPE_TABLE)
->  
-> +#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
-> +
->  #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
->  #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
-> +#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
->  
->  #define kvm_pud_pfn(pud)		pud_pfn(pud)
->  
->  #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
-> +#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
->  
->  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->  {
-> @@ -203,6 +207,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
->  	return pmd;
->  }
->  
-> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-> +{
-> +	pud_val(pud) |= PUD_S2_RDWR;
-> +	return pud;
-> +}
-> +
->  static inline pte_t kvm_s2pte_mkexec(pte_t pte)
->  {
->  	pte_val(pte) &= ~PTE_S2_XN;
-> @@ -215,6 +225,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
->  	return pmd;
->  }
->  
-> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-> +{
-> +	pud_val(pud) &= ~PUD_S2_XN;
-> +	return pud;
-> +}
-> +
-
-Should not these be consolidated in previous patches ?
-
->  static inline void kvm_set_s2pte_readonly(pte_t *ptep)
->  {
->  	pteval_t old_pteval, pteval;
-> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> index 336e24cddc87..6f1c187f1c86 100644
-> --- a/arch/arm64/include/asm/pgtable-hwdef.h
-> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> @@ -193,6 +193,8 @@
->  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
->  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
->  
-> +#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
-> +#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
->  #define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
-
-All PUD related HW page table definitions should have been added
-at once in one of the preparatory patches.
-
->  
->  /*
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index bb0f3f17a7a9..576128635f3c 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -390,6 +390,8 @@ static inline int pmd_protnone(pmd_t pmd)
->  #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
->  #define pud_write(pud)		pte_write(pud_pte(pud))
->  
-> +#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
-> +
-
-All new pud_* definitions should have come together at once as well. 
-
->  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
->  #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
->  #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
-
-
-
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 3893ea6a50bf..2dcff38868d4 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -115,6 +115,25 @@ static void stage2_dissolve_pmd(struct kvm *kvm, phys_addr_t addr, pmd_t *pmd)
->  	put_page(virt_to_page(pmd));
->  }
->  
-> +/**
-> + * stage2_dissolve_pud() - clear and flush huge PUD entry
-> + * @kvm:	pointer to kvm structure.
-> + * @addr:	IPA
-> + * @pud:	pud pointer for IPA
-> + *
-> + * Function clears a PUD entry, flushes addr 1st and 2nd stage TLBs. Marks all
-> + * pages in the range dirty.
-> + */
-> +static void stage2_dissolve_pud(struct kvm *kvm, phys_addr_t addr, pud_t *pudp)
-> +{
-> +	if (!stage2_pud_huge(kvm, *pudp))
-> +		return;
-> +
-> +	stage2_pud_clear(kvm, pudp);
-> +	kvm_tlb_flush_vmid_ipa(kvm, addr);
-> +	put_page(virt_to_page(pudp));
-> +}
-> +
->  static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
->  				  int min, int max)
->  {
-> @@ -1022,7 +1041,7 @@ static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache *cache
->  	pmd_t *pmd;
->  
->  	pud = stage2_get_pud(kvm, cache, addr);
-> -	if (!pud)
-> +	if (!pud || stage2_pud_huge(kvm, *pud))
->  		return NULL;
->  
->  	if (stage2_pud_none(kvm, *pud)) {
-> @@ -1083,6 +1102,36 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
->  	return 0;
->  }
->  
-> +static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
-> +			       phys_addr_t addr, const pud_t *new_pudp)
-> +{
-> +	pud_t *pudp, old_pud;
-> +
-> +	pudp = stage2_get_pud(kvm, cache, addr);
-> +	VM_BUG_ON(!pudp);
-> +
-> +	old_pud = *pudp;
-> +
-> +	/*
-> +	 * A large number of vcpus faulting on the same stage 2 entry,
-> +	 * can lead to a refault due to the
-> +	 * stage2_pud_clear()/tlb_flush(). Skip updating the page
-> +	 * tables if there is no change.
-> +	 */
-> +	if (pud_val(old_pud) == pud_val(*new_pudp))
-> +		return 0;
-> +
-> +	if (stage2_pud_present(kvm, old_pud)) {
-> +		stage2_pud_clear(kvm, pudp);
-> +		kvm_tlb_flush_vmid_ipa(kvm, addr);
-> +	} else {
-> +		get_page(virt_to_page(pudp));
-> +	}
-> +
-> +	kvm_set_pud(pudp, *new_pudp);
-> +	return 0;
-> +}
-> +
->  /*
->   * stage2_get_leaf_entry - walk the stage2 VM page tables and return
->   * true if a valid and present leaf-entry is found. A pointer to the
-> @@ -1149,6 +1198,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
->  			  phys_addr_t addr, const pte_t *new_pte,
->  			  unsigned long flags)
->  {
-> +	pud_t *pud;
->  	pmd_t *pmd;
->  	pte_t *pte, old_pte;
->  	bool iomap = flags & KVM_S2PTE_FLAG_IS_IOMAP;
-> @@ -1157,7 +1207,31 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
->  	VM_BUG_ON(logging_active && !cache);
->  
->  	/* Create stage-2 page table mapping - Levels 0 and 1 */
-> -	pmd = stage2_get_pmd(kvm, cache, addr);
-> +	pud = stage2_get_pud(kvm, cache, addr);
-> +	if (!pud) {
-> +		/*
-> +		 * Ignore calls from kvm_set_spte_hva for unallocated
-> +		 * address ranges.
-> +		 */
-> +		return 0;
-> +	}
-> +
-> +	/*
-> +	 * While dirty page logging - dissolve huge PUD, then continue
-> +	 * on to allocate page.
-> +	 */
-> +	if (logging_active)
-> +		stage2_dissolve_pud(kvm, addr, pud);
-> +
-> +	if (stage2_pud_none(kvm, *pud)) {
-> +		if (!cache)
-> +			return 0; /* ignore calls from kvm_set_spte_hva */
-> +		pmd = mmu_memory_cache_alloc(cache);
-> +		stage2_pud_populate(kvm, pud, pmd);
-> +		get_page(virt_to_page(pud));
-> +	}
-> +
-> +	pmd = stage2_pmd_offset(kvm, pud, addr);
->  	if (!pmd) {
->  		/*
->  		 * Ignore calls from kvm_set_spte_hva for unallocated
-> @@ -1557,12 +1631,19 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	}
->  
->  	vma_pagesize = vma_kernel_pagesize(vma);
-> -	if (vma_pagesize == PMD_SIZE && !logging_active) {
-> -		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
-> +	/*
-> +	 * PUD level may not exist for a VM but PMD is guaranteed to
-> +	 * exist.
-> +	 */
-> +	if ((vma_pagesize == PMD_SIZE ||
-> +	     (vma_pagesize == PUD_SIZE && kvm_stage2_has_pud(kvm))) &&
-> +	    !logging_active) {
-
-This can be better and wrapped in a helper. Probably arm64 definition
-for the helper should check on (PUD_SIZE || PMD_SIZE) but for arm32
-it should just check on PMD_SIZE alone. But this is optional.
-
-> +		gfn = (fault_ipa & huge_page_mask(hstate_vma(vma))) >> PAGE_SHIFT;
->  	} else {
->  		/*
->  		 * Fallback to PTE if it's not one of the Stage 2
-> -		 * supported hugepage sizes
-> +		 * supported hugepage sizes or the corresponding level
-> +		 * doesn't exist
->  		 */
->  		vma_pagesize = PAGE_SIZE;
->  
-> @@ -1661,7 +1742,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	needs_exec = exec_fault ||
->  		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
->  
-> -	if (vma_pagesize == PMD_SIZE) {
-> +	if (vma_pagesize == PUD_SIZE) {
-> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
-> +
-> +		new_pud = kvm_pud_mkhuge(new_pud);
-> +		if (writable)
-> +			new_pud = kvm_s2pud_mkwrite(new_pud);
-> +
-> +		if (needs_exec)
-> +			new_pud = kvm_s2pud_mkexec(new_pud);
-> +
-> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
-> +	} else if (vma_pagesize == PMD_SIZE) {
-
-Ran some memory intensive tests on guests with these patches in place but
-will continue experimenting and looking for more details in here.
