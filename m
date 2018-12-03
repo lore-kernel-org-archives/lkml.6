@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0C3C65BB2
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B262C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7262E20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:33:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7262E20851
+	by mail.kernel.org (Postfix) with ESMTP id 5CC7A20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:33:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC7A20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbeLCNeq (ORCPT
+        id S1726647AbeLCNep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:34:46 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58369 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726221AbeLCNep (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Dec 2018 08:34:45 -0500
-X-UUID: 5787a43f5c434d1baf4ce168db16d43a-20181203
-X-UUID: 5787a43f5c434d1baf4ce168db16d43a-20181203
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+Received: from mailgw02.mediatek.com ([210.61.82.184]:40636 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725867AbeLCNen (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:34:43 -0500
+X-UUID: 4c2c5a6177de4ddea95e434658bf045b-20181203
+X-UUID: 4c2c5a6177de4ddea95e434658bf045b-20181203
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <qii.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1362369011; Mon, 03 Dec 2018 21:33:22 +0800
+        with ESMTP id 1093234821; Mon, 03 Dec 2018 21:33:22 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 3 Dec 2018 21:33:15 +0800
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 3 Dec 2018 21:33:13 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 3 Dec 2018 21:33:15 +0800
+ Transport; Mon, 3 Dec 2018 21:33:13 +0800
 From:   <qii.wang@mediatek.com>
 To:     <wsa@the-dreams.de>
 CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
@@ -43,14 +43,15 @@ CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
         <qii.wang@mediatek.com>, <ryder.lee@mediatek.com>
-Subject: [PATCH 5/5] i2c: mediatek: Add i2c compatible for MediaTek MT8183
-Date:   Mon, 3 Dec 2018 21:32:54 +0800
-Message-ID: <1543843974-4054-6-git-send-email-qii.wang@mediatek.com>
+Subject: [PATCH 2/5] i2c: mediatek: remove useless code and replace definitions
+Date:   Mon, 3 Dec 2018 21:32:51 +0800
+Message-ID: <1543843974-4054-3-git-send-email-qii.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1543843974-4054-1-git-send-email-qii.wang@mediatek.com>
 References: <1543843974-4054-1-git-send-email-qii.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 96542F084A7B41856A9BCC3EA707BFFA2BB1E33880D4F72E327DA73DD87F6D582000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,362 +60,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: qii wang <qii.wang@mediatek.com>
 
-Add i2c compatible for MT8183. Compare to 2712 i2c controller, MT8183 has
-different registers, offsets, clock, and multi-user function.
+Completion_done is useless when we don't use its return value,
+so we remove it. Different speeds have been defined by macros,
+so we use macros definitions.
 
 Signed-off-by: qii wang <qii.wang@mediatek.com>
 ---
- drivers/i2c/busses/i2c-mt65xx.c |  136 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 130 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-mt65xx.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-index 428ac99..6b979ab 100644
+index a74ef76..660de1e 100644
 --- a/drivers/i2c/busses/i2c-mt65xx.c
 +++ b/drivers/i2c/busses/i2c-mt65xx.c
-@@ -35,17 +35,23 @@
- #include <linux/slab.h>
+@@ -456,7 +456,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
  
- #define I2C_RS_TRANSFER			(1 << 4)
-+#define I2C_ARB_LOST			(1 << 3)
- #define I2C_HS_NACKERR			(1 << 2)
- #define I2C_ACKERR			(1 << 1)
- #define I2C_TRANSAC_COMP		(1 << 0)
- #define I2C_TRANSAC_START		(1 << 0)
-+#define I2C_RESUME_ARBIT		(1 << 1)
- #define I2C_RS_MUL_CNFG			(1 << 15)
- #define I2C_RS_MUL_TRIG			(1 << 14)
-+#define I2C_HS_TIME_EN			(1 << 7)
- #define I2C_DCM_DISABLE			0x0000
- #define I2C_IO_CONFIG_OPEN_DRAIN	0x0003
- #define I2C_IO_CONFIG_PUSH_PULL		0x0000
- #define I2C_SOFT_RST			0x0001
- #define I2C_FIFO_ADDR_CLR		0x0001
-+#define I2C_FIFO_ADDR_CLRH		0x0002
-+#define I2C_FIFO_ADDR_CLR_MCH		0x0004
-+#define I2C_HFIFO_DATA			0x8208
- #define I2C_DELAY_LEN			0x0002
- #define I2C_ST_START_CON		0x8001
- #define I2C_FS_START_CON		0x1800
-@@ -76,6 +82,8 @@
- #define I2C_CONTROL_DIR_CHANGE          (0x1 << 4)
- #define I2C_CONTROL_ACKERR_DET_EN       (0x1 << 5)
- #define I2C_CONTROL_TRANSFER_LEN_CHANGE (0x1 << 6)
-+#define I2C_CONTROL_DMAACK_EN           (0x1 << 8)
-+#define I2C_CONTROL_ASYNC_MODE          (0x1 << 9)
- #define I2C_CONTROL_WRAPPER             (0x1 << 0)
+ 	control_reg = readw(i2c->base + OFFSET_CONTROL) &
+ 			~(I2C_CONTROL_DIR_CHANGE | I2C_CONTROL_RS);
+-	if ((i2c->speed_hz > 400000) || (left_num >= 1))
++	if ((i2c->speed_hz > MAX_FS_MODE_SPEED) || (left_num >= 1))
+ 		control_reg |= I2C_CONTROL_RS;
  
- #define I2C_DRV_NAME		"i2c-mt65xx"
-@@ -130,6 +138,15 @@ enum I2C_REGS_OFFSET {
- 	OFFSET_DEBUGCTRL,
- 	OFFSET_TRANSFER_LEN_AUX,
- 	OFFSET_CLOCK_DIV,
-+	/* MT8183 only regs */
-+	OFFSET_LTIMING,
-+	OFFSET_DATA_TIMING,
-+	OFFSET_MCU_INTR,
-+	OFFSET_HW_TIMEOUT,
-+	OFFSET_HFIFO_DATA,
-+	OFFSET_HFIFO_STAT,
-+	OFFSET_MULTI_DMA,
-+	OFFSET_ROLLBACK,
- };
+ 	if (i2c->op == I2C_MASTER_WRRD)
+@@ -465,7 +465,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
+ 	writew(control_reg, i2c->base + OFFSET_CONTROL);
  
- static const u16 mt_i2c_regs_v1[] = {
-@@ -159,6 +176,39 @@ enum I2C_REGS_OFFSET {
- 	[OFFSET_CLOCK_DIV] = 0x70,
- };
- 
-+static const u16 mt_i2c_regs_v2[] = {
-+	[OFFSET_DATA_PORT] = 0x0,
-+	[OFFSET_SLAVE_ADDR] = 0x4,
-+	[OFFSET_INTR_MASK] = 0x8,
-+	[OFFSET_INTR_STAT] = 0xc,
-+	[OFFSET_CONTROL] = 0x10,
-+	[OFFSET_TRANSFER_LEN] = 0x14,
-+	[OFFSET_TRANSAC_LEN] = 0x18,
-+	[OFFSET_DELAY_LEN] = 0x1c,
-+	[OFFSET_TIMING] = 0x20,
-+	[OFFSET_START] = 0x24,
-+	[OFFSET_EXT_CONF] = 0x28,
-+	[OFFSET_LTIMING] = 0x2c,
-+	[OFFSET_HS] = 0x30,
-+	[OFFSET_IO_CONFIG] = 0x34,
-+	[OFFSET_FIFO_ADDR_CLR] = 0x38,
-+	[OFFSET_DATA_TIMING] = 0x3c,
-+	[OFFSET_MCU_INTR] = 0x40,
-+	[OFFSET_TRANSFER_LEN_AUX] = 0x44,
-+	[OFFSET_CLOCK_DIV] = 0x48,
-+	[OFFSET_HW_TIMEOUT] = 0x4c,
-+	[OFFSET_SOFTRESET] = 0x50,
-+	[OFFSET_HFIFO_DATA] = 0x70,
-+	[OFFSET_DEBUGSTAT] = 0xe0,
-+	[OFFSET_DEBUGCTRL] = 0xe8,
-+	[OFFSET_FIFO_STAT] = 0xf4,
-+	[OFFSET_FIFO_THRESH] = 0xf8,
-+	[OFFSET_HFIFO_STAT] = 0xfc,
-+	[OFFSET_DCM_EN] = 0xf88,
-+	[OFFSET_MULTI_DMA] = 0xf8c,
-+	[OFFSET_ROLLBACK] = 0xf98,
-+};
-+
- struct mtk_i2c_compatible {
- 	const struct i2c_adapter_quirks *quirks;
- 	const u16 *regs;
-@@ -168,6 +218,7 @@ struct mtk_i2c_compatible {
- 	unsigned char aux_len_reg: 1;
- 	unsigned char support_33bits: 1;
- 	unsigned char timing_adjust: 1;
-+	unsigned char dma_sync: 1;
- };
- 
- struct mtk_i2c {
-@@ -181,8 +232,11 @@ struct mtk_i2c {
- 	struct clk *clk_main;		/* main clock for i2c bus */
- 	struct clk *clk_dma;		/* DMA clock for i2c via DMA */
- 	struct clk *clk_pmic;		/* PMIC clock for i2c from PMIC */
-+	struct clk *clk_arb;		/* Arbitrator clock for i2c */
- 	bool have_pmic;			/* can use i2c pins from PMIC */
- 	bool use_push_pull;		/* IO config push-pull mode */
-+	bool share_i3c;			/* share i3c IP*/
-+	u32 ch_offset;			/* i2c multi-user channel offset */
- 
- 	u16 irq_stat;			/* interrupt status */
- 	unsigned int clk_src_div;
-@@ -190,6 +244,7 @@ struct mtk_i2c {
- 	enum mtk_trans_op op;
- 	u16 timing_reg;
- 	u16 high_speed_reg;
-+	u16 ltiming_reg;
- 	unsigned char auto_restart;
- 	bool ignore_restart_irq;
- 	const struct mtk_i2c_compatible *dev_comp;
-@@ -216,6 +271,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 1,
- 	.support_33bits = 1,
- 	.timing_adjust = 1,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt6577_compat = {
-@@ -227,6 +283,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 0,
- 	.support_33bits = 0,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt6589_compat = {
-@@ -238,6 +295,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 0,
- 	.support_33bits = 0,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt7622_compat = {
-@@ -249,6 +307,7 @@ struct mtk_i2c {
- 	.aux_len_reg = 1,
- 	.support_33bits = 0,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
- };
- 
- static const struct mtk_i2c_compatible mt8173_compat = {
-@@ -259,6 +318,18 @@ struct mtk_i2c {
- 	.aux_len_reg = 1,
- 	.support_33bits = 1,
- 	.timing_adjust = 0,
-+	.dma_sync = 0,
-+};
-+
-+static const struct mtk_i2c_compatible mt8183_compat = {
-+	.regs = mt_i2c_regs_v2,
-+	.pmic_i2c = 0,
-+	.dcm = 0,
-+	.auto_restart = 1,
-+	.aux_len_reg = 1,
-+	.support_33bits = 1,
-+	.timing_adjust = 1,
-+	.dma_sync = 1,
- };
- 
- static const struct of_device_id mtk_i2c_of_match[] = {
-@@ -267,19 +338,20 @@ struct mtk_i2c {
- 	{ .compatible = "mediatek,mt6589-i2c", .data = &mt6589_compat },
- 	{ .compatible = "mediatek,mt7622-i2c", .data = &mt7622_compat },
- 	{ .compatible = "mediatek,mt8173-i2c", .data = &mt8173_compat },
-+	{ .compatible = "mediatek,mt8183-i2c", .data = &mt8183_compat },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, mtk_i2c_of_match);
- 
- static u16 mtk_i2c_readw(struct mtk_i2c *i2c, enum I2C_REGS_OFFSET reg)
- {
--	return readw(i2c->base + i2c->dev_comp->regs[reg]);
-+	return readw(i2c->base + i2c->ch_offset + i2c->dev_comp->regs[reg]);
- }
- 
- static void mtk_i2c_writew(struct mtk_i2c *i2c, u16 val,
- 			   enum I2C_REGS_OFFSET reg)
- {
--	writew(val, i2c->base + i2c->dev_comp->regs[reg]);
-+	writew(val, i2c->base + i2c->ch_offset + i2c->dev_comp->regs[reg]);
- }
- 
- static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
-@@ -299,8 +371,18 @@ static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
- 		if (ret)
- 			goto err_pmic;
- 	}
-+
-+	if (i2c->clk_arb) {
-+		ret = clk_prepare_enable(i2c->clk_arb);
-+		if (ret)
-+			goto err_arb;
-+	}
-+
- 	return 0;
- 
-+err_arb:
-+	if (i2c->have_pmic)
-+		clk_disable_unprepare(i2c->clk_pmic);
- err_pmic:
- 	clk_disable_unprepare(i2c->clk_main);
- err_main:
-@@ -311,6 +393,9 @@ static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
- 
- static void mtk_i2c_clock_disable(struct mtk_i2c *i2c)
- {
-+	if (i2c->clk_arb)
-+		clk_disable_unprepare(i2c->clk_arb);
-+
- 	if (i2c->have_pmic)
- 		clk_disable_unprepare(i2c->clk_pmic);
- 
-@@ -333,11 +418,23 @@ static void mtk_i2c_init_hw(struct mtk_i2c *i2c)
- 	if (i2c->dev_comp->dcm)
- 		mtk_i2c_writew(i2c, I2C_DCM_DISABLE, OFFSET_DCM_EN);
- 
--	if (i2c->dev_comp->timing_adjust)
-+	if (i2c->ch_offset)
-+		writew(I2C_RESUME_ARBIT, i2c->base +
-+					 i2c->dev_comp->regs[OFFSET_START]);
-+
-+	if (i2c->dev_comp->timing_adjust && i2c->share_i3c) {
-+		mtk_i2c_writew(i2c, (I2C_DEFAULT_CLK_DIV - 1) |
-+				    (I2C_DEFAULT_CLK_DIV - 1) << 8,
-+				    OFFSET_CLOCK_DIV);
-+		i2c->high_speed_reg |= I2C_HS_TIME_EN;
-+	} else {
- 		mtk_i2c_writew(i2c, I2C_DEFAULT_CLK_DIV - 1, OFFSET_CLOCK_DIV);
-+	}
- 
- 	mtk_i2c_writew(i2c, i2c->timing_reg, OFFSET_TIMING);
- 	mtk_i2c_writew(i2c, i2c->high_speed_reg, OFFSET_HS);
-+	if (i2c->dev_comp->regs == mt_i2c_regs_v2)
-+		mtk_i2c_writew(i2c, i2c->ltiming_reg, OFFSET_LTIMING);
- 
- 	/* If use i2c pin from PMIC mt6397 side, need set PATH_DIR first */
- 	if (i2c->have_pmic)
-@@ -345,6 +442,9 @@ static void mtk_i2c_init_hw(struct mtk_i2c *i2c)
- 
- 	control_reg = I2C_CONTROL_ACKERR_DET_EN |
- 		      I2C_CONTROL_CLK_EXT_EN | I2C_CONTROL_DMA_EN;
-+	if (i2c->dev_comp->dma_sync)
-+		control_reg |= I2C_CONTROL_DMAACK_EN | I2C_CONTROL_ASYNC_MODE;
-+
- 	mtk_i2c_writew(i2c, control_reg, OFFSET_CONTROL);
- 	mtk_i2c_writew(i2c, I2C_DELAY_LEN, OFFSET_DELAY_LEN);
- 
-@@ -434,6 +534,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 	unsigned int clk_src;
- 	unsigned int step_cnt;
- 	unsigned int sample_cnt;
-+	unsigned int l_step_cnt;
-+	unsigned int l_sample_cnt;
- 	unsigned int target_speed;
- 	int ret;
- 
-@@ -443,11 +545,11 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 	if (target_speed > MAX_FS_MODE_SPEED) {
- 		/* Set master code speed register */
- 		ret = mtk_i2c_calculate_speed(i2c, clk_src, MAX_FS_MODE_SPEED,
--					      &step_cnt, &sample_cnt);
-+					      &l_step_cnt, &l_sample_cnt);
- 		if (ret < 0)
- 			return ret;
- 
--		i2c->timing_reg = (sample_cnt << 8) | step_cnt;
-+		i2c->timing_reg = (l_sample_cnt << 8) | l_step_cnt;
- 
- 		/* Set the high speed mode register */
- 		ret = mtk_i2c_calculate_speed(i2c, clk_src, target_speed,
-@@ -457,6 +559,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 
- 		i2c->high_speed_reg = I2C_TIME_DEFAULT_VALUE |
- 			(sample_cnt << 12) | (step_cnt << 8);
-+		i2c->ltiming_reg = (l_sample_cnt << 6) | l_step_cnt |
-+				   (sample_cnt << 12) | (step_cnt << 9);
- 	} else {
- 		ret = mtk_i2c_calculate_speed(i2c, clk_src, target_speed,
- 					      &step_cnt, &sample_cnt);
-@@ -467,6 +571,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
- 
- 		/* Disable the high speed transaction */
- 		i2c->high_speed_reg = I2C_TIME_CLR_VALUE;
-+
-+		i2c->ltiming_reg = (sample_cnt << 6) | step_cnt;
+ 	/* set start condition */
+-	if (i2c->speed_hz <= 100000)
++	if (i2c->speed_hz <= I2C_DEFAULT_SPEED)
+ 		writew(I2C_ST_START_CON, i2c->base + OFFSET_EXT_CONF);
+ 	else
+ 		writew(I2C_FS_START_CON, i2c->base + OFFSET_EXT_CONF);
+@@ -642,8 +642,6 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
+ 		return -ETIMEDOUT;
  	}
  
- 	return 0;
-@@ -483,6 +589,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
- 	u16 addr_reg;
- 	u16 start_reg;
- 	u16 control_reg;
-+	u16 fifo_clr_reg;
- 	u16 restart_flag = 0;
- 	u32 reg_4g_mode;
- 	u8 *dma_rd_buf = NULL;
-@@ -521,7 +628,15 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
- 	mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
- 	       I2C_TRANSAC_COMP, OFFSET_INTR_STAT);
- 
--	mtk_i2c_writew(i2c, I2C_FIFO_ADDR_CLR, OFFSET_FIFO_ADDR_CLR);
-+	if (i2c->share_i3c)
-+		fifo_clr_reg = I2C_FIFO_ADDR_CLR | I2C_FIFO_ADDR_CLRH;
-+	if (i2c->ch_offset)
-+		fifo_clr_reg = I2C_FIFO_ADDR_CLR | I2C_FIFO_ADDR_CLR_MCH;
-+
-+	mtk_i2c_writew(i2c, fifo_clr_reg, OFFSET_FIFO_ADDR_CLR);
-+
-+	if ((i2c->speed_hz > MAX_FS_MODE_SPEED) && i2c->share_i3c)
-+		mtk_i2c_writew(i2c, I2C_HFIFO_DATA, OFFSET_HFIFO_DATA);
- 
- 	/* Enable interrupt */
- 	mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
-@@ -817,6 +932,11 @@ static int mtk_i2c_parse_dt(struct device_node *np, struct mtk_i2c *i2c)
- 	if (i2c->clk_src_div == 0)
- 		return -EINVAL;
- 
-+	ret = of_property_read_u32(np, "ch-offset", &i2c->ch_offset);
-+	if (ret < 0)
-+		i2c->ch_offset = 0;
-+
-+	i2c->share_i3c = of_property_read_bool(np, "mediatek,share-i3c");
- 	i2c->have_pmic = of_property_read_bool(np, "mediatek,have-pmic");
- 	i2c->use_push_pull =
- 		of_property_read_bool(np, "mediatek,use-push-pull");
-@@ -884,6 +1004,10 @@ static int mtk_i2c_probe(struct platform_device *pdev)
- 		return PTR_ERR(i2c->clk_dma);
- 	}
- 
-+	i2c->clk_arb = devm_clk_get(&pdev->dev, "arb");
-+	if (IS_ERR(i2c->clk_arb))
-+		i2c->clk_arb = NULL;
-+
- 	clk = i2c->clk_main;
- 	if (i2c->have_pmic) {
- 		i2c->clk_pmic = devm_clk_get(&pdev->dev, "pmic");
+-	completion_done(&i2c->msg_complete);
+-
+ 	if (i2c->irq_stat & (I2C_HS_NACKERR | I2C_ACKERR)) {
+ 		dev_dbg(i2c->dev, "addr: %x, transfer ACK error\n", msgs->addr);
+ 		mtk_i2c_init_hw(i2c);
 -- 
 1.7.9.5
 
