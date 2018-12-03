@@ -2,114 +2,204 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116E1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F76C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2B2A2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58AC72087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:40:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cSjiWjIk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2B2A2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SR6TVmal"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AC72087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeLCRgo (ORCPT
+        id S1726510AbeLCRkb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:36:44 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37093 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbeLCRgo (ORCPT
+        Mon, 3 Dec 2018 12:40:31 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:40292 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeLCRkb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:36:44 -0500
-Received: by mail-io1-f66.google.com with SMTP id f14so5721886iol.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:36:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aJByGiHI+RzUysGTZNqib4yObRx5kjhaz522l9pDvpQ=;
-        b=cSjiWjIkEJ20GAAgk5/MtwvMw8s6potu/QLcDRbTcClwa7JBk4KESjdSvejh/zTgJU
-         5p3wiCJP+5I9m8IZGisJv6xgoDJ13fgMnvMfnHhdeJQOsnZhHBWparsrDoASNTr96KvX
-         LewuLufwCd1ozxFLVGCjnnnCKoRh89SqrdVX0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aJByGiHI+RzUysGTZNqib4yObRx5kjhaz522l9pDvpQ=;
-        b=KjjS5/zzQhzxTx5+fDpWJVTtGPF1TSWjvPz+tf5UqAMbJaZ7xSwGmjYyaHDMONZUOT
-         UHumBb6ux/pVVId3Oiw6gkYkcl5VHs4ehdAt3jcKCc2Hx3BqcqQcPHE6EM+UXS4jwFHe
-         I0r7PAHx10xtTMCJ3gxppLgHRqp8CdWHgq5hPS0W96FksZEVjRkR4MEJTMwHQiwB58hI
-         cQ8Kl9JtIdSQ0BAYJ5MiQ+Xlx3N0RYRQQBhhp0nE5AhnECUxs75w2yVc/89RCYfSajWc
-         6UHwI+x4B7QGQmgF/CRp1dSC/Bn5m4F7U5TQtADqAgM+e6l2u+00O6D4D29vkAWeCPVP
-         Zv1Q==
-X-Gm-Message-State: AA+aEWYtVO0mZtvuawZuNqmIaBa/Z/0h2PL6xMaIfG2MU/s7aoaPWxRn
-        +pSc/qLRYGKP/4126ttWj4kzlAl3vfG8J7t/SaVKmw==
-X-Google-Smtp-Source: AFSGD/VSLPNdOBsxIL/8TIdPPy1iSOq/UF2P5V/Utg3/2wDxiymy4lItlEKtLmRUSPVi7ZIvYLgQ1yXYONz4NuOwKNw=
-X-Received: by 2002:a6b:ce06:: with SMTP id p6mr13467753iob.189.1543858596588;
- Mon, 03 Dec 2018 09:36:36 -0800 (PST)
+        Mon, 3 Dec 2018 12:40:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1543858823; x=1575394823;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=Rn2Rbfa4Eh4tyqVWsQgb06EfJocC87bzjKhqvK8ZVoo=;
+  b=SR6TVmalkT9ze233s0R6TnEXFX6EdUQwnK8DlWmP6Gtpy7eC1Z4aWt3S
+   YWJnQIDOBiLCGSZx15kV1N+PH4RXZQlWiWEPiimFZgsQ9R5YVONY4tNhL
+   yYjoO/GNHm9eIDQxjo9CD5fXgSw3Yc65aix1NNhXow3fAE6W9qhB7aDa9
+   KkU24jpq3J0bx717cPe0C/vAjcYoPRb8ouYKr/ZlJ9upGkqnnYVxy9MX3
+   jVqlTz3c3J9ZNPKv3hUWtxkPKFJJ7sRKf4BjKYiqV12VrL8/iu6DERoQH
+   kkUlkVBoJZ/xFzqlGtVCTY4K/NanH/SIEct1DaBPv9+ecqVt7olDOnpPl
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.56,311,1539619200"; 
+   d="scan'208";a="200281998"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2018 01:40:23 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 03 Dec 2018 09:22:39 -0800
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.72.98]) ([10.111.72.98])
+  by uls-op-cesaip02.wdc.com with ESMTP; 03 Dec 2018 09:40:22 -0800
+Subject: Re: [RFT PATCH v1 2/4] dt-binding: cpu-topology: Move cpu-map to a
+ common binding.
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Juri Lelli <juri.lelli@arm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>
+References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
+ <1543534100-3654-3-git-send-email-atish.patra@wdc.com>
+ <20181203165521.GB17883@e107155-lin>
+ <f902086b-09e1-ad85-d191-137708f5b105@wdc.com>
+ <20181203173306.GF17883@e107155-lin>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <e983d74f-9671-a119-63a4-dd4e12fe0f96@wdc.com>
+Date:   Mon, 3 Dec 2018 09:40:21 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181201005759.28093-1-eric@anholt.net> <20181201005759.28093-3-eric@anholt.net>
-In-Reply-To: <20181201005759.28093-3-eric@anholt.net>
-From:   Dave Emett <david.emett@broadcom.com>
-Date:   Mon, 3 Dec 2018 17:36:25 +0000
-Message-ID: <CAApk1dXSg2dxxjiDrPc90UKfiPKh2NX62aQFPktPMUO96Z4H+g@mail.gmail.com>
-Subject: Re: [PATCH 3/6] drm/v3d: Don't bother flushing L1TD at job start.
-To:     Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Thomas Spurden <thomas.spurden@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181203173306.GF17883@e107155-lin>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 1 Dec 2018 at 00:58, Eric Anholt <eric@anholt.net> wrote:
->
-> This is the write combiner for TMU writes.  You're supposed to flush
-> that at job end if you had dirtied any cachelines.  Flushing it at job
-> start then doesn't make any sense.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+On 12/3/18 9:33 AM, Sudeep Holla wrote:
+> On Mon, Dec 03, 2018 at 09:23:42AM -0800, Atish Patra wrote:
+>> On 12/3/18 8:55 AM, Sudeep Holla wrote:
+>>> On Thu, Nov 29, 2018 at 03:28:18PM -0800, Atish Patra wrote:
+>>>> cpu-map binding can be used to described cpu topology for both
+>>>> RISC-V & ARM. It makes more sense to move the binding to document
+>>>> to a common place.
+>>>>
+>>>> The relevant discussion can be found here.
+>>>> https://lkml.org/lkml/2018/11/6/19
+>>>>
+>>>
+>>> Looks good to me apart from a minor query below in the example.
+>>>
+>>> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>>>
+>>>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>>>> ---
+>>>>    .../{arm/topology.txt => cpu/cpu-topology.txt}     | 81 ++++++++++++++++++----
+>>>>    1 file changed, 67 insertions(+), 14 deletions(-)
+>>>>    rename Documentation/devicetree/bindings/{arm/topology.txt => cpu/cpu-topology.txt} (86%)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/arm/topology.txt b/Documentation/devicetree/bindings/cpu/cpu-topology.txt
+>>>> similarity index 86%
+>>>> rename from Documentation/devicetree/bindings/arm/topology.txt
+>>>> rename to Documentation/devicetree/bindings/cpu/cpu-topology.txt
+>>>> index 66848355..1de6fbce 100644
+>>>> --- a/Documentation/devicetree/bindings/arm/topology.txt
+>>>> +++ b/Documentation/devicetree/bindings/cpu/cpu-topology.txt
+>>>
+>>> [...]
+>>>
+>>>> +Example 3: HiFive Unleashed (RISC-V 64 bit, 4 core system)
+>>>> +
+>>>> +cpus {
+>>>> +	#address-cells = <2>;
+>>>> +	#size-cells = <2>;
+>>>> +	compatible = "sifive,fu540g", "sifive,fu500";
+>>>> +	model = "sifive,hifive-unleashed-a00";
+>>>> +
+>>>> +	...
+>>>> +
+>>>> +	cpu-map {
+>>>> +		cluster0 {
+>>>> +			core0 {
+>>>> +				cpu = <&L12>;
+>>>> +		 	};
+>>>> +			core1 {
+>>>> +				cpu = <&L15>;
+>>>> +			};
+>>>> +			core2 {
+>>>> +				cpu0 = <&L18>;
+>>>> +			};
+>>>> +			core3 {
+>>>> +				cpu0 = <&L21>;
+>>>> +			};
+>>>> +		};
+>>>> + 	};
+>>>> +
+>>>> +	L12: cpu@1 {
+>>>> +		device_type = "cpu";
+>>>> +		compatible = "sifive,rocket0", "riscv";
+>>>> +		reg = <0x1>;
+>>>> +	}
+>>>> +
+>>>> +	L15: cpu@2 {
+>>>> +		device_type = "cpu";
+>>>> +		compatible = "sifive,rocket0", "riscv";
+>>>> +		reg = <0x2>;
+>>>> +	}
+>>>> +	L18: cpu@3 {
+>>>> +		device_type = "cpu";
+>>>> +		compatible = "sifive,rocket0", "riscv";
+>>>> +		reg = <0x3>;
+>>>> +	}
+>>>> +	L21: cpu@4 {
+>>>> +		device_type = "cpu";
+>>>> +		compatible = "sifive,rocket0", "riscv";
+>>>> +		reg = <0x4>;
+>>>> +	}
+>>>> +};
+>>>
+>>> The labels for the CPUs drew my attention. Is it intentionally random
+>>> (or even specific) or just chosen to show anything can be used as labels ?
+>>
+>> SiFive generates the device tree from RTL directly. So I am not sure if they
+>> assign random numbers or a particular algorithm chooses the label. I tried
+>> to put the exact ones that is available publicly.
+>>
+>> https://github.com/riscv/riscv-device-tree-doc/blob/master/examples/sifive-hifive_unleashed-microsemi.dts
+> 
+> Cool, love that. So you don't have the problem I was trying to explain.
+> But I still see the possibility of some other RISC-V vendor copy-pasting
+> from here ;). Anyways it's left to you.
+> 
 
-Reviewed-by: Dave Emett <david.emett@broadcom.com>
+I am fine with either way. I hoped other vendors won't blindly copy as 
+this example was specific to HiFive Unleashed board. But I get your 
+point. As this DT entry is a generic architecture entry, we should have 
+generic examples instead of platform specific examples.
 
-> Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
-> ---
->  drivers/gpu/drm/v3d/v3d_gem.c | 12 ------------
->  1 file changed, 12 deletions(-)
->
-> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-> index 34103205b7cb..cc4d025b01e0 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> @@ -139,22 +139,10 @@ v3d_invalidate_l2(struct v3d_dev *v3d, int core)
->                        V3D_L2CACTL_L2CENA);
->  }
->
-> -static void
-> -v3d_invalidate_l1td(struct v3d_dev *v3d, int core)
-> -{
-> -       V3D_CORE_WRITE(core, V3D_CTL_L2TCACTL, V3D_L2TCACTL_TMUWCF);
-> -       if (wait_for(!(V3D_CORE_READ(core, V3D_CTL_L2TCACTL) &
-> -                      V3D_L2TCACTL_L2TFLS), 100)) {
-> -               DRM_ERROR("Timeout waiting for L1T write combiner flush\n");
-> -       }
-> -}
-> -
->  /* Invalidates texture L2 cachelines */
->  static void
->  v3d_flush_l2t(struct v3d_dev *v3d, int core)
->  {
-> -       v3d_invalidate_l1td(v3d, core);
-> -
->         V3D_CORE_WRITE(core, V3D_CTL_L2TCACTL,
->                        V3D_L2TCACTL_L2TFLS |
->                        V3D_SET_FIELD(V3D_L2TCACTL_FLM_FLUSH, V3D_L2TCACTL_FLM));
+I will change it to a generic one.
+
+
+Regards,
+Atish
 > --
-> 2.20.0.rc1
->
+> Regards,
+> Sudeep
+> 
+
