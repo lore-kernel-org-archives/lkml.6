@@ -2,225 +2,116 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F1AC65BB0
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A88C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4EF20661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:06:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B4EF20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id A2E8A20661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:07:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E8A20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbeLCRGw (ORCPT
+        id S1726896AbeLCRHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:06:52 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:10508 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbeLCRGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:06:51 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 437rxt21XYz9tyyH;
-        Mon,  3 Dec 2018 18:06:42 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WsU5Mv8NEi72; Mon,  3 Dec 2018 18:06:42 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 437rxt1XWHz9tyyF;
-        Mon,  3 Dec 2018 18:06:42 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8EEC18B7B8;
-        Mon,  3 Dec 2018 18:06:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id NZNpV8gFRLuv; Mon,  3 Dec 2018 18:06:45 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 424A28B79E;
-        Mon,  3 Dec 2018 18:06:45 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id F15476BEF5; Mon,  3 Dec 2018 17:06:44 +0000 (UTC)
-Message-Id: <b7a1ceeab24e088ef02b99037128bbe926267893.1543811917.git.christophe.leroy@c-s.fr>
-In-Reply-To: <dd9ef91add7fcf5a9e369dde322b1822e90eb218.1543811917.git.christophe.leroy@c-s.fr>
-References: <dd9ef91add7fcf5a9e369dde322b1822e90eb218.1543811917.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 2/2] powerpc: use probe_user_read() and probe_user_address()
-To:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org
-Date:   Mon,  3 Dec 2018 17:06:44 +0000 (UTC)
+        Mon, 3 Dec 2018 12:07:08 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42324 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbeLCRHI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:07:08 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d72so5982978pga.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:07:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zFJkM5XBvi3wb2HxvmOMvG0u+beYGog/eGkVjGSe4PQ=;
+        b=EO2kjQ1w1qk6qYSyFsjvE182nUPWSHqGYBb94vvbG6Ttv4PPP5Noe22HKkt8zLRS4b
+         zyl0HtsfaVuQrUwQfuSboRKDQXHCSfTo/cLnsiR9MFNEC9UJd8GnWKjp+ZcffuZunf9Y
+         2hBeX2vnYN1/3SEF7HYZL8cIfzG6BO2p8g6Ijy6c4Nqei70RADJ8tDxdqfibig1GMHYP
+         gTRSsEu8jGfjFjVTEe7u9YmIjv0x7o+g9LKiLgvQNCIYafkNba7OajLWRO5nLUcDlf6f
+         gRkFaotLhxCifJMq5563W9ajwI9zQ3YBgkErBi7i8PSNmgbzjnImnMXEu8airNuFx/fX
+         GsjQ==
+X-Gm-Message-State: AA+aEWbg1irbCCH+4DZZgyLVtqeP4l98lFkyqBbLaiamLzIGmkra83UU
+        xCL97Y9jODCZLpynkAnIgj0=
+X-Google-Smtp-Source: AFSGD/W8Z130Y14fmgISnscmbBCZMXHuClgvMkoIKhZDt23TR+sDLgXVxkLCwkkrFySDtq+K5kJNVg==
+X-Received: by 2002:a63:9e0a:: with SMTP id s10mr14028888pgd.239.1543856822790;
+        Mon, 03 Dec 2018 09:07:02 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id l19sm30623477pfi.71.2018.12.03.09.07.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 09:07:02 -0800 (PST)
+Message-ID: <1543856820.185366.159.camel@acm.org>
+Subject: Re: [PATCH 25/27] locking/lockdep: Add support for dynamic keys
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 03 Dec 2018 09:07:00 -0800
+In-Reply-To: <20181129101000.GF2131@hirez.programming.kicks-ass.net>
+References: <20181128234325.110011-1-bvanassche@acm.org>
+         <20181128234325.110011-26-bvanassche@acm.org>
+         <20181129101000.GF2131@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of opencoding, use probe_user_read() and probe_user_address()
-to failessly read a user location.
+On Thu, 2018-11-29 at 11:10 +-0100, Peter Zijlstra wrote:
++AD4 On Wed, Nov 28, 2018 at 03:43:23PM -0800, Bart Van Assche wrote:
++AD4 +AD4 +-/+ACo hash+AF8-entry is used to keep track of dynamically allocated keys. +ACo-/
++AD4 +AD4  struct lock+AF8-class+AF8-key +AHs
++AD4 +AD4 +-	struct hlist+AF8-node		hash+AF8-entry+ADs
++AD4 +AD4  	struct lockdep+AF8-subclass+AF8-key	subkeys+AFs-MAX+AF8-LOCKDEP+AF8-SUBCLASSES+AF0AOw
++AD4 +AD4  +AH0AOw
++AD4 
++AD4 One consideration+ADs and maybe we should have a BUILD+AF8-BUG for that, is
++AD4 that this object should be no larger than the smallest lock primitive.
++AD4 
++AD4 That typically is raw+AF8-spinlock+AF8-t, which normally is 4 bytes, but with
++AD4 lockdep on that at least also includes struct lockdep+AF8-map.
++AD4 
++AD4 So what we want is:
++AD4 
++AD4 	sizeof(lock+AF8-class+AF8-key) +ADwAPQ sizeof(raw+AF8-spinlock+AF8-t)
++AD4 
++AD4 Otherwise, two consecutive spinlocks could end up with key overlap in
++AD4 their subclass range.
++AD4 
++AD4 Now, I think that is still valid after this patch, but it is something
++AD4 that gave me pause.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/process.c   | 12 +-----------
- arch/powerpc/mm/fault.c         |  6 +-----
- arch/powerpc/perf/callchain.c   | 20 +++-----------------
- arch/powerpc/perf/core-book3s.c |  8 +-------
- arch/powerpc/sysdev/fsl_pci.c   |  9 +++------
- 5 files changed, 9 insertions(+), 46 deletions(-)
+How about adding this as an additional patch before patch 25/27?
 
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 96f34730010f..b77a2b4007e5 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -1298,16 +1298,6 @@ void show_user_instructions(struct pt_regs *regs)
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 9a7cca6dc3d4..ce05b9b419f4 100644
+--- a/kernel/locking/lockdep.c
++-+-+- b/kernel/locking/lockdep.c
++AEAAQA -725,6 +-725,15 +AEAAQA static bool assign+AF8-lock+AF8-key(struct lockdep+AF8-map +ACo-lock)
+ +AHs
+ 	unsigned long can+AF8-addr, addr +AD0 (unsigned long)lock+ADs
  
- 	pc = regs->nip - (NR_INSN_TO_PRINT * 3 / 4 * sizeof(int));
- 
--	/*
--	 * Make sure the NIP points at userspace, not kernel text/data or
--	 * elsewhere.
--	 */
--	if (!__access_ok(pc, NR_INSN_TO_PRINT * sizeof(int), USER_DS)) {
--		pr_info("%s[%d]: Bad NIP, not dumping instructions.\n",
--			current->comm, current->pid);
--		return;
--	}
--
- 	seq_buf_init(&s, buf, sizeof(buf));
- 
- 	while (n) {
-@@ -1318,7 +1308,7 @@ void show_user_instructions(struct pt_regs *regs)
- 		for (i = 0; i < 8 && n; i++, n--, pc += sizeof(int)) {
- 			int instr;
- 
--			if (probe_kernel_address((const void *)pc, instr)) {
-+			if (probe_user_address((const void *)pc, instr)) {
- 				seq_buf_printf(&s, "XXXXXXXX ");
- 				continue;
- 			}
-diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index 1697e903bbf2..a87a2d2e7a8b 100644
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -274,12 +274,8 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
- 		if ((flags & FAULT_FLAG_WRITE) && (flags & FAULT_FLAG_USER) &&
- 		    access_ok(VERIFY_READ, nip, sizeof(*nip))) {
- 			unsigned int inst;
--			int res;
- 
--			pagefault_disable();
--			res = __get_user_inatomic(inst, nip);
--			pagefault_enable();
--			if (!res)
-+			if (!probe_user_address(nip, inst))
- 				return !store_updates_sp(inst);
- 			*must_retry = true;
- 		}
-diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-index 0af051a1974e..efe518c4e8c7 100644
---- a/arch/powerpc/perf/callchain.c
-+++ b/arch/powerpc/perf/callchain.c
-@@ -159,12 +159,8 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
- 	    ((unsigned long)ptr & 7))
- 		return -EFAULT;
- 
--	pagefault_disable();
--	if (!__get_user_inatomic(*ret, ptr)) {
--		pagefault_enable();
-+	if (!probe_user_address(ptr, *ret))
- 		return 0;
--	}
--	pagefault_enable();
- 
- 	return read_user_stack_slow(ptr, ret, 8);
- }
-@@ -175,12 +171,8 @@ static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
- 	    ((unsigned long)ptr & 3))
- 		return -EFAULT;
- 
--	pagefault_disable();
--	if (!__get_user_inatomic(*ret, ptr)) {
--		pagefault_enable();
-+	if (!probe_user_address(ptr, *ret))
- 		return 0;
--	}
--	pagefault_enable();
- 
- 	return read_user_stack_slow(ptr, ret, 4);
- }
-@@ -307,17 +299,11 @@ static inline int current_is_64bit(void)
-  */
- static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
- {
--	int rc;
--
- 	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
- 	    ((unsigned long)ptr & 3))
- 		return -EFAULT;
- 
--	pagefault_disable();
--	rc = __get_user_inatomic(*ret, ptr);
--	pagefault_enable();
--
--	return rc;
-+	return probe_user_address(ptr, *ret);
- }
- 
- static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
-index 81f8a0c838ae..25b28aa499b9 100644
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -407,7 +407,6 @@ static void power_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
- static __u64 power_pmu_bhrb_to(u64 addr)
- {
- 	unsigned int instr;
--	int ret;
- 	__u64 target;
- 
- 	if (is_kernel_addr(addr)) {
-@@ -418,13 +417,8 @@ static __u64 power_pmu_bhrb_to(u64 addr)
- 	}
- 
- 	/* Userspace: need copy instruction here then translate it */
--	pagefault_disable();
--	ret = __get_user_inatomic(instr, (unsigned int __user *)addr);
--	if (ret) {
--		pagefault_enable();
-+	if (probe_user_address((unsigned int __user *)addr, instr))
- 		return 0;
--	}
--	pagefault_enable();
- 
- 	target = branch_target(&instr);
- 	if ((!target) || (instr & BRANCH_ABSOLUTE))
-diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-index 918be816b097..b8e2349910b7 100644
---- a/arch/powerpc/sysdev/fsl_pci.c
-+++ b/arch/powerpc/sysdev/fsl_pci.c
-@@ -1068,13 +1068,10 @@ int fsl_pci_mcheck_exception(struct pt_regs *regs)
- 	addr += mfspr(SPRN_MCAR);
- 
- 	if (is_in_pci_mem_space(addr)) {
--		if (user_mode(regs)) {
--			pagefault_disable();
--			ret = get_user(inst, (__u32 __user *)regs->nip);
--			pagefault_enable();
--		} else {
-+		if (user_mode(regs))
-+			ret = probe_user_address((void *)regs->nip, inst);
-+		else
- 			ret = probe_kernel_address((void *)regs->nip, inst);
--		}
- 
- 		if (!ret && mcheck_handle_load(regs, inst)) {
- 			regs->nip += 4;
--- 
-2.13.3
++-	/+ACo
++-	 +ACo lockdep+AF8-free+AF8-key+AF8-range() assumes that struct lock+AF8-class+AF8-key
++-	 +ACo objects do not overlap. Since we use the address of lock
++-	 +ACo objects as class key for static objects, check whether the
++-	 +ACo size of lock+AF8-class+AF8-key objects does not exceed the size of
++-	 +ACo the smallest lock object.
++-	 +ACo-/
++-	BUILD+AF8-BUG+AF8-ON(sizeof(struct lock+AF8-class+AF8-key) +AD4 sizeof(raw+AF8-spinlock+AF8-t))+ADs
++-
+ 	if (+AF8AXw-is+AF8-kernel+AF8-percpu+AF8-address(addr, +ACY-can+AF8-addr))
+ 		lock-+AD4-key +AD0 (void +ACo)can+AF8-addr+ADs
+ 	else if (+AF8AXw-is+AF8-module+AF8-percpu+AF8-address(addr, +ACY-can+AF8-addr))
 
+Thanks,
+
+Bart.
