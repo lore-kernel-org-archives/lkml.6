@@ -2,102 +2,129 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BFAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAF0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA4B2146D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:45:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4758208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:53:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qk2cF7u+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA4B2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JwatynwX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4758208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbeLCSqC (ORCPT
+        id S1726317AbeLCSxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:46:02 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35000 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbeLCSqC (ORCPT
+        Mon, 3 Dec 2018 13:53:53 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:43876 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbeLCSxw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:46:02 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so12416905ljb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:45:56 -0800 (PST)
+        Mon, 3 Dec 2018 13:53:52 -0500
+Received: by mail-yw1-f65.google.com with SMTP id l200so5825273ywe.10;
+        Mon, 03 Dec 2018 10:53:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6KIlQjAqF0ozKgjQePbTy2uj3vHmuUQ0WI6HBneVUec=;
-        b=Qk2cF7u+4AEeu7eJQErfzfnIthN7En1GdAGPigsy71nypbznIVbM1Znkg7D8vNMs2A
-         3qZqNMksYgHHtBfExXWkrMy8yxIKwZP1Ij7Oggh9ZmiQaN5DRklVzNv3g4ZR4d5wv+WV
-         xSu7PsuHmMXBOF8EDRu63wT8ya9iwADcE7JWE=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jpIGOfArGBNMWgXZsUy3sEnlg2klwzYzkIyY2tbBTK8=;
+        b=JwatynwXe3U2C61TazCuoQ6nGG84WsmpDKP50qy/YTu4oJXe7h2pTo84KoemGh4C+6
+         pmD9BKu9Z+s84C+aR0Q3IeUrUFlUDepYIaUWxMvt7K5AE/luZSq9o1eTF6ehI6qEj/Ls
+         S4SL0+5uCtfA2cHl0Mz2dtlP5hVkI+HNGT8i9YX2DPPNtsQarwp2sVjy50f6hF4SBwMS
+         nFCVl8CN/tqirPnBrNareQgmbBz9+bQxrsUbUSpTgP5eVRsSHACSS0n6B1Om3TWw+IPc
+         pjOBN9B8BubqN2+auUciQ62ksIed1F/q7Fhy6KYoxRoxBPMiseiNPPQUoYaY9K+kJdUF
+         6+yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6KIlQjAqF0ozKgjQePbTy2uj3vHmuUQ0WI6HBneVUec=;
-        b=BTH/rRRxL1ncg9/rvMTCv/19nZNTKKFPPf6I76QCLwJNASa6lXc0hjVKoEjdashwgA
-         zFO2MR203eczAludk3jgPmbZZ+5qVJhNifuOVmj8Oaao71HjzOnsViBkqmBwTHDCIZMM
-         3/I6Eb2kzMLwdDN/PNpsPTBLp5xyJt7QtlqgRw2pyES7boae6R8x0nVEtnT9t6x0yXLi
-         QBLRogPZ67YOEaw/sL+GIRaPJX5lHd8W35aft86aWBKgi+fxzX4/g7Rg7gnq7eMkCeCr
-         P0hbKh53N4NZYJ72oAbZC6Nb5+D+6E5d0gPdRrqNL28Qb14vKg5jPyvdrseWbSNgokr8
-         nNjw==
-X-Gm-Message-State: AA+aEWZRL7CxanloqEbFmMYiOkKZzn3Nwcrrhxxuf569wDEpPPhvC0l/
-        TrahCXdqh34E6uJeG5wc2+IFN7D0GKI=
-X-Google-Smtp-Source: AFSGD/WBqB2H77u1GxhQ8yHI2sTybPWvjNvwqAzyzliJ2UQVkIpRd2qQGJdfCCpaRCX2c8YJCMJHJw==
-X-Received: by 2002:a2e:8347:: with SMTP id l7-v6mr7624307ljh.152.1543862755105;
-        Mon, 03 Dec 2018 10:45:55 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id i127-v6sm2616724lji.3.2018.12.03.10.45.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 10:45:53 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id z13so9952836lfe.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:45:52 -0800 (PST)
-X-Received: by 2002:a19:4287:: with SMTP id p129mr10423849lfa.135.1543862751988;
- Mon, 03 Dec 2018 10:45:51 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jpIGOfArGBNMWgXZsUy3sEnlg2klwzYzkIyY2tbBTK8=;
+        b=ipuvuEpZ2jCMUS9Ybcn8oEL8sd+5gM9UffW47Q1Uhf4GKGwuGZ9bJbkPG9ULUMsO70
+         irFT8fb60IvAwsEzrP2fz1NjzFfJ4VYIAdBU6dlsXnwQmuEH0I8XYBuGlKWyKp/Shw9b
+         oW6kgX0umvbd5nNm9IXWiyKShXGtXEmVDqtepTypW76HGz5bUDRoRTjf+Iv2WVyBRuKL
+         J1RCuODSR/1ed8FuAgm79umB5CPk4WqHPSQ30gkAWJ0Am8bzt8PQxl+i1ymJLL4s4tvE
+         p+ZcBHVISrPfSzbcPe1SyHP1SrZaPdatRS+1qiZ8OgAWwSRITr9iCY6kgdEqtfcyoas3
+         RKeg==
+X-Gm-Message-State: AA+aEWb1FDvhap5fEleO0zX1v7/OUFyowQRPebS+zsZTmqC3OlA7DAll
+        8opkKaqYJRBV8pRPFNDFcA==
+X-Google-Smtp-Source: AFSGD/UqqFGBRjV/4v1RTKMf5mq9yaA7NHpHwm+wCiEkxH8LnEYkGcIrnTkL8oQDVoR7+sD/lyd9jA==
+X-Received: by 2002:a81:8d14:: with SMTP id d20mr17546176ywg.150.1543863229844;
+        Mon, 03 Dec 2018 10:53:49 -0800 (PST)
+Received: from 960.armstrong.edu ([130.254.104.55])
+        by smtp.gmail.com with ESMTPSA id u132sm4842769ywc.11.2018.12.03.10.53.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 10:53:49 -0800 (PST)
+From:   Ayman Bagabas <ayman.bagabas@gmail.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc:     ayman.bagabas@gmail.com
+Subject: [PATCH v9 0/3] Huawei laptops
+Date:   Mon,  3 Dec 2018 13:53:37 -0500
+Message-Id: <20181203185344.3521-1-ayman.bagabas@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20181127062503.GH6163@shao2-debian> <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
- <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com>
- <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
- <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
- <20181203181456.GK31738@dhcp22.suse.cz> <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
- <20181203183050.GL31738@dhcp22.suse.cz>
-In-Reply-To: <20181203183050.GL31738@dhcp22.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Dec 2018 10:45:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
-Message-ID: <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
-To:     mhocko@kernel.org
-Cc:     ying.huang@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
-        s.priebe@profihost.ag, mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org,
-        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 10:30 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> I do not get it. 5265047ac301 which this patch effectively reverts has
-> regressed kvm workloads. People started to notice only later because
-> they were not running on kernels with that commit until later. We have
-> 4.4 based kernels reports. What do you propose to do for those people?
+This patch set is based on new audio LED triggers in branch topic/leds-trigger from
+        git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
 
-We have at least two patches that others claim to fix things.
+Changes from v8:
+* Explicitly use NULL in acpi_get_handle
+* Drop __initconst from huawei_wmi_keymap
 
-You dismissed them and said "can't be done".
+Changes from v7:
+* Switch to wmi_driver
+* Use devm to allocate and manage devices
+* Skip registering LED subsystem if a ACPI controller method was not found
 
-As a result, I'm not really interested in this discussion.
+Changes from v6:
+* Use audio LED triggers patch set
+* Use KEY_CONFIG (XF86Tools) instead of KEY_PROG1.
+ In Windows, the key is used to launch Huawei PC manager. XF86Tools is
+ used by default on most desktop environments i.e. Gnome.
 
-                Linus
+Changes from v5:
+* Review tags
+
+Changes from v4:
+* Consistency in file names
+* How module would be enabled (Kconfig)
+* Match license in SPDX and MODULE_LICENSE 
+
+Changes from v3:
+* Code formatting
+
+Changes from v2:
+* Support for Huawei MBX
+* Style and formatting issues
+
+Ayman Bagabas (3):
+  ALSA: hda: fix front speakers on Huawei MBXP.
+  x86: add support for Huawei WMI hotkeys.
+  ALSA: hda: add support for Huawei WMI micmute LED
+
+ drivers/platform/x86/Kconfig      |  16 +++
+ drivers/platform/x86/Makefile     |   1 +
+ drivers/platform/x86/huawei-wmi.c | 226 ++++++++++++++++++++++++++++++
+ sound/pci/hda/patch_realtek.c     |  22 +++
+ 4 files changed, 265 insertions(+)
+ create mode 100644 drivers/platform/x86/huawei-wmi.c
+
+-- 
+2.19.2
+
