@@ -2,88 +2,131 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBCBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76517C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3745C206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:43:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3745C206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 3BC3A206B7
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:43:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WUXfixx3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC3A206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbeLCGna (ORCPT
+        id S1725942AbeLCGnd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 01:43:30 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:16840 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725825AbeLCGn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 01:43:29 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id A7A444E04F7F2AD5C12B;
-        Mon,  3 Dec 2018 14:43:26 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB36hNvC071283;
-        Mon, 3 Dec 2018 14:43:23 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120314432881-14390111 ;
-          Mon, 3 Dec 2018 14:43:28 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     Timur Tabi <timur@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH] fbdev: fsl-diu: remove redundant null check on cmap
-Date:   Mon, 3 Dec 2018 14:43:17 +0800
-Message-Id: <20181203064317.57054-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Mon, 3 Dec 2018 01:43:33 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34690 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbeLCGnc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 01:43:32 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b3so9755895ede.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 22:43:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V3KdqAynByDLNpI9px0tmlm63M2ZByYfPZfbkHm6Mk8=;
+        b=WUXfixx3Muz1sp49jUDfvsAPqZ3HuECW6dljgc6A3kf+zBu2GjGzaK2b1iX+T2XrQL
+         VUIGo9HIqWiXwFTA/ZwmhQtw2QKm5Fpwl06UvHK3frXX4pFUzgE0y2bb83lwcCLhjL+u
+         N2TiDVNJ1rH48K5Hr110Z/AaezcpLVIZTxnQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V3KdqAynByDLNpI9px0tmlm63M2ZByYfPZfbkHm6Mk8=;
+        b=Hfb1n9249KOkY21w0ULdpQeJ5LKyKXob3xHNT0v9GUJTzHgnivMUvARtuxQIXlEvJO
+         X3qvnkE1cAwlAgeTHwuuiZ3T4OEI4Tn5AlwZDhAS9XQLQDEW/rC6DC9/A9Od3E/l4N11
+         B/LX4pNymMdBZewGnfA5u+d+NgEB+3aC9DwDFUDBYjgwClp/f0U3Z9kecJfYlTNAytZq
+         TT7tjON0RyvFdFzuWZDrMh7o6719RGlMb5FbHPR6zqcdIyi19lJWKqAA0hC1quyoUsi/
+         ZKek2AjYlgCoQvqO+s7utOmpS/+qEKvb0o4E54HquNZvnfZuS2avz5ke3DeAMT6ZgQ8l
+         NcFw==
+X-Gm-Message-State: AA+aEWa05wfPh/juJCUuIwGB4glNz0ZpERArFjoZ8aNwDO1lt6BZXqUv
+        rCCMQP5SqpM08jpWvyXtKmwJJUa/vJ1wfTdJxb+wrQ==
+X-Google-Smtp-Source: AFSGD/XALzaQRbNhUnvcyo9qNimKSReQMWeSvwW2ybtNRRBMJPpij7U+6uC84VwKzBSKsAPqHNb7AolSkxcbVfKC5Eo=
+X-Received: by 2002:a50:8799:: with SMTP id a25mr13698395eda.96.1543819409124;
+ Sun, 02 Dec 2018 22:43:29 -0800 (PST)
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-03 14:43:29,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-03 14:43:23
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wB36hNvC071283
+References: <20181128080553.37658-1-wen.yang99@zte.com.cn>
+In-Reply-To: <20181128080553.37658-1-wen.yang99@zte.com.cn>
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+Date:   Mon, 3 Dec 2018 12:13:18 +0530
+Message-ID: <CAL2rwxp=GUa+Uk9kVy9qoZLJ-PU95Jxb5B+OGKG=qujwhRAACA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: megaraid_sas: NULL check before some freeing
+ functions is not needed
+To:     wen.yang99@zte.com.cn
+Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        LKML <linux-kernel@vger.kernel.org>, zhong.weidong@zte.com.cn,
+        Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The null check on &info->cmap is redundant since cmap is a struct
-inside fb=5Finfo and can never be null, so the check is always true.
-we may remove it.
+On Wed, Nov 28, 2018 at 1:36 PM Wen Yang <wen.yang99@zte.com.cn> wrote:
+>
+> dma_pool_destroy(NULL) is safe, so removes NULL check before freeing
+> the mem. This patch also fix the ifnullfree.cocci warnings.
+>
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Timur Tabi <timur@kernel.org>
-CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-CC: linux-fbdev@vger.kernel.org
-CC: dri-devel@lists.freedesktop.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/video/fbdev/fsl-diu-fb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
 
-diff --git a/drivers/video/fbdev/fsl-diu-fb.c b/drivers/video/fbdev/fsl-diu=
--fb.c
-index 332a56b6811f..9a5451ba4d44 100644
---- a/drivers/video/fbdev/fsl-diu-fb.c
-+++ b/drivers/video/fbdev/fsl-diu-fb.c
-@@ -1575,8 +1575,7 @@ static void uninstall=5Ffb(struct fb=5Finfo *info)
-=20
- 	unregister=5Fframebuffer(info);
- 	unmap=5Fvideo=5Fmemory(info);
--	if (&info->cmap)
--		fb=5Fdealloc=5Fcmap(&info->cmap);
-+	fb=5Fdealloc=5Fcmap(&info->cmap);
-=20
- 	mfbi->registered =3D 0;
- }
---=20
-2.19.1
-
+> CC: Julia Lawall <julia.lawall@lip6.fr>
+> CC: Kashyap Desai <kashyap.desai@broadcom.com>
+> CC: Sumit Saxena <sumit.saxena@broadcom.com>
+> CC: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  drivers/scsi/megaraid/megaraid_sas_fusion.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+> index f74b5ea24f0f..aa477f09a7a5 100644
+> --- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
+> +++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+> @@ -807,10 +807,8 @@ megasas_free_rdpq_fusion(struct megasas_instance *instance) {
+>
+>         }
+>
+> -       if (fusion->reply_frames_desc_pool)
+> -               dma_pool_destroy(fusion->reply_frames_desc_pool);
+> -       if (fusion->reply_frames_desc_pool_align)
+> -               dma_pool_destroy(fusion->reply_frames_desc_pool_align);
+> +       dma_pool_destroy(fusion->reply_frames_desc_pool);
+> +       dma_pool_destroy(fusion->reply_frames_desc_pool_align);
+>
+>         if (fusion->rdpq_virt)
+>                 dma_free_coherent(&instance->pdev->dev,
+> @@ -830,8 +828,7 @@ megasas_free_reply_fusion(struct megasas_instance *instance) {
+>                         fusion->reply_frames_desc[0],
+>                         fusion->reply_frames_desc_phys[0]);
+>
+> -       if (fusion->reply_frames_desc_pool)
+> -               dma_pool_destroy(fusion->reply_frames_desc_pool);
+> +       dma_pool_destroy(fusion->reply_frames_desc_pool);
+>
+>  }
+>
+> @@ -1627,8 +1624,7 @@ static inline void megasas_free_ioc_init_cmd(struct megasas_instance *instance)
+>                                   fusion->ioc_init_cmd->frame,
+>                                   fusion->ioc_init_cmd->frame_phys_addr);
+>
+> -       if (fusion->ioc_init_cmd)
+> -               kfree(fusion->ioc_init_cmd);
+> +       kfree(fusion->ioc_init_cmd);
+>  }
+>
+>  /**
+> --
+> 2.19.1
+>
