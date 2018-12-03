@@ -2,131 +2,125 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B26C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDDDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0696B214DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:47:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fK8NZ1Wt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0696B214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4A6412087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:49:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6412087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726235AbeLCKsK (ORCPT
+        id S1726208AbeLCKt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:48:10 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37482 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeLCKsK (ORCPT
+        Mon, 3 Dec 2018 05:49:57 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33761 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbeLCKt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:48:10 -0500
-Received: by mail-ed1-f65.google.com with SMTP id h15so10299333edb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:47:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DwydGyffLoyVQbictEcQXUTSUtaLHUV7UHrtoEBRrEI=;
-        b=fK8NZ1WtWLW88JL09zjR0pKPEogEOy3qtfpXNs0mMt7sz5Qumpt3lic4u/bpySpa+L
-         K37niMGhVQZTRW6SeZfZLtvOGh0PdYW/qW/S7FHgT7oeRs4aZidVHp4UYCx4NfgU3ohT
-         XkHlw/50VRseWpQ8YP2Kyht61I9UYSdxhA3B8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DwydGyffLoyVQbictEcQXUTSUtaLHUV7UHrtoEBRrEI=;
-        b=qNFGUBnC25yT0fSEQTQzHp9BRRA8N4vGPGdkZoUANKx+B1Z7koqZPo1cZpV8LqDa0Y
-         18BzT47xhIvLLMDlvcFl7dLDY2WN8WoKIr+W87NKOdisyfJ++h4vfNkqVISmOpJyYiu9
-         EsvmEzdJ62Kkgq86iatJTaOjZOSxn/HDo+Hjpg63rqAbLN9dQg4ZnLrWs8TY0hvRLXAw
-         6EIYhRaJYy6ppknM6UbExxFbsTtsJcHHAoNNtT6XHAugGhQ8Te3rfASUxrShArwL9Xis
-         3uBsHdNDdBePZQePyNQBGhkkVv3mXemKIWCJE02AMPU8j0+IO9IO/Z/1I3npAOfH1Umo
-         Tm4g==
-X-Gm-Message-State: AA+aEWbLnXLf/+lzMYqoRTHsGNJobObNd5AAdzEnd2UjSFAJI4NvG5LI
-        rgchFUgUclYUCqQw7VWftWsrH/rFp7gL5GrFthqLjXtLqJs=
-X-Google-Smtp-Source: AFSGD/WV4DWoTK3zaxjc4ca9G4VUQ1yyDcOKqnKfxtTOYb1rTGToL9BiI6qd58TWDc5Vhy1M49rc4YrUDoMEwbatQok=
-X-Received: by 2002:a50:a7c4:: with SMTP id i62mr14257122edc.162.1543834058764;
- Mon, 03 Dec 2018 02:47:38 -0800 (PST)
-MIME-Version: 1.0
-References: <1542007566-9449-1-git-send-email-zhang.chunyan@linaro.org>
- <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
- <84836600-c705-9ac3-297e-bb67a611daca@intel.com> <CAAfSe-us5aKOv9F6KHwvJR_cMAF8KFo6W1Gs_B3zBiNOuD10Qg@mail.gmail.com>
- <f78de042-69cf-5345-f16f-236d04d57051@intel.com> <CAAfSe-sfe5A7b_8iBiUmvi_mo1zRZ_Oh0yu-uwXo8Hv+WBftWQ@mail.gmail.com>
- <22591bc4-ea34-dcc6-a3d5-8a75e890ff2b@rock-chips.com>
-In-Reply-To: <22591bc4-ea34-dcc6-a3d5-8a75e890ff2b@rock-chips.com>
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-Date:   Mon, 3 Dec 2018 18:47:27 +0800
-Message-ID: <CAG2=9p-aBuiimuPR3qv43UKJCe2wQqb4Q_ZqcpF-dK4=5XQCxA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] mmc: sdhci: add support for using external DMA devices
-To:     Shawn Lin <shawn.lin@rock-chips.com>
-Cc:     Lyra Zhang <zhang.lyra@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org,
+        Mon, 3 Dec 2018 05:49:57 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gTln2-0007Ru-EO; Mon, 03 Dec 2018 11:49:24 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gTln1-0003Xe-QQ; Mon, 03 Dec 2018 11:49:23 +0100
+Date:   Mon, 3 Dec 2018 11:49:23 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+Message-ID: <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de>
+References: <20181120134032.31645-2-brgl@bgdev.pl>
+ <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+ <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+ <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
+ <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
+ <20181125211854.idnqxz4pco3r7ydr@pengutronix.de>
+ <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+ <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
+ <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
+ <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 at 09:15, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->
-> On 2018/11/29 17:59, Chunyan Zhang wrote:
-> > Hi Adrian,
+On Mon, Dec 03, 2018 at 11:23:38AM +0100, Bartosz Golaszewski wrote:
+> niedz., 2 gru 2018 o 23:20 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
 > >
-> > On Thu, 29 Nov 2018 at 15:36, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> >>
-> >> On 29/11/18 8:22 AM, Chunyan Zhang wrote:
-> >>> On Tue, 20 Nov 2018 at 21:41, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> >>>>
-> >>>> On 12/11/18 9:26 AM, Chunyan Zhang wrote:
-> >>>>> Some standard SD host controllers can support both external dma
-> >>>>> controllers as well as ADMA/SDMA in which the SD host controller
-> >>>>> acts as DMA master. TI's omap controller is the case as an example.
-> >>>>>
-> >>>>> Currently the generic SDHCI code supports ADMA/SDMA integrated in
-> >>>>> the host controller but does not have any support for external DMA
-> >>>>> controllers implemented using dmaengine, meaning that custom code is
-> >>>>> needed for any systems that use an external DMA controller with SDHCI.
-> >>>>
-> >>>> I still think you probably need to reset the DMA if there are transfer
-> >>>> errors - perhaps you could comment on that.  Also there are some comments below.
-> >>>
-> >>> With regard to "transfer error", do you mean if
-> >>> sdhci_external_dma_setup() failed?
-> >>
-> >> No, I mean any error interrupt that can leave the DMA uncompleted.  For
-> >> SDHCI, resetting the data circuit cleans that up, but presumably something
-> >> is needed for external DMA?
+> > niedz., 2 gru 2018 o 22:56 Uwe Kleine-König
+> > <u.kleine-koenig@pengutronix.de> napisał(a):
+> > >
+> > > Hello,
+> > >
+> > > On Thu, Nov 29, 2018 at 07:14:45PM +0100, Bartosz Golaszewski wrote:
+> > > > We're getting too much into details of how to handle simulated
+> > > > interrupts and we can continue discussing it, but meanwhile I'd like
+> > > > to address a different thing:
+> > > >
+> > > > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
+> > > > sharing for userspace") some libgpiod tests are failing because we can
+> > > > no longer depend on reading the value of a dummy GPIO after detecting
+> > > > an interrupt to know the edge of the interrupt. While these interrupts
+> > > > are triggered from debugfs and debugfs is not required to maintain
+> > > > compatibility, I thing having a working test suite for the GPIO
+> > > > subsystem and uAPI is worth applying these two patches and also the
+> > > > previous one[1].
+> > > >
+> > > > Can we have them applied for 4.20 or are there any objections?
+> > >
+> > > Just for the record: I objected the patch, Bartosz agrees to discuss
+> > > further and but because this is too much detail the patch should now be
+> > > applied anyhow to fix the test suite of an external project. This seems
+> > > wrong to me.
+> > >
 > >
-> > Yes, it should need a dmaengine_terminate_all().
+> > Just to look at it from a different perspective: we have a project
+> > whose tests rely on a behavior that was changed by Uwe's patch. While
+> > the patch is fine, we need to find a correct way of testing the GPIO
+> > user API. This may take a long time. In order to not break the tests
+> > of an external project in 4.20 I propose to patch the interrupt
+> > simulator (a component only used for testing) for now and to revisit
+> > it later without time pressure.
 > >
->
-> No, dmaengine_terminate_all is deprecated for quite a long time.
-> Please use dmaengine_terminate_{async, sync}() instead.
->
-> See Documentation/dmaengine/client.txt
+> > Best regards,
+> > Bartosz
+> 
+> In fact after re-reading this conversation I'm still not sure what
+> your objection is exactly. You're proposing a solution that may well
+> be nicely engineered but it's specific to your gpio-simulator.
+> Meanwhile I'm trying to provide a more generalized API for more
+> testing modules to use.
 
-Ok, thanks for the comments.
-Chunyan
+I think you're generalizing something that won't find any user apart
+from your mockup driver. So I'd say the generalisation is wrong and the
+added code could better live in the mockup driver directly.
 
->
->
-> > How about adding that at here (I will wrap it up of course):
-> > https://elixir.bootlin.com/linux/v4.19.5/source/drivers/mmc/host/sdhci.c#L2553
-> >
-> > Is there somewhere else I'm missing?
-> >
-> > Thanks,
-> > Chunyan
-> >
-> >
->
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
