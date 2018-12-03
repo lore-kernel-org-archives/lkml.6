@@ -2,268 +2,198 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C339C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B647C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40CD420851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:11:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40CD420851
+	by mail.kernel.org (Postfix) with ESMTP id 3DD0620851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:11:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD0620851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726433AbeLCML4 (ORCPT
+        id S1726454AbeLCMMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:11:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:35770 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeLCML4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:11:56 -0500
+        Mon, 3 Dec 2018 07:12:38 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35810 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725975AbeLCMMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:12:38 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 078F1165C;
-        Mon,  3 Dec 2018 04:11:09 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CB1A33F614;
-        Mon,  3 Dec 2018 04:11:08 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id B9D391AE1062; Mon,  3 Dec 2018 12:11:28 +0000 (GMT)
-Date:   Mon, 3 Dec 2018 12:11:28 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Kulkarni, Ganapatrao" <Ganapatrao.Kulkarni@cavium.com>
-Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
-        "Richter, Robert" <Robert.Richter@cavium.com>,
-        "Lomovtsev, Vadim" <Vadim.Lomovtsev@cavium.com>,
-        Jan Glauber <Jan.Glauber@cavium.com>,
-        "gklkml16@gmail.com" <gklkml16@gmail.com>
-Subject: Re: [PATCH v8 2/2] ThunderX2, perf : Add Cavium ThunderX2 SoC UNCORE
- PMU driver
-Message-ID: <20181203121128.GC24824@arm.com>
-References: <20181122030354.13570-1-ganapatrao.kulkarni@cavium.com>
- <20181122030354.13570-3-ganapatrao.kulkarni@cavium.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5449165C;
+        Mon,  3 Dec 2018 04:11:50 -0800 (PST)
+Received: from [10.1.37.145] (p8cg001049571a15.cambridge.arm.com [10.1.37.145])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DB713F614;
+        Mon,  3 Dec 2018 04:11:49 -0800 (PST)
+Subject: Re: [PATCH v9 1/8] KVM: arm/arm64: Share common code in
+ user_mem_abort()
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     suzuki.poulose@arm.com, marc.zyngier@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-2-punit.agrawal@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <ad4b316a-054f-24d9-d32d-8fbe7972b5ad@arm.com>
+Date:   Mon, 3 Dec 2018 17:41:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122030354.13570-3-ganapatrao.kulkarni@cavium.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181031175745.18650-2-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 03:04:35AM +0000, Kulkarni, Ganapatrao wrote:
-> This patch adds a perf driver for the PMU UNCORE devices DDR4 Memory
-> Controller(DMC) and Level 3 Cache(L3C). Each PMU supports up to 4
-> counters. All counters lack overflow interrupt and are
-> sampled periodically.
+
+
+On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+> The code for operations such as marking the pfn as dirty, and
+> dcache/icache maintenance during stage 2 fault handling is duplicated
+> between normal pages and PMD hugepages.
 > 
-> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+> Instead of creating another copy of the operations when we introduce
+> PUD hugepages, let's share them across the different pagesizes.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 > ---
->  drivers/perf/Kconfig         |   9 +
->  drivers/perf/Makefile        |   1 +
->  drivers/perf/thunderx2_pmu.c | 869 +++++++++++++++++++++++++++++++++++
->  include/linux/cpuhotplug.h   |   1 +
->  4 files changed, 880 insertions(+)
->  create mode 100644 drivers/perf/thunderx2_pmu.c
+>  virt/kvm/arm/mmu.c | 49 ++++++++++++++++++++++++++++------------------
+>  1 file changed, 30 insertions(+), 19 deletions(-)
 > 
-> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-> index 08ebaf7cca8b..af9bc178495d 100644
-> --- a/drivers/perf/Kconfig
-> +++ b/drivers/perf/Kconfig
-> @@ -87,6 +87,15 @@ config QCOM_L3_PMU
->  	   Adds the L3 cache PMU into the perf events subsystem for
->  	   monitoring L3 cache events.
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 5eca48bdb1a6..59595207c5e1 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1475,7 +1475,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  			  unsigned long fault_status)
+>  {
+>  	int ret;
+> -	bool write_fault, exec_fault, writable, hugetlb = false, force_pte = false;
+> +	bool write_fault, exec_fault, writable, force_pte = false;
+>  	unsigned long mmu_seq;
+>  	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
+>  	struct kvm *kvm = vcpu->kvm;
+> @@ -1484,7 +1484,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	kvm_pfn_t pfn;
+>  	pgprot_t mem_type = PAGE_S2;
+>  	bool logging_active = memslot_is_logging(memslot);
+> -	unsigned long flags = 0;
+> +	unsigned long vma_pagesize, flags = 0;
+
+A small nit s/vma_pagesize/pagesize. Why call it VMA ? Its implicit.
+
 >  
-> +config THUNDERX2_PMU
-> +	tristate "Cavium ThunderX2 SoC PMU UNCORE"
-> +	depends on ARCH_THUNDER2 && ARM64 && ACPI && NUMA
-> +	default m
-> +	help
-> +	   Provides support for ThunderX2 UNCORE events.
-> +	   The SoC has PMU support in its L3 cache controller (L3C) and
-> +	   in the DDR4 Memory Controller (DMC).
-> +
->  config XGENE_PMU
->          depends on ARCH_XGENE
->          bool "APM X-Gene SoC PMU"
-> diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-> index b3902bd37d53..909f27fd9db3 100644
-> --- a/drivers/perf/Makefile
-> +++ b/drivers/perf/Makefile
-> @@ -7,5 +7,6 @@ obj-$(CONFIG_ARM_PMU_ACPI) += arm_pmu_acpi.o
->  obj-$(CONFIG_HISI_PMU) += hisilicon/
->  obj-$(CONFIG_QCOM_L2_PMU)	+= qcom_l2_pmu.o
->  obj-$(CONFIG_QCOM_L3_PMU) += qcom_l3_pmu.o
-> +obj-$(CONFIG_THUNDERX2_PMU) += thunderx2_pmu.o
->  obj-$(CONFIG_XGENE_PMU) += xgene_pmu.o
->  obj-$(CONFIG_ARM_SPE_PMU) += arm_spe_pmu.o
-> diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
-> new file mode 100644
-> index 000000000000..e6509ba868ab
-> --- /dev/null
-> +++ b/drivers/perf/thunderx2_pmu.c
-> @@ -0,0 +1,869 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * CAVIUM THUNDERX2 SoC PMU UNCORE
-> + * Copyright (C) 2018 Cavium Inc.
-> + * Author: Ganapatrao Kulkarni <gkulkarni@cavium.com>
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/cpuhotplug.h>
-> +#include <linux/perf_event.h>
-> +#include <linux/platform_device.h>
-> +
-> +/* Each ThunderX2(TX2) Socket has a L3C and DMC UNCORE PMU device.
-> + * Each UNCORE PMU device consists of 4 independent programmable counters.
-> + * Counters are 32 bit and do not support overflow interrupt,
-> + * they need to be sampled before overflow(i.e, at every 2 seconds).
-> + */
-> +
-> +#define TX2_PMU_MAX_COUNTERS		4
-> +#define TX2_PMU_DMC_CHANNELS		8
-> +#define TX2_PMU_L3_TILES		16
-> +
-> +#define TX2_PMU_HRTIMER_INTERVAL	(2 * NSEC_PER_SEC)
-> +#define GET_EVENTID(ev)			((ev->hw.config) & 0x1ff)
+>  	write_fault = kvm_is_write_fault(vcpu);
+>  	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+> @@ -1504,10 +1504,16 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  		return -EFAULT;
+>  	}
+>  
+> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+> -		hugetlb = true;
+> +	vma_pagesize = vma_kernel_pagesize(vma);
+> +	if (vma_pagesize == PMD_SIZE && !logging_active) {
+>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+>  	} else {
+> +		/*
+> +		 * Fallback to PTE if it's not one of the Stage 2
+> +		 * supported hugepage sizes
+> +		 */
+> +		vma_pagesize = PAGE_SIZE;
 
-I think this should be 0x1f.
+This seems redundant and should be dropped. vma_kernel_pagesize() here either
+calls hugetlb_vm_op_pagesize (via hugetlb_vm_ops->pagesize) or simply returns
+PAGE_SIZE. The vm_ops path is taken if the QEMU VMA covering any given HVA is
+backed either by HugeTLB pages or simply normal pages. vma_pagesize would
+either has a value of PMD_SIZE (HugeTLB hstate based) or PAGE_SIZE. Hence if
+its not PMD_SIZE it must be PAGE_SIZE which should not be assigned again.
 
-> +#define GET_COUNTERID(ev)		((ev->hw.idx) & 0x3)
-> + /* 1 byte per counter(4 counters).
-> +  * Event id is encoded in bits [5:1] of a byte,
-> +  */
-> +#define DMC_EVENT_CFG(idx, val)		((val) << (((idx) * 8) + 1))
 > +
-> +#define L3C_COUNTER_CTL			0xA8
-> +#define L3C_COUNTER_DATA		0xAC
-> +#define DMC_COUNTER_CTL			0x234
-> +#define DMC_COUNTER_DATA		0x240
-> +
-> +/* L3C event IDs */
-> +#define L3_EVENT_READ_REQ		0xD
-> +#define L3_EVENT_WRITEBACK_REQ		0xE
-> +#define L3_EVENT_INV_N_WRITE_REQ	0xF
-> +#define L3_EVENT_INV_REQ		0x10
-> +#define L3_EVENT_EVICT_REQ		0x13
-> +#define L3_EVENT_INV_N_WRITE_HIT	0x14
-> +#define L3_EVENT_INV_HIT		0x15
-> +#define L3_EVENT_READ_HIT		0x17
-> +#define L3_EVENT_MAX			0x18
-> +
-> +/* DMC event IDs */
-> +#define DMC_EVENT_COUNT_CYCLES		0x1
-> +#define DMC_EVENT_WRITE_TXNS		0xB
-> +#define DMC_EVENT_DATA_TRANSFERS	0xD
-> +#define DMC_EVENT_READ_TXNS		0xF
-> +#define DMC_EVENT_MAX			0x10
-> +
-> +enum tx2_uncore_type {
-> +	PMU_TYPE_L3C,
-> +	PMU_TYPE_DMC,
-> +	PMU_TYPE_INVALID,
-> +};
-> +
-> +/*
-> + * pmu on each socket has 2 uncore devices(dmc and l3c),
-> + * each device has 4 counters.
-> + */
-> +struct tx2_uncore_pmu {
-> +	struct hlist_node hpnode;
-> +	struct list_head  entry;
-> +	struct pmu pmu;
-> +	char *name;
-> +	int node;
-> +	int cpu;
-> +	u32    max_counters;
-> +	u32    prorate_factor;
-> +	u32    max_events;
-> +	u64 hrtimer_interval;
-> +	void __iomem *base;
-> +	DECLARE_BITMAP(active_counters, TX2_PMU_MAX_COUNTERS);
-> +	struct perf_event *events[TX2_PMU_MAX_COUNTERS];
-> +	struct device *dev;
-> +	struct hrtimer hrtimer;
-> +	const struct attribute_group **attr_groups;
-> +	enum tx2_uncore_type type;
-> +	void	(*init_cntr_base)(struct perf_event *event,
-> +			struct tx2_uncore_pmu *tx2_pmu);
-> +	void	(*stop_event)(struct perf_event *event);
-> +	void	(*start_event)(struct perf_event *event, int flags);
-> +};
-> +
-> +static LIST_HEAD(tx2_pmus);
-> +
-> +static inline struct tx2_uncore_pmu *pmu_to_tx2_pmu(struct pmu *pmu)
-> +{
-> +	return container_of(pmu, struct tx2_uncore_pmu, pmu);
-> +}
-> +
-> +/*
-> + * sysfs format attributes
-> + */
-> +static ssize_t tx2_pmu_format_show(struct device *dev,
-> +				     struct device_attribute *attr, char *buf)
-> +{
-> +	struct dev_ext_attribute *eattr;
-> +
-> +	eattr = container_of(attr, struct dev_ext_attribute, attr);
-> +	return sprintf(buf, "%s\n", (char *) eattr->var);
-> +}
-> +
-> +#define FORMAT_ATTR(_name, _config) \
-> +	(&((struct dev_ext_attribute[]) { \
-> +	   { \
-> +	   .attr = __ATTR(_name, 0444, tx2_pmu_format_show, NULL), \
-> +	   .var = (void *) _config, \
-> +	   } \
-> +	})[0].attr.attr)
-> +
-> +static struct attribute *l3c_pmu_format_attrs[] = {
-> +	FORMAT_ATTR(event,	"config:0-4"),
-> +	NULL,
-> +};
-> +
-> +static struct attribute *dmc_pmu_format_attrs[] = {
-> +	FORMAT_ATTR(event,	"config:0-4"),
-> +	NULL,
-> +};
+>  		/*
+>  		 * Pages belonging to memslots that don't have the same
+>  		 * alignment for userspace and IPA cannot be mapped using
+> @@ -1573,23 +1579,33 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	if (mmu_notifier_retry(kvm, mmu_seq))
+>  		goto out_unlock;
+>  
+> -	if (!hugetlb && !force_pte)
+> -		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+> +	if (vma_pagesize == PAGE_SIZE && !force_pte) {
+> +		/*
+> +		 * Only PMD_SIZE transparent hugepages(THP) are
+> +		 * currently supported. This code will need to be
+> +		 * updated to support other THP sizes.
+> +		 */
 
-We have PMU_FORMAT_ATTR, PMU_EVENT_ATTR etc in the core code to help here.
-Please try to use them.
+This comment belongs to transparent_hugepage_adjust() but not here.
 
-> +static const struct attribute_group l3c_pmu_format_attr_group = {
-> +	.name = "format",
-> +	.attrs = l3c_pmu_format_attrs,
-> +};
-> +
-> +static const struct attribute_group dmc_pmu_format_attr_group = {
-> +	.name = "format",
-> +	.attrs = dmc_pmu_format_attrs,
-> +};
-> +
-> +/*
-> + * sysfs event attributes
-> + */
-> +static ssize_t tx2_pmu_event_show(struct device *dev,
-> +				    struct device_attribute *attr, char *buf)
-> +{
-> +	struct dev_ext_attribute *eattr;
-> +
-> +	eattr = container_of(attr, struct dev_ext_attribute, attr);
-> +	return sprintf(buf, "config=0x%lx\n", (unsigned long) eattr->var);
-> +}
+> +		if (transparent_hugepage_adjust(&pfn, &fault_ipa))
+> +			vma_pagesize = PMD_SIZE;
 
-Shouldn't this be "event=" instead of "config="?
+IIUC transparent_hugepage_adjust() is only getting called here. Instead of
+returning 'true' when it is able to detect a huge page backing and doing
+an adjustment there after, it should rather return THP size (PMD_SIZE) to
+accommodate probable multi size THP support in future .
 
-Will
+> +	}
+> +
+> +	if (writable)
+> +		kvm_set_pfn_dirty(pfn);
+>  
+> -	if (hugetlb) {
+> +	if (fault_status != FSC_PERM)
+> +		clean_dcache_guest_page(pfn, vma_pagesize);
+> +
+> +	if (exec_fault)
+> +		invalidate_icache_guest_page(pfn, vma_pagesize);
+> +
+> +	if (vma_pagesize == PMD_SIZE) {
+>  		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
+>  		new_pmd = pmd_mkhuge(new_pmd);
+> -		if (writable) {
+> +		if (writable)
+>  			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
+> -			kvm_set_pfn_dirty(pfn);
+> -		}
+> -
+> -		if (fault_status != FSC_PERM)
+> -			clean_dcache_guest_page(pfn, PMD_SIZE);
+>  
+>  		if (exec_fault) {
+>  			new_pmd = kvm_s2pmd_mkexec(new_pmd);
+> -			invalidate_icache_guest_page(pfn, PMD_SIZE);
+>  		} else if (fault_status == FSC_PERM) {
+>  			/* Preserve execute if XN was already cleared */
+>  			if (stage2_is_exec(kvm, fault_ipa))
+> @@ -1602,16 +1618,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  
+>  		if (writable) {
+>  			new_pte = kvm_s2pte_mkwrite(new_pte);
+> -			kvm_set_pfn_dirty(pfn);
+>  			mark_page_dirty(kvm, gfn);
+>  		}
+>  
+> -		if (fault_status != FSC_PERM)
+> -			clean_dcache_guest_page(pfn, PAGE_SIZE);
+> -
+>  		if (exec_fault) {
+>  			new_pte = kvm_s2pte_mkexec(new_pte);
+> -			invalidate_icache_guest_page(pfn, PAGE_SIZE);
+>  		} else if (fault_status == FSC_PERM) {
+>  			/* Preserve execute if XN was already cleared */
+>  			if (stage2_is_exec(kvm, fault_ipa))
+> 
+
+kvm_set_pfn_dirty, clean_dcache_guest_page, invalidate_icache_guest_page
+can all be safely moved before setting the page table entries either as
+PMD or PTE.
