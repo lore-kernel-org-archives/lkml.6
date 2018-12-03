@@ -3,77 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AF4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D20C0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6FCA20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6FCA20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 9317720850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:04:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9317720850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbeLCPAt (ORCPT
+        id S1726598AbeLCPEk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:00:49 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:24208 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726493AbeLCPAt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:00:49 -0500
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wB3F0U7g049754;
-        Tue, 4 Dec 2018 00:00:30 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Tue, 04 Dec 2018 00:00:30 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wB3F0Pu7049725
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 4 Dec 2018 00:00:30 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] printk: don't unconditionally shortcut print_time()
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
- <201811300226.wAU2Q2JG060388@www262.sakura.ne.jp>
- <20181130123027.cyqfi2k34nh2gjmx@pathway.suse.cz>
- <02b4ce85-c1e5-6601-e3a7-cecfbd5298dc@i-love.sakura.ne.jp>
- <20181203141435.iyaawog4i6ecgxyi@pathway.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <89a20c81-1def-8f09-8259-3ba552f10981@i-love.sakura.ne.jp>
-Date:   Tue, 4 Dec 2018 00:00:22 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <20181203141435.iyaawog4i6ecgxyi@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Dec 2018 10:04:40 -0500
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:52693 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbeLCPEk (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:7:1>);
+        Mon, 3 Dec 2018 10:04:40 -0500
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Mon, 03 Dec 2018 08:04:36 -0700
+Message-Id: <5C054600020000780020245F@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.0 
+Date:   Mon, 03 Dec 2018 08:04:32 -0700
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     "Marek Marczykowski" <marmarek@invisiblethingslab.com>
+Cc:     "Dwayne Litzenberger" <dlitz@dlitz.net>,
+        "Stefano Stabellini" <sstabellini@kernel.org>,
+        "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Xen-devel] [PATCH 2/2] xen-pciback: Allow
+ enabling/disabling expansion ROM
+References: <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
+ <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
+ <a05e3cf451d692dc4b1c81c8b5d66fc75d1fa325.1543772656.git-series.marmarek@invisiblethingslab.com>
+ <5C050CF3020000780020223F@prv1-mh.provo.novell.com>
+ <20181203144738.GQ781@mail-itl>
+In-Reply-To: <20181203144738.GQ781@mail-itl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/03 23:14, Petr Mladek wrote:
-> Well, IMHO, it does not explain the pagefault above. The copy_to_user()
-> could come either from syslog_print() or from syslog_print_all(). They
-> both have their own checks that prevent the buf overflow.
+>>> On 03.12.18 at 15:47, <marmarek@invisiblethingslab.com> wrote:
+> On Mon, Dec 03, 2018 at 04:01:07AM -0700, Jan Beulich wrote:
+>> >>> On 02.12.18 at 18:47, <marmarek@invisiblethingslab.com> wrote:
+>> > From: Dwayne Litzenberger <dlitz@dlitz.net>
+>> > 
+>> > Newer AMD GPUs store their initialization routines as bytecode on the
+>> > ROM.  This fixes the following initialization error inside the VM when
+>> > doing PCI passthrough:
+>> > 
+>> >     radeon 0000:00:05.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0xffff
+>> >     radeon 0000:00:05.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0xffff
+>> >     [drm:radeon_get_bios [radeon]] *ERROR* Unable to locate a BIOS ROM
+>> >     radeon 0000:00:05.0: Fatal error during GPU init
+>> 
+>> Isn't it that qemu is supposed to surface the ROM image to guests,
+>> making it unnecessary to allow guests control over the physical
+>> enable bit? 
 > 
-> The code is tricky but it looks safe now. Is it possible that
-> the crash was with some old, still broken, code? Or did you
-> add some extra changes that you used to trigger a testing
-> scenario?
+> Unless that qemu is in stubdomain, where it use pciback to access
+> everything about the device...
 
-I think I was using unmodified current linux.git, but I failed to save
-the reproducer because I was editing under /tmp directory which does not
-create a backup.
+Would be quite helpful to explain this in the description.
 
-Anyway, after this patch, no problem is occurring.
+>> Also why would allowing to alter the bit depend on
+>> whether the address portion of the value is non-zero?
+> 
+> That's a good question. According to commit message I think it should be
+> a ROM presence check instead. If needed at this point at all - is this
+> function even called if there is no ROM?
+
+I suppose this was a question to Dwayne, not me.
+
+Jan
+
+
