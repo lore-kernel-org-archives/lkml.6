@@ -2,131 +2,141 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6841C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D88DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D9F72087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:44:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D9F72087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 327112087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:44:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TzjRTYf+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 327112087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeLCRoB (ORCPT
+        id S1726863AbeLCRos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:44:01 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:17631 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbeLCRoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:44:01 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 437smq0SDrz9v0l5;
-        Mon,  3 Dec 2018 18:43:55 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id q1YpAMOjcO7b; Mon,  3 Dec 2018 18:43:55 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 437smp5m9qz9v0l4;
-        Mon,  3 Dec 2018 18:43:54 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4A55D8B7B8;
-        Mon,  3 Dec 2018 18:43:58 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id keSRY77Pu0Do; Mon,  3 Dec 2018 18:43:58 +0100 (CET)
-Received: from [192.168.232.3] (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8BB4C8B79E;
-        Mon,  3 Dec 2018 18:43:57 +0100 (CET)
-Subject: Re: [PATCH] powerpc/mm: dump block address translation on book3s/32
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, npiggin@gmail.com,
-        rashmicy@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <26cc609706833f78e3195e3d35c0372b2f40cae3.1542181167.git.christophe.leroy@c-s.fr>
- <878t1uva0q.fsf@concordia.ellerman.id.au>
- <9cb14c1f-02ce-a2a5-94e6-95afb4d3e168@c-s.fr>
- <87o9ap2uif.fsf@concordia.ellerman.id.au>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <bab9eb25-a6f4-966c-ceaa-00147b50726d@c-s.fr>
-Date:   Mon, 3 Dec 2018 18:43:57 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Mon, 3 Dec 2018 12:44:48 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:33731 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeLCRos (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:44:48 -0500
+Received: by mail-it1-f195.google.com with SMTP id m8so9013451itk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:44:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vePMyb35njo9Q/1fS/MXk3qMdTWSgBmpTI6xzm1xoLQ=;
+        b=TzjRTYf+0tBx/0onTmsLwawNJwOGyF4gTOBBs/OmbaB6SIfH2nspeqWpJdjgTKYBZ/
+         3MsloZQVyvkBMy/WO7+6ymJY8Yz7I4ha+x57MuBcnAomwpJ6oeRJHxMnQoY0R8Ny0UFo
+         yjQdCVazdtq6+8gsJkPObIKx1Oxf+iNNaLPhQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vePMyb35njo9Q/1fS/MXk3qMdTWSgBmpTI6xzm1xoLQ=;
+        b=Id7zjW8ql3WKg7382B91t4ih/g54l8SUDQ4l8ArU+28iq4Q5RJfOss8iGusmESdhBu
+         PilD765hgTVHAxCC/1gCc/VsK2Hc9KB3TrSf4Iba4ep3E4JoeCnlGE9FBjc/SnH3DRV4
+         TDYF41dh1D6KJPO4ssd1AbTi6r0aeTHLFzqm88LIyJLvNFqcw3U9U1LqmIq8SRsWP3EM
+         umaOKn0Fj+/xMfCXAzt3bjfK/ozcz4ZVa0bT5dSjib5iA6qIG9kizy83j3ICymdusVXP
+         ukX6tEfn3XrELHjOR8/OhRsa6tMnDJoWb2hkqWU5FfADtegZdlpHaKtYhyj379iD213c
+         lppg==
+X-Gm-Message-State: AA+aEWZLFKz3o3LaH3i9Oq3Z3tStNQetQUh8/UvYEv24Pw+cSuYbu2YK
+        wjBPgRMge3dz5jS0r3DksKxgghdbT3S2xQizh/jALA==
+X-Google-Smtp-Source: AFSGD/Xqb+8VI0yXXP3POQxnjWijfhuC/fSRnap/bfwZyBZN1A4soQ1THtosMW2ZOmRDDPCsKLpyQWIxqbRsyYBXaO8=
+X-Received: by 2002:a24:4e0d:: with SMTP id r13mr8237884ita.140.1543859085591;
+ Mon, 03 Dec 2018 09:44:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87o9ap2uif.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20181201005759.28093-1-eric@anholt.net> <20181201005759.28093-2-eric@anholt.net>
+In-Reply-To: <20181201005759.28093-2-eric@anholt.net>
+From:   Dave Emett <david.emett@broadcom.com>
+Date:   Mon, 3 Dec 2018 17:44:34 +0000
+Message-ID: <CAApk1dWzDOXqyUegibhjMYam-7k5Rn5KLRaYHrxu3mCeHRaznA@mail.gmail.com>
+Subject: Re: [PATCH 2/6] drm/v3d: Drop unused v3d_flush_caches().
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Thomas Spurden <thomas.spurden@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It will be needed for the CSD, which does not have a way to clean the
+L1T/L2T before reporting completion.
+In any case it's unused now, so I don't see a problem with removing it.
 
+On Sat, 1 Dec 2018 at 00:58, Eric Anholt <eric@anholt.net> wrote:
+>
+> Now that I've specified how the end-of-pipeline flushing should work,
+> we're never going to use this function.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-Le 16/11/2018 à 11:20, Michael Ellerman a écrit :
-> Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> 
->> Le 15/11/2018 à 12:46, Michael Ellerman a écrit :
->>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>>
->>>> This patch adds a debugfs file to dump block address translation:
->>>>
->>>> ~# cat /sys/kernel/debug/block_address_translation
->>>
->>> My instinct is it should be in /sys/kernel/debug/powerpc. But I guess
->>> the other page table dump files are not.
->>
->> Lol.
->>
->> Looks like we have the same instinct ...
->>
->> But you rejected my patch https://patchwork.ozlabs.org/patch/750426/ :)
-> 
-> Haha. My argument was that the kernel page table dump is not powerpc
-> specific, but this file *is* powerpc specific. Though I guess it's in
-> the same are as the page table / hash table dump, so it may as well live
-> next to them.
+Reviewed-by: Dave Emett <david.emett@broadcom.com>
 
-I see you took the first version in next-test. It doesn't handle the 
-case of 64bits phys addresses. v3 does.
-
-I just sent v4 which does to v3 the changes you did (__init and powerpc/ 
-subdir)
-
-Christophe
-
-> 
->>>> diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
->>>> index ca96e7be4d0e..2adad10b5856 100644
->>>> --- a/arch/powerpc/mm/Makefile
->>>> +++ b/arch/powerpc/mm/Makefile
->>>> @@ -47,7 +47,7 @@ ifdef CONFIG_PPC_PTDUMP
->>>>    obj-$(CONFIG_4xx)		+= dump_linuxpagetables-generic.o
->>>>    obj-$(CONFIG_PPC_8xx)		+= dump_linuxpagetables-8xx.o
->>>>    obj-$(CONFIG_PPC_BOOK3E_MMU)	+= dump_linuxpagetables-generic.o
->>>> -obj-$(CONFIG_PPC_BOOK3S_32)	+= dump_linuxpagetables-generic.o
->>>> +obj-$(CONFIG_PPC_BOOK3S_32)	+= dump_linuxpagetables-generic.o dump_bats.o
->>>
->>> BOOK3S_32 covers quite a lot of CPUs.
->>>
->>> But below the only check is that you're on 601 or 603.
->>>
->>> So is the 603 code going to work on all other BOOK3S_32 CPUs?
->>
->> If I understand function setbat() correctly, it should.
->>
->> See
->> https://elixir.bootlin.com/linux/v4.20-rc1/source/arch/powerpc/mm/ppc_mmu_32.c#L115
->> Tell me if you see something I missed.
-> 
-> I don't know those 32-bit CPUs at all, so as long as you've thought
-> about it that's good enough for me. We can catch bugs in testing anyway.
-> 
-> cheers
-> 
+> ---
+>  drivers/gpu/drm/v3d/v3d_drv.h |  1 -
+>  drivers/gpu/drm/v3d/v3d_gem.c | 21 ---------------------
+>  2 files changed, 22 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index bcd3d567bec2..239b56d76f3e 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -314,7 +314,6 @@ void v3d_exec_put(struct v3d_exec_info *exec);
+>  void v3d_tfu_job_put(struct v3d_tfu_job *exec);
+>  void v3d_reset(struct v3d_dev *v3d);
+>  void v3d_invalidate_caches(struct v3d_dev *v3d);
+> -void v3d_flush_caches(struct v3d_dev *v3d);
+>
+>  /* v3d_irq.c */
+>  void v3d_irq_init(struct v3d_dev *v3d);
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index 8b4af512450f..34103205b7cb 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -175,20 +175,6 @@ v3d_invalidate_slices(struct v3d_dev *v3d, int core)
+>                        V3D_SET_FIELD(0xf, V3D_SLCACTL_ICC));
+>  }
+>
+> -/* Invalidates texture L2 cachelines */
+> -static void
+> -v3d_invalidate_l2t(struct v3d_dev *v3d, int core)
+> -{
+> -       V3D_CORE_WRITE(core,
+> -                      V3D_CTL_L2TCACTL,
+> -                      V3D_L2TCACTL_L2TFLS |
+> -                      V3D_SET_FIELD(V3D_L2TCACTL_FLM_CLEAR, V3D_L2TCACTL_FLM));
+> -       if (wait_for(!(V3D_CORE_READ(core, V3D_CTL_L2TCACTL) &
+> -                      V3D_L2TCACTL_L2TFLS), 100)) {
+> -               DRM_ERROR("Timeout waiting for L2T invalidate\n");
+> -       }
+> -}
+> -
+>  void
+>  v3d_invalidate_caches(struct v3d_dev *v3d)
+>  {
+> @@ -199,13 +185,6 @@ v3d_invalidate_caches(struct v3d_dev *v3d)
+>         v3d_flush_l2t(v3d, 0);
+>  }
+>
+> -void
+> -v3d_flush_caches(struct v3d_dev *v3d)
+> -{
+> -       v3d_invalidate_l1td(v3d, 0);
+> -       v3d_invalidate_l2t(v3d, 0);
+> -}
+> -
+>  static void
+>  v3d_attach_object_fences(struct v3d_bo **bos, int bo_count,
+>                          struct dma_fence *fence)
+> --
+> 2.20.0.rc1
+>
