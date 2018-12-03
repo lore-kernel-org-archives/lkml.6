@@ -2,204 +2,115 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B74CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDB5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D0DB2064A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0DB2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 30F9A20864
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:28:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lV6HDqE/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30F9A20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbeLCW2Y (ORCPT
+        id S1726107AbeLCW2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:28:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48156 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725893AbeLCW2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:28:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4404CAE46;
-        Mon,  3 Dec 2018 22:28:21 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>
-Date:   Tue, 04 Dec 2018 09:28:13 +1100
-Cc:     tgraf@suug.ch, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, eric.dumazet@gmail.com
-Subject: [PATCH] rhashtable: detect when object movement between tables might have invalidated a lookup
-In-Reply-To: <20181203014405.ohmoljrgmrjis3qr@gondor.apana.org.au>
-References: <87muqbtev6.fsf@notabene.neil.brown.name> <20181116055551.zxfydbpoicslsfkg@gondor.apana.org.au> <878t1tece0.fsf@notabene.neil.brown.name> <87pnuno479.fsf@notabene.neil.brown.name> <20181201084727.6mfh46yshxdoba4h@gondor.apana.org.au> <878t17o9js.fsf@notabene.neil.brown.name> <20181203014405.ohmoljrgmrjis3qr@gondor.apana.org.au>
-Message-ID: <871s6y8cua.fsf@notabene.neil.brown.name>
+        Mon, 3 Dec 2018 17:28:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725893AbeLCW2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:28:43 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6D3B2064A;
+        Mon,  3 Dec 2018 22:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543876122;
+        bh=XGiQXrRMQGaufxGbz5Xbdb3hIvIJ/43Qjjwpu8sxr/E=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=lV6HDqE/oulB0F0sSL4S6+I3e05leljhJODzanTrK/cnt1x17FbNTYOFKFBYhys+S
+         pd+IfVZbw7T8b5Cjw3Qi5NY+J4t1CQTbyro2jx7pbrd/XxoeERXGxAelzMxmA/t0qN
+         ptJyTOS8AxEN5RKsfj1MGtNm8LeDK6s/09uQzxNk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181203231655.4e7dc330@xps13>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+References: <20181122212212.16039-3-miquel.raynal@bootlin.com>
+ <201811231627.H7ojlKLL%fengguang.wu@intel.com>
+ <20181123101132.6be3829c@xps13>
+ <154356998033.88331.4426431020982838779@swboyd.mtv.corp.google.com>
+ <20181130112052.73d943ec@xps13>
+ <154386483105.88331.13970025193347328031@swboyd.mtv.corp.google.com>
+ <20181203231655.4e7dc330@xps13>
+Message-ID: <154387612188.88331.1486215045607446526@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
+Date:   Mon, 03 Dec 2018 14:28:41 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Quoting Miquel Raynal (2018-12-03 14:16:55)
+> Stephen Boyd <sboyd@kernel.org> wrote on Mon, 03 Dec 2018 11:20:31
+> -0800:
+> > Quoting Miquel Raynal (2018-11-30 02:20:52)
+> > > Stephen Boyd <sboyd@kernel.org> wrote on Fri, 30 Nov 2018 01:26:20
+> > > -0800:
+> > > > Quoting Miquel Raynal (2018-11-23 01:11:32)  =
+
+> > > =
+
+> > > Because we need the caller's 'struct device' to make the link and
+> > > this is not available in __clk_get(). I tried to ad it as parameter b=
+ut
+> > > I don't think it is possible to retrieve a 'struct device' from the
+> > > device name. The functions where this is problematic are:
+> > > * clk.c:__of_clk_get_from_provider()
+> > > * clkdev.c:clk_get_sys()
+> > > =
+
+> > > By the way in my new version I called the helpers:
+> > > * clk_{link,unlink}_hierarchy()
+> > > * clk_{link,unlink}_consumer()
+> > > =
+
+> > > I will send a new version with these helpers, but if you have anything
+> > > in mind to help me achieve the above request, I will welcome the idea.
+> > >   =
+
+> > =
+
+> > We can do the linking in __clk_get() and __clk_put() if we poke into the
+> > struct clk -> struct clk_core and bury the struct device into each
+> > clk_core structure.
+> > =
+
+> =
+
+> I meant the consumer device's structure. Yes, from a struct clk, the
+> first change in patch 1/2 let's us do clk->core->dev to get the clock
+> device. But for linking I need both the clock device and the consumer
+> device; and the latter will be missing in __clk_get().
+> =
 
 
-Some users of rhashtables might need to move an object from one table
-to another -  this appears to be the reason for the incomplete usage
-of NULLS markers.
+Ah ok, sounds like this is how it has to be then.
 
-To support these, we store a unique NULLS_MARKER at the end of
-each chain, and when a search fails to find a match, we check
-if the NULLS marker found was the expected one.  If not, the search
-may not have examined all objects in the target bucket, so it is
-repeated.
-
-The unique NULLS_MARKER is derived from the address of the
-head of the chain.  As this cannot be derived at load-time the
-static rhnull in rht_bucket_nested() needs to be initialised
-at run time.
-
-Any caller of a lookup function must still be prepared for the
-possibility that the object returned is in a different table - it
-might have been there for some time.
-
-Note that this does NOT provide support for other uses of
-NULLS_MARKERs such as allocating with SLAB_TYPESAFE_BY_RCU or changing
-the key of an object and re-inserting it in the same table.
-These could only be done safely if new objects were inserted
-at the *start* of a hash chain, and that is not currently the case.
-
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
-
-Thanks Herbert,
- here is the patch complete with the Acked-by incase that makes it easer
- to apply.
-
-Thanks,
-NeilBrown
-
-
- include/linux/rhashtable.h | 34 ++++++++++++++++++++++++++--------
- lib/rhashtable.c           |  8 +++++---
- 2 files changed, 31 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index eb7111039247..20f9c6af7473 100644
-=2D-- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -75,8 +75,19 @@ struct bucket_table {
- 	struct rhash_head __rcu *buckets[] ____cacheline_aligned_in_smp;
- };
-=20
-+/*
-+ * NULLS_MARKER() expects a hash value with the low
-+ * bits mostly likely to be significant, and it discards
-+ * the msb.
-+ * We git it an address, in which the bottom 2 bits are
-+ * always 0, and the msb might be significant.
-+ * So we shift the address down one bit to align with
-+ * expectations and avoid losing a significant bit.
-+ */
-+#define	RHT_NULLS_MARKER(ptr)	\
-+	((void *)NULLS_MARKER(((unsigned long) (ptr)) >> 1))
- #define INIT_RHT_NULLS_HEAD(ptr)	\
-=2D	((ptr) =3D (typeof(ptr)) NULLS_MARKER(0))
-+	((ptr) =3D RHT_NULLS_MARKER(&(ptr)))
-=20
- static inline bool rht_is_a_nulls(const struct rhash_head *ptr)
- {
-@@ -471,6 +482,7 @@ static inline struct rhash_head *__rhashtable_lookup(
- 		.ht =3D ht,
- 		.key =3D key,
- 	};
-+	struct rhash_head __rcu * const *head;
- 	struct bucket_table *tbl;
- 	struct rhash_head *he;
- 	unsigned int hash;
-@@ -478,13 +490,19 @@ static inline struct rhash_head *__rhashtable_lookup(
- 	tbl =3D rht_dereference_rcu(ht->tbl, ht);
- restart:
- 	hash =3D rht_key_hashfn(ht, tbl, key, params);
-=2D	rht_for_each_rcu(he, tbl, hash) {
-=2D		if (params.obj_cmpfn ?
-=2D		    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
-=2D		    rhashtable_compare(&arg, rht_obj(ht, he)))
-=2D			continue;
-=2D		return he;
-=2D	}
-+	head =3D rht_bucket(tbl, hash);
-+	do {
-+		rht_for_each_rcu_continue(he, *head, tbl, hash) {
-+			if (params.obj_cmpfn ?
-+			    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
-+			    rhashtable_compare(&arg, rht_obj(ht, he)))
-+				continue;
-+			return he;
-+		}
-+		/* An object might have been moved to a different hash chain,
-+		 * while we walk along it - better check and retry.
-+		 */
-+	} while (he !=3D RHT_NULLS_MARKER(head));
-=20
- 	/* Ensure we see any new tables. */
- 	smp_rmb();
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 30526afa8343..852ffa5160f1 100644
-=2D-- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -1179,8 +1179,7 @@ struct rhash_head __rcu **rht_bucket_nested(const str=
-uct bucket_table *tbl,
- 					    unsigned int hash)
- {
- 	const unsigned int shift =3D PAGE_SHIFT - ilog2(sizeof(void *));
-=2D	static struct rhash_head __rcu *rhnull =3D
-=2D		(struct rhash_head __rcu *)NULLS_MARKER(0);
-+	static struct rhash_head __rcu *rhnull;
- 	unsigned int index =3D hash & ((1 << tbl->nest) - 1);
- 	unsigned int size =3D tbl->size >> tbl->nest;
- 	unsigned int subhash =3D hash;
-@@ -1198,8 +1197,11 @@ struct rhash_head __rcu **rht_bucket_nested(const st=
-ruct bucket_table *tbl,
- 		subhash >>=3D shift;
- 	}
-=20
-=2D	if (!ntbl)
-+	if (!ntbl) {
-+		if (!rhnull)
-+			INIT_RHT_NULLS_HEAD(rhnull);
- 		return &rhnull;
-+	}
-=20
- 	return &ntbl[subhash].bucket;
-=20
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwFrf4ACgkQOeye3VZi
-gbnPiA/+J5J5rVNWFPtDtzgbcm6lbxB63jXoVfqMzNMYfhX1AyqZDSo55l7fOAj2
-A5u5fX7KB5CuxFQreeBAbxd5jeeQ7LMFIahzPPjkLkfnxmNNlsQLVRVC1LyXbWPk
-/crGeqVv0evkwodVSLlEdgH802lFjEZPp/2OLyBOswJWIsCLn2TJskf4SxsXbkO1
-o9c1TquGT+ZPtI0o39ymwVFDwrer6AyYOat4Yl7oROzd2f0c+bHSpFj3dC/h3TDR
-V+usq12tgBg6XRxCTA3cfwSZpcczaC777Bx1fXoNCwhUhtJlqfq/MS2Q6tOGy7iW
-NVnEpCydGNDDwytfeBfnPspAurG9bR1aNIzyc3Oawavd7kB002tKKqcrXUYxQZ0W
-BU9Vi4/ViLvAMbBJYuIpq+D3IYdiTdC1wCDdO2X9fl2PTVEcHQRStIQGz8ELk0HD
-74tDyR7k9q9oBDMkumG2gYKlU1f0VNQQtPNy2ZDYtKf9pUKRcMP/J4LiZ/jXHJ9S
-QeEcN8k50q5taap8Da20tytFsyuzlMKcZ1ykOy5PNsbwNpYSxt9+bCqCKAKWsOiI
-XKAD/7UF8anQPSEaw9zjqjbGyKBNNv9dKOs/RhiEQP0c7GuHqBclgInlKgsYBv+0
-zHSgsa2A2J3dyvVABxKiE2dH0G0bZ1jcSSumUcmccEN2EfI+Sdc=
-=RoAF
------END PGP SIGNATURE-----
---=-=-=--
