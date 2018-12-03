@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD57C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37577C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50822208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFAFB2081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuiLwFv7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50822208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRfuqzEB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFAFB2081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeLCTb7 (ORCPT
+        id S1726152AbeLCTcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:31:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49072 "EHLO mail.kernel.org"
+        Mon, 3 Dec 2018 14:32:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbeLCTb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:31:58 -0500
+        id S1725890AbeLCTcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:32:00 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64F4B214D9;
-        Mon,  3 Dec 2018 19:31:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8176D214DA;
+        Mon,  3 Dec 2018 19:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543865512;
-        bh=A7/igc0CZhhDZenx7tAoa1nrc70SuLXpbM8leEwrcBM=;
+        s=default; t=1543865514;
+        bh=ws6yoJN0AnKnRiXpv6WsuEgsFoE6iblcQQqW8ELNDo4=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=AuiLwFv776oiyZDCNtaALYb+RydKpP6SGfdelqBQ7dzOsroyI/LpWWO5LPRdM4uT6
-         2k+3D//RkYCtuVhm70Cb9GBTmoCma6t/zESugqsGxdXK/gqy6o0R5am2GW6r7tCXni
-         sXOv2DYWGcGfuBZQtYIDkqyPQ+Z7yyQDDc7n9NRY=
+        b=NRfuqzEB1eQ6Ixjo3hHMYl35PO4qG/FRLE0BhKEyG2qfMD8MAEnPaSIMwCVI8KlrN
+         BYB4mcZ8fkcwvYzTwi2sj1PkAe3IRj9tGhhAHkAe+fOJPtpVWSqCw1G2iYs6DKVSDk
+         rP18c3ZPkCR62U7uz3LraIJKu4u2P6W2cGJ+Y+gI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     "A.s. Dong" <aisheng.dong@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1542200198-3017-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1542200198-3017-5-git-send-email-aisheng.dong@nxp.com>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
@@ -53,24 +53,22 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Stephen Boyd <sboyd@codeaurora.org>
 References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
- <1542200198-3017-4-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <154386551184.88331.6087190803273481557@swboyd.mtv.corp.google.com>
+ <1542200198-3017-5-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <154386551400.88331.12173074855161410328@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH V6 3/9] clk: imx: add pllv4 support
-Date:   Mon, 03 Dec 2018 11:31:51 -0800
+Subject: Re: [PATCH V6 4/9] clk: imx: add pfdv2 support
+Date:   Mon, 03 Dec 2018 11:31:54 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting A.s. Dong (2018-11-14 05:01:43)
-> pllv4 is designed for System Clock Generation (SCG) module observed
-> in IMX ULP SoC series. e.g. i.MX7ULP.
+Quoting A.s. Dong (2018-11-14 05:01:47)
+> The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
+> Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
 > =
 
-> The SCG modules generates clock used to derive processor, system,
-> peripheral bus and external memory interface clocks while this patch
-> intends to support the PLL part.
+> NOTE pfdv2 can only be operated when clk is gated.
 > =
 
 > Cc: Stephen Boyd <sboyd@codeaurora.org>
