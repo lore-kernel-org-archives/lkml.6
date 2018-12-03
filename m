@@ -2,99 +2,89 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9E0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BBAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7213D20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2966A20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:41:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pMk4DEJY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7213D20848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="K8tcjISN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2966A20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbeLCUjh (ORCPT
+        id S1726030AbeLCUlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:39:37 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43218 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLCUjh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:39:37 -0500
-Received: by mail-pg1-f196.google.com with SMTP id v28so6238002pgk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 12:39:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=QOQGNXmWwBfLmQecrK1pXi7DjtkunKaw9mj2GLJuEGI=;
-        b=pMk4DEJYttV+dALHqlAHCSmFwOuuUzTcV/DVapqjiUxUUMN62bz0/W0ZVVTjjDpr/f
-         ixEIFdkWEqs7xRATE8E4KL7aEiMqD89J849M3i7IaN94F9bdup548eXpas3I1O0WCEyq
-         FdytHw/IEH59dCdHb5WuHv70ZdgV+XsB34bpWsgsUwWD2glsrC3IUO8EIVWhbbVnbiN2
-         3abSiF3A2CjJq+Au6MxclOqpgF0kU9ny2EJuKBaSDmUsKERPZCYX5y/YW4OOjXF2NmR0
-         Q9dPpezgSexvvM8zWoIOSUbtkcHqK+Te6Yf4G2pdTay03GkeXCvA8iKIUIoVq4uPoj0K
-         vhXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=QOQGNXmWwBfLmQecrK1pXi7DjtkunKaw9mj2GLJuEGI=;
-        b=ES22vUoaVezzX6WTJzqJbNm/EeHl4QdmAQjj4Q32DRV+6kO3jq7UgFp5TiTjfqghgp
-         bRdlpfvtEFIoaql1dPsOuXXUyYX/d8nOznekV10qHOXH1qtSUHv94uaSSiBFehOUo+MQ
-         kYWBhPpI6/DjBkBm7zC+7eXfw/fpNlT1p1bUK647/jRbxdosKAZaGU28YRfgzlwaitkx
-         oT/9Idq3x06znfHkThzg+cny71lO1bsbEyAmxgGfkfd2G6I0cYckP9EijVWbS7nqv9im
-         YSEIHTcoSIB2FsS7BlrL1C0txVYPozGrso9wv1NXjxKMlc5dA/GR3MqpOjwVoEMfGp7C
-         ch2g==
-X-Gm-Message-State: AA+aEWbWVHoD2leiV6LodAssu1g738+j5cu3yjNftlxUP6oH/yudB186
-        SxqmJb0MQqxQnqK10qrUWu5Yig==
-X-Google-Smtp-Source: AFSGD/UJKlaWApbB/RV36eghbeC6WP/Qcmn0Og1ETUTgpcGHJTSlyFVRpn+iouvpjUns/ELGXY3OIA==
-X-Received: by 2002:a65:484c:: with SMTP id i12mr14405887pgs.309.1543869575663;
-        Mon, 03 Dec 2018 12:39:35 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id u123sm15987810pfb.1.2018.12.03.12.39.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 12:39:34 -0800 (PST)
-Date:   Mon, 3 Dec 2018 12:39:34 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ying.huang@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
-        s.priebe@profihost.ag, mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-In-Reply-To: <20181203185954.GM31738@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1812031237340.192288@chino.kir.corp.google.com>
-References: <20181127062503.GH6163@shao2-debian> <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com> <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com> <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
- <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com> <20181203181456.GK31738@dhcp22.suse.cz> <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com> <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
- <20181203185954.GM31738@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 3 Dec 2018 15:41:08 -0500
+Received: from ozlabs.org ([203.11.71.1]:59011 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbeLCUlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 15:41:08 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 437xjF4mzYz9s8J;
+        Tue,  4 Dec 2018 07:41:05 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543869665;
+        bh=mbYZmNMz3kAzhPnsKbEpoJXV7LzN8biWMBuPhjMVDgU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=K8tcjISNZLJZuy0YuWT5aj4wxhO6dbFVEFoefaGaEnG0ntJJIhYg1DeI+5VTB7ATK
+         oqAzJwAUJnXOqLzcEby2/5fVI2owoBTWiduapWTv3H4SxTux28tgFzOw6/WjbRC0Gp
+         S123BNABEOFfbxJ99z2JCaGPDt9Ms7/9Ye/vEk9rZpCsdfXwclffgwWV73GHFlGva+
+         S4iyBFsuyaLrE/QLJJ43kplLBuOlVn0sn+BaXFEnkC56y3MpkEBziGvJfGNGRZd/yi
+         XT5HiTYSgEIEeHUZDthgZaO/ntPHOsZZnJlIuub1bMM19mauUNNtMGb8+ttPGM+U73
+         XlqmW7RJUpNhQ==
+Date:   Tue, 4 Dec 2018 07:40:58 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: error when trying to fetch the mediatek tree
+Message-ID: <20181204074058.3bd8e572@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ezLLCIWa3MfzDzcqZ4afkKy"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Dec 2018, Michal Hocko wrote:
+--Sig_/ezLLCIWa3MfzDzcqZ4afkKy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> I have merely said that a better THP locality needs more work and during
-> the review discussion I have even volunteered to work on that. There
-> are other reclaim related fixes under work right now. All I am saying
-> is that MADV_TRANSHUGE having numa locality implications cannot satisfy
-> all the usecases and it is particurarly KVM that suffers from it.
+Hi Matthias,
 
-I think extending functionality so thp can be allocated remotely if truly 
-desired is worthwhile just so long as it does not cause regressions for 
-other users.  I think that is separate from the swap storm regression that 
-Andrea is reporting, however, since that would also exist even if we 
-allowed remote thp allocations when the host is fully fragmented rather 
-than only locally fragmented.
+Fetching the mediatek tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/matthias.bgg/linux.git
+branch for-next) produces this error:
+
+fatal: Couldn't find remote ref refs/heads/for-next
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ezLLCIWa3MfzDzcqZ4afkKy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwFlNoACgkQAVBC80lX
+0Gx0vgf/QuTnptJy9m6Wj46wIWpZLF2Au7OtS0cVRi7AsfKdu+6/GdEBeDqiFQlE
+1ekWrHXW4u5LDgtSOTPYzPTQWWdGJyFAO24PAxyZOcpd57epY2+8z0IlatFBJc+Q
+LrOELk9FGE+PgQufplT2YOKURN2nstDnnuj7JIrGk9kwUGJ7eUSxuLybseXKvilt
+LsL849dQZENSMtUDhAa69qS2JihfoX/shoIXdhmXitULoWw1xmWomcEa2nqSVxQj
+BNK4/3OeK7+ldJPQKRzaeQMOvUkbM6Je78PBsZPQ5WraozwWPOjpGmGImMZ8HrrT
+boHtzs66JQnVJEwV587gxca1dGxkrQ==
+=H+Iz
+-----END PGP SIGNATURE-----
+
+--Sig_/ezLLCIWa3MfzDzcqZ4afkKy--
