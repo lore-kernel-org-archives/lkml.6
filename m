@@ -2,139 +2,273 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C98C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0C5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B8720851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:06:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B8720851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id A7D8820834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:08:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ju/sYDU6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D8820834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbeLCPGK (ORCPT
+        id S1726661AbeLCPIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:06:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37110 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726162AbeLCPGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:06:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3119CAD47;
-        Mon,  3 Dec 2018 15:06:04 +0000 (UTC)
-Date:   Mon, 3 Dec 2018 16:06:03 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
-References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
- <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+        Mon, 3 Dec 2018 10:08:20 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:39166 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726571AbeLCPIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:08:20 -0500
+Received: from zn.tnic (p200300EC2BC7BF00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:bf00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 88BEB1EC0AD8;
+        Mon,  3 Dec 2018 16:08:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1543849694;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=J0Tqf09DNMfVBdKSHHtU0DNCEkMAmNB81Xrfo67qcjU=;
+        b=ju/sYDU69jOA9RqAwU+Ha1V/MFAboZq+MBHHpqZtUWjbtSI2Ycoy6kxCQ6+5higjrvJOJf
+        gFCQa7AkWapcc1vDZbmFMUWUw7HEzd8ugFK1netsewSImV7qCYREUtRx9+pnDRj7pWDz0D
+        q8fi8gO4AzfkFIOtE30k4n/rJj+9KP4=
+Date:   Mon, 3 Dec 2018 16:08:09 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Lianbo Jiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
+Message-ID: <20181203150809.GA4794@zn.tnic>
+References: <20181202030839.29945-1-lijiang@redhat.com>
+ <20181202030839.29945-2-lijiang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20181202030839.29945-2-lijiang@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 2018-12-01 23:44:37, Tetsuo Handa wrote:
-> On 2018/12/01 0:40, Petr Mladek wrote:
-> >> Some examples for console output:
-> >>
-> >>   [    0.293000] [T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
-> >>   [    0.299733] [T1] Performance Events: Haswell events, core PMU driver.
-> >>   [    2.813808] [T35] clocksource: Switched to clocksource tsc
-> >>   [    2.893984] [C0] random: fast init done
-> >                   ^
-> > 
-> > Please, remove the space between the timestamp and the from field.
+Add some more Ccs.
+
+On Sun, Dec 02, 2018 at 11:08:38AM +0800, Lianbo Jiang wrote:
+> This document lists some variables that export to vmcoreinfo, and briefly
+> describles what these variables indicate. It should be instructive for
+> many people who do not know the vmcoreinfo, and it also normalizes the
+> exported variable as a standard ABI between kernel and use-space.
+
+Yeah, I'm not sure about it being an ABI. Apparently, it is considered
+too tightly coupled to the kernel for it to be an ABI.
+
+Regardless, thanks for doing that.
+
+> Suggested-by: Borislav Petkov <bp@suse.de>
+> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+> ---
+>  Documentation/kdump/vmcoreinfo.txt | 400 +++++++++++++++++++++++++++++
+>  1 file changed, 400 insertions(+)
+>  create mode 100644 Documentation/kdump/vmcoreinfo.txt
 > 
-> This space was emitted by print_time(). Do we want to modify print_time()
-> not to emit this space if the from field is printed?
+> diff --git a/Documentation/kdump/vmcoreinfo.txt b/Documentation/kdump/vmcoreinfo.txt
 
-Exactly. This is what I thought about.
- 
-> If we modify print_time(), I think that the leading spaces inserted by "%5lu"
-> makes little sense, for "%5lu" is too small for systems with uptime >= 1.16 days
-> and parsers after all cannot assume fixed length for the timestamp field. Then,
-> we could change from "%5lu.%06lu" to "%lu.%06lu" so that parsers (like /bin/awk)
-> can get prefix part using white spaces as a delimiter.
+Aren't we adding new docs in rst format only or what is the logic there?
 
-My primary concern was a human readability. The different header columns
-are separated by brackets and the message itself is separated by the space.
+Jon?
 
-awk could easily use \[ as the separator.
+> new file mode 100644
+> index 000000000000..c6759be14af7
+> --- /dev/null
+> +++ b/Documentation/kdump/vmcoreinfo.txt
+> @@ -0,0 +1,400 @@
+> +================================================================
+> +		Documentation for Vmcoreinfo
+> +================================================================
+> +
+> +=======================
+> +What is the vmcoreinfo?
+> +=======================
+> +The vmcoreinfo contains the first kernel's various information, for
 
-But you made a good point about the column width. The text might be
-hard to read when every line of text starts on a different column. And
-the might be bigger differences for the task id. It might be useful to
-add some reasonable default width also for the for the "from_id" column.
+The first sentence here should be explaining what VMCOREINFO is: it is
+an ELF PT_NOTE section. So that people can go, oh ok, it is a special
+ELF section, when reading.
 
-> If we want to reduce space, do we want to do like
-> 
->   [0.293000@T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
->   [0.299733@T1] Performance Events: Haswell events, core PMU driver.
->   [2.813808@T35] clocksource: Switched to clocksource tsc
->   [2.893984@C0] random: fast init done
+Then, MAKEDUMPFILE(8) spells VMCOREINFO in all caps and I think we
+should do that too here, for ease of recognition.
 
-Hmm, this is pretty hard to parse by my eyes. Also it changes the format
-of the timestamp column.
+Btw, do we have a makedumpfile switch or a tool/script which dumps
+VMCOREINFO contents in human-readable form?
 
-I think that the following might give the best human user experience:
+Maybe something nicer than:
 
-[    0.293000][     T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
-[    0.299733][     T1] Performance Events: Haswell events, core PMU driver.
-[    2.813808][    T35] clocksource: Switched to clocksource tsc
-[    2.893984][     C0] random: fast init done
+$ hexdump -C /proc/kcore
 
+> +example, structure size, page size, symbol values and field offset,
+> +etc. These data are encapsulated into an elf format, and these data
+> +will also help user-space tools(e.g. makedumpfile, crash) analyze the
+> +first kernel's memory usage.
+> +
+> +================
+> +Common variables
+> +================
+> +
+> +init_uts_ns.name.release
+> +========================
+> +The number of OS release.
+> +
+> +PAGE_SIZE
+> +=========
+> +The size of a page. It is usually 4k bytes.
+> +
+> +init_uts_ns
+> +===========
+> +This is the UTS namespace, which is used to isolate two specific elements
+> +of the system that relate to the uname system call. The UTS namespace is
+> +named after the data structure used to store information returned by the
+> +uname system call.
 
-> >> @@ -1037,6 +1054,9 @@ void log_buf_vmcoreinfo_setup(void)
-> >>  	VMCOREINFO_OFFSET(printk_log, len);
-> >>  	VMCOREINFO_OFFSET(printk_log, text_len);
-> >>  	VMCOREINFO_OFFSET(printk_log, dict_len);
-> >> +#ifdef CONFIG_PRINTK_FROM
-> >> +	VMCOREINFO_OFFSET(printk_log, from_id);
-> >> +#endif
-> > 
-> > The crash tool would need to be updated if anyone wanted to read
-> > the log from the extended structure. Well, it might be done later
-> > if people start using it more widely.
-> 
-> Since syzbot can utilize output from only normal consoles, I can
-> keep extended records unmodified for now.
+Those non-obvious exports should also have a short explanation why
+they're part of VMCOREINFO.
 
-Please, add VMCOREINFO_OFFSET(printk_log, from_id) so that crashdump
-can be updated when necessary.
+> +
+> +node_online_map
+> +===============
+> +It is a macro definition, actually it is an arrary node_states[N_ONLINE],
+> +and it represents the set of online node in a system, one bit position
+> +per node number.
 
-> > 
-> > I think about adding one more filed "u8 version". It would help
-> > to solve the external compatibility in the long term.
-> 
-> /dev/kmsg format allows adding more fields, but that format did not define
-> how to tell what fields are there. If fields are conditionally added by
-> kernel config options, I don't think that "u8 version" field helps.
-> Unless we add fields unconditionally, we will need to use $name=$value
-> (where $name and $value must not contain ',' and ';') representation.
+Ditto.
 
-/dev/kmsg uses key=value notation. It does not need any version. The
-version filed was intended for crashdump. It would make the life
-easier for its maintainers.
+So yeah, people can find out what those things are but I think it is
+more important to state here *why* they're part of VMCOREINFO and how
+they're used and why they're exported.
 
-Well, I do not resist on it. Let's put the version field aside for now.
+Who knows, some might turn out to be not needed anymore. :)
 
-Best Regards,
-Petr
+> +
+> +swapper_pg_dir
+> +=============
+> +It is always an array, it gerenally stands for the pgd for the kernel.
+> +When mmu is enabled in config file, the 'swapper_pg_dir' is valid.
+> +
+> +_stext
+> +======
+> +It is an assemble directive that defines the beginning of the text section.
+
+That's an assembly symbol.
+
+> +In gerenal, the '_stext' indicates the kernel start address.
+> +
+> +vmap_area_list
+> +==============
+> +It stores the virtual area list, makedumpfile can get the vmalloc start
+> +value according to this variable.
+
+"... from this variable."
+
+> +
+> +mem_map
+> +=======
+> +Physical addresses are translated to struct pages by treating them as an
+> +index into the mem_map array. Shifting a physical address PAGE_SHIFT bits
+> +to the right will treat it as a PFN from physical address 0, which is also
+> +an index within the mem_map array.
+> +
+> +In a word, it can map the address to struct page.
+
+"In short, ... "
+
+> +
+> +contig_page_data
+> +================
+> +Makedumpfile can get the pglist_data structure according to this symbol
+
+Please look up in the dictionary what "according" means. Using it in
+this context is at least weird.
+
+> +'contig_page_data'. The pglist_data structure is used to describe the
+> +memory layout.
+> +
+> +mem_section|(mem_section, NR_SECTION_ROOTS)|(mem_section, section_mem_map)
+> +==========================================================================
+> +Export the address of 'mem_section' array, and it's length, structure size,
+> +and the 'section_mem_map' offset.
+> +
+> +It exists in the sparse memory mapping model, and it is also somewhat
+> +similar to the mem_map variable, both of them will help to translate
+> +the address.
+> +
+> +page
+> +====
+> +The size of a 'page' structure.
+> +
+> +pglist_data
+> +===========
+> +The size of a 'pglist_data' structure.
+> +
+> +zone
+> +====
+> +The size of a 'zone' structure.
+> +
+> +free_area
+> +=========
+> +The size of a 'free_area' structure.
+> +
+> +list_head
+> +=========
+> +The size of a 'list_head' structure.
+> +
+> +nodemask_t
+> +==========
+> +The size of a 'nodemask_t' type.
+> +
+> +(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
+> +       compound_order|compound_head)
+> +===================================================================
+> +The page structure is a familiar concept for most of linuxer, there is no
+> +need to explain too much.
+
+Just delete that sentence.
+
+> To know more information, please refer to the
+> +definition of the page struct(include/linux/mm_types.h).
+> +
+> +(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
+> +              spanned_pages|node_id)
+> +===================================================================
+> +On NUMA machines, each NUMA node would have a pg_data_t to describe
+
+s/would have/has/
+
+> +it's memory layout. On UMA machines there is a single pglist_data which
+> +describes the whole memory.
+> +
+> +The pglist_data structure contains these varibales, here export their
+					    ^^^^^^^^^
+
+Before you send next time, run the *whole* text through a spellchecker.
+
+> +offset in the pglist_data structure, which is defined in this file
+> +"include/linux/mmzone.h".
+
+You don't have to state where stuff is defined - I hope everyone
+should be able to grep.
+
+...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
