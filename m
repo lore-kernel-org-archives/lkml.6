@@ -2,307 +2,80 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB8AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E777FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C1C20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:06:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C1C20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BA5FD20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5FD20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbeLCOHw (ORCPT
+        id S1726560AbeLCOIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:07:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbeLCOHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:07:52 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C2512C049593;
-        Mon,  3 Dec 2018 14:06:42 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D9BB86A52A;
-        Mon,  3 Dec 2018 14:06:37 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v3] x86/hyper-v: Mark TLFS structures packed
-Date:   Mon,  3 Dec 2018 15:06:36 +0100
-Message-Id: <20181203140636.21912-1-vkuznets@redhat.com>
+        Mon, 3 Dec 2018 09:08:22 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:51244 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725888AbeLCOIV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 09:08:21 -0500
+X-IronPort-AV: E=Sophos;i="5.56,310,1539640800"; 
+   d="scan'208";a="358492938"
+Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 15:07:11 +0100
+Date:   Mon, 3 Dec 2018 15:07:07 +0100 (CET)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        mingo@redhat.com, will.deacon@arm.com
+Subject: Re: [PATCH] locktorture: Fix assignment of boolean variables
+In-Reply-To: <20181203105045.GD11573@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.20.1812031506200.23279@hadrien>
+References: <20181201083149.36972-1-wen.yang99@zte.com.cn> <20181201203700.GW4170@linux.ibm.com> <20181203083500.GH11614@hirez.programming.kicks-ass.net> <20181203084605.GC11650@hirez.programming.kicks-ass.net> <alpine.DEB.2.20.1812031016330.7942@hadrien>
+ <20181203105045.GD11573@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 03 Dec 2018 14:06:43 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TLFS structures are used for hypervisor-guest communication and must
-exactly meet the specification.
 
-Compilers can add alignment padding to structures or reorder struct members
-for randomization and optimization, which would break the hypervisor ABI.
 
-Mark the structures as packed to prevent this.
+On Mon, 3 Dec 2018, Peter Zijlstra wrote:
 
-Suggested-by: Nadav Amit <nadav.amit@gmail.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Nadav Amit <nadav.amit@gmail.com>
----
-- Changes since v2:
- - add __packed to struct 'u' defined within union 'hv_port_id'
-   [Michael Kelley]
+> On Mon, Dec 03, 2018 at 10:20:42AM +0100, Julia Lawall wrote:
+> > Personally, I would prefer that assignments involving boolean variables
+> > use true or false.  It seems more readable.  Potentially better for tools
+> > as well.
+>
+> Then those tools are broken per the C spec.
+>
+> > But if the community really prefers 0 and 1, then the test can
+> > be deleted.
+>
+> The C language spec, specifies _Bool as an integer type wide enough to
+> at least store 0 and 1.
+>
+> IOW, 0 and 1 are perfectly valid valus to assign to a _Bool.
+>
+> And fundamentally that has to be so. That's how computers work. 0 is
+> false, 1 is true.
+>
+> The kernel is not the place to try and abstract such stuff, C is our
+> portable assembler. We muck with hardware, we'd better know how the heck
+> it works.
 
-- This is a follow-up to my "[PATCH v2 0/4] x86/kvm/hyper-v: Implement
- Direct Mode for synthetic timers" series, as suggested by Thomas I'm
- routing it to KVM tree to avoid merge conflicts.
----
- arch/x86/include/asm/hyperv-tlfs.h | 52 +++++++++++++++---------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+How about it it were suggested only in files that already use true and
+false somewhere?
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index ebfed56976d2..be5cae160ace 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -271,7 +271,7 @@ union hv_x64_msr_hypercall_contents {
- 		u64 enable:1;
- 		u64 reserved:11;
- 		u64 guest_physical_address:52;
--	};
-+	} __packed;
- };
- 
- /*
-@@ -283,7 +283,7 @@ struct ms_hyperv_tsc_page {
- 	volatile u64 tsc_scale;
- 	volatile s64 tsc_offset;
- 	u64 reserved2[509];
--};
-+}  __packed;
- 
- /*
-  * The guest OS needs to register the guest ID with the hypervisor.
-@@ -324,7 +324,7 @@ struct hv_reenlightenment_control {
- 	__u64 enabled:1;
- 	__u64 reserved2:15;
- 	__u64 target_vp:32;
--};
-+}  __packed;
- 
- #define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
- #define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
-@@ -332,12 +332,12 @@ struct hv_reenlightenment_control {
- struct hv_tsc_emulation_control {
- 	__u64 enabled:1;
- 	__u64 reserved:63;
--};
-+} __packed;
- 
- struct hv_tsc_emulation_status {
- 	__u64 inprogress:1;
- 	__u64 reserved:63;
--};
-+} __packed;
- 
- #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
- #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT	12
-@@ -409,7 +409,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
- 	__u32 res1;
- 	__u64 tsc_scale;
- 	__s64 tsc_offset;
--} HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
-+}  __packed HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
- 
- /* Define the number of synthetic interrupt sources. */
- #define HV_SYNIC_SINT_COUNT		(16)
-@@ -466,7 +466,7 @@ union hv_message_flags {
- 	struct {
- 		__u8 msg_pending:1;
- 		__u8 reserved:7;
--	};
-+	} __packed;
- };
- 
- /* Define port identifier type. */
-@@ -475,7 +475,7 @@ union hv_port_id {
- 	struct {
- 		__u32 id:24;
- 		__u32 reserved:8;
--	} u;
-+	} __packed u;
- };
- 
- /* Define synthetic interrupt controller message header. */
-@@ -488,7 +488,7 @@ struct hv_message_header {
- 		__u64 sender;
- 		union hv_port_id port;
- 	};
--};
-+} __packed;
- 
- /* Define synthetic interrupt controller message format. */
- struct hv_message {
-@@ -496,12 +496,12 @@ struct hv_message {
- 	union {
- 		__u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
- 	} u;
--};
-+} __packed;
- 
- /* Define the synthetic interrupt message page layout. */
- struct hv_message_page {
- 	struct hv_message sint_message[HV_SYNIC_SINT_COUNT];
--};
-+} __packed;
- 
- /* Define timer message payload structure. */
- struct hv_timer_message_payload {
-@@ -509,7 +509,7 @@ struct hv_timer_message_payload {
- 	__u32 reserved;
- 	__u64 expiration_time;	/* When the timer expired */
- 	__u64 delivery_time;	/* When the message was delivered */
--};
-+} __packed;
- 
- /* Define virtual processor assist page structure. */
- struct hv_vp_assist_page {
-@@ -519,7 +519,7 @@ struct hv_vp_assist_page {
- 	__u64 nested_enlightenments_control[2];
- 	__u32 enlighten_vmentry;
- 	__u64 current_nested_vmcs;
--};
-+} __packed;
- 
- struct hv_enlightened_vmcs {
- 	u32 revision_id;
-@@ -693,7 +693,7 @@ struct hv_enlightened_vmcs {
- 		u32 nested_flush_hypercall:1;
- 		u32 msr_bitmap:1;
- 		u32 reserved:30;
--	} hv_enlightenments_control;
-+	}  __packed hv_enlightenments_control;
- 	u32 hv_vp_id;
- 
- 	u64 hv_vm_id;
-@@ -703,7 +703,7 @@ struct hv_enlightened_vmcs {
- 	u64 padding64_5[7];
- 	u64 xss_exit_bitmap;
- 	u64 padding64_6[7];
--};
-+} __packed;
- 
- #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE			0
- #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP		BIT(0)
-@@ -744,7 +744,7 @@ union hv_stimer_config {
- 		u64 reserved_z0:3;
- 		u64 sintx:4;
- 		u64 reserved_z1:44;
--	};
-+	} __packed;
- };
- 
- 
-@@ -759,7 +759,7 @@ union hv_synic_scontrol {
- 	struct {
- 		u64 enable:1;
- 		u64 reserved:63;
--	};
-+	} __packed;
- };
- 
- /* Define synthetic interrupt source. */
-@@ -771,7 +771,7 @@ union hv_synic_sint {
- 		u64 masked:1;
- 		u64 auto_eoi:1;
- 		u64 reserved2:46;
--	};
-+	} __packed;
- };
- 
- /* Define the format of the SIMP register */
-@@ -781,7 +781,7 @@ union hv_synic_simp {
- 		u64 simp_enabled:1;
- 		u64 preserved:11;
- 		u64 base_simp_gpa:52;
--	};
-+	} __packed;
- };
- 
- /* Define the format of the SIEFP register */
-@@ -791,34 +791,34 @@ union hv_synic_siefp {
- 		u64 siefp_enabled:1;
- 		u64 preserved:11;
- 		u64 base_siefp_gpa:52;
--	};
-+	} __packed;
- };
- 
- struct hv_vpset {
- 	u64 format;
- 	u64 valid_bank_mask;
- 	u64 bank_contents[];
--};
-+} __packed;
- 
- /* HvCallSendSyntheticClusterIpi hypercall */
- struct hv_send_ipi {
- 	u32 vector;
- 	u32 reserved;
- 	u64 cpu_mask;
--};
-+} __packed;
- 
- /* HvCallSendSyntheticClusterIpiEx hypercall */
- struct hv_send_ipi_ex {
- 	u32 vector;
- 	u32 reserved;
- 	struct hv_vpset vp_set;
--};
-+} __packed;
- 
- /* HvFlushGuestPhysicalAddressSpace hypercalls */
- struct hv_guest_mapping_flush {
- 	u64 address_space;
- 	u64 flags;
--};
-+} __packed;
- 
- /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
- struct hv_tlb_flush {
-@@ -826,7 +826,7 @@ struct hv_tlb_flush {
- 	u64 flags;
- 	u64 processor_mask;
- 	u64 gva_list[];
--};
-+} __packed;
- 
- /* HvFlushVirtualAddressSpaceEx, HvFlushVirtualAddressListEx hypercalls */
- struct hv_tlb_flush_ex {
-@@ -834,6 +834,6 @@ struct hv_tlb_flush_ex {
- 	u64 flags;
- 	struct hv_vpset hv_vp_set;
- 	u64 gva_list[];
--};
-+} __packed;
- 
- #endif
--- 
-2.19.2
-
+julia
