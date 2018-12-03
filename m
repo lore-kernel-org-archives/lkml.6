@@ -2,143 +2,127 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DB3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B662C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7DB120834
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:11:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7DB120834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D67320834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:11:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D67320834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbeLCQLJ (ORCPT
+        id S1726744AbeLCQLQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:11:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57172 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbeLCQLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:11:09 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 3 Dec 2018 11:11:16 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:43725 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbeLCQLQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 11:11:16 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 517A1A7ED;
-        Mon,  3 Dec 2018 16:11:01 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 49AB01001944;
-        Mon,  3 Dec 2018 16:10:58 +0000 (UTC)
-Subject: Re: [PATCH -tip] kernel/sched,wake_q: Branch predict wake_q_add()
- cmpxchg
-To:     Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
-        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
-        andrea.parri@amarulasolutions.com
-References: <20181129131232.GN2131@hirez.programming.kicks-ass.net>
- <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
- <20181129160627.GU2131@hirez.programming.kicks-ass.net>
- <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
- <20181129172700.GA11632@hirez.programming.kicks-ass.net>
- <20181129180828.GA11650@hirez.programming.kicks-ass.net>
- <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
- <20181129213017.v3eljor54lfpoug2@linux-r8p5>
- <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
- <20181129221714.GF11632@hirez.programming.kicks-ass.net>
- <20181203053130.gwkw6kg72azt2npb@linux-r8p5>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <c1cd0892-9ef4-ffad-ce93-39977389071c@redhat.com>
-Date:   Mon, 3 Dec 2018 11:10:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 5A86C804EA;
+        Mon,  3 Dec 2018 17:10:54 +0100 (CET)
+Date:   Mon, 3 Dec 2018 17:10:52 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] sh: prefer memblock APIs returning virtual address
+Message-ID: <20181203161052.GA4244@ravnborg.org>
+References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+ <1543852035-26634-4-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181203053130.gwkw6kg72azt2npb@linux-r8p5>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 03 Dec 2018 16:11:02 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543852035-26634-4-git-send-email-rppt@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=VnNF1IyMAAAA:8 a=FTNaidAvUsMVHdn4hVIA:9
+        a=9GetFJ8xNGreKwwT:21 a=sKQTW2iCjVXyVLe6:21 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/2018 12:31 AM, Davidlohr Bueso wrote:
-> The cmpxchg will fail when the task is already in the process
-> of waking up, and as such is an extremely rare occurrence.
-> Micro-optimize the call and put an unlikely() around it.
->
-> To no surprise, when using CONFIG_PROFILE_ANNOTATED_BRANCHES
-> under a number of workloads the incorrect rate was a mere 1-2%.
->
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Hi Mike.
+
+On Mon, Dec 03, 2018 at 05:47:12PM +0200, Mike Rapoport wrote:
+> Rather than use the memblock_alloc_base that returns a physical address and
+> then convert this address to the virtual one, use appropriate memblock
+> function that returns a virtual address.
+> 
+> There is a small functional change in the allocation of then NODE_DATA().
+> Instead of panicing if the local allocation failed, the non-local
+> allocation attempt will be made.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 > ---
-> kernel/sched/core.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 091e089063be..f7747cf6e427 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -408,7 +408,7 @@ void wake_q_add(struct wake_q_head *head, struct
-> task_struct *task)
->      * This cmpxchg() executes a full barrier, which pairs with the full
->      * barrier executed by the wakeup in wake_up_q().
->      */
-> -    if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL))
-> +    if (unlikely(cmpxchg(&node->next, NULL, WAKE_Q_TAIL)))
->         return;
->
->     get_task_struct(task);
+>  arch/sh/mm/init.c | 18 +++++-------------
+>  arch/sh/mm/numa.c |  5 ++---
+>  2 files changed, 7 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+> index c8c13c77..3576b5f 100644
+> --- a/arch/sh/mm/init.c
+> +++ b/arch/sh/mm/init.c
+> @@ -192,24 +192,16 @@ void __init page_table_range_init(unsigned long start, unsigned long end,
+>  void __init allocate_pgdat(unsigned int nid)
+>  {
+>  	unsigned long start_pfn, end_pfn;
+> -#ifdef CONFIG_NEED_MULTIPLE_NODES
+> -	unsigned long phys;
+> -#endif
+>  
+>  	get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
+>  
+>  #ifdef CONFIG_NEED_MULTIPLE_NODES
+> -	phys = __memblock_alloc_base(sizeof(struct pglist_data),
+> -				SMP_CACHE_BYTES, end_pfn << PAGE_SHIFT);
+> -	/* Retry with all of system memory */
+> -	if (!phys)
+> -		phys = __memblock_alloc_base(sizeof(struct pglist_data),
+> -					SMP_CACHE_BYTES, memblock_end_of_DRAM());
+> -	if (!phys)
+> +	NODE_DATA(nid) = memblock_alloc_try_nid_nopanic(
+> +				sizeof(struct pglist_data),
+> +				SMP_CACHE_BYTES, MEMBLOCK_LOW_LIMIT,
+> +				MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+> +	if (!NODE_DATA(nid))
+>  		panic("Can't allocate pgdat for node %d\n", nid);
+> -
+> -	NODE_DATA(nid) = __va(phys);
+> -	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+The new code will always assign NODE_DATA(nid), where the old
+code only assigned NODE_DATA(nid) in the good case.
+I dunno if this is an issue, just noticed the difference and
+wanted to point it out.
 
-Acked-by: Waiman Long <longman@redhat.com>
-
+	Sam
