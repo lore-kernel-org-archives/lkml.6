@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C799FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B9AC07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F8A20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F8A20850
+	by mail.kernel.org (Postfix) with ESMTP id 6274320850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:04:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6274320850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbeLCVEe (ORCPT
+        id S1726094AbeLCVEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:04:34 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51903 "EHLO
+        Mon, 3 Dec 2018 16:04:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50411 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbeLCVEd (ORCPT
+        with ESMTP id S1725913AbeLCVEe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:04:33 -0500
+        Mon, 3 Dec 2018 16:04:34 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L2656594411
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L3Ea3594664
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Dec 2018 13:02:06 -0800
+        Mon, 3 Dec 2018 13:03:14 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L26F3594407;
-        Mon, 3 Dec 2018 13:02:06 -0800
-Date:   Mon, 3 Dec 2018 13:02:06 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L3E1C594661;
+        Mon, 3 Dec 2018 13:03:14 -0800
+Date:   Mon, 3 Dec 2018 13:03:14 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-d23650e06299e9b2d04e090ab8c625cdf24465bf@git.kernel.org>
-Cc:     pbonzini@redhat.com, bigeasy@linutronix.de, rkrcmar@redhat.com,
-        dhowells@redhat.com, dave.hansen@linux.intel.com, mingo@redhat.com,
-        konrad.wilk@oracle.com, mingo@kernel.org, hpa@zytor.com,
-        Jason@zx2c4.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        riel@surriel.com, x86@kernel.org, bp@suse.de,
-        tim.c.chen@linux.intel.com, luto@kernel.org, tglx@linutronix.de
-Reply-To: rkrcmar@redhat.com, dhowells@redhat.com, pbonzini@redhat.com,
-          bigeasy@linutronix.de, konrad.wilk@oracle.com, mingo@redhat.com,
-          dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-          kvm@vger.kernel.org, hpa@zytor.com, Jason@zx2c4.com,
-          mingo@kernel.org, riel@surriel.com, x86@kernel.org,
-          tglx@linutronix.de, luto@kernel.org, tim.c.chen@linux.intel.com,
-          bp@suse.de
-In-Reply-To: <20181128222035.2996-4-bigeasy@linutronix.de>
-References: <20181128222035.2996-4-bigeasy@linutronix.de>
+Message-ID: <tip-6637401c35b2f327a35d27f44bda05e327f2f017@git.kernel.org>
+Cc:     jannh@google.com, hpa@zytor.com, bigeasy@linutronix.de,
+        x86@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, bp@suse.de, riel@surriel.com,
+        dave.hansen@linux.intel.com, mingo@kernel.org, Jason@zx2c4.com,
+        rkrcmar@redhat.com, kvm@vger.kernel.org, luto@kernel.org,
+        pbonzini@redhat.com
+Reply-To: jannh@google.com, hpa@zytor.com, bigeasy@linutronix.de,
+          x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@redhat.com, bp@suse.de, riel@surriel.com,
+          dave.hansen@linux.intel.com, mingo@kernel.org, Jason@zx2c4.com,
+          luto@kernel.org, rkrcmar@redhat.com, kvm@vger.kernel.org,
+          pbonzini@redhat.com
+In-Reply-To: <20181128222035.2996-6-bigeasy@linutronix.de>
+References: <20181128222035.2996-6-bigeasy@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/fpu] x86/thread_info: Remove _TIF_ALLWORK_MASK
-Git-Commit-ID: d23650e06299e9b2d04e090ab8c625cdf24465bf
+Subject: [tip:x86/fpu] x86/fpu: Add might_fault() to user_insn()
+Git-Commit-ID: 6637401c35b2f327a35d27f44bda05e327f2f017
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -66,59 +65,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d23650e06299e9b2d04e090ab8c625cdf24465bf
-Gitweb:     https://git.kernel.org/tip/d23650e06299e9b2d04e090ab8c625cdf24465bf
+Commit-ID:  6637401c35b2f327a35d27f44bda05e327f2f017
+Gitweb:     https://git.kernel.org/tip/6637401c35b2f327a35d27f44bda05e327f2f017
 Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Wed, 28 Nov 2018 23:20:09 +0100
+AuthorDate: Wed, 28 Nov 2018 23:20:11 +0100
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Mon, 3 Dec 2018 19:00:28 +0100
+CommitDate: Mon, 3 Dec 2018 19:15:32 +0100
 
-x86/thread_info: Remove _TIF_ALLWORK_MASK
+x86/fpu: Add might_fault() to user_insn()
 
-There is no user of _TIF_ALLWORK_MASK since commit
+Every user of user_insn() passes an user memory pointer to this macro.
 
-  21d375b6b34ff ("x86/entry/64: Remove the SYSCALL64 fast path").
+Add might_fault() to user_insn() so we can spot users which are using
+this macro in sections where page faulting is not allowed.
 
-Remove the unused define _TIF_ALLWORK_MASK.
+ [ bp: Space it out to make it more visible. ]
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Rik van Riel <riel@surriel.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Howells <dhowells@redhat.com>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Jann Horn <jannh@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: kvm ML <kvm@vger.kernel.org>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181128222035.2996-4-bigeasy@linutronix.de
+Link: https://lkml.kernel.org/r/20181128222035.2996-6-bigeasy@linutronix.de
 ---
- arch/x86/include/asm/thread_info.h | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 82b73b75d67c..e0eccbcb8447 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -140,14 +140,6 @@ struct thread_info {
- 	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT |	\
- 	 _TIF_NOHZ)
- 
--/* work to do on any return to user space */
--#define _TIF_ALLWORK_MASK						\
--	(_TIF_SYSCALL_TRACE | _TIF_NOTIFY_RESUME | _TIF_SIGPENDING |	\
--	 _TIF_NEED_RESCHED | _TIF_SINGLESTEP | _TIF_SYSCALL_EMU |	\
--	 _TIF_SYSCALL_AUDIT | _TIF_USER_RETURN_NOTIFY | _TIF_UPROBE |	\
--	 _TIF_PATCH_PENDING | _TIF_NOHZ | _TIF_SYSCALL_TRACEPOINT |	\
--	 _TIF_FSCHECK)
--
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW_BASE						\
- 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 69dcdf195b61..fa2c93cb42a2 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -106,6 +106,9 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
+ #define user_insn(insn, output, input...)				\
+ ({									\
+ 	int err;							\
++									\
++	might_fault();							\
++									\
+ 	asm volatile(ASM_STAC "\n"					\
+ 		     "1:" #insn "\n\t"					\
+ 		     "2: " ASM_CLAC "\n"				\
