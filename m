@@ -2,174 +2,93 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1C0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7781DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C263206B7
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:56:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C263206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 455402082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:56:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455402082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbeLCL4t (ORCPT
+        id S1726432AbeLCL5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:56:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60254 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeLCL4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:56:49 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2D6B83F4C;
-        Mon,  3 Dec 2018 11:56:04 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 54CE2272C6;
-        Mon,  3 Dec 2018 11:56:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon,  3 Dec 2018 12:56:04 +0100 (CET)
-Date:   Mon, 3 Dec 2018 12:56:01 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Pavel Machek <pavel@ucw.cz>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux
- 4.20-rc4)
-Message-ID: <20181203115601.GA31795@redhat.com>
-References: <CAHk-=wgdsXyCaLsFEpyUpAeRqVS69u=xo4rzEN+cS=xwz2gajg@mail.gmail.com>
- <20181203074700.GA21240@gmail.com>
+        Mon, 3 Dec 2018 06:57:16 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43095 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725975AbeLCL5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:57:15 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4DAE0BF84CA14;
+        Mon,  3 Dec 2018 19:56:24 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Mon, 3 Dec 2018
+ 19:56:16 +0800
+Subject: Re: [PATCH] dma-debug: Kconfig for PREALLOC_DMA_DEBUG_ENTRIES
+To:     Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>
+References: <20181130175449.2625-1-cai@gmx.us>
+ <b22d2ad6-2638-96d7-1df2-24701589202f@arm.com>
+ <20181201163657.GA19557@lst.de>
+CC:     Qian Cai <cai@gmx.us>, <netdev@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <yisen.zhuang@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <53ab96d7-5dc9-e1a9-4cf2-bb8bf80a3acf@huawei.com>
+Date:   Mon, 3 Dec 2018 11:56:11 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203074700.GA21240@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 03 Dec 2018 11:56:05 +0000 (UTC)
+In-Reply-To: <20181201163657.GA19557@lst.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03, Ingo Molnar wrote:
+On 01/12/2018 16:36, Christoph Hellwig wrote:
+> On Fri, Nov 30, 2018 at 07:39:50PM +0000, Robin Murphy wrote:
+>> I was assuming the point was to also add something like
+>>
+>> 	default 131072 if HNS_ENET
+>>
+>> so that DMA debug doesn't require too much thought from the user. If they
+>> still have to notice the overflow message and empirically figure out a
+>> value that does work, rebuilding the kernel each time is far less
+>> convenient than simply adding "dma_debug_entries=..." to their kernel
+>> command line and rebooting, which they can do today. If they do already
+>> know up-front that the default will need overriding and what the
+>> appropriate value is, then the command line still seems seems just as
+>> convenient.
 >
-> So there's a new regression in v4.20-rc4, my desktop produces this
-> lockdep splat:
+> I'm not so fond of random drivers changing the defaults.  My idea
+> was rather to have the config option so that the defconfig files for
+> the Hisilicon SOCs with this hardware could select a larger number
+> without making a total mess of the kernel configuration.
 >
-> [ 1772.588771] WARNING: pkexec/4633 still has locks held!
-> [ 1772.588773] 4.20.0-rc4-custom-00213-g93a49841322b #1 Not tainted
-> [ 1772.588775] ------------------------------------
-> [ 1772.588776] 1 lock held by pkexec/4633:
-> [ 1772.588778]  #0: 00000000ed85fbf8 (&sig->cred_guard_mutex){+.+.}, at: prepare_bprm_creds+0x2a/0x70
-> [ 1772.588786] stack backtrace:
-> [ 1772.588789] CPU: 7 PID: 4633 Comm: pkexec Not tainted 4.20.0-rc4-custom-00213-g93a49841322b #1
-> [ 1772.588792] Call Trace:
-> [ 1772.588800]  dump_stack+0x85/0xcb
-> [ 1772.588803]  flush_old_exec+0x116/0x890
-> [ 1772.588807]  ? load_elf_phdrs+0x72/0xb0
-> [ 1772.588809]  load_elf_binary+0x291/0x1620
-> [ 1772.588815]  ? sched_clock+0x5/0x10
-> [ 1772.588817]  ? search_binary_handler+0x6d/0x240
-> [ 1772.588820]  search_binary_handler+0x80/0x240
-> [ 1772.588823]  load_script+0x201/0x220
-> [ 1772.588825]  search_binary_handler+0x80/0x240
-> [ 1772.588828]  __do_execve_file.isra.32+0x7d2/0xa60
-> [ 1772.588832]  ? strncpy_from_user+0x40/0x180
-> [ 1772.588835]  __x64_sys_execve+0x34/0x40
-> [ 1772.588838]  do_syscall_64+0x60/0x1c0
+> If we really have to we could do different defaults, but I'd still
+> much rather do this on a arch/platform basis than specific drivers.
 
-My fault.
+As I understand, some drivers could even use much more than this 
+(131072), to such a point where I can't imagine that we would want to 
+set an arch default to support them. For this HNS_ENET case, it is arm64 
+specific so it would be an arch defconfig.
 
-Michal didn't like this patch, but I managed to confuse him ;)
+Thanks,
+John
 
-I even mentioned that freezable_schedule() is obviously not right with
-->cred_guard_mutex held, but I somehow I thought that this patch "doesn't
-make things worse".
-
-> I reviewed the ->cred_guard_mutex code, and the mutex is held across all
-> of exec() - and we always did this.
-
-Yes, and this was always wrong. For example, this test-case hangs:
-
-	#include <unistd.h>
-	#include <signal.h>
-	#include <sys/ptrace.h>
-	#include <pthread.h>
-
-	void *thread(void *arg)
-	{
-		ptrace(PTRACE_TRACEME, 0,0,0);
-		return NULL;
-	}
-
-	int main(void)
-	{
-		int pid = fork();
-
-		if (!pid) {
-			pthread_t pt;
-			pthread_create(&pt, NULL, thread, NULL);
-			pthread_join(pt, NULL);
-			execlp("echo", "echo", "passed", NULL);
-		}
-
-		sleep(1);
-		// or anything else which needs ->cred_guard_mutex,
-		// say open(/proc/$pid/mem)
-		ptrace(PTRACE_ATTACH, pid, 0,0);
-		kill(pid, SIGCONT);
-
-		return 0;
-	}
-
-we really need to narrow the (huge) scope of ->cred_guard_mutex in exec paths.
-
-my attempt to fix this was nacked, and nobody suggested a better solution so far.
-
-> This reverts commit c22397888f1eed98cd59f0a88f2a5f6925f80e15.
-
-Thanks.
-
-> ---
->  fs/exec.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
 >
-> diff --git a/fs/exec.c b/fs/exec.c
-> index acc3a5536384..fc281b738a98 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -62,7 +62,6 @@
->  #include <linux/oom.h>
->  #include <linux/compat.h>
->  #include <linux/vmalloc.h>
-> -#include <linux/freezer.h>
+> .
 >
->  #include <linux/uaccess.h>
->  #include <asm/mmu_context.h>
-> @@ -1084,7 +1083,7 @@ static int de_thread(struct task_struct *tsk)
->  	while (sig->notify_count) {
->  		__set_current_state(TASK_KILLABLE);
->  		spin_unlock_irq(lock);
-> -		freezable_schedule();
-> +		schedule();
->  		if (unlikely(__fatal_signal_pending(tsk)))
->  			goto killed;
->  		spin_lock_irq(lock);
-> @@ -1112,7 +1111,7 @@ static int de_thread(struct task_struct *tsk)
->  			__set_current_state(TASK_KILLABLE);
->  			write_unlock_irq(&tasklist_lock);
->  			cgroup_threadgroup_change_end(tsk);
-> -			freezable_schedule();
-> +			schedule();
->  			if (unlikely(__fatal_signal_pending(tsk)))
->  				goto killed;
->  		}
+
 
