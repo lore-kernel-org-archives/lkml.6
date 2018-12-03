@@ -2,171 +2,106 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD8EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFC9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F0D20864
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4011D20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K9nflufy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F0D20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="WkqbY192"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4011D20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725976AbeLCWFC (ORCPT
+        id S1725982AbeLCWGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:05:02 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33965 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbeLCWFB (ORCPT
+        Mon, 3 Dec 2018 17:06:22 -0500
+Received: from mail-ot1-f52.google.com ([209.85.210.52]:38666 "EHLO
+        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbeLCWGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:05:01 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u6-v6so12931620ljd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:04:59 -0800 (PST)
+        Mon, 3 Dec 2018 17:06:21 -0500
+Received: by mail-ot1-f52.google.com with SMTP id e12so13227083otl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:06:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
+        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
          :cc;
-        bh=ICGzCv10SUhPz/zyqjorDeeDkj5bTz4pBRwpMyj29eQ=;
-        b=K9nflufyfVmDB2iFuf4W3n4gsm8rMSUar/zsx0upLdN/uBEvdEwTVSL3klHqPtOFGa
-         akOLUCM4ZRntykg2nXAU4i5FL5bFZ5gJFAQ1lEYsQTGp77S5rLuY4lVizNc5sr7nkUfT
-         Ibg1Le87qOs0BEURUkKnSO8lUyM6ECr+XzKE8=
+        bh=kPz2fS32xKXYAczV0ZrE8OqocFQwTPzcdpuQFXv/7DE=;
+        b=WkqbY1928xqc9iBMKSMXQoQClKb3Xl9KoNZ6qTygB4NaRobJwkrJQNfBEe/uTeAtiV
+         3pRH4j2/VoxXLZhcIid+7flm92kkqQQepM6yNAotHbrz01jWG3wUgTnGvJOZBYOMup7B
+         SjDkoFt+xdFBLxeknoxDipEXDNXjUomoQwVtr4Pju4poKrffri0Gv1mHIrf7cAkqPLZC
+         p6PWqghXH0wOhK57Ab5uDmnCc6Q+ovSpsj+UtHIuuHGUDrQ90F2dxuNtZJ+NrMTeYDWd
+         mR0EXfV2i2Af+uKK4gkQZ9UckM3Mm3rv/g3ks0uQ8vjSuCcDGDGkThIIGrf1zbV/nhqz
+         q4QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
          :message-id:subject:to:cc;
-        bh=ICGzCv10SUhPz/zyqjorDeeDkj5bTz4pBRwpMyj29eQ=;
-        b=KNBp8+f5/frlVQ4cHR7qHOGDlU+5pBiA/4pHejNhBME9267jwjhK6bpW7ZmKTncRw5
-         0+HyUIU9TOyVvAg6CODDRDhnytynyfnGfNKMXkru3TF0/GLlDA6QfBF9OZAC9W0lUO81
-         BjEOZ3O7bfn5+Ow39mpldnARVEkKNFsIzGFF2tshWzjxrUrm+jPQAkqBE5MQWw69GXGR
-         wRbH6vTVN1N4+TPBAeRfCBOFhMp+Td5iTxicSzzv465zG2VBz0uCFxJEukEodfcC31az
-         7+sjcQsfO7N4XKnemnJR1RHadP8MHQVZfcDgd/Y/TnyOtZxIGJfrb/yeb3I5O6cTUp6w
-         WwHw==
-X-Gm-Message-State: AA+aEWYkn0oBvV90SCYMc5sFdFCIHMzFgJXxKpPhA5fYdoMKI9HTvqF2
-        lVcYMy8A6xkbFncBVeX7h3Fo3QqSwFg=
-X-Google-Smtp-Source: AFSGD/VZ1KjNzV+XNPBh9OY4kt0TuOL6H/R00XuJUOkywzrRE9k+0pPhwwcJgMktf8D+0s9GoCC0Bg==
-X-Received: by 2002:a2e:55d3:: with SMTP id g80-v6mr12291498lje.78.1543874698421;
-        Mon, 03 Dec 2018 14:04:58 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm2722448ljg.19.2018.12.03.14.04.56
+        bh=kPz2fS32xKXYAczV0ZrE8OqocFQwTPzcdpuQFXv/7DE=;
+        b=Kc3re7w4XHizyvvaWGj356POM9ZUNbugT0th0shlDHv6TZFubEIxz2sPXNp3ms+X4T
+         gKYTS4HKsyzQvQnqdT/JxxZ+zlagszY0y3k8ihmPVE0b3Rfes8NnZkUcOhgSssrd+cyJ
+         hEkFaOpPRrEkfBTOl/jvzvFiRHL0bDfZg/grdjSdL/2KzGNeN518cSYUL8QNVsS3YbSL
+         u6K/RR08WUuKIc9vFy4L6lQuDAIUzfxWmRFfTnI6ppxbT00xnY8R+GqyC/DhawAqCquf
+         S3oyQTPEKEsoji8tXx/9EjD2jO23QWj++97yT3+bIvOh0UC8Fiy/awTGTCN0+cnSf/Hb
+         +btA==
+X-Gm-Message-State: AA+aEWaaOf0pBMce4FFAYhBoLmr0WA4oMZHYERJgvESxGtW+snPSISqs
+        Im39y0yU4VrhHrM4raoq3VR+7ibV53564Q==
+X-Google-Smtp-Source: AFSGD/V9rtosvJ/GAws/pjo5c2a5wKAxmY/Hurp69L/WO4dx8LgyXsqAH+7x46nRXOi6JKj7iatUJA==
+X-Received: by 2002:a9d:4f0e:: with SMTP id d14mr11973611otl.259.1543874780495;
+        Mon, 03 Dec 2018 14:06:20 -0800 (PST)
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
+        by smtp.gmail.com with ESMTPSA id j1sm8102624otl.43.2018.12.03.14.06.19
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 14:04:57 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id e5-v6so12945561lja.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:04:56 -0800 (PST)
-X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr11356257ljs.118.1543874696203;
- Mon, 03 Dec 2018 14:04:56 -0800 (PST)
+        Mon, 03 Dec 2018 14:06:20 -0800 (PST)
+From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
+X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
+Received: by mail-ot1-f54.google.com with SMTP id 32so13178846ota.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:06:19 -0800 (PST)
+X-Received: by 2002:a9d:1b2c:: with SMTP id l41mr10684052otl.1.1543874778760;
+ Mon, 03 Dec 2018 14:06:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com>
- <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
- <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
- <20181203181456.GK31738@dhcp22.suse.cz> <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
- <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
- <20181203185954.GM31738@dhcp22.suse.cz> <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
- <20181203201214.GB3540@redhat.com>
-In-Reply-To: <20181203201214.GB3540@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Dec 2018 14:04:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
-Message-ID: <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     mhocko@kernel.org, ying.huang@intel.com, s.priebe@profihost.ag,
-        mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org,
-        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+References: <20181201193858.20738-1-otavio@ossystems.com.br>
+In-Reply-To: <20181201193858.20738-1-otavio@ossystems.com.br>
+Date:   Mon, 3 Dec 2018 20:05:53 -0200
+X-Gmail-Original-Message-ID: <CAP9ODKo62r8ZrHTj9mHvjbhMXHhaLxA8Hak3su4-yV0dAxNY-g@mail.gmail.com>
+Message-ID: <CAP9ODKo62r8ZrHTj9mHvjbhMXHhaLxA8Hak3su4-yV0dAxNY-g@mail.gmail.com>
+Subject: Re: [PATCH] ARM: imx_v6_v7_defconfig: Enable ATH10K SDIO support
+To:     Otavio Salvador <otavio@ossystems.com.br>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 12:12 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+On Sat, Dec 1, 2018 at 5:39 PM Otavio Salvador <otavio@ossystems.com.br> wrote:
+> The use of ATH10K WiFi is becoming common in i.MX based boards,
+> especially on new designs, so enable the driver support as module so
+> it can be used out of box.
 >
-> On Mon, Dec 03, 2018 at 11:28:07AM -0800, Linus Torvalds wrote:
-> >
-> > One is the patch posted by Andrea earlier in this thread, which seems
-> > to target just this known regression.
->
-> For the short term the important thing is to fix the VM regression one
-> way or another, I don't personally mind which way.
->
-> > The other seems to be to revert commit ac5b2c1891  and instead apply
-> >
-> >   https://lore.kernel.org/lkml/alpine.DEB.2.21.1810081303060.221006@chino.kir.corp.google.com/
-> >
-> > which also seems to be sensible.
->
-> In my earlier review of David's patch, it looked runtime equivalent to
-> the __GFP_COMPACT_ONLY solution. It has the only advantage of adding a
+> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 
-I think there's a missing "not" in the above.
+Please ignore this patch for now, the driver did not work on the
+custom board ... once we get it working, I resend the patch.
 
-> new gfpflag until we're sure we need it but it's the worst solution
-> available for the long term in my view. It'd be ok to apply it as
-> stop-gap measure though.
+Sorry for the noise.
 
-So I have no really strong opinions either way.
+Best regards
 
-I looking at the two options, I think I'd personally have a slight
-preference for that patch by David, not so much because it doesn't add
-a new GFP flag, but because it seems to make it a lot more explicit
-that GFP_TRANSHUGE_LIGHT automatically implies __GFP_NORETRY.
-
-I think that makes a whole lot of conceptual sense with the whole
-meaning of GFP_TRANSHUGE_LIGHT. It's all about "no
-reclaim/compaction", but honestly, doesn't __GFP_NORETRY make sense?
-
-So I look at David's patch, and I go "that makes sense", and then I
-compare it with ac5b2c18911f ("mm: thp: relax __GFP_THISNODE for
-MADV_HUGEPAGE mappings") and that makes me go "ok, that's a hack".
-
-So *if* reverting ac5b2c18911f and applying David's patch instead
-fixes the KVM latency issues (which I assume it really should do,
-simply thanks to __GFP_NORETRY), then I think that makes more sense.
-
-That said, I do agree that the
-
-        if (order == pageblock_order ...)
-
-test in __alloc_pages_slowpath() in David's patch then argues for
-"that looks hacky".  But that code *is* inside the test for
-
-                if (costly_order && (gfp_mask & __GFP_NORETRY)) {
-
-so within the context of that (not visible in the patch itself), it
-looks like a sensible model. The whole point of that block is, as the
-comment above it says
-
-                /*
-                 * Checks for costly allocations with __GFP_NORETRY, which
-                 * includes THP page fault allocations
-                 */
-
-so I think all of David's patch is somewhat sensible, even if that
-specific "order == pageblock_order" test really looks like it might
-want to be clarified.
-
-BUT.
-
-With all that said, I really don't mind that __GFP_COMPACT_ONLY
-approach either. I think David's patch makes sense in a bigger
-context, while the __GFP_COMPACT_ONLY patch makes sense in the context
-of "let's just fix this _particular_ special case.
-
-As long as both work (and apparently they do), either is perfectly find by me.
-
-Some kind of "Thunderdome for patches" is needed, with an epic soundtrack.
-
-   "Two patches enter, one patch leaves!"
-
-I don't so much care which one.
-
-             Linus
+-- 
+Otavio Salvador                             O.S. Systems
+http://www.ossystems.com.br        http://code.ossystems.com.br
+Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
