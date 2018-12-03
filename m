@@ -2,120 +2,105 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BADC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2958C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207302087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:54:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207302087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 91F8620848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:55:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F8620848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbeLCPyp (ORCPT
+        id S1726832AbeLCPzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:54:45 -0500
-Received: from anholt.net ([50.246.234.109]:51566 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbeLCPyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:54:45 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id D77AE10A156D;
-        Mon,  3 Dec 2018 07:54:41 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id X5RPmkNxuH1d; Mon,  3 Dec 2018 07:54:40 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 994FB10A0388;
-        Mon,  3 Dec 2018 07:54:40 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 363D92FE36E1; Mon,  3 Dec 2018 07:54:40 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2] drm/vc4: Add a debugfs entry to disable/enable the load tracker
-In-Reply-To: <20181202081440.0ec235c4@bbrezillon>
-References: <20181130161104.16352-1-paul.kocialkowski@bootlin.com> <87r2f2patf.fsf@anholt.net> <20181202081440.0ec235c4@bbrezillon>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Mon, 03 Dec 2018 07:54:39 -0800
-Message-ID: <87h8fufvwg.fsf@anholt.net>
+        Mon, 3 Dec 2018 10:55:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52217 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbeLCPzE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:55:04 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3FsTb5502059
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 3 Dec 2018 07:54:29 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3FsJ4t502054;
+        Mon, 3 Dec 2018 07:54:19 -0800
+Date:   Mon, 3 Dec 2018 07:54:19 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Juergen Gross <tipbot@zytor.com>
+Message-ID: <tip-182ddd16194cd082f25fa1b063dae3c7c5cce384@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
+        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        taijian@posteo.de, jgross@suse.com
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, jgross@suse.com,
+          taijian@posteo.de, hpa@zytor.com, torvalds@linux-foundation.org,
+          tglx@linutronix.de, peterz@infradead.org
+In-Reply-To: <20181203103811.17056-1-jgross@suse.com>
+References: <20181203103811.17056-1-jgross@suse.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/boot: Clear RSDP address in boot_params for
+ broken loaders
+Git-Commit-ID: 182ddd16194cd082f25fa1b063dae3c7c5cce384
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:  182ddd16194cd082f25fa1b063dae3c7c5cce384
+Gitweb:     https://git.kernel.org/tip/182ddd16194cd082f25fa1b063dae3c7c5cce384
+Author:     Juergen Gross <jgross@suse.com>
+AuthorDate: Mon, 3 Dec 2018 11:38:11 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 3 Dec 2018 11:56:37 +0100
 
-Boris Brezillon <boris.brezillon@bootlin.com> writes:
+x86/boot: Clear RSDP address in boot_params for broken loaders
 
-> On Fri, 30 Nov 2018 12:30:52 -0800
-> Eric Anholt <eric@anholt.net> wrote:
->
->> Paul Kocialkowski <paul.kocialkowski@bootlin.com> writes:
->>=20
->> > In order to test whether the load tracker is working as expected, we
->> > need the ability to compare the commit result with the underrun
->> > indication. With the load tracker always enabled, commits that are
->> > expected to trigger an underrun are always rejected, so userspace
->> > cannot get the actual underrun indication from the hardware.
->> >
->> > Add a debugfs entry to disable/enable the load tracker, so that a DRM
->> > commit expected to trigger an underrun can go through with the load
->> > tracker disabled. The underrun indication is then available to
->> > userspace and can be checked against the commit result with the load
->> > tracker enabled.
->> >
->> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>=20=20
->>=20
->> Given that the load tracker is going to be conservative and say things
->> will underrun even when they might not in practice, will this actually
->> be useful for automated testing? Or is the intent to make it easier to
->> tune the load tracker by disabling it so that you can experiment freely?
->
-> Yes, that's one goal, though I'm not sure IGT is supposed to contain
-> such debugging tools. But the main benefit is being able to track
-> regressions in the load tracking algo that makes it more (too?)
-> conservative. I think people won't like this sort of regressions. The
-> idea would be to settle on an acceptable load tracking algo (maybe
-> after refining the proposed one), record the results (both good and too
-> conservative predictions) and use that as a reference for the IGT
-> test.=20=20
+Gunnar Krueger reported a systemd-boot failure and bisected it down to:
 
-Yeah, I think I'm sold on it at this point -- having a tool that isn't
-an automated regression test, but an automated thing that can help a
-developer see how accurate the estimate is, would be useful and is worth
-a bit of kernel code to support.
+  e6e094e053af75 ("x86/acpi, x86/boot: Take RSDP address from boot params if available")
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+In case a broken boot loader doesn't clear its 'struct boot_params', clear
+rsdp_addr in sanitize_boot_params().
 
------BEGIN PGP SIGNATURE-----
+Reported-by: Gunnar Krueger <taijian@posteo.de>
+Tested-by: Gunnar Krueger <taijian@posteo.de>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: sstabellini@kernel.org
+Fixes: e6e094e053af75 ("x86/acpi, x86/boot: Take RSDP address from boot params if available")
+Link: http://lkml.kernel.org/r/20181203103811.17056-1-jgross@suse.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/bootparam_utils.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlwFUb8ACgkQtdYpNtH8
-nujBbA//X9Cj3ddTo7qwTzKJCthzrOC6ysbnyT/nXZnbUi4sO39gW5NxLhc7485k
-UYv3frUkXkMI+y9TvvnSaamBlqOTvXVZXiWLiVQyF4vgramlugwxeiJKZv09DZQe
-E+T5/zQd0WS7rCeqb2dcjkAjZTWrWTjAY7sMG0b0IXYhmw2lniDp9mbS3cyFrERp
-qFWf3Sdt8dmhlrqjzaj4Nf7P2fEATSxq/Ujv0WcSZu2AXX1fgNDzD2CMeT0xmyIm
-yqR1JWjw7hlwcSLmfjcsyJPjuq3v0uqP4a+Hs8MARNOZT7di6DBwughSd3reRvL7
-cShlGwpPmZVgcCeYkXcTsp2k+P72+l+hw0VIiIY8CkDx69/Qo2O6TqxwDT89ffwy
-ivmT4dkNoQ+ls6HoUHwtOSC2Qng8UHj1vhX2iQtYqZQkAssWU1p1l5ySKuCHCDhY
-qkY45d/2Q1jtPopXTAKMLA8fqQWS/hcpZy7gWagfMBKGqG2wIuzMVNV0S1b0/cn5
-GcIuylcqYlb9wM/vt/vkaasLmNZVDIoXgxV3mBc2JObcKPATdbYSGHtIeuxwk0BV
-m+GXVlgEvpCoDIdWRgSatIb4lCgxgUXCjqkmq7ZOHRPdW3COlKk4gfueJbyWqdh+
-dICj5cO/CtizgNMYk6bYQu8Z+zI98GD2EnEbZthk9aq8KpnBrzo=
-=kQ/F
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/arch/x86/include/asm/bootparam_utils.h b/arch/x86/include/asm/bootparam_utils.h
+index a07ffd23e4dd..f6f6ef436599 100644
+--- a/arch/x86/include/asm/bootparam_utils.h
++++ b/arch/x86/include/asm/bootparam_utils.h
+@@ -36,6 +36,7 @@ static void sanitize_boot_params(struct boot_params *boot_params)
+ 	 */
+ 	if (boot_params->sentinel) {
+ 		/* fields in boot_params are left uninitialized, clear them */
++		boot_params->acpi_rsdp_addr = 0;
+ 		memset(&boot_params->ext_ramdisk_image, 0,
+ 		       (char *)&boot_params->efi_info -
+ 			(char *)&boot_params->ext_ramdisk_image);
