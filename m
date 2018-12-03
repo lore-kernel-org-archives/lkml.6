@@ -3,52 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C62CFC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16EDC07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8630820881
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88B9B20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o22thSot"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8630820881
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GK3KtDCn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B9B20848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeLCRPD (ORCPT
+        id S1727060AbeLCRPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:15:03 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:36690 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeLCROr (ORCPT
+        Mon, 3 Dec 2018 12:15:17 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54078 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeLCROc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:14:47 -0500
+        Mon, 3 Dec 2018 12:14:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=86ctNEwtySJGrtRpJrRdK01iee/o4tYWrfB/fsmXXwY=; b=o22thSot/94TmQK6F1abfJ80zH
-        wchA/biJuN+o4aX0dhHd17mPRDQlTjSHq0Nl0j79EAB8+NqcikrWJcd21PK4MdXrE/68UGw7EzhcI
-        g1SahObI3zkrTm/tpG/ogFNlM5ic1k6gj9rvaumd2fqh62LxvAHgyYqIUpHA7cCNCWzpQjTgJ06Z5
-        5yhwuC+iIWGmIN/X/ZUfEtftqsoqB3iR8K6rXN+ol4ABReUmjQQZX2IPu9prLsouNU1eebKLFuaJ8
-        kEEXq/ToyFI3bacriwgwpD8bpK9hSPQUvitsEzraJHhG+svfHXRkF+RsjLcS3MTIf2zzQ/RmlYE/A
-        cleDWxdw==;
+        bh=EkOnlpyWymR4eBDz4Zf4LKWAUCpS+ahpknQ+lsJJUwg=; b=GK3KtDCncjDMtqqF/CmCtddNLb
+        PmxMbtUqtGeSSSlvjrz7v85zuKbMv0f4YR2AxOPk35ligvB94qOjdV7BpAtPwVUhHOyX+OlrQyOAu
+        tfpNAXhCnZZ0PNwDVhqYHw3zDPT9sMFpyNTV2li9NfuaJEIRKqeNcr9XD01XMnArVJNW29FOD4hHB
+        T4HYeXzZyJ5rspSZOPIJirDNKIe1AavXtexcEkJhgSP/TxExq6/1n9LVv3YlZI6yh568Qcj/i5Pdi
+        V/afs29UGUaxJa2JnRL5z0C8D8BKlAwXP/UCGo3HGCmSORdKROVkqPc24mEQC3+KZskBE1toygMiR
+        z2OkouuQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTrni-0001H8-1F; Mon, 03 Dec 2018 17:14:39 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gTrng-0001xl-Gs; Mon, 03 Dec 2018 17:14:28 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 2FCD92029F4CB; Mon,  3 Dec 2018 18:14:26 +0100 (CET)
-Message-Id: <20181203171043.559855600@infradead.org>
+        id 16FCA2029FD74; Mon,  3 Dec 2018 18:14:26 +0100 (CET)
+Message-Id: <20181203171043.229119497@infradead.org>
 User-Agent: quilt/0.65
-Date:   Mon, 03 Dec 2018 18:03:51 +0100
+Date:   Mon, 03 Dec 2018 18:03:46 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     dave.hansen@intel.com, luto@kernel.org, peterz@infradead.org
 Cc:     x86@kernel.org, Tom.StDenis@amd.com, linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 08/10] x86/mm/cpa: Fold cpa_flush_range() and cpa_flush_array()
+Subject: [RFC][PATCH 03/10] x86/mm/cpa: Add __cpa_addr() helper
 References: <20181203170343.054618965@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -57,174 +57,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Note that the cache flush loop in cpa_flush_*() is identical when we
-use __cpa_addr(); further observe that flush_tlb_kernel_range() is a
-special case of to the cpa_flush_array() TLB invalidation code.
-
-This then means the two functions are virtually identical. Fold these
-two functions into a single cpa_flush() call.
+The code to compute the virtual address of a cpa_data is duplicated;
+introduce a helper before more copies happen.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/mm/pageattr.c |   92 +++++++++----------------------------------------
- 1 file changed, 18 insertions(+), 74 deletions(-)
+ arch/x86/mm/pageattr.c |   38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -304,51 +304,7 @@ static void cpa_flush_all(unsigned long
- 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
- }
+@@ -228,6 +228,23 @@ static bool __cpa_pfn_in_highmap(unsigne
  
--static bool __inv_flush_all(int cache)
--{
--	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
--
--	if (cache && !static_cpu_has(X86_FEATURE_CLFLUSH)) {
--		cpa_flush_all(cache);
--		return true;
--	}
--
--	return false;
--}
--
--static void cpa_flush_range(unsigned long start, int numpages, int cache)
--{
--	unsigned int i, level;
--	unsigned long addr;
--
--	WARN_ON(PAGE_ALIGN(start) != start);
--
--	if (__inv_flush_all(cache))
--		return;
--
--	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
--
--	if (!cache)
--		return;
--
--	/*
--	 * We only need to flush on one CPU,
--	 * clflush is a MESI-coherent instruction that
--	 * will cause all other CPUs to flush the same
--	 * cachelines:
--	 */
--	for (i = 0, addr = start; i < numpages; i++, addr += PAGE_SIZE) {
--		pte_t *pte = lookup_address(addr, &level);
--
--		/*
--		 * Only flush present addresses:
--		 */
--		if (pte && (pte_val(*pte) & _PAGE_PRESENT))
--			clflush_cache_range((void *) addr, PAGE_SIZE);
--	}
--}
--
--void __cpa_flush_array(void *data)
-+void __cpa_flush_tlb(void *data)
- {
- 	struct cpa_data *cpa = data;
- 	unsigned int i;
-@@ -357,33 +313,31 @@ void __cpa_flush_array(void *data)
- 		__flush_tlb_one_kernel(__cpa_addr(cpa, i));
- }
+ #endif
  
--static void cpa_flush_array(struct cpa_data *cpa, int cache)
-+static void cpa_flush(struct cpa_data *data, int cache)
- {
-+	struct cpa_data *cpa = data;
- 	unsigned int i;
- 
--	if (cpa_check_flush_all(cache))
-+	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
++static unsigned long __cpa_addr(struct cpa_data *cpa, int idx)
++{
++	if (cpa->flags & CPA_PAGES_ARRAY) {
++		struct page *page = cpa->pages[idx];
 +
-+	if (cache && !static_cpu_has(X86_FEATURE_CLFLUSH)) {
-+		cpa_flush_all(cache);
- 		return;
++		if (unlikely(PageHighMem(page)))
++			return 0;
++
++		return (unsigned long)page_address(page);
 +	}
++
++	if (cpa->flags & CPA_ARRAY)
++		return cpa->vaddr[idx];
++
++	return *cpa->vaddr;
++}
++
+ /*
+  * Flushing functions
+  */
+@@ -1468,15 +1485,7 @@ static int __change_page_attr(struct cpa
+ 	unsigned int level;
+ 	pte_t *kpte, old_pte;
  
- 	if (cpa->numpages <= tlb_single_page_flush_ceiling)
--		on_each_cpu(__cpa_flush_array, cpa, 1);
-+		on_each_cpu(__cpa_flush_tlb, cpa, 1);
- 	else
- 		flush_tlb_all();
- 
- 	if (!cache)
- 		return;
- 
--	/*
--	 * We only need to flush on one CPU,
--	 * clflush is a MESI-coherent instruction that
--	 * will cause all other CPUs to flush the same
--	 * cachelines:
--	 */
- 	for (i = 0; i < cpa->numpages; i++) {
- 		unsigned long addr = __cpa_addr(cpa, i);
- 		unsigned int level;
--		pte_t *pte;
- 
--		pte = lookup_address(addr, &level);
-+		pte_t *pte = lookup_address(addr, &level);
- 
- 		/*
- 		 * Only flush present addresses:
-@@ -1698,7 +1652,6 @@ static int change_page_attr_set_clr(unsi
- {
- 	struct cpa_data cpa;
- 	int ret, cache, checkalias;
--	unsigned long baddr = 0;
- 
- 	memset(&cpa, 0, sizeof(cpa));
- 
-@@ -1732,11 +1685,6 @@ static int change_page_attr_set_clr(unsi
- 			 */
- 			WARN_ON_ONCE(1);
- 		}
--		/*
--		 * Save address for cache flush. *addr is modified in the call
--		 * to __change_page_attr_set_clr() below.
--		 */
--		baddr = make_addr_canonical_again(*addr);
- 	}
- 
- 	/* Must avoid aliasing mappings in the highmem code */
-@@ -1784,11 +1732,7 @@ static int change_page_attr_set_clr(unsi
- 		goto out;
- 	}
- 
--	if (cpa.flags & (CPA_PAGES_ARRAY | CPA_ARRAY))
--		cpa_flush_array(&cpa, cache);
+-	if (cpa->flags & CPA_PAGES_ARRAY) {
+-		struct page *page = cpa->pages[cpa->curpage];
+-		if (unlikely(PageHighMem(page)))
+-			return 0;
+-		address = (unsigned long)page_address(page);
+-	} else if (cpa->flags & CPA_ARRAY)
+-		address = cpa->vaddr[cpa->curpage];
 -	else
--		cpa_flush_range(baddr, numpages, cache);
+-		address = *cpa->vaddr;
++	address = __cpa_addr(cpa, cpa->curpage);
+ repeat:
+ 	kpte = _lookup_address_cpa(cpa, address, &level);
+ 	if (!kpte)
+@@ -1557,16 +1566,7 @@ static int cpa_process_alias(struct cpa_
+ 	 * No need to redo, when the primary call touched the direct
+ 	 * mapping already:
+ 	 */
+-	if (cpa->flags & CPA_PAGES_ARRAY) {
+-		struct page *page = cpa->pages[cpa->curpage];
+-		if (unlikely(PageHighMem(page)))
+-			return 0;
+-		vaddr = (unsigned long)page_address(page);
+-	} else if (cpa->flags & CPA_ARRAY)
+-		vaddr = cpa->vaddr[cpa->curpage];
+-	else
+-		vaddr = *cpa->vaddr;
 -
-+	cpa_flush(&cpa, cache);
- out:
- 	return ret;
- }
-@@ -2097,18 +2041,18 @@ static int __set_memory_enc_dec(unsigned
- 	/*
- 	 * Before changing the encryption attribute, we need to flush caches.
- 	 */
--	cpa_flush_range(addr, numpages, 1);
-+	cpa_flush(&cpa, 1);
++	vaddr = __cpa_addr(cpa, cpa->curpage);
+ 	if (!(within(vaddr, PAGE_OFFSET,
+ 		    PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT)))) {
  
- 	ret = __change_page_attr_set_clr(&cpa, 1);
- 
- 	/*
--	 * After changing the encryption attribute, we need to flush TLBs
--	 * again in case any speculative TLB caching occurred (but no need
--	 * to flush caches again).  We could just use cpa_flush_all(), but
--	 * in case TLB flushing gets optimized in the cpa_flush_range()
--	 * path use the same logic as above.
-+	 * After changing the encryption attribute, we need to flush TLBs again
-+	 * in case any speculative TLB caching occurred (but no need to flush
-+	 * caches again).  We could just use cpa_flush_all(), but in case TLB
-+	 * flushing gets optimized in the cpa_flush() path use the same logic
-+	 * as above.
- 	 */
--	cpa_flush_range(addr, numpages, 0);
-+	cpa_flush(&cpa, 0);
- 
- 	return ret;
- }
 
 
