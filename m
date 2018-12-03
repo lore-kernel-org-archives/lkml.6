@@ -2,106 +2,167 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1021AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9385C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A714F20661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:28:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IikqCr5f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A714F20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CEEF20661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:28:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEEF20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeLCQ2J (ORCPT
+        id S1726845AbeLCQ2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:28:09 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9386 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbeLCQ2I (ORCPT
+        Mon, 3 Dec 2018 11:28:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48912 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726829AbeLCQ2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:28:08 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0559980001>; Mon, 03 Dec 2018 08:28:09 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 03 Dec 2018 08:28:06 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 03 Dec 2018 08:28:06 -0800
-Received: from [10.24.70.32] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 3 Dec
- 2018 16:27:57 +0000
-Subject: Re: [PATCH v4 6/8] vfio/mdev: Add iommu place holders in mdev_device
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, <ashok.raj@intel.com>,
-        <sanjay.k.kumar@intel.com>, <jacob.jun.pan@intel.com>,
-        <kevin.tian@intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        <yi.l.liu@intel.com>, <yi.y.sun@intel.com>, <peterx@redhat.com>,
-        <tiwei.bie@intel.com>, Zeng Xin <xin.zeng@intel.com>,
-        <iommu@lists.linux-foundation.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-References: <20181105073408.21815-1-baolu.lu@linux.intel.com>
- <20181105073408.21815-7-baolu.lu@linux.intel.com>
- <20181106165356.44b59ec3@w520.home>
- <edadb198-e4ab-ac23-4520-28bfcac252c3@linux.intel.com>
- <7bfc2f2b-10e6-b53c-51f3-c6494b686aa3@nvidia.com>
- <25b9a20f-06b5-57ac-81f1-fd933845c77f@linux.intel.com>
- <20181116085714.GA13181@infradead.org>
- <339ab9c8-08e1-ce2f-6f71-99a06e4b82f3@nvidia.com>
- <20181121084529.GA21766@infradead.org>
-X-Nvconfidentiality: public
-From:   Kirti Wankhede <kwankhede@nvidia.com>
-Message-ID: <fa1bdd92-c4c1-8ed4-a06a-13bc253ceed6@nvidia.com>
-Date:   Mon, 3 Dec 2018 21:57:49 +0530
+        Mon, 3 Dec 2018 11:28:36 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3GQTg3125980
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 11:28:32 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p5685e5my-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 11:28:31 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 3 Dec 2018 16:28:28 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 16:28:21 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3GSKaf25690160
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 16:28:20 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 99EB6A4054;
+        Mon,  3 Dec 2018 16:28:20 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55F64A4060;
+        Mon,  3 Dec 2018 16:28:18 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.196])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  3 Dec 2018 16:28:18 +0000 (GMT)
+Date:   Mon, 3 Dec 2018 18:28:16 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] sh: prefer memblock APIs returning virtual address
+References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+ <1543852035-26634-4-git-send-email-rppt@linux.ibm.com>
+ <20181203161052.GA4244@ravnborg.org>
 MIME-Version: 1.0
-In-Reply-To: <20181121084529.GA21766@infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543854489; bh=b4DkH+vuCTwYtgytDBxVHRcaPrIJH0q5/BjSkcGcvFM=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=IikqCr5fVqXYDx9uFeTTxMn5N2q1jTZV0AzWZAxPdX2QCd8szwQVe/tLpmqm4h/3I
-         2o7o99T/2QY4eVDxQ/KQjrzNsBkyryRnZGIEMBqbQZ9COWmilXBwEhfAoBGdV0hSuq
-         aAW5nBwOJx9BdDtU1AFla/49EVh03jQQhlMIAGvHA6OOLUcqLcd8mnExB8Q4U/POAI
-         qYKx1p3VcBZZjF+FJ1EPEhU1WO/XO7yZ+lkna99fE4XQP+RigHVx95Ev4GUQcMW2C9
-         3GKKU8iBDGN2lN59eonQkiid1pebZgDe0dYQaumZcI7/Ojt8ng2hBKXFQh2fiyUUa9
-         PztZPo1ClKnYw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203161052.GA4244@ravnborg.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18120316-4275-0000-0000-000002EB6519
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120316-4276-0000-0000-000037F86955
+Message-Id: <20181203162816.GA26700@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/21/2018 2:15 PM, Christoph Hellwig wrote:
-> On Wed, Nov 21, 2018 at 02:22:08AM +0530, Kirti Wankhede wrote:
->> It is about how mdev framework can be used by existing drivers. These
->> symbols doesn't use any other exported symbols.
+On Mon, Dec 03, 2018 at 05:10:52PM +0100, Sam Ravnborg wrote:
+> Hi Mike.
 > 
-> That is an unfortunate accident of history, but doesn't extent to new
-> ones.  It also is another inidicator those drivers probably are derived
-> works of the Linux kernel and might be in legal trouble one way or
-> another.
+> On Mon, Dec 03, 2018 at 05:47:12PM +0200, Mike Rapoport wrote:
+> > Rather than use the memblock_alloc_base that returns a physical address and
+> > then convert this address to the virtual one, use appropriate memblock
+> > function that returns a virtual address.
+> > 
+> > There is a small functional change in the allocation of then NODE_DATA().
+> > Instead of panicing if the local allocation failed, the non-local
+> > allocation attempt will be made.
+> > 
+> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> > ---
+> >  arch/sh/mm/init.c | 18 +++++-------------
+> >  arch/sh/mm/numa.c |  5 ++---
+> >  2 files changed, 7 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+> > index c8c13c77..3576b5f 100644
+> > --- a/arch/sh/mm/init.c
+> > +++ b/arch/sh/mm/init.c
+> > @@ -192,24 +192,16 @@ void __init page_table_range_init(unsigned long start, unsigned long end,
+> >  void __init allocate_pgdat(unsigned int nid)
+> >  {
+> >  	unsigned long start_pfn, end_pfn;
+> > -#ifdef CONFIG_NEED_MULTIPLE_NODES
+> > -	unsigned long phys;
+> > -#endif
+> >  
+> >  	get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
+> >  
+> >  #ifdef CONFIG_NEED_MULTIPLE_NODES
+> > -	phys = __memblock_alloc_base(sizeof(struct pglist_data),
+> > -				SMP_CACHE_BYTES, end_pfn << PAGE_SHIFT);
+> > -	/* Retry with all of system memory */
+> > -	if (!phys)
+> > -		phys = __memblock_alloc_base(sizeof(struct pglist_data),
+> > -					SMP_CACHE_BYTES, memblock_end_of_DRAM());
+> > -	if (!phys)
+> > +	NODE_DATA(nid) = memblock_alloc_try_nid_nopanic(
+> > +				sizeof(struct pglist_data),
+> > +				SMP_CACHE_BYTES, MEMBLOCK_LOW_LIMIT,
+> > +				MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+> > +	if (!NODE_DATA(nid))
+> >  		panic("Can't allocate pgdat for node %d\n", nid);
+> > -
+> > -	NODE_DATA(nid) = __va(phys);
+> > -	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+> The new code will always assign NODE_DATA(nid), where the old
+> code only assigned NODE_DATA(nid) in the good case.
+> I dunno if this is an issue, just noticed the difference and
+> wanted to point it out.
+
+If the allocation fails the NODE_DATA(nid) remains zero anyway and there is
+a panic() call. So I think there is no actual functional change here.
+
+> 	Sam
 > 
 
-These symbols are just to associate iommu properties of a physical
-device with a mdev device, doesn't include low-level information.
+-- 
+Sincerely yours,
+Mike.
 
-Thanks,	
-Kirti
