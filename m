@@ -2,106 +2,146 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EB5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AE2C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0637720661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:06:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K1ua6U3n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0637720661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A2D662087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:06:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D662087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbeLCRGo (ORCPT
+        id S1726852AbeLCRGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:06:44 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43398 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbeLCRGo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:06:44 -0500
-Received: by mail-lj1-f194.google.com with SMTP id 83-v6so12085223ljf.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:06:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i9ALoFMSXJ1UcqXr/lIr/p9DnNQLnN3pYeGFAcLDzzc=;
-        b=K1ua6U3n0vvX601+AAR7GL+/xhonjeBxqHzWpGB1WhVIABQB1ilxdPR4tNTNZLCjtc
-         NAN3X+gS9UilaRv0pzEvv9XuZ8CmzUucY+THk0SDDcDfs3lzhQE8AdCYFSrQzYBtnjlI
-         OAG3zA7veq3DoHdiYHs3+3yrYLzfQj/dGVNXw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i9ALoFMSXJ1UcqXr/lIr/p9DnNQLnN3pYeGFAcLDzzc=;
-        b=c0kho/kwxq2OTsG9dQMwP6YP/pw/vtCcKNzESeCI/OVvt1Rmg5d+PxS1a/+HNx2JMC
-         GWDPOsLTzjwBirP2yq9vCNQU8U9RTWyPJ2/Qk9JOlmtztGgb+Ysk82Ct4TiWn/d//GmL
-         bp5xPOa084s/10iBEvH6D1RA6yEqKACgW9kW68DiDNpb9cR6i2mi9f+EHEkJeII6Dzq8
-         YMDIiSRFl9AYlm5JdTPA+06e1yEGf5Ttcd4ypQ7gR2pdQJrKIoK/1UzZMhVg8vHmlis0
-         EmRkFrx4y2ENRzkHuO0upyBNwZdHJy9cmzNSaXzJufW2qMC00ik0hNIaF0zRoCZxWcS9
-         C6eQ==
-X-Gm-Message-State: AA+aEWbBNt12nD77p4h7W157n00Gfq0BOSZB8NgnFYzErmQDfoCg4e8G
-        STt50X5sKdVssraSYTM6151Aq7zw4Dw=
-X-Google-Smtp-Source: AFSGD/Xaj2Ik3Xwf0PJ1++J7lWsespOd/whw2ITojjpgeFfawcwSw8CgL+Eomy3GPVaPF26KCUYh8g==
-X-Received: by 2002:a2e:302:: with SMTP id 2-v6mr5572098ljd.137.1543856797476;
-        Mon, 03 Dec 2018 09:06:37 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id l21-v6sm2575374ljj.48.2018.12.03.09.06.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 09:06:36 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id c19-v6so12105325lja.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:06:35 -0800 (PST)
-X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr11497263lji.133.1543856795466;
- Mon, 03 Dec 2018 09:06:35 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHk-=wgdsXyCaLsFEpyUpAeRqVS69u=xo4rzEN+cS=xwz2gajg@mail.gmail.com>
- <20181203074700.GA21240@gmail.com> <20181203083942.GF31738@dhcp22.suse.cz>
- <20181203123149.GB31795@redhat.com> <20181203123857.GS31738@dhcp22.suse.cz>
- <20181203131006.GA10054@amd> <20181203135351.GU31738@dhcp22.suse.cz>
- <20181203141459.GA14789@amd> <20181203141737.GY31738@dhcp22.suse.cz>
-In-Reply-To: <20181203141737.GY31738@dhcp22.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Dec 2018 09:06:18 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wibyrfrpRoyGRwFrLZvrxAg=j5ueTje=4GckJcJSy-pwg@mail.gmail.com>
-Message-ID: <CAHk-=wibyrfrpRoyGRwFrLZvrxAg=j5ueTje=4GckJcJSy-pwg@mail.gmail.com>
-Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux 4.20-rc4)
-To:     mhocko@kernel.org
-Cc:     pavel@ucw.cz, Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        rafael.j.wysocki@intel.com, chanho.min@lge.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Dec 2018 12:06:49 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:26461 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726637AbeLCRGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:06:49 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 437rxr4Hkpz9tyyG;
+        Mon,  3 Dec 2018 18:06:40 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id SWiAnz58A0pf; Mon,  3 Dec 2018 18:06:40 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 437rxr3f1rz9tyyF;
+        Mon,  3 Dec 2018 18:06:40 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C54FA8B7B8;
+        Mon,  3 Dec 2018 18:06:43 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id kV2y1tG9fbml; Mon,  3 Dec 2018 18:06:43 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6704A8B79E;
+        Mon,  3 Dec 2018 18:06:43 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 0508F6BEF5; Mon,  3 Dec 2018 17:06:42 +0000 (UTC)
+Message-Id: <dd9ef91add7fcf5a9e369dde322b1822e90eb218.1543811917.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 1/2] mm: add probe_user_read() and probe_user_address()
+To:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Date:   Mon,  3 Dec 2018 17:06:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 6:17 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> This argument just doesn't make any sense. Rare bugs are maybe even more
-> annoying because you do not expect them to happen.
+In the powerpc, there are several places implementing safe
+access to user data. This is sometimes implemented using
+probe_kernel_address() with additional access_ok() verification,
+sometimes with get_user() enclosed in a pagefault_disable()/enable()
+pair, etc... :
+    show_user_instructions()
+    bad_stack_expansion()
+    p9_hmi_special_emu()
+    fsl_pci_mcheck_exception()
+    read_user_stack_64()
+    read_user_stack_32() on PPC64
+    read_user_stack_32() on PPC32
+    power_pmu_bhrb_to()
 
-Absolutely.
+In the same spirit as probe_kernel_read() and probe_kernel_address(),
+this patch adds probe_user_read() and probe_user_address().
 
-And valid lockdep complaints are a real issue too.
+probe_user_read() does the same as probe_kernel_read() but
+first checks that it is really a user address.
 
-So I don't think there's any question that this should be reverted,
-the only question is whether I take the revert directly or get it from
-the PM tree.
+probe_user_address() is a shortcut to probe_user_read()
 
-It does sound like the de_thread() behavior needs more work. Maybe,
-for example, we need to make it clear that zapped threads are *not*
-frozen, and instead the freezer will wait for them to exit?
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ Changes since RFC: Made a static inline function instead of weak function as recommended by Kees.
 
-Hmm?
+ include/linux/uaccess.h | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-                      Linus
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index efe79c1cdd47..83ea8aefca75 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -266,6 +266,48 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
+ #define probe_kernel_address(addr, retval)		\
+ 	probe_kernel_read(&retval, addr, sizeof(retval))
+ 
++/**
++ * probe_user_read(): safely attempt to read from a user location
++ * @dst: pointer to the buffer that shall take the data
++ * @src: address to read from
++ * @size: size of the data chunk
++ *
++ * Safely read from address @src to the buffer at @dst.  If a kernel fault
++ * happens, handle that and return -EFAULT.
++ *
++ * We ensure that the copy_from_user is executed in atomic context so that
++ * do_page_fault() doesn't attempt to take mmap_sem.  This makes
++ * probe_user_read() suitable for use within regions where the caller
++ * already holds mmap_sem, or other locks which nest inside mmap_sem.
++ */
++
++#ifndef probe_user_read
++static __always_inline long probe_user_read(void *dst, const void __user *src,
++					    size_t size)
++{
++	long ret;
++
++	if (!access_ok(VERIFY_READ, src, size))
++		return -EFAULT;
++
++	pagefault_disable();
++	ret = __copy_from_user_inatomic(dst, src, size);
++	pagefault_enable();
++
++	return ret ? -EFAULT : 0;
++}
++#endif
++
++/**
++ * probe_user_address(): safely attempt to read from a user location
++ * @addr: address to read from
++ * @retval: read into this variable
++ *
++ * Returns 0 on success, or -EFAULT.
++ */
++#define probe_user_address(addr, retval)		\
++	probe_user_read(&(retval), addr, sizeof(retval))
++
+ #ifndef user_access_begin
+ #define user_access_begin() do { } while (0)
+ #define user_access_end() do { } while (0)
+-- 
+2.13.3
+
