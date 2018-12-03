@@ -2,158 +2,116 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1C3C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9D0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D6A208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:52:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Px80hsID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D6A208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 42A9F2145D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:53:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A9F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbeLCRwk (ORCPT
+        id S1726766AbeLCRxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:52:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37352 "EHLO mail.kernel.org"
+        Mon, 3 Dec 2018 12:53:05 -0500
+Received: from mga06.intel.com ([134.134.136.31]:45922 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbeLCRwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:52:40 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED6F220848;
-        Mon,  3 Dec 2018 17:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543859556;
-        bh=+gjCBg6qCkIqS/5+hzcmL0FLKRJl2ioFwUBH6WbHMSY=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Px80hsIDCole+ek1tecEd1/5Ty32EPG7XAUkkRRSqLNWn3H7Hz0qltVWfGIMCVfpB
-         fYSmh52/zBVf2AcQfQ7pgKw3RzFz+deggsLxrXxcZ2je0k174lC0q9FuMn0IMiwpQd
-         l2T5VTktzi/93rBbtz4FWNgA31zk3bIhMfZSK6YA=
-Content-Type: text/plain; charset="utf-8"
+        id S1726014AbeLCRxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 12:53:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 09:53:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
+   d="scan'208";a="106929120"
+Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
+  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2018 09:53:00 -0800
+Subject: Re: [PATCH v2 3/5] generic/pgtable: Introduce set_pte_safe()
+To:     Dan Williams <dan.j.williams@intel.com>, tglx@linutronix.de
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <154362450646.2367148.16448130381211111341.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154362452184.2367148.10656843315134995636.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <4bc8cab6-4e1a-c3b9-0023-3ecde932cc70@intel.com>
+Date:   Mon, 3 Dec 2018 09:53:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <bf2c5a96-6a29-e89b-4b16-8aaab516a7b5@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
- <20181203155538.GQ2225@minitux>
- <711fb66a-a408-08e2-c0c2-6addf1510937@codeaurora.org>
- <154385654317.88331.9077579060059188717@swboyd.mtv.corp.google.com>
- <bf2c5a96-6a29-e89b-4b16-8aaab516a7b5@codeaurora.org>
-Message-ID: <154385955525.88331.5713343841692637945@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: qcom: Fix MSM8998 resets
-Date:   Mon, 03 Dec 2018 09:52:35 -0800
+In-Reply-To: <154362452184.2367148.10656843315134995636.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jeffrey Hugo (2018-12-03 09:19:20)
-> On 12/3/2018 10:02 AM, Stephen Boyd wrote:
-> > Quoting Jeffrey Hugo (2018-12-03 08:08:46)
-> >> On 12/3/2018 8:55 AM, Bjorn Andersson wrote:
-> >>> On Mon 03 Dec 07:34 PST 2018, Jeffrey Hugo wrote:
-> >>>
-> >>>> The offsets for the defined BCR reset registers does not match the h=
-ardware
-> >>>> documentation.  Update the values to match the hardware documentatio=
-n.
-> >>>>
-> >>>
-> >>> Sorry for not spotting this before.
-> >>>
-> >>>> Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GC=
-C) driver)
-> >>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> >>>> ---
-> >>>>    drivers/clk/qcom/gcc-msm8998.c | 38 +++++++++++++++++++----------=
----------
-> >>>>    1 file changed, 19 insertions(+), 19 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-m=
-sm8998.c
-> >>>> index 9f0ae40..01cc555 100644
-> >>>> --- a/drivers/clk/qcom/gcc-msm8998.c
-> >>>> +++ b/drivers/clk/qcom/gcc-msm8998.c
-> >>>> @@ -2742,25 +2742,25 @@ enum {
-> >>>>    };
-> >>>>    =
+On 11/30/18 4:35 PM, Dan Williams wrote:
+> +/*
+> + * The _safe versions of set_{pte,pmd,pud,p4d,pgd} validate that the
+> + * entry was not populated previously. I.e. for cases where a flush-tlb
+> + * is elided, double-check that there is no stale mapping to shoot down.
+> + */
 
-> >>>>    static const struct qcom_reset_map gcc_msm8998_resets[] =3D {
-> >>>> -    [GCC_BLSP1_QUP1_BCR] =3D { 0x102400 },
-> >>>> -    [GCC_BLSP1_QUP2_BCR] =3D { 0x110592 },
-> >>>> -    [GCC_BLSP1_QUP3_BCR] =3D { 0x118784 },
-> >>>> -    [GCC_BLSP1_QUP4_BCR] =3D { 0x126976 },
-> >>>> -    [GCC_BLSP1_QUP5_BCR] =3D { 0x135168 },
-> >>>> -    [GCC_BLSP1_QUP6_BCR] =3D { 0x143360 },
-> >>>> -    [GCC_BLSP2_QUP1_BCR] =3D { 0x155648 },
-> >>>> -    [GCC_BLSP2_QUP2_BCR] =3D { 0x163840 },
-> >>>> -    [GCC_BLSP2_QUP3_BCR] =3D { 0x172032 },
-> >>>> -    [GCC_BLSP2_QUP4_BCR] =3D { 0x180224 },
-> >>>> -    [GCC_BLSP2_QUP5_BCR] =3D { 0x188416 },
-> >>>> -    [GCC_BLSP2_QUP6_BCR] =3D { 0x196608 },
-> >>>> -    [GCC_PCIE_0_BCR] =3D { 0x438272 },
-> >>>> -    [GCC_PDM_BCR] =3D { 0x208896 },
-> >>>> -    [GCC_SDCC2_BCR] =3D { 0x81920 },
-> >>>> -    [GCC_SDCC4_BCR] =3D { 0x90112 },
-> >>>> -    [GCC_TSIF_BCR] =3D { 0x221184 },
-> >>>> -    [GCC_UFS_BCR] =3D { 0x479232 },
-> >>>> -    [GCC_USB_30_BCR] =3D { 0x61440 },
-> >>>> +    [GCC_BLSP1_QUP1_BCR] =3D { 0x19000 },
-> >>>> +    [GCC_BLSP1_QUP2_BCR] =3D { 0x1b000 },
-> >>>> +    [GCC_BLSP1_QUP3_BCR] =3D { 0x1d000 },
-> >>>> +    [GCC_BLSP1_QUP4_BCR] =3D { 0x1f000 },
-> >>>> +    [GCC_BLSP1_QUP5_BCR] =3D { 0x21000 },
-> >>>> +    [GCC_BLSP1_QUP6_BCR] =3D { 0x23000 },
-> >>>> +    [GCC_BLSP2_QUP1_BCR] =3D { 0x26000 },
-> >>>> +    [GCC_BLSP2_QUP2_BCR] =3D { 0x28000 },
-> >>>> +    [GCC_BLSP2_QUP3_BCR] =3D { 0x2a000 },
-> >>>> +    [GCC_BLSP2_QUP4_BCR] =3D { 0x2c000 },
-> >>>> +    [GCC_BLSP2_QUP5_BCR] =3D { 0x2e000 },
-> >>>> +    [GCC_BLSP2_QUP6_BCR] =3D { 0x30000 },
-> >>>> +    [GCC_PCIE_0_BCR] =3D { 0x6c01c },
-> >>>
-> >>> I find GCC_PCIE_0_BCR at 0x6b000 and then GCC_PCIE_0_PHY_BCR at 0x6c0=
-1c.
-> >>
-> >> Doh.  Thanks for the double check.  GCC_PCIE_0_PHY_BCR is not defined =
-in
-> >> include/dt-bindings/clock/qcom,gcc-msm8998.h so I plan to leave it out
-> >> until later.
-> >>
-> >> Expect a v2 shortly.
-> > =
+Functionally these look great to me.
 
-> > Will you add GCC_PCIE0_PHY_BCR shortly so we don't have to add it later
-> > on when it becomes critical?
-> > =
+The only thing I'd suggest is to make the comment more about when to use
+these, instead of what they do:
 
-> =
-
-> My plan was to let it sit until it becomes necessary.  I'm working on =
-
-> USB and found that GCC_QUSB2PHY_PRIM_BCR, GCC_USB3_PHY_BCR, and =
-
-> GCC_USB3PHY_PHY_BCR are also missing, so I suspect there are others.
-> =
-
-> Would you prefer I send a follow up that adds the PCIE phy and the USB =
-
-> resets?
-
-Yes please send a followup patch to add all the possible defines and
-implementations that you can find. It makes future cross-tree merges
-simpler.
+	Use the set_p*_safe() version when confident that *no*
+	TLB flush will be required as a result of the "set", such
+	as setting non-present entries or when possibly superfluously
+	re-setting an entry.
 
