@@ -6,43 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D145DC64EB4
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F150DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97B7521473
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:45:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97B7521473
+	by mail.kernel.org (Postfix) with ESMTP id B8F6720848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F6720848
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725849AbeLCDpo (ORCPT
+        id S1725941AbeLCDpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 22:45:44 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46562 "EHLO huawei.com"
+        Sun, 2 Dec 2018 22:45:45 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46582 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725819AbeLCDpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 22:45:44 -0500
+        id S1725789AbeLCDpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 22:45:45 -0500
 Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 60D362CE44876;
+        by Forcepoint Email with ESMTP id 542E943F61AC4;
         Mon,  3 Dec 2018 11:45:37 +0800 (CST)
 Received: from vm100-107-113-134.huawei.com (100.107.113.134) by
  DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 3 Dec 2018 11:45:31 +0800
+ 14.3.408.0; Mon, 3 Dec 2018 11:45:32 +0800
 From:   Yu Chen <chenyu56@huawei.com>
 To:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yu Chen <chenyu56@huawei.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         "David S. Miller" <davem@davemloft.net>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        "Arnd Bergmann" <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
+        Pengcheng Li <lpc.li@hisilicon.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>,
         John Stultz <john.stultz@linaro.org>,
         Binghui Wang <wangbinghui@hisilicon.com>
-Subject: [PATCH v1 04/12] usb: dwc3: dwc3-hisi: Add code for dwc3 of Hisilicon Soc Platform
-Date:   Mon, 3 Dec 2018 11:45:07 +0800
-Message-ID: <20181203034515.91412-5-chenyu56@huawei.com>
+Subject: [PATCH v1 06/12] phy: Add usb phy support for hi3660 Soc of Hisilicon
+Date:   Mon, 3 Dec 2018 11:45:09 +0800
+Message-ID: <20181203034515.91412-7-chenyu56@huawei.com>
 X-Mailer: git-send-email 2.15.0-rc2
 In-Reply-To: <20181203034515.91412-1-chenyu56@huawei.com>
 References: <20181203034515.91412-1-chenyu56@huawei.com>
@@ -55,412 +60,323 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver handles the poweron and shutdown of dwc3 core
-on Hisilicon Soc Platform.
+This driver handles usb phy power on and shutdown for hi3660 Soc of
+Hisilicon.
 
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
 Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Pengcheng Li <lpc.li@hisilicon.com>
+Cc: Jianguo Sun <sunjianguo1@huawei.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Jiancheng Xue <xuejiancheng@hisilicon.com>
 Cc: John Stultz <john.stultz@linaro.org>
 Cc: Binghui Wang <wangbinghui@hisilicon.com>
 Signed-off-by: Yu Chen <chenyu56@huawei.com>
+--
+v1: Remove unused code and add comment for time delay as suggested by
+Kishon Vijay Abraham I.
+--
 ---
- MAINTAINERS                  |   8 ++
- drivers/usb/dwc3/Kconfig     |   8 ++
- drivers/usb/dwc3/Makefile    |   1 +
- drivers/usb/dwc3/dwc3-hisi.c | 335 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 352 insertions(+)
- create mode 100644 drivers/usb/dwc3/dwc3-hisi.c
+ MAINTAINERS                             |   2 +
+ drivers/phy/hisilicon/Kconfig           |  10 ++
+ drivers/phy/hisilicon/Makefile          |   1 +
+ drivers/phy/hisilicon/phy-hi3660-usb3.c | 237 ++++++++++++++++++++++++++++++++
+ 4 files changed, 250 insertions(+)
+ create mode 100644 drivers/phy/hisilicon/phy-hi3660-usb3.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 6c3fbbb361f8..1b6b3026804c 100644
+index 1b6b3026804c..1c09c2ca516d 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -15465,6 +15465,14 @@ L:	linux-usb@vger.kernel.org
+@@ -15471,7 +15471,9 @@ M:	Binghui Wang <wangbinghui@hisilicon.com>
+ L:	linux-usb@vger.kernel.org
  S:	Maintained
- F:	drivers/usb/roles/intel-xhci-usb-role-switch.c
+ F:	Documentation/devicetree/bindings/usb/dwc3-hisi.txt
++F:	Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+ F:	drivers/usb/dwc3/dwc3-hisi.c
++F:	drivers/phy/hisilicon/phy-hi3660-usb3.c
  
-+USB IP DRIVER FOR HISILICON KIRIN
-+M:	Yu Chen <chenyu56@huawei.com>
-+M:	Binghui Wang <wangbinghui@hisilicon.com>
-+L:	linux-usb@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/usb/dwc3-hisi.txt
-+F:	drivers/usb/dwc3/dwc3-hisi.c
-+
  USB ISP116X DRIVER
  M:	Olav Kongas <ok@artecdesign.ee>
- L:	linux-usb@vger.kernel.org
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 1a0404fda596..09d105a2b53a 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -123,4 +123,12 @@ config USB_DWC3_QCOM
- 	  for peripheral mode support.
- 	  Say 'Y' or 'M' if you have one such device.
+diff --git a/drivers/phy/hisilicon/Kconfig b/drivers/phy/hisilicon/Kconfig
+index b40ee54a1a50..3c142f08987c 100644
+--- a/drivers/phy/hisilicon/Kconfig
++++ b/drivers/phy/hisilicon/Kconfig
+@@ -12,6 +12,16 @@ config PHY_HI6220_USB
  
-+config USB_DWC3_HISI
-+	tristate "HiSilicon Kirin Platforms"
-+	depends on ((ARCH_HISI && ARM64) || COMPILE_TEST) && OF
-+	default USB_DWC3
+ 	  To compile this driver as a module, choose M here.
+ 
++config PHY_HI3660_USB
++	tristate "hi3660 USB PHY support"
++	depends on (ARCH_HISI && ARM64) || COMPILE_TEST
++	select GENERIC_PHY
++	select MFD_SYSCON
 +	help
-+	  Support USB2/3 functionality in HiSilicon Kirin platforms.
-+	  Say 'Y' or 'M' if you have one such device.
++	  Enable this to support the HISILICON HI3660 USB PHY.
 +
- endif
-diff --git a/drivers/usb/dwc3/Makefile b/drivers/usb/dwc3/Makefile
-index 6e3ef6144e5d..15781455e3f0 100644
---- a/drivers/usb/dwc3/Makefile
-+++ b/drivers/usb/dwc3/Makefile
-@@ -50,3 +50,4 @@ obj-$(CONFIG_USB_DWC3_KEYSTONE)		+= dwc3-keystone.o
- obj-$(CONFIG_USB_DWC3_OF_SIMPLE)	+= dwc3-of-simple.o
- obj-$(CONFIG_USB_DWC3_ST)		+= dwc3-st.o
- obj-$(CONFIG_USB_DWC3_QCOM)		+= dwc3-qcom.o
-+obj-$(CONFIG_USB_DWC3_HISI)		+= dwc3-hisi.o
-diff --git a/drivers/usb/dwc3/dwc3-hisi.c b/drivers/usb/dwc3/dwc3-hisi.c
++	  To compile this driver as a module, choose M here.
++
+ config PHY_HISTB_COMBPHY
+ 	tristate "HiSilicon STB SoCs COMBPHY support"
+ 	depends on (ARCH_HISI && ARM64) || COMPILE_TEST
+diff --git a/drivers/phy/hisilicon/Makefile b/drivers/phy/hisilicon/Makefile
+index f662a4fe18d8..75ba64e2faf8 100644
+--- a/drivers/phy/hisilicon/Makefile
++++ b/drivers/phy/hisilicon/Makefile
+@@ -1,4 +1,5 @@
+ obj-$(CONFIG_PHY_HI6220_USB)		+= phy-hi6220-usb.o
++obj-$(CONFIG_PHY_HI3660_USB)		+= phy-hi3660-usb3.o
+ obj-$(CONFIG_PHY_HISTB_COMBPHY)		+= phy-histb-combphy.o
+ obj-$(CONFIG_PHY_HISI_INNO_USB2)	+= phy-hisi-inno-usb2.o
+ obj-$(CONFIG_PHY_HIX5HD2_SATA)		+= phy-hix5hd2-sata.o
+diff --git a/drivers/phy/hisilicon/phy-hi3660-usb3.c b/drivers/phy/hisilicon/phy-hi3660-usb3.c
 new file mode 100644
-index 000000000000..6e9787d420a7
+index 000000000000..102966e49e01
 --- /dev/null
-+++ b/drivers/usb/dwc3/dwc3-hisi.c
-@@ -0,0 +1,335 @@
++++ b/drivers/phy/hisilicon/phy-hi3660-usb3.c
+@@ -0,0 +1,237 @@
 +// SPDX-License-Identifier: GPL-2.0+
-+/**
-+ * dwc3-hisi.c - Support for dwc3 platform devices on HiSilicon platforms
++/*
++ * Phy provider for USB 3.0 controller on HiSilicon 3660 platform
 + *
 + * Copyright (C) 2017-2018 Hilisicon Electronics Co., Ltd.
 + *		http://www.huawei.com
 + *
 + * Authors: Yu Chen <chenyu56@huawei.com>
 + *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2  of
-+ * the License as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
 + */
 +
-+#include <linux/module.h>
 +#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/phy/phy.h>
 +#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/extcon.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/pinctrl/consumer.h>
 +
-+struct dwc3_hisi {
-+	struct device		*dev;
-+	struct clk		**clks;
-+	int			num_clocks;
-+	struct reset_control	**rstcs;
-+	int			num_rstcs;
++#define PERI_CRG_CLK_EN4			(0x40)
++#define PERI_CRG_CLK_DIS4			(0x44)
++#define GT_CLK_USB3OTG_REF			BIT(0)
++#define GT_ACLK_USB3OTG				BIT(1)
++
++#define PERI_CRG_RSTEN4				(0x90)
++#define PERI_CRG_RSTDIS4			(0x94)
++#define IP_RST_USB3OTGPHY_POR			BIT(3)
++#define IP_RST_USB3OTG				BIT(5)
++
++#define PERI_CRG_ISODIS				(0x148)
++#define USB_REFCLK_ISO_EN			BIT(25)
++
++#define PCTRL_PERI_CTRL3			(0x10)
++#define PCTRL_PERI_CTRL3_MSK_START		(16)
++#define USB_TCXO_EN				BIT(1)
++
++#define PCTRL_PERI_CTRL24			(0x64)
++#define SC_CLK_USB3PHY_3MUX1_SEL		BIT(25)
++
++#define USBOTG3_CTRL0				(0x00)
++#define SC_USB3PHY_ABB_GT_EN			BIT(15)
++
++#define USBOTG3_CTRL2				(0x08)
++#define USBOTG3CTRL2_POWERDOWN_HSP		BIT(0)
++#define USBOTG3CTRL2_POWERDOWN_SSP		BIT(1)
++
++#define USBOTG3_CTRL3				(0x0C)
++#define USBOTG3_CTRL3_VBUSVLDEXT		BIT(6)
++#define USBOTG3_CTRL3_VBUSVLDEXTSEL		BIT(5)
++
++#define USBOTG3_CTRL4				(0x10)
++
++#define USBOTG3_CTRL7				(0x1c)
++#define REF_SSP_EN				BIT(16)
++
++#define HI3660_USB_DEFAULT_PHY_PARAM		(0x1c466e3)
++
++struct hi3660_priv {
++	struct device *dev;
++	struct regmap *peri_crg;
++	struct regmap *pctrl;
++	struct regmap *otg_bc;
++	u32 eye_diagram_param;
++
++	u32 peri_crg_offset;
++	u32 pctrl_offset;
++	u32 otg_bc_offset;
 +};
 +
-+struct dwc3_hisi *g_dwc3_hisi;
-+
-+static int dwc3_hisi_init_clks(struct dwc3_hisi *dwc3_hisi,
-+		struct device_node *np)
++static int hi3660_phy_init(struct phy *phy)
 +{
-+	struct device *dev = dwc3_hisi->dev;
-+	int i;
-+
-+	dwc3_hisi->num_clocks = of_clk_get_parent_count(np);
-+	if (!dwc3_hisi->num_clocks)
-+		return -ENOENT;
-+
-+	dwc3_hisi->clks = devm_kcalloc(dev, dwc3_hisi->num_clocks,
-+			sizeof(struct clk *), GFP_KERNEL);
-+	if (!dwc3_hisi->clks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++) {
-+		struct clk	*clk;
-+
-+		clk = of_clk_get(np, i);
-+		if (IS_ERR(clk)) {
-+			while (--i >= 0)
-+				clk_put(dwc3_hisi->clks[i]);
-+
-+			return PTR_ERR(clk);
-+		}
-+
-+		dwc3_hisi->clks[i] = clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_enable_clks(struct dwc3_hisi *dwc3_hisi)
-+{
-+	int i;
++	struct hi3660_priv *priv = phy_get_drvdata(phy);
++	u32 val, mask;
 +	int ret;
 +
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++) {
-+		ret = clk_prepare_enable(dwc3_hisi->clks[i]);
-+		if (ret < 0) {
-+			while (--i >= 0)
-+				clk_disable_unprepare(dwc3_hisi->clks[i]);
-+
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void dwc3_hisi_disable_clks(struct dwc3_hisi *dwc3_hisi)
-+{
-+	int i;
-+
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++)
-+		clk_disable_unprepare(dwc3_hisi->clks[i]);
-+}
-+
-+static int dwc3_hisi_get_rstcs(struct dwc3_hisi *dwc3_hisi,
-+		struct device_node *np)
-+{
-+	struct device *dev = dwc3_hisi->dev;
-+	int i;
-+
-+	dwc3_hisi->num_rstcs = of_count_phandle_with_args(np,
-+			"resets", "#reset-cells");
-+	if (!dwc3_hisi->num_rstcs)
-+		return -ENOENT;
-+
-+	dwc3_hisi->rstcs = devm_kcalloc(dev, dwc3_hisi->num_rstcs,
-+			sizeof(struct reset_control *), GFP_KERNEL);
-+	if (!dwc3_hisi->rstcs)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < dwc3_hisi->num_rstcs; i++) {
-+		struct reset_control *rstc;
-+
-+		rstc = of_reset_control_get_shared_by_index(np, i);
-+		if (IS_ERR(rstc)) {
-+			while (--i >= 0)
-+				reset_control_put(dwc3_hisi->rstcs[i]);
-+			return PTR_ERR(rstc);
-+		}
-+
-+		dwc3_hisi->rstcs[i] = rstc;
-+	}
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_reset_control_assert(struct dwc3_hisi *dwc3_hisi)
-+{
-+	int i, ret;
-+
-+	for (i = dwc3_hisi->num_rstcs - 1; i >= 0 ; i--) {
-+		ret = reset_control_assert(dwc3_hisi->rstcs[i]);
-+		if (ret) {
-+			while (--i >= 0)
-+				reset_control_deassert(dwc3_hisi->rstcs[i]);
-+			return ret;
-+		}
-+		udelay(10);
-+	}
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_reset_control_deassert(struct dwc3_hisi *dwc3_hisi)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < dwc3_hisi->num_rstcs; i++) {
-+		ret = reset_control_deassert(dwc3_hisi->rstcs[i]);
-+		if (ret) {
-+			while (--i >= 0)
-+				reset_control_assert(dwc3_hisi->rstcs[i]);
-+			return ret;
-+		}
-+		udelay(10);
-+	}
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_probe(struct platform_device *pdev)
-+{
-+	struct dwc3_hisi	*dwc3_hisi;
-+	struct device		*dev = &pdev->dev;
-+	struct device_node	*np = dev->of_node;
-+
-+	int			ret;
-+	int			i;
-+
-+	dwc3_hisi = devm_kzalloc(dev, sizeof(*dwc3_hisi), GFP_KERNEL);
-+	if (!dwc3_hisi)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, dwc3_hisi);
-+	dwc3_hisi->dev = dev;
-+
-+	ret = dwc3_hisi_init_clks(dwc3_hisi, np);
-+	if (ret) {
-+		dev_err(dev, "could not get clocks\n");
-+		return ret;
-+	}
-+
-+	ret = dwc3_hisi_enable_clks(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "could not enable clocks\n");
-+		goto err_put_clks;
-+	}
-+
-+	ret = dwc3_hisi_get_rstcs(dwc3_hisi, np);
-+	if (ret) {
-+		dev_err(dev, "could not get reset controllers\n");
-+		goto err_disable_clks;
-+	}
-+	ret = dwc3_hisi_reset_control_deassert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control deassert failed\n");
-+		goto err_put_rstcs;
-+	}
-+
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+	pm_runtime_get_sync(dev);
-+
-+	ret = of_platform_populate(np, NULL, NULL, dev);
-+	if (ret) {
-+		dev_err(dev, "failed to add dwc3 core\n");
-+		goto err_reset_assert;
-+	}
-+
-+	dev_err(dev, "finish dwc3 hisi probe\n");
-+
-+	g_dwc3_hisi = dwc3_hisi;
-+	return 0;
-+
-+err_reset_assert:
-+	ret = dwc3_hisi_reset_control_assert(dwc3_hisi);
++	/* usb refclk iso disable */
++	ret = regmap_write(priv->peri_crg, PERI_CRG_ISODIS, USB_REFCLK_ISO_EN);
 +	if (ret)
-+		dev_err(dev, "reset control assert failed\n");
-+err_put_rstcs:
-+	for (i = 0; i < dwc3_hisi->num_rstcs; i++)
-+		reset_control_put(dwc3_hisi->rstcs[i]);
-+err_disable_clks:
-+	dwc3_hisi_disable_clks(dwc3_hisi);
-+err_put_clks:
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++)
-+		clk_put(dwc3_hisi->clks[i]);
++		goto out;
 +
++	/* enable usb_tcxo_en */
++	val = USB_TCXO_EN | (USB_TCXO_EN << PCTRL_PERI_CTRL3_MSK_START);
++	ret = regmap_write(priv->pctrl, PCTRL_PERI_CTRL3, val);
++	if (ret)
++		goto out;
++
++	/* assert phy */
++	val = IP_RST_USB3OTGPHY_POR | IP_RST_USB3OTG;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTEN4, val);
++	if (ret)
++		goto out;
++
++	/* enable phy ref clk */
++	val = SC_USB3PHY_ABB_GT_EN;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL0, mask, val);
++	if (ret)
++		goto out;
++
++	val = REF_SSP_EN;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL7, mask, val);
++	if (ret)
++		goto out;
++
++	/* exit from IDDQ mode */
++	mask = USBOTG3CTRL2_POWERDOWN_HSP | USBOTG3CTRL2_POWERDOWN_SSP;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL2, mask, 0);
++	if (ret)
++		goto out;
++
++	/* delay for exit from IDDQ mode */
++	usleep_range(100, 100);
++
++	/* deassert phy */
++	val = IP_RST_USB3OTGPHY_POR | IP_RST_USB3OTG;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTDIS4, val);
++	if (ret)
++		goto out;
++
++	/* delay for phy deasserted */
++	usleep_range(10000, 15000);
++
++	/* fake vbus valid signal */
++	val = USBOTG3_CTRL3_VBUSVLDEXT | USBOTG3_CTRL3_VBUSVLDEXTSEL;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL3, mask, val);
++	if (ret)
++		goto out;
++
++	/* delay for vbus valid */
++	usleep_range(100, 100);
++
++	ret = regmap_write(priv->otg_bc, USBOTG3_CTRL4,
++			priv->eye_diagram_param);
++	if (ret)
++		goto out;
++
++	return 0;
++out:
++	dev_err(priv->dev, "failed to init phy ret: %d\n", ret);
 +	return ret;
 +}
 +
-+static int dwc3_hisi_remove(struct platform_device *pdev)
++static int hi3660_phy_exit(struct phy *phy)
 +{
-+	struct dwc3_hisi	*dwc3_hisi = platform_get_drvdata(pdev);
-+	struct device		*dev = &pdev->dev;
-+	int			i, ret;
-+
-+	of_platform_depopulate(dev);
-+
-+	ret = dwc3_hisi_reset_control_assert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control assert failed\n");
-+		return ret;
-+	}
-+
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++) {
-+		clk_disable_unprepare(dwc3_hisi->clks[i]);
-+		clk_put(dwc3_hisi->clks[i]);
-+	}
-+
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int dwc3_hisi_suspend(struct device *dev)
-+{
-+	struct dwc3_hisi *dwc3_hisi = dev_get_drvdata(dev);
++	struct hi3660_priv *priv = phy_get_drvdata(phy);
++	u32 val;
 +	int ret;
 +
-+	dev_info(dev, "%s\n", __func__);
++	/* assert phy */
++	val = IP_RST_USB3OTGPHY_POR;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTEN4, val);
++	if (ret)
++		goto out;
 +
-+	ret = dwc3_hisi_reset_control_assert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control assert failed\n");
-+		return ret;
-+	}
-+
-+	dwc3_hisi_disable_clks(dwc3_hisi);
-+
-+	pinctrl_pm_select_default_state(dev);
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_resume(struct device *dev)
-+{
-+	struct dwc3_hisi *dwc3_hisi = dev_get_drvdata(dev);
-+	int ret;
-+
-+	dev_info(dev, "%s\n", __func__);
-+	pinctrl_pm_select_default_state(dev);
-+
-+	ret = dwc3_hisi_enable_clks(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "could not enable clocks\n");
-+		return ret;
-+	}
-+
-+	ret = dwc3_hisi_reset_control_deassert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control deassert failed\n");
-+		return ret;
-+	}
-+
-+	/* Wait for clock stable */
-+	msleep(100);
++	/* disable usb_tcxo_en */
++	val = USB_TCXO_EN << PCTRL_PERI_CTRL3_MSK_START;
++	ret = regmap_write(priv->pctrl, PCTRL_PERI_CTRL3, val);
++	if (ret)
++		goto out;
 +
 +	return 0;
++out:
++	dev_err(priv->dev, "failed to exit phy ret: %d\n", ret);
++	return ret;
 +}
-+#endif /* CONFIG_PM_SLEEP */
 +
-+static SIMPLE_DEV_PM_OPS(dwc3_hisi_dev_pm_ops,
-+		dwc3_hisi_suspend, dwc3_hisi_resume);
-+
-+static const struct of_device_id dwc3_hisi_match[] = {
-+	{ .compatible = "hisilicon,hi3660-dwc3" },
-+	{ /* sentinel */ },
++static struct phy_ops hi3660_phy_ops = {
++	.init		= hi3660_phy_init,
++	.exit		= hi3660_phy_exit,
++	.owner		= THIS_MODULE,
 +};
 +
-+MODULE_DEVICE_TABLE(of, dwc3_hisi_match);
++static int hi3660_phy_probe(struct platform_device *pdev)
++{
++	struct phy_provider *phy_provider;
++	struct device *dev = &pdev->dev;
++	struct phy *phy;
++	struct hi3660_priv *priv;
 +
-+static struct platform_driver dwc3_hisi_driver = {
-+	.probe = dwc3_hisi_probe,
-+	.remove = dwc3_hisi_remove,
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = dev;
++	priv->peri_crg = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,pericrg-syscon");
++	if (IS_ERR(priv->peri_crg)) {
++		dev_err(dev, "no hisilicon,pericrg-syscon\n");
++		return PTR_ERR(priv->peri_crg);
++	}
++
++	priv->pctrl = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,pctrl-syscon");
++	if (IS_ERR(priv->pctrl)) {
++		dev_err(dev, "no hisilicon,pctrl-syscon\n");
++		return PTR_ERR(priv->pctrl);
++	}
++
++	priv->otg_bc = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,usb3-otg-bc-syscon");
++	if (IS_ERR(priv->otg_bc)) {
++		dev_err(dev, "no hisilicon,usb3-otg-bc-syscon\n");
++		return PTR_ERR(priv->otg_bc);
++	}
++
++	if (of_property_read_u32(dev->of_node, "hisilicon,eye-diagram-param",
++		&(priv->eye_diagram_param)))
++		priv->eye_diagram_param = HI3660_USB_DEFAULT_PHY_PARAM;
++
++	phy = devm_phy_create(dev, NULL, &hi3660_phy_ops);
++	if (IS_ERR(phy))
++		return PTR_ERR(phy);
++
++	phy_set_drvdata(phy, priv);
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static const struct of_device_id hi3660_phy_of_match[] = {
++	{.compatible = "hisilicon,hi3660-usb-phy",},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, hi3660_phy_of_match);
++
++static struct platform_driver hi3660_phy_driver = {
++	.probe	= hi3660_phy_probe,
 +	.driver = {
-+		.name = "usb-hisi-dwc3",
-+		.of_match_table = dwc3_hisi_match,
-+		.pm = &dwc3_hisi_dev_pm_ops,
-+	},
++		.name	= "hi3660-usb-phy",
++		.of_match_table	= hi3660_phy_of_match,
++	}
 +};
-+
-+module_platform_driver(dwc3_hisi_driver);
++module_platform_driver(hi3660_phy_driver);
 +
 +MODULE_AUTHOR("Yu Chen <chenyu56@huawei.com>");
 +MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("DesignWare USB3 HiSilicon Glue Layer");
++MODULE_DESCRIPTION("Hilisicon Hi3660 USB3 PHY Driver");
 -- 
 2.15.0-rc2
 
