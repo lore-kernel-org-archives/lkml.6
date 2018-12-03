@@ -2,138 +2,121 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADFEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 382DCC65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2572082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0067020848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:01:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="udl1i8o9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2572082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kIl6z/N2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0067020848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725874AbeLCHBI (ORCPT
+        id S1725897AbeLCHB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 02:01:08 -0500
-Received: from ozlabs.org ([203.11.71.1]:46475 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbeLCHBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 02:01:08 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 437bW22r3Hz9s7W;
-        Mon,  3 Dec 2018 18:01:02 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543820462;
-        bh=g33OozxkX9+wikUEnteWKjGmpFfYYarPZIru/ZqkXew=;
-        h=Date:From:To:Cc:Subject:From;
-        b=udl1i8o9fkGVQGdPzrRyE2IQ3axNqzPIHRee99aZT4q03UIy1pw1/VMSE1VChHWAL
-         N6NwOXpXvK0v7H4ivSqxyjetV11zGzcjA3EfUTr//UBGUjQd1fgdoIVpGuvdsEDRQu
-         BbfIdi7I83yBy24pvxox6McUOafnGUYxSnJ3Vg0ielg7EsDiIfxjg+kD61TXaLwXNv
-         +r/hZteSu1W1/bJWH1x2M3vZddZTn4k5+22W2EA2JSVg6N6OL+nhRwcgwImAaAJle8
-         /X4/GtGvt4XB0tOJADvjE53+45XBEP89DK+ZBseU8AzemBdxNO7oil0o0ii0U2IwUh
-         TB6GBzgw/+54Q==
-Date:   Mon, 3 Dec 2018 18:00:37 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: linux-next: build failure after merge of the akpm tree
-Message-ID: <20181203180037.0a54279b@canb.auug.org.au>
+        Mon, 3 Dec 2018 02:01:27 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38007 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbeLCHB0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 02:01:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m22so4442188wml.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 23:01:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=dxq6pfqZv+ZSAFbHOJCu2yH1qd4VEYhBxzMkifDOfhQ=;
+        b=kIl6z/N27ooJ4YAA1LJQFWlQiGcBRNK0Tjcd/ZkaAQclthulb8+Fo5/FomWC8lKbU+
+         iLX0Fu6Lnz67qKJLnHb6eVwWUQPV/2x1egfqlAJGXM/tb5y0b17Yk6rW1cWvbFq5sv93
+         Qh3yVo0lxWkV9hBtIor+xzPeQU8F2aEd7sQbY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=dxq6pfqZv+ZSAFbHOJCu2yH1qd4VEYhBxzMkifDOfhQ=;
+        b=co5AP2cLCqx5o+qem8Ad+xj1XGHSg+ll+vdV7d7KSx0IYkdL00ezbl6cTUG6m5N3v/
+         EA4Te1Z5jZT1TAy5sh2C6oGbkWpUqmtXJMg1FhK8bjPJzqO8REDzCFKp68DTO165IJmz
+         qYelWvO743tXUC/ptMeS3ek//Dq6n/EnJ9ThSI7/JmuOOydFJ6pYPRCklaC9IMYEndzF
+         o2H8TWQpSmXYCOWU4hzBizXgS7J14lnonL43e437+Gu0fF5iccmZQPU+O8D4fQB3tYHO
+         JXQu9VydecYdT94RpwBJl0Jixs2meZz3e9GSPgt/VHSA7sNKX4xyLKj4sMuzjbU68QMp
+         WPbg==
+X-Gm-Message-State: AA+aEWZhQ86anDdoeg1VvHmSeQN6U1QWhoJOh25TuHEXuvFbN0fdHbFW
+        oGfi++AvjAZETAQV9uGoZ1ePeA==
+X-Google-Smtp-Source: AFSGD/X/csQb8umdrmegoU5h/RRHHfrAVvW3jJU7QNayYHclBnIKH+IDHlKBETB0Hs9Kjpwl2tUTJA==
+X-Received: by 2002:a1c:b687:: with SMTP id g129mr6880964wmf.59.1543820480686;
+        Sun, 02 Dec 2018 23:01:20 -0800 (PST)
+Received: from dell ([2.31.167.218])
+        by smtp.gmail.com with ESMTPSA id 80sm6276422wmv.6.2018.12.02.23.01.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Dec 2018 23:01:19 -0800 (PST)
+Date:   Mon, 3 Dec 2018 07:01:17 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Vignesh R <vigneshr@ti.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: adc: ti_am335x_tscadc: Improve accuracy of
+ measurement
+Message-ID: <20181203070117.GI6009@dell>
+References: <20181119064236.28902-1-vigneshr@ti.com>
+ <20181119064236.28902-3-vigneshr@ti.com>
+ <20181128091432.GT4272@dell>
+ <20181201150400.09706f47@archlinux>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hcrQ6VYBsCI2iAv9yWDouQ/"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181201150400.09706f47@archlinux>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/hcrQ6VYBsCI2iAv9yWDouQ/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, 01 Dec 2018, Jonathan Cameron wrote:
 
-Hi Andrew,
+> On Wed, 28 Nov 2018 09:14:32 +0000
+> Lee Jones <lee.jones@linaro.org> wrote:
+> 
+> > On Mon, 19 Nov 2018, Vignesh R wrote:
+> > 
+> > > When performing single ended measurements with TSCADC, its recommended
+> > > to set negative input (SEL_INM_SWC_3_0) of ADC step to ADC's VREFN in the
+> > > corresponding STEP_CONFIGx register.
+> > > Also, the positive(SEL_RFP_SWC_2_0) and negative(SEL_RFM_SWC_1_0)
+> > > reference voltage for ADC step needs to be set to VREFP and VREFN
+> > > respectively in STEP_CONFIGx register.
+> > > Without these changes, there may be variation of as much as ~2% in the
+> > > ADC's digital output which is bad for precise measurement.
+> > > 
+> > > Signed-off-by: Vignesh R <vigneshr@ti.com>
+> > > ---
+> > >  drivers/iio/adc/ti_am335x_adc.c      | 5 ++++-  
+> > 
+> > >  include/linux/mfd/ti_am335x_tscadc.h | 4 ++++  
+> > 
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+> > 
+> I'll leave this for v2 given changes in the first patch.
+> 
+> My assumption is at the moment that both will go through mfd.
+> Shout Lee if you have other plans.
 
-After merging the akpm tree, today's linux-next build (powerpc_le perf)
-failed like this:
+I'm fine with that.
 
-bench/numa.c:37:10: fatal error: linux/numa.h: No such file or directory
- #include <linux/numa.h>
-          ^~~~~~~~~~~~~~
-
-Caused by patches
-
-  "mm: replace all open encodings for NUMA_NO_NODE"
-  "mm-replace-all-open-encodings-for-numa_no_node-fix"
-
-For linux/numa.h to be generally availble to the tools builds, it must
-be copied into tools/include/linux ...
-
-I have done that copy for today:
-
-=46rom 6dabc11d5513510d0ec0a6b0a4aa8b9051b71516 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 3 Dec 2018 17:57:27 +1100
-Subject: [PATCH] linux/numa.h is now needed for the perf build
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- tools/include/linux/numa.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 tools/include/linux/numa.h
-
-diff --git a/tools/include/linux/numa.h b/tools/include/linux/numa.h
-new file mode 100644
-index 000000000000..110b0e5d0fb0
---- /dev/null
-+++ b/tools/include/linux/numa.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_NUMA_H
-+#define _LINUX_NUMA_H
-+
-+
-+#ifdef CONFIG_NODES_SHIFT
-+#define NODES_SHIFT     CONFIG_NODES_SHIFT
-+#else
-+#define NODES_SHIFT     0
-+#endif
-+
-+#define MAX_NUMNODES    (1 << NODES_SHIFT)
-+
-+#define	NUMA_NO_NODE	(-1)
-+
-+#endif /* _LINUX_NUMA_H */
---=20
-2.19.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/hcrQ6VYBsCI2iAv9yWDouQ/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwE1JUACgkQAVBC80lX
-0Gx3uwf/XtKl7r506aQV9Qv4NBzNtutKEKY4JSEbstSzqJHuC0w8ZztfXtk1VIuo
-YYMk0m+HHxpjB7fysyspszX3YsQgY/mVyVup8sRF1kqwg4TSxjfNQOcRL2ntJuYu
-w8uJKCuhSjBjNHS1GY5EZd1PT8DknHsmMwKJhMu5QKI7zxIrnoGaAd/TH7OpH83i
-eCDFMZkjfOup29vpY27yRzSri21D46BOtmQKSrXFU2HC5w3P9JHQObKm4K3AiLzU
-VFv7USgo5aq9DCx75/8Vpg/MXZ6583hBw94wkBT5wGfdwGaTcdUDfmPUTdsoNqeW
-Y6D/tln0loDaK1PDjyisBmJmTM2xBQ==
-=VCno
------END PGP SIGNATURE-----
-
---Sig_/hcrQ6VYBsCI2iAv9yWDouQ/--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
