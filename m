@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FAFC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894B6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20C9920850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C9920850
+	by mail.kernel.org (Postfix) with ESMTP id 52D5E20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:36:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52D5E20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbeLCXgU (ORCPT
+        id S1726259AbeLCXgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:36:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36332 "EHLO mx1.redhat.com"
+        Mon, 3 Dec 2018 18:36:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42094 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726237AbeLCXgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:36:17 -0500
+        id S1726004AbeLCXgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 18:36:20 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7CA51C05004D;
-        Mon,  3 Dec 2018 23:36:15 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 05B5D87629;
+        Mon,  3 Dec 2018 23:36:19 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-120-188.rdu2.redhat.com [10.10.120.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B7B1600C7;
-        Mon,  3 Dec 2018 23:36:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3704600C1;
+        Mon,  3 Dec 2018 23:36:15 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -58,16 +58,16 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Dave Airlie <airlied@redhat.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>
-Subject: [RFC PATCH 10/14] mm/hbind: add heterogeneous memory policy tracking infrastructure
-Date:   Mon,  3 Dec 2018 18:35:05 -0500
-Message-Id: <20181203233509.20671-11-jglisse@redhat.com>
+Subject: [RFC PATCH 11/14] mm/hbind: add bind command to heterogeneous memory policy
+Date:   Mon,  3 Dec 2018 18:35:06 -0500
+Message-Id: <20181203233509.20671-12-jglisse@redhat.com>
 In-Reply-To: <20181203233509.20671-1-jglisse@redhat.com>
 References: <20181203233509.20671-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 03 Dec 2018 23:36:16 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 03 Dec 2018 23:36:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,12 +75,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-This patch add infrastructure to track heterogeneous memory policy
-within the kernel. Policy are defined over range of virtual address
-of a process and attach to the correspond mm_struct.
+This patch add bind command to hbind() ioctl, this allow to bind a
+range of virtual address to given list of target memory. New memory
+allocated in the range will try to use memory from the target memory
+list.
 
-User can reset to default policy for range of virtual address using
-hbind() default commands for the range.
+Note that this patch does not modify existing page fault path and thus
+does not activate new heterogeneous policy. Updating the CPU page fault
+code path or device page fault code path (HMM) will be done in separate
+patches.
+
+Here we only introduce helpers and infrastructure that will be use by
+page fault code path.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Rafael J. Wysocki <rafael@kernel.org>
@@ -107,494 +113,83 @@ Cc: Dave Airlie <airlied@redhat.com>
 Cc: Ben Skeggs <bskeggs@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 ---
- include/linux/hms.h        |  46 ++++++
- include/linux/mm_types.h   |   6 +
- include/uapi/linux/hbind.h |   8 +
- kernel/fork.c              |   3 +
- mm/hms.c                   | 306 ++++++++++++++++++++++++++++++++++++-
- 5 files changed, 368 insertions(+), 1 deletion(-)
+ include/uapi/linux/hbind.h | 10 ++++++++++
+ mm/hms.c                   | 40 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
 
-diff --git a/include/linux/hms.h b/include/linux/hms.h
-index 511b5363d8f2..f39c390b3afb 100644
---- a/include/linux/hms.h
-+++ b/include/linux/hms.h
-@@ -20,6 +20,8 @@
- 
- #include <linux/device.h>
- #include <linux/types.h>
-+#include <linux/mm_types.h>
-+#include <linux/mmu_notifier.h>
- 
- 
- struct hms_target;
-@@ -34,6 +36,10 @@ struct hms_target_hbind {
- #if IS_ENABLED(CONFIG_HMS)
- 
- 
-+#include <linux/interval_tree.h>
-+#include <linux/rwsem.h>
-+
-+
- #define to_hms_object(device) container_of(device, struct hms_object, device)
- 
- enum hms_type {
-@@ -133,6 +139,42 @@ void hms_bridge_register(struct hms_bridge **bridgep,
- void hms_bridge_unregister(struct hms_bridge **bridgep);
- 
- 
-+struct hms_policy_targets {
-+	struct hms_target **targets;
-+	unsigned ntargets;
-+	struct kref kref;
-+};
-+
-+struct hms_policy_range {
-+	struct hms_policy_targets *ptargets;
-+	struct interval_tree_node node;
-+	struct kref kref;
-+};
-+
-+struct hms_policy {
-+	struct rb_root_cached ranges;
-+	struct rw_semaphore sem;
-+	struct mmu_notifier mn;
-+};
-+
-+static inline unsigned long hms_policy_range_start(struct hms_policy_range *r)
-+{
-+	return r->node.start;
-+}
-+
-+static inline unsigned long hms_policy_range_end(struct hms_policy_range *r)
-+{
-+	return r->node.last + 1;
-+}
-+
-+static inline void hms_policy_init(struct mm_struct *mm)
-+{
-+	mm->hpolicy = NULL;
-+}
-+
-+void hms_policy_fini(struct mm_struct *mm);
-+
-+
- int hms_init(void);
- 
- 
-@@ -163,6 +205,10 @@ int hms_init(void);
- #define hms_bridge_unregister(bridgep)
- 
- 
-+#define hms_policy_init(mm)
-+#define hms_policy_fini(mm)
-+
-+
- static inline int hms_init(void)
- {
- 	return 0;
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5ed8f6292a53..3da91767c689 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -26,6 +26,7 @@ typedef int vm_fault_t;
- 
- struct address_space;
- struct mem_cgroup;
-+struct hms_policy;
- struct hmm;
- 
- /*
-@@ -491,6 +492,11 @@ struct mm_struct {
- 		/* HMM needs to track a few things per mm */
- 		struct hmm *hmm;
- #endif
-+
-+#if IS_ENABLED(CONFIG_HMS)
-+		/* Heterogeneous Memory System policy */
-+		struct hms_policy *hpolicy;
-+#endif
- 	} __randomize_layout;
- 
- 	/*
 diff --git a/include/uapi/linux/hbind.h b/include/uapi/linux/hbind.h
-index a9aba17ab142..cc4687587f5a 100644
+index cc4687587f5a..7bb876954e3f 100644
 --- a/include/uapi/linux/hbind.h
 +++ b/include/uapi/linux/hbind.h
-@@ -39,6 +39,14 @@ struct hbind_params {
- #define HBIND_ATOM_GET_CMD(v) ((v) & 0xfffff)
- #define HBIND_ATOM_SET_CMD(v) ((v) & 0xfffff)
+@@ -47,6 +47,16 @@ struct hbind_params {
+  */
+ #define HBIND_CMD_DEFAULT 0
  
 +/*
-+ * HBIND_CMD_DEFAULT restore default policy ie undo any of the previous policy.
++ * HBIND_CMD_BIND strict policy ie new allocations will comes from one of the
++ * listed targets until they run of memory. Other targets can be use if the
++ * none of the listed targets can be accessed by the initiator that did fault.
 + *
 + * Additional dwords:
 + *      NONE (DWORDS MUST BE 0 !)
 + */
-+#define HBIND_CMD_DEFAULT 0
++#define HBIND_CMD_BIND 1
 +
  
  #define HBIND_IOCTL		_IOWR('H', 0x00, struct hbind_params)
  
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 07cddff89c7b..bc40edcadc69 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -38,6 +38,7 @@
- #include <linux/mman.h>
- #include <linux/mmu_notifier.h>
- #include <linux/hmm.h>
-+#include <linux/hms.h>
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/vmacache.h>
-@@ -671,6 +672,7 @@ void __mmdrop(struct mm_struct *mm)
- 	mm_free_pgd(mm);
- 	destroy_context(mm);
- 	hmm_mm_destroy(mm);
-+	hms_policy_fini(mm);
- 	mmu_notifier_mm_destroy(mm);
- 	check_mm(mm);
- 	put_user_ns(mm->user_ns);
-@@ -989,6 +991,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	RCU_INIT_POINTER(mm->exe_file, NULL);
- 	mmu_notifier_mm_init(mm);
- 	hmm_mm_init(mm);
-+	hms_policy_init(mm);
- 	init_tlb_flush_pending(mm);
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
- 	mm->pmd_huge_pte = NULL;
 diff --git a/mm/hms.c b/mm/hms.c
-index bf328bd577dc..be2c4e526f25 100644
+index be2c4e526f25..6be6f4acdd49 100644
 --- a/mm/hms.c
 +++ b/mm/hms.c
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/hms.h>
-+#include <linux/mm.h>
- #include <linux/fs.h>
- 
- #include <uapi/linux/hbind.h>
-@@ -31,7 +32,6 @@
- 
- #define HBIND_FIX_ARRAY 64
- 
--
- static ssize_t hbind_read(struct file *file, char __user *buf,
- 			size_t count, loff_t *ppos)
- {
-@@ -44,6 +44,300 @@ static ssize_t hbind_write(struct file *file, const char __user *buf,
- 	return -EINVAL;
+@@ -338,6 +338,36 @@ static struct hms_policy *hms_policy_get(struct mm_struct *mm)
  }
  
-+
-+static void hms_policy_targets_get(struct hms_policy_targets *ptargets)
-+{
-+	kref_get(&ptargets->kref);
-+}
-+
-+static void hms_policy_targets_free(struct kref *kref)
-+{
-+	struct hms_policy_targets *ptargets;
-+
-+	ptargets = container_of(kref, struct hms_policy_targets, kref);
-+	kfree(ptargets->targets);
-+	kfree(ptargets);
-+}
-+
-+static void hms_policy_targets_put(struct hms_policy_targets *ptargets)
-+{
-+	kref_put(&ptargets->kref, &hms_policy_targets_free);
-+}
-+
-+static struct hms_policy_targets* hms_policy_targets_new(const uint32_t *targets,
-+							 unsigned ntargets)
-+{
-+	struct hms_policy_targets *ptargets;
-+	void *_targets;
-+	unsigned i, c;
-+
-+	_targets = kzalloc(ntargets * sizeof(void *), GFP_KERNEL);
-+	if (_targets == NULL)
-+		return NULL;
-+
-+	ptargets = kmalloc(sizeof(*ptargets), GFP_KERNEL);
-+	if (ptargets == NULL) {
-+		kfree(_targets);
-+		return NULL;
-+	}
-+
-+	kref_init(&ptargets->kref);
-+	ptargets->targets = _targets;
-+	ptargets->ntargets = ntargets;
-+
-+	for (i = 0, c = 0; i < ntargets; ++i) {
-+		ptargets->targets[c] = hms_target_find(targets[i]);
-+		c += !!((long)ptargets->targets[i]);
-+	}
-+
-+	/* Ignore NULL targets[i] */
-+	ptargets->ntargets = c;
-+
-+	if (!c) {
-+		/* No valid targets pointless to waste memory ... */
-+		hms_policy_targets_put(ptargets);
-+		return NULL;
-+	}
-+
-+	return ptargets;
-+}
-+
-+
-+static void hms_policy_range_get(struct hms_policy_range *prange)
-+{
-+	kref_get(&prange->kref);
-+}
-+
-+static void hms_policy_range_free(struct kref *kref)
+ 
++static int hbind_bind(struct mm_struct *mm, struct hbind_params *params,
++		      const uint32_t *targets, uint32_t *atoms)
 +{
 +	struct hms_policy_range *prange;
-+
-+	prange = container_of(kref, struct hms_policy_range, kref);
-+	hms_policy_targets_put(prange->ptargets);
-+	kfree(prange);
-+}
-+
-+static void hms_policy_range_put(struct hms_policy_range *prange)
-+{
-+	kref_put(&prange->kref, &hms_policy_range_free);
-+}
-+
-+static struct hms_policy_range *hms_policy_range_new(const uint32_t *targets,
-+						     unsigned long start,
-+						     unsigned long end,
-+						     unsigned ntargets)
-+{
-+	struct hms_policy_targets *ptargets;
-+	struct hms_policy_range *prange;
-+
-+	ptargets = hms_policy_targets_new(targets, ntargets);
-+	if (ptargets == NULL)
-+		return NULL;
-+
-+	prange = kmalloc(sizeof(*prange), GFP_KERNEL);
-+	if (prange == NULL)
-+		return NULL;
-+
-+	prange->node.start = start & PAGE_MASK;
-+	prange->node.last = PAGE_ALIGN(end) - 1;
-+	prange->ptargets = ptargets;
-+	kref_init(&prange->kref);
-+
-+	return prange;
-+}
-+
-+static struct hms_policy_range *
-+hms_policy_range_dup(struct hms_policy_range *_prange)
-+{
-+	struct hms_policy_range *prange;
-+
-+	prange = kmalloc(sizeof(*prange), GFP_KERNEL);
-+	if (prange == NULL)
-+		return NULL;
-+
-+	hms_policy_targets_get(_prange->ptargets);
-+	prange->node.start = _prange->node.start;
-+	prange->node.last = _prange->node.last;
-+	prange->ptargets = _prange->ptargets;
-+	kref_init(&prange->kref);
-+
-+	return prange;
-+}
-+
-+
-+void hms_policy_fini(struct mm_struct *mm)
-+{
-+	struct hms_policy *hpolicy = READ_ONCE(mm->hpolicy);
-+	struct interval_tree_node *node;
-+
-+	spin_lock(&mm->page_table_lock);
-+	hpolicy = READ_ONCE(mm->hpolicy);
-+	mm->hpolicy = NULL;
-+	spin_unlock(&mm->page_table_lock);
-+
-+	/* No active heterogeneous policy structure so nothing to cleanup. */
-+	if (hpolicy == NULL)
-+		return;
-+
-+	mmu_notifier_unregister_no_release(&hpolicy->mn, mm);
-+
-+	down_write(&hpolicy->sem);
-+	node = interval_tree_iter_first(&hpolicy->ranges, 0, -1UL);
-+	while (node) {
-+		struct hms_policy_range *prange;
-+		struct interval_tree_node *next;
-+
-+		prange = container_of(node, struct hms_policy_range, node);
-+		next = interval_tree_iter_next(node, 0, -1UL);
-+		interval_tree_remove(node, &hpolicy->ranges);
-+		hms_policy_range_put(prange);
-+		node = next;
-+	}
-+	up_write(&hpolicy->sem);
-+
-+	kfree(hpolicy);
-+}
-+
-+
-+static int hbind_default_locked(struct hms_policy *hpolicy,
-+				struct hbind_params *params)
-+{
-+	struct interval_tree_node *node;
-+	unsigned long start, last;
-+	int ret = 0;
-+
-+	start = params->start;
-+	last = params->end - 1UL;
-+
-+	node = interval_tree_iter_first(&hpolicy->ranges, start, last);
-+	while (node) {
-+		struct hms_policy_range *prange;
-+		struct interval_tree_node *next;
-+
-+		prange = container_of(node, struct hms_policy_range, node);
-+		next = interval_tree_iter_next(node, start, last);
-+		if (node->start < start && node->last > last) {
-+			/* Node is split in 2 */
-+			struct hms_policy_range *_prange;
-+			_prange = hms_policy_range_dup(prange);
-+			if (_prange == NULL) {
-+				ret = -ENOMEM;
-+				break;
-+			}
-+			prange->node.last = start - 1;
-+			_prange->node.start = last + 1;
-+			interval_tree_insert(&_prange->node, &hpolicy->ranges);
-+			break;
-+		} else if (node->start < start) {
-+			prange->node.last = start - 1;
-+		} else if (node->last > last) {
-+			prange->node.start = last + 1;
-+		} else {
-+			/* Fully inside [start, last] */
-+			interval_tree_remove(node, &hpolicy->ranges);
-+		}
-+
-+		node = next;
-+	}
-+
-+	return ret;
-+}
-+
-+static int hbind_default(struct mm_struct *mm, struct hbind_params *params,
-+			 const uint32_t *targets, uint32_t *atoms)
-+{
-+	struct hms_policy *hpolicy = READ_ONCE(mm->hpolicy);
++	struct hms_policy *hpolicy;
 +	int ret;
 +
-+	/* No active heterogeneous policy structure so no range to reset. */
++	hpolicy = hms_policy_get(mm);
 +	if (hpolicy == NULL)
-+		return 0;
++		return -ENOMEM;
++
++	prange = hms_policy_range_new(targets, params->start, params->end,
++				      params->ntargets);
++	if (prange == NULL)
++		return -ENOMEM;
 +
 +	down_write(&hpolicy->sem);
 +	ret = hbind_default_locked(hpolicy, params);
++	if (ret)
++		goto out;
++
++	interval_tree_insert(&prange->node, &hpolicy->ranges);
++
++out:
 +	up_write(&hpolicy->sem);
 +
 +	return ret;
-+}
-+
-+
-+static void hms_policy_notifier_release(struct mmu_notifier *mn,
-+					struct mm_struct *mm)
-+{
-+	hms_policy_fini(mm);
-+}
-+
-+static int hms_policy_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+				       const struct mmu_notifier_range *range)
-+{
-+	if (range->event == MMU_NOTIFY_UNMAP) {
-+		struct hbind_params params;
-+
-+		if (!range->blockable)
-+			return -EBUSY;
-+
-+		params.natoms = 0;
-+		params.ntargets = 0;
-+		params.end = range->end;
-+		params.start = range->start;
-+		hbind_default(range->mm, &params, NULL, NULL);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct mmu_notifier_ops hms_policy_notifier_ops = {
-+	.release = hms_policy_notifier_release,
-+	.invalidate_range_start = hms_policy_notifier_invalidate_range_start,
-+};
-+
-+static struct hms_policy *hms_policy_get(struct mm_struct *mm)
-+{
-+	struct hms_policy *hpolicy = READ_ONCE(mm->hpolicy);
-+	bool mmu_notifier = false;
-+
-+	/*
-+	 * The hpolicy struct can only be freed once the mm_struct goes away,
-+	 * hence only pre-allocate if none is attach yet.
-+	 */
-+	if (hpolicy)
-+		return hpolicy;
-+
-+	hpolicy = kzalloc(sizeof(*hpolicy), GFP_KERNEL);
-+	if (hpolicy == NULL)
-+		return NULL;
-+
-+	init_rwsem(&hpolicy->sem);
-+
-+	spin_lock(&mm->page_table_lock);
-+	if (!mm->hpolicy) {
-+		mm->hpolicy = hpolicy;
-+		mmu_notifier = true;
-+		hpolicy = NULL;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+
-+	if (mmu_notifier) {
-+		int ret;
-+
-+		hpolicy->mn.ops = &hms_policy_notifier_ops;
-+		ret = mmu_notifier_register(&hpolicy->mn, mm);
-+		if (ret) {
-+			spin_lock(&mm->page_table_lock);
-+			hpolicy = mm->hpolicy;
-+			mm->hpolicy = NULL;
-+			spin_unlock(&mm->page_table_lock);
-+		}
-+	}
-+
-+	if (hpolicy)
-+		kfree(hpolicy);
-+
-+	/* At this point mm->hpolicy is valid */
-+	return mm->hpolicy;
 +}
 +
 +
  static long hbind_ioctl(struct file *file, unsigned cmd, unsigned long arg)
  {
  	uint32_t *targets, *_dtargets = NULL, _ftargets[HBIND_FIX_ARRAY];
-@@ -114,6 +408,16 @@ static long hbind_ioctl(struct file *file, unsigned cmd, unsigned long arg)
- 	for (i = 0, ndwords = 1; i < params.natoms; i += ndwords) {
- 		ndwords = 1 + HBIND_ATOM_GET_DWORDS(atoms[i]);
- 		switch (HBIND_ATOM_GET_CMD(atoms[i])) {
-+		case HBIND_CMD_DEFAULT:
+@@ -418,6 +448,16 @@ static long hbind_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+ 			if (ret)
+ 				goto out_mm;
+ 			break;
++		case HBIND_CMD_BIND:
 +			if (ndwords != 1) {
 +				ret = -EINVAL;
 +				goto out_mm;
 +			}
-+			ret = hbind_default(current->mm, &params,
-+					    targets, atoms);
++			ret = hbind_bind(current->mm, &params,
++					 targets, atoms);
 +			if (ret)
 +				goto out_mm;
 +			break;
