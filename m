@@ -1,115 +1,300 @@
 Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=BUG6152_INVALID_DATE_TZ_ABSURD,
-	HEADER_FROM_DIFFERENT_DOMAINS,INVALID_DATE_TZ_ABSURD,L_SPAM_TOOL_13,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21B7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2126C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D7320851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D7320851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mageia.org
+	by mail.kernel.org (Postfix) with ESMTP id 5425520851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:39:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTAnzR3L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5425520851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbeLCVho convert rfc822-to-8bit (ORCPT
+        id S1726027AbeLCVjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:37:44 -0500
-Received: from mx1.yrkesakademin.fi ([85.134.45.194]:49318 "EHLO
-        mx1.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLCVho (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:37:44 -0500
-X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Dec 2018 16:37:42 EST
-Subject: Re: [PATCH AUTOSEL 4.14 25/35] iomap: sub-block dio needs to zeroout
- beyond EOF
-To:     Sasha Levin <sashal@kernel.org>, Dave Chinner <david@fromorbit.com>
-CC:     Greg KH <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181129060110.159878-1-sashal@kernel.org>
- <20181129060110.159878-25-sashal@kernel.org> <20181129121458.GK19305@dastard>
- <20181129124756.GA25945@kroah.com> <20181129224019.GM19305@dastard>
- <20181130082203.GA26830@kroah.com> <20181130101441.GA213156@sasha-vm>
- <20181130215005.GP19305@dastard> <20181201074909.GC213156@sasha-vm>
- <20181202232302.GT19305@dastard> <20181203092241.GC235790@sasha-vm>
-From:   Thomas Backlund <tmb@mageia.org>
-Message-ID: <2de96c1b-c375-8eed-f934-df5cbcdcd5cc@mageia.org>
-Date:   Mon, 3 Dec 2018 23:22:46 +0159
+        Mon, 3 Dec 2018 16:39:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbeLCVjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:39:51 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D514B20672;
+        Mon,  3 Dec 2018 21:39:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543873190;
+        bh=9t2j9NdYFHEuBSNEPi5wpZL2KNQ6t0FuielaLR+kB84=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gTAnzR3LmHb5HPAWkh4pQ18iVZ0+PrLH/llMPFXA3+58XcTIJg8JUFVE4G1QnnCD/
+         MMFFsT/Mh69TKl9nH5LJ2l8kVsabq9FgjQJv7bhG/Ds8aa6bg+qCcVBnZ75aLXAUbA
+         Oy3Lbp3SkvHDDeLC6hs68vfqWaVJUvwBcEvzf+R4=
+Date:   Mon, 3 Dec 2018 15:39:48 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] x86/pci: Remove dead code DBG() macro
+Message-ID: <20181203213948.GC207198@google.com>
+References: <20181203082140.GA15318@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181203092241.GC235790@sasha-vm>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-WatchGuard-Spam-ID: str=0001.0A0C020E.5C05A227.003D,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
-X-WatchGuard-Mail-Client-IP: 85.134.45.194
-X-WatchGuard-Mail-From: tmb@mageia.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203082140.GA15318@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Den 2018-12-03 kl. 11:22, skrev Sasha Levin:
-
+On Mon, Dec 03, 2018 at 09:21:40AM +0100, Ingo Molnar wrote:
+> From 22b71f970f18f5f38161be028ab7ce7cd1f769f7 Mon Sep 17 00:00:00 2001
+> From: Ingo Molnar <mingo@kernel.org>
+> Date: Mon, 3 Dec 2018 09:15:40 +0100
+> Subject: [PATCH] x86/pci: Remove the dead-code DBG() macro
 > 
-> This is a case where theory collides with the real world. Yes, our QA is
-> lacking, but we don't have the option of not doing the current process.
-> If we stop backporting until a future data where our QA problem is
-> solved we'll end up with what we had before: users stuck on ancient
-> kernels without a way to upgrade.
+> While reading arch/x86/include/asm/pci_x86.h I noticed that we have ancient
+> residuals of debugging code, which is never actually enabled via any regular
+> Kconfig mechanism:
 > 
-
-Sorry, but you seem to be living in a different "real world"...
-
-People stay on "ancient kernels" that "just works" instead of updating
-to a newer one that "hopefully/maybe/... works"
-
-
-> With the current model we're aware that bugs sneak through, but we try
-> to deal with it by both improving our QA, and encouraging users to do
-> their own extensive QA. If we encourage users to update frequently we
-> can keep improving our process and the quality of kernels will keep
-> getting better.
-
-And here you want to turn/force users into QA ... good luck with that.
-
-In reality they wont "update frequently", instead they will stop
-updating when they have something that works... and start ignoring
-updates as they expect something "to break as usual" as they actually
-need to get some real work done too...
-
-
+>  #undef DEBUG
 > 
-> We simply can't go back to the "enterprise distro" days.
+>  #ifdef DEBUG
+>  #define DBG(fmt, ...) printk(fmt, ##__VA_ARGS__)
+>  #else
+>  #define DBG(fmt, ...)                          \
+>  do {                                           \
+>        if (0)                                  \
+>                printk(fmt, ##__VA_ARGS__);     \
+>  } while (0)
+>  #endif
 > 
+> Remove this and the call sites. These messages might have been
+> super interesting decades ago when the PCI code was first
+> bootstrapped, but we have better mechanisms meanwhile, and code
+> readability is king ... ;-)
+> 
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
 
-Maybe so, but we should atleast get back to having "stable" or
-"longterm" actually mean something again...
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Or what does it say when distros starts thinking about ignoring
-(and some already do) stable/longterm trees because there is
-_way_ too much questionable changes coming through, even overriding
-maintainers to the point where they basically state "we dont care
-about monitoring stable trees anymore, as they add whatever they want
-anyway"...
+for both of these.  I have nothing in the queue for these files, so
+probably easier if you just take them.  FWIW, recent history
+capitalizes the subject lines as "x86/PCI: "
 
-And pretending that every fix is important enough to backport,
-and saying if you dont take everything you have an "unsecure" kernel
-wont help, as reality has shown from time to time that backports
-can/will open up a new issue instead for no good reason
+Thanks for all this cleanup!
 
-Wich for distros starts to mean, switch back to selectively taking fixes
-for _known_ security issues are considered way better choice
-
-End result, no-one cares about -stable trees -> no-one uses them -> a
-lot of wasted work for nothing...
-
---
-Thomas
-
-
+> ---
+>  arch/x86/include/asm/pci_x86.h | 12 ------------
+>  arch/x86/pci/direct.c          |  1 -
+>  arch/x86/pci/i386.c            |  2 --
+>  arch/x86/pci/irq.c             | 29 +++--------------------------
+>  arch/x86/pci/legacy.c          |  3 +--
+>  arch/x86/pci/pcbios.c          |  9 ++-------
+>  6 files changed, 6 insertions(+), 50 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
+> index 959d618dbb17..3f8d9c75b9ee 100644
+> --- a/arch/x86/include/asm/pci_x86.h
+> +++ b/arch/x86/include/asm/pci_x86.h
+> @@ -7,18 +7,6 @@
+>  
+>  #include <linux/ioport.h>
+>  
+> -#undef DEBUG
+> -
+> -#ifdef DEBUG
+> -#define DBG(fmt, ...) printk(fmt, ##__VA_ARGS__)
+> -#else
+> -#define DBG(fmt, ...)				\
+> -do {						\
+> -	if (0)					\
+> -		printk(fmt, ##__VA_ARGS__);	\
+> -} while (0)
+> -#endif
+> -
+>  #define PCI_PROBE_BIOS		0x0001
+>  #define PCI_PROBE_CONF1		0x0002
+>  #define PCI_PROBE_CONF2		0x0004
+> diff --git a/arch/x86/pci/direct.c b/arch/x86/pci/direct.c
+> index a51074c55982..68a115629568 100644
+> --- a/arch/x86/pci/direct.c
+> +++ b/arch/x86/pci/direct.c
+> @@ -216,7 +216,6 @@ static int __init pci_sanity_check(const struct pci_raw_ops *o)
+>  			return 1;
+>  	}
+>  
+> -	DBG(KERN_WARNING "PCI: Sanity check failed\n");
+>  	return 0;
+>  }
+>  
+> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
+> index 8cd66152cdb0..5c2b31315750 100644
+> --- a/arch/x86/pci/i386.c
+> +++ b/arch/x86/pci/i386.c
+> @@ -389,8 +389,6 @@ void __init pcibios_resource_survey(void)
+>  {
+>  	struct pci_bus *bus;
+>  
+> -	DBG("PCI: Allocating resources\n");
+> -
+>  	list_for_each_entry(bus, &pci_root_buses, node)
+>  		pcibios_allocate_bus_resources(bus);
+>  
+> diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
+> index 52e55108404e..1286f138e281 100644
+> --- a/arch/x86/pci/irq.c
+> +++ b/arch/x86/pci/irq.c
+> @@ -77,11 +77,8 @@ static inline struct irq_routing_table *pirq_check_routing_table(u8 *addr)
+>  	sum = 0;
+>  	for (i = 0; i < rt->size; i++)
+>  		sum += addr[i];
+> -	if (!sum) {
+> -		DBG(KERN_DEBUG "PCI: Interrupt Routing Table found at 0x%p\n",
+> -			rt);
+> +	if (!sum)
+>  		return rt;
+> -	}
+>  	return NULL;
+>  }
+>  
+> @@ -126,15 +123,6 @@ static void __init pirq_peer_trick(void)
+>  	memset(busmap, 0, sizeof(busmap));
+>  	for (i = 0; i < (rt->size - sizeof(struct irq_routing_table)) / sizeof(struct irq_info); i++) {
+>  		e = &rt->slots[i];
+> -#ifdef DEBUG
+> -		{
+> -			int j;
+> -			DBG(KERN_DEBUG "%02x:%02x slot=%02x", e->bus, e->devfn/8, e->slot);
+> -			for (j = 0; j < 4; j++)
+> -				DBG(" %d:%02x/%04x", j, e->irq[j].link, e->irq[j].bitmap);
+> -			DBG("\n");
+> -		}
+> -#endif
+>  		busmap[e->bus] = 1;
+>  	}
+>  	for (i = 1; i < 256; i++) {
+> @@ -163,10 +151,8 @@ void elcr_set_level_irq(unsigned int irq)
+>  	elcr_irq_mask |= (1 << irq);
+>  	printk(KERN_DEBUG "PCI: setting IRQ %u as level-triggered\n", irq);
+>  	val = inb(port);
+> -	if (!(val & mask)) {
+> -		DBG(KERN_DEBUG " -> edge");
+> +	if (!(val & mask))
+>  		outb(val | mask, port);
+> -	}
+>  }
+>  
+>  /*
+> @@ -836,16 +822,10 @@ static void __init pirq_find_router(struct irq_router *r)
+>  	r->get = NULL;
+>  	r->set = NULL;
+>  
+> -	DBG(KERN_DEBUG "PCI: Attempting to find IRQ router for [%04x:%04x]\n",
+> -	    rt->rtr_vendor, rt->rtr_device);
+> -
+>  	pirq_router_dev = pci_get_domain_bus_and_slot(0, rt->rtr_bus,
+>  						      rt->rtr_devfn);
+> -	if (!pirq_router_dev) {
+> -		DBG(KERN_DEBUG "PCI: Interrupt router not found at "
+> -			"%02x:%02x\n", rt->rtr_bus, rt->rtr_devfn);
+> +	if (!pirq_router_dev)
+>  		return;
+> -	}
+>  
+>  	for (h = pirq_routers; h->vendor; h++) {
+>  		/* First look for a router match */
+> @@ -1028,7 +1008,6 @@ void __init pcibios_fixup_irqs(void)
+>  	struct pci_dev *dev = NULL;
+>  	u8 pin;
+>  
+> -	DBG(KERN_DEBUG "PCI: IRQ fixup\n");
+>  	for_each_pci_dev(dev) {
+>  		/*
+>  		 * If the BIOS has set an out of range IRQ number, just
+> @@ -1119,8 +1098,6 @@ static const struct dmi_system_id pciirq_dmi_table[] __initconst = {
+>  
+>  void __init pcibios_irq_init(void)
+>  {
+> -	DBG(KERN_DEBUG "PCI: IRQ init\n");
+> -
+>  	if (raw_pci_ops == NULL)
+>  		return;
+>  
+> diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
+> index dfbe6ac38830..045089b34400 100644
+> --- a/arch/x86/pci/legacy.c
+> +++ b/arch/x86/pci/legacy.c
+> @@ -17,7 +17,6 @@ static void pcibios_fixup_peer_bridges(void)
+>  
+>  	if (pcibios_last_bus <= 0 || pcibios_last_bus > 0xff)
+>  		return;
+> -	DBG("PCI: Peer bridge fixup\n");
+>  
+>  	for (n=0; n <= pcibios_last_bus; n++)
+>  		pcibios_scan_specific_bus(n);
+> @@ -45,7 +44,7 @@ void pcibios_scan_specific_bus(int busn)
+>  	for (devfn = 0; devfn < 256; devfn += stride) {
+>  		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
+>  		    l != 0x0000 && l != 0xffff) {
+> -			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
+> +
+>  			pr_info("PCI: Discovered peer bus %02x\n", busn);
+>  			pcibios_scan_root(busn);
+>  			return;
+> diff --git a/arch/x86/pci/pcbios.c b/arch/x86/pci/pcbios.c
+> index 9c97d814125e..a6fc43aa668c 100644
+> --- a/arch/x86/pci/pcbios.c
+> +++ b/arch/x86/pci/pcbios.c
+> @@ -160,8 +160,6 @@ static int __init check_pcibios(void)
+>  		minor_ver = ebx & 0xff;
+>  		if (pcibios_last_bus < 0)
+>  			pcibios_last_bus = ecx & 0xff;
+> -		DBG("PCI: BIOS probe returned s=%02x hw=%02x ver=%02x.%02x l=%02x\n",
+> -			status, hw_mech, major_ver, minor_ver, pcibios_last_bus);
+>  		if (status || signature != PCI_SIGNATURE) {
+>  			printk (KERN_ERR "PCI: BIOS BUG #%x[%08x] found\n",
+>  				status, signature);
+> @@ -320,15 +318,13 @@ static const struct pci_raw_ops *__init pci_find_bios(void)
+>  				check->fields.revision, check);
+>  			continue;
+>  		}
+> -		DBG("PCI: BIOS32 Service Directory structure at 0x%p\n", check);
+>  		if (check->fields.entry >= 0x100000) {
+>  			printk("PCI: BIOS32 entry (0x%p) in high memory, "
+>  					"cannot use.\n", check);
+>  			return NULL;
+>  		} else {
+>  			unsigned long bios32_entry = check->fields.entry;
+> -			DBG("PCI: BIOS32 Service Directory entry at 0x%lx\n",
+> -					bios32_entry);
+> +
+>  			bios32_indirect.address = bios32_entry + PAGE_OFFSET;
+>  			set_bios_x();
+>  			if (check_pcibios())
+> @@ -366,7 +362,6 @@ struct irq_routing_table * pcibios_get_irq_routing_table(void)
+>  	opt.size = PAGE_SIZE;
+>  	opt.segment = __KERNEL_DS;
+>  
+> -	DBG("PCI: Fetching IRQ routing table... ");
+>  	__asm__("push %%es\n\t"
+>  		"push %%ds\n\t"
+>  		"pop  %%es\n\t"
+> @@ -384,7 +379,7 @@ struct irq_routing_table * pcibios_get_irq_routing_table(void)
+>  		  "S" (&pci_indirect),
+>  		  "m" (opt)
+>  		: "memory");
+> -	DBG("OK  ret=%d, size=%d, map=%x\n", ret, opt.size, map);
+> +
+>  	if (ret & 0xff00)
+>  		printk(KERN_ERR "PCI: Error %02x when fetching IRQ routing table.\n", (ret >> 8) & 0xff);
+>  	else if (opt.size) {
