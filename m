@@ -2,75 +2,83 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C88C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95979C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE8720878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:31:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE8720878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 667BA214E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:33:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667BA214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeLCMcp (ORCPT
+        id S1726477AbeLCMd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:32:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbeLCMcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:32:45 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D5D5C034E1F;
-        Mon,  3 Dec 2018 12:31:53 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 82FDD272C0;
-        Mon,  3 Dec 2018 12:31:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon,  3 Dec 2018 13:31:52 +0100 (CET)
-Date:   Mon, 3 Dec 2018 13:31:49 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux
- 4.20-rc4)
-Message-ID: <20181203123149.GB31795@redhat.com>
-References: <CAHk-=wgdsXyCaLsFEpyUpAeRqVS69u=xo4rzEN+cS=xwz2gajg@mail.gmail.com>
- <20181203074700.GA21240@gmail.com>
- <20181203083942.GF31738@dhcp22.suse.cz>
+        Mon, 3 Dec 2018 07:33:57 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44077 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbeLCMd4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:33:56 -0500
+Received: from 79.184.252.87.ipv4.supernova.orange.pl (79.184.252.87) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
+ id 33005df1c76e39af; Mon, 3 Dec 2018 13:33:02 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH] cpuidle: poll_state: Disregard disable idle states
+Date:   Mon, 03 Dec 2018 13:32:53 +0100
+Message-ID: <4697959.rYJ3NsDDJG@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203083942.GF31738@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 03 Dec 2018 12:31:54 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03, Michal Hocko wrote:
->
-> Now, I wouldn't mind to revert this because the code is really old and
-> we haven't seen many bug reports about failing suspend yet. But what is
-> the actual plan to make this work properly?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I don't see a simple solution...
+When computing the limit of time to spend in the loop in poll_idle(),
+use the target residency of the first enabled idle state deeper than
+state 0 instead of always using the target residency of state 1.
 
-But we need to fix exec/de_thread anyway, then we can probably reconsider
-this patch.
+This helps when state 1 is disabled for diagnostics, for instance.
 
-Oleg.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/poll_state.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+Index: linux-pm/drivers/cpuidle/poll_state.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/poll_state.c
++++ linux-pm/drivers/cpuidle/poll_state.c
+@@ -20,8 +20,17 @@ static int __cpuidle poll_idle(struct cp
+ 
+ 	local_irq_enable();
+ 	if (!current_set_polling_and_test()) {
+-		u64 limit = (u64)drv->states[1].target_residency * NSEC_PER_USEC;
+ 		unsigned int loop_count = 0;
++		u64 limit = TICK_USEC;
++		int i;
++
++		for (i = 1; i < drv->state_count; i++) {
++			if (drv->states[i].disabled || dev->states_usage[i].disable)
++				continue;
++
++			limit = (u64)drv->states[i].target_residency * NSEC_PER_USEC;
++			break;
++		}
+ 
+ 		while (!need_resched()) {
+ 			cpu_relax();
 
