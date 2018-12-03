@@ -2,206 +2,127 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4089FC64EB4
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E0FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1331F20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1331F20848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id BB56B20881
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 03:51:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Ny7Udhkp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB56B20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=live.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726093AbeLCDq4 (ORCPT
+        id S1725829AbeLCDvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 22:46:56 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16067 "EHLO huawei.com"
+        Sun, 2 Dec 2018 22:51:11 -0500
+Received: from mail-oln040092008096.outbound.protection.outlook.com ([40.92.8.96]:63264
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725813AbeLCDpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 22:45:43 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 16398BBCE13A7;
-        Mon,  3 Dec 2018 11:45:37 +0800 (CST)
-Received: from vm100-107-113-134.huawei.com (100.107.113.134) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 3 Dec 2018 11:45:31 +0800
-From:   Yu Chen <chenyu56@huawei.com>
-To:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>,
-        "Binghui Wang" <wangbinghui@hisilicon.com>
-Subject: [PATCH v1 05/12] usb: dwc3: Add two quirks for Hisilicon Kirin Soc Platform
-Date:   Mon, 3 Dec 2018 11:45:08 +0800
-Message-ID: <20181203034515.91412-6-chenyu56@huawei.com>
-X-Mailer: git-send-email 2.15.0-rc2
-In-Reply-To: <20181203034515.91412-1-chenyu56@huawei.com>
-References: <20181203034515.91412-1-chenyu56@huawei.com>
+        id S1725790AbeLCDvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Dec 2018 22:51:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JwMVRJP0Tg+SdOgkTSb7+5BinAzL5pXMv7v5qdeHE+Q=;
+ b=Ny7UdhkpRQDTwcaiS5OOgSecJ/uEjoWRFSCH80EDqy+xUZQnbfhgW6omL0VD8ZQm/Sh7QzAeNIFmx9SarBXmTTJrb0k/AadXz2lQWuQ9kOHbk0nZTR7odvHuT2Ynlzzrd2KlOKCTK5tKz+pQm1+N0bhWh+McbLQcmiLAyrx02L6q/Ji8BvLVX6CAc5E0SGvdqn4yYGxlvYbqhuPOtojd4ApslmXJ7+Icd9dc8PwWpjkXLTHjDoICSXNiT6oVln8Q0xuM2rmd8/Ku5p1guzHO/Lu7NFeUXCawPPxy2cMuLI/V7YRHJyXl+VB7qjeiZvcPpIiHTaBY0QmaxaLEe1mHyA==
+Received: from DM3NAM03FT030.eop-NAM03.prod.protection.outlook.com
+ (10.152.82.57) by DM3NAM03HT210.eop-NAM03.prod.protection.outlook.com
+ (10.152.83.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.18; Mon, 3 Dec
+ 2018 03:51:05 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com (10.152.82.55) by
+ DM3NAM03FT030.mail.protection.outlook.com (10.152.82.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.18 via Frontend Transport; Mon, 3 Dec 2018 03:51:05 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::19ff:b7ea:dfaa:2ee3]) by BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::19ff:b7ea:dfaa:2ee3%2]) with mapi id 15.20.1404.011; Mon, 3 Dec 2018
+ 03:51:05 +0000
+From:   Yueyi Li <liyueyi@live.com>
+To:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@suse.com" <mhocko@suse.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] memblock: Anonotate memblock_is_reserved() with
+ __init_memblock.
+Thread-Topic: [PATCH] memblock: Anonotate memblock_is_reserved() with
+ __init_memblock.
+Thread-Index: AQHUirtqtuzF7rWp1EuMR6Zuhke7FQ==
+Date:   Mon, 3 Dec 2018 03:51:05 +0000
+Message-ID: <BLUPR13MB0289EFC5F40ADCAC2146F687DFAE0@BLUPR13MB0289.namprd13.prod.outlook.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR02CA0148.apcprd02.prod.outlook.com
+ (2603:1096:202:16::32) To BLUPR13MB0289.namprd13.prod.outlook.com
+ (2a01:111:e400:5951::22)
+x-incomingtopheadermarker: OriginalChecksum:23A99CE9DFD4FE9E963AD6BE761DFC59F0B1960D1B5B24B31F3AA52EEF89D03E;UpperCasedChecksum:94C04BC4F8988D58C468B80510F4369B15FDA4F097C793F3E790E45DC7569440;SizeAsReceived:7472;Count:48
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [DBXn40p1D61h5wf6KYr6VyOjwh7yHJ/y]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM3NAM03HT210;6:fiLjNPdCa83hchLSAUFl2zRV//iV3iZ7r8fczHmj3Ge/686ElnItRro5O2+qbNBL0flRUvgWE5QZ2Ydnm60dW9m1fry2r9bi2fP/3Aij7cY9Ba9wHB2ob+fJSj2WxAWOZ3b7Xjq1Jy87ePHq740I1fgZK+qibMwpPBaDto7ITq3ASUF+aw8P8RPWPdvdkZrDCkXAmRSqLn2vcmUlKPALws/fDl87jehxtAMxvP5YC2HcaBg4nGgUY8ZcxDUTcuQRLafOAlt7bTVEAYnJQuUJV1Jb7ifZhFJJiIbC+Sxrjfb+KnV2poi0UyCGMCw9uTqGQ8KDeeuRUCygnXahDNsRFM6eeLh1hndMDUR5mN1oyhnSGksnolsQmb3tnqrUBfo2TI6C9xbbeGS5gh2T5e7rcgjrVVXquEv4c6ng1vzwtAke31scPj6S0U44oz1CdC5ixZlHdobmMuZSBOnWR7/lfA==;5:Yh8NmZILjE4CghzQ1DOPo4tl0CUb3zDS6cZdN+U4fJ4ZDxIhHocTIy7wJnOWLMNZv58fD6rzpiLqgcl8ZiJhcjUAto5MN+caSTGaQgrU2zvUpmfq2c7TZI5LwAHlx3GGZ+i+BJcuQiPYhYFkP3M3F9M6+fkHYQzsE5O1AEKTle8=;7:WZNCEFl+v6OnHKIqWXvCjoy0GyVFuLaRnFo8rPlcLGIe7jMi9Ih0i4XexWYzey4Ug+7PEDX98spHCTluL4hoc4yHpme/9A9jIWmajrur74gOtNkEmt98ndcSRsNLb5JJD3RtvYILCh07QMURbN1g8g==
+x-incomingheadercount: 48
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:DM3NAM03HT210;
+x-ms-traffictypediagnostic: DM3NAM03HT210:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:DM3NAM03HT210;BCL:0;PCL:0;RULEID:;SRVR:DM3NAM03HT210;
+x-microsoft-antispam-message-info: OsWRV2+ZgZmp8Pmjpjw4S+D50uoOnamQz5H2gDVTPMeleByiT4ySIsq9R2s7aD4o
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [100.107.113.134]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: live.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09d3d101-f355-47ea-7570-08d658d28ca6
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 03:51:05.4349
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3NAM03HT210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are tow quirks for DesignWare USB3 DRD Core of Hisilicon Kirin Soc.
-1)SPLIT_BOUNDARY_DISABLE should be set for Host mode
-2)A GCTL soft reset should be executed when switch mode
+Found warring:
 
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Binghui Wang <wangbinghui@hisilicon.com>
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
+WARNING: EXPORT symbol "gsi_write_channel_scratch" [vmlinux] version genera=
+tion failed, symbol will not be versioned.
+WARNING: vmlinux.o(.text+0x1e0a0): Section mismatch in reference from the f=
+unction valid_phys_addr_range() to the function .init.text:memblock_is_rese=
+rved()
+The function valid_phys_addr_range() references
+the function __init memblock_is_reserved().
+This is often because valid_phys_addr_range lacks a __init
+annotation or the annotation of memblock_is_reserved is wrong.
+
+Use __init_memblock instead of __init.
+
+Signed-off-by: liyueyi <liyueyi@live.com>
 ---
- drivers/usb/dwc3/core.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
- drivers/usb/dwc3/core.h   |  7 +++++++
- drivers/usb/dwc3/gadget.c |  2 +-
- 3 files changed, 51 insertions(+), 1 deletion(-)
+ mm/memblock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index becfbb87f791..b539bcc45d3b 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -111,11 +111,25 @@ void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode)
- 	dwc->current_dr_role = mode;
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 9a2d5ae..81ae63c 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1727,7 +1727,7 @@ static int __init_memblock memblock_search(struct mem=
+block_type *type, phys_addr
+ 	return -1;
  }
- 
-+static void dwc3_gctl_core_soft_reset(struct dwc3 *dwc)
-+{
-+	int reg;
-+
-+	reg = dwc3_readl(dwc->regs, DWC3_GCTL);
-+	reg |= (DWC3_GCTL_CORESOFTRESET);
-+	dwc3_writel(dwc->regs, DWC3_GCTL, reg);
-+
-+	reg = dwc3_readl(dwc->regs, DWC3_GCTL);
-+	reg &= ~(DWC3_GCTL_CORESOFTRESET);
-+	dwc3_writel(dwc->regs, DWC3_GCTL, reg);
-+}
-+
- static void __dwc3_set_mode(struct work_struct *work)
+=20
+-bool __init memblock_is_reserved(phys_addr_t addr)
++bool __init_memblock memblock_is_reserved(phys_addr_t addr)
  {
- 	struct dwc3 *dwc = work_to_dwc(work);
- 	unsigned long flags;
- 	int ret;
-+	int reg;
- 
- 	if (dwc->dr_mode != USB_DR_MODE_OTG)
- 		return;
-@@ -155,6 +169,10 @@ static void __dwc3_set_mode(struct work_struct *work)
- 
- 	dwc3_set_prtcap(dwc, dwc->desired_dr_role);
- 
-+	/* Execute a GCTL Core Soft Reset when switch mode */
-+	if (dwc->gctl_reset_quirk)
-+		dwc3_gctl_core_soft_reset(dwc);
-+
- 	spin_unlock_irqrestore(&dwc->lock, flags);
- 
- 	switch (dwc->desired_dr_role) {
-@@ -168,6 +186,11 @@ static void __dwc3_set_mode(struct work_struct *work)
- 			phy_set_mode(dwc->usb2_generic_phy, PHY_MODE_USB_HOST);
- 			phy_set_mode(dwc->usb3_generic_phy, PHY_MODE_USB_HOST);
- 			phy_calibrate(dwc->usb2_generic_phy);
-+			if (dwc->dis_split_quirk) {
-+				reg = dwc3_readl(dwc->regs, DWC3_GUCTL3);
-+				reg |= DWC3_GUCTL3_SPLITDISABLE;
-+				dwc3_writel(dwc->regs, DWC3_GUCTL3, reg);
-+			}
- 		}
- 		break;
- 	case DWC3_GCTL_PRTCAP_DEVICE:
-@@ -1298,6 +1321,11 @@ static void dwc3_get_properties(struct dwc3 *dwc)
- 	dwc->dis_metastability_quirk = device_property_read_bool(dev,
- 				"snps,dis_metastability_quirk");
- 
-+	dwc->dis_split_quirk = device_property_read_bool(dev,
-+				"snps,dis-split-quirk");
-+	dwc->gctl_reset_quirk = device_property_read_bool(dev,
-+				"snps,gctl-reset-quirk");
-+
- 	dwc->lpm_nyet_threshold = lpm_nyet_threshold;
- 	dwc->tx_de_emphasis = tx_de_emphasis;
- 
-@@ -1815,10 +1843,25 @@ static int dwc3_resume(struct device *dev)
- 
- 	return 0;
+ 	return memblock_search(&memblock.reserved, addr) !=3D -1;
  }
-+
-+static void dwc3_complete(struct device *dev)
-+{
-+	struct dwc3	*dwc = dev_get_drvdata(dev);
-+	u32		reg;
-+
-+	if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_HOST &&
-+			dwc->dis_split_quirk) {
-+		dev_dbg(dwc->dev, "set DWC3_GUCTL3_SPLITDISABLE\n");
-+		reg = dwc3_readl(dwc->regs, DWC3_GUCTL3);
-+		reg |= DWC3_GUCTL3_SPLITDISABLE;
-+		dwc3_writel(dwc->regs, DWC3_GUCTL3, reg);
-+	}
-+}
- #endif /* CONFIG_PM_SLEEP */
- 
- static const struct dev_pm_ops dwc3_dev_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(dwc3_suspend, dwc3_resume)
-+	.complete = dwc3_complete,
- 	SET_RUNTIME_PM_OPS(dwc3_runtime_suspend, dwc3_runtime_resume,
- 			dwc3_runtime_idle)
- };
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index 5bfb62533e0f..b3cea95f7720 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -135,6 +135,7 @@
- #define DWC3_GEVNTCOUNT(n)	(0xc40c + ((n) * 0x10))
- 
- #define DWC3_GHWPARAMS8		0xc600
-+#define DWC3_GUCTL3		0xc60c
- #define DWC3_GFLADJ		0xc630
- 
- /* Device Registers */
-@@ -359,6 +360,9 @@
- /* Global User Control Register 2 */
- #define DWC3_GUCTL2_RST_ACTBITLATER		BIT(14)
- 
-+/* Global User Control Register 3 */
-+#define DWC3_GUCTL3_SPLITDISABLE		BIT(14)
-+
- /* Device Configuration Register */
- #define DWC3_DCFG_DEVADDR(addr)	((addr) << 3)
- #define DWC3_DCFG_DEVADDR_MASK	DWC3_DCFG_DEVADDR(0x7f)
-@@ -1168,6 +1172,9 @@ struct dwc3 {
- 
- 	unsigned		dis_metastability_quirk:1;
- 
-+	unsigned		dis_split_quirk:1;
-+	unsigned		gctl_reset_quirk:1;
-+
- 	u16			imod_interval;
- };
- 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 679c12e14522..cd54ad3eaf01 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -269,7 +269,7 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned cmd,
- {
- 	const struct usb_endpoint_descriptor *desc = dep->endpoint.desc;
- 	struct dwc3		*dwc = dep->dwc;
--	u32			timeout = 1000;
-+	u32			timeout = 5000;
- 	u32			saved_config = 0;
- 	u32			reg;
- 
--- 
-2.15.0-rc2
+--=20
+2.7.4
 
