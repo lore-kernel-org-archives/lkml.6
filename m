@@ -2,99 +2,258 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4936C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787DFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975AF20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975AF20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 406E720851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406E720851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeLCMMv (ORCPT
+        id S1726521AbeLCMNQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:12:51 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34890 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726298AbeLCMMv (ORCPT
+        Mon, 3 Dec 2018 07:13:16 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55614 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbeLCMNQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:12:51 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3C7AZv062381
-        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 07:12:02 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p5478rdqm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 07:12:00 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sebott@linux.ibm.com>;
-        Mon, 3 Dec 2018 12:11:58 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Dec 2018 12:11:56 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3CBsm4852414
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Dec 2018 12:11:54 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0AC552054;
-        Mon,  3 Dec 2018 12:11:54 +0000 (GMT)
-Received: from dyn-9-152-212-73.boeblingen.de.ibm.com (unknown [9.152.212.73])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 6824152052;
-        Mon,  3 Dec 2018 12:11:54 +0000 (GMT)
-Date:   Mon, 3 Dec 2018 13:11:53 +0100 (CET)
-From:   Sebastian Ott <sebott@linux.ibm.com>
-X-X-Sender: sebott@schleppi.aag-de.ibmmobiledemo.com
-To:     Yangtao Li <tiny.windzz@gmail.com>
-cc:     sth@linux.ibm.com, hoeppner@linux.ibm.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        oberpar@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390: convert to DEFINE_SHOW_ATTRIBUTE
-In-Reply-To: <20181202032811.9875-1-tiny.windzz@gmail.com>
-References: <20181202032811.9875-1-tiny.windzz@gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
- =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        Mon, 3 Dec 2018 07:13:16 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB3CCLRg105209;
+        Mon, 3 Dec 2018 06:12:21 -0600
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB3CCK7l113801
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 06:12:21 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 3
+ Dec 2018 06:12:20 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 3 Dec 2018 06:12:20 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB3CCHMB024819;
+        Mon, 3 Dec 2018 06:12:17 -0600
+Subject: Re: [PATCH V3 1/3] mmc: sdhci: add support for using external DMA
+ devices
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
+ <1543471664-22856-1-git-send-email-zhang.chunyan@linaro.org>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <f198a61f-40e8-973a-5541-a1bc1dc347de@ti.com>
+Date:   Mon, 3 Dec 2018 17:45:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-x-cbid: 18120312-0016-0000-0000-0000023147F0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120312-0017-0000-0000-000032894B1C
-Message-Id: <alpine.LFD.2.21.1812031310340.1928@schleppi.aag-de.ibmmobiledemo.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=895 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812030116
+In-Reply-To: <1543471664-22856-1-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 1 Dec 2018, Yangtao Li wrote:
-> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+Hi,
+
+On 29/11/18 11:37 AM, Chunyan Zhang wrote:
+> Some standard SD host controllers can support both external dma
+> controllers as well as ADMA/SDMA in which the SD host controller
+> acts as DMA master. TI's omap controller is the case as an example.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> the host controller but does not have any support for external DMA
+> controllers implemented using dmaengine, meaning that custom code is
+> needed for any systems that use an external DMA controller with SDHCI.
+> 
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 > ---
->  drivers/s390/block/dasd.c     | 15 +--------------
->  drivers/s390/cio/qdio_debug.c | 16 ++--------------
->  2 files changed, 3 insertions(+), 28 deletions(-)
+>  drivers/mmc/host/Kconfig |  14 ++++
+>  drivers/mmc/host/sdhci.c | 185 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci.h |   8 ++
+>  3 files changed, 206 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 1b58739..4183f43 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -969,6 +969,7 @@ config MMC_SDHCI_XENON
+>  config MMC_SDHCI_OMAP
+>  	tristate "TI SDHCI Controller Support"
+>  	depends on MMC_SDHCI_PLTFM && OF
+> +	select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
+>  	help
+>  	  This selects the Secure Digital Host Controller Interface (SDHCI)
+>  	  support present in TI's DRA7 SOCs. The controller supports
+> @@ -977,3 +978,16 @@ config MMC_SDHCI_OMAP
+>  	  If you have a controller with this interface, say Y or M here.
+>  
+>  	  If unsure, say N.
+> +
+> +config MMC_SDHCI_EXTERNAL_DMA
+> +        bool "Support external DMA in standard SD host controller"
+> +	depends on MMC_SDHCI
+> +	depends on DMA_ENGINE
+> +	help
+> +	  This is an option for using external DMA device via dmaengine
+> +	  framework.
+> +
+> +	  If you have a controller which support using external DMA device
+> +	  for data transfer, can say Y.
+> +
+> +	  If unsure, say N.
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae5..ad7cc80 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -14,6 +14,7 @@
+>   */
+>  
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+>  #include <linux/ktime.h>
+>  #include <linux/highmem.h>
+>  #include <linux/io.h>
+> @@ -1309,6 +1310,162 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
+>  		del_timer(&host->timer);
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> +{
+> +	int ret = 0;
+> +	struct mmc_host *mmc = host->mmc;
+> +
+> +	host->tx_chan = dma_request_chan(mmc->parent, "tx");
+> +	if (IS_ERR(host->tx_chan)) {
+> +		ret = PTR_ERR(host->tx_chan);
+> +		if (ret != -EPROBE_DEFER)
+> +			pr_warn("Failed to request TX DMA channel.\n");
+> +		host->tx_chan = NULL;
+> +		return ret;
+> +	}
+> +
+> +	host->rx_chan = dma_request_chan(mmc->parent, "rx");
+> +	if (IS_ERR(host->rx_chan)) {
+> +		if (host->tx_chan) {
+> +			dma_release_channel(host->tx_chan);
+> +			host->tx_chan = NULL;
+> +		}
+> +
+> +		ret = PTR_ERR(host->rx_chan);
+> +		if (ret != -EPROBE_DEFER)
+> +			pr_warn("Failed to request RX DMA channel.\n");
+> +		host->rx_chan = NULL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static inline struct dma_chan *
+> +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
+> +{
+> +	return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
+> +}
+> +
+> +static int sdhci_external_dma_setup(struct sdhci_host *host,
+> +				    struct mmc_command *cmd)
+> +{
+> +	int ret, i;
+> +	struct dma_async_tx_descriptor *desc;
+> +	struct mmc_data *data = cmd->data;
+> +	struct dma_chan *chan;
+> +	struct dma_slave_config cfg;
+> +	dma_cookie_t cookie;
+> +
+> +	if (!host->mapbase)
+> +		return -EINVAL;
+> +
+> +	if (!data)
+> +		return 0;
+> +
+> +	cfg.src_addr = host->mapbase + SDHCI_BUFFER;
+> +	cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
+> +	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	cfg.src_maxburst = data->blksz / 4;
+> +	cfg.dst_maxburst = data->blksz / 4;
+> +
+> +	/* Sanity check: all the SG entries must be aligned by block size. */
+> +	for (i = 0; i < data->sg_len; i++) {
+> +		if ((data->sg + i)->length % data->blksz)
+> +			return -EINVAL;
+> +	}
+> +
+> +	chan = sdhci_external_dma_channel(host, data);
+> +
+> +	ret = dmaengine_slave_config(chan, &cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
+> +				       mmc_get_dma_dir(data),
+> +				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	desc->callback = NULL;
+> +	desc->callback_param = NULL;
+> +
+> +	cookie = dmaengine_submit(desc);
+> +	if (cookie < 0)
+> +		ret = cookie;
+> +
+> +	return ret;
+> +}
+> +
+> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> +{
+> +	if (host->tx_chan) {
+> +		dma_release_channel(host->tx_chan);
+> +		host->tx_chan = NULL;
+> +	}
+> +
+> +	if (host->rx_chan) {
+> +		dma_release_channel(host->rx_chan);
+> +		host->rx_chan = NULL;
+> +	}
+> +
+> +	sdhci_switch_external_dma(host, false);
+> +}
+> +
+> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
 
-Applied, thanks!
-Sebastian
+Please add a condition for data == NULL here. This was already pointed
+out by Adrian in v2.
 
+My test with an am335x-evm failed with these patches. Looks like the
+very first SDIO commands failing.
+
+https://pastebin.ubuntu.com/p/Y2RDjSKpgd/
+
+Currently am335x-evm is using omap_hsmmc driver. I added the following
+patch to make it work with sdhci_omap.
+
+https://pastebin.ubuntu.com/p/VTGrCbJxY3/
+
+Will look deeper into this. Please ping if you need any more information.
+
+Thanks,
+Faiz
