@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C14EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F5EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D06B214C1
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E863220834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="nzY4qQdQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D06B214C1
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Hy5EBx9W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E863220834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbeLCLcq (ORCPT
+        id S1726438AbeLCLcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:32:46 -0500
-Received: from mail-eopbgr20052.outbound.protection.outlook.com ([40.107.2.52]:21376
+        Mon, 3 Dec 2018 06:32:48 -0500
+Received: from mail-eopbgr20042.outbound.protection.outlook.com ([40.107.2.42]:52592
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726328AbeLCLcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:32:45 -0500
+        id S1726386AbeLCLcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:32:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dH0HviKmC/Vu8HUFZckW3p6Xx9+TL8TchyZ+aFdpbQ8=;
- b=nzY4qQdQVef7LBkxB4s3pOWdtle+BaRQtRBMZctFPAVw84itNWhwhRDnrGSvnohEdQdexsHHlRbrEkdP9Os09e0PkJ7u2yIyT01PJNNNIbpv3HE1y7x37EX4xJ3gsyvpHWs5HkLKFZO11bATYf9aY8C7+CgT9sOH4oSOJrEd4Zk=
+ bh=t5r1W7iov3F9c3G5jDOOBXKH3YiWag1PuAl4bxyyQp4=;
+ b=Hy5EBx9WABbmsJS+JV+jT2ScleMYl2mBkshLRl1B/sXG21UyQ2KcEoCkC0yABQEQWzom4k9WzIZqWxXQd5jaUO3AWe2elBgegpyQU2IHlLVy139iF1CX9SlR1axmFom89meFceWFpEuOcORiigqtsoYxP+aQdCNjFVdv4tFL58M=
 Received: from AM0PR08MB3891.eurprd08.prod.outlook.com (20.178.82.147) by
  AM0PR08MB3491.eurprd08.prod.outlook.com (20.177.108.222) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18; Mon, 3 Dec 2018 11:31:55 +0000
+ 15.20.1382.18; Mon, 3 Dec 2018 11:31:58 +0000
 Received: from AM0PR08MB3891.eurprd08.prod.outlook.com
  ([fe80::896a:710:2a8c:e2fa]) by AM0PR08MB3891.eurprd08.prod.outlook.com
  ([fe80::896a:710:2a8c:e2fa%6]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 11:31:55 +0000
+ 11:31:58 +0000
 From:   Ayan Halder <Ayan.Halder@arm.com>
 To:     Ayan Halder <Ayan.Halder@arm.com>,
         Liviu Dudau <Liviu.Dudau@arm.com>,
@@ -60,11 +60,13 @@ To:     Ayan Halder <Ayan.Halder@arm.com>,
         "arnd@arndb.de" <arnd@arndb.de>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 CC:     nd <nd@arm.com>
-Subject: [RFC AFBC 01/12] drm/fourcc: Add AFBC yuv fourccs for Mali
-Thread-Topic: [RFC AFBC 01/12] drm/fourcc: Add AFBC yuv fourccs for Mali
-Thread-Index: AQHUivvLhdpemUHBzUiBjUfFvAvaaA==
-Date:   Mon, 3 Dec 2018 11:31:55 +0000
-Message-ID: <1543836703-8491-2-git-send-email-ayan.halder@arm.com>
+Subject: [RFC v3 AFBC 04/12] drm/arm/malidp: Set the AFBC register bits if the
+ framebuffer has AFBC modifier
+Thread-Topic: [RFC v3 AFBC 04/12] drm/arm/malidp: Set the AFBC register bits
+ if the framebuffer has AFBC modifier
+Thread-Index: AQHUivvNe+KfFyADaUyOk+ZKPgY96g==
+Date:   Mon, 3 Dec 2018 11:31:58 +0000
+Message-ID: <1543836703-8491-5-git-send-email-ayan.halder@arm.com>
 References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
 In-Reply-To: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
 Accept-Language: en-US
@@ -79,28 +81,28 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [217.140.106.55]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3491;6:im3xltO+QvRTRNm9ZEDbV7hOO9j+jn7gVfJBN6bBYxkIIfHQCUHWt5m2GcHq6EqnvQUKpQPiCQfppY3nJi9q9rMhfKM0jlPQKTWaWnl6AnQoSA37wGf59iCojEiSDy7MnaKIsFKnbduXQPk2y7k3eLLetCTgrypPB/IjbNCEOkG3wXl876kB2Qt9HW37DfV0WynpK50iF2x0vYIha7MN/oMmpzv9CMA76VDMGDRsBbd4S68b+Qo8BbJenR+6bBqaxYneRqSrTsaonuMSAQ+1Ru7NYb6yVCPl6KnREYLoQU8ulclLcrfIG7wTpYKS2pIMqi1IJ6yE+LWQHrToCIo3VyIwKt7mS9agsyEM3F11nI8JOAsyOojc8awSfPUMtYcajjSyPCORlUnS00q/NzX2I91vHwGMtXTDuW6qnYfpmQuDaWnvNkIh5CD0cBlhfsLSQntxuh3RdoJZ47C/dS24dg==;5:ty1jcSNhQGBZARw+V4YRIEWaOtgeudYpZByFXk/FGbd3ewmuHPaw7u2Mh8MKowJhktmJ5mmCwg/P5n9/4ivMtfG21PdwmIXpgLOxmHi/hSeatnsv2K35ArsBUDJJoY976aUZALTXIigDbICHb2Z0Wgg5YzwJONs/Q9oVT11Z5QE=;7:K8GmGXUoW0ZD8AVYuq2cPitfYZpGjCJ+lPog2vFPWVKhQnoXePRQ1iLSPyBjyM4jVpVrC53kggqDx3YwzhUHwmg+Pq9w607LNdR88arb3mOCCM6xsntkFHpEIM0MYR+2gVMU3XwsB6zUU1G8pnyaZA==
-x-ms-office365-filtering-correlation-id: 16f270d2-6ee7-4667-0d5f-08d65912eda2
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3491;6:/4iIGJ889C8iKDGTqoZbKVVe1+guMx8fT/Pe72XpGPBSbRuzVUlCthJnDiwtKyqRoNARP2mWn7rkUw1yEx6/gArHapqUcUoqv7t8bEgJ8Q1LrKFFuJk46MnK0ZOMFvZsf/okn/Z7PWAgWgJUylWQRvx6TsEBBkcKLU6eCAObTHgwtTtufpi3xo6/wYMJwK+9fEeMTrGf6LF8pGUKA9M1rn3XiWXNy6Ovh/ruZcB2dcoy+pzhP9nc0eanXRzqZVenrrfXkXjyztsZWEjTprzN4ktjzzYEfCGQzH6LPsh/sdAsCMvTtVbJbggooZeGOmgPXSzBk3XMVl87N5zaxjR29bjYU3yutufGwqXDVngn6vZY7oMTiYoU1joMsCR3UbsBXO3BQwr6FjP+KDI/PuYQ9Dd4okLl6neyZdGC4u4j/FhyBlBmVRhiHuONlVGS8O2dVjuJCE04GO6wy1GQL8jEkg==;5:LzGEhk77a0HpQpH7wbG25XhRnwXVTho2MMraHr9F59K584yDXBwWbgwsW+TOyhFpvuxPdmrQxYeJjgwGaMIr96uikIfI7OPNv3eJApNJz9EFbqeSZ6Ap8fuN8UvBeBZhuUhxlVXzNrIc10WKRbiQlCKHYBSLUo5ovwFG9LC2LzM=;7:RMwgNyNetXdgj9ZrU6gc1ERcDW77dTsISJMNh9ecmXTi5KSXXLIDO2ACHPkjIX4EVWZxIHPXxffXVzC53F5vUtCR08owlnt3yCDeAXb4QflsOCbw2UR4j1mESdJHjpL6r5LnVGd+trdzO7mTG/S7xA==
+x-ms-office365-filtering-correlation-id: 485703a2-e8d3-42bb-53e3-08d65912ef90
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3491;
 x-ms-traffictypediagnostic: AM0PR08MB3491:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB34914A9F7A0893B7361F5203E4AE0@AM0PR08MB3491.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR08MB3491767C8C64B774270D10A8E4AE0@AM0PR08MB3491.eurprd08.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3491;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3491;
 x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(136003)(346002)(366004)(199004)(189003)(99286004)(4326008)(71190400001)(97736004)(36756003)(4744004)(71200400001)(106356001)(6486002)(68736007)(72206003)(256004)(14454004)(66066001)(478600001)(7416002)(5660300001)(81166006)(8936002)(7736002)(25786009)(2201001)(81156014)(305945005)(3846002)(6116002)(26005)(102836004)(316002)(186003)(6436002)(11346002)(486006)(2906002)(2501003)(8676002)(14444005)(575784001)(966005)(2616005)(44832011)(476003)(6512007)(6306002)(105586002)(217873002)(53936002)(52116002)(446003)(386003)(6506007)(86362001)(110136005)(76176011)(21314003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3491;H:AM0PR08MB3891.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(136003)(346002)(366004)(199004)(189003)(99286004)(4326008)(71190400001)(97736004)(36756003)(4744004)(71200400001)(106356001)(6486002)(68736007)(72206003)(256004)(14454004)(66066001)(478600001)(7416002)(5660300001)(45080400002)(81166006)(8936002)(7736002)(25786009)(2201001)(81156014)(305945005)(3846002)(6116002)(26005)(102836004)(316002)(186003)(6436002)(11346002)(486006)(2906002)(2501003)(8676002)(14444005)(575784001)(2616005)(44832011)(476003)(6512007)(105586002)(53936002)(52116002)(446003)(386003)(6506007)(86362001)(110136005)(76176011)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3491;H:AM0PR08MB3891.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: SI4qtplACuW/IXS/dGthB0E+90Lw8xp1V9HYPbRqXIDbDqN8MCNN4Ou8rzAkmVLbCNdEhfYNZaOSBW4xVoBOln4R0I9DF3E3ge0f927oA4nK/8HBLfU6g5Nv72MPLTF9wdIsMOj4nqqowwySxzqCpd2IEbRQlE4dO1P2jHatTWkBZho0iudSusIc1c5HLc4DxgEymE1pQRgLGKHgAIhC0fZr28xs5hPWatm33b7keLMtHlLeFQtbdg25A65ZN+AbCPusEsH1WanV5fUCOwFiuqrOSE0si90U/ayl+vf2gEcKWUqU3gCh5QyjLISyHjcdg0f2rfiFcV/IuIQx4g51lm5ebSh3IqHjK/G8EIZuCoI=
+x-microsoft-antispam-message-info: 8uUoIMBsJEOLHbjF/QcCi7xdahh+Kb3wAeoNpKsbzK9bzDn7S3qBK0IN79DSSXDgKwVt4sFZNftXHyw3gY3cmrijfPf50sAoMTO+QucC+FsgLGXPg4HXISwwRIxeYquRg1JAM6nWepffLDvm6KqFhJWoUIZtX1306//nuYEWw9Kuwaey7yo5gyv5ZKleqAuPcgTp5g53DPTv/vwo4CZUmWqBpY9klAbcgrn2K8RlkcVsAe8PiHMkbaFwvCmGdglOfasNVHDzE7HxIJ53L/11oqiPcy+81C9dneqe2QIQcuo8Snnf6lUqRqljwyJhSrJDs6Pb0kOOiOvFSdN5whmjEWZOoSHIXAvhv9PfHnqebhY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16f270d2-6ee7-4667-0d5f-08d65912eda2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 11:31:55.3809
+X-MS-Exchange-CrossTenant-Network-Message-Id: 485703a2-e8d3-42bb-53e3-08d65912ef90
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 11:31:58.4511
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
@@ -110,300 +112,334 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Starkey <brian.starkey@arm.com>
+Added the AFBC decoder registers for DP500 , DP550 and DP650.
+These registers control the processing of AFBC buffers. It controls various
+features like AFBC decoder enable, lossless transformation and block split
+as well as setting of the left, right, top and bottom cropping of AFBC buff=
+ers
+(in number of pixels).
+All the layers (except DE_SMART) support framebuffers with AFBC modifiers.
+One needs to set the pixel values of the top, left, bottom and right croppi=
+ng
+for the AFBC framebuffer.
+Cropping an AFBC framebuffer is controlled by the AFBC crop registers.
+In that case, the layer input size registers should be configured with
+framebuffer's dimensions and not with drm_plane_state source width/height
+values (which is used for non AFBC framebuffer to denote cropping).
 
-As we look to enable AFBC using DRM format modifiers, we run into
-problems which we've historically handled via vendor-private details
-(i.e. gralloc, on Android).
+Changes from v1:
+ - Removed the "if (fb->modifier)" check from malidp_de_plane_update()
+and added it in malidp_de_set_plane_afbc(). This will consolidate all the
+AFBC specific register configurations in a single function ie
+malidp_de_set_plane_afbc().
 
-AFBC (as an encoding) is fully flexible, and for example YUV data can
-be encoded into 1, 2 or 3 encoded "planes", much like the linear
-equivalents. Component order is also meaningful, as AFBC doesn't
-necessarily care about what each "channel" of the data it encodes
-contains. Therefore ABGR8888 and RGBA8888 can be encoded in AFBC with
-different representations. Similarly, 'X' components may be encoded
-into AFBC streams in cases where a decoder expects to decode a 4th
-component.
+Changes from v2:
+ - For AFBC framebuffer, layer input size register should be set to framebu=
+ffer's
+width and height
 
-In addition, AFBC is a licensable IP, meaning that to support the
-ecosystem we need to ensure that _all_ AFBC users are able to describe
-the encodings that they need. This is much better achieved by
-preserving meaning in the fourcc codes when they are combined with an
-AFBC modifier.
-
-In essence, we want to use the modifier to describe the parameters of
-the AFBC encode/decode, and use the fourcc code to describe the data
-being encoded/decoded.
-
-To do anything different would be to introduce redundancy - we would
-need to duplicate in the modifier information which is _already_
-conveyed clearly and non-ambigiously by a fourcc code.
-
-I hope that for RGB this is non-controversial.
-(BGRA8888 + MODIFIER_AFBC) is a different format from
-(RGBA8888 + MODIFIER_AFBC).
-
-Possibly more controversial is that (XBGR8888 + MODIFIER_AFBC)
-is different from (BGR888 + MODIFIER_AFBC). I understand that in some
-schemes it is not the case - but in AFBC it is so.
-
-Where we run into problems is where there are not already fourcc codes
-which represent the data which the AFBC encoder/decoder is processing.
-To that end, we want to introduce new fourcc codes to describe the
-data being encoded/decoded, in the places where none of the existing
-fourcc codes are applicable.
-
-Where we don't support an equivalent non-compressed layout, or where
-no "obvious" linear layout exists, we are proposing adding fourcc
-codes which have no associated linear layout - because any layout we
-proposed would be completely arbitrary.
-
-Some formats are following the naming conventions from [2].
-
-The summary of the new formats is:
- DRM_FORMAT_VUY888 - Packed 8-bit YUV 444. Y followed by U then V.
- DRM_FORMAT_VUY101010 - Packed 10-bit YUV 444. Y followed by U then
-                        V. No defined linear encoding.
- DRM_FORMAT_Y210 - Packed 10-bit YUV 422. Y followed by U (then Y)
-                   then V. 10-bit samples in 16-bit words.
- DRM_FORMAT_Y410 - Packed 10-bit YUV 444, with 2-bit alpha.
- DRM_FORMAT_P210 - Semi-planar 10-bit YUV 422. Y plane, followed by
-                   interleaved U-then-V plane. 10-bit samples in
-                   16-bit words.
- DRM_FORMAT_YUV420_8BIT - Packed 8-bit YUV 420. Y followed by U then
-                          V. No defined linear encoding
- DRM_FORMAT_YUV420_10BIT - Packed 10-bit YUV 420. Y followed by U
-                           then V. No defined linear encoding
-
-Please also note that in the absence of AFBC, we would still need to
-add Y410, Y210 and P210.
-
-Full rationale follows:
-
-YUV 444 8-bit, 1-plane
-----------------------
- The currently defined AYUV format encodes a 4th alpha component,
- which makes it unsuitable for representing a 3-component YUV 444
- AFBC stream.
-
- The proposed[1] XYUV format which is supported by Mali-DP in linear
- layout is also unsuitable, because the component order is the
- opposite of the AFBC version, and it encodes a 4th 'X' component.
-
- DRM_FORMAT_VUY888 is the "obvious" format for a 3-component, packed,
- YUV 444 8-bit format, with the component order which our HW expects to
- encode/decode. It conforms to the same naming convention as the
- existing packed YUV 444 format.
- The naming here is meant to be consistent with DRM_FORMAT_AYUV and
- DRM_FORMAT_XYUV[1]
-
-YUV 444 10-bit, 1-plane
------------------------
- There is no currently-defined YUV 444 10-bit format in
- drm_fourcc.h, irrespective of number of planes.
-
- The proposed[1] XVYU2101010 format which is supported by Mali-DP in
- linear layout uses the wrong component order, and also encodes a 4th
- 'X' component, which doesn't match the AFBC version of YUV 444
- 10-bit which we support.
-
- DRM_FORMAT_Y410 is the same layout as XVYU2101010, but with 2 bits of
- alpha.  This format is supported with linear layout by Mali GPUs. The
- naming follows[2].
-
- There is no "obvious" linear encoding for a 3-component 10:10:10
- packed format, and so DRM_FORMAT_VUY101010 defines a component
- order, but not a bit encoding. Again, the naming is meant to be
- consistent with DRM_FORMAT_AYUV.
-
-YUV 422 8-bit, 1-plane
-----------------------
- The existing DRM_FORMAT_YUYV (and the other component orders) are
- single-planar YUV 422 8-bit formats. Following the convention of
- the component orders of the RGB formats, YUYV has the correct
- component order for our AFBC encoding (Y followed by U followed by
- V). We can use YUYV for AFBC YUV 422 8-bit.
-
-YUV 422 10-bit, 1-plane
------------------------
- There is no currently-defined YUV 422 10-bit format in drm_fourcc.h
-
- DRM_FORMAT_Y210 is analogous to YUYV, but with 10-bits per sample
- packed into the upper 10-bits of 16-bit samples. This format is
- supported in both linear and AFBC by Mali GPUs.
-
-YUV 422 10-bit, 2-plane
------------------------
- The recently defined DRM_FORMAT_P010 format is a 10-bit semi-planar
- YUV 420 format, which has the correct component ordering for an AFBC
- 2-plane YUV 420 buffer. The linear layout contains meaningless padding
- bits, which will not be encoded in an AFBC stream.
-
-YUV 420 8-bit, 1-plane
-----------------------
- There is no currently defined single-planar YUV 420, 8-bit format
- in drm_fourcc.h. There's differing opinions on whether using the
- existing fourcc-implied n_planes where possible is a good idea or
- not when using modifiers.
-
- For me, it's much more "obvious" to use NV12 for 2-plane AFBC and
- YUV420 for 3-plane AFBC. This keeps the aforementioned separation
- between the AFBC codec settings (in the modifier) and the pixel data
- format (in the fourcc). With different vendors using AFBC, this helps
- to ensure that there is no confusion in interoperation. It also
- ensures that the AFBC modifiers describe AFBC itself (which is a
- licensable component), and not implementation details which are not
- defined by AFBC.
-
- The proposed[1] X0L0 format which Mali-DP supports with Linear layout
- is unsuitable, as it contains a 4th 'X' component, and our AFBC
- decoder expects only 3 components.
-
- To that end, we propose a new YUV 420 8-bit format. There is no
- "obvious" linear encoding for a 3-component 8:8:8, 420, packed format,
- and so DRM_FORMAT_YUV420_8BIT defines a component order, but not a
- bit encoding. I'm happy to hear different naming suggestions.
-
-YUV 420 8-bit, 2-, 3-plane
---------------------------
- These already exist, we can use NV12 and YUV420.
-
-YUV 420 10-bit, 1-plane
------------------------
- As above, no current definition exists, and X0L2 encodes a 4th 'X'
- channel.
-
- Analogous to DRM_FORMAT_YUV420_8BIT, we define DRM_FORMAT_YUV420_10BIT.
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2018-July/184598.html
-[2] https://docs.microsoft.com/en-us/windows/desktop/medfound/10-bit-and-16=
--bit-yuv-video-formats
-
-Changes since RFC v1:
- - Fix confusing subsampling vs bit-depth X:X:X notation in
-   descriptions (danvet)
- - Rename DRM_FORMAT_AVYU1101010 to DRM_FORMAT_Y410 (Lisa Wu)
- - Add drm_format_info structures for the new formats, using the
-   new 'bpp' field for those with non-integer bytes-per-pixel
- - Rebase, including Juha-Pekka Heikkila's format definitions
-
-Signed-off-by: Brian Starkey <brian.starkey@arm.com>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
 ---
- drivers/gpu/drm/drm_fourcc.c  | 10 ++++++++++
- include/uapi/drm/drm_fourcc.h | 16 +++++++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/arm/malidp_hw.c     |  25 +++++----
+ drivers/gpu/drm/arm/malidp_hw.h     |   2 +
+ drivers/gpu/drm/arm/malidp_planes.c | 109 +++++++++++++++++++++++++++++++-=
+----
+ drivers/gpu/drm/arm/malidp_regs.h   |  20 +++++++
+ 4 files changed, 130 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-index d45a3a4..6b7a62e 100644
---- a/drivers/gpu/drm/drm_fourcc.c
-+++ b/drivers/gpu/drm/drm_fourcc.c
-@@ -225,10 +225,14 @@ const struct drm_format_info *__drm_format_info(u32 f=
-ormat)
- 		{ .format =3D DRM_FORMAT_UYVY,		.depth =3D 0,  .num_planes =3D 1, .cpp =
-=3D { 2, 0, 0 }, .hsub =3D 2, .vsub =3D 1, .is_yuv =3D true },
- 		{ .format =3D DRM_FORMAT_VYUY,		.depth =3D 0,  .num_planes =3D 1, .cpp =
-=3D { 2, 0, 0 }, .hsub =3D 2, .vsub =3D 1, .is_yuv =3D true },
- 		{ .format =3D DRM_FORMAT_XYUV8888,	.depth =3D 0,  .num_planes =3D 1, .cp=
-p =3D { 4, 0, 0 }, .hsub =3D 1, .vsub =3D 1, .is_yuv =3D true },
-+		{ .format =3D DRM_FORMAT_Y210,		.depth =3D 0,  .num_planes =3D 1, .cpp =
-=3D { 4, 0, 0 }, .hsub =3D 2, .vsub =3D 1, .is_yuv =3D true },
-+		{ .format =3D DRM_FORMAT_VUY888,          .depth =3D 0,  .num_planes =3D=
- 1, .cpp =3D { 3, 0, 0 }, .hsub =3D 1, .vsub =3D 1, .is_yuv =3D true },
-+		{ .format =3D DRM_FORMAT_Y410,            .depth =3D 0,  .num_planes =3D=
- 1, .cpp =3D { 4, 0, 0 }, .hsub =3D 1, .vsub =3D 1, .has_alpha =3D true, .i=
-s_yuv =3D true },
- 		{ .format =3D DRM_FORMAT_AYUV,		.depth =3D 0,  .num_planes =3D 1, .cpp =
-=3D { 4, 0, 0 }, .hsub =3D 1, .vsub =3D 1, .has_alpha =3D true, .is_yuv =3D=
- true },
- 		{ .format =3D DRM_FORMAT_P010,		.depth =3D 0,  .num_planes =3D 2, .cpp =
-=3D { 2, 4, 0 }, .hsub =3D 2, .vsub =3D 2, .is_yuv =3D true  },
- 		{ .format =3D DRM_FORMAT_P012,		.depth =3D 0,  .num_planes =3D 2, .cpp =
-=3D { 2, 4, 0 }, .hsub =3D 2, .vsub =3D 2, .is_yuv =3D true  },
- 		{ .format =3D DRM_FORMAT_P016,		.depth =3D 0,  .num_planes =3D 2, .cpp =
-=3D { 2, 4, 0 }, .hsub =3D 2, .vsub =3D 2, .is_yuv =3D true  },
-+		{ .format =3D DRM_FORMAT_P210,		.depth =3D 0,  .num_planes =3D 2, .cpp =
-=3D { 2, 4, 0 }, .hsub =3D 2, .vsub =3D 1, .is_yuv =3D true  },
- 		{ .format =3D DRM_FORMAT_Y0L0,		.depth =3D 0,  .num_planes =3D 1,
- 		  .char_per_block =3D { 8, 0, 0 }, .block_w =3D { 2, 0, 0 }, .block_h =
-=3D { 2, 0, 0 },
- 		  .hsub =3D 2, .vsub =3D 2, .has_alpha =3D true, .is_yuv =3D true },
-@@ -241,6 +245,12 @@ const struct drm_format_info *__drm_format_info(u32 fo=
-rmat)
- 		{ .format =3D DRM_FORMAT_X0L2,		.depth =3D 0,  .num_planes =3D 1,
- 		  .char_per_block =3D { 8, 0, 0 }, .block_w =3D { 2, 0, 0 }, .block_h =
-=3D { 2, 0, 0 },
- 		  .hsub =3D 2, .vsub =3D 2, .is_yuv =3D true },
-+		{ .format =3D DRM_FORMAT_VUY101010,	.depth =3D 0,  .num_planes =3D 1,
-+		  .cpp =3D { 0, 0, 0 }, .hsub =3D 1, .vsub =3D 1, .is_yuv =3D true },
-+		{ .format =3D DRM_FORMAT_YUV420_8BIT,     .depth =3D 0,  .num_planes =3D=
- 1,
-+		  .cpp =3D { 0, 0, 0 }, .hsub =3D 2, .vsub =3D 2, .is_yuv =3D true },
-+		{ .format =3D DRM_FORMAT_YUV420_10BIT,    .depth =3D 0,  .num_planes =3D=
- 1,
-+		  .cpp =3D { 0, 0, 0 }, .hsub =3D 2, .vsub =3D 2, .is_yuv =3D true },
- 	};
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_h=
+w.c
+index b9bed11..87b7b12 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -94,11 +94,12 @@ static const struct malidp_layer malidp500_layers[] =3D=
+ {
+ 	 *	yuv2rgb matrix offset, mmu control register offset, rotation_features
+ 	 */
+ 	{ DE_VIDEO1, MALIDP500_DE_LV_BASE, MALIDP500_DE_LV_PTR_BASE,
+-		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, 0, ROTATE_ANY },
++		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, 0, ROTATE_ANY,
++		MALIDP500_DE_LV_AD_CTRL },
+ 	{ DE_GRAPHICS1, MALIDP500_DE_LG1_BASE, MALIDP500_DE_LG1_PTR_BASE,
+-		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
++		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY, MALIDP500_DE_LG1_AD_CTRL },
+ 	{ DE_GRAPHICS2, MALIDP500_DE_LG2_BASE, MALIDP500_DE_LG2_PTR_BASE,
+-		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
++		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY, MALIDP500_DE_LG2_AD_CTRL },
+ };
 =20
- 	unsigned int i;
-diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-index c6e4598..71b2bc7 100644
---- a/include/uapi/drm/drm_fourcc.h
-+++ b/include/uapi/drm/drm_fourcc.h
-@@ -149,9 +149,13 @@ extern "C" {
- #define DRM_FORMAT_YVYU		fourcc_code('Y', 'V', 'Y', 'U') /* [31:0] Cb0:Y1:=
-Cr0:Y0 8:8:8:8 little endian */
- #define DRM_FORMAT_UYVY		fourcc_code('U', 'Y', 'V', 'Y') /* [31:0] Y1:Cr0:=
-Y0:Cb0 8:8:8:8 little endian */
- #define DRM_FORMAT_VYUY		fourcc_code('V', 'Y', 'U', 'Y') /* [31:0] Y1:Cb0:=
-Y0:Cr0 8:8:8:8 little endian */
-+#define DRM_FORMAT_Y210		fourcc_code('Y', '2', '1', '0') /* [63:0] Cr0:0:Y=
-1:0:Cb0:0:Y0:0 10:6:10:6:10:6:10:6 little endian */
+ static const struct malidp_layer malidp550_layers[] =3D {
+@@ -106,13 +107,15 @@ static const struct malidp_layer malidp550_layers[] =
+=3D {
+ 	 *	yuv2rgb matrix offset, mmu control register offset, rotation_features
+ 	 */
+ 	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
+-		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY },
++		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY,
++		MALIDP550_DE_LV1_AD_CTRL },
+ 	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
+-		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
++		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY, MALIDP550_DE_LG_AD_CTRL },
+ 	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
+-		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY },
++		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY,
++		MALIDP550_DE_LV2_AD_CTRL },
+ 	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
+-		MALIDP550_DE_LS_R1_STRIDE, 0, 0, ROTATE_NONE },
++		MALIDP550_DE_LS_R1_STRIDE, 0, 0, ROTATE_NONE, 0 },
+ };
 =20
- #define DRM_FORMAT_AYUV		fourcc_code('A', 'Y', 'U', 'V') /* [31:0] A:Y:Cb:=
-Cr 8:8:8:8 little endian */
--#define DRM_FORMAT_XYUV8888		fourcc_code('X', 'Y', 'U', 'V') /* [31:0] X:Y=
-:Cb:Cr 8:8:8:8 little endian */
-+#define DRM_FORMAT_XYUV8888	fourcc_code('X', 'Y', 'U', 'V') /* [31:0] X:Y:=
-Cb:Cr 8:8:8:8 little endian */
-+#define DRM_FORMAT_VUY888	fourcc_code('V', 'U', '2', '4') /* [23:0] Cr:Cb:=
-Y 8:8:8 little endian */
-+#define DRM_FORMAT_Y410		fourcc_code('Y', '4', '1', '0') /* [31:0] A:Cr:Y:=
-Cb 2:10:10:10 little endian */
-+#define DRM_FORMAT_VUY101010	fourcc_code('V', 'U', '3', '0') /* Y followed=
- by U then V, 10:10:10. Non-linear modifier only */
+ static const struct malidp_layer malidp650_layers[] =3D {
+@@ -122,16 +125,16 @@ static const struct malidp_layer malidp650_layers[] =
+=3D {
+ 	 */
+ 	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
+ 		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB,
+-		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY },
++		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY, MALIDP550_DE_LV1_AD_CTRL },
+ 	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
+ 		MALIDP_DE_LG_STRIDE, 0, MALIDP650_DE_LG_MMU_CTRL,
+-		ROTATE_COMPRESSED },
++		ROTATE_COMPRESSED, MALIDP550_DE_LG_AD_CTRL },
+ 	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
+ 		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB,
+-		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY },
++		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY, MALIDP550_DE_LV2_AD_CTRL },
+ 	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
+ 		MALIDP550_DE_LS_R1_STRIDE, 0, MALIDP650_DE_LS_MMU_CTRL,
+-		ROTATE_NONE },
++		ROTATE_NONE, 0 },
+ };
 =20
- /*
-  * packed YCbCr420 2x2 tiled formats
-@@ -168,6 +172,15 @@ extern "C" {
- #define DRM_FORMAT_X0L2		fourcc_code('X', '0', 'L', '2')
+ #define SE_N_SCALING_COEFFS	96
+diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_h=
+w.h
+index 40155e2..651558f 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.h
++++ b/drivers/gpu/drm/arm/malidp_hw.h
+@@ -70,6 +70,8 @@ struct malidp_layer {
+ 	s16 yuv2rgb_offset;	/* offset to the YUV->RGB matrix entries */
+ 	u16 mmu_ctrl_offset;    /* offset to the MMU control register */
+ 	enum rotation_features rot;	/* type of rotation supported */
++	/* address offset for the AFBC decoder registers */
++	u16 afbc_decoder_offset;
+ };
 =20
- /*
-+ * 1-plane YUV 4:2:0
-+ * In these formats, the component ordering is specified (Y, followed by U
-+ * then V), but the exact Linear layout is undefined.
-+ * These formats can only be used with a non-Linear modifier.
-+ */
-+#define DRM_FORMAT_YUV420_8BIT	fourcc_code('Y', 'U', '0', '8')
-+#define DRM_FORMAT_YUV420_10BIT	fourcc_code('Y', 'U', '1', '0')
+ enum malidp_scaling_coeff_set {
+diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/mali=
+dp_planes.c
+index c9a6d3e..cd60f73 100644
+--- a/drivers/gpu/drm/arm/malidp_planes.c
++++ b/drivers/gpu/drm/arm/malidp_planes.c
+@@ -592,6 +592,80 @@ static void malidp_de_set_mmu_control(struct malidp_pl=
+ane *mp,
+ 			mp->layer->base + mp->layer->mmu_ctrl_offset);
+ }
+=20
++static void malidp_set_plane_base_addr(struct drm_framebuffer *fb,
++				       struct malidp_plane *mp,
++				       int plane_index)
++{
++	dma_addr_t paddr;
++	u16 ptr;
++	struct drm_plane *plane =3D &mp->base;
++	bool afbc =3D fb->modifier ? true : false;
 +
-+/*
-  * 2 plane RGB + A
-  * index 0 =3D RGB plane, same format as the corresponding non _A8 format =
-has
-  * index 1 =3D A plane, [7:0] A
-@@ -201,6 +214,7 @@ extern "C" {
-  * component xxx msb Y [xxx:16-xxx]
-  * index 1 =3D Cr:Cb plane, [31:0] Cr:Cb little endian [xxx:16-xxx:xxx:16-=
-xxx]
-  */
-+#define DRM_FORMAT_P210		fourcc_code('P', '2', '1', '0') /* 2x1 subsampled=
- Cr:Cb plane, 10 bit per channel */
- #define DRM_FORMAT_P010		fourcc_code('P', '0', '1', '0') /* 2x2 subsampled=
- Cr:Cb plane, 10 bit per channel */
- #define DRM_FORMAT_P012		fourcc_code('P', '0', '1', '2') /* 2x2 subsampled=
- Cr:Cb plane, 12 bit per channel */
- #define DRM_FORMAT_P016		fourcc_code('P', '0', '1', '6') /* 2x2 subsampled=
- Cr:Cb plane, 16 bit per channel */
++	ptr =3D mp->layer->ptr + (plane_index << 4);
++
++	/*
++	 * For AFBC buffers, cropping is handled by AFBC decoder rather than
++	 * pointer manipulation.
++	 */
++	if (!afbc) {
++		paddr =3D drm_fb_cma_get_gem_addr(fb, plane->state,
++						plane_index);
++	} else {
++		struct drm_gem_cma_object *obj;
++
++		obj =3D drm_fb_cma_get_gem_obj(fb, plane_index);
++
++		if (WARN_ON(!obj))
++			return;
++		paddr =3D obj->paddr;
++	}
++
++	malidp_hw_write(mp->hwdev, lower_32_bits(paddr), ptr);
++	malidp_hw_write(mp->hwdev, upper_32_bits(paddr), ptr + 4);
++}
++
++static void malidp_de_set_plane_afbc(struct drm_plane *plane)
++{
++	struct malidp_plane *mp;
++	u32 src_w, src_h, val =3D 0, src_x, src_y;
++	struct drm_framebuffer *fb =3D plane->state->fb;
++
++	mp =3D to_malidp_plane(plane);
++
++	/* no afbc_decoder_offset means AFBC is not supported on this plane */
++	if (!mp->layer->afbc_decoder_offset)
++		return;
++
++	if (!fb->modifier) {
++		malidp_hw_write(mp->hwdev, 0, mp->layer->afbc_decoder_offset);
++		return;
++	}
++
++	/* convert src values from Q16 fixed point to integer */
++	src_w =3D plane->state->src_w >> 16;
++	src_h =3D plane->state->src_h >> 16;
++	src_x =3D plane->state->src_x >> 16;
++	src_y =3D plane->state->src_y >> 16;
++
++	val =3D ((fb->width - (src_x + src_w)) << MALIDP_AD_CROP_RIGHT_OFFSET) |
++		   src_x;
++	malidp_hw_write(mp->hwdev, val,
++			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_H);
++
++	val =3D ((fb->height - (src_y + src_h)) << MALIDP_AD_CROP_BOTTOM_OFFSET) =
+|
++		   src_y;
++	malidp_hw_write(mp->hwdev, val,
++			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_V);
++
++	val =3D MALIDP_AD_EN;
++	if (fb->modifier & AFBC_FORMAT_MOD_SPLIT)
++		val |=3D MALIDP_AD_BS;
++	if (fb->modifier & AFBC_FORMAT_MOD_YTR)
++		val |=3D MALIDP_AD_YTR;
++
++	malidp_hw_write(mp->hwdev, val, mp->layer->afbc_decoder_offset);
++}
++
+ static void malidp_de_plane_update(struct drm_plane *plane,
+ 				   struct drm_plane_state *old_state)
+ {
+@@ -600,30 +674,33 @@ static void malidp_de_plane_update(struct drm_plane *=
+plane,
+ 	struct drm_plane_state *state =3D plane->state;
+ 	u16 pixel_alpha =3D state->pixel_blend_mode;
+ 	u8 plane_alpha =3D state->alpha >> 8;
++	bool format_has_alpha =3D state->fb->format->has_alpha;
+ 	u32 src_w, src_h, dest_w, dest_h, val;
+ 	int i;
++	struct drm_framebuffer *fb =3D plane->state->fb;
+=20
+ 	mp =3D to_malidp_plane(plane);
+=20
+-	/* convert src values from Q16 fixed point to integer */
+-	src_w =3D state->src_w >> 16;
+-	src_h =3D state->src_h >> 16;
+-	dest_w =3D state->crtc_w;
+-	dest_h =3D state->crtc_h;
++	/* For AFBC framebuffer, use the framebuffer width and height for configu=
+ring
++	 * layer input size register.
++	 */
++	if (fb->modifier) {
++		src_w =3D fb->width;
++		src_h =3D fb->height;
++	} else {
++		/* convert src values from Q16 fixed point to integer */
++		src_w =3D ms->base.src_w >> 16;
++		src_h =3D ms->base.src_h >> 16;
++	}
++	dest_w =3D ms->base.crtc_w;
++	dest_h =3D ms->base.crtc_h;
+=20
+ 	val =3D malidp_hw_read(mp->hwdev, mp->layer->base);
+ 	val =3D (val & ~LAYER_FORMAT_MASK) | ms->format;
+ 	malidp_hw_write(mp->hwdev, val, mp->layer->base);
+=20
+-	for (i =3D 0; i < ms->n_planes; i++) {
+-		/* calculate the offset for the layer's plane registers */
+-		u16 ptr =3D mp->layer->ptr + (i << 4);
+-		dma_addr_t fb_addr =3D drm_fb_cma_get_gem_addr(state->fb,
+-							     state, i);
+-
+-		malidp_hw_write(mp->hwdev, lower_32_bits(fb_addr), ptr);
+-		malidp_hw_write(mp->hwdev, upper_32_bits(fb_addr), ptr + 4);
+-	}
++	for (i =3D 0; i < ms->n_planes; i++)
++		malidp_set_plane_base_addr(fb, mp, i);
+=20
+ 	malidp_de_set_mmu_control(mp, ms);
+=20
+@@ -657,6 +734,8 @@ static void malidp_de_plane_update(struct drm_plane *pl=
+ane,
+ 				mp->layer->base + MALIDP550_LS_R1_IN_SIZE);
+ 	}
+=20
++	malidp_de_set_plane_afbc(plane);
++
+ 	/* first clear the rotation bits */
+ 	val =3D malidp_hw_read(mp->hwdev, mp->layer->base + MALIDP_LAYER_CONTROL)=
+;
+ 	val &=3D ~LAYER_ROT_MASK;
+@@ -674,7 +753,7 @@ static void malidp_de_plane_update(struct drm_plane *pl=
+ane,
+=20
+ 	if (state->alpha !=3D DRM_BLEND_ALPHA_OPAQUE) {
+ 		val |=3D LAYER_COMP_PLANE;
+-	} else if (state->fb->format->has_alpha) {
++	} else if (format_has_alpha) {
+ 		/* We only care about blend mode if the format has alpha */
+ 		switch (pixel_alpha) {
+ 		case DRM_MODE_BLEND_PREMULTI:
+diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp=
+_regs.h
+index 7ce3e14..a0dd6e1 100644
+--- a/drivers/gpu/drm/arm/malidp_regs.h
++++ b/drivers/gpu/drm/arm/malidp_regs.h
+@@ -198,10 +198,13 @@
+ #define MALIDP500_LV_YUV2RGB		((s16)(-0xB8))
+ #define MALIDP500_DE_LV_BASE		0x00100
+ #define MALIDP500_DE_LV_PTR_BASE	0x00124
++#define MALIDP500_DE_LV_AD_CTRL		0x00400
+ #define MALIDP500_DE_LG1_BASE		0x00200
+ #define MALIDP500_DE_LG1_PTR_BASE	0x0021c
++#define MALIDP500_DE_LG1_AD_CTRL	0x0040c
+ #define MALIDP500_DE_LG2_BASE		0x00300
+ #define MALIDP500_DE_LG2_PTR_BASE	0x0031c
++#define MALIDP500_DE_LG2_AD_CTRL	0x00418
+ #define MALIDP500_SE_BASE		0x00c00
+ #define MALIDP500_SE_CONTROL		0x00c0c
+ #define MALIDP500_SE_MEMWRITE_OUT_SIZE	0x00c2c
+@@ -228,10 +231,13 @@
+ #define MALIDP550_LV_YUV2RGB		0x00084
+ #define MALIDP550_DE_LV1_BASE		0x00100
+ #define MALIDP550_DE_LV1_PTR_BASE	0x00124
++#define MALIDP550_DE_LV1_AD_CTRL	0x001B8
+ #define MALIDP550_DE_LV2_BASE		0x00200
+ #define MALIDP550_DE_LV2_PTR_BASE	0x00224
++#define MALIDP550_DE_LV2_AD_CTRL	0x002B8
+ #define MALIDP550_DE_LG_BASE		0x00300
+ #define MALIDP550_DE_LG_PTR_BASE	0x0031c
++#define MALIDP550_DE_LG_AD_CTRL		0x00330
+ #define MALIDP550_DE_LS_BASE		0x00400
+ #define MALIDP550_DE_LS_PTR_BASE	0x0042c
+ #define MALIDP550_DE_PERF_BASE		0x00500
+@@ -258,6 +264,20 @@
+ #define MALIDP_MMU_CTRL_PX_PS(x)	(1 << (8 + (x)))
+ #define MALIDP_MMU_CTRL_PP_NUM_REQ(x)	(((x) & 0x7f) << 12)
+=20
++/* AFBC register offsets relative to MALIDPXXX_DE_LX_AD_CTRL */
++/* The following register offsets are common for DP500, DP550 and DP650 */
++#define MALIDP_AD_CROP_H                0x4
++#define MALIDP_AD_CROP_V                0x8
++#define MALIDP_AD_END_PTR_LOW           0xc
++#define MALIDP_AD_END_PTR_HIGH          0x10
++
++/* AFBC decoder Registers */
++#define MALIDP_AD_EN                    BIT(0)
++#define MALIDP_AD_YTR                   BIT(4)
++#define MALIDP_AD_BS                    BIT(8)
++#define MALIDP_AD_CROP_RIGHT_OFFSET     16
++#define MALIDP_AD_CROP_BOTTOM_OFFSET    16
++
+ /*
+  * Starting with DP550 the register map blocks has been standardised to th=
+e
+  * following layout:
 --=20
 2.7.4
 
