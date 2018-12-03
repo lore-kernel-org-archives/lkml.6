@@ -2,106 +2,116 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B876BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8845CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D8D32082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F97D20672
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:53:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SwYI1/AT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8D32082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iyXAAA+B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F97D20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeLCOyP (ORCPT
+        id S1726664AbeLCOye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:54:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38344 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbeLCOyP (ORCPT
+        Mon, 3 Dec 2018 09:54:34 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35485 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbeLCOye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 09:54:15 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB3Emrlb009898;
-        Mon, 3 Dec 2018 14:52:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=3zHu2TS7q888PMagnnYuV5kIkL42s5TP4A1hxO+3J28=;
- b=SwYI1/AT87hS7QtyHQZMZHpby5X78CIyWeaIHjzX2VJ0w05VyM+9/xNq+VHqTsdFrGhe
- YGYsc5HxD3Cu5tRJtC5ipEmnviq/gSwkCcEOr40/JXaeHkPr8SZg6M/DyRrXIsvZg793
- vPwRtFVaV1/Oti2RlL96/5mY9RPZdiD7iPjPNLpHofkR49bgoYyWPu5n9LsWf9onzXza
- jNhoQgLwXsTTVtFolDRe6AZnDLI3xpbK/iLQh2Oe+sE00DWyRpoWWd5oZoCsGqq7KH7j
- 88mAZwlHg2HxrXv4TrBBJ2l6Fj9oGLHoexKfZ0L/YCuxp5BT7m65UUK6PTrUQZXqUq9i 6w== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2p3j8q6t92-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 Dec 2018 14:52:38 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB3EqWTc023471
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Dec 2018 14:52:32 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB3EqVSW027249;
-        Mon, 3 Dec 2018 14:52:32 GMT
-Received: from kili.mountain (/197.157.0.63)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 03 Dec 2018 06:52:31 -0800
-Date:   Mon, 3 Dec 2018 17:52:19 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] misc: vexpress: Off by one in vexpress_syscfg_exec()
-Message-ID: <20181203145219.brmtuv26dj3vnc5y@kili.mountain>
+        Mon, 3 Dec 2018 09:54:34 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so12513803wrb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 06:53:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gHkXpmuMJdjOAjc4qNljfTYLICAT4rbpxB36srapNC8=;
+        b=iyXAAA+Byee5bNK1snzxlkbZ94zqB17eWM6OZCp09f0eUZdVe1PwczKyfIHUuhGWJI
+         tUlIraO/Fj4vr84XwOPC3VJK1TX5+yhRdrf2nXRHXDGxDaG123+IqZFp2TXgbpFGsWWr
+         KhOlQFUwqNXB3PjuV4F04ENN0nuS7/L2srwzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gHkXpmuMJdjOAjc4qNljfTYLICAT4rbpxB36srapNC8=;
+        b=sRFl9u54c4OS02S+oxXhcXYb3t04FzzNE1Fi/MzWe3k+nyhMGR0RIaPAbZ9agztwQG
+         gmgdL9p7mMDTvoAUd0IhKQkXyFRDuKpSZzldLrWZi1V7xqVqxNWFfrLc3Zkv6PrpHdmw
+         60jMuNmyVbZTmyQfIYeP5DcVzyDGBR6AJCrKUdGeMO7BN+6+wyMmeFNI+7H+QZGwfZ8i
+         DXKQU2npBykgTEWbd+GPDT+mE4lueGFWS7pToUaLTjYLSRXmcA9eO31x3UiZcGBguMtp
+         CnfJjgZthvUf/KHlSGcpaVxzEpQYV1RYN4BTJxKdxDFVyfJsHRVPpFQLYIJChF/sbmAY
+         0ygA==
+X-Gm-Message-State: AA+aEWYddqkrjM+KQgYCGYFeGVPoKlwYoZ+Eg5jnYLVBDLm4FtXQS+3d
+        Iafbqn98z8RD2mKpPggyh5ntQa0GZVs=
+X-Google-Smtp-Source: AFSGD/WFGUhI1F3USVNxeona54w3FOkwB0WN3N669EgtrtqBLAGr3u9f7wD80ChsPf1ylYuzibmoug==
+X-Received: by 2002:adf:90e5:: with SMTP id i92mr13647338wri.210.1543848793596;
+        Mon, 03 Dec 2018 06:53:13 -0800 (PST)
+Received: from [192.168.0.40] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id w8sm17442803wrv.7.2018.12.03.06.53.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 06:53:12 -0800 (PST)
+Subject: Re: [PATCH] clocksource: riscv_timer: Provide sched_clock
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Atish Patra <atish.patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+References: <20181203123524.11778-1-anup@brainfault.org>
+ <c970d873-9dbc-9f21-3380-89635d6f574a@linaro.org>
+ <CAAhSdy2rw=4Uw8=MZtfHi_ML9ZBqeiJ2iv+tRmDnjQDh7yuUHg@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <63f67f2b-9e17-78e6-beb5-65d32ff2f85c@linaro.org>
+Date:   Mon, 3 Dec 2018 15:53:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812030140
+In-Reply-To: <CAAhSdy2rw=4Uw8=MZtfHi_ML9ZBqeiJ2iv+tRmDnjQDh7yuUHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The > comparison should be >= to prevent reading beyond the end of the
-func->template[] array.
+On 03/12/2018 15:50, Anup Patel wrote:
+> On Mon, Dec 3, 2018 at 6:29 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 03/12/2018 13:35, Anup Patel wrote:
+>>> Currently, we don't have a sched_clock registered for RISC-V systems.
+>>> This means Linux time keeping will use jiffies (running at HZ) as the
+>>> default sched_clock.
+>>>
+>>> To avoid this, we explicity provide sched_clock using RISC-V rdtime
+>>> instruction (similar to riscv_timer clocksource).
+>>>
+>>> Signed-off-by: Anup Patel <anup@brainfault.org>
+>>
+>> Hi Anup,
+>>
+>> the GENERIC_SCHED_CLOCK dependency in the Kconfig is missing.
+> 
+> Sure, will do.
+> 
+> I also have another patch to select GENERIC_SCHED_CLOCK
+> for CONFIG_RISCV. Should I squash that patch with this patch??
 
-(The func->template array is allocated in vexpress_syscfg_regmap_init()
-and it has func->num_templates elements.)
+I prefer the riscv config option to be merged via the riscv tree.
 
-Fixes: 974cc7b93441 ("mfd: vexpress: Define the device as MFD cells")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/misc/vexpress-syscfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/vexpress-syscfg.c b/drivers/misc/vexpress-syscfg.c
-index 6c3591cdf855..a3c6c773d9dc 100644
---- a/drivers/misc/vexpress-syscfg.c
-+++ b/drivers/misc/vexpress-syscfg.c
-@@ -61,7 +61,7 @@ static int vexpress_syscfg_exec(struct vexpress_syscfg_func *func,
- 	int tries;
- 	long timeout;
- 
--	if (WARN_ON(index > func->num_templates))
-+	if (WARN_ON(index >= func->num_templates))
- 		return -EINVAL;
- 
- 	command = readl(syscfg->base + SYS_CFGCTRL);
 -- 
-2.11.0
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
