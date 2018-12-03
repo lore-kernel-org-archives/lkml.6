@@ -2,194 +2,401 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA06C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C75C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2CB42087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:46:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HyUIL3J5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2CB42087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C0A220850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:46:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C0A220850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbeLCPqH (ORCPT
+        id S1726756AbeLCPqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:46:07 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:37444 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbeLCPqG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:46:06 -0500
-Received: by mail-yw1-f65.google.com with SMTP id h193so5559095ywc.4;
-        Mon, 03 Dec 2018 07:46:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=LeNuq4Ictyztt6BD7eGXxvqob9tPczvYy3DDYKDFgN8=;
-        b=HyUIL3J5o5Jc5eSw+0QB2BANOohINH2dLY4TWxQWYvtNgHghi7K+Gt4rA+QQaIgfty
-         EFNFFldYrXTH5b5+nOqQYsAnFBt1brClepdylEzGCM4ydjFw0ZDs1WtJcBCIjPrs+2zE
-         R0C3YhQFH7LijsueFTRJ1X7rqOF72eoHwpHGjl0k8OUxQtWB+IlEd2AKGSkJP5eRkyOe
-         swpsI1eb4kTk3iTWxGI0xfAXqs8c0MVarBuOpRiKTbBtP8nr2nKSkgTGzC6iWlqc9lhe
-         XeJsSRUDptZFQbqzjMY82+Np+iKAZf1gyBAun1Z0ABRpX2jNi3x5G1Ah7L5+y0Pu7cXL
-         KQpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=LeNuq4Ictyztt6BD7eGXxvqob9tPczvYy3DDYKDFgN8=;
-        b=knm49l+2xIM8tSv/yj2UtNQ6FfMD55ik1eYfw8POB79lbh2Mz8+zh39bd0aUhdu6Oh
-         NhV7ROZtE+tUWPSugZOHhfM13jtMqb1/ev4LOtq+8mwzUqW/Pw5bNSM887RN37lDn+nV
-         FPKhOdy3lFun7GcZQ8L/8IH3rYM4bV81wXqil3su+RCTXfyYm/a/dpardYBSrxqPUcL6
-         MzdkEO2Rba5WTVVhrWBeBO0AZBc3jv1f/hRBwm6xFz/4v3UKXKbVpNXKJGVwv98mmY5s
-         6VBbwBLHwUQXSx24ulA6YLRMgtyS0mFsHXiBsMq8qSlrshrhoeA44Cw52IeFGAHUgFnJ
-         tCdA==
-X-Gm-Message-State: AA+aEWZY3ifwioFgUCvxj7h8gdH1jSXxeNehmJcjJw7qGxG1NNhMrmH+
-        YbT8aU7gvMJ8PjtEUBxk8g==
-X-Google-Smtp-Source: AFSGD/VLqICDJ8SJXOtASqGEtI5NblnTP8foHTGFxeTLkjy/YzPm7proBxQBL0xltdXI3UWhhyOOCA==
-X-Received: by 2002:a81:ed2:: with SMTP id 201mr16287284ywo.257.1543851964179;
-        Mon, 03 Dec 2018 07:46:04 -0800 (PST)
-Received: from 960 ([130.254.104.55])
-        by smtp.gmail.com with ESMTPSA id w2sm11864782ywl.10.2018.12.03.07.46.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 07:46:03 -0800 (PST)
-Message-ID: <eaa9d7a8898df9487031995429ff11892c9cd0ca.camel@gmail.com>
-Subject: Re: [PATCH v8 2/3] x86: add support for Huawei WMI hotkeys.
-From:   ayman.bagabas@gmail.com
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     alsa-devel@alsa-project.org, Hui Wang <hui.wang@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kailang Yang <kailang@realtek.com>,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Date:   Mon, 03 Dec 2018 10:46:01 -0500
-In-Reply-To: <s5hftvezupj.wl-tiwai@suse.de>
-References: <20181129235742.14332-1-ayman.bagabas@gmail.com>
-         <20181129235742.14332-3-ayman.bagabas@gmail.com>
-         <s5hftvezupj.wl-tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
+        Mon, 3 Dec 2018 10:46:53 -0500
+Received: from foss.arm.com ([217.140.101.70]:40210 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726571AbeLCPqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:46:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C15E41682;
+        Mon,  3 Dec 2018 07:46:50 -0800 (PST)
+Received: from [10.1.37.145] (p8cg001049571a15.cambridge.arm.com [10.1.37.145])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2D243F5AF;
+        Mon,  3 Dec 2018 07:46:48 -0800 (PST)
+Subject: Re: [PATCH v9 8/8] KVM: arm64: Add support for creating PUD hugepages
+ at stage 2
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     suzuki.poulose@arm.com, marc.zyngier@arm.com,
+        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        punitagrawal@gmail.com, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-9-punit.agrawal@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <3c37af59-6936-20fb-b3a3-eaa10f3ada53@arm.com>
+Date:   Mon, 3 Dec 2018 21:16:54 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181031175745.18650-9-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-03 at 13:00 +0100, Takashi Iwai wrote:
-> On Fri, 30 Nov 2018 00:57:37 +0100,
-> Ayman Bagabas wrote:
-> > This driver adds support for missing hotkeys on some Huawei
-> > laptops.
-> > Laptops such as the Matebook X have non functioning hotkeys.
-> > Whereas
-> > newer laptops such as the Matebook X Pro come with working hotkeys
-> > out
-> > of the box.
-> > 
-> > Old laptops, such as the Matebook X, report hotkey events through
-> > ACPI
-> > device "\WMI0". However, new laptops, such as the Matebook X Pro,
-> > does not have this WMI device.
-> > 
-> > All the hotkeys on the Matebook X Pro work fine
-> > without this patch except (micmute, wlan, and huawei key). These
-> > keys
-> > and the brightness keys report events to "\AMW0" ACPI device. One
-> > problem is that brightness keys on the Matebook X Pro work without
-> > this
-> > patch. This results in reporting two brightness key press
-> > events one is captured by ACPI and another by this driver.
-> > 
-> > A solution would be to check if such event came from the "\AMW0"
-> > WMI driver
-> > then skip reporting event. Another solution would be to leave this
-> > to user-space to handle. Which
-> > can be achieved by using "hwdb" tables and remap those keys to
-> > "unknown".
-> > This solution seems more natural to me because it leaves the
-> > decision to
-> > user-space.
-> > 
-> > Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
-> 
-> The new patch looks much better than the previous one, thanks for
-> working on it.
-> 
-> Just a few comments:
-> 
-> > +struct huawei_wmi_priv {
-> > +	struct input_dev *idev;
-> > +	struct led_classdev cdev;
-> > +	acpi_handle handle;
-> 
-> Is this handle set in anywhere?  I couldn't see it in your patch.
-> If it's supposed to be NULL, passing NULL explicitly makes your
-> intention clearer.
-> 
-> 
-> > +static int huawei_wmi_leds_setup(struct wmi_device *wdev)
-> > +{
-> > +	struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
-> > +	acpi_status status;
-> > +
-> > +	// Skip registering LED subsystem if no ACPI method was found.
-> > +	status = acpi_get_handle(priv->handle, "\\_SB.PCI0.LPCB.EC0",
-> > &priv->handle);
-> > +	if (ACPI_FAILURE(status))
-> > +		return 0;
-> > +
-> > +	if (acpi_has_method(priv->handle, "SPIN"))
-> > +		priv->acpi_method = "SPIN";
-> > +	else if (acpi_has_method(priv->handle, "WPIN"))
-> > +		priv->acpi_method = "WPIN";
-> > +	else
-> > +		return 0;
-> > +
-> > +	priv->cdev.name = "platform::micmute";
-> > +	priv->cdev.max_brightness = 1;
-> > +	priv->cdev.brightness_set_blocking =
-> > huawei_wmi_micmute_led_set;
-> > +	priv->cdev.default_trigger = "audio-micmute";
-> > +	priv->cdev.brightness = ledtrig_audio_get(LED_AUDIO_MICMUTE);
-> > +	priv->cdev.dev = &wdev->dev;
-> 
-> What about suspend/resume?
-> When the driver is bound wit HD-audio, the HD-audio will restore the
-> state at resume, so it would work.  But, by providing the LED class
-> device, it is supposed to work even without HD-audio, so it might
-> make
-> sense to pass LED_CORE_SUSPENDRESUME, too.
 
-Besides that, is there anything needed for wmi_device suspend/resume?
 
+On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+> KVM only supports PMD hugepages at stage 2. Now that the various page
+> handling routines are updated, extend the stage 2 fault handling to
+> map in PUD hugepages.
 > 
+> Addition of PUD hugepage support enables additional page sizes (e.g.,
+> 1G with 4K granule) which can be useful on cores that support mapping
+> larger block sizes in the TLB entries.
 > 
-> > +static int __init huawei_wmi_init(void)
-> > +{
-> > +	if (!(wmi_has_guid(WMI0_EVENT_GUID) ||
-> > wmi_has_guid(AMW0_EVENT_GUID))) {
-> > +		pr_debug("Compatible WMI GUID not found\n");
-> > +		return -ENODEV;
-> > +	}
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm/include/asm/kvm_mmu.h         |  20 +++++
+>  arch/arm/include/asm/stage2_pgtable.h  |   5 ++
+>  arch/arm64/include/asm/kvm_mmu.h       |  16 ++++
+>  arch/arm64/include/asm/pgtable-hwdef.h |   2 +
+>  arch/arm64/include/asm/pgtable.h       |   2 +
+>  virt/kvm/arm/mmu.c                     | 104 +++++++++++++++++++++++--
+>  6 files changed, 143 insertions(+), 6 deletions(-)
 > 
-> This is superfluous when you implement with wmi_driver.
-> In theory, the supported GUID can be added dynamically via sysfs,
-> too.
-> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index e62f0913ce7d..6336319a0d5b 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -84,11 +84,14 @@ void kvm_clear_hyp_idmap(void);
+>  
+>  #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+>  #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
+> +#define kvm_pfn_pud(pfn, prot)	(__pud(0))
 
-I left it that way so it doesn't insert the module if these GUIDs were
-not found. Should I drop that and use module_wmi_driver instead?
+This makes sense. Was not enabled before and getting added here.
 
-> 
-> thanks,
-> 
-> Takashi
+>  
+>  #define kvm_pud_pfn(pud)	({ BUG(); 0; })
+>  
+>  
+>  #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
+> +/* No support for pud hugepages */
+> +#define kvm_pud_mkhuge(pud)	( {BUG(); pud; })
+>  
+>  /*
+>   * The following kvm_*pud*() functions are provided strictly to allow
+> @@ -105,6 +108,23 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+>  	return false;
+>  }
+>  
+> +static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
+> +{
+> +	BUG();
+> +}
+> +
+> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+> +{
+> +	BUG();
+> +	return pud;
+> +}
+> +
+> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+> +{
+> +	BUG();
+> +	return pud;
+> +}
+> +
 
+But the previous patches have been adding some of these helpers
+as well. Needs consolidation.
+
+>  static inline bool kvm_s2pud_exec(pud_t *pud)
+>  {
+>  	BUG();
+> diff --git a/arch/arm/include/asm/stage2_pgtable.h b/arch/arm/include/asm/stage2_pgtable.h
+> index f6a7ea805232..f9017167a8d1 100644
+> --- a/arch/arm/include/asm/stage2_pgtable.h
+> +++ b/arch/arm/include/asm/stage2_pgtable.h
+> @@ -68,4 +68,9 @@ stage2_pmd_addr_end(struct kvm *kvm, phys_addr_t addr, phys_addr_t end)
+>  #define stage2_pmd_table_empty(kvm, pmdp)	kvm_page_empty(pmdp)
+>  #define stage2_pud_table_empty(kvm, pudp)	false
+>  
+> +static inline bool kvm_stage2_has_pud(struct kvm *kvm)
+> +{
+> +	return false;
+> +}
+>
+
+Makes sense. Disabled on arm32.
+
+ +
+>  #endif	/* __ARM_S2_PGTABLE_H_ */
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 9f941f70775c..8af4b1befa42 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -184,12 +184,16 @@ void kvm_clear_hyp_idmap(void);
+>  #define kvm_mk_pgd(pudp)					\
+>  	__pgd(__phys_to_pgd_val(__pa(pudp)) | PUD_TYPE_TABLE)
+>  
+> +#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
+> +
+>  #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
+>  #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
+> +#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
+>  
+>  #define kvm_pud_pfn(pud)		pud_pfn(pud)
+>  
+>  #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
+> +#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
+>  
+>  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+>  {
+> @@ -203,6 +207,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
+>  	return pmd;
+>  }
+>  
+> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+> +{
+> +	pud_val(pud) |= PUD_S2_RDWR;
+> +	return pud;
+> +}
+> +
+>  static inline pte_t kvm_s2pte_mkexec(pte_t pte)
+>  {
+>  	pte_val(pte) &= ~PTE_S2_XN;
+> @@ -215,6 +225,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
+>  	return pmd;
+>  }
+>  
+> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+> +{
+> +	pud_val(pud) &= ~PUD_S2_XN;
+> +	return pud;
+> +}
+> +
+
+Should not these be consolidated in previous patches ?
+
+>  static inline void kvm_set_s2pte_readonly(pte_t *ptep)
+>  {
+>  	pteval_t old_pteval, pteval;
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index 336e24cddc87..6f1c187f1c86 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -193,6 +193,8 @@
+>  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+>  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+>  
+> +#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
+> +#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
+>  #define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
+
+All PUD related HW page table definitions should have been added
+at once in one of the preparatory patches.
+
+>  
+>  /*
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index bb0f3f17a7a9..576128635f3c 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -390,6 +390,8 @@ static inline int pmd_protnone(pmd_t pmd)
+>  #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
+>  #define pud_write(pud)		pte_write(pud_pte(pud))
+>  
+> +#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
+> +
+
+All new pud_* definitions should have come together at once as well. 
+
+>  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+>  #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
+>  #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
+
+
+
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 3893ea6a50bf..2dcff38868d4 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -115,6 +115,25 @@ static void stage2_dissolve_pmd(struct kvm *kvm, phys_addr_t addr, pmd_t *pmd)
+>  	put_page(virt_to_page(pmd));
+>  }
+>  
+> +/**
+> + * stage2_dissolve_pud() - clear and flush huge PUD entry
+> + * @kvm:	pointer to kvm structure.
+> + * @addr:	IPA
+> + * @pud:	pud pointer for IPA
+> + *
+> + * Function clears a PUD entry, flushes addr 1st and 2nd stage TLBs. Marks all
+> + * pages in the range dirty.
+> + */
+> +static void stage2_dissolve_pud(struct kvm *kvm, phys_addr_t addr, pud_t *pudp)
+> +{
+> +	if (!stage2_pud_huge(kvm, *pudp))
+> +		return;
+> +
+> +	stage2_pud_clear(kvm, pudp);
+> +	kvm_tlb_flush_vmid_ipa(kvm, addr);
+> +	put_page(virt_to_page(pudp));
+> +}
+> +
+>  static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
+>  				  int min, int max)
+>  {
+> @@ -1022,7 +1041,7 @@ static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache *cache
+>  	pmd_t *pmd;
+>  
+>  	pud = stage2_get_pud(kvm, cache, addr);
+> -	if (!pud)
+> +	if (!pud || stage2_pud_huge(kvm, *pud))
+>  		return NULL;
+>  
+>  	if (stage2_pud_none(kvm, *pud)) {
+> @@ -1083,6 +1102,36 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>  	return 0;
+>  }
+>  
+> +static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+> +			       phys_addr_t addr, const pud_t *new_pudp)
+> +{
+> +	pud_t *pudp, old_pud;
+> +
+> +	pudp = stage2_get_pud(kvm, cache, addr);
+> +	VM_BUG_ON(!pudp);
+> +
+> +	old_pud = *pudp;
+> +
+> +	/*
+> +	 * A large number of vcpus faulting on the same stage 2 entry,
+> +	 * can lead to a refault due to the
+> +	 * stage2_pud_clear()/tlb_flush(). Skip updating the page
+> +	 * tables if there is no change.
+> +	 */
+> +	if (pud_val(old_pud) == pud_val(*new_pudp))
+> +		return 0;
+> +
+> +	if (stage2_pud_present(kvm, old_pud)) {
+> +		stage2_pud_clear(kvm, pudp);
+> +		kvm_tlb_flush_vmid_ipa(kvm, addr);
+> +	} else {
+> +		get_page(virt_to_page(pudp));
+> +	}
+> +
+> +	kvm_set_pud(pudp, *new_pudp);
+> +	return 0;
+> +}
+> +
+>  /*
+>   * stage2_get_leaf_entry - walk the stage2 VM page tables and return
+>   * true if a valid and present leaf-entry is found. A pointer to the
+> @@ -1149,6 +1198,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+>  			  phys_addr_t addr, const pte_t *new_pte,
+>  			  unsigned long flags)
+>  {
+> +	pud_t *pud;
+>  	pmd_t *pmd;
+>  	pte_t *pte, old_pte;
+>  	bool iomap = flags & KVM_S2PTE_FLAG_IS_IOMAP;
+> @@ -1157,7 +1207,31 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+>  	VM_BUG_ON(logging_active && !cache);
+>  
+>  	/* Create stage-2 page table mapping - Levels 0 and 1 */
+> -	pmd = stage2_get_pmd(kvm, cache, addr);
+> +	pud = stage2_get_pud(kvm, cache, addr);
+> +	if (!pud) {
+> +		/*
+> +		 * Ignore calls from kvm_set_spte_hva for unallocated
+> +		 * address ranges.
+> +		 */
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * While dirty page logging - dissolve huge PUD, then continue
+> +	 * on to allocate page.
+> +	 */
+> +	if (logging_active)
+> +		stage2_dissolve_pud(kvm, addr, pud);
+> +
+> +	if (stage2_pud_none(kvm, *pud)) {
+> +		if (!cache)
+> +			return 0; /* ignore calls from kvm_set_spte_hva */
+> +		pmd = mmu_memory_cache_alloc(cache);
+> +		stage2_pud_populate(kvm, pud, pmd);
+> +		get_page(virt_to_page(pud));
+> +	}
+> +
+> +	pmd = stage2_pmd_offset(kvm, pud, addr);
+>  	if (!pmd) {
+>  		/*
+>  		 * Ignore calls from kvm_set_spte_hva for unallocated
+> @@ -1557,12 +1631,19 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	}
+>  
+>  	vma_pagesize = vma_kernel_pagesize(vma);
+> -	if (vma_pagesize == PMD_SIZE && !logging_active) {
+> -		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+> +	/*
+> +	 * PUD level may not exist for a VM but PMD is guaranteed to
+> +	 * exist.
+> +	 */
+> +	if ((vma_pagesize == PMD_SIZE ||
+> +	     (vma_pagesize == PUD_SIZE && kvm_stage2_has_pud(kvm))) &&
+> +	    !logging_active) {
+
+This can be better and wrapped in a helper. Probably arm64 definition
+for the helper should check on (PUD_SIZE || PMD_SIZE) but for arm32
+it should just check on PMD_SIZE alone. But this is optional.
+
+> +		gfn = (fault_ipa & huge_page_mask(hstate_vma(vma))) >> PAGE_SHIFT;
+>  	} else {
+>  		/*
+>  		 * Fallback to PTE if it's not one of the Stage 2
+> -		 * supported hugepage sizes
+> +		 * supported hugepage sizes or the corresponding level
+> +		 * doesn't exist
+>  		 */
+>  		vma_pagesize = PAGE_SIZE;
+>  
+> @@ -1661,7 +1742,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	needs_exec = exec_fault ||
+>  		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
+>  
+> -	if (vma_pagesize == PMD_SIZE) {
+> +	if (vma_pagesize == PUD_SIZE) {
+> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
+> +
+> +		new_pud = kvm_pud_mkhuge(new_pud);
+> +		if (writable)
+> +			new_pud = kvm_s2pud_mkwrite(new_pud);
+> +
+> +		if (needs_exec)
+> +			new_pud = kvm_s2pud_mkexec(new_pud);
+> +
+> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
+> +	} else if (vma_pagesize == PMD_SIZE) {
+
+Ran some memory intensive tests on guests with these patches in place but
+will continue experimenting and looking for more details in here.
