@@ -2,88 +2,139 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D20C0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C98C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9317720850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:04:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9317720850
+	by mail.kernel.org (Postfix) with ESMTP id 73B8720851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:06:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B8720851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbeLCPEk convert rfc822-to-8bit (ORCPT
+        id S1726653AbeLCPGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:04:40 -0500
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:52693 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbeLCPEk (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:7:1>);
-        Mon, 3 Dec 2018 10:04:40 -0500
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Mon, 03 Dec 2018 08:04:36 -0700
-Message-Id: <5C054600020000780020245F@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.1.0 
-Date:   Mon, 03 Dec 2018 08:04:32 -0700
-From:   "Jan Beulich" <JBeulich@suse.com>
-To:     "Marek Marczykowski" <marmarek@invisiblethingslab.com>
-Cc:     "Dwayne Litzenberger" <dlitz@dlitz.net>,
-        "Stefano Stabellini" <sstabellini@kernel.org>,
-        "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Xen-devel] [PATCH 2/2] xen-pciback: Allow
- enabling/disabling expansion ROM
-References: <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
- <cover.55c0e31b75e2fbdf4206cc39c2fd7581793ae7ae.1543772656.git-series.marmarek@invisiblethingslab.com>
- <a05e3cf451d692dc4b1c81c8b5d66fc75d1fa325.1543772656.git-series.marmarek@invisiblethingslab.com>
- <5C050CF3020000780020223F@prv1-mh.provo.novell.com>
- <20181203144738.GQ781@mail-itl>
-In-Reply-To: <20181203144738.GQ781@mail-itl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        Mon, 3 Dec 2018 10:06:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37110 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726162AbeLCPGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:06:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3119CAD47;
+        Mon,  3 Dec 2018 15:06:04 +0000 (UTC)
+Date:   Mon, 3 Dec 2018 16:06:03 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+Message-ID: <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
+References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
+ <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 03.12.18 at 15:47, <marmarek@invisiblethingslab.com> wrote:
-> On Mon, Dec 03, 2018 at 04:01:07AM -0700, Jan Beulich wrote:
->> >>> On 02.12.18 at 18:47, <marmarek@invisiblethingslab.com> wrote:
->> > From: Dwayne Litzenberger <dlitz@dlitz.net>
->> > 
->> > Newer AMD GPUs store their initialization routines as bytecode on the
->> > ROM.  This fixes the following initialization error inside the VM when
->> > doing PCI passthrough:
->> > 
->> >     radeon 0000:00:05.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0xffff
->> >     radeon 0000:00:05.0: Invalid PCI ROM header signature: expecting 0xaa55, got 0xffff
->> >     [drm:radeon_get_bios [radeon]] *ERROR* Unable to locate a BIOS ROM
->> >     radeon 0000:00:05.0: Fatal error during GPU init
->> 
->> Isn't it that qemu is supposed to surface the ROM image to guests,
->> making it unnecessary to allow guests control over the physical
->> enable bit? 
+On Sat 2018-12-01 23:44:37, Tetsuo Handa wrote:
+> On 2018/12/01 0:40, Petr Mladek wrote:
+> >> Some examples for console output:
+> >>
+> >>   [    0.293000] [T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
+> >>   [    0.299733] [T1] Performance Events: Haswell events, core PMU driver.
+> >>   [    2.813808] [T35] clocksource: Switched to clocksource tsc
+> >>   [    2.893984] [C0] random: fast init done
+> >                   ^
+> > 
+> > Please, remove the space between the timestamp and the from field.
 > 
-> Unless that qemu is in stubdomain, where it use pciback to access
-> everything about the device...
+> This space was emitted by print_time(). Do we want to modify print_time()
+> not to emit this space if the from field is printed?
 
-Would be quite helpful to explain this in the description.
+Exactly. This is what I thought about.
+ 
+> If we modify print_time(), I think that the leading spaces inserted by "%5lu"
+> makes little sense, for "%5lu" is too small for systems with uptime >= 1.16 days
+> and parsers after all cannot assume fixed length for the timestamp field. Then,
+> we could change from "%5lu.%06lu" to "%lu.%06lu" so that parsers (like /bin/awk)
+> can get prefix part using white spaces as a delimiter.
 
->> Also why would allowing to alter the bit depend on
->> whether the address portion of the value is non-zero?
+My primary concern was a human readability. The different header columns
+are separated by brackets and the message itself is separated by the space.
+
+awk could easily use \[ as the separator.
+
+But you made a good point about the column width. The text might be
+hard to read when every line of text starts on a different column. And
+the might be bigger differences for the task id. It might be useful to
+add some reasonable default width also for the for the "from_id" column.
+
+> If we want to reduce space, do we want to do like
 > 
-> That's a good question. According to commit message I think it should be
-> a ROM presence check instead. If needed at this point at all - is this
-> function even called if there is no ROM?
+>   [0.293000@T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
+>   [0.299733@T1] Performance Events: Haswell events, core PMU driver.
+>   [2.813808@T35] clocksource: Switched to clocksource tsc
+>   [2.893984@C0] random: fast init done
 
-I suppose this was a question to Dwayne, not me.
+Hmm, this is pretty hard to parse by my eyes. Also it changes the format
+of the timestamp column.
 
-Jan
+I think that the following might give the best human user experience:
+
+[    0.293000][     T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
+[    0.299733][     T1] Performance Events: Haswell events, core PMU driver.
+[    2.813808][    T35] clocksource: Switched to clocksource tsc
+[    2.893984][     C0] random: fast init done
 
 
+> >> @@ -1037,6 +1054,9 @@ void log_buf_vmcoreinfo_setup(void)
+> >>  	VMCOREINFO_OFFSET(printk_log, len);
+> >>  	VMCOREINFO_OFFSET(printk_log, text_len);
+> >>  	VMCOREINFO_OFFSET(printk_log, dict_len);
+> >> +#ifdef CONFIG_PRINTK_FROM
+> >> +	VMCOREINFO_OFFSET(printk_log, from_id);
+> >> +#endif
+> > 
+> > The crash tool would need to be updated if anyone wanted to read
+> > the log from the extended structure. Well, it might be done later
+> > if people start using it more widely.
+> 
+> Since syzbot can utilize output from only normal consoles, I can
+> keep extended records unmodified for now.
+
+Please, add VMCOREINFO_OFFSET(printk_log, from_id) so that crashdump
+can be updated when necessary.
+
+> > 
+> > I think about adding one more filed "u8 version". It would help
+> > to solve the external compatibility in the long term.
+> 
+> /dev/kmsg format allows adding more fields, but that format did not define
+> how to tell what fields are there. If fields are conditionally added by
+> kernel config options, I don't think that "u8 version" field helps.
+> Unless we add fields unconditionally, we will need to use $name=$value
+> (where $name and $value must not contain ',' and ';') representation.
+
+/dev/kmsg uses key=value notation. It does not need any version. The
+version filed was intended for crashdump. It would make the life
+easier for its maintainers.
+
+Well, I do not resist on it. Let's put the version field aside for now.
+
+Best Regards,
+Petr
