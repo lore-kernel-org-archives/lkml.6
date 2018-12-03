@@ -2,107 +2,140 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9381FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3ABC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 582072081C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 04:57:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 582072081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id DC5262081C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:01:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC5262081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725834AbeLCE5z (ORCPT
+        id S1725835AbeLCFBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Dec 2018 23:57:55 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:57084 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbeLCE5z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Dec 2018 23:57:55 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8451314F2BB25;
-        Sun,  2 Dec 2018 20:57:53 -0800 (PST)
-Date:   Sun, 02 Dec 2018 20:57:52 -0800 (PST)
-Message-Id: <20181202.205752.1359988041150979586.davem@davemloft.net>
-To:     tiny.windzz@gmail.com
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        sparclinux@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial/sunsu: add missing of_node_put()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181121160615.23666-1-tiny.windzz@gmail.com>
-References: <20181121160615.23666-1-tiny.windzz@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 02 Dec 2018 20:57:53 -0800 (PST)
+        Mon, 3 Dec 2018 00:01:12 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:54516 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725807AbeLCFBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 00:01:12 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 7120D64A; Sun,  2 Dec 2018 23:01:08 -0600 (CST)
+Date:   Sun, 2 Dec 2018 23:01:08 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Tycho Andersen <tycho@tycho.ws>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, Jann Horn <jannh@google.com>,
+        linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v9 2/4] seccomp: switch system call argument type to void
+ *
+Message-ID: <20181203050108.GB31406@mail.hallyn.com>
+References: <20181203032827.27978-1-tycho@tycho.ws>
+ <20181203032827.27978-3-tycho@tycho.ws>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203032827.27978-3-tycho@tycho.ws>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
-Date: Wed, 21 Nov 2018 11:06:15 -0500
-
-> of_find_node_by_path() acquires a reference to the node
-> returned by it and that reference needs to be dropped by its caller.
-> This place is not doing this, so fix it.
+On Sun, Dec 02, 2018 at 08:28:25PM -0700, Tycho Andersen wrote:
+> The const qualifier causes problems for any code that wants to write to the
+> third argument of the seccomp syscall, as we will do in a future patch in
+> this series.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> The third argument to the seccomp syscall is documented as void *, so
+> rather than just dropping the const, let's switch everything to use void *
+> as well.
+> 
+> I believe this is safe because of 1. the documentation above, 2. there's no
+> real type information exported about syscalls anywhere besides the man
+> pages.
+> 
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Eric W. Biederman <ebiederm@xmission.com>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
 
-Several coding style problems and you are adding two new
-leaks.
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-> +		struct device_node *tmp;
->  		const char *keyb = of_get_property(ap, "keyboard", NULL);
->  		const char *ms = of_get_property(ap, "mouse", NULL);
+Though I'm not entirely convinced there will be no ill effects of changing
+the argument type.  I'll feel comfortable when Michael and Paul say it's
+fine :)
 
-Always order local variable declarations from longest to
-shortest line.
-
+> CC: Christian Brauner <christian@brauner.io>
+> CC: Tyler Hicks <tyhicks@canonical.com>
+> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> ---
+>  include/linux/seccomp.h | 2 +-
+>  kernel/seccomp.c        | 8 ++++----
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+> index e5320f6c8654..b5103c019cf4 100644
+> --- a/include/linux/seccomp.h
+> +++ b/include/linux/seccomp.h
+> @@ -43,7 +43,7 @@ extern void secure_computing_strict(int this_syscall);
+>  #endif
 >  
->  		if (keyb) {
-> -			if (dp == of_find_node_by_path(keyb))
-> -				return SU_PORT_KBD;
-> +			tmp = of_find_node_by_path(keyb);
-> +			if (tmp && dp == tmp){
-
-Always put a space between ")" and the "{" openning a new basic
-block.
-
-> +				rc = SU_PORT_KBD;
-> +				goto out;
-> +			}
->  		}
->  		if (ms) {
-> -			if (dp == of_find_node_by_path(ms))
-> -				return SU_PORT_MS;
-> +			tmp = of_find_node_by_path(ms);
-> +			if (tmp && dp == tmp){
-> +				rc = SU_PORT_MS;
-> +				goto out;
-> +			}
->  		}
->  	}
+>  extern long prctl_get_seccomp(void);
+> -extern long prctl_set_seccomp(unsigned long, char __user *);
+> +extern long prctl_set_seccomp(unsigned long, void __user *);
 >  
-> -	return SU_PORT_PORT;
-> +out:
-> +	of_node_put(ap);
-> +	return rc;
-
-Now you have two references, one held by 'ap' and one held by 'tmp'.
-
-You are not releasing the one held by 'tmp', and you must release
-'tmp' even if it equals 'dp'.
-
-It's pretty obvious you have no way by which to test these changes and
-therefore are not doing so.
-
+>  static inline int seccomp_mode(struct seccomp *s)
+>  {
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index 96afc32e041d..393e029f778a 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -924,7 +924,7 @@ static long seccomp_get_action_avail(const char __user *uaction)
+>  
+>  /* Common entry point for both prctl and syscall. */
+>  static long do_seccomp(unsigned int op, unsigned int flags,
+> -		       const char __user *uargs)
+> +		       void __user *uargs)
+>  {
+>  	switch (op) {
+>  	case SECCOMP_SET_MODE_STRICT:
+> @@ -944,7 +944,7 @@ static long do_seccomp(unsigned int op, unsigned int flags,
+>  }
+>  
+>  SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
+> -			 const char __user *, uargs)
+> +			 void __user *, uargs)
+>  {
+>  	return do_seccomp(op, flags, uargs);
+>  }
+> @@ -956,10 +956,10 @@ SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
+>   *
+>   * Returns 0 on success or -EINVAL on failure.
+>   */
+> -long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
+> +long prctl_set_seccomp(unsigned long seccomp_mode, void __user *filter)
+>  {
+>  	unsigned int op;
+> -	char __user *uargs;
+> +	void __user *uargs;
+>  
+>  	switch (seccomp_mode) {
+>  	case SECCOMP_MODE_STRICT:
+> -- 
+> 2.19.1
