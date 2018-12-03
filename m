@@ -2,167 +2,229 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E5FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB266C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F202087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F202087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BE4D2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 20:09:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hegYeheN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE4D2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbeLCUHm convert rfc822-to-8bit (ORCPT
+        id S1726019AbeLCUJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 15:07:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57870 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeLCUHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 15:07:42 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7A0D058E36;
-        Mon,  3 Dec 2018 20:07:39 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C18660BEC;
-        Mon,  3 Dec 2018 20:07:38 +0000 (UTC)
-Subject: Re: [PATCH] clocksource/arm_arch_timer: fix a lockdep warning
-To:     Qian Cai <cai@gmx.us>, mark.rutland@arm.com, marc.zyngier@arm.com
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1543865624-17301-1-git-send-email-cai@gmx.us>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <11876b19-ec16-c7c5-4b21-c45c2b0f7244@redhat.com>
-Date:   Mon, 3 Dec 2018 15:07:38 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1543865624-17301-1-git-send-email-cai@gmx.us>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 03 Dec 2018 20:07:39 +0000 (UTC)
+        Mon, 3 Dec 2018 15:09:19 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42020 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCUJT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 15:09:19 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB3JwZoj078799;
+        Mon, 3 Dec 2018 20:09:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=vxLAF8bT0VIgTD2UGzdu92swisUy1mIrbjZx+y8Wxck=;
+ b=hegYeheNo5PYGbcsOmPdUBgHYv5ujLGFmWxnqWCcG7cMhXP8j4RUtS3+V7pY69CWOzCF
+ AiFW/GOsCSNQYWgrKPUyhvnWNBRYO0BKVDl3L1Hx8EeoPlieI/noPQ9GFbCreHVQI3E/
+ 9x+Y9fM7dpjCry5zm8owPH84kqFuWq7KcugLSVpqyS5WrxtgGcKrHHTfRs4x9+tEsJ49
+ MEs5G5v9VfMTHgNlG9Dpl8e9k6L450TZ7FoyfswHzt7JQBDRYNls011eVLJskd6Ow4IQ
+ qfjy2OfjkRpYNwfIWfzkX4gBpm/glU6Wn1l+ycpfTbUrQ2dtwtyWr9YfWMcYNAK/odDY IQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2p3jxr8gk0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Dec 2018 20:09:04 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB3K93xM018213
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Dec 2018 20:09:03 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB3K93PW017194;
+        Mon, 3 Dec 2018 20:09:03 GMT
+Received: from monkey.oracle.com (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 Dec 2018 12:09:02 -0800
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>, stable@vger.kernel.org
+Subject: [PATCH 3/3] hugetlbfs: remove unnecessary code after i_mmap_rwsem synchronization
+Date:   Mon,  3 Dec 2018 12:08:50 -0800
+Message-Id: <20181203200850.6460-4-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20181203200850.6460-1-mike.kravetz@oracle.com>
+References: <20181203200850.6460-1-mike.kravetz@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=890
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812030183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/2018 02:33 PM, Qian Cai wrote:
-> Booting this Huawei TaiShan 2280 arm64 server generated this lockdep
-> warning.
->
-> [    0.000000]  lockdep_assert_cpus_held+0x50/0x60
-> [    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
-> [    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
-> [    0.000000]  arch_timer_acpi_init+0x274/0x6ac
-> [    0.000000]  acpi_table_parse+0x1ac/0x218
-> [    0.000000]  __acpi_probe_device_table+0x164/0x1ec
-> [    0.000000]  timer_probe+0x1bc/0x254
-> [    0.000000]  time_init+0x44/0x98
-> [    0.000000]  start_kernel+0x4ec/0x7d4
->
-> This is due to the commit cb538267ea1e ("jump_label/lockdep: Assert we hold
-> the hotplug lock for _cpuslocked() operations"). Therefore, it will check
-> if it is really in the CPU hotplug path or not, and work around this
-> problem by using cpus_read_trylock(). The chance of not getting the read
-> lock is very small. If that happens, it will report a lockdep warning at
-> most.
->
-> Signed-off-by: Qian Cai <cai@gmx.us>
-> ---
->  drivers/clocksource/arm_arch_timer.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-> index 9a7d4dc..5c9acbd 100644
-> --- a/drivers/clocksource/arm_arch_timer.c
-> +++ b/drivers/clocksource/arm_arch_timer.c
-> @@ -497,11 +497,20 @@ void arch_timer_enable_workaround(const struct arch_timer_erratum_workaround *wa
->  			per_cpu(timer_unstable_counter_workaround, i) = wa;
->  	}
->  
-> +#ifdef CONFIG_HOTPLUG_CPU
+After expanding i_mmap_rwsem use for better shared pmd and page fault/
+truncation synchronization, remove code that is no longer necessary.
 
-If HOTPLUG_CPU isn't defined, all the cpus_lock() and related functions
-are just no-op. You don't need to use conditional compilation directive
-here.
+Cc: <stable@vger.kernel.org>
+Fixes: ebed4bfc8da8 ("hugetlb: fix absurd HugePages_Rsvd")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ fs/hugetlbfs/inode.c | 46 +++++++++++++++-----------------------------
+ mm/hugetlb.c         | 21 ++++++++++----------
+ 2 files changed, 25 insertions(+), 42 deletions(-)
 
-> +	i = 0;
-> +
->  	/*
->  	 * Use the locked version, as we're called from the CPU
->  	 * hotplug framework. Otherwise, we end-up in deadlock-land.
->  	 */
-
-I think the main problem is the above comment may not be true anymore or
-is only occasionally true. We need to audit the code to find the root cause.
-
-> +	i = cpus_read_trylock();
->  	static_branch_enable_cpuslocked(&arch_timer_read_ool_enabled);
-> +	if (i)
-> +		cpus_read_unlock();
-
-This is not the right way of fixing the lockdep splash.
-
-> +#else
-> +	static_branch_enable(&arch_timer_read_ool_enabled);
-> +#endif
->  
->  	/*
->  	 * Don't use the vdso fastpath if errata require using the
-
-Cheers,
-Longman
-
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 3244147fc42b..a9c00c6ef80d 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -383,17 +383,16 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end)
+  * truncation is indicated by end of range being LLONG_MAX
+  *	In this case, we first scan the range and release found pages.
+  *	After releasing pages, hugetlb_unreserve_pages cleans up region/reserv
+- *	maps and global counts.  Page faults can not race with truncation
+- *	in this routine.  hugetlb_no_page() prevents page faults in the
+- *	truncated range.  It checks i_size before allocation, and again after
+- *	with the page table lock for the page held.  The same lock must be
+- *	acquired to unmap a page.
++ *	maps and global counts.
+  * hole punch is indicated if end is not LLONG_MAX
+  *	In the hole punch case we scan the range and release found pages.
+  *	Only when releasing a page is the associated region/reserv map
+  *	deleted.  The region/reserv map for ranges without associated
+- *	pages are not modified.  Page faults can race with hole punch.
+- *	This is indicated if we find a mapped page.
++ *	pages are not modified.
++ *
++ * Callers of this routine must hold the i_mmap_rwsem in write mode to prevent
++ * races with page faults.
++ *
+  * Note: If the passed end of range value is beyond the end of file, but
+  * not LLONG_MAX this routine still performs a hole punch operation.
+  */
+@@ -423,32 +422,14 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
+ 
+ 		for (i = 0; i < pagevec_count(&pvec); ++i) {
+ 			struct page *page = pvec.pages[i];
+-			u32 hash;
+ 
+ 			index = page->index;
+-			hash = hugetlb_fault_mutex_hash(h, current->mm,
+-							&pseudo_vma,
+-							mapping, index, 0);
+-			mutex_lock(&hugetlb_fault_mutex_table[hash]);
+-
+ 			/*
+-			 * If page is mapped, it was faulted in after being
+-			 * unmapped in caller.  Unmap (again) now after taking
+-			 * the fault mutex.  The mutex will prevent faults
+-			 * until we finish removing the page.
+-			 *
+-			 * This race can only happen in the hole punch case.
+-			 * Getting here in a truncate operation is a bug.
++			 * A mapped page is impossible as callers should unmap
++			 * all references before calling.  And, i_mmap_rwsem
++			 * prevents the creation of additional mappings.
+ 			 */
+-			if (unlikely(page_mapped(page))) {
+-				BUG_ON(truncate_op);
+-
+-				i_mmap_lock_write(mapping);
+-				hugetlb_vmdelete_list(&mapping->i_mmap,
+-					index * pages_per_huge_page(h),
+-					(index + 1) * pages_per_huge_page(h));
+-				i_mmap_unlock_write(mapping);
+-			}
++			VM_BUG_ON(page_mapped(page));
+ 
+ 			lock_page(page);
+ 			/*
+@@ -470,7 +451,6 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
+ 			}
+ 
+ 			unlock_page(page);
+-			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+ 		}
+ 		huge_pagevec_release(&pvec);
+ 		cond_resched();
+@@ -624,7 +604,11 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
+ 		/* addr is the offset within the file (zero based) */
+ 		addr = index * hpage_size;
+ 
+-		/* mutex taken here, fault path and hole punch */
++		/*
++		 * fault mutex taken here, protects against fault path
++		 * and hole punch.  inode_lock previously taken protects
++		 * against truncation.
++		 */
+ 		hash = hugetlb_fault_mutex_hash(h, mm, &pseudo_vma, mapping,
+ 						index, addr);
+ 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 362601b69c56..89e1a253a40b 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3760,16 +3760,16 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+ 	}
+ 
+ 	/*
+-	 * Use page lock to guard against racing truncation
+-	 * before we get page_table_lock.
++	 * We can not race with truncation due to holding i_mmap_rwsem.
++	 * Check once here for faults beyond end of file.
+ 	 */
++	size = i_size_read(mapping->host) >> huge_page_shift(h);
++	if (idx >= size)
++		goto out;
++
+ retry:
+ 	page = find_lock_page(mapping, idx);
+ 	if (!page) {
+-		size = i_size_read(mapping->host) >> huge_page_shift(h);
+-		if (idx >= size)
+-			goto out;
+-
+ 		/*
+ 		 * Check for page in userfault range
+ 		 */
+@@ -3859,9 +3859,6 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+ 	}
+ 
+ 	ptl = huge_pte_lock(h, mm, ptep);
+-	size = i_size_read(mapping->host) >> huge_page_shift(h);
+-	if (idx >= size)
+-		goto backout;
+ 
+ 	ret = 0;
+ 	if (!huge_pte_none(huge_ptep_get(ptep)))
+@@ -3964,8 +3961,10 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 
+ 	/*
+ 	 * Acquire i_mmap_rwsem before calling huge_pte_alloc and hold
+-	 * until finished with ptep.  This prevents huge_pmd_unshare from
+-	 * being called elsewhere and making the ptep no longer valid.
++	 * until finished with ptep.  This serves two purposes:
++	 * 1) It prevents huge_pmd_unshare from being called elsewhere
++	 *    and making the ptep no longer valid.
++	 * 2) It synchronizes us with file truncation.
+ 	 *
+ 	 * ptep could have already be assigned via huge_pte_offset.  That
+ 	 * is OK, as huge_pte_alloc will return the same value unless
+-- 
+2.17.2
 
