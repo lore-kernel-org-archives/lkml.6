@@ -2,90 +2,76 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214FEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86328C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E645F20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:11:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E645F20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 4720F20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:12:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4720F20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbeLCKMM (ORCPT
+        id S1726183AbeLCKMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:12:12 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40129 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbeLCKMM (ORCPT
+        Mon, 3 Dec 2018 05:12:52 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39026 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbeLCKMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:12:12 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d3so10193939edx.7;
-        Mon, 03 Dec 2018 02:11:49 -0800 (PST)
+        Mon, 3 Dec 2018 05:12:52 -0500
+Received: by mail-ot1-f65.google.com with SMTP id n8so7181844otl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:12:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xRjBFh85MQbS2a8FAsvDnRi2kJOiNyC74NfxuA+bUGk=;
-        b=aEuMmeu37H+hO6pMcNOJSXyTJw3WwfbkI582SRHVpSkkOJE0BeDvgOdv7z/I7FoTZD
-         jXP4f0T3DEAHsXp8dY7vvAsY712N8GBZ8sOAlyF17oLMjL6K9yyVFOPOrH/wgOugjgAD
-         5xT0+PsW6pjBGEbzYQ3E0/5+ScoqmbkDNxrqllOhWqdS9gqda5ELng5bHaUjEIsApo1K
-         IME1agsUp/HONDvgLuk7CnQuwQ+boQZI1UuZXiKGlzNzLTj/41XBSV0ZXlfkXdM67ZNU
-         GmX0+78eAMY8HcEZlxjJbPsFZPyxkll10eEEkeZzf3I3i74oI8Y+SFnu6vMsoHEkFq70
-         yzAw==
-X-Gm-Message-State: AA+aEWYfRHxiAYzLfcGE1dx5jEKc1mW696pfYo4cWxdYxm5hzSs8BGsp
-        fKX+yaxm/EkaXvVAyPHj8lD6y2Oc/9c=
-X-Google-Smtp-Source: AFSGD/WS6UtQYxyrYwCszrNIDcub8DWok6uyNg4mPPqHQkfSSe70HTpU4ybkPC5LNAaoa016xPss+Q==
-X-Received: by 2002:a17:906:4b19:: with SMTP id y25-v6mr12271927eju.89.1543831908110;
-        Mon, 03 Dec 2018 02:11:48 -0800 (PST)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm2144574ejk.33.2018.12.03.02.11.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 02:11:47 -0800 (PST)
-Received: by mail-wr1-f51.google.com with SMTP id j10so11462053wru.4;
-        Mon, 03 Dec 2018 02:11:47 -0800 (PST)
-X-Received: by 2002:a5d:5208:: with SMTP id j8mr13937441wrv.188.1543831907353;
- Mon, 03 Dec 2018 02:11:47 -0800 (PST)
+        bh=QtNh8ae8VWZCW9TlIIuNdXe1TGb/PguqSO4vKeT7MEE=;
+        b=SLqOqKOnTyaG2Etpy2tnGf81iT2eV4KBnR0J2xyy/KH4gHzjlDoZvDRy1Ma2O6xdtv
+         CyHyIBqXlErFTBm+hEIZnW7dY0EhgiakJqX9yhHnk2xFvEdVeJUo9Q3IHacjplz55XW8
+         LUa4kPl9KnmcM3+4a5skLaW4MVJsspG+9qK/ym8yAXsWMNVsOFVgTPGD6R2ZaSI0eIlR
+         sV2QJthav3tb4pztXYOVNZaJTP/ERPFY4vnOJs5LL3UDhdksBQDxB2Oe+b8IfzHH0d/S
+         gVN3KugKCtQ2KNZKZlPf+OhioqrRtNDZ8rmWvykPauO43jg2q4fS+lfgm+/Qzl4Tpe4+
+         FEmQ==
+X-Gm-Message-State: AA+aEWYOMksqZTbO6838y8TX1xMRW/jfAuo1KqOnakPmXsKivudRuj7A
+        q9dJIo3rxLRFhrSGxr+dmnfA7SoZSnqgTkDJXB0=
+X-Google-Smtp-Source: AFSGD/U9G3mgCOrjakMk1yNvnGXow6IYIwE0dPl200svldig6Sa3IF1UuI0BuQ1K5jLoM0dEQib4v1T5PEQFftpf5/0=
+X-Received: by 2002:a9d:60b:: with SMTP id 11mr9381079otn.200.1543831949022;
+ Mon, 03 Dec 2018 02:12:29 -0800 (PST)
 MIME-Version: 1.0
-References: <20181203100747.16442-1-jagan@amarulasolutions.com> <20181203100747.16442-3-jagan@amarulasolutions.com>
-In-Reply-To: <20181203100747.16442-3-jagan@amarulasolutions.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 3 Dec 2018 18:11:35 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66pG0kes1_xBNUj4z85fjunjP_Fe5_pPiRja=nDSOS01A@mail.gmail.com>
-Message-ID: <CAGb2v66pG0kes1_xBNUj4z85fjunjP_Fe5_pPiRja=nDSOS01A@mail.gmail.com>
-Subject: Re: [PATCH 2/5] dt-bindings: media: sun6i: Add vcc-csi supply property
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1539892534-16917-1-git-send-email-daniel.lezcano@linaro.org> <e21423b4-ec9c-ae6e-0b1f-c33e659b3cb0@linaro.org>
+In-Reply-To: <e21423b4-ec9c-ae6e-0b1f-c33e659b3cb0@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 3 Dec 2018 11:12:16 +0100
+Message-ID: <CAJZ5v0gHDzY9W0UG9QUDGTZGDD74ovRCj4dDFbksH0b4AoMvjg@mail.gmail.com>
+Subject: Re: [PATCH] sched/cpufreq: Add the SPDX tags
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+On Mon, Dec 3, 2018 at 11:07 AM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 >
-> Most of the Allwinner A64 CSI controllers are supply with
-> VCC-PE pin. which need to supply for some of the boards to
-> trigger the power.
+> On 18/10/2018 21:55, Daniel Lezcano wrote:
+> > The SPDX tags are not present in cpufreq.c and cpufreq_schedutil.c.
+> >
+> > Add them and remove the license descriptions
+> >
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 >
-> So, document the supply property as vcc-csi so-that the required
-> board can eable it via device tree.
+> Hi Rafael,
 >
-> Used vcc-csi instead of vcc-pe to have better naming convention
-> wrt other controller pin supplies.
+> I think this patch passed between the cracks.
 
-This is not related to the CSI controller. It belongs in the pin
-controller, but that has its own set of problems like possible
-circular dependencies.
-
-ChenYu
+Well, please resend. :-)
