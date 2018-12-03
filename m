@@ -2,148 +2,141 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB52C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8C8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47BC820661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:49:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQtvVvuq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BC820661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 087FB2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:50:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087FB2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbeLCPto (ORCPT
+        id S1726760AbeLCPuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:49:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbeLCPto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:49:44 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DD44214D9;
-        Mon,  3 Dec 2018 15:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543852181;
-        bh=pN3h6zRzeTbZdA+F+ILK+NrhH5etsg5R8T3a6yNT9J0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qQtvVvuq4G319BAMalYpRBu4O4mDIbG0mfb4ByxjvUtyC60D2GNrAeKlBRSM8dKZT
-         W8B8ESfb3Cmh9g4j1/OKNCxtot5silr3tuAz5MLW1BF6iiYssaYGJW6R3f1kggDZlB
-         yTNUfCxP9+lJBOVXXQOleynqI8rYP9wmUiO36dFk=
-Received: by mail-qk1-f174.google.com with SMTP id o89so7613481qko.0;
-        Mon, 03 Dec 2018 07:49:41 -0800 (PST)
-X-Gm-Message-State: AA+aEWZShbGd2kZ5Ph75JHdjHk6yFeX8rx5SBLLYDoe0QHDJ/6eaDuRb
-        h52G+048sYEmLy2kHXtAA5jZQmc7eBocIITBFg==
-X-Google-Smtp-Source: AFSGD/WYph9gLXfZcLl1K4BXPdpETtX1EUB57VQti7f5ViXIcMxMmpiz31TH63qvElH/gTIBXMldVDgE9okz0vCwU4c=
-X-Received: by 2002:a37:7682:: with SMTP id r124mr15416720qkc.79.1543852180470;
- Mon, 03 Dec 2018 07:49:40 -0800 (PST)
-MIME-Version: 1.0
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
- <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
- <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com> <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
- <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
-In-Reply-To: <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 3 Dec 2018 09:49:29 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
-Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline description
-To:     sugaya.taichi@socionext.com
-Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Mon, 3 Dec 2018 10:50:16 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726638AbeLCPuP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:50:15 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3Fidfc134087
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 10:50:12 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p5677v5v7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:50:11 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 3 Dec 2018 15:47:48 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 15:47:40 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3Fldqi393682
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 15:47:39 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53C3211C050;
+        Mon,  3 Dec 2018 15:47:39 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 13B0611C05E;
+        Mon,  3 Dec 2018 15:47:36 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.196])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  3 Dec 2018 15:47:35 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 03 Dec 2018 17:47:35 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
         Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2 4/6] openrisc: simplify pte_alloc_one_kernel()
+Date:   Mon,  3 Dec 2018 17:47:13 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18120315-0028-0000-0000-00000325602D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120315-0029-0000-0000-000023E164D7
+Message-Id: <1543852035-26634-5-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=852 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
-<sugaya.taichi@socionext.com> wrote:
->
-> Hi,
->
-> On 2018/11/30 17:16, Stephen Boyd wrote:
-> > Quoting Sugaya, Taichi (2018-11-29 04:24:51)
-> >> On 2018/11/28 11:01, Stephen Boyd wrote:
-> >>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
-> >>>>    create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>> new file mode 100644
-> >>>> index 0000000..f5d906c
-> >>>> --- /dev/null
-> >>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>> @@ -0,0 +1,12 @@
-> >>>> +Socionext M10V SMP trampoline driver binding
-> >>>> +
-> >>>> +This is a driver to wait for sub-cores while boot process.
-> >>>> +
-> >>>> +- compatible: should be "socionext,smp-trampoline"
-> >>>> +- reg: should be <0x4C000100 0x100>
-> >>>> +
-> >>>> +EXAMPLE
-> >>>> +       trampoline: trampoline@0x4C000100 {
-> >>> Drop the 0x part of unit addresses.
-> >>
-> >> Okay.
-> >>
-> >>
-> >>>> +               compatible = "socionext,smp-trampoline";
-> >>>> +               reg = <0x4C000100 0x100>;
-> >>> Looks like a software construct, which we wouldn't want to put into DT
-> >>> this way. DT doesn't describe drivers.
-> >> We would like to use this node only getting the address of the
-> >> trampoline area
-> >> in which sub-cores wait.  (They have finished to go to this area in previous
-> >> bootloader process.)
-> >
-> > Is this area part of memory, or a special SRAM? If it's part of memory,
-> > I would expect this node to be under the reserved-memory node and
-> > pointed to by some other node that uses this region. Could even be the
-> > CPU nodes.
->
-> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
-> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
-> BTW, sorry, the trampoline address of this example is simply wrong.  We
-> were going to use a part of the SRAM from the beginning.
->
-> >
-> >>
-> >> So should we embed the constant value in source codes instead of getting
-> >> from
-> >> DT because the address is constant at the moment? Or is there other
-> >> approach?
-> >>
-> >
-> > If it's constant then that also works. Why does it need to come from DT
-> > at all then?
->
-> We think it is not good to embed constant value in driver codes and do
-> not have another way...
-> Are there better ways?
+The pte_alloc_one_kernel() function allocates a page using
+__get_free_page(GFP_KERNEL) when mm initialization is complete and
+memblock_phys_alloc() on the earlier stages. The physical address of the
+page allocated with memblock_phys_alloc() is converted to the virtual
+address and in the both cases the allocated page is cleared using
+clear_page().
 
-If this is just memory, can you use the standard spin-table binding in
-the DT spec? There are some requirements like 64-bit values even on
-32-bit machines (though this gets violated).
+The code is simplified by replacing __get_free_page() with
+get_zeroed_page() and by replacing memblock_phys_alloc() with
+memblock_alloc().
 
-Rob
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Stafford Horne <shorne@gmail.com>
+---
+ arch/openrisc/mm/ioremap.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/arch/openrisc/mm/ioremap.c b/arch/openrisc/mm/ioremap.c
+index c969752..cfef989 100644
+--- a/arch/openrisc/mm/ioremap.c
++++ b/arch/openrisc/mm/ioremap.c
+@@ -123,13 +123,10 @@ pte_t __ref *pte_alloc_one_kernel(struct mm_struct *mm,
+ {
+ 	pte_t *pte;
+ 
+-	if (likely(mem_init_done)) {
+-		pte = (pte_t *) __get_free_page(GFP_KERNEL);
+-	} else {
+-		pte = (pte_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
+-	}
++	if (likely(mem_init_done))
++		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
++	else
++		pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+ 
+-	if (pte)
+-		clear_page(pte);
+ 	return pte;
+ }
+-- 
+2.7.4
+
