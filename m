@@ -2,486 +2,333 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7F3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA2BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E71A2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:57:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0mZZZ5+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E71A2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 85800208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:58:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85800208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeLCP5f (ORCPT
+        id S1726740AbeLCP6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:57:35 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35561 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeLCP5e (ORCPT
+        Mon, 3 Dec 2018 10:58:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15751 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726560AbeLCP6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:57:34 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c126so6209863wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 07:57:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=35SwHc/wTajPXEk/ZNTQ/zNrwbuN3l3GZZC2HvWJrxg=;
-        b=S0mZZZ5+MfOGuu/3FzwDHO5aeWNAR/HGOxn+Zt2OUufHFFuasgx41bjzYd2rSmMf98
-         6FzB38Xfj3tkJEI+Pw3oiDJ3oek1XEHXy5cmcON3oKUXwO5+smVo2lCKRfLNRbWpPVUA
-         sUbJ+6OrayX2kKlWZxqqMvpkEv5/N+oF2gjqE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=35SwHc/wTajPXEk/ZNTQ/zNrwbuN3l3GZZC2HvWJrxg=;
-        b=cNjhN/8AnLOtfNhQtvplhrlhpGAg5Kh57f/7GGJuC2ML1iTTRy8EhBmJLT2PpiUJr9
-         eWi608TSYHU7hohaZNGgeZ1aT9B6QQbVontyKsA3oLBVfvaq2aeUtwiHjbrlNafeUVlO
-         rx91dGwURb8rOqKGohgPYiUNfgp0x/Sy2rOAHn7/51J1EGX+tLc/7AUMdme850NiLITa
-         sua3Rw4ChdWJ3ogTdfTFXY6+SPQWA+iNjREn0yjXbP6d1r9lzBPtbLXymvvqI4GWEirm
-         KZ01NUmLDb35wjOxuBj+LDED0lFyefQ9jqXxjq1G9A3ZrTmUB6oCb0NnPP5B6OWntyt3
-         p77g==
-X-Gm-Message-State: AA+aEWa7heUnIPkcomAlnUGLJka97ZPyv5HWgHgKum60IH69PshRCalH
-        cexA7L+V4yiwmsdB4ekR9j8tKg==
-X-Google-Smtp-Source: AFSGD/W2xYDzah7+ehvSRllQRT+brTlTuoAeiYgJysvoqEgRtb2o1W8HrWaaYwrMzSL8gr26ilu5ow==
-X-Received: by 2002:a1c:7706:: with SMTP id t6mr8320911wmi.57.1543852647539;
-        Mon, 03 Dec 2018 07:57:27 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id s202sm7391190wme.40.2018.12.03.07.57.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 07:57:26 -0800 (PST)
-Date:   Mon, 3 Dec 2018 15:57:24 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Hogan <jhogan@kernel.org>, linux-hexagon@vger.kernel.org,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Rich Felker <dalias@libc.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-snps-arc@lists.infradead.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Mon, 3 Dec 2018 10:58:06 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3FtZvZ012776
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 10:58:01 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p5685cfu5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:58:00 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 3 Dec 2018 15:47:50 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 15:47:44 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3FlhRm57606288
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 15:47:43 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6931FAE055;
+        Mon,  3 Dec 2018 15:47:43 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2BADBAE05A;
+        Mon,  3 Dec 2018 15:47:40 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.196])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  3 Dec 2018 15:47:40 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 03 Dec 2018 17:47:39 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Burton <paul.burton@mips.com>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v6 2/4] kgdb: Fix kgdb_roundup_cpus() for arches who used
- smp_call_function()
-Message-ID: <20181203155724.7g37vp43e4fd4xqk@holly.lan>
-References: <20181127173839.34328-1-dianders@chromium.org>
- <20181127173839.34328-3-dianders@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127173839.34328-3-dianders@chromium.org>
-User-Agent: NeoMutt/20180716
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2 5/6] arch: simplify several early memory allocations
+Date:   Mon,  3 Dec 2018 17:47:14 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18120315-0016-0000-0000-00000231613D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120315-0017-0000-0000-0000328966AB
+Message-Id: <1543852035-26634-6-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 09:38:37AM -0800, Douglas Anderson wrote:
-> When I had lockdep turned on and dropped into kgdb I got a nice splat
-> on my system.  Specifically it hit:
->   DEBUG_LOCKS_WARN_ON(current->hardirq_context)
-> 
-> Specifically it looked like this:
->   sysrq: SysRq : DEBUG
->   ------------[ cut here ]------------
->   DEBUG_LOCKS_WARN_ON(current->hardirq_context)
->   WARNING: CPU: 0 PID: 0 at .../kernel/locking/lockdep.c:2875 lockdep_hardirqs_on+0xf0/0x160
->   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0 #27
->   pstate: 604003c9 (nZCv DAIF +PAN -UAO)
->   pc : lockdep_hardirqs_on+0xf0/0x160
->   ...
->   Call trace:
->    lockdep_hardirqs_on+0xf0/0x160
->    trace_hardirqs_on+0x188/0x1ac
->    kgdb_roundup_cpus+0x14/0x3c
->    kgdb_cpu_enter+0x53c/0x5cc
->    kgdb_handle_exception+0x180/0x1d4
->    kgdb_compiled_brk_fn+0x30/0x3c
->    brk_handler+0x134/0x178
->    do_debug_exception+0xfc/0x178
->    el1_dbg+0x18/0x78
->    kgdb_breakpoint+0x34/0x58
->    sysrq_handle_dbg+0x54/0x5c
->    __handle_sysrq+0x114/0x21c
->    handle_sysrq+0x30/0x3c
->    qcom_geni_serial_isr+0x2dc/0x30c
->   ...
->   ...
->   irq event stamp: ...45
->   hardirqs last  enabled at (...44): [...] __do_softirq+0xd8/0x4e4
->   hardirqs last disabled at (...45): [...] el1_irq+0x74/0x130
->   softirqs last  enabled at (...42): [...] _local_bh_enable+0x2c/0x34
->   softirqs last disabled at (...43): [...] irq_exit+0xa8/0x100
->   ---[ end trace adf21f830c46e638 ]---
-> 
-> Looking closely at it, it seems like a really bad idea to be calling
-> local_irq_enable() in kgdb_roundup_cpus().  If nothing else that seems
-> like it could violate spinlock semantics and cause a deadlock.
-> 
-> Instead, let's use a private csd alongside
-> smp_call_function_single_async() to round up the other CPUs.  Using
-> smp_call_function_single_async() doesn't require interrupts to be
-> enabled so we can remove the offending bit of code.
-> 
-> In order to avoid duplicating this across all the architectures that
-> use the default kgdb_roundup_cpus(), we'll add a "weak" implementation
-> to debug_core.c.
-> 
-> Looking at all the people who previously had copies of this code,
-> there were a few variants.  I've attempted to keep the variants
-> working like they used to.  Specifically:
-> * For arch/arc we passed NULL to kgdb_nmicallback() instead of
->   get_irq_regs().
-> * For arch/mips there was a bit of extra code around
->   kgdb_nmicallback()
-> 
-> NOTE: In this patch we will still get into trouble if we try to round
-> up a CPU that failed to round up before.  We'll try to round it up
-> again and potentially hang when we try to grab the csd lock.  That's
-> not new behavior but we'll still try to do better in a future patch.
-> 
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
-> Changes in v6:
-> - Moved smp_call_function_single_async() error check to patch 3.
-> 
-> Changes in v5:
-> - Add a comment about get_irq_regs().
-> - get_cpu() => raw_smp_processor_id() in kgdb_roundup_cpus().
-> - for_each_cpu() => for_each_online_cpu()
-> - Error check smp_call_function_single_async()
-> 
-> Changes in v4: None
-> Changes in v3:
-> - No separate init call.
-> - Don't round up the CPU that is doing the rounding up.
-> - Add "#ifdef CONFIG_SMP" to match the rest of the file.
-> - Updated desc saying we don't solve the "failed to roundup" case.
-> - Document the ignored parameter.
-> 
-> Changes in v2:
-> - Removing irq flags separated from fixing lockdep splat.
-> - Don't use smp_call_function (Daniel).
-> 
->  arch/arc/kernel/kgdb.c     | 10 ++--------
->  arch/arm/kernel/kgdb.c     | 12 -----------
->  arch/arm64/kernel/kgdb.c   | 12 -----------
->  arch/hexagon/kernel/kgdb.c | 27 -------------------------
->  arch/mips/kernel/kgdb.c    |  9 +--------
->  arch/powerpc/kernel/kgdb.c |  4 ++--
->  arch/sh/kernel/kgdb.c      | 12 -----------
+There are several early memory allocations in arch/ code that use
+memblock_phys_alloc() to allocate memory, convert the returned physical
+address to the virtual address and then set the allocated memory to zero.
 
-Please could you re-send with the arch maintainers for these platforms
-included in the Cc: of the patch description rather than just in the
-e-mail header.
+Exactly the same behaviour can be achieved simply by calling
+memblock_alloc(): it allocates the memory in the same way as
+memblock_phys_alloc(), then it performs the phys_to_virt() conversion and
+clears the allocated memory.
 
-I'd like to make sure arch maintainers have a chance to opt out if they
-want to (it's a weak symbol so an arch could chose not to use it).
+Replace the longer sequence with a simpler call to memblock_alloc().
 
-Otherwise I shall start testing shortly!
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ arch/arm/mm/mmu.c                     |  4 +---
+ arch/c6x/mm/dma-coherent.c            |  9 ++-------
+ arch/nds32/mm/init.c                  | 12 ++++--------
+ arch/powerpc/kernel/setup-common.c    |  4 ++--
+ arch/powerpc/mm/pgtable_32.c          |  4 +---
+ arch/powerpc/mm/ppc_mmu_32.c          |  3 +--
+ arch/powerpc/platforms/powernv/opal.c |  3 +--
+ arch/sparc/kernel/prom_64.c           |  7 ++-----
+ arch/sparc/mm/init_64.c               |  9 +++------
+ arch/unicore32/mm/mmu.c               |  4 +---
+ 10 files changed, 18 insertions(+), 41 deletions(-)
 
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index f5cc1cc..0a04c9a5 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -721,9 +721,7 @@ EXPORT_SYMBOL(phys_mem_access_prot);
+ 
+ static void __init *early_alloc_aligned(unsigned long sz, unsigned long align)
+ {
+-	void *ptr = __va(memblock_phys_alloc(sz, align));
+-	memset(ptr, 0, sz);
+-	return ptr;
++	return memblock_alloc(sz, align);
+ }
+ 
+ static void __init *early_alloc(unsigned long sz)
+diff --git a/arch/c6x/mm/dma-coherent.c b/arch/c6x/mm/dma-coherent.c
+index 01305c7..ffc49e2 100644
+--- a/arch/c6x/mm/dma-coherent.c
++++ b/arch/c6x/mm/dma-coherent.c
+@@ -118,8 +118,6 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
+  */
+ void __init coherent_mem_init(phys_addr_t start, u32 size)
+ {
+-	phys_addr_t bitmap_phys;
+-
+ 	if (!size)
+ 		return;
+ 
+@@ -135,11 +133,8 @@ void __init coherent_mem_init(phys_addr_t start, u32 size)
+ 	if (dma_size & (PAGE_SIZE - 1))
+ 		++dma_pages;
+ 
+-	bitmap_phys = memblock_phys_alloc(BITS_TO_LONGS(dma_pages) * sizeof(long),
+-					  sizeof(long));
+-
+-	dma_bitmap = phys_to_virt(bitmap_phys);
+-	memset(dma_bitmap, 0, dma_pages * PAGE_SIZE);
++	dma_bitmap = memblock_alloc(BITS_TO_LONGS(dma_pages) * sizeof(long),
++				    sizeof(long));
+ }
+ 
+ static void c6x_dma_sync(struct device *dev, phys_addr_t paddr, size_t size,
+diff --git a/arch/nds32/mm/init.c b/arch/nds32/mm/init.c
+index 131104b..9f19be8 100644
+--- a/arch/nds32/mm/init.c
++++ b/arch/nds32/mm/init.c
+@@ -80,8 +80,7 @@ static void __init map_ram(void)
+ 		}
+ 
+ 		/* Alloc one page for holding PTE's... */
+-		pte = (pte_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
+-		memset(pte, 0, PAGE_SIZE);
++		pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+ 		set_pmd(pme, __pmd(__pa(pte) + _PAGE_KERNEL_TABLE));
+ 
+ 		/* Fill the newly allocated page with PTE'S */
+@@ -113,8 +112,7 @@ static void __init fixedrange_init(void)
+ 	pgd = swapper_pg_dir + pgd_index(vaddr);
+ 	pud = pud_offset(pgd, vaddr);
+ 	pmd = pmd_offset(pud, vaddr);
+-	fixmap_pmd_p = (pmd_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
+-	memset(fixmap_pmd_p, 0, PAGE_SIZE);
++	fixmap_pmd_p = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+ 	set_pmd(pmd, __pmd(__pa(fixmap_pmd_p) + _PAGE_KERNEL_TABLE));
+ 
+ #ifdef CONFIG_HIGHMEM
+@@ -126,8 +124,7 @@ static void __init fixedrange_init(void)
+ 	pgd = swapper_pg_dir + pgd_index(vaddr);
+ 	pud = pud_offset(pgd, vaddr);
+ 	pmd = pmd_offset(pud, vaddr);
+-	pte = (pte_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
+-	memset(pte, 0, PAGE_SIZE);
++	pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+ 	set_pmd(pmd, __pmd(__pa(pte) + _PAGE_KERNEL_TABLE));
+ 	pkmap_page_table = pte;
+ #endif /* CONFIG_HIGHMEM */
+@@ -152,8 +149,7 @@ void __init paging_init(void)
+ 	fixedrange_init();
+ 
+ 	/* allocate space for empty_zero_page */
+-	zero_page = __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
+-	memset(zero_page, 0, PAGE_SIZE);
++	zero_page = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+ 	zone_sizes_init();
+ 
+ 	empty_zero_page = virt_to_page(zero_page);
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+index 93ee370..8f6c763 100644
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -459,8 +459,8 @@ void __init smp_setup_cpu_maps(void)
+ 
+ 	DBG("smp_setup_cpu_maps()\n");
+ 
+-	cpu_to_phys_id = __va(memblock_phys_alloc(nr_cpu_ids * sizeof(u32), __alignof__(u32)));
+-	memset(cpu_to_phys_id, 0, nr_cpu_ids * sizeof(u32));
++	cpu_to_phys_id = memblock_alloc(nr_cpu_ids * sizeof(u32),
++					__alignof__(u32));
+ 
+ 	for_each_node_by_type(dn, "cpu") {
+ 		const __be32 *intserv;
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index bda3c6f..9931e68 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -50,9 +50,7 @@ __ref pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long address)
+ 	if (slab_is_available()) {
+ 		pte = (pte_t *)__get_free_page(GFP_KERNEL|__GFP_ZERO);
+ 	} else {
+-		pte = __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
+-		if (pte)
+-			clear_page(pte);
++		pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+ 	}
+ 	return pte;
+ }
+diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
+index f6f575b..fddf823 100644
+--- a/arch/powerpc/mm/ppc_mmu_32.c
++++ b/arch/powerpc/mm/ppc_mmu_32.c
+@@ -224,8 +224,7 @@ void __init MMU_init_hw(void)
+ 	 * Find some memory for the hash table.
+ 	 */
+ 	if ( ppc_md.progress ) ppc_md.progress("hash:find piece", 0x322);
+-	Hash = __va(memblock_phys_alloc(Hash_size, Hash_size));
+-	memset(Hash, 0, Hash_size);
++	Hash = memblock_alloc(Hash_size, Hash_size);
+ 	_SDR1 = __pa(Hash) | SDR1_LOW_BITS;
+ 
+ 	Hash_end = (struct hash_pte *) ((unsigned long)Hash + Hash_size);
+diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
+index beed86f..29ee2ea 100644
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -171,8 +171,7 @@ int __init early_init_dt_scan_recoverable_ranges(unsigned long node,
+ 	/*
+ 	 * Allocate a buffer to hold the MC recoverable ranges.
+ 	 */
+-	mc_recoverable_range =__va(memblock_phys_alloc(size, __alignof__(u64)));
+-	memset(mc_recoverable_range, 0, size);
++	mc_recoverable_range = memblock_alloc(size, __alignof__(u64));
+ 
+ 	for (i = 0; i < mc_recoverable_range_len; i++) {
+ 		mc_recoverable_range[i].start_addr =
+diff --git a/arch/sparc/kernel/prom_64.c b/arch/sparc/kernel/prom_64.c
+index c37955d..2a17665 100644
+--- a/arch/sparc/kernel/prom_64.c
++++ b/arch/sparc/kernel/prom_64.c
+@@ -34,16 +34,13 @@
+ 
+ void * __init prom_early_alloc(unsigned long size)
+ {
+-	unsigned long paddr = memblock_phys_alloc(size, SMP_CACHE_BYTES);
+-	void *ret;
++	void *ret = memblock_alloc(size, SMP_CACHE_BYTES);
+ 
+-	if (!paddr) {
++	if (!ret) {
+ 		prom_printf("prom_early_alloc(%lu) failed\n", size);
+ 		prom_halt();
+ 	}
+ 
+-	ret = __va(paddr);
+-	memset(ret, 0, size);
+ 	prom_early_allocated += size;
+ 
+ 	return ret;
+diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
+index 3c8aac2..52884f4 100644
+--- a/arch/sparc/mm/init_64.c
++++ b/arch/sparc/mm/init_64.c
+@@ -1089,16 +1089,13 @@ static void __init allocate_node_data(int nid)
+ 	struct pglist_data *p;
+ 	unsigned long start_pfn, end_pfn;
+ #ifdef CONFIG_NEED_MULTIPLE_NODES
+-	unsigned long paddr;
+ 
+-	paddr = memblock_phys_alloc_try_nid(sizeof(struct pglist_data),
+-					    SMP_CACHE_BYTES, nid);
+-	if (!paddr) {
++	NODE_DATA(nid) = memblock_alloc_node(sizeof(struct pglist_data),
++					     SMP_CACHE_BYTES, nid);
++	if (!NODE_DATA(nid)) {
+ 		prom_printf("Cannot allocate pglist_data for nid[%d]\n", nid);
+ 		prom_halt();
+ 	}
+-	NODE_DATA(nid) = __va(paddr);
+-	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+ 
+ 	NODE_DATA(nid)->node_id = nid;
+ #endif
+diff --git a/arch/unicore32/mm/mmu.c b/arch/unicore32/mm/mmu.c
+index 040a8c2..50d8c1a 100644
+--- a/arch/unicore32/mm/mmu.c
++++ b/arch/unicore32/mm/mmu.c
+@@ -143,9 +143,7 @@ static void __init build_mem_type_table(void)
+ 
+ static void __init *early_alloc(unsigned long sz)
+ {
+-	void *ptr = __va(memblock_phys_alloc(sz, sz));
+-	memset(ptr, 0, sz);
+-	return ptr;
++	return memblock_alloc(sz, sz);
+ }
+ 
+ static pte_t * __init early_pte_alloc(pmd_t *pmd, unsigned long addr,
+-- 
+2.7.4
 
-Daniel.
-
-
->  include/linux/kgdb.h       | 15 ++++++++++++--
->  kernel/debug/debug_core.c  | 41 ++++++++++++++++++++++++++++++++++++++
->  9 files changed, 59 insertions(+), 83 deletions(-)
-> 
-> diff --git a/arch/arc/kernel/kgdb.c b/arch/arc/kernel/kgdb.c
-> index 0932851028e0..68d9fe4b5aa7 100644
-> --- a/arch/arc/kernel/kgdb.c
-> +++ b/arch/arc/kernel/kgdb.c
-> @@ -192,18 +192,12 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
->  	instruction_pointer(regs) = ip;
->  }
->  
-> -static void kgdb_call_nmi_hook(void *ignored)
-> +void kgdb_call_nmi_hook(void *ignored)
->  {
-> +	/* Default implementation passes get_irq_regs() but we don't */
->  	kgdb_nmicallback(raw_smp_processor_id(), NULL);
->  }
->  
-> -void kgdb_roundup_cpus(void)
-> -{
-> -	local_irq_enable();
-> -	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> -	local_irq_disable();
-> -}
-> -
->  struct kgdb_arch arch_kgdb_ops = {
->  	/* breakpoint instruction: TRAP_S 0x3 */
->  #ifdef CONFIG_CPU_BIG_ENDIAN
-> diff --git a/arch/arm/kernel/kgdb.c b/arch/arm/kernel/kgdb.c
-> index f21077b077be..d9a69e941463 100644
-> --- a/arch/arm/kernel/kgdb.c
-> +++ b/arch/arm/kernel/kgdb.c
-> @@ -170,18 +170,6 @@ static struct undef_hook kgdb_compiled_brkpt_hook = {
->  	.fn			= kgdb_compiled_brk_fn
->  };
->  
-> -static void kgdb_call_nmi_hook(void *ignored)
-> -{
-> -       kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
-> -}
-> -
-> -void kgdb_roundup_cpus(void)
-> -{
-> -       local_irq_enable();
-> -       smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> -       local_irq_disable();
-> -}
-> -
->  static int __kgdb_notify(struct die_args *args, unsigned long cmd)
->  {
->  	struct pt_regs *regs = args->regs;
-> diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
-> index 12c339ff6e75..da880247c734 100644
-> --- a/arch/arm64/kernel/kgdb.c
-> +++ b/arch/arm64/kernel/kgdb.c
-> @@ -284,18 +284,6 @@ static struct step_hook kgdb_step_hook = {
->  	.fn		= kgdb_step_brk_fn
->  };
->  
-> -static void kgdb_call_nmi_hook(void *ignored)
-> -{
-> -	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
-> -}
-> -
-> -void kgdb_roundup_cpus(void)
-> -{
-> -	local_irq_enable();
-> -	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> -	local_irq_disable();
-> -}
-> -
->  static int __kgdb_notify(struct die_args *args, unsigned long cmd)
->  {
->  	struct pt_regs *regs = args->regs;
-> diff --git a/arch/hexagon/kernel/kgdb.c b/arch/hexagon/kernel/kgdb.c
-> index 012e0e230ac2..b95d12038a4e 100644
-> --- a/arch/hexagon/kernel/kgdb.c
-> +++ b/arch/hexagon/kernel/kgdb.c
-> @@ -115,33 +115,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
->  	instruction_pointer(regs) = pc;
->  }
->  
-> -#ifdef CONFIG_SMP
-> -
-> -/**
-> - * kgdb_roundup_cpus - Get other CPUs into a holding pattern
-> - *
-> - * On SMP systems, we need to get the attention of the other CPUs
-> - * and get them be in a known state.  This should do what is needed
-> - * to get the other CPUs to call kgdb_wait(). Note that on some arches,
-> - * the NMI approach is not used for rounding up all the CPUs. For example,
-> - * in case of MIPS, smp_call_function() is used to roundup CPUs.
-> - *
-> - * On non-SMP systems, this is not called.
-> - */
-> -
-> -static void hexagon_kgdb_nmi_hook(void *ignored)
-> -{
-> -	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
-> -}
-> -
-> -void kgdb_roundup_cpus(void)
-> -{
-> -	local_irq_enable();
-> -	smp_call_function(hexagon_kgdb_nmi_hook, NULL, 0);
-> -	local_irq_disable();
-> -}
-> -#endif
-> -
->  
->  /*  Not yet working  */
->  void sleeping_thread_to_gdb_regs(unsigned long *gdb_regs,
-> diff --git a/arch/mips/kernel/kgdb.c b/arch/mips/kernel/kgdb.c
-> index 2b05effc17b4..42f057a6c215 100644
-> --- a/arch/mips/kernel/kgdb.c
-> +++ b/arch/mips/kernel/kgdb.c
-> @@ -207,7 +207,7 @@ void arch_kgdb_breakpoint(void)
->  		".set\treorder");
->  }
->  
-> -static void kgdb_call_nmi_hook(void *ignored)
-> +void kgdb_call_nmi_hook(void *ignored)
->  {
->  	mm_segment_t old_fs;
->  
-> @@ -219,13 +219,6 @@ static void kgdb_call_nmi_hook(void *ignored)
->  	set_fs(old_fs);
->  }
->  
-> -void kgdb_roundup_cpus(void)
-> -{
-> -	local_irq_enable();
-> -	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> -	local_irq_disable();
-> -}
-> -
->  static int compute_signal(int tt)
->  {
->  	struct hard_trap_info *ht;
-> diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
-> index b0e804844be0..b4ce54d73337 100644
-> --- a/arch/powerpc/kernel/kgdb.c
-> +++ b/arch/powerpc/kernel/kgdb.c
-> @@ -117,7 +117,7 @@ int kgdb_skipexception(int exception, struct pt_regs *regs)
->  	return kgdb_isremovedbreak(regs->nip);
->  }
->  
-> -static int kgdb_call_nmi_hook(struct pt_regs *regs)
-> +static int kgdb_debugger_ipi(struct pt_regs *regs)
->  {
->  	kgdb_nmicallback(raw_smp_processor_id(), regs);
->  	return 0;
-> @@ -502,7 +502,7 @@ int kgdb_arch_init(void)
->  	old__debugger_break_match = __debugger_break_match;
->  	old__debugger_fault_handler = __debugger_fault_handler;
->  
-> -	__debugger_ipi = kgdb_call_nmi_hook;
-> +	__debugger_ipi = kgdb_debugger_ipi;
->  	__debugger = kgdb_debugger;
->  	__debugger_bpt = kgdb_handle_breakpoint;
->  	__debugger_sstep = kgdb_singlestep;
-> diff --git a/arch/sh/kernel/kgdb.c b/arch/sh/kernel/kgdb.c
-> index cc57630f6bf2..14e012ad7c57 100644
-> --- a/arch/sh/kernel/kgdb.c
-> +++ b/arch/sh/kernel/kgdb.c
-> @@ -314,18 +314,6 @@ BUILD_TRAP_HANDLER(singlestep)
->  	local_irq_restore(flags);
->  }
->  
-> -static void kgdb_call_nmi_hook(void *ignored)
-> -{
-> -	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
-> -}
-> -
-> -void kgdb_roundup_cpus(void)
-> -{
-> -	local_irq_enable();
-> -	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
-> -	local_irq_disable();
-> -}
-> -
->  static int __kgdb_notify(struct die_args *args, unsigned long cmd)
->  {
->  	int ret;
-> diff --git a/include/linux/kgdb.h b/include/linux/kgdb.h
-> index 05e5b2eb0d32..24422865cd18 100644
-> --- a/include/linux/kgdb.h
-> +++ b/include/linux/kgdb.h
-> @@ -176,14 +176,25 @@ kgdb_arch_handle_exception(int vector, int signo, int err_code,
->  			   char *remcom_out_buffer,
->  			   struct pt_regs *regs);
->  
-> +/**
-> + *	kgdb_call_nmi_hook - Call kgdb_nmicallback() on the current CPU
-> + *	@ignored: This parameter is only here to match the prototype.
-> + *
-> + *	If you're using the default implementation of kgdb_roundup_cpus()
-> + *	this function will be called per CPU.  If you don't implement
-> + *	kgdb_call_nmi_hook() a default will be used.
-> + */
-> +
-> +extern void kgdb_call_nmi_hook(void *ignored);
-> +
->  /**
->   *	kgdb_roundup_cpus - Get other CPUs into a holding pattern
->   *
->   *	On SMP systems, we need to get the attention of the other CPUs
->   *	and get them into a known state.  This should do what is needed
->   *	to get the other CPUs to call kgdb_wait(). Note that on some arches,
-> - *	the NMI approach is not used for rounding up all the CPUs. For example,
-> - *	in case of MIPS, smp_call_function() is used to roundup CPUs.
-> + *	the NMI approach is not used for rounding up all the CPUs.  Normally
-> + *	those architectures can just not implement this and get the default.
->   *
->   *	On non-SMP systems, this is not called.
->   */
-> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-> index f3cadda45f07..10db2833a423 100644
-> --- a/kernel/debug/debug_core.c
-> +++ b/kernel/debug/debug_core.c
-> @@ -55,6 +55,7 @@
->  #include <linux/mm.h>
->  #include <linux/vmacache.h>
->  #include <linux/rcupdate.h>
-> +#include <linux/irq.h>
->  
->  #include <asm/cacheflush.h>
->  #include <asm/byteorder.h>
-> @@ -220,6 +221,46 @@ int __weak kgdb_skipexception(int exception, struct pt_regs *regs)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_SMP
-> +
-> +/*
-> + * Default (weak) implementation for kgdb_roundup_cpus
-> + */
-> +
-> +static DEFINE_PER_CPU(call_single_data_t, kgdb_roundup_csd);
-> +
-> +void __weak kgdb_call_nmi_hook(void *ignored)
-> +{
-> +	/*
-> +	 * NOTE: get_irq_regs() is supposed to get the registers from
-> +	 * before the IPI interrupt happened and so is supposed to
-> +	 * show where the processor was.  In some situations it's
-> +	 * possible we might be called without an IPI, so it might be
-> +	 * safer to figure out how to make kgdb_breakpoint() work
-> +	 * properly here.
-> +	 */
-> +	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
-> +}
-> +
-> +void __weak kgdb_roundup_cpus(void)
-> +{
-> +	call_single_data_t *csd;
-> +	int this_cpu = raw_smp_processor_id();
-> +	int cpu;
-> +
-> +	for_each_online_cpu(cpu) {
-> +		/* No need to roundup ourselves */
-> +		if (cpu == this_cpu)
-> +			continue;
-> +
-> +		csd = &per_cpu(kgdb_roundup_csd, cpu);
-> +		csd->func = kgdb_call_nmi_hook;
-> +		smp_call_function_single_async(cpu, csd);
-> +	}
-> +}
-> +
-> +#endif
-> +
->  /*
->   * Some architectures need cache flushes when we set/clear a
->   * breakpoint:
-> -- 
-> 2.20.0.rc0.387.gc7a69e6b6c-goog
-> 
