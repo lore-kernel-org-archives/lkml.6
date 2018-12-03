@@ -2,169 +2,87 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D4DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DDBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42DB221473
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DB221473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C33A921473
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:59:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33A921473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbeLCJ6D (ORCPT
+        id S1726100AbeLCJ7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:58:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:32976 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbeLCJ6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:58:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E86D61688;
-        Mon,  3 Dec 2018 01:57:43 -0800 (PST)
-Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CBDF13F59C;
-        Mon,  3 Dec 2018 01:57:39 -0800 (PST)
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org,
-        quentin.perret@arm.com
-Subject: [PATCH v10 15/15] OPTIONAL: cpufreq: dt: Register an Energy Model
-Date:   Mon,  3 Dec 2018 09:56:28 +0000
-Message-Id: <20181203095628.11858-16-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181203095628.11858-1-quentin.perret@arm.com>
-References: <20181203095628.11858-1-quentin.perret@arm.com>
+        Mon, 3 Dec 2018 04:59:40 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24624 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725945AbeLCJ7k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 04:59:40 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB39p7Cp021675;
+        Mon, 3 Dec 2018 10:58:56 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2p3uhmgrvc-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 03 Dec 2018 10:58:56 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 51B1838;
+        Mon,  3 Dec 2018 09:58:55 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 27A4D1325;
+        Mon,  3 Dec 2018 09:58:55 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.47) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 3 Dec
+ 2018 10:58:54 +0100
+Subject: Re: [PATCH v2] ARM: multi_v7_defconfig: enable STM32 analog & timer
+ drivers
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <arnd@arndb.de>,
+        <mcoquelin.stm32@gmail.com>
+CC:     <linux@armlinux.org.uk>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1538577689-22847-1-git-send-email-fabrice.gasnier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <0e4b96e9-e4de-bd88-ed87-b6a411fdb8fa@st.com>
+Date:   Mon, 3 Dec 2018 10:58:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1538577689-22847-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-*******************************************************************
-* This patch illustrates the usage of the newly introduced Energy *
-* Model framework and isn't supposed to be merged as-is.          *
-*******************************************************************
+Hi Fabrice,
 
-The Energy Model framework provides an API to register the active power
-of CPUs. Call this API from the cpufreq-dt driver with an estimation
-of the power as P = C * V^2 * f with C, V, and f respectively the
-capacitance of the CPU and the voltage and frequency of the OPP.
+On 10/3/18 4:41 PM, Fabrice Gasnier wrote:
+> This enables drivers for STM32 timer, low power timer and analog hardware
+> that can be used on STM32MP1 SoC:
+> - Timer & LP Timer MFD core, PWM, trigger & encoder drivers
+> - IIO ADC/DAC/DFSDM
+> - vrefbuf regu driver (voltage reference buffer).
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>   arch/arm/configs/multi_v7_defconfig | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 
-The CPU capacitance is read from the "dynamic-power-coefficient" DT
-binding (originally introduced for thermal/IPA), and the voltage and
-frequency values from PM_OPP.
+Applied on stm32-next.
 
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- drivers/cpufreq/cpufreq-dt.c | 48 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index e58bfcb1169e..4cfef5554d86 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -16,6 +16,7 @@
- #include <linux/cpu_cooling.h>
- #include <linux/cpufreq.h>
- #include <linux/cpumask.h>
-+#include <linux/energy_model.h>
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -150,8 +151,50 @@ static int resources_available(void)
- 	return 0;
- }
- 
-+static int __maybe_unused of_est_power(unsigned long *mW, unsigned long *KHz,
-+				       int cpu)
-+{
-+	unsigned long mV, Hz, MHz;
-+	struct device *cpu_dev;
-+	struct dev_pm_opp *opp;
-+	struct device_node *np;
-+	u32 cap;
-+	u64 tmp;
-+
-+	cpu_dev = get_cpu_device(cpu);
-+	if (!cpu_dev)
-+		return -ENODEV;
-+
-+	np = of_node_get(cpu_dev->of_node);
-+	if (!np)
-+		return -EINVAL;
-+
-+	if (of_property_read_u32(np, "dynamic-power-coefficient", &cap))
-+		return -EINVAL;
-+
-+	Hz = *KHz * 1000;
-+	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
-+	if (IS_ERR(opp))
-+		return -EINVAL;
-+
-+	mV = dev_pm_opp_get_voltage(opp) / 1000;
-+	dev_pm_opp_put(opp);
-+	if (!mV)
-+		return -EINVAL;
-+
-+	MHz = Hz / 1000000;
-+	tmp = (u64)cap * mV * mV * MHz;
-+	do_div(tmp, 1000000000);
-+
-+	*mW = (unsigned long)tmp;
-+	*KHz = Hz / 1000;
-+
-+	return 0;
-+}
-+
- static int cpufreq_init(struct cpufreq_policy *policy)
- {
-+	struct em_data_callback em_cb = EM_DATA_CB(of_est_power);
- 	struct cpufreq_frequency_table *freq_table;
- 	struct opp_table *opp_table = NULL;
- 	struct private_data *priv;
-@@ -160,7 +203,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	unsigned int transition_latency;
- 	bool fallback = false;
- 	const char *name;
--	int ret;
-+	int ret, nr_opp;
- 
- 	cpu_dev = get_cpu_device(policy->cpu);
- 	if (!cpu_dev) {
-@@ -237,6 +280,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 		ret = -EPROBE_DEFER;
- 		goto out_free_opp;
- 	}
-+	nr_opp = ret;
- 
- 	if (fallback) {
- 		cpumask_setall(policy->cpus);
-@@ -280,6 +324,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->cpuinfo.transition_latency = transition_latency;
- 	policy->dvfs_possible_from_any_cpu = true;
- 
-+	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
-+
- 	return 0;
- 
- out_free_cpufreq_table:
--- 
-2.19.2
-
+Thanks.
+Alex
