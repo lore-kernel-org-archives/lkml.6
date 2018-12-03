@@ -2,236 +2,137 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0E2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E63EDC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 267A42087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:08:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC6D220834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:08:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="r+y9wpEG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 267A42087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdKG+B9P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC6D220834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeLCQIg (ORCPT
+        id S1726765AbeLCQIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:08:36 -0500
-Received: from mail-eopbgr810072.outbound.protection.outlook.com ([40.107.81.72]:19293
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726560AbeLCQIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:08:36 -0500
+        Mon, 3 Dec 2018 11:08:48 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41655 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbeLCQIs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 11:08:48 -0500
+Received: by mail-ed1-f65.google.com with SMTP id z28so11204629edi.8;
+        Mon, 03 Dec 2018 08:08:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v43zDua4GLq9c6JErXxEgUi3BCZ6ChilDJIIPazEdNU=;
- b=r+y9wpEGlpOO6KZYHRcd5hMZEWAsfP5Q3oQlqknetRFYzXhzmdozJIkq1SWT6FX6w2PqWCBaQVhDBmuBPy5YiBwU7qKLy3LGWJCYBZyK9GR7ETct4VzoTiF8n+enS9W4vrEXU3X9eODj0xm62J/CmXK5UT4p3kCfz8lFCMNaAkw=
-Received: from BL0PR02MB5633.namprd02.prod.outlook.com (20.177.241.80) by
- BL0PR02MB4788.namprd02.prod.outlook.com (20.177.144.85) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.21; Mon, 3 Dec 2018 16:05:25 +0000
-Received: from BL0PR02MB5633.namprd02.prod.outlook.com
- ([fe80::68ed:9ca9:c7da:d76d]) by BL0PR02MB5633.namprd02.prod.outlook.com
- ([fe80::68ed:9ca9:c7da:d76d%2]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 16:05:25 +0000
-From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-CC:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shuah Khan <shuah@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Jaejoong Kim <climbbb.kim@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
-Subject: RE: [PATCH v7 01/10] usb: gadget: udc: Add timer support for usb
- requests
-Thread-Topic: [PATCH v7 01/10] usb: gadget: udc: Add timer support for usb
- requests
-Thread-Index: AQHUiWbrxVzoMt2EkU67+RgGKmmQY6Vrp4EAgAEXBVCAAF3jgIAAAp+A
-Date:   Mon, 3 Dec 2018 16:05:24 +0000
-Message-ID: <BL0PR02MB563382F544FBEA926452DCF1A7AE0@BL0PR02MB5633.namprd02.prod.outlook.com>
-References: <BL0PR02MB563334585C8E1EEFF91EAA39A7AE0@BL0PR02MB5633.namprd02.prod.outlook.com>
- <Pine.LNX.4.44L0.1812030945440.21114-100000@netrider.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1812030945440.21114-100000@netrider.rowland.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anuragku@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL0PR02MB4788;6:YPCtVN7guMDf3Rd3Mi88YYrLUsqusxPwC8QAtHwLkuNLUf9QKTkh+7dRGh7nA9aSiLibGNxcOUbAg85uXpxDPDo0vKwz/Fla29m2q7fcEkUOqaIyE23kmXezAipyFdve5qnCse2r4tyjbHODrOR9/W5maEdZwqs+RNNoJwhg583yMH37mwGzCZ7u3CgCSXTsRXhTyG+19FOgrh88wa8UeTncb+Y5wnIUJsEeaHVh8/084n+unFF2gXQM9rAFdHDAeWl7FIjThgydfUfCkJ+Vj83XIZAcd8p8h/CTr+QVieLSkhND/VXmDZePJ+lz0lDrgHKS/pHKvTaYDjIexWb6kKwNa10cqoN2Hi1K3opMKfE+4DDYmax83SYptkqlq0qfgbFT+loi36y2XAXtNSSDd5TqI+fMh2Kr775fZCufIm2+Ulkg00NWCsxUT1FeFhp779K7d2rdPoEWQEtQmii5vQ==;5:6NCRO8PtOThxwZfXRh9t1QhJxGwpxWUBaemXYpdsZcHZkxJ2HD7zA6Qz7lS21RtA/tbhbcCRQjPBZ9Ax44Z6dgktB5q5Lia+1PuKBBqubN6ewDx9Z0W4+oPqvZMaKuJTdCYcs1wTys/WSL/EO+zlP4ABd1XdeIiJE+/xvKTvwdI=;7:dC0HipeiC7AiAUMPBZ/qgFYGNaKS6wlPOhYtKW9l58ygjPUDPaFj/RrO1d7LmkjEbOcNcAADKslg+QfetpVrr+gxBXnRJTDB5D89LpRiehJQ2ZnTMn+u35gbYBD1HgBeJoB/yNNaQE7cQBzjD/CWLQ==
-x-ms-office365-filtering-correlation-id: e2a7c5fe-b12f-4acd-ec45-08d6593922bc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BL0PR02MB4788;
-x-ms-traffictypediagnostic: BL0PR02MB4788:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BL0PR02MB478830B2A8E0E6126A0C92FCA7AE0@BL0PR02MB4788.namprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BL0PR02MB4788;BCL:0;PCL:0;RULEID:;SRVR:BL0PR02MB4788;
-x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(396003)(366004)(376002)(189003)(199004)(13464003)(99286004)(551934003)(105586002)(26005)(106356001)(8936002)(14444005)(81166006)(81156014)(8676002)(55016002)(486006)(476003)(4326008)(53936002)(33656002)(102836004)(186003)(66066001)(97736004)(9686003)(256004)(2906002)(11346002)(446003)(229853002)(71190400001)(71200400001)(478600001)(316002)(3846002)(86362001)(54906003)(14454004)(6436002)(107886003)(2171002)(6116002)(7416002)(7736002)(305945005)(6506007)(76176011)(68736007)(6246003)(74316002)(25786009)(5660300001)(6916009)(39060400002)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR02MB4788;H:BL0PR02MB5633.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: AFHIYrmnnmIfeG/52MQHLSd1iFpSclLDvVTd5vIw8AnxjZ8t844I2MAMe0k8kGMeUH12kzWp/Ots2OwPSn7pDu1qop4UVgnRiyNDckbXHiT1DmcQQbGmV4QcnsaqRrwKSkQ0sRNjNfbfRAcujxQ6oTFNFXPlByBxw2OHMjwPTOT7E2RXdkL5e6A4bKG+NP6CV4sgFAj59v2SZ3Yn6U+kPdAJNKEgtAgS/tYlEEtPEDr7nrcrWXu1xBjL5WncbtyJ3bBPHywCZZoH/2eOR+0+09gZdxgegsmH4PnzF+WsjDiNpRFtPIbN8G6fo3A9+hh0ymElwzR9/eqRlhm9xRSm8CRoUPa1Ov2sBLuXCrmGnSQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3HOgXG8Cr5YsERV2T5rvhw+4316QgprwNLvsEggZMvs=;
+        b=RdKG+B9PB8ntar0iej8TXhgUNUvyRcfSbCHZ6zdaP1QzA2c1q9W3/pVdmCoiUpo0Lg
+         VryQyxeuCFQJ05QuKRvw6Fosc9ABmbsRCrli6z5Crs9UumjoNwF6r3xNK2MYrFET0e0C
+         PYjoJbygsiVs5lSqlGKwRdShcrMmKX9c+S26EDarv6W8sG3KBubSoBprs0QPzDksrSMA
+         vgWk6MiFKXHaUiytyrDMAzU6yVrAZQ3lhPOdusArSEfc/jxs9xHpfHQbIhJSC5MzHbHK
+         F+YyUcGFEwlPUfcFtwuRAnuX4t8+EV/HvOculES6yQRM3mKD2C6VPoTrRVCfngRI7VaZ
+         bItw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3HOgXG8Cr5YsERV2T5rvhw+4316QgprwNLvsEggZMvs=;
+        b=Lp92n55k3vIb+2iMA7y+vNBii2HAFLl7MoPtl/OEZsW/EQ5+fVm3oND0cUDofqo7H+
+         maIiqWPtrXXSb8pnAOcTSRLK5rGHMZ8Kd7P4R8DI6FQROzH3C/AhmqGnLd9gXhsBqdXX
+         Ajj9a1inqBkQTcTLxiWpITyj9XN51mG/lPw09cUBGIiirDxaxbONHGtFX22i+UCy5Jr6
+         Ve5eJqYgOKj7K9gYAsFH9L1m3duQdCm5WahQ/dP6Z/1O0AnR79/b1TszgpLyaA50fT/G
+         QJDtPOmXs/+Hgaiu5zLhnCDswSbW/EolPSqfWPXIrQdMuC7JcBCY8VJm/8MtK8Y8exrO
+         1kLw==
+X-Gm-Message-State: AA+aEWbgY+yc4/J7ip/I4UtZccQGG3+O+OIqoXXtEnFsw8PtfVy3ogaZ
+        BI5uIHrvLviufDyKbTF0FwY=
+X-Google-Smtp-Source: AFSGD/UKbV42t8DqyXyt4zru21D+THZXiIYKtVxajtvdQxAWbreLtTYO+wpJmvKMlE8GPp/DcroC5A==
+X-Received: by 2002:a17:906:2009:: with SMTP id 9-v6mr13782442ejo.2.1543853320074;
+        Mon, 03 Dec 2018 08:08:40 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id k24-v6sm2202838eja.60.2018.12.03.08.08.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 08:08:39 -0800 (PST)
+Date:   Mon, 3 Dec 2018 17:08:37 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Alex Gonzalez <alex.gonzalez@digi.com>
+Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-imx@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/4] drm/panel: simple: Add AUO G101EVN010 panel
+ support
+Message-ID: <20181203160837.GA10037@ulmo>
+References: <1540480173-12009-1-git-send-email-alex.gonzalez@digi.com>
+ <1540480173-12009-2-git-send-email-alex.gonzalez@digi.com>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2a7c5fe-b12f-4acd-ec45-08d6593922bc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 16:05:24.8757
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB4788
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
+Content-Disposition: inline
+In-Reply-To: <1540480173-12009-2-git-send-email-alex.gonzalez@digi.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hi Alan,
+--bg08WKrSYDhXBjb5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->-----Original Message-----
->From: Alan Stern [mailto:stern@rowland.harvard.edu]
->Sent: Monday, December 03, 2018 8:21 PM
->To: Anurag Kumar Vulisha <anuragku@xilinx.com>
->Cc: Felipe Balbi <balbi@kernel.org>; Greg Kroah-Hartman
-><gregkh@linuxfoundation.org>; Shuah Khan <shuah@kernel.org>; Johan Hovold
-><johan@kernel.org>; Jaejoong Kim <climbbb.kim@gmail.com>; Benjamin
->Herrenschmidt <benh@kernel.crashing.org>; Roger Quadros <rogerq@ti.com>; M=
-anu
->Gautam <mgautam@codeaurora.org>; martin.petersen@oracle.com; Bart Van
->Assche <bvanassche@acm.org>; Mike Christie <mchristi@redhat.com>; Matthew
->Wilcox <willy@infradead.org>; Colin Ian King <colin.king@canonical.com>; l=
-inux-
->usb@vger.kernel.org; linux-kernel@vger.kernel.org; v.anuragkumar@gmail.com=
-;
->Thinh Nguyen <thinhn@synopsys.com>; Tejas Joglekar
-><tejas.joglekar@synopsys.com>; Ajay Yugalkishore Pandey <APANDEY@xilinx.co=
-m>
->Subject: RE: [PATCH v7 01/10] usb: gadget: udc: Add timer support for usb =
-requests
->
->On Mon, 3 Dec 2018, Anurag Kumar Vulisha wrote:
->
->> >First of all, if some sort of deadlock causes a transfer to fail to
->> >complete, the host is expected to cancel and restart it.  Not the
->> >gadget.
->> >
->>
->> Thanks for spending your time in reviewing this patch.  The deadlock
->> is  a very rare case scenario and is happening because both the gadget
->> controller & host controllers get out of sync and are stuck waiting for =
-the
->> relevant event. For example this issue is observed in stream protocol wh=
-ere
->> the gadget controller is waiting on Host controller to issue PRIME trans=
-action
->> and  Host controller is waiting on gadget to issue ERDY transaction. Sin=
-ce
->> the stream protocol is gadget driven, the host may not proceed further u=
-ntil it
->> receives a valid Start Stream (ERDY) transaction from gadget.
->
->That's not entirely true.  Can't the host cancel the transfer and then
->restart it?
->
+On Thu, Oct 25, 2018 at 05:09:30PM +0200, Alex Gonzalez wrote:
+> The change adds support for the AU Optronics G101EVN010 10.1" TFT LCD
+> panel.
+>=20
+> Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
+> ---
+>  .../bindings/display/panel/auo,g101evn010          | 12 ++++++++++
+>  drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++=
+++++++
+>  2 files changed, 39 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/auo,g=
+101evn010
 
-Yes the host can cancel the transfer. This issue originated from the endpoi=
-nts using bulk
-streaming protocol and may not occur with normal endpoints. AFAIK bulk stre=
-aming is
-gadget driven, where the gadget is allowed to select which stream id transf=
-er the host
-should work on . Since the host doesn't have control on when the transfer w=
-ould be
-selected by gadget, it may wait for longer timeouts before cancelling the t=
-ransfer.=20
+Two things to keep in mind for next time: please split up DT bindings
+and driver changes into two separate patches (checkpatch.pl warns about
+this) and keep entries in panel-simple sorted alphabetically.
 
->> Since the gadget
->> controller driver is aware that the controller is stuck , makes it respo=
-nsible
->> to recover the controller from hang condition by restarting the transfer=
- (which
->> triggers the controller FSM to issue ERDY to host).
->
->Isn't there a cleaner way to recover than by cancelling the request and
->resubmitting it?
->
+I fixed the sorting myself and also added a .txt suffix to the DT
+binding documentation for consistency with other files in that
+directory.
 
-dequeuing the request issues the stop transfer command to the controller, w=
-hich
-cleans all the hardware resource allocated for that endpoint. This also res=
-ets the
-hardware FSMs for that endpoint . So, when re-queuing of the transfer happe=
-ns
-the controller starts allocating hardware resources again, thus avoiding th=
-e probability
-of entering into the issue. I am not sure of other controllers, but for dwc=
-3, issuing
-the stop transfer is the only way to handle this issue.=20
+Applied to drm-misc-next, thanks.
 
-@Felipe:  Can you please provide your suggestion on this. =20
- =20
->> >Second, if a request timer expires and the request is cancelled, the
->> >gadget driver's completion handler will be called.  This is not what
->> >you want if the UDC core is going to resubmit the request
->> >automatically.
->> >
->> >Third, if a request timer expires and the timer handler calls
->> >usb_ep_dequeue() followed immediately by usb_ep_queue_timeout(), the
->> >resubmit will probably fail because the dequeue won't have completed
->> >yet.
->> >
->> >Fourth, the patch contains a race between the timer expiring and the
->> >request completing.
->>
->> Thanks for correcting, I agree with you on all the above 3 cases that th=
-e
->> resubmission of the request should only be done from the class driver an=
-d
->> the udc core should simply dequeue the request on timeout. I am not sure
->> why I haven't seen any issue while testing on this patch series. I will =
-modify
->> the code to handle the resubmitting of requests properly.
->
->How can the gadget driver know what timeout to use?  The host is
->allowed to be as slow as it wants; the gadget driver doesn't have any
->way to tell when the host wants to start the transfer.
+Thierry
 
-Yes , I agree with you that the timeout may vary from usage to usage. This =
-timeout
-should be decided by the class driver which queues the request. As discusse=
-d above
-this issue was observed in streaming protocol , which  is very much faster =
-than normal
-BOT modes and it works on super speed .  More over the gadget controller de=
-cides
-the selection of the stream id on which the host should work , so taking al=
-l these into
-consideration I kept 50ms timeout for stream transfers, so that the perform=
-ance may
-not get decreased.
+--bg08WKrSYDhXBjb5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Anurag Kumar Vulisha
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwFVQEACgkQ3SOs138+
+s6Gt/Q//fW3RY8o0MJeeWb5pyty3d3BVcUWDLS9phurF90m/1HbMIWE7/8d53bBV
+DavgsKBPmhRlqy1Lu1O3940r+xS6WtlDXzFbt5Iiqd5DtwP+gftTzLND71wohAKc
+Pc9lGjzdbeIndY8VcB/oBAEd62DD5BZsn6gMewARCpvT/VcLRCo5Ks/pkGl8QGbe
+Ze3tzeAQwWMumzrdJLqbyBE72QA0/9/1ql8iqujmyFHZ5A1vlMozihUcnQ6cyyAt
+p9MEJ/TVfKGu42sLc5OW+oPb9f3tLO+G/jVoZ9lLgfRyQH7nyucJPqZ1SPXmI9AR
+OI9g34RCqnldcEjh2QPtCchpZBT9Ip55B/GJxZpFonZVjK1Fty9bpSQ5ZZLo03cT
+OL1psLujcsLAb3TrkKfCt0fROv9xix0qo954o61E5LjmOx3o8OkKvsM68CuSvUVC
+1CrjVZzacco5DeGO5z8NZ4SsmF2hRyzmGNvSAv19toqjXvvrZMasUmSrU+pdBYgW
+aZipFthJkw/jlXnk1UTVvMfd/OHfrwDBiXuLvQSfMJ4aVpti2Kq/q8NF2eZw1OWU
+cJngTfAVPVD1uHVjJSSDv93u/A43hvJMHcVD0gd0Rpu+AXePbHdfPje5Nmni+QZK
+b4S2QNnwsTHZP5pvKP7ai1/OXv/Qjo2DSBQAFLR2Gi7gcRcVRXw=
+=/9Nx
+-----END PGP SIGNATURE-----
+
+--bg08WKrSYDhXBjb5--
