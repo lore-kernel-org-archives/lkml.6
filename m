@@ -2,81 +2,107 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6ACC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7577C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 471FB20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 471FB20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BDC72087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:07:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="D8HGrzy7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BDC72087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbeLCKIN (ORCPT
+        id S1726185AbeLCKIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:08:13 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55273 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbeLCKIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:08:13 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2E90B20CFA; Mon,  3 Dec 2018 11:07:50 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 06D5A20787;
-        Mon,  3 Dec 2018 11:07:40 +0100 (CET)
-Date:   Mon, 3 Dec 2018 11:07:39 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     vitor <vitor.soares@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: Rename dw-i3c-master.c into i3c-master-dw.c
-Message-ID: <20181203110739.0959d6c0@bbrezillon>
-In-Reply-To: <20181126084514.23663-1-boris.brezillon@bootlin.com>
-References: <20181126084514.23663-1-boris.brezillon@bootlin.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 3 Dec 2018 05:08:18 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41774 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeLCKIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 05:08:18 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x10so11449201wrs.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:07:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gylxsZ9fcYlwwbMYTHy/WVwKOtRSFqkbXsc3NH3T39A=;
+        b=D8HGrzy7OYGWo08Qc+ECKpX1y2ejt5+HrIc/yd+Vbf49JlWm2ZtoOGx6cVj697YjZB
+         ZJrcHmYFaBvGDFacfQ9PvGob03Zzvd+GFDzL/EnZ8oE6nKeKfBWveveUlZSZtvmkvRRo
+         jqqsnsC9ocZh40KMwLM4IAvllIzfpIjKgl5CU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gylxsZ9fcYlwwbMYTHy/WVwKOtRSFqkbXsc3NH3T39A=;
+        b=JFYqjnBf2wcZyJB0buUNJACfJaYrLQ1wxHQEStf2oWP59uVXZHWaKYBbdjyzcwVM5y
+         lGMTLXuexLEScQeCetkWrAe3jjVyW/FP4Py+H6ISny8pLRHRT+WE/uZHB1VOdGUC/Anw
+         PtJjH1zruNBfm2V09qGuCtLG+Uurg8Yio5kNqKgnh8xvW3vUEg7pLESlOg7rXLE4vnJx
+         mQr+pf5xTK8nU6C4XeoZCGtK4FXyygJ8WIaFDdHeY2S4Vux6B/i6A8yivOawh0zn4vxq
+         kTp82pjKIT8uy+7ABYURwfGzby+pUfVYdqDEuFU64c8YRBpemTVTBFUgh4nNgl1yAh3Z
+         cQPw==
+X-Gm-Message-State: AA+aEWaxvldG39vqHxwWv12iQudFlyfjantil7Q75Dy0FvKv8mRXlC5L
+        xNjau9PhqYr5vo5/ljnLu463rw==
+X-Google-Smtp-Source: AFSGD/X/ftP2iitUfgcxC8dWoPI4Wirc8tHDe0MCInKQ/fAjCaSEPe51HLEf83+T1guceMN9DtEBIQ==
+X-Received: by 2002:a5d:56d2:: with SMTP id m18mr14405877wrw.113.1543831675070;
+        Mon, 03 Dec 2018 02:07:55 -0800 (PST)
+Received: from localhost.localdomain (conf.hotelmediterraneo.com. [2.228.78.71])
+        by smtp.gmail.com with ESMTPSA id n15sm18589236wrt.21.2018.12.03.02.07.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 02:07:54 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 0/5] media/sun6i: Allwinner A64 CSI support
+Date:   Mon,  3 Dec 2018 15:37:42 +0530
+Message-Id: <20181203100747.16442-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vitor,
+This series support CSI on Allwinner A64.
 
-On Mon, 26 Nov 2018 09:45:14 +0100
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+The CSI controller seems similar to that of in H3, so fallback
+compatible is used to load the driver.
 
-> Follow the naming scheme introduced by the Cadence driver to keep things
-> consistent.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
->  drivers/i3c/master/Makefile                             | 2 +-
->  drivers/i3c/master/{dw-i3c-master.c => i3c-master-dw.c} | 0
->  2 files changed, 1 insertion(+), 1 deletion(-)
->  rename drivers/i3c/master/{dw-i3c-master.c => i3c-master-dw.c} (100%)
+Unlike other SoC's A64 has set of GPIO Pin gropus SDA, SCK intead
+of dedicated I2C controller, so this series used i2c-gpio bitbanging.
 
-Any opinion on this rename. If you disagree with this, then I'd like to
-know it.
+Right now the camera is able to detect, but capture images shows 
+sequence of red, blue line. any suggestion please help.
 
-Regards,
+Any inputs,
+Jagan.
 
-Boris
+Jagan Teki (5):
+  dt-bindings: media: sun6i: Add A64 CSI compatible (w/ H3 fallback)
+  dt-bindings: media: sun6i: Add vcc-csi supply property
+  media: sun6i: Add vcc-csi supply regulator
+  arm64: dts: allwinner: a64: Add A64 CSI controller
+  arm64: dts: allwinner: a64-amarula-relic: Add OV5640 camera node
 
-> 
-> diff --git a/drivers/i3c/master/Makefile b/drivers/i3c/master/Makefile
-> index fc53939a0bb1..c5f52733aa10 100644
-> --- a/drivers/i3c/master/Makefile
-> +++ b/drivers/i3c/master/Makefile
-> @@ -1,2 +1,2 @@
->  obj-$(CONFIG_CDNS_I3C_MASTER)		+= i3c-master-cdns.o
-> -obj-$(CONFIG_DW_I3C_MASTER)		+= dw-i3c-master.o
-> +obj-$(CONFIG_DW_I3C_MASTER)		+= i3c-master-dw.o
-> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/i3c-master-dw.c
-> similarity index 100%
-> rename from drivers/i3c/master/dw-i3c-master.c
-> rename to drivers/i3c/master/i3c-master-dw.c
+ .../devicetree/bindings/media/sun6i-csi.txt   |  4 ++
+ .../allwinner/sun50i-a64-amarula-relic.dts    | 54 +++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 26 +++++++++
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 15 ++++++
+ 4 files changed, 99 insertions(+)
+
+-- 
+2.18.0.321.gffc6fa0e3
 
