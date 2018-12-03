@@ -2,127 +2,203 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4C6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7BCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 192332145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:24:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J1Epz5LC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192332145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AA5BD208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 18:25:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5BD208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeLCSZA (ORCPT
+        id S1726960AbeLCSZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:25:00 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33345 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbeLCSZA (ORCPT
+        Mon, 3 Dec 2018 13:25:09 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38133 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbeLCSZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:25:00 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l11so14960253qtp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:24:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:subject:to:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8S2GCIBmDhpsr9ffz2NPr17A6UX3yXgBFRtRmtKvOXk=;
-        b=J1Epz5LCK4GxDI+tYFXIzr1G5znA7Ywrd/jwMvjYH+3Razy48sX2k5ylAs5+NNshc+
-         B68SO1IlcCVuArI+oE7+iKpqZw6Uve56gWqG9WHO4RBU4qDDJd5y4Kl5N0andDZMsPy0
-         f4XtaV5He9P18+FLEOKM074pFtmHkFtAMEVKE=
+        Mon, 3 Dec 2018 13:25:08 -0500
+Received: by mail-lj1-f193.google.com with SMTP id c19-v6so12347079lja.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:25:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=8S2GCIBmDhpsr9ffz2NPr17A6UX3yXgBFRtRmtKvOXk=;
-        b=nxevdW5vuqb9dhQffzLhi3SqaCZhVX3Z5e6uauF4N02SFbHUe8QGICIZYuNOlZ/0eF
-         Cw/QSQNgXV+y7v92XasKySZhimnyc5wm9ikasciqmTNi+7BCOUGWSsAzxTTLVKqoe5Vx
-         wCUIEpzpZz0KcWJOLwRRFs+sw6DAmaiPUMyB2mB43BtANDvuquk4PCVHXUEoY5ONc2d2
-         d2SBKkXvCB5xxCtqsVQkxPJSqR+vAPIhX+/x4bibet6t3x7Fq1VE8oj3X3yXPzL4QWOh
-         jU1SqNI16cutT5KyyypoVIvxOzPlcgxHmJU8zkq0LLnlGk1aCdPjdUL8jl4BQpfTLC7x
-         qGdw==
-X-Gm-Message-State: AA+aEWb4Cup2InGzD0VhwaSOCXVPMU2qTHYlH7TaHhAQxU6OKqgEQ6hq
-        pqZeC3Ghq3B/7DdL6tveKHil+A==
-X-Google-Smtp-Source: AFSGD/WKMVZMl8p2stz6rPXAyRupvk4CRUdiRupW5C6jKSwVFrTdwHk4qFbHX6nVcwqm1zlbuc5Rhg==
-X-Received: by 2002:aed:3027:: with SMTP id 36mr15949423qte.252.1543861493699;
-        Mon, 03 Dec 2018 10:24:53 -0800 (PST)
-Received: from [192.168.49.18] ([138.204.25.29])
-        by smtp.gmail.com with ESMTPSA id v2sm6540675qte.75.2018.12.03.10.24.50
+        bh=WgJilwBUStRKSYZLqAxIg/s8z1+rPB4jtNqLSi/f7zA=;
+        b=f0A45I87tmVoq9tiLRBNZRnokOIPmba+96bT9sKbEAI1zyuNr7T/SJR34q+yQ9qMGw
+         Nazq9YaTmFTVrPSWfDZFYaBPW+fFVfLGBgvhVuT3eFmg13PubssKPrc3R7xnbCGIPK5R
+         Kxo7I7Du52JsmEB8AH6EBAKk6X54JA5GraltxHCjy3X0X0aWgeErG1uvHBzry7R02KKY
+         VYXYYQUhj9WBrAgbRZSblIDTPWcY1e+fF6ydyDKnnWdUG+LqyzK8jDZXCboTQAh+YywP
+         FV1t5FPexnDa4W9tDVfpFbS108tFmygBKNWy3ZbJSJHuga9n5QHn8g1FObLm0chI3zpZ
+         9EbA==
+X-Gm-Message-State: AA+aEWbVGa0J+sB2nWfkVs1q7YFT2hWS6pFBjd7J3RnlfyrQ4G7uLoWe
+        hSEaDJs5AsttvdsHMVInN3BcRuSMK1s=
+X-Google-Smtp-Source: AFSGD/Wd9zZ1suZVBNqPGdt7RiHv4a1eiguzhdCRVgSqxQ9yB6iDp1nbNX0umvrSNeoOB5q9hJyU3g==
+X-Received: by 2002:a2e:2909:: with SMTP id u9-v6mr10831504lje.28.1543861504746;
+        Mon, 03 Dec 2018 10:25:04 -0800 (PST)
+Received: from [192.168.42.35] ([213.87.151.70])
+        by smtp.gmail.com with ESMTPSA id q67sm2510847lfe.19.2018.12.03.10.25.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 10:24:52 -0800 (PST)
-Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: v4.14 fix for Hikey 960 unbalanced IRQ enablement
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-References: <20181203133107.4002-1-rafael.tinoco@linaro.org>
- <20181203141442.GA19335@kroah.com>
- <dc468512-7a73-3d69-fe9e-d660db85ee5b@linaro.org>
- <20181203151946.GG235790@sasha-vm> <20181203180521.GA15996@kroah.com>
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-Organization: Linaro
-Message-ID: <e0eb7f46-e619-7198-eb78-2b55246b1159@linaro.org>
-Date:   Mon, 3 Dec 2018 16:24:48 -0200
+        Mon, 03 Dec 2018 10:25:03 -0800 (PST)
+Reply-To: alex.popov@linux.com
+Subject: Re: [PATCH 1/1] stackleak: Register the 'stackleak_cleanup' pass
+ before the 'mach' pass
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Richard Sandiford <richard.sandiford@arm.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        amonakov@ispras.ru, Tycho Andersen <tycho@tycho.ws>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Emese Revfy <re.emese@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        gcc@gcc.gnu.org, LKML <linux-kernel@vger.kernel.org>
+References: <1543583987-27948-1-git-send-email-alex.popov@linux.com>
+ <CAGXu5jJ7LmHRJJxtH2HD4XEu5hPLtAe=koJbaCmqF9qoSw=sVw@mail.gmail.com>
+ <CAGXu5jKcRLcAg7r-E-9LMjK0YisLJp2TVYoiBwE+4ctYzi5wkg@mail.gmail.com>
+From:   Alexander Popov <alex.popov@linux.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
+ 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
+ jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
+Message-ID: <e1259720-423c-c1ca-1fe5-b9ef89ad19a3@linux.com>
+Date:   Mon, 3 Dec 2018 21:25:01 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181203180521.GA15996@kroah.com>
+In-Reply-To: <CAGXu5jKcRLcAg7r-E-9LMjK0YisLJp2TVYoiBwE+4ctYzi5wkg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> Greg,
+On 30.11.2018 20:12, Kees Cook wrote:
+> On Fri, Nov 30, 2018 at 9:09 AM Kees Cook <keescook@chromium.org> wrote:
 >>
->> Patch 5 in this series seems to explain the best what is happening here:
+>> On Fri, Nov 30, 2018 at 5:20 AM Alexander Popov <alex.popov@linux.com> wrote:
+>>>
+>>> Currently the 'stackleak_cleanup' pass deleting a CALL insn is executed
+>>> after the 'reload' pass. That allows gcc to do some weird optimization in
+>>> function prologues and epilogues, which are generated later [1].
+>>>
+>>> Let's avoid that by registering the 'stackleak_cleanup' pass before
+>>> the 'mach' pass, which performs the machine dependent code transformations.
+>>> It's the moment when the stack frame size is final and function prologues
+>>> and epilogues are already generated.
+>>>
+>>> [1] https://www.openwall.com/lists/kernel-hardening/2018/11/23/2
+>>>
+>>> Reported-by: kbuild test robot <lkp@intel.com>
+>>> Signed-off-by: Alexander Popov <alex.popov@linux.com>
 >>
->>> With the following changes, we fix all in one:
->>>
->>> - Do the setup, one time, at probe time
->>>
->>> - Add the IRQF_ONESHOT, ack the interrupt in the threaded handler
->>>
->>> - Remove the interrupt handler
->>>
->>> - Set the correct value for the LAG register
->>>
->>> - Remove all the irq_enabled stuff in the code as the interruption
->>>   handling is fixed
->>>
->>> - Remove the 3ms delay
->>>
->>> - Reorder the initialization routine to be in the right order
->>
->> We can't revert anything because the breakage was there since the driver
->> was introduced.
+>> Thanks, applied!
 > 
-> So the driver was broken in 4.14, why not just use 4.19 instead?  This
-> isn't a 4.14 regression, it's something that obviously no one has
-> noticed for a year now, so why backport these big patches to 4.14 now?
+> Eek, no, this is breaking my build badly:
 > 
-> thanks,
+> *** WARNING *** there are active plugins, do not report this as a bug
+> unless you can reproduce it without enabling any plugins.
+> Event                            | Plugins
+> PLUGIN_START_UNIT                | stackleak_plugin
+> kernel/exit.c: In function ‘release_task’:
+> kernel/exit.c:228:1: internal compiler error: Segmentation fault
+>  }
 > 
-> greg k-h
+> Failing with:
 > 
+> gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
 
-This was caught during our functional tests. No direct complains, but,
-since it included a trace, and there was a fix for it, I thought it
-could be accepted for upstream v4.14 (it is included in other v4.14
-kernels, like Android's).
+I've done debugging of gcc with gdb and now understand my mistake.
 
-thanks!
--- 
-Rafael D. Tinoco
-Linaro - Kernel Validation
+It turned out that I register the 'stackleak_cleanup' pass deleting CALL insn
+for that particular moment when the control flow graph is inconsistent.
+
+That's what the machine-specific reorg passes do on various architectures:
+
+  /* We are freeing block_for_insn in the toplev to keep compatibility
+     with old MDEP_REORGS that are not CFG based.  Recompute it now.  */
+  compute_bb_for_insn ();
+
+So recomputing basic block info for insns before calling delete_insn_and_edges()
+fixes the issue.
+
+But I think it's better to register the 'stackleak_cleanup' pass just one pass
+earlier -- before the '*free_cfg' pass. I'll double check it for different
+versions of gcc on all supported architectures and return with a new patch.
+
+Best regards,
+Alexander
