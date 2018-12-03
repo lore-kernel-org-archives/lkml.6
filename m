@@ -2,109 +2,94 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC919C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8CBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A35562087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 906B5214C1
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 16:55:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fLRVKzuE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35562087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JdCwWhMZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 906B5214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbeLCQuA (ORCPT
+        id S1726831AbeLCQzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:50:00 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45299 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeLCQt7 (ORCPT
+        Mon, 3 Dec 2018 11:55:21 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38283 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726756AbeLCQzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:49:59 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so12022505ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 08:49:57 -0800 (PST)
+        Mon, 3 Dec 2018 11:55:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so6759379plb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 08:55:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ckKTYj8os6C0SnRTgb0UJBdry5aI4TuybA26h+N17BA=;
-        b=fLRVKzuEW6L6vp+CLAbARpmwGypmdwBAxrG4wCtb+1WeSgngaAPRHybWYJoyDVnqAm
-         2ek77moz6yV4TltaoUUOjxFPj5ToJw2GYRqktYRzQbIjg5PjFwwd4eh9hDqLyLCYkqaR
-         WrKmFl92Ry9GHNPAOKxCKzgr3vRERVt7V47Yk=
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=6JQgTsMny6xvvZZgxgilTf3orjeNoe4rFmbiXZVDU1g=;
+        b=JdCwWhMZikpmUBhQ9SAP4FW6FaLohiLJkANAws4v/fRl5NEGOXw/VrbE9NT2DYhjCx
+         ZEs/DFyUNJQJmCVveyWkzerQX2wYEGc7UryN9TWEQRZMaPQy/dxqdcDqd8Yvn8ygOJNW
+         qC++gWPtU7OMyIU+6gBAMi1ZImYMjaORfHpy8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ckKTYj8os6C0SnRTgb0UJBdry5aI4TuybA26h+N17BA=;
-        b=WdXlnZEodUpA6swIagnBuqOhkrbLKpIbfof17CeeEq8cRacCcuYdLY/6Ei/geOoI+9
-         IEbVzYzHn0wgcM1yYupeYFOz+dGESwOyWqEC9+DxHhOD32ShCbTbVj/GBd08Taei0nqj
-         0IBfqMpP5HacKDftyXAES9z0DGnctP1qJgRdEIoh6C8YuoUiA0k62BRLBYJNqUqLbIoN
-         GNaTKq8WdVnnkKV+AUxKbz5zHlskubMXilxR14e4iC1kne5Ajwt3h/Avu80g3h9BZ7Pc
-         4EdG5oNhZNaep5JFB7XBPH1vl5zOWgm55XTiGZNIGQSBpTRRLV+FNwPeCmrVyac1LVHp
-         pakQ==
-X-Gm-Message-State: AA+aEWb2C/aqIX3Wqckild2gGlFk3mAyjF02RSkyLzltQygNsPu2f/e+
-        q58aig3eO3lls+5nJDKkTMW+/g0+vhw=
-X-Google-Smtp-Source: AFSGD/U6z00lLFE19pZS8XYUF2293J8oBJ6+4Tl9Lh0PH1O65RhTlEJKSoebn+MFrdm91H/Eybo0Nw==
-X-Received: by 2002:a2e:4503:: with SMTP id s3-v6mr10732031lja.44.1543855796509;
-        Mon, 03 Dec 2018 08:49:56 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id v10-v6sm2792476ljh.72.2018.12.03.08.49.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 08:49:55 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id l15-v6so12043889lja.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 08:49:55 -0800 (PST)
-X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr9333860ljj.120.1543855794955;
- Mon, 03 Dec 2018 08:49:54 -0800 (PST)
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=6JQgTsMny6xvvZZgxgilTf3orjeNoe4rFmbiXZVDU1g=;
+        b=WyAwZsyCN65BINxMQoaDpyCauhEjXVmZ+lELyvfZ4pxlLkBdWmRbxRhyFFVdVFXpIc
+         UpJNw2M0ndUA/BFDCg/yBcbspkasBhf9C8yjxqVp5k+j/9LX9jPQdwt/y1//478x2NZV
+         FrDnrx4ATwNqJqClYva6ShDIh3R6N/nl8EFn4PT3WlrvsXAk2jw96xmqi3vjCUWb6AvO
+         cLpLoumCNlyWh4mugTwdbbbw1AeLXyfZZOIztH+Wyojzv/+/BJ5+4xd4DhR3aVUgH/QC
+         aDKLB6ChceiWHvr1GNLlGDVbyTlme77vTjYIPie+6nLXz62qFmplfybclfXFMvdEnJoD
+         6Y9g==
+X-Gm-Message-State: AA+aEWbQ4f9MRBOD+YT/NztQYQHBOWv6Oo9SAH4OzI//3ANc81pjXQWt
+        LF9d893nslszej6dEU7Sa9kJLQ==
+X-Google-Smtp-Source: AFSGD/UXo6mX0hg+eYaE8CE6Jgkbq2xl/oo61KB0U+9hlyU1b8XHfpN/2UfJGU08q2D1oDDv6ct6gA==
+X-Received: by 2002:a17:902:d697:: with SMTP id v23mr16392931ply.261.1543856118665;
+        Mon, 03 Dec 2018 08:55:18 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id s9sm15670500pgl.88.2018.12.03.08.55.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 08:55:18 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181202093257.3918-1-geert@linux-m68k.org> <20181203110506.GA7485@kroah.com>
- <20181203121519.GA7478@amd>
-In-Reply-To: <20181203121519.GA7478@amd>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Dec 2018 08:49:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiDeCY_ENy9S-6DjPgzzF=1UucJGrKo_K98jYA-yR1jJg@mail.gmail.com>
-Message-ID: <CAHk-=wiDeCY_ENy9S-6DjPgzzF=1UucJGrKo_K98jYA-yR1jJg@mail.gmail.com>
-Subject: Re: [PATCH v3] code-of-conduct: Remove explicit list of
- discrimination factors
-To:     pavel@ucw.cz
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Frank Rowand <frowand.list@gmail.com>, acme@kernel.org,
-        tomi.valkeinen@iki.fi, bvanassche@acm.org,
-        linux-doc@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <1543722903-10989-2-git-send-email-tdas@codeaurora.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, evgreen@google.com,
+        Taniya Das <tdas@codeaurora.org>
+References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
+ <1543722903-10989-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <154385611714.88331.8566017812494618071@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v11 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware
+ bindings
+Date:   Mon, 03 Dec 2018 08:55:17 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 4:15 AM Pavel Machek <pavel@ucw.cz> wrote:
->
-> Linus, I don't think Greg is doing good job maintaining this. Can you
-> take the patch? (Or explain what is going on here, because I don't
-> think public has full story).
+Quoting Taniya Das (2018-12-01 19:55:02)
+> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+> SoCs. This is required for managing the cpu frequency transitions which a=
+re
+> controlled by the hardware engine.
+> =
 
-I think Greg is doing a fine job, and I personally will not take
-patches to the CoC without *much* stronger reasons than just some
-random opinion.
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-This is an area where everybody has opinions, and there is no inherent
-technical agreement (ie no "look, numbers: this makes code 5%
-faster"), so my policy wrt the CoC is that changes to it have to have
-very concrete reasons for them. IOW, actual problems caused by real
-issues, not "in my opinion".
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-Honestly, the list of discrimination factors looks fine to me, and if
-it is shown to be insufficient or problematic, there's the documented
-link to the Code of Conduct Committee. That sounds to me like the
-right way to bring up problematic behavior - and if the review then
-shows that "yes, the CoC should cover this too", then at that point we
-have a real and present example and reason to modify the CoC.
-
-             Linus
