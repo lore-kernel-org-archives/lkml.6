@@ -2,333 +2,299 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA2BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A925C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85800208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:58:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85800208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CED8A2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 15:59:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DsdaMy4L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED8A2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbeLCP6H (ORCPT
+        id S1726670AbeLCP7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:58:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15751 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726560AbeLCP6G (ORCPT
+        Mon, 3 Dec 2018 10:59:46 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51944 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbeLCP7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:58:06 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3FtZvZ012776
-        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 10:58:01 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p5685cfu5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 10:58:00 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 3 Dec 2018 15:47:50 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Dec 2018 15:47:44 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3FlhRm57606288
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Dec 2018 15:47:43 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6931FAE055;
-        Mon,  3 Dec 2018 15:47:43 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2BADBAE05A;
-        Mon,  3 Dec 2018 15:47:40 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.196])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  3 Dec 2018 15:47:40 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 03 Dec 2018 17:47:39 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Greentime Hu <green.hu@gmail.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Mark Salter <msalter@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Rich Felker <dalias@libc.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v2 5/6] arch: simplify several early memory allocations
-Date:   Mon,  3 Dec 2018 17:47:14 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
-References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18120315-0016-0000-0000-00000231613D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120315-0017-0000-0000-0000328966AB
-Message-Id: <1543852035-26634-6-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812030149
+        Mon, 3 Dec 2018 10:59:46 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB3FxC5d105547;
+        Mon, 3 Dec 2018 15:59:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=8difBb/UniRZgtWoNDRuR3Fz6uP3IfLIQMcLXKu/ucA=;
+ b=DsdaMy4LjgkJvDY1eZSPv9pcGq1nyudtSvouObDUUCgsCXNAEuk52H765ksUSio0fgI/
+ D9iwT3MhNpjxECaMteeKTXsjwxpbaVWL1o/uXucIoVQAePgLUY3ZBiNrNrJugR5aMT11
+ pj9Lp4Wa/RO2vRnc/76KUsFr9zdLhGstWaoqr7ES2TFhI+9Y2hUe4ExRAa5fqnGZZyjz
+ wB+/CJ2VjfM6FXly67PLvQE5OFXpm5kW8wH3jWed8LIfiYPUKE1V9qGHN6rd+lV6TnmZ
+ 3zw1bKWBCohUlIpGcgIjSh9YhEagFVmwcTjqBQf1xZw+Za/ohodui/31bkZNSToWT6bG 8A== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2p3hqtq7sg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 Dec 2018 15:59:29 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB3FxTBp004672
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Dec 2018 15:59:29 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB3FxRSp032222;
+        Mon, 3 Dec 2018 15:59:28 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 Dec 2018 07:59:27 -0800
+Subject: Re: [PATCH v4] pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under
+ spinlock
+To:     Wen Yang <wen.yang99@zte.com.cn>, jgross@suse.com,
+        sstabellini@kernel.org
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Julia Lawall <julia.lawall@lip6.fr>
+References: <20181201063303.45089-1-wen.yang99@zte.com.cn>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <bbe2e371-97ec-42b8-bc1a-01c6019d76d6@oracle.com>
+Date:   Mon, 3 Dec 2018 10:59:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181201063303.45089-1-wen.yang99@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=52 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812030150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several early memory allocations in arch/ code that use
-memblock_phys_alloc() to allocate memory, convert the returned physical
-address to the virtual address and then set the allocated memory to zero.
+On 12/1/18 1:33 AM, Wen Yang wrote:
+> The problem is that we call this with a spin lock held.
+> The call tree is:
+> pvcalls_front_accept() holds bedata->socket_lock.
+>     -> create_active()
+>         -> __get_free_pages() uses GFP_KERNEL
+>
+> The create_active() function is only called from pvcalls_front_accept()
+> with a spin_lock held, The allocation is not allowed to sleep and
+> GFP_KERNEL is not sufficient.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> v2: Add a function doing the allocations which is called
+>     outside the lock and passing the allocated data to
+>     create_active().
+>
+> v3: Use the matching deallocators i.e., free_page()
+>     and free_pages(), respectively.
+>
+> v4: It would be better to pre-populate map (struct sock_mapping),
+>     rather than introducing one more new struct.
+>
+> Suggested-by: Juergen Gross <jgross@suse.com>
+> Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Suggested-by: Stefano Stabellini <sstabellini@kernel.org>
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> CC: Julia Lawall <julia.lawall@lip6.fr>
+> CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> CC: Juergen Gross <jgross@suse.com>
+> CC: Stefano Stabellini <sstabellini@kernel.org>
+> CC: xen-devel@lists.xenproject.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  drivers/xen/pvcalls-front.c | 57 ++++++++++++++++++++++++++++++-------
+>  1 file changed, 46 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+> index 77224d8f3e6f..555c9abdf58f 100644
+> --- a/drivers/xen/pvcalls-front.c
+> +++ b/drivers/xen/pvcalls-front.c
+> @@ -335,13 +335,18 @@ int pvcalls_front_socket(struct socket *sock)
+>  	return ret;
+>  }
+>  
+> -static int create_active(struct sock_mapping *map, int *evtchn)
+> +static void free_active_ring(struct sock_mapping *map)
+>  {
+> -	void *bytes;
+> -	int ret = -ENOMEM, irq = -1, i;
+> +	if (!map)
+> +		return;
+> +	free_pages((unsigned long)map->active.data.in,
+> +			map->active.ring->ring_order);
+> +	free_page((unsigned long)map->active.ring);
+> +}
+>  
+> -	*evtchn = -1;
+> -	init_waitqueue_head(&map->active.inflight_conn_req);
+> +static int alloc_active_ring(struct sock_mapping *map)
+> +{
+> +	void *bytes;
+>  
+>  	map->active.ring = (struct pvcalls_data_intf *)
+>  		__get_free_page(GFP_KERNEL | __GFP_ZERO);
+> @@ -352,6 +357,26 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+>  					PVCALLS_RING_ORDER);
+>  	if (bytes == NULL)
+>  		goto out_error;
+> +	map->active.data.in = bytes;
+> +	map->active.data.out = bytes +
+> +		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
+> +
+> +	return 0;
+> +
+> +out_error:
+> +	free_active_ring(map);
+> +	return -ENOMEM;
+> +}
+> +
+> +static int create_active(struct sock_mapping *map, int *evtchn)
+> +{
+> +	void *bytes;
+> +	int ret = -ENOMEM, irq = -1, i;
+> +
+> +	*evtchn = -1;
+> +	init_waitqueue_head(&map->active.inflight_conn_req);
+> +
+> +	bytes = map->active.data.in;
 
-Exactly the same behaviour can be achieved simply by calling
-memblock_alloc(): it allocates the memory in the same way as
-memblock_phys_alloc(), then it performs the phys_to_virt() conversion and
-clears the allocated memory.
+Why is this needed?
 
-Replace the longer sequence with a simpler call to memblock_alloc().
+I may not be be reading the diff correctly, but your patch appears to be
+whitespace-damaged and I can't apply it.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- arch/arm/mm/mmu.c                     |  4 +---
- arch/c6x/mm/dma-coherent.c            |  9 ++-------
- arch/nds32/mm/init.c                  | 12 ++++--------
- arch/powerpc/kernel/setup-common.c    |  4 ++--
- arch/powerpc/mm/pgtable_32.c          |  4 +---
- arch/powerpc/mm/ppc_mmu_32.c          |  3 +--
- arch/powerpc/platforms/powernv/opal.c |  3 +--
- arch/sparc/kernel/prom_64.c           |  7 ++-----
- arch/sparc/mm/init_64.c               |  9 +++------
- arch/unicore32/mm/mmu.c               |  4 +---
- 10 files changed, 18 insertions(+), 41 deletions(-)
+>  	for (i = 0; i < (1 << PVCALLS_RING_ORDER); i++)
+>  		map->active.ring->ref[i] = gnttab_grant_foreign_access(
+>  			pvcalls_front_dev->otherend_id,
+> @@ -361,10 +386,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+>  		pvcalls_front_dev->otherend_id,
+>  		pfn_to_gfn(virt_to_pfn((void *)map->active.ring)), 0);
+>  
+> -	map->active.data.in = bytes;
+> -	map->active.data.out = bytes +
+> -		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
+> -
+>  	ret = xenbus_alloc_evtchn(pvcalls_front_dev, evtchn);
+>  	if (ret)
+>  		goto out_error;
+> @@ -385,8 +406,7 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+>  out_error:
+>  	if (*evtchn >= 0)
+>  		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
+> -	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
+> -	free_page((unsigned long)map->active.ring);
+> +	free_active_ring(map);
 
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index f5cc1cc..0a04c9a5 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -721,9 +721,7 @@ EXPORT_SYMBOL(phys_mem_access_prot);
- 
- static void __init *early_alloc_aligned(unsigned long sz, unsigned long align)
- {
--	void *ptr = __va(memblock_phys_alloc(sz, align));
--	memset(ptr, 0, sz);
--	return ptr;
-+	return memblock_alloc(sz, align);
- }
- 
- static void __init *early_alloc(unsigned long sz)
-diff --git a/arch/c6x/mm/dma-coherent.c b/arch/c6x/mm/dma-coherent.c
-index 01305c7..ffc49e2 100644
---- a/arch/c6x/mm/dma-coherent.c
-+++ b/arch/c6x/mm/dma-coherent.c
-@@ -118,8 +118,6 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
-  */
- void __init coherent_mem_init(phys_addr_t start, u32 size)
- {
--	phys_addr_t bitmap_phys;
--
- 	if (!size)
- 		return;
- 
-@@ -135,11 +133,8 @@ void __init coherent_mem_init(phys_addr_t start, u32 size)
- 	if (dma_size & (PAGE_SIZE - 1))
- 		++dma_pages;
- 
--	bitmap_phys = memblock_phys_alloc(BITS_TO_LONGS(dma_pages) * sizeof(long),
--					  sizeof(long));
--
--	dma_bitmap = phys_to_virt(bitmap_phys);
--	memset(dma_bitmap, 0, dma_pages * PAGE_SIZE);
-+	dma_bitmap = memblock_alloc(BITS_TO_LONGS(dma_pages) * sizeof(long),
-+				    sizeof(long));
- }
- 
- static void c6x_dma_sync(struct device *dev, phys_addr_t paddr, size_t size,
-diff --git a/arch/nds32/mm/init.c b/arch/nds32/mm/init.c
-index 131104b..9f19be8 100644
---- a/arch/nds32/mm/init.c
-+++ b/arch/nds32/mm/init.c
-@@ -80,8 +80,7 @@ static void __init map_ram(void)
- 		}
- 
- 		/* Alloc one page for holding PTE's... */
--		pte = (pte_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
--		memset(pte, 0, PAGE_SIZE);
-+		pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 		set_pmd(pme, __pmd(__pa(pte) + _PAGE_KERNEL_TABLE));
- 
- 		/* Fill the newly allocated page with PTE'S */
-@@ -113,8 +112,7 @@ static void __init fixedrange_init(void)
- 	pgd = swapper_pg_dir + pgd_index(vaddr);
- 	pud = pud_offset(pgd, vaddr);
- 	pmd = pmd_offset(pud, vaddr);
--	fixmap_pmd_p = (pmd_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
--	memset(fixmap_pmd_p, 0, PAGE_SIZE);
-+	fixmap_pmd_p = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 	set_pmd(pmd, __pmd(__pa(fixmap_pmd_p) + _PAGE_KERNEL_TABLE));
- 
- #ifdef CONFIG_HIGHMEM
-@@ -126,8 +124,7 @@ static void __init fixedrange_init(void)
- 	pgd = swapper_pg_dir + pgd_index(vaddr);
- 	pud = pud_offset(pgd, vaddr);
- 	pmd = pmd_offset(pud, vaddr);
--	pte = (pte_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
--	memset(pte, 0, PAGE_SIZE);
-+	pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 	set_pmd(pmd, __pmd(__pa(pte) + _PAGE_KERNEL_TABLE));
- 	pkmap_page_table = pte;
- #endif /* CONFIG_HIGHMEM */
-@@ -152,8 +149,7 @@ void __init paging_init(void)
- 	fixedrange_init();
- 
- 	/* allocate space for empty_zero_page */
--	zero_page = __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
--	memset(zero_page, 0, PAGE_SIZE);
-+	zero_page = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 	zone_sizes_init();
- 
- 	empty_zero_page = virt_to_page(zero_page);
-diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-index 93ee370..8f6c763 100644
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -459,8 +459,8 @@ void __init smp_setup_cpu_maps(void)
- 
- 	DBG("smp_setup_cpu_maps()\n");
- 
--	cpu_to_phys_id = __va(memblock_phys_alloc(nr_cpu_ids * sizeof(u32), __alignof__(u32)));
--	memset(cpu_to_phys_id, 0, nr_cpu_ids * sizeof(u32));
-+	cpu_to_phys_id = memblock_alloc(nr_cpu_ids * sizeof(u32),
-+					__alignof__(u32));
- 
- 	for_each_node_by_type(dn, "cpu") {
- 		const __be32 *intserv;
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index bda3c6f..9931e68 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -50,9 +50,7 @@ __ref pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long address)
- 	if (slab_is_available()) {
- 		pte = (pte_t *)__get_free_page(GFP_KERNEL|__GFP_ZERO);
- 	} else {
--		pte = __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
--		if (pte)
--			clear_page(pte);
-+		pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 	}
- 	return pte;
- }
-diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
-index f6f575b..fddf823 100644
---- a/arch/powerpc/mm/ppc_mmu_32.c
-+++ b/arch/powerpc/mm/ppc_mmu_32.c
-@@ -224,8 +224,7 @@ void __init MMU_init_hw(void)
- 	 * Find some memory for the hash table.
- 	 */
- 	if ( ppc_md.progress ) ppc_md.progress("hash:find piece", 0x322);
--	Hash = __va(memblock_phys_alloc(Hash_size, Hash_size));
--	memset(Hash, 0, Hash_size);
-+	Hash = memblock_alloc(Hash_size, Hash_size);
- 	_SDR1 = __pa(Hash) | SDR1_LOW_BITS;
- 
- 	Hash_end = (struct hash_pte *) ((unsigned long)Hash + Hash_size);
-diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
-index beed86f..29ee2ea 100644
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -171,8 +171,7 @@ int __init early_init_dt_scan_recoverable_ranges(unsigned long node,
- 	/*
- 	 * Allocate a buffer to hold the MC recoverable ranges.
- 	 */
--	mc_recoverable_range =__va(memblock_phys_alloc(size, __alignof__(u64)));
--	memset(mc_recoverable_range, 0, size);
-+	mc_recoverable_range = memblock_alloc(size, __alignof__(u64));
- 
- 	for (i = 0; i < mc_recoverable_range_len; i++) {
- 		mc_recoverable_range[i].start_addr =
-diff --git a/arch/sparc/kernel/prom_64.c b/arch/sparc/kernel/prom_64.c
-index c37955d..2a17665 100644
---- a/arch/sparc/kernel/prom_64.c
-+++ b/arch/sparc/kernel/prom_64.c
-@@ -34,16 +34,13 @@
- 
- void * __init prom_early_alloc(unsigned long size)
- {
--	unsigned long paddr = memblock_phys_alloc(size, SMP_CACHE_BYTES);
--	void *ret;
-+	void *ret = memblock_alloc(size, SMP_CACHE_BYTES);
- 
--	if (!paddr) {
-+	if (!ret) {
- 		prom_printf("prom_early_alloc(%lu) failed\n", size);
- 		prom_halt();
- 	}
- 
--	ret = __va(paddr);
--	memset(ret, 0, size);
- 	prom_early_allocated += size;
- 
- 	return ret;
-diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
-index 3c8aac2..52884f4 100644
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@ -1089,16 +1089,13 @@ static void __init allocate_node_data(int nid)
- 	struct pglist_data *p;
- 	unsigned long start_pfn, end_pfn;
- #ifdef CONFIG_NEED_MULTIPLE_NODES
--	unsigned long paddr;
- 
--	paddr = memblock_phys_alloc_try_nid(sizeof(struct pglist_data),
--					    SMP_CACHE_BYTES, nid);
--	if (!paddr) {
-+	NODE_DATA(nid) = memblock_alloc_node(sizeof(struct pglist_data),
-+					     SMP_CACHE_BYTES, nid);
-+	if (!NODE_DATA(nid)) {
- 		prom_printf("Cannot allocate pglist_data for nid[%d]\n", nid);
- 		prom_halt();
- 	}
--	NODE_DATA(nid) = __va(paddr);
--	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
- 
- 	NODE_DATA(nid)->node_id = nid;
- #endif
-diff --git a/arch/unicore32/mm/mmu.c b/arch/unicore32/mm/mmu.c
-index 040a8c2..50d8c1a 100644
---- a/arch/unicore32/mm/mmu.c
-+++ b/arch/unicore32/mm/mmu.c
-@@ -143,9 +143,7 @@ static void __init build_mem_type_table(void)
- 
- static void __init *early_alloc(unsigned long sz)
- {
--	void *ptr = __va(memblock_phys_alloc(sz, sz));
--	memset(ptr, 0, sz);
--	return ptr;
-+	return memblock_alloc(sz, sz);
- }
- 
- static pte_t * __init early_pte_alloc(pmd_t *pmd, unsigned long addr,
--- 
-2.7.4
+
+I think that since you are allocating the data outside of this call it
+should also be freed outside, when create_active() fails.
+
+-boris
+
+
+>  	return ret;
+>  }
+>  
+> @@ -406,11 +426,17 @@ int pvcalls_front_connect(struct socket *sock, struct sockaddr *addr,
+>  		return PTR_ERR(map);
+>  
+>  	bedata = dev_get_drvdata(&pvcalls_front_dev->dev);
+> +	ret = alloc_active_ring(map);
+> +	if (ret < 0) {
+> +		pvcalls_exit_sock(sock);
+> +		return ret;
+> +	}
+>  
+>  	spin_lock(&bedata->socket_lock);
+>  	ret = get_request(bedata, &req_id);
+>  	if (ret < 0) {
+>  		spin_unlock(&bedata->socket_lock);
+> +		free_active_ring(map);
+>  		pvcalls_exit_sock(sock);
+>  		return ret;
+>  	}
+> @@ -780,12 +806,20 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
+>  		}
+>  	}
+>  
+> +	ret = alloc_active_ring(map);
+> +	if (ret < 0) {
+> +		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+> +				(void *)&map->passive.flags);
+> +		pvcalls_exit_sock(sock);
+> +		return ret;
+> +	}
+>  	spin_lock(&bedata->socket_lock);
+>  	ret = get_request(bedata, &req_id);
+>  	if (ret < 0) {
+>  		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+>  			  (void *)&map->passive.flags);
+>  		spin_unlock(&bedata->socket_lock);
+> +		free_active_ring(map);
+>  		pvcalls_exit_sock(sock);
+>  		return ret;
+>  	}
+> @@ -794,6 +828,7 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
+>  		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+>  			  (void *)&map->passive.flags);
+>  		spin_unlock(&bedata->socket_lock);
+> +		free_active_ring(map);
+>  		pvcalls_exit_sock(sock);
+>  		return -ENOMEM;
+>  	}
 
