@@ -2,189 +2,316 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC6FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D194C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB79A21486
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:55:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntek37qY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB79A21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BA6DF21473
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:56:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA6DF21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbeLCJz5 (ORCPT
+        id S1726149AbeLCJ46 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:55:57 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36279 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbeLCJz4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:55:56 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a18so4961710wmj.1;
-        Mon, 03 Dec 2018 01:55:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=oquu/FLEYKFqheu1MmlHCc7UFKoKcnbDa1+fz6cQYyw=;
-        b=ntek37qYIOE2AVdo9ePJ3B97NwFWQmBmJN4ubwhG5SC2ZZGvqCGyWR13GR3bHuR7fJ
-         EG6DjBBZOTruN4/bgRJ+YquY5MN+2bL6VIM1g8p/5Ly5HLahYCcGEOMWBQBjCd+WXAcl
-         LJEvVWzBso39+Nd1UUjF8tZQFcvFKbONy7fYwuQbENg9ebcwF3D9bP2C2yAUoquf/kQ6
-         Ov/dKLZJiopX/TQY2He6daotI+/qCOSEcON6MOMBt2e+UnTU0Hjb9HYarpW7JPR2QycV
-         ZvP4LmfQ/FcWpi5ZSLpIsjNGQHWE2dlLDeRRD4GcULjf2gAX3sfve8pTm+7mQVLlYNRM
-         zYKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=oquu/FLEYKFqheu1MmlHCc7UFKoKcnbDa1+fz6cQYyw=;
-        b=RaQoA0EKAYqGX3ct4UHpIGryMvFP6AOXNJzf8k99g6HvYpyv11N7WltSuXy5CNs/6k
-         o7HPZM163ftiM4SOsuFhJUQINXcuLJhPqxx2dACrJCl9GUvOTFgc+hJ+hjXcebyllUcn
-         uuFSqRyMr8lqW6spD3qElRH0z4L75R2O+xtxI1elNocDke+j4KgGDHLeFelpWEc5Ek17
-         XZ7OYB+HN+dS4XgJdbABQVrU7vi5BTzCXYKAP1djVdjJF7mUpE5OS6XUcn4Q/3uc93YQ
-         BzJ59ftd3CHCcAvtheOlnD4CkKCcNHMg5veYAwL9fl8+C6RGVrjfaSeWgTPTQjLuFpJr
-         258g==
-X-Gm-Message-State: AA+aEWasxpJykL79r5SNtUfNdb9/q6BNcrYN3b+yjpO86H06slnxOMoV
-        FQ/IRIVr+sy4kSExHIq3xSYN/LWUcPQpt9WsUCo5KQ==
-X-Google-Smtp-Source: AFSGD/W2lNCq5ymchhm8sH+YHYqBKeodnuPpszYR5lQAk4WGsHD/8ASSIjF/IotoDkKc7nYnSn/7Fq9iNz/ZYrQ1dv0=
-X-Received: by 2002:a1c:934b:: with SMTP id v72mr4250395wmd.5.1543830935350;
- Mon, 03 Dec 2018 01:55:35 -0800 (PST)
+        Mon, 3 Dec 2018 04:56:58 -0500
+Received: from foss.arm.com ([217.140.101.70]:60758 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725864AbeLCJ45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 04:56:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 431AA80D;
+        Mon,  3 Dec 2018 01:56:38 -0800 (PST)
+Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 017663F59C;
+        Mon,  3 Dec 2018 01:56:33 -0800 (PST)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org,
+        quentin.perret@arm.com
+Subject: [PATCH v10 00/15] Energy Aware Scheduling
+Date:   Mon,  3 Dec 2018 09:56:13 +0000
+Message-Id: <20181203095628.11858-1-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <CAK+_RLnYbyDrqRbm6-AyRmG4=iFrqqL_UrzHuhPO1_jD1F9WSQ@mail.gmail.com>
- <CAK+_RLk=WL1SxtNF7YRw5eLGjcCc9o2dcHodgFw7SoFPSm25Xw@mail.gmail.com>
-In-Reply-To: <CAK+_RLk=WL1SxtNF7YRw5eLGjcCc9o2dcHodgFw7SoFPSm25Xw@mail.gmail.com>
-From:   Tigran Aivazian <aivazian.tigran@gmail.com>
-Date:   Mon, 3 Dec 2018 09:55:23 +0000
-Message-ID: <CAK+_RLmJTrc3P0q0rzjoo4LD=g2cyA0eRwoVUtg-V8kPYEg7eg@mail.gmail.com>
-Subject: Re: [patch set 4.19.6] BFS updates
-To:     torvalds@linux-foundation.org, LKML <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org, gregkh@linuxfoundation.org
-Content-Type: multipart/mixed; boundary="0000000000007ede09057c1b2647"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000007ede09057c1b2647
-Content-Type: text/plain; charset="UTF-8"
+This patch series introduces Energy Aware Scheduling (EAS) for CFS tasks
+on platforms with asymmetric CPU topologies (e.g. Arm big.LITTLE).
 
-Re-sending the patches with the "Cc: stable@vger.kernel.org" included
-in the sign-off area, as per Option 1 of the rules Greg referred me
-to. I hope that now I have done everything by the rules.
+For more details about the ideas behind it and the overall design,
+please refer to the cover letter of version 5 [1].
 
-On Sun, 2 Dec 2018 at 21:42, Tigran Aivazian <aivazian.tigran@gmail.com> wrote:
->
-> just wanted to add: although the subject says "4.19.6" the patches
-> apply perfectly to the top of "torvalds/linux" tree from github.
-> On Sun, 2 Dec 2018 at 21:01, Tigran Aivazian <aivazian.tigran@gmail.com> wrote:
-> >
-> > Hi Linus,
-> >
-> > I attached two incremental patches for BFS:
-> >
-> > 1. Make inode bitmap allocation static (applies on top of 4.19.6)
-> > 2. Strengthen the superblock sanity checking code (applies on top of 1. above)
-> >
-> > Kind regards,
-> > Tigran
+1. Version history
+------------------
 
---0000000000007ede09057c1b2647
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="bfs-4.19.6-1-of-2-static-inode-bitmap.patch"
-Content-Disposition: attachment; 
-	filename="bfs-4.19.6-1-of-2-static-inode-bitmap.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jp84ycg10>
-X-Attachment-Id: f_jp84ycg10
+Changes v9[2]->v10:
+- Re-factored schedutil_freq_util() to avoid useless identation (patch 02)
+- Moved sched_cpufreq_governor_change() to linux/cpufreq.h (patch 08)
+- Reworked the static key enabling code (patch 09)
 
-RnJvbTogVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21haWwuY29tPgpTdWJqZWN0
-OiBbUEFUQ0ggNC4xOS42IDEvMl0gQkZTIHVwZGF0ZXMKCk1ha2UgaW4tY29yZSBpbm9kZSBiaXRt
-YXAgc3RhdGljIHBhcnQgb2Ygc3VwZXJibG9jayBpbmZvIHN0cnVjdHVyZSBhbi4KcHJpbnQgYSB3
-YXJuaW5nIHdoZW4gbW91bnRpbmcgYSBCRlMgZmlsZXN5c3RlbSBjcmVhdGVkIHdpdGggIi1OIDUx
-MiIKb3B0aW9uIGFzIG9ubHkgNTEwIGZpbGVzIGNhbiBiZSBjcmVhdGVkIGluIHRoZSByb290IGRp
-cmVjdG9yeS4KClNpZ25lZC1vZmYtYnk6IFRpZ3JhbiBBaXZhemlhbiA8YWl2YXppYW4udGlncmFu
-QGdtYWlsLmNvbT4KQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcKLS0tCgogYmZzLmggICB8ICAg
-IDkgKysrKysrKystCiBpbm9kZS5jIHwgICAyNyArKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0K
-IDIgZmlsZXMgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pCgotLS0g
-ZnMvYmZzL2Jmcy5oLjAJMjAxOC0xMi0wMiAyMDozMzowMi4yNTI3MTAyOTEgKzAwMDAKKysrIGZz
-L2Jmcy9iZnMuaAkyMDE4LTEyLTAyIDIwOjM0OjM0LjA0MTI0NjQ4OSArMDAwMApAQCAtOCw2ICs4
-LDEzIEBACiAKICNpbmNsdWRlIDxsaW51eC9iZnNfZnMuaD4KIAorLyogSW4gdGhlb3J5IEJGUyBz
-dXBwb3J0cyB1cCB0byA1MTIgaW5vZGVzLCBudW1iZXJlZCBmcm9tIDIgKGZvciAvKSB1cCB0byA1
-MTMgaW5jbHVzaXZlLgorICAgSW4gYWN0dWFsIGZhY3QsIGF0dGVtcHRpbmcgdG8gY3JlYXRlIHRo
-ZSA1MTJ0aCBpbm9kZSAoaS5lLiBpbm9kZSBOby4gNTEzIG9yIGZpbGUgTm8uIDUxMSkKKyAgIHdp
-bGwgZmFpbCB3aXRoIEVOT1NQQyBpbiBiZnNfYWRkX2VudHJ5KCk6IHRoZSByb290IGRpcmVjdG9y
-eSBjYW5ub3QgY29udGFpbiBzbyBtYW55IGVudHJpZXMsIGNvdW50aW5nICcuLicuCisgICBTbywg
-bWtmcy5iZnMoOCkgc2hvdWxkIHJlYWxseSBsaW1pdCBpdHMgLU4gb3B0aW9uIHRvIDUxMSBhbmQg
-bm90IDUxMi4gRm9yIG5vdywgd2UganVzdCBwcmludCBhIHdhcm5pbmcKKyAgIGlmIGEgZmlsZXN5
-c3RlbSBpcyBtb3VudGVkIHdpdGggc3VjaCAiaW1wb3NzaWJsZSB0byBmaWxsIHVwIiBudW1iZXIg
-b2YgaW5vZGVzICovCisjZGVmaW5lIEJGU19NQVhfTEFTVEkJNTEzCisKIC8qCiAgKiBCRlMgZmls
-ZSBzeXN0ZW0gaW4tY29yZSBzdXBlcmJsb2NrIGluZm8KICAqLwpAQCAtMTcsNyArMjQsNyBAQAog
-CXVuc2lnbmVkIGxvbmcgc2lfZnJlZWk7CiAJdW5zaWduZWQgbG9uZyBzaV9sZl9lYmxrOwogCXVu
-c2lnbmVkIGxvbmcgc2lfbGFzdGk7Ci0JdW5zaWduZWQgbG9uZyAqc2lfaW1hcDsKKwlERUNMQVJF
-X0JJVE1BUChzaV9pbWFwLCBCRlNfTUFYX0xBU1RJKzEpOwogCXN0cnVjdCBtdXRleCBiZnNfbG9j
-azsKIH07CiAKLS0tIGZzL2Jmcy9pbm9kZS5jLjAJMjAxOC0xMi0wMiAyMDozNDowMy4yMTE3NDA4
-NzcgKzAwMDAKKysrIGZzL2Jmcy9pbm9kZS5jCTIwMTgtMTItMDIgMjA6MzY6NTQuNTA4OTYzODEz
-ICswMDAwCkBAIC0yMTQsNyArMjE0LDYgQEAKIAkJcmV0dXJuOwogCiAJbXV0ZXhfZGVzdHJveSgm
-aW5mby0+YmZzX2xvY2spOwotCWtmcmVlKGluZm8tPnNpX2ltYXApOwogCWtmcmVlKGluZm8pOwog
-CXMtPnNfZnNfaW5mbyA9IE5VTEw7CiB9CkBAIC0zMjIsNyArMzIxLDcgQEAKIAlzdHJ1Y3QgYnVm
-ZmVyX2hlYWQgKmJoLCAqc2JoOwogCXN0cnVjdCBiZnNfc3VwZXJfYmxvY2sgKmJmc19zYjsKIAlz
-dHJ1Y3QgaW5vZGUgKmlub2RlOwotCXVuc2lnbmVkIGksIGltYXBfbGVuOworCXVuc2lnbmVkIGk7
-CiAJc3RydWN0IGJmc19zYl9pbmZvICppbmZvOwogCWludCByZXQgPSAtRUlOVkFMOwogCXVuc2ln
-bmVkIGxvbmcgaV9zYmxvY2ssIGlfZWJsb2NrLCBpX2VvZmYsIHNfc2l6ZTsKQEAgLTM1NiwxMyAr
-MzU1LDExIEBACiAJCWdvdG8gb3V0MTsKIAl9CiAKLQlpbmZvLT5zaV9sYXN0aSA9IChsZTMyX3Rv
-X2NwdShiZnNfc2ItPnNfc3RhcnQpIC0gQkZTX0JTSVpFKSAvCi0JCQkJCXNpemVvZihzdHJ1Y3Qg
-YmZzX2lub2RlKQotCQkJCQkrIEJGU19ST09UX0lOTyAtIDE7Ci0JaW1hcF9sZW4gPSAoaW5mby0+
-c2lfbGFzdGkgLyA4KSArIDE7Ci0JaW5mby0+c2lfaW1hcCA9IGt6YWxsb2MoaW1hcF9sZW4sIEdG
-UF9LRVJORUwgfCBfX0dGUF9OT1dBUk4pOwotCWlmICghaW5mby0+c2lfaW1hcCkgewotCQlwcmlu
-dGYoIkNhbm5vdCBhbGxvY2F0ZSAldSBieXRlc1xuIiwgaW1hcF9sZW4pOworCWluZm8tPnNpX2xh
-c3RpID0gKGxlMzJfdG9fY3B1KGJmc19zYi0+c19zdGFydCkgLSBCRlNfQlNJWkUpIC8gc2l6ZW9m
-KHN0cnVjdCBiZnNfaW5vZGUpICsgQkZTX1JPT1RfSU5PIC0gMTsKKwlpZiAoaW5mby0+c2lfbGFz
-dGkgPT0gQkZTX01BWF9MQVNUSSkKKwkJcHJpbnRmKCJXQVJOSU5HOiBmaWxlc3lzdGVtICVzIHdh
-cyBjcmVhdGVkIHdpdGggNTEyIGlub2RlcywgdGhlIHJlYWwgbWF4aW11bSBpcyA1MTEsIG1vdW50
-aW5nIGFueXdheVxuIiwgcy0+c19pZCk7CisJZWxzZSBpZiAoaW5mby0+c2lfbGFzdGkgPiBCRlNf
-TUFYX0xBU1RJKSB7CisJCXByaW50ZigiSW1wb3NzaWJsZSBsYXN0IGlub2RlIG51bWJlciAlbHUg
-PiAlZCBvbiAlc1xuIiwgaW5mby0+c2lfbGFzdGksIEJGU19NQVhfTEFTVEksIHMtPnNfaWQpOwog
-CQlnb3RvIG91dDE7CiAJfQogCWZvciAoaSA9IDA7IGkgPCBCRlNfUk9PVF9JTk87IGkrKykKQEAg
-LTM3MiwxMiArMzY5LDEyIEBACiAJaW5vZGUgPSBiZnNfaWdldChzLCBCRlNfUk9PVF9JTk8pOwog
-CWlmIChJU19FUlIoaW5vZGUpKSB7CiAJCXJldCA9IFBUUl9FUlIoaW5vZGUpOwotCQlnb3RvIG91
-dDI7CisJCWdvdG8gb3V0MTsKIAl9CiAJcy0+c19yb290ID0gZF9tYWtlX3Jvb3QoaW5vZGUpOwog
-CWlmICghcy0+c19yb290KSB7CiAJCXJldCA9IC1FTk9NRU07Ci0JCWdvdG8gb3V0MjsKKwkJZ290
-byBvdXQxOwogCX0KIAogCWluZm8tPnNpX2Jsb2NrcyA9IChsZTMyX3RvX2NwdShiZnNfc2ItPnNf
-ZW5kKSArIDEpID4+IEJGU19CU0laRV9CSVRTOwpAQCAtMzkxLDcgKzM4OCw3IEBACiAJaWYgKCFi
-aCkgewogCQlwcmludGYoIkxhc3QgYmxvY2sgbm90IGF2YWlsYWJsZTogJWx1XG4iLCBpbmZvLT5z
-aV9ibG9ja3MgLSAxKTsKIAkJcmV0ID0gLUVJTzsKLQkJZ290byBvdXQzOworCQlnb3RvIG91dDI7
-CiAJfQogCWJyZWxzZShiaCk7CiAKQEAgLTQyOSw3ICs0MjYsNyBAQAogCiAJCQlicmVsc2UoYmgp
-OwogCQkJcmV0ID0gLUVJTzsKLQkJCWdvdG8gb3V0MzsKKwkJCWdvdG8gb3V0MjsKIAkJfQogCiAJ
-CWlmICghZGktPmlfaW5vKSB7CkBAIC00NDgsMTEgKzQ0NSw5IEBACiAJYmZzX2R1bXBfaW1hcCgi
-cmVhZF9zdXBlciIsIHMpOwogCXJldHVybiAwOwogCi1vdXQzOgorb3V0MjoKIAlkcHV0KHMtPnNf
-cm9vdCk7CiAJcy0+c19yb290ID0gTlVMTDsKLW91dDI6Ci0Ja2ZyZWUoaW5mby0+c2lfaW1hcCk7
-CiBvdXQxOgogCWJyZWxzZShzYmgpOwogb3V0Ogo=
---0000000000007ede09057c1b2647
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="bfs-4.19.6-2-of-2-strengthen-sanity-checking.patch"
-Content-Disposition: attachment; 
-	filename="bfs-4.19.6-2-of-2-strengthen-sanity-checking.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jp84ycge1>
-X-Attachment-Id: f_jp84ycge1
+Changes v8[3]->v9:
+- Rebased on latest tip/sched/core (trivial conflict with PSI stuff in
+  sched.h)
+- Added documentation for the sched_energy_aware sysctl
 
-RnJvbTogVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21haWwuY29tPgpTdWJqZWN0
-OiBbUEFUQ0ggNC4xOS42IDIvMl0gQkZTIHVwZGF0ZXMKClN0cmVuZ3RoZW4gdGhlIHN1cGVyYmxv
-Y2sgc2FuaXR5IGNoZWNraW5nIChzdXBlcnNlZGVzIHRoZSBjb2RlCnRoYXQgd2VudCBpbnRvIDQu
-MTkuNikuCgpTaWduZWQtb2ZmLWJ5OiBUaWdyYW4gQWl2YXppYW4gPGFpdmF6aWFuLnRpZ3JhbkBn
-bWFpbC5jb20+CkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnCi0tLQoKIGlub2RlLmMgfCAgICAy
-ICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCi0tLSBm
-cy9iZnMvaW5vZGUuYy4wCTIwMTgtMTItMDIgMjA6NDk6MDAuNTI1NDYxMzU0ICswMDAwCisrKyBm
-cy9iZnMvaW5vZGUuYwkyMDE4LTEyLTAyIDIwOjQ5OjUxLjA1NDY4Njc3OSArMDAwMApAQCAtMzUw
-LDcgKzM1MCw3IEBACiAJcy0+c19tYWdpYyA9IEJGU19NQUdJQzsKIAogCWlmIChsZTMyX3RvX2Nw
-dShiZnNfc2ItPnNfc3RhcnQpID4gbGUzMl90b19jcHUoYmZzX3NiLT5zX2VuZCkgfHwKLQkgICAg
-bGUzMl90b19jcHUoYmZzX3NiLT5zX3N0YXJ0KSA8IEJGU19CU0laRSkgeworCSAgICBsZTMyX3Rv
-X2NwdShiZnNfc2ItPnNfc3RhcnQpIDwgc2l6ZW9mKHN0cnVjdCBiZnNfc3VwZXJfYmxvY2spICsg
-c2l6ZW9mKHN0cnVjdCBiZnNfZGlyZW50KSkgewogCQlwcmludGYoIlN1cGVyYmxvY2sgaXMgY29y
-cnVwdGVkXG4iKTsKIAkJZ290byBvdXQxOwogCX0K
---0000000000007ede09057c1b2647--
+Changes v7[4]->v8:
+- Added kerneldoc to enum schedutil_type (patch 02)
+- Added 'max' argument to schedutil_freq_util() (patch 02)
+- Added schedutil_energy_util() wrapper (patch 02)
+- Added smp_store_release() to the EM loading code (patch 03)
+- Renamed 'obj' field of struct perf_domain to 'em_pd' (patch 05)
+- Added plain WARN when the EM is too large for EAS (patch 07)
+- Added dmesg warning when EAS gets disabled by switching from sugov
+  (patch 08)
+- Replaced sched_feat(ENERGY_AWARE) by a sysctl + static key (patches 09
+  and 10)
+- Improved/refactored find_energy_efficient_cpu() and compute_energy()
+  for readability (patches 13 and 14)
+
+Changes v6[5]->v7:
+- Replaced the sched_energy_present static key by a sched_feat
+- Replaced the CPUFreq notifier in the dependency between sugov and EAS
+  by a function call
+- Squashed all sugov-refactoring patches into patch 02
+- Clarified comment in em_fd_energy() to explain the choice of “energy”
+  over “power”
+- Added kerneldoc to structs in include/linux/energy_model.h
+- Removed unnecessary memory barrier from the EM framework
+- Fixed corner case in find_energy_efficient_cpu when prev_cpu is
+  overutilized (and prev_energy = ULONG_MAX)
+
+Changes v5[1]->v6:
+- Rebased on Peter’s sched/core branch (that includes Morten's misfit
+  patches [6] and the automatic detection of SD_ASYM_CPUCAPACITY [7])
+- Removed patch 13/14 (not needed with the automatic flag detection)
+- Added patch creating a dependency between sugov and EAS
+- Renamed frequency domains to performance domains to avoid creating too
+  deep assumptions in the code about the HW
+- Renamed the sd_ea shortcut sd_asym_cpucapacity
+- Added comment to explain why new tasks are not accounted when
+  detecting the 'overutilized' flag
+- Added comment explaining why forkees don’t go in
+  find_energy_efficient_cpu()
+
+Changes v4[8]->v5:
+- Removed the RCU protection of the EM tables and the associated
+  need for em_rescale_cpu_capacity().
+- Factorized schedutil’s PELT aggregation function with EAS
+- Improved comments/doc in the EM framework
+- Added check on the uarch of CPUs in one fd in the EM framework
+- Reduced CONFIG_ENERGY_MODEL ifdefery in kernel/sched/topology.c
+- Cleaned-up update_sg_lb_stats parameters
+- Improved comments in compute_energy() to explain the multi-rd
+  scenarios
+
+Changes v3[9]->v4:
+- Replaced spinlock in EM framework by smp_store_release/READ_ONCE
+- Fixed missing locks to protect rcu_assign_pointer in EM framework
+- Fixed capacity calculation in EM framework on 32 bits system
+- Fixed compilation issue for CONFIG_ENERGY_MODEL=n
+- Removed cpumask from struct em_freq_domain, now dynamically allocated
+- Power costs of the EM are specified in milliwatts
+- Added example of CPUFreq driver modification
+- Added doc/comments in the EM framework and better commit header
+- Fixed integration issue with util_est in cpu_util_next()
+- Changed scheduler topology code to have one freq. dom. list per rd
+- Split sched topology patch in smaller patches
+- Added doc/comments explaining the heuristic in the wake-up path
+- Changed energy threshold for migration to from 1.5% to 6%
+
+Changes v2[10]->v3:
+- Removed the PM_OPP dependency by implementing a new EM framework
+- Modified the scheduler topology code to take references on the EM data
+  structures
+- Simplified the overutilization mechanism into a system-wide flag
+- Reworked the integration in the wake-up path using the sd_ea shortcut
+- Rebased on tip/sched/core (247f2f6f3c70 "sched/core: Don't schedule
+  threads on pre-empted vCPUs")
+
+Changes v1[11]->v2:
+- Reworked interface between fair.c and energy.[ch] (Remove #ifdef
+  CONFIG_PM_OPP from energy.c) (Greg KH)
+- Fixed licence & header issue in energy.[ch] (Greg KH)
+- Reordered EAS path in select_task_rq_fair() (Joel)
+- Avoid prev_cpu if not allowed in select_task_rq_fair() (Morten/Joel)
+- Refactored compute_energy() (Patrick)
+- Account for RT/IRQ pressure in task_fits() (Patrick)
+- Use UTIL_EST and DL utilization during OPP estimation (Patrick/Juri)
+- Optimize selection of CPU candidates in the energy-aware wake-up path
+- Rebased on top of tip/sched/core (commit b720342849fe “sched/core:
+  Update Preempt_notifier_key to modern API”)
+
+
+2. Test results
+---------------
+
+Two fundamentally different tests were executed. Firstly the energy test
+case shows the impact on energy consumption this patch-set has using a
+synthetic set of tasks. Secondly the performance test case provides the
+conventional hackbench metric numbers.
+
+The tests run on two arm64 big.LITTLE platforms: Hikey960 (4xA73 +
+4xA53) and Juno r0 (2xA57 + 4xA53).
+
+Base kernel is tip/sched/core (based on 4.19), with some Hikey960 and
+Juno specific patches. Test branch: [12].
+
+
+2.1 Energy test case
+
+10 iterations of between 10 and 50 periodic rt-app tasks (16ms period,
+5% duty-cycle) for 30 seconds with energy measurement. Unit is Joules.
+The goal is to save energy, so lower is better.
+
+2.1.1 Hikey960
+
+Energy is measured with an ACME Cape on an instrumented board. Numbers
+include consumption of big and little CPUs, LPDDR memory, GPU and most
+of the other small components on the board. They do not include
+consumption of the radio chip (turned-off anyway) and external
+connectors.
+
++----------+-----------------+-------------------------+
+|          | Without patches | With patches            |
++----------+--------+--------+------------------+------+
+| Tasks nb |  Mean  | RSD*   | Mean             | RSD* |
++----------+--------+--------+------------------+------+
+|       10 |  32.55 |   1.59 |  28.91 (-11.20%) | 1.59 |
+|       20 |  53.39 |   0.91 |  42.58 (-20.25%) | 0.60 |
+|       30 |  66.16 |   2.73 |  60.30  (-8.86%) | 3.84 |
+|       40 |  90.70 |   3.63 |  81.42 (-10.23%) | 3.76 |
+|       50 | 132.07 |   7.37 | 108.18 (-18.09%) | 7.43 |
++----------+-----------------+-------------------------+
+
+2.1.2 Juno r0
+
+Energy is measured with the onboard energy meter. Numbers include
+consumption of big and little CPUs.
+
++----------+-----------------+-------------------------+
+|          | Without patches | With patches            |
++----------+--------+--------+------------------+------+
+| Tasks nb |  Mean  | RSD*   | Mean             | RSD* |
++----------+--------+--------+------------------+------+
+|       10 |   8.96 |   0.35 |   6.54 (-27.00%) | 0.38 |
+|       20 |  16.79 |   0.90 |  13.66 (-18.66%) | 0.94 |
+|       30 |  28.60 |   2.71 |  21.06 (-26.37%) | 0.98 |
+|       40 |  41.21 |   1.95 |  31.20 (-24.30%) | 2.80 |
+|       50 |  53.69 |   1.21 |  49.29  (-8.20%) | 1.39 |
++----------+-----------------+-------------------------+
+
+
+2.2 Performance test case
+
+30 iterations of perf bench sched messaging --pipe --thread --group G
+--loop L with G=[1 2 4 8] and L=50000 (Hikey960)/16000 (Juno r0).
+
+2.2.1 Hikey960
+
+The impact of thermal capping was mitigated thanks to a heatsink, a
+fan, and a 30 sec delay between two successive executions. IPA is
+disabled to reduce the stddev.
+
++----------------+-----------------+-----------------------+
+|                | Without patches | With patches          |
++--------+-------+---------+-------+----------------+------+
+| Groups | Tasks | Mean    | RSD*  | Mean           | RSD* |
++--------+-------+---------+-------+----------------+------+
+|      1 |    40 |    8.32 |  0.09 |  8.45 (+1.64%) | 0.10 |
+|      2 |    80 |   15.16 |  0.07 | 15.32 (+1.04%) | 0.08 |
+|      4 |   160 |   31.29 |  0.20 | 31.64 (+1.12%) | 0.19 |
+|      8 |   320 |   66.25 |  0.28 | 66.69 (+0.67%) | 0.33 |
++--------+-------+---------+-------+----------------+------+
+
+2.2.2 Juno r0
+
++----------------+-----------------+-----------------------+
+|                | Without patches | With patches          |
++--------+-------+---------+-------+----------------+------+
+| Groups | Tasks | Mean    | RSD*  | Mean           | RSD* |
++--------+-------+---------+-------+----------------+------+
+|      1 |    40 |    8.38 |  0.09 |  8.50 (+1.41%) | 0.11 |
+|      2 |    80 |   15.32 |  0.10 | 15.67 (+2.31%) | 0.20 |
+|      4 |   160 |   29.12 |  0.20 | 29.65 (+1.82%) | 0.14 |
+|      8 |   320 |   58.42 |  0.26 | 59.81 (+2.38%) | 0.37 |
++--------+-------+---------+-------+----------------+------+
+
+
+*RSD: Relative Standard Deviation (std dev / mean)
+
+
+[1]  https://marc.info/?l=linux-kernel&m=153243513908731&w=2 (V5)
+[2]  https://marc.info/?l=linux-kernel&m=154269969931689&w=2 (V9)
+[3]  https://marc.info/?l=linux-kernel&m=153968492908835&w=2 (V8)
+[4]  https://marc.info/?l=linux-kernel&m=153674360525432&w=2 (V7)
+[5]  https://marc.info/?l=linux-kernel&m=153476300928169&w=2 (V6)
+[6]  https://marc.info/?l=linux-kernel&m=153069968022982&w=2 (Misfit)
+[7]  https://marc.info/?l=linux-kernel&m=153209362826476&w=2 (SD_ASYM_CPUCAPACITY)
+[8]  https://marc.info/?l=linux-kernel&m=153018606728533&w=2 (V4)
+[9]  https://marc.info/?l=linux-kernel&m=152691273111941&w=2 (V3)
+[10] https://marc.info/?l=linux-kernel&m=152302902427143&w=2 (V2)
+[11] https://marc.info/?l=linux-kernel&m=152153905805048&w=2 (V1)
+[12] http://www.linux-arm.org/git?p=linux-qp.git;a=shortlog;h=refs/heads/upstream/eas_v10
+
+
+Morten Rasmussen (1):
+  sched: Add over-utilization/tipping point indicator
+
+Quentin Perret (14):
+  sched: Relocate arch_scale_cpu_capacity
+  sched/cpufreq: Prepare schedutil for Energy Aware Scheduling
+  PM: Introduce an Energy Model management framework
+  PM / EM: Expose the Energy Model in sysfs
+  sched/topology: Reference the Energy Model of CPUs when available
+  sched/topology: Lowest CPU asymmetry sched_domain level pointer
+  sched/topology: Disable EAS on inappropriate platforms
+  sched/topology: Make Energy Aware Scheduling depend on schedutil
+  sched: Introduce sched_energy_present static key
+  sched: Introduce a sysctl for Energy Aware Scheduling
+  sched/fair: Clean-up update_sg_lb_stats parameters
+  sched/fair: Introduce an energy estimation helper function
+  sched/fair: Select an energy-efficient CPU on task wake-up
+  OPTIONAL: cpufreq: dt: Register an Energy Model
+
+ Documentation/sysctl/kernel.txt  |  12 ++
+ drivers/cpufreq/cpufreq-dt.c     |  48 ++++-
+ drivers/cpufreq/cpufreq.c        |   1 +
+ include/linux/cpufreq.h          |   8 +
+ include/linux/energy_model.h     | 189 +++++++++++++++++++
+ include/linux/sched/cpufreq.h    |   6 +
+ include/linux/sched/sysctl.h     |   7 +
+ include/linux/sched/topology.h   |  19 ++
+ kernel/power/Kconfig             |  15 ++
+ kernel/power/Makefile            |   2 +
+ kernel/power/energy_model.c      | 291 +++++++++++++++++++++++++++++
+ kernel/sched/cpufreq_schedutil.c |  90 +++++++--
+ kernel/sched/fair.c              | 305 +++++++++++++++++++++++++++++--
+ kernel/sched/sched.h             |  84 ++++++---
+ kernel/sched/topology.c          | 258 +++++++++++++++++++++++++-
+ kernel/sysctl.c                  |  11 ++
+ 16 files changed, 1280 insertions(+), 66 deletions(-)
+ create mode 100644 include/linux/energy_model.h
+ create mode 100644 kernel/power/energy_model.c
+
+-- 
+2.19.2
+
