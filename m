@@ -2,141 +2,107 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4769CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3570DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0185F20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:31:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="szPcHjbY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0185F20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 07B5120850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 13:32:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B5120850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbeLCNcv (ORCPT
+        id S1726592AbeLCNdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 08:32:51 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33819 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbeLCNcv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:32:51 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 17so5740876pgg.1;
-        Mon, 03 Dec 2018 05:31:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Vv+Jso5Cu154zWL31wEKKL+Cxc5/IY3r+EdUjHnkACY=;
-        b=szPcHjbYjBkyc0cB5lHIzBWyLw8VXOqJmmqGHLOjow8xTNpPs874EHTvbNgPZxeQDY
-         tGVZvC3PqhD5dK7OEVgjHShxZSj/qZHvrLPqeHCcgkPrW8xP9wOgc61iChJXeUmjIGPw
-         E4cqpofBajXje1l8dUa7/LvfY6eENQOEafmnAmRGo2tItk4TttyewvaqlmMQU4/rO89w
-         irgYdh2aiAHu8w0gFHk7CJMFZ5Gz59FRWzAWwXtaoAXy1cYzbw3aJp0j1Y4pKUnyEvfv
-         4gBles1hGEMmP2GTAFAMWHZTSn0StP4C0DRwZaAz4rIyncHxi+AErQRkj91mZIx1Upmu
-         C1DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Vv+Jso5Cu154zWL31wEKKL+Cxc5/IY3r+EdUjHnkACY=;
-        b=To5Orfh1E14ZUdHfkEnNFxAGL3sYX11FNhivRSdcwQQa4oASy6ECQcE+V8BGKTjDnf
-         +SsDeD5IevkSf2CVuB0Dccq94+WDfpwJZDlxII4MpWQFUjd1YpbxnuwsiMuOT3iz0yNP
-         t/VZ0RfOHRbHS/53cqfvSRhAQD6bHWuq43MS6WU4pyzcKj7il+TpZqV5SfeEVkuZ+o5a
-         nIttPiNssmZWyA9VAgVs+7Vsqde/ieEte4Ivb9lKjGBposIazqntG2qLe8dMzot96UFR
-         afUR1xWKm7Wjm4SCqqKNW66pLX4oT2liEudYPuFe7KUh3SHABKYm8cC5n9wcwE8qC0AV
-         wtoQ==
-X-Gm-Message-State: AA+aEWbySgqVUYkWjwbRLUm+gOlBBzp9kASYYYFR+PDbteloNqPhJz/R
-        FMCEWx11FKmmpYAqqEIWfLOaGJl4i0M=
-X-Google-Smtp-Source: AFSGD/X/UixODgGe+0E6rX/MfiepPOMU3kRCJq2X6tcnK4O0AUIbHtuIe2M8Lg+qEz/G4utanI024g==
-X-Received: by 2002:a63:1f4e:: with SMTP id q14mr12725673pgm.88.1543843908870;
-        Mon, 03 Dec 2018 05:31:48 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id v62sm26951764pfd.163.2018.12.03.05.31.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 05:31:47 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     pizza@shaftnet.org, kvalo@codeaurora.org, davem@davemloft.net
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] wireless/cw1200: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Mon,  3 Dec 2018 08:31:45 -0500
-Message-Id: <20181203133145.12430-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 3 Dec 2018 08:33:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:37218 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725861AbeLCNdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 08:33:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D46E80D;
+        Mon,  3 Dec 2018 05:32:19 -0800 (PST)
+Received: from [10.1.37.145] (p8cg001049571a15.cambridge.arm.com [10.1.37.145])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49D473F614;
+        Mon,  3 Dec 2018 05:32:17 -0800 (PST)
+Subject: Re: [PATCH v9 2/8] KVM: arm/arm64: Re-factor setting the Stage 2
+ entry to exec on fault
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     suzuki.poulose@arm.com, marc.zyngier@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
+References: <20181031175745.18650-1-punit.agrawal@arm.com>
+ <20181031175745.18650-3-punit.agrawal@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <12212830-ffc6-a0e0-5de6-3e6a15ed7141@arm.com>
+Date:   Mon, 3 Dec 2018 19:02:23 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181031175745.18650-3-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/net/wireless/st/cw1200/debug.c | 32 ++++----------------------
- 1 file changed, 4 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/net/wireless/st/cw1200/debug.c b/drivers/net/wireless/st/cw1200/debug.c
-index 295cb1a29f25..2231ba08bc1f 100644
---- a/drivers/net/wireless/st/cw1200/debug.c
-+++ b/drivers/net/wireless/st/cw1200/debug.c
-@@ -289,19 +289,7 @@ static int cw1200_status_show(struct seq_file *seq, void *v)
- 	return 0;
- }
- 
--static int cw1200_status_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, &cw1200_status_show,
--		inode->i_private);
--}
--
--static const struct file_operations fops_status = {
--	.open = cw1200_status_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--	.owner = THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(cw1200_status);
- 
- static int cw1200_counters_show(struct seq_file *seq, void *v)
- {
-@@ -345,19 +333,7 @@ static int cw1200_counters_show(struct seq_file *seq, void *v)
- 	return 0;
- }
- 
--static int cw1200_counters_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, &cw1200_counters_show,
--		inode->i_private);
--}
--
--static const struct file_operations fops_counters = {
--	.open = cw1200_counters_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--	.owner = THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(cw1200_counters);
- 
- static ssize_t cw1200_wsm_dumps(struct file *file,
- 	const char __user *user_buf, size_t count, loff_t *ppos)
-@@ -399,11 +375,11 @@ int cw1200_debug_init(struct cw1200_common *priv)
- 		goto err;
- 
- 	if (!debugfs_create_file("status", 0400, d->debugfs_phy,
--				 priv, &fops_status))
-+				 priv, &cw1200_status_fops))
- 		goto err;
- 
- 	if (!debugfs_create_file("counters", 0400, d->debugfs_phy,
--				 priv, &fops_counters))
-+				 priv, &cw1200_counters_fops))
- 		goto err;
- 
- 	if (!debugfs_create_file("wsm_dumps", 0200, d->debugfs_phy,
--- 
-2.17.0
+On 10/31/2018 11:27 PM, Punit Agrawal wrote:
+> Stage 2 fault handler marks a page as executable if it is handling an
+> execution fault or if it was a permission fault in which case the
+> executable bit needs to be preserved.
+> 
+> The logic to decide if the page should be marked executable is
+> duplicated for PMD and PTE entries. To avoid creating another copy
+> when support for PUD hugepages is introduced refactor the code to
+> share the checks needed to mark a page table entry as executable.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  virt/kvm/arm/mmu.c | 28 +++++++++++++++-------------
+>  1 file changed, 15 insertions(+), 13 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 59595207c5e1..6912529946fb 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1475,7 +1475,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  			  unsigned long fault_status)
+>  {
+>  	int ret;
+> -	bool write_fault, exec_fault, writable, force_pte = false;
+> +	bool write_fault, writable, force_pte = false;
+> +	bool exec_fault, needs_exec;
 
+New line not required, still within 80 characters.
+
+>  	unsigned long mmu_seq;
+>  	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
+>  	struct kvm *kvm = vcpu->kvm;
+> @@ -1598,19 +1599,25 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	if (exec_fault)
+>  		invalidate_icache_guest_page(pfn, vma_pagesize);
+>  
+> +	/*
+> +	 * If we took an execution fault we have made the
+> +	 * icache/dcache coherent above and should now let the s2
+
+Coherent or invalidated with invalidate_icache_guest_page ?
+
+> +	 * mapping be executable.
+> +	 *
+> +	 * Write faults (!exec_fault && FSC_PERM) are orthogonal to
+> +	 * execute permissions, and we preserve whatever we have.
+> +	 */
+
+Otherwise looks good.
