@@ -2,140 +2,148 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B40D1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CB8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3EB2145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDCC520672
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 07:11:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BXf8Yzsg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3EB2145D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="issLcm1+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCC520672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725888AbeLCHHs (ORCPT
+        id S1725872AbeLCHLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 02:07:48 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36778 "EHLO
+        Mon, 3 Dec 2018 02:11:51 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34756 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeLCHHs (ORCPT
+        with ESMTP id S1725829AbeLCHLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 02:07:48 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u3so10890997wrs.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 23:07:42 -0800 (PST)
+        Mon, 3 Dec 2018 02:11:51 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so10920052wrw.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 23:11:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=WEOZR9xSFVjqHvE33ySvpJqV9F90/x6lhhmYYgQP3kI=;
-        b=BXf8YzsgyUNDYM4OpFzibn74Dr4byLcExFQGkV+Zo42blSxIh/H1jzIsH8rwH1ktS+
-         fPnlEX1au1QthM1IjfnlSnwuh9RJTfdRjNsywy5/AHFa49G/zGxjoCAKwNQR+8OUpw9L
-         fZ+FbZU2NQuix/tkQzq6gPCtVfH2qzPteeqlA=
+        bh=4GbBcrVQ1hMdFpT0/ZG5K3ZR9XdGo+EI9dB/QL8dm40=;
+        b=issLcm1+qkl/fSBaNN0DURD3UqUdxAEqDOznoVgxJqXj5V4w0352SBOdZyUzoWjX95
+         YwcpV7zpXlhTXPr1IasTetZETKjp9rAUY7TCeCQrsBsjFA4ZbWvS7d9vNIdJPwNYpzCt
+         pEYV1RFi2OhuRftoc8ZtxQljAaR05heSrm3Gs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=WEOZR9xSFVjqHvE33ySvpJqV9F90/x6lhhmYYgQP3kI=;
-        b=UnSEB1GAwPqYcmhIU8ESL1/nk/MnVeKhTKX7sXoLW7Iha3CPStsQ1EmOXFX+6Nw5Uu
-         QWytW+5uWLyJP90GnU0l+EKtjxwtJLy0frR9TsBKy139lnJhJGbS3cBJVTcpdkAQ3rPV
-         lcw1k9pchupNn0MPJARVV6Gw2J57L0Q9QMV1AzHDsSTXeLKTNOHQyKkv7G/xsB5uF+01
-         Nv4kioG7kiKg/3rMwCvailP0KzXrcSrahJK0MdsY7zb8HZPi1U4mybQm97Z0mc08Exfh
-         +K6mhNJmSQugnWR2xJWTWkrreF20FDUnXDxFskESFVjEn6t16hV9PUednncw/26DYmWD
-         xD/Q==
-X-Gm-Message-State: AA+aEWailPe3Ps6ZPK+tdcQd4ENcrychunXTO0ets38wEAIV2iSkDSmF
-        1wL+a9sizH2U3rrTcOkkZ3Tjkg==
-X-Google-Smtp-Source: AFSGD/WwmRigedoPfb0oSFEr157qOVa2Mz7fDL0wahStvCxk1fAQ2V0oWoDruA11xOLR/wQE/cVtrQ==
-X-Received: by 2002:a05:6000:8a:: with SMTP id m10mr12330886wrx.79.1543820861691;
-        Sun, 02 Dec 2018 23:07:41 -0800 (PST)
+        bh=4GbBcrVQ1hMdFpT0/ZG5K3ZR9XdGo+EI9dB/QL8dm40=;
+        b=bhqhmeLXlMPb5N6dpUdiuF7xyf4+ow2pR56EEze18FtENPaxG6Cfr0xoJN3rtrVfYc
+         PJizTAaMLazwSNRqDBklvdDguHDRjzfQ4yy990KpGbccyPEnft0kXpwbZqNtgKfi1g00
+         f8JvrJ/GjVQRuk/4ENfq+22fDI4B209OQK5hQ4QIsqz5g89OLTJzmVCOUB+S0gwH/ki2
+         0ElKz+dQjKVaTkifY5S8rwkX+c/6OtN6vtCasMvMOTTYy4MyssJIhjL4AfVaySqMs1YZ
+         DgBLKfVEmobpJlRd8Cs3kV+KLFqfufaBu0Af0xLuci+XiVuxJI549v2o4rqnkL3PE0nS
+         sFww==
+X-Gm-Message-State: AA+aEWYQ9UYxSal8LJc56oQgFHpUOiUUsTwSS7ARiI9Rsp2gS/O4CvHt
+        AaP1El7zlujLcJer15YbpEy7eg==
+X-Google-Smtp-Source: AFSGD/U8oLvsb409XdE/CQFpiJb9xYQlf/62EAyfWyIVQezdbUJS9Fvfrl5PhDh5LKPnq16pWUuoww==
+X-Received: by 2002:adf:ae41:: with SMTP id u1mr12234688wrd.20.1543821108104;
+        Sun, 02 Dec 2018 23:11:48 -0800 (PST)
 Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id o4sm4970208wmo.29.2018.12.02.23.07.40
+        by smtp.gmail.com with ESMTPSA id g198sm4931795wmd.23.2018.12.02.23.11.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Dec 2018 23:07:40 -0800 (PST)
-Date:   Mon, 3 Dec 2018 07:07:39 +0000
+        Sun, 02 Dec 2018 23:11:47 -0800 (PST)
+Date:   Mon, 3 Dec 2018 07:11:45 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        robert.jarzmik@free.fr,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        kernel@collabora.com,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        stable@vger.kernel.org, u.kleine-koenig@pengutronix.de,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Subject: Re: [PATCH v3] backlight: pwm_bl: Fix brightness levels for non-DT
- case.
-Message-ID: <20181203070739.GK6009@dell>
-References: <20181107085507.26126-1-enric.balletbo@collabora.com>
- <CAFqH_53NiYULqcc+2fCgbHETJoTc7tWD8BNxOFhPm6kFZ=e6_g@mail.gmail.com>
+To:     Pascal PAILLET-LME <p.paillet@st.com>
+Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+Subject: Re: [PATCH v7 0/7] Introduce STPMIC1 PMIC Driver
+Message-ID: <20181203071145.GA26661@dell>
+References: <1543571742-17995-1-git-send-email-p.paillet@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFqH_53NiYULqcc+2fCgbHETJoTc7tWD8BNxOFhPm6kFZ=e6_g@mail.gmail.com>
+In-Reply-To: <1543571742-17995-1-git-send-email-p.paillet@st.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018, Enric Balletbo Serra wrote:
+On Fri, 30 Nov 2018, Pascal PAILLET-LME wrote:
 
-> Hi,
-> Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
-> dia dc., 7 de nov. 2018 a les 9:56:
-> >
-> > Commit '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
-> > linearly to human eye")' allows the possibility to compute a default
-> > brightness table when there isn't the brightness-levels property in the
-> > DT. Unfortunately the changes made broke the pwm backlight for the
-> > non-DT boards.
-> >
-> > Usually, the non-DT boards don't pass the brightness levels via platform
-> > data, instead, it sets the max_brightness in their platform data and the
-> > driver calculates the level without a table. The offending patch assumed
-> > that when there is no brightness levels table we should create one, but this
-> > is clearly wrong for the non-DT case.
-> >
-> > After this patch the code handles the DT and the non-DT case taking in
-> > consideration also if max_brightness is set or not.
-> >
-> > Fixes: 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > ---
-> >
-> > Changes in v3:
-> > - Fixed some typos in commit message.
-> > - Removed ' in Fixes tag.
-> >
-> > Changes in v2:
-> > - Rebase on top of mainline
-> > - Add Tested-by and Acked-by tags.
-> >
-> >  drivers/video/backlight/pwm_bl.c | 41 +++++++++++++++++++++++++++-----
-> >  1 file changed, 35 insertions(+), 6 deletions(-)
+> The goal of this patch-set is to propose a driver for the STPMIC1 PMIC from 
+> STMicroelectronics. 
+> The STPMIC1 regulators supply power to an application processor as well as 
+> to external system peripherals such as DDR, Flash memories and system
+> devices. It also features onkey button input and an hardware watchdog.
+> The STPMIC1 is controlled via I2C. 
+> 
+> Main driver is drivers/mfd/stpmic1 that handle I2C regmap configuration and
+> irqchip. stpmic1_regulator, stpmic1_onkey and stpmic1_wdt need stpmic1 mfd
+> as parent.
+> 
+> STPMIC1 MFD and regulator drivers maybe mandatory at boot time.
+> 
+> Pascal Paillet (7):
+> changes in v7:
+> * rebase on regul/for-next
+> 
+>   dt-bindings: mfd: document stpmic1
+>   mfd: stpmic1: add stpmic1 driver
+>   dt-bindings: input: document stpmic1 pmic onkey
+>   input: stpmic1: add stpmic1 onkey driver
+>   dt-bindings: watchdog: document stpmic1 pmic watchdog
+>   watchdog: stpmic1: add stpmic1 watchdog driver
+>   regulator: stpmic1: fix regulator_lock usage
+> 
+>  .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 +++
+>  .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ++++++
+>  .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 ++
+>  drivers/input/misc/Kconfig                         |  11 ++
+>  drivers/input/misc/Makefile                        |   2 +
+>  drivers/input/misc/stpmic1_onkey.c                 | 198 +++++++++++++++++++
+>  drivers/mfd/Kconfig                                |  16 ++
+>  drivers/mfd/Makefile                               |   1 +
+>  drivers/mfd/stpmic1.c                              | 213 +++++++++++++++++++++
 
-[...]
+>  drivers/regulator/stpmic1_regulator.c              |   2 +-
 
-> A gentle ping on this patch.
+Is it just Mark you're waiting on now?
 
-Don't do that.
-
-If you think that it's been forgotten, send it again as a [RESEND].
+>  drivers/watchdog/Kconfig                           |  12 ++
+>  drivers/watchdog/Makefile                          |   1 +
+>  drivers/watchdog/stpmic1_wdt.c                     | 139 ++++++++++++++
+>  include/dt-bindings/mfd/st,stpmic1.h               |  50 +++++
+>  include/linux/mfd/stpmic1.h                        | 212 ++++++++++++++++++++
+>  15 files changed, 956 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
+>  create mode 100644 drivers/input/misc/stpmic1_onkey.c
+>  create mode 100644 drivers/mfd/stpmic1.c
+>  create mode 100644 drivers/watchdog/stpmic1_wdt.c
+>  create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
+>  create mode 100644 include/linux/mfd/stpmic1.h
+> 
 
 -- 
 Lee Jones [李琼斯]
