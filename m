@@ -2,87 +2,87 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED42C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD69CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2F3E20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2F3E20848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9260D20848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9260D20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbeLCMV3 (ORCPT
+        id S1726573AbeLCMVk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:21:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36110 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbeLCMV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:21:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 910E41688;
-        Mon,  3 Dec 2018 04:20:39 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D72A3F614;
-        Mon,  3 Dec 2018 04:20:37 -0800 (PST)
-Date:   Mon, 3 Dec 2018 12:20:34 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        Fabio Estevam <fabio.estevam@nxp.com>, cphealy@gmail.com,
-        l.stach@pengutronix.de, Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 0/3] PCIE support for i.MX8MQ
-Message-ID: <20181203122034.GC8040@e107981-ln.cambridge.arm.com>
-References: <20181117181225.10737-1-andrew.smirnov@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181117181225.10737-1-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 3 Dec 2018 07:21:40 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:44602 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726174AbeLCMVk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 07:21:40 -0500
+Received: from ramsan ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id 7QLp1z0043XaVaC06QLp0q; Mon, 03 Dec 2018 13:20:49 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gTnDU-00039p-UU; Mon, 03 Dec 2018 13:20:48 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gTnDU-0003Bv-RX; Mon, 03 Dec 2018 13:20:48 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>
+Cc:     openrisc@lists.librecores.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH resend] openrisc: Fix broken paths to arch/or32
+Date:   Mon,  3 Dec 2018 13:20:47 +0100
+Message-Id: <20181203122047.12225-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 17, 2018 at 10:12:22AM -0800, Andrey Smirnov wrote:
-> 
-> Everyone:
-> 
-> This series contains changes I made in order to enable support of PCIE
-> IP block on i.MX8MQ SoCs (full tree can be found at [github-v0]). This series
-> is _very_ preliminary and by no means is ready for inclusion (it also
-> has some unmet dependencies).  However is should be in OK enough shape
-> to get some early feedback on, which is the intent of this submission.
-> 
-> Specifically, I'd like to get some feedback on whether newly
-> introduced "fsl,iomux-gpr1x" and "fsl,gpr12-device-type" DT
-> properties, added to handle differences between PCIE0 and PCIE1, is a
-> good (acceptable) solution for the problem.
-> 
-> All other feedback is appreciated as well!
-> 
-> Thank you,
-> Andrey Smirnov
-> 
-> [github-v0] https://github.com/ndreys/linux/commits/imx8mq-pcie-v0
-> 
-> Andrey Smirnov (3):
->   PCI: imx: No-op imx6_setup_phy_mpll() on i.MX7D
->   PCI: imx: No-op imx6_pcie_reset_phy() on i.MX7D
->   PCI: imx: Add support for i.MX8MQ
-> 
->  drivers/pci/controller/dwc/Kconfig    |   2 +-
->  drivers/pci/controller/dwc/pci-imx6.c | 119 +++++++++++++++++++++++++-
->  2 files changed, 117 insertions(+), 4 deletions(-)
+OpenRISC was mainlined as "openrisc", not "or32".
+vmlinux.lds is generated from vmlinux.lds.S.
 
-I am expecting you to post of v2 of this series, addressing review
-comments so I will mark these patches with "Changes Requested", please
-let me know if you have any objections.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ arch/openrisc/kernel/entry.S | 2 +-
+ arch/openrisc/kernel/head.S  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Lorenzo
+diff --git a/arch/openrisc/kernel/entry.S b/arch/openrisc/kernel/entry.S
+index 0c826ad6e994cce3..ee6159d2ed22ec49 100644
+--- a/arch/openrisc/kernel/entry.S
++++ b/arch/openrisc/kernel/entry.S
+@@ -240,7 +240,7 @@ handler:							;\
+  *	 occured. in fact they never do. if you need them use
+  *	 values saved on stack (for SPR_EPC, SPR_ESR) or content
+  *       of r4 (for SPR_EEAR). for details look at EXCEPTION_HANDLE()
+- *       in 'arch/or32/kernel/head.S'
++ *       in 'arch/openrisc/kernel/head.S'
+  */
+ 
+ /* =====================================================[ exceptions] === */
+diff --git a/arch/openrisc/kernel/head.S b/arch/openrisc/kernel/head.S
+index 9fc6b60140f007be..31ed257ff06188ee 100644
+--- a/arch/openrisc/kernel/head.S
++++ b/arch/openrisc/kernel/head.S
+@@ -1728,7 +1728,7 @@ _string_nl:
+ 
+ /*
+  * .data section should be page aligned
+- *	(look into arch/or32/kernel/vmlinux.lds)
++ *	(look into arch/openrisc/kernel/vmlinux.lds.S)
+  */
+ 	.section .data,"aw"
+ 	.align	8192
+-- 
+2.17.1
+
