@@ -2,104 +2,99 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B63C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4936C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62E552087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62E552087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 975AF20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:12:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975AF20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbeLCMMr (ORCPT
+        id S1726507AbeLCMMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:12:47 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:42081 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbeLCMMr (ORCPT
+        Mon, 3 Dec 2018 07:12:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34890 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726298AbeLCMMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:12:47 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gTn4u-0001dr-AG from Vladimir_Zapolskiy@mentor.com ; Mon, 03 Dec 2018 04:11:56 -0800
-Received: from [137.202.108.125] (137.202.0.90) by
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Mon, 3 Dec 2018 12:11:52 +0000
-Subject: Re: [PATCH linux-next v2 0/6] clk: renesas: adg: add AVB Clock
-To:     <jiada_wang@mentor.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
-References: <20181203112200.18220-1-jiada_wang@mentor.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <d63c751b-fab4-cf88-459e-efe5a3e83da4@mentor.com>
-Date:   Mon, 3 Dec 2018 14:11:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Mon, 3 Dec 2018 07:12:51 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB3C7AZv062381
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 07:12:02 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p5478rdqm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 07:12:00 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <sebott@linux.ibm.com>;
+        Mon, 3 Dec 2018 12:11:58 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 12:11:56 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB3CBsm4852414
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 12:11:54 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0AC552054;
+        Mon,  3 Dec 2018 12:11:54 +0000 (GMT)
+Received: from dyn-9-152-212-73.boeblingen.de.ibm.com (unknown [9.152.212.73])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 6824152052;
+        Mon,  3 Dec 2018 12:11:54 +0000 (GMT)
+Date:   Mon, 3 Dec 2018 13:11:53 +0100 (CET)
+From:   Sebastian Ott <sebott@linux.ibm.com>
+X-X-Sender: sebott@schleppi.aag-de.ibmmobiledemo.com
+To:     Yangtao Li <tiny.windzz@gmail.com>
+cc:     sth@linux.ibm.com, hoeppner@linux.ibm.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        oberpar@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390: convert to DEFINE_SHOW_ATTRIBUTE
+In-Reply-To: <20181202032811.9875-1-tiny.windzz@gmail.com>
+References: <20181202032811.9875-1-tiny.windzz@gmail.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
+ =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
+ =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
+ =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
+ =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
+ =?ISO-8859-15?Q?94=22?=
 MIME-Version: 1.0
-In-Reply-To: <20181203112200.18220-1-jiada_wang@mentor.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-06.mgc.mentorg.com (139.181.222.6) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-GCONF: 00
+x-cbid: 18120312-0016-0000-0000-0000023147F0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120312-0017-0000-0000-000032894B1C
+Message-Id: <alpine.LFD.2.21.1812031310340.1928@schleppi.aag-de.ibmmobiledemo.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=895 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiada,
-
-On 12/03/2018 01:21 PM, jiada_wang@mentor.com wrote:
-> From: Jiada Wang <jiada_wang@mentor.com>
+On Sat, 1 Dec 2018, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 > 
-> on R-Car SoCs there are AVB Counter Clocks, each clock has 12bits integral
-> and 8 bits fractional dividers which operates with S0D1ϕ clock.
-> 
-> This patch-set adds 'adg' clock to R-Car Soc, and changes adg driver to
-> register avb clocks when clock-cells of rcar_sound node is 2.
-> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
-> v2:
-> - expends adg register size and register avb clocks instead of
->   add new clk-avb driver
-> - Add adg clock 
-> 
-> v1: initial version
-> 
-> Jiada Wang (2):
->   dt-bindings: clock: add clock id for renesas adg clocks
->   ASoC: rsnd: add avb clocks
-> 
-> Takeshi Kihara (4):
->   clk: renesas: r8a7795: Add ADG clock
->   clk: renesas: r8a7796: Add ADG clock
->   clk: renesas: r8a77990: Add ADG clocks
->   clk: renesas: r8a77995: Add ADG clock
-> 
+>  drivers/s390/block/dasd.c     | 15 +--------------
+>  drivers/s390/cio/qdio_debug.c | 16 ++--------------
+>  2 files changed, 3 insertions(+), 28 deletions(-)
 
-plural 'clocks' for r8a77990 vs. 'clock' in other cases, please unify subjects.
+Applied, thanks!
+Sebastian
 
-You can consider to add the ADG clock description for r8a77965 / M3-N as well.
-
->  drivers/clk/renesas/r8a7795-cpg-mssr.c  |   1 +
->  drivers/clk/renesas/r8a7796-cpg-mssr.c  |   1 +
->  drivers/clk/renesas/r8a77990-cpg-mssr.c |   1 +
->  drivers/clk/renesas/r8a77995-cpg-mssr.c |   1 +
->  include/dt-bindings/clock/renesas-adg.h |  11 +
-
-The new header file added above is not needed in my opinion.
-
->  sound/soc/sh/rcar/adg.c                 | 306 +++++++++++++++++++++++-
->  sound/soc/sh/rcar/gen.c                 |   9 +
->  sound/soc/sh/rcar/rsnd.h                |   9 +
->  8 files changed, 330 insertions(+), 9 deletions(-)
->  create mode 100644 include/dt-bindings/clock/renesas-adg.h
-> 
-
---
-Best wishes,
-Vladimir
