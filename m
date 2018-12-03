@@ -2,106 +2,123 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AB6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD86C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A0A20848
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:22:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A0A20848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 4079120848
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:22:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4079120848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbeLCGWC (ORCPT
+        id S1725919AbeLCGWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 01:22:02 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:8288 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725824AbeLCGWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 01:22:02 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id EEC02247E69156DC34F0;
-        Mon,  3 Dec 2018 14:21:55 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB36LnJ0033684;
-        Mon, 3 Dec 2018 14:21:49 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120314215533-14385734 ;
-          Mon, 3 Dec 2018 14:21:55 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     Bernie Thompson <bernie@plugable.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH] udlfb: fix potential NULL pointer dereference in dlfb_usb_probe
-Date:   Mon, 3 Dec 2018 14:21:25 +0800
-Message-Id: <20181203062125.34880-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Mon, 3 Dec 2018 01:22:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36246 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725900AbeLCGWX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 01:22:23 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB36Ivxw102715
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Dec 2018 01:22:18 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p4wd3uyb2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 01:22:18 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Mon, 3 Dec 2018 06:22:16 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Dec 2018 06:22:11 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB36MAWo7733632
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 06:22:10 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8077DA405B;
+        Mon,  3 Dec 2018 06:22:10 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7ADBFA4060;
+        Mon,  3 Dec 2018 06:22:07 +0000 (GMT)
+Received: from [9.124.31.174] (unknown [9.124.31.174])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  3 Dec 2018 06:22:07 +0000 (GMT)
+Subject: Re: [PATCH] Uprobes: Fix kernel oops with delayed_uprobe_remove()
+To:     rostedt@goodmis.org
+Cc:     Oleg Nesterov <oleg@redhat.com>, srikar@linux.vnet.ibm.com,
+        mhiramat@kernel.org, liu.song.a23@gmail.com, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+References: <20181114081921.26484-1-ravi.bangoria@linux.ibm.com>
+ <20181114160600.GD13885@redhat.com>
+ <556c2aa5-550d-d96f-7ed2-549d8f3d803b@linux.ibm.com>
+ <20181115124317.GA23272@redhat.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Mon, 3 Dec 2018 11:52:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-03 14:21:55,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-03 14:21:49
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wB36LnJ0033684
+In-Reply-To: <20181115124317.GA23272@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18120306-0012-0000-0000-000002D3AA5F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120306-0013-0000-0000-00002108FEC8
+Message-Id: <9f73b926-b3a5-2519-3a9e-91de35899a6e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=937 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812030062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a possible null pointer dereference in
-dlfb=5Fusb=5Fprobe, detected by the semantic patch deref=5Fnull.cocci,
-with the following warning:
+Hi Steve,
 
-drivers/video/fbdev/udlfb.c:1704:11-15: ERROR: dlfb is NULL but dereference=
-d.
+Please pull this patch.
 
-The following code has potential null pointer references:
-1597         /* usb initialization */
-1598         dlfb =3D kzalloc(sizeof(*dlfb), GFP=5FKERNEL);
-1599         if (!dlfb) {
-...
-1601             goto error;
-1602         }
-...
-1703 error:
-1704         if (dlfb->info) {
-1705                 dlfb=5Fops=5Fdestroy(dlfb->info);
-1706         } else if (dlfb) {
-1707                 usb=5Fput=5Fdev(dlfb->udev);
-1708                 kfree(dlfb);
-1709         }
+Thanks.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Bernie Thompson <bernie@plugable.com>
-CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-CC: linux-fbdev@vger.kernel.org
-CC: dri-devel@lists.freedesktop.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/video/fbdev/udlfb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index 070026a7e55a..df37cfaa2362 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1701,7 +1701,7 @@ static int dlfb=5Fusb=5Fprobe(struct usb=5Finterface =
-*intf,
- 	return 0;
-=20
- error:
--	if (dlfb->info) {
-+	if (dlfb && dlfb->info) {
- 		dlfb=5Fops=5Fdestroy(dlfb->info);
- 	} else if (dlfb) {
- 		usb=5Fput=5Fdev(dlfb->udev);
---=20
-2.19.1
+On 11/15/18 6:13 PM, Oleg Nesterov wrote:
+> On 11/15, Ravi Bangoria wrote:
+>>
+>> There could be a race between task exit and probe unregister:
+>>
+>>   exit_mm()
+>>   mmput()
+>>   __mmput()                     uprobe_unregister()
+>>   uprobe_clear_state()          put_uprobe()
+>>   delayed_uprobe_remove()       delayed_uprobe_remove()
+>>
+>> put_uprobe() is calling delayed_uprobe_remove() without taking
+>> delayed_uprobe_lock and thus the race sometimes results in a
+>> kernel crash. Fix this by taking delayed_uprobe_lock before
+>> calling delayed_uprobe_remove() from put_uprobe().
+>>
+>> Detailed crash log can be found at:
+>>   https://lkml.org/lkml/2018/11/1/1244
+> 
+> Thanks, looks good,
+> 
+> Oleg.
+> 
 
