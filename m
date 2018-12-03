@@ -2,98 +2,151 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498F1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35274C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050A820850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:03:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lWITEb/Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050A820850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 0482720878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:03:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0482720878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbeLCKDg (ORCPT
+        id S1726126AbeLCKDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:03:36 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:49912 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeLCKDg (ORCPT
+        Mon, 3 Dec 2018 05:03:42 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33691 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbeLCKDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:03:36 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB39xm0s193627;
-        Mon, 3 Dec 2018 10:03:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=QgwlWOCuShW3FxjssMZOYUd25oeml3zh5NddFCOomMg=;
- b=lWITEb/Q9AA/Rrh5vaLl+QRFKO7xVjAMBMKE0YKSzsC9MAUAH1cxsGFYI2AbhP4avi3j
- QWMk2hudzP+pYNw//1WhMNgdUOoiiKQVHBH025QtfkBjr5c34iFfLknqJRaYMVfnCBdV
- GbJ8pnxDK5uMpUYp3DqnkG6S4WttWWTv24b7LkQjiv1gIY96XuzpRTpjuHoqZpZ1XTlM
- DEDRsml9MU9galZC1xKUDH8t3ql7uHBJodDdgppAxrYJQAlN2KoB9G9zGGHC2Zej9D2B
- HV5wiumvWw8v2lAgKm4Gvb8wuUOMEuhOVhmTbBhnNj7WkiDJCJwq7U4LEyRM6pWOnFZM gQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2p3hqtnbh1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 Dec 2018 10:03:14 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB3A37Cu021091
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Dec 2018 10:03:07 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB3A37hq022750;
-        Mon, 3 Dec 2018 10:03:07 GMT
-Received: from unbuntlaptop (/197.157.0.63)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 03 Dec 2018 02:03:06 -0800
-Date:   Mon, 3 Dec 2018 13:04:58 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ptp: fix an IS_ERR() vs NULL check
-Message-ID: <20181203100458.GZ3073@unbuntlaptop>
-References: <20181130125834.u42dhxgof66rhya2@kili.mountain>
- <20181130163252.e6z33t23j3qud57z@localhost>
+        Mon, 3 Dec 2018 05:03:42 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p6so1911685eds.0;
+        Mon, 03 Dec 2018 02:03:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jPdQ2xohPGQO5/youIzdD6XhrzLSdiPyktb/A7gR3XQ=;
+        b=FD2m9KSZo+Xaqpa4MotfpPMcdfbtbMX/yvJphPYOm8iJTSHggeEeRYFPru0qKClOqF
+         538HCrdL2sO7Q94jDD1l/pY4h+fjcu+iaKMf+NSBoHNcc/EZRMr3mMnkpTHrTUCPGEsJ
+         /S+kxjODTx2y4RA3ahjoUf6cj9Qup4g0Y5rWUmX7WaMOgSRWPUqRz+fRFPAIsjQ5M+qG
+         ly5k0roJuw6gt3OUsk3B9YLJHZV/Jg8cE1cum922J6PkIyJ0cCYw5SvS7EZOcjmy/pQM
+         dv4P+AjReLRq9+hoeD2KbFV1kJSAOYlG2Dc/2jH7FQ7MeS8xutSBcDQIQP/V3MIO3uqQ
+         zz0A==
+X-Gm-Message-State: AA+aEWYA1/W99F7PsAOxVt1vl7asYmU8Y4EsNvduucQijRcyHzOHDRqv
+        3V6PLZktkg7aFwUlfySLRDA=
+X-Google-Smtp-Source: AFSGD/UFvc0nAOOz+A9P/ainnX0MOvW1MEMDO0U2Zi9/O/8F4j//xH+y6i/ZxE0x54J2PFR9kNfbdw==
+X-Received: by 2002:a17:906:279a:: with SMTP id j26-v6mr12480469ejc.112.1543831400455;
+        Mon, 03 Dec 2018 02:03:20 -0800 (PST)
+Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id w13sm3719321edl.54.2018.12.03.02.03.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 02:03:19 -0800 (PST)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Oscar Salvador <OSalvador@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Stable tree <stable@vger.kernel.org>
+Subject: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
+Date:   Mon,  3 Dec 2018 11:03:09 +0100
+Message-Id: <20181203100309.14784-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130163252.e6z33t23j3qud57z@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9095 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=640
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812030097
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 08:32:52AM -0800, Richard Cochran wrote:
-> On Fri, Nov 30, 2018 at 03:58:34PM +0300, Dan Carpenter wrote:
-> > The pps_register_source() function doesn't return NULL, it returns
-> > error pointers.
-> 
-> It keeps a local variable for errno, but then it returns NULL.
-> But this is about to change with this recent patch:
-> 
->    26.Nov'18 YueHaibing [PATCH -next] pps: using ERR_PTR instead of NULL while pps_register_source fails
-> 
-> It hasn't been merged yet AFAICT, but gregkh said he take it.
+From: Michal Hocko <mhocko@suse.com>
 
-Oh, yeah.  That patch has actually been applied, but we didn't update
-the caller.  I should have made the Fixes tag point to that YueHaibing's
-patch.
+We have received a bug report that an injected MCE about faulty memory
+prevents memory offline to succeed. The underlying reason is that the
+HWPoison page has an elevated reference count and the migration keeps
+failing. There are two problems with that. First of all it is dubious
+to migrate the poisoned page because we know that accessing that memory
+is possible to fail. Secondly it doesn't make any sense to migrate a
+potentially broken content and preserve the memory corruption over to a
+new location.
 
-regards,
-dan carpenter
+Oscar has found out that it is the elevated reference count from
+memory_failure that is confusing the offlining path. HWPoisoned pages
+are isolated from the LRU list but __offline_pages might still try to
+migrate them if there is any preceding migrateable pages in the pfn
+range. Such a migration would fail due to the reference count but
+the migration code would put it back on the LRU list. This is quite
+wrong in itself but it would also make scan_movable_pages stumble over
+it again without any way out.
 
+This means that the hotremove with hwpoisoned pages has never really
+worked (without a luck). HWPoisoning really needs a larger surgery
+but an immediate and backportable fix is to skip over these pages during
+offlining. Even if they are still mapped for some reason then
+try_to_unmap should turn those mappings into hwpoison ptes and cause
+SIGBUS on access. Nobody should be really touching the content of the
+page so it should be safe to ignore them even when there is a pending
+reference count.
 
+Debugged-by: Oscar Salvador <osalvador@suse.com>
+Cc: stable
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+Hi,
+I am sending this as an RFC now because I am not fully sure I see all
+the consequences myself yet. This has passed a testing by Oscar but I
+would highly appreciate a review from Naoya about my assumptions about
+hwpoisoning. E.g. it is not entirely clear to me whether there is a
+potential case where the page might be still mapped. I have put
+try_to_unmap just to be sure. It would be really great if I could drop
+that part because then it is not really great which of the TTU flags to
+use to cover all potential cases.
+
+I have marked the patch for stable but I have no idea how far back it
+should go. Probably everything that already has hotremove and hwpoison
+code.
+
+Thanks in advance!
+
+ mm/memory_hotplug.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index c6c42a7425e5..08c576d5a633 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -34,6 +34,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/memblock.h>
+ #include <linux/compaction.h>
++#include <linux/rmap.h>
+ 
+ #include <asm/tlbflush.h>
+ 
+@@ -1366,6 +1367,17 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+ 			pfn = page_to_pfn(compound_head(page))
+ 				+ hpage_nr_pages(page) - 1;
+ 
++		/*
++		 * HWPoison pages have elevated reference counts so the migration would
++		 * fail on them. It also doesn't make any sense to migrate them in the
++		 * first place. Still try to unmap such a page in case it is still mapped.
++		 */
++		if (PageHWPoison(page)) {
++			if (page_mapped(page))
++				try_to_unmap(page, TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS);
++			continue;
++		}
++
+ 		if (!get_page_unless_zero(page))
+ 			continue;
+ 		/*
+-- 
+2.19.1
 
