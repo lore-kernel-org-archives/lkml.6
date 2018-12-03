@@ -2,96 +2,155 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F63C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75B6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C82620850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76A052146D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:55:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gpBCCoZq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C82620850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjElAK8T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A052146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbeLCWya (ORCPT
+        id S1726059AbeLCWzA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:54:30 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42422 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbeLCWy3 (ORCPT
+        Mon, 3 Dec 2018 17:55:00 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45669 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbeLCWy7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:54:29 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y1so2406679plp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:54:29 -0800 (PST)
+        Mon, 3 Dec 2018 17:54:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id a14so7202767plm.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:54:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AeEP0u7Oh2ap/F3/pDIZ557Zp4+YYiiRmpE0cGoJDDQ=;
-        b=gpBCCoZqaZGixTp2Tn6L0qZvdMC2NJaHvCVVq0V9mPCdDyoF7oE2iwIk8Z6mtUwt0s
-         Bqhgucbzlxkf5QpWRjUENij+Cbmxif1yH3Ul9nUD9g8qb0RO8oFwhC6gvRc6N0atsyQC
-         6bN18zFopFGvCuenUuL+NvCSjWX3juIV5nxSI=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ksGSE6Cc9VG/A00Ld7RPZ1CW6RRFzM/pQBtwpovt2X4=;
+        b=EjElAK8T7sc3RlBItuETx3nTXgWFHr9nCABkxA218Abq/dx48F5iaSIeddLSCPX6nq
+         +PQuDPIWvlxSJNwzkIQBGwDXQle5xlG8fOxi9EwD8Ysj6GeW7niyPBHvC1lPLsQcUf++
+         MZw2sN8I+m2IsI/ajfl2KSM38fiILd8Xx2Wkw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AeEP0u7Oh2ap/F3/pDIZ557Zp4+YYiiRmpE0cGoJDDQ=;
-        b=aWv4wcDCOVroRptUHNFa0X0Os77CTAaN8WVIo3goiCvl2wDUNkkmwLWavBcCP+kR7D
-         6kigkfJAH8ktCOTluVibEAEY56bR/SKcs7OjXvSCbCelfVHJ4gZfRFgIcj0lUVuxuwM5
-         1BMIC9iGwxpqvHBYZWXsWCHxoo0Q612MJX/UtgF6RtKa0RjHDO65GDy0/qdJ9S2vXf3a
-         ivDZqFgxb5F69dYnKM7qclU2z94HxD9Vmyv2IHqOsQ0kp7akAbn78LN0zX4OhIZ0iOwh
-         5u4BJ5FnXoAPhpACJqsP9613SYY9JTBHl+Uf+RUS0QTAre+rsEDEWQsdrkAB9wfqRBF9
-         em8g==
-X-Gm-Message-State: AA+aEWYZSpno0UKjeUrKSPG6hZBo3p18tjfCbamTh4A8/4wYLTH0cghX
-        3WsqS+6YchAy4uuTnDVSpGKqpw==
-X-Google-Smtp-Source: AFSGD/Ubuwie2HLmsWsoIBRbyAGnfxK4fpNITBNHiGYAYgFudf6p1ypDswdSGpgJNkUABd+6hrjVUA==
-X-Received: by 2002:a17:902:2b84:: with SMTP id l4mr11461293plb.191.1543877669111;
-        Mon, 03 Dec 2018 14:54:29 -0800 (PST)
-Received: from decatoncale.mtv.corp.google.com ([2620:15c:202:1:c562:226a:6d78:2ae4])
-        by smtp.gmail.com with ESMTPSA id w3sm17867264pge.8.2018.12.03.14.54.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 14:54:28 -0800 (PST)
-From:   Benson Leung <bleung@chromium.org>
-To:     bleung@google.com, bleung@chromium.org,
-        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] MAINTAINERS: platform/chrome: Add Enric as a maintainer
-Date:   Mon,  3 Dec 2018 14:54:07 -0800
-Message-Id: <20181203225407.173234-1-bleung@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ksGSE6Cc9VG/A00Ld7RPZ1CW6RRFzM/pQBtwpovt2X4=;
+        b=foBAcBmbCdqwSBYMvrfPJaf4PR4sa6LS1W7wwF3H4tj6jvNPmvAkM4SC7mSqoI6IbY
+         kC3NVwlLz50g/sgTOGsnjAi18074yGIGadmngizNTVN4jqdW2ei+YP6U8UMmOZoSX0+k
+         foVtJIq2w4LKCn4gpeXXgTyEUH6IR5OomYAr0Z5X/HSkJYrF3peM07LCvdnURkxV/hSi
+         vEt5JixoiLkVMH6EZ7KUKSRK/VxFFACKr+57MT4b207tQq9EOM1Y8/iZBd8+Ukd0lKKD
+         qGkoRop3Of4BDxI/Evqz4KG/MmmsUQuqiBFpuraZ1j5SZSX50Rlq2V7yOBbgEAjeWVfl
+         Fbsg==
+X-Gm-Message-State: AA+aEWYVq/SnKAwXZxwre0TqKe9WouzSa/oByTpaaucEnOhXaX2R4DPz
+        WziMWtCdOLp+gRuKPm4Rt6eEZA==
+X-Google-Smtp-Source: AFSGD/Ww4eM+LZIWxdpW1D9qjHHHG7bAP0l5nJVoGhm4sibL/3GhitseWLv+7fxMz918qVGiK6mqKQ==
+X-Received: by 2002:a17:902:8a91:: with SMTP id p17mr17698810plo.316.1543877699012;
+        Mon, 03 Dec 2018 14:54:59 -0800 (PST)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id v9sm20933057pfg.144.2018.12.03.14.54.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 03 Dec 2018 14:54:58 -0800 (PST)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     acme@kernel.org, peterz@infradead.org, gregkh@linuxfoundation.org
+Cc:     mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
+        suzuki.poulosi@arm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 0/6] perf: Add ioctl for PMU driver configuration 
+Date:   Mon,  3 Dec 2018 15:54:50 -0700
+Message-Id: <1543877696-17174-1-git-send-email-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enric has volunteered to help me with maintaining chrome-platform
-as we change the development model toward strictly upstream-first for
-any chrome-platform and cros_ec driver.
+In the coresight world there can be more than one sink to aggregate
+trace data generated by CPUs, hence the need for users to select which
+one to use from the perf command line.
 
-Signed-off-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Up until now sysfs was used to communicate sink information to the
+kernel but that was never the right way to proceed because it breaks
+when more than one perf session are created at the same time.  The
+situation was manageable when working with per-thread scenarios where
+a single HW trace event is created but in CPU-wide mode a HW trace
+event is created for each CPU that is specified on the perf command
+line, taking us back to the concurrency problem we have when dealing
+with multiple per-thread session.
+
+This work fits in a wider scheme to support CPU-wide trace scenarios on
+CoreSight that is available here [1]. The first step in that venture is
+to address sysfs concurrency issues, which this patchset does.
+
+The main difference with V4 is the usage of a CoreSight sink's HW start
+address (u64) to uniquely identify a sink, negating the need to use the
+component's name (char *).
+
+By using a u64 we can theoretically add the sink information to the
+perf_event_attr structure, avoiding the need to add a new perf ioctl().
+On flip side it would introduce a very specific CoreSight field
+to a structure that is generic.  I have opted for the ioctl() method,
+let me know if you want me to proceed with the latter.
+
+Regards,
+Mathieu
+
+# Before this set: 
+
+root@juno:/home/linaro# perf record -e cs_etm/@20070000.etr/ -C 2,3 sleep 1
+failed to mmap with 12 (Cannot allocate memory)
+
+# After this set:
+
+root@juno:/home/linaro# perf record -e cs_etm/@20070000.etr/ -C 2,3 sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 4.145 MB perf.data ]
+
+[1]. https://git.linaro.org/people/mathieu.poirier/coresight.git/log/?h=cpu-wide-coresight
+
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Changes for V5:
+. Went from a char * to a u64 for ioctl argument (GKH).
+. Added a better description of the problem being fixed to
+  the cover letter (GKH).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a31c3a833763..8293efb566d6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3549,6 +3549,7 @@ F:	drivers/input/touchscreen/chipone_icn8505.c
- 
- CHROME HARDWARE PLATFORM SUPPORT
- M:	Benson Leung <bleung@chromium.org>
-+M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
- F:	drivers/platform/chrome/
+Changes for V4:
+. Made passing of information between ioctl() and PMU simpler.
+
+Mathieu Poirier (6):
+  perf: Introduce ioctl to communicate driver configuration to kernel
+  perf/core: Use ioctl to communicate driver configuration to kernel
+  perf/aux: Make perf_event accessible to setup_aux()
+  coresight: Use PMU driver configuration for sink selection
+  perf tools: Make perf_evsel accessible to PMU driver configuration
+    code
+  perf tools: Use ioctl function to send sink information to kernel
+
+ arch/s390/kernel/perf_cpum_sf.c                  |  6 +-
+ arch/x86/events/intel/bts.c                      |  4 +-
+ arch/x86/events/intel/pt.c                       |  5 +-
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 80 +++++++++++++++++-----
+ drivers/perf/arm_spe_pmu.c                       |  6 +-
+ include/linux/perf_event.h                       | 40 ++++++++++-
+ include/uapi/linux/perf_event.h                  |  1 +
+ kernel/events/core.c                             | 67 +++++++++++++++++++
+ kernel/events/ring_buffer.c                      |  2 +-
+ tools/include/uapi/linux/perf_event.h            |  1 +
+ tools/perf/arch/arm/util/cs-etm.c                | 84 +++++++++++++++++++++++-
+ tools/perf/arch/arm/util/cs-etm.h                |  3 +-
+ tools/perf/util/drv_configs.c                    | 30 ++-------
+ tools/perf/util/evsel.c                          |  6 ++
+ tools/perf/util/evsel.h                          |  1 +
+ tools/perf/util/pmu.h                            |  3 +-
+ 16 files changed, 287 insertions(+), 52 deletions(-)
+
 -- 
-2.20.0.rc1.387.gf8505762e3-goog
+2.7.4
 
