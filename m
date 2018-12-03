@@ -2,111 +2,113 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1155CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF7CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBBA220851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:13:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBBA220851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B9B720851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:14:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="C7GjDYxf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B9B720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725961AbeLCWNZ (ORCPT
+        id S1725988AbeLCWOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:13:25 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43114 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeLCWNZ (ORCPT
+        Mon, 3 Dec 2018 17:14:01 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33464 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbeLCWOA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:13:25 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id D18DC276369
-Subject: Re: [PATCH v3 1/8] mfd / platform: cros_ec: use devm_mfd_add_devices.
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-2-enric.balletbo@collabora.com>
- <20181203103228.GC26661@dell>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <652e1f21-c443-3a25-a57f-71e0f835d47d@collabora.com>
-Date:   Mon, 3 Dec 2018 23:13:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 3 Dec 2018 17:14:00 -0500
+Received: by mail-qk1-f193.google.com with SMTP id o89so8424893qko.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:14:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4tQRj7YtxJOLI8Nz3X9VVhFqSK8FkIZrTx2UbmzwihE=;
+        b=C7GjDYxfLh2Ob9D56uUowuyLO8W0DY+VN4ISVR/GArE/4dA45oc+I4KFmQz7Klvm6m
+         1rzcJqN/EZCtVWkNHbwIku91WkzttPj0oQnXSgwCjQtJsChsz39MTR0XfOOwr5mAsa76
+         n3EhstuTziWg+N8s6iLR300efG4E/1IVrKD7U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4tQRj7YtxJOLI8Nz3X9VVhFqSK8FkIZrTx2UbmzwihE=;
+        b=h4dzTFGgODFzdOoBiWSwmhSkUIcrsru9urg26d7yjTmWjXm7QZufz1odVUlDoHabmB
+         Zi2NekCedC3AY5/J9RE7cxLyv1qk/P/dStj/V/X1BU+EMqDFp4f5+9Sz3WkoliXKaA87
+         kBmZCYL5CBbz2+G83MvVsoCdgvbzOOvSXlY6CBiBX/E1vsGdAovLAAFzx2s8JTIZfPJ2
+         XUOef3Pmt9CV8aQNFJkbNSj4wCaTUUdu3xoiY+uAypDRB7aunlvwSZjV1NtMffnRr9cL
+         Sj5UDixJldQ5UpT30A8Lxpwa4sHmEmdpN1mk2pnwyw5NOAJNf0g6tFgdDuLv7qBaNEMx
+         TPhQ==
+X-Gm-Message-State: AA+aEWYWCDOQ+5FvSZtMWDmecKxEwd1LqcYt6hx0HAs6QsSdGm1FaKQX
+        DD/Z5YdvGStvJCfKrzkol+8FNixUPjXBFihV4Vs=
+X-Google-Smtp-Source: AFSGD/VOPJfpW1K8PArA2x7433o4go/0YHLtInmxXWri+wIbqOZ9BOYZcfNZYL5wRAcdSCEqMRMFuKR3zoc35aysQhs=
+X-Received: by 2002:a37:781:: with SMTP id 123mr16494465qkh.231.1543875239356;
+ Mon, 03 Dec 2018 14:13:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181203103228.GC26661@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20181102004455.10157-1-joel@jms.id.au> <CAKwvOdni_iJ4beAWYkUUpZss_PYZezMGR7hN9k1rm9J0iB0gHQ@mail.gmail.com>
+ <CACPK8XdbWzb=52iFV_fj0Y5KMWPgsRv_A8PZgfKn9vm96y3LOw@mail.gmail.com> <CAKwvOdndyeRZApOqbp-6evEpYgzHyGo4qqaMKd_DQ4U9x8_5wA@mail.gmail.com>
+In-Reply-To: <CAKwvOdndyeRZApOqbp-6evEpYgzHyGo4qqaMKd_DQ4U9x8_5wA@mail.gmail.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Tue, 4 Dec 2018 08:43:47 +1030
+Message-ID: <CACPK8Xcz4YzfnFAHGOcJZkt0UFfQ02YabtEQDHXdSFsH57xRiQ@mail.gmail.com>
+Subject: Re: [PATCH v2] raid6/ppc: Fix build for clang
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>, Jinsong Ji <jji@us.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+On Tue, 4 Dec 2018 at 05:15, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > > > +ifdef CONFIG_CC_IS_CLANG
+> > > > +# clang ppc port does not yet support -maltivec when -msoft-float is
+> > > > +# enabled. A future release of clang will resolve this
+> > > > +# https://bugs.llvm.org/show_bug.cgi?id=31177
+> > > > +CFLAGS_REMOVE_altivec1.o  += -msoft-float
+> > > > +CFLAGS_REMOVE_altivec2.o  += -msoft-float
+> > > > +CFLAGS_REMOVE_altivec4.o  += -msoft-float
+> > > > +CFLAGS_REMOVE_altivec8.o  += -msoft-float
+> > > > +CFLAGS_REMOVE_altivec8.o  += -msoft-float
+> > > > +CFLAGS_REMOVE_vpermxor1.o += -msoft-float
+> > > > +CFLAGS_REMOVE_vpermxor2.o += -msoft-float
+> > > > +CFLAGS_REMOVE_vpermxor4.o += -msoft-float
+> > > > +CFLAGS_REMOVE_vpermxor8.o += -msoft-float
+> > > > +endif
+> > >
+> > > Hi Joel, thanks for this patch!  My same thoughts about
+> > > CONFIG_CC_IS_CLANG vs cc-option from
+> > > https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-November/180939.html
+> > > apply here as well.  I don't feel strongly about either though.  What
+> > > are your thoughts?
+> >
+> > I'm not sure that we can test for this one with cc-option. The result
+> > of having -maltivec with -msoft-float is a error about the internals
+> > of clang, which isn't something that kbuild is set up to test for.
+>
+> As in clang itself crashes, and cc-option/kbuild can't handle that gracefully?
 
-On 3/12/18 11:32, Lee Jones wrote:
-> On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
-> 
->> Use devm_mfd_add_devices() for adding cros-ec core MFD child devices. This
->> reduces the need of remove callback from platform/chrome for removing the
->> MFD child devices.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->> Changes in v3:
->> - Removed cros_ec_remove from include file.
->>
->> Changes in v2:
->> - Use devm only for the cros-ec core.
->>
->>  drivers/mfd/cros_ec.c                 | 14 +++-----------
->>  drivers/mfd/cros_ec_dev.c             |  1 +
->>  drivers/platform/chrome/cros_ec_i2c.c | 10 ----------
->>  drivers/platform/chrome/cros_ec_lpc.c |  4 ----
->>  drivers/platform/chrome/cros_ec_spi.c | 11 -----------
->>  include/linux/mfd/cros_ec.h           | 10 ----------
->>  6 files changed, 4 insertions(+), 46 deletions(-)
-> 
-> Nice patch.
-> 
-> Just one question:
-> 
-> [...]
-> 
->> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
->> index 8f9d6964173e..ff788d3e6d5f 100644
->> --- a/drivers/mfd/cros_ec_dev.c
->> +++ b/drivers/mfd/cros_ec_dev.c
->> @@ -493,6 +493,7 @@ static int ec_device_remove(struct platform_device *pdev)
->>  
->>  	cros_ec_debugfs_remove(ec);
->>  
->> +	mfd_remove_devices(ec->dev);
-> 
-> Why is this still required?
-> 
+The developer gets something like this:
 
-Hmm, maybe that line shouldn't be here as is not really related to this patch,
-it's more a fix for the cros_ec_dev to remove those cells that are registered
-with mfd_add_devices.
+SplitVectorResult #0: t196: v16i8 = llvm.ppc.altivec.vcmpgtsb
+TargetConstant:i64<4823>, t146, t195
+fatal error: error in backend: Do not know how to split the result of
+this operator!
+clang-8: error: clang frontend command failed with exit code 70 (use
+-v to see invocation)
 
-Actually what we have is cros_ec that instantiates one or two cros_ec_dev
-(depends on the platform) and cros_ec_dev instantiating different subdrivers.
-The purpose of the patch was use the device managed resource for the cros_ec
-driver, I did not touch the cros_ec_dev driver
-
->>  	cdev_del(&ec->cdev);
->>  	device_unregister(&ec->class_dev);
->>  	return 0;
-> 
-> [...]
-> 
+>
+> >
+> > When clang is fixed to allow this combination we will still build this
+> > code in the same way, so in that sense it fails "open".
+> >
