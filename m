@@ -2,141 +2,172 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 494ADC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4A1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E83120851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:22:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D542087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 23:25:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OevCFM8J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E83120851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="B+YL2/0O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D542087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725969AbeLCXWq (ORCPT
+        id S1725996AbeLCXZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 18:22:46 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38847 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLCXWq (ORCPT
+        Mon, 3 Dec 2018 18:25:07 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40961 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCXZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:22:46 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so12594445oii.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 15:22:44 -0800 (PST)
+        Mon, 3 Dec 2018 18:25:06 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 189so8494942qkj.8;
+        Mon, 03 Dec 2018 15:25:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=jms.id.au; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cYCFcJ1UdDdLdTFH8pPRXacbQNJ1dh92bXLqX6q3pYk=;
-        b=OevCFM8JY8gCnIyRJRNgg8mr7ASkqBVQ3bsPKtDpmve/0pVcAYergzBjl2Zx3GPEWO
-         M5PEbu7wdzTPS3ZU0+8pZCGR95r3VCN7mI4WPbkYbBNdaV3jRVOCc8Ll7G3c3fhhUXda
-         pUSbCJY2GXRaB3ryUyb6AuXTLAKUjsiaw51W/Q5HptR9P17ZP63WTLA+fbVK+nujVurN
-         KVaS3GrsrmyKHT+ZAQg+gB6+s7XW3+MMnhtU4opSvHfkn8U7dOnJo9ViLpmL7VrQGkHv
-         v67aj/Epz4Txzss+xyevySbDYkH+njx74aq4oUjGk6bVlj7QPcExSje//DAZUlQ3Yrej
-         Uw7w==
+        bh=ldKQF90m/G5zm935FjxHUATkIgg00xIePjtNug6i8VM=;
+        b=B+YL2/0ONXElrrEPv2dMfJsRSfvxC482aR/7TaJ5jRjF5EnoxkVwIKxroOdRLq2Svs
+         tA5yiTxcv6jxtfMI6y9+l/IuhVkhvxIsJiDLL1aZO7z6Dds5EyBfI68RynSISP17B6ER
+         C9wwPPLmYIr04gEUy5xugL/KooJZB5bKHEtYw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cYCFcJ1UdDdLdTFH8pPRXacbQNJ1dh92bXLqX6q3pYk=;
-        b=abtmCQaM8q5q/Yy2/2d9HBspSIpJnK3Q8RYBlkPtwZxNjjVthEFU9wS1w8EzEAVvD8
-         koqc4SjLaFBfC/lShFO3eanlYXx4I4ukm/4wLajhtIavKd1sHpF7h0jkKSXeH7PJs9bY
-         oqd0pXWE2kdKhHBwHDsp24bmFXbkkAENRs6m2y+ydRNwXx945jrnFv4Hb6Eaqot+pnhB
-         Pxy1++C5Oj21nPvy8mI2NQR6b9G3tHgQY0AyDlhXTddSPtD9uTbtqY1+bLTGs8BgXHL2
-         lcTF4yihUOqoqgqK6AaGksq66ktJmDrSj7USXNseSOpe07+mYoozRaXumnpOJqMs48VK
-         nchg==
-X-Gm-Message-State: AA+aEWZp6ddsc/diSFg2edWRrTIDqa1/bgbUEZDonoMDwzRnKhVkci9g
-        JBO35zNL2ZFs+GlvGU3QN61kBcsIRiwZXnao16VGZQ==
-X-Google-Smtp-Source: AFSGD/Vcut7LP5rRRau7La1WiN2r6QBxUFrAW8XpW7YN/1b90lz9976AReAP7gI1smwgC/lWRW2eakQYEF0bC5gASN4=
-X-Received: by 2002:aca:be41:: with SMTP id o62mr10616674oif.206.1543879363718;
- Mon, 03 Dec 2018 15:22:43 -0800 (PST)
+        bh=ldKQF90m/G5zm935FjxHUATkIgg00xIePjtNug6i8VM=;
+        b=SfLryl5EZ0vldClCM66DFQORcHgeWhdAJI1wl0uoBNRXIPpdb6301o0GEK1Datqhv2
+         cGKzBDCLzm8+z1zsrvUyKwAX72LFrCwrgmH8+pvyS0iE2g+mYygEu7gxhklWCOFmc8zm
+         JjDbqGFYLGmZROpwTexSz5LEAqntJqKDWjizhHjXeCyCx1gCGiUo2K5dgjVvmnYVaCxp
+         wf3DfnrCY63K0oCOoRimrWeYzdwW8kBoKr8+bHc4tF3eBWPououeVpi5getvKgaxkfer
+         GZorkX8wvODqdwcyj+H45Y42Ps+Iu8WfiT/1TQ3DGfSxWkXIEEvCdQ7xmsE8VHATUolk
+         b4hg==
+X-Gm-Message-State: AA+aEWYajz4rq0itkxn//SOYsND0Sd43OX5ZyKnh80Gawp87/wOkhVXX
+        TstBr6H7GH4sc8Cyu7CvKQTIdWqp4PTXAM3SAQE=
+X-Google-Smtp-Source: AFSGD/XTrD8oOLM7poO8YPp6Ubx5mZflG66w7iTFCPTnyZRuC6G2j7hFiWR7G5gB+GZqd6+2S989N8o2DXOrmLC+89I=
+X-Received: by 2002:ae9:ef8a:: with SMTP id d132mr16176709qkg.11.1543879504998;
+ Mon, 03 Dec 2018 15:25:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-7-brendanhiggins@google.com> <CAL_JsqJLNSg-38hej8LV+Oh-YXBM2hRGomie3b_psa9LvzoRYg@mail.gmail.com>
- <20181130033704.GL18410@garbanzo.do-not-panic.com> <CAL_Jsq+jxHHmT5bLnABnF7S0fSBZvH72nDPyY5LHTn9Zm9hCUw@mail.gmail.com>
- <20181130182203.GS18410@garbanzo.do-not-panic.com>
-In-Reply-To: <20181130182203.GS18410@garbanzo.do-not-panic.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 3 Dec 2018 15:22:32 -0800
-Message-ID: <CAFd5g47ndhD+j6-_tTV-9N8eY0_48kEvEO76BzOWi-BD3GYauw@mail.gmail.com>
-Subject: Re: [RFC v3 06/19] arch: um: enable running kunit from User Mode Linux
-To:     mcgrof@kernel.org
-Cc:     Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, dan.j.williams@intel.com,
-        linux-nvdimm@lists.01.org, kieran.bingham@ideasonboard.com,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>
+References: <20180612081413.323d85b8@canb.auug.org.au> <CACPK8XeDHt46rUJWQ1n=4fRWioogs9K0Z8dkxUa=E2ShfQ1Vdg@mail.gmail.com>
+ <87k1lgufiw.fsf@concordia.ellerman.id.au> <20181118112244.GD21617@bubble.grove.modra.org>
+In-Reply-To: <20181118112244.GD21617@bubble.grove.modra.org>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Tue, 4 Dec 2018 09:54:53 +1030
+Message-ID: <CACPK8Xft3n5KkpTjN3=7_VUCXHFcK7mxvZm2Rrqu7tppcBoyOg@mail.gmail.com>
+Subject: Re: linux-next: build warnings from Linus' tree
+To:     Alan Modra <amodra@gmail.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 10:22 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Sun, 18 Nov 2018 at 21:52, Alan Modra <amodra@gmail.com> wrote:
 >
-> On Fri, Nov 30, 2018 at 08:05:34AM -0600, Rob Herring wrote:
-> > On Thu, Nov 29, 2018 at 9:37 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> On Wed, Nov 14, 2018 at 09:20:23PM +1100, Michael Ellerman wrote:
+> > Joel Stanley <joel@jms.id.au> writes:
+> > > Hello Alan,
 > > >
-> > > On Wed, Nov 28, 2018 at 03:26:03PM -0600, Rob Herring wrote:
-> > > > On Wed, Nov 28, 2018 at 1:37 PM Brendan Higgins
-> > > > <brendanhiggins@google.com> wrote:
-> > > > >
-> > > > > Make minimum number of changes outside of the KUnit directories for
-> > > > > KUnit to build and run using UML.
-> > > >
-> > > > There's nothing in this patch limiting this to UML.
+> > > On Tue, 12 Jun 2018 at 07:44, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > > >
-> > > Not that one, but the abort thing segv thing is, eventually.
-> > > To support other architectures we'd need to make a wrapper to that
-> > > hack which Brendan added, and then allow each os to implement
-> > > its own call, and add an asm-generic helper.
-
-I think Rob is referring to the description for this patch. This patch
-previously did what you suggested, Luis, (source the KUnit kconfig
-from arch/um/) but Kees asked me to change it to how it is now (which
-probably makes sense if we are saying KUnit is not intended to be tied
-to a particular architecture, no?), and I forgot to update the commit
-description, sorry.
-
+> > >> Building Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
+> > >> produced these warning:
+> > >>
+> > >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
+> > >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
+> > >> ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.hash'.
+> > >>
+> > >> This may just be because I have started building using the native Debian
+> > >> gcc for the powerpc builds ...
+> > >
+> > > Do you know why we started creating these?
 > >
-> > I've not looked into why this is needed, but can't you make the abort
-> > support optional and arches can select it when they support it.
+> > It's controlled by the ld option --hash-style, which AFAICS still
+> > defaults to sysv (generating .hash).
+> >
+> > But it seems gcc can be configured to have a different default, and at
+> > least my native ppc64le toolchains are passing gnu, eg:
+> >
+> >  /usr/lib/gcc/powerpc64le-linux-gnu/6/collect2 -plugin
+> >  /usr/lib/gcc/powerpc64le-linux-gnu/6/liblto_plugin.so
+> >  -plugin-opt=/usr/lib/gcc/powerpc64le-linux-gnu/6/lto-wrapper
+> >  -plugin-opt=-fresolution=/tmp/ccw1U2fF.res
+> >  -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s
+> >  -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc
+> >  -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr
+> >  -V -shared -m elf64lppc
+> >  --hash-style=gnu
+> >  ^^^^^^^^^^^^^^^^
+> >
+> > So that's presumably why we're seeing it, some GCCs are configured to
+> > use it.
+> >
+> > > If it's intentional, should we be putting including them in the same
+> > > way as .hash sections?
+> > >
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/kernel/vmlinux.lds.S#n282
+> > >
+> > >   .hash : AT(ADDR(.hash) - LOAD_OFFSET) { *(.hash) }
+> >
+> > That would presumably work.
+> >
+> > My question though is do we even need it?
+> >
+> > >From what I can see for it to be useful you need the section as well as
+> > an entry in the dynamic section pointing at it, and we don't have a
+> > dynamic section at all:
+> >
+> >   $ readelf -S vmlinux | grep gnu.hash
+> >     [ 4] .gnu.hash         GNU_HASH         c000000000dbbdb0  00dcbdb0
+> >   $ readelf -d vmlinux
+> >
+> >   There is no dynamic section in this file.
+> >
+> > Compare to the vdso:
+> >
+> > $ readelf -d arch/powerpc/kernel/vdso64/vdso64.so
+> >
+> > Dynamic section at offset 0x868 contains 12 entries:
+> >   Tag        Type                         Name/Value
+> >  0x000000000000000e (SONAME)             Library soname: [linux-vdso64.so.1]
+> >  0x0000000000000004 (HASH)               0x120
+> >  0x000000006ffffef5 (GNU_HASH)           0x170
+> >  0x0000000000000005 (STRTAB)             0x320
+> >  0x0000000000000006 (SYMTAB)             0x1d0
+> >  0x000000000000000a (STRSZ)              269 (bytes)
+> >  0x000000000000000b (SYMENT)             24 (bytes)
+> >  0x0000000070000003 (PPC64_OPT)          0x0
+> >  0x000000006ffffffc (VERDEF)             0x450
+> >  0x000000006ffffffd (VERDEFNUM)          2
+> >  0x000000006ffffff0 (VERSYM)             0x42e
+> >  0x0000000000000000 (NULL)               0x0
+> >
+> >
+> > So can't we just discard .gnu.hash? And in fact do we need .hash either?
+> >
+> > Actually arm64 discards the latter, and parisc discards both.
+> >
+> > Would still be good to hear from Alan or someone else who knows anything
+> > about toolchain stuff, ie. not me :)
 >
-> Its why I have asked for it to be properly documented. The patches in no
-> way illustrate *why* such thing is done. And if we are going to
-> potentially have other archs do something similar best to make it
-> explicit.
+> .gnu.hash, like .hash, is used by glibc ld.so for dynamic symbol
+> lookup.  I imagine you don't need either section in a kernel, so
+> discarding both sounds reasonable.  Likely you could discard .interp
+> and .dynstr too, and .dynsym when !CONFIG_PPC32.
 
-Yeah, I should better document it. I should also probably not include
-any UML specific header files in kunit/test.h; that seems like I am
-asking to get more tightly coupled if I am not careful about exactly
-what things I depend on.
+Thanks for the digging Michael, and thanks Alan for clarifying the
+details. I'll cook up a patch or two.
 
-I think Luis is right, I need to add a wrapper around the features
-needed for the hack to support abort() and then write a UML specific
-implementation.
+Cheers,
 
-For the asm-generic case, we could probably just have abort() call
-BUG(), with that KUnit should work on most architectures, albeit with
-pretty reduced functionality.
-
->
-> > At
-> > least before, the DT unittests didn't need this to run and shouldn't
-> > depend on it after converting to kunit.
-
-Fair enough.
+Joel
