@@ -2,104 +2,107 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4D1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B01AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 488CA20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECAB920850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 17:34:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNQcOhBw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 488CA20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FNgEJnrL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECAB920850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeLCRe0 (ORCPT
+        id S1726946AbeLCRed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:34:26 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52413 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbeLCReZ (ORCPT
+        Mon, 3 Dec 2018 12:34:33 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46779 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbeLCRed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:34:25 -0500
-Received: by mail-it1-f195.google.com with SMTP id i7so10604494iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:34:19 -0800 (PST)
+        Mon, 3 Dec 2018 12:34:33 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v15-v6so12167881ljh.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Cg+48DoFxNYJ/GCLHItJYQDW72U1S3V3i9H+pqbVQ/0=;
-        b=TNQcOhBwOLixilY4XXq/voa3rZQ+h5VmS4r3l7AO/LCAGBY8RGNGIzpC7PNn8qfDdg
-         8ksipToTExzXSuG2CFDebsNt2l50Yq2RSt5dEBru4WeQYOe0IwDpXGp6+U5oyhksWXIZ
-         GEPhMa7rBT2NU++94LHq5cEvCTi5n+AaeUswc=
+        bh=7LcLnMk4V5PpabCgP7lHlco39TNBY8EwSdngHqUzyCc=;
+        b=FNgEJnrLY375WNyOgrlITMygyw4NqgVOkjxz4Ekqt5qRdgw7QUA4cvP/whQsH6jZIZ
+         TltdhCdhqqQ+RloEdQbMOmRY2tAkL3r9DkdqOfixL2XFcuZqv4z949rJ3mK9fSEJx506
+         ndk8MYrcpGhCLV5uP6DEaApdy0KlRdACTOsNM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Cg+48DoFxNYJ/GCLHItJYQDW72U1S3V3i9H+pqbVQ/0=;
-        b=IAaEjUdgZUzKyKwq0C0jp47yPwUxDspUBhZ7YR3kk2GAmc1dDfPPH1YoKklvS5oGwx
-         qFkHjx+Smqk9zw//aEP2pgUztnXoojjwrvnLOLEmeq7RtsvHVpvev3sr/yrdvrOk2oKN
-         csShotoi17xT0PKVeHZDN002I7Pgvx8EOiX1CkhTHu8/KwFX21rwfQ/dUwWexON6ysOC
-         uXfkpqrOP0PoTN2Sxf4ci76IZBQ02PxXU88MByT9WO0FfYSFEpFpFto1Tmv1q8FG3EA6
-         uFImtcCIKksw7pdRA/K/46HWFMq7N1Z9oikNEYWRqHIbKNY1b3415B0X+5a+oJgNpRfN
-         JsIg==
-X-Gm-Message-State: AA+aEWYZqbT31GqP5EY1dFKQolizbgNllzuJ1BP/RgBV2bVIurgIC3An
-        eyE8C4nPJy9WsulJacfVN8pIGNFkLWbYqlRNmdbWbE+H
-X-Google-Smtp-Source: AFSGD/UJY7hy+sIo2ceMWvwRDc0V4Fs0+oXk9Zab7K5odLmRwTc2hHE5T8DrK/FLkUpw17jXORdym/KlWYzU1u+mCNQ=
-X-Received: by 2002:a05:660c:34f:: with SMTP id b15mr8903651itl.146.1543858459010;
- Mon, 03 Dec 2018 09:34:19 -0800 (PST)
+        bh=7LcLnMk4V5PpabCgP7lHlco39TNBY8EwSdngHqUzyCc=;
+        b=m0XcNSuP2YLL4K3kaaYQm5r9u9Xkt6Ha7UAQ0pwnNN2wN8oEhtRrctrzD+dthvLQu7
+         SZZyVOihpmI9A9P2k5EXJPjsmgN1Umlz18Dt1/egac7QGEqs0N4BE9pHBroDEoIrRXDf
+         cPxmPqQj8R5dClqsrSlC7j4taPwETLkyDesV85AD7WV73ZE/+pZoSn+lhJ9hgs6D2p8Q
+         C7J/1H99VloA29o9JTonrktZO3TsiJ842nbWJaxKUG1JCyBaEFW+qg0ZgynplylWraa7
+         zLp39aeTmQtw4QE2pgcv/9ByIwX4k6SBUXkoTsnoRQJz4SIo/Uy8Xeew9GzvnFrKrDGY
+         WmQw==
+X-Gm-Message-State: AA+aEWbMFjbEuybGfBQm6qv86gLbVGRBidUE6Fm1UNs/xKPgQgiAYllm
+        8TmAz0oM59P1anUqaSu705XjD/2JQ1Q=
+X-Google-Smtp-Source: AFSGD/VA0PSMAhao3CyIFULE4cPJovkst5T/0jxLekCR/fsqkYvxwJO38I30k3fDADxNv7pYL3yOBw==
+X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr10272021lje.117.1543858464412;
+        Mon, 03 Dec 2018 09:34:24 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id i127-v6sm2585899lji.3.2018.12.03.09.34.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 09:34:23 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id c16so9782288lfj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 09:34:23 -0800 (PST)
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr9296579lfa.106.1543858462654;
+ Mon, 03 Dec 2018 09:34:22 -0800 (PST)
 MIME-Version: 1.0
-References: <1543540924-16321-1-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1543540924-16321-1-git-send-email-leo.yan@linaro.org>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 3 Dec 2018 10:34:07 -0700
-Message-ID: <CANLsYkxc21RbNft+k_oBA=4ZPCBr_rhYSV2vxiHceyJH3M6jVw@mail.gmail.com>
-Subject: Re: [PATCH] coresight: cpu-debug: Support for CA73 CPUs
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181203110237.14787-1-rpenyaev@suse.de>
+In-Reply-To: <20181203110237.14787-1-rpenyaev@suse.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 3 Dec 2018 09:34:06 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiQX4HnBpyrxCwJmhBRff0GG65tOhsRnA=2KdYL=PBdyg@mail.gmail.com>
+Message-ID: <CAHk-=wiQX4HnBpyrxCwJmhBRff0GG65tOhsRnA=2KdYL=PBdyg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] epoll: use rwlock in order to reduce
+ ep_poll_callback() contention
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 at 18:22, Leo Yan <leo.yan@linaro.org> wrote:
+On Mon, Dec 3, 2018 at 3:03 AM Roman Penyaev <rpenyaev@suse.de> wrote:
 >
-> This patch is to add the AMBA device ID for CA73 CPU, so that CPU debug
-> module can be initialized successfully when a SoC contain CA73 CPUs.
->
-> This patch has been verified on 96boards Hikey960.
->
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  drivers/hwtracing/coresight/coresight-cpu-debug.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> index 45b2460..e8819d7 100644
-> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> @@ -668,6 +668,10 @@ static const struct amba_id debug_ids[] = {
->                 .id     = 0x000bbd08,
->                 .mask   = 0x000fffff,
->         },
-> +       {       /* Debug for Cortex-A73 */
-> +               .id     = 0x000bbd09,
-> +               .mask   = 0x000fffff,
-> +       },
->         { 0, 0 },
->  };
->
+> Also I'm not quite sure where to put very special lockless variant
+> of adding element to the list (list_add_tail_lockless() in this
+> patch).  Seems keeping it locally is safer.
 
-I have picked this up - thanks.
+That function is scary, and can be mis-used so easily that I
+definitely don't want to see it anywhere else.
 
-Mathieu
+Afaik, it's *really* important that only "add_tail" operations can be
+done in parallel.
 
-> --
-> 2.7.4
->
+This also ends up making the memory ordering of "xchg()" very very
+important. Yes, we've documented it as being an ordering op, but I'm
+not sure we've relied on it this directly before.
+
+I also note that now we do more/different locking in the waitqueue
+handling, because the code now takes both that rwlock _and_ the
+waitqueue spinlock for wakeup. That also makes me worried that the
+"waitqueue_active()" games are no no longer reliable. I think they're
+fine (looks like they are only done under the write-lock, so it's
+effectively the same serialization anyway), but the upshoot of all of
+this is that I *really* want others to look at this patch too. A lot
+of small subtle things here.
+
+                Linus
