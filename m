@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42969C65BB0
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEE0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B6BE20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:59:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6BE20850
+	by mail.kernel.org (Postfix) with ESMTP id 7C8E020850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 14:59:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C8E020850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbeLCO6i (ORCPT
+        id S1726855AbeLCO7N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 09:58:38 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50910 "EHLO
+        Mon, 3 Dec 2018 09:59:13 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50902 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726394AbeLCO6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726682AbeLCO6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Dec 2018 09:58:37 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 9A2F95FDD5; Mon,  3 Dec 2018 22:58:27 +0800 (CST)
+        id 83A115FDC1; Mon,  3 Dec 2018 22:58:27 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -35,11 +35,10 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v2 12/14] ARM: dts: sun8i: r40: Add clock accuracy for external oscillators
-Date:   Mon,  3 Dec 2018 22:58:23 +0800
-Message-Id: <20181203145825.20511-13-wens@csie.org>
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 09/14] ARM: dts: sun8i: a23/a33: Fix up RTC device node
+Date:   Mon,  3 Dec 2018 22:58:20 +0800
+Message-Id: <20181203145825.20511-10-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181203145825.20511-1-wens@csie.org>
 References: <20181203145825.20511-1-wens@csie.org>
@@ -50,36 +49,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The R40 datasheet specifies a tolerance range for the external
-oscillators used. Add them to the device tree as the clock accuracy.
+The RTC module on the A23 was claimed to be the same as on the A31, when
+in fact it is not. The A31 does not have an RTC external clock output,
+and its internal RC oscillator's average clock rate is not in the same
+range. The A33's RTC is the same as the A23.
+
+This patch fixes the compatible string and clock properties to conform
+to the updated bindings. The register range is also fixed.
 
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/boot/dts/sun8i-r40.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
-index 6f4c9ca5a3ee..a8917f8b1c80 100644
---- a/arch/arm/boot/dts/sun8i-r40.dtsi
-+++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-@@ -61,6 +61,7 @@
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
- 			clock-frequency = <24000000>;
-+			clock-accuracy = <50000>;
- 			clock-output-names = "osc24M";
+diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+index c2ff8975ac60..a9c123de5d2c 100644
+--- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+@@ -573,11 +573,11 @@
  		};
  
-@@ -68,6 +69,7 @@
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
- 			clock-frequency = <32768>;
-+			clock-accuracy = <20000>;
- 			clock-output-names = "osc32k";
+ 		rtc: rtc@1f00000 {
+-			compatible = "allwinner,sun6i-a31-rtc";
+-			reg = <0x01f00000 0x54>;
++			compatible = "allwinner,sun8i-a23-rtc";
++			reg = <0x01f00000 0x400>;
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+-			clock-output-names = "osc32k";
++			clock-output-names = "osc32k", "osc32k-out";
+ 			clocks = <&ext_osc32k>;
+ 			#clock-cells = <1>;
  		};
- 	};
 -- 
 2.20.0.rc1
 
