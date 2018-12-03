@@ -2,50 +2,50 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504B6C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B668C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2186820878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:17:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2186820878
+	by mail.kernel.org (Postfix) with ESMTP id 139E620878
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 12:18:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139E620878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbeLCMSX (ORCPT
+        id S1726469AbeLCMTC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:18:23 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40108 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbeLCMSX (ORCPT
+        Mon, 3 Dec 2018 07:19:02 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44933 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbeLCMTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 07:18:23 -0500
-Received: by mail-lj1-f196.google.com with SMTP id n18-v6so11149155lji.7;
-        Mon, 03 Dec 2018 04:17:33 -0800 (PST)
+        Mon, 3 Dec 2018 07:19:02 -0500
+Received: by mail-lf1-f67.google.com with SMTP id z13so8930503lfe.11;
+        Mon, 03 Dec 2018 04:18:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=e8KB2/WXgCvWWRok++Ev6sx74vmaI5DCSjYW/BQ/IPU=;
-        b=mAkc/etNuADk1exMLJALkb8DGiZmjHcGpTf02NGRakfbxMgOTjzF20vt4PHBVTWMQZ
-         fCJ7/nyz1sARXI5ALId6qNC450uFYjwOvevoVCX4gHaOAi78lR2L7ZQmgVxOOEQdurIB
-         MvcO2dX3xoUpt0JMIAykDL3gwmTmVD6D2koKS6I6q/rkceow+S7UQP90ueIBsq5zwEzD
-         aAv5wpHFhejlQU45YsL4gPOj/osO0DtjImMnhAdkQNhvUUP7QTZYiSHHm7kgitTjELkH
-         EsZomI+s6SZ0AT89OL80T2BBE4isgnpQ/3vT+jk92sm4VfkR7Sh/iwhFagWFv8kA3F+y
-         Qk4Q==
-X-Gm-Message-State: AA+aEWakqWBKDC5h8SF2EFVFBAVtHozyp91H1202Hq3LXkI+pi2Z74Yb
-        kP15eEkpQu/V1/Oea2jsxqQ=
-X-Google-Smtp-Source: AFSGD/UFb3MAQnjkh8aguglNIHGJ/Wp+rIlH6SlTdLK8+YkagFIUc4AlxCen7Ki/I6LzhyTTpkfwbQ==
-X-Received: by 2002:a2e:744:: with SMTP id i4-v6mr8118437ljd.140.1543839452549;
-        Mon, 03 Dec 2018 04:17:32 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w4m1/JlFXy+H6P73gFddGHjsLcAn5Y4uuyOJoCi2r3k=;
+        b=Yae7cjavEyHhFJU47kA2zT/6wwXgDqgWFaHqkottpOFUxTrrxBc3BCQS3UGqnV+nMP
+         XUMSd2TXRfuhKJSwbWtH32QnZRuv6ec2iu9rLM6rttZtezuGOAuB13A7mnSCBkSNu2VY
+         zVxJbP0ozVIWg6VvhxuAHfM1IPDzMhUBMuUwj2iF9V/ljthRaJa+kMM+80E4GRTf+CK4
+         PtozjEUWF4QxPzkbmQPc79zmFMo+sghJQjivOdDmJsUxZFTtRTkQ7mW/siE+fgBBfAqS
+         86ZgNbJSnIHQ5nhaDFVFLAG5QW/DmSMrqe7Shnf4CnJygjPkpRT++tfNdnnXx9hliIro
+         liCQ==
+X-Gm-Message-State: AA+aEWai+uNshWITdO+j+KYN3uIoap9NzTep5dVYyUN3kHmGCqu6v/zu
+        mPfqLgJl51D0NQOFJIzN/MMnmfbUgU0=
+X-Google-Smtp-Source: AFSGD/V6mHObKB5mLcnDnizgBwluhXfpreZyoRlZwRkMqfQpXL5Va39sEJChpyXc+e39jdqTbdDaIQ==
+X-Received: by 2002:a19:6719:: with SMTP id b25mr8361226lfc.38.1543839489901;
+        Mon, 03 Dec 2018 04:18:09 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id y131sm2263347lfc.43.2018.12.03.04.17.31
+        by smtp.gmail.com with ESMTPSA id r29-v6sm2382781ljd.44.2018.12.03.04.18.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 04:17:32 -0800 (PST)
-Date:   Mon, 3 Dec 2018 14:17:19 +0200
+        Mon, 03 Dec 2018 04:18:09 -0800 (PST)
+Date:   Mon, 3 Dec 2018 14:17:56 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
@@ -56,108 +56,203 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
         djkurtz@chromium.org, rafael.j.wysocki@intel.com,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 0/9] clk: clkdev: managed clk lookup and provider
- registrations
-Message-ID: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v5 1/9] clkdev: add managed clkdev lookup registration
+Message-ID: <b6c5c110c482ff6a6b2378ab3518bd31c6233872.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Series add bd71837/bd71837 PMIC clock support + managed interfaces
+Clkdev registration lacks of managed registration functions and it
+seems few drivers do not drop clkdev lookups at exit. Add
+devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
+releasing at exit.
 
-Few clk drivers appear to be leaking clkdev lookup registrations at
-driver remove. The patch series adds devm versions of lookup
-registrations and cleans up few drivers. Driver clean-up patches have
-not been tested as I lack the HW. All testing and comments if
-driver/device removal is even possible for changed drivers is highly
-appreciated. If removal is not possible I will gladly drop the patches
-from series - although leaking lookups may serve as bad example for new
-developers =)
-
-Patch 8 adds support for clock gate in ROHM bd71837 and bd71847 PMICs.
-This change is included in the series because it depends on new managed
-interfaces introduced in this series.
-
-bd718x7 driver and devm interfaces are tested on BeagleBoneBlack and 
-bd71837 break-out board. Clk area register interface of bd71847 is
-identical to bd71837.
-
-Changed drivers are:
-clk-max77686, clk-st, clk-hi655x, rk808, clk-twl6040
-and apcs-msm8916. New driver is clk-bd718x7
-
-This series has been discussed for a while now. For those who want to
-see whole discussion:
-
-The bd71837 driver was originally proposed here
-https://lore.kernel.org/lkml/d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com/
-
-clk portion was separated from that series and devm variants were
-proposed here
-https://lore.kernel.org/linux-clk/cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com/
-
-Cleanup to other drivers was initiated in this series while waiting for
-MFD portions of bd718x7 to be applied. And now when MFD dependencies are in-tree
-the patch version (4) combined bd718x7 driver back to this series.
-
-Changelog (for this series) v5
-- Split v4 patch 1. Place clkdev stuff to patch 1 and clk provider to patch 2
-- Remove devm_clk_release_clkdev from devres.txt
-- Added kerneldoc for managed provider registrations.
-- Cleaned styling issues.
-
-Changelog (for this series) v4
-- Add support for ROHM bd718x7 PMIC clock gate. Included in this patch
-  series because it depends on managed interfaces added in patch 1.
-
-Changelog (for this series) v3
-Address issues spotted by Krzysztof Kozlowski
-- Drop patch 3 for clk-s3c2410-dclk as this device can never be removed
-- Fix indentiation for clk-max77686
-- Rest  of the patches are unchanged.
-
-Changelog (for this series) v2
-Issue spotted by 0-Day test suite
-- Add a stub function 'devm_of_clk_add_parent_hw_provider' for no OF config.
-- patches 2-8 are unchanged.
-
-This patch series is based on clk-next
-
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
-
-Matti Vaittinen (9):
-  clkdev: add managed clkdev lookup registration
-  clk: of_clk - add managed provider registrations
-  clk: clk-max77686: Clean clkdev lookup leak and use devm
-  clk: clk-st: avoid clkdev lookup leak at remove
-  clk: clk-hi655x: Free of_provider at remove
-  clk: rk808: use managed version of of_provider registration
-  clk: clk-twl6040: Free of_provider at remove
-  clk: apcs-msm8916: simplify probe cleanup by using devm
-  clk: bd718x7: Initial support for ROHM bd71837/bd71847 PMIC clock
-
- Documentation/driver-model/devres.txt |   2 +
- drivers/clk/Kconfig                   |   7 ++
- drivers/clk/Makefile                  |   1 +
- drivers/clk/clk-bd718x7.c             | 131 ++++++++++++++++++++++++++++++++++
- drivers/clk/clk-hi655x.c              |   4 +-
- drivers/clk/clk-max77686.c            |  29 ++------
- drivers/clk/clk-rk808.c               |  15 +---
- drivers/clk/clk-twl6040.c             |   5 +-
- drivers/clk/clk.c                     |  65 ++++++++++++++---
- drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++-------
- drivers/clk/qcom/apcs-msm8916.c       |   5 +-
- drivers/clk/x86/clk-st.c              |   3 +-
- include/linux/clk-provider.h          |  11 +++
+ Documentation/driver-model/devres.txt |   1 +
+ drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++++--------
  include/linux/clkdev.h                |   4 ++
- 14 files changed, 325 insertions(+), 79 deletions(-)
- create mode 100644 drivers/clk/clk-bd718x7.c
+ 3 files changed, 101 insertions(+), 26 deletions(-)
 
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index 43681ca0837f..dbf14326243b 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -238,6 +238,7 @@ CLOCK
+   devm_clk_put()
+   devm_clk_hw_register()
+   devm_of_clk_add_hw_provider()
++  devm_clk_hw_register_clkdev()
+ 
+ DMA
+   dmaenginem_async_device_register()
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 9ab3db8b3988..68a1e55a60d2 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -401,6 +401,25 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+ 	return cl;
+ }
+ 
++static int do_clk_register_clkdev(struct clk_hw *hw,
++	struct clk_lookup **cl, const char *con_id, const char *dev_id)
++{
++
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	/*
++	 * Since dev_id can be NULL, and NULL is handled specially, we must
++	 * pass it as either a NULL format string, or with "%s".
++	 */
++	if (dev_id)
++		*cl = __clk_register_clkdev(hw, con_id, "%s",
++					   dev_id);
++	else
++		*cl = __clk_register_clkdev(hw, con_id, NULL);
++
++	return *cl ? 0 : -ENOMEM;
++}
++
+ /**
+  * clk_register_clkdev - register one clock lookup for a struct clk
+  * @clk: struct clk to associate with all clk_lookups
+@@ -420,20 +439,10 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
+ {
+ 	struct clk_lookup *cl;
+ 
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
+-
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
+-					   dev_id);
+-	else
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
+-
+-	return cl ? 0 : -ENOMEM;
++	if (!IS_ERR(clk))
++		return do_clk_register_clkdev(__clk_get_hw(clk), &cl, con_id,
++					      dev_id);
++	return PTR_ERR(clk);
+ }
+ EXPORT_SYMBOL(clk_register_clkdev);
+ 
+@@ -456,18 +465,79 @@ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
+ {
+ 	struct clk_lookup *cl;
+ 
+-	if (IS_ERR(hw))
+-		return PTR_ERR(hw);
++	return do_clk_register_clkdev(hw, &cl, con_id, dev_id);
++}
++EXPORT_SYMBOL(clk_hw_register_clkdev);
+ 
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
+-	else
+-		cl = __clk_register_clkdev(hw, con_id, NULL);
++static void devm_clkdev_release(struct device *dev, void *res)
++{
++	clkdev_drop(*(struct clk_lookup **)res);
++}
+ 
+-	return cl ? 0 : -ENOMEM;
++static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
++{
++	struct clk_lookup **l = res;
++
++	if (!l || !*l) {
++		WARN_ON(!l || !*l);
++		return 0;
++	}
++	return *l == data;
+ }
+-EXPORT_SYMBOL(clk_hw_register_clkdev);
++
++/**
++ * devm_clk_release_clkdev - Resource managed clkdev lookup release
++ * @dev: device this lookup is bound
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * Drop the clkdev lookup created with devm_clk_hw_register_clkdev.
++ * Normally this function will not need to be called and the resource
++ * management code will ensure that the resource is freed.
++ */
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id)
++{
++	struct clk_lookup *cl;
++	int rval;
++
++	cl = clk_find(dev_id, con_id);
++	WARN_ON(!cl);
++	rval = devres_release(dev, devm_clkdev_release,
++			      devm_clk_match_clkdev, cl);
++	WARN_ON(rval);
++}
++EXPORT_SYMBOL(devm_clk_release_clkdev);
++
++/**
++ * devm_clk_hw_register_clkdev - managed clk lookup registration for clk_hw
++ * @dev: device this lookup is bound
++ * @hw: struct clk_hw to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
++ * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clk_hws
++ * from a previous clk_hw_register_*() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_hw_register_*().
++ */
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id)
++{
++	int rval = -ENOMEM;
++	struct clk_lookup **cl;
++
++	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
++	if (cl) {
++		rval = do_clk_register_clkdev(hw, cl, con_id, dev_id);
++		if (!rval)
++			devres_add(dev, cl);
++		else
++			devres_free(cl);
++	}
++	return rval;
++}
++EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index 4890ff033220..ccb32af5848b 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -52,4 +52,8 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
+ int clk_register_clkdev(struct clk *, const char *, const char *);
+ int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+ 
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id);
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id);
+ #endif
 -- 
 2.14.3
 
