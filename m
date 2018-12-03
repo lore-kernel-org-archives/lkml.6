@@ -2,114 +2,134 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B09C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2209C04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A48620851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 05:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 760F620851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 06:02:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="J+pJ1/8a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A48620851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIszrXm4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 760F620851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbeLCF5t (ORCPT
+        id S1725843AbeLCGCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 00:57:49 -0500
-Received: from mail-eopbgr800047.outbound.protection.outlook.com ([40.107.80.47]:44304
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725818AbeLCF5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 00:57:49 -0500
+        Mon, 3 Dec 2018 01:02:18 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38274 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeLCGCS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 01:02:18 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so5895876plb.5
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Dec 2018 22:02:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FwDk/si1nAhxtdo/G2mxSOmYTr7sQZhTa6UHSJaMkbo=;
- b=J+pJ1/8arxgFfn9FFyY5hAIONUIJB9bxXsJS5ciqPuoKE3USgDyvHeTXDSkmg/JheyLYPSHejqRooZOhvkdd9iuiZv86Ue6i2eL158rRUhXtPeGGjAoGO07Da0IU1/dlNo7R5OZhXzWkCyscQ8FQgswL+CZnUJicqCdj76Jn0nw=
-Received: from MW2PR07MB4042.namprd07.prod.outlook.com (52.132.179.25) by
- MW2PR07MB3884.namprd07.prod.outlook.com (52.132.178.33) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Mon, 3 Dec 2018 05:57:42 +0000
-Received: from MW2PR07MB4042.namprd07.prod.outlook.com
- ([fe80::142a:233e:11c3:4c4f]) by MW2PR07MB4042.namprd07.prod.outlook.com
- ([fe80::142a:233e:11c3:4c4f%5]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 05:57:42 +0000
-From:   "Rangankar, Manish" <Manish.Rangankar@cavium.com>
-To:     Thomas Meyer <thomas@m3y3r.de>,
-        Dept-Eng QLogic Storage Upstream 
-        <QLogic-Storage-Upstream@cavium.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: qedf: NULL check before some freeing functions is
- not needed.
-Thread-Topic: [PATCH] scsi: qedf: NULL check before some freeing functions is
- not needed.
-Thread-Index: AQHUioFaEfcUnyHEhkGgkXi0R2Id1KVshQxg
-Date:   Mon, 3 Dec 2018 05:57:42 +0000
-Message-ID: <MW2PR07MB4042B569F3E1BD643DE67022E3AE0@MW2PR07MB4042.namprd07.prod.outlook.com>
-References: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de>
- <1543760930052-271366275-12-diffsplit-thomas@m3y3r.de>
-In-Reply-To: <1543760930052-271366275-12-diffsplit-thomas@m3y3r.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Manish.Rangankar@cavium.com; 
-x-originating-ip: [114.143.185.87]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR07MB3884;6:HigFqR0FC16IPZV2eDC715mRY2MkLu81gkola9/hQ5XMdPCGQKLLyfoDw0QI9KLW3LYkeaAsP/uh81tIqPNs7ZTC7OoXqhC5DQfHpqFtT1CPBiZGblY4DiX1Pw2PoX3m9GWfFuJXwbT9NE9JVwXjVIi0evOuHUADCMUrEe+vRu5NATEDgFMkmgqJFX2xqHXsLKAsU83T82NFvLjYgSkH/4q0n9yAxUBZKDTpEyZYFbHZ5Hzxorwlwnmnwa9/Ji3aTBoQ2ul/776G+09ioWkXmylEIl9d7c0Qso/Agq/h6xhhm1EE7x2R4r6h3z1oY9bPSAg1/Y8FX5VdMDZuxFhoWhi5wbaqXjv1Nzhu2wVYzFwZT9+a84XTsuV/slXclgbkoMIfhgyfSWp/lCVoAG5dF3AEvv96x0jqChB9iRcv3/FPwZ01vywLJzAGKTADMR3gbCoc01mUe7O7h3fv9S4Sfw==;5:YK/msO86cXMMOLcahv6ElINfnBxVBb3aotXT8hHlXfvex3RRoUvBFAejopiAWOYNCVkNy+Kb53rGq9QQFbtAo05eswEeFd+3Y3WM8sJUwdaF/lFh6wdCsr4GMapcSuO9GyT3BZYSq3KPYuNwr4GxtsnMu9jc0674eyqBcmnF2u0=;7:kN0Jq5b/eACFVNDC6yd0GauNmJ84FSeOrjJwLlj55Zv7zRRymhtNbw1NfkEQJL3R1m+MQLLxG90M+u+NTWlmbWgn7M9vCQpSumCNhg3ZOb2UHNzzSgXpORmgOtNy3ytxSU7sdta2BvSO4ECTOyf1mg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9ce54105-1d72-4392-7789-08d658e43d59
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MW2PR07MB3884;
-x-ms-traffictypediagnostic: MW2PR07MB3884:
-x-microsoft-antispam-prvs: <MW2PR07MB3884BD9CDD0F53BCE99B214EE3AE0@MW2PR07MB3884.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:MW2PR07MB3884;BCL:0;PCL:0;RULEID:;SRVR:MW2PR07MB3884;
-x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(376002)(366004)(189003)(199004)(13464003)(3846002)(68736007)(486006)(186003)(256004)(229853002)(2201001)(14444005)(86362001)(14454004)(106356001)(7696005)(105586002)(76176011)(6436002)(446003)(11346002)(476003)(2501003)(26005)(53936002)(97736004)(72206003)(316002)(102836004)(99286004)(71200400001)(6506007)(53546011)(7736002)(9686003)(55016002)(33656002)(110136005)(478600001)(74316002)(6246003)(81156014)(2906002)(8936002)(71190400001)(81166006)(305945005)(66066001)(8676002)(25786009)(6116002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR07MB3884;H:MW2PR07MB4042.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: oao0+FDWt+50IcdsXb8jkxEAbINjK6WFakMoCbpucku9eHFK+S2p6McU8hGuddpnRNOOyr3fuaLYH4L4kQiH3zWQ9NyJipE8IOvKKFWdiIa+xqpwyq6QJtPAOZ/LMbMAtP53/geQvOO+oupxK0HYNaxVvePbgb8o7/sMj2QQDwVOit6CnrzbhnGfC6+sQbE0Ir+FAzFBO0xGX8agxBV0UUA+sBdUGtwdiZ0vIss/3eRFzGIV0+0jzUnHz3jeR95Lawl0abJG0fEq4qxzP9cvrcM89BlDgGldTc/OmO7Kp8IL+WHU4Lb1ijI1MU1DTwD3r2JsnYc4BdfS3lFk3lq6tjPhn7GniWrhPpXIBsnJNaI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KvOLLYtosfl9evOE75aR4QwQpjj3V6YvB33Oi+VUiiE=;
+        b=TIszrXm4p0cDEemFF1HIeB39YpvhTy+qNr7Q0H29c/zChAaPH+MhSXYqpoLsA76NRt
+         Cm0nsqrwFfC/F/zTUbCKmN1r+658s8/nYO6SHeJo+0Y8FpZaiMirSP/bMWZ3izn8YhYX
+         HymASgWQqZ2vb7k05tJSqT4cQQM/8TN+efmjAchGPHro7F4xE5DMeW9NUAy/uY/WUyFC
+         aShqMjXBGTJo1FEjNpfBkkmeev+uMwkAc+B2GpIs2dmdaAcnw0bDSx8rS57wR9QC2IoB
+         I0MkHpsmVWoxlAX5KGoZcDwVoKygj1i0ZG3qyNu+B9jnKxIUSWh+7A5H+bEd2QrGrnAu
+         8mZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KvOLLYtosfl9evOE75aR4QwQpjj3V6YvB33Oi+VUiiE=;
+        b=S1poKxBTwdFxPrp+SRkoCtzY+so2o78fq6W4xwR8ntJqNV9SJRg4068gNFgUrUl9NJ
+         CYsKSApi8+7WpeA1ryyGd05zm2eMy86C4G5CaBYOsh6G8LOep5K992lzKCVoriPNwXFi
+         tx7qP2Ri1CEAypt2aNB24bx/bkgMH90kWzABbnyZPFjiCtQ7MKJ18dHO3+hasmnhEVVV
+         ueEqzxTLGGNPvg4Jt8/z6DYe1Vrbili08JzwePFf/s1qcWnJDV7O9eJBkeDjo8NryVGK
+         48a+dePGBLesa0CvgO2iPu0OSmT0eSyADMuJsvS1wN8fevF4eXqrewCsGux1bNqbBcJ5
+         Y0Jw==
+X-Gm-Message-State: AA+aEWbOlKPTJEl3LtDW6k5ouYBICNTEZhr7pijX97p2oKFhgwdwnLsS
+        qvgIpaVQFXRgUXIputnjpBM=
+X-Google-Smtp-Source: AFSGD/WQnHTJolfZQYzOazcHovGKPzinhhsC+U3F7w5qudLEfald0BVMQawx39KVuVdfHKxqg1JQ4Q==
+X-Received: by 2002:a17:902:b118:: with SMTP id q24mr14881114plr.209.1543816932333;
+        Sun, 02 Dec 2018 22:02:12 -0800 (PST)
+Received: from localhost ([175.223.22.143])
+        by smtp.gmail.com with ESMTPSA id j14sm16502452pfn.175.2018.12.02.22.02.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Dec 2018 22:02:11 -0800 (PST)
+Date:   Mon, 3 Dec 2018 15:02:08 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH v4 7/7] zram: writeback throttle
+Message-ID: <20181203060208.GE427@jagdpanzerIV>
+References: <20181203024045.153534-1-minchan@kernel.org>
+ <20181203024045.153534-8-minchan@kernel.org>
+ <20181203055026.GD427@jagdpanzerIV>
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ce54105-1d72-4392-7789-08d658e43d59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 05:57:42.2743
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR07MB3884
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203055026.GD427@jagdpanzerIV>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFRob21hcyBNZXllciA8dGhv
-bWFzQG0zeTNyLmRlPg0KPiBTZW50OiBNb25kYXksIERlY2VtYmVyIDMsIDIwMTggMjoyMiBBTQ0K
-PiBUbzogRGVwdC1FbmcgUUxvZ2ljIFN0b3JhZ2UgVXBzdHJlYW0gPFFMb2dpYy1TdG9yYWdlLQ0K
-PiBVcHN0cmVhbUBjYXZpdW0uY29tPjsgamVqYkBsaW51eC52bmV0LmlibS5jb207DQo+IG1hcnRp
-bi5wZXRlcnNlbkBvcmFjbGUuY29tOyBsaW51eC1zY3NpQHZnZXIua2VybmVsLm9yZzsgbGludXgt
-DQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBzY3NpOiBxZWRm
-OiBOVUxMIGNoZWNrIGJlZm9yZSBzb21lIGZyZWVpbmcgZnVuY3Rpb25zIGlzIG5vdA0KPiBuZWVk
-ZWQuDQo+IA0KPiBFeHRlcm5hbCBFbWFpbA0KPiANCj4gTlVMTCBjaGVjayBiZWZvcmUgc29tZSBm
-cmVlaW5nIGZ1bmN0aW9ucyBpcyBub3QgbmVlZGVkLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVGhv
-bWFzIE1leWVyIDx0aG9tYXNAbTN5M3IuZGU+DQo+IC0tLQ0KPiANCj4gZGlmZiAtdSAtcCBhL2Ry
-aXZlcnMvc2NzaS9xZWRmL3FlZGZfbWFpbi5jIGIvZHJpdmVycy9zY3NpL3FlZGYvcWVkZl9tYWlu
-LmMNCj4gLS0tIGEvZHJpdmVycy9zY3NpL3FlZGYvcWVkZl9tYWluLmMNCj4gKysrIGIvZHJpdmVy
-cy9zY3NpL3FlZGYvcWVkZl9tYWluLmMNCj4gQEAgLTI5MzUsOCArMjkzNSw3IEBAIHN0YXRpYyB2
-b2lkIHFlZGZfZnJlZV9mY29lX3BmX3BhcmFtKHN0cnUNCj4gDQo+ICAgICAgICAgcWVkZl9mcmVl
-X2dsb2JhbF9xdWV1ZXMocWVkZik7DQo+IA0KPiAtICAgICAgIGlmIChxZWRmLT5nbG9iYWxfcXVl
-dWVzKQ0KPiAtICAgICAgICAgICAgICAga2ZyZWUocWVkZi0+Z2xvYmFsX3F1ZXVlcyk7DQo+ICsg
-ICAgICAga2ZyZWUocWVkZi0+Z2xvYmFsX3F1ZXVlcyk7DQo+ICB9DQo+IA0KPiAgLyoNCg0KVGhh
-bmtzDQpBY2tlZC1ieTogTWFuaXNoIFJhbmdhbmthciA8TWFuaXNoLlJhbmdhbmthckBjYXZpdW0u
-Y29tPg0K
+On (12/03/18 14:50), Sergey Senozhatsky wrote:
+> On (12/03/18 11:40), Minchan Kim wrote:
+> [..]
+> > +	down_read(&zram->init_lock);
+> > +	atomic64_set(&zram->stats.bd_wb_limit, val);
+> > +	if (val == 0)
+> > +		zram->stop_writeback = false;
+> > +	up_read(&zram->init_lock);
+> 
+> [..]
+> 
+> > +		if (zram->stop_writeback) {
+> > +			ret = -EIO;
+> > +			break;
+> > +		}
+> > +
+> >  		if (!blk_idx) {
+> >  			blk_idx = alloc_block_bdev(zram);
+> >  			if (!blk_idx) {
+> > @@ -694,6 +732,11 @@ static ssize_t writeback_store(struct device *dev,
+> >  		zram_set_element(zram, index, blk_idx);
+> >  		blk_idx = 0;
+> >  		atomic64_inc(&zram->stats.pages_stored);
+> > +		if (atomic64_add_unless(&zram->stats.bd_wb_limit,
+> > +					-1 << (PAGE_SHIFT - 12), 0)) {
+> > +			if (atomic64_read(&zram->stats.bd_wb_limit) == 0)
+> > +				zram->stop_writeback = true;
+> > +		}
+> 
+> Do we need ->stop_writeback? It should be identical to
+> 
+> 	atomic64_read(&zram->stats.bd_wb_limit) == 0
+
+Seems like I misread writeback_limit_store() a bit.
+
+So, if I want to, say, let only 10M of writteback pages, I need to
+do
+
+	echo 0 > writeback_limit
+	echo 10M > writeback_limit_store	// memparse format is for
+						// simplicity only; I know
+						// it should be in 4K units.
+
+every day. How about dropping the "echo 0" and ->stop_writeback?
+So then we can just do
+
+	echo 10M > writeback_limit_store
+
+every day: if we have ->bd_wb_limit budget then we writeback,
+           otherwise we don't.
+
+	-ss
