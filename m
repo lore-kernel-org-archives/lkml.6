@@ -2,85 +2,109 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AC9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4BEC65BAF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C26BD20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:46:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r/xzab/p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26BD20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id F19FE20851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 08:46:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19FE20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725989AbeLCIqb (ORCPT
+        id S1726005AbeLCIqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 03:46:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34518 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbeLCIqa (ORCPT
+        Mon, 3 Dec 2018 03:46:35 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:27710 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725870AbeLCIqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 03:46:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EgHySjzcZL6cfvn0IY/qIxKvTjt+dYuyKwPO5LsghnM=; b=r/xzab/p8c7PNIB3Eq2p3zrbM
-        1sg7eMn3IR/BDtuytzqEztTQgg6+05RLS4iRy4ZzBFmfjO4EdTad/P3RGKkfn7f7eVJeGMSQOB+bq
-        +0GTLVIpC1DLurIUNp8LA0/Y/IzdBGpvInAt2pP7Myx39sC1rZ2Wz6dfBNjrSU89ZrXETugpOy0hw
-        U/cJEjOprpb++biMe+UZvk0Vz8Gb5O6OdSY/hHXfNB/vSVbYx3jidfZb8hQr62OX7S2b+EH560nXm
-        mWtZnCoNEIbL+qJM5Qm6kkpeDKHpHzAWhufVCORENZzNIctnO8WBji07gjuxT/mzEJHEdkFPvr+UV
-        SJuRENs3Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTjri-0003II-Nd; Mon, 03 Dec 2018 08:46:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 309DB2029F883; Mon,  3 Dec 2018 09:46:05 +0100 (CET)
-Date:   Mon, 3 Dec 2018 09:46:05 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        mingo@redhat.com, will.deacon@arm.com, Julia.Lawall@lip6.fr
-Subject: Re: [PATCH] locktorture: Fix assignment of boolean variables
-Message-ID: <20181203084605.GC11650@hirez.programming.kicks-ass.net>
-References: <20181201083149.36972-1-wen.yang99@zte.com.cn>
- <20181201203700.GW4170@linux.ibm.com>
- <20181203083500.GH11614@hirez.programming.kicks-ass.net>
+        Mon, 3 Dec 2018 03:46:34 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB38fMVq009068;
+        Mon, 3 Dec 2018 09:46:07 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2p3u7v8kad-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 03 Dec 2018 09:46:07 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E5A3734;
+        Mon,  3 Dec 2018 08:46:05 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 860FEFCC;
+        Mon,  3 Dec 2018 08:46:05 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.47) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 3 Dec
+ 2018 09:46:04 +0100
+Subject: Re: [PATCH v3 0/4] Add support of STM32 hwspinlock
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <devicetree@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20181112152342.6561-1-benjamin.gaignard@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <5c137862-e8fa-abb4-d931-f5c63db50649@st.com>
+Date:   Mon, 3 Dec 2018 09:46:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203083500.GH11614@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181112152342.6561-1-benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-03_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 09:35:00AM +0100, Peter Zijlstra wrote:
-> On Sat, Dec 01, 2018 at 12:37:01PM -0800, Paul E. McKenney wrote:
-> > On Sat, Dec 01, 2018 at 04:31:49PM +0800, Wen Yang wrote:
-> > > Fix the following warnings reported by coccinelle:
-> > > 
-> > > kernel/locking/locktorture.c:703:6-10: WARNING: Assignment of bool to 0/1
+Hi Benjamin,
 
-Not to mention that WARN is gramatically incorrect. We're not assigning
-'bool' to 0/1 but the other way around.
-
-What crap..
-
-> So I strongly disagree with this. Anybody that has trouble with 0/1 vs
-> false/true needs to stay the heck away from C.
+On 11/12/18 4:23 PM, Benjamin Gaignard wrote:
+> This serie adds the support of the hardware semaphore block for stm32mp1 SoC.
 > 
-> I would suggest we delete that stupid coccinelle scripts that generates
-> these pointless warns.
+> version 3:
+> - fix clock name in properties description.
+> - use postcore_initcall() instead of module_platform_driver()
+> 
+> version 2:
+> - fix comments done by Bjorn about clock naming, license terms in header,
+>    alphabetic ordering in Makefile and Kconfig and remove function
+> - Do not push test module in this version while waiting for feedbacks about it
+> 
+> 
+> Benjamin Gaignard (4):
+>    dt-bindings: hwlock: Document STM32 hwspinlock bindings
+>    hwspinlock: add STM32 hwspinlock device
+>    ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
+>    ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
+> 
+>   .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 +++
+>   arch/arm/boot/dts/stm32mp157c-ed1.dts              |   4 +
+>   arch/arm/boot/dts/stm32mp157c.dtsi                 |   9 ++
+>   drivers/hwspinlock/Kconfig                         |   9 ++
+>   drivers/hwspinlock/Makefile                        |   1 +
+>   drivers/hwspinlock/stm32_hwspinlock.c              | 156 +++++++++++++++++++++
+>   6 files changed, 202 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+>   create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+> 
 
+There is a (strong) dependency between pinctrl and hsem.
+As our pin controller is enabled by default, it's better to enable also
+your hwspinlock device by default. It will avoid pin controller probe 
+defer and a no stable behavior. So, I gonna remove DT patches from 
+stm32-next. Those Dt patches will not be included in my 4.20 pull-request.
 
+regards
+Alex
