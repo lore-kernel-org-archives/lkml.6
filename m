@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A45DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB74C65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408EE214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96FE6214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:31:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="dX6TGBRi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408EE214DA
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="TYrbGiC4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96FE6214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbeLCJbw (ORCPT
+        id S1726145AbeLCJby (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:31:52 -0500
+        Mon, 3 Dec 2018 04:31:54 -0500
 Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:7528 "EHLO
         smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLCJbv (ORCPT
+        with ESMTP id S1725995AbeLCJbx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:31:51 -0500
+        Mon, 3 Dec 2018 04:31:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1543829497; x=1575365497;
+  t=1543829499; x=1575365499;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=toxNxeL+S0L+BBqXaHswTUHx7pn3H4+1r7Q4vo4rzNs=;
-  b=dX6TGBRihwu5D9LEi49ddw0Uk1cNT9j6/PVEgYDdwezfEqE/0AIXXvro
-   xqh09uKSgM6hIw8ykFp8Ft7kI8pQ9hyJVF1MNzvMv5kD2yEEKwlfffdBY
-   TGFd4clCL6NzdHmtWk/g2vBWnzGdOUZakc4FngcSWkjBVI+fJ+4cBSq9y
-   Y=;
+  bh=Py5JiW69qOO5baCsZHoyyhTfGuArenzy79zuSKYdWng=;
+  b=TYrbGiC4rrAcXrm4KGkpodOKZYZ5AcGUUD/b4sQKkRxE8HDitSLu7yk5
+   jRKOtRewNzlhuXTFVDCpAtvsDbO4pRGBqfQvPkONQI3EEH2/HmrOJhpnT
+   akZPfa1ciGVgVv+di1XqxBSOHvptEU1jzgnHTNg5c27GbwxozwQ/04PQf
+   o=;
 X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
-   d="scan'208";a="370599955"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Dec 2018 09:31:35 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
-        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id wB39VUmJ108020
+   d="scan'208";a="370599941"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Dec 2018 09:31:33 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2a-90c42d1d.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wB39VTQ0098624
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 3 Dec 2018 09:31:32 GMT
+        Mon, 3 Dec 2018 09:31:30 GMT
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wB39VTYZ018135;
-        Mon, 3 Dec 2018 10:31:29 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wB39VSjB018131;
+        Mon, 3 Dec 2018 10:31:28 +0100
 Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id wB39VTis018134;
-        Mon, 3 Dec 2018 10:31:29 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id wB39VSer018127;
+        Mon, 3 Dec 2018 10:31:28 +0100
 From:   KarimAllah Ahmed <karahmed@amazon.de>
 To:     rkrcmar@redhat.com, pbonzini@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         jmattson@google.com
 Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v4 06/14] KVM/nVMX: Use kvm_vcpu_map when mapping the L1 MSR bitmap
-Date:   Mon,  3 Dec 2018 10:30:59 +0100
-Message-Id: <1543829467-18025-7-git-send-email-karahmed@amazon.de>
+Subject: [PATCH v4 05/14] KVM: Introduce a new guest mapping API
+Date:   Mon,  3 Dec 2018 10:30:58 +0100
+Message-Id: <1543829467-18025-6-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543829467-18025-1-git-send-email-karahmed@amazon.de>
 References: <1543829467-18025-1-git-send-email-karahmed@amazon.de>
@@ -66,68 +66,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kvm_vcpu_map when mapping the L1 MSR bitmap since using
-kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
-a "struct page".
+In KVM, specially for nested guests, there is a dominant pattern of:
+
+	=> map guest memory -> do_something -> unmap guest memory
+
+In addition to all this unnecessarily noise in the code due to boiler plate
+code, most of the time the mapping function does not properly handle memory
+that is not backed by "struct page". This new guest mapping API encapsulate
+most of this boiler plate code and also handles guest memory that is not
+backed by "struct page".
+
+The current implementation of this API is using memremap for memory that is
+not backed by a "struct page" which would lead to a huge slow-down if it
+was used for high-frequency mapping operations. The API does not have any
+effect on current setups where guest memory is backed by a "struct page".
+Further patches are going to also introduce a pfn-cache which would
+significantly improve the performance of the memremap case.
 
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 ---
+v3 -> v4:
+- Update the commit message.
 v1 -> v2:
-- Do not change the lifecycle of the mapping (pbonzini)
+- Drop the caching optimization (pbonzini)
+- Use 'hva' instead of 'kaddr' (pbonzini)
+- Return 0/-EINVAL/-EFAULT instead of true/false. -EFAULT will be used for
+  AMD patch (pbonzini)
+- Introduce __kvm_map_gfn which accepts a memory slot and use it (pbonzini)
+- Only clear map->hva instead of memsetting the whole structure.
+- Drop kvm_vcpu_map_valid since it is no longer used.
+- Fix EXPORT_MODULE naming.
 ---
- arch/x86/kvm/vmx.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ include/linux/kvm_host.h |  9 +++++++++
+ virt/kvm/kvm_main.c      | 50 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 6d6dfa9..cca3ba0 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -867,6 +867,9 @@ struct nested_vmx {
- 	struct page *apic_access_page;
- 	struct page *virtual_apic_page;
- 	struct page *pi_desc_page;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index c926698..59e56b8 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -205,6 +205,13 @@ enum {
+ 	READING_SHADOW_PAGE_TABLES,
+ };
+ 
++struct kvm_host_map {
++	struct page *page;
++	void *hva;
++	kvm_pfn_t pfn;
++	kvm_pfn_t gfn;
++};
 +
-+	struct kvm_host_map msr_bitmap_map;
-+
- 	struct pi_desc *pi_desc;
- 	bool pi_pending;
- 	u16 posted_intr_nv;
-@@ -12069,9 +12072,10 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
- 						 struct vmcs12 *vmcs12)
- {
- 	int msr;
--	struct page *page;
- 	unsigned long *msr_bitmap_l1;
- 	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
-+	struct kvm_host_map *map = &to_vmx(vcpu)->nested.msr_bitmap_map;
-+
- 	/*
- 	 * pred_cmd & spec_ctrl are trying to verify two things:
- 	 *
-@@ -12097,11 +12101,10 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
- 	    !pred_cmd && !spec_ctrl)
- 		return false;
- 
--	page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->msr_bitmap);
--	if (is_error_page(page))
-+	if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->msr_bitmap), map))
- 		return false;
- 
--	msr_bitmap_l1 = (unsigned long *)kmap(page);
-+	msr_bitmap_l1 = (unsigned long *)map->hva;
- 	if (nested_cpu_has_apic_reg_virt(vmcs12)) {
- 		/*
- 		 * L0 need not intercept reads for MSRs between 0x800 and 0x8ff, it
-@@ -12149,8 +12152,7 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
- 					MSR_IA32_PRED_CMD,
- 					MSR_TYPE_W);
- 
--	kunmap(page);
--	kvm_release_page_clean(page);
-+	kvm_vcpu_unmap(&to_vmx(vcpu)->nested.msr_bitmap_map);
- 
- 	return true;
+ /*
+  * Sometimes a large or cross-page mmio needs to be broken up into separate
+  * exits for userspace servicing.
+@@ -708,6 +715,8 @@ struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
+ struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
++int kvm_vcpu_map(struct kvm_vcpu *vcpu, gpa_t gpa, struct kvm_host_map *map);
++void kvm_vcpu_unmap(struct kvm_host_map *map);
+ struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn);
+ unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
+ unsigned long kvm_vcpu_gfn_to_hva_prot(struct kvm_vcpu *vcpu, gfn_t gfn, bool *writable);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 2679e47..ea7c82f 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1658,6 +1658,56 @@ struct page *gfn_to_page(struct kvm *kvm, gfn_t gfn)
  }
+ EXPORT_SYMBOL_GPL(gfn_to_page);
+ 
++static int __kvm_map_gfn(struct kvm_memory_slot *slot, gfn_t gfn,
++			 struct kvm_host_map *map)
++{
++	kvm_pfn_t pfn;
++	void *hva = NULL;
++	struct page *page = NULL;
++
++	pfn = gfn_to_pfn_memslot(slot, gfn);
++	if (is_error_noslot_pfn(pfn))
++		return -EINVAL;
++
++	if (pfn_valid(pfn)) {
++		page = pfn_to_page(pfn);
++		hva = kmap(page);
++	} else {
++		hva = memremap(pfn_to_hpa(pfn), PAGE_SIZE, MEMREMAP_WB);
++	}
++
++	if (!hva)
++		return -EFAULT;
++
++	map->page = page;
++	map->hva = hva;
++	map->pfn = pfn;
++	map->gfn = gfn;
++
++	return 0;
++}
++
++int kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
++{
++	return __kvm_map_gfn(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn, map);
++}
++EXPORT_SYMBOL_GPL(kvm_vcpu_map);
++
++void kvm_vcpu_unmap(struct kvm_host_map *map)
++{
++	if (!map->hva)
++		return;
++
++	if (map->page)
++		kunmap(map->page);
++	else
++		memunmap(map->hva);
++
++	kvm_release_pfn_dirty(map->pfn);
++	map->hva = NULL;
++}
++EXPORT_SYMBOL_GPL(kvm_vcpu_unmap);
++
+ struct page *kvm_vcpu_gfn_to_page(struct kvm_vcpu *vcpu, gfn_t gfn)
+ {
+ 	kvm_pfn_t pfn;
 -- 
 2.7.4
 
