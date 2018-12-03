@@ -2,106 +2,156 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFC9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 614C2C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4011D20851
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23DD820851
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 22:07:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="WkqbY192"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4011D20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU7DOutP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DD820851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725982AbeLCWGW (ORCPT
+        id S1726001AbeLCWHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:06:22 -0500
-Received: from mail-ot1-f52.google.com ([209.85.210.52]:38666 "EHLO
-        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbeLCWGV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:06:21 -0500
-Received: by mail-ot1-f52.google.com with SMTP id e12so13227083otl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:06:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
-        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
-         :cc;
-        bh=kPz2fS32xKXYAczV0ZrE8OqocFQwTPzcdpuQFXv/7DE=;
-        b=WkqbY1928xqc9iBMKSMXQoQClKb3Xl9KoNZ6qTygB4NaRobJwkrJQNfBEe/uTeAtiV
-         3pRH4j2/VoxXLZhcIid+7flm92kkqQQepM6yNAotHbrz01jWG3wUgTnGvJOZBYOMup7B
-         SjDkoFt+xdFBLxeknoxDipEXDNXjUomoQwVtr4Pju4poKrffri0Gv1mHIrf7cAkqPLZC
-         p6PWqghXH0wOhK57Ab5uDmnCc6Q+ovSpsj+UtHIuuHGUDrQ90F2dxuNtZJ+NrMTeYDWd
-         mR0EXfV2i2Af+uKK4gkQZ9UckM3Mm3rv/g3ks0uQ8vjSuCcDGDGkThIIGrf1zbV/nhqz
-         q4QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
-         :message-id:subject:to:cc;
-        bh=kPz2fS32xKXYAczV0ZrE8OqocFQwTPzcdpuQFXv/7DE=;
-        b=Kc3re7w4XHizyvvaWGj356POM9ZUNbugT0th0shlDHv6TZFubEIxz2sPXNp3ms+X4T
-         gKYTS4HKsyzQvQnqdT/JxxZ+zlagszY0y3k8ihmPVE0b3Rfes8NnZkUcOhgSssrd+cyJ
-         hEkFaOpPRrEkfBTOl/jvzvFiRHL0bDfZg/grdjSdL/2KzGNeN518cSYUL8QNVsS3YbSL
-         u6K/RR08WUuKIc9vFy4L6lQuDAIUzfxWmRFfTnI6ppxbT00xnY8R+GqyC/DhawAqCquf
-         S3oyQTPEKEsoji8tXx/9EjD2jO23QWj++97yT3+bIvOh0UC8Fiy/awTGTCN0+cnSf/Hb
-         +btA==
-X-Gm-Message-State: AA+aEWaaOf0pBMce4FFAYhBoLmr0WA4oMZHYERJgvESxGtW+snPSISqs
-        Im39y0yU4VrhHrM4raoq3VR+7ibV53564Q==
-X-Google-Smtp-Source: AFSGD/V9rtosvJ/GAws/pjo5c2a5wKAxmY/Hurp69L/WO4dx8LgyXsqAH+7x46nRXOi6JKj7iatUJA==
-X-Received: by 2002:a9d:4f0e:: with SMTP id d14mr11973611otl.259.1543874780495;
-        Mon, 03 Dec 2018 14:06:20 -0800 (PST)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
-        by smtp.gmail.com with ESMTPSA id j1sm8102624otl.43.2018.12.03.14.06.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 14:06:20 -0800 (PST)
-From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
-X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
-Received: by mail-ot1-f54.google.com with SMTP id 32so13178846ota.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 14:06:19 -0800 (PST)
-X-Received: by 2002:a9d:1b2c:: with SMTP id l41mr10684052otl.1.1543874778760;
- Mon, 03 Dec 2018 14:06:18 -0800 (PST)
+        Mon, 3 Dec 2018 17:07:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbeLCWHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:07:02 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F35E420851;
+        Mon,  3 Dec 2018 22:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543874821;
+        bh=P+ClqifsYBB5+feA1KgYgp5Jf4neLwGqIj2CUPXxFXE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hU7DOutPAOrnKbkj6S1cjGVdqpBefmmg6dZhPUd4xvvlJ5MUGLXra8s58L3nEtwFO
+         klEjdaprxndwSLRhqQAKqXbg9fq9zW4cxOj3BTK2wejgqVjH+UC6X4PfQsrnJmfU58
+         7RGdoNxyGmMkNHAmkiWj6DlacsbeFRS3IyLxL/0w=
+Date:   Mon, 3 Dec 2018 16:06:59 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        Leo Li <leoyang.li@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCH 2/2] PCI: mobiveil: ls_pcie_g4: add Workaround for
+ A-011451
+Message-ID: <20181203220659.GD207198@google.com>
+References: <20181202133303.33988-1-Zhiqiang.Hou@nxp.com>
+ <20181202133303.33988-3-Zhiqiang.Hou@nxp.com>
 MIME-Version: 1.0
-References: <20181201193858.20738-1-otavio@ossystems.com.br>
-In-Reply-To: <20181201193858.20738-1-otavio@ossystems.com.br>
-Date:   Mon, 3 Dec 2018 20:05:53 -0200
-X-Gmail-Original-Message-ID: <CAP9ODKo62r8ZrHTj9mHvjbhMXHhaLxA8Hak3su4-yV0dAxNY-g@mail.gmail.com>
-Message-ID: <CAP9ODKo62r8ZrHTj9mHvjbhMXHhaLxA8Hak3su4-yV0dAxNY-g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: imx_v6_v7_defconfig: Enable ATH10K SDIO support
-To:     Otavio Salvador <otavio@ossystems.com.br>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181202133303.33988-3-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 1, 2018 at 5:39 PM Otavio Salvador <otavio@ossystems.com.br> wrote:
-> The use of ATH10K WiFi is becoming common in i.MX based boards,
-> especially on new designs, so enable the driver support as module so
-> it can be used out of box.
->
-> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+On Sun, Dec 02, 2018 at 01:32:45PM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> 
+> When LX2 PCIe controller is sending multiple split completions and
+> ACK latency expires indicating that ACK should be send at priority.
+> But because of large number of split completions and FC update DLLP,
+> the controller does not give priority to ACK transmission. This
+> results into ACK latency timer timeout error at the link partner and
+> the pending TLPs are replayed by the link partner again.
+> 
+> Workaround:
+> 1. Reduce the ACK latency timeout value to a very small value.
+> 2. Restrict the number of completions from the LX2 PCIe controller
+>    to 1, by changing the Max Read Request Size (MRRS) of link partner
+>    to the same value as Max Packet size (MPS).
+> 
+> This patch implemented part 1, the part 2 can be set by kernel parameter
+> 'pci=pcie_bus_perf'
 
-Please ignore this patch for now, the driver did not work on the
-custom board ... once we get it working, I resend the patch.
+So you're saying that users of this controller must boot with
+"pci=pcie_bus_perf"?  That's a little unfriendly to users.  When they
+forget to use that parameter and some mysterious PCIe error occurs,
+they will not thank you.
 
-Sorry for the noise.
+We should be able to figure this out automatically via some sort of
+quirk in the driver, and then do the right thing in the MPS/MRRS
+configuration.  That would also give us a chance to make sure that
+when the MPS/MRRS code changes, it can be done in a way that keeps
+this Rev1.0 controller working.
 
-Best regards
+If you depend on users booting with "pci=pcie_bus_perf", there's no
+connection in the code, and if we change or remove that parameter, we
+would have no clue that you depend on it.
 
--- 
-Otavio Salvador                             O.S. Systems
-http://www.ossystems.com.br        http://code.ossystems.com.br
-Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
+> This ERRATA is only for LX2160A Rev1.0, and it will be fixed
+> in Rev2.0.
+> 
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> ---
+>  .../pci/controller/mobiveil/pci-layerscape-gen4.c  | 14 ++++++++++++++
+>  drivers/pci/controller/mobiveil/pcie-mobiveil.h    |  4 ++++
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+> index 1fe56532b288..ef43033e1c2a 100644
+> --- a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+> +++ b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+> @@ -220,6 +220,18 @@ static const struct mobiveil_pab_ops ls_pcie_g4_pab_ops = {
+>  	.link_up = ls_pcie_g4_link_up,
+>  };
+>  
+> +static void workaround_A011451(struct ls_pcie_g4 *pcie)
+> +{
+> +	struct mobiveil_pcie *mv_pci = pcie->pci;
+> +	u32 val;
+> +
+> +	/* Set ACK latency timeout */
+> +	val = csr_readl(mv_pci, GPEX_ACK_REPLAY_TO);
+> +	val &= ~(ACK_LAT_TO_VAL_MASK << ACK_LAT_TO_VAL_SHIFT);
+> +	val |= (4 << ACK_LAT_TO_VAL_SHIFT);
+> +	csr_writel(mv_pci, val, GPEX_ACK_REPLAY_TO);
+> +}
+> +
+>  static int __init ls_pcie_g4_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -259,6 +271,8 @@ static int __init ls_pcie_g4_probe(struct platform_device *pdev)
+>  	if (!ls_pcie_g4_is_bridge(pcie))
+>  		return -ENODEV;
+>  
+> +	workaround_A011451(pcie);
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+> index ef93b41f4419..c75b7c304c46 100644
+> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+> @@ -85,6 +85,10 @@
+>  #define PAB_AXI_AMAP_PEX_WIN_H(win)	PAB_REG_ADDR(0x0bac, win)
+>  #define PAB_INTP_AXI_PIO_CLASS		0x474
+>  
+> +#define GPEX_ACK_REPLAY_TO		0x438
+> +#define  ACK_LAT_TO_VAL_MASK		0x1fff
+> +#define  ACK_LAT_TO_VAL_SHIFT		0
+> +
+>  #define PAB_PEX_AMAP_CTRL(win)		PAB_REG_ADDR(0x4ba0, win)
+>  #define  AMAP_CTRL_EN_SHIFT		0
+>  #define  AMAP_CTRL_TYPE_SHIFT		1
+> -- 
+> 2.17.1
+> 
