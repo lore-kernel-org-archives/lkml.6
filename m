@@ -3,41 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A72D5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5ECC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781B4214C1
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781B4214C1
+	by mail.kernel.org (Postfix) with ESMTP id F2002214DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:12:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2002214DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbeLCLKV (ORCPT
+        id S1726302AbeLCLMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:10:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35004 "EHLO mx1.redhat.com"
+        Mon, 3 Dec 2018 06:12:34 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53674 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbeLCLKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:10:21 -0500
+        id S1725883AbeLCLMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:12:34 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 79701308428C;
-        Mon,  3 Dec 2018 11:09:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 53C3B3082E46;
+        Mon,  3 Dec 2018 11:11:58 +0000 (UTC)
 Received: from [10.36.118.125] (unknown [10.36.118.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 45687601AE;
-        Mon,  3 Dec 2018 11:09:44 +0000 (UTC)
-Subject: Re: [PATCH v2] memblock: Anonotate memblock_is_reserved() with
- __init_memblock.
-To:     Yueyi Li <liyueyi@live.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@suse.com" <mhocko@suse.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <BLUPR13MB02893411BF12EACB61888E80DFAE0@BLUPR13MB0289.namprd13.prod.outlook.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 30746604CC;
+        Mon,  3 Dec 2018 11:11:56 +0000 (UTC)
+Subject: Re: [PATCH -next] mm/hmm: remove set but not used variable 'devmem'
+To:     YueHaibing <yuehaibing@huawei.com>, jglisse@redhat.com,
+        akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        dan.j.williams@intel.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <1543629971-128377-1-git-send-email-yuehaibing@huawei.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -84,55 +83,52 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <a585d9c2-e14b-4e55-49cb-e0d0eeeecdcb@redhat.com>
-Date:   Mon, 3 Dec 2018 12:09:43 +0100
+Message-ID: <c009d3b3-3ae5-948d-992a-393b64d25275@redhat.com>
+Date:   Mon, 3 Dec 2018 12:11:55 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <BLUPR13MB02893411BF12EACB61888E80DFAE0@BLUPR13MB0289.namprd13.prod.outlook.com>
+In-Reply-To: <1543629971-128377-1-git-send-email-yuehaibing@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 03 Dec 2018 11:09:45 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 03 Dec 2018 11:11:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.12.18 05:00, Yueyi Li wrote:
-> Found warning:
+On 01.12.18 03:06, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> WARNING: EXPORT symbol "gsi_write_channel_scratch" [vmlinux] version generation failed, symbol will not be versioned.
-> WARNING: vmlinux.o(.text+0x1e0a0): Section mismatch in reference from the function valid_phys_addr_range() to the function .init.text:memblock_is_reserved()
-> The function valid_phys_addr_range() references
-> the function __init memblock_is_reserved().
-> This is often because valid_phys_addr_range lacks a __init
-> annotation or the annotation of memblock_is_reserved is wrong.
+> mm/hmm.c: In function 'hmm_devmem_ref_kill':
+> mm/hmm.c:995:21: warning:
+>  variable 'devmem' set but not used [-Wunused-but-set-variable]
 > 
-> Use __init_memblock instead of __init.
+> It not used any more since commit 35d39f953d4e ("mm, hmm: replace
+> hmm_devmem_pages_create() with devm_memremap_pages()")
 > 
-> Signed-off-by: liyueyi <liyueyi@live.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
+>  mm/hmm.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
->  Changes v2: correct typo in 'warning'.
-> 
->  mm/memblock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 9a2d5ae..81ae63c 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1727,7 +1727,7 @@ static int __init_memblock memblock_search(struct memblock_type *type, phys_addr
->  	return -1;
->  }
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index 50fbaf8..361f370 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -992,9 +992,6 @@ static void hmm_devmem_ref_exit(void *data)
 >  
-> -bool __init memblock_is_reserved(phys_addr_t addr)
-> +bool __init_memblock memblock_is_reserved(phys_addr_t addr)
+>  static void hmm_devmem_ref_kill(struct percpu_ref *ref)
 >  {
->  	return memblock_search(&memblock.reserved, addr) != -1;
+> -	struct hmm_devmem *devmem;
+> -
+> -	devmem = container_of(ref, struct hmm_devmem, ref);
+>  	percpu_ref_kill(ref);
 >  }
+> 
+> 
 > 
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
