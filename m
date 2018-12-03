@@ -2,93 +2,129 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9DCC65BAE
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82368C65BAE
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 307132145D
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:42:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="B2SBVgJW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307132145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 549D521486
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 09:42:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 549D521486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbeLCJmN (ORCPT
+        id S1726058AbeLCJmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:42:13 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39412 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLCJmN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 04:42:13 -0500
-Received: by mail-io1-f67.google.com with SMTP id k7so9873744iob.6
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 01:41:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MJhyObZHH+z3JMwCDzBJOiMf2OvwIyDMaaZPnyC+mJI=;
-        b=B2SBVgJWw4wISQbZPf1NwK1npbia/yVTs4q7AxGtUmAaio0K0YONAzUEz8zGXpqfoe
-         XKMLc0F7qfxvAtt/sligAW8AKU/Tk/DrdUQxhpKlYGu9eheddYKL2KF1hBjtP/f1xxK5
-         jpX7L+GZcYm8MZxrrxFMqcigTWY82iLWB09pY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MJhyObZHH+z3JMwCDzBJOiMf2OvwIyDMaaZPnyC+mJI=;
-        b=Y3dmd92Smx7c7j1er9XeiuiiRrGTPiIv7OXDOQftz7rbMgl+9QDcfsAzd2RiILnh2D
-         0qg2RRAmPc/HlwT4bUFr5GWepL20lvwPtfa3Jg9a5Dm/pifQqXj2b6T7hKFcM2WYxwef
-         hA0n61WIhnkK3Y4b47HyOTHLEmgPI7ggewIXT9GfEPwvKT3sfa/hSzfFjiqVaI25215E
-         moy0hcdB3/CLGVacTVThbiWdTJYXBfBEhouHBBfQ8jKSaQa/biIKLxWC3A5JHuFygoHs
-         lK7QkeWnYMBcXDNLv8bBnFGcASvNvI5uby45sE7+bGLafQ8gvnpd47NOqaqUuLwBKfYW
-         KXtA==
-X-Gm-Message-State: AA+aEWbg4SEmx5b+QJFSK5GxkBxHGd8aRjydY9mN1SPzp9/zOtEubtN4
-        tx4SujTNfQ8xX7PYxfKsNK2grXNZwlnXsJwvL+cRuw==
-X-Google-Smtp-Source: AFSGD/VnPpar5Bk1bJoyfUTzjkSCrRwrHD8hRdHsgcFBg6pQJgGlrT41KmOH3kSyIcpDWEG7eTCsml2+uXV0Y2Agr4g=
-X-Received: by 2002:a6b:e50d:: with SMTP id y13mr12284674ioc.114.1543830116872;
- Mon, 03 Dec 2018 01:41:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20181130075849.16941-1-wens@csie.org> <20181130075849.16941-2-wens@csie.org>
-In-Reply-To: <20181130075849.16941-2-wens@csie.org>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 3 Dec 2018 15:11:45 +0530
-Message-ID: <CAMty3ZC-4hnVOx9AYhm7uUCUHF=n_NoH3xV-3SyUXWxb_X8TGg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] media: dt-bindings: media: sun6i: Separate H3
- compatible from A31
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 3 Dec 2018 04:42:32 -0500
+Received: from mga14.intel.com ([192.55.52.115]:28827 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725928AbeLCJmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 04:42:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 01:42:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,310,1539673200"; 
+   d="scan'208";a="106547353"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 03 Dec 2018 01:42:14 -0800
+Received: from [10.125.252.149] (abudanko-mobl.ccr.corp.intel.com [10.125.252.149])
+        by linux.intel.com (Postfix) with ESMTP id 4AB6B580117;
+        Mon,  3 Dec 2018 01:42:11 -0800 (PST)
+Subject: Re: [PATCH v4 1/2] Documentation/admin-guide: introduce
+ perf-security.rst file
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <feac7efa-df6f-cca1-e321-28d220bf0411@linux.intel.com>
+ <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
+ <20181127111148.75746f02@lwn.net>
+ <5e1e9c08-dff5-956d-4c2b-8ee090c387c3@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <e7fd5492-f48e-7696-f894-a3ab60479ac5@linux.intel.com>
+Date:   Mon, 3 Dec 2018 12:42:09 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <5e1e9c08-dff5-956d-4c2b-8ee090c387c3@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 1:29 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> The CSI controller found on the H3 (and H5) is a reduced version of the
-> one found on the A31. It only has 1 channel, instead of 4 channels for
-> time-multiplexed BT.656. Since the H3 is a reduced version, it cannot
-> "fallback" to a compatible that implements more features than it
-> supports.
->
-> Split out the H3 compatible as a separate entry, with no fallback.
->
-> Fixes: b7eadaa3a02a ("media: dt-bindings: media: sun6i: Add A31 and H3
->                       compatibles")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Hi Peter,
 
-"media" text appear two times on commit head.
+On 27.11.2018 22:13, Alexey Budankov wrote:
+> On 27.11.2018 21:11, Jonathan Corbet wrote:
+>> On Tue, 27 Nov 2018 11:15:37 +0300
+>> Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+>>
+>>> +To perform security checks, the Linux implementation splits processes into two
+>>> +categories [6]_ : a) privileged processes (whose effective user ID is 0, referred
+>>> +to as superuser or root), and b) unprivileged processes (whose effective UID is
+>>> +nonzero). Privileged processes bypass all kernel security permission checks so
+>>> +perf_events performance monitoring is fully available to privileged processes
+>>> +without access, scope and resource restrictions.
+>>> +
+>>> +Unprivileged processes are subject to a full security permission check based on
+>>> +the process's credentials [5]_ (usually: effective UID, effective GID, and
+>>> +supplementary group list).
+>>> +
+>>> +Linux divides the privileges traditionally associated with superuser into
+>>> +distinct units, known as capabilities [6]_ , which can be independently enabled
+>>> +and disabled on per-thread basis for processes and files of unprivileged users.
+>>> +
+>>> +Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated as
+>>> +privileged processes with respect to perf_events performance monitoring and
+>>> +bypass *scope* permissions checks in the kernel.
+>>> +
+>>> +Unprivileged processes using perf_events system call API is also subject for
+>>> +PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose outcome
+>>> +determines whether monitoring is permitted. So unprivileged processes provided
+>>> +with CAP_SYS_PTRACE capability are effectively permitted to pass the check.
+>>
+>> It's good to have more information here.  I could certainly quibble
+>> further with things - a process with CAP_SYS_ADMIN is not "unprivileged"!
+>> - but I don't want to stand in the way of this any further.  I *would*
+>> still like to see an ack from the perf world, though.
+> 
+> Thanks for meaningful comments! Looking forward to ack from perf world.
 
-Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
+May I ask you to review v4 of the patches? 
+Your comments on v1 have been addressed in there.
+
+Thanks,
+Alexey
+
+> 
+>>
+>> With regard to Kees's comment on merging the two patches; I would probably
+>> add the new document to index.rst in the same patch, but it doesn't matter
+>> that much.  Not worth redoing the patch just for that.
+> 
+> Thanks,
+> Alexey
+> 
+>>
+>> jon
+>>
+> 
