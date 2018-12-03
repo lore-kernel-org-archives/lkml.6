@@ -2,87 +2,113 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85728C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D8BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499FE20850
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499FE20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id C167B20850
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 21:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C167B20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbeLCVAj (ORCPT
+        id S1726037AbeLCVBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:00:39 -0500
-Received: from sauhun.de ([88.99.104.3]:58484 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeLCVAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:00:39 -0500
-Received: from localhost (p54B3353C.dip0.t-ipconnect.de [84.179.53.60])
-        by pokefinder.org (Postfix) with ESMTPSA id 519753E17CF;
-        Mon,  3 Dec 2018 22:00:36 +0100 (CET)
-Date:   Mon, 3 Dec 2018 22:00:35 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter Rosin <peda@axentia.se>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: i2c: Use correct vendor prefix for Atmel
-Message-ID: <20181203210035.GA4611@kunai>
-References: <20181123121009.17213-1-thierry.reding@gmail.com>
- <20181123125138.22489-1-thierry.reding@gmail.com>
- <20181127125050.GO1107@kunai>
- <CAL_JsqJZJVMvd0aQJ8eDXBqiZ=quLrNGr3hhqePm8fCushHxxQ@mail.gmail.com>
+        Mon, 3 Dec 2018 16:01:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56831 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeLCVBU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 16:01:20 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB3L0uJM594262
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 3 Dec 2018 13:00:56 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB3L0tO4594259;
+        Mon, 3 Dec 2018 13:00:55 -0800
+Date:   Mon, 3 Dec 2018 13:00:55 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-d08452390179710dc7989242605e3c1faa62b64f@git.kernel.org>
+Cc:     rkrcmar@redhat.com, riel@surriel.com, x86@kernel.org,
+        pbonzini@redhat.com, tglx@linutronix.de, Jason@zx2c4.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, luto@kernel.org,
+        dave.hansen@linux.intel.com, bigeasy@linutronix.de,
+        mingo@kernel.org, mingo@redhat.com, bp@suse.de, hpa@zytor.com
+Reply-To: riel@surriel.com, tglx@linutronix.de, x86@kernel.org,
+          pbonzini@redhat.com, rkrcmar@redhat.com,
+          linux-kernel@vger.kernel.org, Jason@zx2c4.com, mingo@redhat.com,
+          mingo@kernel.org, kvm@vger.kernel.org, luto@kernel.org,
+          bigeasy@linutronix.de, dave.hansen@linux.intel.com,
+          hpa@zytor.com, bp@suse.de
+In-Reply-To: <20181128222035.2996-2-bigeasy@linutronix.de>
+References: <20181128222035.2996-2-bigeasy@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/fpu] x86/fpu: Use unsigned long long shift in
+ xfeature_uncompacted_offset()
+Git-Commit-ID: d08452390179710dc7989242605e3c1faa62b64f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqJZJVMvd0aQJ8eDXBqiZ=quLrNGr3hhqePm8fCushHxxQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  d08452390179710dc7989242605e3c1faa62b64f
+Gitweb:     https://git.kernel.org/tip/d08452390179710dc7989242605e3c1faa62b64f
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Wed, 28 Nov 2018 23:20:07 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 3 Dec 2018 18:40:28 +0100
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+x86/fpu: Use unsigned long long shift in xfeature_uncompacted_offset()
 
+The xfeature mask is 64-bit so a shift from a number to its mask should
+have ULL suffix or else bits above position 31 will be lost. This is not
+a problem now but should XFEATURE_MASK_SUPERVISOR gain a bit >31 then
+this check won't catch it.
 
-> Didn't we agree that I take trivial devices changes? Normally, it
-> doesn't really matter, but I'll have to delay landing the json-schema
-> conversion because this will conflict.
+Use BIT_ULL() to compute a mask from a number.
 
-Oh, sorry, I missed that! I haven't send my pull request to Linus, so I
-can easily drop this patch again and apply a version not touching
-trivial-devices instead.
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm ML <kvm@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181128222035.2996-2-bigeasy@linutronix.de
+---
+ arch/x86/kernel/fpu/xstate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwFmW8ACgkQFA3kzBSg
-KbbjEA/+OKQ7MdMHGblhl5HTt3byGdsdKyB36y6xbG2jtRbs79sZI7YbEk6hDyaZ
-e1MiKL32PtkaxTGCQZRyMwFolO463ESYuN+KsrzDKkb6vv3KZieTJh17WOFmD9gP
-1o4q9PINNf4HkjgFRbJEKRZCnYI6jYhDgPHduTib7c1K3J9FH/DNOVfj4Vdpw6UO
-BPmtdyyauDkUBlkdTM1fFk8Y8zhg8bd/8gqa0oIFsKVKM2DocCoRCojtIBB9QQZA
-LR7ponmAL4bChhccnE4op9BYCiD+Nv6fAq2mZSmYAF/nl93y+YwchbAY9oBmONSf
-xhG7BwhJag5UnIbPgrVFd8XL9+UO1dLijUezAJd9WVDLICOmb6wL65G4iZzIN4Tq
-3eRhfgaUumP1vIgGZwSQ9c7MmZ3rpKgQvaes5dl33cwIKJD9JqFdbo102aO0ntHD
-n66b2KbEknyYYQvC08o2EZMOqt5RI1IoPY+vI7x1UH860Z6SRWpO+wMuH2PPiH81
-TZjdJFGM409DADjbrIdaAN/XqJ9F8Qkne4iCWJ+YX+e4k3O0oBEsrTuYDlyBT6kq
-D4VdyR6UkeGAAbOZoPNdoWXrZib6OufsIglU9opQPMWuMRNryYak4ooKsxM5nY6R
-SHFPNLstdHTsXNd4YYqXFWDG4nQAFqLM95KtnFA9w5ZbMNWea6Q=
-=g2RM
------END PGP SIGNATURE-----
-
---4Ckj6UjgE2iN1+kY--
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 87a57b7642d3..69d5740ed254 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -444,7 +444,7 @@ static int xfeature_uncompacted_offset(int xfeature_nr)
+ 	 * format. Checking a supervisor state's uncompacted offset is
+ 	 * an error.
+ 	 */
+-	if (XFEATURE_MASK_SUPERVISOR & (1 << xfeature_nr)) {
++	if (XFEATURE_MASK_SUPERVISOR & BIT_ULL(xfeature_nr)) {
+ 		WARN_ONCE(1, "No fixed offset for xstate %d\n", xfeature_nr);
+ 		return -1;
+ 	}
