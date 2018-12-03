@@ -2,120 +2,118 @@ Return-Path: <SRS0=Grn6=OM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD591C04EB9
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90691C04EBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9452082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54F59214D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 10:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dBUQqzuc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B9452082F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ceXJkczc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F59214D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbeLCKn2 (ORCPT
+        id S1726195AbeLCKrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 05:43:28 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45232 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbeLCKn2 (ORCPT
+        Mon, 3 Dec 2018 05:47:16 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39744 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbeLCKrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 05:43:28 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v6so11545977wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:42:57 -0800 (PST)
+        Mon, 3 Dec 2018 05:47:16 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b14so10286154edt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 02:46:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=TRRpU1ugoBCwyMdRSV7p1f06262sTpaTgnrzhW6b2M8=;
-        b=dBUQqzucAQl4frXE0OblVrA9Sd3RqVd/F777b7y/qX20ieSA/QdfB5kJVzff6QACoQ
-         HgFHrUwfBfCFu1YGHvwq8xt5vGanEIZoxp/Cq8TM6rC5td7PayP2ffvux2PJJ5r2nwWe
-         l4rQOMRd8SrcCU3jLKyy7tLX/jc/JGBj/7SGE=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C4DqEn37SBRsotIrKAm5yynDS6jpvHS3hOUw3P+QwwE=;
+        b=ceXJkczc3iwbnmoscqMAaL+NjPXtiaF34nuMObqEEb7hKST2xROzzBteuUrgOuOFPs
+         iC2ndrSzUKhw0r+tpD8KFlfUNd7DGDSDjozQndVSgwpp42uFneeBSv88OO1FjfQDQN8+
+         GxtWC2HGrzOjyaOAVzgSxocFjLdYuoOP6mvw0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=TRRpU1ugoBCwyMdRSV7p1f06262sTpaTgnrzhW6b2M8=;
-        b=ngdoW5v+bToXzN7f0LKT6MvCAM1noaNYFzPT9dF0xASYI4z/dkWao43N/KmuNPj65h
-         VmClEw4grr21nvAofrFOUF8IZTTAz8zL+eo/aDnTYxn7FW7XRQh/oZqVpqkWw2Siy8xg
-         cQcpxBlU89z+fktdJApWCg46+cJ8Wl1rSgWjxp4BTiVybN3N8/+SHVx0x8FcrszBW+h3
-         xDIqAL8xQrYZsqk8woITSHJAd6TjxaizDUO7grcPx6YN34EnLjYRRu+CKxf1gAE0j84R
-         Z0tLj6TKzh7Xb5Ly6NWE22m2/16ngHMoBWxWflvWga50Jem1186lCl5Ybg0w3pkQiXlv
-         tt4g==
-X-Gm-Message-State: AA+aEWZ0s9MPuDHdZuIlcFb7fv3iOx+/KByoC64yiAahadWn7x5L33xX
-        oRRKswIL3ekhytlPVN5PWGaVYQ==
-X-Google-Smtp-Source: AFSGD/XlqzlkYq0M2ZVQCxJ5sNJwWYPmqsc1nbGwty39zp7DYx8nCnAj6RtW9JJdhuOMQi2HMAdVxA==
-X-Received: by 2002:adf:e707:: with SMTP id c7mr12879927wrm.196.1543833776814;
-        Mon, 03 Dec 2018 02:42:56 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id h203sm20661986wma.19.2018.12.03.02.42.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 02:42:56 -0800 (PST)
-Date:   Mon, 3 Dec 2018 10:42:54 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 3/8] mfd / platform: cros_ec: move vbc attributes to
- its own driver.
-Message-ID: <20181203104254.GE26661@dell>
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-4-enric.balletbo@collabora.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C4DqEn37SBRsotIrKAm5yynDS6jpvHS3hOUw3P+QwwE=;
+        b=QyOrt4lHuCUSUCa7x8Jx8QGFu+OWPefp4fzUbJIx62HpTy33cwPXhV9ggf2B41SDFq
+         oD/fr1bWTTf2DcpdgxrRtwRU0gLJHCtui0pk0qx89wZABCdXzZFwkO+bGDWDUDXFY0YZ
+         iOV8gha4e2C/dXikz3H6bLY+uV41qY2AFevHVo48cUdSNFwnuTE73Xk4wRkC6R9JYLBf
+         DJNF5PpLPDLxBpQPbElORb19FYsj+h5AP+7QBWnHixwOkgTkP1HSBByXJoPMOZyAOKU2
+         CU0jZV74YGjJAb0ou+noB32Z005xbQgnMAgVwZS3CKhwG0a9bd1uUpylKYCYMXllbMJ2
+         ImvQ==
+X-Gm-Message-State: AA+aEWaVKeCJR+RZkc7z0AnyOu0PtoylRF1H1/DxiT3vO6uC/Yt+gWOb
+        svis/m0NrqjU1lRIVwfPRAvoR9EVSGFlX6xF6rbzFA==
+X-Google-Smtp-Source: AFSGD/URT8DMwYQqi3GnvKg+Ka9Ax99Ydlrwjle9DgaZ130aE5Oz8MzvgGgJwhdjI4d04wYF5hJ2yJzWRQh7dRG5Tlg=
+X-Received: by 2002:a17:906:404a:: with SMTP id y10-v6mr12518544ejj.30.1543834004482;
+ Mon, 03 Dec 2018 02:46:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181127121849.23975-4-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
+ <1543471664-22856-1-git-send-email-zhang.chunyan@linaro.org>
+ <cb2cdfb9-f3e6-72cd-2d55-734b08ea3e15@intel.com> <42f994b2-ba98-8160-6eef-11eeb8a10f5e@ti.com>
+In-Reply-To: <42f994b2-ba98-8160-6eef-11eeb8a10f5e@ti.com>
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+Date:   Mon, 3 Dec 2018 18:46:33 +0800
+Message-ID: <CAG2=9p9mpC_mB4ghbrJm=e4Ewa9pL7R0zURg=erFPw4MR4S+Zg@mail.gmail.com>
+Subject: Re: [PATCH V3 1/3] mmc: sdhci: add support for using external DMA devices
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Lyra Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
+On Mon, 3 Dec 2018 at 17:01, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Hi Chunyan,
+>
+> On 29/11/18 2:53 PM, Adrian Hunter wrote:
+> > On 29/11/18 8:07 AM, Chunyan Zhang wrote:
+> >> Some standard SD host controllers can support both external dma
+> >> controllers as well as ADMA/SDMA in which the SD host controller
+> >> acts as DMA master. TI's omap controller is the case as an example.
+> >>
+> >> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> >> the host controller but does not have any support for external DMA
+> >> controllers implemented using dmaengine, meaning that custom code is
+> >> needed for any systems that use an external DMA controller with SDHCI.
+> >>
+> >> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> >> ---
+> >>  drivers/mmc/host/Kconfig |  14 ++++
+> >>  drivers/mmc/host/sdhci.c | 185 ++++++++++++++++++++++++++++++++++++++++++++++-
+> >>  drivers/mmc/host/sdhci.h |   8 ++
+> >>  3 files changed, 206 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> >> index 1b58739..4183f43 100644
+> >> --- a/drivers/mmc/host/Kconfig
+> >> +++ b/drivers/mmc/host/Kconfig
+> >> @@ -969,6 +969,7 @@ config MMC_SDHCI_XENON
+> >>  config MMC_SDHCI_OMAP
+> >>      tristate "TI SDHCI Controller Support">>        depends on MMC_SDHCI_PLTFM && OF
+> >> +    select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
+>
+>
+> This should be in patch 2.
 
-> The entire way how cros sysfs attibutes are created is broken.
-> cros_ec_vbc should be its own driver and its attributes should be
-> associated with a vbc driver not the mfd driver. In order to retain
-> the path, the vbc attributes are attached to the cros_class.
-> 
-> The patch also adds the sysfs documentation.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
-> Changes in v3:
-> - Fixed build error as reported by the kbuild test robot.
-> 
-> Changes in v2:
-> - Removed unneeded check of ec_dev.
-> 
->  .../sysfs-class-chromeos-driver-cros-ec-vbc   |  6 +++
->  drivers/mfd/cros_ec_dev.c                     |  2 +-
->  drivers/platform/chrome/Kconfig               | 10 +++++
->  drivers/platform/chrome/Makefile              |  3 +-
->  drivers/platform/chrome/cros_ec_vbc.c         | 43 ++++++++++++++++++-
->  include/linux/mfd/cros_ec.h                   |  1 -
->  6 files changed, 61 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-vbc
+Ok, will move to.
 
-Patch looks fine, so long as drivers/platform is the right place for
-this driver to reside.  No better subsystems for it?
+Thanks,
+Chunyan
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>
+> Thanks,
+> Faiz
