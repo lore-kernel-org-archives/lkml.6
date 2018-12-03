@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F5EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE87FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E863220834
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE1F20834
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Dec 2018 11:32:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Hy5EBx9W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E863220834
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="bVvD9XgW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE1F20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbeLCLcs (ORCPT
+        id S1726466AbeLCLcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 06:32:48 -0500
+        Mon, 3 Dec 2018 06:32:50 -0500
 Received: from mail-eopbgr20042.outbound.protection.outlook.com ([40.107.2.42]:52592
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbeLCLcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 06:32:47 -0500
+        id S1726328AbeLCLct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 06:32:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t5r1W7iov3F9c3G5jDOOBXKH3YiWag1PuAl4bxyyQp4=;
- b=Hy5EBx9WABbmsJS+JV+jT2ScleMYl2mBkshLRl1B/sXG21UyQ2KcEoCkC0yABQEQWzom4k9WzIZqWxXQd5jaUO3AWe2elBgegpyQU2IHlLVy139iF1CX9SlR1axmFom89meFceWFpEuOcORiigqtsoYxP+aQdCNjFVdv4tFL58M=
+ bh=enKct3KC3V5UYfm2sTvxkow8fEk0Lafv6jFHRzxlbrU=;
+ b=bVvD9XgWwiDHp/aXlDZnVpiwe5XST/7s4QSccasLRYPlezWvMA2v/e2oGpSS1q0ZgJNDKOUo9u+KvqNpEiM2RdMwR4QndCwXMm02qpkMHnV3VexRwVhltQ/OyNuWy5LTbSjBo7SDCDlqdBbp7wE3rEJ69Yib5Zd1KJZuiuVd9Rw=
 Received: from AM0PR08MB3891.eurprd08.prod.outlook.com (20.178.82.147) by
  AM0PR08MB3491.eurprd08.prod.outlook.com (20.177.108.222) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18; Mon, 3 Dec 2018 11:31:58 +0000
+ 15.20.1382.18; Mon, 3 Dec 2018 11:31:59 +0000
 Received: from AM0PR08MB3891.eurprd08.prod.outlook.com
  ([fe80::896a:710:2a8c:e2fa]) by AM0PR08MB3891.eurprd08.prod.outlook.com
  ([fe80::896a:710:2a8c:e2fa%6]) with mapi id 15.20.1382.020; Mon, 3 Dec 2018
- 11:31:58 +0000
+ 11:31:59 +0000
 From:   Ayan Halder <Ayan.Halder@arm.com>
 To:     Ayan Halder <Ayan.Halder@arm.com>,
         Liviu Dudau <Liviu.Dudau@arm.com>,
@@ -60,13 +60,13 @@ To:     Ayan Halder <Ayan.Halder@arm.com>,
         "arnd@arndb.de" <arnd@arndb.de>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 CC:     nd <nd@arm.com>
-Subject: [RFC v3 AFBC 04/12] drm/arm/malidp: Set the AFBC register bits if the
- framebuffer has AFBC modifier
-Thread-Topic: [RFC v3 AFBC 04/12] drm/arm/malidp: Set the AFBC register bits
- if the framebuffer has AFBC modifier
-Thread-Index: AQHUivvNe+KfFyADaUyOk+ZKPgY96g==
-Date:   Mon, 3 Dec 2018 11:31:58 +0000
-Message-ID: <1543836703-8491-5-git-send-email-ayan.halder@arm.com>
+Subject: [RFC AFBC 05/12] drm/arm/malidp:- Define a common list of AFBC format
+ modifiers supported for DP500, DP550 and DP650
+Thread-Topic: [RFC AFBC 05/12] drm/arm/malidp:- Define a common list of AFBC
+ format modifiers supported for DP500, DP550 and DP650
+Thread-Index: AQHUivvNKeBDbJPJl0CSbSfIg6+TSg==
+Date:   Mon, 3 Dec 2018 11:31:59 +0000
+Message-ID: <1543836703-8491-6-git-send-email-ayan.halder@arm.com>
 References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
 In-Reply-To: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
 Accept-Language: en-US
@@ -81,28 +81,28 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [217.140.106.55]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3491;6:/4iIGJ889C8iKDGTqoZbKVVe1+guMx8fT/Pe72XpGPBSbRuzVUlCthJnDiwtKyqRoNARP2mWn7rkUw1yEx6/gArHapqUcUoqv7t8bEgJ8Q1LrKFFuJk46MnK0ZOMFvZsf/okn/Z7PWAgWgJUylWQRvx6TsEBBkcKLU6eCAObTHgwtTtufpi3xo6/wYMJwK+9fEeMTrGf6LF8pGUKA9M1rn3XiWXNy6Ovh/ruZcB2dcoy+pzhP9nc0eanXRzqZVenrrfXkXjyztsZWEjTprzN4ktjzzYEfCGQzH6LPsh/sdAsCMvTtVbJbggooZeGOmgPXSzBk3XMVl87N5zaxjR29bjYU3yutufGwqXDVngn6vZY7oMTiYoU1joMsCR3UbsBXO3BQwr6FjP+KDI/PuYQ9Dd4okLl6neyZdGC4u4j/FhyBlBmVRhiHuONlVGS8O2dVjuJCE04GO6wy1GQL8jEkg==;5:LzGEhk77a0HpQpH7wbG25XhRnwXVTho2MMraHr9F59K584yDXBwWbgwsW+TOyhFpvuxPdmrQxYeJjgwGaMIr96uikIfI7OPNv3eJApNJz9EFbqeSZ6Ap8fuN8UvBeBZhuUhxlVXzNrIc10WKRbiQlCKHYBSLUo5ovwFG9LC2LzM=;7:RMwgNyNetXdgj9ZrU6gc1ERcDW77dTsISJMNh9ecmXTi5KSXXLIDO2ACHPkjIX4EVWZxIHPXxffXVzC53F5vUtCR08owlnt3yCDeAXb4QflsOCbw2UR4j1mESdJHjpL6r5LnVGd+trdzO7mTG/S7xA==
-x-ms-office365-filtering-correlation-id: 485703a2-e8d3-42bb-53e3-08d65912ef90
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3491;6:rNmXtw+P8wXliSeZNShBoPrLzHbCYFi8Uoy61L5SCeAZ5tcUh701ON6j4IQsTfRPllxsS5iK620p8VHidrMGztMeVeM4bV9pCUxSzUwcPStIHBtl8si7ZQS7TlGcOw8RBhkHiD5N5LRpD2bFEV1PBNJCILFKrjX0HZMKgMekDwf1ARQA8WWJMDp3owGY9epfglie1ODoGDWqGFIf6Ummb+8Ii8d9SruclukkCiN4qom94hAEwDCusNuLHyFFJQ7LY3dRFkv5KLULtwufWokO5pmmRv98qRC2Su0WW2/NsaT8HBLW3Ys/XDzeyHeVdm8+5aVoaMXD6Gl4Wi8adGP/wDv4ng+32a1IziULxAyLAUlOfmXEngUY7lQtAJR/211P5OeHquikARH2+j7uT441G81Km4593ch8n+HEjQCQ1vrYSeL0ZHNTyLT9Wux0ruriGQeJmf3dnJ1lrs3drCQU7A==;5:T8KGSln/quWW4hTUuLllUyldzV1Nt6IpuEFie1Nm33lnZBuDzZdbWxuAuCEAR14kDmyGFanR49+EYSeOThbFdw1hrOs+CZ6N+1AG9R8OAIRKTyDvP47Ch8wcA9cwCHL26zMFRckkaVl2QtS2dMbSy9So5oVwf1wKCC/8VPDbVeI=;7:rr2qmZCO02dv8X3KtDC8c3MlI+2/B8vrSVo88VgTSFf7u0jLS7Eor39P+KgKSTHMVuvKyMe/qrdfgEzex8/XKsAzPmpZJZaFbFbjFmxQGrw5eJS1ZN824yoskSDyzNDYsEe2tMxnXc/RLOyvRW2EcQ==
+x-ms-office365-filtering-correlation-id: 8bdf68cd-9009-451b-c71e-08d65912f020
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3491;
 x-ms-traffictypediagnostic: AM0PR08MB3491:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB3491767C8C64B774270D10A8E4AE0@AM0PR08MB3491.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR08MB3491477918BFC5B487507DCCE4AE0@AM0PR08MB3491.eurprd08.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3491;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3491;
 x-forefront-prvs: 08756AC3C8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(136003)(346002)(366004)(199004)(189003)(99286004)(4326008)(71190400001)(97736004)(36756003)(4744004)(71200400001)(106356001)(6486002)(68736007)(72206003)(256004)(14454004)(66066001)(478600001)(7416002)(5660300001)(45080400002)(81166006)(8936002)(7736002)(25786009)(2201001)(81156014)(305945005)(3846002)(6116002)(26005)(102836004)(316002)(186003)(6436002)(11346002)(486006)(2906002)(2501003)(8676002)(14444005)(575784001)(2616005)(44832011)(476003)(6512007)(105586002)(53936002)(52116002)(446003)(386003)(6506007)(86362001)(110136005)(76176011)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3491;H:AM0PR08MB3891.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(136003)(346002)(366004)(199004)(189003)(99286004)(4326008)(71190400001)(97736004)(36756003)(71200400001)(106356001)(6486002)(68736007)(72206003)(256004)(14454004)(66066001)(478600001)(7416002)(5660300001)(81166006)(8936002)(7736002)(25786009)(2201001)(81156014)(305945005)(3846002)(6116002)(26005)(102836004)(316002)(186003)(6436002)(11346002)(486006)(2906002)(2501003)(8676002)(14444005)(575784001)(2616005)(44832011)(476003)(6512007)(105586002)(217873002)(53936002)(52116002)(446003)(386003)(6506007)(86362001)(110136005)(76176011)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3491;H:AM0PR08MB3891.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 8uUoIMBsJEOLHbjF/QcCi7xdahh+Kb3wAeoNpKsbzK9bzDn7S3qBK0IN79DSSXDgKwVt4sFZNftXHyw3gY3cmrijfPf50sAoMTO+QucC+FsgLGXPg4HXISwwRIxeYquRg1JAM6nWepffLDvm6KqFhJWoUIZtX1306//nuYEWw9Kuwaey7yo5gyv5ZKleqAuPcgTp5g53DPTv/vwo4CZUmWqBpY9klAbcgrn2K8RlkcVsAe8PiHMkbaFwvCmGdglOfasNVHDzE7HxIJ53L/11oqiPcy+81C9dneqe2QIQcuo8Snnf6lUqRqljwyJhSrJDs6Pb0kOOiOvFSdN5whmjEWZOoSHIXAvhv9PfHnqebhY=
+x-microsoft-antispam-message-info: HgcX7mF00IcPhsNg/y5PmuSFyYbpCbxoByE2PFG5zkAn40mdHDr8/+8efh31LD8tSsaJjOrHBXy1+qXesg0V2uuFvUKlPFtVHf71uUNQgRO2ymhOFknt99VANH89WkdOIZdklUz16G360btE6xYWjlut5/eB/vQcZdrgYXo18xCEp0MnkZ3C+1XBsFZ9YmAbUp49TC6hhEInBox2+Mh2NcYgTuWQwk1trY7RNjjdeQjH7saz960NLHXTK0j3ie6wlv9z07fT4ivI9Mwpo+Gs5HVer+bldmPysmlsT4C0n+i3aG0a0rz0UNln14i4u1mT2p48Or5v+PVsud/DIpti/l2iUf6llBa3BEy+86Gwr+w=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 485703a2-e8d3-42bb-53e3-08d65912ef90
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 11:31:58.4511
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bdf68cd-9009-451b-c71e-08d65912f020
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2018 11:31:59.4568
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
@@ -112,334 +112,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added the AFBC decoder registers for DP500 , DP550 and DP650.
-These registers control the processing of AFBC buffers. It controls various
-features like AFBC decoder enable, lossless transformation and block split
-as well as setting of the left, right, top and bottom cropping of AFBC buff=
-ers
-(in number of pixels).
-All the layers (except DE_SMART) support framebuffers with AFBC modifiers.
-One needs to set the pixel values of the top, left, bottom and right croppi=
-ng
-for the AFBC framebuffer.
-Cropping an AFBC framebuffer is controlled by the AFBC crop registers.
-In that case, the layer input size registers should be configured with
-framebuffer's dimensions and not with drm_plane_state source width/height
-values (which is used for non AFBC framebuffer to denote cropping).
+We need to define a common list of format modifiers supported by each of th=
+e Mali
+display processors. The difference between DP500 from DP550/650 is that DP5=
+00
+does not support block split mode (ie AFBC_FORMAT_MOD_SPLIT) and DP550 supp=
+orts
+YUV420 with split mode. We noted these special cases by defining MALIDP_DEV=
+ICE_AFBC_SUPPORT_SPLIT
+and AFBC_SUPPORT_SPLIT_WITH_YUV_420_10 for malidp_hw_regmap.features
 
-Changes from v1:
- - Removed the "if (fb->modifier)" check from malidp_de_plane_update()
-and added it in malidp_de_set_plane_afbc(). This will consolidate all the
-AFBC specific register configurations in a single function ie
-malidp_de_set_plane_afbc().
+Also we have defined a set of meaningful macros to shorten the modifier nam=
+es
 
-Changes from v2:
- - For AFBC framebuffer, layer input size register should be set to framebu=
-ffer's
-width and height
+Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
 
-Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+Change-Id: I09fba2032a7474e6ce45af230e0ed18fc1f4c1df
 ---
- drivers/gpu/drm/arm/malidp_hw.c     |  25 +++++----
- drivers/gpu/drm/arm/malidp_hw.h     |   2 +
- drivers/gpu/drm/arm/malidp_planes.c | 109 +++++++++++++++++++++++++++++++-=
-----
- drivers/gpu/drm/arm/malidp_regs.h   |  20 +++++++
- 4 files changed, 130 insertions(+), 26 deletions(-)
+ drivers/gpu/drm/arm/malidp_drv.c |  8 ++++----
+ drivers/gpu/drm/arm/malidp_hw.c  | 30 ++++++++++++++++++++++++++++--
+ drivers/gpu/drm/arm/malidp_hw.h  | 20 +++++++++++++++-----
+ 3 files changed, 47 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_h=
-w.c
-index b9bed11..87b7b12 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -94,11 +94,12 @@ static const struct malidp_layer malidp500_layers[] =3D=
- {
- 	 *	yuv2rgb matrix offset, mmu control register offset, rotation_features
- 	 */
- 	{ DE_VIDEO1, MALIDP500_DE_LV_BASE, MALIDP500_DE_LV_PTR_BASE,
--		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, 0, ROTATE_ANY },
-+		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, 0, ROTATE_ANY,
-+		MALIDP500_DE_LV_AD_CTRL },
- 	{ DE_GRAPHICS1, MALIDP500_DE_LG1_BASE, MALIDP500_DE_LG1_PTR_BASE,
--		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
-+		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY, MALIDP500_DE_LG1_AD_CTRL },
- 	{ DE_GRAPHICS2, MALIDP500_DE_LG2_BASE, MALIDP500_DE_LG2_PTR_BASE,
--		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
-+		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY, MALIDP500_DE_LG2_AD_CTRL },
- };
-=20
- static const struct malidp_layer malidp550_layers[] =3D {
-@@ -106,13 +107,15 @@ static const struct malidp_layer malidp550_layers[] =
-=3D {
- 	 *	yuv2rgb matrix offset, mmu control register offset, rotation_features
- 	 */
- 	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
--		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY },
-+		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY,
-+		MALIDP550_DE_LV1_AD_CTRL },
- 	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
--		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
-+		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY, MALIDP550_DE_LG_AD_CTRL },
- 	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
--		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY },
-+		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY,
-+		MALIDP550_DE_LV2_AD_CTRL },
- 	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
--		MALIDP550_DE_LS_R1_STRIDE, 0, 0, ROTATE_NONE },
-+		MALIDP550_DE_LS_R1_STRIDE, 0, 0, ROTATE_NONE, 0 },
- };
-=20
- static const struct malidp_layer malidp650_layers[] =3D {
-@@ -122,16 +125,16 @@ static const struct malidp_layer malidp650_layers[] =
-=3D {
- 	 */
- 	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
- 		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB,
--		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY },
-+		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY, MALIDP550_DE_LV1_AD_CTRL },
- 	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
- 		MALIDP_DE_LG_STRIDE, 0, MALIDP650_DE_LG_MMU_CTRL,
--		ROTATE_COMPRESSED },
-+		ROTATE_COMPRESSED, MALIDP550_DE_LG_AD_CTRL },
- 	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
- 		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB,
--		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY },
-+		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY, MALIDP550_DE_LV2_AD_CTRL },
- 	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
- 		MALIDP550_DE_LS_R1_STRIDE, 0, MALIDP650_DE_LS_MMU_CTRL,
--		ROTATE_NONE },
-+		ROTATE_NONE, 0 },
- };
-=20
- #define SE_N_SCALING_COEFFS	96
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_h=
-w.h
-index 40155e2..651558f 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -70,6 +70,8 @@ struct malidp_layer {
- 	s16 yuv2rgb_offset;	/* offset to the YUV->RGB matrix entries */
- 	u16 mmu_ctrl_offset;    /* offset to the MMU control register */
- 	enum rotation_features rot;	/* type of rotation supported */
-+	/* address offset for the AFBC decoder registers */
-+	u16 afbc_decoder_offset;
- };
-=20
- enum malidp_scaling_coeff_set {
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/mali=
-dp_planes.c
-index c9a6d3e..cd60f73 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -592,6 +592,80 @@ static void malidp_de_set_mmu_control(struct malidp_pl=
-ane *mp,
- 			mp->layer->base + mp->layer->mmu_ctrl_offset);
- }
-=20
-+static void malidp_set_plane_base_addr(struct drm_framebuffer *fb,
-+				       struct malidp_plane *mp,
-+				       int plane_index)
-+{
-+	dma_addr_t paddr;
-+	u16 ptr;
-+	struct drm_plane *plane =3D &mp->base;
-+	bool afbc =3D fb->modifier ? true : false;
-+
-+	ptr =3D mp->layer->ptr + (plane_index << 4);
-+
-+	/*
-+	 * For AFBC buffers, cropping is handled by AFBC decoder rather than
-+	 * pointer manipulation.
-+	 */
-+	if (!afbc) {
-+		paddr =3D drm_fb_cma_get_gem_addr(fb, plane->state,
-+						plane_index);
-+	} else {
-+		struct drm_gem_cma_object *obj;
-+
-+		obj =3D drm_fb_cma_get_gem_obj(fb, plane_index);
-+
-+		if (WARN_ON(!obj))
-+			return;
-+		paddr =3D obj->paddr;
-+	}
-+
-+	malidp_hw_write(mp->hwdev, lower_32_bits(paddr), ptr);
-+	malidp_hw_write(mp->hwdev, upper_32_bits(paddr), ptr + 4);
-+}
-+
-+static void malidp_de_set_plane_afbc(struct drm_plane *plane)
-+{
-+	struct malidp_plane *mp;
-+	u32 src_w, src_h, val =3D 0, src_x, src_y;
-+	struct drm_framebuffer *fb =3D plane->state->fb;
-+
-+	mp =3D to_malidp_plane(plane);
-+
-+	/* no afbc_decoder_offset means AFBC is not supported on this plane */
-+	if (!mp->layer->afbc_decoder_offset)
-+		return;
-+
-+	if (!fb->modifier) {
-+		malidp_hw_write(mp->hwdev, 0, mp->layer->afbc_decoder_offset);
-+		return;
-+	}
-+
-+	/* convert src values from Q16 fixed point to integer */
-+	src_w =3D plane->state->src_w >> 16;
-+	src_h =3D plane->state->src_h >> 16;
-+	src_x =3D plane->state->src_x >> 16;
-+	src_y =3D plane->state->src_y >> 16;
-+
-+	val =3D ((fb->width - (src_x + src_w)) << MALIDP_AD_CROP_RIGHT_OFFSET) |
-+		   src_x;
-+	malidp_hw_write(mp->hwdev, val,
-+			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_H);
-+
-+	val =3D ((fb->height - (src_y + src_h)) << MALIDP_AD_CROP_BOTTOM_OFFSET) =
-|
-+		   src_y;
-+	malidp_hw_write(mp->hwdev, val,
-+			mp->layer->afbc_decoder_offset + MALIDP_AD_CROP_V);
-+
-+	val =3D MALIDP_AD_EN;
-+	if (fb->modifier & AFBC_FORMAT_MOD_SPLIT)
-+		val |=3D MALIDP_AD_BS;
-+	if (fb->modifier & AFBC_FORMAT_MOD_YTR)
-+		val |=3D MALIDP_AD_YTR;
-+
-+	malidp_hw_write(mp->hwdev, val, mp->layer->afbc_decoder_offset);
-+}
-+
- static void malidp_de_plane_update(struct drm_plane *plane,
- 				   struct drm_plane_state *old_state)
- {
-@@ -600,30 +674,33 @@ static void malidp_de_plane_update(struct drm_plane *=
-plane,
- 	struct drm_plane_state *state =3D plane->state;
- 	u16 pixel_alpha =3D state->pixel_blend_mode;
- 	u8 plane_alpha =3D state->alpha >> 8;
-+	bool format_has_alpha =3D state->fb->format->has_alpha;
- 	u32 src_w, src_h, dest_w, dest_h, val;
- 	int i;
-+	struct drm_framebuffer *fb =3D plane->state->fb;
-=20
- 	mp =3D to_malidp_plane(plane);
-=20
--	/* convert src values from Q16 fixed point to integer */
--	src_w =3D state->src_w >> 16;
--	src_h =3D state->src_h >> 16;
--	dest_w =3D state->crtc_w;
--	dest_h =3D state->crtc_h;
-+	/* For AFBC framebuffer, use the framebuffer width and height for configu=
-ring
-+	 * layer input size register.
-+	 */
-+	if (fb->modifier) {
-+		src_w =3D fb->width;
-+		src_h =3D fb->height;
-+	} else {
-+		/* convert src values from Q16 fixed point to integer */
-+		src_w =3D ms->base.src_w >> 16;
-+		src_h =3D ms->base.src_h >> 16;
-+	}
-+	dest_w =3D ms->base.crtc_w;
-+	dest_h =3D ms->base.crtc_h;
-=20
- 	val =3D malidp_hw_read(mp->hwdev, mp->layer->base);
- 	val =3D (val & ~LAYER_FORMAT_MASK) | ms->format;
- 	malidp_hw_write(mp->hwdev, val, mp->layer->base);
-=20
--	for (i =3D 0; i < ms->n_planes; i++) {
--		/* calculate the offset for the layer's plane registers */
--		u16 ptr =3D mp->layer->ptr + (i << 4);
--		dma_addr_t fb_addr =3D drm_fb_cma_get_gem_addr(state->fb,
--							     state, i);
--
--		malidp_hw_write(mp->hwdev, lower_32_bits(fb_addr), ptr);
--		malidp_hw_write(mp->hwdev, upper_32_bits(fb_addr), ptr + 4);
--	}
-+	for (i =3D 0; i < ms->n_planes; i++)
-+		malidp_set_plane_base_addr(fb, mp, i);
-=20
- 	malidp_de_set_mmu_control(mp, ms);
-=20
-@@ -657,6 +734,8 @@ static void malidp_de_plane_update(struct drm_plane *pl=
-ane,
- 				mp->layer->base + MALIDP550_LS_R1_IN_SIZE);
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_=
+drv.c
+index 505f316..b8db92f 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -293,8 +293,8 @@ malidp_verify_afbc_framebuffer_caps(struct drm_device *=
+dev,
+ 		return false;
  	}
 =20
-+	malidp_de_set_plane_afbc(plane);
-+
- 	/* first clear the rotation bits */
- 	val =3D malidp_hw_read(mp->hwdev, mp->layer->base + MALIDP_LAYER_CONTROL)=
-;
- 	val &=3D ~LAYER_ROT_MASK;
-@@ -674,7 +753,7 @@ static void malidp_de_plane_update(struct drm_plane *pl=
-ane,
+-	switch (mode_cmd->modifier[0] & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK) {
+-	case AFBC_FORMAT_MOD_BLOCK_SIZE_16x16:
++	switch (mode_cmd->modifier[0] & AFBC_SIZE_MASK) {
++	case AFBC_SIZE_16X16:
+ 		if ((mode_cmd->width % 16) || (mode_cmd->height % 16)) {
+ 			DRM_DEBUG_KMS("AFBC buffers must be aligned to 16 pixels\n");
+ 			return false;
+@@ -319,8 +319,8 @@ malidp_verify_afbc_framebuffer_size(struct drm_device *=
+dev,
+ 	u32 afbc_superblock_size =3D 0, afbc_superblock_height =3D 0;
+ 	u32 afbc_superblock_width =3D 0, afbc_size =3D 0;
 =20
- 	if (state->alpha !=3D DRM_BLEND_ALPHA_OPAQUE) {
- 		val |=3D LAYER_COMP_PLANE;
--	} else if (state->fb->format->has_alpha) {
-+	} else if (format_has_alpha) {
- 		/* We only care about blend mode if the format has alpha */
- 		switch (pixel_alpha) {
- 		case DRM_MODE_BLEND_PREMULTI:
-diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp=
-_regs.h
-index 7ce3e14..a0dd6e1 100644
---- a/drivers/gpu/drm/arm/malidp_regs.h
-+++ b/drivers/gpu/drm/arm/malidp_regs.h
-@@ -198,10 +198,13 @@
- #define MALIDP500_LV_YUV2RGB		((s16)(-0xB8))
- #define MALIDP500_DE_LV_BASE		0x00100
- #define MALIDP500_DE_LV_PTR_BASE	0x00124
-+#define MALIDP500_DE_LV_AD_CTRL		0x00400
- #define MALIDP500_DE_LG1_BASE		0x00200
- #define MALIDP500_DE_LG1_PTR_BASE	0x0021c
-+#define MALIDP500_DE_LG1_AD_CTRL	0x0040c
- #define MALIDP500_DE_LG2_BASE		0x00300
- #define MALIDP500_DE_LG2_PTR_BASE	0x0031c
-+#define MALIDP500_DE_LG2_AD_CTRL	0x00418
- #define MALIDP500_SE_BASE		0x00c00
- #define MALIDP500_SE_CONTROL		0x00c0c
- #define MALIDP500_SE_MEMWRITE_OUT_SIZE	0x00c2c
-@@ -228,10 +231,13 @@
- #define MALIDP550_LV_YUV2RGB		0x00084
- #define MALIDP550_DE_LV1_BASE		0x00100
- #define MALIDP550_DE_LV1_PTR_BASE	0x00124
-+#define MALIDP550_DE_LV1_AD_CTRL	0x001B8
- #define MALIDP550_DE_LV2_BASE		0x00200
- #define MALIDP550_DE_LV2_PTR_BASE	0x00224
-+#define MALIDP550_DE_LV2_AD_CTRL	0x002B8
- #define MALIDP550_DE_LG_BASE		0x00300
- #define MALIDP550_DE_LG_PTR_BASE	0x0031c
-+#define MALIDP550_DE_LG_AD_CTRL		0x00330
- #define MALIDP550_DE_LS_BASE		0x00400
- #define MALIDP550_DE_LS_PTR_BASE	0x0042c
- #define MALIDP550_DE_PERF_BASE		0x00500
-@@ -258,6 +264,20 @@
- #define MALIDP_MMU_CTRL_PX_PS(x)	(1 << (8 + (x)))
- #define MALIDP_MMU_CTRL_PP_NUM_REQ(x)	(((x) & 0x7f) << 12)
+-	switch (mode_cmd->modifier[0] & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK) {
+-	case AFBC_FORMAT_MOD_BLOCK_SIZE_16x16:
++	switch (mode_cmd->modifier[0] & AFBC_SIZE_MASK) {
++	case AFBC_SIZE_16X16:
+ 		afbc_superblock_height =3D 16;
+ 		afbc_superblock_width =3D 16;
+ 		break;
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_h=
+w.c
+index 87b7b12..55d379b 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -137,6 +137,32 @@ static const struct malidp_layer malidp650_layers[] =
+=3D {
+ 		ROTATE_NONE, 0 },
+ };
 =20
-+/* AFBC register offsets relative to MALIDPXXX_DE_LX_AD_CTRL */
-+/* The following register offsets are common for DP500, DP550 and DP650 */
-+#define MALIDP_AD_CROP_H                0x4
-+#define MALIDP_AD_CROP_V                0x8
-+#define MALIDP_AD_END_PTR_LOW           0xc
-+#define MALIDP_AD_END_PTR_HIGH          0x10
++const u64 malidp_format_modifiers[] =3D {
++	/* All RGB formats (except XRGB, RGBX, XBGR, BGRX) */
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16 | AFBC_YTR | AFBC_SPARSE),
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16 | AFBC_YTR),
 +
-+/* AFBC decoder Registers */
-+#define MALIDP_AD_EN                    BIT(0)
-+#define MALIDP_AD_YTR                   BIT(4)
-+#define MALIDP_AD_BS                    BIT(8)
-+#define MALIDP_AD_CROP_RIGHT_OFFSET     16
-+#define MALIDP_AD_CROP_BOTTOM_OFFSET    16
++	/* All RGB formats > 16bpp (except XRGB, RGBX, XBGR, BGRX) */
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16 | AFBC_YTR | AFBC_SPARSE | AFBC_S=
+PLIT),
 +
- /*
-  * Starting with DP550 the register map blocks has been standardised to th=
-e
-  * following layout:
++	/* All 8 or 10 bit YUV 444 formats. */
++	/* In DP550, 10 bit YUV 420 format also supported */
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16 | AFBC_SPARSE | AFBC_SPLIT),
++
++	/* YUV 420, 422 P1 8 bit and YUV 444 8 bit/10 bit formats */
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16 | AFBC_SPARSE),
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16),
++
++	/* YUV 420, 422 P1 8, 10 bit formats */
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16 | AFBC_CBR | AFBC_SPARSE),
++	DRM_FORMAT_MOD_ARM_AFBC(AFBC_SIZE_16X16 | AFBC_CBR),
++
++	/* All formats */
++	DRM_FORMAT_MOD_LINEAR,
++
++	DRM_FORMAT_MOD_INVALID
++};
++
+ #define SE_N_SCALING_COEFFS	96
+ static const u16 dp500_se_scaling_coeffs[][SE_N_SCALING_COEFFS] =3D {
+ 	[MALIDP_UPSCALING_COEFFS - 1] =3D {
+@@ -841,7 +867,7 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES=
+] =3D {
+ 			.se_base =3D MALIDP550_SE_BASE,
+ 			.dc_base =3D MALIDP550_DC_BASE,
+ 			.out_depth_base =3D MALIDP550_DE_OUTPUT_DEPTH,
+-			.features =3D MALIDP_REGMAP_HAS_CLEARIRQ,
++			.features =3D MALIDP_REGMAP_HAS_CLEARIRQ | MALIDP_DEVICE_AFBC_SUPPORT_S=
+PLIT | AFBC_SUPPORT_SPLIT_WITH_YUV_420_10,
+ 			.n_layers =3D ARRAY_SIZE(malidp550_layers),
+ 			.layers =3D malidp550_layers,
+ 			.de_irq_map =3D {
+@@ -887,7 +913,7 @@ const struct malidp_hw malidp_device[MALIDP_MAX_DEVICES=
+] =3D {
+ 			.se_base =3D MALIDP550_SE_BASE,
+ 			.dc_base =3D MALIDP550_DC_BASE,
+ 			.out_depth_base =3D MALIDP550_DE_OUTPUT_DEPTH,
+-			.features =3D MALIDP_REGMAP_HAS_CLEARIRQ,
++			.features =3D MALIDP_REGMAP_HAS_CLEARIRQ | MALIDP_DEVICE_AFBC_SUPPORT_S=
+PLIT,
+ 			.n_layers =3D ARRAY_SIZE(malidp650_layers),
+ 			.layers =3D malidp650_layers,
+ 			.de_irq_map =3D {
+diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_h=
+w.h
+index 651558f..27b907f 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.h
++++ b/drivers/gpu/drm/arm/malidp_hw.h
+@@ -95,7 +95,9 @@ struct malidp_se_config {
+ };
+=20
+ /* regmap features */
+-#define MALIDP_REGMAP_HAS_CLEARIRQ	(1 << 0)
++#define MALIDP_REGMAP_HAS_CLEARIRQ				BIT(0)
++#define MALIDP_DEVICE_AFBC_SUPPORT_SPLIT			BIT(1)
++#define AFBC_SUPPORT_SPLIT_WITH_YUV_420_10			BIT(2)
+=20
+ struct malidp_hw_regmap {
+ 	/* address offset of the DE register bank */
+@@ -390,9 +392,17 @@ static inline void malidp_se_set_enh_coeffs(struct mal=
+idp_hw_device *hwdev)
+=20
+ #define MALIDP_GAMMA_LUT_SIZE		4096
+=20
+-#define AFBC_MOD_VALID_BITS (AFBC_FORMAT_MOD_BLOCK_SIZE_MASK | \
+-			AFBC_FORMAT_MOD_YTR | AFBC_FORMAT_MOD_SPLIT | \
+-			AFBC_FORMAT_MOD_SPARSE | AFBC_FORMAT_MOD_CBR | \
+-			AFBC_FORMAT_MOD_TILED | AFBC_FORMAT_MOD_SC)
++#define AFBC_SIZE_MASK		AFBC_FORMAT_MOD_BLOCK_SIZE_MASK
++#define AFBC_SIZE_16X16		AFBC_FORMAT_MOD_BLOCK_SIZE_16x16
++#define AFBC_YTR		AFBC_FORMAT_MOD_YTR
++#define AFBC_SPARSE		AFBC_FORMAT_MOD_SPARSE
++#define AFBC_CBR		AFBC_FORMAT_MOD_CBR
++#define AFBC_SPLIT		AFBC_FORMAT_MOD_SPLIT
++#define AFBC_TILED		AFBC_FORMAT_MOD_TILED
++#define AFBC_SC			AFBC_FORMAT_MOD_SC
++
++#define AFBC_MOD_VALID_BITS (AFBC_SIZE_MASK | AFBC_YTR | AFBC_SPLIT | AFBC=
+_SPARSE | AFBC_CBR | AFBC_TILED | AFBC_SC)
++
++extern const u64 malidp_format_modifiers[];
+=20
+ #endif  /* __MALIDP_HW_H__ */
 --=20
 2.7.4
 
