@@ -2,246 +2,130 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED27C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822BAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C1C820834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:51:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C1C820834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 490F420834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490F420834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbeLDSvY (ORCPT
+        id S1725916AbeLDSyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:51:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51898 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 13:54:12 -0500
+Received: from mga11.intel.com ([192.55.52.93]:4454 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbeLDSvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:51:24 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7C772081C;
-        Tue,  4 Dec 2018 18:51:22 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 13:51:20 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 10/12] tracing: Remove orphaned
- trace_add/remove_event_call functions
-Message-ID: <20181204135120.02361a89@vmware.local.home>
-In-Reply-To: <154140866955.17322.2081425494660638846.stgit@devbox>
-References: <154140838606.17322.15294184388075458777.stgit@devbox>
-        <154140866955.17322.2081425494660638846.stgit@devbox>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725797AbeLDSyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:54:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:54:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="98615661"
+Received: from unknown (HELO [10.7.201.141]) ([10.7.201.141])
+  by orsmga008.jf.intel.com with ESMTP; 04 Dec 2018 10:54:10 -0800
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
+ <20181204184919.GD2937@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <64cf873c-9e1e-f3b0-4869-7e0ebab10452@intel.com>
+Date:   Tue, 4 Dec 2018 10:54:10 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181204184919.GD2937@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  5 Nov 2018 18:04:29 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On 12/4/18 10:49 AM, Jerome Glisse wrote:
+> Policy is same kind of story, this email is long enough now :) But
+> i can write one down if you want.
 
-> Remove trace_add_event_call() and trace_remove_event_call()
-> functions since those are not used anymore.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Yes, please.  I'd love to see the code.
 
-Hi Masami,
-
-I've applied the series locally (need to test it) except for this
-patch. Honestly, I hate the "_nolock" name, and it makes no sense when
-
- 1) they still grab locks
- 2) there's no version without "_nolock"
-
-I added this patch in its place:
-
--- Steve
-
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Date: Tue, 4 Dec 2018 13:35:45 -0500
-Subject: [PATCH] tracing: Consolidate trace_add/remove_event_call back to the
- nolock functions
-
-The trace_add/remove_event_call_nolock() functions were added to allow
-the tace_add/remove_event_call() code be called when the event_mutex
-lock was already taken. Now that all callers are done within the
-event_mutex, there's no reason to have two different interfaces.
-
-Remove the current wrapper trace_add/remove_event_call()s and rename the
-_nolock versions back to the original names.
-
-Link: http://lkml.kernel.org/r/154140866955.17322.2081425494660638846.stgit@devbox
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- include/linux/trace_events.h     |  2 --
- kernel/trace/trace_events.c      | 30 ++++--------------------------
- kernel/trace/trace_events_hist.c |  6 +++---
- kernel/trace/trace_kprobe.c      |  4 ++--
- kernel/trace/trace_uprobe.c      |  4 ++--
- 5 files changed, 11 insertions(+), 35 deletions(-)
-
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 3aa05593a53f..4130a5497d40 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -529,8 +529,6 @@ extern int trace_event_raw_init(struct trace_event_call *call);
- extern int trace_define_field(struct trace_event_call *call, const char *type,
- 			      const char *name, int offset, int size,
- 			      int is_signed, int filter_type);
--extern int trace_add_event_call_nolock(struct trace_event_call *call);
--extern int trace_remove_event_call_nolock(struct trace_event_call *call);
- extern int trace_add_event_call(struct trace_event_call *call);
- extern int trace_remove_event_call(struct trace_event_call *call);
- extern int trace_event_get_offsets(struct trace_event_call *call);
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index a3b157f689ee..bd0162c0467c 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -2305,7 +2305,8 @@ __trace_early_add_new_event(struct trace_event_call *call,
- struct ftrace_module_file_ops;
- static void __add_event_to_tracers(struct trace_event_call *call);
- 
--int trace_add_event_call_nolock(struct trace_event_call *call)
-+/* Add an additional event_call dynamically */
-+int trace_add_event_call(struct trace_event_call *call)
- {
- 	int ret;
- 	lockdep_assert_held(&event_mutex);
-@@ -2320,17 +2321,6 @@ int trace_add_event_call_nolock(struct trace_event_call *call)
- 	return ret;
- }
- 
--/* Add an additional event_call dynamically */
--int trace_add_event_call(struct trace_event_call *call)
--{
--	int ret;
--
--	mutex_lock(&event_mutex);
--	ret = trace_add_event_call_nolock(call);
--	mutex_unlock(&event_mutex);
--	return ret;
--}
--
- /*
-  * Must be called under locking of trace_types_lock, event_mutex and
-  * trace_event_sem.
-@@ -2376,8 +2366,8 @@ static int probe_remove_event_call(struct trace_event_call *call)
- 	return 0;
- }
- 
--/* no event_mutex version */
--int trace_remove_event_call_nolock(struct trace_event_call *call)
-+/* Remove an event_call */
-+int trace_remove_event_call(struct trace_event_call *call)
- {
- 	int ret;
- 
-@@ -2392,18 +2382,6 @@ int trace_remove_event_call_nolock(struct trace_event_call *call)
- 	return ret;
- }
- 
--/* Remove an event_call */
--int trace_remove_event_call(struct trace_event_call *call)
--{
--	int ret;
--
--	mutex_lock(&event_mutex);
--	ret = trace_remove_event_call_nolock(call);
--	mutex_unlock(&event_mutex);
--
--	return ret;
--}
--
- #define for_each_event(event, start, end)			\
- 	for (event = start;					\
- 	     (unsigned long)event < (unsigned long)end;		\
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 21e4954375a1..82e72c48a5a9 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -960,7 +960,7 @@ static int register_synth_event(struct synth_event *event)
- 	call->data = event;
- 	call->tp = event->tp;
- 
--	ret = trace_add_event_call_nolock(call);
-+	ret = trace_add_event_call(call);
- 	if (ret) {
- 		pr_warn("Failed to register synthetic event: %s\n",
- 			trace_event_name(call));
-@@ -969,7 +969,7 @@ static int register_synth_event(struct synth_event *event)
- 
- 	ret = set_synth_event_print_fmt(call);
- 	if (ret < 0) {
--		trace_remove_event_call_nolock(call);
-+		trace_remove_event_call(call);
- 		goto err;
- 	}
-  out:
-@@ -984,7 +984,7 @@ static int unregister_synth_event(struct synth_event *event)
- 	struct trace_event_call *call = &event->call;
- 	int ret;
- 
--	ret = trace_remove_event_call_nolock(call);
-+	ret = trace_remove_event_call(call);
- 
- 	return ret;
- }
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index bdf8c2ad5152..0e0f7b8024fb 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1353,7 +1353,7 @@ static int register_kprobe_event(struct trace_kprobe *tk)
- 		kfree(call->print_fmt);
- 		return -ENODEV;
- 	}
--	ret = trace_add_event_call_nolock(call);
-+	ret = trace_add_event_call(call);
- 	if (ret) {
- 		pr_info("Failed to register kprobe event: %s\n",
- 			trace_event_name(call));
-@@ -1368,7 +1368,7 @@ static int unregister_kprobe_event(struct trace_kprobe *tk)
- 	int ret;
- 
- 	/* tp->event is unregistered in trace_remove_event_call() */
--	ret = trace_remove_event_call_nolock(&tk->tp.call);
-+	ret = trace_remove_event_call(&tk->tp.call);
- 	if (!ret)
- 		kfree(tk->tp.call.print_fmt);
- 	return ret;
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 4a7b21c891f3..e335576b9411 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -1320,7 +1320,7 @@ static int register_uprobe_event(struct trace_uprobe *tu)
- 		return -ENODEV;
- 	}
- 
--	ret = trace_add_event_call_nolock(call);
-+	ret = trace_add_event_call(call);
- 
- 	if (ret) {
- 		pr_info("Failed to register uprobe event: %s\n",
-@@ -1337,7 +1337,7 @@ static int unregister_uprobe_event(struct trace_uprobe *tu)
- 	int ret;
- 
- 	/* tu->event is unregistered in trace_remove_event_call() */
--	ret = trace_remove_event_call_nolock(&tu->tp.call);
-+	ret = trace_remove_event_call(&tu->tp.call);
- 	if (ret)
- 		return ret;
- 	kfree(tu->tp.call.print_fmt);
--- 
-2.19.2
-
+We'll do the same on the "HMAT" side and we can compare notes.
