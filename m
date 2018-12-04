@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8470EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B16BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A6D62146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC86720851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:30:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y6ckdp+2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6D62146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y6rBE6IT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC86720851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbeLDK51 (ORCPT
+        id S1726792AbeLDLaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:57:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41230 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:30:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbeLDK5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:57:23 -0500
+        id S1726737AbeLDK51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:57:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D96C2146D;
-        Tue,  4 Dec 2018 10:57:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A2C1214DE;
+        Tue,  4 Dec 2018 10:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921041;
-        bh=P7psbqmqRAIT3xF1xOmH2JA8sbEbZnhWRMvVo6L1Td8=;
+        s=default; t=1543921047;
+        bh=YNBnpgMt8ovF4tGQpHsT8DYxI7egCexXJPRPnk+jtsU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y6ckdp+2e1c7/0QEAnznyXkp9fz4J1QMH5B+xFyp6FdZytlgJ5YqL2bWfKj8Yz9sO
-         Sz0FpUpDed6lHRLSMt56Psj4xxq3dKTIUoBr7szhLKdeQvI+WfDP+RMe7sg9J8bbKf
-         YfGPzG2EVEiSq2aRPQyGvYHweHwujgJLRgY4UWlQ=
+        b=y6rBE6ITVgu9pkQC2p7caRF2GaNl9JzCgBh9d1ErdmavmwUEPIHbth2eO/N7Cck76
+         8fPrSwqh7B1/F6JDrRCVykfeVQNFt0h0t7cIA62izpHKv9b3296/OhqFa4yrMtJ5AE
+         1H93BJKPhmt7DjSB0rbrv6uYeW1Y6u7lQtketlcY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 057/139] x86/speculation: Prepare arch_smt_update() for PRCTL mode
-Date:   Tue,  4 Dec 2018 11:48:58 +0100
-Message-Id: <20181204103652.316353783@linuxfoundation.org>
+Subject: [PATCH 4.19 059/139] x86/speculation: Enable prctl mode for spectre_v2_user
+Date:   Tue,  4 Dec 2018 11:49:00 +0100
+Message-Id: <20181204103652.415521380@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -83,13 +83,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 6893a959d7fdebbab5f5aa112c277d5a44435ba1 upstream
+commit 7cc765a67d8e04ef7d772425ca5a2a1e2b894c15 upstream
 
-The upcoming fine grained per task STIBP control needs to be updated on CPU
-hotplug as well.
+Now that all prerequisites are in place:
 
-Split out the code which controls the strict mode so the prctl control code
-can be added later. Mark the SMP function call argument __unused while at it.
+ - Add the prctl command line option
+
+ - Default the 'auto' mode to 'prctl'
+
+ - When SMT state changes, update the static key which controls the
+   conditional STIBP evaluation on context switch.
+
+ - At init update the static key which controls the conditional IBPB
+   evaluation on context switch.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -113,79 +119,147 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185005.759457117@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185005.958421388@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   46 ++++++++++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 21 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |    7 +++-
+ arch/x86/kernel/cpu/bugs.c                      |   41 ++++++++++++++++++------
+ 2 files changed, 38 insertions(+), 10 deletions(-)
 
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4211,9 +4211,14 @@
+ 			off     - Unconditionally disable mitigations. Is
+ 				  enforced by spectre_v2=off
+ 
++			prctl   - Indirect branch speculation is enabled,
++				  but mitigation can be enabled via prctl
++				  per thread.  The mitigation control state
++				  is inherited on fork.
++
+ 			auto    - Kernel selects the mitigation depending on
+ 				  the available CPU features and vulnerability.
+-				  Default is off.
++				  Default is prctl.
+ 
+ 			Not specifying this option is equivalent to
+ 			spectre_v2_user=auto.
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -528,40 +528,44 @@ specv2_set_mode:
- 	arch_smt_update();
- }
+@@ -255,11 +255,13 @@ enum spectre_v2_user_cmd {
+ 	SPECTRE_V2_USER_CMD_NONE,
+ 	SPECTRE_V2_USER_CMD_AUTO,
+ 	SPECTRE_V2_USER_CMD_FORCE,
++	SPECTRE_V2_USER_CMD_PRCTL,
+ };
  
--static bool stibp_needed(void)
-+static void update_stibp_msr(void * __unused)
- {
--	/* Enhanced IBRS makes using STIBP unnecessary. */
--	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
--		return false;
--
--	/* Check for strict user mitigation mode */
--	return spectre_v2_user == SPECTRE_V2_USER_STRICT;
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- }
+ static const char * const spectre_v2_user_strings[] = {
+ 	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
+ 	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
++	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
+ };
  
--static void update_stibp_msr(void *info)
-+/* Update x86_spec_ctrl_base in case SMT state changed. */
-+static void update_stibp_strict(void)
- {
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+	u64 mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
-+
-+	if (sched_smt_active())
-+		mask |= SPEC_CTRL_STIBP;
-+
-+	if (mask == x86_spec_ctrl_base)
-+		return;
-+
-+	pr_info("Update user space SMT mitigation: STIBP %s\n",
-+		mask & SPEC_CTRL_STIBP ? "always-on" : "off");
-+	x86_spec_ctrl_base = mask;
-+	on_each_cpu(update_stibp_msr, NULL, 1);
- }
+ static const struct {
+@@ -270,6 +272,7 @@ static const struct {
+ 	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
+ 	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
+ 	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
++	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
+ };
  
- void arch_smt_update(void)
- {
--	u64 mask;
--
--	if (!stibp_needed())
-+	/* Enhanced IBRS implies STIBP. No update required. */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
- 		return;
+ static void __init spec_v2_user_print_cond(const char *reason, bool secure)
+@@ -324,12 +327,15 @@ spectre_v2_user_select_mitigation(enum s
+ 		smt_possible = false;
  
- 	mutex_lock(&spec_ctrl_mutex);
- 
--	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
--	if (sched_smt_active())
--		mask |= SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
-+	switch (spectre_v2_user) {
-+	case SPECTRE_V2_USER_NONE:
-+		break;
-+	case SPECTRE_V2_USER_STRICT:
-+		update_stibp_strict();
+ 	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
+-	case SPECTRE_V2_USER_CMD_AUTO:
+ 	case SPECTRE_V2_USER_CMD_NONE:
+ 		goto set_mode;
+ 	case SPECTRE_V2_USER_CMD_FORCE:
+ 		mode = SPECTRE_V2_USER_STRICT;
+ 		break;
++	case SPECTRE_V2_USER_CMD_AUTO:
++	case SPECTRE_V2_USER_CMD_PRCTL:
++		mode = SPECTRE_V2_USER_PRCTL;
 +		break;
  	}
-+
- 	mutex_unlock(&spec_ctrl_mutex);
+ 
+ 	/* Initialize Indirect Branch Prediction Barrier */
+@@ -340,6 +346,9 @@ spectre_v2_user_select_mitigation(enum s
+ 		case SPECTRE_V2_USER_STRICT:
+ 			static_branch_enable(&switch_mm_always_ibpb);
+ 			break;
++		case SPECTRE_V2_USER_PRCTL:
++			static_branch_enable(&switch_mm_cond_ibpb);
++			break;
+ 		default:
+ 			break;
+ 		}
+@@ -352,6 +361,12 @@ spectre_v2_user_select_mitigation(enum s
+ 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+ 		return;
+ 
++	/*
++	 * If SMT is not possible or STIBP is not available clear the STIPB
++	 * mode.
++	 */
++	if (!smt_possible || !boot_cpu_has(X86_FEATURE_STIBP))
++		mode = SPECTRE_V2_USER_NONE;
+ set_mode:
+ 	spectre_v2_user = mode;
+ 	/* Only print the STIBP mode when SMT possible */
+@@ -550,6 +565,15 @@ static void update_stibp_strict(void)
+ 	on_each_cpu(update_stibp_msr, NULL, 1);
  }
  
++/* Update the static key controlling the evaluation of TIF_SPEC_IB */
++static void update_indir_branch_cond(void)
++{
++	if (sched_smt_active())
++		static_branch_enable(&switch_to_cond_stibp);
++	else
++		static_branch_disable(&switch_to_cond_stibp);
++}
++
+ void arch_smt_update(void)
+ {
+ 	/* Enhanced IBRS implies STIBP. No update required. */
+@@ -565,6 +589,7 @@ void arch_smt_update(void)
+ 		update_stibp_strict();
+ 		break;
+ 	case SPECTRE_V2_USER_PRCTL:
++		update_indir_branch_cond();
+ 		break;
+ 	}
+ 
+@@ -1036,7 +1061,8 @@ static char *stibp_state(void)
+ 	case SPECTRE_V2_USER_STRICT:
+ 		return ", STIBP: forced";
+ 	case SPECTRE_V2_USER_PRCTL:
+-		return "";
++		if (static_key_enabled(&switch_to_cond_stibp))
++			return ", STIBP: conditional";
+ 	}
+ 	return "";
+ }
+@@ -1044,14 +1070,11 @@ static char *stibp_state(void)
+ static char *ibpb_state(void)
+ {
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+-		switch (spectre_v2_user) {
+-		case SPECTRE_V2_USER_NONE:
+-			return ", IBPB: disabled";
+-		case SPECTRE_V2_USER_STRICT:
++		if (static_key_enabled(&switch_mm_always_ibpb))
+ 			return ", IBPB: always-on";
+-		case SPECTRE_V2_USER_PRCTL:
+-			return "";
+-		}
++		if (static_key_enabled(&switch_mm_cond_ibpb))
++			return ", IBPB: conditional";
++		return ", IBPB: disabled";
+ 	}
+ 	return "";
+ }
 
 
