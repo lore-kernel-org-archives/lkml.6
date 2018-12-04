@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8A5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88748C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 551CB20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50C6B20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="FSUA1XHH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 551CB20850
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="nn4MFFor"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C6B20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbeLDAau (ORCPT
+        id S1726118AbeLDAax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:30:50 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:55625 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbeLDA3V (ORCPT
+        Mon, 3 Dec 2018 19:30:53 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:33625 "EHLO
+        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeLDA3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:29:21 -0500
+        Mon, 3 Dec 2018 19:29:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=5gx+b0imFmIl8frlrb4U3vbM0m8H31N+v76mlRXIdGw=; b=FSUA1XHH2XDi
-        MpmgdOmsZKsxjfkxIxfCdeMRXn6yH80O7IUhDkGgeFvlFx9GlaeyXKnDqS7Ndn/bDOE8kYCXBBZj1
-        48tngp98ll9zVPD6drSrlvTJB9Gm+Oyr3DExqsEUVz+2MbjRb1xYT4V3OYfcDb9EX4x1QOeWqAXfF
-        GuLx2jfxvSqqUg2B592ybB8KzG3cl/emRTJaJHg0rLx7dKj37YX+hX0VIvn+j9F7QALP3g/hn9dvf
-        k1IlMHRi2PD7Z3XRDmxOd1Ptk6/udAT6aJeTf2Sm+FmKwz9OyVn4JaqMW9bXenZPQhVR8C1kKSsjs
-        sORVYVv9usmJVNKnepBcKg==;
+        content-type; bh=n8MmIcs1KEYPH9/B8fBr/+CoqQiji97c5pPCLjk5Qu0=; b=nn4MFFormY8N
+        LjcVViY1NmWX5ujOJDCr6WszRFQygDJ/iBR7gbnbcYDFDC+Dc9svOxMC0NS2s5S10Su0Nl3SycmEr
+        73uUhAJWQWpHSaUq9pQDaOt0qL7cTE1v2D7v7cxb58nX9tJSSfd3rkGplBPeYXL0z/cAi1ssGm9gN
+        c1isYQ4N1XVTaQjr7YA65T7cbL+qR3aZXreb0JzOG5uo13u3Fn3l48HWetEw0y/y9d4y8t+DovFtq
+        BAwAPrOgtPzDZzeBDOSaRh0RIhDwTLOowaqeWHOWlzgQIt6K6JDoZxTBAR9/n+bOS6fwalG0e6J+0
+        EMHVLsYFwdGd0iqfR4X9qA==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.155])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
+        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gTyaL-0005FE-6A; Tue, 04 Dec 2018 01:29:09 +0100
+        id 1gTyaN-00087E-7p; Tue, 04 Dec 2018 01:29:11 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 4C3A7C05CD;
-        Tue,  4 Dec 2018 01:29:06 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 73F71C05CD;
+        Tue,  4 Dec 2018 01:29:08 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, longman@redhat.com,
         johannes.berg@intel.com, linux-kernel@vger.kernel.org,
         Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v2 10/24] locking/lockdep: Introduce lock_class_cache_is_registered()
-Date:   Mon,  3 Dec 2018 16:28:19 -0800
-Message-Id: <20181204002833.55452-11-bvanassche@acm.org>
+Subject: [PATCH v2 11/24] locking/lockdep: Remove a superfluous INIT_LIST_HEAD() statement
+Date:   Mon,  3 Dec 2018 16:28:20 -0800
+Message-Id: <20181204002833.55452-12-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <20181204002833.55452-1-bvanassche@acm.org>
 References: <20181204002833.55452-1-bvanassche@acm.org>
@@ -63,22 +63,22 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.01)
+X-SpamExperts-Outgoing-Evidence: Combined (0.15)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5iIxni21hr12SYmDe4BPKVJ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5lqap14/eYCJGhNwceGMSZB602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
  AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
  YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORoS4rOi1Tgqz86mdT1/
- EVbuSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVH6GzPz+r852EXXeYX4ImMyzDg6HYuT
+ XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORoQZz9Pov/Ec/Ticf+I
+ seo4SNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
  CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
  VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
  Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
  f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
- U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8jRjgifve2wm5/91NPphLv6ECs
- r4Ly/pfDCEVh5Dz6VlK0Eais1dvdKPGEPV4Ah2yqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
+ U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZnklQ
+ bq0GddajpgwS7yVEOZ0sYqYsg0zq//yY/W/8Ga2qltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
  LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
- AQh13vqug5h3Dxy0asoAIiVmGXR8O/TjUI3IJG8tGCZwTXTY103rwio975IAiDKO1d3jsySf+J0s
+ AQh13vqug5h3DxxVUi1HXtu2nBVpri812VmgU0Uv8Hsn6gQMWpc+tx3Z4JIAiDKO1d3jsySf+J0s
  zc3volzWZu5fe7ghC/HzOt6Mfqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
  VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
  MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
@@ -88,90 +88,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch does not change any functionality but makes the
-lockdep_reset_lock() function easier to read.
+Initializing a list entry just before it is passed to list_add_tail_rcu()
+is not necessary because list_add_tail_rcu() overwrites the next and prev
+pointers anyway. Hence remove the INIT_LIST_HEAD() statement.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- kernel/locking/lockdep.c | 50 ++++++++++++++++++++++++----------------
- 1 file changed, 30 insertions(+), 20 deletions(-)
+ kernel/locking/lockdep.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index b5c8fcb6c070..81388d028ac7 100644
+index 81388d028ac7..346b5a1fd062 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -4201,13 +4201,33 @@ void lockdep_free_key_range(void *start, unsigned long size)
- 	 */
- }
- 
--void lockdep_reset_lock(struct lockdep_map *lock)
-+/*
-+ * Check whether any element of the @lock->class_cache[] array refers to a
-+ * registered lock class. The caller must hold either the graph lock or the
-+ * RCU read lock.
-+ */
-+static bool lock_class_cache_is_registered(struct lockdep_map *lock)
- {
- 	struct lock_class *class;
- 	struct hlist_head *head;
--	unsigned long flags;
- 	int i, j;
--	int locked;
-+
-+	for (i = 0; i < CLASSHASH_SIZE; i++) {
-+		head = classhash_table + i;
-+		hlist_for_each_entry_rcu(class, head, hash_entry) {
-+			for (j = 0; j < NR_LOCKDEP_CACHING_CLASSES; j++)
-+				if (lock->class_cache[j] == class)
-+					return true;
-+		}
-+	}
-+	return false;
-+}
-+
-+void lockdep_reset_lock(struct lockdep_map *lock)
-+{
-+	struct lock_class *class;
-+	unsigned long flags;
-+	int j, locked;
- 
- 	raw_local_irq_save(flags);
- 
-@@ -4227,24 +4247,14 @@ void lockdep_reset_lock(struct lockdep_map *lock)
- 	 * be gone.
- 	 */
- 	locked = graph_lock();
--	for (i = 0; i < CLASSHASH_SIZE; i++) {
--		head = classhash_table + i;
--		hlist_for_each_entry_rcu(class, head, hash_entry) {
--			int match = 0;
--
--			for (j = 0; j < NR_LOCKDEP_CACHING_CLASSES; j++)
--				match |= class == lock->class_cache[j];
--
--			if (unlikely(match)) {
--				if (debug_locks_off_graph_unlock()) {
--					/*
--					 * We all just reset everything, how did it match?
--					 */
--					WARN_ON(1);
--				}
--				goto out_restore;
--			}
-+	if (unlikely(lock_class_cache_is_registered(lock))) {
-+		if (debug_locks_off_graph_unlock()) {
-+			/*
-+			 * We all just reset everything, how did it match?
-+			 */
-+			WARN_ON(1);
- 		}
-+		goto out_restore;
- 	}
- 	if (locked)
- 		graph_unlock();
+@@ -792,7 +792,6 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
+ 	class->key = key;
+ 	class->name = lock->name;
+ 	class->subclass = subclass;
+-	INIT_LIST_HEAD(&class->lock_entry);
+ 	INIT_LIST_HEAD(&class->locks_before);
+ 	INIT_LIST_HEAD(&class->locks_after);
+ 	class->name_version = count_matching_names(class);
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
