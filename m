@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0CAC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282E0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53EDB2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C032D2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iuyd+ELS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53EDB2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5gHMmYi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C032D2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbeLDLFy (ORCPT
+        id S1728236AbeLDLF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53904 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:05:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727893AbeLDLFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:52 -0500
+        id S1727918AbeLDLFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21C2F2082D;
-        Tue,  4 Dec 2018 11:05:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AD662082D;
+        Tue,  4 Dec 2018 11:05:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921551;
-        bh=HGeccy1/vzkHII+A6drfeLvp2LRsdnzoRSIlB+M7ukk=;
+        s=default; t=1543921554;
+        bh=099MSU3w0YUHTV4nhb96uDIoxiRHqSC6HOyrKWHsAW4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iuyd+ELSEFkqHGFOifq3qqeDnmWP8eRkZATHHvjg8hwosPKPAu4P016HrSVbWlfRu
-         BP4/EVHk147ziNNjTgLvvASIoI9xlz19ZTFzWYUI5lKQ2DeK2Gfx9rpArNueVsbeFu
-         S7X/xluhv1/ona27DDhRFc4DQRAEmO45p5jBWfxs=
+        b=h5gHMmYieOuIVklWRR+3rM2U95ekoZIIFFoKB5tWLJgliEK+4FQiW+QoRSHp38+F2
+         0aeAcesuo3HeO6hmpRt+1Y7Udve88BWKlR32P6zgRCv/TNfFp584MU82LKWbBs75AS
+         lBBvvzRVwJ3y2+4MYfAKAL8ejcvlrd8HHFQOFh1g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 116/146] Btrfs: ensure path name is null terminated at btrfs_control_ioctl
-Date:   Tue,  4 Dec 2018 11:50:02 +0100
-Message-Id: <20181204103731.491876231@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Pan Bian <bianpan2016@163.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 117/146] btrfs: relocation: set trans to be NULL after ending transaction
+Date:   Tue,  4 Dec 2018 11:50:03 +0100
+Message-Id: <20181204103731.530084930@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -64,39 +63,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit f505754fd6599230371cb01b9332754ddc104be1 upstream.
+commit 42a657f57628402c73237547f0134e083e2f6764 upstream.
 
-We were using the path name received from user space without checking that
-it is null terminated. While btrfs-progs is well behaved and does proper
-validation and null termination, someone could call the ioctl and pass
-a non-null terminated patch, leading to buffer overrun problems in the
-kernel.  The ioctl is protected by CAP_SYS_ADMIN.
+The function relocate_block_group calls btrfs_end_transaction to release
+trans when update_backref_cache returns 1, and then continues the loop
+body. If btrfs_block_rsv_refill fails this time, it will jump out the
+loop and the freed trans will be accessed. This may result in a
+use-after-free bug. The patch assigns NULL to trans after trans is
+released so that it will not be accessed.
 
-So just set the last byte of the path to a null character, similar to what
-we do in other ioctls (add/remove/resize device, snapshot creation, etc).
-
+Fixes: 0647bf564f1 ("Btrfs: improve forever loop when doing balance relocation")
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/super.c |    1 +
+ fs/btrfs/relocation.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2176,6 +2176,7 @@ static long btrfs_control_ioctl(struct f
- 	vol = memdup_user((void __user *)arg, sizeof(*vol));
- 	if (IS_ERR(vol))
- 		return PTR_ERR(vol);
-+	vol->name[BTRFS_PATH_NAME_MAX] = '\0';
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -4048,6 +4048,7 @@ static noinline_for_stack int relocate_b
+ restart:
+ 		if (update_backref_cache(trans, &rc->backref_cache)) {
+ 			btrfs_end_transaction(trans);
++			trans = NULL;
+ 			continue;
+ 		}
  
- 	switch (cmd) {
- 	case BTRFS_IOC_SCAN_DEV:
 
 
