@@ -2,218 +2,108 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 913C6C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB48C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AED42082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:33:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WyyM36Df"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AED42082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 5571E2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5571E2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbeLDKdf (ORCPT
+        id S1726095AbeLDKhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:33:35 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41225 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbeLDKde (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:33:34 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181204103332euoutp0291140d03ec82f30bd43404455d4cee90~tGrUorT3t1097210972euoutp02B
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 10:33:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181204103332euoutp0291140d03ec82f30bd43404455d4cee90~tGrUorT3t1097210972euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1543919612;
-        bh=XRFf/jMiYzQFUBsvcs9drpC3bPsSzfFx+dqnCKwt7aA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=WyyM36Df2pVSl+mnfUpC2uSsEmaEOD91USta59wZJolkrhLYxRrarCvnxrlyFx1Ud
-         G2tOxuX+xriIFnMZQerBooN9XFTe1025UVOh4XtfrvhUZM0zdHWWoIpdggkByfMalf
-         WFxih8hQJ2lOAKfOJQkwK02ljfDyh0JGyF4CR1UQ=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181204103332eucas1p26796fac96fe54122d34fb2f97f5aa182~tGrUFG6R31337713377eucas1p2H;
-        Tue,  4 Dec 2018 10:33:32 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 18.0B.04806.BF7560C5; Tue,  4
-        Dec 2018 10:33:31 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181204103331eucas1p12b9d02e1b463c7f415b4049c868d1e1c~tGrTNisMW0813208132eucas1p1V;
-        Tue,  4 Dec 2018 10:33:31 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181204103330eusmtrp13c65390251fdd453869d62539499b6f6~tGrS_7Jlj2691826918eusmtrp1b;
-        Tue,  4 Dec 2018 10:33:30 +0000 (GMT)
-X-AuditID: cbfec7f5-79db79c0000012c6-4f-5c0657fb1633
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8F.F3.04284.AF7560C5; Tue,  4
-        Dec 2018 10:33:30 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181204103330eusmtip283a26b87a8760877bd07091ef8dad853~tGrSoqsaQ0601706017eusmtip2a;
-        Tue,  4 Dec 2018 10:33:30 +0000 (GMT)
-Subject: Re: [PATCH 00/13 v2] Regulator ena_gpiod fixups
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <455ced52-e444-66f2-7dec-9d37bdd5116c@samsung.com>
-Date:   Tue, 4 Dec 2018 11:33:29 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.3.2
+        Tue, 4 Dec 2018 05:37:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52774 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbeLDKhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:37:53 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 39B7D308403C;
+        Tue,  4 Dec 2018 10:37:53 +0000 (UTC)
+Received: from [10.36.112.72] (ovpn-112-72.ams2.redhat.com [10.36.112.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 337A25DE01;
+        Tue,  4 Dec 2018 10:37:50 +0000 (UTC)
+Subject: Re: [RFC PATCH V2 00/11] Intel EPT-Based Sub-page Protection Support
+To:     =?UTF-8?Q?Mihai_Don=c8=9bu?= <mdontu@bitdefender.com>,
+        rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Nicusor CITU <ncitu@bitdefender.com>,
+        =?UTF-8?Q?Adalbert_Laz=c4=83r?= <alazar@bitdefender.com>
+References: <cover.1543481993.git.yi.z.zhang@linux.intel.com>
+ <1c7e9821-df4b-9b1c-76aa-d1c4c654c952@redhat.com>
+ <1543809373.23880.17.camel@bitdefender.com>
+ <20181204063533.GA73736@tiger-server>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b0366848-1f0e-1a9a-8810-12ad77b39eb2@redhat.com>
+Date:   Tue, 4 Dec 2018 11:37:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYQ5cy1-8wu--deF0kdzrRGVJ_teNh2LRF7tr9vyh+oHw@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181204063533.GA73736@tiger-server>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsWy7djPc7q/w9liDPr/6Vt8mXuKxWLqwyds
-        FldaNzFafLvSwWQx5c9yJovLu+awObB5vL/Ryu6xc9Zddo9NqzrZPO5c28PmMX3Of0aPz5vk
-        AtiiuGxSUnMyy1KL9O0SuDIWf/Yq6JaqeHRoHnMDY6toFyMnh4SAicTErV1MXYxcHEICKxgl
-        Nt1/wAiSEBL4wijx/0ISROIzo8TZxz2sMB1db/exQySWM0osO7uMGcJ5zyhxbudRsCphAQuJ
-        Ncfugo0SEdCR6N72kxWkiFngHaNEw7E9zCAJNgFDoFFdbCA2r4CdxISN08EaWARUJI53NgHV
-        cHCICsRI7HpeA1EiKHFy5hMWEJtTIFBiwvfXYDazgLxE89bZzBC2uMStJ/PB/pEQWMUusfLh
-        P0aIs10klmxazgRhC0u8Or6FHcKWkTg9uYcFoqGZUaJ9xix2CKeHUWLrnB1sEFXWEoePX2QF
-        uYhZQFNi/S59iLCjxK6H95lAwhICfBI33gpCHMEnMWnbdGaIMK9ER5sQRLWaxKzj6+DWHrxw
-        iXkCo9IsJK/NQvLOLCTvzELYu4CRZRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgCjr9
-        7/jXHYz7/iQdYhTgYFTi4Z3hxBojxJpYVlyZe4hRgoNZSYT3jhpbjBBvSmJlVWpRfnxRaU5q
-        8SFGaQ4WJXHeaoYH0UIC6YklqdmpqQWpRTBZJg5OqQbGXTnfLsb9kj3V/ffl8dxOXzuJzc4M
-        XKcE8quEy6e/ucqtNfvmS64TezJOOPZ8/WUlfdvV55xnTujml6Icz2Mvhwsfnyai311Ssf4p
-        088F7gnKhc+Ob7SqenmgNlzqZWNN5Nfd3DuPP141Ze83zxdH5LLnF1652D6Z97PEdPmTqqtV
-        DhldillxVYmlOCPRUIu5qDgRAFYZ+y49AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsVy+t/xe7q/wtliDJ62GFt8mXuKxWLqwyds
-        FldaNzFafLvSwWQx5c9yJovLu+awObB5vL/Ryu6xc9Zddo9NqzrZPO5c28PmMX3Of0aPz5vk
-        Atii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIW
-        f/Yq6JaqeHRoHnMDY6toFyMnh4SAiUTX233sILaQwFJGiblfMiDiMhInpzWwQtjCEn+udbFB
-        1LxllPi61R/EFhawkFhz7C4jiC0ioCPRve0nUD0XB7PAO0aJ2yd3sYA4QgK9TBLv561iAali
-        EzAE2gYxiVfATmLCxulg3SwCKhLHO5uYQWxRgRiJKZdfs0LUCEqcnPkErJdTIFBiwvfXYDaz
-        gLrEn3mXmCFseYnmrbOhbHGJW0/mM01gFJqFpH0WkpZZSFpmIWlZwMiyilEktbQ4Nz232FCv
-        ODG3uDQvXS85P3cTIzDmth37uXkH46WNwYcYBTgYlXh4ZzixxgixJpYVV+YeYpTgYFYS4b2j
-        xhYjxJuSWFmVWpQfX1Sak1p8iNEU6LmJzFKiyfnAdJBXEm9oamhuYWlobmxubGahJM573qAy
-        SkggPbEkNTs1tSC1CKaPiYNTqoGxXepL9bwT3ZnTwr5W18S7q5q9Xn/M3qyrzKo8udXP9+63
-        ORqHF35rseKoOrVO/IMv3/qK/FnJNQ6RsYzq2wsurBViLGiNMukJiedQYokskLQ2Zot3fJZZ
-        +8hZYqdZbKZJYMOnxAsCOddftU5WnijesMO1In2ub8pMibTTNlWH69o1vs6TV2Ipzkg01GIu
-        Kk4EABAIRgXPAgAA
-X-CMS-MailID: 20181204103331eucas1p12b9d02e1b463c7f415b4049c868d1e1c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181201154428epcas4p3a1a5c9c576027b1c56f8dd1510b32187
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181201154428epcas4p3a1a5c9c576027b1c56f8dd1510b32187
-References: <CGME20181201154428epcas4p3a1a5c9c576027b1c56f8dd1510b32187@epcas4p3.samsung.com>
-        <20181201154151.14890-1-linus.walleij@linaro.org>
-        <d6b5f384-51aa-0e99-7e88-a1debcf5eca3@samsung.com>
-        <CACRpkdYQ5cy1-8wu--deF0kdzrRGVJ_teNh2LRF7tr9vyh+oHw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 04 Dec 2018 10:37:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 04/12/18 07:35, Yi Zhang wrote:
+> On 2018-12-03 at 05:56:13 +0200, Mihai Donțu wrote:
+>>> Hi,
+>>>
+>>> I think the right thing to do here would be to first get VM
+>>> introspection in KVM, as SPP is mostly an introspection feature and it
+>>> should be controller by the introspector rather than the KVM userspace.
+>>>
+>>> Mihai, if you resubmit, I promise that I will look at it promptly.
+> Thanks review, Paolo, What do u think we cook some user-cases for qemu or
+> some kvmtools? even with some other kernel hyper-calls?
 
-On 2018-12-04 10:31, Linus Walleij wrote:
-> Hi Marek,
->
-> first, thanks a *lot* for testing this, it is is much, much appreciated!
->
-> On Mon, Dec 3, 2018 at 3:35 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->
->> The idea is good imho, but it looks that there are some missing cases in
->> the code. Here are some logs from the boards I have access to:
-> OK let's fix this!
->
->> Artik5 evaluation board (arch/arm/boot/dts/exynos3250-artik5-eval.dtb):
->> s2mps11-pmic s2mps14-regulator: Failed to get control GPIO for 11/LDO12
-> Question: this is supposed to fail, right? It is something
-> like a probe deferral or nonexisting GPIO controller?
+That's up to you.  If you can find a usecase, I'll certainly consider
+this independent patch set and the ioctl API.
 
-It looks that the issue has been introduced earlier, but I didn't notice it.
-
-gpiod_get_from_of_node() doesn't handle GPIOD_FLAGS_BIT_NONEXCLUSIVE
-flag, the rest is just a result of it.
-
-
-Here we have a case, where 2 regulators provided by s2mps11 driver have
-a common gpio enable line (by PMIC design), so s2mps11 calls
-devm_gpiod_get_from_of_node() 2 times for exactly the same gpio descriptor.
-
-
-Fixing gpiod_get_from_of_node() for GPIOD_FLAGS_BIT_NONEXCLUSIVE is trivial:
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index cd84315ad586..ace194665b19 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4192,6 +4192,8 @@ struct gpio_desc *gpiod_get_from_of_node(struct
-device_node *node,
-        transitory = flags & OF_GPIO_TRANSITORY;
-
-        ret = gpiod_request(desc, label);
-+       if (ret == -EBUSY && (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
-+               return desc;
-        if (ret)
-                return ERR_PTR(ret);
-
-
-With the above fix I still however get 2 warnings from devres functions,
-but this is probably caused by adding the same entry 2 times to the list
-without proper refcounting... I will check that later.
-
-
-> I look in the upstream tree:
-> arch/arm/boot/dts/exynos3250-artik5.dtsi
-> where s2mps14 is defined:
->
-> ldo12_reg: LDO12 {
->     /* VDD72 ~ VDD73 */
->     regulator-name = "VLDO12_2.8V";
->     regulator-min-microvolt = <2800000>;
->     regulator-max-microvolt = <2800000>;
->     samsung,ext-control-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
-> };
->
-> I didn't really change anything about this, so this missing
-> GPIO descriptor looks worrysome.
->
-> Anyways what happens is this:
->
-> gpio[reg] = devm_gpiod_get_from_of_node(...)
-> if (IS_ERR(gpio[reg]))
-> (...)
->             continue;
->
-> So this IS_ERR descriptor is left around. So we should
-> probably handle erronoeus or NULL descriptors in
-> gpiod_unhinge().
->
-> If you add this on top, does it start working?
->
-> diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-> index 5864e758d7f2..e35751bf0ea8 100644
-> --- a/drivers/gpio/gpiolib-devres.c
-> +++ b/drivers/gpio/gpiolib-devres.c
-> @@ -332,6 +332,8 @@ EXPORT_SYMBOL(devm_gpiod_put);
->
->  void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
->  {
-> +       if (IS_ERR_OR_NULL(desc))
-> +               return;
->         WARN_ON(devres_destroy(dev, devm_gpiod_release,
->                                devm_gpiod_match, desc));
->  }
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Paolo
