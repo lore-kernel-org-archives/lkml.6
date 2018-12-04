@@ -7,41 +7,40 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB733C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE26C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889BE214E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 839142146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFKsdo3M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889BE214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+GPuoRF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 839142146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbeLDLFL (ORCPT
+        id S1728109AbeLDLFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52710 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:05:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727767AbeLDLFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:09 -0500
+        id S1728086AbeLDLFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3536E214DB;
-        Tue,  4 Dec 2018 11:05:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF3F821527;
+        Tue,  4 Dec 2018 11:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921507;
-        bh=upA17X1pR+p0oVcU+ikHfVvvUEuamxFE61fRpP5edKM=;
+        s=default; t=1543921510;
+        bh=3zy4MXkZCPn8Q4g9ttxWKZeDnJp862fE3WJpdM3914I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NFKsdo3Mn6032xOZemoCwOALTdss69x65SGYXwO122fKGxUqbLJ5kv9zq6NUuiTfG
-         eagQaDhat++mdZmL7Wcpvk+nI3UOz1XPctsEPMhhf6uTeyE3145Ix5Miul/7ONvUro
-         1WlTRHtKpRrLEbz9NO2wHfeGIwgOVrzGrZM6BCbw=
+        b=L+GPuoRFum0l1na5Sjpn3VMdSZWt8P9vy7zXJs55myP16y+bpOSV7sSIaYL23uSKK
+         yWDNeRXnn3VfPjL94r6eAJhdEzuJloIy2js3rjoBuB0ktDI01fuYDO0Yh0olAZ+FhE
+         XQWcwHX+yvjg6DYoEbdAm786MnZxDso8jq+MRMbc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
@@ -51,6 +50,7 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Casey Schaufler <casey.schaufler@intel.com>,
@@ -60,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 097/146] x86/speculation: Prepare for per task indirect branch speculation control
-Date:   Tue,  4 Dec 2018 11:49:43 +0100
-Message-Id: <20181204103730.728498086@linuxfoundation.org>
+Subject: [PATCH 4.14 098/146] x86/process: Consolidate and simplify switch_to_xtra() code
+Date:   Tue,  4 Dec 2018 11:49:44 +0100
+Message-Id: <20181204103730.767674414@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -81,28 +81,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tim Chen tim.c.chen@linux.intel.com
+From: Thomas Gleixner tglx@linutronix.de
 
-commit 5bfbe3ad5840d941b89bcac54b821ba14f50a0ba upstream
+commit ff16701a29cba3aafa0bd1656d766813b2d0a811 upstream
 
-To avoid the overhead of STIBP always on, it's necessary to allow per task
-control of STIBP.
+Move the conditional invocation of __switch_to_xtra() into an inline
+function so the logic can be shared between 32 and 64 bit.
 
-Add a new task flag TIF_SPEC_IB and evaluate it during context switch if
-SMT is active and flag evaluation is enabled by the speculation control
-code. Add the conditional evaluation to x86_virt_spec_ctrl() as well so the
-guest/host switch works properly.
+Remove the handthrough of the TSS pointer and retrieve the pointer directly
+in the bitmap handling function. Use this_cpu_ptr() instead of the
+per_cpu() indirection.
 
-This has no effect because TIF_SPEC_IB cannot be set yet and the static key
-which controls evaluation is off. Preparatory patch for adding the control
-code.
+This is a preparatory change so integration of conditional indirect branch
+speculation optimization happens only in one place.
 
-[ tglx: Simplify the context switch logic and make the TIF evaluation
-  	depend on SMP=y and on the static key controlling the conditional
-  	update. Rename it to TIF_SPEC_IB because it controls both STIBP and
-  	IBPB ]
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -113,6 +105,7 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Casey Schaufler <casey.schaufler@intel.com>
@@ -124,137 +117,156 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185005.176917199@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185005.280855518@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/msr-index.h   |    5 +++--
- arch/x86/include/asm/spec-ctrl.h   |   12 ++++++++++++
- arch/x86/include/asm/thread_info.h |    5 ++++-
- arch/x86/kernel/cpu/bugs.c         |    4 ++++
- arch/x86/kernel/process.c          |   20 ++++++++++++++++++--
- 5 files changed, 41 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/switch_to.h |    3 ---
+ arch/x86/kernel/process.c        |   12 +++++++-----
+ arch/x86/kernel/process.h        |   24 ++++++++++++++++++++++++
+ arch/x86/kernel/process_32.c     |    8 +-------
+ arch/x86/kernel/process_64.c     |   10 +++-------
+ 5 files changed, 35 insertions(+), 22 deletions(-)
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -41,9 +41,10 @@
+--- a/arch/x86/include/asm/switch_to.h
++++ b/arch/x86/include/asm/switch_to.h
+@@ -11,9 +11,6 @@ struct task_struct *__switch_to_asm(stru
  
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
--#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
-+#define SPEC_CTRL_STIBP_SHIFT		1	   /* Single Thread Indirect Branch Predictor (STIBP) bit */
-+#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
- #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
--#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
-+#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)	/* Speculative Store Bypass Disable */
+ __visible struct task_struct *__switch_to(struct task_struct *prev,
+ 					  struct task_struct *next);
+-struct tss_struct;
+-void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
+-		      struct tss_struct *tss);
  
- #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
- #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -53,12 +53,24 @@ static inline u64 ssbd_tif_to_spec_ctrl(
- 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
- }
- 
-+static inline u64 stibp_tif_to_spec_ctrl(u64 tifn)
-+{
-+	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
-+	return (tifn & _TIF_SPEC_IB) >> (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
-+}
-+
- static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
- {
- 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
- 	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
- }
- 
-+static inline unsigned long stibp_spec_ctrl_to_tif(u64 spec_ctrl)
-+{
-+	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
-+	return (spec_ctrl & SPEC_CTRL_STIBP) << (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
-+}
-+
- static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
- {
- 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -85,6 +85,7 @@ struct thread_info {
- #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
-+#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
- #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
- #define TIF_UPROBE		12	/* breakpointed or singlestepping */
- #define TIF_PATCH_PENDING	13	/* pending live patching update */
-@@ -112,6 +113,7 @@ struct thread_info {
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
-+#define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
- #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
-@@ -148,7 +150,8 @@ struct thread_info {
- 
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW							\
--	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
-+	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
-+	 _TIF_SSBD|_TIF_SPEC_IB)
- 
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -147,6 +147,10 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
- 		    static_cpu_has(X86_FEATURE_AMD_SSBD))
- 			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
- 
-+		/* Conditional STIBP enabled? */
-+		if (static_branch_unlikely(&switch_to_cond_stibp))
-+			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
-+
- 		if (hostval != guestval) {
- 			msrval = setguest ? guestval : hostval;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+ /* This runs runs on the previous thread's stack. */
+ static inline void prepare_switch_to(struct task_struct *prev,
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -407,11 +407,17 @@ static __always_inline void amd_set_ssb_
- static __always_inline void __speculation_ctrl_update(unsigned long tifp,
- 						      unsigned long tifn)
- {
-+	unsigned long tif_diff = tifp ^ tifn;
- 	u64 msr = x86_spec_ctrl_base;
- 	bool updmsr = false;
+@@ -41,6 +41,8 @@
+ #include <asm/prctl.h>
+ #include <asm/spec-ctrl.h>
  
--	/* If TIF_SSBD is different, select the proper mitigation method */
--	if ((tifp ^ tifn) & _TIF_SSBD) {
-+	/*
-+	 * If TIF_SSBD is different, select the proper mitigation
-+	 * method. Note that if SSBD mitigation is disabled or permanentely
-+	 * enabled this branch can't be taken because nothing can set
-+	 * TIF_SSBD.
-+	 */
-+	if (tif_diff & _TIF_SSBD) {
- 		if (static_cpu_has(X86_FEATURE_VIRT_SSBD)) {
- 			amd_set_ssb_virt_state(tifn);
- 		} else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
-@@ -423,6 +429,16 @@ static __always_inline void __speculatio
- 		}
- 	}
- 
-+	/*
-+	 * Only evaluate TIF_SPEC_IB if conditional STIBP is enabled,
-+	 * otherwise avoid the MSR write.
-+	 */
-+	if (IS_ENABLED(CONFIG_SMP) &&
-+	    static_branch_unlikely(&switch_to_cond_stibp)) {
-+		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
-+		msr |= stibp_tif_to_spec_ctrl(tifn);
-+	}
++#include "process.h"
 +
- 	if (updmsr)
- 		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ /*
+  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
+  * no more per-task TSS's. The TSS size is kept cacheline-aligned
+@@ -255,11 +257,12 @@ void arch_setup_new_exec(void)
+ 		enable_cpuid();
  }
+ 
+-static inline void switch_to_bitmap(struct tss_struct *tss,
+-				    struct thread_struct *prev,
++static inline void switch_to_bitmap(struct thread_struct *prev,
+ 				    struct thread_struct *next,
+ 				    unsigned long tifp, unsigned long tifn)
+ {
++	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
++
+ 	if (tifn & _TIF_IO_BITMAP) {
+ 		/*
+ 		 * Copy the relevant range of the IO bitmap.
+@@ -451,8 +454,7 @@ void speculation_ctrl_update(unsigned lo
+ 	preempt_enable();
+ }
+ 
+-void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
+-		      struct tss_struct *tss)
++void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
+ {
+ 	struct thread_struct *prev, *next;
+ 	unsigned long tifp, tifn;
+@@ -462,7 +464,7 @@ void __switch_to_xtra(struct task_struct
+ 
+ 	tifn = READ_ONCE(task_thread_info(next_p)->flags);
+ 	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
+-	switch_to_bitmap(tss, prev, next, tifp, tifn);
++	switch_to_bitmap(prev, next, tifp, tifn);
+ 
+ 	propagate_user_return_notify(prev_p, next_p);
+ 
+--- /dev/null
++++ b/arch/x86/kernel/process.h
+@@ -0,0 +1,24 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Code shared between 32 and 64 bit
++
++void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p);
++
++/*
++ * This needs to be inline to optimize for the common case where no extra
++ * work needs to be done.
++ */
++static inline void switch_to_extra(struct task_struct *prev,
++				   struct task_struct *next)
++{
++	unsigned long next_tif = task_thread_info(next)->flags;
++	unsigned long prev_tif = task_thread_info(prev)->flags;
++
++	/*
++	 * __switch_to_xtra() handles debug registers, i/o bitmaps,
++	 * speculation mitigations etc.
++	 */
++	if (unlikely(next_tif & _TIF_WORK_CTXSW_NEXT ||
++		     prev_tif & _TIF_WORK_CTXSW_PREV))
++		__switch_to_xtra(prev, next);
++}
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -234,7 +234,6 @@ __switch_to(struct task_struct *prev_p,
+ 	struct fpu *prev_fpu = &prev->fpu;
+ 	struct fpu *next_fpu = &next->fpu;
+ 	int cpu = smp_processor_id();
+-	struct tss_struct *tss = &per_cpu(cpu_tss_rw, cpu);
+ 
+ 	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
+ 
+@@ -266,12 +265,7 @@ __switch_to(struct task_struct *prev_p,
+ 	if (get_kernel_rpl() && unlikely(prev->iopl != next->iopl))
+ 		set_iopl_mask(next->iopl);
+ 
+-	/*
+-	 * Now maybe handle debug registers and/or IO bitmaps
+-	 */
+-	if (unlikely(task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV ||
+-		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
+-		__switch_to_xtra(prev_p, next_p, tss);
++	switch_to_extra(prev_p, next_p);
+ 
+ 	/*
+ 	 * Leave lazy mode, flushing any hypercalls made here.
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -59,6 +59,8 @@
+ #include <asm/unistd_32_ia32.h>
+ #endif
+ 
++#include "process.h"
++
+ __visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
+ 
+ /* Prints also some state that isn't saved in the pt_regs */
+@@ -400,7 +402,6 @@ __switch_to(struct task_struct *prev_p,
+ 	struct fpu *prev_fpu = &prev->fpu;
+ 	struct fpu *next_fpu = &next->fpu;
+ 	int cpu = smp_processor_id();
+-	struct tss_struct *tss = &per_cpu(cpu_tss_rw, cpu);
+ 
+ 	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ENTRY) &&
+ 		     this_cpu_read(irq_count) != -1);
+@@ -467,12 +468,7 @@ __switch_to(struct task_struct *prev_p,
+ 	/* Reload sp0. */
+ 	update_sp0(next_p);
+ 
+-	/*
+-	 * Now maybe reload the debug registers and handle I/O bitmaps
+-	 */
+-	if (unlikely(task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT ||
+-		     task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV))
+-		__switch_to_xtra(prev_p, next_p, tss);
++	__switch_to_xtra(prev_p, next_p);
+ 
+ #ifdef CONFIG_XEN_PV
+ 	/*
 
 
