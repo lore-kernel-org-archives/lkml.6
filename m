@@ -2,55 +2,56 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D02DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B690C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57D92146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B92E42146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:32:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddMBMzR1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57D92146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfuwIoE9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92E42146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbeLDLcU (ORCPT
+        id S1726686AbeLDLcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:32:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39298 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:32:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbeLDK4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:56:11 -0500
+        id S1726375AbeLDK4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:56:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF874214DA;
-        Tue,  4 Dec 2018 10:56:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BB8A214C1;
+        Tue,  4 Dec 2018 10:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920970;
-        bh=E5e+OhVZ9zT/Mm7mEMiy9yW4hT06gOx3cNXG7tPy4oU=;
+        s=default; t=1543920962;
+        bh=tegTUsjt8MrVXh8516nHsA+4Grv6gHXGJ/0pK14A8mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ddMBMzR1QJNlogGjiRoc+SuRbG2QDEwQej48N85GnB8CIRLkvTwG42NVhn3CE4QO+
-         Dx16pGmM98m4bydoPRARVsDhThdAq8EmSsT3fZlKJRLwR1AJ1ao1qsJRTAzpJqn9aY
-         pIN84icz84KBe8N93aAgrfBJSks+qmE2c8RjNN5E=
+        b=EfuwIoE92iNWTM5sBfBWc10le7jv/ZHygSgJMLAybiOBlouHzqmJOuCzrxteySzgK
+         WKrfgBKPRIvQ7SrjzDO48eVkmVOwWofSVIOhvv1GO4Il9TxGQGxtEiIRL0xh1eOoVa
+         b2hme5zJl9MGTXbtoBHjhMXMAdcGrJI1HokAJvDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 003/139] mm/huge_memory: fix lockdep complaint on 32-bit i_size_read()
-Date:   Tue,  4 Dec 2018 11:48:04 +0100
-Message-Id: <20181204103650.092375118@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "WoodhouseDavid" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "SchauflerCasey" <casey.schaufler@intel.com>
+Subject: [PATCH 4.19 027/139] x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
+Date:   Tue,  4 Dec 2018 11:48:28 +0100
+Message-Id: <20181204103651.094926231@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -69,104 +70,181 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 006d3ff27e884f80bd7d306b041afc415f63598f upstream.
+From: Jiri Kosina jkosina@suse.cz
 
-Huge tmpfs testing, on 32-bit kernel with lockdep enabled, showed that
-__split_huge_page() was using i_size_read() while holding the irq-safe
-lru_lock and page tree lock, but the 32-bit i_size_read() uses an
-irq-unsafe seqlock which should not be nested inside them.
+commit 53c613fe6349994f023245519265999eed75957f upstream
 
-Instead, read the i_size earlier in split_huge_page_to_list(), and pass
-the end offset down to __split_huge_page(): all while holding head page
-lock, which is enough to prevent truncation of that extent before the
-page tree lock has been taken.
+STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
+(once enabled) prevents cross-hyperthread control of decisions made by
+indirect branch predictors.
 
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261520070.2275@eggly.anvils
-Fixes: baa355fd33142 ("thp: file pages support for split_huge_page()")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: <stable@vger.kernel.org>	[4.8+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Enable this feature if
+
+- the CPU is vulnerable to spectre v2
+- the CPU supports SMT and has SMT siblings online
+- spectre_v2 mitigation autoselection is enabled (default)
+
+After some previous discussion, this leaves STIBP on all the time, as wrmsr
+on crossing kernel boundary is a no-no. This could perhaps later be a bit
+more optimized (like disabling it in NOHZ, experiment with disabling it in
+idle, etc) if needed.
+
+Note that the synchronization of the mask manipulation via newly added
+spec_ctrl_mutex is currently not strictly needed, as the only updater is
+already being serialized by cpu_add_remove_lock, but let's make this a
+little bit more future-proof.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+
 ---
- mm/huge_memory.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   57 ++++++++++++++++++++++++++++++++++++++++-----
+ kernel/cpu.c               |   11 +++++++-
+ 2 files changed, 61 insertions(+), 7 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index c12b441a99f9..15310f14c25e 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2410,12 +2410,11 @@ static void __split_huge_page_tail(struct page *head, int tail,
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -35,12 +35,10 @@ static void __init spectre_v2_select_mit
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
+ 
+-/*
+- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+- * writes to SPEC_CTRL contain whatever reserved bits have been set.
+- */
+-u64 __ro_after_init x86_spec_ctrl_base;
++/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
++u64 x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
++static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -325,6 +323,46 @@ static enum spectre_v2_mitigation_cmd __
+ 	return cmd;
  }
  
- static void __split_huge_page(struct page *page, struct list_head *list,
--		unsigned long flags)
-+		pgoff_t end, unsigned long flags)
- {
- 	struct page *head = compound_head(page);
- 	struct zone *zone = page_zone(head);
- 	struct lruvec *lruvec;
--	pgoff_t end = -1;
- 	int i;
- 
- 	lruvec = mem_cgroup_page_lruvec(head, zone->zone_pgdat);
-@@ -2423,9 +2422,6 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 	/* complete memcg works before add pages to LRU */
- 	mem_cgroup_split_huge_fixup(head);
- 
--	if (!PageAnon(page))
--		end = DIV_ROUND_UP(i_size_read(head->mapping->host), PAGE_SIZE);
--
- 	for (i = HPAGE_PMD_NR - 1; i >= 1; i--) {
- 		__split_huge_page_tail(head, i, lruvec, list);
- 		/* Some pages can be beyond i_size: drop them from page cache */
-@@ -2597,6 +2593,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	int count, mapcount, extra_pins, ret;
- 	bool mlocked;
- 	unsigned long flags;
-+	pgoff_t end;
- 
- 	VM_BUG_ON_PAGE(is_huge_zero_page(page), page);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
-@@ -2619,6 +2616,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 			ret = -EBUSY;
- 			goto out;
- 		}
-+		end = -1;
- 		mapping = NULL;
- 		anon_vma_lock_write(anon_vma);
- 	} else {
-@@ -2632,6 +2630,15 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 
- 		anon_vma = NULL;
- 		i_mmap_lock_read(mapping);
++static bool stibp_needed(void)
++{
++	if (spectre_v2_enabled == SPECTRE_V2_NONE)
++		return false;
 +
-+		/*
-+		 *__split_huge_page() may need to trim off pages beyond EOF:
-+		 * but on 32-bit, i_size_read() takes an irq-unsafe seqlock,
-+		 * which cannot be nested inside the page tree lock. So note
-+		 * end now: i_size itself may be changed at any moment, but
-+		 * head page lock is good enough to serialize the trimming.
-+		 */
-+		end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE);
++	if (!boot_cpu_has(X86_FEATURE_STIBP))
++		return false;
++
++	return true;
++}
++
++static void update_stibp_msr(void *info)
++{
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++}
++
++void arch_smt_update(void)
++{
++	u64 mask;
++
++	if (!stibp_needed())
++		return;
++
++	mutex_lock(&spec_ctrl_mutex);
++	mask = x86_spec_ctrl_base;
++	if (cpu_smt_control == CPU_SMT_ENABLED)
++		mask |= SPEC_CTRL_STIBP;
++	else
++		mask &= ~SPEC_CTRL_STIBP;
++
++	if (mask != x86_spec_ctrl_base) {
++		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
++				cpu_smt_control == CPU_SMT_ENABLED ?
++				"Enabling" : "Disabling");
++		x86_spec_ctrl_base = mask;
++		on_each_cpu(update_stibp_msr, NULL, 1);
++	}
++	mutex_unlock(&spec_ctrl_mutex);
++}
++
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -424,6 +462,9 @@ specv2_set_mode:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
  	}
++
++	/* Enable STIBP if appropriate */
++	arch_smt_update();
+ }
  
- 	/*
-@@ -2681,7 +2688,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 		if (mapping)
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 		spin_unlock(&pgdata->split_queue_lock);
--		__split_huge_page(page, list, flags);
-+		__split_huge_page(page, list, end, flags);
- 		if (PageSwapCache(head)) {
- 			swp_entry_t entry = { .val = page_private(head) };
+ #undef pr_fmt
+@@ -814,6 +855,8 @@ static ssize_t l1tf_show_state(char *buf
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
++	int ret;
++
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
  
--- 
-2.17.1
-
+@@ -831,10 +874,12 @@ static ssize_t cpu_show_common(struct de
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 
+ 	case X86_BUG_SPECTRE_V2:
+-		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
++			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       spectre_v2_module_string());
++		return ret;
+ 
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2026,6 +2026,12 @@ static void cpuhp_online_cpu_device(unsi
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
++/*
++ * Architectures that need SMT-specific errata handling during SMT hotplug
++ * should override this.
++ */
++void __weak arch_smt_update(void) { };
++
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2052,8 +2058,10 @@ static int cpuhp_smt_disable(enum cpuhp_
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret)
++	if (!ret) {
+ 		cpu_smt_control = ctrlval;
++		arch_smt_update();
++	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2064,6 +2072,7 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
++	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
 
 
