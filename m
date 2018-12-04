@@ -2,106 +2,108 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BB5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AC4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F3420850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC1382081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cs07OAKQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F3420850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="PjGZSobU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC1382081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbeLDByV (ORCPT
+        id S1726147AbeLDByt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:54:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39020 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbeLDBwV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:52:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XnNLG6PzyTyEDjXACIFkKAGRnMoitpf3CYwq67DtBB4=; b=cs07OAKQeAbIQ1JmIjwRIRTOB
-        mpo/c64rTgQpT2197VwVTeybeAvnzhWhI7Xh7rXrEdah/3K/53ta8tCmYeOtFEPxdJsSkIeFz3Apd
-        QQZ5xF7oCBbo5tbhxo5k73qC7vSL7Bsek9qnjM1cQDst7Z6VPzexmovJNGJumYWeUnWZNzl+XaT1d
-        +9IL5hTU2cbxyvZ0+8ChVIZ1kXhYKr17L4DBWycWcDJeH0Q7zG5f3WVQOb2nRvRAvvhgNTSefo0Sc
-        bIMAuUqTleVCIJHr2XnR06onWWAQOvxY4z9pSaZ5kF3fuwjrs0lec91FsByo3Cj0tlJLsl5QRWhq6
-        4dk/Q3aAQ==;
-Received: from [2600:1700:65a0:78e0:514:7862:1503:8e4d] (helo=sagi-Latitude-E7470.lbits)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTzsq-0003Zq-9E; Tue, 04 Dec 2018 01:52:20 +0000
-From:   Sagi Grimberg <sagi@grimberg.me>
-To:     linux-nvme@lists.infradead.org
-Cc:     linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v5 03/13] iov_iter: pass void csum pointer to csum_and_copy_to_iter
-Date:   Mon,  3 Dec 2018 17:52:07 -0800
-Message-Id: <20181204015217.16613-4-sagi@grimberg.me>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181204015217.16613-1-sagi@grimberg.me>
-References: <20181204015217.16613-1-sagi@grimberg.me>
+        Mon, 3 Dec 2018 20:54:49 -0500
+Received: from mail-eopbgr1400112.outbound.protection.outlook.com ([40.107.140.112]:33184
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725953AbeLDBys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 20:54:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+R7JWbGlZlQYo6tYC8WlKVUMubWbPvhU/9mtraxO4tI=;
+ b=PjGZSobUVHaRxblD+dPzXE8jkLXsJ68rjQFSrCWycnf9PUsG28iboYnjlZW9HsMRc+IDIf/GSi+oJK+v/nwXvN1+75YEwsjH/T9D+WKayaV+GrnIWpSjJC9PsZunPEtIu2h07gO8BiTDYmgYRy1NDoYkdLH1WgLOF7U3ALqNWHs=
+Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com (20.178.137.210) by
+ TYASPR01MB0011.jpnprd01.prod.outlook.com (20.178.137.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.22; Tue, 4 Dec 2018 01:54:43 +0000
+Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com
+ ([fe80::70b6:5ef2:3f71:77c7]) by TYAPR01MB3661.jpnprd01.prod.outlook.com
+ ([fe80::70b6:5ef2:3f71:77c7%4]) with mapi id 15.20.1382.020; Tue, 4 Dec 2018
+ 01:54:43 +0000
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     "jiada_wang@mentor.com" <jiada_wang@mentor.com>
+CC:     "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "vladimir_zapolskiy@mentor.com" <vladimir_zapolskiy@mentor.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH linux-next v2 6/6] ASoC: rsnd: add avb clocks
+Thread-Topic: [PATCH linux-next v2 6/6] ASoC: rsnd: add avb clocks
+Thread-Index: AQHUi3RTAIWPM4c4I0q7pds6+gkqEQ==
+Date:   Tue, 4 Dec 2018 01:54:43 +0000
+Message-ID: <87mupm2hgd.wl-kuninori.morimoto.gx@renesas.com>
+References: <20181203112427.18324-1-jiada_wang@mentor.com>
+In-Reply-To: <20181203112427.18324-1-jiada_wang@mentor.com>
+Accept-Language: ja-JP, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: TYAPR01CA0104.jpnprd01.prod.outlook.com
+ (2603:1096:404:2a::20) To TYAPR01MB3661.jpnprd01.prod.outlook.com
+ (2603:1096:404:c1::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [211.11.155.130]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TYASPR01MB0011;20:nZGAY24OrYq4iLHKO/tWUYcnvj36xKHFQCOO0zAsD6XBLpPfubf4vXnS7YT6K/icuPPoMDrG6Z3zlQu4YS7lU2f2gOgBV/X7fiyivjbk0cNCuzuv6H1aIGzgeFZRhNPLZI044amd2t0G9LY7pA6ifnb41NNFZNGKbC2kO0kAtH4=
+x-ms-office365-filtering-correlation-id: 1b56dcdb-1fc0-4ed0-1520-08d6598b7600
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYASPR01MB0011;
+x-ms-traffictypediagnostic: TYASPR01MB0011:
+x-microsoft-antispam-prvs: <TYASPR01MB001114A84A72DDEBB7853597D4AF0@TYASPR01MB0011.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:TYASPR01MB0011;BCL:0;PCL:0;RULEID:;SRVR:TYASPR01MB0011;
+x-forefront-prvs: 0876988AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(346002)(376002)(136003)(189003)(199004)(5640700003)(229853002)(478600001)(102836004)(6506007)(6916009)(386003)(6512007)(105586002)(2351001)(53936002)(14454004)(6246003)(71190400001)(2906002)(71200400001)(575784001)(6436002)(6116002)(3846002)(99286004)(52116002)(26005)(186003)(4326008)(86362001)(76176011)(6486002)(25786009)(14444005)(66066001)(256004)(486006)(11346002)(2616005)(476003)(5660300001)(446003)(305945005)(7736002)(8936002)(68736007)(81156014)(54906003)(106356001)(8676002)(81166006)(316002)(2501003)(36756003)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:TYASPR01MB0011;H:TYAPR01MB3661.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lClL/HytVGsR4AYhqtWpeJ5DXqi3c8FeyvVgiOm50cUCKEagWRLEI2tCmk/utFF0N3gUerd2NRIj2IjGJNdvPGJxi9pPYgGjVCB+dttKw96GD7Pwq5RNams3Y2cWgpfqfBWW1vHzAww/TXJih8PUygGl0725QYfQ9JAnDAkh7Pogq7ijhGtS4VRfaha0jrloVHsnpaDUlSYTZ7eQA1SOomcWyccj1UOs4OsslNAsaS+j+kHzPU/DgP1Q4shV98G1Oe86dfxHgC5mA1RgAnLY3V8WlX9H4Z/n3CeCbCpEpB7tATjGnuo6eoMxDqUujM2dhTfi0A6vwPOdaC/JcMuu9gTjnt0SW/7tMwf08frdwS4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <056E9E466B1CAA49B17C11C6C9C631A6@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b56dcdb-1fc0-4ed0-1520-08d6598b7600
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 01:54:43.7239
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYASPR01MB0011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sagi Grimberg <sagi@lightbitslabs.com>
-
-The single caller to csum_and_copy_to_iter is skb_copy_and_csum_datagram
-and we are trying to unite its logic with skb_copy_datagram_iter by passing
-a callback to the copy function that we want to apply. Thus, we need
-to make the checksum pointer private to the function.
-
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sagi Grimberg <sagi@lightbitslabs.com>
----
- include/linux/uio.h | 2 +-
- lib/iov_iter.c      | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 55ce99ddb912..41d1f8d3313d 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -266,7 +266,7 @@ static inline void iov_iter_reexpand(struct iov_iter *i, size_t count)
- {
- 	i->count = count;
- }
--size_t csum_and_copy_to_iter(const void *addr, size_t bytes, __wsum *csum, struct iov_iter *i);
-+size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *csump, struct iov_iter *i);
- size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum, struct iov_iter *i);
- bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum, struct iov_iter *i);
- 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 7ebccb5c1637..db93531ca3e3 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1432,10 +1432,11 @@ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum,
- }
- EXPORT_SYMBOL(csum_and_copy_from_iter_full);
- 
--size_t csum_and_copy_to_iter(const void *addr, size_t bytes, __wsum *csum,
-+size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *csump,
- 			     struct iov_iter *i)
- {
- 	const char *from = addr;
-+	__wsum *csum = csump;
- 	__wsum sum, next;
- 	size_t off = 0;
- 	sum = *csum;
--- 
-2.17.1
-
+DQpISSBKaWFkYQ0KDQo+IFRoZXJlIGFyZSBBVkIgQ291bnRlciBDbG9ja3MgaW4gQURHLCBlYWNo
+IGNsb2NrIGhhcyAxMmJpdHMgaW50ZWdyYWwNCj4gYW5kIDggYml0cyBmcmFjdGlvbmFsIGRpdmlk
+ZXJzIHdoaWNoIG9wZXJhdGVzIHdpdGggUzBEMc+VIGNsb2NrLg0KPiANCj4gVGhpcyBwYXRjaCBy
+ZWdpc3RlcnMgOCBBVkIgQ291bnRlciBDbG9ja3Mgd2hlbiBjbG9jay1jZWxscyBvZg0KPiByY2Fy
+X3NvdW5kIG5vZGUgaXMgMiwNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEppYWRhIFdhbmcgPGppYWRh
+X3dhbmdAbWVudG9yLmNvbT4NCj4gLS0tDQo+ICBzb3VuZC9zb2Mvc2gvcmNhci9hZGcuYyAgfCAz
+MDYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+ICBzb3VuZC9zb2Mv
+c2gvcmNhci9nZW4uYyAgfCAgIDkgKysNCj4gIHNvdW5kL3NvYy9zaC9yY2FyL3JzbmQuaCB8ICAg
+OSArKw0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAzMTUgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMo
+LSkNCg0KUGxlYXNlIHVwZGF0ZSBEVCBiaW5kaW5nIHR4dCwgdG9vDQoNCkJlc3QgcmVnYXJkcw0K
+LS0tDQpLdW5pbm9yaSBNb3JpbW90bw0K
