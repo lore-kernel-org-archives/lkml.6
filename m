@@ -2,192 +2,164 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0EBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57F7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954C220834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:39:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954C220834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ginzinger.com
+	by mail.kernel.org (Postfix) with ESMTP id A4E98214C1
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:40:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCW/J9ji"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4E98214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726110AbeLDHjZ (ORCPT
+        id S1726117AbeLDHkO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:39:25 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:34037 "EHLO
-        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726065AbeLDHjZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:39:25 -0500
-Received: from [31.193.165.228] (port=38963 helo=mx-ginzinger.sigmacloud.services)
-        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gU5Ib-0001u3-0T; Tue, 04 Dec 2018 08:39:17 +0100
-Received: from [10.10.1.120] (10.10.1.120) by exc1.buero.ginzinger.com
- (10.1.1.204) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 4 Dec 2018
- 08:39:16 +0100
-X-CTCH-RefID: str=0001.0A0B0202.5C062F25.0024:SCFSTAT16437741,ss=1,re=-4.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Subject: Re: [PATCH] ubi: fastmap: Check each mapping only once
-To:     Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>
-CC:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stable <stable@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        <linux-mtd@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Juergen <juergen.lachmann@harman.com>
-References: <20181126103842.3249-1-martin.kepplinger@ginzinger.com>
- <CADVatmP1h7GJJRVURkinwSM44Y4iooMP-U_7zew4V+zsMva4Vw@mail.gmail.com>
- <20181202143543.GE221015@sasha-vm> <1678636.EYQpd7BODG@blindfold>
-From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Message-ID: <e977dca6-60f0-ce5b-d116-30acf60058f9@ginzinger.com>
-Date:   Tue, 4 Dec 2018 08:39:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-In-Reply-To: <1678636.EYQpd7BODG@blindfold>
-X-Originating-IP: [10.10.1.120]
-X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
- exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NODISC][NOSIG]Re: [PATCH] ubi: fastmap:
- Check each mapping only once
-X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
-MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----F92EB3625D5F279A0F839B14A976C47D"
+        Tue, 4 Dec 2018 02:40:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45638 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726007AbeLDHkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 02:40:14 -0500
+Received: from devnote (p35161-mobac01.tokyo.ocn.ne.jp [153.233.26.161])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57A4320834;
+        Tue,  4 Dec 2018 07:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543909212;
+        bh=TYS4YnpfAikJN3oNMunPEXqdavsXhUXkQFfrtux+tfY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VCW/J9jiuNfBx0J6LFO0RUA5XgKtBWgbJIREGlQWIH2n7ox5B3USQyUnFcbmByd/e
+         Lk/B778jLg9E21wJnV9wd58ZmQxMFvATOfJ2JtwaDpzgFev3Y5FnAh+SfCkXCYYzxU
+         ZuGb0DHMojbB5QPeebbeDsh+dAfYsOt83phHVRIo=
+Date:   Tue, 4 Dec 2018 16:40:07 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: Strange hang with gcc 8 of kprobe multiple_kprobes test
+Message-Id: <20181204164007.956a3458c9fd301b3d173eba@kernel.org>
+In-Reply-To: <20181203211807.17e03384@vmware.local.home>
+References: <20181203211807.17e03384@vmware.local.home>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an S/MIME signed message
+Hi Steve,
 
-------F92EB3625D5F279A0F839B14A976C47D
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+On Mon, 3 Dec 2018 21:18:07 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On 02.12.18 16:02, Richard Weinberger wrote:
-> Sasha,
+> Hi Masami,
 > 
-> Am Sonntag, 2. Dezember 2018, 15:35:43 CET schrieb Sasha Levin:
->> On Sun, Dec 02, 2018 at 11:50:33AM +0000, Sudip Mukherjee wrote:
->>>>> Now queued up for 4.14.y, thanks.
->>>>
->>>> can you *please* slow a little down?
->>>
->>> True. It will really help if you can have some sort of fixed schedule
->>> for stable release, like maybe stablerc is ready on Thursday or Friday
->>> and release the stable on Monday. Having a weekend in stablerc will be
->>> helpful for people like me who only get the time in weekends for
->>> upstream or stable kernel.
->>
->> Any sort of schedule will never work for everyone (for example, if it's
->> part of your paid job - you don't necessarily want to review stuff over
->> the weekend).
+> I started testing some of my new code and the system got into a
+> strange state. Debugging further, I found the cause came from the
+> kprobe tests. It became stranger to me that I could reproduce it with
+> older kernels. I went back as far as 4.16 and it triggered. I thought
+> this very strange because I ran this test on all those kernels in the
+> past.
 > 
-> a schedule is not needed, but please give maintainers at least a chance
-> to react on stable inclusion request.
-> In this case Martin asked for inclusion on Monday and the patch was applied
-> two days later.
+> After a bit of hair pulling, I figured out what changed. I upgraded to
+> gcc 8.1 (and I reproduce it with 8.2 as well). I convert back to gcc 7
+> and the tests pass without issue.
 
-True, especially when the maintainer is asked a question as part of the 
-patch.
+OK, let me see.
 
-I've already had the feeling that we'd need the other patch too, but in 
-this case at least I should have searched for Fixes tags.
+> The issue that I notice when the system gets into this strange state is
+> that I can't log into the box. Nor can I reboot. Basically it's
+> anything to do with systemd just doesn't work (insert your jokes here
+> now, and then let's move on).
+> 
+> I was able to narrow down what the exact function was that caused the
+> issues and it is: update_vsyscall()
+> 
+> gcc 7 looks like this:
+> 
+> ffffffff81004bf0 <update_vsyscall>:
+> ffffffff81004bf0:       e8 0b cc 9f 00          callq  ffffffff81a01800 <__fentry__>
+>                         ffffffff81004bf1: R_X86_64_PC32 __fentry__-0x4
+> ffffffff81004bf5:       48 8b 07                mov    (%rdi),%rax
+> ffffffff81004bf8:       8b 15 96 5f 34 01       mov    0x1345f96(%rip),%edx        # ffffffff8234ab94 <vclocks_used>
+>                         ffffffff81004bfa: R_X86_64_PC32 vclocks_used-0x4
+> ffffffff81004bfe:       83 05 7b 84 6f 01 01    addl   $0x1,0x16f847b(%rip)        # ffffffff826fd080 <vsyscall_gtod_data>
+>                         ffffffff81004c00: R_X86_64_PC32 vsyscall_gtod_data-0x5
+> ffffffff81004c05:       8b 48 24                mov    0x24(%rax),%ecx
+> ffffffff81004c08:       b8 01 00 00 00          mov    $0x1,%eax
+> ffffffff81004c0d:       d3 e0                   shl    %cl,%eax
+> 
+> And gcc 8 looks like this:
+> 
+> ffffffff81004c90 <update_vsyscall>:
+> ffffffff81004c90:       e8 6b cb 9f 00          callq  ffffffff81a01800 <__fentry__>
+>                         ffffffff81004c91: R_X86_64_PC32 __fentry__-0x4
+> ffffffff81004c95:       48 8b 07                mov    (%rdi),%rax
+> ffffffff81004c98:       83 05 e1 93 6f 01 01    addl   $0x1,0x16f93e1(%rip)        # ffffffff826fe080 <vsyscall_gtod_data>
 
-Greg, how about reminding people of Fixes tags in 
-Documentation/process/stable-kernel-rules.rst ?
+Hm this is a RIP relative instruction, it should be modified by kprobes.
 
-                               martin
+>                         ffffffff81004c9a: R_X86_64_PC32 vsyscall_gtod_data-0x5
+> ffffffff81004c9f:       8b 50 24                mov    0x24(%rax),%edx
+> ffffffff81004ca2:       8b 05 ec 5e 34 01       mov    0x1345eec(%rip),%eax        # ffffffff8234ab94 <vclocks_used>
+>                         ffffffff81004ca4: R_X86_64_PC32 vclocks_used-0x4
+> 
+> The test adds a kprobe (optimized) at udpate_vsyscall+5. And will
+> insert a jump on the two instructions after fentry. The difference
+> between v7 and v8 is that v7 is touching vclocks_used and v8 is
+> touching vsyscall_gtod_data.
+> 
+> Is there some black magic going on with the vsyscall area with
+> vsyscall_gtod_data that is causing havoc when a kprobe is added there?
 
-------F92EB3625D5F279A0F839B14A976C47D
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
+I think it might miss something when preprocessing RIP relative instruction.
+Could you disable jump optimization as below and test what happen on
+update_vsyscall+5 AND update_vsyscall+8? (RIP relative preprocess must
+happen even if the jump optimization is disabled)
 
-MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
-hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
-hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
-Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
-bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
-dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
-R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
-ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
-U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
-MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
-UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
-fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
-KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
-03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
-k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
-AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
-HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
-EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
-oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
-b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
-cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
-AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
-GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
-ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
-WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
-NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
-2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
-BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
-fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
-cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
-2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
-csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
-AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
-Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
-H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
-kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
-fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
-voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
-h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
-6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
-BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
-14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
-VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
-MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
-Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
-TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
-gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
-YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
-bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
-A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
-hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
-b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
-3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
-udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
-I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
-1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
-NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
-aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMjA0MDczOTIw
-WjAvBgkqhkiG9w0BCQQxIgQgUXBnYQpm74wo2vPeAasq2ZWqPapxbs1AHX7DljxM
-ZGsweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-kieccjNOoLT+C/WQtE5yPzJITec74YfUV+qhVw3ef06yfqVKf/b/sIzthN8aEr1r
-gU9OeYP34q3frslI2iOn3aMhG3+hrJeF1MooSIQvuSsBVQ9s6c6z7e9hb/s5eQJe
-DnSUiuM3caeLSb5qTv9RyG0aTaNS3+LHyDlwhEQJkga2ul6UGaVmKWjGIpqOMBO5
-JdurmguzUSrykyz3CNv5Qwx6YhTBsLrwC1FU2Kh1LSuDGH0OwfU+jTLk2OWWcs3v
-5hkZDTMEwUaT7CSx0sjoYsjaaU1tfmLKo7tcvTarCXozWAcppVL34x0yrsNzjdtV
-31W4kE8tShsRRg4j6fgCgQ==
+# echo 0 > /proc/sys/debug/kprobes-optimization
 
-------F92EB3625D5F279A0F839B14A976C47D--
 
+> I can dig a little more into this, but I'm currently at my HQ office
+> with a lot of other objectives that I must get done, and I can't work
+> on this much more this week.
+
+OK, let me try to reproduce it in my environment.
+
+> 
+> I included my config (for my virt machine, which I was also able to
+> trigger it with).
+
+Thanks, but I think it should not depend on the kconfig.
+
+> 
+> The test that triggers this bug is:
+> 
+>  tools/testing/selftests/ftrace/test.d/kprobe/multiple_kprobes.tc
+> 
+> It runs the test fine, but other things just start to act up after I
+> run it.
+
+Yeah, thank you for digging it down. It is now much easier to me.
+
+> 
+> I notice that when I get into the state, journald and the dbus_daemon
+> are constantly running. Perhaps the userspace time keeping went bad?
+
+Yeah, I think so. Maybe addl instruction becomes broken.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
