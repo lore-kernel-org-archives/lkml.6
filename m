@@ -2,131 +2,150 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0600AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C4DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89C520666
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:00:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89C520666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7769D2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:05:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GV0vsPgu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7769D2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbeLDOAL (ORCPT
+        id S1726436AbeLDOFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:00:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45606 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726045AbeLDOAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:00:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A9DB5ADD6;
-        Tue,  4 Dec 2018 14:00:07 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 15:00:07 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH v14 03/11] livepatch: Consolidate klp_free functions
-Message-ID: <20181204140007.si7l2glbsgaj2dbf@pathway.suse.cz>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-4-pmladek@suse.com>
- <alpine.LSU.2.21.1812031542540.22317@pobox.suse.cz>
+        Tue, 4 Dec 2018 09:05:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726226AbeLDOFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:05:07 -0500
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CB302087F;
+        Tue,  4 Dec 2018 14:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543932306;
+        bh=yTr+UbBFW+eS6HM3fzcLbxczAbrxW4SyfnuUXDeA/9o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GV0vsPguRlbVwUdqPqdotp9D2RX4uJcvLoeZB4aoigLRi8c7ofsrLfJ3hTvEy12nT
+         3oDb2slvH5a27cyVmVC2m6BQspIoq8Cfy2ZmpH2LSslhjD9ORiJJdd8STMH9ZsBG+O
+         U9Uh+jBysPhtu0bVYSATY+Qpb2tiZwvhrxeihfeg=
+Received: by mail-qt1-f169.google.com with SMTP id y20so18065933qtm.13;
+        Tue, 04 Dec 2018 06:05:06 -0800 (PST)
+X-Gm-Message-State: AA+aEWZCFW29VUfREm3JJWmlnRVl1OJJCxhwaTpIFZpeLHh/gpis1B5J
+        BBozvH4KjtZeF+3GLVuX29soJ1GippnDd9Kq2A==
+X-Google-Smtp-Source: AFSGD/Wa9LYCKIlO2I4w34Owie/nbFY2YYmEhKbJJCOx75JQlW9JLL4Y1Zli1NJqi2tnJfrE9cHPFZaPN3+nzSMsdBg=
+X-Received: by 2002:ac8:6b18:: with SMTP id w24mr19809237qts.144.1543932305591;
+ Tue, 04 Dec 2018 06:05:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1812031542540.22317@pobox.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-22-robh@kernel.org>
+ <be37bd18-a573-307e-3a9e-e879010cfc89@baylibre.com>
+In-Reply-To: <be37bd18-a573-307e-3a9e-e879010cfc89@baylibre.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 4 Dec 2018 08:04:54 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ3oL4FWSQKVLRtmg5Bma5q6-QgicfATcOEo3nQY-TdPw@mail.gmail.com>
+Message-ID: <CAL_JsqJ3oL4FWSQKVLRtmg5Bma5q6-QgicfATcOEo3nQY-TdPw@mail.gmail.com>
+Subject: Re: [PATCH v2 21/34] dt-bindings: arm: Convert Oxford Semi board/soc
+ bindings to json-schema
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        ARM-SoC Maintainers <arm@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-oxnas@groups.io
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-12-03 15:59:57, Miroslav Benes wrote:
-> On Thu, 29 Nov 2018, Petr Mladek wrote:
-> 
-> > -static int klp_init_patch(struct klp_patch *patch)
-> > +/* Init operations that must succeed before klp_free_patch() can be called. */
-> > +static int klp_init_patch_before_free(struct klp_patch *patch)
-> 
-> There is no klp_free_patch() now, so the comment is not correct. Also I 
-> don't know if the function name is ideal, but I don't have a better one.
-> 
-> >  {
-> >  	struct klp_object *obj;
-> > -	int ret;
-> > +	struct klp_func *func;
-> >  
-> >  	if (!patch->objs)
-> >  		return -EINVAL;
-> >  
-> > -	mutex_lock(&klp_mutex);
+On Tue, Dec 4, 2018 at 2:43 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> On 03/12/2018 22:32, Rob Herring wrote:
+> > Convert Oxford Semi SoC bindings to DT schema format using json-schema.
+> >
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Neil Armstrong <narmstrong@baylibre.com>
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-oxnas@groups.io
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../devicetree/bindings/arm/oxnas.txt         | 14 -----------
+> >  .../devicetree/bindings/arm/oxnas.yaml        | 25 +++++++++++++++++++
+> >  2 files changed, 25 insertions(+), 14 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/arm/oxnas.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/oxnas.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/oxnas.txt b/Documentation/devicetree/bindings/arm/oxnas.txt
+> > deleted file mode 100644
+> > index ac64e60f99f1..000000000000
+> > --- a/Documentation/devicetree/bindings/arm/oxnas.txt
+> > +++ /dev/null
+> > @@ -1,14 +0,0 @@
+> > -Oxford Semiconductor OXNAS SoCs Family device tree bindings
+> > --------------------------------------------
 > > -
-> > +	INIT_LIST_HEAD(&patch->list);
-> > +	patch->kobj_alive = false;
-> >  	patch->enabled = false;
-> >  	init_completion(&patch->finish);
-> >  
-> > -	ret = kobject_init_and_add(&patch->kobj, &klp_ktype_patch,
-> > -				   klp_root_kobj, "%s", patch->mod->name);
-> > +	klp_for_each_object(patch, obj) {
-> > +		if (!obj->funcs)
-> > +			return -EINVAL;
+> > -Boards with the OX810SE SoC shall have the following properties:
+> > -  Required root node property:
+> > -    compatible: "oxsemi,ox810se"
+> > -
+> > -Boards with the OX820 SoC shall have the following properties:
+> > -  Required root node property:
+> > -    compatible: "oxsemi,ox820"
+> > -
+> > -Board compatible values:
+> > -  - "wd,mbwe" (OX810SE)
+> > -  - "cloudengines,pogoplugv3" (OX820)
+> > diff --git a/Documentation/devicetree/bindings/arm/oxnas.yaml b/Documentation/devicetree/bindings/arm/oxnas.yaml
+> > new file mode 100644
+> > index 000000000000..6ae51ef513be
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/oxnas.yaml
+> > @@ -0,0 +1,25 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/arm/oxnas.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> > +		obj->kobj_alive = false;
+> > +title: Oxford Semiconductor OXNAS SoCs Family device tree bindings
 > > +
-> > +		klp_for_each_func(obj, func)
-> > +			func->kobj_alive = false;
-> > +	}
+> > +maintainers:
+> > +  - Neil Armstrong <narmstrong@baylibre.com>
 > > +
-> > +	return 0;
-> > +}
+> > +properties:
+> > +  $nodename:
+> > +    const: '/'
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +        - enum:
+> > +            - wd,mbwe
+> > +        - const: oxsemi,ox810se
 > > +
-> > +static int klp_init_patch(struct klp_patch *patch)
-> > +{
-> > +	struct klp_object *obj;
-> > +	int ret;
-> > +
-> > +	mutex_lock(&klp_mutex);
-> > +
-> > +	ret = klp_init_patch_before_free(patch);
-> >  	if (ret) {
-> >  		mutex_unlock(&klp_mutex);
-> >  		return ret;
-> >  	}
-> >  
-> > +	ret = kobject_init_and_add(&patch->kobj, &klp_ktype_patch,
-> > +				   klp_root_kobj, "%s", patch->mod->name);
-> > +	if (ret)
-> > +		goto free;
-> 
-> Is this intentional? It should be sufficient (and it was before the patch) to
-> unlock the mutex and return ret. We do not need to free anything here. Only
-> klp_patch instance was initialized and that is all.
+> > +      - items:
+> > +        - enum:
+> > +            - cloudengines,pogoplugv3
+> > +        - const: oxsemi,ox820
+> >
+>
+> We also loose all the "human friendly" description of board/SoC relationship here,
+> and I think it's a shame.
 
-It will get needed later when try_module_get() is moved into
-klp_init_patch_before_free(), see the 5th patch. I'll do it
-in the right order in v15.
+You can have whatever comments or description properties you like, so
+how would you like it to look?
 
-BTW: I remember that I did this by intention. I updated the patchset
-step by step according to the feedback. The init_before_free() was
-growing and growing. I did many rebases, shuffling changes between
-patches, just wanted to be on the safe side, and maybe save one hunk.
-But it seems that no shortcut can slip the careful review ;-)
-
-
-> Otherwise it looks good. kobj_alive feels safer than state_initialized.
-
-Yup.
-
-Best Regards,
-Petr
+Rob
