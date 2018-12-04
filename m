@@ -2,163 +2,117 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE2FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0BDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D87DE20834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:16:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87DE20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 9ACCC20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:17:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ACCC20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbeLDTQt convert rfc822-to-8bit (ORCPT
+        id S1726421AbeLDTRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:16:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34668 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 14:17:45 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46653 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbeLDTQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:16:49 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 444B92082B;
-        Tue,  4 Dec 2018 19:16:47 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 14:16:44 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Marko Pusch <marko.pusch@siemens.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@sssup.it>,
-        =?UTF-8?B?UsO0bXVsbw==?= Silva de Oliveira 
-        <romulo.deoliveira@ufsc.br>, Ingo Molnar <mingo@redhat.com>
-Subject: Re: BUG: ftrace/perf dropping events at the begin of interrupt
- handlers
-Message-ID: <20181204141644.6852d450@vmware.local.home>
-In-Reply-To: <a5e8182e-de6c-caaf-3106-a43b54198b97@redhat.com>
-References: <a5e8182e-de6c-caaf-3106-a43b54198b97@redhat.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725831AbeLDTRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:17:45 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8AB0620A5A; Tue,  4 Dec 2018 20:17:42 +0100 (CET)
+Received: from localhost.localdomain (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8E59E20717;
+        Tue,  4 Dec 2018 20:17:31 +0100 (CET)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v3 0/8] Add Armada 3700 COMPHY support
+Date:   Tue,  4 Dec 2018 20:17:22 +0100
+Message-Id: <20181204191730.11516-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 10:45:05 +0100
-Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
+Hello,
 
-> While developing the automata [1], I've hit cases in which need resched
-> and/or sched wakeup events were being fired with preemption and/or
-> interrupts enabled. However, this is not possible because interrupts must
-> be disabled to avoid concurrence with an interrupt handler, and the
-> preemption must be disabled to avoid concurrence with the scheduler.
-> The tool I use to validate the model is based on perf, and it was
-> complaining about this situation. I’ve talked to Arnaldo about it
-> two months.
-> 
-> Further debug on perf has shown that those cases always took place
-> associated with the occurrence of interrupts. At ELC Europe
-> Marko Pusch (Siemens) also mentioned hitting cases in which he saw
-> missing events related to IRQ handling, but using ftrace. Steven and
-> I also discussed this during the last Plumbers (Vancouver - CA) and we
-> agreed that there is a problem on ftrace too.
-> 
-> To reproduce this problem with ftrace, one needs to enable function
-> tracer and do kernel operations in a CPU in which IRQs are taking place.
-> 
-> For instance, in a single CPU VM, run:
-> 
-> # while [ 1 ]; do echo > /dev/null; done
-> 
-> In a shell, and 
-> 
-> # trace-cmd record -b [enough buff to avoid missing trace because of buffer overun] -p function sleep 5
-> 
-> In another shell.
-> 
-> Then, using trace-cmd report --debug, we can see the problem. Here is one
-> example of output, first the expected one:
-> 
-> 
+This series adds a new driver to support Armada 3700 COMPHY IP.
+The series has been tested on an ESPRESSObin with SATA, PCIe
+and USB3 host. For this purpose, patch 1 enumerates the SATA PHY
+mode. The SGMII PHY mode that is supported by the IP has been written
+(uses SMC calls anyway) but could not be tested on this platform.
+
+Three series will follow to add PHY support (or at least a PHY nodes
+in the A3700/ESPRESSObin device trees) to the MVEBU AHCI driver, the
+Aardvark PCI controller driver and the MVEBU xHCI driver. All this is
+needed in order to achieve suspend to RAM on this platform.
+
+Thanks,
+Miquèl
 
 
-> ================ Faulty execution =================
-> 
-> Thus, ftrace and perf, sometimes, are dropping events at the begin of
-> interrupt handlers. And that is The reason why interrupt disable and
-> preempt disable were not being recorded (and causing problem in the
-> automata execution) is that these events take place in the very early
-> execution of the interrupt handler, in the section in which the
-> perf/ftrace are dropping events [ without notifying ].
-> 
-> [1] This is a good demonstration of problems that can be found using the
-> automata model presented in this workshop paper:
-> 
-> Modeling the Behavior of Threads in the PREEMPT_RT Linux Kernel Using
-> Automata. Daniel Bristot de Oliveira, Tommaso Cucinotta, Rômulo Silva de
-> Oliveira - EWiLi'2018 – Embedded operating system workshop Torino, Italy,
-> 4 October 2018.
-> 
-> And in the presentations:
-> "Mind the gap between real-time Linux and real-time theory"
-> "How can we catch problems that can break the PREEMPT_RT preemption model?"
-> At the Linux Plumbers (Vancouver - CA)
-> 
-> Steven is already aware of this problem, and he is working on it.
+Changes since v2:
+=================
+* Remove redundant check on lane->port/args->arg[0] at the end of the
+  ->xlate() callback. Do it on both armada-cp110 and armada-a3700
+  COMPHY drivers.
+* Put my SoB as author of the patch first when a patch is co-developed.
 
-Yes, it's a simple fix. The problem is that the recursion detection of
-the function tracer requires that when its called from interrupt, the
-"in_interrupt" needs to be true, otherwise it thinks that the function
-tracer is recursing on itself (which is common).
+Changes since v1:
+=================
+* Fix wrong check in ->xlate().
+* Apply the same fix to the cp110 comphy driver from which the a3700
+  driver is based.
+* Added credit to Gregorz Jaszczyk for his work.
+* Added Suggested-by tag to the patch adding the COMPHY DT node.
 
-Looking an the dropped events, and the code in __irq_enter() we have
-this:
 
-#define __irq_enter()					\
-	do {						\
-		account_irq_enter_time(current);	\
-		preempt_count_add(HARDIRQ_OFFSET);	\ <<-- in_interrupt() returns true here
-		trace_hardirq_enter();			\
-	} while (0)
+Grzegorz Jaszczyk (1):
+  phy: enumerate SATA PHY mode
 
-Interesting enough, the dropped events happen to be in
-account_irq_enter_time()!
+Miquel Raynal (7):
+  phy: mvebu-cp110-comphy: fix spelling in structure name
+  phy: mvebu-cp110-comphy: fix port check in ->xlate()
+  phy: add A3700 COMPHY support
+  dt-bindings: phy: mvebu-comphy: extend the file to describe a3700
+    bindings
+  MAINTAINERS: phy: add entry for Armada 3700 COMPHY driver
+  ARM64: dts: marvell: armada-37xx: fix SATA node scope
+  ARM64: dts: marvell: armada-37xx: declare the COMPHY node
 
-Thus what I believe is happening is that an interrupt came in while one
-event was being recorded. When account_irq_enter_time was called, the
-function tracer noticed that its recursion bit for the current context
-was already set, and just dropped the event because it thought it was
-just tracing itself. After we add HARDIRQ_OFFSET to preempt_count, the
-"in_interrupt()" will be set and the function tracer will know its in a
-new context where its safe to continue tracing.
+ .../bindings/phy/phy-mvebu-comphy.txt         |  65 ++++-
+ MAINTAINERS                                   |   6 +
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  31 +-
+ drivers/phy/marvell/Kconfig                   |  10 +
+ drivers/phy/marvell/Makefile                  |   1 +
+ drivers/phy/marvell/phy-mvebu-a3700-comphy.c  | 274 ++++++++++++++++++
+ drivers/phy/marvell/phy-mvebu-cp110-comphy.c  |   6 +-
+ include/linux/phy/phy.h                       |   1 +
+ 8 files changed, 377 insertions(+), 17 deletions(-)
+ create mode 100644 drivers/phy/marvell/phy-mvebu-a3700-comphy.c
 
-Can you try this patch to see if it fixes it for you?
+-- 
+2.19.1
 
--- Steve
-
-diff --git a/include/linux/hardirq.h b/include/linux/hardirq.h
-index 0fbbcdf0c178..0290531ebe3c 100644
---- a/include/linux/hardirq.h
-+++ b/include/linux/hardirq.h
-@@ -35,8 +35,8 @@ extern void rcu_nmi_exit(void);
-  */
- #define __irq_enter()					\
- 	do {						\
--		account_irq_enter_time(current);	\
- 		preempt_count_add(HARDIRQ_OFFSET);	\
-+		account_irq_enter_time(current);	\
- 		trace_hardirq_enter();			\
- 	} while (0)
- 
