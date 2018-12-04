@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4F9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D043C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487352082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D87662087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vsks0E3R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487352082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="asz0W2ly"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87662087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbeLDLJW (ORCPT
+        id S1728795AbeLDLJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:09:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59140 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:09:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727990AbeLDLJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:09:20 -0500
+        id S1728176AbeLDLJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:09:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B37E2214E0;
-        Tue,  4 Dec 2018 11:09:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E9342146D;
+        Tue,  4 Dec 2018 11:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921759;
-        bh=T6XfOrwrjQ4num1BT5tVLSkgpdHfU1XVLnoo+kGxywI=;
+        s=default; t=1543921756;
+        bh=m8scQTFefAP0BQztGhnrlrLv3gms0WmwiULgb4WQ4s8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vsks0E3RNAPyP/cAH1q9vcNnSTTOFODJg3L+5o5hwyHXST2xv94GQVMtcM5MeMkNJ
-         cJ9PtNup1cPhci2tlnz0vKPb1bZGZOh3mr+mHHcxk9KPdk0oCXUbpGwPNEDgwj+Rzc
-         MhfKXhlLuZTMzD4eG3NQ9VJgKLuzGG7mhrR7yFog=
+        b=asz0W2ly+JxxdH+HU4upFFhiV1moCLO7O5OQ6RKzusHal6SV2q1ZaY+3mlZ5b5I/V
+         nSQJjBzw1JbwF9XquNx7neAI9SNTXOQDc9mUF/nalz7LpkVBDySlzbMJrg8O3NP9hc
+         81iJ928mBr0v2sHcfd/YwmJEfFLUeSw8v3iRI+Bo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Tejun Heo <tj@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 49/50] efi/libstub: Make file I/O chunking x86-specific
-Date:   Tue,  4 Dec 2018 11:50:44 +0100
-Message-Id: <20181204103716.938039643@linuxfoundation.org>
+Subject: [PATCH 4.9 48/50] workqueue: avoid clang warning
+Date:   Tue,  4 Dec 2018 11:50:43 +0100
+Message-Id: <20181204103716.894717649@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -69,75 +64,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-(commit b3879a4d3a31ef14265a52e8d941cf4b0f6627ae upstream)
+(commit a45463cbf3f9dcdae683033c256f50bded513d6a upstream)
 
-The ARM decompressor is finicky when it comes to uninitialized variables
-with local linkage, the reason being that it may relocate .text and .bss
-independently when executing from ROM. This is only possible if all
-references into .bss from .text are absolute, and this happens to be the
-case for references emitted under -fpic to symbols with external linkage,
-and so all .bss references must involve symbols with external linkage.
+Building with clang shows lots of warning like:
 
-When building the ARM stub using clang, the initialized local variable
-__chunk_size is optimized into a zero-initialized flag that indicates
-whether chunking is in effect or not. This flag is therefore emitted into
-.bss, which triggers the ARM decompressor's diagnostics, resulting in a
-failed build.
+drivers/amba/bus.c:447:8: warning: implicit conversion from 'long long' to 'int' changes value from 4294967248 to -48
+      [-Wconstant-conversion]
+static DECLARE_DELAYED_WORK(deferred_retry_work, amba_deferred_retry_func);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/workqueue.h:187:26: note: expanded from macro 'DECLARE_DELAYED_WORK'
+        struct delayed_work n = __DELAYED_WORK_INITIALIZER(n, f, 0)
+                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/workqueue.h:177:10: note: expanded from macro '__DELAYED_WORK_INITIALIZER'
+        .work = __WORK_INITIALIZER((n).work, (f)),                      \
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/workqueue.h:170:10: note: expanded from macro '__WORK_INITIALIZER'
+        .data = WORK_DATA_STATIC_INIT(),                                \
+                ^~~~~~~~~~~~~~~~~~~~~~~
+include/linux/workqueue.h:111:39: note: expanded from macro 'WORK_DATA_STATIC_INIT'
+        ATOMIC_LONG_INIT(WORK_STRUCT_NO_POOL | WORK_STRUCT_STATIC)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+include/asm-generic/atomic-long.h:32:41: note: expanded from macro 'ATOMIC_LONG_INIT'
+ #define ATOMIC_LONG_INIT(i)     ATOMIC_INIT(i)
+                                ~~~~~~~~~~~~^~
+arch/arm/include/asm/atomic.h:21:27: note: expanded from macro 'ATOMIC_INIT'
+ #define ATOMIC_INIT(i)  { (i) }
+                        ~  ^
 
-Under UEFI, we never execute the decompressor from ROM, so the diagnostic
-makes little sense here. But we can easily work around the issue by making
-__chunk_size global instead.
+This makes the type cast explicit, which shuts up the warning.
 
-However, given that the file I/O chunking that is controlled by the
-__chunk_size variable is intended to work around known bugs on various
-x86 implementations of UEFI, we can simply make the chunking an x86
-specific feature. This is an improvement by itself, and also removes the
-need to parse the efi= options in the stub entirely.
-
-Tested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/1486380166-31868-8-git-send-email-ard.biesheuvel@linaro.org
-[ Small readability edits. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/efi/libstub/efi-stub-helper.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ include/linux/workqueue.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-+++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-@@ -356,6 +356,14 @@ efi_status_t efi_parse_options(char *cmd
- 	char *str;
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -106,9 +106,9 @@ struct work_struct {
+ #endif
+ };
  
- 	/*
-+	 * Currently, the only efi= option we look for is 'nochunk', which
-+	 * is intended to work around known issues on certain x86 UEFI
-+	 * versions. So ignore for now on other architectures.
-+	 */
-+	if (!IS_ENABLED(CONFIG_X86))
-+		return EFI_SUCCESS;
-+
-+	/*
- 	 * If no EFI parameters were specified on the cmdline we've got
- 	 * nothing to do.
- 	 */
-@@ -528,7 +536,8 @@ efi_status_t handle_cmdline_files(efi_sy
- 			size = files[j].size;
- 			while (size) {
- 				unsigned long chunksize;
--				if (size > __chunk_size)
-+
-+				if (IS_ENABLED(CONFIG_X86) && size > __chunk_size)
- 					chunksize = __chunk_size;
- 				else
- 					chunksize = size;
+-#define WORK_DATA_INIT()	ATOMIC_LONG_INIT(WORK_STRUCT_NO_POOL)
++#define WORK_DATA_INIT()	ATOMIC_LONG_INIT((unsigned long)WORK_STRUCT_NO_POOL)
+ #define WORK_DATA_STATIC_INIT()	\
+-	ATOMIC_LONG_INIT(WORK_STRUCT_NO_POOL | WORK_STRUCT_STATIC)
++	ATOMIC_LONG_INIT((unsigned long)(WORK_STRUCT_NO_POOL | WORK_STRUCT_STATIC))
+ 
+ struct delayed_work {
+ 	struct work_struct work;
 
 
