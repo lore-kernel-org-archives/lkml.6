@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49296C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0B6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D497214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41FA2214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="grqE16JZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D497214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lb0vtxwz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41FA2214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbeLDLCA (ORCPT
+        id S1727567AbeLDLCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:02:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47682 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727165AbeLDLB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:01:57 -0500
+        id S1726859AbeLDLCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D982214F1;
-        Tue,  4 Dec 2018 11:01:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D9EE2146D;
+        Tue,  4 Dec 2018 11:02:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921317;
-        bh=obwpbtnsPaZeUdR0xIeTnpvRnvsl3289Rchk0GOXcEA=;
+        s=default; t=1543921322;
+        bh=4PLHGUQZjxaSpmYXVhH54mUbTEfypfzBk6/jqKmsD38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=grqE16JZOT7aegiwUDSt6Tp3rrDc3BXCWMV2bOr8NKxWxdiq4Nn7T2RqrRrOYYj1Q
-         JHywZrLRvjF/mQwlg7LWcOFTCiJrn4sUFT6EHDAHVFPqur5awy0FcMTv915A8MpVxT
-         CTYCwrmRmkql90HyFYs+skmM+2J3IQdQ4RhVnSSE=
+        b=lb0vtxwz6tDAc/eTfwlpAXRH3jnnsxDM5fYoRuUEm951cc+ntQ+Uhyv4xVv1pOjZ9
+         1run7RTdZlstuvbyM13xc7gIIZbUn1z8dpdUQpSLmS241BDkDXuXdhYGxvuX4oHJdz
+         ETT1gOjAeclXsTPXL5311K9qiIOKqjnd5R0N6YDk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jerome Glisse <jglisse@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 003/146] mm/huge_memory: splitting set mapping+index before unfreeze
-Date:   Tue,  4 Dec 2018 11:48:09 +0100
-Message-Id: <20181204103726.893053610@linuxfoundation.org>
+Subject: [PATCH 4.14 005/146] mm/khugepaged: collapse_shmem() stop if punched or truncated
+Date:   Tue,  4 Dec 2018 11:48:11 +0100
+Message-Id: <20181204103726.989837703@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -69,69 +69,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 173d9d9fd3ddae84c110fea8aedf1f26af6be9ec upstream.
+commit 701270fa193aadf00bdcf607738f64997275d4c7 upstream.
 
-Huge tmpfs stress testing has occasionally hit shmem_undo_range()'s
-VM_BUG_ON_PAGE(page_to_pgoff(page) != index, page).
+Huge tmpfs testing showed that although collapse_shmem() recognizes a
+concurrently truncated or hole-punched page correctly, its handling of
+holes was liable to refill an emptied extent.  Add check to stop that.
 
-Move the setting of mapping and index up before the page_ref_unfreeze()
-in __split_huge_page_tail() to fix this: so that a page cache lookup
-cannot get a reference while the tail's mapping and index are unstable.
-
-In fact, might as well move them up before the smp_wmb(): I don't see an
-actual need for that, but if I'm missing something, this way round is
-safer than the other, and no less efficient.
-
-You might argue that VM_BUG_ON_PAGE(page_to_pgoff(page) != index, page) is
-misplaced, and should be left until after the trylock_page(); but left as
-is has not crashed since, and gives more stringent assurance.
-
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261516380.2275@eggly.anvils
-Fixes: e9b61f19858a5 ("thp: reintroduce split_huge_page()")
-Requires: 605ca5ede764 ("mm/huge_memory.c: reorder operations in __split_huge_page_tail()")
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261522040.2275@eggly.anvils
+Fixes: f3f0e1d2150b2 ("khugepaged: add support of collapse for tmpfs/shmem pages")
 Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Cc: <stable@vger.kernel.org>	[4.8+]
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/huge_memory.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ mm/khugepaged.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 8969f5cf3174..69ffeb439b0f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2331,6 +2331,12 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 			 (1L << PG_unevictable) |
- 			 (1L << PG_dirty)));
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 0a5bb3e8a8a3..d4a06afbeda4 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1352,6 +1352,16 @@ static void collapse_shmem(struct mm_struct *mm,
+ 	radix_tree_for_each_slot(slot, &mapping->page_tree, &iter, start) {
+ 		int n = min(iter.index, end) - index;
  
-+	/* ->mapping in first tail page is compound_mapcount */
-+	VM_BUG_ON_PAGE(tail > 2 && page_tail->mapping != TAIL_MAPPING,
-+			page_tail);
-+	page_tail->mapping = head->mapping;
-+	page_tail->index = head->index + tail;
++		/*
++		 * Stop if extent has been hole-punched, and is now completely
++		 * empty (the more obvious i_size_read() check would take an
++		 * irq-unsafe seqlock on 32-bit).
++		 */
++		if (n >= HPAGE_PMD_NR) {
++			result = SCAN_TRUNCATED;
++			goto tree_locked;
++		}
 +
- 	/* Page flags must be visible before we make the page non-compound. */
- 	smp_wmb();
+ 		/*
+ 		 * Handle holes in the radix tree: charge it from shmem and
+ 		 * insert relevant subpage of new_page into the radix-tree.
+@@ -1463,6 +1473,11 @@ static void collapse_shmem(struct mm_struct *mm,
+ 	if (result == SCAN_SUCCEED && index < end) {
+ 		int n = end - index;
  
-@@ -2351,12 +2357,6 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 	if (page_is_idle(head))
- 		set_page_idle(page_tail);
- 
--	/* ->mapping in first tail page is compound_mapcount */
--	VM_BUG_ON_PAGE(tail > 2 && page_tail->mapping != TAIL_MAPPING,
--			page_tail);
--	page_tail->mapping = head->mapping;
--
--	page_tail->index = head->index + tail;
- 	page_cpupid_xchg_last(page_tail, page_cpupid_last(head));
- 	lru_add_page_tail(head, page_tail, lruvec, list);
- }
++		/* Stop if extent has been truncated, and is now empty */
++		if (n >= HPAGE_PMD_NR) {
++			result = SCAN_TRUNCATED;
++			goto tree_locked;
++		}
+ 		if (!shmem_charge(mapping->host, n)) {
+ 			result = SCAN_FAIL;
+ 			goto tree_locked;
 -- 
 2.17.1
 
