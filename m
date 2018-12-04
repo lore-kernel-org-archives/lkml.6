@@ -2,1032 +2,495 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C8AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A49E2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957B72081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:37:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957B72081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5535D20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:37:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j2jgutVr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5535D20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbeLDUhK (ORCPT
+        id S1726401AbeLDUhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:37:10 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38917 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeLDUhK (ORCPT
+        Tue, 4 Dec 2018 15:37:22 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33012 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeLDUhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:37:10 -0500
-Received: by mail-ot1-f66.google.com with SMTP id n8so12632961otl.6;
-        Tue, 04 Dec 2018 12:37:08 -0800 (PST)
+        Tue, 4 Dec 2018 15:37:21 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so8874142plo.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 12:37:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=T4xKDB7e4ccy6Wm1FQNXIMP7dyh94+gR/K/i7vw5a6g=;
+        b=j2jgutVrsU7vCbt6Eq4V0wGK29U7lQaipj561yGQvh02OJIZEMma1SnZjyAGvUQjdL
+         hs33Tp8egVgqsYuZOmvXflf+WqeIVvgZsQXOE4lLQOGA9qXIAPsRlGM3Gz/umdtsUGvi
+         mOLf9CU1Lj0DMidSO8oSR3ayqJet6QryHcsD0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=UTSRfr0tz3UPq+Yw8V1rqUYSeCv0zgMpLTw2+JfbXXQ=;
-        b=SiQtzXE19SKPLze7ZHui1GwZsA0X7nje+qjfub+ecC5zXrmF3/1y4FCeel9hpRDK5d
-         YgP5R9BQrI4VSxBSA3KQ0TbeX9HlQk88Oeb/fO7kg/1170aiVMpjqWrOFcVini+KOg/Z
-         KPO6zuOMqlTZHX5LwBa6ylLH48fqihtGh9rZpfOeZglGm4EjI65bAvMacB8VbBKmrzTx
-         qK4zDqoD/afjuaQ4Y9jHtlKLYezCUkFabKtLUgdLhoynV1Zo73m6ptF+og0dn14sSq48
-         IJ2BFPpIWP4wYAj8FDKzvFwAKPPjMRSEFQ2cLFJSflFUg6Zpb0SNpOOObLWFZkJ24DXk
-         ErIQ==
-X-Gm-Message-State: AA+aEWYsweaPfn00/qL/9fwLROpiWPJCAdltkSoTeGbCbZceoT7sv9+9
-        6GPnjlSlRBOFR9FVmmJq7rip7NI=
-X-Google-Smtp-Source: AFSGD/V2F7IZtraYahdBSuMybubjTa1SFvHzlnZ/4pX29V5wytntdQx+Dmi1uFkf1P23/bfrmbxpMA==
-X-Received: by 2002:a9d:401:: with SMTP id 1mr13250381otc.78.1543955828329;
-        Tue, 04 Dec 2018 12:37:08 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j33sm14472400ota.32.2018.12.04.12.37.07
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T4xKDB7e4ccy6Wm1FQNXIMP7dyh94+gR/K/i7vw5a6g=;
+        b=guD45KlRnQxGbWWDvjDQ3MpsCFW4hRTQgcXHMKPucno0+2qlsixC/nvv/EIzXzOJFL
+         Xe2OOdZuUXXR06hfASWaHL7CT2V9H/BPBU89vNjLQpwjOMbMHKa4w6Oj4Tv2zYdoM3oj
+         Dx/1Px/BL2FQtphYkliiC2YbMFP77Z58O2ByylcJ4WLl6R7aTg6Qt/+P/wqKIslMpGnX
+         sUOB5EM6SRCQqGL9iKnY05x0J9R7la1bQpGA0hcRo1vRWCsd1GW4G2GrUMsVFbvuZ6qy
+         7sROMd2YUuoRZLQmDmvvawCRBYZpMpS4gfgH5nlx/OSRwx1j9RGUS1GRD6MyDtVH+yZC
+         2JEQ==
+X-Gm-Message-State: AA+aEWaonqaXyXE43C0QfpjREwdvUWMa3/gBlXNYYguMLG5hFGmc7EdP
+        opC/uqIig1eDM2dIb+W9biJ8gg==
+X-Google-Smtp-Source: AFSGD/UvyxqVMaEofJahBo8kM++9BaINzlT35oPVu6uwjk0ba07sPMW8fwAeCBPq+SRN0rg4rlPTKg==
+X-Received: by 2002:a17:902:74c1:: with SMTP id f1mr21041294plt.273.1543955839734;
+        Tue, 04 Dec 2018 12:37:19 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id h128sm22168332pgc.15.2018.12.04.12.37.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 12:37:07 -0800 (PST)
-Date:   Tue, 4 Dec 2018 14:37:06 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH RFC] ARM64: dts: marvell: Add DTS file for Turris Mox
-Message-ID: <20181204203706.GA25038@bogus>
-References: <20181113134408.5681-1-marek.behun@nic.cz>
+        Tue, 04 Dec 2018 12:37:19 -0800 (PST)
+Date:   Tue, 4 Dec 2018 12:37:18 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: sdm845: Add UART nodes
+Message-ID: <20181204203718.GD14307@google.com>
+References: <20181004002409.39350-1-mka@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181113134408.5681-1-marek.behun@nic.cz>
+In-Reply-To: <20181004002409.39350-1-mka@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 02:44:08PM +0100, Marek Behún wrote:
-> This is a RFC, please do not merge.
-> 
-> This adds basic support for the Turris Mox board from CZ.NIC.
-> 
-> Turris Mox is as modular router based on the Armada 3720 SOC (same as
-> EspressoBin).
-> 
-> The basic module can be extended by different modules.
-> When those modules are connected, U-Boot has to let kernel know via
-> device-tree. Since modules can be connected in different order and
-> some modules can be connected multiple times (up to three 8-port
-> switch modules can be connected), using dtb overlays would result in
-> too files.
-> 
-> I therefore chose to put all the possible connected devices in one dts
-> and disable them. If U-Boot finds these modules, it fixes the device
-> tree accrodginly, by enabling some nodes (setting status to "okay") and
-> by setting some addresses and references.
+Hi Andy,
 
-Given it is a whole hierarchy of nodes, might be cleaner if u-boot 
-removes the whole sub-tree of disable nodes.
+can this be landed or are any more changes needed?
 
-> For example there are 6 switch nodes - three for 8-port switch module
-> and three for 4-port switch module. This is because another switch
-> (either 8-port or 4-port) can be connected to a 8-port switch, in DSA,
-> and interface names have to be defined (from lan1 to lan24).
+Thanks
+
+Matthias
+
+On Wed, Oct 03, 2018 at 05:24:09PM -0700, Matthias Kaehlcke wrote:
+> This adds nodes for all possible UARTs to sdm845.dtsi. By default
+> only configure the RX/TX lines with pinctrl. Boards that use UARTs
+> with flow control can overwrite the configuration in the
+> <board>.dtsi.
 > 
-> Another way (for defining switch nodes) would have to be either:
->   - including a file where switch nodes are defined, which would need
->     #defining lan interface names (and some other things), and #undefing
->     them after the #include
->   - defining a macro for switch nodes
->   - have a separate DTBs for each possible configuration (this would
->     result in too many DTBs)
->   - not defining these nodes in device-tree at all, instead creating
->     them in U-Boot when patching the device-tree (I actually tried this,
->     but the resulting code in U-Boot was horrible)
-> 
-> Please let me know if doing it this way is acceptable, or if I should
-> try something different (and if yes, what?).
-> 
-> Signed-off-by: Marek Behún <marek.behun@nic.cz>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Gregory CLEMENT <gregory.clement@bootlin.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  .../arm/marvell/armada-3720-turris-mox.txt    |   6 +
->  MAINTAINERS                                   |   1 +
->  arch/arm64/boot/dts/marvell/Makefile          |   1 +
->  .../dts/marvell/armada-3720-turris-mox.dts    | 838 ++++++++++++++++++
->  4 files changed, 846 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
->  create mode 100644 arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
+> Changes in v2:
+> - use GCC_QUPV3_WRAP1_Sx_CLK for uart8-15, not
+>   GCC_QUPV3_WRAP0_Sx_CLK
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 270 +++++++++++++++++++++++++++
+>  1 file changed, 270 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt b/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
-> new file mode 100644
-> index 000000000000..408fc07a9bbf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
-> @@ -0,0 +1,6 @@
-> +CZ.NIC's Turris Mox SOHO router Device Tree Bindings
-> +----------------------------------------------------
-> +
-> +Required root node property:
-> +
-> +compatible: must contain "cznic,turris-mox"
-
-This should also contain the SoC compatible. Please add this to where 
-that is defined instead of a new file.
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f6e60e7f6c11..81b57260b110 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1348,6 +1348,7 @@ ARM/CZ.NIC TURRIS MOX SUPPORT
->  M:	Marek Behun <marek.behun@nic.cz>
->  W:	http://mox.turris.cz
->  S:	Maintained
-> +F:	arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
->  F:	include/mfd/moxtet.h
->  F:	drivers/gpio/gpio-moxtet.c
->  F:	drivers/mfd/moxtet.c
-> diff --git a/arch/arm64/boot/dts/marvell/Makefile b/arch/arm64/boot/dts/marvell/Makefile
-> index 5633676fa9d0..51782b31b441 100644
-> --- a/arch/arm64/boot/dts/marvell/Makefile
-> +++ b/arch/arm64/boot/dts/marvell/Makefile
-> @@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_BERLIN) += berlin4ct-stb.dtb
->  # Mvebu SoC Family
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-db.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-espressobin.dtb
-> +dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-turris-mox.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-7040-db.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-8040-db.dtb
->  dtb-$(CONFIG_ARCH_MVEBU) += armada-8040-mcbin.dtb
-> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
-> new file mode 100644
-> index 000000000000..1315c59ecef3
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
-> @@ -0,0 +1,838 @@
-> +// SPDX-License-Identifier: GPL-2.0+ or X11
-> +/*
-> + * Device Tree file for CZ.NIC Turris Mox Board
-> + * 2018 by Marek Behun <marek.behun@nic.cz>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include "armada-372x.dtsi"
-> +
-> +/ {
-> +	model = "CZ.NIC Turris Mox Board";
-> +	compatible = "cznic,turris-mox", "marvell,armada3720",
-> +		     "marvell,armada3710";
-> +
-> +	aliases {
-> +		spi0 = &spi0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x00000000 0x00000000 0x00000000 0x20000000>;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		red {
-> +			gpios = <&gpiosb 21 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +
-> +	gpio_keys {
-> +		compatible = "gpio-keys";
-> +
-> +		reset_button {
-
-reset {
-
-Don't use '_' in node names. Building with W=2 will tell you this. You 
-chould build with W=1 and fix any warnings this file adds.
-
-> +			label = "reset";
-> +			linux,code = <BTN_MISC>;
-> +			gpios = <&gpiosb 20 GPIO_ACTIVE_LOW>;
-> +			debounce-interval = <60>;
-> +		};
-> +	};
-> +
-> +	exp_usb3_vbus: usb3-vbus {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb3-vbus";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		enable-active-high;
-> +		regulator-always-on;
-> +		gpio = <&gpiosb 0 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	usb3_phy: usb3-phy {
-> +		compatible = "usb-nop-xceiv";
-> +		vcc-supply = <&exp_usb3_vbus>;
-> +	};
-> +
-> +	vsdc_reg: vsdc_reg {
-> +		compatible = "regulator-gpio";
-> +		regulator-name = "vsdc";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +
-> +		gpios = <&gpiosb 23 GPIO_ACTIVE_HIGH>;
-> +		gpios-states = <0>;
-> +		states = <1800000 0x1
-> +			  3300000 0x0>;
-> +		enable-active-high;
-> +	};
-> +
-> +	vsdio_reg: vsdio_reg {
-> +		compatible = "regulator-gpio";
-> +		regulator-name = "vsdio";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +
-> +		gpios = <&gpiosb 22 GPIO_ACTIVE_HIGH>;
-> +		gpios-states = <0>;
-> +		states = <1800000 0x1
-> +			  3300000 0x0>;
-> +		enable-active-high;
-> +	};
-> +
-> +	sdhci1_pwrseq: sdhci1_pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		reset-gpios = <&gpionb 19 GPIO_ACTIVE_HIGH>;
-> +		status = "okay";
-> +	};
-> +
-> +	sfp: sfp {
-> +		compatible = "sff,sfp+";
-> +		i2c-bus = <&i2c0>;
-> +		los-gpio = <&moxtet_sfp 0 GPIO_ACTIVE_HIGH>;
-> +		tx-fault-gpio = <&moxtet_sfp 1 GPIO_ACTIVE_HIGH>;
-> +		mod-def0-gpio = <&moxtet_sfp 2 GPIO_ACTIVE_LOW>;
-> +		tx-disable-gpio = <&moxtet_sfp 3 GPIO_ACTIVE_HIGH>;
-> +		rate-select0-gpio = <&moxtet_sfp 4 GPIO_ACTIVE_HIGH>;
-> +		status = "disabled";
-> +	};
-> +};
-> +
-> +&pinctrl_nb {
-> +	spi_cs1_pins: spi-cs1-pins {
-> +		groups = "spi_cs1";
-> +		function = "spi";
-> +	};
-> +
-> +	sdio0_pins: sdio0-pins {
-> +		groups = "sdio0";
-> +		function = "sdio";
-> +	};
-> +};
-> +
-> +&pinctrl_sb {
-> +	sdio_sb_pins: sdio-sb-pins {
-> +		groups = "sdio_sb";
-> +		function = "sdio";
-> +	};
-> +
-> +	smi_pins: smi-pins {
-> +		groups = "smi";
-> +		function = "smi";
-> +	};
-> +
-> +	pcie_pins: pcie1-pins {
-> +		groups = "pcie1";
-> +		function = "gpio";
-> +	};
-> +};
-> +
-> +&i2c0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c1_pins>;
-> +	status = "okay";
-> +
-> +	rtc@6f {
-> +		compatible = "microchip,mcp7940x";
-> +		reg = <0x6f>;
-> +	};
-> +};
-> +
-> +&pcie0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie_pins>;
-> +	status = "okay";
-> +	max-link-speed = <2>;
-> +	reset-gpio = <&gpiosb 3 GPIO_ACTIVE_HIGH>;
-
-reset-gpios is the preferred form.
-
-> +
-> +	/* this shall be enabled by u-boot if the PCIe module is present */
-> +	status = "disabled";
-> +};
-> +
-> +&uart0 {
-> +	status = "okay";
-> +};
-> +
-> +&eth0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&rgmii_pins>;
-> +	phy-mode = "rgmii-id";
-> +	phy = <&phy1>;
-> +	status = "okay";
-> +};
-> +
-> +&eth1 {
-> +	phy-mode = "1000base-x";
-> +	managed = "in-band-status";
-> +};
-> +
-> +&mdio {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&smi_pins>;
-> +	status = "okay";
-> +
-> +	phy1: ethernet-phy@1 {
-> +		reg = <1>;
-> +	};
-> +
-> +	switch0@10 {
-> +		compatible = "marvell,mv88e6190";
-> +		reg = <0x10 0>;
-> +		dsa,member = <0 0>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch0phy1: switch0phy1@1 {
-> +				reg = <0x1>;
-> +			};
-> +
-> +			switch0phy2: switch0phy2@2 {
-> +				reg = <0x2>;
-> +			};
-> +
-> +			switch0phy3: switch0phy3@3 {
-> +				reg = <0x3>;
-> +			};
-> +
-> +			switch0phy4: switch0phy4@4 {
-> +				reg = <0x4>;
-> +			};
-> +
-> +			switch0phy5: switch0phy5@5 {
-> +				reg = <0x5>;
-> +			};
-> +
-> +			switch0phy6: switch0phy6@6 {
-> +				reg = <0x6>;
-> +			};
-> +
-> +			switch0phy7: switch0phy7@7 {
-> +				reg = <0x7>;
-> +			};
-> +
-> +			switch0phy8: switch0phy8@8 {
-> +				reg = <0x8>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan1";
-> +				phy-handle = <&switch0phy1>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan2";
-> +				phy-handle = <&switch0phy2>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan3";
-> +				phy-handle = <&switch0phy3>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan4";
-> +				phy-handle = <&switch0phy4>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "lan5";
-> +				phy-handle = <&switch0phy5>;
-> +			};
-> +
-> +			port@6 {
-> +				reg = <0x6>;
-> +				label = "lan6";
-> +				phy-handle = <&switch0phy6>;
-> +			};
-> +
-> +			port@7 {
-> +				reg = <0x7>;
-> +				label = "lan7";
-> +				phy-handle = <&switch0phy7>;
-> +			};
-> +
-> +			port@8 {
-> +				reg = <0x8>;
-> +				label = "lan8";
-> +				phy-handle = <&switch0phy8>;
-> +			};
-> +
-> +			port@9 {
-> +				reg = <0x9>;
-> +				label = "cpu";
-> +				ethernet = <&eth1>;
-> +			};
-> +
-> +			switch0port10: port@a {
-> +				reg = <0xa>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch1port9 &switch2port9>;
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index 0c9a2aa6a1b5..c4056c2c3cc5 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -286,6 +286,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart0: serial@880000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x880000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart0_default>;
+> +				interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
 > +				status = "disabled";
 > +			};
 > +
-> +			port-sfp@a {
-> +				reg = <0xa>;
-> +				label = "sfp";
-> +				sfp = <&sfp>;
-> +				phy-mode = "sgmii";
-> +				managed = "in-band-status";
-> +				status = "disabled";
-> +			};
-> +		};
-> +	};
-> +
-> +	switch0@2 {
-> +		compatible = "marvell,mv88e6085";
-> +		reg = <0x2 0>;
-> +		dsa,member = <0 0>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch0phy1_topaz: switch0phy1@11 {
-> +				reg = <0x11>;
-> +			};
-> +
-> +			switch0phy2_topaz: switch0phy2@12 {
-> +				reg = <0x12>;
-> +			};
-> +
-> +			switch0phy3_topaz: switch0phy3@13 {
-> +				reg = <0x13>;
-> +			};
-> +
-> +			switch0phy4_topaz: switch0phy4@14 {
-> +				reg = <0x14>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan1";
-> +				phy-handle = <&switch0phy1_topaz>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan2";
-> +				phy-handle = <&switch0phy2_topaz>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan3";
-> +				phy-handle = <&switch0phy3_topaz>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan4";
-> +				phy-handle = <&switch0phy4_topaz>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "cpu";
-> +				ethernet = <&eth1>;
-> +			};
-> +		};
-> +	};
-> +
-> +	switch1@11 {
-> +		compatible = "marvell,mv88e6190";
-> +		reg = <0x11 0>;
-> +		dsa,member = <0 1>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch1phy1: switch1phy1@1 {
-> +				reg = <0x1>;
-> +			};
-> +
-> +			switch1phy2: switch1phy2@2 {
-> +				reg = <0x2>;
-> +			};
-> +
-> +			switch1phy3: switch1phy3@3 {
-> +				reg = <0x3>;
-> +			};
-> +
-> +			switch1phy4: switch1phy4@4 {
-> +				reg = <0x4>;
-> +			};
-> +
-> +			switch1phy5: switch1phy5@5 {
-> +				reg = <0x5>;
-> +			};
-> +
-> +			switch1phy6: switch1phy6@6 {
-> +				reg = <0x6>;
-> +			};
-> +
-> +			switch1phy7: switch1phy7@7 {
-> +				reg = <0x7>;
-> +			};
-> +
-> +			switch1phy8: switch1phy8@8 {
-> +				reg = <0x8>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan9";
-> +				phy-handle = <&switch1phy1>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan10";
-> +				phy-handle = <&switch1phy2>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan11";
-> +				phy-handle = <&switch1phy3>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan12";
-> +				phy-handle = <&switch1phy4>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "lan13";
-> +				phy-handle = <&switch1phy5>;
-> +			};
-> +
-> +			port@6 {
-> +				reg = <0x6>;
-> +				label = "lan14";
-> +				phy-handle = <&switch1phy6>;
-> +			};
-> +
-> +			port@7 {
-> +				reg = <0x7>;
-> +				label = "lan15";
-> +				phy-handle = <&switch1phy7>;
-> +			};
-> +
-> +			port@8 {
-> +				reg = <0x8>;
-> +				label = "lan16";
-> +				phy-handle = <&switch1phy8>;
-> +			};
-> +
-> +			switch1port9: port@9 {
-> +				reg = <0x9>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch0port10>;
-> +			};
-> +
-> +			switch1port10: port@a {
-> +				reg = <0xa>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch2port9>;
+>  			i2c1: i2c@884000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0x884000 0x4000>;
+> @@ -312,6 +323,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart1: serial@884000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x884000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart1_default>;
+> +				interrupts = <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>;
 > +				status = "disabled";
 > +			};
 > +
-> +			port-sfp@a {
-> +				reg = <0xa>;
-> +				label = "sfp";
-> +				sfp = <&sfp>;
-> +				phy-mode = "sgmii";
-> +				managed = "in-band-status";
+>  			i2c2: i2c@888000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0x888000 0x4000>;
+> @@ -338,6 +360,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart2: serial@888000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x888000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart2_default>;
+> +				interrupts = <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>;
 > +				status = "disabled";
 > +			};
-> +		};
-> +	};
 > +
-> +	switch1@2 {
-
-Ideally, we shouldn't have this switch0, switch1, etc.
-
-> +		compatible = "marvell,mv88e6085";
-> +		reg = <0x2 0>;
-> +		dsa,member = <0 1>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch1phy1_topaz: switch1phy1@11 {
-> +				reg = <0x11>;
-> +			};
-> +
-> +			switch1phy2_topaz: switch1phy2@12 {
-> +				reg = <0x12>;
-> +			};
-> +
-> +			switch1phy3_topaz: switch1phy3@13 {
-> +				reg = <0x13>;
-> +			};
-> +
-> +			switch1phy4_topaz: switch1phy4@14 {
-> +				reg = <0x14>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan9";
-> +				phy-handle = <&switch1phy1_topaz>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan10";
-> +				phy-handle = <&switch1phy2_topaz>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan11";
-> +				phy-handle = <&switch1phy3_topaz>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan12";
-> +				phy-handle = <&switch1phy4_topaz>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch0port10>;
-> +			};
-> +		};
-> +	};
-> +
-> +	switch2@12 {
-> +		compatible = "marvell,mv88e6190";
-> +		reg = <0x12 0>;
-> +		dsa,member = <0 2>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch2phy1: switch2phy1@1 {
-> +				reg = <0x1>;
-> +			};
-> +
-> +			switch2phy2: switch2phy2@2 {
-> +				reg = <0x2>;
-> +			};
-> +
-> +			switch2phy3: switch2phy3@3 {
-> +				reg = <0x3>;
-> +			};
-> +
-> +			switch2phy4: switch2phy4@4 {
-> +				reg = <0x4>;
-> +			};
-> +
-> +			switch2phy5: switch2phy5@5 {
-> +				reg = <0x5>;
-> +			};
-> +
-> +			switch2phy6: switch2phy6@6 {
-> +				reg = <0x6>;
-> +			};
-> +
-> +			switch2phy7: switch2phy7@7 {
-> +				reg = <0x7>;
-> +			};
-> +
-> +			switch2phy8: switch2phy8@8 {
-> +				reg = <0x8>;
-> +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan17";
-> +				phy-handle = <&switch2phy1>;
-> +			};
-> +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan18";
-> +				phy-handle = <&switch2phy2>;
-> +			};
-> +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan19";
-> +				phy-handle = <&switch2phy3>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan20";
-> +				phy-handle = <&switch2phy4>;
-> +			};
-> +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "lan21";
-> +				phy-handle = <&switch2phy5>;
-> +			};
-> +
-> +			port@6 {
-> +				reg = <0x6>;
-> +				label = "lan22";
-> +				phy-handle = <&switch2phy6>;
-> +			};
-> +
-> +			port@7 {
-> +				reg = <0x7>;
-> +				label = "lan23";
-> +				phy-handle = <&switch2phy7>;
-> +			};
-> +
-> +			port@8 {
-> +				reg = <0x8>;
-> +				label = "lan24";
-> +				phy-handle = <&switch2phy8>;
-> +			};
-> +
-> +			switch2port9: port@9 {
-> +				reg = <0x9>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch1port10 &switch0port10>;
-> +			};
-> +
-> +			port-sfp@a {
-> +				reg = <0xa>;
-> +				label = "sfp";
-> +				sfp = <&sfp>;
-> +				phy-mode = "sgmii";
-> +				managed = "in-band-status";
+>  			i2c3: i2c@88c000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0x88c000 0x4000>;
+> @@ -364,6 +397,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart3: serial@88c000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x88c000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart3_default>;
+> +				interrupts = <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>;
 > +				status = "disabled";
 > +			};
-> +		};
-> +	};
 > +
-> +	switch2@2 {
-> +		compatible = "marvell,mv88e6085";
-> +		reg = <0x2 0>;
-> +		dsa,member = <0 2>;
-> +		interrupt-parent = <&gpiosb>;
-> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +		status = "disabled";
-> +
-> +		mdio {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			switch2phy1_topaz: switch2phy1@11 {
-> +				reg = <0x11>;
+>  			i2c4: i2c@890000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0x890000 0x4000>;
+> @@ -390,6 +434,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart4: serial@890000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x890000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart4_default>;
+> +				interrupts = <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
 > +
-> +			switch2phy2_topaz: switch2phy2@12 {
-> +				reg = <0x12>;
+>  			i2c5: i2c@894000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0x894000 0x4000>;
+> @@ -416,6 +471,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart5: serial@894000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x894000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart5_default>;
+> +				interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
 > +
-> +			switch2phy3_topaz: switch2phy3@13 {
-> +				reg = <0x13>;
+>  			i2c6: i2c@898000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0x898000 0x4000>;
+> @@ -442,6 +508,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart6: serial@898000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x898000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart6_default>;
+> +				interrupts = <GIC_SPI 607 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
 > +
-> +			switch2phy4_topaz: switch2phy4@14 {
-> +				reg = <0x14>;
+>  			i2c7: i2c@89c000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0x89c000 0x4000>;
+> @@ -467,6 +544,17 @@
+>  				#size-cells = <0>;
+>  				status = "disabled";
+>  			};
+> +
+> +			uart7: serial@89c000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0x89c000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart7_default>;
+> +				interrupts = <GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
-> +		};
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@1 {
-> +				reg = <0x1>;
-> +				label = "lan17";
-> +				phy-handle = <&switch2phy1_topaz>;
+>  		};
+>  
+>  		qupv3_id_1: geniqup@ac0000 {
+> @@ -506,6 +594,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart8: serial@a80000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0xa80000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart8_default>;
+> +				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
 > +
-> +			port@2 {
-> +				reg = <0x2>;
-> +				label = "lan18";
-> +				phy-handle = <&switch2phy2_topaz>;
+>  			i2c9: i2c@a84000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0xa84000 0x4000>;
+> @@ -569,6 +668,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart10: serial@a88000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0xa88000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart10_default>;
+> +				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
 > +
-> +			port@3 {
-> +				reg = <0x3>;
-> +				label = "lan19";
-> +				phy-handle = <&switch2phy3_topaz>;
+>  			i2c11: i2c@a8c000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0xa8c000 0x4000>;
+> @@ -595,6 +705,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart11: serial@a8c000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0xa8c000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart11_default>;
+> +				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
 > +
-> +			port@4 {
-> +				reg = <0x4>;
-> +				label = "lan20";
-> +				phy-handle = <&switch2phy4_topaz>;
+>  			i2c12: i2c@a90000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0xa90000 0x4000>;
+> @@ -621,6 +742,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart12: serial@a90000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0xa90000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart12_default>;
+> +				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
 > +
-> +			port@5 {
-> +				reg = <0x5>;
-> +				label = "dsa";
-> +				phy-mode = "2500base-x";
-> +				link = <&switch1port10 &switch0port10>;
+>  			i2c13: i2c@a94000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0xa94000 0x4000>;
+> @@ -647,6 +779,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart13: serial@a94000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0xa94000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart13_default>;
+> +				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
 > +			};
-> +		};
-> +	};
 > +
-> +};
+>  			i2c14: i2c@a98000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0xa98000 0x4000>;
+> @@ -673,6 +816,17 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			uart14: serial@a98000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0xa98000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart14_default>;
+> +				interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
+> +			};
 > +
-> +&sdhci0 {
-> +	wp-inverted;
-> +	bus-width = <4>;
-> +	cd-gpios = <&gpionb 10 GPIO_ACTIVE_HIGH>;
-> +	vqmmc-supply = <&vsdc_reg>;
-> +	marvell,pad-type = "sd";
-> +	status = "okay";
-> +};
+>  			i2c15: i2c@a9c000 {
+>  				compatible = "qcom,geni-i2c";
+>  				reg = <0xa9c000 0x4000>;
+> @@ -698,6 +852,17 @@
+>  				#size-cells = <0>;
+>  				status = "disabled";
+>  			};
 > +
-> +&sdhci1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdio0_pins &sdio_sb_pins>;
-> +	non-removable;
-> +	bus-width = <4>;
-> +	marvell,pad-type = "sd";
-> +	vqmmc-supply = <&vsdio_reg>;
-> +	mmc-pwrseq = <&sdhci1_pwrseq>;
-> +	status = "okay";
-> +};
+> +			uart15: serial@a9c000 {
+> +				compatible = "qcom,geni-uart";
+> +				reg = <0xa9c000 0x4000>;
+> +				clock-names = "se";
+> +				clocks = <&gcc GCC_QUPV3_WRAP1_S7_CLK>;
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&qup_uart15_default>;
+> +				interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
+> +				status = "disabled";
+> +			};
+>  		};
+>  
+>  		tcsr_mutex_regs: syscon@1f40000 {
+> @@ -954,12 +1119,117 @@
+>  				};
+>  			};
+>  
+> +			qup_uart0_default: qup-uart0-default {
+> +				pinmux {
+> +					pins = "gpio2", "gpio3";
+> +					function = "qup0";
+> +				};
+> +			};
 > +
-> +&spi0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&spi_quad_pins &spi_cs1_pins>;
-> +	assigned-clocks = <&nb_periph_clk 7>;
-> +	assigned-clock-parents = <&tbg 1>;
-> +	assigned-clock-rates = <20000000>;
+> +			qup_uart1_default: qup-uart1-default {
+> +				pinmux {
+> +					pins = "gpio19", "gpio20";
+> +					function = "qup1";
+> +				};
+> +			};
 > +
-> +	spi-flash@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "jedec,spi-nor";
-> +		reg = <0>;
-> +		spi-max-frequency = <20000000>;
+> +			qup_uart2_default: qup-uart2-default {
+> +				pinmux {
+> +					pins = "gpio29", "gpio30";
+> +					function = "qup2";
+> +				};
+> +			};
 > +
-> +		partition@0 {
-
-All these under a 'partitions' node is preferred.
-
-> +			label = "secure-firmware";
-> +			reg = <0x0 0x20000>;
-> +		};
+> +			qup_uart3_default: qup-uart3-default {
+> +				pinmux {
+> +					pins = "gpio43", "gpio44";
+> +					function = "qup3";
+> +				};
+> +			};
 > +
-> +		partition@20000 {
-> +			label = "u-boot";
-> +			reg = <0x20000 0x160000>;
-> +		};
+> +			qup_uart4_default: qup-uart4-default {
+> +				pinmux {
+> +					pins = "gpio91", "gpio92";
+> +					function = "qup4";
+> +				};
+> +			};
 > +
-> +		partition@180000 {
-> +			label = "u-boot-env";
-> +			reg = <0x180000 0x10000>;
-> +		};
+> +			qup_uart5_default: qup-uart5-default {
+> +				pinmux {
+> +					pins = "gpio87", "gpio88";
+> +					function = "qup5";
+> +				};
+> +			};
 > +
-> +		partition@190000 {
-> +			label = "Rescue system";
-> +			reg = <0x190000 0x660000>;
-> +		};
+> +			qup_uart6_default: qup-uart6-default {
+> +				pinmux {
+> +					pins = "gpio47", "gpio48";
+> +					function = "qup6";
+> +				};
+> +			};
 > +
-> +		partition@7f0000 {
-> +			label = "dtb";
-> +			reg = <0x7f0000 0x10000>;
-> +		};
-> +	};
+> +			qup_uart7_default: qup-uart7-default {
+> +				pinmux {
+> +					pins = "gpio95", "gpio96";
+> +					function = "qup7";
+> +				};
+> +			};
 > +
-> +	moxtet@1 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		compatible = "cznic,moxtet";
-
-All this node needs to be documented.
-
-> +		reg = <1>;
-> +		devrst-gpio = <&gpiosb 2 GPIO_ACTIVE_LOW>;
-
-Not documented. reset-gpios is preferred for GPIO reset lines.
-
-> +		spi-max-frequency = <10000000>;
-> +		spi-cpol;
-> +		spi-cpha;
+> +			qup_uart8_default: qup-uart8-default {
+> +				pinmux {
+> +					pins = "gpio67", "gpio68";
+> +					function = "qup8";
+> +				};
+> +			};
 > +
-> +		moxtet_sfp: moxtet-sfp@0 {
-> +			compatible = "cznic,moxtet-gpio";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			reg = <0>;
-> +			moxtet,id = <1>;
-> +			moxtet,input-mask = <0x7>;
-> +			moxtet,output-mask = <0x3>;
-> +			status = "disabled";
-> +		};
-> +	};
-> +};
+>  			qup_uart9_default: qup-uart9-default {
+>  				pinmux {
+>  					pins = "gpio4", "gpio5";
+>  					function = "qup9";
+>  				};
+>  			};
 > +
-> +&usb2 {
-> +	status = "okay";
-> +};
+> +			qup_uart10_default: qup-uart10-default {
+> +				pinmux {
+> +					pins = "gpio53", "gpio54";
+> +					function = "qup10";
+> +				};
+> +			};
 > +
-> +&usb3 {
-> +	status = "okay";
-> +	usb-phy = <&usb3_phy>;
-> +};
-> -- 
-> 2.18.1
-> 
+> +			qup_uart11_default: qup-uart11-default {
+> +				pinmux {
+> +					pins = "gpio33", "gpio34";
+> +					function = "qup11";
+> +				};
+> +			};
+> +
+> +			qup_uart12_default: qup-uart12-default {
+> +				pinmux {
+> +					pins = "gpio51", "gpio52";
+> +					function = "qup12";
+> +				};
+> +			};
+> +
+> +			qup_uart13_default: qup-uart13-default {
+> +				pinmux {
+> +					pins = "gpio107", "gpio108";
+> +					function = "qup13";
+> +				};
+> +			};
+> +
+> +			qup_uart14_default: qup-uart14-default {
+> +				pinmux {
+> +					pins = "gpio31", "gpio32";
+> +					function = "qup14";
+> +				};
+> +			};
+> +
+> +			qup_uart15_default: qup-uart15-default {
+> +				pinmux {
+> +					pins = "gpio83", "gpio84";
+> +					function = "qup15";
+> +				};
+> +			};
+>  		};
+>  
+>  		tsens0: thermal-sensor@c263000 {
