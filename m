@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282E0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF09C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C032D2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C503321508
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5gHMmYi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C032D2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="slPlgsmY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C503321508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbeLDLF7 (ORCPT
+        id S1728246AbeLDLGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53980 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:06:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727918AbeLDLFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:54 -0500
+        id S1727918AbeLDLF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AD662082D;
-        Tue,  4 Dec 2018 11:05:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0E832082D;
+        Tue,  4 Dec 2018 11:05:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921554;
-        bh=099MSU3w0YUHTV4nhb96uDIoxiRHqSC6HOyrKWHsAW4=;
+        s=default; t=1543921559;
+        bh=7Y6KKl/u0365BZH6QblDion9bQpVv+CVOGi43k80Sgg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h5gHMmYieOuIVklWRR+3rM2U95ekoZIIFFoKB5tWLJgliEK+4FQiW+QoRSHp38+F2
-         0aeAcesuo3HeO6hmpRt+1Y7Udve88BWKlR32P6zgRCv/TNfFp584MU82LKWbBs75AS
-         lBBvvzRVwJ3y2+4MYfAKAL8ejcvlrd8HHFQOFh1g=
+        b=slPlgsmYdl1UDViECO9/2yZ1Pt3scqFGGmx+iiUaVF+OkKwBPlv19aQy7DuFmdqRo
+         2EVLi2cQkjpvteLK3H4rDSdwqJK00K2PTYw98EpcwaOYybHy3LGLPRZ+JtD60enYo9
+         6k8Zbw9AnUpahNCvjI8agmH2T+Dd4MI7SsZsPXS8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Pan Bian <bianpan2016@163.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 117/146] btrfs: relocation: set trans to be NULL after ending transaction
-Date:   Tue,  4 Dec 2018 11:50:03 +0100
-Message-Id: <20181204103731.530084930@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.14 119/146] arm64: dts: rockchip: Fix PCIe reset polarity for rk3399-puma-haikou.
+Date:   Tue,  4 Dec 2018 11:50:05 +0100
+Message-Id: <20181204103731.625565469@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -63,38 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Christoph Muellner <christoph.muellner@theobroma-systems.com>
 
-commit 42a657f57628402c73237547f0134e083e2f6764 upstream.
+commit c1d91f86a1b4c9c05854d59c6a0abd5d0f75b849 upstream.
 
-The function relocate_block_group calls btrfs_end_transaction to release
-trans when update_backref_cache returns 1, and then continues the loop
-body. If btrfs_block_rsv_refill fails this time, it will jump out the
-loop and the freed trans will be accessed. This may result in a
-use-after-free bug. The patch assigns NULL to trans after trans is
-released so that it will not be accessed.
+This patch fixes the wrong polarity setting for the PCIe host driver's
+pre-reset pin for rk3399-puma-haikou. Without this patch link training
+will most likely fail.
 
-Fixes: 0647bf564f1 ("Btrfs: improve forever loop when doing balance relocation")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 60fd9f72ce8a ("arm64: dts: rockchip: add Haikou baseboard with RK3399-Q7 SoM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christoph Muellner <christoph.muellner@theobroma-systems.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/relocation.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/rockchip/rk3399-puma-haikou.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -4048,6 +4048,7 @@ static noinline_for_stack int relocate_b
- restart:
- 		if (update_backref_cache(trans, &rc->backref_cache)) {
- 			btrfs_end_transaction(trans);
-+			trans = NULL;
- 			continue;
- 		}
+--- a/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou.dts
+@@ -130,7 +130,7 @@
+ };
  
+ &pcie0 {
+-	ep-gpios = <&gpio4 RK_PC6 GPIO_ACTIVE_LOW>;
++	ep-gpios = <&gpio4 RK_PC6 GPIO_ACTIVE_HIGH>;
+ 	num-lanes = <4>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pcie_clkreqn_cpm>;
 
 
