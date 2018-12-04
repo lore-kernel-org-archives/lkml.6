@@ -2,145 +2,104 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEA3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA8DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5462064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:58:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5462064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E8F32081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:59:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="CDqo1FKu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8F32081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbeLDX61 (ORCPT
+        id S1726549AbeLDX7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 18:58:27 -0500
-Received: from mga02.intel.com ([134.134.136.20]:28438 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbeLDX60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 18:58:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 15:58:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
-   d="scan'208";a="256844495"
-Received: from ray.jf.intel.com (HELO [10.7.201.141]) ([10.7.201.141])
-  by orsmga004.jf.intel.com with ESMTP; 04 Dec 2018 15:58:24 -0800
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
- <20181204184919.GD2937@redhat.com>
- <20163c1e-00f1-7e02-82c0-7730ceabb9f2@intel.com>
- <20181204215711.GP2937@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <ed96fdb0-d8b6-e19b-fe45-532042b712c6@intel.com>
-Date:   Tue, 4 Dec 2018 15:58:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 4 Dec 2018 18:59:17 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42670 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbeLDX7Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 18:59:16 -0500
+Received: by mail-ed1-f66.google.com with SMTP id j6so15465036edp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 15:59:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SqoyHVYj/uLGolRV4jdUgg7Lv7ReizNW/bp9vefhxxE=;
+        b=CDqo1FKulmo9s37ik+eLl5nIpbW0DcWIFENtjvirsB7VnxedkR66kkJSQBkl4/dRjQ
+         uOuOjdiQFznTwhpMgBjEr6WKcqHREnDi62MXbEeGqsLIDg7wjM8v/UjD6CKZwKWrBg0N
+         jHI0NtCUR7NFyVU+lexd4bWte6N3NH2h4xPh8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SqoyHVYj/uLGolRV4jdUgg7Lv7ReizNW/bp9vefhxxE=;
+        b=lxSRPKRd6hoQdJQwGu1toiUUXB7VntjKOfY6WSYJymloNWemha3FSi0WnSellk0uW6
+         CGj/JJKncpryKitx5q7hHLjrz0dvkgKIUhwsV2EOwntg77QAtrWGvUggjY8GPxaRwYg9
+         PKBgw1QcAYUDy5wlCJxeCmdo0njw06O92w7RXRx+VvynfvYQ0pMpUx3KH4C8x/8t2VE2
+         nvmtz9Triw6iFE3qt/fnjEhyyjPRRYIRDOtQHsinZWu3WGzspKhEX1sEQsIFlNouRehe
+         vD1M5Alu0h50wX3gvP3uljS6AmpABU1FrbaU12SzMxQRWwZZFOmzBMsTJ/zEWnfec3T8
+         7wmQ==
+X-Gm-Message-State: AA+aEWYvGlsq/EeuWzUWnwO6IqShCRyAAS+R1fYWxonb85DdHrb4DZpt
+        WSOIebo+DDdpl/aXjwq/7AHWpqBnZWvXtA==
+X-Google-Smtp-Source: AFSGD/XcOPIvNmKooDif8JB2aBHSsyaJFB6uJxb9D7Hhb0Jg1bphYtHh8PTZUTq2N6TrUXSx9/0iQg==
+X-Received: by 2002:a17:906:6b99:: with SMTP id l25-v6mr16717548ejr.154.1543967954635;
+        Tue, 04 Dec 2018 15:59:14 -0800 (PST)
+Received: from andrea (dynamic-2a00-1028-8386-da8a-eacb-c188-78b9-634c.ipv6.broadband.iol.cz. [2a00:1028:8386:da8a:eacb:c188:78b9:634c])
+        by smtp.gmail.com with ESMTPSA id x10sm4933356edb.58.2018.12.04.15.59.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 15:59:13 -0800 (PST)
+Date:   Wed, 5 Dec 2018 00:59:07 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/1] epoll: use rwlock in order to reduce
+ ep_poll_callback() contention
+Message-ID: <20181204235907.GA5388@andrea>
+References: <20181203110237.14787-1-rpenyaev@suse.de>
+ <CAHk-=wiQX4HnBpyrxCwJmhBRff0GG65tOhsRnA=2KdYL=PBdyg@mail.gmail.com>
+ <83edf06ce9db540495b53527eca3248c@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20181204215711.GP2937@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <83edf06ce9db540495b53527eca3248c@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 1:57 PM, Jerome Glisse wrote:
-> Fully correct mind if i steal that perfect summary description next time
-> i post ? I am so bad at explaining thing :)
+Hi Roman,
 
-Go for it!
+On Tue, Dec 04, 2018 at 12:50:58PM +0100, Roman Penyaev wrote:
+> On 2018-12-03 18:34, Linus Torvalds wrote:
 
-> Intention is to allow program to do everything they do with mbind() today
-> and tomorrow with the HMAT patchset and on top of that to also be able to
-> do what they do today through API like OpenCL, ROCm, CUDA ... So it is one
-> kernel API to rule them all ;)
+> > This also ends up making the memory ordering of "xchg()" very very
+> > important. Yes, we've documented it as being an ordering op, but I'm
+> > not sure we've relied on it this directly before.
+> 
+> Seems exit_mm() does exactly the same, the following chunk:
+> 
+> 		up_read(&mm->mmap_sem);
+> 
+> 		self.task = current;
+> 		self.next = xchg(&core_state->dumper.next, &self);
+> 
+> 
+> At least code pattern looks similar.
 
-While I appreciate the exhaustive scope of such a project, I'm really
-worried that if we decided to use this for our "HMAT" use cases, we'll
-be bottlenecked behind this project while *it* goes through 25 revisions
-over 4 or 5 years like HMM did.
+Maybe add a comment on top of (your) xchg() to note/justify these memory
+ordering requirements?  As Paul said: "if there are races, this would
+help force them to happen" (and simplify the review, this/future).
 
-So, should we just "park" the enhancements to the existing NUMA
-interfaces and infrastructure (think /sys/devices/system/node) and wait
-for this to go in?  Do we try to develop them in parallel and make them
-consistent?  Or, do we just ignore each other and make Andrew sort it
-out in a few years? :)
+  Andrea
