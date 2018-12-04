@@ -2,93 +2,86 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9790FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E94C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 585192146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F7AE214D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:31:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsDniAuN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 585192146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="HjUuamy5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F7AE214D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726042AbeLDH2h (ORCPT
+        id S1726073AbeLDHbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:28:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbeLDH2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:28:36 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85E6220834;
-        Tue,  4 Dec 2018 07:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543908516;
-        bh=INJvMSa6sHkJKdw0qQZqN4OYGLvQiuQwF1fNpe7xD1c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RsDniAuNZA0LHbHDNHLS9OPvN8bxgV6iyCjm+mYKH9oodS/sUbkAj/1Z2Tf3vFFYz
-         IWt3gOxS06aPaMCCQUyz+62H5T1aBYa4sMHCLRTM7ZMqxySG/UPWLp6cw1bWLm8QVt
-         k+lrHsRJ+sQ5wi44978UR82uyltf8mik/SusItNE=
-Date:   Tue, 4 Dec 2018 08:28:33 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Thomas Backlund <tmb@mageia.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Dave Chinner <david@fromorbit.com>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.14 25/35] iomap: sub-block dio needs to zeroout
- beyond EOF
-Message-ID: <20181204072833.GB25998@kroah.com>
-References: <20181129121458.GK19305@dastard>
- <20181129124756.GA25945@kroah.com>
- <20181129224019.GM19305@dastard>
- <20181130082203.GA26830@kroah.com>
- <20181130101441.GA213156@sasha-vm>
- <20181130215005.GP19305@dastard>
- <20181201074909.GC213156@sasha-vm>
- <20181202232302.GT19305@dastard>
- <20181203092241.GC235790@sasha-vm>
- <2de96c1b-c375-8eed-f934-df5cbcdcd5cc@mageia.org>
+        Tue, 4 Dec 2018 02:31:12 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:16185 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeLDHbL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 02:31:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1543908665;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=GxphV0/QBmgY76aLj+7ZLW0iICYCSPe6PKnQsfPOUZ4=;
+        b=HjUuamy5YptH1/e1AAHGhGx8JBrLTeDGGqcQo0/FDFgZ8SlMtyQ1iMZgzkv8nCstwU
+        HVxqxSnmgveigGYaAx4GYOjCuMrXeCxFH87W9KEepqNGNmW/kcn+Biu7d0kypylm47UW
+        5UpBe33c4ui5nbB0R8/e0ZahfU4kGhlw3Ta6Lu2chvUegH/fmcZQPzxJjmaocQ9gRmud
+        fPRAkUumZ7bDq26udEAABBUkyHoZheLQ/yL4IXm58+WKJ+0cgSR3vlLkP2A7q75zg83K
+        hK5TfHHxQ6oC/iCPvDNgDCh06Z6O18gJhjopsGuvAMsc01DkfLWMo8cig3BD9XwjT3T1
+        XOcw==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7ClZhvaRn0pXV/NUDryiXACgEIDA3A=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:f801:4655:10f9:7c9f]
+        by smtp.strato.de (RZmta 44.6 AUTH)
+        with ESMTPSA id 404b20uB47V3XCf
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 4 Dec 2018 08:31:03 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20181114082314.8965-1-hch@lst.de> <20181127074253.GB30186@lst.de>
+ <87zhttfonk.fsf@concordia.ellerman.id.au>
+ <4d4e3cdd-d1a9-affe-0f63-45b8c342bbd6@xenosoft.de>
+ <20181129170351.GC27951@lst.de>
+ <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
+ <20181130105346.GB26765@lst.de>
+ <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
+ <20181130131056.GA5211@lst.de>
+ <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
+Message-ID: <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
+Date:   Tue, 4 Dec 2018 08:31:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2de96c1b-c375-8eed-f934-df5cbcdcd5cc@mageia.org>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 11:22:46PM +0159, Thomas Backlund wrote:
-> Den 2018-12-03 kl. 11:22, skrev Sasha Levin:
-> 
-> > 
-> > This is a case where theory collides with the real world. Yes, our QA is
-> > lacking, but we don't have the option of not doing the current process.
-> > If we stop backporting until a future data where our QA problem is
-> > solved we'll end up with what we had before: users stuck on ancient
-> > kernels without a way to upgrade.
-> > 
-> 
-> Sorry, but you seem to be living in a different "real world"...
-> 
-> People stay on "ancient kernels" that "just works" instead of updating
-> to a newer one that "hopefully/maybe/... works"
+Hi All,
 
-That's not good as those "ancient kernels" really just are "kernels with
-lots of known security bugs".
+Could you please test Christoph's kernel on your PASEMI and NXP boards? 
+Download:
 
-It's your systems, I can't tell you what to do, but I will tell you that
-running older, unfixed kernels, is a known liability.
+'git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.5 a'
 
-Good luck!
-
-greg k-h
+Thanks,
+Christian
