@@ -2,116 +2,166 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34273C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D107C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA8BF2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:08:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rrz3iCXY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA8BF2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id E1B92214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:09:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B92214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbeLDTI4 (ORCPT
+        id S1726627AbeLDTJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:08:56 -0500
-Received: from mail-eopbgr130048.outbound.protection.outlook.com ([40.107.13.48]:35088
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726171AbeLDTIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:08:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Iufcb/KYH2bZGgixztfQ/3Aim0D415Z6QGznpML4mNw=;
- b=rrz3iCXYNf9rVq/p7XSctb6DbH4faNy8cskfvqW7pX8f3dBEA2khOAv/bZ/08d3oRoVoC7rT/LfzB9VOOhdwtNqvv90xp9ZBRDB9Qbz+DFmavoLydJ8YEwbBL0n2d9bCxHlW1/nYQj4a2ZgjpP1j1akJLqbUArspk6U8cz9iIgA=
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
- VI1PR04MB5613.eurprd04.prod.outlook.com (20.178.125.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.19; Tue, 4 Dec 2018 19:08:50 +0000
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::f80a:77f3:7cbf:62b5]) by VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::f80a:77f3:7cbf:62b5%2]) with mapi id 15.20.1404.016; Tue, 4 Dec 2018
- 19:08:50 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     "stefan@agner.ch" <stefan@agner.ch>
-CC:     Richard Zhu <hongxing.zhu@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "tpiepho@impinj.com" <tpiepho@impinj.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-Subject: Re: [PATCH v4 3/3] PCI: imx6: limit DBI register length
-Thread-Topic: [PATCH v4 3/3] PCI: imx6: limit DBI register length
-Thread-Index: AQHUi/ItnXKkv6zAjkGaBp3fo/yZWqVu8ZwA
-Date:   Tue, 4 Dec 2018 19:08:50 +0000
-Message-ID: <a30b8bcb6492eadba6206ba879a6530b2a5d2db9.camel@nxp.com>
-References: <20181204165528.15534-1-stefan@agner.ch>
-         <20181204165528.15534-3-stefan@agner.ch>
-In-Reply-To: <20181204165528.15534-3-stefan@agner.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5613;6:Ke3NQKf9Cwgpx0ALQeESjnLPQa3km6vGsyOQp94T7i5uwdGUDJ+Y2oMW/gua66SMGufz8wGq2Mt42PZ2ROIHZptfNzA6UAjhzL/V34JfynVesSLmmctySnjOtuqMBz0vSzenzK6zecGwfr/pAXPwUru+Qt7OSCdyt/pzosqhjgn9L3aiXt58bjkbvzrjthsS6JmTjT9Yeb0DK8O2s2zgQ+wKWWgmuhcVjTvtn7LLdVS2+SIbrQFth3WEJmXbf2RC61plahD69G3adbN6b85oxz0eEjk+wflf31AI7kpn+3J3M7bHMsXaGqrRRBUw2I6uMG9Mi/8MWcKNU+l3+WeJJDPfNVF+NMRiko7T1R1rwcCnMK445GMJ/XCDy60DtVMq+qqBkBNavq/46y2+ENWNjdgdLYW/LrcOfKJXOl+PHY3rtWURdOAqNOPlS/Ps7QMu1EJ1tMKwQS5boDBasu+nNw==;5:uwr+VMvD210U6UMzxMb3cNJfSGzCuUJwfPxR3xg6qgvhcCiERXHxfdsp8GgnCUM0SHM02E0u8PQSEYJGUdtJ65PRQOSAQMxnFI74wol0tqJ7hOystZQ3W4haDG6JBgFvf9wPIhntlKwBqZhdX8MVG2/Eg1LrZzvcbkrxJ///U0c=;7:/SvJdZQqZPQ7p+wv9zS0KeYR9WD2ZB6EmZ920BS0VRHF/lXLaw1S5a5DUgrdW3ED0BFvy54OnK1jrO+IsIzMKd8hR/V4t0RspAFePaNzURuzquLsKOWcoq6/fJBTDHY4JuB05XseqYqr2PtiBXMnGQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 98c1b97c-2498-4847-2423-08d65a1bed0c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5613;
-x-ms-traffictypediagnostic: VI1PR04MB5613:
-x-microsoft-antispam-prvs: <VI1PR04MB561313F6C76F46BC1167619EEEAF0@VI1PR04MB5613.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5613;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5613;
-x-forefront-prvs: 0876988AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(366004)(346002)(189003)(199004)(68736007)(99286004)(105586002)(71200400001)(71190400001)(305945005)(2906002)(6916009)(102836004)(106356001)(2351001)(5660300001)(7736002)(25786009)(14444005)(256004)(2501003)(186003)(97736004)(229853002)(76176011)(6486002)(14454004)(26005)(86362001)(36756003)(53936002)(54906003)(6116002)(1730700003)(44832011)(8676002)(118296001)(3846002)(4326008)(81156014)(81166006)(50226002)(478600001)(446003)(316002)(486006)(6512007)(8936002)(2616005)(6436002)(6506007)(6246003)(11346002)(5640700003)(476003)(39060400002)(66066001)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5613;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7Xrlp8Ey7CgvsFLQ/eWUtxs2hIO/UjQdwIAmhUzVJM7VsnpKxCCpW/bk8pj8GBEV3tUnUFBM0xCsEy0B/GXMR2k1nrPWV3uL9u7WFlKmK7Jk2tDuLxMz0BK4KQVk3g10kOKn2JBGmWiTG46MKPDekq6NDsOFXII79V/sFzcYEGECnBT7NQOItsC7HGm6RDa0PVEdcxP2ZqvKdE/O68dKS9i6xmiT8U2hZS14MvOkXEzbkFy7gH1yOuFOqJWTQwLdcnV606q+/1QV8wRQz54UJmfyanF1pDqRV8ZzTPPzsCekTzz+PIBKvYBUNpSu/P7ImXKYuG/ghi9d+qHYDaTBYKRDV6nvOmbmU2Z0cUDYClU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9FDC838BFB74FF4081A5D9D64B995F0B@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 4 Dec 2018 14:09:37 -0500
+Received: from muru.com ([72.249.23.125]:56430 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbeLDTJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:09:37 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 41F8D80FA;
+        Tue,  4 Dec 2018 19:09:38 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 11:09:32 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, Axel Haslam <axelhaslam@ti.com>,
+        Illia Smyrnov <illia.smyrnov@ti.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH 2/2] Input: omap-keypad: Fix idle configration to not
+ block SoC idle states
+Message-ID: <20181204190932.GD6707@atomide.com>
+References: <20181203012933.6647-1-tony@atomide.com>
+ <20181203012933.6647-2-tony@atomide.com>
+ <20181203192351.GB257010@dtor-ws>
+ <20181203231251.GB39861@atomide.com>
+ <20181204040001.GA239923@dtor-ws>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98c1b97c-2498-4847-2423-08d65a1bed0c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 19:08:50.6165
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5613
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204040001.GA239923@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEyLTA0IGF0IDE3OjU1ICswMTAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
-IERlZmluZSB0aGUgbGVuZ3RoIG9mIHRoZSBEQkkgcmVnaXN0ZXJzLiBUaGlzIG1ha2VzIHN1cmUg
-dGhhdA0KPiB0aGUga2VybmVsIGRvZXMgbm90IGFjY2VzcyByZWdpc3RlcnMgYmV5b25kIHRoYXQg
-cG9pbnQsIGF2b2lkaW5nDQo+IHRoZSBmb2xsb3dpbmcgYWJvcnQgb24gYSBpLk1YIDZRdWFkOg0K
-PiAgICMgY2F0IC9zeXMvZGV2aWNlcy9zb2MwL3NvYy8xZmZjMDAwLnBjaWUvcGNpMDAwMFw6MDAv
-MDAwMFw6MDBcOjAwLjAvY29uZmlnDQo+ICAgWyAgMTAwLjAyMTQzM10gVW5oYW5kbGVkIGZhdWx0
-OiBpbXByZWNpc2UgZXh0ZXJuYWwgYWJvcnQgKDB4MTQwNikgYXQgMHhiNmVhNzAwMA0KPiAgIC4u
-Lg0KPiAgIFsgIDEwMC4wNTY0MjNdIFBDIGlzIGF0IGR3X3BjaWVfcmVhZCsweDUwLzB4ODQNCj4g
-ICBbICAxMDAuMDYwNzkwXSBMUiBpcyBhdCBkd19wY2llX3JkX293bl9jb25mKzB4NDQvMHg0OA0K
-PiANCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaW14Nl9wY2llX2RydmRhdGEgZHJ2ZGF0YVtdID0g
-ew0KPiAtCVtJTVg2UV0gPSB7IC52YXJpYW50ID0gSU1YNlEgfSwNCj4gKwlbSU1YNlFdID0geyAu
-dmFyaWFudCA9IElNWDZRLCAuZGJpX2xlbmd0aCA9IDB4MTVjIH0sDQo+ICAJW0lNWDZTWF0gPSB7
-IC52YXJpYW50ID0gSU1YNlNYIH0sDQo+ICAJW0lNWDZRUF0gPSB7IC52YXJpYW50ID0gSU1YNlFQ
-IH0sDQo+ICAJW0lNWDdEXSA9IHsgLnZhcmlhbnQgPSBJTVg3RCB9LA0KDQpBbHNvIHNlZW1zIHRv
-IGFmZmVjdCBJTVg2UVAgdmFyaWFudCAoYnV0IG5vdCBvdGhlcnMpLg0KDQpMdWNhcyBzdWdnZXN0
-ZWQgMHgxNWMgYmVjYXVzZSB0aGF0J3MgdGhlIGxhc3QgcmVnaXN0ZXIgZG9jdW1lbnRlZCBpbg0K
-dGhlIGRhdGFzaGVldCBidXQgdGhlIHJlYWwgSFcgbGltaXQgaXMgMHgyMDAsIHdvdWxkbid0IGl0
-IG1ha2UgbW9yZQ0Kc2Vuc2UgdG8gdXNlIHRoYXQ/DQoNCi0tDQpSZWdhcmRzLA0KTGVvbmFyZA0K
+Hi,
+
+* Dmitry Torokhov <dmitry.torokhov@gmail.com> [181204 04:00]:
+> Hi Tony,
+> 
+> On Mon, Dec 03, 2018 at 03:12:51PM -0800, Tony Lindgren wrote:
+> > 
+> > With PM enabled, I noticed that pressing a key on the droid4 keyboard will
+> > block deeper idle states for the SoC. Looks like we can fix this by
+> > managing the idle register to gether with the interrupt similar to what
+> > we already do for the GPIO controller.
+> 
+> Can you show me where exactly we are doing this? I can't seem to find
+> the matching code.
+
+With your change it now becomes the fix, and we're just missing the
+clearing of the OMAP4_KBD_WAKEUPENABLE register in omap4_keypad_close.
+
+Does the following minimal version with updated comments make
+more sense now?
+
+Regards,
+
+Tony
+
+8< --------------
+From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Tue, 4 Dec 2018 11:07:56 -0800
+Subject: [PATCH] Input: omap-keypad: Fix idle configration to not block
+ SoC idle states
+
+With PM enabled, I noticed that pressing a key on the droid4 keyboard will
+block deeper idle states for the SoC. Let's fix this by using IRQF_ONESHOT
+and stop constantly toggling the device OMAP4_KBD_IRQENABLE register as
+suggested by Dmitry Torokhov <dmitry.torokhov@gmail.com>.
+
+From the hardware point of view, looks like we need to manage the registers
+for OMAP4_KBD_IRQENABLE and OMAP4_KBD_WAKEUPENABLE together to avoid
+blocking deeper SoC idle states. And with toggling of OMAP4_KBD_IRQENABLE
+register now gone with IRQF_ONESHOT, also the SoC idle state problem is
+gone during runtime. We still also need to clear OMAP4_KBD_WAKEUPENABLE in
+omap4_keypad_close() though to pair it with omap4_keypad_open() to prevent
+blocking deeper SoC idle states after rmmod omap4-keypad.
+
+Cc: Axel Haslam <axelhaslam@ti.com>
+Cc: Illia Smyrnov <illia.smyrnov@ti.com>
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Scott <hashcode0f@gmail.com>
+Cc: NeKit <nekit1000@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/input/keyboard/omap4-keypad.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -126,12 +126,8 @@ static irqreturn_t omap4_keypad_irq_handler(int irq, void *dev_id)
+ {
+ 	struct omap4_keypad *keypad_data = dev_id;
+ 
+-	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS)) {
+-		/* Disable interrupts */
+-		kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-				 OMAP4_VAL_IRQDISABLE);
++	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS))
+ 		return IRQ_WAKE_THREAD;
+-	}
+ 
+ 	return IRQ_NONE;
+ }
+@@ -173,11 +169,6 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+ 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
+ 
+-	/* enable interrupts */
+-	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-		OMAP4_DEF_IRQENABLE_EVENTEN |
+-				OMAP4_DEF_IRQENABLE_LONGKEY);
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -214,9 +205,10 @@ static void omap4_keypad_close(struct input_dev *input)
+ 
+ 	disable_irq(keypad_data->irq);
+ 
+-	/* Disable interrupts */
++	/* Disable interrupts and wake-up events */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+ 			 OMAP4_VAL_IRQDISABLE);
++	kbd_writel(keypad_data, OMAP4_KBD_WAKEUPENABLE, 0);
+ 
+ 	/* clear pending interrupts */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+@@ -365,7 +357,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	error = request_threaded_irq(keypad_data->irq, omap4_keypad_irq_handler,
+-				     omap4_keypad_irq_thread_fn, 0,
++				     omap4_keypad_irq_thread_fn, IRQF_ONESHOT,
+ 				     "omap4-keypad", keypad_data);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to register interrupt\n");
+-- 
+2.19.2
