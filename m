@@ -6,57 +6,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C242C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB3FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 108FD20672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108FD20672
+	by mail.kernel.org (Postfix) with ESMTP id 21AA72087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AA72087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbeLDSgO (ORCPT
+        id S1726248AbeLDSgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:36:14 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:39854 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbeLDSgM (ORCPT
+        Tue, 4 Dec 2018 13:36:15 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:42003 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbeLDSgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:36:12 -0500
-Received: by mail-yb1-f195.google.com with SMTP id w17-v6so7269673ybl.6;
-        Tue, 04 Dec 2018 10:36:11 -0800 (PST)
+        Tue, 4 Dec 2018 13:36:14 -0500
+Received: by mail-yb1-f193.google.com with SMTP id s8so5114914ybe.9;
+        Tue, 04 Dec 2018 10:36:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bQpKW5IQZRQCaOlxFPCc/zPZs+94fhLsbziJx/ehO80=;
-        b=Yv7nFvqkbB16bhUT/6fvQoIcHPGKshSbg/1PENM+ej+vKUROCCFtZ7ZinGqv36RB9h
-         RVcM4ixAcr4U4nBcr/GCUEma2aCpN+Z8YnMgeHzx+FqkJfgKawMj3IygD4kEx3NbrjIw
-         HAtb1pouf9jzlQLYC4/OQrnlAfpYpFR9c/GMsGWj1gnljTIZ1pmo5wtoD5eIy89KSrpM
-         WswfrzaGB7q6qcfj/ABd5Tj5Cl387suRXG5vz/MCckMpo+0PtCOq8QEtjUsC53XNOJMo
-         vGMeeCPxErRdOfvaBkG4tjCRI8FzMBfVf5rF2If16dU+MG0NDTqYlZPbI8S45t5GXU1F
-         v7/Q==
-X-Gm-Message-State: AA+aEWYjzeKM9aDhkNer164WIg5pKzC2DyKRd3NUpRd5ka14ZuJp4aB/
-        LSdVwtKfvMlCxEU5JmIGwMM=
-X-Google-Smtp-Source: AFSGD/XR1R+g5dxCQSATxI7g+OX5hHcir6C4JwO7alvecSwRy907o12Vjy3wg4oYIk/K7eOlfe58rA==
-X-Received: by 2002:a25:5e43:: with SMTP id s64mr10311833ybb.242.1543948570801;
-        Tue, 04 Dec 2018 10:36:10 -0800 (PST)
+        bh=bDtyDWFwsy3cTbCsYZQ052J7W94OKIQSuaqoyAgynY4=;
+        b=Nz9kDgNWzh8FfTeoYV5SyI6eFZEA81lvdxa+NJQvFnu/3T6qFSsK+n/r8ZEjKSwEn/
+         2BKBtPhGVFQYrF2tEUvDWXFyzP7x5L+BIIu7sb3dMzIip1mtaRV2QpZbAW1bXxpCERYS
+         najmnPh8DZ8yO3NFZDv8xbDzvvHscLm0x1YxGrF0n4xTlcJpH3pH46vl953UIUHN0jJJ
+         HM8/dW5wkO+p1i0yFa6eRGMyirP4u2TMgI2VMcOfZXLA4aMfye1p7bZBNG/Vt9jvWr5e
+         Wk9FJj13ENGx/xatE4PakzZuhjvf8s7+SGRFqKf0FJcpzLIXpV+4+VO1Zjgk94ulzBCo
+         JQhg==
+X-Gm-Message-State: AA+aEWZZpwGBkJvayWhJLTQKCsm2kbikQrgTqn6nEFsaLfx04Tnj0FuZ
+        NzDBVp+EQNqAhoZdMKGpzt8=
+X-Google-Smtp-Source: AFSGD/WKmiNUKjzz+S7m8mOXWJUpFq1XsVWOiS6qv8bSYeC95hAcFQL+xgW5Mpq/2dD2XMf3Z/Nang==
+X-Received: by 2002:a25:5f4c:: with SMTP id h12-v6mr20309268ybm.402.1543948572176;
+        Tue, 04 Dec 2018 10:36:12 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id x82sm4274798ywb.34.2018.12.04.10.36.09
+        by smtp.gmail.com with ESMTPSA id x82sm4274798ywb.34.2018.12.04.10.36.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Dec 2018 10:36:10 -0800 (PST)
+        Tue, 04 Dec 2018 10:36:11 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Josef Bacik <josef@toxicpanda.com>
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dennis Zhou <dennis@kernel.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 05/14] dm: set the static flush bio device on demand
-Date:   Tue,  4 Dec 2018 13:35:51 -0500
-Message-Id: <20181204183600.99746-6-dennis@kernel.org>
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH 06/14] blkcg: associate blkg when associating a device
+Date:   Tue,  4 Dec 2018 13:35:52 -0500
+Message-Id: <20181204183600.99746-7-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20181204183600.99746-1-dennis@kernel.org>
 References: <20181204183600.99746-1-dennis@kernel.org>
@@ -65,69 +63,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The next patch changes the macro bio_set_dev() to associate a bio with a
-blkg based on the device set. However, dm creates a static bio to be
-used as the basis for cloning empty flush bios on creation. The
-bio_set_dev() call in alloc_dev() will cause problems with the next
-patch adding association to bio_set_dev() because the call is before the
-bdev is associated with a gendisk (bd_disk is %NULL). To get around
-this, set the device on the static bio every time and use that to clone
-to the other bios.
+Previously, blkg association was handled by controller specific code in
+blk-throttle and blk-iolatency. However, because a blkg represents a
+relationship between a blkcg and a request_queue, it makes sense to keep
+the blkg->q and bio->bi_disk->queue consistent.
+
+This patch moves association into the bio_set_dev macro(). This should
+cover the majority of cases where the device is set/changed keeping the
+two pointers consistent. Fallback code is added to
+blkcg_bio_issue_check() to catch any missing paths.
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Cc: Alasdair Kergon <agk@redhat.com>
-Cc: Mike Snitzer <snitzer@redhat.com>
 ---
- block/bio.c     |  1 +
- drivers/md/dm.c | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ block/bio.c                |  1 +
+ block/blk-iolatency.c      |  4 +---
+ block/blk-throttle.c       |  1 -
+ include/linux/bio.h        |  2 ++
+ include/linux/blk-cgroup.h | 11 +++--------
+ 5 files changed, 7 insertions(+), 12 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 452b8e79b998..41ebb3f8e2fc 100644
+index 41ebb3f8e2fc..1e852ab904aa 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -2021,6 +2021,7 @@ void bio_disassociate_blkg(struct bio *bio)
- 		bio->bi_blkg = NULL;
- 	}
+@@ -2074,6 +2074,7 @@ void bio_associate_blkg(struct bio *bio)
+ 
+ 	rcu_read_unlock();
  }
-+EXPORT_SYMBOL_GPL(bio_disassociate_blkg);
++EXPORT_SYMBOL_GPL(bio_associate_blkg);
  
  /**
-  * __bio_associate_blkg - associate a bio with the a blkg
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index a733e4c920af..a2d6f8b33d23 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1417,10 +1417,21 @@ static int __send_empty_flush(struct clone_info *ci)
- 	unsigned target_nr = 0;
- 	struct dm_target *ti;
+  * bio_disassociate_task - undo bio_associate_current()
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index cdbd10564e66..e6b47c255521 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -472,14 +472,12 @@ static void check_scale_change(struct iolatency_grp *iolat)
+ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
+ {
+ 	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
+-	struct blkcg_gq *blkg;
++	struct blkcg_gq *blkg = bio->bi_blkg;
+ 	bool issue_as_root = bio_issue_as_root_blkg(bio);
  
-+	/*
-+	 * Empty flush uses a statically initialized bio as the base for
-+	 * cloning, &md->flush_bio.  However, blkg association requires that
-+	 * a bdev is associated with a gendisk, which doesn't happen until the
-+	 * bdev is opened.  So, blkg association is done at issue time of the
-+	 * flush rather than when the device is created in dm_alloc().
-+	 */
-+	bio_set_dev(ci->bio, ci->io->md->bdev);
-+
- 	BUG_ON(bio_has_data(ci->bio));
- 	while ((ti = dm_table_get_target(ci->map, target_nr++)))
- 		__send_duplicate_bios(ci, ti, ti->num_flush_bios, NULL);
+ 	if (!blk_iolatency_enabled(blkiolat))
+ 		return;
  
-+	bio_disassociate_blkg(ci->bio);
-+
- 	return 0;
+-	bio_associate_blkg(bio);
+-	blkg = bio->bi_blkg;
+ 	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
+ 
+ 	while (blkg && blkg->parent) {
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 228c3a007ebc..1c6529df2002 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -2118,7 +2118,6 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
+ static void blk_throtl_assoc_bio(struct bio *bio)
+ {
+ #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
+-	bio_associate_blkg(bio);
+ 	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
+ #endif
+ }
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 62715a5a4f32..6ee2ea8b378a 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -491,12 +491,14 @@ do {						\
+ 		bio_clear_flag(bio, BIO_THROTTLED);\
+ 	(bio)->bi_disk = (bdev)->bd_disk;	\
+ 	(bio)->bi_partno = (bdev)->bd_partno;	\
++	bio_associate_blkg(bio);		\
+ } while (0)
+ 
+ #define bio_copy_dev(dst, src)			\
+ do {						\
+ 	(dst)->bi_disk = (src)->bi_disk;	\
+ 	(dst)->bi_partno = (src)->bi_partno;	\
++	bio_clone_blkcg_association(dst, src);	\
+ } while (0)
+ 
+ #define bio_dev(bio) \
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index c08e96e521ed..3c87ae71156f 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -802,21 +802,17 @@ static inline bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg
+ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 					 struct bio *bio)
+ {
+-	struct blkcg *blkcg;
+ 	struct blkcg_gq *blkg;
+ 	bool throtl = false;
+ 
+-	rcu_read_lock();
++	if (!bio->bi_blkg)
++		bio_associate_blkg(bio);
+ 
+-	/* associate blkcg if bio hasn't attached one */
+-	bio_associate_blkcg(bio, NULL);
+-	blkcg = bio_blkcg(bio);
+-	blkg = blkg_lookup_create(blkcg, q);
++	blkg = bio->bi_blkg;
+ 
+ 	throtl = blk_throtl_bio(q, blkg, bio);
+ 
+ 	if (!throtl) {
+-		blkg = blkg ?: q->root_blkg;
+ 		/*
+ 		 * If the bio is flagged with BIO_QUEUE_ENTERED it means this
+ 		 * is a split bio and we would have already accounted for the
+@@ -828,7 +824,6 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 		blkg_rwstat_add(&blkg->stat_ios, bio->bi_opf, 1);
+ 	}
+ 
+-	rcu_read_unlock();
+ 	return !throtl;
  }
  
-@@ -1939,7 +1950,6 @@ static struct mapped_device *alloc_dev(int minor)
- 		goto bad;
- 
- 	bio_init(&md->flush_bio, NULL, 0);
--	bio_set_dev(&md->flush_bio, md->bdev);
- 	md->flush_bio.bi_opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
- 
- 	dm_stats_init(&md->stats);
 -- 
 2.17.1
 
