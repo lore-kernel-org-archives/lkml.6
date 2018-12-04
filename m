@@ -2,330 +2,746 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29724C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C11C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C332B208A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE365214D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:50:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3izsvzK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C332B208A3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3INz8z5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE365214D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725874AbeLDIu1 (ORCPT
+        id S1725922AbeLDIuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 03:50:27 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54420 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbeLDIu0 (ORCPT
+        Tue, 4 Dec 2018 03:50:40 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40885 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbeLDIuk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 03:50:26 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z18so8646354wmc.4;
-        Tue, 04 Dec 2018 00:50:24 -0800 (PST)
+        Tue, 4 Dec 2018 03:50:40 -0500
+Received: by mail-it1-f194.google.com with SMTP id h193so13181704ita.5;
+        Tue, 04 Dec 2018 00:50:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dkJecG6Gs8OQOTcX/RyiNwbjIH69LOnMZTRM0sVUBTE=;
-        b=l3izsvzK4RpMVqUuQS11T5fHqltc4HIXZUkhMj1ow7YCknZc3UyLuN6T26GSKgB7fc
-         Sy9PZW43JDHo2wDFgwtIjmxa51RTgmJplzf4kSrxIUqjBsQe86AnGDSsuVzlZ9P1gvV3
-         oJ5ZXKsye+jYx7npN5s93SMgbsFJ+uZ6SACyiiBdn+jLDn+xCjg7poM44d6v7QksDHCW
-         U7fA0Fh7PYuyotoJ+L7LHMbJ1z0BDwUa7PER6k+5a95ucP9Y9Nx02AtDDT37/Km6jitw
-         MLrgJgRD/1/FjxfjaRQ8sPQ7FZik1D+qQQ0k+79aTtmu2kqbEiQQisATZJ/5JwXeKgED
-         hhmw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yPvdq8J2yGb83a1zzElHocqVWn+yILD+nA5xn3NFg6M=;
+        b=f3INz8z5d6OyJmdL0AqLl2WTu1/szLzehVTfcxA32O7jIPWe8Vo+33MROcHjMWCqfd
+         Wu1DI5hae0kFmPr/gJ4qWNfSblb8H5q6iJI5BMK5/vFOFoY7JlN+cCPgruYut5pwUnLl
+         I/yGqb8S9+JvQfrhDwbpe7QQ0YSYUC+v0BZRk2krZaSNEzg1fdSzQPYCStiO03nDdaAb
+         bhfuIkZ8y9KG0vNo4ECrtJ0/HhBPh4mlktD4dLLto38qxBMhnKQYEMAiaEikjPWYMBeL
+         HLMOjohlOsfIPeCXaGbw63ArpBwKJcbNM3aTetzSfGxLgxnk+26vwhbvTNdbSVReW1t8
+         vn7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dkJecG6Gs8OQOTcX/RyiNwbjIH69LOnMZTRM0sVUBTE=;
-        b=Iw0lb9io954C3hpiRVHZMww3tniDpvjK4eh1QNhe5OUxiawsl6izxkPA+JEjnrTWvD
-         x9VY9d20tVsagDpfPq3JILTbZAq0RV3AUOoqX1QLTtVYBzrMiM093lVmvhBp6AMNZGRe
-         gWvgw0SSW42F3oM9Hgph2se1tpFh0pJJrS1YtFZ0KNDdeWw/Uzu8g7Hz9ZWzYnG+OWRK
-         eqyPhg5sojDWqQb+40YTXapK2b+KFkyDq1PDRnbFBS/RekxeRRaFNK0OrELKDn05Oaz2
-         NX0dKlLAtNj88pC7BpB7RrCGZyVDUwYfqng5DGBWac/MOJzAi+ljCod3wKGhcS7WPbAc
-         I03A==
-X-Gm-Message-State: AA+aEWafdVEICGJqKs5eKkXgulwcFIQvDsPknYOntdrnjISKRsnsMaKl
-        xlH8DDG3kjvNj6RjAHztt3Y=
-X-Google-Smtp-Source: AFSGD/UCk0KkmagSSrE74B+GVNujcPbet0SyYa/t+3VqcmqMIQzUCwpCtDmgB+5SabYaMV/BGpvQhQ==
-X-Received: by 2002:a1c:7616:: with SMTP id r22mr11412356wmc.35.1543913423872;
-        Tue, 04 Dec 2018 00:50:23 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id c10sm13844029wrw.49.2018.12.04.00.50.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 00:50:23 -0800 (PST)
-Date:   Tue, 4 Dec 2018 09:50:22 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 30/34] dt-bindings: arm: Convert Tegra board/soc
- bindings to json-schema
-Message-ID: <20181204085022.GB25962@ulmo>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-31-robh@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yPvdq8J2yGb83a1zzElHocqVWn+yILD+nA5xn3NFg6M=;
+        b=GBaGYaGRlOcrrKDjWHpsP80YZEhn66dPoPxpkHjj4I5tMekhtzBghf3UmulgwZ05aE
+         rfUNPvrBbhelDMYnYjvkjtNJeI/EwxvOvSiJr07EcNf3lqv26Vqru16x+9yXhjt1kKAO
+         baZBaws5PoUlV6leGeyaVdP5s41wy9RE3SjnYp/R7Z3lllyR1wXe9VZiUj81rfOYExRl
+         7pY6EzcsIVvJ0y7Dk7z/lz038xCHDZ7wApBuHR8KHlvUgyBWKc5sAUC+B5m9pvntbVm+
+         iWrjioUtbK8boxuGQ6/83YZnC9Zby0pnTqzxPC1vSLim7FjcgvIHs6YBTIbUXleGxJFn
+         2P+g==
+X-Gm-Message-State: AA+aEWalFuYkYe7eGcMUruL82FhS/kqMXTmrm3aiHyX6aHVI854xwIT+
+        yd87mDjvH6NbVVMe31nY2biFDaYWlYe5MtZ4UXg=
+X-Google-Smtp-Source: AFSGD/W8m/mTj+Z2+xThS1ZKQ0kfzdMViJoUqAGwuDlMkI2sHByObGh55CqHJngMp7zDSQhqv75GmO8K6TmpoK5QvGI=
+X-Received: by 2002:a24:c601:: with SMTP id j1mr4374045itg.130.1543913437922;
+ Tue, 04 Dec 2018 00:50:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
-Content-Disposition: inline
-In-Reply-To: <20181203213223.16986-31-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-5-git-send-email-pawell@cadence.com> <5BF7E5E8.3090406@ti.com>
+In-Reply-To: <5BF7E5E8.3090406@ti.com>
+From:   Peter Chen <hzpeterchen@gmail.com>
+Date:   Tue, 4 Dec 2018 16:50:25 +0800
+Message-ID: <CAL411-rWc23fbP0Ny9Kfdpe9ESUSVt5X00G1uFjJf+rj-2jWzg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/15] usb:cdns3: Driver initialization code.
+To:     rogerq@ti.com
+Cc:     pawell@cadence.com, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        adouglas@cadence.com, jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com,
+        sureshp@cadence.com, peter.chen@nxp.com, pjez@cadence.com,
+        kurahul@cadence.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> > + * Cadence USBSS DRD Driver.
+> > + *
+> > + * Copyright (C) 2018 Cadence.
+> > + *
+> > + * Author: Peter Chen <peter.chen@nxp.com>
+> > + *         Pawel Laszczak <pawell@cadence.com>
+> > + */
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/io.h>
+> > +#include <linux/pm_runtime.h>
+> > +
+> > +#include "gadget.h"
+> > +#include "core.h"
+> > +
+> > +static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
+> > +{
+> > +     WARN_ON(cdns->role >= CDNS3_ROLE_END || !cdns->roles[cdns->role]);
+> > +     return cdns->roles[cdns->role];
+> > +}
+> > +
+> > +static inline int cdns3_role_start(struct cdns3 *cdns, enum cdns3_roles role)
+> > +{
+> > +     int ret;
+> > +
+> > +     if (role >= CDNS3_ROLE_END)
+>
+> WARN_ON()?
+>
+> > +             return 0;
+> > +
+> > +     if (!cdns->roles[role])
+> > +             return -ENXIO;
+> > +
+> > +     mutex_lock(&cdns->mutex);
+> > +     cdns->role = role;
+> > +     ret = cdns->roles[role]->start(cdns);
+> > +     mutex_unlock(&cdns->mutex);
+> > +     return ret;
+> > +}
+> > +
+> > +static inline void cdns3_role_stop(struct cdns3 *cdns)
+> > +{
+> > +     enum cdns3_roles role = cdns->role;
+> > +
+> > +     if (role == CDNS3_ROLE_END)
+>
+> WARN_ON(role >= CNDS3_ROLE_END) ?
+>
+> > +             return;
+> > +
+> > +     mutex_lock(&cdns->mutex);
+> > +     cdns->roles[role]->stop(cdns);
+> > +     cdns->role = CDNS3_ROLE_END;
+>
+> Why change the role here? You are just stopping the role not changing it.
+> I think cdns->role should remain unchanged, so we can call cdns3_role_start()
+> if required without error.
+>
 
---aM3YZ0Iwxop3KEKx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The current version of this IP has some issues to detect vbus status correctly,
+we have to force vbus status accordingly, so we need a status to indicate
+vbus disconnection, and add some code to let controller know vbus
+removal, in that case, the controller's state machine can be correct.
+So, we increase one role 'CDNS3_ROLE_END' to for this purpose.
 
-On Mon, Dec 03, 2018 at 03:32:19PM -0600, Rob Herring wrote:
-> Convert Tegra SoC bindings to DT schema format using json-schema.
->=20
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/arm/tegra.txt         |  65 -----------
->  .../devicetree/bindings/arm/tegra.yaml        | 101 ++++++++++++++++++
->  2 files changed, 101 insertions(+), 65 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentat=
-ion/devicetree/bindings/arm/tegra.txt
-> deleted file mode 100644
-> index c59b15f64346..000000000000
-> --- a/Documentation/devicetree/bindings/arm/tegra.txt
-> +++ /dev/null
-> @@ -1,65 +0,0 @@
-> -NVIDIA Tegra device tree bindings
-> --------------------------------------------
-> -
-> -SoCs
-> --------------------------------------------
-> -
-> -Each device tree must specify which Tegra SoC it uses, using one of the
-> -following compatible values:
-> -
-> -  nvidia,tegra20
-> -  nvidia,tegra30
-> -  nvidia,tegra114
-> -  nvidia,tegra124
-> -  nvidia,tegra132
-> -  nvidia,tegra210
-> -  nvidia,tegra186
-> -  nvidia,tegra194
-> -
-> -Boards
-> --------------------------------------------
-> -
-> -Each device tree must specify which one or more of the following
-> -board-specific compatible values:
-> -
-> -  ad,medcom-wide
-> -  ad,plutux
-> -  ad,tamonten
-> -  ad,tec
-> -  compal,paz00
-> -  compulab,trimslice
-> -  nvidia,beaver
-> -  nvidia,cardhu
-> -  nvidia,cardhu-a02
-> -  nvidia,cardhu-a04
-> -  nvidia,dalmore
-> -  nvidia,harmony
-> -  nvidia,jetson-tk1
-> -  nvidia,norrin
-> -  nvidia,p2371-0000
-> -  nvidia,p2371-2180
-> -  nvidia,p2571
-> -  nvidia,p2771-0000
-> -  nvidia,p2972-0000
-> -  nvidia,roth
-> -  nvidia,seaboard
-> -  nvidia,tn7
-> -  nvidia,ventana
-> -  toradex,apalis_t30
-> -  toradex,apalis_t30-eval
-> -  toradex,apalis_t30-v1.1
-> -  toradex,apalis_t30-v1.1-eval
-> -  toradex,apalis-tk1
-> -  toradex,apalis-tk1-eval
-> -  toradex,apalis-tk1-v1.2
-> -  toradex,apalis-tk1-v1.2-eval
-> -  toradex,colibri_t20
-> -  toradex,colibri_t20-eval-v3
-> -  toradex,colibri_t20-iris
-> -  toradex,colibri_t30
-> -  toradex,colibri_t30-eval-v3
-> -
-> -Trusted Foundations
-> --------------------------------------------
-> -Tegra supports the Trusted Foundation secure monitor. See the
-> -"tlm,trusted-foundations" binding's documentation for more details.
-> diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documenta=
-tion/devicetree/bindings/arm/tegra.yaml
-> new file mode 100644
-> index 000000000000..66493892ffc1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-> @@ -0,0 +1,101 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/tegra.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+CDNS3_ROLE_GADGET: gadget mode and VBUS on
+CDNS3_ROLE_HOST: host mode and VBUS on
+CDNS3_ROLE_END: VBUS off, eg either host or device cable on the port.
 
-Could you explain what these are? They give 404, so I assume they are
-more like placeholders and not actually used?
+So, we may start role from CDNS3_ROLE_END at probe when nothing is connected,
+and need to set role as CDNS3_ROLE_END at ->stop for further handling at
+role switch routine.
 
-> +
-> +title: NVIDIA Tegra device tree bindings
-> +
-> +maintainers:
-> +  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> +  - Peter De Schrijver <pdeschrijver@nvidia.com>
+> > +     mutex_unlock(&cdns->mutex);
+> > +}
+> > +
+> > +static enum cdns3_roles cdns3_get_role(struct cdns3 *cdns)
+> > +{
+> > +     if (cdns->roles[CDNS3_ROLE_HOST] && cdns->roles[CDNS3_ROLE_GADGET]) {
+> > +             //TODO: implements selecting device/host mode
+> > +             return CDNS3_ROLE_HOST;
+> > +     }
+> > +     return cdns->roles[CDNS3_ROLE_HOST]
+> > +             ? CDNS3_ROLE_HOST
+> > +             : CDNS3_ROLE_GADGET;
+>
+> Why not just
+>         return cdns->role;
+>
+> I'm wondering if we really need this function.
 
-Not sure how you got that list, but probably from git history. I think
-it makes sense to replace Marcel and Peter with Jon and myself.
+cdns->role gets from cdns3_get_role, and this API tells role at the runtime.
+If both roles are supported, the role is decided by external
+conditions, eg, vbus/id
+or external connector. If only single role is supported, only one role structure
+is allocated, cdns->roles[CDNS3_ROLE_HOST] or cdns->roles[CDNS3_ROLE_GADGET]
 
-Other than that, looks fine to me. Some of the enumerations below look
-somewhat hard to parse, but I suspect that it will become second nature
-in no time.
+> > +}
+>
+> > +
+> > +/**
+> > + * cdns3_core_init_role - initialize role of operation
+> > + * @cdns: Pointer to cdns3 structure
+> > + *
+> > + * Returns 0 on success otherwise negative errno
+> > + */
+> > +static int cdns3_core_init_role(struct cdns3 *cdns)
+> > +{
+> > +     struct device *dev = cdns->dev;
+> > +     enum usb_dr_mode dr_mode;
+> > +
+> > +     dr_mode = usb_get_dr_mode(dev);
+> > +     cdns->role = CDNS3_ROLE_END;
+> > +
+> > +     /*
+> > +      * If driver can't read mode by means of usb_get_dr_mdoe function then
+> > +      * chooses mode according with Kernel configuration. This setting
+> > +      * can be restricted later depending on strap pin configuration.
+> > +      */
+> > +     if (dr_mode == USB_DR_MODE_UNKNOWN) {
+> > +             if (IS_ENABLED(CONFIG_USB_CDNS3_HOST) &&
+> > +                 IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+> > +                     dr_mode = USB_DR_MODE_OTG;
+> > +             else if (IS_ENABLED(CONFIG_USB_CDNS3_HOST))
+> > +                     dr_mode = USB_DR_MODE_HOST;
+> > +             else if (IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+> > +                     dr_mode = USB_DR_MODE_PERIPHERAL;
+> > +     }
+> > +
+> > +     if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
+> > +             //TODO: implements host initialization
+>
+>                 /* TODO: Add host role */ ?
+>
+> > +     }
+> > +
+> > +     if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
+> > +             //TODO: implements device initialization
+>
+>                 /* TODO: Add device role */ ?
+>
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Yes, it needs to allocate cdns->roles[CDNS3_ROLE_HOST] and
+cdns->roles[CDNS3_ROLE_GADGET].
 
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - compal,paz00
-> +              - compulab,trimslice
-> +              - nvidia,harmony
-> +              - nvidia,seaboard
-> +              - nvidia,ventana
-> +          - const: nvidia,tegra20
-> +      - items:
-> +          - enum:
-> +              - ad,medcom-wide
-> +              - ad,plutux
-> +              - ad,tec
-> +          - const: ad,tamonten
-> +          - const: nvidia,tegra20
-> +      - items:
-> +          - enum:
-> +              - toradex,colibri_t20-eval-v3
-> +              - toradex,colibri_t20-iris
-> +          - const: toradex,colibri_t20
-> +          - const: nvidia,tegra20
-> +      - items:
-> +          - enum:
-> +              - nvidia,beaver
-> +          - const: nvidia,tegra30
-> +      - items:
-> +          - enum:
-> +              - nvidia,cardhu-a02
-> +              - nvidia,cardhu-a04
-> +          - const: nvidia,cardhu
-> +          - const: nvidia,tegra30
-> +      - items:
-> +          - const: toradex,apalis_t30-eval
-> +          - const: toradex,apalis_t30
-> +          - const: nvidia,tegra30
-> +      - items:
-> +          - const: toradex,apalis_t30-eval-v1.1
-> +          - const: toradex,apalis_t30-eval
-> +          - const: toradex,apalis_t30-v1.1
-> +          - const: toradex,apalis_t30
-> +          - const: nvidia,tegra30
-> +      - items:
-> +          - enum:
-> +              - toradex,colibri_t30-eval-v3
-> +          - const: toradex,colibri_t30
-> +          - const: nvidia,tegra30
-> +      - items:
-> +          - enum:
-> +              - nvidia,dalmore
-> +              - nvidia,roth
-> +              - nvidia,tn7
-> +          - const: nvidia,tegra114
-> +      - items:
-> +          - enum:
-> +              - nvidia,jetson-tk1
-> +              - nvidia,venice2
-> +          - const: nvidia,tegra124
-> +      - items:
-> +          - const: toradex,apalis-tk1-eval
-> +          - const: toradex,apalis-tk1
-> +          - const: nvidia,tegra124
-> +      - items:
-> +          - const: toradex,apalis-tk1-v1.2-eval
-> +          - const: toradex,apalis-tk1-eval
-> +          - const: toradex,apalis-tk1-v1.2
-> +          - const: toradex,apalis-tk1
-> +          - const: nvidia,tegra124
-> +      - items:
-> +          - enum:
-> +              - nvidia,norrin
-> +          - const: nvidia,tegra132
-> +          - const: nvidia,tegra124
-> +      - items:
-> +          - enum:
-> +              - nvidia,p2371-0000
-> +              - nvidia,p2371-2180
-> +              - nvidia,p2571
-> +          - const: nvidia,tegra210
-> +      - items:
-> +          - enum:
-> +              - nvidia,p2771-0000
-> +          - const: nvidia,tegra186
-> +      - items:
-> +          - enum:
-> +              - nvidia,p2972-0000
-> +          - const: nvidia,tegra194
-> --=20
-> 2.19.1
->=20
+> > +     }
+> > +
+> > +     if (!cdns->roles[CDNS3_ROLE_HOST] && !cdns->roles[CDNS3_ROLE_GADGET]) {
+> > +             dev_err(dev, "no supported roles\n");
+> > +             return -ENODEV;
+> > +     }
+> > +
+> > +     cdns->dr_mode = dr_mode;
 
---aM3YZ0Iwxop3KEKx
-Content-Type: application/pgp-signature; name="signature.asc"
+Pawel, why dr_mode needs to be introduced?
 
------BEGIN PGP SIGNATURE-----
+> > +     return 0;
+> > +}
+> > +
+> > +/**
+> > + * cdns3_irq - interrupt handler for cdns3 core device
+> > + *
+> > + * @irq: irq number for cdns3 core device
+> > + * @data: structure of cdns3
+> > + *
+> > + * Returns IRQ_HANDLED or IRQ_NONE
+> > + */
+> > +static irqreturn_t cdns3_irq(int irq, void *data)
+> > +{
+> > +     struct cdns3 *cdns = data;
+> > +     irqreturn_t ret = IRQ_NONE;
+> > +
+> > +     /* Handle device/host interrupt */
+> > +     if (cdns->role != CDNS3_ROLE_END)
+>
+> Is it because of this that you need to set role to END at role_stop?
+> I think it is better to add a state variable to struct cdns3_role_driver, so we can
+> check if it is active or stopped.
+>
+> e.g.
+>         if (cdns3_get_current_role_driver(cdns)->state == CDNS3_ROLE_STATE_ACTIVE)
+>
+> > +             ret = cdns3_get_current_role_driver(cdns)->irq(cdns);
+> > +
+> > +     return ret;
+> > +}
+> > +
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwGP80ACgkQ3SOs138+
-s6F1lBAAqWmjjJqzXAlRqT/zeIxORQ/tP15oBBfsyT07n9XQ3qEnuR4sq0B24TBl
-l63/fZ+81/lpv8Ile8LcnKIJs0ojIbSqo4RhDks0NkOID8+LhFRBQ6TlMAonqN99
-VvtBXYCQTFWs0tk7qyz7/Nj5rsrJgpkKnKmmlRL+g0+tjz4IgrJWFkt4IJcJ9C8h
-FWXB67whBSkXxeXR2GPY/6tYoAzgJWo2f6YxeRbXKZNaLV+cx3nUSrp60zIvRjgn
-qdd3Hxj9OkIQ2vybA6+QPEz5AVsR+IhK4rcMj99gYswPykQ1xsc0r+L9iBn/9XwF
-pwQZI2Bq/axHmqx6w2xW76tE78Dkb8K/t2N1J00ygr+z+Y4DTYtSkwvp1F18gSbK
-FZQX1ymsc9qbA9MzBJGgLJ63szn5nIOFIb4wuP+fLYjbwj5MFO07oe5ArB0du2H1
-Ciy1BLTTu5aqCXgTRnk24vE4pl1KaZNKdBwaNdhdrNQNAHDK30caNlqxrF5i7HGi
-WFjlJr0M/Hf6duGWU0FBGtNLKaEPtVxHggjMeQV28gLm93Rw0P2yeqOcBquRgCfp
-mEfmzvKLreReUfkH0Z58U9YESrsnM8FHn7HEJg736hTHjrzTmpSlOpWGy5KahXIz
-cikPOjKsTP01LJEJ6/2D31XkAOGD55md3v8n38tI2LxxurUapD4=
-=MF5A
------END PGP SIGNATURE-----
+ CDNS3_ROLE_END is introduced from above comments, we don't
+need another flag for it.
+If cdns->role == CDNS3_ROLE_END, it handles VBUS and ID interrupt.
 
---aM3YZ0Iwxop3KEKx--
+> > +static void cdns3_remove_roles(struct cdns3 *cdns)
+>
+> Should this be called cdns3_exit_roles() to be opposite of cdns3_init_roles()?
+>
+
+It is planed to called when at ->remove.
+> > +{
+> > +     //TODO: implements this function
+> > +}
+>
+> > +
+> > +static int cdns3_do_role_switch(struct cdns3 *cdns, enum cdns3_roles role)
+> > +{
+> > +     enum cdns3_roles current_role;
+> > +     int ret = 0;
+> > +
+> > +     current_role = cdns->role;
+> > +
+> > +     if (role == CDNS3_ROLE_END)
+> > +             return 0;
+>
+> role == END looks like error state. and it should never happen.
+> WARN here?
+>
+
+See my comments above.
+
+> > +
+> > +     dev_dbg(cdns->dev, "Switching role");
+> > +
+>
+> Don't you have to stop the previous role before starting the new role?
+>
+
+Yes, it is needed. Pawel may simply some flows to suit his platform.
+
+> > +     ret = cdns3_role_start(cdns, role);
+> > +     if (ret) {
+> > +             /* Back to current role */
+> > +             dev_err(cdns->dev, "set %d has failed, back to %d\n",
+> > +                     role, current_role);
+> > +             ret = cdns3_role_start(cdns, current_role);
+> > +     }
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +/**
+> > + * cdns3_role_switch - work queue handler for role switch
+> > + *
+> > + * @work: work queue item structure
+> > + *
+> > + * Handles below events:
+> > + * - Role switch for dual-role devices
+> > + * - CDNS3_ROLE_GADGET <--> CDNS3_ROLE_END for peripheral-only devices
+> > + */
+> > +static void cdns3_role_switch(struct work_struct *work)
+> > +{
+> > +     enum cdns3_roles role = CDNS3_ROLE_END;
+> > +     struct cdns3 *cdns;
+> > +     bool device, host;
+> > +
+> > +     cdns = container_of(work, struct cdns3, role_switch_wq);
+> > +
+> > +     //TODO: implements this functions.
+> > +     //host = cdns3_is_host(cdns);
+> > +     //device = cdns3_is_device(cdns);
+> > +     host = 1;
+> > +     device = 0;
+> > +
+> > +     if (host)
+> > +             role = CDNS3_ROLE_HOST;
+> > +     else if (device)
+> > +             role = CDNS3_ROLE_GADGET;
+> > +
+> > +     if (cdns->desired_dr_mode == cdns->current_dr_mode &&
+> > +         cdns->role == role)
+> > +             return;
+> > +
+>
+> I think all the below code can be moved to cdns3_do_role_switch().
+>
+> > +     pm_runtime_get_sync(cdns->dev);
+> > +     cdns3_role_stop(cdns);
+> > +
+> > +     if (host) {
+> > +             if (cdns->roles[CDNS3_ROLE_HOST])
+> > +                     cdns3_do_role_switch(cdns, CDNS3_ROLE_HOST);
+> > +             pm_runtime_put_sync(cdns->dev);
+> > +             return;
+> > +     }
+> > +
+> > +     if (device)
+> > +             cdns3_do_role_switch(cdns, CDNS3_ROLE_GADGET);
+> > +     else
+> > +             cdns3_do_role_switch(cdns, CDNS3_ROLE_END);
+> > +
+> > +     pm_runtime_put_sync(cdns->dev);
+> > +}
+> > +
+> > +/**
+> > + * cdns3_probe - probe for cdns3 core device
+> > + * @pdev: Pointer to cdns3 core platform device
+> > + *
+> > + * Returns 0 on success otherwise negative errno
+> > + */
+> > +static int cdns3_probe(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev = &pdev->dev;
+> > +     struct resource *res;
+> > +     struct cdns3 *cdns;
+> > +     void __iomem *regs;
+> > +     int ret;
+> > +
+> > +     cdns = devm_kzalloc(dev, sizeof(*cdns), GFP_KERNEL);
+> > +     if (!cdns)
+> > +             return -ENOMEM;
+> > +
+> > +     cdns->dev = dev;
+> > +
+> > +     platform_set_drvdata(pdev, cdns);
+> > +
+> > +     res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> > +     if (!res) {
+> > +             dev_err(dev, "missing IRQ\n");
+> > +             return -ENODEV;
+> > +     }
+> > +     cdns->irq = res->start;
+> > +
+> > +     /*
+> > +      * Request memory region
+> > +      * region-0: xHCI
+> > +      * region-1: Peripheral
+> > +      * region-2: OTG registers
+> > +      */
+>
+> The memory region order is different from the dt-binding.
+> There it is OTG, host(xhci), device (peripheral).
+>
+> > +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +     regs = devm_ioremap_resource(dev, res);
+> > +
+> > +     if (IS_ERR(regs))
+> > +             return PTR_ERR(regs);
+> > +     cdns->xhci_regs = regs;
+> > +     cdns->xhci_res = res;
+> > +
+> > +     res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> > +     regs = devm_ioremap_resource(dev, res);
+> > +     if (IS_ERR(regs))
+> > +             return PTR_ERR(regs);
+> > +     cdns->dev_regs  = regs;
+> > +
+> > +     res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> > +     regs = devm_ioremap_resource(dev, res);
+> > +     if (IS_ERR(regs))
+> > +             return PTR_ERR(regs);
+> > +     cdns->otg_regs = regs;
+> > +
+> > +     mutex_init(&cdns->mutex);
+> > +
+> > +     cdns->phy = devm_phy_get(dev, "cdns3,usbphy");
+>
+> "cdns3,usbphy" is not documented in dt-binding.
+>
+> > +     if (IS_ERR(cdns->phy)) {
+> > +             dev_info(dev, "no generic phy found\n");
+> > +             cdns->phy = NULL;
+> > +             /*
+> > +              * fall through here!
+> > +              * if no generic phy found, phy init
+> > +              * should be done under boot!
+> > +              */
+>
+> No you shouldn't fall through always if it is an error condition.
+> Something like this should work better.
+>
+>         if (IS_ERR(cnds->phy)) {
+>                 ret = PTR_ERR(cdns->phy);
+>                 if (ret == -ENOSYS || ret == -ENODEV) {
+>                         cdns->phy = NULL;
+>                 } else if (ret == -EPROBE_DEFER) {
+>                         return ret;
+>                 } else {
+>                         dev_err(dev, "no phy found\n");
+>                         goto err0;
+>                 }
+>         }
+>
+> So if PHY was provided in DT, and PHY support/drivers is present
+> and error condition means something is wrong and we have to error out.
+>
+> > +     } else {
+> > +             phy_init(cdns->phy);
+> > +     }
+>
+> You can do phy_init() outside the else.
+>
+> > +
+> > +     ret = cdns3_core_init_role(cdns);
+> > +     if (ret)
+> > +             goto err1;
+> > +
+> > +     INIT_WORK(&cdns->role_switch_wq, cdns3_role_switch);
+> > +     if (ret)
+> > +             goto err2;
+> > +
+> > +     if (ret)
+> > +             goto err2;
+> > +
+> > +     cdns->role = cdns3_get_role(cdns);
+>
+> I think this should move to cdns3_core_init_role().
+>
+
+I agree.
+
+> > +
+> > +     ret = devm_request_irq(dev, cdns->irq, cdns3_irq, IRQF_SHARED,
+> > +                            dev_name(dev), cdns);
+> > +
+> > +     if (ret)
+> > +             goto err2;
+>
+> How about moving request_irq to before cdsn3_core_init_role()?
+>
+> Then you can move cdns3_role_start() as well to core_init_role().
+>
+
+Usually, we request irq after hardware initialization has finished, if not,
+there may unexpected interrupt.
+
+Peter
+
+> > +
+> > +     ret = cdns3_role_start(cdns, cdns->role);
+> > +     if (ret) {
+> > +             dev_err(dev, "can't start %s role\n",
+> > +                     cdns3_get_current_role_driver(cdns)->name);
+> > +             goto err2;
+> > +     }
+> > +
+> > +     device_set_wakeup_capable(dev, true);
+> > +     pm_runtime_set_active(dev);
+> > +     pm_runtime_enable(dev);
+> > +
+> > +     /*
+> > +      * The controller needs less time between bus and controller suspend,
+> > +      * and we also needs a small delay to avoid frequently entering low
+> > +      * power mode.
+> > +      */
+> > +     pm_runtime_set_autosuspend_delay(dev, 20);
+> > +     pm_runtime_mark_last_busy(dev);
+> > +     pm_runtime_use_autosuspend(dev);
+> > +     dev_dbg(dev, "Cadence USB3 core: probe succeed\n");
+> > +
+> > +     return 0;
+> > +
+> > +err2:
+> > +     cdns3_remove_roles(cdns);
+> > +err1:
+>
+> phy_exit() ?
+>
+> > +     return ret;
+> > +}
+> > +
+> > +/**
+> > + * cdns3_remove - unbind drd driver and clean up
+> > + * @pdev: Pointer to Linux platform device
+> > + *
+> > + * Returns 0 on success otherwise negative errno
+> > + */
+> > +static int cdns3_remove(struct platform_device *pdev)
+> > +{
+> > +     struct cdns3 *cdns = platform_get_drvdata(pdev);
+> > +
+> > +     pm_runtime_get_sync(&pdev->dev);
+> > +     pm_runtime_disable(&pdev->dev);
+> > +     pm_runtime_put_noidle(&pdev->dev);
+> > +     cdns3_remove_roles(cdns);
+>
+> phy_exit() ?
+>
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id of_cdns3_match[] = {
+> > +     { .compatible = "cdns,usb3" },
+> > +     { },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, of_cdns3_match);
+> > +#endif
+> > +
+> > +#ifdef CONFIG_PM
+> > +
+> > +#ifdef CONFIG_PM_SLEEP
+> > +static int cdns3_suspend(struct device *dev)
+> > +{
+> > +     //TODO: implements this function
+> > +     return 0;
+> > +}
+> > +
+> > +static int cdns3_resume(struct device *dev)
+> > +{
+> > +     //TODO: implements this function
+> > +     return 0;
+> > +}
+> > +#endif /* CONFIG_PM_SLEEP */
+> > +static int cdns3_runtime_suspend(struct device *dev)
+> > +{    //TODO: implements this function
+> > +     return 0;
+> > +}
+> > +
+> > +static int cdns3_runtime_resume(struct device *dev)
+> > +{
+> > +     //TODO: implements this function
+> > +     return 0;
+> > +}
+> > +#endif /* CONFIG_PM */
+> > +
+> > +static const struct dev_pm_ops cdns3_pm_ops = {
+> > +     SET_SYSTEM_SLEEP_PM_OPS(cdns3_suspend, cdns3_resume)
+> > +     SET_RUNTIME_PM_OPS(cdns3_runtime_suspend, cdns3_runtime_resume, NULL)
+> > +};
+> > +
+> > +static struct platform_driver cdns3_driver = {
+> > +     .probe          = cdns3_probe,
+> > +     .remove         = cdns3_remove,
+> > +     .driver         = {
+> > +             .name   = "cdns-usb3",
+> > +             .of_match_table = of_match_ptr(of_cdns3_match),
+> > +             .pm     = &cdns3_pm_ops,
+> > +     },
+> > +};
+> > +
+> > +static int __init cdns3_driver_platform_register(void)
+> > +{
+> > +     return platform_driver_register(&cdns3_driver);
+> > +}
+> > +module_init(cdns3_driver_platform_register);
+> > +
+> > +static void __exit cdns3_driver_platform_unregister(void)
+> > +{
+> > +     platform_driver_unregister(&cdns3_driver);
+> > +}
+> > +module_exit(cdns3_driver_platform_unregister);
+> > +
+> > +MODULE_ALIAS("platform:cdns3");
+> > +MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_DESCRIPTION("Cadence USB3 DRD Controller Driver");
+> > diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
+> > new file mode 100644
+> > index 000000000000..7c8204fe4d3d
+> > --- /dev/null
+> > +++ b/drivers/usb/cdns3/core.h
+> > @@ -0,0 +1,100 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Cadence USBSS DRD Driver.
+> > + *
+> > + * Copyright (C) 2017 NXP
+> > + * Copyright (C) 2018 Cadence.
+> > + *
+> > + * Authors: Peter Chen <peter.chen@nxp.com>
+> > + *          Pawel Laszczak <pawell@cadence.com>
+> > + */
+> > +#include <linux/usb/otg.h>
+> > +
+> > +#ifndef __LINUX_CDNS3_CORE_H
+> > +#define __LINUX_CDNS3_CORE_H
+> > +
+> > +struct cdns3;
+> > +enum cdns3_roles {
+> > +     CDNS3_ROLE_HOST = 0,
+> > +     CDNS3_ROLE_GADGET,
+> > +     CDNS3_ROLE_END,
+> > +};
+> > +
+> > +/**
+> > + * struct cdns3_role_driver - host/gadget role driver
+> > + * @start: start this role
+> > + * @stop: stop this role
+> > + * @suspend: suspend callback for this role
+> > + * @resume: resume callback for this role
+> > + * @irq: irq handler for this role
+> > + * @name: role name string (host/gadget)
+> > + */
+> > +struct cdns3_role_driver {
+> > +     int (*start)(struct cdns3 *cdns);
+> > +     void (*stop)(struct cdns3 *cdns);
+> > +     int (*suspend)(struct cdns3 *cdns, bool do_wakeup);
+> > +     int (*resume)(struct cdns3 *cdns, bool hibernated);
+> > +     irqreturn_t (*irq)(struct cdns3 *cdns);
+> > +     const char *name;
+> > +};
+> > +
+> > +#define CDNS3_NUM_OF_CLKS    5
+> > +/**
+> > + * struct cdns3 - Representation of Cadence USB3 DRD controller.
+> > + * @dev: pointer to Cadence device struct
+> > + * @xhci_regs: pointer to base of xhci registers
+> > + * @xhci_res: the resource for xhci
+> > + * @dev_regs: pointer to base of dev registers
+> > + * @otg_regs: pointer to base of otg registers
+> > + * @irq: irq number for controller
+> > + * @roles: array of supported roles for this controller
+> > + * @role: current role
+> > + * @host_dev: the child host device pointer for cdns3 core
+> > + * @gadget_dev: the child gadget device pointer for cdns3 core
+> > + * @usb: phy for this controller
+> > + * @role_switch_wq: work queue item for role switch
+> > + * @in_lpm: the controller in low power mode
+> > + * @wakeup_int: the wakeup interrupt
+> > + * @mutex: the mutex for concurrent code at driver
+> > + * @dr_mode: supported mode of operation it can be only Host, only Device
+> > + *           or OTG mode that allow to switch between Device and Host mode.
+> > + *           This field based on hardware configuration and cant't be changed.
+>
+> But dr_mode can be forced in device-tree. So it isn't really only hardware configuration.
+>
+> > + * @current_dr_role: current mode of operation when in dual-role mode
+> > + * @desired_dr_role: desired mode of operation when in dual-role mode.
+> > + *           This value can be changed during runtime.
+> > + *           Available options depends on  dr_mode:
+> > + *           dr_mode                 |  desired_dr_role and current_dr_role
+> > + *           ----------------------------------------------------------------
+> > + *           USB_DR_MODE_HOST        | only USB_DR_MODE_HOST
+> > + *           USB_DR_MODE_PERIPHERAL  | only USB_DR_MODE_PERIPHERAL
+> > + *           USB_DR_MODE_OTG         | only USB_DR_MODE_HOST
+> > + *           USB_DR_MODE_OTG         | only USB_DR_MODE_PERIPHERAL
+> > + *           USB_DR_MODE_OTG         | USB_DR_MODE_OTG
+>
+> Do you need to update the right hand side to reflect ROLEs instead of MODE?
+>
+> > + *
+> > + *           Desired_dr_role can be changed by means of debugfs.
+> > + * @root: debugfs root folder pointer
+> > + */
+> > +struct cdns3 {
+> > +     struct device                   *dev;
+> > +     void __iomem                    *xhci_regs;
+> > +     struct resource                 *xhci_res;
+> > +     struct cdns3_usb_regs __iomem   *dev_regs;
+> > +     struct cdns3_otg_regs           *otg_regs;
+> > +     int irq;
+> > +     struct cdns3_role_driver        *roles[CDNS3_ROLE_END];
+> > +     enum cdns3_roles                role;
+> > +     struct device                   *host_dev;
+> > +     struct device                   *gadget_dev;
+> > +     struct phy                      *phy;
+> > +     struct work_struct              role_switch_wq;
+> > +     int                             in_lpm:1;
+> > +     int                             wakeup_int:1;
+> > +     /* mutext used in workqueue*/
+> > +     struct mutex                    mutex;
+> > +     enum usb_dr_mode                dr_mode;
+> > +     enum usb_dr_mode                current_dr_mode;
+> > +     enum usb_dr_mode                desired_dr_mode;
+> > +     struct dentry                   *root;
+> > +};
+> > +
+> > +#endif /* __LINUX_CDNS3_CORE_H */
+> >
+>
+> cheers,
+> -roger
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
