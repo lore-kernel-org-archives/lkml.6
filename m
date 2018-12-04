@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA259C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8D8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 862FA20672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862FA20672
+	by mail.kernel.org (Postfix) with ESMTP id 1052020672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1052020672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbeLDSg5 (ORCPT
+        id S1727360AbeLDShJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:36:57 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:42196 "EHLO
+        Tue, 4 Dec 2018 13:37:09 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:38364 "EHLO
         mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbeLDSgR (ORCPT
+        with ESMTP id S1726172AbeLDSgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:36:17 -0500
-Received: by mail-yw1-f65.google.com with SMTP id x2so7389242ywc.9;
-        Tue, 04 Dec 2018 10:36:16 -0800 (PST)
+        Tue, 4 Dec 2018 13:36:14 -0500
+Received: by mail-yw1-f65.google.com with SMTP id i20so7397717ywc.5;
+        Tue, 04 Dec 2018 10:36:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GpKKsX6cKhxXuFDSCK8CzHfLCYdBqcCVVk9oe3i81ZI=;
-        b=WajcnQyNXdCosDSZVWr9Q9npgIAfcw90vWD3BIEuXEkOi9Va4zauZbC9aicLCG/c9I
-         5IqS+QGzd0NRr5xVJDs1LPpJ4ceK9pui9dPHOOQHm3DVHfLYcje9rYD8JeQjdGsf5YmC
-         FnngW8AvJRwkX/taXjXUaX0trn9YM0MBHuWmHaimj5UiU70Y68BdCqk5zr9Z/inIPgIb
-         sDo+CMNidlD68p3r1Ouol0HYwcpKVaLodFAqTIbYnUbOywKtuJp5yP7BmwQePAe1E3U8
-         PxErZUUNqy8VhINZhK/qCQg2dXNaAmE97MTj+PIOa73Q1FjmerNUu7WuOLupBlCM8wG8
-         62eA==
-X-Gm-Message-State: AA+aEWYNEgPcZLGxUdQ53fk/477MBvGM8b14/5GoY6I3RBSnKqcC4mhA
-        r27ahM2Bb2NejnaCkT+3j9E=
-X-Google-Smtp-Source: AFSGD/WqS/IJaNCIO7rR3vEw1K1Wn1pCmVl5YoD4U8Xn2D4mljKrGLdmexZVz1xYg7kwIkPTN6m/kA==
-X-Received: by 2002:a81:3683:: with SMTP id d125mr21319530ywa.263.1543948576082;
-        Tue, 04 Dec 2018 10:36:16 -0800 (PST)
+        bh=53HkgHIonCsBbl+KaKXgiPeGBiiH+FYvGL0HERKygRA=;
+        b=sdkgAMww+e+vK1jHGLXGAxsLa0ed28uz9NRJ9gbI32dXMp+8w9Pb1NPPRa2ZBWDW2K
+         o20sJheqc36C0bJKAyjImDYDOLcgmqdqbV1Caaczrsl9L+68hJ6ik3lpU2woAjvZe7hj
+         RMUKjUrQ6/iwdnLfrmMuScaj9wSaZYmLNTAwS8PX7fM3Zzvb/GuiWu0k1LqtfRat0/Ml
+         s2NDSrBYEM1GUH4nTL5viTPE/z4qns6Ye29zpKKtX1vVPP4QhWvxDa24KYpBD8cLAZ4j
+         weEYtaWkqCdIgfF1ks7Jg1dWNm/0S5brb4O46i9GgvFDdAFVoZyNaGKILg8oxgPn2v2z
+         yybg==
+X-Gm-Message-State: AA+aEWZVZOQjtNwAn/YnK8mZ9TPWkkaflghkenR3I+QNYou5ubQ4gc2Z
+        tlXBWOdeoP+Vp0xVWX9ZBco=
+X-Google-Smtp-Source: AFSGD/VO5RbOhERrZXfMZrK60Bx/OJ9P0zk4GOyk/IiFNO2qE0/w8yJZEGl5jmoQSC2khOsHJONQSg==
+X-Received: by 2002:a81:34d3:: with SMTP id b202mr21172248ywa.241.1543948573346;
+        Tue, 04 Dec 2018 10:36:13 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id x82sm4274798ywb.34.2018.12.04.10.36.14
+        by smtp.gmail.com with ESMTPSA id x82sm4274798ywb.34.2018.12.04.10.36.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Dec 2018 10:36:15 -0800 (PST)
+        Tue, 04 Dec 2018 10:36:12 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -52,9 +52,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 09/14] blkcg: associate writeback bios with a blkg
-Date:   Tue,  4 Dec 2018 13:35:55 -0500
-Message-Id: <20181204183600.99746-10-dennis@kernel.org>
+Subject: [PATCH 07/14] blkcg: consolidate bio_issue_init() to be a part of core
+Date:   Tue,  4 Dec 2018 13:35:53 -0500
+Message-Id: <20181204183600.99746-8-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20181204183600.99746-1-dennis@kernel.org>
 References: <20181204183600.99746-1-dennis@kernel.org>
@@ -63,171 +63,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the goals of this series is to remove a separate reference to
-the css of the bio. This can and should be accessed via bio_blkcg(). In
-this patch, wbc_init_bio() now requires a bio to have a device
-associated with it.
+bio_issue_init among other things initializes the timestamp for an IO.
+Rather than have this logic handled by policies, this consolidates it to
+be on the init paths (normal, clone, bounce clone).
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Acked-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst |  8 +++++---
- block/bio.c                             | 18 ++++++++++++++++++
- fs/buffer.c                             | 10 +++++-----
- fs/ext4/page-io.c                       |  2 +-
- include/linux/bio.h                     |  5 +++++
- include/linux/writeback.h               |  5 +++--
- 6 files changed, 37 insertions(+), 11 deletions(-)
+ block/bio.c                | 1 +
+ block/blk-iolatency.c      | 2 --
+ block/blk-throttle.c       | 8 --------
+ block/bounce.c             | 1 +
+ include/linux/blk-cgroup.h | 9 +++++++++
+ 5 files changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 476722b7b636..baf19bf28385 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1879,8 +1879,10 @@ following two functions.
- 
-   wbc_init_bio(@wbc, @bio)
- 	Should be called for each bio carrying writeback data and
--	associates the bio with the inode's owner cgroup.  Can be
--	called anytime between bio allocation and submission.
-+	associates the bio with the inode's owner cgroup and the
-+	corresponding request queue.  This must be called after
-+	a queue (device) has been associated with the bio and
-+	before submission.
- 
-   wbc_account_io(@wbc, @page, @bytes)
- 	Should be called for each data segment being written out.
-@@ -1899,7 +1901,7 @@ the configuration, the bio may be executed at a lower priority and if
- the writeback session is holding shared resources, e.g. a journal
- entry, may lead to priority inversion.  There is no one easy solution
- for the problem.  Filesystems can try to work around specific problem
--cases by skipping wbc_init_bio() or using bio_associate_blkcg()
-+cases by skipping wbc_init_bio() and using bio_associate_blkg()
- directly.
- 
- 
 diff --git a/block/bio.c b/block/bio.c
-index f0f069c1823c..b42477b6a225 100644
+index 1e852ab904aa..90089124b512 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -2034,6 +2034,24 @@ static void __bio_associate_blkg_from_css(struct bio *bio,
- 	rcu_read_unlock();
+@@ -611,6 +611,7 @@ void __bio_clone_fast(struct bio *bio, struct bio *bio_src)
+ 	bio->bi_io_vec = bio_src->bi_io_vec;
+ 
+ 	bio_clone_blkcg_association(bio, bio_src);
++	blkcg_bio_issue_init(bio);
  }
+ EXPORT_SYMBOL(__bio_clone_fast);
  
-+/**
-+ * bio_associate_blkg_from_css - associate a bio with a specified css
-+ * @bio: target bio
-+ * @css: target css
-+ *
-+ * Associate @bio with the blkg found by combining the css's blkg and the
-+ * request_queue of the @bio.  This takes a reference on the css that will
-+ * be put upon freeing of @bio.
-+ */
-+void bio_associate_blkg_from_css(struct bio *bio,
-+				 struct cgroup_subsys_state *css)
-+{
-+	css_get(css);
-+	bio->bi_css = css;
-+	__bio_associate_blkg_from_css(bio, css);
-+}
-+EXPORT_SYMBOL_GPL(bio_associate_blkg_from_css);
-+
- #ifdef CONFIG_MEMCG
- /**
-  * bio_associate_blkg_from_page - associate a bio with the page's blkg
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1286c2b95498..d60d61e8ed7d 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3060,11 +3060,6 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
- 	 */
- 	bio = bio_alloc(GFP_NOIO, 1);
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index e6b47c255521..5a79f06a730d 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -478,8 +478,6 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
+ 	if (!blk_iolatency_enabled(blkiolat))
+ 		return;
  
--	if (wbc) {
--		wbc_init_bio(wbc, bio);
--		wbc_account_io(wbc, bh->b_page, bh->b_size);
--	}
+-	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
 -
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_write_hint = write_hint;
-@@ -3084,6 +3079,11 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
- 		op_flags |= REQ_PRIO;
- 	bio_set_op_attrs(bio, op, op_flags);
- 
-+	if (wbc) {
-+		wbc_init_bio(wbc, bio);
-+		wbc_account_io(wbc, bh->b_page, bh->b_size);
-+	}
-+
- 	submit_bio(bio);
- 	return 0;
+ 	while (blkg && blkg->parent) {
+ 		struct iolatency_grp *iolat = blkg_to_lat(blkg);
+ 		if (!iolat) {
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 1c6529df2002..1b97a73d2fb1 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -2115,13 +2115,6 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
  }
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index db7590178dfc..2aa62d58d8dd 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -374,13 +374,13 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
- 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
- 	if (!bio)
- 		return -ENOMEM;
--	wbc_init_bio(io->io_wbc, bio);
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_end_io = ext4_end_bio;
- 	bio->bi_private = ext4_get_io_end(io->io_end);
- 	io->io_bio = bio;
- 	io->io_next_block = bh->b_blocknr;
-+	wbc_init_bio(io->io_wbc, bio);
- 	return 0;
- }
+ #endif
  
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index f13572c254a7..f0438061a5a3 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -515,6 +515,8 @@ static inline void bio_associate_blkg_from_page(struct bio *bio,
- int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
- void bio_disassociate_blkg(struct bio *bio);
- void bio_associate_blkg(struct bio *bio);
-+void bio_associate_blkg_from_css(struct bio *bio,
-+				 struct cgroup_subsys_state *css);
- void bio_disassociate_task(struct bio *bio);
- void bio_clone_blkcg_association(struct bio *dst, struct bio *src);
- #else	/* CONFIG_BLK_CGROUP */
-@@ -522,6 +524,9 @@ static inline int bio_associate_blkcg(struct bio *bio,
- 			struct cgroup_subsys_state *blkcg_css) { return 0; }
- static inline void bio_disassociate_blkg(struct bio *bio) { }
- static inline void bio_associate_blkg(struct bio *bio) { }
-+static inline void bio_associate_blkg_from_css(struct bio *bio,
-+					       struct cgroup_subsys_state *css)
-+{ }
- static inline void bio_disassociate_task(struct bio *bio) { }
- static inline void bio_clone_blkcg_association(struct bio *dst,
- 			struct bio *src) { }
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index fdfd04e348f6..738a0c24874f 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -246,7 +246,8 @@ static inline void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
-  *
-  * @bio is a part of the writeback in progress controlled by @wbc.  Perform
-  * writeback specific initialization.  This is used to apply the cgroup
-- * writeback context.
-+ * writeback context.  Must be called after the bio has been associated with
-+ * a device.
-  */
- static inline void wbc_init_bio(struct writeback_control *wbc, struct bio *bio)
+-static void blk_throtl_assoc_bio(struct bio *bio)
+-{
+-#ifdef CONFIG_BLK_DEV_THROTTLING_LOW
+-	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
+-#endif
+-}
+-
+ bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg,
+ 		    struct bio *bio)
  {
-@@ -257,7 +258,7 @@ static inline void wbc_init_bio(struct writeback_control *wbc, struct bio *bio)
- 	 * regular writeback instead of writing things out itself.
- 	 */
- 	if (wbc->wb)
--		bio_associate_blkcg(bio, wbc->wb->blkcg_css);
-+		bio_associate_blkg_from_css(bio, wbc->wb->blkcg_css);
+@@ -2142,7 +2135,6 @@ bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg,
+ 
+ 	throtl_update_latency_buckets(td);
+ 
+-	blk_throtl_assoc_bio(bio);
+ 	blk_throtl_update_idletime(tg);
+ 
+ 	sq = &tg->service_queue;
+diff --git a/block/bounce.c b/block/bounce.c
+index 559c55bda040..cfb96d5170d0 100644
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@ -278,6 +278,7 @@ static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
+ 	}
+ 
+ 	bio_clone_blkcg_association(bio, bio_src);
++	blkcg_bio_issue_init(bio);
+ 
+ 	return bio;
+ }
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 3c87ae71156f..5cca4ffcdae5 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -799,6 +799,12 @@ static inline bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg
+ 				  struct bio *bio) { return false; }
+ #endif
+ 
++
++static inline void blkcg_bio_issue_init(struct bio *bio)
++{
++	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
++}
++
+ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 					 struct bio *bio)
+ {
+@@ -824,6 +830,8 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 		blkg_rwstat_add(&blkg->stat_ios, bio->bi_opf, 1);
+ 	}
+ 
++	blkcg_bio_issue_init(bio);
++
+ 	return !throtl;
  }
  
- #else	/* CONFIG_CGROUP_WRITEBACK */
+@@ -929,6 +937,7 @@ static inline char *blkg_path(struct blkcg_gq *blkg) { return NULL; }
+ static inline void blkg_get(struct blkcg_gq *blkg) { }
+ static inline void blkg_put(struct blkcg_gq *blkg) { }
+ 
++static inline void blkcg_bio_issue_init(struct bio *bio) { }
+ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 					 struct bio *bio) { return true; }
+ 
 -- 
 2.17.1
 
