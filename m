@@ -2,148 +2,148 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274B2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED586C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68EF2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:50:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68EF2082B
+	by mail.kernel.org (Postfix) with ESMTP id B890A20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:51:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B890A20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbeLDVui (ORCPT
+        id S1726298AbeLDVvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:50:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33568 "EHLO mx1.redhat.com"
+        Tue, 4 Dec 2018 16:51:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35664 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbeLDVui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:50:38 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726078AbeLDVvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:51:50 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7527CC0740F2;
-        Tue,  4 Dec 2018 21:50:37 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D18B55D786;
-        Tue,  4 Dec 2018 21:50:35 +0000 (UTC)
-Subject: Re: [PATCH v2 21/24] locking/lockdep: Verify whether lock objects are
- small enough to be used as class keys
-To:     Bart Van Assche <bvanassche@acm.org>, mingo@redhat.com
-Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>
-References: <20181204002833.55452-1-bvanassche@acm.org>
- <20181204002833.55452-22-bvanassche@acm.org>
- <8ae6bb3f-ab75-e6f2-adfa-8003366b7410@redhat.com>
- <1543959553.185366.213.camel@acm.org>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <0fbedd8d-6eec-051d-b2fd-5246dc47b477@redhat.com>
-Date:   Tue, 4 Dec 2018 16:50:35 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 1F3D9307DAB3;
+        Tue,  4 Dec 2018 21:51:50 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1C2AD5C237;
+        Tue,  4 Dec 2018 21:51:48 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 16:51:46 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+Message-ID: <20181204215146.GO2937@redhat.com>
+References: <20181204182421.GC2937@redhat.com>
+ <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
+ <20181204185725.GE2937@redhat.com>
+ <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
+ <20181204192221.GG2937@redhat.com>
+ <f759cc28-309d-930c-da7d-34144a4d5517@deltatee.com>
+ <20181204201347.GK2937@redhat.com>
+ <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
+ <20181204205902.GM2937@redhat.com>
+ <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <1543959553.185366.213.camel@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 04 Dec 2018 21:50:37 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 04 Dec 2018 21:51:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/04/2018 04:39 PM, Bart Van Assche wrote:
-> On Tue, 2018-12-04 at 16:08 -0500, Waiman Long wrote:
->> On 12/03/2018 07:28 PM, Bart Van Assche wrote:
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Waiman Long <longman@redhat.com>
->>> Cc: Johannes Berg <johannes@sipsolutions.net>
->>> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
->>> ---
->>>  kernel/locking/lockdep.c | 9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
->>> index c936fce5b9d7..b4772e5fc176 100644
->>> --- a/kernel/locking/lockdep.c
->>> +++ b/kernel/locking/lockdep.c
->>> @@ -727,6 +727,15 @@ static bool assign_lock_key(struct lockdep_map *lock)
->>>  {
->>>  	unsigned long can_addr, addr = (unsigned long)lock;
->>>  
->>> +	/*
->>> +	 * lockdep_free_key_range() assumes that struct lock_class_key
->>> +	 * objects do not overlap. Since we use the address of lock
->>> +	 * objects as class key for static objects, check whether the
->>> +	 * size of lock_class_key objects does not exceed the size of
->>> +	 * the smallest lock object.
->>> +	 */
->>> +	BUILD_BUG_ON(sizeof(struct lock_class_key) > sizeof(raw_spinlock_t));
->>> +
->>>  	if (__is_kernel_percpu_address(addr, &can_addr))
->>>  		lock->key = (void *)can_addr;
->>>  	else if (__is_module_percpu_address(addr, &can_addr))
->> I don't understand what this check is for. lock_class_key and spinlock
->> are different objects. Their relative size shouldn't matter.
-> Hi Waiman,
->
-> Peter asked me to add this check.
->
-> Bart.
+On Tue, Dec 04, 2018 at 02:19:09PM -0700, Logan Gunthorpe wrote:
+> 
+> 
+> On 2018-12-04 1:59 p.m., Jerome Glisse wrote:
+> > How to expose harmful memory to userspace then ? How can i expose
+> > non cache coherent memory because yes they are application out there
+> > that use that today and would like to be able to migrate to and from
+> > that memory dynamicly during lifetime of the application as the data
+> > set progress through the application processing pipeline.
+> 
+> I'm not arguing against the purpose or use cases. I'm being critical of
+> the API choices.
+> 
+> > Note that i do not expose things like physical address or even splits
+> > memory in a node into individual device, in fact in expose less
+> > information that the existing NUMA (no zone, phys index, ...). As i do
+> > not think those have any value to userspace. What matter to userspace
+> > is where is this memory is in my topology so i can look at all the
+> > initiators node that are close by. Or the reverse, i have a set of
+> > initiators what is the set of closest targets to all those initiators.
+> 
+> No, what matters to applications is getting memory that will work for
+> the initiators/resources they need it to work for. The specific topology
+> might be of interest to administrators but it is not what applications
+> need. And it should be relatively easy to flesh out the existing sysfs
+> device tree to provide the topology information administrators need.
 
-I haven't finished reviewing all your patches yet. Maybe one of the
-subsequent patches requires this. If that is the case, you should move
-this patch after that.
+Existing user would disagree in my cover letter i have given pointer
+to existing library and paper from HPC folks that do leverage system
+topology (among the few who are). So they are application _today_ that
+do use topology information to adapt their workload to maximize the
+performance for the platform they run on.
 
--Longman
+They are also some new platform that have much more complex topology
+that definitly can not be represented as a tree like today sysfs we
+have (i believe that even some of the HPC folks have _today_ topology
+that are not tree-like).
 
+So existing user + random graph topology becoming more commons lead
+me to the choice i made in this API. I believe a graph is someting
+that can easily be understood by people. I am not inventing some
+weird new data structure, it is just a graph and for the name i have
+use the ACPI naming convention but i am more than open to use memory
+for target and differentiate cpu and device instead of using initiator
+as a name. I do not have strong feeling on that. I do however would
+like to be able to represent any topology and be able to use device
+memory that is not manage by core mm for reasons i explained previously.
+
+Note that if it turn out to be a bad idea kernel can decide to dumb
+down thing in future version for new platform. So it could give a
+flat graph to userspace, there is nothing precluding that.
+
+
+> > I am talking about the inevitable fact that at some point some system
+> > firmware will miss-represent their platform. System firmware writer
+> > usualy copy and paste thing with little regards to what have change
+> > from one platform to the new. So their will be inevitable workaround
+> > and i would rather see those piling up inside a userspace library than
+> > inside the kernel.
+> 
+> It's *absolutely* the kernel's responsibility to patch issues caused by
+> broken firmware. We have quirks all over the place for this. That's
+> never something userspace should be responsible for. Really, this is the
+> raison d'etre of the kernel: to provide userspace with a uniform
+> execution environment -- if every application had to deal with broken
+> firmware it would be a nightmare.
+
+You cuted the other paragraph that explained why they will unlikely
+to be broken badly enough to break the kernel.
+
+Anyway we can fix the topology in kernel too ... that is fine with
+me.
+
+Cheers,
+Jérôme
