@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09208C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08D3C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC6BE2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB1D20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:18:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfnQgWeQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC6BE2146D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3RY5vky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB1D20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbeLDMSu (ORCPT
+        id S1726365AbeLDMSz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:18:50 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37394 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeLDMSr (ORCPT
+        Tue, 4 Dec 2018 07:18:55 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33596 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeLDMSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:18:47 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e5-v6so14715187lja.4;
-        Tue, 04 Dec 2018 04:18:44 -0800 (PST)
+        Tue, 4 Dec 2018 07:18:49 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so14708135ljd.0;
+        Tue, 04 Dec 2018 04:18:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=MKhXHv/I+suoXSvWY4nOkDQg0yGt8f18bNJLOYzoxHQ=;
-        b=gfnQgWeQffX3wVdRPVcjmboL00JGC8t7TbC+RAMpKpuzEMI+2s/f8LK1imQ05mYwT/
-         xcZLvzDYnNbaxT+JydGhBz58/N/6lbErp5QaiSfpLPs72sqz3Yv9UaHeyz2OlijZsumy
-         dm1JMso9OG00MasdYPVwBFor6ktklkuQlSzYutp2DuNYA8+DIrvg4WC7etgHnXvUAa4f
-         HopTED6G7o74rDwIPEvyW9qPC3D7wRyd9dNfxyDU2+8GU61BQNgpvnSDb+LfKXm0t1fJ
-         kYS+RDYeDQW48BCz2BseM+MmIUDB52S/kihoje7fOf4VxfTtqJQbN0PsbeGLxD4JKGWK
-         NFGw==
+        bh=WBnbM87FYiZB144WHH+WIErpqzF5ZNVsWJfotUGC/To=;
+        b=E3RY5vkybSvPTIG8UuGMwEVOwkUplL0AFDj1MN9T0ROLaaMBhx3o6sL9qiBqK8cDpF
+         lHokL4Goz61X1sMwWX2rqe8g+i/xkU80XCiz6Keo5mY+N2QwkuztsW8I1TLYVZ36cJL0
+         cH3fN77tAZGhRIwFjGT/udN/UU2XaH/2piLYSuFcG9+mF0rVBDyJkSqRWN10wU0RGVLp
+         g/U3CKeZCh+PdGUKf8B7AMY64oqIvcBkpDi5JA5HxCI6tSjMn8oOG8MbP/CCJI23fOqP
+         OzTixarbLeKA4neW+891Bwfc31u1LhGzMb0feY22cbNyFQTUMEWbsqO2Kl8cBZC+/vvy
+         QAYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=MKhXHv/I+suoXSvWY4nOkDQg0yGt8f18bNJLOYzoxHQ=;
-        b=TTewxZUdbU43jWMSyZouwq1UyQiAaiMSbBfkAvdGNRFOcr/IjL54K9+U0S8pJ7mXon
-         ivHXMeR9FUZDQ/iMRNlIyThY/c3gMSzaiei8wg/YKu+4ujNl6Cm0lfu9jMz3+O/Vl4S2
-         6CX5dXzBtVHp+ztY7Qg8y5K2ghpu9XI9MEzkG1GbIt+p6MSZdDvF/bes1QpIubWBFD28
-         eEV2T+BroIHLBusqIwa+h4CbIt2zClonWZ1NzI+HIWyzxv1LoS2VVmvFEpku7gkWd4Ra
-         tyCCyLZ92RxCLOZJ4thDB0hO4nmBBqvVeGBjI8bvDQ6CRD532+gPyRYMjdzf//T5omGg
-         RhkA==
-X-Gm-Message-State: AA+aEWZaWCkCRc+A0CYNeiqhbac/abgL+A1JRW2B7GFRpEUCLRspFktX
-        X6/oQQ//MhljsPTla6M++mi37B4ps84=
-X-Google-Smtp-Source: AFSGD/X5Ld4X34L6vNoHWDuvQhMxb5FqI8KA/+UtlMLx0Bgb9exvu91YMLJ7FP/CibfWnxue3VJ6fA==
-X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr12920743ljs.118.1543925922527;
-        Tue, 04 Dec 2018 04:18:42 -0800 (PST)
+        bh=WBnbM87FYiZB144WHH+WIErpqzF5ZNVsWJfotUGC/To=;
+        b=tt48kyoff7pEIyg4FEPYKGDQ2vzW3/6CTRYpTsS7iSN2waDsDBTyPYo/TXSMOqflko
+         jtJFZi+yQuinUrstRazjnDM83Walk//lomVvw8xeVNsfbHUH0zotgm1yWV8FdMkdrSSg
+         vOJJIAKeGCST4belywHEMuvPuCGRu6UcaS9YtlWfBKK1xWJ7OMVaMk9hKpuEjdS0V5KH
+         /31zHs7Iz9Hhd+pXn2WZBF8UG4l3V30dbAAFy50hGe6Qgp1VcWA8a2YKvwTnCJjmLbkx
+         cnIgm47W/TGBcMFyIPzNWTbS0hLMnJMpgwsKGzOyI1WT6k4/jx+ScjIE/F7YaAAth6/2
+         Fihg==
+X-Gm-Message-State: AA+aEWYdSqZYoLzYIxye2nGkXoKy1hfffX63GJBL30MqJeGTtxlSKSsH
+        bEJQXpDvDjpjk6u93qTxehA=
+X-Google-Smtp-Source: AFSGD/Uz5k3knHQnWYcPn5vvfo8l7N0tmCpAv9nXtZVRKiyo8X/OPZgpu0935A98/eCYHI1LGa7rXQ==
+X-Received: by 2002:a2e:9957:: with SMTP id r23-v6mr12190962ljj.98.1543925925285;
+        Tue, 04 Dec 2018 04:18:45 -0800 (PST)
 Received: from localhost.localdomain (91-156-179-117.elisa-laajakaista.fi. [91.156.179.117])
-        by smtp.gmail.com with ESMTPSA id h3sm2899653lfj.25.2018.12.04.04.18.41
+        by smtp.gmail.com with ESMTPSA id h3sm2899653lfj.25.2018.12.04.04.18.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 04:18:41 -0800 (PST)
+        Tue, 04 Dec 2018 04:18:44 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -71,9 +71,9 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] __wr_after_init: write rare for static allocation
-Date:   Tue,  4 Dec 2018 14:18:01 +0200
-Message-Id: <20181204121805.4621-3-igor.stoppa@huawei.com>
+Subject: [PATCH 4/6] rodata_test: add verification for __wr_after_init
+Date:   Tue,  4 Dec 2018 14:18:03 +0200
+Message-Id: <20181204121805.4621-5-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181204121805.4621-1-igor.stoppa@huawei.com>
 References: <20181204121805.4621-1-igor.stoppa@huawei.com>
@@ -85,27 +85,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implementation of write rare for statically allocated data, located in a
-specific memory section through the use of the __write_rare label.
-
-The basic functions are:
-- wr_memset(): write rare counterpart of memset()
-- wr_memcpy(): write rare counterpart of memcpy()
-- wr_assign(): write rare counterpart of the assignment ('=') operator
-- wr_rcu_assign_pointer(): write rare counterpart of rcu_assign_pointer()
-
-The implementation is based on code from Andy Lutomirski and Nadav Amit
-for patching the text on x86 [here goes reference to commits, once merged]
-
-The modification of write protected data is done through an alternate
-mapping of the same pages, as writable.
-This mapping is local to each core and is active only for the duration
-of each write operation.
-Local interrupts are disabled, while the alternate mapping is active.
-
-In theory, it could introduce a non-predictable delay, in a preemptible
-system, however the amount of data to be altered is likely to be far
-smaller than a page.
+The write protection of the __wr_after_init data can be verified with the
+same methodology used for const data.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -120,331 +101,44 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- include/linux/prmem.h | 133 ++++++++++++++++++++++++++++++++++++++++++
- init/main.c           |   2 +
- mm/Kconfig            |   4 ++
- mm/Makefile           |   1 +
- mm/prmem.c            | 124 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 264 insertions(+)
- create mode 100644 include/linux/prmem.h
- create mode 100644 mm/prmem.c
+ mm/rodata_test.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/prmem.h b/include/linux/prmem.h
-new file mode 100644
-index 000000000000..b0131c1f5dc0
---- /dev/null
-+++ b/include/linux/prmem.h
-@@ -0,0 +1,133 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+index 3c1e515ca9b1..a98d088ad9cc 100644
+--- a/mm/rodata_test.c
++++ b/mm/rodata_test.c
+@@ -16,7 +16,19 @@
+ 
+ #define INIT_TEST_VAL 0xC3
+ 
 +/*
-+ * prmem.h: Header for memory protection library
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ *
-+ * Support for:
-+ * - statically allocated write rare data
++ * Note: __ro_after_init data is, for every practical effect, equivalent to
++ * const data, since they are even write protected at the same time; there
++ * is no need for separate testing.
++ * __wr_after_init data, otoh, is altered also after the write protection
++ * takes place and it cannot be exploitable for altering more permanent
++ * data.
 + */
 +
-+#ifndef _LINUX_PRMEM_H
-+#define _LINUX_PRMEM_H
-+
-+#include <linux/set_memory.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/mutex.h>
-+#include <linux/compiler.h>
-+#include <linux/irqflags.h>
-+
-+/**
-+ * memtst() - test n bytes of the source to match the c value
-+ * @p: beginning of the memory to test
-+ * @c: byte to compare against
-+ * @len: amount of bytes to test
-+ *
-+ * Returns 0 on success, non-zero otherwise.
-+ */
-+static inline int memtst(void *p, int c, __kernel_size_t len)
-+{
-+	__kernel_size_t i;
-+
-+	for (i = 0; i < len; i++) {
-+		u8 d =  *(i + (u8 *)p) - (u8)c;
-+
-+		if (unlikely(d))
-+			return d;
-+	}
-+	return 0;
-+}
-+
-+
-+#ifndef CONFIG_PRMEM
-+
-+static inline void *wr_memset(void *p, int c, __kernel_size_t len)
-+{
-+	return memset(p, c, len);
-+}
-+
-+static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
-+{
-+	return memcpy(p, q, size);
-+}
-+
-+#define wr_assign(var, val)	((var) = (val))
-+
-+#define wr_rcu_assign_pointer(p, v)	\
-+	rcu_assign_pointer(p, v)
-+
-+#else
-+
-+enum wr_op_type {
-+	WR_MEMCPY,
-+	WR_MEMSET,
-+	WR_RCU_ASSIGN_PTR,
-+	WR_OPS_NUMBER,
-+};
-+
-+void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
-+	      enum wr_op_type op);
-+
-+/**
-+ * wr_memset() - sets n bytes of the destination to the c value
-+ * @p: beginning of the memory to write to
-+ * @c: byte to replicate
-+ * @len: amount of bytes to copy
-+ *
-+ * Returns true on success, false otherwise.
-+ */
-+static inline void *wr_memset(void *p, int c, __kernel_size_t len)
-+{
-+	return __wr_op((unsigned long)p, (unsigned long)c, len, WR_MEMSET);
-+}
-+
-+/**
-+ * wr_memcpy() - copyes n bytes from source to destination
-+ * @dst: beginning of the memory to write to
-+ * @src: beginning of the memory to read from
-+ * @n_bytes: amount of bytes to copy
-+ *
-+ * Returns pointer to the destination
-+ */
-+static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
-+{
-+	return __wr_op((unsigned long)p, (unsigned long)q, size, WR_MEMCPY);
-+}
-+
-+/**
-+ * wr_assign() - sets a write-rare variable to a specified value
-+ * @var: the variable to set
-+ * @val: the new value
-+ *
-+ * Returns: the variable
-+ *
-+ * Note: it might be possible to optimize this, to use wr_memset in some
-+ * cases (maybe with NULL?).
-+ */
-+
-+#define wr_assign(var, val) ({			\
-+	typeof(var) tmp = (typeof(var))val;	\
-+						\
-+	wr_memcpy(&var, &tmp, sizeof(var));	\
-+	var;					\
-+})
-+
-+/**
-+ * wr_rcu_assign_pointer() - initialize a pointer in rcu mode
-+ * @p: the rcu pointer
-+ * @v: the new value
-+ *
-+ * Returns the value assigned to the rcu pointer.
-+ *
-+ * It is provided as macro, to match rcu_assign_pointer()
-+ */
-+#define wr_rcu_assign_pointer(p, v) ({					\
-+	__wr_op((unsigned long)&p, v, sizeof(p), WR_RCU_ASSIGN_PTR);	\
-+	p;								\
-+})
-+#endif
-+#endif
-diff --git a/init/main.c b/init/main.c
-index a461150adfb1..a36f2e54f937 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -498,6 +498,7 @@ void __init __weak thread_stack_cache_init(void)
- void __init __weak mem_encrypt_init(void) { }
- 
- void __init __weak poking_init(void) { }
-+void __init __weak wr_poking_init(void) { }
- 
- bool initcall_debug;
- core_param(initcall_debug, initcall_debug, bool, 0644);
-@@ -734,6 +735,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	delayacct_init();
- 
- 	poking_init();
-+	wr_poking_init();
- 	check_bugs();
- 
- 	acpi_subsystem_init();
-diff --git a/mm/Kconfig b/mm/Kconfig
-index d85e39da47ae..9b09339c027f 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -142,6 +142,10 @@ config ARCH_DISCARD_MEMBLOCK
- config MEMORY_ISOLATION
- 	bool
- 
-+config PRMEM
-+	def_bool n
-+	depends on STRICT_KERNEL_RWX && X86_64
-+
- #
- # Only be set on architectures that have completely implemented memory hotplug
- # feature. If you are not sure, don't touch it.
-diff --git a/mm/Makefile b/mm/Makefile
-index d210cc9d6f80..ef3867c16ce0 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -58,6 +58,7 @@ obj-$(CONFIG_SPARSEMEM)	+= sparse.o
- obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
- obj-$(CONFIG_SLOB) += slob.o
- obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
-+obj-$(CONFIG_PRMEM) += prmem.o
- obj-$(CONFIG_KSM) += ksm.o
- obj-$(CONFIG_PAGE_POISONING) += page_poison.o
- obj-$(CONFIG_SLAB) += slab.o
-diff --git a/mm/prmem.c b/mm/prmem.c
-new file mode 100644
-index 000000000000..e8ab76701831
---- /dev/null
-+++ b/mm/prmem.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * prmem.c: Memory Protection Library
-+ *
-+ * (C) Copyright 2017-2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ */
-+
-+#include <linux/mm.h>
-+#include <linux/string.h>
-+#include <linux/compiler.h>
-+#include <linux/slab.h>
-+#include <linux/mmu_context.h>
-+#include <linux/rcupdate.h>
-+#include <linux/prmem.h>
-+
-+static __ro_after_init bool wr_ready;
-+static __ro_after_init struct mm_struct *wr_poking_mm;
-+static __ro_after_init unsigned long wr_poking_base;
-+
-+/*
-+ * The following two variables are statically allocated by the linker
-+ * script at the the boundaries of the memory region (rounded up to
-+ * multiples of PAGE_SIZE) reserved for __wr_after_init.
-+ */
+ static const int rodata_test_data = INIT_TEST_VAL;
++static int wr_after_init_test_data __wr_after_init = INIT_TEST_VAL;
 +extern long __start_wr_after_init;
 +extern long __end_wr_after_init;
-+
-+static inline bool is_wr_after_init(unsigned long ptr, __kernel_size_t size)
-+{
-+	unsigned long start = (unsigned long)&__start_wr_after_init;
-+	unsigned long end = (unsigned long)&__end_wr_after_init;
-+	unsigned long low = ptr;
-+	unsigned long high = ptr + size;
-+
-+	return likely(start <= low && low <= high && high <= end);
-+}
-+
-+
-+void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
-+	      enum wr_op_type op)
-+{
-+	temporary_mm_state_t prev;
-+	unsigned long flags;
-+	unsigned long offset;
-+	unsigned long wr_poking_addr;
-+
-+	/* Confirm that the writable mapping exists. */
-+	BUG_ON(!wr_ready);
-+
-+	if (WARN_ONCE(op >= WR_OPS_NUMBER, "Invalid WR operation.") ||
-+	    WARN_ONCE(!is_wr_after_init(dst, len), "Invalid WR range."))
-+		return (void *)dst;
-+
-+	offset = dst - (unsigned long)&__start_wr_after_init;
-+	wr_poking_addr = wr_poking_base + offset;
-+	local_irq_save(flags);
-+	prev = use_temporary_mm(wr_poking_mm);
-+
-+	kasan_disable_current();
-+	if (op == WR_MEMCPY)
-+		memcpy((void *)wr_poking_addr, (void *)src, len);
-+	else if (op == WR_MEMSET)
-+		memset((u8 *)wr_poking_addr, (u8)src, len);
-+	else if (op == WR_RCU_ASSIGN_PTR)
-+		/* generic version of rcu_assign_pointer */
-+		smp_store_release((void **)wr_poking_addr,
-+				  RCU_INITIALIZER((void **)src));
-+	kasan_enable_current();
-+
-+	barrier(); /* XXX redundant? */
-+
-+	unuse_temporary_mm(prev);
-+	/* XXX make the verification optional? */
-+	if (op == WR_MEMCPY)
-+		BUG_ON(memcmp((void *)dst, (void *)src, len));
-+	else if (op == WR_MEMSET)
-+		BUG_ON(memtst((void *)dst, (u8)src, len));
-+	else if (op == WR_RCU_ASSIGN_PTR)
-+		BUG_ON(*(unsigned long *)dst != src);
-+	local_irq_restore(flags);
-+	return (void *)dst;
-+}
-+
-+struct mm_struct *copy_init_mm(void);
-+void __init wr_poking_init(void)
-+{
-+	unsigned long start = (unsigned long)&__start_wr_after_init;
-+	unsigned long end = (unsigned long)&__end_wr_after_init;
-+	unsigned long i;
-+	unsigned long wr_range;
-+
-+	wr_poking_mm = copy_init_mm();
-+	BUG_ON(!wr_poking_mm);
-+
-+	/* XXX What if it's too large to fit in the task unmapped mem? */
-+	wr_range = round_up(end - start, PAGE_SIZE);
-+
-+	/* Randomize the poking address base*/
-+	wr_poking_base = TASK_UNMAPPED_BASE +
-+		(kaslr_get_random_long("Write Rare Poking") & PAGE_MASK) %
-+		(TASK_SIZE - (TASK_UNMAPPED_BASE + wr_range));
-+
-+	/* Create alternate mapping for the entire wr_after_init range. */
-+	for (i = start; i < end; i += PAGE_SIZE) {
-+		struct page *page;
-+		spinlock_t *ptl;
-+		pte_t pte;
-+		pte_t *ptep;
-+		unsigned long wr_poking_addr;
-+
-+		BUG_ON(!(page = virt_to_page(i)));
-+		wr_poking_addr = i - start + wr_poking_base;
-+
-+		/* The lock is not needed, but avoids open-coding. */
-+		ptep = get_locked_pte(wr_poking_mm, wr_poking_addr, &ptl);
-+		VM_BUG_ON(!ptep);
-+
-+		pte = mk_pte(page, PAGE_KERNEL);
-+		set_pte_at(wr_poking_mm, wr_poking_addr, ptep, pte);
-+		spin_unlock(ptl);
-+	}
-+	wr_ready = true;
-+}
+ 
+ static bool test_data(char *data_type, const int *data,
+ 		      unsigned long start, unsigned long end)
+@@ -60,6 +72,9 @@ void rodata_test(void)
+ {
+ 	if (test_data("rodata", &rodata_test_data,
+ 		      (unsigned long)&__start_rodata,
+-		      (unsigned long)&__end_rodata))
++		      (unsigned long)&__end_rodata) &&
++	    test_data("wr after init data", &wr_after_init_test_data,
++		      (unsigned long)&__start_wr_after_init,
++		      (unsigned long)&__end_wr_after_init))
+ 		pr_info("all tests were successful\n");
+ }
 -- 
 2.19.1
 
