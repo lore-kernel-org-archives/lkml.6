@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B2CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935B5C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AFB12146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CB3D20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwj5gE4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFB12146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mns7qrmm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CB3D20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeLDLV3 (ORCPT
+        id S1727727AbeLDLC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:21:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49318 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbeLDLDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:03:03 -0500
+        id S1727709AbeLDLCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B29A7214DB;
-        Tue,  4 Dec 2018 11:03:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D19142146D;
+        Tue,  4 Dec 2018 11:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921382;
-        bh=8jd1hEzg0CE5ADqn7VzKNToGoPHtaUKy6BN4hj3VVQQ=;
+        s=default; t=1543921374;
+        bh=gZHJgQJw/Fz7T/8iXjhjZdm4DCrpmeZXSJR0gxlLBME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lwj5gE4JF4JUqL9BZLkc+6uO9Y1QQZP7lIgD+4s0YcwQgwYhu3CEf8sHhi7R3fn8l
-         S3BmWDKI3FhZpzU0BpbGt5w9t7elz0+QuYN7w3yPwkzYXoGexriUQMNbLYATw7Ft+0
-         Kc2GHeEOo2XyGmvC4LxZCc0U4gib/ocBUgVXDpEY=
+        b=Mns7qrmmZgXGRKdSE1vaCLmCRxoGmQeWGv8nPjt9fKLjbcvN3eAtKo80FDobN/Iji
+         U1ukYG8WxNSQmX9Zey3N0QsAd3MKqjoovOmR3prGvc6bHcW8l9vbhEMLHUVkSGhWUA
+         LaMvXp7ZxUsUSO9XqJWSJpqACkSh7g+6D0ZKbsLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Greg KH <greg@kroah.com>,
+        Silvio Cesare <silvio.cesare@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 049/146] f2fs: fix to do sanity check with secs_per_zone
-Date:   Tue,  4 Dec 2018 11:48:55 +0100
-Message-Id: <20181204103728.825917017@linuxfoundation.org>
+Subject: [PATCH 4.14 046/146] f2fs: enhance sanity_check_raw_super() to avoid potential overflow
+Date:   Tue,  4 Dec 2018 11:48:52 +0100
+Message-Id: <20181204103728.711411606@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,99 +67,180 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 42bf546c1fe3f3654bdf914e977acbc2b80a5be5 upstream.
+commit 0cfe75c5b011994651a4ca6d74f20aa997bfc69a upstream.
 
-As Wen Xu reported in below link:
+In order to avoid the below overflow issue, we should have checked the
+boundaries in superblock before reaching out to allocation. As Linus suggested,
+the right place should be sanity_check_raw_super().
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200183
+Dr Silvio Cesare of InfoSect reported:
 
-- Overview
-Divide zero in reset_curseg() when mounting a crafted f2fs image
+There are integer overflows with using the cp_payload superblock field in the
+f2fs filesystem potentially leading to memory corruption.
 
-- Reproduce
+include/linux/f2fs_fs.h
 
-- Kernel message
-[  588.281510] divide error: 0000 [#1] SMP KASAN PTI
-[  588.282701] CPU: 0 PID: 1293 Comm: mount Not tainted 4.18.0-rc1+ #4
-[  588.284000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  588.286178] RIP: 0010:reset_curseg+0x94/0x1a0
-[  588.298166] RSP: 0018:ffff8801e88d7940 EFLAGS: 00010246
-[  588.299360] RAX: 0000000000000014 RBX: ffff8801e1d46d00 RCX: ffffffffb88bf60b
-[  588.300809] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e1d46d64
-[  588.305272] R13: 0000000000000000 R14: 0000000000000014 R15: 0000000000000000
-[  588.306822] FS:  00007fad85008840(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
-[  588.308456] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  588.309623] CR2: 0000000001705078 CR3: 00000001f30f8000 CR4: 00000000000006f0
-[  588.311085] Call Trace:
-[  588.311637]  f2fs_build_segment_manager+0x103f/0x3410
-[  588.316136]  ? f2fs_commit_super+0x1b0/0x1b0
-[  588.317031]  ? set_blocksize+0x90/0x140
-[  588.319473]  f2fs_mount+0x15/0x20
-[  588.320166]  mount_fs+0x60/0x1a0
-[  588.320847]  ? alloc_vfsmnt+0x309/0x360
-[  588.321647]  vfs_kern_mount+0x6b/0x1a0
-[  588.322432]  do_mount+0x34a/0x18c0
-[  588.323175]  ? strndup_user+0x46/0x70
-[  588.323937]  ? copy_mount_string+0x20/0x20
-[  588.324793]  ? memcg_kmem_put_cache+0x1b/0xa0
-[  588.325702]  ? kasan_check_write+0x14/0x20
-[  588.326562]  ? _copy_from_user+0x6a/0x90
-[  588.327375]  ? memdup_user+0x42/0x60
-[  588.328118]  ksys_mount+0x83/0xd0
-[  588.328808]  __x64_sys_mount+0x67/0x80
-[  588.329607]  do_syscall_64+0x78/0x170
-[  588.330400]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  588.331461] RIP: 0033:0x7fad848e8b9a
-[  588.336022] RSP: 002b:00007ffd7c5b6be8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-[  588.337547] RAX: ffffffffffffffda RBX: 00000000016f8030 RCX: 00007fad848e8b9a
-[  588.338999] RDX: 00000000016f8210 RSI: 00000000016f9f30 RDI: 0000000001700ec0
-[  588.340442] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
-[  588.341887] R10: 00000000c0ed0000 R11: 0000000000000206 R12: 0000000001700ec0
-[  588.343341] R13: 00000000016f8210 R14: 0000000000000000 R15: 0000000000000003
-[  588.354891] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  588.355862] RIP: 0010:reset_curseg+0x94/0x1a0
-[  588.360742] RSP: 0018:ffff8801e88d7940 EFLAGS: 00010246
-[  588.361812] RAX: 0000000000000014 RBX: ffff8801e1d46d00 RCX: ffffffffb88bf60b
-[  588.363485] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e1d46d64
-[  588.365213] RBP: ffff8801e88d7968 R08: ffffed003c32266f R09: ffffed003c32266f
-[  588.366661] R10: 0000000000000001 R11: ffffed003c32266e R12: ffff8801f0337700
-[  588.368110] R13: 0000000000000000 R14: 0000000000000014 R15: 0000000000000000
-[  588.370057] FS:  00007fad85008840(0000) GS:ffff8801f6e00000(0000) knlGS:0000000000000000
-[  588.372099] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  588.373291] CR2: 0000000001705078 CR3: 00000001f30f8000 CR4: 00000000000006f0
+struct f2fs_super_block {
+...
+        __le32 cp_payload;
 
-- Location
-https://elixir.bootlin.com/linux/latest/source/fs/f2fs/segment.c#L2147
-        curseg->zone = GET_ZONE_FROM_SEG(sbi, curseg->segno);
+fs/f2fs/f2fs.h
 
-If secs_per_zone is corrupted due to fuzzing test, it will cause divide
-zero operation when using GET_ZONE_FROM_SEG macro, so we should do more
-sanity check with secs_per_zone during mount to avoid this issue.
+typedef u32 block_t;    /*
+                         * should not change u32, since it is the on-disk block
+                         * address format, __le32.
+                         */
+...
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+static inline block_t __cp_payload(struct f2fs_sb_info *sbi)
+{
+        return le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
+}
+
+fs/f2fs/checkpoint.c
+
+        block_t start_blk, orphan_blocks, i, j;
+...
+        start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
+        orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
+
++++ integer overflows
+
+...
+        unsigned int cp_blks = 1 + __cp_payload(sbi);
+...
+        sbi->ckpt = kzalloc(cp_blks * blk_size, GFP_KERNEL);
+
++++ integer overflow leading to incorrect heap allocation.
+
+        int cp_payload_blks = __cp_payload(sbi);
+...
+        ckpt->cp_pack_start_sum = cpu_to_le32(1 + cp_payload_blks +
+                        orphan_blocks);
+
++++ sign bug and integer overflow
+
+...
+        for (i = 1; i < 1 + cp_payload_blks; i++)
+
++++ integer overflow
+
+...
+
+      sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
+                        NR_CURSEG_TYPE - __cp_payload(sbi)) *
+                                F2FS_ORPHANS_PER_BLOCK;
+
++++ integer overflow
+
+Reported-by: Greg KH <greg@kroah.com>
+Reported-by: Silvio Cesare <silvio.cesare@gmail.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[bwh: Backported to 4.14: No hot file extension support]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c | 71 ++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 64 insertions(+), 7 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c3e1090e7c0a..084ff9c82a37 100644
+index 7cda685296b2..c3e1090e7c0a 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1904,9 +1904,9 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+@@ -1807,6 +1807,8 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
+ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 				struct buffer_head *bh)
+ {
++	block_t segment_count, segs_per_sec, secs_per_zone;
++	block_t total_sections, blocks_per_seg;
+ 	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
+ 					(bh->b_data + F2FS_SUPER_OFFSET);
+ 	struct super_block *sb = sbi->sb;
+@@ -1863,6 +1865,68 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
  		return 1;
  	}
  
--	if (secs_per_zone > total_sections) {
-+	if (secs_per_zone > total_sections || !secs_per_zone) {
- 		f2fs_msg(sb, KERN_INFO,
--			"Wrong secs_per_zone (%u > %u)",
-+			"Wrong secs_per_zone / total_sections (%u, %u)",
- 			secs_per_zone, total_sections);
++	segment_count = le32_to_cpu(raw_super->segment_count);
++	segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
++	secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
++	total_sections = le32_to_cpu(raw_super->section_count);
++
++	/* blocks_per_seg should be 512, given the above check */
++	blocks_per_seg = 1 << le32_to_cpu(raw_super->log_blocks_per_seg);
++
++	if (segment_count > F2FS_MAX_SEGMENT ||
++				segment_count < F2FS_MIN_SEGMENTS) {
++		f2fs_msg(sb, KERN_INFO,
++			"Invalid segment count (%u)",
++			segment_count);
++		return 1;
++	}
++
++	if (total_sections > segment_count ||
++			total_sections < F2FS_MIN_SEGMENTS ||
++			segs_per_sec > segment_count || !segs_per_sec) {
++		f2fs_msg(sb, KERN_INFO,
++			"Invalid segment/section count (%u, %u x %u)",
++			segment_count, total_sections, segs_per_sec);
++		return 1;
++	}
++
++	if ((segment_count / segs_per_sec) < total_sections) {
++		f2fs_msg(sb, KERN_INFO,
++			"Small segment_count (%u < %u * %u)",
++			segment_count, segs_per_sec, total_sections);
++		return 1;
++	}
++
++	if (segment_count > (le32_to_cpu(raw_super->block_count) >> 9)) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong segment_count / block_count (%u > %u)",
++			segment_count, le32_to_cpu(raw_super->block_count));
++		return 1;
++	}
++
++	if (secs_per_zone > total_sections) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong secs_per_zone (%u > %u)",
++			secs_per_zone, total_sections);
++		return 1;
++	}
++	if (le32_to_cpu(raw_super->extension_count) > F2FS_MAX_EXTENSION) {
++		f2fs_msg(sb, KERN_INFO,
++			"Corrupted extension count (%u > %u)",
++			le32_to_cpu(raw_super->extension_count),
++			F2FS_MAX_EXTENSION);
++		return 1;
++	}
++
++	if (le32_to_cpu(raw_super->cp_payload) >
++				(blocks_per_seg - F2FS_CP_PACKS)) {
++		f2fs_msg(sb, KERN_INFO,
++			"Insane cp_payload (%u > %u)",
++			le32_to_cpu(raw_super->cp_payload),
++			blocks_per_seg - F2FS_CP_PACKS);
++		return 1;
++	}
++
+ 	/* check reserved ino info */
+ 	if (le32_to_cpu(raw_super->node_ino) != 1 ||
+ 		le32_to_cpu(raw_super->meta_ino) != 2 ||
+@@ -1875,13 +1939,6 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
  		return 1;
  	}
+ 
+-	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
+-		f2fs_msg(sb, KERN_INFO,
+-			"Invalid segment count (%u)",
+-			le32_to_cpu(raw_super->segment_count));
+-		return 1;
+-	}
+-
+ 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+ 	if (sanity_check_area_boundary(sbi, bh))
+ 		return 1;
 -- 
 2.17.1
 
