@@ -2,157 +2,252 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0B3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3D0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDD02081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:54:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDD02081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C82D2064D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:56:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C82D2064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbeLDXyY (ORCPT
+        id S1726423AbeLDX4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 18:54:24 -0500
-Received: from mga03.intel.com ([134.134.136.65]:58657 "EHLO mga03.intel.com"
+        Tue, 4 Dec 2018 18:56:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37616 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbeLDXyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 18:54:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 15:54:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
-   d="scan'208";a="256842797"
-Received: from ray.jf.intel.com (HELO [10.7.201.141]) ([10.7.201.141])
-  by orsmga004.jf.intel.com with ESMTP; 04 Dec 2018 15:54:22 -0800
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-To:     jglisse@redhat.com, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        id S1725905AbeLDX4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 18:56:36 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D6C830014DF;
+        Tue,  4 Dec 2018 23:56:35 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6F7745D785;
+        Tue,  4 Dec 2018 23:56:32 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 18:56:30 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-References: <20181203233509.20671-1-jglisse@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
-Date:   Tue, 4 Dec 2018 15:54:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+Message-ID: <20181204235630.GQ2937@redhat.com>
+References: <20181204185725.GE2937@redhat.com>
+ <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
+ <20181204192221.GG2937@redhat.com>
+ <f759cc28-309d-930c-da7d-34144a4d5517@deltatee.com>
+ <20181204201347.GK2937@redhat.com>
+ <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
+ <20181204205902.GM2937@redhat.com>
+ <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
+ <20181204215146.GO2937@redhat.com>
+ <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <20181203233509.20671-1-jglisse@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 04 Dec 2018 23:56:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/18 3:34 PM, jglisse@redhat.com wrote:
-> This patchset use the above scheme to expose system topology through
-> sysfs under /sys/bus/hms/ with:
->     - /sys/bus/hms/devices/v%version-%id-target/ : a target memory,
->       each has a UID and you can usual value in that folder (node id,
->       size, ...)
+On Tue, Dec 04, 2018 at 03:16:54PM -0700, Logan Gunthorpe wrote:
 > 
->     - /sys/bus/hms/devices/v%version-%id-initiator/ : an initiator
->       (CPU or device), each has a HMS UID but also a CPU id for CPU
->       (which match CPU id in (/sys/bus/cpu/). For device you have a
->       path that can be PCIE BUS ID for instance)
 > 
->     - /sys/bus/hms/devices/v%version-%id-link : an link, each has a
->       UID and a file per property (bandwidth, latency, ...) you also
->       find a symlink to every target and initiator connected to that
->       link.
+> On 2018-12-04 2:51 p.m., Jerome Glisse wrote:
+> > Existing user would disagree in my cover letter i have given pointer
+> > to existing library and paper from HPC folks that do leverage system
+> > topology (among the few who are). So they are application _today_ that
+> > do use topology information to adapt their workload to maximize the
+> > performance for the platform they run on.
 > 
->     - /sys/bus/hms/devices/v%version-%id-bridge : a bridge, each has
->       a UID and a file per property (bandwidth, latency, ...) you
->       also find a symlink to all initiators that can use that bridge.
+> Well we need to give them what they actually need, not what they want to
+> shoot their foot with. And I imagine, much of what they actually do
+> right now belongs firmly in the kernel. Like I said, existing
+> applications are not justifications for bad API design or layering
+> violations.
 
-We support 1024 NUMA nodes on x86.  The ACPI HMAT expresses the
-connections between each node.  Let's suppose that each node has some
-CPUs and some memory.
+One example i have is 4 nodes (CPU socket) each nodes with 8 GPUs and
+two 8 GPUs node connected through each other with fast mesh (ie each
+GPU can peer to peer to each other at the same bandwidth). Then this
+2 blocks are connected to the other block through a share link.
 
-That means we'll have 1024 target directories in sysfs, 1024 initiator
-directories in sysfs, and 1024*1024 link directories.  Or, would the
-kernel be responsible for "compiling" the firmware-provided information
-down into a more manageable number of links?
+So it looks like:
+    SOCKET0----SOCKET1-----SOCKET2----SOCKET3
+    |          |           |          |
+    S0-GPU0====S1-GPU0     S2-GPU0====S1-GPU0
+    ||     \\//            ||     \\//
+    ||     //\\            ||     //\\
+    ...    ====...    -----...    ====...
+    ||     \\//            ||     \\//
+    ||     //\\            ||     //\\
+    S0-GPU7====S1-GPU7     S2-GPU7====S3-GPU7
 
-Some idiot made the mistake of having one sysfs directory per 128MB of
-memory way back when, and now we have hundreds of thousands of
-/sys/devices/system/memory/memoryX directories.  That sucks to manage.
-Isn't this potentially repeating that mistake?
+Application partition its workload in 2 ie allocate dataset twice
+for 16 group of GPU. Each of the 2 partitions is then further split
+in two for some of the buffer in the dataset but not all.
 
-Basically, is sysfs the right place to even expose this much data?
+So AFAICT they are using all the topology informations. They see
+that they are 4 group of GPU that in those 4 group, they are 2
+pair of group with better interconnect and then a share slower
+inter-connect between the 2 groups.
+
+From HMS point of view this looks like (ignoring CPU):
+link0: S0-GPU0 ... S0-GPU7
+link1: S1-GPU0 ... S1-GPU7
+link2: S2-GPU0 ... S2-GPU7
+link3: S3-GPU0 ... S3-GPU7
+
+link4: S0-GPU0 ... S0-GPU7 S1-GPU0 ... S1-GPU7
+link5: S2-GPU0 ... S2-GPU7 S3-GPU0 ... S3-GPU7
+
+link6: S0-GPU0 ... S0-GPU7 S1-GPU0 ... S1-GPU7
+       S2-GPU0 ... S2-GPU7 S3-GPU0 ... S3-GPU7
+
+Dumbing it more down and they loose information they want. On top
+of that there is also the NUMA CPU node (which is more symetric).
+
+I do not see how this can express in current sysfs we have but
+maybe there is a way to shoe horn it.
+
+I expect more complex topology to show up with a mix of different
+devices (like GPU and FPGA).
+
+> 
+> You've even mentioned we'd need a simplified "libhms" interface for
+> applications. We should really just figure out what that needs to be and
+> make that the kernel interface.
+
+No i said that a libhms for average application would totaly make
+sense to dumb thing down. I do not expect all application will use
+the full extent of the information. One simple reason, desktop,
+on desktop i don't expect the topology to grow too complex and
+thus all the desktop application will not care about it (your
+blender, libreoffice, ... which are using GPU today).
+
+But for people creating application that will run on big server,
+yes i expect some of them will use that information if only the
+existing people that already do use that information.
+
+
+> > They are also some new platform that have much more complex topology
+> > that definitly can not be represented as a tree like today sysfs we
+> > have (i believe that even some of the HPC folks have _today_ topology
+> > that are not tree-like).
+> 
+> The sysfs tree already allows for a complex graph that describes
+> existing hardware very well. If there is hardware it cannot describe
+> then we should work to improve it and not just carve off a whole new
+> area for a special API. -- In fact, you are already using sysfs, just
+> under your own virtual/non-existent bus.
+
+How the above example would looks like ? I fail to see how to do it
+inside current sysfs. Maybe by creating multiple virtual device for
+each of the inter-connect ? So something like
+
+link0 -> device:00 which itself has S0-GPU0 ... S0-GPU7 has child
+link1 -> device:01 which itself has S1-GPU0 ... S1-GPU7 has child
+link2 -> device:02 which itself has S2-GPU0 ... S2-GPU7 has child
+link3 -> device:03 which itself has S3-GPU0 ... S3-GPU7 has child
+
+Then for link4, link5 and link6 we would need symlink to the GPU
+device. So it sounds like creating virtual device for the sake of
+doing it in the existing framework. Then userspace would have to
+learn about this virtual device to identify them as node for the
+topology graph and would have to differentiate from non node
+device. This sounds much more complex to me.
+
+Also if doing node for those we would need to do CPU less and memory
+less NUMA node as the GPU memory is not usable by the CPU ... I am
+not sure we want to get there. If that's what people want fine but
+i personnaly don't think this is the right solution.
+
+
+> > Note that if it turn out to be a bad idea kernel can decide to dumb
+> > down thing in future version for new platform. So it could give a
+> > flat graph to userspace, there is nothing precluding that.
+> 
+> Uh... if it turns out to be a bad idea we are screwed because we have an
+> API existing applications are using. It's much easier to add features to
+> a simple (your word: "dumb") interface than it is to take options away
+> from one that is too broad.
+
+We all have fears that what we do will not get use, but i do not
+want to stop making progress because of that. Like i said i am doing
+all this under staging to get the ball rolling, to test it with
+guinea pig and to gain some level of confidence it is actually
+useful. So i am providing evidence today (see all the research in
+HPC on memory management, topology, placement, ... for which i have
+given some links to) and i want to gather more evidence before commiting
+to this.
+
+I hope this sounds like a reasonable plan. What would you like me to
+do differently ? Like i said i feel that this is a chicken and egg
+problem today there is no standard way to get topology so there is
+no way to know how much applications would use such informations. We
+know that very few applications in special case use the topology
+informations. How to test wether more applications would use that
+same informations without providing some kind of standard API for
+them to get it ?
+
+It is also a system availability thing, right now they are very few
+system with such complex topology, but we are seeing more and more
+GPU, TPU, FPGA in more and more environement. I want to be pro-active
+here and provide API that would help leverage those new system for
+people experimenting with them.
+
+My proposal is to do HMS behind staging for a while and also avoid
+any disruption to existing code path. See with people living on the
+bleeding edge if they get interested in that informations. If not then
+i can strip down my thing to the bare minimum which is about device
+memory.
+
+
+> >>> I am talking about the inevitable fact that at some point some system
+> >>> firmware will miss-represent their platform. System firmware writer
+> >>> usualy copy and paste thing with little regards to what have change
+> >>> from one platform to the new. So their will be inevitable workaround
+> >>> and i would rather see those piling up inside a userspace library than
+> >>> inside the kernel.
+> >>
+> >> It's *absolutely* the kernel's responsibility to patch issues caused by
+> >> broken firmware. We have quirks all over the place for this. That's
+> >> never something userspace should be responsible for. Really, this is the
+> >> raison d'etre of the kernel: to provide userspace with a uniform
+> >> execution environment -- if every application had to deal with broken
+> >> firmware it would be a nightmare.
+> > 
+> > You cuted the other paragraph that explained why they will unlikely
+> > to be broken badly enough to break the kernel.
+> 
+> That was entirely beside the point. Just because it doesn't break the
+> kernel itself doesn't make it any less necessary for it to be fixed
+> inside the kernel. It must be done in a common place so every
+> application doesn't have to maintain a table of hardware quirks.
+
+Fine with quirks in kernel. It was just a personnal taste thing ...
+pure kernel vs ugly userspace :)
+
+Cheers,
+Jérôme
