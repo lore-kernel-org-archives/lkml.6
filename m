@@ -3,104 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36F5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89CDC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8892146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:04:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8892146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8813420834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8813420834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbeLDGEC (ORCPT
+        id S1726107AbeLDGEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:04:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34124 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725996AbeLDGEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 01:04:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 365DFAF3C;
-        Tue,  4 Dec 2018 06:03:59 +0000 (UTC)
-Subject: Re: [PATCH] x86/boot: clear rsdp address in boot_params for broken
- loaders
-To:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de
-References: <20181203103811.17056-1-jgross@suse.com>
- <2489CC78-0410-4F0D-9D79-7905868B51BC@zytor.com>
- <082a6607-09f2-72d3-84f7-794c68412c66@suse.com>
- <0917d755-3311-92a9-8fb4-c0f408633f5c@zytor.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e7ca96fe-5bd5-d051-3bf4-abcca52e73a9@suse.com>
-Date:   Tue, 4 Dec 2018 07:03:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 4 Dec 2018 01:04:12 -0500
+Received: from mx1.mailbox.org ([80.241.60.212]:61898 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725996AbeLDGEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 01:04:11 -0500
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 45D454355C;
+        Tue,  4 Dec 2018 07:04:08 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id 6SnltX3KzNeT; Tue,  4 Dec 2018 07:04:06 +0100 (CET)
+Date:   Tue, 4 Dec 2018 17:03:54 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Florian Weimer <fweimer@redhat.com>, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, serge@hallyn.com, jannh@google.com,
+        luto@kernel.org, akpm@linux-foundation.org, oleg@redhat.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
+        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+Message-ID: <20181204060354.bozjmjn24sw3axav@yavin>
+References: <20181120105124.14733-1-christian@brauner.io>
+ <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+ <746B7C49-CC7B-4040-A7EF-82491796D360@brauner.io>
+ <20181202100304.labt63mzrlr5utdl@brauner.io>
+ <8736rebl9s.fsf@oldenburg.str.redhat.com>
+ <20181203180224.fkvw4kajtbvru2ku@brauner.io>
 MIME-Version: 1.0
-In-Reply-To: <0917d755-3311-92a9-8fb4-c0f408633f5c@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n32bdtqrrttj3wgr"
+Content-Disposition: inline
+In-Reply-To: <20181203180224.fkvw4kajtbvru2ku@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/12/2018 06:49, H. Peter Anvin wrote:
-> On 12/3/18 9:32 PM, Juergen Gross wrote:
->>
->> I'd like to send a followup patch doing that. And I'd like to not only
->> test sentinel for being non-zero, but all padding fields as well. This
->> should be 4.21 material, though.
->>
-> 
-> No, you can't do that.  That breaks backwards compatibility.
 
-So you are speaking about paddings which are at places where there used
-to be some information? Shouldn't those be named "_res*"?
-Recycling such paddings with some useful information seems to be rather
-dangerous then.
+--n32bdtqrrttj3wgr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'd like to have at least some idea which boot loader is not passing a
-clean struct boot_params. So I think we should at least have some debug
-or info messages telling us which paddings are not zero initially to be
-able to either fix the boot loader or switch from _pad* to _res* naming.
+On 2018-12-03, Christian Brauner <christian@brauner.io> wrote:
+> > > As I pointed out in another mail my I is to make this work by using
+> > > file descriptors for /proc/<pid>/task/<tid>.  I don't want this in the
+> > > initial patchset though.  I prefer to slowly add those features once
+> > > we have gotten the basic functionality in.
+> >=20
+> > Do you want to land all this in one kernel release?  I wonder how
+> > applications are supposed to discover kernel support if functionality is
+> > split across several kernel releases.  If you get EINVAL or EBADF, it
+> > may not be obvious what is going on.
+>=20
+> Sigh, I get that but I really don't want to have to land this in one big
+> chunk. I want this syscall to go in in a as soon as we can to fulfill
+> the most basic need: having a way that guarantees us that we signal the
+> process that we intended to signal.
+>=20
+> The thread case is easy to implement on top of it. But I suspect we will
+> quibble about the exact semantics for a long time. Even now we have been
+> on multiple - justified - detrous. That's all pefectly fine and
+> expected. But if we have the basic functionality in we have time to do
+> all of that. We might even land it in the same kernel release still. I
+> really don't want to come of as tea-party-kernel-conservative here but I
+> have time-and-time again seen that making something fancy and cover ever
+> interesting feature in one patchset takes a very very long time.
+>=20
+> If you care about userspace being able to detect that case I can return
+> EOPNOTSUPP when a tid descriptor is passed.
+
+Personally, I'm +1 on -EOPNOTSUPP so we can get an MVP merged, and add
+new features in later patches.
+
+> > What happens if you use the new interface with an O_PATH descriptor?
+>=20
+> You get EINVAL. When an O_PATH file descriptor is created the kernel
+> will set file->f_op =3D &empty_fops at which point the check I added=20
+>         if (!proc_is_tgid_procfd(f.file))
+>                 goto err;
+> will fail. Imho this is correct behavior since technically signaling a
+> struct pid is the equivalent of writing to a file and hence doesn't
+> purely operate on the file descriptor level.
+
+Not to mention that O_PATH file descriptors are a whole kettle of fish
+when it comes to permission checking semantics.
 
 
-Juergen
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--n32bdtqrrttj3wgr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlwGGMoACgkQSnvnv3De
+m5+lDBAAxrkdEEDjq6ASZyzYu++elzkZwOs9q49a1PFaNr0i4W08Kz2ZEPOvXMiP
+xz+s4dL78GZo4sSL1e6rs35+3N0dZHFUlfASXeDU8XlKdoM1MQ55/DFHMJ1WcwBH
+C3xPOGW4zOBCF1hEp7mayrmc6qIcPGj5jCvamoYAC1P/1RdJ4qbqLJ6FiYynYaJr
+McAWlFBjCI60Bzhxkg8cuOOkpF4PE922kCWsdqKEkwLuVztrHwXu/80NYPzuRVXI
+g0QxtSz1Gu+6ZMOmdyxluy3RvricEMt4dNsIo8PuLALrGkeoklivfWJKWFT9n00Y
+2uI3qYkQdLgfy5OQZ4ceY5PkeI1DX6BXTV2TkIN4Zh+gDmAGhOjO+wzwhIgeNqrq
+MX+Luujx6iyKDnNrDJuFJJ12u5sQN4pW9+ilYAXcMos6hyejeG/xtIS+t7wwEcny
+PMQQaLuEr8Kz+/z9FBdYr3HZAMe29Z4mB1UOag5/6Iv1NYprukY2OJOot6x3mq4w
+YWtt2o2W/QOithsPfCxRZ5HpxiyZXATUe5ZVIWqxSFk+VCOIn9eIzlQ4KVzFZpjx
+ngh7OqsfEWaHRquUMLNEEdrNeBs29ewdj8GbWb8yTrXJzmEz9JBVQtVJy8+sd4Bd
+X8D7nD9eUq+XxZwLWXgPwIKLJbeo6WUme80euvu3PSWwUqCrlOg=
+=mApV
+-----END PGP SIGNATURE-----
+
+--n32bdtqrrttj3wgr--
