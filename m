@@ -2,199 +2,595 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38ED5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3FAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00A842081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:58:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00A842081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 84F7C20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:58:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDDSw2vu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F7C20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbeLDS6M (ORCPT
+        id S1726418AbeLDS6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:58:12 -0500
-Received: from mga18.intel.com ([134.134.136.126]:40575 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbeLDS6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:58:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:58:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="127064811"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Dec 2018 10:58:10 -0800
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jiri Kosina <jkosina@suse.cz>, thomas.lendacky@amd.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>,
-        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
-        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>,
-        jason.w.brandt@intel.com
-References: <20181125183328.318175777@linutronix.de>
- <20181125185006.051663132@linutronix.de>
- <CAHk-=whtiX45YPjFPMFuktZ3WB23zqBZR-rL6RewrTyvrFj2Fw@mail.gmail.com>
- <f4b903ef-828c-0b05-29c6-6f71677d120d@linux.intel.com>
- <CAHk-=wj7h=eCrvEPuO_AJ2Y5T5akTQPs5cLA811O64wORf+NyQ@mail.gmail.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- xsFNBE6ONugBEAC1c8laQ2QrezbYFetwrzD0v8rOqanj5X1jkySQr3hm/rqVcDJudcfdSMv0
- BNCCjt2dofFxVfRL0G8eQR4qoSgzDGDzoFva3NjTJ/34TlK9MMouLY7X5x3sXdZtrV4zhKGv
- 3Rt2osfARdH3QDoTUHujhQxlcPk7cwjTXe4o3aHIFbcIBUmxhqPaz3AMfdCqbhd7uWe9MAZX
- 7M9vk6PboyO4PgZRAs5lWRoD4ZfROtSViX49KEkO7BDClacVsODITpiaWtZVDxkYUX/D9OxG
- AkxmqrCxZxxZHDQos1SnS08aKD0QITm/LWQtwx1y0P4GGMXRlIAQE4rK69BDvzSaLB45ppOw
- AO7kw8aR3eu/sW8p016dx34bUFFTwbILJFvazpvRImdjmZGcTcvRd8QgmhNV5INyGwtfA8sn
- L4V13aZNZA9eWd+iuB8qZfoFiyAeHNWzLX/Moi8hB7LxFuEGnvbxYByRS83jsxjH2Bd49bTi
- XOsAY/YyGj6gl8KkjSbKOkj0IRy28nLisFdGBvgeQrvaLaA06VexptmrLjp1Qtyesw6zIJeP
- oHUImJltjPjFvyfkuIPfVIB87kukpB78bhSRA5mC365LsLRl+nrX7SauEo8b7MX0qbW9pg0f
- wsiyCCK0ioTTm4IWL2wiDB7PeiJSsViBORNKoxA093B42BWFJQARAQABzTRUaW0gQ2hlbiAo
- d29yayByZWxhdGVkKSA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC5jb20+wsF+BBMBAgAoAhsD
- BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCWfPBPgUJDyfxUQAKCRCiZ7WKota4SReFEACa
- 5ruzJM/hXJguHJY8i95rxHfLOgE7QoDgsR2aK2C1BSu84StTcT9BMikndQ0em28mpd1zROCs
- FvJ8Dzpp923699FU7s70+bFG9zIWtAOLWt2QyIMYImILzKkzkyLZo2RTcLNdUWS5fkAtjspQ
- QPg29W+kcbX1NhB6WDdbvk2HNeZoDh4A5ucOzKjEPqbSFIbw2Wt3RUmXxezjH1NzZG3fMkEN
- cT7JezYhUxvi2PrJlD+mo26q2/PQmFgF49tneRJXmYyie5o2+ClfFVO9I6Rd1k7hS9uXQLg3
- udpnDKobNYZ7/+O5+ucp0Y/MwzTfBYmtJ5fBjUTi2L1RMDJee8WqCNY1VU6cQ8MD4KstxUp2
- bxlSRAYaDtNa1Omr61E7BA1Cc2E3cIt/O1mMfudWUjCND8qrAtEnugqKjk5tJJZzmzIKSHPY
- dCiJtOBQaVAYYchXF2hwOKhpFS43V4FdWLlM1CnFXsmbk48hGbiA8XHU85JBCXmG0i4qUlKn
- x2ilChvq4A102ahnlGbEmFaSwxuqR/5lhai6lOkwHXDFUT6jblaSs24L3MTn/vXtvwaLEEKh
- SPzNaj7yFvEhrJoLiZmDm0SZuPbQ+wrmPWUbzyf5te2Oq0JyrHTQJoQqn+CwGqwF/JaUq60f
- VuUD3T0icgsfljsOA4apyH7kyfxXGP0hOM7BTQROjjboARAAx+LxKhznLH0RFvuBEGTcntrC
- 3S0tpYmVsuWbdWr2ZL9VqZmXh6UWb0K7w7OpPNW1FiaWtVLnG1nuMmBJhE5jpYsi+yU8sbMA
- 5BEiQn2hUo0k5eww5/oiyNI9H7vql9h628JhYd9T1CcDMghTNOKfCPNGzQ8Js33cFnszqL4I
- N9jh+qdg5FnMHs/+oBNtlvNjD1dQdM6gm8WLhFttXNPn7nRUPuLQxTqbuoPgoTmxUxR3/M5A
- KDjntKEdYZziBYfQJkvfLJdnRZnuHvXhO2EU1/7bAhdz7nULZktw9j1Sp9zRYfKRnQdIvXXa
- jHkOn3N41n0zjoKV1J1KpAH3UcVfOmnTj+u6iVMW5dkxLo07CddJDaayXtCBSmmd90OG0Odx
- cq9VaIu/DOQJ8OZU3JORiuuq40jlFsF1fy7nZSvQFsJlSmHkb+cDMZDc1yk0ko65girmNjMF
- hsAdVYfVsqS1TJrnengBgbPgesYO5eY0Tm3+0pa07EkONsxnzyWJDn4fh/eA6IEUo2JrOrex
- O6cRBNv9dwrUfJbMgzFeKdoyq/Zwe9QmdStkFpoh9036iWsj6Nt58NhXP8WDHOfBg9o86z9O
- VMZMC2Q0r6pGm7L0yHmPiixrxWdW0dGKvTHu/DH/ORUrjBYYeMsCc4jWoUt4Xq49LX98KDGN
- dhkZDGwKnAUAEQEAAcLBZQQYAQIADwIbDAUCVEAL2AUJC1VvawAKCRCiZ7WKota4SWWrD/9L
- 4H3kHUR9qPTfSpwFBV0+PspkpMQmRQ9cQauIRXL+qIqCYfx48Jz/WZkq47COhY4d1tAvX4qv
- lviIoCwShAHhVkxD2rWFpa6Yang7cyPDjS6sNChsZ9aTAP0zX4LLHN8ub5LwCcU9JA4Avwdy
- NDSeeSeqNq9QOvVd2bDmyHxgVv4zRgLTNPH28hXAnDODy0wCJWg53PWvlp35XfWdIsC0ZAPK
- vgA1Bh+FYYKfT8Uzj8J/SYH+chmeYMt+8Y+FZa+NybivWJg6+UaJ2fCTuKCc7TgqLneBudox
- izWQMnBso0tHOT6+ju+L+ewPWc0OrJdKJeadrE2T1E949vMup5jG0lJLeSpBNmELODNL0xz6
- Erjs/pwX7cYGKUbJfBaQcC9frPfpWfSqnK5X+12HFDxAxquXKC4ejBJOhbo3xx0sziiPTC3m
- 4LvLkEa9evQNtMvRcnWY5qIC4YdT5waC0stYNpyCiBXpYArKYCmlra3xpgAe0MRL94PHU4UW
- yxxdxRubFYna9LeNcWL7C0w2ngg1jd0tjRjLnimrOL8rSVUzwjNSQOV37tWTueTr40M/SfjU
- B6bifflZQpeSY8IpqzKqB0vvxo2xD0rU7JqUh7rW8U6rg2JEzVgYiHS4cf/vJMHuauHAjH7a
- ys7DYlLhlOVo3o0jOor4xuZPrWbSp4w51sLBZQQYAQIADwIbDAUCWfPBJQUJDyfxOAAKCRCi
- Z7WKota4SZKQD/wLu3j8kgATic+wF3ekngjwPcW3JhbQJeHxUZwsb9OgVMHumlrZHGoltKQu
- FfAhG/sOfuAh5f7QMzzA1M+2JD1Q6lr74vUHNBu+xBFMgZstE6hpkKmn0pNZ5JS3iZRVRLBx
- dWw63DYr0GM80vmbHjAhwxoF2PsO2/PkWTc68+pFyl3Dy0heZSJii81hkzh8FnF8CaMH0VXu
- MJoWyuYgnC058hHj0QqXvlNx9LzMtmrsskTmPvwqXTgG/dTEfTkQ4RfX3enrBy55cg9tMc88
- BEQ/0/JV1bCDwyWXKRpz6FsHbICGQ4G9TTD4pS5QJ+oRQccMjfiDM3rFTcG1RYP2lHXjSm9c
- 0VnimpQBz3LarrdHJilmTHbAWf5KLmtWfYXHrlncnhnCtw2nfwBBdy8cQW4tUyniSVRLOwGm
- eJziyuPJ5SVVZcil2oN5/o7js7BYAeAV/WVF2Sk/blnXaaObIYIVqnDhV4N0oUz1KXq1Leem
- Uvjo5rljmmhOBdgl6D0scXCWICbuuWN9eW2fZl38hBSI3M0MX0jnV2e+0FY+76iNmKadpTDw
- gY3OaQAZ/UlJVI+pRV4JtRrajtpo9Vb38SBPXwp9moWmwVQyIdFUXjCTQARvxjRsUoPVu9oA
- SCd9W74oOgrqC1hadvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
-Subject: Re: [patch V2 27/28] x86/speculation: Add seccomp Spectre v2 user
- space protection mode
-Message-ID: <84a1bd5c-bdc5-4902-d543-5b276f097d04@linux.intel.com>
-Date:   Tue, 4 Dec 2018 10:58:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Tue, 4 Dec 2018 13:58:41 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39826 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDS6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:58:40 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c72so8668307pfc.6;
+        Tue, 04 Dec 2018 10:58:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RoRUwcMrps/dxBzYP4+dkP0HojLktouOhOeqsDULnQM=;
+        b=ZDDSw2vuKBGOxhXYr/ynuHgH6nfhmvbAK4y3qgr/tf3NC9j2CkSkLeBgRKG9xSN4ts
+         /fXqmmcKkhTw515okCw8UI7yMYdPhCx/K7nCAZpAhZc2ud1l04MOwZAGNiLIH/f2ArIY
+         DkcAgK2jHmfP+mgPvmjmz2RaHzcj1bt8E+Osw8jeKCaAqypgwax4ooQIVhItxbeaVPD8
+         Y6XA8ho2WYGxhHATXnMIDRhNH7vUMbIwVCowP2UDneFzcrq36yfud6Ad/INGHp0ltGlD
+         DKN40WW2Ai2BD0kXLKZBPu8pXJWmTIJ4IjWB8arWShXbItbRJTKRyaFhYth+Q5OALjUK
+         lPhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RoRUwcMrps/dxBzYP4+dkP0HojLktouOhOeqsDULnQM=;
+        b=Z8BoyCCX9MY4696chyYHs9/bfyCPSCDrxdec5xT4aNnjqA/d16Lgf63BBgR5JG46Eo
+         LGQr/RnN/v4WbvKs4W3luCQU6k3fWxFMfZPyjUIX2h6JBNhw+M0WjDqojH8yDSnhvFPt
+         xVs+OQQbustb4TVF4rMkY4MnPdqzsaeYR1/kxV+o4KWCzKE8nJqX+lKSlpbvmJrsEay2
+         QVCHpBXtlo3L3bnjyFBtotZfZISnszoQiHebTNT0YLvuCKulim1BA3kdZAM2uuqTCz0w
+         9oZMnMmpRp3DZzQayEsbtmK57uqPFtfYrPHTbfIeQA9+fJCaAAQx49cAp/MMoaPiJyzM
+         10Sw==
+X-Gm-Message-State: AA+aEWbL1VxP6dk58e6ooW4ji1d/Sm1s2Gy78ESMhtbeQHGNBXQdTytG
+        x3xXySL8H7QmYtVccL7M8IkD5kyXtmb2BL/gO5w=
+X-Google-Smtp-Source: AFSGD/XX/in+AaQveL0h5uRtcKHr6WKZxnkkn3N276AaQm+u3ApCOYYEwsqrf87ro/OleFoYUp7AQ91dnUm0vh+XcVo=
+X-Received: by 2002:a62:e044:: with SMTP id f65mr21019534pfh.208.1543949919160;
+ Tue, 04 Dec 2018 10:58:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wj7h=eCrvEPuO_AJ2Y5T5akTQPs5cLA811O64wORf+NyQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-13-git-send-email-loic.pallardy@st.com> <59fad1e3-11a2-939e-c47e-4351fb636e2d@ti.com>
+ <c21433c8034a438d8d7c5044c181c2e0@SFHDAG7NODE2.st.com> <edff6a62-5b4c-433b-d824-51143b83ad93@ti.com>
+ <CAA07jV8vmVF0rwYHK86dxe3=8fSEsm5wEcZZeC7ws=JdqW1VWg@mail.gmail.com> <b9f5941cd4014e3e82832b4b302ee422@SFHDAG7NODE2.st.com>
+In-Reply-To: <b9f5941cd4014e3e82832b4b302ee422@SFHDAG7NODE2.st.com>
+From:   Wendy Liang <sunnyliangjy@gmail.com>
+Date:   Tue, 4 Dec 2018 10:58:27 -0800
+Message-ID: <CAA07jV8StedBEStNURsRTNwk4jRS2LanV1tz-xXuf-5qVtuXwA@mail.gmail.com>
+Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+ centralized carveout allocator
+To:     Loic Pallardy <loic.pallardy@st.com>
+Cc:     Suman Anna <s-anna@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arnaud pouliquen <arnaud.pouliquen@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/04/2018 09:20 AM, Linus Torvalds wrote:
+On Tue, Dec 4, 2018 at 10:04 AM Loic PALLARDY <loic.pallardy@st.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Wendy Liang <sunnyliangjy@gmail.com>
+> > Sent: mardi 4 d=C3=A9cembre 2018 18:57
+> > To: Suman Anna <s-anna@ti.com>
+> > Cc: Loic PALLARDY <loic.pallardy@st.com>; Bjorn Andersson
+> > <bjorn.andersson@linaro.org>; Ohad Ben-Cohen <ohad@wizery.com>;
+> > linux-remoteproc@vger.kernel.org; Linux Kernel Mailing List <linux-
+> > kernel@vger.kernel.org>; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> > Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> > Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to re=
+ly on
+> > centralized carveout allocator
+> >
+> > On Mon, Oct 29, 2018 at 1:19 PM Suman Anna <s-anna@ti.com> wrote:
+> > >
+> > > Hi Loic,
+> > >
+> > > On 10/24/18 10:14 AM, Loic PALLARDY wrote:
+> > > > Hi Suman,
+> > > >
+> > > >> -----Original Message-----
+> > > >> From: Suman Anna <s-anna@ti.com>
+> > > >> Sent: mercredi 24 octobre 2018 02:14
+> > > >> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.o=
+rg;
+> > > >> ohad@wizery.com
+> > > >> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org=
+;
+> > > >> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> > > >> benjamin.gaignard@linaro.org
+> > > >> Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation =
+to
+> > rely on
+> > > >> centralized carveout allocator
+> > > >>
+> > > >> On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> > > >>> Current version of rproc_alloc_vring function supports only dynam=
+ic
+> > vring
+> > > >>> allocation.
+> > > >>>
+> > > >>> This patch allows to allocate vrings based on memory region
+> > declatation.
+> > > >>> Vrings are now manage like memory carveouts, to communize
+> > memory
+> > > >> management
+> > > >>> code in rproc_alloc_registered_carveouts().
+> > > >>>
+> > > >>> Allocated buffer is retrieved in rp_find_vq() thanks to
+> > > >>> rproc_find_carveout_by_name() functions for.
+> > > >>>
+> > > >>> This patch sets vrings names to vdev"x"vring"y" with x vdev index=
+ in
+> > > >>> resource table and y vring index in vdev. This will be updated wh=
+en
+> > > >>> name will be associated to vdev in firmware resource table.
+> > > >>>
+> > > >>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > > >>> ---
+> > > >>>  drivers/remoteproc/remoteproc_core.c     | 61 +++++++++++++++++-
+> > -----
+> > > >> ---------
+> > > >>>  drivers/remoteproc/remoteproc_internal.h |  2 ++
+> > > >>>  drivers/remoteproc/remoteproc_virtio.c   | 14 +++++++-
+> > > >>>  include/linux/remoteproc.h               |  6 ++--
+> > > >>>  4 files changed, 51 insertions(+), 32 deletions(-)
+> > > >>>
+> > > >>> diff --git a/drivers/remoteproc/remoteproc_core.c
+> > > >> b/drivers/remoteproc/remoteproc_core.c
+> > > >>> index c543d04..4edc6f0 100644
+> > > >>> --- a/drivers/remoteproc/remoteproc_core.c
+> > > >>> +++ b/drivers/remoteproc/remoteproc_core.c
+> > > >>> @@ -53,6 +53,11 @@ typedef int (*rproc_handle_resources_t)(struct
+> > > >> rproc *rproc,
+> > > >>>  typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
+> > > >>>                              void *, int offset, int avail);
+> > > >>>
+> > > >>> +static int rproc_alloc_carveout(struct rproc *rproc,
+> > > >>> +                           struct rproc_mem_entry *mem);
+> > > >>> +static int rproc_release_carveout(struct rproc *rproc,
+> > > >>> +                             struct rproc_mem_entry *mem);
+> > > >>> +
+> > > >>>  /* Unique indices for remoteproc devices */
+> > > >>>  static DEFINE_IDA(rproc_dev_index);
+> > > >>>
+> > > >>> @@ -312,21 +317,33 @@ int rproc_alloc_vring(struct rproc_vdev
+> > *rvdev,
+> > > >> int i)
+> > > >>>     struct device *dev =3D &rproc->dev;
+> > > >>>     struct rproc_vring *rvring =3D &rvdev->vring[i];
+> > > >>>     struct fw_rsc_vdev *rsc;
+> > > >>> -   dma_addr_t dma;
+> > > >>> -   void *va;
+> > > >>>     int ret, size, notifyid;
+> > > >>> +   struct rproc_mem_entry *mem;
+> > > >>>
+> > > >>>     /* actual size of vring (in bytes) */
+> > > >>>     size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
+> > > >>>
+> > > >>> -   /*
+> > > >>> -    * Allocate non-cacheable memory for the vring. In the future
+> > > >>> -    * this call will also configure the IOMMU for us
+> > > >>> -    */
+> > > >>> -   va =3D dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL=
+);
+> > > >>> -   if (!va) {
+> > > >>> -           dev_err(dev->parent, "dma_alloc_coherent failed\n");
+> > > >>> -           return -EINVAL;
+> > > >>> +   rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
+> > > >>> +
+> > > >>> +   /* Search for pre-registered carveout */
+> > > >>> +   mem =3D rproc_find_carveout_by_name(rproc, "vdev%dvring%d",
+> > > >> rvdev->index,
+> > > >>> +                                     i);
+> > > >>> +   if (mem) {
+> > > >>> +           if (rproc_check_carveout_da(rproc, mem, rsc->vring[i]=
+.da,
+> > > >> size))
+> > > >>> +                   return -ENOMEM;
+> > > >>> +   } else {
+> > > >>> +           /* Register carveout in in list */
+> > > >>> +           mem =3D rproc_mem_entry_init(dev, 0, 0, size, rsc-
+> > > >>> vring[i].da,
+> > > >>> +                                      rproc_alloc_carveout,
+> > > >>> +                                      rproc_release_carveout,
+> > > >>> +                                      "vdev%dvring%d",
+> > > >>> +                                      rvdev->index, i);
+> > > >>> +           if (!mem) {
+> > > >>> +                   dev_err(dev, "Can't allocate memory entry
+> > > >> structure\n");
+> > > >>> +                   return -ENOMEM;
+> > > >>> +           }
+> > > >>> +
+> > > >>> +           rproc_add_carveout(rproc, mem);
+> > > >>>     }
+> > > >>>
+> > > >>>     /*
+> > > >>> @@ -337,7 +354,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvde=
+v,
+> > int i)
+> > > >>>     ret =3D idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL=
+);
+> > > >>>     if (ret < 0) {
+> > > >>>             dev_err(dev, "idr_alloc failed: %d\n", ret);
+> > > >>> -           dma_free_coherent(dev->parent, size, va, dma);
+> > > >>>             return ret;
+> > > >>>     }
+> > > >>>     notifyid =3D ret;
+> > > >>> @@ -346,21 +362,9 @@ int rproc_alloc_vring(struct rproc_vdev
+> > *rvdev, int
+> > > >> i)
+> > > >>>     if (notifyid > rproc->max_notifyid)
+> > > >>>             rproc->max_notifyid =3D notifyid;
+> > > >>>
+> > > >>> -   dev_dbg(dev, "vring%d: va %pK dma %pad size 0x%x idr %d\n",
+> > > >>> -           i, va, &dma, size, notifyid);
+> > > >>> -
+> > > >>> -   rvring->va =3D va;
+> > > >>> -   rvring->dma =3D dma;
+> > > >>>     rvring->notifyid =3D notifyid;
+> > > >>>
+> > > >>> -   /*
+> > > >>> -    * Let the rproc know the notifyid and da of this vring.
+> > > >>> -    * Not all platforms use dma_alloc_coherent to automatically
+> > > >>> -    * set up the iommu. In this case the device address (da) wil=
+l
+> > > >>> -    * hold the physical address and not the device address.
+> > > >>> -    */
+> > > >>> -   rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
+> > > >>> -   rsc->vring[i].da =3D dma;
+> > > >>> +   /* Let the rproc know the notifyid of this vring.*/
+> > > >>>     rsc->vring[i].notifyid =3D notifyid;
+> > > >>>     return 0;
+> > > >>>  }
+> > > >>> @@ -392,12 +396,10 @@ int rproc_alloc_vring(struct rproc_vdev
+> > *rvdev,
+> > > >> int i)
+> > > >>>
+> > > >>>  void rproc_free_vring(struct rproc_vring *rvring)
+> > > >>>  {
+> > > >>> -   int size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align=
+));
+> > > >>>     struct rproc *rproc =3D rvring->rvdev->rproc;
+> > > >>>     int idx =3D rvring->rvdev->vring - rvring;
+> > > >>>     struct fw_rsc_vdev *rsc;
+> > > >>>
+> > > >>> -   dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring=
+-
+> > > >>> dma);
+> > > >>>     idr_remove(&rproc->notifyids, rvring->notifyid);
+> > > >>
+> > > >> Also, I am not sure if FW_RSC_ADDR_ANY semantics were enforced
+> > > >> previously on the vring da. It was simply overwritten irrespective=
+ of
+> > > >> the value. Now, I am running again into the "bad carveout rsc
+> > > >> configuration value" due to the iommu_domain_check if
+> > > >> !FW_RSC_ADDR_ANY.
+> > > >
+> > >
+> > > Just realized that I missed responding on this thread last week.
+> > >
+> > > > When are you running into the "bad carveout rsc configuration value=
+" ?
+> > > > This patch is creating one carveout per vring to rely on generic ca=
+rveout
+> > allocator.
+> > > > Then carveout is retrieved from carveout  list and vring resource t=
+able
+> > information updated.
+> > > >
+> > > > If the da of the carveout was fixed in the resource table, it is no=
+rmal you
+> > have this error.
+> > >
+> > > Yes, and if the vring da value is FW_RSC_ADDR_ANY, then I don't run i=
+nto
+> > > this particular error. It's just that the semantics of vring da is op=
+en
+> > > previously, and my above comment being 0 was being used as a reset va=
+lue
+> > > as well.
+> > >
+> > > > To solve that ST driver is registering one fixed carveout per vring=
+ (with the
+> > right name today)
+> > >
+> > > Yeah, we still expect to allocate these dynamically, so there won't b=
+e
+> > > any registration needed.
+> > >
+> > > > It is the same discussion as with Patch 1.
+> > >
+> > > Right, except that we have a da from RSC_CARVEOUT and a da from vring=
+,
+> > > and the previous code had some slight differences between the two. Th=
+e
+> > > vring da semantics were never set before (value was always being
+> > > overwritten, also it didn't have a pa field), whereas the remoteproc.=
+h
+> > > documentation did mention about FW_RSC_ADDR_ANY (without any
+> > backing
+> > > implementation previously) for the RSC_CARVEOUT da, with the entry al=
+so
+> > > having a field for pa.
+> > >
+> > > If we consider we can't change fixed coprocessor address requests, rp=
+roc
+> > > core should stop its execution.
+> > > > It is the responsibility of platform driver to register the right m=
+emory
+> > regions.
+> > > > That's what we discussed with you and Bill in OpenAMP forum.
+> > > > TI usecase was to have the same DSP firmware with the same resource
+> > table being able to run on any DSP.
+> > >
+> > > Yeah, it only covers one of the usecases/platforms (Keystone 2 DSP
+> > > platforms). And this only worked on these platforms so far because we
+> > > only were using internal memories - so there were no RSC_CARVEOUT
+> > > entries with valid da. Our Davinci DSP is a single instance and we do
+> > > have a RSC_CARVEOUT there, which fails due to the same Patch 1 logic
+> > > here as well.
+> > >
+> > > > In that case each DSP platform driver has to provide the right memo=
+ry
+> > region configuration with the correct pa to da.
+> > > >
+> > > >>
+> > > >> FWIW, the rproc_free_vring was actually using the value 0 when
+> > resetting.
+> > > >
+> > > > It is no more needed as the carveout list is cleared at each stop a=
+nd
+> > recreated at each start.
+> > > > Moreover resource table (and firmware) is reloaded at each coproces=
+sor
+> > start.
+> > >
+> > > Yes, agreed. This is about the semantics of vring da from before (no
+> > > enforcement to strict enforcement of FW_RSC_ADDR_ANY). The
+> > overwriting
+> > > on da field on vrings with the dma address is actually a mistake, whi=
+ch
+> > > we are trying to proliferate more now. It all comes down to the fact =
+of
+> > > treating da as dma address when it is not going to be the case on all
+> > > remoteprocs.
+> > [Wendy] Are we assuming that the vring da is always predefined.
+> > But in the Linux kernel side, without IOMMU case, we use
+> > dma_alloc_coherent() to
+> > allocate for vring address. In this case, there is no gurantee the
+> > allocated vrings
+> > address matches the predefined value.
+> > Or we assume that only vdev devices of the remoteproc can use
+> > dma_alloc_coherent()
+> > but not subdevices?
+> > Or we can still store the rsc table da pointer. And instead of always
+> > set da with dma address
+> > we can pass the dma address to remoteproc and let remoteproc to do the
+> > pa to da conversion if
+> > required.
+>
+> Hi Wendy,
+> I pushed a correction patch which check dma address with requested da fro=
+m resource table.
+> If no match, a warning is display, but the sequence is not stopped as req=
+uested by Suman.
+> I have a next patch which is adding a rproc_pa_to_da() platform dependent=
+ function to concert a pa in da understandable by rproc firmware.
+> The goal is to answer Suman request, that some rproc can configure an off=
+set in HW to access part of the DRR or an memory.
+> On another side, I'm looking how to do the same with the carveout registr=
+ation functions...
+HI Loic,
 
->> STIBP
->> ^^^^^
->> Implementations of STIBP on existing Core-family processors (where STIBP
->> functionality was added through a microcode update) work by disabling
->> branch predictors that both:
->>
->>     1. Contain indirect branch predictions for both hardware threads, and
->>     2. Do not contain a dedicated thread ID bit
-> 
-> Honestly, it still feels entirely misguided to me.
-> 
-> The above is not STIBP. It's just "disable IB". There's nothing "ST" about it.
-> 
-> So on processors where there is no thread ID bit (or per-thread
-> predictors), Intel simply SHOULD NOT EXPOSE this at all.
-> 
-> As it is, I refuse to call this shit "STIBP", because on current CPU's
-> that's simply a lie.
-> 
-> Being "technically correct" is not an excuse. It's just lying. I would
-> really hope that we restrict the lying to politicians, and not do it
-> in technical documentation.
-> 
+I agreed that carveout registration functions should allow ANY_ADDRESS
+for no IOMMU case.
+In my case, the openamp remoteproc virtio assumes that when the app is
+running, it assumes the da are all set by master, but the latest
+upstream delayed the vring da setting
+when it tries to create the vq, it looks, it looks like the remote
+should not even start to checking vdev configs until the master set
+the status to DRIVER_OK.
 
-Linus,
-
-I consulted our HW architects to get their thinking behind the STIBP name
-and why it is exposed on CPUs without thread ID bit.
-
-1) Why expose STIBP even when it is just a scratch bit?
-
-VM migration pools prefer that bits which guests have direct access to
-(as we recommend for IA32_SPEC_CTRL) do not cause #GP when they are
-migrated to different processors in order to prevent guests from crashing
-or require restricting VM migration targets. That is why we decided
-to allow the STIBP bit to be set and to return the last value written
-even on parts where it has no other effect (e.g. Atom parts without
-multithreading). There was also discomfort with allowing a bit to be
-set, to return the last value written, and to meet the architecturally
-documented behavior, but to not enumerate that it is supported. Not
-enumerating STIBP would make it more difficult for software to understand
-things like how the CPU does reserved bit checks. That is why we enumerate
-and support STIBP even when it affects no branch predictors.
-
-2) Why did we not call STIBP "disable IB":
-
- * It does not disable all indirect branch predictors (on current Core), just a subset
- * It does not disable any indirect branch predictors (on future Core)
- * It does not disable any indirect branch predictors (on Atom parts with no SMT)
- * It does more than disable some indirect branch predictors (on some non-Core)
-
-3) Philosophy for naming architectural bits.
-
-The microcode updates and future hardware changes do a variety
-of different micro-architectural behaviors in order to achieve the
-goals behind each MSR bit. This means that the names aren't the most
-descriptive for each individual project. Had we instead exposed the
-different functionality/behavior to software for each CPU then it would
-have been a model-specific feature, likely needing different software
-behavior for different CPUID family/model/stepping. This would have been
-painful for the OS, and even more painful for VMMs and VM migration
-pools. This is why we made these bits architectural and used a common
-name and definition across the projects.
-
-We don't object to the Linux community using an alternative name for
-STIBP (but not Disable IB), so long as it is accurate across our products.
-Changing our MSR name in the SDM seems like would it
-cause unneeded confusion and work.
-
-Thanks.
-
-Tim
-
+Best Regards,
+Wendy
+>
+> Regards,
+> Loic
+>
+>
+> >
+> > Thanks,
+> > Wendy
+> > >
+> > > regards
+> > > Suman
+> > >
+> > > >
+> > > > Regards,
+> > > > Loic
+> > > >>
+> > > >> regards
+> > > >> Suman
+> > > >>
+> > > >>>
+> > > >>>     /* reset resource entry info */
+> > > >>> @@ -484,6 +486,7 @@ static int rproc_handle_vdev(struct rproc
+> > *rproc,
+> > > >> struct fw_rsc_vdev *rsc,
+> > > >>>
+> > > >>>     rvdev->id =3D rsc->id;
+> > > >>>     rvdev->rproc =3D rproc;
+> > > >>> +   rvdev->index =3D rproc->nb_vdev++;
+> > > >>>
+> > > >>>     /* parse the vrings */
+> > > >>>     for (i =3D 0; i < rsc->num_of_vrings; i++) {
+> > > >>> @@ -528,9 +531,6 @@ void rproc_vdev_release(struct kref *ref)
+> > > >>>
+> > > >>>     for (id =3D 0; id < ARRAY_SIZE(rvdev->vring); id++) {
+> > > >>>             rvring =3D &rvdev->vring[id];
+> > > >>> -           if (!rvring->va)
+> > > >>> -                   continue;
+> > > >>> -
+> > > >>>             rproc_free_vring(rvring);
+> > > >>>     }
+> > > >>>
+> > > >>> @@ -1322,6 +1322,9 @@ static int rproc_fw_boot(struct rproc *rpro=
+c,
+> > > >> const struct firmware *fw)
+> > > >>>     /* reset max_notifyid */
+> > > >>>     rproc->max_notifyid =3D -1;
+> > > >>>
+> > > >>> +   /* reset handled vdev */
+> > > >>> +   rproc->nb_vdev =3D 0;
+> > > >>> +
+> > > >>>     /* handle fw resources which are required to boot rproc */
+> > > >>>     ret =3D rproc_handle_resources(rproc, rproc_loading_handlers)=
+;
+> > > >>>     if (ret) {
+> > > >>> diff --git a/drivers/remoteproc/remoteproc_internal.h
+> > > >> b/drivers/remoteproc/remoteproc_internal.h
+> > > >>> index 7570beb..f6cad24 100644
+> > > >>> --- a/drivers/remoteproc/remoteproc_internal.h
+> > > >>> +++ b/drivers/remoteproc/remoteproc_internal.h
+> > > >>> @@ -60,6 +60,8 @@ struct dentry *rproc_create_trace_file(const ch=
+ar
+> > > >> *name, struct rproc *rproc,
+> > > >>>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct f=
+irmware
+> > > >> *fw);
+> > > >>>  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rp=
+roc
+> > > >> *rproc,
+> > > >>>                                                    const struct f=
+irmware
+> > > >> *fw);
+> > > >>> +struct rproc_mem_entry *
+> > > >>> +rproc_find_carveout_by_name(struct rproc *rproc, const char
+> > *name,
+> > > >> ...);
+> > > >>>
+> > > >>>  static inline
+> > > >>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firm=
+ware
+> > *fw)
+> > > >>> diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> > > >> b/drivers/remoteproc/remoteproc_virtio.c
+> > > >>> index bbecd44..de21f62 100644
+> > > >>> --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > >>> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > >>> @@ -76,7 +76,9 @@ static struct virtqueue *rp_find_vq(struct
+> > > >> virtio_device *vdev,
+> > > >>>     struct rproc_vdev *rvdev =3D vdev_to_rvdev(vdev);
+> > > >>>     struct rproc *rproc =3D vdev_to_rproc(vdev);
+> > > >>>     struct device *dev =3D &rproc->dev;
+> > > >>> +   struct rproc_mem_entry *mem;
+> > > >>>     struct rproc_vring *rvring;
+> > > >>> +   struct fw_rsc_vdev *rsc;
+> > > >>>     struct virtqueue *vq;
+> > > >>>     void *addr;
+> > > >>>     int len, size;
+> > > >>> @@ -88,8 +90,14 @@ static struct virtqueue *rp_find_vq(struct
+> > > >> virtio_device *vdev,
+> > > >>>     if (!name)
+> > > >>>             return NULL;
+> > > >>>
+> > > >>> +   /* Search allocated memory region by name */
+> > > >>> +   mem =3D rproc_find_carveout_by_name(rproc, "vdev%dvring%d",
+> > > >> rvdev->index,
+> > > >>> +                                     id);
+> > > >>> +   if (!mem || !mem->va)
+> > > >>> +           return ERR_PTR(-ENOMEM);
+> > > >>> +
+> > > >>>     rvring =3D &rvdev->vring[id];
+> > > >>> -   addr =3D rvring->va;
+> > > >>> +   addr =3D mem->va;
+> > > >>>     len =3D rvring->len;
+> > > >>>
+> > > >>>     /* zero vring */
+> > > >>> @@ -114,6 +122,10 @@ static struct virtqueue *rp_find_vq(struct
+> > > >> virtio_device *vdev,
+> > > >>>     rvring->vq =3D vq;
+> > > >>>     vq->priv =3D rvring;
+> > > >>>
+> > > >>> +   /* Update vring in resource table */
+> > > >>> +   rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
+> > > >>> +   rsc->vring[id].da =3D mem->da;
+> > > >>> +
+> > > >>>     return vq;
+> > > >>>  }
+> > > >>>
+> > > >>> diff --git a/include/linux/remoteproc.h b/include/linux/remotepro=
+c.h
+> > > >>> index 4cdd0c6..6b3a234 100644
+> > > >>> --- a/include/linux/remoteproc.h
+> > > >>> +++ b/include/linux/remoteproc.h
+> > > >>> @@ -453,6 +453,7 @@ struct rproc_dump_segment {
+> > > >>>   * @table_sz: size of @cached_table
+> > > >>>   * @has_iommu: flag to indicate if remote processor is behind an
+> > MMU
+> > > >>>   * @dump_segments: list of segments in the firmware
+> > > >>> + * @nb_vdev: number of vdev currently handled by rproc
+> > > >>>   */
+> > > >>>  struct rproc {
+> > > >>>     struct list_head node;
+> > > >>> @@ -485,6 +486,7 @@ struct rproc {
+> > > >>>     bool has_iommu;
+> > > >>>     bool auto_boot;
+> > > >>>     struct list_head dump_segments;
+> > > >>> +   int nb_vdev;
+> > > >>>  };
+> > > >>>
+> > > >>>  /**
+> > > >>> @@ -512,7 +514,6 @@ struct rproc_subdev {
+> > > >>>  /**
+> > > >>>   * struct rproc_vring - remoteproc vring state
+> > > >>>   * @va:    virtual address
+> > > >>> - * @dma: dma address
+> > > >>>   * @len: length, in bytes
+> > > >>>   * @da: device address
+> > > >>>   * @align: vring alignment
+> > > >>> @@ -522,7 +523,6 @@ struct rproc_subdev {
+> > > >>>   */
+> > > >>>  struct rproc_vring {
+> > > >>>     void *va;
+> > > >>> -   dma_addr_t dma;
+> > > >>>     int len;
+> > > >>>     u32 da;
+> > > >>>     u32 align;
+> > > >>> @@ -541,6 +541,7 @@ struct rproc_vring {
+> > > >>>   * @vdev: the virio device
+> > > >>>   * @vring: the vrings for this vdev
+> > > >>>   * @rsc_offset: offset of the vdev's resource entry
+> > > >>> + * @index: vdev position versus other vdev declared in resource =
+table
+> > > >>>   */
+> > > >>>  struct rproc_vdev {
+> > > >>>     struct kref refcount;
+> > > >>> @@ -553,6 +554,7 @@ struct rproc_vdev {
+> > > >>>     struct virtio_device vdev;
+> > > >>>     struct rproc_vring vring[RVDEV_NUM_VRINGS];
+> > > >>>     u32 rsc_offset;
+> > > >>> +   u32 index;
+> > > >>>  };
+> > > >>>
+> > > >>>  struct rproc *rproc_get_by_phandle(phandle phandle);
+> > > >>>
+> > > >
+> > >
