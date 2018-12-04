@@ -2,98 +2,72 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A889C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25017C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2228B2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4B9220834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:39:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQTiXPyH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2228B2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XjkPZW0g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B9220834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbeLDTjK (ORCPT
+        id S1726109AbeLDTjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:39:10 -0500
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:39153 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbeLDTjJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:39:09 -0500
-Received: by mail-wm1-f49.google.com with SMTP id f81so8115855wmd.4;
-        Tue, 04 Dec 2018 11:39:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:references:user-agent:in-reply-to:date
-         :message-id:mime-version;
-        bh=iQwytpxIBcHHKVFu2QLF4iY+Mv1AFxWbqR3YYwAHeXw=;
-        b=UQTiXPyHek7sm0ubUN3JzYhwpasskZeBGhPpdrJZzi0gsPoyMA02DBEy1MH/TvdVjY
-         ATV1hc0L7wm5zP0wZfVXB2CFUHu1sOuGXfF3NiPzDZmlmZieeuQuVHDYldWAoH6kqONk
-         VYZOw4+nkncUomoW7Sv35a/mXfz7bWsmzMLHwAVfOIejloakEmMz+Q4zILgq41MzZhfy
-         KVg5tFSdGe2BXGjQmr7xH4fmCoMNqnb5ZM1UC27NNVGzBxdNZf37SiVJahNxAJHCgqHg
-         oq/KSFLdh/KHcVcnyErHYlGTQaeq/LkyvONEMKG9A0Uz5DN4FCLQ8FrlEFfxJAShd+Ei
-         StiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:user-agent
-         :in-reply-to:date:message-id:mime-version;
-        bh=iQwytpxIBcHHKVFu2QLF4iY+Mv1AFxWbqR3YYwAHeXw=;
-        b=A5VP+xNIrlc/RdCuuXdnPH4ec/sbT77Czl97AO2cT01UwKhN3fzGO78f3Z530GzWhp
-         5tdUDp3bFYhvsQhqVVPliWhE8IJS2mzxb15aJakGC5fl8tnG+aLtd3YN1w1KUlPmGvij
-         XJkOO6xMsJweYEDR1ASPFhngeHGmek7e89tbePVfN0s4mFCCT6YiE08vhCzW8mwvdSEq
-         9ZInh+k+PjSb0z4HPQz6a8LG4M5USPsZ1kwulOV7KU0UJoDZjWgHF4XKd8Y1BDxfq3g6
-         RVweGIQWXVxABXkmoK6jP8/T2Qyd2DIBOYyPygwyVhKGkZ7YnE3hON/QDmFLdVdBIX9w
-         jV+g==
-X-Gm-Message-State: AA+aEWa9elI16n4EuBuGzQTDjvk9lD66ZGm2GjYNv2uozjoDS02KJo7f
-        P7ml2L7vVRWoC2Wd99NWl/CCcHTh
-X-Google-Smtp-Source: AFSGD/V5BGFIklEw+LjuOX84Jkv7sse5eU1+QSRpbbZkSZfbyuucytNKz0aa3lGmQ+Qa/iHr8VsCdg==
-X-Received: by 2002:a1c:f112:: with SMTP id p18mr12676162wmh.83.1543952348138;
-        Tue, 04 Dec 2018 11:39:08 -0800 (PST)
-Received: from evledraar (ip545586d2.adsl-surfen.hetnet.nl. [84.85.134.210])
-        by smtp.gmail.com with ESMTPSA id 5sm13089590wmr.37.2018.12.04.11.39.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 11:39:07 -0800 (PST)
-From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-To:     Junio C Hamano <gitster@pobox.com>
-Cc:     git@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com, Stefan Beller <sbeller@google.com>,
-        Jeff King <peff@peff.net>
-Subject: Re: [ANNOUNCE] Git v2.20.0-rc2
-References: <xmqq36rhjnts.fsf@gitster-ct.c.googlers.com>
-User-agent: Debian GNU/Linux buster/sid; Emacs 25.2.2; mu4e 1.1.0
-In-reply-to: <xmqq36rhjnts.fsf@gitster-ct.c.googlers.com>
-Date:   Tue, 04 Dec 2018 20:39:05 +0100
-Message-ID: <87in09ytd2.fsf@evledraar.gmail.com>
+        Tue, 4 Dec 2018 14:39:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725855AbeLDTjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:39:52 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7B2E2081C;
+        Tue,  4 Dec 2018 19:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543952392;
+        bh=aVdSRiFETmY9eEUpLNHwuSWx+iPFRxgvcxjDPYH0cIs=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=XjkPZW0g/FaiMcRHCdtwCO16Quce6XxcXgrxOkbFCwdNWfuQWFKs0SgHJvi61BwOP
+         +D4BYAuTnovpyqqlQxMVPT7k5yXZwQAQ6IDa1x7HhZyvM2qR5nW+EjlLjP8j72lQtH
+         yR6FJXndbFLjAiQ703dO4lASfGfjNtSemLpouy0c=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <dbbe1896ba62d2421606fb0807740d9e6090a1df.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
+        andrew.smirnov@gmail.com, pombredanne@nexb.com,
+        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
+        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <dbbe1896ba62d2421606fb0807740d9e6090a1df.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <154395239140.88331.1595713170039757326@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 02/10] clk: Add kerneldoc to managed of-provider interfaces
+Date:   Tue, 04 Dec 2018 11:39:51 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Matti Vaittinen (2018-12-04 03:33:48)
+> Document the devm_of_clk_del_provider and the
+> devm_of_clk_add_hw_provider functions.
+> =
 
-On Sat, Dec 01 2018, Junio C Hamano wrote:
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
 
->  * "git ls-remote $there foo" was broken by recent update for the
->    protocol v2 and stopped showing refs that match 'foo' that are not
->    refs/{heads,tags}/foo, which has been fixed.
->    (merge 6a139cdd74 jk/proto-v2-ref-prefix-fix later to maint).
+Applied to clk-next
 
-I started bisecting this thinking it was a regression, but found that
-the reason the instructions in the protocol v2 announcement[1] don't
-work anymore is because of it was due to 631f0f8c4b ("ls-remote: do not
-send ref prefixes for patterns", 2018-10-31).
-
-Perhaps we should note this more prominently, and since Brandon isn't at
-Google anymore can some of you working there edit this post? It's the
-first Google result for "git protocol v2", so it's going to be quite
-confusing for people if after 2.20 the instructions in it no longer
-work.
-
-1. https://opensource.googleblog.com/2018/05/introducing-git-protocol-version-2.html
