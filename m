@@ -2,113 +2,218 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2264DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 913C6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD3812082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:33:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AED42082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:33:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LsZ2fG0l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD3812082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WyyM36Df"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AED42082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbeLDKdc (ORCPT
+        id S1726132AbeLDKdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:33:32 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:47762 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbeLDKdc (ORCPT
+        Tue, 4 Dec 2018 05:33:35 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41225 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbeLDKde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:33:32 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB4AXPe3025010;
-        Tue, 4 Dec 2018 04:33:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543919605;
-        bh=H2iXpJSpQ0UjsXZqHgkmt2nVNGFevjLxN21m78QUBFw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=LsZ2fG0lSbiiiMpAqkQT0kFPVn4CRJq5ziU/NHyyXdPOPLWnSLacUhgVyFyMhg82L
-         HYFD3eql7pkxc2HB0LdEX/73s96LA8gYJCi+4EayIlB7sIoDqfjhEA0lfC/QYrEI9l
-         W3xgUIz/pxA/eOuLcRs50vjdEma0Xjw8hAvoGgfI=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB4AXPwp093986
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Dec 2018 04:33:25 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 4
- Dec 2018 04:33:25 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 4 Dec 2018 04:33:25 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB4AXMt0019832;
-        Tue, 4 Dec 2018 04:33:22 -0600
-Subject: Re: [PATCH V3 0/3] Add support for using external dma in SDHCI
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <1543908270-13953-1-git-send-email-zhang.chunyan@linaro.org>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <4871e35d-08e4-9199-08bc-f80f83349020@ti.com>
-Date:   Tue, 4 Dec 2018 16:06:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 4 Dec 2018 05:33:34 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181204103332euoutp0291140d03ec82f30bd43404455d4cee90~tGrUorT3t1097210972euoutp02B
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 10:33:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181204103332euoutp0291140d03ec82f30bd43404455d4cee90~tGrUorT3t1097210972euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1543919612;
+        bh=XRFf/jMiYzQFUBsvcs9drpC3bPsSzfFx+dqnCKwt7aA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=WyyM36Df2pVSl+mnfUpC2uSsEmaEOD91USta59wZJolkrhLYxRrarCvnxrlyFx1Ud
+         G2tOxuX+xriIFnMZQerBooN9XFTe1025UVOh4XtfrvhUZM0zdHWWoIpdggkByfMalf
+         WFxih8hQJ2lOAKfOJQkwK02ljfDyh0JGyF4CR1UQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181204103332eucas1p26796fac96fe54122d34fb2f97f5aa182~tGrUFG6R31337713377eucas1p2H;
+        Tue,  4 Dec 2018 10:33:32 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 18.0B.04806.BF7560C5; Tue,  4
+        Dec 2018 10:33:31 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181204103331eucas1p12b9d02e1b463c7f415b4049c868d1e1c~tGrTNisMW0813208132eucas1p1V;
+        Tue,  4 Dec 2018 10:33:31 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181204103330eusmtrp13c65390251fdd453869d62539499b6f6~tGrS_7Jlj2691826918eusmtrp1b;
+        Tue,  4 Dec 2018 10:33:30 +0000 (GMT)
+X-AuditID: cbfec7f5-79db79c0000012c6-4f-5c0657fb1633
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8F.F3.04284.AF7560C5; Tue,  4
+        Dec 2018 10:33:30 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181204103330eusmtip283a26b87a8760877bd07091ef8dad853~tGrSoqsaQ0601706017eusmtip2a;
+        Tue,  4 Dec 2018 10:33:30 +0000 (GMT)
+Subject: Re: [PATCH 00/13 v2] Regulator ena_gpiod fixups
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <455ced52-e444-66f2-7dec-9d37bdd5116c@samsung.com>
+Date:   Tue, 4 Dec 2018 11:33:29 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <1543908270-13953-1-git-send-email-zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CACRpkdYQ5cy1-8wu--deF0kdzrRGVJ_teNh2LRF7tr9vyh+oHw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsWy7djPc7q/w9liDPr/6Vt8mXuKxWLqwyds
+        FldaNzFafLvSwWQx5c9yJovLu+awObB5vL/Ryu6xc9Zddo9NqzrZPO5c28PmMX3Of0aPz5vk
+        AtiiuGxSUnMyy1KL9O0SuDIWf/Yq6JaqeHRoHnMDY6toFyMnh4SAicTErV1MXYxcHEICKxgl
+        Nt1/wAiSEBL4wijx/0ISROIzo8TZxz2sMB1db/exQySWM0osO7uMGcJ5zyhxbudRsCphAQuJ
+        Ncfugo0SEdCR6N72kxWkiFngHaNEw7E9zCAJNgFDoFFdbCA2r4CdxISN08EaWARUJI53NgHV
+        cHCICsRI7HpeA1EiKHFy5hMWEJtTIFBiwvfXYDazgLxE89bZzBC2uMStJ/PB/pEQWMUusfLh
+        P0aIs10klmxazgRhC0u8Or6FHcKWkTg9uYcFoqGZUaJ9xix2CKeHUWLrnB1sEFXWEoePX2QF
+        uYhZQFNi/S59iLCjxK6H95lAwhICfBI33gpCHMEnMWnbdGaIMK9ER5sQRLWaxKzj6+DWHrxw
+        iXkCo9IsJK/NQvLOLCTvzELYu4CRZRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgCjr9
+        7/jXHYz7/iQdYhTgYFTi4Z3hxBojxJpYVlyZe4hRgoNZSYT3jhpbjBBvSmJlVWpRfnxRaU5q
+        8SFGaQ4WJXHeaoYH0UIC6YklqdmpqQWpRTBZJg5OqQbGXTnfLsb9kj3V/ffl8dxOXzuJzc4M
+        XKcE8quEy6e/ucqtNfvmS64TezJOOPZ8/WUlfdvV55xnTujml6Icz2Mvhwsfnyai311Ssf4p
+        088F7gnKhc+Ob7SqenmgNlzqZWNN5Nfd3DuPP141Ze83zxdH5LLnF1652D6Z97PEdPmTqqtV
+        DhldillxVYmlOCPRUIu5qDgRAFYZ+y49AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsVy+t/xe7q/wtliDJ62GFt8mXuKxWLqwyds
+        FldaNzFafLvSwWQx5c9yJovLu+awObB5vL/Ryu6xc9Zddo9NqzrZPO5c28PmMX3Of0aPz5vk
+        Atii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIW
+        f/Yq6JaqeHRoHnMDY6toFyMnh4SAiUTX233sILaQwFJGiblfMiDiMhInpzWwQtjCEn+udbFB
+        1LxllPi61R/EFhawkFhz7C4jiC0ioCPRve0nUD0XB7PAO0aJ2yd3sYA4QgK9TBLv561iAali
+        EzAE2gYxiVfATmLCxulg3SwCKhLHO5uYQWxRgRiJKZdfs0LUCEqcnPkErJdTIFBiwvfXYDaz
+        gLrEn3mXmCFseYnmrbOhbHGJW0/mM01gFJqFpH0WkpZZSFpmIWlZwMiyilEktbQ4Nz232FCv
+        ODG3uDQvXS85P3cTIzDmth37uXkH46WNwYcYBTgYlXh4ZzixxgixJpYVV+YeYpTgYFYS4b2j
+        xhYjxJuSWFmVWpQfX1Sak1p8iNEU6LmJzFKiyfnAdJBXEm9oamhuYWlobmxubGahJM573qAy
+        SkggPbEkNTs1tSC1CKaPiYNTqoGxXepL9bwT3ZnTwr5W18S7q5q9Xn/M3qyrzKo8udXP9+63
+        ORqHF35rseKoOrVO/IMv3/qK/FnJNQ6RsYzq2wsurBViLGiNMukJiedQYokskLQ2Zot3fJZZ
+        +8hZYqdZbKZJYMOnxAsCOddftU5WnijesMO1In2ub8pMibTTNlWH69o1vs6TV2Ipzkg01GIu
+        Kk4EABAIRgXPAgAA
+X-CMS-MailID: 20181204103331eucas1p12b9d02e1b463c7f415b4049c868d1e1c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181201154428epcas4p3a1a5c9c576027b1c56f8dd1510b32187
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181201154428epcas4p3a1a5c9c576027b1c56f8dd1510b32187
+References: <CGME20181201154428epcas4p3a1a5c9c576027b1c56f8dd1510b32187@epcas4p3.samsung.com>
+        <20181201154151.14890-1-linus.walleij@linaro.org>
+        <d6b5f384-51aa-0e99-7e88-a1debcf5eca3@samsung.com>
+        <CACRpkdYQ5cy1-8wu--deF0kdzrRGVJ_teNh2LRF7tr9vyh+oHw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chunyan,
+Hi Linus,
 
-On 04/12/18 12:54 PM, Chunyan Zhang wrote:
-> Currently the generic SDHCI code in the Linux kernel supports the SD
-> standard DMA integrated into the host controller but does not have any
-> support for external DMA controllers implemented using dmaengine meaning
-> that custom code is needed for any systems that use a generic DMA
-> controller with SDHCI which in practice means any SDHCI controller that
-> doesn't have an integrated DMA controller so we should have this as a
-> generic feature.
-> 
-> There are already a number of controller specific drivers that have dmaengine
-> code, and some could use sdhci.c actually, but needed to implement mmc_ops->request()
-> in their specific driver for sending command with external dma using dmaengine
-> framework, with this patchset, them will take advantage of the generic support.
-> TI's omap controller is the case as an example.
-> 
-> Any comments are very appreciated.
-> 
+On 2018-12-04 10:31, Linus Walleij wrote:
+> Hi Marek,
+>
+> first, thanks a *lot* for testing this, it is is much, much appreciated!
+>
+> On Mon, Dec 3, 2018 at 3:35 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>
+>> The idea is good imho, but it looks that there are some missing cases in
+>> the code. Here are some logs from the boards I have access to:
+> OK let's fix this!
+>
+>> Artik5 evaluation board (arch/arm/boot/dts/exynos3250-artik5-eval.dtb):
+>> s2mps11-pmic s2mps14-regulator: Failed to get control GPIO for 11/LDO12
+> Question: this is supposed to fail, right? It is something
+> like a probe deferral or nonexisting GPIO controller?
 
-Following your comments, I added dmas in dra7.dtsi as shown in the patch
-below.
+It looks that the issue has been introduced earlier, but I didn't notice it.
 
-https://pastebin.ubuntu.com/p/J4F3xWZv5c/
+gpiod_get_from_of_node() doesn't handle GPIOD_FLAGS_BIT_NONEXCLUSIVE
+flag, the rest is just a result of it.
 
-This time the MMC devices enumerate successfully but I see a bunch of
 
-[  108.135736] omap-dma-engine 4a056000.dma-controller: t2_desc[10]
-allocation failed
+Here we have a case, where 2 regulators provided by s2mps11 driver have
+a common gpio enable line (by PMIC design), so s2mps11 calls
+devm_gpiod_get_from_of_node() 2 times for exactly the same gpio descriptor.
 
-messages when I try to run a short ltp test.
 
-https://pastebin.ubuntu.com/p/WvRSkxBPpv/
+Fixing gpiod_get_from_of_node() for GPIOD_FLAGS_BIT_NONEXCLUSIVE is trivial:
 
-Thanks,
-Faiz
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index cd84315ad586..ace194665b19 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -4192,6 +4192,8 @@ struct gpio_desc *gpiod_get_from_of_node(struct
+device_node *node,
+        transitory = flags & OF_GPIO_TRANSITORY;
+
+        ret = gpiod_request(desc, label);
++       if (ret == -EBUSY && (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
++               return desc;
+        if (ret)
+                return ERR_PTR(ret);
+
+
+With the above fix I still however get 2 warnings from devres functions,
+but this is probably caused by adding the same entry 2 times to the list
+without proper refcounting... I will check that later.
+
+
+> I look in the upstream tree:
+> arch/arm/boot/dts/exynos3250-artik5.dtsi
+> where s2mps14 is defined:
+>
+> ldo12_reg: LDO12 {
+>     /* VDD72 ~ VDD73 */
+>     regulator-name = "VLDO12_2.8V";
+>     regulator-min-microvolt = <2800000>;
+>     regulator-max-microvolt = <2800000>;
+>     samsung,ext-control-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
+> };
+>
+> I didn't really change anything about this, so this missing
+> GPIO descriptor looks worrysome.
+>
+> Anyways what happens is this:
+>
+> gpio[reg] = devm_gpiod_get_from_of_node(...)
+> if (IS_ERR(gpio[reg]))
+> (...)
+>             continue;
+>
+> So this IS_ERR descriptor is left around. So we should
+> probably handle erronoeus or NULL descriptors in
+> gpiod_unhinge().
+>
+> If you add this on top, does it start working?
+>
+> diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
+> index 5864e758d7f2..e35751bf0ea8 100644
+> --- a/drivers/gpio/gpiolib-devres.c
+> +++ b/drivers/gpio/gpiolib-devres.c
+> @@ -332,6 +332,8 @@ EXPORT_SYMBOL(devm_gpiod_put);
+>
+>  void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
+>  {
+> +       if (IS_ERR_OR_NULL(desc))
+> +               return;
+>         WARN_ON(devres_destroy(dev, devm_gpiod_release,
+>                                devm_gpiod_match, desc));
+>  }
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
