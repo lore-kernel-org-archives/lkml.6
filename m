@@ -2,101 +2,123 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B514C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD34C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4592820851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4592820851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id F3D9020851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IyvuJhlg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D9020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbeLDLZL (ORCPT
+        id S1727373AbeLDLAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:25:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39115 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbeLDLZJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:25:09 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB4BOrpa842547
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 4 Dec 2018 03:24:53 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB4BOrfu842544;
-        Tue, 4 Dec 2018 03:24:53 -0800
-Date:   Tue, 4 Dec 2018 03:24:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Roland Dreier <tipbot@zytor.com>
-Message-ID: <tip-d999c0ec2498e54b9328db6b2c1037710025add1@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, x86@kernel.org, bp@suse.de,
-        roland@purestorage.com, mingo@kernel.org
-Reply-To: hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
-          x86@kernel.org, linux-kernel@vger.kernel.org,
-          roland@purestorage.com, mingo@kernel.org, bp@suse.de
-In-Reply-To: <20181130211450.5200-1-roland@purestorage.com>
-References: <20181130211450.5200-1-roland@purestorage.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/hpet: Remove unused FSEC_PER_NSEC define
-Git-Commit-ID: d999c0ec2498e54b9328db6b2c1037710025add1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 4 Dec 2018 06:00:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726675AbeLDLAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:00:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 131692146D;
+        Tue,  4 Dec 2018 11:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543921246;
+        bh=zMo+qM/Pr2AooFCaX44quBm4xERoz0nZg9Ana8UV1z8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IyvuJhlg9B+zpxxZz40su8NGjtQ+au6pKh6YVDByO0jeVSVO9/7LC2YvvZy2pmmou
+         kTu74hDlnJoaNi1PyDwPe8CSN8BG979/rzwodHsTVOX1mJLM8PVppVWAnIi2t/i5lY
+         Yv8RL1yrBhrl9ofSjspfXtBNafMoSdPIhtESyMUY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 137/139] mm: use swp_offset as key in shmem_replace_page()
+Date:   Tue,  4 Dec 2018 11:50:18 +0100
+Message-Id: <20181204103656.495517724@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
+References: <20181204103649.950154335@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d999c0ec2498e54b9328db6b2c1037710025add1
-Gitweb:     https://git.kernel.org/tip/d999c0ec2498e54b9328db6b2c1037710025add1
-Author:     Roland Dreier <roland@purestorage.com>
-AuthorDate: Fri, 30 Nov 2018 13:14:50 -0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 4 Dec 2018 12:17:21 +0100
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-x86/hpet: Remove unused FSEC_PER_NSEC define
+------------------
 
-The FSEC_PER_NSEC macro has had zero users since commit
+From: Yu Zhao <yuzhao@google.com>
 
-  ab0e08f15d23 ("x86: hpet: Cleanup the clockevents init and register code").
+commit c1cb20d43728aa9b5393bd8d489bc85c142949b2 upstream.
 
-Remove it.
+We changed the key of swap cache tree from swp_entry_t.val to
+swp_offset.  We need to do so in shmem_replace_page() as well.
 
-Signed-off-by: Roland Dreier <roland@purestorage.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181130211450.5200-1-roland@purestorage.com
+Hugh said:
+ "shmem_replace_page() has been wrong since the day I wrote it: good
+  enough to work on swap "type" 0, which is all most people ever use
+  (especially those few who need shmem_replace_page() at all), but
+  broken once there are any non-0 swp_type bits set in the higher order
+  bits"
+
+Link: http://lkml.kernel.org/r/20181121215442.138545-1-yuzhao@google.com
+Fixes: f6ab1f7f6b2d ("mm, swap: use offset of swap entry as key of swap cache")
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Acked-by: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>	[4.9+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/kernel/hpet.c | 4 ----
- 1 file changed, 4 deletions(-)
+ mm/shmem.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index b0acb22e5a46..dfd3aca82c61 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -21,10 +21,6 @@
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1551,11 +1551,13 @@ static int shmem_replace_page(struct pag
+ {
+ 	struct page *oldpage, *newpage;
+ 	struct address_space *swap_mapping;
++	swp_entry_t entry;
+ 	pgoff_t swap_index;
+ 	int error;
  
- #define HPET_MASK			CLOCKSOURCE_MASK(32)
+ 	oldpage = *pagep;
+-	swap_index = page_private(oldpage);
++	entry.val = page_private(oldpage);
++	swap_index = swp_offset(entry);
+ 	swap_mapping = page_mapping(oldpage);
  
--/* FSEC = 10^-15
--   NSEC = 10^-9 */
--#define FSEC_PER_NSEC			1000000L
--
- #define HPET_DEV_USED_BIT		2
- #define HPET_DEV_USED			(1 << HPET_DEV_USED_BIT)
- #define HPET_DEV_VALID			0x8
+ 	/*
+@@ -1574,7 +1576,7 @@ static int shmem_replace_page(struct pag
+ 	__SetPageLocked(newpage);
+ 	__SetPageSwapBacked(newpage);
+ 	SetPageUptodate(newpage);
+-	set_page_private(newpage, swap_index);
++	set_page_private(newpage, entry.val);
+ 	SetPageSwapCache(newpage);
+ 
+ 	/*
+
+
