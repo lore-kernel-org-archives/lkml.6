@@ -2,154 +2,108 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D75AAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EE5C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6C92082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:50:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeoyJhvO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C6C92082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6FBA220659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBA220659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbeLDNuD (ORCPT
+        id S1726435AbeLDNxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:50:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbeLDNuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:50:03 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45EA8206B7;
-        Tue,  4 Dec 2018 13:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543931402;
-        bh=XWEJJsvDFbgkuCsALG6+PEpbc7VY/pnz5bn5e/wn0No=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GeoyJhvONJoyTwtQxRWZj82SgjGCXTupTqrkXKs1mTPqfcBGNTxLe/b4IM3dOP6K6
-         iQ2BDTdvSdRYZMR61+NF2WSfpO2HMNHa6kRHX90hXzDdtbbgxtXKQt6VTwpRPDWu2y
-         RujDqTR27/PrIX8CZ3wO6qpj6JDZYNoPMmXaX94g=
-Date:   Tue, 4 Dec 2018 22:49:58 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Michael Rodin <michael@rodin.online>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [BUGFIX PATCH -tip] kprobes/x86: Fix to copy RIP relative
- instruction correctly
-Message-Id: <20181204224958.30d1080d4c4e795953e1588f@kernel.org>
-In-Reply-To: <20181204081335.GB67285@gmail.com>
-References: <153504457253.22602.1314289671019919596.stgit@devbox>
-        <20181204081335.GB67285@gmail.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Dec 2018 08:53:20 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41197 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726356AbeLDNxU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 08:53:20 -0500
+Received: by mail-vs1-f68.google.com with SMTP id t17so9814888vsc.8;
+        Tue, 04 Dec 2018 05:53:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=eKdG+iTjuP1kZgJ6VlVsCsbtPXtiOHTWrPRmZYvCpb8=;
+        b=r9wbXzE7pF9o+wKf4dOFFBx3+kdknDJdG5CMwl9dOpbYrOUHuK6zYIPO2bvQJWhv06
+         +/rvDtYfcunotEi4dNNIndBRUcjOAod9juI4G1Up7KoksodBXIF9A61GPSLaF+qVovst
+         dYLTSY9SZPnMyQWw8WGUw10czKdE/fGXCEAEIY7ih2uFvjeDWsstZCdyyk8uKi4MDU/i
+         fVDPPGrNNFYpQv8/1KQfU2mC8jLcTPj9qgJEdU+49BED7LsUv55W6DvEGvucZiPeZ99P
+         EEBX6IFQjJgV+rhr7YSTzlw7/Z64sRVCBQZZNg5eC/Vko7YlkaODor7SezT+REt6ZEM9
+         igfA==
+X-Gm-Message-State: AA+aEWao7Fg2ubnfSL5HpZB14SIJbeJmfa8IUS7pK4qOZWLJD7V9Mhz3
+        +jn6gnVB4tg8cATt1xOsYkXXIR8cMSGpXyRHChk=
+X-Google-Smtp-Source: AFSGD/WcSuKguQiZ3qH9eVDQTuYNYmLt5GKT7zt1AwQyhjxt0C2HtZ8PqftappIv1996JGCVNoePlrbA6pSQTRkQhEI=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr8946495vsp.166.1543931599318;
+ Tue, 04 Dec 2018 05:53:19 -0800 (PST)
+MIME-Version: 1.0
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 4 Dec 2018 14:53:07 +0100
+Message-ID: <CAMuHMdVJr0PwvJg3FeTCy7vxuyY1=S1tPLHO7hPsoZX4wZ+-cQ@mail.gmail.com>
+Subject: NFS/TCP crashes on MIPS/RBTX4927 in v4.20-rcX (bisected)
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc:     Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-mips@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 09:13:35 +0100
-Ingo Molnar <mingo@kernel.org> wrote:
+        Hi Trond,
 
-> 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Since copy_optimized_instructions() misses to update real RIP
-> > address while copying several instructions to working buffer,
-> > it adjusts RIP-relative instruction with wrong RIP address for
-> > the 2nd and subsequent instructions.
-> > 
-> > This may break the kernel (like kernel freeze) because
-> > probed instruction can refer a wrong data. For example,
-> > putting kprobes on cpumask_next hit this bug.
-> > 
-> > cpumask_next is normally like below if CONFIG_CPUMASK_OFFSTACK=y
-> > (in this case nr_cpumask_bits is an alias of nr_cpu_ids)
-> > 
-> >  <cpumask_next>:
-> >        48 89 f0                mov    %rsi,%rax
-> >        8b 35 7b fb e2 00       mov    0xe2fb7b(%rip),%esi
-> >         # ffffffff82db9e64 <nr_cpu_ids>
-> >        55                      push   %rbp
-> > ...
-> > 
-> > If we put a kprobe on it and optimized with jump, it becomes
-> > like this.
-> > 
-> > 	e9 95 7d 07 1e	jmpq   0xffffffffa000207a
-> > 	7b fb	jnp    0xffffffff81f8a2e2 <cpumask_next+2>
-> > 	e2 00	loop   0xffffffff81f8a2e9 <cpumask_next+9>
-> > 	55	push   %rbp
-> > 
-> > This shows first 2 "mov" instructions are copied to trampoline
-> > buffer at 0xffffffffa000207a. Here is the disassembled result.
-> > (skipped optprobe template instructions)
-> > 
-> > Dump of assembler code from 0xffffffffa000207a to 0xffffffffa00020ea:
-> > 	54	push   %rsp
-> > ...
-> > 	48 83 c4 08	add    $0x8,%rsp
-> > 	9d	popfq
-> > 	48 89 f0	mov    %rsi,%rax
-> > 	8b 35 82 7d db e2	mov    -0x1d24827e(%rip),%esi
-> >         # 0xffffffff82db9e67 <nr_cpu_ids+3>
-> > 
-> > As it shows, the 2nd mov accesses *(nr_cpu_ids+3) instead of
-> > *nr_cpu_ids. This leads a kernel freeze because cpumask_next()
-> > always returns 0 and for_each_cpu() never ended.
-> > 
-> > Fixing this by adding len correctly to real RIP address while
-> > copying.
-> > 
-> > Fixes: 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()")
-> > Reported-by: Michael Rodin <michael@rodin.online>
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  arch/x86/kernel/kprobes/opt.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-> > index eaf02f2e7300..e92672b8b490 100644
-> > --- a/arch/x86/kernel/kprobes/opt.c
-> > +++ b/arch/x86/kernel/kprobes/opt.c
-> > @@ -189,7 +189,8 @@ static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
-> >  	int len = 0, ret;
-> >  
-> >  	while (len < RELATIVEJUMP_SIZE) {
-> > -		ret = __copy_instruction(dest + len, src + len, real, &insn);
-> > +		ret = __copy_instruction(dest + len, src + len, real + len,
-> > +			&insn);
-> 
-> I applied this, except that I unbroke the line: please ignore checkpatch 
-> in such cases where the cure is worse than the disease ...
+Recently, I've upgraded my NFS server to Ubuntu 18.04LTS.  Apparently
+the NFS server in that release dropped support for NFS over UDP, hence I
+appended ",tcp,v3" to all my nfsroot kernel command line parameters.
+This works fine on my arm/arm64 development boards, but causes a crash
+on RBTX4927:
 
-Thanks Ingo!
+    VFS: Mounted root (nfs filesystem) on device 0:13.
+    devtmpfs: mounted
+    Freeing prom memory: 1020k freed
+    Freeing unused kernel memory: 208K
+    This architecture does not have kernel memory protection.
+    Run /sbin/init as init process
+    do_page_fault(): sending SIGSEGV to init for invalid read access
+from 57e7e414
+    epc = 77f9e188 in ld-2.19.so[77f9c000+22000]
+    ra  = 77f9d91c in ld-2.19.so[77f9c000+22000]
+    Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 
-> 
-> I.e. even if slightly over 80 cols, this is more readable:
-> 
-> 		ret = __copy_instruction(dest + len, src + len, real + len, &insn);
+I found similar crashes in a report from 2006, but of course the code
+has changed too much to apply the solution proposed there
+(https://www.linux-mips.org/archives/linux-mips/2006-09/msg00169.html).
 
-Got it.
+Userland is Debian 8 (the last release supporting "old" MIPS).
+My kernel is based on v4.20.0-rc5, but the issue happens with v4.20-rc1,
+too.
 
-BTW, this ugry "+ len" repeat would be avoided. I would better make a new inline
-function to wrap it.
+However, I noticed it works in v4.19! Hence I've bisected this, to commit
+277e4ab7d530bf28 ("SUNRPC: Simplify TCP receive code by switching to using
+iterators").
 
+Dropping the ",tcp" part from the nfsroot parameter also fixes the issue.
 
-Thank you,
+Given RBTX4926 is little endian, just like my arm/arm64 boards, it's probably
+not an endianness issue.  Sparse didn't show anything suspicious before/after
+the guilty commit.
+
+Do you have a clue?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
