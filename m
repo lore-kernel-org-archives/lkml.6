@@ -2,144 +2,103 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A03C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1B8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0737920850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:39:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iecUL2z1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0737920850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C5B0C2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:41:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B0C2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbeLDUjU (ORCPT
+        id S1726375AbeLDUlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:39:20 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41304 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeLDUjJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:39:09 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b7so8794102pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 12:39:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7uXAOOMCbxu3NrD8kWXeIGqCAjNGZU3sGkuc69CifPM=;
-        b=iecUL2z1/4wS3WhGPKUzl4IQnx1Ey/RZTh0iOlII1lWJjwffvCYN17q47rRfM4lh78
-         k+d0YcBAYjjPqzYzpSVzj2Wm1VNazAuT4OBU9KN8HAdBn/GgM1vLjSkT8qXZGAUtb6s4
-         jATqDhJlqMq0vNWEglGTG/DQc7I6+o7Q5piGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7uXAOOMCbxu3NrD8kWXeIGqCAjNGZU3sGkuc69CifPM=;
-        b=cjaRd7WreXbLyWZ7DZmZMMiBsE0r4OlmOTDhHlCaTYI6sMCBhFm5qEA4LtSTxTlz9T
-         Wp8qq6wRywGL3OIR8L/U3AJJmrqAv4CHkVwIa03qlUN8l9sgppKAEF/jZRemZ3zVVMay
-         XpUEWP//GuiJ7sTpWj5nNNZhgHDujCAiaUEVOL1P5hTBP9H2uKOnL4hS2pO2+3Hdy72R
-         bBG4kwOZkRgRtgle5PphBzRpdYf7NgABuXZIFPMnPjsZWCJm0t+RvCoehAKvIo3OzdOx
-         Fuv5MMnGNrJDrAhbwLA+zgTI/5loLQD/MG+wPrTyHgNoxcHbXWq21J8A2AlU6WDsyI2q
-         oVSA==
-X-Gm-Message-State: AA+aEWZdAHAiESQ2NhVMjwUr9D9fseF7fWiUmSu6xLb0ybN0jFfjMk/l
-        Lgpeuz2HIiiue+PrBeeZIG65IA==
-X-Google-Smtp-Source: AFSGD/XgZWq2TbPpEL6JPbNpk3Apqv3jP7QRVczTizH6yRkZDS1Er+9Kq3zYJHSorfuH8ZXps6qX8w==
-X-Received: by 2002:a63:e302:: with SMTP id f2mr18305424pgh.320.1543955948796;
-        Tue, 04 Dec 2018 12:39:08 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id r76sm29783274pfb.69.2018.12.04.12.39.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Dec 2018 12:39:08 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     acme@kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND 2/3] perf tools: Add support for ETMv3 trace decoding
-Date:   Tue,  4 Dec 2018 13:39:03 -0700
-Message-Id: <1543955944-10042-3-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543955944-10042-1-git-send-email-mathieu.poirier@linaro.org>
-References: <1543955944-10042-1-git-send-email-mathieu.poirier@linaro.org>
+        Tue, 4 Dec 2018 15:41:22 -0500
+Received: from mga01.intel.com ([192.55.52.88]:55190 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725887AbeLDUlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:41:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 12:41:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="106987660"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga008.fm.intel.com with SMTP; 04 Dec 2018 12:41:18 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 04 Dec 2018 22:41:17 +0200
+From:   Ville Syrjala <ville.syrjala@linux.intel.com>
+To:     linux-bluetooth@vger.kernel.org
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Kay Sievers <kay.sievers@vrfy.org>,
+        =?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 BlueZ] hid2hci: Fix udev rules for linux-4.14+
+Date:   Tue,  4 Dec 2018 22:41:17 +0200
+Message-Id: <20181204204117.14964-1-ville.syrjala@linux.intel.com>
+X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
+References: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the creation of packet printer and decoder for the ETMv3
-trace architecture.  That way traces generated by tracers adhering to that
-trace protocol can be handled properly by the perf infrastructure.
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Since commit 1455cf8dbfd0 ("driver core: emit uevents when
+device is bound to a driver") the kernel started emitting
+"bind" and "unbind" uevents which confuse the hid2hci
+udev rules.
+
+The symptoms on an affected machine (Dell E5400 in my case)
+include bluetooth devices not appearing and udev hogging
+the cpu as it's busy processing a constant stream of these
+"bind"+"unbind" uevents.
+
+Change the udev rules not do anything except for "add" and
+"change" events. This seems to cure my machine at least.
+
+v2: Don't mess up "change" (Zbyszek)
+    Fix up the commit message a bit
+
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Kay Sievers <kay.sievers@vrfy.org>
+Cc: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+Cc: systemd-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-bluetooth@vger.kernel.org
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Reposting with BlueZ in subject and sob stripped. Maybe that helps in
+getting a oneliner merged?
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 938def6d0bb9..84a86d2f25c9 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -116,6 +116,19 @@ int cs_etm_decoder__get_packet(struct cs_etm_decoder *decoder,
- 	return 1;
- }
+ tools/hid2hci.rules | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/hid2hci.rules b/tools/hid2hci.rules
+index db6bb03d2ef3..5c7208af7a02 100644
+--- a/tools/hid2hci.rules
++++ b/tools/hid2hci.rules
+@@ -1,6 +1,6 @@
+ # do not edit this file, it will be overwritten on update
  
-+static int cs_etm_decoder__gen_etmv3_config(struct cs_etm_trace_params *params,
-+					    ocsd_etmv3_cfg *config)
-+{
-+	config->reg_idr = params->etmv3.reg_idr;
-+	config->reg_ctrl = params->etmv3.reg_ctrl;
-+	config->reg_ccer = params->etmv3.reg_ccer;
-+	config->reg_trc_id = params->etmv3.reg_trc_id;
-+	config->arch_ver = ARCH_V7;
-+	config->core_prof = profile_CortexA;
-+
-+	return 0;
-+}
-+
- static void cs_etm_decoder__gen_etmv4_config(struct cs_etm_trace_params *params,
- 					     ocsd_etmv4_cfg *config)
- {
-@@ -237,10 +250,16 @@ cs_etm_decoder__create_etm_packet_printer(struct cs_etm_trace_params *t_params,
- 					  struct cs_etm_decoder *decoder)
- {
- 	const char *decoder_name;
-+	ocsd_etmv3_cfg config_etmv3;
- 	ocsd_etmv4_cfg trace_config_etmv4;
- 	void *trace_config;
+-ACTION=="remove", GOTO="hid2hci_end"
++ACTION!="add|change", GOTO="hid2hci_end"
+ SUBSYSTEM!="usb*", GOTO="hid2hci_end"
  
- 	switch (t_params->protocol) {
-+	case CS_ETM_PROTO_ETMV3:
-+		cs_etm_decoder__gen_etmv3_config(t_params, &config_etmv3);
-+		decoder_name = OCSD_BUILTIN_DCD_ETMV3;
-+		trace_config = &config_etmv3;
-+		break;
- 	case CS_ETM_PROTO_ETMV4i:
- 		cs_etm_decoder__gen_etmv4_config(t_params, &trace_config_etmv4);
- 		decoder_name = OCSD_BUILTIN_DCD_ETMV4I;
-@@ -398,11 +417,17 @@ static int cs_etm_decoder__create_etm_packet_decoder(
- 					struct cs_etm_decoder *decoder)
- {
- 	const char *decoder_name;
-+	ocsd_etmv3_cfg config_etmv3;
- 	ocsd_etmv4_cfg trace_config_etmv4;
- 	void *trace_config;
- 	u8 csid;
- 
- 	switch (t_params->protocol) {
-+	case CS_ETM_PROTO_ETMV3:
-+		cs_etm_decoder__gen_etmv3_config(t_params, &config_etmv3);
-+		decoder_name = OCSD_BUILTIN_DCD_ETMV3;
-+		trace_config = &config_etmv3;
-+		break;
- 	case CS_ETM_PROTO_ETMV4i:
- 		cs_etm_decoder__gen_etmv4_config(t_params, &trace_config_etmv4);
- 		decoder_name = OCSD_BUILTIN_DCD_ETMV4I;
+ # Variety of Dell Bluetooth devices - match on a mouse device that is
 -- 
-2.7.4
+2.16.4
 
