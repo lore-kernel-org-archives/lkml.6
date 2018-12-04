@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C63C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665BAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE74120851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B0EE20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUWmor6B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE74120851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ui5+1BSB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0EE20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeLDL2U (ORCPT
+        id S1727017AbeLDK6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:28:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43364 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:58:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727023AbeLDK6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:48 -0500
+        id S1726981AbeLDK6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0E612087F;
-        Tue,  4 Dec 2018 10:58:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5D4B214DB;
+        Tue,  4 Dec 2018 10:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921127;
-        bh=c80V6tU5ZR4PQQCfVJEwHpCppJdzGxBNXZOVa2Rek4w=;
+        s=default; t=1543921117;
+        bh=5LVn1TFIzRWk/CFhAyJxbMVOwTC2XU/XdZDVkkFY6vo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gUWmor6BHGKPSIoLgrMoZFBm2vAbWlS1oR1M9aOdOH0v/Nkv3E/j26XA4fV1H5vjl
-         bzSy1boS84WzG/h8SWZYJnNWQzOue1pWR4UgT0BvE8VuODMwm7F4uF6/M3byNmSm5W
-         eN4OleZH74tL3Q53YeHw/CkoPabxWvmdzzcWXG0w=
+        b=Ui5+1BSB5pVeqSK0XCOMMsZU0XswsfixpcBkaHUyDDiutGk9hqXoeJGLtgj2+SgRa
+         HZbzvtQYcxxrax4+Ugm6rPAl7/GvVvB47Bk3KjTWazhNdDkZsPh3XixurCciJ9eIm9
+         Z4d19rChqiyWysiLcfAGKG92IkVOPwLRikMhPCg0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 092/139] ALSA: sparc: Fix invalid snd_free_pages() at error path
-Date:   Tue,  4 Dec 2018 11:49:33 +0100
-Message-Id: <20181204103654.137118166@linuxfoundation.org>
+        stable@vger.kernel.org, Ravi Nankani <rnankani@amazon.com>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Torsten Mehlan <tomeh@amazon.de>,
+        Uwe Dannowski <uwed@amazon.de>, Amit Shah <aams@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 088/139] fs: fix lost error code in dio_complete
+Date:   Tue,  4 Dec 2018 11:49:29 +0100
+Message-Id: <20181204103653.940457711@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -63,51 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Maximilian Heyne <mheyne@amazon.de>
 
-commit 9a20332ab373b1f8f947e0a9c923652b32dab031 upstream.
+commit 41e817bca3acd3980efe5dd7d28af0e6f4ab9247 upstream.
 
-Some spurious calls of snd_free_pages() have been overlooked and
-remain in the error paths of sparc cs4231 driver code.  Since
-runtime->dma_area is managed by the PCM core helper, we shouldn't
-release manually.
+commit e259221763a40403d5bb232209998e8c45804ab8 ("fs: simplify the
+generic_write_sync prototype") reworked callers of generic_write_sync(),
+and ended up dropping the error return for the directio path. Prior to
+that commit, in dio_complete(), an error would be bubbled up the stack,
+but after that commit, errors passed on to dio_complete were eaten up.
 
-Drop the superfluous calls.
+This was reported on the list earlier, and a fix was proposed in
+https://lore.kernel.org/lkml/20160921141539.GA17898@infradead.org/, but
+never followed up with.  We recently hit this bug in our testing where
+fencing io errors, which were previously erroring out with EIO, were
+being returned as success operations after this commit.
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The fix proposed on the list earlier was a little short -- it would have
+still called generic_write_sync() in case `ret` already contained an
+error. This fix ensures generic_write_sync() is only called when there's
+no pending error in the write. Additionally, transferred is replaced
+with ret to bring this code in line with other callers.
+
+Fixes: e259221763a4 ("fs: simplify the generic_write_sync prototype")
+Reported-by: Ravi Nankani <rnankani@amazon.com>
+Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+CC: Torsten Mehlan <tomeh@amazon.de>
+CC: Uwe Dannowski <uwed@amazon.de>
+CC: Amit Shah <aams@amazon.de>
+CC: David Woodhouse <dwmw@amazon.co.uk>
+CC: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/sparc/cs4231.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ fs/direct-io.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/sparc/cs4231.c
-+++ b/sound/sparc/cs4231.c
-@@ -1146,10 +1146,8 @@ static int snd_cs4231_playback_open(stru
- 	runtime->hw = snd_cs4231_playback;
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -325,8 +325,8 @@ static ssize_t dio_complete(struct dio *
+ 		 */
+ 		dio->iocb->ki_pos += transferred;
  
- 	err = snd_cs4231_open(chip, CS4231_MODE_PLAY);
--	if (err < 0) {
--		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
-+	if (err < 0)
- 		return err;
--	}
- 	chip->playback_substream = substream;
- 	chip->p_periods_sent = 0;
- 	snd_pcm_set_sync(substream);
-@@ -1167,10 +1165,8 @@ static int snd_cs4231_capture_open(struc
- 	runtime->hw = snd_cs4231_capture;
+-		if (dio->op == REQ_OP_WRITE)
+-			ret = generic_write_sync(dio->iocb,  transferred);
++		if (ret > 0 && dio->op == REQ_OP_WRITE)
++			ret = generic_write_sync(dio->iocb, ret);
+ 		dio->iocb->ki_complete(dio->iocb, ret, 0);
+ 	}
  
- 	err = snd_cs4231_open(chip, CS4231_MODE_RECORD);
--	if (err < 0) {
--		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
-+	if (err < 0)
- 		return err;
--	}
- 	chip->capture_substream = substream;
- 	chip->c_periods_sent = 0;
- 	snd_pcm_set_sync(substream);
 
 
