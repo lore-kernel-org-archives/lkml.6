@@ -2,188 +2,134 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D98C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9569C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC1A920851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:43:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="H3IU8tzb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC1A920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 25F5420851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:45:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F5420851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbeLDInM (ORCPT
+        id S1725865AbeLDIpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 03:43:12 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35814 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbeLDInM (ORCPT
+        Tue, 4 Dec 2018 03:45:32 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:52739 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725747AbeLDIpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 03:43:12 -0500
-Received: by mail-wr1-f67.google.com with SMTP id 96so14983629wrb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 00:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=mvkdi3q+pCk19j+OSCfIIO4IR4c7G8O0A9eW6/HhP7s=;
-        b=H3IU8tzbX+K1KZGAxgcl8y+TQFRwPk/o9HFRGDIA8A/MN17BRpJls1VASuivI/q4H8
-         Sz7R0XqDNbYmkk/jGBKD/E/zaDuN1+5PSfFv1XKBFWoFCi1Q5ab0ootFd3mpq8VGw7pj
-         kBo7P/zm0yvM8cyaBp/rh+lVcoLu4CeDxSfrUwSX/Dt/u5USczVIRBcLYjA61vs6Nq2F
-         CEigs7nGwonnLgqZzaVGR6OURed7BAm6y5oYkOhxzZhCbwt7ebpgRusmRCsJWBnUksMb
-         69mVuvJsxaEKoOcDzj4XTx1PudP6US5GJ+LyvPD/QlDimfDgxlTyzmwpo7okhoLa+qZk
-         Hk/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=mvkdi3q+pCk19j+OSCfIIO4IR4c7G8O0A9eW6/HhP7s=;
-        b=awE/uZv6dGafzExjuTU+COF4ocj3Uf3gJtAvYzFpfxgYThTWiQP/ByFWHhJ4nHgprL
-         8iK7Wd3VJG9DRr3VX1d8tQrHIc4hZqR36XX0n5xp1vp8+bItpQlntb/Z0hd3r9TD7OvN
-         uAhEW86xiJXKmT5XRaMJBYQn0se3r4UHozImb6aUwRosf9EzBA+eBI9UQyrxnsPf+kqR
-         GRXyh96+KzI/cI9bQ6lLuhA+4s7IZbpMssK6i3y7hz91Ny/nZgpMJmVGqSdNvS30H4c5
-         xWen5A/+AQzaOrsntJSV/iNq94WQhwTFrY0u01o6ocWY1RfTcjgP53YmRwa/f6XeAuyC
-         pRDA==
-X-Gm-Message-State: AA+aEWathW3bcX1vH8Yx2SwxtqbYirykwfyCC2x5scXN0b/cOJ1bnv/8
-        Sa8DaBT5n5itpDXPy9NRbJmxHiV+O/ol6A==
-X-Google-Smtp-Source: AFSGD/W9CGJvXkWDmL2+CrcScCbawKHbOYyyQMMNdnjxECss33LNwTLqVmdaYL5HAgosqUsb0vk9Rw==
-X-Received: by 2002:adf:dc4e:: with SMTP id m14mr4149796wrj.107.1543912989653;
-        Tue, 04 Dec 2018 00:43:09 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c13sm37317099wrb.38.2018.12.04.00.43.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 00:43:09 -0800 (PST)
-Subject: Re: [PATCH v2 21/34] dt-bindings: arm: Convert Oxford Semi board/soc
- bindings to json-schema
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-oxnas@groups.io
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-22-robh@kernel.org>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <be37bd18-a573-307e-3a9e-e879010cfc89@baylibre.com>
-Date:   Tue, 4 Dec 2018 09:43:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 4 Dec 2018 03:45:32 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TEqRxdG_1543913079;
+Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0TEqRxdG_1543913079)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 04 Dec 2018 16:44:40 +0800
+Reply-To: xlpang@linux.alibaba.com
+Subject: Re: [PATCH 2/3] mm/vmscan: Enable kswapd to reclaim low-protected
+ memory
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20181203080119.18989-1-xlpang@linux.alibaba.com>
+ <20181203080119.18989-2-xlpang@linux.alibaba.com>
+ <20181203115646.GP31738@dhcp22.suse.cz>
+ <54a3f0a6-6e7d-c620-97f2-ac567c057bc2@linux.alibaba.com>
+ <20181203172007.GG31738@dhcp22.suse.cz>
+ <a77ed2a6-ed9b-4c1b-e2e9-fb9a5108c1f9@linux.alibaba.com>
+ <20181204072508.GU31738@dhcp22.suse.cz>
+From:   Xunlei Pang <xlpang@linux.alibaba.com>
+Message-ID: <4e06fac2-7269-23a7-e4f5-18928998ece2@linux.alibaba.com>
+Date:   Tue, 4 Dec 2018 16:44:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <20181203213223.16986-22-robh@kernel.org>
+In-Reply-To: <20181204072508.GU31738@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 22:32, Rob Herring wrote:
-> Convert Oxford Semi SoC bindings to DT schema format using json-schema.
+On 2018/12/4 PM 3:25, Michal Hocko wrote:
+> On Tue 04-12-18 10:40:29, Xunlei Pang wrote:
+>> On 2018/12/4 AM 1:22, Michal Hocko wrote:
+>>> On Mon 03-12-18 23:20:31, Xunlei Pang wrote:
+>>>> On 2018/12/3 下午7:56, Michal Hocko wrote:
+>>>>> On Mon 03-12-18 16:01:18, Xunlei Pang wrote:
+>>>>>> There may be cgroup memory overcommitment, it will become
+>>>>>> even common in the future.
+>>>>>>
+>>>>>> Let's enable kswapd to reclaim low-protected memory in case
+>>>>>> of memory pressure, to mitigate the global direct reclaim
+>>>>>> pressures which could cause jitters to the response time of
+>>>>>> lantency-sensitive groups.
+>>>>>
+>>>>> Please be more descriptive about the problem you are trying to handle
+>>>>> here. I haven't actually read the patch but let me emphasise that the
+>>>>> low limit protection is important isolation tool. And allowing kswapd to
+>>>>> reclaim protected memcgs is going to break the semantic as it has been
+>>>>> introduced and designed.
+>>>>
+>>>> We have two types of memcgs: online groups(important business)
+>>>> and offline groups(unimportant business). Online groups are
+>>>> all configured with MAX low protection, while offline groups
+>>>> are not at all protected(with default 0 low).
+>>>>
+>>>> When offline groups are overcommitted, the global memory pressure
+>>>> suffers. This will cause the memory allocations from online groups
+>>>> constantly go to the slow global direct reclaim in order to reclaim
+>>>> online's page caches, as kswap is not able to reclaim low-protection
+>>>> memory. low is not hard limit, it's reasonable to be reclaimed by
+>>>> kswapd if there's no other reclaimable memory.
+>>>
+>>> I am sorry I still do not follow. What role do offline cgroups play.
+>>> Those are certainly not low mem protected because mem_cgroup_css_offline
+>>> will reset them to 0.
+>>>
+>>
+>> Oh, I meant "offline groups" to be "offline-business groups", memcgs
+>> refered to here are all "online state" from kernel's perspective.
 > 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-oxnas@groups.io
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/arm/oxnas.txt         | 14 -----------
->  .../devicetree/bindings/arm/oxnas.yaml        | 25 +++++++++++++++++++
->  2 files changed, 25 insertions(+), 14 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/oxnas.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/oxnas.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/oxnas.txt b/Documentation/devicetree/bindings/arm/oxnas.txt
-> deleted file mode 100644
-> index ac64e60f99f1..000000000000
-> --- a/Documentation/devicetree/bindings/arm/oxnas.txt
-> +++ /dev/null
-> @@ -1,14 +0,0 @@
-> -Oxford Semiconductor OXNAS SoCs Family device tree bindings
-> --------------------------------------------
-> -
-> -Boards with the OX810SE SoC shall have the following properties:
-> -  Required root node property:
-> -    compatible: "oxsemi,ox810se"
-> -
-> -Boards with the OX820 SoC shall have the following properties:
-> -  Required root node property:
-> -    compatible: "oxsemi,ox820"
-> -
-> -Board compatible values:
-> -  - "wd,mbwe" (OX810SE)
-> -  - "cloudengines,pogoplugv3" (OX820)
-> diff --git a/Documentation/devicetree/bindings/arm/oxnas.yaml b/Documentation/devicetree/bindings/arm/oxnas.yaml
-> new file mode 100644
-> index 000000000000..6ae51ef513be
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/oxnas.yaml
-> @@ -0,0 +1,25 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/oxnas.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Oxford Semiconductor OXNAS SoCs Family device tree bindings
-> +
-> +maintainers:
-> +  - Neil Armstrong <narmstrong@baylibre.com>
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +        - enum:
-> +            - wd,mbwe
-> +        - const: oxsemi,ox810se
-> +
-> +      - items:
-> +        - enum:
-> +            - cloudengines,pogoplugv3
-> +        - const: oxsemi,ox820
+> What is offline-business group? Please try to explain the actual problem
+> in much more details and do not let us guess.
 > 
 
-We also loose all the "human friendly" description of board/SoC relationship here,
-and I think it's a shame.
+Maybe I choosed the wrong word, let me rephase it, and
+here is an example.
 
-Neil
+                root 200GB
+           /                  \
+important(100GB)  unimportant(100GB+DYNAMIC)
+  /     |      \         /          \
+docker0 docker1...  normal(100GB) oversold(DYNAMIC)
+                      /  |  \      / |  \
+                     j0 j1 ...    w0 w1 ...
+
+"DYNAMIC" is controlled by the cluster job scheduler dynamically,
+it periodically samples the available system memory(/proc/meminfo
+"MemAvailable"), and use part of that to launch oversold jobs
+under some special conditions. When "oversold" is active, the
+whole system is put under heavy global memory pressure although
+memcgs are not.
+
+IOW "DYNAMIC" is primarily borrowed from "dockers" temporarily,
+oversold workers will be killed in a timely fashion if "dockers"
+needs their memory back suddenly which is rare.
+
+If kswapd doesn't reclaim low-protected memory configured among
+"important" dockers, memory allocations from dockers will trap
+into global direct reclaim constantly which harms their performance
+and response time. The inactive caches from dockers are allowed
+to be reclaimed although they are under low-protected(we used a
+simple MAX setting), we allow the inactive low-protected memory
+to be reclaimed immediately and asynchronously as long as there's
+no unprotected reclaimable memory. Its's also friendly to disk IO.
+
+For really latency-sensitive docker, memory.min is supposed to be
+used to guarantee its memory QoS.
+
+Thanks
