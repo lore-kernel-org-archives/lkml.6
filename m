@@ -2,175 +2,234 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40988C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D39DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D392020834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:40:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F61A20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:46:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="kSgvjUHZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D392020834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzwvGSkD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F61A20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbeLDGkp (ORCPT
+        id S1726063AbeLDGqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:40:45 -0500
-Received: from mail-eopbgr690049.outbound.protection.outlook.com ([40.107.69.49]:53216
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725983AbeLDGkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 01:40:45 -0500
+        Tue, 4 Dec 2018 01:46:23 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43786 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeLDGqX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 01:46:23 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 83-v6so13802378ljf.10;
+        Mon, 03 Dec 2018 22:46:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oESeI/KFKsvE4xWI0O1H2ohbsgzGizMtxzn6Xma/Y5I=;
- b=kSgvjUHZd4elUStlv1v+2B5IQ031iBM7GfkLP59I9R68a0AHpBeTNCYWxHXemuawdDGzKTQ7jB94wjx5FhNeOMgQAcZBP6rsZoMDrAtnonmGCxErXJEG/2RcSjXgQsCVWI8stXCjGb/J8Ww/ka4FH5iqxTuV4s61PK85Okm67no=
-Received: from DM3PR12CA0063.namprd12.prod.outlook.com (2603:10b6:0:56::31) by
- BN7PR12MB2628.namprd12.prod.outlook.com (2603:10b6:408:29::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Tue, 4 Dec 2018 06:40:01 +0000
-Received: from DM3NAM03FT051.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e49::208) by DM3PR12CA0063.outlook.office365.com
- (2603:10b6:0:56::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1404.17 via Frontend
- Transport; Tue, 4 Dec 2018 06:40:01 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; lists.freedesktop.org; dkim=none (message not signed)
- header.d=none;lists.freedesktop.org; dmarc=permerror action=none
- header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV02.amd.com (165.204.84.17) by
- DM3NAM03FT051.mail.protection.outlook.com (10.152.83.56) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1382.18 via Frontend Transport; Tue, 4 Dec 2018 06:40:01 +0000
-Received: from [10.237.74.158] (10.34.1.3) by SATLEXCHOV02.amd.com
- (10.181.40.72) with Microsoft SMTP Server (TLS) id 14.3.389.1; Tue, 4 Dec
- 2018 00:40:00 -0600
-Subject: Re: [PATCH -next] drm/amdgpu: Fix return value check in
- amdgpu_allocate_static_csa()
-To:     Wei Yongjun <weiyongjun1@huawei.com>, <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
-        <airlied@linux.ie>, <Rex.Zhu@amd.com>, <Monk.Liu@amd.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <1543905576-38015-1-git-send-email-weiyongjun1@huawei.com>
-From:   zhoucm1 <zhoucm1@amd.com>
-Message-ID: <fc2e78a7-d739-6e53-864b-75080e124585@amd.com>
-Date:   Tue, 4 Dec 2018 14:39:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3Bi+h44ijy3xVAPz9yPzSX5g+v7hAB0xgCgaaTWMPM4=;
+        b=fzwvGSkDhR8HvF05xaRgSzAJoRlrIye+4Cp/I7kimGz8uPhOFXFYGsDX7z0ayidA4P
+         6y/qo8WygJNyN0IGRgdHFLIgX+x0y+DeXOJBch9DgV9o9lfiMeF5Et9p4gb3K0arhyVV
+         27PWBFK4a4VMyzOQ/H+H9Ikd1+S67QMd+1N4zEUrgi0JK2JwTs+e7zeoAZH1Vlkh1uMS
+         CX6ds4L6QPUI+oGI2f24JUwO7kAgZ3TBKeX1uik6L10FdJpLaMEQmxFylkcY6Rk7O3f1
+         QVLAmMzOYFS7h/ngkby3Aw4RrV9o32m+EgoYOpk04yD32dti7VN6/uDay17i9EYrApx5
+         xYdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3Bi+h44ijy3xVAPz9yPzSX5g+v7hAB0xgCgaaTWMPM4=;
+        b=kAL/iwJxShTp8E2FEVqjXl7IdJ1hWCKKlH8MD1rLMZP2iC7AicGKlUjYuALG9P7W/q
+         lEfa+rfykbSbzcL/n+RgESZ4zYOiVG4yPZCqkNr1tyHKDgfVBReugTM5qPqI2ewubl4d
+         gCYaVtqrw/V/MnA5kaRGfT5tueK9LQAx3Cg6BW6Bn+BKj5GldJI+HR0cXb58vD85bUJr
+         jTZUqjlLNTR/EnaccXlJhDsPO6eL/E43WoxUoEQ0H5JbW+hVFtWaN988f1gpH+7QEdCA
+         A7ieCP1VQUatAyFAotyoDAoKsUxYHcbUskmnnK8g7XIISOqxB7qhXYMuxbnccEFNb3YC
+         jNuw==
+X-Gm-Message-State: AA+aEWZu//QS3fnsg6Ri0L/JxOc/SyE8bckVC4pwbtdL8EFNKCkl2Bc8
+        gh8MRiejCBdyIwLNFh0aZXj9GV+z3wJwkYDky80=
+X-Google-Smtp-Source: AFSGD/V8D1DIq9BNUSfvXaJeSm4j0evDx8zRdQeUh+EsamQpyI/ikTbaprbeCOWfcerp+VP4PLUsGmS8gNqh11lqxXY=
+X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr787223lji.93.1543905980125;
+ Mon, 03 Dec 2018 22:46:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1543905576-38015-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.34.1.3]
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(346002)(376002)(2980300002)(428003)(199004)(189003)(16526019)(67846002)(65826007)(26005)(478600001)(186003)(72206003)(6666004)(6246003)(11346002)(446003)(53936002)(356004)(426003)(77096007)(4326008)(305945005)(65806001)(7736002)(23676004)(97736004)(3846002)(6116002)(2486003)(336012)(86152003)(14444005)(47776003)(76176011)(5660300001)(64126003)(65956001)(50466002)(31686004)(2870700001)(2201001)(6636002)(31696002)(36756003)(229853002)(58126008)(16576012)(110136005)(316002)(54906003)(81156014)(68736007)(81166006)(8676002)(104016004)(486006)(105586002)(476003)(2906002)(106466001)(8936002)(2616005)(126002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2628;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT051;1:hK/xc+ltiKzdg/7uzPu3GcTyhHAmfRnm18tY8inNyiCQRnSePoIOtnbkpWPIpGeleHMztXwzDUJjlhP9AX91SsTaYQZ4PJCMxsFMxnRn6VHNzYSobz+jN9JZnwYLIvEa
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5ed89307-2e8a-4ac4-918c-08d659b35125
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2628;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2628;3:JRfx1rkHaD36jhp27cV0k4ZbqczIpWfSvK1sFMJzIbgJ+KUEE2t9qs8ISvHBZEtjbTGmvgOkDgsFh0dCak9WZi21OAnCougEXqRq4dOrl3TkGTyiDyhWZ2SDJi0atHFxk84Wz2JoNukZpE2q/jkRN0TAZGQ87LWvFpQFeOufPT5TlPv1OLcef3aAkj8Us5BiqkteLIkkKnoKGPm9KOMK7Qip92TLcf+lJCKcYTt3r6U+1FTAdlgbDv0lB9wlTiW74/31Fih0rthoNXPm+lBRunT4Lg6oks3WmdRjhyZalK5dyoQtOStOu7vQjJaOv+7fYXFHTKSN5SVOtA+SbiHqxCnd+64A/G/av2Dbn6pV5Ug=;25:EvfBDW0xHpNiBwwDpGrYCZ6uKgvOHMDamGtofNhJpnUVR8p68++JTYCOgsYlPQ+JCZmzJkLpTv5UIGQBKOBRAJM4r8UiB6WPunFj3HED1DfFlD82BJbh9U6UXgpTetg2Zg/ZxLLSDfV5puKMPiCYYJOzXF2Jt3jki3nx7ZQF9hZphSOvf4hMBauH+DOWmndrMRlscGWMnJubHYdDTarvxfksnoCqcNMIEjcm79yc+6nAtnady95aosTahhm+hw4tFpLFnrMGVj1bgdZar/3l4ECZRRT5oJSSj8MKFx/bMdUZXN6bFauF5ppIPMqEQqTt9lLjTuqb2ayivkcarYCUQQ==
-X-MS-TrafficTypeDiagnostic: BN7PR12MB2628:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2628;31:4RY5R7nzSiV983IMfBEsj4Ptv7RTTmMisdD7pY42HnvOqVu5oYoo6F+z4xoQvjKbTgcCeq/JkiShIixeC3yXdmSAWwaImU6l7Q0hsoBUEl1/6YI1eJRt9H6YcTHAu9pZk5YDQ42AKNe9nKC05vQI2cQdrik8e8jF+Eo41nOGZPwnClDpd8C2y4o8z+dcVm9t8z2j68tRzl2sIiQer1XwGI9v5WgfAP4dXPhPxHAxKHQ=;20:DCc+12cyaj9NjASyxWfuGKK+P77hwC3BV17mss+phY4yByAa08vNyVxYfgisCDBDqm0PFce54YvuIlNlp0I6G3ERISgdc88EHXybX+fFmTLd/xfZtOIgAPqMVKXAI8ZnkkkihFfvzGfB2SsBKXXrCXd+P1l1VV8RnkrG3m0Rgs6c91rK2c6Ly9Zqv1Sf3SOtyU1B348vswD+qKO02JuYlpyRVjjDDIObU/CFEFRRG4MAL2wJavu8TqZpKhBjsij0WI82JNAZMsChiJe0KCEzprxZgFgi3kBBrmxiFCabSWY1uSFrq1zaVDBlXAnqbwILbD52t5Sq7GjcuU43iu28TyrDnZknxMqA3xKYVVlkT4PXBIdC3DHzXZXOn7xmfCRDZEtLg+ATnQZ9YKH79A+vdL5iYJqKehl9UfyqJ8rcq3uiFRLjf+I2ABNeJt7o50HpfP+4PscPHLrW/wKdROxbjG8Tk8tvVRsvhz4DS/cDpOPo/nIkIgq7CQIU86w3VXk2
-X-Microsoft-Antispam-PRVS: <BN7PR12MB2628D2ACB953C13D9576D6B2B4AF0@BN7PR12MB2628.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501493)(52105112)(93006095)(93003095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN7PR12MB2628;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2628;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2628;4:RqrdZbUU/x/5N7F+cF46cndAGWcls9itrdMZ6z0lPZ16Liw5SJUNo2KCcuS6oxQj4ewI8Dfwbxs9qMzWT+riaayTO1m+p6smAsyss6QjOqU/nSgZmz0N3MPKlCMZZ5N84a/dRxwpuO1q2d2GuM8XGHu7pT8ualNZ+6GiBelq9cRArTw3fz5sRJDHl0pVjAAz80Rl7I99PDuU3a9fgiOV3gNFjZ6zRZnHjISUMEQqDBrpExq971AEinNX7/2RkmnueNSGXycE5jvkn1gOAkvr2Q==
-X-Forefront-PRVS: 0876988AF0
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjdQUjEyTUIyNjI4OzIzOmJiY25FaHV0MzZhRVpoNU42ZkJ4dXR0eEpK?=
- =?utf-8?B?ZkNOMUo1ZVpVSGZXUGw4dnVOMlcyb3Zka2NCMUV1UVFSWXU3dkErMndXdERi?=
- =?utf-8?B?UnpjMm9UNDJPTFZCZHhrSW9xRVRoZFJIbElUMXY3M0NTbHNscyt5OTBlWFNG?=
- =?utf-8?B?WGNHWW9uWW5QalpJZUxjZXVSQ2xZZXl5bmFjd0RPSThWVTN3SmVUS0hlUGl3?=
- =?utf-8?B?WTBndTYyL3ZQbWxxQjluUk9lOUlYcUQ2Z1VNeVpKd2duUzBBTTI0TFczWEpX?=
- =?utf-8?B?am90VTJ2dlA1NUU4Z05oa0wzSXpheGNQOHhzZDB5bWtlZ1pqcWQxdXd5bm9H?=
- =?utf-8?B?djhyVmp4V2ZUMUJPaVNEWTJTcWFvSUlIYjdhVUNJNk1RMDFTVXM5WUZGUXRw?=
- =?utf-8?B?TWcwMFB4SnpjQityWXVTSmlCZnRjbVk0NVhFN0xmcWNwRWhTSkNkeHlNdFE0?=
- =?utf-8?B?TnBZMnZWQ2JyZDQzYi85T0JsT1h1YXFSK1BuN1pmelg0enNZZExtNXROOEtT?=
- =?utf-8?B?Vm9ObTNlRVRYWmQ5WUQ3aEtpanFNbDQ0WkFZYTNxVDh1Q0RLbXR2c3RTYmNj?=
- =?utf-8?B?Y1JrNWlvVVJnU1d6SHNDeUd5VTZyTlpUdFhYbTFsTVZYY2ZuNXFuSTN4bWg5?=
- =?utf-8?B?TnBLLzltVkxFZDFVNDMyQ1dSb3ViSit4bzg5TGx1Z0F1T2t2S0swd2tNakRG?=
- =?utf-8?B?aytjbnVVWGt1MFZaRTIwcWUxMzhYRU9nMXhOaWpZalN0K0JEZ3pSTnJqcTVt?=
- =?utf-8?B?RnpHMXlwcmhFS21NSWxjc2t6b2NXcHR1eFdCUmo4YzFEcWlJS1Zvd0FuUW1u?=
- =?utf-8?B?aHFqQytLNy9yNjNzcnJheHQ2WEhWTEhDVlZXcHhUYytnQVg4ZzRhUlhCcXpt?=
- =?utf-8?B?UXBNSXNuYk96N1VVZEowUGV3dUdVNnMrNXV3SGJYTThLSkgrQVlQYzZiZDd0?=
- =?utf-8?B?dE1sN050NmtCTlFjODI5WEdFZ0pBdG9waGVsWG1nQkJGQUYybjVYejMvVzU1?=
- =?utf-8?B?QkNILzVrc1JWNHg2K0xsaTFQdHY5RHBTRWZzTzZIdkFQTE1valI2NTdrTnZM?=
- =?utf-8?B?Nk9ubXJxQXEyNlVQdTR1L0NzSEE1cWZQTDZMVEFGOEpYT3dlU3pCSzFzMTht?=
- =?utf-8?B?TVBDcVNrR3VtSFhsVTVXQ2VxQ3oxekhYVXhCZ1hoL1NWbnFod1hmU1RIV083?=
- =?utf-8?B?cEpVTVBpTlNZYjFkZ3lOQVV0aU5aMkFDamFLTVhyRTBrdktMUXY1dGowY2cv?=
- =?utf-8?B?S04zTEtzT1dQSVByRmlMckQxZUN4REdDQjEzTTdVSFEwZ21KMUpPcSs5OHR5?=
- =?utf-8?B?cWxaMkczQU9LY1hKU29YTktHTG5GVWlIeGIwb0lhdENPOHNRRVpiQ1BXbUox?=
- =?utf-8?B?cEVlazNCcW83RDNLTjBLeHQzamxHOUEwalVlKzRuZTdBNzBNRjhFM0pSWGFK?=
- =?utf-8?B?WllEM2hzN0tWV1l1N3VPdHBKMjhXczZZeGk1MzlQUzJOcCtWR0U3anJPNFZa?=
- =?utf-8?B?bS9QZmR3TEFFK3Z2YkpSVjU5MzByY3JlQ05QSGRNeG5YeklFYXBkZmZodmtu?=
- =?utf-8?B?RDdkWVA5bzhUZFVFa1EzVGh5U2NhT0dEbFhYWXFJb29BMW1pWWRXZTNmdTNn?=
- =?utf-8?B?OUdKOHREUWEyQUpuSlhuNzBhUVFiTU16Q0FBakZOeG5sWWRDMEp2MmRWY29S?=
- =?utf-8?B?dzlSbVFvWnpLQ2tHOTZKRmZlNWhJSXpVRndJZ1U3ZzZWc1g3R2ZUajZ1ZWVU?=
- =?utf-8?B?dkh6TzZab2ttQXBBbUo2V2tLMEtuNVMwWDhWRmFmeFV0MjBZZXUvWlhnNVQ4?=
- =?utf-8?B?dTJSTC9BQ0Nvajhla1p1WlA5UmVidjhBMEFaR1VnYnIrejBvRzEvK2kvN1Nw?=
- =?utf-8?B?RjZWVFZiaHpBM3lHc1d3bEVHYkdvZnlkTDB6Wm1jbG5wVWRpaFV5dm55THpK?=
- =?utf-8?B?N0dERm5HM0w0c1Q4VzZLZm53NVlXZlFpMWxxMEpyaVhUL1BsQmFZWExvWEh4?=
- =?utf-8?Q?hIAl2Q?=
-X-Microsoft-Antispam-Message-Info: a9qTmtAYeaj05swRtTuRhigRtk30WxN5LIZl8TE5VoeU390P+rsF/Ctkq8h80XSbRQQWsvB/6gE8f1ozqelPa7Nq0ognz4ODuTlFw9cMQlVHGMExHjh18mJHEhHSKQ6IVVFnX/DLMi/B5lbLJQCaSoIenxee6ZaM5TuMlFQHXA2/6F/Kf6+GTVynY6iK0nOlu0OnzEHNEQL9AK1vyM0Oi+8rs3atuaGqpTwIoM6x1dSrf2/tNrxI+Ax41EDrGWEsgxJeXuRvTpAMK8x8SqgUSOZYJKolLSjIvn4W9qXG158FjDbRvCtZDV+8sby1Xdk6vIGOgktpM1b25bSB8tXEvIEgBlLaSK+/jCtxc39Ni8k=
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2628;6:5lc6B5OTdvl9fUGA1vCuEZmUBj+7dsplpUHm8NYutuowSJTkJYCAQPOreBd5R+Ugj4159jw+kJ0d/OepHnYRm6Jc9PaurotJdkJJDzMQ80EKjI7FCeZVYJP/6DxnVNjppctsmpmzO/1eNIVFo+HmfxDCHwSb1159/U3vtCHk3Ymi7GwTH06epkjfac4woC1ZZ2BvGVq0e0XPvZgTlSTrMumFBi2ATRadD1zF5sUWnNXVJvp6iltiaoDmHl7n5e2ncJtxibl60cKPfpdUvtXXvQ59/NZKgw8HuLBjSOjYEsOCeI9pkle07F5cIzgj8Xw0y18hGEroYsRPsD3svxbcIjMhUfOW91VEOeNa1MOQO6sUAGscUlAB/TTrcCja3hSw1ZAU7+XftE3Bx3/FlAlyki192Wsz8KLXdIzRrTcbByMEuiFWfn9dHD/1ieC1j+UVYPybtq9ZJurs2GbJ3Wjl1Q==;5:DovRbN7tpkbMUEw8U9ES/jLm5T89gqeCp9c5yROvQgb5cBQCgaeCvBA/baCb9NNZNarA/JoyFUFcDHnh1L2uJ83iIxQjA+2ZmYArwtC//XL7NjWB2LXozj+/Iid70wy/FwLFNumUwA7jAyD4n+z6sNEQ5HObrKGi+aIitKVIOxE=;7:txXqFa6AEdxO3d8ESpK9Cc+sqeZVaWLVj+nyLe2tbYRwrWWgVNec6bkMpAz4zQ60hm7EeDX8wPV7zvYUPv9II8UOiTDGBNDwQWDOibRXVcXolQyPLwbUJis6+p3K/OE/fkUURVwNBAiNZITwsygrKQ==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2628;20:j4PnHPR0pMV9K0gl67pKav3By9rLn1f1hErj2DB6UX8cwdwuNKAznfukKOSbDkGakvqlN1yP58exwqJXmI3gKskWigfW5v63abkALfk86xDTkcyko57+FL7r2ayPWmUuD8y6xrA/UydYEyLJp6DphtqDXbIgGgNJD2Tfnfrikq2fbzm6fxegc8kCxV1tL0SGbXKdUQ6NhWcYfUF6C8o/8d9ihrsLMchyLSM9D85Ay3oS0pSAwjlS4DA3zzWUrfJn
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2018 06:40:01.1813
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ed89307-2e8a-4ac4-918c-08d659b35125
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2628
+References: <20181202061944.GA3094@jordon-HP-15-Notebook-PC>
+ <20181202111313.GC6959@rapoport-lnx> <CAFqt6zbvyaPF3tUA1-=RsfSM14p7Rx5NgQqAeW5-JUfd+NrJ2g@mail.gmail.com>
+ <20181203062222.GF6959@rapoport-lnx>
+In-Reply-To: <20181203062222.GF6959@rapoport-lnx>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 4 Dec 2018 12:16:07 +0530
+Message-ID: <CAFqt6za-XWsskz4VDhUonSPBSbSWsSV_icMpL55-LUrA5MSEiA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] mm: Introduce new vm_insert_range API
+To:     rppt@linux.ibm.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 3, 2018 at 11:52 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Mon, Dec 03, 2018 at 09:51:45AM +0530, Souptick Joarder wrote:
+> > Hi Mike,
+> >
+> > On Sun, Dec 2, 2018 at 4:43 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > >
+> > > On Sun, Dec 02, 2018 at 11:49:44AM +0530, Souptick Joarder wrote:
+> > > > Previouly drivers have their own way of mapping range of
+> > > > kernel pages/memory into user vma and this was done by
+> > > > invoking vm_insert_page() within a loop.
+> > > >
+> > > > As this pattern is common across different drivers, it can
+> > > > be generalized by creating a new function and use it across
+> > > > the drivers.
+> > > >
+> > > > vm_insert_range is the new API which will be used to map a
+> > > > range of kernel memory/pages to user vma.
+> > > >
+> > > > This API is tested by Heiko for Rockchip drm driver, on rk3188,
+> > > > rk3288, rk3328 and rk3399 with graphics.
+> > > >
+> > > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > > Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> > > > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > > > ---
+> > > >  include/linux/mm_types.h |  3 +++
+> > > >  mm/memory.c              | 38 ++++++++++++++++++++++++++++++++++++++
+> > > >  mm/nommu.c               |  7 +++++++
+> > > >  3 files changed, 48 insertions(+)
+> > > >
+> > > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > > > index 5ed8f62..15ae24f 100644
+> > > > --- a/include/linux/mm_types.h
+> > > > +++ b/include/linux/mm_types.h
+> > > > @@ -523,6 +523,9 @@ extern void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+> > > >  extern void tlb_finish_mmu(struct mmu_gather *tlb,
+> > > >                               unsigned long start, unsigned long end);
+> > > >
+> > > > +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> > > > +                     struct page **pages, unsigned long page_count);
+> > > > +
+> > >
+> > > This seem to belong to include/linux/mm.h, near vm_insert_page()
+> >
+> > Ok, I will change it. Apart from this change does it looks good ?
+>
+> With this change you can add
+>
+> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
+Thanks Mike.
 
-On 2018年12月04日 14:39, Wei Yongjun wrote:
-> Fix the return value check which testing the wrong variable
-> in amdgpu_allocate_static_csa().
 >
-> Fixes: 7946340fa389 ("drm/amdgpu: Move csa related code to separate file")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > >  static inline void init_tlb_flush_pending(struct mm_struct *mm)
+> > > >  {
+> > > >       atomic_set(&mm->tlb_flush_pending, 0);
+> > > > diff --git a/mm/memory.c b/mm/memory.c
+> > > > index 15c417e..84ea46c 100644
+> > > > --- a/mm/memory.c
+> > > > +++ b/mm/memory.c
+> > > > @@ -1478,6 +1478,44 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+> > > >  }
+> > > >
+> > > >  /**
+> > > > + * vm_insert_range - insert range of kernel pages into user vma
+> > > > + * @vma: user vma to map to
+> > > > + * @addr: target user address of this page
+> > > > + * @pages: pointer to array of source kernel pages
+> > > > + * @page_count: number of pages need to insert into user vma
+> > > > + *
+> > > > + * This allows drivers to insert range of kernel pages they've allocated
+> > > > + * into a user vma. This is a generic function which drivers can use
+> > > > + * rather than using their own way of mapping range of kernel pages into
+> > > > + * user vma.
+> > > > + *
+> > > > + * If we fail to insert any page into the vma, the function will return
+> > > > + * immediately leaving any previously-inserted pages present.  Callers
+> > > > + * from the mmap handler may immediately return the error as their caller
+> > > > + * will destroy the vma, removing any successfully-inserted pages. Other
+> > > > + * callers should make their own arrangements for calling unmap_region().
+> > > > + *
+> > > > + * Context: Process context. Called by mmap handlers.
+> > > > + * Return: 0 on success and error code otherwise
+> > > > + */
+> > > > +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> > > > +                     struct page **pages, unsigned long page_count)
+> > > > +{
+> > > > +     unsigned long uaddr = addr;
+> > > > +     int ret = 0, i;
+> > > > +
+> > > > +     for (i = 0; i < page_count; i++) {
+> > > > +             ret = vm_insert_page(vma, uaddr, pages[i]);
+> > > > +             if (ret < 0)
+> > > > +                     return ret;
+> > > > +             uaddr += PAGE_SIZE;
+> > > > +     }
+> > > > +
+> > > > +     return ret;
+> > > > +}
+> > > > +EXPORT_SYMBOL(vm_insert_range);
+> > > > +
+> > > > +/**
+> > > >   * vm_insert_page - insert single page into user vma
+> > > >   * @vma: user vma to map to
+> > > >   * @addr: target user address of this page
+> > > > diff --git a/mm/nommu.c b/mm/nommu.c
+> > > > index 749276b..d6ef5c7 100644
+> > > > --- a/mm/nommu.c
+> > > > +++ b/mm/nommu.c
+> > > > @@ -473,6 +473,13 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
+> > > >  }
+> > > >  EXPORT_SYMBOL(vm_insert_page);
+> > > >
+> > > > +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> > > > +                     struct page **pages, unsigned long page_count)
+> > > > +{
+> > > > +     return -EINVAL;
+> > > > +}
+> > > > +EXPORT_SYMBOL(vm_insert_range);
+> > > > +
+> > > >  /*
+> > > >   *  sys_brk() for the most part doesn't need the global kernel
+> > > >   *  lock, except when an application is doing something nasty
+> > > > --
+> > > > 1.9.1
+> > > >
+> > >
+> > > --
+> > > Sincerely yours,
+> > > Mike.
+> > >
+> >
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-> index 0c590dd..a5fbc6f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c
-> @@ -43,7 +43,7 @@ int amdgpu_allocate_static_csa(struct amdgpu_device *adev, struct amdgpu_bo **bo
->   	r = amdgpu_bo_create_kernel(adev, size, PAGE_SIZE,
->   				domain, bo,
->   				NULL, &ptr);
-> -	if (!bo)
-> +	if (!r)
->   		return -ENOMEM;
-I guess original is correct as well, if you want to change it, you can 
-make like below, not your 'if (!r)':
-                 if (r)
-                         return r;
-
--David
->   
->   	memset(ptr, 0, size);
+> --
+> Sincerely yours,
+> Mike.
 >
->
->
-
