@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33353C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF279C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D850920851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A78E520851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:29:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvzYnN7q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D850920851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBfvC20Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78E520851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeLDK6W (ORCPT
+        id S1727072AbeLDL3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:58:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42596 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:29:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726908AbeLDK6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:18 -0500
+        id S1726899AbeLDK6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3A5F214DA;
-        Tue,  4 Dec 2018 10:58:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E18F6214D9;
+        Tue,  4 Dec 2018 10:58:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921097;
-        bh=uh9dFAj72yPtKwhPctBRPHNn2K4vHWomSxsrgXyiHLY=;
+        s=default; t=1543921092;
+        bh=h35gAvBAbF4wT3Z6cTdkFy6ZBoIkpzHUErKRGyFPiY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OvzYnN7qZ9eIB4iXkhOdLCHkxcNCRZpt+Ho9OFAr+xfMO9vbTy3HqQT9HNXhyq7/D
-         2wP/KgbyVhWOGLWTCHstxK7kdBIqq/QojDGa9ho8BJ0rSEwgqEA99YxdCYOrdrnm68
-         BANi1exSY1SPg1CcEAgS9AIxei8Q2bWthzsalYhg=
+        b=SBfvC20ZQP7vW2lHdKcCTIPdmH68oafDSy01ZuLfBQYkHmXqD13lu6wM6DVHz6oOC
+         SZ+UJuqhbinlfaeZH0haE5aPuPGHm4S8nMPds1CN1GBQU/HDxqSF9e7mvf6gMqw5MU
+         tgqyrib7cYMgL/keDgLzhHm8zb9v/twwzKKgTce4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 045/139] x86/speculation: Reorder the spec_v2 code
-Date:   Tue,  4 Dec 2018 11:48:46 +0100
-Message-Id: <20181204103651.838598732@linuxfoundation.org>
+Subject: [PATCH 4.19 043/139] x86/speculation: Rework SMT state change
+Date:   Tue,  4 Dec 2018 11:48:44 +0100
+Message-Id: <20181204103651.756637894@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -83,9 +83,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 15d6b7aab0793b2de8a05d8a828777dd24db424e upstream
+commit a74cfffb03b73d41e08f84c2e5c87dec0ce3db9f upstream
 
-Reorder the code so it is better grouped. No functional change.
+arch_smt_update() is only called when the sysfs SMT control knob is
+changed. This means that when SMT is enabled in the sysfs control knob the
+system is considered to have SMT active even if all siblings are offline.
+
+To allow finegrained control of the speculation mitigations, the actual SMT
+state is more interesting than the fact that siblings could be enabled.
+
+Rework the code, so arch_smt_update() is invoked from each individual CPU
+hotplug function, and simplify the update function while at it.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -109,234 +117,105 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.707122879@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185004.521974984@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |  168 ++++++++++++++++++++++-----------------------
- 1 file changed, 84 insertions(+), 84 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   11 +++++------
+ include/linux/sched/smt.h  |    2 ++
+ kernel/cpu.c               |   15 +++++++++------
+ 3 files changed, 16 insertions(+), 12 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -124,29 +124,6 @@ void __init check_bugs(void)
- #endif
- }
+@@ -14,6 +14,7 @@
+ #include <linux/module.h>
+ #include <linux/nospec.h>
+ #include <linux/prctl.h>
++#include <linux/sched/smt.h>
  
--/* The kernel command line selection */
--enum spectre_v2_mitigation_cmd {
--	SPECTRE_V2_CMD_NONE,
--	SPECTRE_V2_CMD_AUTO,
--	SPECTRE_V2_CMD_FORCE,
--	SPECTRE_V2_CMD_RETPOLINE,
--	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
--	SPECTRE_V2_CMD_RETPOLINE_AMD,
--};
--
--static const char *spectre_v2_strings[] = {
--	[SPECTRE_V2_NONE]			= "Vulnerable",
--	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
--	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
--	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
--};
--
--#undef pr_fmt
--#define pr_fmt(fmt)     "Spectre V2 : " fmt
--
--static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
--	SPECTRE_V2_NONE;
--
- void
- x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- {
-@@ -216,6 +193,12 @@ static void x86_amd_ssb_disable(void)
- 		wrmsrl(MSR_AMD64_LS_CFG, msrval);
- }
+ #include <asm/spec-ctrl.h>
+ #include <asm/cmdline.h>
+@@ -343,16 +344,14 @@ void arch_smt_update(void)
+ 		return;
  
-+#undef pr_fmt
-+#define pr_fmt(fmt)     "Spectre V2 : " fmt
-+
-+static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
-+	SPECTRE_V2_NONE;
-+
- #ifdef RETPOLINE
- static bool spectre_v2_bad_module;
- 
-@@ -237,18 +220,6 @@ static inline const char *spectre_v2_mod
- static inline const char *spectre_v2_module_string(void) { return ""; }
- #endif
- 
--static void __init spec2_print_if_insecure(const char *reason)
--{
--	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s selected on command line.\n", reason);
--}
--
--static void __init spec2_print_if_secure(const char *reason)
--{
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s selected on command line.\n", reason);
--}
--
- static inline bool match_option(const char *arg, int arglen, const char *opt)
- {
- 	int len = strlen(opt);
-@@ -256,24 +227,53 @@ static inline bool match_option(const ch
- 	return len == arglen && !strncmp(arg, opt, len);
- }
- 
-+/* The kernel command line selection for spectre v2 */
-+enum spectre_v2_mitigation_cmd {
-+	SPECTRE_V2_CMD_NONE,
-+	SPECTRE_V2_CMD_AUTO,
-+	SPECTRE_V2_CMD_FORCE,
-+	SPECTRE_V2_CMD_RETPOLINE,
-+	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
-+	SPECTRE_V2_CMD_RETPOLINE_AMD,
-+};
-+
-+static const char *spectre_v2_strings[] = {
-+	[SPECTRE_V2_NONE]			= "Vulnerable",
-+	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
-+	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
-+};
-+
- static const struct {
- 	const char *option;
- 	enum spectre_v2_mitigation_cmd cmd;
- 	bool secure;
- } mitigation_options[] = {
--	{ "off",               SPECTRE_V2_CMD_NONE,              false },
--	{ "on",                SPECTRE_V2_CMD_FORCE,             true },
--	{ "retpoline",         SPECTRE_V2_CMD_RETPOLINE,         false },
--	{ "retpoline,amd",     SPECTRE_V2_CMD_RETPOLINE_AMD,     false },
--	{ "retpoline,generic", SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
--	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
-+	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
-+	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
-+	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
-+	{ "retpoline,amd",	SPECTRE_V2_CMD_RETPOLINE_AMD,	  false },
-+	{ "retpoline,generic",	SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
-+	{ "auto",		SPECTRE_V2_CMD_AUTO,		  false },
- };
- 
-+static void __init spec2_print_if_insecure(const char *reason)
-+{
-+	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+		pr_info("%s selected on command line.\n", reason);
-+}
-+
-+static void __init spec2_print_if_secure(const char *reason)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+		pr_info("%s selected on command line.\n", reason);
-+}
-+
- static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- {
-+	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
- 	char arg[20];
- 	int ret, i;
--	enum spectre_v2_mitigation_cmd cmd = SPECTRE_V2_CMD_AUTO;
- 
- 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
- 		return SPECTRE_V2_CMD_NONE;
-@@ -316,48 +316,6 @@ static enum spectre_v2_mitigation_cmd __
- 	return cmd;
- }
- 
--static bool stibp_needed(void)
--{
--	if (spectre_v2_enabled == SPECTRE_V2_NONE)
--		return false;
--
--	/* Enhanced IBRS makes using STIBP unnecessary. */
--	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
--		return false;
--
--	if (!boot_cpu_has(X86_FEATURE_STIBP))
--		return false;
--
--	return true;
--}
--
--static void update_stibp_msr(void *info)
--{
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
--}
--
--void arch_smt_update(void)
--{
--	u64 mask;
--
--	if (!stibp_needed())
--		return;
--
--	mutex_lock(&spec_ctrl_mutex);
--
--	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
--	if (sched_smt_active())
--		mask |= SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
--	}
--	mutex_unlock(&spec_ctrl_mutex);
--}
--
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -460,6 +418,48 @@ specv2_set_mode:
- 	arch_smt_update();
- }
- 
-+static bool stibp_needed(void)
-+{
-+	if (spectre_v2_enabled == SPECTRE_V2_NONE)
-+		return false;
-+
-+	/* Enhanced IBRS makes using STIBP unnecessary. */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return false;
-+
-+	if (!boot_cpu_has(X86_FEATURE_STIBP))
-+		return false;
-+
-+	return true;
-+}
-+
-+static void update_stibp_msr(void *info)
-+{
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+}
-+
-+void arch_smt_update(void)
-+{
-+	u64 mask;
-+
-+	if (!stibp_needed())
-+		return;
-+
-+	mutex_lock(&spec_ctrl_mutex);
+ 	mutex_lock(&spec_ctrl_mutex);
+-	mask = x86_spec_ctrl_base;
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
 +
 +	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
 +	if (sched_smt_active())
-+		mask |= SPEC_CTRL_STIBP;
-+
-+	if (mask != x86_spec_ctrl_base) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
-+			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
-+		x86_spec_ctrl_base = mask;
-+		on_each_cpu(update_stibp_msr, NULL, 1);
-+	}
-+	mutex_unlock(&spec_ctrl_mutex);
-+}
-+
- #undef pr_fmt
- #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
+ 		mask |= SPEC_CTRL_STIBP;
+-	else
+-		mask &= ~SPEC_CTRL_STIBP;
  
+ 	if (mask != x86_spec_ctrl_base) {
+ 		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
+-				cpu_smt_control == CPU_SMT_ENABLED ?
+-				"Enabling" : "Disabling");
++			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
+ 		x86_spec_ctrl_base = mask;
+ 		on_each_cpu(update_stibp_msr, NULL, 1);
+ 	}
+--- a/include/linux/sched/smt.h
++++ b/include/linux/sched/smt.h
+@@ -15,4 +15,6 @@ static __always_inline bool sched_smt_ac
+ static inline bool sched_smt_active(void) { return false; }
+ #endif
+ 
++void arch_smt_update(void);
++
+ #endif
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -10,6 +10,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/hotplug.h>
+ #include <linux/sched/task.h>
++#include <linux/sched/smt.h>
+ #include <linux/unistd.h>
+ #include <linux/cpu.h>
+ #include <linux/oom.h>
+@@ -346,6 +347,12 @@ void cpu_hotplug_enable(void)
+ EXPORT_SYMBOL_GPL(cpu_hotplug_enable);
+ #endif	/* CONFIG_HOTPLUG_CPU */
+ 
++/*
++ * Architectures that need SMT-specific errata handling during SMT hotplug
++ * should override this.
++ */
++void __weak arch_smt_update(void) { }
++
+ #ifdef CONFIG_HOTPLUG_SMT
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+ EXPORT_SYMBOL_GPL(cpu_smt_control);
+@@ -982,6 +989,7 @@ out:
+ 	 * concurrent CPU hotplug via cpu_add_remove_lock.
+ 	 */
+ 	lockup_detector_cleanup();
++	arch_smt_update();
+ 	return ret;
+ }
+ 
+@@ -1110,6 +1118,7 @@ static int _cpu_up(unsigned int cpu, int
+ 	ret = cpuhp_up_callbacks(cpu, st, target);
+ out:
+ 	cpus_write_unlock();
++	arch_smt_update();
+ 	return ret;
+ }
+ 
+@@ -2026,12 +2035,6 @@ static void cpuhp_online_cpu_device(unsi
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
+-/*
+- * Architectures that need SMT-specific errata handling during SMT hotplug
+- * should override this.
+- */
+-void __weak arch_smt_update(void) { };
+-
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
 
 
