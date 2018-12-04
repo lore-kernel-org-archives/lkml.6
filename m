@@ -4,49 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99613C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0D5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EA20214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D1102087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQgDhiCb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA20214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="frFY26S6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D1102087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbeLDK54 (ORCPT
+        id S1726872AbeLDK6B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:57:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42002 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:58:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726846AbeLDK5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:57:53 -0500
+        id S1726399AbeLDK56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:57:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1C52214C1;
-        Tue,  4 Dec 2018 10:57:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E75B2146D;
+        Tue,  4 Dec 2018 10:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921072;
-        bh=aAde/MsE0Ky4NSjsnp7mr2ZLaqyWM0gYwlELHu82ljA=;
+        s=default; t=1543921077;
+        bh=KLpEduOzAl3nj66wSdpt225swj/rHbcTo6LZwEXecmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RQgDhiCbUh3lcB9vO7IBG926vyyM96kC0tgkkmbGqUQj1YUNnE/W3h3VxgFDz4nz3
-         jnC6QDEBAnUR2gnV9XzyJU4rsajXPBiokCICJzwwgwt2/rLzzz9KUVx6ZscHd+t/Ns
-         ugmC+ljrYRGhwjO4bC3ZYc6JoDt5fO+YB8R8KLpQ=
+        b=frFY26S6kJwQZoYoxFyJKOcfW6mV+X6UCWicgOgZ+GfRAj85fhDI6WcgaTNJ1fM2e
+         uhVSNfnlCgOI2Iakz4z9XfNTUzioF8aBZfD899w47Xw4zaAUF1mFgcoEYaA0lpeumJ
+         2302z7OFAZ9fojJuSaZlIbL5K86jounuOTlf/AqI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Wu <ww9210@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 4.19 068/139] KVM: X86: Fix scan ioapic use-before-initialization
-Date:   Tue,  4 Dec 2018 11:49:09 +0100
-Message-Id: <20181204103652.848324523@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.19 070/139] xtensa: enable coprocessors that are being flushed
+Date:   Tue,  4 Dec 2018 11:49:11 +0100
+Message-Id: <20181204103652.945763798@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -65,104 +61,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wanpeng Li <wanpengli@tencent.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit e97f852fd4561e77721bb9a4e0ea9d98305b1e93 upstream.
+commit 2958b66694e018c552be0b60521fec27e8d12988 upstream.
 
-Reported by syzkaller:
+coprocessor_flush_all may be called from a context of a thread that is
+different from the thread being flushed. In that case contents of the
+cpenable special register may not match ti->cpenable of the target
+thread, resulting in unhandled coprocessor exception in the kernel
+context.
+Set cpenable special register to the ti->cpenable of the target register
+for the duration of the flush and restore it afterwards.
+This fixes the following crash caused by coprocessor register inspection
+in native gdb:
 
- BUG: unable to handle kernel NULL pointer dereference at 00000000000001c8
- PGD 80000003ec4da067 P4D 80000003ec4da067 PUD 3f7bfa067 PMD 0
- Oops: 0000 [#1] PREEMPT SMP PTI
- CPU: 7 PID: 5059 Comm: debug Tainted: G           OE     4.19.0-rc5 #16
- RIP: 0010:__lock_acquire+0x1a6/0x1990
- Call Trace:
-  lock_acquire+0xdb/0x210
-  _raw_spin_lock+0x38/0x70
-  kvm_ioapic_scan_entry+0x3e/0x110 [kvm]
-  vcpu_enter_guest+0x167e/0x1910 [kvm]
-  kvm_arch_vcpu_ioctl_run+0x35c/0x610 [kvm]
-  kvm_vcpu_ioctl+0x3e9/0x6d0 [kvm]
-  do_vfs_ioctl+0xa5/0x690
-  ksys_ioctl+0x6d/0x80
-  __x64_sys_ioctl+0x1a/0x20
-  do_syscall_64+0x83/0x6e0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  (gdb) p/x $w0
+  Illegal instruction in kernel: sig: 9 [#1] PREEMPT
+  Call Trace:
+    ___might_sleep+0x184/0x1a4
+    __might_sleep+0x41/0xac
+    exit_signals+0x14/0x218
+    do_exit+0xc9/0x8b8
+    die+0x99/0xa0
+    do_illegal_instruction+0x18/0x6c
+    common_exception+0x77/0x77
+    coprocessor_flush+0x16/0x3c
+    arch_ptrace+0x46c/0x674
+    sys_ptrace+0x2ce/0x3b4
+    system_call+0x54/0x80
+    common_exception+0x77/0x77
+  note: gdb[100] exited with preempt_count 1
+  Killed
 
-The reason is that the testcase writes hyperv synic HV_X64_MSR_SINT6 msr
-and triggers scan ioapic logic to load synic vectors into EOI exit bitmap.
-However, irqchip is not initialized by this simple testcase, ioapic/apic
-objects should not be accessed.
-This can be triggered by the following program:
-
-    #define _GNU_SOURCE
-
-    #include <endian.h>
-    #include <stdint.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <sys/syscall.h>
-    #include <sys/types.h>
-    #include <unistd.h>
-
-    uint64_t r[3] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
-
-    int main(void)
-    {
-    	syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
-    	long res = 0;
-    	memcpy((void*)0x20000040, "/dev/kvm", 9);
-    	res = syscall(__NR_openat, 0xffffffffffffff9c, 0x20000040, 0, 0);
-    	if (res != -1)
-    		r[0] = res;
-    	res = syscall(__NR_ioctl, r[0], 0xae01, 0);
-    	if (res != -1)
-    		r[1] = res;
-    	res = syscall(__NR_ioctl, r[1], 0xae41, 0);
-    	if (res != -1)
-    		r[2] = res;
-    	memcpy(
-    			(void*)0x20000080,
-    			"\x01\x00\x00\x00\x00\x5b\x61\xbb\x96\x00\x00\x40\x00\x00\x00\x00\x01\x00"
-    			"\x08\x00\x00\x00\x00\x00\x0b\x77\xd1\x78\x4d\xd8\x3a\xed\xb1\x5c\x2e\x43"
-    			"\xaa\x43\x39\xd6\xff\xf5\xf0\xa8\x98\xf2\x3e\x37\x29\x89\xde\x88\xc6\x33"
-    			"\xfc\x2a\xdb\xb7\xe1\x4c\xac\x28\x61\x7b\x9c\xa9\xbc\x0d\xa0\x63\xfe\xfe"
-    			"\xe8\x75\xde\xdd\x19\x38\xdc\x34\xf5\xec\x05\xfd\xeb\x5d\xed\x2e\xaf\x22"
-    			"\xfa\xab\xb7\xe4\x42\x67\xd0\xaf\x06\x1c\x6a\x35\x67\x10\x55\xcb",
-    			106);
-    	syscall(__NR_ioctl, r[2], 0x4008ae89, 0x20000080);
-    	syscall(__NR_ioctl, r[2], 0xae80, 0);
-    	return 0;
-    }
-
-This patch fixes it by bailing out scan ioapic if ioapic is not initialized in
-kernel.
-
-Reported-by: Wei Wu <ww9210@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Wei Wu <ww9210@gmail.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/xtensa/kernel/process.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7314,7 +7314,8 @@ static void vcpu_scan_ioapic(struct kvm_
- 	else {
- 		if (vcpu->arch.apicv_active)
- 			kvm_x86_ops->sync_pir_to_irr(vcpu);
--		kvm_ioapic_scan_entry(vcpu, vcpu->arch.ioapic_handled_vectors);
-+		if (ioapic_in_kernel(vcpu->kvm))
-+			kvm_ioapic_scan_entry(vcpu, vcpu->arch.ioapic_handled_vectors);
- 	}
+--- a/arch/xtensa/kernel/process.c
++++ b/arch/xtensa/kernel/process.c
+@@ -94,18 +94,21 @@ void coprocessor_release_all(struct thre
  
- 	if (is_guest_mode(vcpu))
+ void coprocessor_flush_all(struct thread_info *ti)
+ {
+-	unsigned long cpenable;
++	unsigned long cpenable, old_cpenable;
+ 	int i;
+ 
+ 	preempt_disable();
+ 
++	RSR_CPENABLE(old_cpenable);
+ 	cpenable = ti->cpenable;
++	WSR_CPENABLE(cpenable);
+ 
+ 	for (i = 0; i < XCHAL_CP_MAX; i++) {
+ 		if ((cpenable & 1) != 0 && coprocessor_owner[i] == ti)
+ 			coprocessor_flush(ti, i);
+ 		cpenable >>= 1;
+ 	}
++	WSR_CPENABLE(old_cpenable);
+ 
+ 	preempt_enable();
+ }
 
 
