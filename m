@@ -2,277 +2,122 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3451EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 955C6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE89D2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:32:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B0E820851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:36:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvtoZhOw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE89D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gymUdo/y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0E820851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbeLDBcO (ORCPT
+        id S1726070AbeLDBgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:32:14 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34237 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbeLDBcO (ORCPT
+        Mon, 3 Dec 2018 20:36:55 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14280 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeLDBgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:32:14 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u6-v6so13304812ljd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 17:32:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jJtEICfLEofftzZtzHi7uQoDuwsy/YSlDonL+0HdVgY=;
-        b=dvtoZhOwNncq4gqehGLJdAr0Qkw/MIHqDr1PGOVTOl54QSd7OTPD9xTDdjsTaSwqfB
-         rHq0FWE0Wr6JOCWcf6YKcKdHuaw21ncKmyi6ZaKau4bBqiHGhrpnsIldk5iA7OjTGWy5
-         odDHs/QUM5hnKgF1iovfvt3CMxu0fMcYsyVCQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=jJtEICfLEofftzZtzHi7uQoDuwsy/YSlDonL+0HdVgY=;
-        b=eP5VR/ZLyhu79sPUKzq2YdcM9I9ByE6DDgd7hm0GXXaDsiJ6BJst6eyqup5wrtguQv
-         ojush7pNYrT+V/day/bM6uQ7CVR1mvCzPHe/RhT76cDEDJ+18zoRhWZDhjStlHAZhqas
-         gEK0qi0Do6MymI1YisskLT1M+vTxFSlm2wLWJkCDI85KTwsfb7FcV2vxWP6tOrkoxm73
-         f8rqoIHk3Nk2BKGMlEi6vngobZV4g6sEXndgpmfBu4wakrEd8gjjvU/0kRhjlk2oJcyK
-         4NhcF5x0+WOoVmoHfwMflzbSH0SdG1cKia7U4SWU9l9pK8UCNeFa2sarbBSnalWYhqu5
-         n6YQ==
-X-Gm-Message-State: AA+aEWZCCfc+4ig7fHwEJupAcza0Pzv1WMdg1aiOVW+TcYFvFL65OTBj
-        3bXno7qgir+JF6+kl5n6utPQiw==
-X-Google-Smtp-Source: AFSGD/WHsXaY79cu18ha/uDiOk4VPCT5N47+iRszsA2Kyt1zk0gz1cvdJlBKavfjxhFDy+LizoP4eA==
-X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr11066824lje.117.1543887130961;
-        Mon, 03 Dec 2018 17:32:10 -0800 (PST)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id f20-v6sm2839632ljk.33.2018.12.03.17.32.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 17:32:10 -0800 (PST)
-Date:   Tue, 4 Dec 2018 03:32:08 +0200
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     davem@davemloft.net, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jiri@mellanox.com, andrew@lunn.ch
-Subject: Re: [RFC PATCH net-next 2/5] net: 8021q: vlan_dev: add vid tag for
- uc and mc address lists
-Message-ID: <20181204013207.GH23230@khorivan>
-Mail-Followup-To: Florian Fainelli <f.fainelli@gmail.com>,
-        davem@davemloft.net, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jiri@mellanox.com, andrew@lunn.ch
-References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
- <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
- <b2a7baa7-b334-0f6f-c119-a2f30ac68c7b@gmail.com>
- <20181203235119.GF23230@khorivan>
- <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
+        Mon, 3 Dec 2018 20:36:55 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c05d9fa0000>; Mon, 03 Dec 2018 17:35:54 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Dec 2018 17:36:54 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 03 Dec 2018 17:36:54 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 01:36:54 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 01:36:53 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 4 Dec 2018 01:36:53 +0000
+Received: from vdumpa-ubuntu.nvidia.com (Not Verified[172.17.173.140]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c05da350004>; Mon, 03 Dec 2018 17:36:53 -0800
+From:   Krishna Reddy <vdumpa@nvidia.com>
+To:     <will.deacon@arm.com>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+        <yhsu@nvidia.com>, <snikam@nvidia.com>, <praithatha@nvidia.com>,
+        <talho@nvidia.com>, <avanbrunt@nvidia.com>, <thomasz@nvidia.com>,
+        <olof@lixom.net>, <jtukkinen@nvidia.com>, <mperttunen@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>
+Subject: [PATCH v3 0/5] Add Tegra194 Dual ARM SMMU driver
+Date:   Mon, 3 Dec 2018 17:36:48 -0800
+Message-ID: <1543887414-18209-1-git-send-email-vdumpa@nvidia.com>
+X-Mailer: git-send-email 2.1.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543887354; bh=GFFSVMThQMDSxoe7Z5jLRH73/5ZQ0+ad0JneajN89sY=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=gymUdo/yMdiRK5n1CAZNnDR/kUBgTFsPFxuHZz1n1hsWlcoqZA4dKc4gCtdXR8xgD
+         8uLKNRZwtqTHSWpL8QJn27XMm25vkp5+QcvmuWlL7NIPT/f06lxnSq41jDcQ8mJNQM
+         ISbEoaXL9GoWE0248b9MJgJ30D8k4qABykwJrjUPDNa42/LwV1Mdg2dYOYbrAHxKkE
+         bDBcpMNFI8YgREU0fFyUg0ES+cmmSLvWpx9YtzuRl7iUF/EXOvxpBoZSIQZxOC6hD6
+         V79brsd/wmU+75p9ex7W5foUPXkTx/g1GemUHNoSyQAlzgxQ8yU9SIw2CTOZ7jgOTA
+         VDmFoiUIQdMOQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 03:57:03PM -0800, Florian Fainelli wrote:
->On 12/3/18 3:51 PM, Ivan Khoronzhuk wrote:
->> On Mon, Dec 03, 2018 at 02:17:00PM -0800, Florian Fainelli wrote:
->>> On 12/3/18 10:40 AM, Ivan Khoronzhuk wrote:
->>>> Update vlan mc and uc addresses with VID tag while propagating address
->>>> set to lower devices, do this only if address is not synched. It allows
->>>> on end driver level to distinguish address belonging to vlans.
->>>
->>> Underlying driver for the real device would be able to properly identify
->>> that you are attempting to add an address to a virtual device, which
->>> happens to be of VLAN kind so I am really not sure this is the right
->>> approach here.
->>>
->>> From there, it seems to me that we have two situations:
->>>
->>> - each of your network devices expose VLAN devices directly on top of
->>> the real device, in which case your driver should support
->>> ndo_vlan_rx_add_vid and ndo_vlan_rx_kill_vid to know when VLAN devices
->>> are create and maintain a VLAN device to VID correspondence if it needs
->>> to when being called while setting the addresses
->>>
->>> - you are setting up a bridge that is VLAN aware on one of your bridge
->>> ports, and there you can use switchdev to learn about such events and
->>> know about both addresses as well as VIDs that must be programmed into
->>> your real device
->> No limits to have any "middle" device between real end device and
->> virtual one, not only a bridge, but also other kind. And as it's generic
->> change, it should cover all such cases, the simplest example is:
->> real_dev/macvlan/vlan.
->
->It is not generic if the additional information is a VLAN ID, that
->construct does not apply to all types of virtual devices, that is part
->of my issue with the extra VID that is being added. If this was a void *
->priv and any virtual device could pass up/down information that might be
->more acceptable.
-I tractate it as virtual identification not relating it to vlans only.
-VID just uses for eth devices part of already reserved address.
-I was also thinking about passing smth like pointer on vlan device,
-frankly even don't remember what stopped me, probably size of pointer or
-so, maybe it looked harder... but it still seems possible and at least for
-ethernet address is enough space: 32 - 6 = 26, 26 > 8.
+NVIDIA's Xavier (Tegra194) SOC has two ARM SMMU(MMU-500) instances, which
+are used as one SMMU device in HW. The IOVA accesses from HW devices are
+interleaved across these two SMMU instances and need to be programmed identical.
 
-Despite it only combines methods with extended address space and passing
-link to vlan device, it adds ability to apply allmulti and promisc modes
-per vlans.
+The existing ARM SMMU driver can't be used in its current form for programming
+the two SMMU instances identically. But, Most of the code can be shared between
+ARM SMMU driver and Tegra194 SMMU driver. To allow sharing the code, Created
+a libray based on the current ARM SMMU driver and added suppport to program
+multiple ARM SMMU Instances identically. Upated Current ARM SMMU driver and
+Tegra194 SMMU driver to use the library functions.
 
+Please review the patches and provide feedback.
 
->
->>
->>>
->>> It seems to me that what you need may be something like either:
->>>
->>> - notifications on slave devices when addresses are added via
->>> ndo_set_rxmode()
->>>
->>> or
->>>
->>> - dev_{uc,mc}_sync() should be augmented with a "source net_device"
->>> argument which allows you to differentiate which network device is the
->>> source of the address programming. That way, no need to "hash" the MAC
->>> address with a VID, any network device specific information can be
->>> provided and in the real device driver you can do: if
->>> (netif_is_vlan()... etc.)
->> No issue to retrieve vlan dev if it's directly on top of real dev.
->> Issue is to get it when it's not directly connected as it's not in
->> vlan_info group list. Who knows what else can be "structed" on top of
->> real dev till the vlan device. Please look on reply for cover letter,
->> as it seems requires similar response.
->
->In that case, there are notifications generated that you must be
->listening to determine whether you have something like a VLAN device on
->top of a bond, which is a port member of a bridge, on which one of your
->real device port is enslaved (yes, it can be that type of stacking).
+Changes in v2:
+* Added CONFIG_ARM_SMMU_TEGRA to protect Tegra194 SMMU driver compilation
+* Enabled CONFIG_ARM_SMMU_TEGRA in defconfig
+* Added SMMU nodes in Tegra194 device tree
 
-It becomes even harder, traversing all structure of devices, seems not very
-simple task.
+Changes in v3:
+* Created library for ARM SMMU based on arm-smmu.c
+* Added support to program multiple ARM SMMU instances identically
+* Updated arm-smmu.c/tegra194-smmu.c to use ARM SMMU library functions
 
->
->>
->>>
->>> Hopefully someone else will chime in.
->>>
->>>>
->>>> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->>>> ---
->>>>  include/linux/if_vlan.h |  1 +
->>>>  net/8021q/vlan_core.c   | 10 ++++++++++
->>>>  net/8021q/vlan_dev.c    | 26 ++++++++++++++++++++++++++
->>>>  3 files changed, 37 insertions(+)
->>>>
->>>> diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
->>>> index 4cca4da7a6de..94657f3c483a 100644
->>>> --- a/include/linux/if_vlan.h
->>>> +++ b/include/linux/if_vlan.h
->>>> @@ -136,6 +136,7 @@ extern struct net_device
->>>> *__vlan_find_dev_deep_rcu(struct net_device *real_dev,
->>>>  extern int vlan_for_each(struct net_device *dev,
->>>>               int (*action)(struct net_device *dev, int vid,
->>>>                         void *arg), void *arg);
->>>> +extern u16 vlan_dev_get_addr_vid(struct net_device *dev, const u8
->>>> *addr);
->>>>  extern struct net_device *vlan_dev_real_dev(const struct net_device
->>>> *dev);
->>>>  extern u16 vlan_dev_vlan_id(const struct net_device *dev);
->>>>  extern __be16 vlan_dev_vlan_proto(const struct net_device *dev);
->>>> diff --git a/net/8021q/vlan_core.c b/net/8021q/vlan_core.c
->>>> index a313165e7a67..5d17947d6988 100644
->>>> --- a/net/8021q/vlan_core.c
->>>> +++ b/net/8021q/vlan_core.c
->>>> @@ -454,6 +454,16 @@ bool vlan_uses_dev(const struct net_device *dev)
->>>>  }
->>>>  EXPORT_SYMBOL(vlan_uses_dev);
->>>>
->>>> +u16 vlan_dev_get_addr_vid(struct net_device *dev, const u8 *addr)
->>>> +{
->>>> +    u16 vid = 0;
->>>> +
->>>> +    vid = addr[dev->addr_len];
->>>> +    vid |= (addr[dev->addr_len + 1] & 0xf) << 8;
->>>> +    return vid;
->>>> +}
->>>> +EXPORT_SYMBOL(vlan_dev_get_addr_vid);
->>>> +
->>>>  static struct sk_buff *vlan_gro_receive(struct list_head *head,
->>>>                      struct sk_buff *skb)
->>>>  {
->>>> diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
->>>> index b2d9c8f27cd7..c05b313314b7 100644
->>>> --- a/net/8021q/vlan_dev.c
->>>> +++ b/net/8021q/vlan_dev.c
->>>> @@ -250,6 +250,14 @@ void vlan_dev_get_realdev_name(const struct
->>>> net_device *dev, char *result)
->>>>      strncpy(result, vlan_dev_priv(dev)->real_dev->name, 23);
->>>>  }
->>>>
->>>> +static void vlan_dev_set_addr_vid(struct net_device *vlan_dev, u8
->>>> *addr)
->>>> +{
->>>> +    u16 vid = vlan_dev_vlan_id(vlan_dev);
->>>> +
->>>> +    addr[vlan_dev->addr_len] = vid & 0xff;
->>>> +    addr[vlan_dev->addr_len + 1] = (vid >> 8) & 0xf;
->>>> +}
->>>> +
->>>>  bool vlan_dev_inherit_address(struct net_device *dev,
->>>>                    struct net_device *real_dev)
->>>>  {
->>>> @@ -481,8 +489,26 @@ static void vlan_dev_change_rx_flags(struct
->>>> net_device *dev, int change)
->>>>      }
->>>>  }
->>>>
->>>> +static void vlan_dev_align_addr_vid(struct net_device *vlan_dev)
->>>> +{
->>>> +    struct net_device *real_dev = vlan_dev_real_dev(vlan_dev);
->>>> +    struct netdev_hw_addr *ha;
->>>> +
->>>> +    if (!real_dev->vid_len)
->>>> +        return;
->>>> +
->>>> +    netdev_for_each_mc_addr(ha, vlan_dev)
->>>> +        if (!ha->sync_cnt)
->>>> +            vlan_dev_set_addr_vid(vlan_dev, ha->addr);
->>>> +
->>>> +    netdev_for_each_uc_addr(ha, vlan_dev)
->>>> +        if (!ha->sync_cnt)
->>>> +            vlan_dev_set_addr_vid(vlan_dev, ha->addr);
->>>> +}
->>>> +
->>>>  static void vlan_dev_set_rx_mode(struct net_device *vlan_dev)
->>>>  {
->>>> +    vlan_dev_align_addr_vid(vlan_dev);
->>>>      dev_mc_sync(vlan_dev_priv(vlan_dev)->real_dev, vlan_dev);
->>>>      dev_uc_sync(vlan_dev_priv(vlan_dev)->real_dev, vlan_dev);
->>>>  }
->>>>
->>>
->>>
->>> -- 
->>> Florian
->>
->
->
->-- 
->Florian
+Krishna Reddy (6):
+  iommu/arm-smmu: create library for ARM SMMU
+  iommu/arm-smmu: Add support to program multiple ARM SMMU's identically
+  iommu/arm-smmu: update arm-smmu.c to use ARM SMMU library
+  iommu/tegra194_smmu: Add Tegra194 SMMU driver
+  arm64: defconfig: Enable ARM_SMMU_TEGRA
+  arm64: tegra: Add SMMU nodes to Tegra194 device tree
+
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi |  148 +++
+ arch/arm64/configs/defconfig             |    1 +
+ drivers/iommu/Kconfig                    |   11 +
+ drivers/iommu/Makefile                   |    2 +
+ drivers/iommu/arm-smmu.c                 | 1709 +----------------------------
+ drivers/iommu/lib-arm-smmu.c             | 1768 ++++++++++++++++++++++++++++++
+ drivers/iommu/lib-arm-smmu.h             |  161 +++
+ drivers/iommu/tegra194-smmu.c            |  394 +++++++
+ 8 files changed, 2496 insertions(+), 1698 deletions(-)
+ create mode 100644 drivers/iommu/lib-arm-smmu.c
+ create mode 100644 drivers/iommu/lib-arm-smmu.h
+ create mode 100644 drivers/iommu/tegra194-smmu.c
 
 -- 
-Regards,
-Ivan Khoronzhuk
+2.1.4
+
