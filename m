@@ -7,52 +7,46 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168B2C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F0BC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF0CC214DB
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E6B1214E0
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mW591jeX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF0CC214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHp9WsV0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6B1214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbeLDLAv (ORCPT
+        id S1727001AbeLDLAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:00:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46034 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:00:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726901AbeLDLAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:00:44 -0500
+        id S1727362AbeLDLAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:00:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BD6B2087F;
-        Tue,  4 Dec 2018 11:00:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A638C214C1;
+        Tue,  4 Dec 2018 11:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921243;
-        bh=YzD9QSP4BREwBC0Y5hdYlgDkWlNy+KzwW5fkm1LSo9I=;
+        s=default; t=1543921249;
+        bh=csUc1xsszE95nH9qJjoUZIYnGPq1qSd6STtJxYffx/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mW591jeXYkATROs0hmrLrz6aer+udjsiLaL6JBKJSg67zI8m5pZfxAFx/KnvCu4W6
-         StW+Bv7WEH5YNBBhn5uRCpaw9mweG/qt47uX637JTfO3nY2BvTtxHHs1mZXfCxFjXu
-         rbAtCP8hV4lMqKRWqjxFIwRMNEdZXUwPoygKg7wc=
+        b=PHp9WsV0AYtr+N/k9cMnMNIuHYNoJUYtkfgDFDYcBF1OzlPdzEESBmXmmSz/8BsTX
+         QaBb71rREhbPOik+FH2gW0vRDR3ezw+HVZxWEl97OcYhqiokLrYVAlEIlAEe+f3Kak
+         OGZ3To+rTzKKcupewAo2rbihf7CDXiDjDg2adXhU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 136/139] mm: cleancache: fix corruption on missed inode invalidation
-Date:   Tue,  4 Dec 2018 11:50:17 +0100
-Message-Id: <20181204103656.442578056@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>
+Subject: [PATCH 4.19 138/139] Drivers: hv: vmbus: check the creation_status in vmbus_establish_gpadl()
+Date:   Tue,  4 Dec 2018 11:50:19 +0100
+Message-Id: <20181204103656.546768798@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -71,73 +65,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit 6ff38bd40230af35e446239396e5fc8ebd6a5248 upstream.
+commit eceb05965489784f24bbf4d61ba60e475a983016 upstream.
 
-If all pages are deleted from the mapping by memory reclaim and also
-moved to the cleancache:
+This is a longstanding issue: if the vmbus upper-layer drivers try to
+consume too many GPADLs, the host may return with an error
+0xC0000044 (STATUS_QUOTA_EXCEEDED), but currently we forget to check
+the creation_status, and hence we can pass an invalid GPADL handle
+into the OPEN_CHANNEL message, and get an error code 0xc0000225 in
+open_info->response.open_result.status, and finally we hang in
+vmbus_open() -> "goto error_free_info" -> vmbus_teardown_gpadl().
 
-__delete_from_page_cache
-  (no shadow case)
-  unaccount_page_cache_page
-    cleancache_put_page
-  page_cache_delete
-    mapping->nrpages -= nr
-    (nrpages becomes 0)
+With this patch, we can exit gracefully on STATUS_QUOTA_EXCEEDED.
 
-We don't clean the cleancache for an inode after final file truncation
-(removal).
-
-truncate_inode_pages_final
-  check (nrpages || nrexceptional) is false
-    no truncate_inode_pages
-      no cleancache_invalidate_inode(mapping)
-
-These way when reading the new file created with same inode we may get
-these trash leftover pages from cleancache and see wrong data instead of
-the contents of the new file.
-
-Fix it by always doing truncate_inode_pages which is already ready for
-nrpages == 0 && nrexceptional == 0 case and just invalidates inode.
-
-[akpm@linux-foundation.org: add comment, per Jan]
-Link: http://lkml.kernel.org/r/20181112095734.17979-1-ptikhomirov@virtuozzo.com
-Fixes: commit 91b0abe36a7b ("mm + fs: store shadow entries in page cache")
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Reviewed-by: Vasily Averin <vvs@virtuozzo.com>
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/truncate.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/hv/channel.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -520,9 +520,13 @@ void truncate_inode_pages_final(struct a
- 		 */
- 		xa_lock_irq(&mapping->i_pages);
- 		xa_unlock_irq(&mapping->i_pages);
--
--		truncate_inode_pages(mapping, 0);
+--- a/drivers/hv/channel.c
++++ b/drivers/hv/channel.c
+@@ -482,6 +482,14 @@ int vmbus_establish_gpadl(struct vmbus_c
  	}
-+
-+	/*
-+	 * Cleancache needs notification even if there are no pages or shadow
-+	 * entries.
-+	 */
-+	truncate_inode_pages(mapping, 0);
- }
- EXPORT_SYMBOL(truncate_inode_pages_final);
+ 	wait_for_completion(&msginfo->waitevent);
  
++	if (msginfo->response.gpadl_created.creation_status != 0) {
++		pr_err("Failed to establish GPADL: err = 0x%x\n",
++		       msginfo->response.gpadl_created.creation_status);
++
++		ret = -EDQUOT;
++		goto cleanup;
++	}
++
+ 	if (channel->rescind) {
+ 		ret = -ENODEV;
+ 		goto cleanup;
 
 
