@@ -2,317 +2,132 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC4DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE75C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D1020834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E881720834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:56:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jv7Z8csL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92D1020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wlFopwh3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E881720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726122AbeLDSym (ORCPT
+        id S1726133AbeLDS4W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:54:42 -0500
-Received: from mail-pl1-f169.google.com ([209.85.214.169]:36948 "EHLO
-        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbeLDSyl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:54:41 -0500
-Received: by mail-pl1-f169.google.com with SMTP id b5so8753967plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:54:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KVdbnxQN/EAigFOsyJ/RDQSseze7WAvrj2qYD4cnbo8=;
-        b=Jv7Z8csLlo3zfOvTWWIuE+ZZ1hc2Ao8Ur1wrHRM54aju/ej+duYt2gGZClpWcugLVG
-         j+JpoIy9DYjt33qLYjSRqDvX9s65/yUW3kLK3ArRHd4Ysj9Y1B2JyklifL6waEnp3iFO
-         GZZd8UaVRhPi4TncvxlvGXf1IJCc3oNh17bbsKk2zGhKBD01SGWK/3hVnTvyOaatcHr7
-         YjK8zWLqRwHUaHv34rmiHfdxePZW8gltDGPVPb3V31xGKMsq47KQ+NNajxEfwkiNCaQZ
-         0Dd78bzPtxCNaDzGavdnuNXGPUTshOybRsEii0rRT2+O81jcBL7vhiMsJPyGfjpblRgX
-         j6OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KVdbnxQN/EAigFOsyJ/RDQSseze7WAvrj2qYD4cnbo8=;
-        b=WxFKjXjSK4oM1f0RdnlrXghbtbfWl46DjWkj8gvIub6jgNqeVJXzbndWhwJBupfj0q
-         fwefKO0puQPGJ+geIP6d2XxDSD/V/DVYmAtXlxw0MPJolDHx7m2+Qd6VIlxbtWtbakw0
-         3Vxuvoz1bX3ykpn+beNMhpeD+jdMhpsutYtFJlJuiWjt21nagj8Uv1uG1H6gkxgywmgc
-         P7xhbsMBNR3MnyjC6hqEgYaCMAk2CNWYDy3qvRwuH5qswCSPL1A0EI/B4qwFIyUELYaQ
-         Go0r69UUrM6/rzxcGtgTP/wNGT1jwgzhYju0VJHelKUhP1Bq5rGk9g3ivtIR66ApYIXN
-         ncYA==
-X-Gm-Message-State: AA+aEWYjZoMjmt0fAQoPtZFwTjwhvgrzH+seTXD27oJB/xFTV3S0+JC3
-        1YqyqzZbLjqQnHVaKMzWtn9KeKRDk9mKevQ2rSo8Nw==
-X-Google-Smtp-Source: AFSGD/Vdsw+yw7CxE9Y+aEtMLHmqEapsThquN1WCBAw/jpUDAdZudT3ANtzJZsHKN0EhSOfhQrVJPm8LKSZYHAYSar4=
-X-Received: by 2002:a17:902:7b88:: with SMTP id w8mr20903350pll.320.1543949679428;
- Tue, 04 Dec 2018 10:54:39 -0800 (PST)
+        Tue, 4 Dec 2018 13:56:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725864AbeLDS4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:56:19 -0500
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A13B20851
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 18:56:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543949778;
+        bh=iFtxg6LhjYpm8Evo/ahI8Rptn8CtMFv3JwG6zzvPXHk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wlFopwh3m9VtTIjsbQ850FdexYr8m8osKTWxvMxNBVgBVEdtQZBa83brClWrPWftH
+         njiXTqsfNBt8iK2kXRbze8fhaHbFLT/NddiA8lWArPEefXNrBJ84o7BG3yIa6oqzFa
+         PJnVS/WVMCtwgBQ3ckR3ZHC3xFpHf8MTFfADQVC0=
+Received: by mail-wm1-f41.google.com with SMTP id y139so10695217wmc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:56:17 -0800 (PST)
+X-Gm-Message-State: AA+aEWZLkZaS05hGHy98rLu95pSeeLEMIs08lKIhvlUHUOOfBTWxP7ON
+        Dq03zH/lKjKKkmCEYaedtBy+lfFvpBiIXXbXnj5iWA==
+X-Google-Smtp-Source: AFSGD/U7ltAUEqFB4kL1WdgJ0lnl3xIw3hk+FWLdUr0eiqg57Clxl/ae69uFWmAZyKLHd1ql0HpeXLEr69T8HmR02/s=
+X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr2740811wme.108.1543949776480;
+ Tue, 04 Dec 2018 10:56:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20180915054739.14117-1-natechancellor@gmail.com>
- <CAKwvOdmQ4pbbPuvYrVYB9myD8ap36h6nLjEdL-mSbYjM37UJ_g@mail.gmail.com>
- <20180917193936.33e90d5a@coco.lan> <20181204102639.3qsvfxrzmsvybiop@gofer.mess.org>
- <20181204095714.60ee5b95@coco.lan> <20181204133922.aaxvzu3qumbfakzu@gofer.mess.org>
-In-Reply-To: <20181204133922.aaxvzu3qumbfakzu@gofer.mess.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 4 Dec 2018 10:54:28 -0800
-Message-ID: <CAKwvOdkx87V6Yo9Pmh44Sfr_etSBR_b77aMj79p4U-VCoCQz8Q@mail.gmail.com>
-Subject: Re: [PATCH] [media] dib7000p: Remove dead code
-To:     sean@mess.org
-Cc:     mchehab+samsung@kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+ <20181128000754.18056-2-rick.p.edgecombe@intel.com> <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+In-Reply-To: <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 4 Dec 2018 10:56:03 -0800
+X-Gmail-Original-Message-ID: <CALCETrXvddt148fncMJqpjK98uatiK-44knYFWU0-ytf8X+iog@mail.gmail.com>
+Message-ID: <CALCETrXvddt148fncMJqpjK98uatiK-44knYFWU0-ytf8X+iog@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, jeyu@kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jann Horn <jannh@google.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 5:39 AM Sean Young <sean@mess.org> wrote:
+On Mon, Dec 3, 2018 at 5:43 PM Nadav Amit <nadav.amit@gmail.com> wrote:
 >
-> On Tue, Dec 04, 2018 at 09:57:14AM -0200, Mauro Carvalho Chehab wrote:
-> > Em Tue, 4 Dec 2018 10:26:40 +0000
-> > Sean Young <sean@mess.org> escreveu:
+> > On Nov 27, 2018, at 4:07 PM, Rick Edgecombe <rick.p.edgecombe@intel.com=
+> wrote:
 > >
-> > > On Mon, Sep 17, 2018 at 07:39:36PM -0300, Mauro Carvalho Chehab wrote:
-> > > > Em Mon, 17 Sep 2018 10:58:32 -0700
-> > > > Nick Desaulniers <ndesaulniers@google.com> escreveu:
-> > > >
-> > > > > On Fri, Sep 14, 2018 at 10:47 PM Nathan Chancellor
-> > > > > <natechancellor@gmail.com> wrote:
-> > > > > >
-> > > > > > Clang warns that 'interleaving' is assigned to itself in this function.
-> > > > > >
-> > > > > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
-> > > > > > assigning value of variable of type 'int' to itself [-Wself-assign]
-> > > > > >         interleaving = interleaving;
-> > > > > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
-> > > > > > 1 warning generated.
-> > > > > >
-> > > > > > It's correct. Just removing the self-assignment would sufficiently hide
-> > > > > > the warning but all of this code is dead because 'tmp' is zero due to
-> > > > > > being multiplied by zero. This doesn't appear to be an issue with
-> > > > > > dib8000, which this code was copied from in commit 041ad449683b
-> > > > > > ("[media] dib7000p: Add DVBv5 stats support").
-> > > > > >
-> > > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > > > > ---
-> > > > > >  drivers/media/dvb-frontends/dib7000p.c | 10 ++--------
-> > > > > >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
-> > > > > > index 58387860b62d..25843658fc68 100644
-> > > > > > --- a/drivers/media/dvb-frontends/dib7000p.c
-> > > > > > +++ b/drivers/media/dvb-frontends/dib7000p.c
-> > > > > > @@ -1800,9 +1800,8 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
-> > > > >
-> > > > > Something looks wrong here (with this function).  The patch is no
-> > > > > functional change, since as you point out `interleaving` is
-> > > > > initialized to 0, then never updated before read, but I think there's
-> > > > > an underlying bug here that should be fixed differently.  Thanks for
-> > > > > the patch though, as it does raise the question.
-> > > > >
-> > > > > dib7000p_get_time_us has this comment above it:
-> > > > >
-> > > > >   1798 /* FIXME: may require changes - this one was borrowed from
-> > > > > dib8000 */
-> > > >
-> > > > The goal of dib7000p_get_time_us() is to estimate how much time it
-> > > > takes, with current tuning parameters, to have a certain number of
-> > > > DVB-T packets. This is used for block error count. That's said,
-> > > > on a quick look, it seems that the code is not right on many ways.
-> > > >
-> > > > It should be aligned with the amount of data it is required for
-> > > > dib7000 to update the block/bit error counters. There are two kinds
-> > > > of implementation:
-> > > >
-> > > > 1) the frontend has an internal counter that it is shifted and made
-> > > >    available to the driver after a certain amount of received data
-> > > >    (usually in the order of 10^5 to 10^7 bits);
-> > > >
-> > > > 2) the frontend has an internal timer that shifts the data from its
-> > > >    internal counter after a certain amount of time (usually at the
-> > > >    seconds range).
-> > > >
-> > > > Different vendors opt for either one of the strategy. Some updates
-> > > > a counter with the amount of bits taken. Unfortunately, this is not
-> > > > the case of those dib* frontends. So, the Kernel has to estimate
-> > > > it, based on the tuning parameters.
-> > > >
-> > > > From the code, it seems that, for block errors, it waits for 1,250,000
-> > > > bits to arrive (e. g. about 766 packets), so, it uses type (1) strategy:
-> > > >
-> > > >                 /* Estimate the number of packets based on bitrate */
-> > > >                 if (!time_us)
-> > > >                         time_us = dib7000p_get_time_us(demod);
-> > > >
-> > > >                 if (time_us) {
-> > > >                         blocks = 1250000ULL * 1000000ULL; // the multiply here is to convert to microsseconds...
-> > > >                         do_div(blocks, time_us * 8 * 204);        // As here it divides by the time in microsseconds
-> > > >                         c->block_count.stat[0].scale = FE_SCALE_COUNTER;
-> > > >                         c->block_count.stat[0].uvalue += blocks;
-> > > >                 }
-> > > >
-> > > > For BER, the logic assumes that the bit error count should be divided
-> > > > by 10^-8:
-> > > >
-> > > >                 c->post_bit_count.stat[0].uvalue += 100000000;
-> > > >
-> > > > and the counter is updated every second. So, it uses (2).
-> > > >
-> > > > >
-> > > > > Wondering if it has the same bug, it seems it does not:
-> > > > > drivers/media/dvb-frontends/dib8000.c#dib8000_get_time_us():3986
-> > > > >
-> > > > > dib8000_get_time_us() seems to loop over multiple layers, and then
-> > > > > assigns interleaving to the final layers interleaving (that looks like
-> > > > > loop invariant code to me).
-> > > > >
-> > > > > Mauro, should dib7000p_get_time_us() use c->layer[???].interleaving?
-> > > >
-> > > > I don't think that time interleaving would affect the bit rate.
-> > > > I suspect that the dead code on dib8000 is just a dead code.
-> > > >
-> > > > > I don't see a single reference to `layer` in
-> > > > > drivers/media/dvb-frontends/dib7000p.c.
-> > > >
-> > > > Layers are specific for ISDB-T, but I think DVB-T (or at least DVB-T2)
-> > > > may use time interleaving.
-> > > >
-> > > > Yet, as I said, the goal is to estimate the streaming bit rate.
-> > > >
-> > > > I don't remember anymore from where the dib8000 formula came.
-> > > >
-> > > > My guts tell that time interleaving shouldn't do much changes (if any)
-> > > > to the bit rate. I suspect that removing the dead code is likely
-> > > > OK, but I'll try to see if I can find something related to where this
-> > > > formula came.
-> > >
-> > > So we have two issues. One is the clang issue and clearly the code needs
-> > > fixing up. The second issue is that we're not sure about the algorithm;
-> > > I've been reading up on mpeg-ts but I'm not anywhere near getting to an
-> > > answer on this.
-> > >
-> > > How about we merge a patch which just fixes the clang issue and leave
-> > > the rest of the code as-is for now?
-> >
-> > I'm ok with that, but it would be better to add a FIXME note somewhere.
-> >
-> > >
-> > > Thanks,
-> > >
-> > > Sean
-> > >
-> > > ---
-> > > From c6e4c5f514c38511d2054c69f7b103e98c520af4 Mon Sep 17 00:00:00 2001
-> > > From: Sean Young <sean@mess.org>
-> > > Date: Tue, 4 Dec 2018 09:59:10 +0000
-> > > Subject: [PATCH v2] media: dib7000p: Remove dead code
-> > >
-> > > Clang warns that 'interleaving' is assigned to itself in this function.
-> > >
-> > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
-> > > assigning value of variable of type 'int' to itself [-Wself-assign]
-> > >         interleaving = interleaving;
-> > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
-> > > 1 warning generated.
-> > >
-> > > Just remove the self-assign and leave existing code in place for now.
-> > >
-> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Signed-off-by: Sean Young <sean@mess.org>
-
-Thanks for taking the time to revisit the warning and clean it up.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
-Might be nice to give Nathan some credit when applied:
-Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-
-> > > ---
-> > >  drivers/media/dvb-frontends/dib7000p.c | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > >
-> > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
-> > > index 58387860b62d..cd84320c61c9 100644
-> > > --- a/drivers/media/dvb-frontends/dib7000p.c
-> > > +++ b/drivers/media/dvb-frontends/dib7000p.c
-> > > @@ -1871,8 +1871,6 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
-> > >             break;
-> > >     }
-> > >
-> > > -   interleaving = interleaving;
-> > > -
-> > >     denom = bits_per_symbol * rate_num * fft_div * 384;
-> >
-> > something like:
-> >
-> >       /*
-> >        * FIXME: check if the math makes sense. If so, fill the
-> >        * interleaving var.
-> >        */
-> > >
-> > >     /* If calculus gets wrong, wait for 1s for the next stats */
-> >
+> > Since vfree will lazily flush the TLB, but not lazily free the underlyi=
+ng pages,
+> > it often leaves stale TLB entries to freed pages that could get re-used=
+. This is
+> > undesirable for cases where the memory being freed has special permissi=
+ons such
+> > as executable.
 >
-> Good point.
+> So I am trying to finish my patch-set for preventing transient W+X mappin=
+gs
+> from taking space, by handling kprobes & ftrace that I missed (thanks aga=
+in for
+> pointing it out).
 >
-> Sean
->
-> From a31c18315830da40561db6443d3b90b8584d5232 Mon Sep 17 00:00:00 2001
-> From: Sean Young <sean@mess.org>
-> Date: Tue, 4 Dec 2018 09:59:10 +0000
-> Subject: [PATCH v3] media: dib7000p: Remove dead code
->
-> Clang warns that 'interleaving' is assigned to itself in this function.
->
-> drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
-> assigning value of variable of type 'int' to itself [-Wself-assign]
->         interleaving = interleaving;
->         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
-> 1 warning generated.
->
-> Just remove the self-assign and leave existing code in place for now.
->
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Sean Young <sean@mess.org>
-> ---
->  drivers/media/dvb-frontends/dib7000p.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
-> index 58387860b62d..2818e8def1b3 100644
-> --- a/drivers/media/dvb-frontends/dib7000p.c
-> +++ b/drivers/media/dvb-frontends/dib7000p.c
-> @@ -1871,10 +1871,13 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
->                 break;
->         }
->
-> -       interleaving = interleaving;
-> -
->         denom = bits_per_symbol * rate_num * fft_div * 384;
->
-> +       /*
-> +        * FIXME: check if the math makes sense. If so, fill the
-> +        * interleaving var.
-> +        */
-> +
->         /* If calculus gets wrong, wait for 1s for the next stats */
->         if (!denom)
->                 return 0;
-> --
-> 2.19.2
+> But all of the sudden, I don=E2=80=99t understand why we have the problem=
+ that this
+> (your) patch-set deals with at all. We already change the mappings to mak=
+e
+> the memory writable before freeing the memory, so why can=E2=80=99t we ma=
+ke it
+> non-executable at the same time? Actually, why do we make the module memo=
+ry,
+> including its data executable before freeing it???
 >
 
+All the code you're looking at is IMO a very awkward and possibly
+incorrect of doing what's actually necessary: putting the direct map
+the way it wants to be.
 
--- 
-Thanks,
-~Nick Desaulniers
+Can't we shove this entirely mess into vunmap?  Have a flag (as part
+of vmalloc like in Rick's patch or as a flag passed to a vfree variant
+directly) that makes the vunmap code that frees the underlying pages
+also reset their permissions?
+
+Right now, we muck with set_memory_rw() and set_memory_nx(), which
+both have very awkward (and inconsistent with each other!) semantics
+when called on vmalloc memory.  And they have their own flushes, which
+is inefficient.  Maybe the right solution is for vunmap to remove the
+vmap area PTEs, call into a function like set_memory_rw() that resets
+the direct maps to their default permissions *without* flushing, and
+then to do a single flush for everything.  Or, even better, to cause
+the change_page_attr code to do the flush and also to flush the vmap
+area all at once so that very small free operations can flush single
+pages instead of flushing globally.
