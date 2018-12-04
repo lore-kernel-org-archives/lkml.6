@@ -2,130 +2,122 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9AAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E136C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA00206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:43:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA00206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1425C2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:44:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N4UGcs+/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1425C2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbeLDPnr (ORCPT
+        id S1726932AbeLDPoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:43:47 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725910AbeLDPnr (ORCPT
+        Tue, 4 Dec 2018 10:44:12 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43016 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbeLDPoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:43:47 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB4FZPxL111128
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 10:43:46 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p5tw4wyy7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:43:45 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Tue, 4 Dec 2018 15:43:43 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 4 Dec 2018 15:43:39 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB4FhckL58589268
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Dec 2018 15:43:38 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6A8B25204E;
-        Tue,  4 Dec 2018 15:43:38 +0000 (GMT)
-Received: from skywalker.linux.ibm.com (unknown [9.199.51.227])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 20DCD52052;
-        Tue,  4 Dec 2018 15:43:35 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 1/7] node: Link memory nodes to their compute nodes
-In-Reply-To: <20181116183254.GD14630@localhost.localdomain>
-References: <20181114224921.12123-2-keith.busch@intel.com> <20181115135710.GD19286@bombadil.infradead.org> <20181115145920.GG11416@localhost.localdomain> <20181115203654.GA28246@bombadil.infradead.org> <20181116183254.GD14630@localhost.localdomain>
-Date:   Tue, 04 Dec 2018 21:13:33 +0530
+        Tue, 4 Dec 2018 10:44:12 -0500
+Received: by mail-io1-f67.google.com with SMTP id f10so8163110iop.10
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 07:44:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ysPLc9vTvOK2EWdgx5z5B8rpOAQ2rRDlsvgkzpycaw8=;
+        b=N4UGcs+/DSnkP3WagcOlyvwyp+3jfVDf4juqsyWCUJK57+bsHYx1QOrtLC5uXpNFY5
+         FyzqbNVmLFspP1Bx1J6RDKpHj2m93YOrol20izkVajoLt9CL9fTMuDuDNuaubwJvDs+T
+         H/yC2yVpi/TN24A/mYFwSyNx1vyJDzqg1Cf/s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ysPLc9vTvOK2EWdgx5z5B8rpOAQ2rRDlsvgkzpycaw8=;
+        b=s89Er/QDaPqC3l8Wa4lRszouXj6o0AnR2wBIEiqa2gG3VVIj5n0QjQeCC+aG9N8b3U
+         mHL7AzG5XdMGh6BXSS7UzoBT/56Mf0Ny02FKYAei+WVK7B0sVe+iG9jY1B5AY9NisZ3q
+         Eg9QkW/99tnI6nA63aZH0E+dDtE1qKqulh9FnRYcMpDbSGHXwWghdzM4NciYfV52cGc9
+         EWGFGNhsUAZnM2cmnIS2Z9Zc7CPP1ThpNnyqwH0WYVBY4RlhrYFK0oyVoLmunOgo5xCM
+         6/CUMWfrQdTG161Xl3gSsRXyd3Rb8x9l+I30Uhi7BKV0eEOvOzM9owI82c+/AJ+q8szO
+         O+nA==
+X-Gm-Message-State: AA+aEWYoPpEQhn6dtz9JBe2GICbfJyFMk/YkNEUNrEprX8CIFi1LzaT9
+        Uszll5F3/AxEDvyKQAYZoMqFFOQUjKJBlDjn1Sfsjw==
+X-Google-Smtp-Source: AFSGD/Ul5FWR/FRau4x3UbtKp/pBT7awPU+Tyo3JTi6j7Rlrmtk4YHzzBFAeDIOxs4aIAJDIkfmoms1SM23YMzb5Oas=
+X-Received: by 2002:a6b:6b0d:: with SMTP id g13mr17121690ioc.18.1543938250444;
+ Tue, 04 Dec 2018 07:44:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18120415-0016-0000-0000-00000231EC31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120415-0017-0000-0000-00003289F82A
-Message-Id: <87sgzd5mca.fsf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812040133
+References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org> <1539102302-9057-6-git-send-email-thara.gopinath@linaro.org>
+In-Reply-To: <1539102302-9057-6-git-send-email-thara.gopinath@linaro.org>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 4 Dec 2018 16:43:58 +0100
+Message-ID: <CAKfTPtB18Fh3neT7d6m0fgthE6Zo0am4i9WQ9OriD3FCuZgrRw@mail.gmail.com>
+Subject: Re: [RFC PATCH 5/7] sched/fair: Enable CFS periodic tick to update
+ thermal pressure
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kachhap <amit.kachhap@gmail.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Ionela Voinescu <ionela.voinescu@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keith Busch <keith.busch@intel.com> writes:
+Hi Thara,
 
-> On Thu, Nov 15, 2018 at 12:36:54PM -0800, Matthew Wilcox wrote:
->> On Thu, Nov 15, 2018 at 07:59:20AM -0700, Keith Busch wrote:
->> > On Thu, Nov 15, 2018 at 05:57:10AM -0800, Matthew Wilcox wrote:
->> > > On Wed, Nov 14, 2018 at 03:49:14PM -0700, Keith Busch wrote:
->> > > > Memory-only nodes will often have affinity to a compute node, and
->> > > > platforms have ways to express that locality relationship.
->> > > > 
->> > > > A node containing CPUs or other DMA devices that can initiate memory
->> > > > access are referred to as "memory iniators". A "memory target" is a
->> > > > node that provides at least one phyiscal address range accessible to a
->> > > > memory initiator.
->> > > 
->> > > I think I may be confused here.  If there is _no_ link from node X to
->> > > node Y, does that mean that node X's CPUs cannot access the memory on
->> > > node Y?  In my mind, all nodes can access all memory in the system,
->> > > just not with uniform bandwidth/latency.
->> > 
->> > The link is just about which nodes are "local". It's like how nodes have
->> > a cpulist. Other CPUs not in the node's list can acces that node's memory,
->> > but the ones in the mask are local, and provide useful optimization hints.
->> 
->> So ... let's imagine a hypothetical system (I've never seen one built like
->> this, but it doesn't seem too implausible).  Connect four CPU sockets in
->> a square, each of which has some regular DIMMs attached to it.  CPU A is
->> 0 hops to Memory A, one hop to Memory B and Memory C, and two hops from
->> Memory D (each CPU only has two "QPI" links).  Then maybe there's some
->> special memory extender device attached on the PCIe bus.  Now there's
->> Memory B1 and B2 that's attached to CPU B and it's local to CPU B, but
->> not as local as Memory B is ... and we'd probably _prefer_ to allocate
->> memory for CPU A from Memory B1 than from Memory D.  But ... *mumble*,
->> this seems hard.
+On Tue, 9 Oct 2018 at 18:25, Thara Gopinath <thara.gopinath@linaro.org> wrote:
 >
-> Indeed, that particular example is out of scope for this series. The
-> first objective is to aid a process running in node B's CPUs to allocate
-> memory in B1. Anything that crosses QPI are their own.
+> Introduce support in CFS periodic tick to trigger the process of
+> computing average thermal pressure for a cpu.
+>
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> ---
+>  kernel/sched/fair.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b39fb59..7deb1d0 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -21,6 +21,7 @@
+>   *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
+>   */
+>  #include "sched.h"
+> +#include "thermal.h"
+>
+>  #include <trace/events/sched.h>
+>
+> @@ -9557,6 +9558,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+>
+>         if (static_branch_unlikely(&sched_numa_balancing))
+>                 task_tick_numa(rq, curr);
+> +
+> +       update_periodic_maxcap(rq);
 
-But if you can extrapolate how such a system can possibly be expressed
-using what is propsed here, it would help in reviewing this. Also how
-do we intent to express the locality of memory w.r.t to other computing
-units like GPU/FPGA?
+You have to call update_periodic_maxcap() in update_blocked_averages() too
+Otherwise, the thermal pressure will not always be updated correctly
+for tickless system
 
-I understand that this is looked at as ACPI HMAT in sysfs format.
-But as mentioned by others in this thread, if we don't do this platform
-and device independent way, we can have application portability issues
-going forward?
-
--aneesh
-
+>  }
+>
+>  /*
+> --
+> 2.1.4
+>
