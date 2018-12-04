@@ -2,137 +2,318 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89CDC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D9CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8813420834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:04:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8813420834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 821E0214C1
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:10:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MAbq23BF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821E0214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbeLDGEM (ORCPT
+        id S1726035AbeLDGKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:04:12 -0500
-Received: from mx1.mailbox.org ([80.241.60.212]:61898 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbeLDGEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 01:04:11 -0500
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 45D454355C;
-        Tue,  4 Dec 2018 07:04:08 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id 6SnltX3KzNeT; Tue,  4 Dec 2018 07:04:06 +0100 (CET)
-Date:   Tue, 4 Dec 2018 17:03:54 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Florian Weimer <fweimer@redhat.com>, ebiederm@xmission.com,
-        linux-kernel@vger.kernel.org, serge@hallyn.com, jannh@google.com,
-        luto@kernel.org, akpm@linux-foundation.org, oleg@redhat.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
-        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-Message-ID: <20181204060354.bozjmjn24sw3axav@yavin>
-References: <20181120105124.14733-1-christian@brauner.io>
- <87in0g5aqo.fsf@oldenburg.str.redhat.com>
- <746B7C49-CC7B-4040-A7EF-82491796D360@brauner.io>
- <20181202100304.labt63mzrlr5utdl@brauner.io>
- <8736rebl9s.fsf@oldenburg.str.redhat.com>
- <20181203180224.fkvw4kajtbvru2ku@brauner.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n32bdtqrrttj3wgr"
-Content-Disposition: inline
-In-Reply-To: <20181203180224.fkvw4kajtbvru2ku@brauner.io>
+        Tue, 4 Dec 2018 01:10:39 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:31292 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbeLDGKj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 01:10:39 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181204061035epoutp043fa0a03cdb3b86d09221b5c6bfa275a8~tDFu8GR8P0722507225epoutp04s;
+        Tue,  4 Dec 2018 06:10:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181204061035epoutp043fa0a03cdb3b86d09221b5c6bfa275a8~tDFu8GR8P0722507225epoutp04s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1543903835;
+        bh=4+VwYZ6Xyo7nNuBKziSikLxXqYyXpf8jpntNyG8EGtE=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=MAbq23BFiN2RkvqxutGgL6TJ3okS3W4AaIkehi7Zx1iOunWnZcV3md7NvzTVdBU0v
+         v1rMZYGhy+La5JDYyrEEtWs8ttl+iAvpMCE51TCkf/tXwR2hsfS3/MsyKOpX5pBSLj
+         GA5PZWLP4uaSMyxkhxKRnCmG9acnKCDYJhIWRp4A=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.156]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181204061032epcas1p2ede234c97ac4ebe289e0e2e7732cea0d~tDFsjsyc-2154021540epcas1p2D;
+        Tue,  4 Dec 2018 06:10:32 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B2.56.04058.85A160C5; Tue,  4 Dec 2018 15:10:32 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181204061031epcas1p35234fb21941830b2ff1dd5920aff0709~tDFrvsBN_1960219602epcas1p3M;
+        Tue,  4 Dec 2018 06:10:31 +0000 (GMT)
+X-AuditID: b6c32a35-e37ff70000000fda-c8-5c061a58bcec
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 9C.B2.03601.75A160C5; Tue,  4 Dec
+        2018 15:10:31 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PJ700CVJ7TJ6J50@mmp2.samsung.com>; Tue, 04 Dec 2018 15:10:31 +0900 (KST)
+Message-id: <5C061A57.7040002@samsung.com>
+Date:   Tue, 04 Dec 2018 15:10:31 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
+        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
+        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Subject: Re: [PATCH v2 2/5] devfreq: add support for suspend/resume of a
+ devfreq device
+In-reply-to: <5C06140E.7010603@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TbUxTVxjHd+47ZsW7ovOkzg2v2ZZikF5q2XGx27Khu4nGsLkPTFi6O7gD
+        Qt/opW5scat1qKBTdCZrOhANLjFQAUuBluELrMykG1ZqmIQNl7U6cSpphKmZmVvLjRnfnuc5
+        v/9zzv855zC4+g6lYaqstZLDKpo5ahHR9702L7dYQ5Xq9t5chYZ6tei0p4tE/afvkag1fJFE
+        u9q6KPTTPgs6mLiFo2i0m0aj7ts0mnQ9g7xHzmDIn/iZRJcHmik0+2UYIE/0LIZOhado9O2V
+        MQz9svMkhaYiI6keP8ZIVH8mTKPdHUkS3b50lXhtmdD3XR8p+I76gPCNa4wQmg7eBULb4E1M
+        8Lc3UMK5Fh8t9Jz4XHj0Ay0MzQxiQmB8DyEcCLQD4WTHfVqY9T9blLmten2lJJZLjmzJWmYr
+        r7JWGLlNW01vmAwFOj6XX4de4rKtokUycoWbi3I3VplT9rns7aLZmSoVibLM5b2y3mFz1krZ
+        lTa51shJ9nKzfZ19jSxaZKe1Yk2ZzfIyr9PlG1Lg+9WVA0P1pN2b93HvwHXgAp4XGkEGA9m1
+        0B3vJxvBIkbNBgH0J+NEekHN3gdwzLf8MTS1rw9X6t0Aus+WpGMV+xR88NXVFM8wOPscDMeq
+        02Wc1cLpucOE0nMKwNFIPa3wOXCk4wZIxwT7PEyON8/vRaXq56YnqHS8mF0Jxx8k5pmlbDEM
+        td6j042WsFEAfaFBLJ3gbD0OHyUD84os9l0YabuOp0+Rwa6GvzesSjOQ3cnAwN3LQHFQCCcf
+        HqaUOAv+eSFAp3nILoexEaPC7wFwbnoXqSRNACYjPZgi0MM/jjdiirdMOPPXflIRq+De3WoF
+        EeCB/Z20YrkFg71dXxBNYIV3wZS8/0/Ju2BKxwDeDp6W7LKlQpJ5O7/w9vxg/qnnGILgyMXN
+        w4BlAPekyvM6Waomxe1ynWUYQAbnlqjsNUSpWlUu1n0iOWwmh9MsycPAkBryIVyztMyW+jjW
+        WhNvyNfr9WgtX2DgeW6Z6pqmpUTNVoi1UrUk2SXHYx3GZGhcoLO5ZiQ3qnWLkzZn0Pd27J07
+        qxNXut4rToY0v754PpE1s3VD8HyPflPcQxS4Fne35SUbvu6XRkOX8lcEZ1dataEtA39/Nqme
+        ezXTN/HWbPzGLV1mcsdH1vih8X+v5ZS8+bDwnwj5QfGg+zfpgm2i1dhpqjtV82nTjqMbNCe2
+        xT584jhHyJUin4M7ZPE/Ee5iigAEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t9jQd1wKbYYg2dfjC0ObtW02DhjPavF
+        9o3fWC3mHznHatG8eD2bxZnuXIv+x6+ZLc6f38BucbbpDbvFrQYZi1lT9jJZbHp8jdXi8q45
+        bBafe48wWsw4v4/JYu2Ru+wWS69fZLK43biCzeLuqaNAM05fYrVo3XuE3aJt9QdWizcX7rE4
+        iHts272N1WPNvDWMHrMbLrJ4TOj/xOixeM9LJo9NqzrZPPbPXcPusXlJvce/Y+weB9/tYfLY
+        crWdxaNvyypGjxWrv7N7fN4kF8AXxWWTkpqTWZZapG+XwJWx62Ara8Es/Yqtu54yNjDOUOti
+        5OSQEDCRuNu9jbmLkYtDSGAdo8Sloz8YQRK8AoISPybfY+li5OBgFpCXOHIpG8JUl5gyJRei
+        /D6jxIKWM8wQ5VoSR1c/B2tlEVCV+HB1DguIzQYU3//iBhuIzS+gKHH1x2NGkDmiAhES3Scq
+        QeaICJxnlDjY18kKUsMs0Mos8agtC8QWFoiUOLX4Kdh8IYG5TBJtzcYgvZwC2hIPO5UnMArM
+        QnLoLIRDZyEcuoCReRWjZGpBcW56brFRgWFearlecWJucWleul5yfu4mRmBUbzus1beD8f6S
+        +EOMAhyMSjy8M5xYY4RYE8uKK3MPMUpwMCuJ8BYUssQI8aYkVlalFuXHF5XmpBYfYpTmYFES
+        572ddyxSSCA9sSQ1OzW1ILUIJsvEwSnVwOjNv+z7+6sXvlyPKWcJXVCc2+DD8Dfm6cvE3/c3
+        VZvKbXTdclnlyHzFEkGra9O8hI3frQ+KqFg22f23dRPPk0fOX9w0m37/OPry5uOzBrdSpHv3
+        fg2u/XY1XHVei3nK6xLGkkUVj4SY799gW7TOkyl0YVfV18zpdnfvrpj6ZAeD0VRV9veh3lxK
+        LMUZiYZazEXFiQAcnK+25gIAAA==
+X-CMS-MailID: 20181204061031epcas1p35234fb21941830b2ff1dd5920aff0709
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181203143131eucas1p217f22ac6d19682a54a57658a06980914
+References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181203143131eucas1p217f22ac6d19682a54a57658a06980914@eucas1p2.samsung.com>
+        <1543847475-7600-3-git-send-email-l.luba@partner.samsung.com>
+        <5C06124B.5030409@samsung.com> <5C06140E.7010603@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lukasz,
 
---n32bdtqrrttj3wgr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I add the comment about 'suspend_count'.
 
-On 2018-12-03, Christian Brauner <christian@brauner.io> wrote:
-> > > As I pointed out in another mail my I is to make this work by using
-> > > file descriptors for /proc/<pid>/task/<tid>.  I don't want this in the
-> > > initial patchset though.  I prefer to slowly add those features once
-> > > we have gotten the basic functionality in.
-> >=20
-> > Do you want to land all this in one kernel release?  I wonder how
-> > applications are supposed to discover kernel support if functionality is
-> > split across several kernel releases.  If you get EINVAL or EBADF, it
-> > may not be obvious what is going on.
->=20
-> Sigh, I get that but I really don't want to have to land this in one big
-> chunk. I want this syscall to go in in a as soon as we can to fulfill
-> the most basic need: having a way that guarantees us that we signal the
-> process that we intended to signal.
->=20
-> The thread case is easy to implement on top of it. But I suspect we will
-> quibble about the exact semantics for a long time. Even now we have been
-> on multiple - justified - detrous. That's all pefectly fine and
-> expected. But if we have the basic functionality in we have time to do
-> all of that. We might even land it in the same kernel release still. I
-> really don't want to come of as tea-party-kernel-conservative here but I
-> have time-and-time again seen that making something fancy and cover ever
-> interesting feature in one patchset takes a very very long time.
->=20
-> If you care about userspace being able to detect that case I can return
-> EOPNOTSUPP when a tid descriptor is passed.
+On 2018년 12월 04일 14:43, Chanwoo Choi wrote:
+> Hi,
+> 
+> On 2018년 12월 04일 14:36, Chanwoo Choi wrote:
+>> Hi Lukasz,
+>>
+>> Looks good to me. But, I add the some comments.
+>> If you will fix it, feel free to add my tag:
+>> Reviewed-by: Chanwoo choi <cw00.choi@samsung.com>
+> 
+> Sorry. Fix typo 'choi' to 'Choi' as following.
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+>>
+>> On 2018년 12월 03일 23:31, Lukasz Luba wrote:
+>>> The patch prepares devfreq device for handling suspend/resume
+>>> functionality.  The new fields will store needed information during this
+>>
+>> nitpick. Remove unneeded space. There are two spaces between '.' and 'The new'. 
+>>
+>>> process.  Devfreq framework handles opp-suspend DT entry and there is no
+>>
+>> ditto.
+>>
+>>> need of modyfications in the drivers code.  It uses atomic variables to
+>>
+>> ditto.
+>>
+>>> make sure no race condition affects the process.
+>>>
+>>> The patch is based on earlier work by Tobias Jakobi.
+>>
+>> Please remove it from each patch description.
+>>
+>>>
+>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>>> ---
+>>>  drivers/devfreq/devfreq.c | 51 +++++++++++++++++++++++++++++++++++++++--------
+>>>  include/linux/devfreq.h   |  7 +++++++
+>>>  2 files changed, 50 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>>> index a9fd61b..36bed24 100644
+>>> --- a/drivers/devfreq/devfreq.c
+>>> +++ b/drivers/devfreq/devfreq.c
+>>> @@ -316,6 +316,10 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>>>  			"Couldn't update frequency transition information.\n");
+>>>  
+>>>  	devfreq->previous_freq = new_freq;
+>>> +
+>>> +	if (devfreq->suspend_freq)
+>>> +		devfreq->resume_freq = cur_freq;
+>>> +
+>>>  	return err;
+>>>  }
+>>>  
+>>> @@ -667,6 +671,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>>  	}
+>>>  	devfreq->max_freq = devfreq->scaling_max_freq;
+>>>  
+>>> +	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
+>>> +	atomic_set(&devfreq->suspend_count, 0);
+>>> +
+>>>  	dev_set_name(&devfreq->dev, "devfreq%d",
+>>>  				atomic_inc_return(&devfreq_no));
+>>>  	err = device_register(&devfreq->dev);
+>>> @@ -867,14 +874,28 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
+>>>   */
+>>>  int devfreq_suspend_device(struct devfreq *devfreq)
+>>>  {
+>>> +	int ret;
+>>> +
+>>>  	if (!devfreq)
+>>>  		return -EINVAL;
+>>>  
+>>> -	if (!devfreq->governor)
+>>> -		return 0;
+>>> +	if (devfreq->governor) {
+>>> +		ret = devfreq->governor->event_handler(devfreq,
+>>> +					DEVFREQ_GOV_SUSPEND, NULL);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>> +
+>>> +	if (devfreq->suspend_freq) {
+>>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
+>>> +			return 0;
+>>> +
+>>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
 
-Personally, I'm +1 on -EOPNOTSUPP so we can get an MVP merged, and add
-new features in later patches.
+In this patch, if some users call 'devfreq_suspend_device' twice,
+'devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_SUSPEND, NULL)'
+is called twice but devfreq_set_target() is called only one.
+I knew that it is no problem for operation.
 
-> > What happens if you use the new interface with an O_PATH descriptor?
->=20
-> You get EINVAL. When an O_PATH file descriptor is created the kernel
-> will set file->f_op =3D &empty_fops at which point the check I added=20
->         if (!proc_is_tgid_procfd(f.file))
->                 goto err;
-> will fail. Imho this is correct behavior since technically signaling a
-> struct pid is the equivalent of writing to a file and hence doesn't
-> purely operate on the file descriptor level.
+But,
+I think that you better to use 'suspend_count' as the reference count
+of devfreq_suspend/resume_device(). But, if you use 'suspend_count'
+in order to check whether this devfreq is suspended or not,
+we can reduce the unneeded redundant call when calling it twice.
 
-Not to mention that O_PATH file descriptors are a whole kettle of fish
-when it comes to permission checking semantics.
+clock and regulator used the 'reference count' method in order to
+remove the redundant call.
 
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+>>>  
+>>> -	return devfreq->governor->event_handler(devfreq,
+>>> -				DEVFREQ_GOV_SUSPEND, NULL);
+>>> +	return 0;
+>>>  }
+>>>  EXPORT_SYMBOL(devfreq_suspend_device);
+>>>  
+>>> @@ -888,14 +909,28 @@ EXPORT_SYMBOL(devfreq_suspend_device);
+>>>   */
+>>>  int devfreq_resume_device(struct devfreq *devfreq)
+>>>  {
+>>> +	int ret;
+>>> +
+>>>  	if (!devfreq)
+>>>  		return -EINVAL;
+>>>  
+>>> -	if (!devfreq->governor)
+>>> -		return 0;
+>>> +	if (devfreq->resume_freq) {
+>>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
+>>> +			return 0;
 
---n32bdtqrrttj3wgr
-Content-Type: application/pgp-signature; name="signature.asc"
+ditto.
 
------BEGIN PGP SIGNATURE-----
+>>>  
+>>> -	return devfreq->governor->event_handler(devfreq,
+>>> -				DEVFREQ_GOV_RESUME, NULL);
+>>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>> +
+>>> +	if (devfreq->governor) {
+>>> +		ret = devfreq->governor->event_handler(devfreq,
+>>> +					DEVFREQ_GOV_RESUME, NULL);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>> +
+>>> +	return 0;
+>>>  }
+>>>  EXPORT_SYMBOL(devfreq_resume_device);
+>>>  
+>>> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+>>> index e4963b0..d985199 100644
+>>> --- a/include/linux/devfreq.h
+>>> +++ b/include/linux/devfreq.h
+>>> @@ -131,6 +131,9 @@ struct devfreq_dev_profile {
+>>>   * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
+>>>   * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
+>>>   * @stop_polling:	 devfreq polling status of a device.
+>>> + * @suspend_freq:	 frequency of a device set during suspend phase.
+>>> + * @resume_freq:	 frequency of a device set in resume phase.
+>>> + * @suspend_count:	 suspend requests counter for a device.
+>>>   * @total_trans:	Number of devfreq transitions
+>>>   * @trans_table:	Statistics of devfreq transitions
+>>>   * @time_in_state:	Statistics of devfreq states
+>>> @@ -167,6 +170,10 @@ struct devfreq {
+>>>  	unsigned long scaling_max_freq;
+>>>  	bool stop_polling;
+>>>  
+>>> +	unsigned long suspend_freq;
+>>> +	unsigned long resume_freq;
+>>> +	atomic_t suspend_count;
+>>> +
+>>>  	/* information for device frequency transition */
+>>>  	unsigned int total_trans;
+>>>  	unsigned int *trans_table;
+>>>
+>>
+>>
+> 
+> 
 
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlwGGMoACgkQSnvnv3De
-m5+lDBAAxrkdEEDjq6ASZyzYu++elzkZwOs9q49a1PFaNr0i4W08Kz2ZEPOvXMiP
-xz+s4dL78GZo4sSL1e6rs35+3N0dZHFUlfASXeDU8XlKdoM1MQ55/DFHMJ1WcwBH
-C3xPOGW4zOBCF1hEp7mayrmc6qIcPGj5jCvamoYAC1P/1RdJ4qbqLJ6FiYynYaJr
-McAWlFBjCI60Bzhxkg8cuOOkpF4PE922kCWsdqKEkwLuVztrHwXu/80NYPzuRVXI
-g0QxtSz1Gu+6ZMOmdyxluy3RvricEMt4dNsIo8PuLALrGkeoklivfWJKWFT9n00Y
-2uI3qYkQdLgfy5OQZ4ceY5PkeI1DX6BXTV2TkIN4Zh+gDmAGhOjO+wzwhIgeNqrq
-MX+Luujx6iyKDnNrDJuFJJ12u5sQN4pW9+ilYAXcMos6hyejeG/xtIS+t7wwEcny
-PMQQaLuEr8Kz+/z9FBdYr3HZAMe29Z4mB1UOag5/6Iv1NYprukY2OJOot6x3mq4w
-YWtt2o2W/QOithsPfCxRZ5HpxiyZXATUe5ZVIWqxSFk+VCOIn9eIzlQ4KVzFZpjx
-ngh7OqsfEWaHRquUMLNEEdrNeBs29ewdj8GbWb8yTrXJzmEz9JBVQtVJy8+sd4Bd
-X8D7nD9eUq+XxZwLWXgPwIKLJbeo6WUme80euvu3PSWwUqCrlOg=
-=mApV
------END PGP SIGNATURE-----
 
---n32bdtqrrttj3wgr--
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
