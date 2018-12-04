@@ -2,253 +2,116 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906BAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34273C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402CC20834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA8BF2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:08:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="sxT82fSk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402CC20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rrz3iCXY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA8BF2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbeLDTIv (ORCPT
+        id S1726494AbeLDTI4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:08:51 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33041 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbeLDTIu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:08:50 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c206so15304093oib.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:08:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KFVdWr/Fy8+/j2Ye4j8wZ/Q8aeBGKJ3rEak03vnb01I=;
-        b=sxT82fSkRbtIO8FXISzyNeCAsUZXT53KFX4tJZ2pjcnLnMIG6yXtobui8KDCr4jipo
-         d96hyrt6z2IbiMPMjcsoiwUqKVoeH6S3aGfQRD0BzK+nFIDJiOqJxjZDeK7QX6Xic9Ik
-         7Wf8m8VUCxL77BV2NO0qQvqZ0FrcXji7i4JPN5v8L05Kn3wMJ+09H5WrPDplHSpVxYcB
-         wIqQKQDh4DDL35M5HYnPiGEd/AS33toP1pQJngX/rzypDtYuh+AVXvB8vDfQQc/FzlZR
-         SM7PFkM5gb7jy70Vml6SK9YN0I7c8Aq+cjeJgHj2KRgiVSBCKituvktfC1yChXN1EUlo
-         ue8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KFVdWr/Fy8+/j2Ye4j8wZ/Q8aeBGKJ3rEak03vnb01I=;
-        b=rMOPCp6XISlAutBK20myEAiqygjE8vo+AsE4s+r9y+85r9fyJyKhMFRaiOxjdu6VUt
-         xhO49ebug5PdUjmWoDXxAVcmE+E+690BOvWbeGwOLYpAHLnhYDCME4v7/Np94zsF6Fp5
-         LeXQehHpncaP/OYSMcwuJTzz5bjFXaOXO9G9lISHI4Of6I0DP9qT3RUInTp8L/N8pwd1
-         ESVwETyVchxMbhBDkKC0n0xx8ElzKNbcvMgXIKxgTvggR71M1QpjD8LjxTqL8KpRAki0
-         odnWuG7Z1obLOzo3q2P9nobL3807+wgTmtxFMugExWtzpM5Q7pfU8/lY1nye5CbFSf+D
-         ltLg==
-X-Gm-Message-State: AA+aEWZbFtJrvZTTIF0/dn2Wj1uH4fgF9PbzC3VnfKXsMR/O5onE6NZa
-        hhBUAN8Gy8CPGOoUQvsTwhOqopgNnBs66LkJ9v1FdQ==
-X-Google-Smtp-Source: AFSGD/X7+dU84TGOG1HzbXgrZGbHf760ODvr+iHTpJPIWS1lADpyZAE7+HfE6BG1FJRtIRk695grXBHV1hpP6CG/5x0=
-X-Received: by 2002:aca:b804:: with SMTP id i4mr9740237oif.280.1543950528564;
- Tue, 04 Dec 2018 11:08:48 -0800 (PST)
+        Tue, 4 Dec 2018 14:08:56 -0500
+Received: from mail-eopbgr130048.outbound.protection.outlook.com ([40.107.13.48]:35088
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726171AbeLDTIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:08:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Iufcb/KYH2bZGgixztfQ/3Aim0D415Z6QGznpML4mNw=;
+ b=rrz3iCXYNf9rVq/p7XSctb6DbH4faNy8cskfvqW7pX8f3dBEA2khOAv/bZ/08d3oRoVoC7rT/LfzB9VOOhdwtNqvv90xp9ZBRDB9Qbz+DFmavoLydJ8YEwbBL0n2d9bCxHlW1/nYQj4a2ZgjpP1j1akJLqbUArspk6U8cz9iIgA=
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
+ VI1PR04MB5613.eurprd04.prod.outlook.com (20.178.125.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.19; Tue, 4 Dec 2018 19:08:50 +0000
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::f80a:77f3:7cbf:62b5]) by VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::f80a:77f3:7cbf:62b5%2]) with mapi id 15.20.1404.016; Tue, 4 Dec 2018
+ 19:08:50 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "stefan@agner.ch" <stefan@agner.ch>
+CC:     Richard Zhu <hongxing.zhu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "tpiepho@impinj.com" <tpiepho@impinj.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "bhelgaas@google.com" <bhelgaas@google.com>
+Subject: Re: [PATCH v4 3/3] PCI: imx6: limit DBI register length
+Thread-Topic: [PATCH v4 3/3] PCI: imx6: limit DBI register length
+Thread-Index: AQHUi/ItnXKkv6zAjkGaBp3fo/yZWqVu8ZwA
+Date:   Tue, 4 Dec 2018 19:08:50 +0000
+Message-ID: <a30b8bcb6492eadba6206ba879a6530b2a5d2db9.camel@nxp.com>
+References: <20181204165528.15534-1-stefan@agner.ch>
+         <20181204165528.15534-3-stefan@agner.ch>
+In-Reply-To: <20181204165528.15534-3-stefan@agner.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5613;6:Ke3NQKf9Cwgpx0ALQeESjnLPQa3km6vGsyOQp94T7i5uwdGUDJ+Y2oMW/gua66SMGufz8wGq2Mt42PZ2ROIHZptfNzA6UAjhzL/V34JfynVesSLmmctySnjOtuqMBz0vSzenzK6zecGwfr/pAXPwUru+Qt7OSCdyt/pzosqhjgn9L3aiXt58bjkbvzrjthsS6JmTjT9Yeb0DK8O2s2zgQ+wKWWgmuhcVjTvtn7LLdVS2+SIbrQFth3WEJmXbf2RC61plahD69G3adbN6b85oxz0eEjk+wflf31AI7kpn+3J3M7bHMsXaGqrRRBUw2I6uMG9Mi/8MWcKNU+l3+WeJJDPfNVF+NMRiko7T1R1rwcCnMK445GMJ/XCDy60DtVMq+qqBkBNavq/46y2+ENWNjdgdLYW/LrcOfKJXOl+PHY3rtWURdOAqNOPlS/Ps7QMu1EJ1tMKwQS5boDBasu+nNw==;5:uwr+VMvD210U6UMzxMb3cNJfSGzCuUJwfPxR3xg6qgvhcCiERXHxfdsp8GgnCUM0SHM02E0u8PQSEYJGUdtJ65PRQOSAQMxnFI74wol0tqJ7hOystZQ3W4haDG6JBgFvf9wPIhntlKwBqZhdX8MVG2/Eg1LrZzvcbkrxJ///U0c=;7:/SvJdZQqZPQ7p+wv9zS0KeYR9WD2ZB6EmZ920BS0VRHF/lXLaw1S5a5DUgrdW3ED0BFvy54OnK1jrO+IsIzMKd8hR/V4t0RspAFePaNzURuzquLsKOWcoq6/fJBTDHY4JuB05XseqYqr2PtiBXMnGQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 98c1b97c-2498-4847-2423-08d65a1bed0c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5613;
+x-ms-traffictypediagnostic: VI1PR04MB5613:
+x-microsoft-antispam-prvs: <VI1PR04MB561313F6C76F46BC1167619EEEAF0@VI1PR04MB5613.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5613;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5613;
+x-forefront-prvs: 0876988AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(366004)(346002)(189003)(199004)(68736007)(99286004)(105586002)(71200400001)(71190400001)(305945005)(2906002)(6916009)(102836004)(106356001)(2351001)(5660300001)(7736002)(25786009)(14444005)(256004)(2501003)(186003)(97736004)(229853002)(76176011)(6486002)(14454004)(26005)(86362001)(36756003)(53936002)(54906003)(6116002)(1730700003)(44832011)(8676002)(118296001)(3846002)(4326008)(81156014)(81166006)(50226002)(478600001)(446003)(316002)(486006)(6512007)(8936002)(2616005)(6436002)(6506007)(6246003)(11346002)(5640700003)(476003)(39060400002)(66066001)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5613;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 7Xrlp8Ey7CgvsFLQ/eWUtxs2hIO/UjQdwIAmhUzVJM7VsnpKxCCpW/bk8pj8GBEV3tUnUFBM0xCsEy0B/GXMR2k1nrPWV3uL9u7WFlKmK7Jk2tDuLxMz0BK4KQVk3g10kOKn2JBGmWiTG46MKPDekq6NDsOFXII79V/sFzcYEGECnBT7NQOItsC7HGm6RDa0PVEdcxP2ZqvKdE/O68dKS9i6xmiT8U2hZS14MvOkXEzbkFy7gH1yOuFOqJWTQwLdcnV606q+/1QV8wRQz54UJmfyanF1pDqRV8ZzTPPzsCekTzz+PIBKvYBUNpSu/P7ImXKYuG/ghi9d+qHYDaTBYKRDV6nvOmbmU2Z0cUDYClU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9FDC838BFB74FF4081A5D9D64B995F0B@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
- <154386513120.27193.7977541941078967487.stgit@ahduyck-desk1.amr.corp.intel.com>
- <CAPcyv4gZkx9zRsKkVhrmPG7SyjPEycp0neFnECmSADZNLuDOpQ@mail.gmail.com>
- <97943d2ed62e6887f4ba51b985ef4fb5478bc586.camel@linux.intel.com>
- <CAPcyv4i=FL4f34H2_1mgWMk=UyyaXFaKPh5zJSnFNyN3cBoJhA@mail.gmail.com>
- <2a3f70b011b56de2289e2f304b3d2d617c5658fb.camel@linux.intel.com>
- <CAPcyv4hPDjHzKd4wTh8Ujv-xL8YsJpcFXOp5ocJ-5fVJZ3=vRw@mail.gmail.com> <30ab5fa569a6ede936d48c18e666bc6f718d50db.camel@linux.intel.com>
-In-Reply-To: <30ab5fa569a6ede936d48c18e666bc6f718d50db.camel@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 4 Dec 2018 11:08:37 -0800
-Message-ID: <CAPcyv4izGr4dLs_Xpa1wbqJRrHZVEKFWQNb2Qo2Ej_xbEXhbTg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] mm: Add support for exposing if dev_pagemap
- supports refcount pinning
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Barret Rhoden <brho@google.com>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, rkrcmar@redhat.com,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98c1b97c-2498-4847-2423-08d65a1bed0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 19:08:50.6165
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5613
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 1:50 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> On Mon, 2018-12-03 at 13:05 -0800, Dan Williams wrote:
-> > On Mon, Dec 3, 2018 at 12:53 PM Alexander Duyck
-> > <alexander.h.duyck@linux.intel.com> wrote:
-> > >
-> > > On Mon, 2018-12-03 at 12:31 -0800, Dan Williams wrote:
-> > > > On Mon, Dec 3, 2018 at 12:21 PM Alexander Duyck
-> > > > <alexander.h.duyck@linux.intel.com> wrote:
-> > > > >
-> > > > > On Mon, 2018-12-03 at 11:47 -0800, Dan Williams wrote:
-> > > > > > On Mon, Dec 3, 2018 at 11:25 AM Alexander Duyck
-> > > > > > <alexander.h.duyck@linux.intel.com> wrote:
-> > > > > > >
-> > > > > > > Add a means of exposing if a pagemap supports refcount pinning. I am doing
-> > > > > > > this to expose if a given pagemap has backing struct pages that will allow
-> > > > > > > for the reference count of the page to be incremented to lock the page
-> > > > > > > into place.
-> > > > > > >
-> > > > > > > The KVM code already has several spots where it was trying to use a
-> > > > > > > pfn_valid check combined with a PageReserved check to determien if it could
-> > > > > > > take a reference on the page. I am adding this check so in the case of the
-> > > > > > > page having the reserved flag checked we can check the pagemap for the page
-> > > > > > > to determine if we might fall into the special DAX case.
-> > > > > > >
-> > > > > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > > > > ---
-> > > > > > >  drivers/nvdimm/pfn_devs.c |    2 ++
-> > > > > > >  include/linux/memremap.h  |    5 ++++-
-> > > > > > >  include/linux/mm.h        |   11 +++++++++++
-> > > > > > >  3 files changed, 17 insertions(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> > > > > > > index 6f22272e8d80..7a4a85bcf7f4 100644
-> > > > > > > --- a/drivers/nvdimm/pfn_devs.c
-> > > > > > > +++ b/drivers/nvdimm/pfn_devs.c
-> > > > > > > @@ -640,6 +640,8 @@ static int __nvdimm_setup_pfn(struct nd_pfn *nd_pfn, struct dev_pagemap *pgmap)
-> > > > > > >         } else
-> > > > > > >                 return -ENXIO;
-> > > > > > >
-> > > > > > > +       pgmap->support_refcount_pinning = true;
-> > > > > > > +
-> > > > > >
-> > > > > > There should be no dev_pagemap instance instance where this isn't
-> > > > > > true, so I'm missing why this is needed?
-> > > > >
-> > > > > I thought in the case of HMM there were instances where you couldn't
-> > > > > pin the page, isn't there? Specifically I am thinking of the definition
-> > > > > of MEMORY_DEVICE_PUBLIC:
-> > > > >   Device memory that is cache coherent from device and CPU point of
-> > > > >   view. This is use on platform that have an advance system bus (like
-> > > > >   CAPI or CCIX). A driver can hotplug the device memory using
-> > > > >   ZONE_DEVICE and with that memory type. Any page of a process can be
-> > > > >   migrated to such memory. However no one should be allow to pin such
-> > > > >   memory so that it can always be evicted.
-> > > > >
-> > > > > It sounds like MEMORY_DEVICE_PUBLIC and MMIO would want to fall into
-> > > > > the same category here in order to allow a hot-plug event to remove the
-> > > > > device and take the memory with it, or is my understanding on this not
-> > > > > correct?
-> > > >
-> > > > I don't understand how HMM expects to enforce no pinning, but in any
-> > > > event it should always be the expectation an elevated reference count
-> > > > on a page prevents that page from disappearing. Anything else is
-> > > > broken.
-> > >
-> > > I don't think that is true for device MMIO though.
-> > >
-> > > In the case of MMIO you have the memory region backed by a device, if
-> > > that device is hot-plugged or fails in some way then that backing would
-> > > go away and the reads would return and all 1's response.
-> >
-> > Until p2pdma there are no struct pages for device memory, is that what
-> > you're referring?
->
-> Honestly I am not sure. It is possible I am getting beyond my depth.
->
-> My understanding is that we have a 'struct page' for any of these pages
-> that we are currently using. It is just a matter of if we want to pass
-> the struct page around or not. So for example in the case of an MMIO
-> page we still have a 'struct page', however the PG_reserved flag is set
-> on such a page, so KVM is opting to not touch the reference count,
-> modify the dirty/accessed bits, and is generally reducing performance
-> as a result.
->
-> > Otherwise any device driver that leaks "struct pages" into random code
-> > paths in the kernel had better not expect to be able to
-> > surprise-remove those pages from the system. Any dev_pagemap user
-> > should expect to do a coordinated removal with the driver that waits
-> > for page references to drop before the device can be physically
-> > removed.
->
-> Right. This part I get. However I would imagine there still has to be
-> some exception handling in the case of a PCIe backed region of memory
-> so that if the device falls of the bus we clean up the dev_pagemap
-> memory.
-
-There isn't. This is a gap. Persistent memory gets around this by the
-fact that none of the current NVDIMM bus implementations support
-surprise physical unplug. HMM may be broken in this regard when GPUs
-fall of the bus, but I don't think this is a recoverable situation
-once applications have been handed direct access to the memory
-resource. There is no recovery without a device-driver intermediary to
-gracefully fail transactions.
-
-> > > Holding a reference to the page doesn't guarantee that the backing
-> > > device cannot go away.
-> >
-> > Correct there is no physical guarantee, but that's not the point. It
-> > needs to be coordinated, otherwise all bets are off with respect to
-> > system stability.
->
-> Right.
->
-> > > I believe that is the origin of the original use
-> > > of the PageReserved check in KVM in terms of if it will try to use the
-> > > get_page/put_page functions.
-> >
-> > Is it? MMIO does not typically have a corresponding 'struct page'.
->
-> I think we might be talking about different things when we say 'struct
-> page'. I'm pretty sure there has to be a 'struct page' for the MMIO
-> region as otherwise we wouldn't be able to check for the PG_reserved
-> bit in the 'struct page'. Do you maybe mean that MMIO doesn't have a
-> corresponding virtual address or TLB entry?
-
-No.
-
-> I know that is what we are
-> normally generating via the ioremap family of calls in device drivers
-> in order to access such memory if I am not mistaken.
-
-I think the confusion arises from the fact that there are a few MMIO
-resources with a struct page and all the rest MMIO resources without.
-The problem comes from the coarse definition of pfn_valid(), it may
-return 'true' for things that are not System-RAM, because pfn_valid()
-may be something as simplistic as a single "address < X" check. Then
-PageReserved is a fallback to clarify the pfn_valid() result. The
-typical case is that MMIO space is not caught up in this linear map
-confusion. An MMIO address may or may not have an associated 'struct
-page' and in most cases it does not.
-
-> > > I believe this is also why
-> > > MEMORY_DEVICE_PUBLIC specifically calls out that you should not allow
-> > > pinning such memory.
-> >
-> > I don't think that call out was referencing device hotplug, I believe
-> > it was the HMM expectation that it should be able to move an HMM page
-> > from device to System-RAM at will.
->
-> I could be wrong. If so that would make this patch set easier since
-> essentially it would just mean that any PageReserved page that matches
-> is_zone_device_page would fall into this category then and I could just
-> drop patch 2, and probably combine the entire fix for all of this into
-> one patch as it would only really be a few additional lines.
->
-
-I took another look at PageReserved usage, I really think we're better
-off just deleting PageReserved for dax and fixing up the small number
-of places where it matters. By my count there are only 44 tests for
-PageReserved and most of those are locations that would never see a
-dax page.
+T24gVHVlLCAyMDE4LTEyLTA0IGF0IDE3OjU1ICswMTAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
+IERlZmluZSB0aGUgbGVuZ3RoIG9mIHRoZSBEQkkgcmVnaXN0ZXJzLiBUaGlzIG1ha2VzIHN1cmUg
+dGhhdA0KPiB0aGUga2VybmVsIGRvZXMgbm90IGFjY2VzcyByZWdpc3RlcnMgYmV5b25kIHRoYXQg
+cG9pbnQsIGF2b2lkaW5nDQo+IHRoZSBmb2xsb3dpbmcgYWJvcnQgb24gYSBpLk1YIDZRdWFkOg0K
+PiAgICMgY2F0IC9zeXMvZGV2aWNlcy9zb2MwL3NvYy8xZmZjMDAwLnBjaWUvcGNpMDAwMFw6MDAv
+MDAwMFw6MDBcOjAwLjAvY29uZmlnDQo+ICAgWyAgMTAwLjAyMTQzM10gVW5oYW5kbGVkIGZhdWx0
+OiBpbXByZWNpc2UgZXh0ZXJuYWwgYWJvcnQgKDB4MTQwNikgYXQgMHhiNmVhNzAwMA0KPiAgIC4u
+Lg0KPiAgIFsgIDEwMC4wNTY0MjNdIFBDIGlzIGF0IGR3X3BjaWVfcmVhZCsweDUwLzB4ODQNCj4g
+ICBbICAxMDAuMDYwNzkwXSBMUiBpcyBhdCBkd19wY2llX3JkX293bl9jb25mKzB4NDQvMHg0OA0K
+PiANCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaW14Nl9wY2llX2RydmRhdGEgZHJ2ZGF0YVtdID0g
+ew0KPiAtCVtJTVg2UV0gPSB7IC52YXJpYW50ID0gSU1YNlEgfSwNCj4gKwlbSU1YNlFdID0geyAu
+dmFyaWFudCA9IElNWDZRLCAuZGJpX2xlbmd0aCA9IDB4MTVjIH0sDQo+ICAJW0lNWDZTWF0gPSB7
+IC52YXJpYW50ID0gSU1YNlNYIH0sDQo+ICAJW0lNWDZRUF0gPSB7IC52YXJpYW50ID0gSU1YNlFQ
+IH0sDQo+ICAJW0lNWDdEXSA9IHsgLnZhcmlhbnQgPSBJTVg3RCB9LA0KDQpBbHNvIHNlZW1zIHRv
+IGFmZmVjdCBJTVg2UVAgdmFyaWFudCAoYnV0IG5vdCBvdGhlcnMpLg0KDQpMdWNhcyBzdWdnZXN0
+ZWQgMHgxNWMgYmVjYXVzZSB0aGF0J3MgdGhlIGxhc3QgcmVnaXN0ZXIgZG9jdW1lbnRlZCBpbg0K
+dGhlIGRhdGFzaGVldCBidXQgdGhlIHJlYWwgSFcgbGltaXQgaXMgMHgyMDAsIHdvdWxkbid0IGl0
+IG1ha2UgbW9yZQ0Kc2Vuc2UgdG8gdXNlIHRoYXQ/DQoNCi0tDQpSZWdhcmRzLA0KTGVvbmFyZA0K
