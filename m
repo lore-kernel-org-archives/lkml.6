@@ -2,114 +2,188 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D653EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2A2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7B720661
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:12:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="BbbevpNq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7B720661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C70C20672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C70C20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbeLDRM0 (ORCPT
+        id S1727199AbeLDRNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 12:12:26 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37658 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbeLDRM0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 12:12:26 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j10so16772058wru.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 09:12:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=pc2qkZ/fZj18Fzy7SVhPl63s4s0jlteEt+vDPnMNtME=;
-        b=BbbevpNqYxZhavjtLpmMBTjRK/fbhFdYM3oabZPFhIhvVafZqkHJDKrOT5w6TnZzYm
-         owKgzNLGfvbsZ70fXZjsO3SeWmIVtu8bcYQ6RPSYzAoSFP5GYesbEFTW5db90bgEhSYD
-         xj5n+jWdAJuus7RZ/luup1jNsnHpdlKWotpOU0YG+XIGPsDgx2PeCrkHmkqUXsQWkVDu
-         8hzKMk7ze5nXxG2nnO6B/A+HAoEKQ4/GR8k1P3FZy71bIFly1mTB+o17dYtXGneV1VFT
-         d6y4MBKBKlahf+9KdNOBzQ+FLhboCG60iVqjcvPcT/3wBVx4iX8VuwFexp2czbvfttTL
-         /wgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=pc2qkZ/fZj18Fzy7SVhPl63s4s0jlteEt+vDPnMNtME=;
-        b=CiYKW/7wGBDSw/yv4SMi0ZOrWvbY14hWRQqZ97aG3YgLl0YS+37WW7NPdD81nnfPTa
-         JvDaCpfis5wyJwJO9RopudSuezh52tYvEswWMS9YzftFVSzhPeJLboMX3P+yHjGm/HMe
-         /KF5HrCOq2Ggy/lOGC0raJcfVjPMnTMJkOfGIURE8YnAzhEFD2knfX9AeFB/gHFn4Vh6
-         GRZ0CsX+BRRwFQZcz6mmulIYquCcdT8atVfmpcroRxhbxvLGnb1v4kP/FEreRktocJtG
-         7jOVGM4du9zU2DkMzvtBtkL7MQqzeMoGBbcCn7HCUB/wm1OFEEcXpQxm3AE89e6Cn2hS
-         8r5Q==
-X-Gm-Message-State: AA+aEWZM2rs5k6u43tqVcOiWAhJxnJjHzfbIkE7jK+IbH72EdXg3yL8z
-        cnwJZh0tuEtXtLKGVUB/UrK7wnK+DgHOYQ==
-X-Google-Smtp-Source: AFSGD/U8GFbuTLnibeXSVxW234ClUkf7G0t5M+TKg1N1HlrUli92jCEGw1SlTDSm0evUKMxWy3G9hQ==
-X-Received: by 2002:adf:90e5:: with SMTP id i92mr17841828wri.210.1543943544333;
-        Tue, 04 Dec 2018 09:12:24 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id h4sm15663252wrt.66.2018.12.04.09.12.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 09:12:23 -0800 (PST)
-Message-ID: <5c06b577.1c69fb81.1352a.a192@mx.google.com>
-Date:   Tue, 04 Dec 2018 09:12:23 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.19.y
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.19.6-140-g987a6da5152c
-In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
-References: <20181204103649.950154335@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 000/139] 4.19.7-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+        Tue, 4 Dec 2018 12:13:44 -0500
+Received: from mga05.intel.com ([192.55.52.43]:34123 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726226AbeLDRNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 12:13:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 09:13:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,314,1539673200"; 
+   d="scan'208";a="127031778"
+Received: from unknown (HELO yyu32-desk1) ([143.183.136.51])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Dec 2018 09:13:43 -0800
+Message-ID: <752c38422a6536d8df99b619214f935e4bc882ad.camel@intel.com>
+Subject: Re: [RFC PATCH v6 04/26] x86/fpu/xstate: Introduce XSAVES system
+ states
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Tue, 04 Dec 2018 09:08:11 -0800
+In-Reply-To: <20181204160144.GG11803@zn.tnic>
+References: <20181119214809.6086-1-yu-cheng.yu@intel.com>
+         <20181119214809.6086-5-yu-cheng.yu@intel.com>
+         <20181204160144.GG11803@zn.tnic>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 120 boots: 0 failed, 117 passed with 2 offline=
-, 1 untried/unknown (v4.19.6-140-g987a6da5152c)
+On Tue, 2018-12-04 at 17:01 +0100, Borislav Petkov wrote:
+> On Mon, Nov 19, 2018 at 01:47:47PM -0800, Yu-cheng Yu wrote:
+> > Control-flow Enforcement (CET) MSR contents are XSAVES system states.
+> > To support CET, introduce XSAVES system states first.
+> > 
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > ---
+> >  arch/x86/include/asm/fpu/internal.h |  3 +-
+> >  arch/x86/include/asm/fpu/xstate.h   |  4 +-
+> >  arch/x86/kernel/fpu/core.c          |  6 +-
+> >  arch/x86/kernel/fpu/init.c          | 10 ---
+> >  arch/x86/kernel/fpu/xstate.c        | 94 +++++++++++++++++++----------
+> >  5 files changed, 69 insertions(+), 48 deletions(-)
+> 
+> ...
+> 
+> > @@ -704,6 +710,7 @@ static int init_xstate_size(void)
+> >   */
+> >  static void fpu__init_disable_system_xstate(void)
+> >  {
+> > +	xfeatures_mask_all = 0;
+> >  	xfeatures_mask_user = 0;
+> >  	cr4_clear_bits(X86_CR4_OSXSAVE);
+> >  	fpu__xstate_clear_all_cpu_caps();
+> > @@ -717,6 +724,8 @@ void __init fpu__init_system_xstate(void)
+> >  {
+> >  	unsigned int eax, ebx, ecx, edx;
+> >  	static int on_boot_cpu __initdata = 1;
+> > +	u64 cpu_system_xfeatures_mask;
+> > +	u64 cpu_user_xfeatures_mask;
+> 
+> So what I had in mind is to not have those local vars but use
+> xfeatures_mask_user and xfeatures_mask_system here directly...
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.6-140-g987a6da5152c/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.6-140-g987a6da5152c/
+Ok, I will re-write it.
 
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.6-140-g987a6da5152c
-Git Commit: 987a6da5152c29e37cc11de9a2d10a23a48015c9
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 62 unique boards, 23 SoC families, 15 builds out of 202
+...
 
-Offline Platforms:
+> >  
+> > @@ -739,10 +748,23 @@ void __init fpu__init_system_xstate(void)
+> >  		return;
+> >  	}
+> >  
+> > +	/*
+> > +	 * Find user states supported by the processor.
+> > +	 * Only these bits can be set in XCR0.
+> > +	 */
+> >  	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> > -	xfeatures_mask_user = eax + ((u64)edx << 32);
+> > +	cpu_user_xfeatures_mask = eax + ((u64)edx << 32);
+> >  
+> > -	if ((xfeatures_mask_user & XFEATURE_MASK_FPSSE) !=
+> > XFEATURE_MASK_FPSSE) {
+> > +	/*
+> > +	 * Find system states supported by the processor.
+> > +	 * Only these bits can be set in IA32_XSS MSR.
+> > +	 */
+> > +	cpuid_count(XSTATE_CPUID, 1, &eax, &ebx, &ecx, &edx);
+> > +	cpu_system_xfeatures_mask = ecx + ((u64)edx << 32);
+> > +
+> > +	xfeatures_mask_all = cpu_user_xfeatures_mask |
+> > cpu_system_xfeatures_mask;
+> 
+> ... and not introduce xfeatures_mask_all at all but everywhere you need
+> all features, to do:
+> 
+> 	(xfeatures_mask_user | xfeatures_mask_system)
+> 
+> and work with that.
 
-arm:
+Then we will do this very often.  Why don't we create all three in the
+beginning: xfeatures_mask_all, xfeatures_mask_user, and xfeatures_mask_system?
 
-    multi_v7_defconfig:
-        stih410-b2120: 1 offline lab
+> ...
+> 
+> > @@ -1178,7 +1208,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave,
+> > const void *kbuf)
+> >  	 * The state that came in from userspace was user-state only.
+> >  	 * Mask all the user states out of 'xfeatures':
+> >  	 */
+> > -	xsave->header.xfeatures &= XFEATURE_MASK_SUPERVISOR;
+> > +	xsave->header.xfeatures &= (xfeatures_mask_all &
+> > ~xfeatures_mask_user);
+> 
+> ... and this would be
+> 
+> 	xsave->header.xfeatures &= xfeatures_mask_system;
 
-arm64:
+Yes.
 
-    defconfig:
-        meson-gxl-s905x-p212: 1 offline lab
+> 
+> >  
+> >  	/*
+> >  	 * Add back in the features that came in from userspace:
+> > @@ -1234,7 +1264,7 @@ int copy_user_to_xstate(struct xregs_state *xsave,
+> > const void __user *ubuf)
+> >  	 * The state that came in from userspace was user-state only.
+> >  	 * Mask all the user states out of 'xfeatures':
+> >  	 */
+> > -	xsave->header.xfeatures &= XFEATURE_MASK_SUPERVISOR;
+> > +	xsave->header.xfeatures &= (xfeatures_mask_all &
+> > ~xfeatures_mask_user);
+> 
+> Ditto here.
+> 
+> This way you have *two* mask variables and code queries them only.
+> 
+> Hmmm?
+> 
+> Or am I missing something?
 
----
-For more info write to <info@kernelci.org>
+We actually have three.
+
+Yu-cheng
+
