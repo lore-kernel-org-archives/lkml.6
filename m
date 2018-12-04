@@ -2,207 +2,242 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B61C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4892BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C02208A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:11:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRfFPlS2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C02208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 174B72082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:13:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174B72082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbeLDHLx (ORCPT
+        id S1726061AbeLDHN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:11:53 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33761 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLDHLw (ORCPT
+        Tue, 4 Dec 2018 02:13:29 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38125 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLDHN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:11:52 -0500
-Received: by mail-io1-f66.google.com with SMTP id t24so12762556ioi.0;
-        Mon, 03 Dec 2018 23:11:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LLMra+pQ24ZVHk1vbWB2C8i0hTV4jWLvatavtlSVr58=;
-        b=JRfFPlS2FScQFfXbockYeC0J3MlnnK9FW97HvhNdiKolzRkd/LodCNgJd6zn/S5vEu
-         +q3L7XaaQeBA1pXudG9lQaa8frMSCkCh8HDlMEIvzGh47JIJsvt+yvpWx6xxKuDJjGsx
-         pThyVDrbuEki6XHzgrB9CbostCvjYkpE6jc8oCKOom1N0j0X9zxnHPM7mPfwQD0BStlN
-         czU8JV0knbcKPOVfoy4SifSQ10XJlSsjHPIF6jkVKzcRwNNbAuV0lxMDRRpuiWkdD33Z
-         bZX4NAWOSvLbtJbbKTCvdN5oFjdHPi3PfmJIXGqNUJl4UB4SQlb2jujuVMzORoInJsYB
-         GE0Q==
+        Tue, 4 Dec 2018 02:13:28 -0500
+Received: by mail-lj1-f195.google.com with SMTP id c19-v6so13884904lja.5;
+        Mon, 03 Dec 2018 23:13:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LLMra+pQ24ZVHk1vbWB2C8i0hTV4jWLvatavtlSVr58=;
-        b=APgDjRnvgE1lJauWiwj+n1GGzxyN2iyeAonLdl7+d9kAx+9a5W7kzEjqMa8eX6YN4P
-         14U9NPz47JMCN7QqWyJbUyxap7lFZpYYbv+KP73MWwBEtCHXonYao6rjgDanQfN5blO7
-         WlHg3dzi4Z8sZxVYFLP1mWFrbOEWHzci3U5JE/fONdRTHXHpmUS8i8dvBqWtrHzSr+Ea
-         WNpflp3YMBnNzqmByx71+FsUO8nCp1Ge6Gs/8rEpGcL0g3BshnMHKFgbpGaBG9nlRoUY
-         M+3XRvxfzoFrsVbL0RZhq+1pupo5cNnpaAfq+ZnPWnobtuPaHW37WHZ1kQpY/u7vsOkP
-         iH1g==
-X-Gm-Message-State: AA+aEWY8qM0/x1NC3pCrIWr0nnfnOoCahWIWsKJot2kO7QHT+40EYO4f
-        QM1PddLYyGZmFIrgx+hmaAvGp/KisVvyEoqNqF0=
-X-Google-Smtp-Source: AFSGD/VJ8wkkgkeej6jTMTs+MtPn3c2wN+K5gK9oeA3kqXfYLRPsNKJPT/ajIiUYouSTmFx2kuGBfvaqldivx8y6Bbk=
-X-Received: by 2002:a6b:8b0a:: with SMTP id n10mr15904302iod.2.1543907511420;
- Mon, 03 Dec 2018 23:11:51 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xmeezsH2L85SbH1REd44WuAJXxNc3UqWGXKyi96Uj28=;
+        b=cbK9NEUEcxan80cYocRsW02Iu8vvCW5lBtyE9qMbpFovGiDL9fsHD16NK+nT9xYqvx
+         PtNN/zQ2IImxB5AL29HXJHywRSIpPYH7geBIFbvELadz+ggtN1UMVE+bhvGi05ElovNp
+         kIV+yGsxEDaJTIPLd9RT/atcFfupqVZD3TaPO8bjy17HERzBCSVRdeNRHyOMdI49fYrn
+         E7E+D6xwXbGuI4uCgpkFN7NNQrKUa6T6wkqJkFVqesM9uZuz8wtQVZB/DgoF6kfY/R3j
+         gEnFOp7KfAXokB6W+3T8YAURnOaMCaON0omSd1Eiqbe/75LM36SJ2AYIsst/JsVMKH8E
+         sseg==
+X-Gm-Message-State: AA+aEWamlmCTuJusGkRTKROHkNxyTwd9WekKjwyMkVTMaQnomWP2pZoe
+        Bc/eheZIOYVb+WAoho0e/Pa405Tmb0g=
+X-Google-Smtp-Source: AFSGD/XYIGAw29yRvRUedjQ9g4fIn0B0FHC5J9uW9shhq4igz9NfvdIuMojadcAS7atDvAZfLd0dxQ==
+X-Received: by 2002:a2e:4299:: with SMTP id h25-v6mr11561739ljf.5.1543907605271;
+        Mon, 03 Dec 2018 23:13:25 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id x204sm2789009lfa.5.2018.12.03.23.13.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 23:13:24 -0800 (PST)
+Date:   Tue, 4 Dec 2018 09:13:15 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mazziesaccount@gmail.com, Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
+ provider registrations
+Message-ID: <20181204071315.GA31204@localhost.localdomain>
+References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
+ <20181130105022.GA15388@localhost.localdomain>
+ <154388011043.88331.6461709079501929390@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
- <1542535751-16079-5-git-send-email-pawell@cadence.com> <CAL411-rWbQ6yj1r_aaLP8UagVRJhsn7xdznQwXS9enkxXTs2LA@mail.gmail.com>
- <BYAPR07MB4709A8E4B0B0CC05A842B708DDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
-In-Reply-To: <BYAPR07MB4709A8E4B0B0CC05A842B708DDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
-From:   Peter Chen <hzpeterchen@gmail.com>
-Date:   Tue, 4 Dec 2018 15:11:40 +0800
-Message-ID: <CAL411-rzhH+y-b0-xze4-WmeVtey4bXt4Jc6TWYyfw6E8x-5Eg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 04/15] usb:cdns3: Driver initialization code.
-To:     pawell@cadence.com
-Cc:     devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, rogerq@ti.com,
-        lkml <linux-kernel@vger.kernel.org>, adouglas@cadence.com,
-        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
-        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154388011043.88331.6461709079501929390@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 4:34 AM Pawel Laszczak <pawell@cadence.com> wrote:
->
-> >>
-> >> Patch adds core.c and core.h file that implements initialization
-> >> of platform driver and adds function responsible for selecting,
-> >> switching and running appropriate Device/Host mode.
-> >>
-> >> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
-> >> ---
-> >>  drivers/usb/cdns3/Makefile |   2 +
-> >>  drivers/usb/cdns3/core.c   | 413 +++++++++++++++++++++++++++++++++++++
-> >>  drivers/usb/cdns3/core.h   | 100 +++++++++
-> >>  3 files changed, 515 insertions(+)
-> >>  create mode 100644 drivers/usb/cdns3/core.c
-> >>  create mode 100644 drivers/usb/cdns3/core.h
-> >>
-> >> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
-> >> index dcdd62003c6a..02d25b23c5d3 100644
-> >> --- a/drivers/usb/cdns3/Makefile
-> >> +++ b/drivers/usb/cdns3/Makefile
-> >> @@ -1,3 +1,5 @@
-> >> +obj-$(CONFIG_USB_CDNS3)                        += cdns3.o
-> >>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)       += cdns3-pci.o
-> >>
-> >> +cdns3-y                                        := core.o
-> >>  cdns3-pci-y                            := cdns3-pci-wrap.o
-> >> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
-> >> new file mode 100644
-> >> index 000000000000..f9055d4da67f
-> >> --- /dev/null
-> >> +++ b/drivers/usb/cdns3/core.c
-> >> @@ -0,0 +1,413 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Cadence USBSS DRD Driver.
-> >> + *
-> >> + * Copyright (C) 2018 Cadence.
-> >> + *
-> >
-> >Please add NXP copyright too.
->
-> Ok, I don't know why I omitted this.
-> I know that you are the main author of this file
-> Sorry for that.
->
-> One additional question. What year I should add in Copyright for NXP?.
-> The original year 2017 or I should modified all to 2018.
->
-Please use below copyright, thanks.
+Hello Again Stephen,
 
-Copyright 2017-2018 NXP
+I did already send v5 prior to your reply but I will create v6 today
+based on this discussion.
 
+On Mon, Dec 03, 2018 at 03:35:10PM -0800, Stephen Boyd wrote:
+> Quoting Matti Vaittinen (2018-11-30 02:50:22)
+> > Hello Stephen,
+> > 
+> > Thanks a bunch for taking the time and reviewing this!
+> > 
+> > On Fri, Nov 30, 2018 at 12:54:10AM -0800, Stephen Boyd wrote:
+> > > Quoting Matti Vaittinen (2018-11-13 03:55:58)
+> > > > -int devm_of_clk_add_hw_provider(struct device *dev,
+> > > > +static int __devm_of_clk_add_hw_provider(struct device *dev,
+> > > >                         struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> > > >                                               void *data),
+> > > > -                       void *data)
+> > > > +                       struct device_node *of_node, void *data)
+> > > >  {
+> > > > -       struct device_node **ptr, *np;
+> > > > +       struct device_node **ptr;
+> > > >         int ret;
+> > > >  
+> > > >         ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
+> > > > @@ -3906,10 +3906,9 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+> > > >         if (!ptr)
+> > > >                 return -ENOMEM;
+> > > >  
+> > > > -       np = dev->of_node;
+> > > > -       ret = of_clk_add_hw_provider(np, get, data);
+> > > > +       *ptr = of_node;
+> > > > +       ret = of_clk_add_hw_provider(of_node, get, data);
+> > > >         if (!ret) {
+> > > > -               *ptr = np;
+> > > 
+> > > Why is this moved outside of the if condition?
+> > I completely removed the local variable np and just unconditionally set
+> > the allocated devres to point at the node (if allocation succeeded). We
+> > could of course only do this if the provider registration succeeded and
+> > save one assignment - but I guess I intended to remove the curly braces
+> > and thus decided to go for one liner after if. But apparently I didn't
+> > remove the braces O_o. Well, I can put the assignment inside the
+> > condition if you prefer that.
+> > 
+> > > In fact, why isn't just
+> > > the first line in this hunk deleted and passed to this function as
+> > > struct device_node *np?
+> > 
+> > I am sorry but I don't quite follow your suggestion here. Do you mean we
+> > could just pass the struct device_node *np in devres_add()? I thought
+> > the pointer passed to devress_add() should be allocated using
+> > devres_alloc. Can you please elaborate what you mean?
+> 
+> I'm just trying to reduce the diff in the patch.
 
+Oh, right. I will see how renaming the argument to np would impact to
+patch size. iActually, I never consider the patch size at all - I have
+only been concentrating on how the resulting file looks like. It didn't
+ever cross my mind that patch size matters. But I guess the size of
+chanes is really meaningfull when the amount of changes is large.
 
-> >> +       mutex_init(&cdns->mutex);
-> >> +
-> >> +       cdns->phy = devm_phy_get(dev, "cdns3,usbphy");
-> >> +       if (IS_ERR(cdns->phy)) {
-> >> +               dev_info(dev, "no generic phy found\n");
-> >> +               cdns->phy = NULL;
-> >> +               /*
-> >> +                * fall through here!
-> >> +                * if no generic phy found, phy init
-> >> +                * should be done under boot!
-> >> +                */
-> >
-> >If the phy driver is defer-probed, it will be here, it is not an error.
-> >I think you could have a generic phy driver or usb generic phy driver
-> >(drivers/usb/phy/phy-generic.c) even you don't need any operations for
-> >PHY. It will be easy for other platforms.
->
-> Yes, Roger ask me to modify this fragment. In next version it will look like:
->         cdns->phy = devm_phy_get(dev, "cdns3,usbphy");
->         if (IS_ERR(cdns->phy)) {
->                 ret = PTR_ERR(cdns->phy);
->                 if (ret == -ENOSYS || ret == -ENODEV) {
->                         cdns->phy = NULL;
->                 } else if (ret == -EPROBE_DEFER) {
->                         return ret;
->                 } else {
->                         dev_err(dev, "no phy found\n");
->                         goto err0;
->                 }
->         }
->
->         phy_init(cdns->phy);
->
-> We are going to use phy driver. I don't know if it correct.
-> I don't have experience in this filed.
-> We need phy initialization but I don't have testing platform now.
-> In most usb drivers I see that there are used usb phy driverd instead phy dirverd.
->
+> > > >                 devres_add(dev, ptr);
+> > > >         } else {
+> > > >                 devres_free(ptr);
+> [..]
+> > > 
+> > > > +int devm_of_clk_add_hw_provider(struct device *dev,
+> > > > +                       struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> > > > +                                             void *data),
+> > > > +                       void *data)
+> > > > +{
+> > > > +       return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
+> > > > +}
+> > > >  EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
+> > > >  
+> > > > +int devm_of_clk_add_parent_hw_provider(struct device *dev,
+> > > > +                       struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> > > > +                                             void *data),
+> > > > +                       void *data)
+> > > > +{
+> > > > +       return __devm_of_clk_add_hw_provider(dev, get, dev->parent->of_node,
+> > > 
+> > > I'm wondering if we can somehow auto-detect this in
+> > > devm_of_clk_add_hw_provider() by looking for #clock-cells in the node.
+> > > If it isn't there, then we go to the parent node and look for a
+> > > #clock-cells property there in the DT node for that device. Does that
+> > > make sense? Then there isn't any new API and we can attach the lifetime
+> > > of the devm registration to the presence of the property indicating this
+> > > is a clk controller or not.
+> > 
+> > Huh. I don't know why but building this kind of logic in core is a bit
+> > scary to me. I guess I can try implementing something like this - but I
+> > am not really a fan of this. (Accidentally) omit the #clock-cells from
+> > node and we go to parent node - I am a novice on this area but this
+> > sounds like a potential hazard to me. I believe the driver should know
+> > if it's properties should be in own or parent node - and if they are
+> > not, then there should be no guessing but error. The lifetime is topic
+> > where I would like to get information from you who know the kernel
+> > better than I do =) But I guess the parent node is there at least as
+> > long as the child device is alive. So for me the life time of
+> > get-callback is more crucial - but as I said, I don't understand the
+> > kernel in details so you probably know it better than me. But please let
+> > me know your final take on this and I will follow the guidance =)
+> 
+> Please do the magic instead of adding another API. It makes things
+> simpler and will work for this case without having to change anything
+> besides of_clk_add_provider().
 
-At my CDNS3 platform, there are some USB PHY initialization for register setting
-and clock enable. You could add generic PHY driver under: drivers/phy/cadence/.
+All right. Let's go on this direction then.
 
-Above PHY initialization code is OK for me.
+> If the DT doesn't have the #clock-cells property in the node being
+> registered then calling clk_get() will fail for any consumer devices
+> that point to the node with a phandle and clock specifier. I don't
+> expect us to get very far into development if that's the case.
 
+Makes sense. So only potential thing to break is if someone out there
+has broken DT/driver - where they currently see this failure. Eg. they
+use node w/o #clock-cells as provider and where they try and fail
+controlling this clock - but ignore the error (and system just "works"
+with HW defaults). After this change they may actually succeed in
+controlling - but do control wrong clock.
 
-> >> +static void __exit cdns3_driver_platform_unregister(void)
-> >> +{
-> >> +       platform_driver_unregister(&cdns3_driver);
-> >> +}
-> >> +module_exit(cdns3_driver_platform_unregister);
-> >> +
-> >> +MODULE_ALIAS("platform:cdns3");
-> >> +MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
-> >> +MODULE_LICENSE("GPL v2");
-> >> +MODULE_DESCRIPTION("Cadence USB3 DRD Controller Driver");
-> >> diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
-> >> new file mode 100644
-> >> index 000000000000..7c8204fe4d3d
-> >> --- /dev/null
-> >> +++ b/drivers/usb/cdns3/core.h
-> >> @@ -0,0 +1,100 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> +/*
-> >> + * Cadence USBSS DRD Driver.
-> >> + *
-> >
-> >Header file
-> I don't understand. What is wrong ?
-> >
+Not likely scenario (sure happens somewhere) - and it involves already
+broken design. So I agree with you. Besides, you are the maintainer for
+clk framework and thus get the most of the rain if **** hits the fan =D
 
-The comment for this file
+> Of course, we don't fail in of_clk_add_provider() if there isn't a
+> #clock-cells property in the node, we just happily add the node to the
+> provider list and carry on. I doubt anyone is failing to specify the DT
+> property, but maybe they are, in which case we could keep not failing
+> and just add the node of whatever we're called with originally if
+> neither the parent or the passed node have the #clock-cells property. I
+> wouldn't try to go any higher than one node above the current node and
+> look for a #clock-cells though.
 
-Cadence USBSS DRD Core Header File
+I think we should use parent device's node, not the paren node in DT,
+right? But I agree, we should only look "one level up in the chain".
 
-Peter
+> 
+> If this all still seems scary then don't worry about it, I'll implement
+> it myself.
+
+It still is somewhat "scary" - but I really would like to use the devm
+based provider registration in the bd718x7 driver so I will implement it
+in this series. The engineer version of the "living on the edge", you
+know =)
+
+Br,
+	Matti Vaittinen
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
