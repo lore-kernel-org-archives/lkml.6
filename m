@@ -2,142 +2,121 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B706DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C06C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8698620672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:02:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8698620672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 057D420672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057D420672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725884AbeLDSC4 (ORCPT
+        id S1725921AbeLDSDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:02:56 -0500
-Received: from mga11.intel.com ([192.55.52.93]:62040 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbeLDSC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:02:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:02:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,314,1539673200"; 
-   d="scan'208";a="115922854"
-Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
-  by orsmga001.jf.intel.com with ESMTP; 04 Dec 2018 10:02:55 -0800
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-To:     jglisse@redhat.com, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-References: <20181203233509.20671-1-jglisse@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
-Date:   Tue, 4 Dec 2018 10:02:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 4 Dec 2018 13:03:47 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58566 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDSDq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:03:46 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB4I3jEo106775;
+        Tue, 4 Dec 2018 12:03:45 -0600
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB4I3jRp009467
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Dec 2018 12:03:45 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 4
+ Dec 2018 12:03:45 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 4 Dec 2018 12:03:45 -0600
+Received: from [172.22.101.186] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB4I3i3P001297;
+        Tue, 4 Dec 2018 12:03:44 -0600
+Subject: Re: [PATCH 1/2] iio: ti-ads124s08: Add DT binding documentation
+To:     <linux-iio@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <jic23@kernel.org>,
+        <robh+dt@kernel.org>
+References: <20181204175955.8259-1-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <74b6db2a-bfc4-a7d3-3528-9ece2725520f@ti.com>
+Date:   Tue, 4 Dec 2018 12:03:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181203233509.20671-1-jglisse@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181204175955.8259-1-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/18 3:34 PM, jglisse@redhat.com wrote:
-> This means that it is no longer sufficient to consider a flat view
-> for each node in a system but for maximum performance we need to
-> account for all of this new memory but also for system topology.
-> This is why this proposal is unlike the HMAT proposal [1] which
-> tries to extend the existing NUMA for new type of memory. Here we
-> are tackling a much more profound change that depart from NUMA.
+Hello
 
-The HMAT and its implications exist, in firmware, whether or not we do
-*anything* in Linux to support it or not.  Any system with an HMAT
-inherently reflects the new topology, via proximity domains, whether or
-not we parse the HMAT table in Linux or not.
+On 12/04/2018 11:59 AM, Dan Murphy wrote:
+> Adding binding documentation for Texas Instruments ADS124S08
+> and ADS124S06 ADC.
+> 
+> S08 is a 12 channel ADC
+> S06 is a 6 channel ADC
+> 
+> Datesheet can be found here:
+> http://www.ti.com/lit/gpn/ads124s08
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../bindings/iio/adc/ti-ads124s08.txt         | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt b/Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt
+> new file mode 100644
+> index 000000000000..41ab67379ee1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt
+> @@ -0,0 +1,25 @@
+> +* Texas Instruments' ads124s08 and ads124s06 ADC chip
+> +
+> +Required properties:
+> + - compatible: Should be "ti,ads124s08" or "ti,ads124s06"
+> + - reg: spi chip select number for the device
+> +
+> +Recommended properties:
+> + - spi-max-frequency: Definition as per
+> +		Documentation/devicetree/bindings/spi/spi-bus.txt
+> + - spi-cpha: Definition as per
+> +		Documentation/devicetree/bindings/spi/spi-bus.txt
+> +
+> +Optional properties:
+> + - vref-supply: The regulator supply for ADC reference voltage
+> + - reset-gpios: GPIO pin used to reset the device.
+> +
+> +Example:
+> +adc@0 {
+> +	compatible = "ti,ads8688";
 
-Basically, *ACPI* has decided to extend NUMA.  Linux can either fight
-that or embrace it.  Keith's HMAT patches are embracing it.  These
-patches are appearing to fight it.  Agree?  Disagree?
+This is a copy/paste error I will fix in v2.
 
-Also, could you add a simple, example program for how someone might use
-this?  I got lost in all the new sysfs and ioctl gunk.  Can you
-characterize how this would work with the *exiting* NUMA interfaces that
-we have?
+> +	reg = <0>;
+> +	vref-supply = <&vdd_supply>;
+> +	spi-max-frequency = <1000000>;
+> +	spi-cpha;
+> +	reset-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
+> +};
+> 
+
+
+-- 
+------------------
+Dan Murphy
