@@ -2,50 +2,52 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD61C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D61C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF2920878
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37A792146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:20:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLRKayGd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF2920878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oblfMerf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A792146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbeLDLTt (ORCPT
+        id S1727870AbeLDLDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:19:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50648 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:03:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbeLDLD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:03:57 -0500
+        id S1727856AbeLDLDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:03:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 304242146D;
-        Tue,  4 Dec 2018 11:03:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21C582146D;
+        Tue,  4 Dec 2018 11:03:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921436;
-        bh=dhnQIf4/Ncv13JEpqNESv2IFjgpkAuwUpTJihc60epQ=;
+        s=default; t=1543921423;
+        bh=5KOl8uQoSPF7mVmyZcLt/dBYcsR9OL9FMAeedj+quDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZLRKayGdTjg3BWczCCgPHKEJXtjd+t/dHZzKRW8FwjpD6q7Il7c7Gkevo4UEkc40z
-         jUkupS0cxCq/9VZFyzm08Pl7Qhpk7ianB2w/kD8oMMnmWZWP4jr433L93mIiIhQYCw
-         hFd+B2vGiRRHsKgTgW/dE/Tv/BP3/20G3h40b7gA=
+        b=oblfMerfeIIbpDcyK3ttoaku81aS677gjln1h8cNhMJ7D3MaJr3WrOlgW2Qb/6Dm5
+         VtaWkPCnBv8DjvnS59VtoSSd5jM1KjG50HLpbpxCiNGrUCsv9Wm0FP+28yhq975332
+         Zg5dgDsZRZnkuaL3UnnM0yujAhviKuIylrHIn7BI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 063/146] net: thunderx: set tso_hdrs pointer to NULL in nicvf_free_snd_queue
-Date:   Tue,  4 Dec 2018 11:49:09 +0100
-Message-Id: <20181204103729.372006569@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 030/146] btrfs: Check if item pointer overlaps with the item itself
+Date:   Tue,  4 Dec 2018 11:48:36 +0100
+Message-Id: <20181204103728.071424574@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -64,97 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+commit 7f43d4affb2a254d421ab20b0cf65ac2569909fb upstream.
 
-[ Upstream commit ef2a7cf1d8831535b8991459567b385661eb4a36 ]
+Function check_leaf() checks if any item pointer points outside of the
+leaf, but it doesn't check if the pointer overlaps with the item itself.
 
-Reset snd_queue tso_hdrs pointer to NULL in nicvf_free_snd_queue routine
-since it is used to check if tso dma descriptor queue has been previously
-allocated. The issue can be triggered with the following reproducer:
+Normally only the last item may be the victim, but adding such check is
+never a bad idea anyway.
 
-$ip link set dev enP2p1s0v0 xdpdrv obj xdp_dummy.o
-$ip link set dev enP2p1s0v0 xdpdrv off
-
-[  341.467649] WARNING: CPU: 74 PID: 2158 at mm/vmalloc.c:1511 __vunmap+0x98/0xe0
-[  341.515010] Hardware name: GIGABYTE H270-T70/MT70-HD0, BIOS T49 02/02/2018
-[  341.521874] pstate: 60400005 (nZCv daif +PAN -UAO)
-[  341.526654] pc : __vunmap+0x98/0xe0
-[  341.530132] lr : __vunmap+0x98/0xe0
-[  341.533609] sp : ffff00001c5db860
-[  341.536913] x29: ffff00001c5db860 x28: 0000000000020000
-[  341.542214] x27: ffff810feb5090b0 x26: ffff000017e57000
-[  341.547515] x25: 0000000000000000 x24: 00000000fbd00000
-[  341.552816] x23: 0000000000000000 x22: ffff810feb5090b0
-[  341.558117] x21: 0000000000000000 x20: 0000000000000000
-[  341.563418] x19: ffff000017e57000 x18: 0000000000000000
-[  341.568719] x17: 0000000000000000 x16: 0000000000000000
-[  341.574020] x15: 0000000000000010 x14: ffffffffffffffff
-[  341.579321] x13: ffff00008985eb27 x12: ffff00000985eb2f
-[  341.584622] x11: ffff0000096b3000 x10: ffff00001c5db510
-[  341.589923] x9 : 00000000ffffffd0 x8 : ffff0000086868e8
-[  341.595224] x7 : 3430303030303030 x6 : 00000000000006ef
-[  341.600525] x5 : 00000000003fffff x4 : 0000000000000000
-[  341.605825] x3 : 0000000000000000 x2 : ffffffffffffffff
-[  341.611126] x1 : ffff0000096b3728 x0 : 0000000000000038
-[  341.616428] Call trace:
-[  341.618866]  __vunmap+0x98/0xe0
-[  341.621997]  vunmap+0x3c/0x50
-[  341.624961]  arch_dma_free+0x68/0xa0
-[  341.628534]  dma_direct_free+0x50/0x80
-[  341.632285]  nicvf_free_resources+0x160/0x2d8 [nicvf]
-[  341.637327]  nicvf_config_data_transfer+0x174/0x5e8 [nicvf]
-[  341.642890]  nicvf_stop+0x298/0x340 [nicvf]
-[  341.647066]  __dev_close_many+0x9c/0x108
-[  341.650977]  dev_close_many+0xa4/0x158
-[  341.654720]  rollback_registered_many+0x140/0x530
-[  341.659414]  rollback_registered+0x54/0x80
-[  341.663499]  unregister_netdevice_queue+0x9c/0xe8
-[  341.668192]  unregister_netdev+0x28/0x38
-[  341.672106]  nicvf_remove+0xa4/0xa8 [nicvf]
-[  341.676280]  nicvf_shutdown+0x20/0x30 [nicvf]
-[  341.680630]  pci_device_shutdown+0x44/0x88
-[  341.684720]  device_shutdown+0x144/0x250
-[  341.688640]  kernel_restart_prepare+0x44/0x50
-[  341.692986]  kernel_restart+0x20/0x68
-[  341.696638]  __se_sys_reboot+0x210/0x238
-[  341.700550]  __arm64_sys_reboot+0x24/0x30
-[  341.704555]  el0_svc_handler+0x94/0x110
-[  341.708382]  el0_svc+0x8/0xc
-[  341.711252] ---[ end trace 3f4019c8439959c9 ]---
-[  341.715874] page:ffff7e0003ef4000 count:0 mapcount:0 mapping:0000000000000000 index:0x4
-[  341.723872] flags: 0x1fffe000000000()
-[  341.727527] raw: 001fffe000000000 ffff7e0003f1a008 ffff7e0003ef4048 0000000000000000
-[  341.735263] raw: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-[  341.742994] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-
-where xdp_dummy.c is a simple bpf program that forwards the incoming
-frames to the network stack (available here:
-https://github.com/altoor/xdp_walkthrough_examples/blob/master/sample_1/xdp_dummy.c)
-
-Fixes: 05c773f52b96 ("net: thunderx: Add basic XDP support")
-Fixes: 4863dea3fab0 ("net: Adding support for Cavium ThunderX network controller")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cavium/thunder/nicvf_queues.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/disk-io.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-@@ -585,10 +585,12 @@ static void nicvf_free_snd_queue(struct
- 	if (!sq->dmem.base)
- 		return;
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 4a1e63df1183..da7b2039e4cb 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -644,6 +644,13 @@ static noinline int check_leaf(struct btrfs_root *root,
+ 			return -EUCLEAN;
+ 		}
  
--	if (sq->tso_hdrs)
-+	if (sq->tso_hdrs) {
- 		dma_free_coherent(&nic->pdev->dev,
- 				  sq->dmem.q_len * TSO_HEADER_SIZE,
- 				  sq->tso_hdrs, sq->tso_hdrs_phys);
-+		sq->tso_hdrs = NULL;
-+	}
- 
- 	/* Free pending skbs in the queue */
- 	smp_rmb();
++		/* Also check if the item pointer overlaps with btrfs item. */
++		if (btrfs_item_nr_offset(slot) + sizeof(struct btrfs_item) >
++		    btrfs_item_ptr_offset(leaf, slot)) {
++			CORRUPT("slot overlap with its data", leaf, root, slot);
++			return -EUCLEAN;
++		}
++
+ 		prev_key.objectid = key.objectid;
+ 		prev_key.type = key.type;
+ 		prev_key.offset = key.offset;
+-- 
+2.17.1
+
 
 
