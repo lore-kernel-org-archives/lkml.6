@@ -2,153 +2,83 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB71BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1D1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CA3E20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1406220850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XEj1GsOw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LlbTHYfq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA3E20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="EF50p3Px"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1406220850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbeLDFVc (ORCPT
+        id S1726079AbeLDFVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 00:21:32 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47964 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeLDFVc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 00:21:32 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4C49D606FA; Tue,  4 Dec 2018 05:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543900891;
-        bh=WtLlfugiNL8c1mQcCxFuASryYsAlWsI33Y+K8fQqNaE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XEj1GsOwt6B7wTCTMULBUiiOyNmKY8syw670j0I11yXyeDIocsoTavKiyw34Jke7H
-         iflwa5QU1+uNg8+WmISnC7N+pp3HDaS+FU+TCsa/xdl8I+7zRWPRoR+8+mMwwkpXJ8
-         OasjvD8xTQFgxMFXnz48UwCfDXw01w6D6Qod1ENY=
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E734E6019F;
-        Tue,  4 Dec 2018 05:21:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543900889;
-        bh=WtLlfugiNL8c1mQcCxFuASryYsAlWsI33Y+K8fQqNaE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LlbTHYfqnL5+r1WecBaVgTtNg02XPrOLsKqc+Op/f23xZ5V4vvKxHMZqEN6DNkgcD
-         I6Jyyj3vScKlmD07Ja1+xYjggfg9WO21SRt0oUY8Yjek0EOy+879eDDItua3pj4I5G
-         OFMwNDM8XtuLSb+71ZHbCTnhzRScOJAByZ+JWhF4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E734E6019F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     robh@kernel.org, viresh.kumar@linaro.org, sboyd@kernel.org,
-        andy.gross@linaro.org, ulf.hansson@linaro.org,
-        collinsd@codeaurora.org, mka@chromium.org
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v5 0/8] Add power domain driver for corners on msm8996/sdm845
-Date:   Tue,  4 Dec 2018 10:51:11 +0530
-Message-Id: <20181204052119.806-1-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
+        Tue, 4 Dec 2018 00:21:37 -0500
+Received: from imap.thunk.org ([74.207.234.97]:38996 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726056AbeLDFVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 00:21:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=uH0pVhhZGg+tOvtwTgJDFt7mIdS7fh+YIZ57s1hC+RI=; b=EF50p3PxshfyfynqdbrPZFnAAK
+        Lcq3LdpZBLlld+GqDbDILM7YytSWSiY8ezl/9iqP05Dni8HAxfnUI5Xi+LVTkBkw8O6+hvuwi8AKs
+        T52twbnQxytt9K5h6T7lMgw7fSVCnHsSwmtBpxHMRDParl88mDOzF5sDKE4fgvkIFPBk=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gU39E-0008MT-Ay; Tue, 04 Dec 2018 05:21:28 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 437477A47E0; Tue,  4 Dec 2018 00:21:27 -0500 (EST)
+Date:   Tue, 4 Dec 2018 00:21:27 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Colin King <colin.king@canonical.com>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] jbd2: clean up indentation issue, replace spaces with tab
+Message-ID: <20181204052127.GF4981@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jan Kara <jack@suse.cz>, Colin King <colin.king@canonical.com>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181123164053.19193-1-colin.king@canonical.com>
+ <20181126135632.GA25835@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126135632.GA25835@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Mon, Nov 26, 2018 at 02:56:32PM +0100, Jan Kara wrote:
+> On Fri 23-11-18 16:40:53, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > There is a statement that is indented with spaces, replace it with
+> > a tab.
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Looks good. You can add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-This series is mainly pending your review/ack for the DT parts.
-Rest of the genpd parts are reviewed and acked by both Viresh
-and Ulf.
+Thanks, applied.
 
-Changes in v5:
-* First 6 patches are unchanged
-* Patch 7/8 adds the DT node for rpmh power-controller on sdm845 and the
-corresponding OPP tables for it to describe the performance states
-* Patch 8/8 adds a parent/child relationship across mx/cx and mx_ao/cx_ao
-as needed on sdm845 platform. This patch is dependent on the series from
-Viresh [1] which adds support to propogate performance states across the
-power domain hierarchy which is still being reviewed
-
-Changes in v4:
-* Included the patch to add qcom-opp bindings (dropped accidentally in v3)
-* merged the patches to add bindings for rpm and rpmh, added consumer binding example
-* Made the drivers built in, removed .remove
-* Added better description in changelog for PATCH 6/6
-* Updated rpmhpd_aggregate_corner() based on Davids feedback
-* rpmhpd_set_performance_state() returns max corner, in cases where its called
-with an INT_MAX
-* Dropped the patch to max vote on all corners at init, the patch did not
-work anyway, and it shouldn't be needed now
-
-Changes in v3:
-* Bindings split into seperate patches
-* Bindings updated to remove duplicate OPP table phandles
-* DT headers defining macros for Power domain indexes and OPP levels
-* Optimisations to use rpmh_write_async() whereever applicable
-* Fixed up handling of ACTIVE_ONLY/WAKE_ONLY/SLEEP voting for RPMh
-* Fixed the vlvl to hlvl conversions in set_performance
-* Other minor fixes based on review of v2
-* TODO: This series does not handle the case where all VDD_MX votes
-should be higher than VDD_CX from APPs, as pointed out
-by David Collins in v2. This needs support at genpd to propogate performance
-state up the parents, if we model these as Parent/Child to handle the
-interdependency.
-
-Changes in v2:
-* added a power domain driver for sdm845 which supports communicating to RPMh
-* dropped the changes to sdhc driver to move over to using OPP
-as there is active discussion on using OPP as the interface vs
-handling all of it in clock drivers
-* Other minor binding updates based on review of v1
-
-With performance state support for genpd/OPP merged, this is an effort
-to model a power domain driver to communicate corner/level
-values for qualcomm platforms to RPM (Remote Power Manager) and RPMh.
-
-[1] https://lkml.org/lkml/2018/11/26/333
-
-Rajendra Nayak (8):
-  dt-bindings: opp: Introduce qcom-opp bindings
-  dt-bindings: power: Add qcom rpm power domain driver bindings
-  soc: qcom: rpmpd: Add a Power domain driver to model corners
-  soc: qcom: rpmpd: Add support for get/set performance state
-  arm64: dts: msm8996: Add rpmpd device node
-  soc: qcom: rpmhpd: Add RPMh Power domain driver
-  arm64: dts: sdm845: Add rpmh powercontroller node
-  soc: qcom: rpmhpd: Mark mx as a parent for cx
-
- .../devicetree/bindings/opp/qcom-opp.txt      |  25 +
- .../devicetree/bindings/power/qcom,rpmpd.txt  | 146 ++++++
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |  34 ++
- arch/arm64/boot/dts/qcom/sdm845.dtsi          |  51 ++
- drivers/soc/qcom/Kconfig                      |  18 +
- drivers/soc/qcom/Makefile                     |   2 +
- drivers/soc/qcom/rpmhpd.c                     | 442 ++++++++++++++++++
- drivers/soc/qcom/rpmpd.c                      | 340 ++++++++++++++
- include/dt-bindings/power/qcom-rpmpd.h        |  39 ++
- 9 files changed, 1097 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
- create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
- create mode 100644 drivers/soc/qcom/rpmhpd.c
- create mode 100644 drivers/soc/qcom/rpmpd.c
- create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+						- Ted
