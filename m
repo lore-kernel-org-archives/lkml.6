@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6223AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C25C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B3922145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A32DF2145D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="DmyB+6Vu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B3922145D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="IbWQm2D5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A32DF2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbeLDA3j (ORCPT
+        id S1726307AbeLDA3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:29:39 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:33041 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbeLDA3f (ORCPT
+        Mon, 3 Dec 2018 19:29:40 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:46743 "EHLO
+        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbeLDA3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:29:35 -0500
+        Mon, 3 Dec 2018 19:29:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=sG3AmIYpa3POjsHM7YRZxAQXtuaAuOqWH76Fb8EbhrQ=; b=DmyB+6VuS34d
-        dlh2UExray9fSVh2at5sLtJ7roH1shKiGYInkMFX/W2QoDGy+4jELnc8iMlo5S9bko1JgB5iiTali
-        k22xAhGF1w8ZCvuCWCmj7w2g2TaLha67tHR7Tkfn/sVEJkiF8CpCvUsetKzHKhnXYOrzi74p50Qm+
-        7pxZ54UUJl69eywuS5CfUM+2B/h4hLKkICCQDZJ3zvBq4tI2KHqgeo0KCcKIHp7UATkkJpJNo33QJ
-        h18HIbCjN6E74WZRVhn2cUSYGQI3x8m3edyR5sBOS75UkDalA4meFbYRBjKT3MAuyy4AZkO50W2J1
-        eNjtcJVM86cycARa8RUt6Q==;
+        content-type; bh=TLZeq5KH6PCxVjWHalGs7HFGJ/uMCcCOlDOki5RJWdY=; b=IbWQm2D5aF9f
+        6XePD4Sjk0lHvteYRsa4M86rjKR6Q5msDgQvAo7wdzFCj3kPDJRThoLNBNJF2qRQlK2CLlViF6vU5
+        U6XojIc+i/xCeUm6Beifcxx9wTlYrQpvGVJlGAO4vMtMb2OG1xpIvx8Rzm8NpBwfsl/p5/jqYek43
+        PKnugRKfOVvh8sLad9itjZZoiEkx6WsXAA+zrJLliNSyu4prkWVHGvwF+BmbaS0dWRYkgipiijcW9
+        fdZ9A/K2LKFCApX1Dounj+hh6nKgcKAZ8NO0SKOwvCU0l6bVT1v6C75EVAvpMFBGPzUU4Wqh7OsyH
+        Gqg+q/nwz9Reb0BcEIfYGg==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.155])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
+        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gTyaY-0005H4-AM; Tue, 04 Dec 2018 01:29:22 +0100
+        id 1gTyab-0008A1-RW; Tue, 04 Dec 2018 01:29:26 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id B336DC06CF;
-        Tue,  4 Dec 2018 01:29:19 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 664CBC07AC;
+        Tue,  4 Dec 2018 01:29:23 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, longman@redhat.com,
         johannes.berg@intel.com, linux-kernel@vger.kernel.org,
         Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v2 17/24] locking/lockdep: Free lock classes that are no longer in use
-Date:   Mon,  3 Dec 2018 16:28:26 -0800
-Message-Id: <20181204002833.55452-18-bvanassche@acm.org>
+Subject: [PATCH v2 19/24] locking/lockdep: Check data structure consistency
+Date:   Mon,  3 Dec 2018 16:28:28 -0800
+Message-Id: <20181204002833.55452-20-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <20181204002833.55452-1-bvanassche@acm.org>
 References: <20181204002833.55452-1-bvanassche@acm.org>
@@ -63,23 +63,23 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00288256274667)
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.0013579094181)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5mt2fVRJvlZNajJMa75DyQF602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5kpTeq86FNeJwUmVlnWn/f5602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
  AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
  YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORrAqXrfc0duKgawy3be
- qVr6SNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVH6GzPz+r852EXXeYX4ImMyzDg6HYuT
+ XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORpOmgcpebvOVf5k9F7B
+ H3cQSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
  CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
  VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
  Pj+OUYZX3/3Z86X+I1ED1LLv7p/g4HOOdbYb9IXfYGRpVS/0hA4Mwp9kB6JZdl+SJy+nWImyKEy/
  zJE11ZjKQFiKV8EwnkodMjMm/D2rEPnNAuCCnt9B91Ax/uigYcgpQGDKFCrOdd8gr/U0flMcy2Vi
- /IcBgY4aVBKUAPQbBk8nfWT8Lcjyyn9ZSA9YgSwQmLSJwsFnO3lUxpF8dVvwCXY/4mE1q/c/E53d
- gi3vLmcjfrrMypRHn8UYASxSi8YH0bd81QYXADm9c1LhU96mLJn0jFscPCXDX1KrFIDnIhhlHDLh
+ /IcBgY4aVBKUAPQbBk8nfWT8Lcjyyn9ZSA9YgSwQmLSJwsFnO3lUxpF8dVvwCXY/4mE1q/c/lcBJ
+ DmoxYxZqr5EVgTOQJGrZFp2uygPTeAmvSBJ6qe55YRMY1AYubtD35PmFkZg7X1KrFIDnIhhlHDLh
  vRwgYpikjrjEsQHYqzPksYepQjQSeP/rn+UB/EmrduGPxHj/dKsQ+WcgzL7pTOYRE2yEvlBrMyfp
- YuyanAZpMXssfrVwLrD8rqLg0SqQCDr4y/2aUusWz5oXGRtm6oGqgkedjk8kCmCOiMtQBfs3D46g
- ikDYhBKQrXFod+WvUUP1Uys1EcG7yIy1/E3Wa9/NTnLEueuO5TcDeKjrEmYPn2IVWRtfdRHps2br
+ YuyanAZpMXssfrVwLrD8rqLg0SqQCDr4y/2aCp2V4YohJHkF3vhJDWZtE5zkNwf48cxqxZLCJLHq
+ Ui/YhBKQrXFod+WvUUP1Uys1EcG7yIy1/E3Wa9/NTnLEueuO5TcDeKjrEmYPn2IVWRtfdRHps2br
  TOkutpvyrdmtvbYO9ASW9x0dzW2b+IEXgSV5FVT0nNNOs1IDBtijAxf8XG910biZEcomWehz4u8s
  zDg6HYuTCyYgL61SIkBTYSiCBqrB4vMmHpjmx6wTDBzk2EPy497nssgnoMkIb3rMdj8luXC7km26
  QtXP9s02LA==
@@ -89,419 +89,196 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of leaving lock classes that are no longer in use in the
-lock_classes array, reuse entries from that array that are no longer
-in use. Maintain a linked list of free lock classes with list head
-'free_lock_class'. Initialize that list from inside register_lock_class()
-instead of from inside lockdep_init() because register_lock_class() can
-be called before lockdep_init() has been called. Only add freed lock
-classes to the free_lock_classes list after a grace period to avoid that
-a lock_classes[] element would be reused while an RCU reader is
-accessing it.
+Debugging lockdep data structure inconsistencies is challenging. Add
+disabled code that verifies data structure consistency at runtime.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- include/linux/lockdep.h  |   9 +-
- kernel/locking/lockdep.c | 237 ++++++++++++++++++++++++++++++++-------
- 2 files changed, 205 insertions(+), 41 deletions(-)
+ kernel/locking/lockdep.c | 147 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 9421f028c26c..02a1469c46e1 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -63,7 +63,8 @@ extern struct lock_class_key __lockdep_no_validate__;
- #define LOCKSTAT_POINTS		4
- 
- /*
-- * The lock-class itself:
-+ * The lock-class itself. The order of the structure members matters.
-+ * reinit_class() zeroes the key member and all subsequent members.
-  */
- struct lock_class {
- 	/*
-@@ -72,7 +73,9 @@ struct lock_class {
- 	struct hlist_node		hash_entry;
- 
- 	/*
--	 * global list of all lock-classes:
-+	 * Entry in all_lock_classes when in use. Entry in free_lock_classes
-+	 * when not in use. Instances that are being freed are briefly on
-+	 * neither list.
- 	 */
- 	struct list_head		lock_entry;
- 
-@@ -106,7 +109,7 @@ struct lock_class {
- 	unsigned long			contention_point[LOCKSTAT_POINTS];
- 	unsigned long			contending_point[LOCKSTAT_POINTS];
- #endif
--};
-+} __no_randomize_layout;
- 
- #ifdef CONFIG_LOCK_STAT
- struct lock_time {
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 92bdb187987f..d907d8bfefdf 100644
+index f343e7612a3a..6d99f3f0757c 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -134,8 +134,8 @@ static struct lock_list list_entries[MAX_LOCKDEP_ENTRIES];
- /*
-  * All data structures here are protected by the global debug_lock.
-  *
-- * Mutex key structs only get allocated, once during bootup, and never
-- * get freed - this significantly simplifies the debugging code.
-+ * nr_lock_classes is the number of elements of lock_classes[] that is
-+ * in use.
-  */
- unsigned long nr_lock_classes;
- #ifndef CONFIG_DEBUG_LOCKDEP
-@@ -277,11 +277,18 @@ static inline void lock_release_holdtime(struct held_lock *hlock)
+@@ -72,6 +72,8 @@ module_param(lock_stat, int, 0644);
+ #define lock_stat 0
  #endif
  
++static bool check_data_structure_consistency;
++
  /*
-- * We keep a global list of all lock classes. The list only grows,
-- * never shrinks. The list is only accessed with the lockdep
-- * spinlock lock held.
-+ * We keep a global list of all lock classes. The list is only accessed with
-+ * the lockdep spinlock lock held. The zapped_classes list contains lock
-+ * classes that are about to be freed but that may still be accessed by an RCU
-+ * reader. free_lock_classes is a list with free elements. These elements are
-+ * linked together by the lock_entry member in struct lock_class.
-  */
- LIST_HEAD(all_lock_classes);
-+static LIST_HEAD(zapped_classes);
-+static LIST_HEAD(free_lock_classes);
-+static bool initialization_happened;
-+static bool rcu_callback_scheduled;
-+static struct rcu_head free_zapped_classes_rcu_head;
- 
- /*
-  * The lockdep classes are in a hash-table as well, for fast lookup:
-@@ -735,6 +742,21 @@ static bool assign_lock_key(struct lockdep_map *lock)
+  * lockdep_lock: protects the lockdep graph, the hashes and the
+  *               class/list/hash allocators.
+@@ -744,6 +746,148 @@ static bool assign_lock_key(struct lockdep_map *lock)
  	return true;
  }
  
-+/*
-+ * Initialize the lock_classes[] array elements and also the free_lock_classes
-+ * list.
-+ */
-+static void init_data_structures(void)
++/* Check whether element @e occurs in list @h */
++static bool in_list(struct list_head *e, struct list_head *h)
 +{
++	struct list_head *f;
++
++	list_for_each(f, h) {
++		if (e == f)
++			return true;
++	}
++
++	return false;
++}
++
++/*
++ * Check whether entry @e occurs in any of the locks_after or locks_before
++ * lists.
++ */
++static bool in_any_class_list(struct list_head *e)
++{
++	struct lock_class *class;
 +	int i;
 +
 +	for (i = 0; i < ARRAY_SIZE(lock_classes); i++) {
-+		list_add_tail(&lock_classes[i].lock_entry, &free_lock_classes);
-+		INIT_LIST_HEAD(&lock_classes[i].locks_after);
-+		INIT_LIST_HEAD(&lock_classes[i].locks_before);
++		class = &lock_classes[i];
++		if (in_list(e, &class->locks_after) ||
++		    in_list(e, &class->locks_before))
++			return true;
 +	}
++	return false;
 +}
 +
- /*
-  * Register a lock's class in the hash-table, if the class is not present
-  * yet. Otherwise we look it up. We cache the result in the lock object
-@@ -775,11 +797,14 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
- 			goto out_unlock_set;
- 	}
- 
--	/*
--	 * Allocate a new key from the static array, and add it to
--	 * the hash:
--	 */
--	if (nr_lock_classes >= MAX_LOCKDEP_KEYS) {
-+	/* Allocate a new lock class and add it to the hash. */
-+	if (unlikely(!initialization_happened)) {
-+		initialization_happened = true;
-+		init_data_structures();
-+	}
-+	class = list_first_entry_or_null(&free_lock_classes, typeof(*class),
-+					 lock_entry);
-+	if (!class) {
- 		if (!debug_locks_off_graph_unlock()) {
- 			return NULL;
- 		}
-@@ -788,13 +813,14 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
- 		dump_stack();
- 		return NULL;
- 	}
--	class = lock_classes + nr_lock_classes++;
-+	list_del(&class->lock_entry);
-+	nr_lock_classes++;
- 	debug_atomic_inc(nr_unused_locks);
- 	class->key = key;
- 	class->name = lock->name;
- 	class->subclass = subclass;
--	INIT_LIST_HEAD(&class->locks_before);
--	INIT_LIST_HEAD(&class->locks_after);
-+	WARN_ON_ONCE(!list_empty(&class->locks_before));
-+	WARN_ON_ONCE(!list_empty(&class->locks_after));
- 	class->name_version = count_matching_names(class);
- 	/*
- 	 * We use RCU's safe list-add method to make
-@@ -1845,6 +1871,13 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	struct lock_list this;
- 	int ret;
- 
-+	if (WARN_ON_ONCE(!hlock_class(prev)->hash_entry.pprev) ||
-+	    WARN_ONCE(!hlock_class(next)->hash_entry.pprev,
-+		      KERN_INFO "Detected use-after-free of lock class %s\n",
-+		      hlock_class(next)->name)) {
-+		return 2;
-+	}
-+
- 	/*
- 	 * Prove that the new <prev> -> <next> dependency would not
- 	 * create a circular dependency in the graph. (We do this by
-@@ -2236,17 +2269,14 @@ static inline int add_chain_cache(struct task_struct *curr,
- }
- 
- /*
-- * Look up a dependency chain.
-+ * Look up a dependency chain. Must be called with either the graph lock or
-+ * the RCU read lock held.
-  */
- static inline struct lock_chain *lookup_chain_cache(u64 chain_key)
- {
- 	struct hlist_head *hash_head = chainhashentry(chain_key);
- 	struct lock_chain *chain;
- 
--	/*
--	 * We can walk it lock-free, because entries only get added
--	 * to the hash:
--	 */
- 	hlist_for_each_entry_rcu(chain, hash_head, entry) {
- 		if (chain->chain_key == chain_key) {
- 			debug_atomic_inc(chain_lookup_hits);
-@@ -3338,6 +3368,9 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (nest_lock && !__lock_is_held(nest_lock, -1))
- 		return print_lock_nested_lock_not_held(curr, hlock, ip);
- 
-+	WARN_ON_ONCE(depth && !hlock_class(hlock - 1)->hash_entry.pprev);
-+	WARN_ON_ONCE(!hlock_class(hlock)->hash_entry.pprev);
-+
- 	if (!validate_chain(curr, lock, hlock, chain_head, chain_key))
- 		return 0;
- 
-@@ -4126,11 +4159,90 @@ void lockdep_reset(void)
- 	raw_local_irq_restore(flags);
- }
- 
-+/* Must be called with the graph lock held. */
-+static void remove_class_from_lock_chain(struct lock_chain *chain,
-+					 struct lock_class *class)
++static bool class_lock_list_valid(struct lock_class *c, struct list_head *h)
 +{
-+	u64 chain_key;
++	struct lock_list *e;
++
++	list_for_each_entry(e, h, entry) {
++		if (e->links_to != c) {
++			printk(KERN_INFO "class %s: mismatch for lock entry %ld; class %s <> %s",
++			       c->name ? : "(?)",
++			       (unsigned long)(e - list_entries),
++			       e->links_to && e->links_to->name ?
++			       e->links_to->name : "(?)",
++			       e->class && e->class->name ? e->class->name :
++			       "(?)");
++			return false;
++		}
++	}
++	return true;
++}
++
++static u16 chain_hlocks[];
++
++static bool check_lock_chain_key(struct lock_chain *chain)
++{
++#ifdef CONFIG_PROVE_LOCKING
++	u64 chain_key = 0;
 +	int i;
 +
-+#ifdef CONFIG_PROVE_LOCKING
-+	for (i = chain->base; i < chain->base + chain->depth; i++) {
-+		if (chain_hlocks[i] != class - lock_classes)
-+			continue;
-+		if (--chain->depth == 0)
-+			break;
-+		memmove(&chain_hlocks[i], &chain_hlocks[i + 1],
-+			(chain->base + chain->depth - i) *
-+			sizeof(chain_hlocks[0]));
-+		/*
-+		 * Each lock class occurs at most once in a
-+		 * lock chain so once we found a match we can
-+		 * break out of this loop.
-+		 */
-+		break;
-+	}
-+	/*
-+	 * Note: calling hlist_del_rcu() from inside a
-+	 * hlist_for_each_entry_rcu() loop is safe.
-+	 */
-+	if (chain->depth == 0) {
-+		/* To do: decrease chain count. See also inc_chains(). */
-+		hlist_del_rcu(&chain->entry);
-+		return;
-+	}
-+	chain_key = 0;
 +	for (i = chain->base; i < chain->base + chain->depth; i++)
 +		chain_key = iterate_chain_key(chain_key, chain_hlocks[i] + 1);
-+	if (chain->chain_key == chain_key)
-+		return;
-+	hlist_del_rcu(&chain->entry);
-+	chain->chain_key = chain_key;
-+	hlist_add_head_rcu(&chain->entry, chainhashentry(chain_key));
++	/*
++	 * The 'unsigned long long' casts avoid that a compiler warning
++	 * is reported when building tools/lib/lockdep.
++	 */
++	if (chain->chain_key != chain_key)
++		printk(KERN_INFO "chain %lld: key %#llx <> %#llx\n",
++		       (unsigned long long)(chain - lock_chains),
++		       (unsigned long long)chain->chain_key,
++		       (unsigned long long)chain_key);
++	return chain->chain_key == chain_key;
++#else
++	return true;
 +#endif
 +}
 +
-+/* Must be called with the graph lock held. */
-+static void remove_class_from_lock_chains(struct lock_class *class)
++static bool check_data_structures(void)
 +{
++	struct lock_class *class;
 +	struct lock_chain *chain;
 +	struct hlist_head *head;
++	struct lock_list *e;
 +	int i;
 +
++	/*
++	 * Check whether all list entries that are in use occur in a class
++	 * lock list.
++	 */
++	for_each_set_bit(i, list_entries_in_use, ARRAY_SIZE(list_entries)) {
++		if (test_bit(i, list_entries_being_freed))
++			continue;
++		e = list_entries + i;
++		if (!in_any_class_list(&e->entry)) {
++			printk(KERN_INFO "list entry %d is not in any class list; class %s <> %s\n",
++			       (unsigned int)(e - list_entries),
++			       e->class->name ? : "(?)",
++			       e->links_to->name ? : "(?)");
++			return false;
++		}
++	}
++
++	/*
++	 * Check whether all list entries that are not in use do not occur in
++	 * a class lock list.
++	 */
++	for_each_clear_bit(i, list_entries_in_use, ARRAY_SIZE(list_entries)) {
++		e = list_entries + i;
++		if (WARN_ON_ONCE(test_bit(i, list_entries_being_freed)))
++			return false;
++		if (in_any_class_list(&e->entry)) {
++			printk(KERN_INFO "list entry %d occurs in a class list; class %s <> %s\n",
++			       (unsigned int)(e - list_entries),
++			       e->class && e->class->name ? e->class->name :
++			       "(?)",
++			       e->links_to && e->links_to->name ?
++			       e->links_to->name : "(?)");
++			return false;
++		}
++	}
++
++	/* Check whether all classes have valid lock lists. */
++	for (i = 0; i < ARRAY_SIZE(lock_classes); i++) {
++		class = &lock_classes[i];
++		if (!class->locks_before.next)
++			continue;
++		if (!class_lock_list_valid(class, &class->locks_before))
++			return false;
++		if (!class_lock_list_valid(class, &class->locks_after))
++			return false;
++	}
++
++	/* Check the chain_key of all lock chains. */
 +	for (i = 0; i < ARRAY_SIZE(chainhash_table); i++) {
 +		head = chainhash_table + i;
 +		hlist_for_each_entry_rcu(chain, head, entry) {
-+			remove_class_from_lock_chain(chain, class);
++			if (!check_lock_chain_key(chain))
++				return false;
 +		}
 +	}
-+}
 +
-+/*
-+ * Move a class to the zapped_classes list if it is no longer in use. Must be
-+ * called with the graph lock held.
-+ */
-+static void check_free_class(struct lock_class *class)
-+{
-+	/*
-+	 * If the list_del_rcu(&entry->entry) call made both lock order lists
-+	 * empty, remove @class from the all_lock_classes list and add it to
-+	 * the zapped_classes list.
-+	 */
-+	if (class->hash_entry.pprev &&
-+	    list_empty(&class->locks_after) &&
-+	    list_empty(&class->locks_before)) {
-+		list_move_tail(&class->lock_entry, &zapped_classes);
-+		hlist_del_rcu(&class->hash_entry);
-+		class->hash_entry.pprev = NULL;
-+	}
++	return true;
 +}
 +
  /*
-  * Remove all references to a lock class. The caller must hold the graph lock.
-  */
- static void zap_class(struct lock_class *class)
- {
-+	struct lock_class *links_to;
- 	struct lock_list *entry;
- 	int i;
- 
-@@ -4141,14 +4253,31 @@ static void zap_class(struct lock_class *class)
- 	for (i = 0, entry = list_entries; i < nr_list_entries; i++, entry++) {
- 		if (entry->class != class && entry->links_to != class)
- 			continue;
-+		links_to = entry->links_to;
-+		WARN_ON_ONCE(entry->class == links_to);
- 		list_del_rcu(&entry->entry);
-+		check_free_class(class);
- 	}
--	/*
--	 * Unhash the class and remove it from the all_lock_classes list:
--	 */
--	hlist_del_rcu(&class->hash_entry);
--	class->hash_entry.pprev = NULL;
--	list_del(&class->lock_entry);
-+	check_free_class(class);
-+	WARN_ONCE(class->hash_entry.pprev,
-+		  KERN_INFO "%s() failed for class %s\n", __func__,
-+		  class->name);
-+
-+	remove_class_from_lock_chains(class);
-+}
-+
-+static void reinit_class(struct lock_class *class)
-+{
-+	void *const p = class;
-+	const unsigned int offset = offsetof(struct lock_class, key);
-+
-+	WARN_ON_ONCE(!class->lock_entry.next);
-+	WARN_ON_ONCE(!list_empty(&class->locks_after));
-+	WARN_ON_ONCE(!list_empty(&class->locks_before));
-+	memset(p + offset, 0, sizeof(*class) - offset);
-+	WARN_ON_ONCE(!class->lock_entry.next);
-+	WARN_ON_ONCE(!list_empty(&class->locks_after));
-+	WARN_ON_ONCE(!list_empty(&class->locks_before));
- }
- 
- static inline int within(const void *addr, void *start, unsigned long size)
-@@ -4156,6 +4285,38 @@ static inline int within(const void *addr, void *start, unsigned long size)
- 	return addr >= start && addr < start + size;
- }
- 
-+/*
-+ * Free all lock classes that are on the zapped_classes list. Called as an
-+ * RCU callback function.
-+ */
-+static void free_zapped_classes(struct callback_head *ch)
-+{
-+	struct lock_class *class;
-+	unsigned long flags;
-+	int locked;
-+
-+	raw_local_irq_save(flags);
-+	locked = graph_lock();
-+	rcu_callback_scheduled = false;
-+	list_for_each_entry(class, &zapped_classes, lock_entry) {
-+		reinit_class(class);
-+		nr_lock_classes--;
-+	}
-+	list_splice_init(&zapped_classes, &free_lock_classes);
-+	if (locked)
-+		graph_unlock();
-+	raw_local_irq_restore(flags);
-+}
-+
-+/* Must be called with the graph lock held. */
-+static void schedule_free_zapped_classes(void)
-+{
-+	if (rcu_callback_scheduled)
-+		return;
-+	rcu_callback_scheduled = true;
-+	call_rcu(&free_zapped_classes_rcu_head, free_zapped_classes);
-+}
-+
- /*
-  * Used in module.c to remove lock classes from memory that is going to be
-  * freed; and possibly re-used by other modules.
-@@ -4181,10 +4342,11 @@ void lockdep_free_key_range(void *start, unsigned long size)
- 	for (i = 0; i < CLASSHASH_SIZE; i++) {
- 		head = classhash_table + i;
- 		hlist_for_each_entry_rcu(class, head, hash_entry) {
--			if (within(class->key, start, size))
--				zap_class(class);
--			else if (within(class->name, start, size))
--				zap_class(class);
-+			if (!class->hash_entry.pprev ||
-+			    (!within(class->key, start, size) &&
-+			     !within(class->name, start, size)))
-+				continue;
-+			zap_class(class);
- 		}
- 	}
- 
-@@ -4193,18 +4355,14 @@ void lockdep_free_key_range(void *start, unsigned long size)
+  * Initialize the lock_classes[] array elements and also the free_lock_classes
+  * list.
+@@ -4308,6 +4452,8 @@ static void free_zapped_classes(struct callback_head *ch)
+ 	raw_local_irq_save(flags);
+ 	locked = graph_lock();
+ 	rcu_callback_scheduled = false;
++	if (check_data_structure_consistency)
++		WARN_ON_ONCE(!check_data_structures());
+ 	list_for_each_entry(class, &zapped_classes, lock_entry) {
+ 		reinit_class(class);
+ 		nr_lock_classes--;
+@@ -4319,6 +4465,7 @@ static void free_zapped_classes(struct callback_head *ch)
+ 	if (locked)
+ 		graph_unlock();
  	raw_local_irq_restore(flags);
- 
- 	/*
--	 * Wait for any possible iterators from look_up_lock_class() to pass
--	 * before continuing to free the memory they refer to.
--	 *
--	 * sync_sched() is sufficient because the read-side is IRQ disable.
-+	 * Do not wait for concurrent look_up_lock_class() calls. If any such
-+	 * concurrent call would return a pointer to one of the lock classes
-+	 * freed by this function then that means that there is a race in the
-+	 * code that calls look_up_lock_class(), namely concurrently accessing
-+	 * and freeing a synchronization object.
- 	 */
--	synchronize_sched();
- 
--	/*
--	 * XXX at this point we could return the resources to the pool;
--	 * instead we leak them. We would need to change to bitmap allocators
--	 * instead of the linear allocators we have now.
--	 */
-+	schedule_free_zapped_classes();
++
  }
  
- /*
-@@ -4249,6 +4407,9 @@ void lockdep_reset_lock(struct lockdep_map *lock)
- 		if (class)
- 			zap_class(class);
- 	}
-+
-+	schedule_free_zapped_classes();
-+
- 	/*
- 	 * Debug check: in the end all mapped classes should
- 	 * be gone.
+ /* Must be called with the graph lock held. */
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
