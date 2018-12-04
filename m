@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05287C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6FAC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C060021536
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9F482087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjAMXxw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C060021536
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHkXvwGt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F482087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeLDLEd (ORCPT
+        id S1728017AbeLDLEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:04:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51540 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:04:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbeLDLEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:04:30 -0500
+        id S1728003AbeLDLEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:04:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DAA221508;
-        Tue,  4 Dec 2018 11:04:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C90E021527;
+        Tue,  4 Dec 2018 11:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921469;
-        bh=EeHMqIadgNetA8soLjy3kcZYyEurupfsFFexHTIkQG4=;
+        s=default; t=1543921472;
+        bh=jYiSOXOY58QwGDh3vit4SP6BPLczW91Zgh8T3vmM7cU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kjAMXxw5XnMHVjEe6RfMjGxCJLDqv5VWYDpjnlkDY2j6EYvHnCOeLq2gr0OcnfiRG
-         ZB3jfwHnUPTi9/kTR/rhz7MEcK1K9uzAqu4pnk/Lh94iPgbxHToRaqGeeMq1msO1h4
-         tQqEiBQM1bRnFzt5YbziZae0RMwSY/y74+RlfWw8=
+        b=cHkXvwGtegfIFahfxCvSDWLNJRKvIHHuAJciPk3bdaED7ujJCFiet9J53csWeuxSG
+         8G0H0kd3zyTc1H6fgkHZV/iz7E43IeqQrqxGgDQjmgLrQhyPl7pFIzlr42CanSI8v7
+         ZOrun0otigFgERXq8aTZkKkX3foBIJ6gSgkSk8Z0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 083/146] x86/speculation: Move STIPB/IBPB string conditionals out of cpu_show_common()
-Date:   Tue,  4 Dec 2018 11:49:29 +0100
-Message-Id: <20181204103730.165701738@linuxfoundation.org>
+Subject: [PATCH 4.14 084/146] x86/speculation: Disable STIBP when enhanced IBRS is in use
+Date:   Tue,  4 Dec 2018 11:49:30 +0100
+Message-Id: <20181204103730.206501751@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -83,15 +83,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tim Chen tim.c.chen@linux.intel.com
 
-commit a8f76ae41cd633ac00be1b3019b1eb4741be3828 upstream
+commit 34bce7c9690b1d897686aac89604ba7adc365556 upstream
 
-The Spectre V2 printout in cpu_show_common() handles conditionals for the
-various mitigation methods directly in the sprintf() argument list. That's
-hard to read and will become unreadable if more complex decisions need to
-be made for a particular method.
+If enhanced IBRS is active, STIBP is redundant for mitigating Spectre v2
+user space exploits from hyperthread sibling.
 
-Move the conditionals for STIBP and IBPB string selection into helper
-functions, so they can be extended later on.
+Disable STIBP when enhanced IBRS is used.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -115,48 +112,34 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185003.874479208@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185003.966801480@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -841,6 +841,22 @@ static ssize_t l1tf_show_state(char *buf
- }
- #endif
+@@ -319,6 +319,10 @@ static bool stibp_needed(void)
+ 	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+ 		return false;
  
-+static char *stibp_state(void)
-+{
-+	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
-+		return ", STIBP";
-+	else
-+		return "";
-+}
++	/* Enhanced IBRS makes using STIBP unnecessary. */
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++		return false;
 +
-+static char *ibpb_state(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
-+		return ", IBPB";
-+	else
-+		return "";
-+}
-+
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
+ 	if (!boot_cpu_has(X86_FEATURE_STIBP))
+ 		return false;
+ 
+@@ -843,6 +847,9 @@ static ssize_t l1tf_show_state(char *buf
+ 
+ static char *stibp_state(void)
  {
-@@ -859,9 +875,9 @@ static ssize_t cpu_show_common(struct de
- 
- 	case X86_BUG_SPECTRE_V2:
- 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+			       ibpb_state(),
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       stibp_state(),
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
- 
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++		return "";
++
+ 	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
+ 		return ", STIBP";
+ 	else
 
 
