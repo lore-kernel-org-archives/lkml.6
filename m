@@ -2,155 +2,183 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B9EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C2EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58EF120878
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:23:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD60020851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:24:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hgW8KY1x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58EF120878
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VxTKy5i1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD60020851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbeLDJXA (ORCPT
+        id S1725935AbeLDJYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:23:00 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51752 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbeLDJW7 (ORCPT
+        Tue, 4 Dec 2018 04:24:47 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39424 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbeLDJYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:22:59 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s14so8773314wmh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 01:22:57 -0800 (PST)
+        Tue, 4 Dec 2018 04:24:46 -0500
+Received: by mail-io1-f68.google.com with SMTP id k7so13016234iob.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 01:24:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PWlj7O4M1nWNKX7mh7+IPtcOY+7OHOGx5Tq8ZH8HMCU=;
-        b=hgW8KY1xuvl3mrevsiZAlDhuEL7z3qsI3std4tA0UgtqcsDrfj1GGiIRXnLLUj/RyZ
-         ay+yKS+FqeQ5oZTweA/xbFU9F8I3ne3QKD/R5uW4oV/Jph3Xho5QzCyAlq/lwH/iI3Ow
-         4LPruFk66Yoqir/W6EpgcFzUVM8DqqjlBXY+Y=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XZ+08FPwhE0cgGofslk4+e+aFpPulGmL/DyHwKs4BoQ=;
+        b=VxTKy5i1vsOEBy/Wj/c7rkcHatEDqahJQCe/wHEsvGq+awysqjzV/jXMqYcK8pRt4D
+         M450LXywQqbjgMYKhjN5oJjEFqnS399ZRL44MO3e/HnC+ZNfN9/tiJdT4UQrNaIIXrT5
+         abVTdy1nABEfqEWkTpgMNeLsP62jE5eWy7Kx4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PWlj7O4M1nWNKX7mh7+IPtcOY+7OHOGx5Tq8ZH8HMCU=;
-        b=naN3l+vJgDpQ6oeaXBA6xv52ZWXEUX4tzc1QdSbr9pVTW8M1PsoHrFtTbKjRAHTwij
-         dqliG6WdmmvyFe+7yveytXRtTAZJXoqEH48oLAPgqtAD9WHgkEnORhAg9bFqLQC7a0ZO
-         gBnElBOfZGuBMmI5A+fCbDZNpuYiXpdA337XMDuKDIwiDd1vngvdiShwaAnT7iJPtNkW
-         Yv1Hfp90MBXofOGPXZO0URAPbctLYzNAYMolxQtXBTxaIJnASWeMH9KPmVEA7wLhBp2H
-         eYigglMYjD5d0JpZhDvN9YZVbqHxHt2bPTgMfEtl/84vyOdNiuBljUGE3hWUG0vPmtIJ
-         +8zg==
-X-Gm-Message-State: AA+aEWYTbwa4KOIy5KrQSpXhLXwjPYmcJTPEohA1xZkVRzaUon9lLeiz
-        ZJswnhEbbblaU4312snViIRrXg==
-X-Google-Smtp-Source: AFSGD/UAh3fFy6lk+u6XStBmaVp0Y3yZVs11rM3L1jxHv9EKIuXLN9DN5NllkG/nNwq7XqRoFRT8yg==
-X-Received: by 2002:a1c:d14d:: with SMTP id i74mr10976192wmg.100.1543915376511;
-        Tue, 04 Dec 2018 01:22:56 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id y8sm8628347wmg.13.2018.12.04.01.22.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 01:22:55 -0800 (PST)
-Date:   Tue, 4 Dec 2018 09:22:54 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 1/8] mfd / platform: cros_ec: use devm_mfd_add_devices.
-Message-ID: <20181204092254.GS26661@dell>
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-2-enric.balletbo@collabora.com>
- <20181203103228.GC26661@dell>
- <652e1f21-c443-3a25-a57f-71e0f835d47d@collabora.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XZ+08FPwhE0cgGofslk4+e+aFpPulGmL/DyHwKs4BoQ=;
+        b=PjF9AAcAvgxO8DBS8cTjoJayJ3+waPiNYyMQDdFMVfY5FnZYgbGhLmnj4sTAnGhW2a
+         tc0YlE3u8QoiJOmGHAdLcuw9bL7Hsmtx/XBskmYNS2SsfsxAw15sm7SnjsQpjlWij62n
+         +cYSh//Edzfg+5I39jG0hN84Ba4eXsGBsBicmB9kqj81eQcmUf1H6IIwz0iiGyMDx5jV
+         3nz+1m/f9BeQimNuK7X5r3YjjW4OrREoo2TvxToVS3oEmQvNSwJnk7MfJNlMKslJSUeG
+         +Js9Frpja+3ypeNPUo0oAWfqku4fkVhOYr7QdtqMaCwCzEZT3d3jVh981KYfe6dUKi8/
+         N3vg==
+X-Gm-Message-State: AA+aEWaqmw2E9aIhDAZEBG5s0+vvqOo71wLguCkZx9Vj7s60joAsFKs6
+        ZukWB/VjxcJIij6beAWKeSUSa227Y7qICZ4LKSAB0A==
+X-Google-Smtp-Source: AFSGD/WgOu5tcnBTKG0gPn8kk3O7fFNZbwItkx8xzFz+TrnogeXu2AbB6fh4BmCPdQeW8xoeN6NK8fGCrQ100GUMF8w=
+X-Received: by 2002:a6b:8f8d:: with SMTP id r135mr16770414iod.5.1543915485544;
+ Tue, 04 Dec 2018 01:24:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <652e1f21-c443-3a25-a57f-71e0f835d47d@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1542088829-19790-1-git-send-email-firoz.khan@linaro.org> <CAMuHMdW6JiponxLiGNEXUX4xJk3hK4b8dTOCNvVBr7s2LyfhJw@mail.gmail.com>
+In-Reply-To: <CAMuHMdW6JiponxLiGNEXUX4xJk3hK4b8dTOCNvVBr7s2LyfhJw@mail.gmail.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Tue, 4 Dec 2018 14:54:34 +0530
+Message-ID: <CALxhOnhS38VACZPWzkLREWW6D9vmZT4Lo89U=7BoWjNJwvxqyA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] m68k: system call table generation support
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 03 Dec 2018, Enric Balletbo i Serra wrote:
+Hi Geert,
 
-> Hi Lee,
-> 
-> On 3/12/18 11:32, Lee Jones wrote:
-> > On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
-> > 
-> >> Use devm_mfd_add_devices() for adding cros-ec core MFD child devices. This
-> >> reduces the need of remove callback from platform/chrome for removing the
-> >> MFD child devices.
-> >>
-> >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >> ---
-> >>
-> >> Changes in v3:
-> >> - Removed cros_ec_remove from include file.
-> >>
-> >> Changes in v2:
-> >> - Use devm only for the cros-ec core.
-> >>
-> >>  drivers/mfd/cros_ec.c                 | 14 +++-----------
-> >>  drivers/mfd/cros_ec_dev.c             |  1 +
-> >>  drivers/platform/chrome/cros_ec_i2c.c | 10 ----------
-> >>  drivers/platform/chrome/cros_ec_lpc.c |  4 ----
-> >>  drivers/platform/chrome/cros_ec_spi.c | 11 -----------
-> >>  include/linux/mfd/cros_ec.h           | 10 ----------
-> >>  6 files changed, 4 insertions(+), 46 deletions(-)
-> > 
-> > Nice patch.
-> > 
-> > Just one question:
-> > 
-> > [...]
-> > 
-> >> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> >> index 8f9d6964173e..ff788d3e6d5f 100644
-> >> --- a/drivers/mfd/cros_ec_dev.c
-> >> +++ b/drivers/mfd/cros_ec_dev.c
-> >> @@ -493,6 +493,7 @@ static int ec_device_remove(struct platform_device *pdev)
-> >>  
-> >>  	cros_ec_debugfs_remove(ec);
-> >>  
-> >> +	mfd_remove_devices(ec->dev);
-> > 
-> > Why is this still required?
-> > 
-> 
-> Hmm, maybe that line shouldn't be here as is not really related to this patch,
-> it's more a fix for the cros_ec_dev to remove those cells that are registered
-> with mfd_add_devices.
-> 
-> Actually what we have is cros_ec that instantiates one or two cros_ec_dev
-> (depends on the platform) and cros_ec_dev instantiating different subdrivers.
-> The purpose of the patch was use the device managed resource for the cros_ec
-> driver, I did not touch the cros_ec_dev driver
+On Tue, 4 Dec 2018 at 14:22, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> On Tue, Nov 13, 2018 at 7:01 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+> > The purpose of this patch series is, we can easily
+> > add/modify/delete system call table support by cha-
+> > nging entry in syscall.tbl file instead of manually
+> > changing many files. The other goal is to unify the
+> > system call table generation support implementation
+> > across all the architectures.
+> >
+> > The system call tables are in different format in
+> > all architecture. It will be difficult to manually
+> > add, modify or delete the system calls in the resp-
+> > ective files manually. To make it easy by keeping a
+> > script and which'll generate uapi header file and
+> > syscall table file.
+> >
+> > syscall.tbl contains the list of available system
+> > calls along with system call number and correspond-
+> > ing entry point. Add a new system call in this arch-
+> > itecture will be possible by adding new entry in the
+> > syscall.tbl file.
+> >
+> > Adding a new table entry consisting of:
+> >         - System call number.
+> >         - ABI.
+> >         - System call name.
+> >         - Entry point name.
+> >
+> > ARM, s390 and x86 architecuture does exist the sim-
+> > ilar support. I leverage their implementation to
+> > come up with a generic solution.
+> >
+> > I have done the same support for work for alpha, ia64,
+> > microblaze, mips, parisc, powerpc, sh, sparc and xtensa.
+> > Below mentioned git repository contains more details
+> > about the workflow.
+> >
+> > https://github.com/frzkhn/system_call_table_generator/
+> >
+> > Finally, this is the ground work to solve the Y2038
+> > issue. We need to add two dozen of system calls to
+> > solve Y2038 issue. So this patch series will help to
+> > add new system calls easily by adding new entry in
+> > the syscall.tbl.
+> >
+> > changes since v4:
+> >  - changed from generic-y to generated-y in Kbuild.
+> >  - remove the patch "0001-m68k-rename-system-call-
+> >    table-file-name.patch".
+> >
+> > changes since v3:
+> >  - optimized/updated the syscall table generation
+> >    scripts.
+> >  - fixed all mixed indentation issues in syscall.tbl.
+> >  - added "comments" in syscall_*.tbl.
+> >
+> > changes since v2:
+> >  - removed __IGNORE entries which was added in v2
+> >    to suppress the warning.
+> >  - added missing new line.
+> >
+> > changes since v1:
+> >  - enclosed __NR_sycalls macro with __KERNEL__.
+> >
+> > Firoz Khan (3):
+> >   m68k: add __NR_syscalls along with NR_syscalls
+> >   m68k: add system call table generation support
+> >   m68k: generate uapi header and syscall table header files
+> >
+> >  arch/m68k/Makefile                      |   3 +
+> >  arch/m68k/include/asm/Kbuild            |   1 +
+> >  arch/m68k/include/asm/unistd.h          |   3 +-
+> >  arch/m68k/include/uapi/asm/Kbuild       |   1 +
+> >  arch/m68k/include/uapi/asm/unistd.h     | 385 +------------------------------
+> >  arch/m68k/kernel/syscalls/Makefile      |  38 ++++
+> >  arch/m68k/kernel/syscalls/syscall.tbl   | 389 ++++++++++++++++++++++++++++++++
+> >  arch/m68k/kernel/syscalls/syscallhdr.sh |  36 +++
+> >  arch/m68k/kernel/syscalls/syscalltbl.sh |  32 +++
+> >  arch/m68k/kernel/syscalltable.S         | 387 +------------------------------
+> >  10 files changed, 507 insertions(+), 768 deletions(-)
+> >  create mode 100644 arch/m68k/kernel/syscalls/Makefile
+> >  create mode 100644 arch/m68k/kernel/syscalls/syscall.tbl
+> >  create mode 100644 arch/m68k/kernel/syscalls/syscallhdr.sh
+> >  create mode 100644 arch/m68k/kernel/syscalls/syscalltbl.sh
+>
+> Thanks, applied and queued for v4.21 (with the missing newline added).
 
-Also, if you are using managed devices, you shouldn't need to call
-mfd_remove_devices() at all, since it will be called for you when the
-device is torn down, right?
+Great, Thanks!
 
-> >>  	cdev_del(&ec->cdev);
-> >>  	device_unregister(&ec->class_dev);
-> >>  	return 0;
-> > 
-> > [...]
-> > 
+Firoz
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
