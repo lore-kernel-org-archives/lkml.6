@@ -7,43 +7,47 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CBAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F9DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F06BA214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84CDF214DE
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3suQxIj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F06BA214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMk/4U9U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84CDF214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeLDLAh (ORCPT
+        id S1727354AbeLDLAn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:00:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:00:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727335AbeLDLAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:00:34 -0500
+        id S1727346AbeLDLAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:00:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 511AB2146D;
-        Tue,  4 Dec 2018 11:00:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD2132087F;
+        Tue,  4 Dec 2018 11:00:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921233;
-        bh=mCmAhycXXVIhxTXsqRESiXMjdlWpB6flC42AL7rkYF8=;
+        s=default; t=1543921236;
+        bh=vlejQOoaA5oiDPjntUqKnVR9X4kHqHtFcAb7+UMeGzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I3suQxIjDAV8b9/Vo69fv0fvk1TywuGLGzIhCprg+JsOHdx5CS4HOJa7cZ/jrbxC/
-         toXWYPykjFa9Y1WdkMesohad7IB09kCuS8alXPP0vdktQwIfyz6y1lm3ipRvAfjIWP
-         UYMRObbzHWtWJwfOTtwFTWLU8MaOxaWtOCy8P6oM=
+        b=QMk/4U9UpvexPAko5p2PU2U33CpCehe/GmgM+CSR/seaaN7aT+HzBaWqg5Ey6FeBZ
+         Zq7TTw6gqVyCUyZY+Zbjx6TdHL10D8+nhXtCGhPQkf8ji5IbDUX1fDRa9FcRQJxIWk
+         RKOgEIaRnn0aNXwrOBJwcg4ppPgqWddb2krMUFTg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.19 132/139] Revert "usb: dwc3: gadget: skip Set/Clear Halt when invalid"
-Date:   Tue,  4 Dec 2018 11:50:13 +0100
-Message-Id: <20181204103656.233951541@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 133/139] iio/hid-sensors: Fix IIO_CHAN_INFO_RAW returning wrong values for signed numbers
+Date:   Tue,  4 Dec 2018 11:50:14 +0100
+Message-Id: <20181204103656.284030683@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -62,44 +66,343 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 38317f5c0f2faae5110854f36edad810f841d62f upstream.
+commit 0145b50566e7de5637e80ecba96c7f0e6fff1aad upstream.
 
-This reverts commit ffb80fc672c3a7b6afd0cefcb1524fb99917b2f3.
+Before this commit sensor_hub_input_attr_get_raw_value() failed to take
+the signedness of 16 and 8 bit values into account, returning e.g.
+65436 instead of -100 for the z-axis reading of an accelerometer.
 
-Turns out that commit is wrong. Host controllers are allowed to use
-Clear Feature HALT as means to sync data toggle between host and
-periperal.
+This commit adds a new is_signed parameter to the function and makes all
+callers pass the appropriate value for this.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+While at it, this commit also fixes up some neighboring lines where
+statements were needlessly split over 2 lines to improve readability.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    5 -----
- 1 file changed, 5 deletions(-)
+ drivers/hid/hid-sensor-custom.c                  |    2 +-
+ drivers/hid/hid-sensor-hub.c                     |   13 ++++++++++---
+ drivers/iio/accel/hid-sensor-accel-3d.c          |    5 ++++-
+ drivers/iio/gyro/hid-sensor-gyro-3d.c            |    5 ++++-
+ drivers/iio/humidity/hid-sensor-humidity.c       |    3 ++-
+ drivers/iio/light/hid-sensor-als.c               |    8 +++++---
+ drivers/iio/light/hid-sensor-prox.c              |    8 +++++---
+ drivers/iio/magnetometer/hid-sensor-magn-3d.c    |    8 +++++---
+ drivers/iio/orientation/hid-sensor-incl-3d.c     |    8 +++++---
+ drivers/iio/pressure/hid-sensor-press.c          |    8 +++++---
+ drivers/iio/temperature/hid-sensor-temperature.c |    3 ++-
+ drivers/rtc/rtc-hid-sensor-time.c                |    2 +-
+ include/linux/hid-sensor-hub.h                   |    4 +++-
+ 13 files changed, 52 insertions(+), 25 deletions(-)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1461,9 +1461,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
- 		unsigned transfer_in_flight;
- 		unsigned started;
+--- a/drivers/hid/hid-sensor-custom.c
++++ b/drivers/hid/hid-sensor-custom.c
+@@ -358,7 +358,7 @@ static ssize_t show_value(struct device
+ 						sensor_inst->hsdev,
+ 						sensor_inst->hsdev->usage,
+ 						usage, report_id,
+-						SENSOR_HUB_SYNC);
++						SENSOR_HUB_SYNC, false);
+ 	} else if (!strncmp(name, "units", strlen("units")))
+ 		value = sensor_inst->fields[field_index].attribute.units;
+ 	else if (!strncmp(name, "unit-expo", strlen("unit-expo")))
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -299,7 +299,8 @@ EXPORT_SYMBOL_GPL(sensor_hub_get_feature
+ int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
+ 					u32 usage_id,
+ 					u32 attr_usage_id, u32 report_id,
+-					enum sensor_hub_read_flags flag)
++					enum sensor_hub_read_flags flag,
++					bool is_signed)
+ {
+ 	struct sensor_hub_data *data = hid_get_drvdata(hsdev->hdev);
+ 	unsigned long flags;
+@@ -331,10 +332,16 @@ int sensor_hub_input_attr_get_raw_value(
+ 						&hsdev->pending.ready, HZ*5);
+ 		switch (hsdev->pending.raw_size) {
+ 		case 1:
+-			ret_val = *(u8 *)hsdev->pending.raw_data;
++			if (is_signed)
++				ret_val = *(s8 *)hsdev->pending.raw_data;
++			else
++				ret_val = *(u8 *)hsdev->pending.raw_data;
+ 			break;
+ 		case 2:
+-			ret_val = *(u16 *)hsdev->pending.raw_data;
++			if (is_signed)
++				ret_val = *(s16 *)hsdev->pending.raw_data;
++			else
++				ret_val = *(u16 *)hsdev->pending.raw_data;
+ 			break;
+ 		case 4:
+ 			ret_val = *(u32 *)hsdev->pending.raw_data;
+--- a/drivers/iio/accel/hid-sensor-accel-3d.c
++++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+@@ -149,6 +149,7 @@ static int accel_3d_read_raw(struct iio_
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 	struct hid_sensor_hub_device *hsdev =
+ 					accel_state->common_attributes.hsdev;
  
--		if (dep->flags & DWC3_EP_STALL)
--			return 0;
--
- 		if (dep->number > 1)
- 			trb = dwc3_ep_prev_trb(dep, dep->trb_enqueue);
- 		else
-@@ -1485,8 +1482,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
- 		else
- 			dep->flags |= DWC3_EP_STALL;
- 	} else {
--		if (!(dep->flags & DWC3_EP_STALL))
--			return 0;
+@@ -158,12 +159,14 @@ static int accel_3d_read_raw(struct iio_
+ 	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&accel_state->common_attributes, true);
+ 		report_id = accel_state->accel[chan->scan_index].report_id;
++		min = accel_state->accel[chan->scan_index].logical_minimum;
+ 		address = accel_3d_addresses[chan->scan_index];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 					accel_state->common_attributes.hsdev,
+ 					hsdev->usage, address, report_id,
+-					SENSOR_HUB_SYNC);
++					SENSOR_HUB_SYNC,
++					min < 0);
+ 		else {
+ 			*val = 0;
+ 			hid_sensor_power_state(&accel_state->common_attributes,
+--- a/drivers/iio/gyro/hid-sensor-gyro-3d.c
++++ b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+@@ -111,6 +111,7 @@ static int gyro_3d_read_raw(struct iio_d
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
  
- 		ret = dwc3_send_clear_stall_ep_cmd(dep);
- 		if (ret)
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -118,13 +119,15 @@ static int gyro_3d_read_raw(struct iio_d
+ 	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&gyro_state->common_attributes, true);
+ 		report_id = gyro_state->gyro[chan->scan_index].report_id;
++		min = gyro_state->gyro[chan->scan_index].logical_minimum;
+ 		address = gyro_3d_addresses[chan->scan_index];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 					gyro_state->common_attributes.hsdev,
+ 					HID_USAGE_SENSOR_GYRO_3D, address,
+ 					report_id,
+-					SENSOR_HUB_SYNC);
++					SENSOR_HUB_SYNC,
++					min < 0);
+ 		else {
+ 			*val = 0;
+ 			hid_sensor_power_state(&gyro_state->common_attributes,
+--- a/drivers/iio/humidity/hid-sensor-humidity.c
++++ b/drivers/iio/humidity/hid-sensor-humidity.c
+@@ -75,7 +75,8 @@ static int humidity_read_raw(struct iio_
+ 				HID_USAGE_SENSOR_HUMIDITY,
+ 				HID_USAGE_SENSOR_ATMOSPHERIC_HUMIDITY,
+ 				humid_st->humidity_attr.report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				humid_st->humidity_attr.logical_minimum < 0);
+ 		hid_sensor_power_state(&humid_st->common_attributes, false);
+ 
+ 		return IIO_VAL_INT;
+--- a/drivers/iio/light/hid-sensor-als.c
++++ b/drivers/iio/light/hid-sensor-als.c
+@@ -93,6 +93,7 @@ static int als_read_raw(struct iio_dev *
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -102,8 +103,8 @@ static int als_read_raw(struct iio_dev *
+ 		case  CHANNEL_SCAN_INDEX_INTENSITY:
+ 		case  CHANNEL_SCAN_INDEX_ILLUM:
+ 			report_id = als_state->als_illum.report_id;
+-			address =
+-			HID_USAGE_SENSOR_LIGHT_ILLUM;
++			min = als_state->als_illum.logical_minimum;
++			address = HID_USAGE_SENSOR_LIGHT_ILLUM;
+ 			break;
+ 		default:
+ 			report_id = -1;
+@@ -116,7 +117,8 @@ static int als_read_raw(struct iio_dev *
+ 					als_state->common_attributes.hsdev,
+ 					HID_USAGE_SENSOR_ALS, address,
+ 					report_id,
+-					SENSOR_HUB_SYNC);
++					SENSOR_HUB_SYNC,
++					min < 0);
+ 			hid_sensor_power_state(&als_state->common_attributes,
+ 						false);
+ 		} else {
+--- a/drivers/iio/light/hid-sensor-prox.c
++++ b/drivers/iio/light/hid-sensor-prox.c
+@@ -73,6 +73,7 @@ static int prox_read_raw(struct iio_dev
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -81,8 +82,8 @@ static int prox_read_raw(struct iio_dev
+ 		switch (chan->scan_index) {
+ 		case  CHANNEL_SCAN_INDEX_PRESENCE:
+ 			report_id = prox_state->prox_attr.report_id;
+-			address =
+-			HID_USAGE_SENSOR_HUMAN_PRESENCE;
++			min = prox_state->prox_attr.logical_minimum;
++			address = HID_USAGE_SENSOR_HUMAN_PRESENCE;
+ 			break;
+ 		default:
+ 			report_id = -1;
+@@ -95,7 +96,8 @@ static int prox_read_raw(struct iio_dev
+ 				prox_state->common_attributes.hsdev,
+ 				HID_USAGE_SENSOR_PROX, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 			hid_sensor_power_state(&prox_state->common_attributes,
+ 						false);
+ 		} else {
+--- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
++++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+@@ -163,21 +163,23 @@ static int magn_3d_read_raw(struct iio_d
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&magn_state->magn_flux_attributes, true);
+-		report_id =
+-			magn_state->magn[chan->address].report_id;
++		report_id = magn_state->magn[chan->address].report_id;
++		min = magn_state->magn[chan->address].logical_minimum;
+ 		address = magn_3d_addresses[chan->address];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 				magn_state->magn_flux_attributes.hsdev,
+ 				HID_USAGE_SENSOR_COMPASS_3D, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 		else {
+ 			*val = 0;
+ 			hid_sensor_power_state(
+--- a/drivers/iio/orientation/hid-sensor-incl-3d.c
++++ b/drivers/iio/orientation/hid-sensor-incl-3d.c
+@@ -111,21 +111,23 @@ static int incl_3d_read_raw(struct iio_d
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&incl_state->common_attributes, true);
+-		report_id =
+-			incl_state->incl[chan->scan_index].report_id;
++		report_id = incl_state->incl[chan->scan_index].report_id;
++		min = incl_state->incl[chan->scan_index].logical_minimum;
+ 		address = incl_3d_addresses[chan->scan_index];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 				incl_state->common_attributes.hsdev,
+ 				HID_USAGE_SENSOR_INCLINOMETER_3D, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 		else {
+ 			hid_sensor_power_state(&incl_state->common_attributes,
+ 						false);
+--- a/drivers/iio/pressure/hid-sensor-press.c
++++ b/drivers/iio/pressure/hid-sensor-press.c
+@@ -77,6 +77,7 @@ static int press_read_raw(struct iio_dev
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -85,8 +86,8 @@ static int press_read_raw(struct iio_dev
+ 		switch (chan->scan_index) {
+ 		case  CHANNEL_SCAN_INDEX_PRESSURE:
+ 			report_id = press_state->press_attr.report_id;
+-			address =
+-			HID_USAGE_SENSOR_ATMOSPHERIC_PRESSURE;
++			min = press_state->press_attr.logical_minimum;
++			address = HID_USAGE_SENSOR_ATMOSPHERIC_PRESSURE;
+ 			break;
+ 		default:
+ 			report_id = -1;
+@@ -99,7 +100,8 @@ static int press_read_raw(struct iio_dev
+ 				press_state->common_attributes.hsdev,
+ 				HID_USAGE_SENSOR_PRESSURE, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 			hid_sensor_power_state(&press_state->common_attributes,
+ 						false);
+ 		} else {
+--- a/drivers/iio/temperature/hid-sensor-temperature.c
++++ b/drivers/iio/temperature/hid-sensor-temperature.c
+@@ -76,7 +76,8 @@ static int temperature_read_raw(struct i
+ 			HID_USAGE_SENSOR_TEMPERATURE,
+ 			HID_USAGE_SENSOR_DATA_ENVIRONMENTAL_TEMPERATURE,
+ 			temp_st->temperature_attr.report_id,
+-			SENSOR_HUB_SYNC);
++			SENSOR_HUB_SYNC,
++			temp_st->temperature_attr.logical_minimum < 0);
+ 		hid_sensor_power_state(
+ 				&temp_st->common_attributes,
+ 				false);
+--- a/drivers/rtc/rtc-hid-sensor-time.c
++++ b/drivers/rtc/rtc-hid-sensor-time.c
+@@ -213,7 +213,7 @@ static int hid_rtc_read_time(struct devi
+ 	/* get a report with all values through requesting one value */
+ 	sensor_hub_input_attr_get_raw_value(time_state->common_attributes.hsdev,
+ 			HID_USAGE_SENSOR_TIME, hid_time_addresses[0],
+-			time_state->info[0].report_id, SENSOR_HUB_SYNC);
++			time_state->info[0].report_id, SENSOR_HUB_SYNC, false);
+ 	/* wait for all values (event) */
+ 	ret = wait_for_completion_killable_timeout(
+ 			&time_state->comp_last_time, HZ*6);
+--- a/include/linux/hid-sensor-hub.h
++++ b/include/linux/hid-sensor-hub.h
+@@ -177,6 +177,7 @@ int sensor_hub_input_get_attribute_info(
+ * @attr_usage_id:	Attribute usage id as per spec
+ * @report_id:	Report id to look for
+ * @flag:      Synchronous or asynchronous read
++* @is_signed:   If true then fields < 32 bits will be sign-extended
+ *
+ * Issues a synchronous or asynchronous read request for an input attribute.
+ * Returns data upto 32 bits.
+@@ -190,7 +191,8 @@ enum sensor_hub_read_flags {
+ int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
+  					u32 usage_id,
+  					u32 attr_usage_id, u32 report_id,
+- 					enum sensor_hub_read_flags flag
++					enum sensor_hub_read_flags flag,
++					bool is_signed
+ );
+ 
+ /**
 
 
