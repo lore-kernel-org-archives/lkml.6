@@ -2,103 +2,154 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB985C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDABEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93B1A2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93B1A2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id F20CC20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="EIz4ikbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20CC20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbeLDOPA (ORCPT
+        id S1726499AbeLDOPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:15:00 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:55808 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeLDOPA (ORCPT
+        Tue, 4 Dec 2018 09:15:07 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39156 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbeLDOPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:15:00 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 53EF31850C;
-        Tue,  4 Dec 2018 15:14:58 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id B9KJkER89gtD; Tue,  4 Dec 2018 15:14:57 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 49AE818505;
-        Tue,  4 Dec 2018 15:14:57 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A44B1E072;
-        Tue,  4 Dec 2018 15:14:57 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F2B0B1E06A;
-        Tue,  4 Dec 2018 15:14:56 +0100 (CET)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Tue,  4 Dec 2018 15:14:56 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id E60E2201;
-        Tue,  4 Dec 2018 15:14:56 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id E0FBA800D4; Tue,  4 Dec 2018 15:14:56 +0100 (CET)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     linux@armlinux.org.uk, jeyu@kernel.org
-Cc:     dave.martin@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH v5 1/2] module: Overwrite st_size instead of st_info
-Date:   Tue,  4 Dec 2018 15:14:14 +0100
-Message-Id: <20181204141415.969-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
+        Tue, 4 Dec 2018 09:15:07 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c72so8274199pfc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 06:15:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=g.ncu.edu.tw; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8JPiqVruzrD5OGaZzdip19sastO5p9E3ha1IKkMYs/A=;
+        b=EIz4ikbfLjJhka7KtNZTWOVLwnJG2BE1jDRQZU8gGzbfCrKPE4Xft9SVix9Xsz4/dr
+         DQ7vJ0nBSEfKsvqY1AaA+IV07GVS7OaSFkvm7tytU2D+BX+reKdcVSokKkpu9O5j3Y9/
+         tDfJvJY6alklmXm5iA/gSGfjY5oeD5J8kTLJU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8JPiqVruzrD5OGaZzdip19sastO5p9E3ha1IKkMYs/A=;
+        b=QnGwln/C9ZUe/hWAVDsQjzgGqmCLnYvIqIJy4mu0a9VDI0n5mm/MibyLOzs9FxQfkb
+         AdAZEEdb8xom0WkHWkV7gzPnzfBHEG+bceyqnHI6A0zj8G8NvsbanegVT2qJAqYxhVgs
+         8gnntHZsgAfqF+V1EdqSgFhV9EQAvNQBt67iv2nGLVWi6VYEK/sz3Xwb0y0+ZUfyXPK+
+         HnW/zIdWoOxYsZMZ87i2/6cW2wWM7GaAZfXlPkW1G6Arb4F1npQe33Ek93wnS6QKE56v
+         9RbW8EoTnyQ+fuuSB4BkQwHF7gxpHF+5Ufs+Y0rFhXkW6e7XvyfH99lvAori0zo+6K1X
+         LQFA==
+X-Gm-Message-State: AA+aEWa8Q87M3b710asIo3Qs7mYgTiIcKZHklXvcMu/j+m8QhdEljdw2
+        tU08b5Mi2KN+7FO80GOB2Ss4iA==
+X-Google-Smtp-Source: AFSGD/U8jvgr5ygk7IiXzVM4RoOJoR5pGRq0PsdpspeDhmhInQMIIIaP2wWjBtn2+DL3gDfirwSWGA==
+X-Received: by 2002:a62:5950:: with SMTP id n77mr19999151pfb.128.1543932904969;
+        Tue, 04 Dec 2018 06:15:04 -0800 (PST)
+Received: from starnight.local ([150.116.248.145])
+        by smtp.gmail.com with ESMTPSA id n66sm36975863pfk.19.2018.12.04.06.15.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 06:15:04 -0800 (PST)
+From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
+To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Subject: [PATCH V4 0/6] net: lorawan: Add LoRaWAN soft MAC module
+Date:   Tue,  4 Dec 2018 22:13:36 +0800
+Message-Id: <20181204141341.4353-1-starnight@g.ncu.edu.tw>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
+References: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-st_info is currently overwritten after relocation and used to store the
-elf_type().  However, we're going to need it fix kallsyms on ARM's
-Thumb-2 kernels, so preserve st_info and overwrite the st_size field
-instead.  st_size is neither used by the module core nor by any
-architecture.
+LoRaWAN(TM) is the MAC layer defined by LoRa Alliance(TM) over LoRa
+devices.  LoRa is one of Low-Power Wide-Area Network (LPWAN) technology.
 
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
-v5: Add Dave Martin's Reviewed-by
-v4: Split out to separate patch.  Use st_size instead of st_other.
-v1-v3: See PATCH 2/2
+LoRaWAN networks typically are laid out in a star-of-stars topology in
+which gateways relay messages between end-devices and a central network
+server at the backend.  Gateways are connected to the network server via
+standard IP connections while end-devices use single hop LoRa(TM) or FSK
+communication to one or many gateways.
 
- kernel/module.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+A LoRa network distinguishes between a basic LoRaWAN (named Class A) and
+optional features (Class B, Class C ...):
+* Bi-directional end-devices (Class A)
+* Bi-directional end-devices with scheduled receive slots (Class B)
+* Bi-directional end-devices with maximal receive slots (Class C)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..3d86a38b580c 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2682,7 +2682,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
- 
- 	/* Set types up while we still have access to sections. */
- 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
--		mod->kallsyms->symtab[i].st_info
-+		mod->kallsyms->symtab[i].st_size
- 			= elf_type(&mod->kallsyms->symtab[i], info);
- 
- 	/* Now populate the cut down core kallsyms for after init. */
-@@ -4061,7 +4061,7 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
- 		kallsyms = rcu_dereference_sched(mod->kallsyms);
- 		if (symnum < kallsyms->num_symtab) {
- 			*value = kallsyms->symtab[symnum].st_value;
--			*type = kallsyms->symtab[symnum].st_info;
-+			*type = kallsyms->symtab[symnum].st_size;
- 			strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
- 			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
- 			*exported = is_exported(name, *value, mod);
+This patch set add LoRaWAN class module implementing the stack,
+especially the soft MAC, between socket APIs and LoRa device drivers.
+
+socket APIs:
+send and receive the data
+------------------------------------------------------------------------
+LoRaWAN class module implements soft MAC:
+append the header/footer, encryption/decryption, timing slot and MAC
+commands
+------------------------------------------------------------------------
+LoRa device drivers:
+send and receive the messages for MAC layer
+------------------------------------------------------------------------
+LoRa devices
+
+This module starts from simple and implements partial Class A
+end-devices features defined in LoRaWAN(TM) Specification Ver. 1.0.2.
+More features and complexity, for example regional parameters, confirmed
+data messages, join request/accept messages for Over-The-Air Activation,
+MAC commands ... will be added in the future.
+
+Jian-Hong Pan (6):
+  net: lorawan: Add LoRaWAN socket module
+  net: lorawan: Add LoRaWAN API declaration for LoRa devices
+  net: maclorawan: Add maclorawan module declaration
+  net: maclorawan: Implement the crypto of maclorawan module
+  net: maclorawan: Implement maclorawan class module
+  net: lorawan: List LORAWAN in menuconfig
+
+ include/linux/lora/lorawan.h        | 131 ++++++
+ include/linux/lora/lorawan_netdev.h |  52 +++
+ net/Kconfig                         |   2 +
+ net/Makefile                        |   2 +
+ net/lorawan/Kconfig                 |  10 +
+ net/lorawan/Makefile                |   2 +
+ net/lorawan/socket.c                | 686 ++++++++++++++++++++++++++++
+ net/maclorawan/Kconfig              |  14 +
+ net/maclorawan/Makefile             |   2 +
+ net/maclorawan/crypto.c             | 212 +++++++++
+ net/maclorawan/crypto.h             |  27 ++
+ net/maclorawan/mac.c                | 518 +++++++++++++++++++++
+ net/maclorawan/maclorawan.h         | 200 ++++++++
+ net/maclorawan/main.c               | 605 ++++++++++++++++++++++++
+ 14 files changed, 2463 insertions(+)
+ create mode 100644 include/linux/lora/lorawan.h
+ create mode 100644 include/linux/lora/lorawan_netdev.h
+ create mode 100644 net/lorawan/Kconfig
+ create mode 100644 net/lorawan/Makefile
+ create mode 100644 net/lorawan/socket.c
+ create mode 100644 net/maclorawan/Kconfig
+ create mode 100644 net/maclorawan/Makefile
+ create mode 100644 net/maclorawan/crypto.c
+ create mode 100644 net/maclorawan/crypto.h
+ create mode 100644 net/maclorawan/mac.c
+ create mode 100644 net/maclorawan/maclorawan.h
+ create mode 100644 net/maclorawan/main.c
+
 -- 
-2.11.0
+2.19.2
 
