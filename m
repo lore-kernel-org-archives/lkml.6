@@ -2,275 +2,125 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891E9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CA2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F46E206B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:39:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F46E206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mess.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A606206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tseYKfu7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A606206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbeLDNj0 (ORCPT
+        id S1726407AbeLDNjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:39:26 -0500
-Received: from gofer.mess.org ([88.97.38.141]:54559 "EHLO gofer.mess.org"
+        Tue, 4 Dec 2018 08:39:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbeLDNj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:39:26 -0500
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id 15A8360EED; Tue,  4 Dec 2018 13:39:23 +0000 (GMT)
-Date:   Tue, 4 Dec 2018 13:39:22 +0000
-From:   Sean Young <sean@mess.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] [media] dib7000p: Remove dead code
-Message-ID: <20181204133922.aaxvzu3qumbfakzu@gofer.mess.org>
-References: <20180915054739.14117-1-natechancellor@gmail.com>
- <CAKwvOdmQ4pbbPuvYrVYB9myD8ap36h6nLjEdL-mSbYjM37UJ_g@mail.gmail.com>
- <20180917193936.33e90d5a@coco.lan>
- <20181204102639.3qsvfxrzmsvybiop@gofer.mess.org>
- <20181204095714.60ee5b95@coco.lan>
+        id S1725770AbeLDNjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 08:39:41 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C525206B6;
+        Tue,  4 Dec 2018 13:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543930780;
+        bh=AUOps6vsAp5H0ofVvGFUrs0Z8qFuqwt5MJBumjVMxeI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tseYKfu7/ndCoXZzIcgEeXSgIOV6HepMyUwv6D6fuIS3luU9f1EmZUAOFqHcBy+UR
+         bOULq9G+2WNnESpg97DsT5OCQu+a8iX+WhO4R31eVQeyVg0HPcRCu/U8HHrlmPEDeT
+         0RzAHAx0Q+ojkIRGGKjfKTJDoy/eZmihKVu81bPw=
+Date:   Tue, 4 Dec 2018 14:39:38 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 4.14 098/146] x86/process: Consolidate and simplify
+ switch_to_xtra() code
+Message-ID: <20181204133938.GA4749@kroah.com>
+References: <20181204103726.750894136@linuxfoundation.org>
+ <20181204103730.767674414@linuxfoundation.org>
+ <alpine.DEB.2.21.1812041213140.8181@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181204095714.60ee5b95@coco.lan>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <alpine.DEB.2.21.1812041213140.8181@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 09:57:14AM -0200, Mauro Carvalho Chehab wrote:
-> Em Tue, 4 Dec 2018 10:26:40 +0000
-> Sean Young <sean@mess.org> escreveu:
-> 
-> > On Mon, Sep 17, 2018 at 07:39:36PM -0300, Mauro Carvalho Chehab wrote:
-> > > Em Mon, 17 Sep 2018 10:58:32 -0700
-> > > Nick Desaulniers <ndesaulniers@google.com> escreveu:
-> > >   
-> > > > On Fri, Sep 14, 2018 at 10:47 PM Nathan Chancellor
-> > > > <natechancellor@gmail.com> wrote:  
-> > > > >
-> > > > > Clang warns that 'interleaving' is assigned to itself in this function.
-> > > > >
-> > > > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
-> > > > > assigning value of variable of type 'int' to itself [-Wself-assign]
-> > > > >         interleaving = interleaving;
-> > > > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
-> > > > > 1 warning generated.
-> > > > >
-> > > > > It's correct. Just removing the self-assignment would sufficiently hide
-> > > > > the warning but all of this code is dead because 'tmp' is zero due to
-> > > > > being multiplied by zero. This doesn't appear to be an issue with
-> > > > > dib8000, which this code was copied from in commit 041ad449683b
-> > > > > ("[media] dib7000p: Add DVBv5 stats support").
-> > > > >
-> > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > > > ---
-> > > > >  drivers/media/dvb-frontends/dib7000p.c | 10 ++--------
-> > > > >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
-> > > > > index 58387860b62d..25843658fc68 100644
-> > > > > --- a/drivers/media/dvb-frontends/dib7000p.c
-> > > > > +++ b/drivers/media/dvb-frontends/dib7000p.c
-> > > > > @@ -1800,9 +1800,8 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)    
-> > > > 
-> > > > Something looks wrong here (with this function).  The patch is no
-> > > > functional change, since as you point out `interleaving` is
-> > > > initialized to 0, then never updated before read, but I think there's
-> > > > an underlying bug here that should be fixed differently.  Thanks for
-> > > > the patch though, as it does raise the question.
-> > > > 
-> > > > dib7000p_get_time_us has this comment above it:
-> > > > 
-> > > >   1798 /* FIXME: may require changes - this one was borrowed from
-> > > > dib8000 */  
-> > > 
-> > > The goal of dib7000p_get_time_us() is to estimate how much time it
-> > > takes, with current tuning parameters, to have a certain number of
-> > > DVB-T packets. This is used for block error count. That's said,
-> > > on a quick look, it seems that the code is not right on many ways.
-> > > 
-> > > It should be aligned with the amount of data it is required for
-> > > dib7000 to update the block/bit error counters. There are two kinds
-> > > of implementation:
-> > > 
-> > > 1) the frontend has an internal counter that it is shifted and made
-> > >    available to the driver after a certain amount of received data
-> > >    (usually in the order of 10^5 to 10^7 bits);
-> > > 
-> > > 2) the frontend has an internal timer that shifts the data from its
-> > >    internal counter after a certain amount of time (usually at the
-> > >    seconds range).
-> > > 
-> > > Different vendors opt for either one of the strategy. Some updates
-> > > a counter with the amount of bits taken. Unfortunately, this is not
-> > > the case of those dib* frontends. So, the Kernel has to estimate
-> > > it, based on the tuning parameters.
-> > > 
-> > > From the code, it seems that, for block errors, it waits for 1,250,000
-> > > bits to arrive (e. g. about 766 packets), so, it uses type (1) strategy:
-> > > 
-> > >                 /* Estimate the number of packets based on bitrate */
-> > >                 if (!time_us)
-> > >                         time_us = dib7000p_get_time_us(demod);
-> > > 
-> > >                 if (time_us) {
-> > >                         blocks = 1250000ULL * 1000000ULL;	// the multiply here is to convert to microsseconds...
-> > >                         do_div(blocks, time_us * 8 * 204);	// As here it divides by the time in microsseconds
-> > >                         c->block_count.stat[0].scale = FE_SCALE_COUNTER;
-> > >                         c->block_count.stat[0].uvalue += blocks;
-> > >                 }
-> > > 
-> > > For BER, the logic assumes that the bit error count should be divided
-> > > by 10^-8:
-> > > 
-> > >                 c->post_bit_count.stat[0].uvalue += 100000000;
-> > > 
-> > > and the counter is updated every second. So, it uses (2).
-> > >   
-> > > > 
-> > > > Wondering if it has the same bug, it seems it does not:
-> > > > drivers/media/dvb-frontends/dib8000.c#dib8000_get_time_us():3986
-> > > > 
-> > > > dib8000_get_time_us() seems to loop over multiple layers, and then
-> > > > assigns interleaving to the final layers interleaving (that looks like
-> > > > loop invariant code to me).
-> > > > 
-> > > > Mauro, should dib7000p_get_time_us() use c->layer[???].interleaving?  
-> > > 
-> > > I don't think that time interleaving would affect the bit rate.
-> > > I suspect that the dead code on dib8000 is just a dead code.
-> > >   
-> > > > I don't see a single reference to `layer` in
-> > > > drivers/media/dvb-frontends/dib7000p.c.  
-> > > 
-> > > Layers are specific for ISDB-T, but I think DVB-T (or at least DVB-T2)
-> > > may use time interleaving. 
-> > > 
-> > > Yet, as I said, the goal is to estimate the streaming bit rate. 
-> > > 
-> > > I don't remember anymore from where the dib8000 formula came.
-> > > 
-> > > My guts tell that time interleaving shouldn't do much changes (if any)
-> > > to the bit rate. I suspect that removing the dead code is likely
-> > > OK, but I'll try to see if I can find something related to where this
-> > > formula came.  
-> > 
-> > So we have two issues. One is the clang issue and clearly the code needs
-> > fixing up. The second issue is that we're not sure about the algorithm;
-> > I've been reading up on mpeg-ts but I'm not anywhere near getting to an
-> > answer on this.
-> > 
-> > How about we merge a patch which just fixes the clang issue and leave
-> > the rest of the code as-is for now?
-> 
-> I'm ok with that, but it would be better to add a FIXME note somewhere.
-> 
-> > 
-> > Thanks,
-> > 
-> > Sean
-> > 
-> > ---
-> > From c6e4c5f514c38511d2054c69f7b103e98c520af4 Mon Sep 17 00:00:00 2001
-> > From: Sean Young <sean@mess.org>
-> > Date: Tue, 4 Dec 2018 09:59:10 +0000
-> > Subject: [PATCH v2] media: dib7000p: Remove dead code
-> > 
-> > Clang warns that 'interleaving' is assigned to itself in this function.
-> > 
-> > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
-> > assigning value of variable of type 'int' to itself [-Wself-assign]
-> >         interleaving = interleaving;
-> >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
-> > 1 warning generated.
-> > 
-> > Just remove the self-assign and leave existing code in place for now.
-> > 
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Sean Young <sean@mess.org>
-> > ---
-> >  drivers/media/dvb-frontends/dib7000p.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
-> > index 58387860b62d..cd84320c61c9 100644
-> > --- a/drivers/media/dvb-frontends/dib7000p.c
-> > +++ b/drivers/media/dvb-frontends/dib7000p.c
-> > @@ -1871,8 +1871,6 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
-> >  		break;
-> >  	}
+On Tue, Dec 04, 2018 at 12:14:13PM +0100, Thomas Gleixner wrote:
+> On Tue, 4 Dec 2018, Greg Kroah-Hartman wrote:
+> > --- a/arch/x86/kernel/process_32.c
+> > +++ b/arch/x86/kernel/process_32.c
+> > @@ -234,7 +234,6 @@ __switch_to(struct task_struct *prev_p,
+> >  	struct fpu *prev_fpu = &prev->fpu;
+> >  	struct fpu *next_fpu = &next->fpu;
+> >  	int cpu = smp_processor_id();
+> > -	struct tss_struct *tss = &per_cpu(cpu_tss_rw, cpu);
 > >  
-> > -	interleaving = interleaving;
-> > -
-> >  	denom = bits_per_symbol * rate_num * fft_div * 384;
-> 
-> something like:
-> 
-> 	/* 
-> 	 * FIXME: check if the math makes sense. If so, fill the
-> 	 * interleaving var.
-> 	 */
+> >  	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
 > >  
-> >  	/* If calculus gets wrong, wait for 1s for the next stats */
+> > @@ -266,12 +265,7 @@ __switch_to(struct task_struct *prev_p,
+> >  	if (get_kernel_rpl() && unlikely(prev->iopl != next->iopl))
+> >  		set_iopl_mask(next->iopl);
+> >  
+> > -	/*
+> > -	 * Now maybe handle debug registers and/or IO bitmaps
+> > -	 */
+> > -	if (unlikely(task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV ||
+> > -		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
+> > -		__switch_to_xtra(prev_p, next_p, tss);
+> > +	switch_to_extra(prev_p, next_p);
 > 
+> This is missing the hunk below.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+> 8<------------------
+> 
+> diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+> index 67cecc9a2b6f..c2df91eab573 100644
+> --- a/arch/x86/kernel/process_32.c
+> +++ b/arch/x86/kernel/process_32.c
+> @@ -59,6 +59,8 @@
+>  #include <asm/intel_rdt_sched.h>
+>  #include <asm/proto.h>
+>  
+> +#include "process.h"
+> +
+>  void __show_regs(struct pt_regs *regs, int all)
+>  {
+>  	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
 
-Good point. 
+Thanks, now updated.
 
-Sean
-
-From a31c18315830da40561db6443d3b90b8584d5232 Mon Sep 17 00:00:00 2001
-From: Sean Young <sean@mess.org>
-Date: Tue, 4 Dec 2018 09:59:10 +0000
-Subject: [PATCH v3] media: dib7000p: Remove dead code
-
-Clang warns that 'interleaving' is assigned to itself in this function.
-
-drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
-assigning value of variable of type 'int' to itself [-Wself-assign]
-        interleaving = interleaving;
-        ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
-1 warning generated.
-
-Just remove the self-assign and leave existing code in place for now.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Sean Young <sean@mess.org>
----
- drivers/media/dvb-frontends/dib7000p.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
-index 58387860b62d..2818e8def1b3 100644
---- a/drivers/media/dvb-frontends/dib7000p.c
-+++ b/drivers/media/dvb-frontends/dib7000p.c
-@@ -1871,10 +1871,13 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
- 		break;
- 	}
- 
--	interleaving = interleaving;
--
- 	denom = bits_per_symbol * rate_num * fft_div * 384;
- 
-+	/*
-+	 * FIXME: check if the math makes sense. If so, fill the
-+	 * interleaving var.
-+	 */
-+
- 	/* If calculus gets wrong, wait for 1s for the next stats */
- 	if (!denom)
- 		return 0;
--- 
-2.19.2
-
+greg k-h
