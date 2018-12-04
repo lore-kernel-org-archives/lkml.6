@@ -2,114 +2,99 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AACAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F34C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 271472082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:11:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 271472082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3812E2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:12:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3812E2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbeLDTLh (ORCPT
+        id S1726207AbeLDTMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:11:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54972 "EHLO mx1.redhat.com"
+        Tue, 4 Dec 2018 14:12:05 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:53386 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbeLDTLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:11:36 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EEA013001E5A;
-        Tue,  4 Dec 2018 19:11:35 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D1ED51F8;
-        Tue,  4 Dec 2018 19:11:32 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 14:11:31 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        id S1725797AbeLDTME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:12:04 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gUG6o-0007ax-4D; Tue, 04 Dec 2018 12:11:50 -0700
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-Message-ID: <20181204191130.GF2937@redhat.com>
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
 References: <20181203233509.20671-1-jglisse@redhat.com>
- <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
- <20181204184919.GD2937@redhat.com>
- <64cf873c-9e1e-f3b0-4869-7e0ebab10452@intel.com>
+ <20181203233509.20671-3-jglisse@redhat.com> <875zw98bm4.fsf@linux.intel.com>
+ <20181204182421.GC2937@redhat.com>
+ <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
+ <20181204185725.GE2937@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
+Date:   Tue, 4 Dec 2018 12:11:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <64cf873c-9e1e-f3b0-4869-7e0ebab10452@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 04 Dec 2018 19:11:36 +0000 (UTC)
+In-Reply-To: <20181204185725.GE2937@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, ross.zwisler@linux.intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 10:54:10AM -0800, Dave Hansen wrote:
-> On 12/4/18 10:49 AM, Jerome Glisse wrote:
-> > Policy is same kind of story, this email is long enough now :) But
-> > i can write one down if you want.
+
+
+On 2018-12-04 11:57 a.m., Jerome Glisse wrote:
+>> That sounds needlessly restrictive. Let the kernel arbitrate what
+>> memory an application gets, don't design a system where applications
+>> are hard coded to a memory type. Applications can hint, or optionally
+>> specify an override and the kernel can react accordingly.
 > 
-> Yes, please.  I'd love to see the code.
-> 
-> We'll do the same on the "HMAT" side and we can compare notes.
+> You do not want to randomly use non cache coherent memory inside your
+> application :) This is not gonna go well with C++ or atomic :) Yes they
+> are legitimate use case where application can decide to give up cache
+> coherency temporarily for a range of virtual address. But the application
+> needs to understand what it is doing and opt in to do that knowing full
+> well that. The version thing allows for scenario like. You do not have
+> to define a new version with every new type of memory. If your new memory
+> has all the properties of v1 than you expose it as v1 and old application
+> on the new platform will use your new memory type being non the wiser.
 
-Example use case ? Example use are:
-    Application create a range of virtual address with mmap() for the
-    input dataset. Application knows it will use GPU on it directly so
-    it calls hbind() to set a policy for the range to use GPU memory
-    for any new allocation for the range.
+I agree with Dan and the general idea that this version thing is really
+ugly. Define some standard attributes so the application can say "I want
+cache-coherent, high bandwidth memory". If there's some future
+new-memory attribute, then the application needs to know about it to
+request it.
 
-    Application directly stream the dataset to GPU memory through the
-    virtual address range thanks to the policy.
+Also, in the same vein, I think it's wrong to have the API enumerate all
+the different memory available in the system. The API should simply
+allow userspace to say it wants memory that can be accessed by a set of
+initiators with a certain set of attributes and the bind call tries to
+fulfill that or fallback on system memory/hmm migration/whatever.
 
-
-    Application create a range of virtual address with mmap() to store
-    the output result of GPU jobs its about to launch. It binds the
-    range of virtual address to GPU memory so that allocation use GPU
-    memory for the range.
-
-
-    Application can also use policy binding as a slow migration path
-    ie set a policy to a new target memory so that new allocation are
-    directed to this new target.
-
-Or do you want example userspace program like the one in the last
-patch of this serie ?
-
-Cheers,
-Jérôme
+Logan
