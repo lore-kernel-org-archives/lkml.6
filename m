@@ -2,83 +2,167 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA62CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60852C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 829F12146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A3A42146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:52:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="npOfMIGT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 829F12146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="XK4h+B2N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3A42146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbeLDBw3 (ORCPT
+        id S1726219AbeLDBwt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:52:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeLDBw0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:52:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bz6sLONTcyPgDmr4XJ8yBuUx/MYIx+rF6T9SSJ6KLhs=; b=npOfMIGTfqufHNMjknQOfju1Q
-        vniZflsDT9rqn5OScoOzpQSD8hdkxpCDz6emP+FXnfgKC4y2fcrxDivImuAUAei2Vl5XJFFmSr4rF
-        IOpu0uBCdaItD10lnSlYS6eXdwHNfgC5n4N5fFgcYDHMYuUQbG4GMsnkef2y2TtTbMeIH8THDln8W
-        kOPBMMiwk6I6Camd6PCwIfu7wlBMDYpJT4wYvQm1kV+VwF7nBqqhjTMzcg3vhpQRLFOPWPs0GH4IA
-        I8ojadxKPaMsSWyF6LvB9wwp5n3HkFlrNPAoXQhN7GArPWvj0IgNnG52dpuRf7Y63D826hbK8nipd
-        R/Y68Xerw==;
-Received: from [2600:1700:65a0:78e0:514:7862:1503:8e4d] (helo=sagi-Latitude-E7470.lbits)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTzss-0003Zq-Ty; Tue, 04 Dec 2018 01:52:22 +0000
-From:   Sagi Grimberg <sagi@grimberg.me>
-To:     linux-nvme@lists.infradead.org
-Cc:     linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v5 12/13] nvmet: allow configfs tcp trtype configuration
-Date:   Mon,  3 Dec 2018 17:52:16 -0800
-Message-Id: <20181204015217.16613-13-sagi@grimberg.me>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181204015217.16613-1-sagi@grimberg.me>
-References: <20181204015217.16613-1-sagi@grimberg.me>
+        Mon, 3 Dec 2018 20:52:49 -0500
+Received: from mail-eopbgr1410134.outbound.protection.outlook.com ([40.107.141.134]:28634
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725938AbeLDBwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 20:52:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ECN6lGwW6ABG4K1jBibvEfXRh6l7f4MShg/5Jy2ReNM=;
+ b=XK4h+B2NICvyj+04+nTfOO9JJ2COX12z9A1kOuXLhJbSSMk11fnmw1J0BkiV0aQ8/p/OQ8uUaRzTgu7Q+BNiO6fkGv0VBsJjbhEa1phNT2IKvo/mnkpRu+X1ZdC9pqhVJrsc40/uYGHt5W56MrKNAumP1AQu8VggoZkN/ANnGPc=
+Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com (20.178.137.210) by
+ TYAPR01MB3183.jpnprd01.prod.outlook.com (20.177.105.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.22; Tue, 4 Dec 2018 01:52:40 +0000
+Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com
+ ([fe80::70b6:5ef2:3f71:77c7]) by TYAPR01MB3661.jpnprd01.prod.outlook.com
+ ([fe80::70b6:5ef2:3f71:77c7%4]) with mapi id 15.20.1382.020; Tue, 4 Dec 2018
+ 01:52:40 +0000
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     "jiada_wang@mentor.com" <jiada_wang@mentor.com>
+CC:     "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "vladimir_zapolskiy@mentor.com" <vladimir_zapolskiy@mentor.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH linux-next v2 6/6] ASoC: rsnd: add avb clocks
+Thread-Topic: [PATCH linux-next v2 6/6] ASoC: rsnd: add avb clocks
+Thread-Index: AQHUi3QJAIWPM4c4I0q7pds6+gkqEQ==
+Date:   Tue, 4 Dec 2018 01:52:40 +0000
+Message-ID: <87o9a22hjt.wl-kuninori.morimoto.gx@renesas.com>
+References: <20181203112427.18324-1-jiada_wang@mentor.com>
+In-Reply-To: <20181203112427.18324-1-jiada_wang@mentor.com>
+Accept-Language: ja-JP, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: TYAPR01CA0072.jpnprd01.prod.outlook.com
+ (2603:1096:404:2b::36) To TYAPR01MB3661.jpnprd01.prod.outlook.com
+ (2603:1096:404:c1::18)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [211.11.155.130]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TYAPR01MB3183;20:CHHDTsuTCQAfK5+Bi+fgwowW+s9MQefS/m2nSLR/naZuwpeytc/ek61ng2Mfle1j05Ai/Ojt52hBpQG8JYWznS+Jchz3BIGM60LkJKW0DasB5iCL/FFjhV5+pB70PUoxk91m+2EjnGdqS2Ksj6xtHJb6uJDJLLUdt6x0XkHvATQ=
+x-ms-office365-filtering-correlation-id: 763101f8-927d-4472-1d53-08d6598b2bf3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB3183;
+x-ms-traffictypediagnostic: TYAPR01MB3183:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+x-microsoft-antispam-prvs: <TYAPR01MB318320ECB1CCD6BCB434F2CAD4AF0@TYAPR01MB3183.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TYAPR01MB3183;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB3183;
+x-forefront-prvs: 0876988AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(136003)(396003)(39860400002)(199004)(189003)(2351001)(3846002)(6436002)(5640700003)(2906002)(11346002)(6246003)(476003)(486006)(14454004)(4326008)(25786009)(6486002)(446003)(2616005)(5660300001)(105586002)(106356001)(6512007)(478600001)(186003)(7736002)(52116002)(26005)(53936002)(305945005)(386003)(6506007)(229853002)(76176011)(102836004)(6116002)(54906003)(6916009)(36756003)(99286004)(316002)(68736007)(66066001)(8936002)(71200400001)(81166006)(14444005)(256004)(2501003)(8676002)(575784001)(97736004)(81156014)(71190400001)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3183;H:TYAPR01MB3661.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: jwOhnjC34Oy+860B6T7KBMCGJ5Lcf1dLV+y1NykOMoD9U24Iuld7OhXMBlu+COwJFhsvw+fiSSF097ieWHjqRDxvV34H6rRFS9k4SAB5tS8jLwcXM9f6Szow68HwZ3uLICXfRwvS1MY+iKIgDzlytWBXxG22tOxJKfq4xIr9ZhEUhY+qVdCWzle9ItAvBIlgw7CJ1Vl7FALG6DF7svwI+4zsFQr+lwOcEdnANJe3Y9kYLLaFoJSQc1dvdmMESDE99C2Vt/+5R3kuoqQaVdVzuBKT/D0tM4vWOxjtXCCID0uzBhnuX2uuvgntxDoWOYVG1W/DkAO8IG1rctZazxJETb1d4mC2MmTnzoPca7It1l8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B65D6B7D15E5ED4093FC71E115BBC515@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 763101f8-927d-4472-1d53-08d6598b2bf3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 01:52:40.2560
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sagi Grimberg <sagi@lightbitslabs.com>
-
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sagi Grimberg <sagi@lightbitslabs.com>
----
- drivers/nvme/target/configfs.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
-index db2cb64be7ba..618bbd006544 100644
---- a/drivers/nvme/target/configfs.c
-+++ b/drivers/nvme/target/configfs.c
-@@ -34,6 +34,7 @@ static const struct nvmet_transport_name {
- } nvmet_transport_names[] = {
- 	{ NVMF_TRTYPE_RDMA,	"rdma" },
- 	{ NVMF_TRTYPE_FC,	"fc" },
-+	{ NVMF_TRTYPE_TCP,	"tcp" },
- 	{ NVMF_TRTYPE_LOOP,	"loop" },
- };
- 
--- 
-2.17.1
-
+DQpIaSBKaWFkYQ0KDQo+IFRoZXJlIGFyZSBBVkIgQ291bnRlciBDbG9ja3MgaW4gQURHLCBlYWNo
+IGNsb2NrIGhhcyAxMmJpdHMgaW50ZWdyYWwNCj4gYW5kIDggYml0cyBmcmFjdGlvbmFsIGRpdmlk
+ZXJzIHdoaWNoIG9wZXJhdGVzIHdpdGggUzBEMc+VIGNsb2NrLg0KPiANCj4gVGhpcyBwYXRjaCBy
+ZWdpc3RlcnMgOCBBVkIgQ291bnRlciBDbG9ja3Mgd2hlbiBjbG9jay1jZWxscyBvZg0KPiByY2Fy
+X3NvdW5kIG5vZGUgaXMgMiwNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEppYWRhIFdhbmcgPGppYWRh
+X3dhbmdAbWVudG9yLmNvbT4NCj4gLS0tDQooc25pcCkNCj4gK3N0cnVjdCBjbGtfYXZiIHsNCj4g
+KwlzdHJ1Y3QgY2xrX2h3IGh3Ow0KPiArCXVuc2lnbmVkIGludCBpZHg7DQo+ICsJc3RydWN0IHJz
+bmRfbW9kICptb2Q7DQo+ICsJLyogbG9jayByZWcgYWNjZXNzICovDQo+ICsJc3BpbmxvY2tfdCAq
+bG9jazsNCj4gK307DQo+ICsNCj4gKyNkZWZpbmUgdG9fY2xrX2F2YihfaHcpIGNvbnRhaW5lcl9v
+ZihfaHcsIHN0cnVjdCBjbGtfYXZiLCBodykNCg0KSSBsaWtlICJod190b19hdmIoKSINCg0KPiAr
+c3RhdGljIHN0cnVjdCBjbGsgKnJzbmRfYWRnX2Nsa19zcmNfdHdvY2VsbF9nZXQoc3RydWN0IG9m
+X3BoYW5kbGVfYXJncyAqY2xrc3BlYywNCj4gKwkJCQkJCXZvaWQgKmRhdGEpDQo+ICt7DQo+ICsJ
+dW5zaWduZWQgaW50IGNsa2lkeCA9IGNsa3NwZWMtPmFyZ3NbMV07DQo+ICsJc3RydWN0IHJzbmRf
+YWRnICphZGcgPSBkYXRhOw0KPiArCWNvbnN0IGNoYXIgKnR5cGU7DQo+ICsJc3RydWN0IGNsayAq
+Y2xrOw0KPiArDQo+ICsJc3dpdGNoIChjbGtzcGVjLT5hcmdzWzBdKSB7DQo+ICsJY2FzZSBBREdf
+RklYOg0KPiArCQl0eXBlID0gImZpeGVkIjsNCj4gKwkJaWYgKGNsa2lkeCA+PSBDTEtPVVRNQVgp
+IHsNCj4gKwkJCXByX2VycigiSW52YWxpZCAlcyBjbG9jayBpbmRleCAldVxuIiwgdHlwZSwNCj4g
+KwkJCSAgICAgICBjbGtpZHgpOw0KPiArCQkJcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7DQo+ICsJ
+CX0NCj4gKwkJY2xrID0gYWRnLT5jbGtvdXRbY2xraWR4XTsNCj4gKwkJYnJlYWs7DQo+ICsJY2Fz
+ZSBBREdfQVZCOg0KPiArCQl0eXBlID0gImF2YiI7DQo+ICsJCWlmIChjbGtpZHggPj0gQVZCX0NM
+S19OVU0pIHsNCj4gKwkJCXByX2VycigiSW52YWxpZCAlcyBjbG9jayBpbmRleCAldVxuIiwgdHlw
+ZSwNCj4gKwkJCSAgICAgICBjbGtpZHgpOw0KPiArCQkJcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7
+DQo+ICsJCX0NCj4gKwkJY2xrID0gYWRnLT5jbGthdmJbY2xraWR4XTsNCj4gKwkJYnJlYWs7DQo+
+ICsJZGVmYXVsdDoNCj4gKwkJcHJfZXJyKCJJbnZhbGlkIEFERyBjbG9jayB0eXBlICV1XG4iLCBj
+bGtzcGVjLT5hcmdzWzBdKTsNCj4gKwkJcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7DQo+ICsJfQ0K
+PiArDQo+ICsJcmV0dXJuIGNsazsNCj4gK30NCg0KSW4gdGhpcyBmdW5jdGlvbg0KMSkgSSBkb24n
+dCB0aGluayB5b3UgbmVlZCB0byB1c2UgImNoYXIgKnR5cGUiLg0KMikgSWYgeW91IHVzZSAiY2xr
+aWR4ID0gY2xrc3BlYy0+YXJnc1sxXSIsIGhhdmluZyBzYW1lIG5hbWUgZm9yICJjbGtzcGVjLT5h
+cmdzWzBdIg0KICAgaXMgcmVhZGFibGUuDQozKSBwbGVhc2UgdXNlIGRldl9lcnIoKSBpbnN0YWQg
+b2YgcHJfZXJyKCkNCiAgIEkgdGhpbmsgZGF0YSBjYW4gYmUgcHJpdiwgYW5kIHlvdSBjYW4gdXNl
+IHJzbmRfcHJpdl90b19hZGcoKSwgcnNuZF9wcml2X3RvX2RldigpDQoNCj4gK3N0YXRpYyB2b2lk
+IGNsa19hdmJfZGl2X3dyaXRlKHN0cnVjdCByc25kX21vZCAqbW9kLCB1MzIgZGF0YSwgaW50IGlk
+eCkNCihzbmlwKQ0KPiArc3RhdGljIHUzMiBjbGtfYXZiX2Rpdl9yZWFkKHN0cnVjdCByc25kX21v
+ZCAqbW9kLCBpbnQgaWR4KQ0KDQpUbyByZWR1Y2UgY29uZnVzaW9uLCBhbmQgYmUgbW9yZSByZWRh
+YmxlIGNvZGUsDQpJIHRoaW5rIHRoZXNlIGZ1bmN0aW9uIGNhbiBiZQ0KDQoJY2xrX2F2Yl9kaXZf
+d3JpdGUoc3RydWN0IHJzbmRfYWRnICphZGcsIHUzMiBkYXRhKTsNCgljbGtfYXZiX2Rpdl9yZWFk
+KHN0cnVjdCByc25kX2FkZyAqYWRnKTsNCg0KPiArc3RhdGljIGludCBjbGtfYXZiX3NldF9yYXRl
+KHN0cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQo+ICsJCQkgICAgdW5zaWdu
+ZWQgbG9uZyBwYXJlbnRfcmF0ZSkNCj4gK3sNCj4gKwlzdHJ1Y3QgY2xrX2F2YiAqYXZiID0gdG9f
+Y2xrX2F2Yihodyk7DQo+ICsJdW5zaWduZWQgaW50IGRpdiA9IGNsa19hdmJfY2FsY19kaXYocmF0
+ZSwgcGFyZW50X3JhdGUpOw0KPiArCXUzMiB2YWw7DQo+ICsNCj4gKwl2YWwgPSBjbGtfYXZiX2Rp
+dl9yZWFkKGF2Yi0+bW9kLCBhdmItPmlkeCkgJiB+QVZCX0RJVl9NQVNLOw0KPiArCWNsa19hdmJf
+ZGl2X3dyaXRlKGF2Yi0+bW9kLCB2YWwgfCBkaXYsIGF2Yi0+aWR4KTsNCj4gKw0KPiArCXJldHVy
+biAwOw0KPiArfQ0KDQpXaHkgZG8gd2UgbmVlZCB0byBjYXJlIGFib3V0IH5BVkJfRElWX01BU0sg
+YXJlYSA/DQpUaGVzZSBhcmUgMCBSZXNlcnZlZCwgSSB0aGluay4NCg0KPiArc3RhdGljIGNvbnN0
+IHN0cnVjdCBjbGtfb3BzIGNsa19hdmJfb3BzID0gew0KPiArCS5lbmFibGUgPSBjbGtfYXZiX2Vu
+YWJsZSwNCj4gKwkuZGlzYWJsZSA9IGNsa19hdmJfZGlzYWJsZSwNCj4gKwkuaXNfZW5hYmxlZCA9
+IGNsa19hdmJfaXNfZW5hYmxlZCwNCj4gKwkucmVjYWxjX3JhdGUgPSBjbGtfYXZiX3JlY2FsY19y
+YXRlLA0KPiArCS5yb3VuZF9yYXRlID0gY2xrX2F2Yl9yb3VuZF9yYXRlLA0KPiArCS5zZXRfcmF0
+ZSA9IGNsa19hdmJfc2V0X3JhdGUsDQo+ICt9Ow0KDQpUaGlzIGlzIG5vdCBhIGJpZyBkZWFsLCBi
+dXQgSSBsaWtlIHRhYiBhbGlnbmVkIG9wcw0KDQo+ICtzdGF0aWMgc3RydWN0IGNsayAqY2xrX3Jl
+Z2lzdGVyX2F2YihzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCByc25kX21vZCAqbW9kLA0KPiAr
+CQkJCSAgICB1bnNpZ25lZCBpbnQgaWQsIHNwaW5sb2NrX3QgKmxvY2spDQo+ICt7DQo+ICsJc3Ry
+dWN0IGNsa19pbml0X2RhdGEgaW5pdDsNCj4gKwlzdHJ1Y3QgY2xrX2F2YiAqYXZiOw0KPiArCXN0
+cnVjdCBjbGsgKmNsazsNCj4gKwljaGFyIG5hbWVbQVZCX0NMS19OQU1FX1NJWkVdOw0KPiArCWNv
+bnN0IGNoYXIgKnBhcmVudF9uYW1lID0gQURHX0NMS19OQU1FOw0KPiArDQo+ICsJYXZiID0gZGV2
+bV9remFsbG9jKGRldiwgc2l6ZW9mKCphdmIpLCBHRlBfS0VSTkVMKTsNCj4gKwlpZiAoIWF2YikN
+Cj4gKwkJcmV0dXJuIEVSUl9QVFIoLUVOT01FTSk7DQo+ICsNCj4gKwlzbnByaW50ZihuYW1lLCBB
+VkJfQ0xLX05BTUVfU0laRSwgIiVzJXUiLCBBVkJfQ0xLX05BTUUsIGlkKTsNCj4gKw0KPiArCWF2
+Yi0+aWR4ID0gaWQ7DQo+ICsJYXZiLT5sb2NrID0gbG9jazsNCj4gKwlhdmItPm1vZCA9IG1vZDsN
+Cj4gKw0KPiArCS8qIFJlZ2lzdGVyIHRoZSBjbG9jay4gKi8NCj4gKwlpbml0Lm5hbWUgPSBuYW1l
+Ow0KPiArCWluaXQub3BzID0gJmNsa19hdmJfb3BzOw0KPiArCWluaXQuZmxhZ3MgPSBDTEtfSVNf
+QkFTSUM7DQo+ICsJaW5pdC5wYXJlbnRfbmFtZXMgPSAmcGFyZW50X25hbWU7DQo+ICsJaW5pdC5u
+dW1fcGFyZW50cyA9IDE7DQo+ICsNCj4gKwlhdmItPmh3LmluaXQgPSAmaW5pdDsNCj4gKw0KPiAr
+CS8qIGluaXQgRElWIHRvIGEgdmFsaWQgc3RhdGUgKi8NCj4gKwljbGtfYXZiX2Rpdl93cml0ZShh
+dmItPm1vZCwgYXZiLT5pZHgsIEFWQl9NQVhfRElWKTsNCg0KUGxlYXNlIGNoZWNrIHBhcmFtZXRl
+ciwgSSB0aGluayB5b3Ugd2FudCB0byBkbyBpcw0KDQoJLSBjbGtfYXZiX2Rpdl93cml0ZShhdmIt
+Pm1vZCwgYXZiLT5pZHgsIEFWQl9NQVhfRElWKTsNCgkrIGNsa19hdmJfZGl2X3dyaXRlKGF2Yi0+
+bW9kLCBBVkJfTUFYX0RJViwgYXZiLT5pZHgpOw0KDQpCZXN0IHJlZ2FyZHMNCi0tLQ0KS3VuaW5v
+cmkgTW9yaW1vdG8NCg==
