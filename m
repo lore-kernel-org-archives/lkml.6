@@ -4,52 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297C0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDCCC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E23222082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D7C62087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:16:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wJZ/4SHC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23222082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdiAZxrx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D7C62087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeLDLQG (ORCPT
+        id S1728210AbeLDLQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:16:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54250 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:16:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728249AbeLDLGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:06:05 -0500
+        id S1727893AbeLDLF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F258214DB;
-        Tue,  4 Dec 2018 11:06:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E32E2146D;
+        Tue,  4 Dec 2018 11:05:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921564;
-        bh=sCdxcCH0NNxYIDe1J8Vc6DJ8BurYL3ek+Z99gj2ssPc=;
+        s=default; t=1543921556;
+        bh=zqn+NfSGJaXG/Qq8o3S/92BDcKmEbznnUYqvZAXyYgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wJZ/4SHCBns7koehn1SH5gDtbs5JY25e26yUIV4YQbqNnpe/sa78V3eKR6d3/qhd/
-         WKtuZvOMmbkrGCiSAaRPshYmd0groyuLVBeiZy20LLtP0JrmncxYZSTqlXR+9AfmXX
-         QHTJNy66x9FIErCNQn1Pd+ixHRKFj6jwo71pM71w=
+        b=bdiAZxrxzd6vL4kPiiAxXHNxbZ/jA4FB6eqesv3fj+kC9cO4+VxnlMIz6KA0EIR4r
+         1cM6AfhvQDMAmvU69nTN3s+473XU/fzA+x14bPC8eqIHVttt/sWxkuwcGEt8Ca+MdH
+         S4kYBzQ2rVUNpEPb8h77DD/zIGUxfutNUfVDxwN4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        John Clemens <clemej@gmail.com>, Borislav Petkov <bp@suse.de>,
-        John Clemens <john@deater.net>,
-        Aravind Gopalakrishnan <aravindksg.lkml@gmail.com>,
-        linux-edac@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        x86@kernel.org, Yazen Ghannam <Yazen.Ghannam@amd.com>
-Subject: [PATCH 4.14 120/146] x86/MCE/AMD: Fix the thresholding machinery initialization order
-Date:   Tue,  4 Dec 2018 11:50:06 +0100
-Message-Id: <20181204103731.659254879@linuxfoundation.org>
+        stable@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.14 118/146] PCI: layerscape: Fix wrong invocation of outbound window disable accessor
+Date:   Tue,  4 Dec 2018 11:50:04 +0100
+Message-Id: <20181204103731.575144430@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -68,101 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-commit 60c8144afc287ef09ce8c1230c6aa972659ba1bb upstream.
+commit c6fd6fe9dea44732cdcd970f1130b8cc50ad685a upstream.
 
-Currently, the code sets up the thresholding interrupt vector and only
-then goes about initializing the thresholding banks. Which is wrong,
-because an early thresholding interrupt would cause a NULL pointer
-dereference when accessing those banks and prevent the machine from
-booting.
+The order of parameters is not correct when invoking the outbound
+window disable routine. Fix it.
 
-Therefore, set the thresholding interrupt vector only *after* having
-initialized the banks successfully.
-
-Fixes: 18807ddb7f88 ("x86/mce/AMD: Reset Threshold Limit after logging error")
-Reported-by: Rafał Miłecki <rafal@milecki.pl>
-Reported-by: John Clemens <clemej@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Tested-by: Rafał Miłecki <rafal@milecki.pl>
-Tested-by: John Clemens <john@deater.net>
-Cc: Aravind Gopalakrishnan <aravindksg.lkml@gmail.com>
-Cc: linux-edac@vger.kernel.org
+Fixes: 4a2745d760fa ("PCI: layerscape: Disable outbound windows configured by bootloader")
+Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+[lorenzo.pieralisi@arm.com: commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: stable@vger.kernel.org
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: x86@kernel.org
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Link: https://lkml.kernel.org/r/20181127101700.2964-1-zajec5@gmail.com
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=201291
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mcheck/mce_amd.c |   19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+ drivers/pci/dwc/pci-layerscape.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -56,7 +56,7 @@
- /* Threshold LVT offset is at MSR0xC0000410[15:12] */
- #define SMCA_THR_LVT_OFF	0xF000
+--- a/drivers/pci/dwc/pci-layerscape.c
++++ b/drivers/pci/dwc/pci-layerscape.c
+@@ -89,7 +89,7 @@ static void ls_pcie_disable_outbound_atu
+ 	int i;
  
--static bool thresholding_en;
-+static bool thresholding_irq_en;
- 
- static const char * const th_names[] = {
- 	"load_store",
-@@ -533,9 +533,8 @@ prepare_threshold_block(unsigned int ban
- 
- set_offset:
- 	offset = setup_APIC_mce_threshold(offset, new);
--
--	if ((offset == new) && (mce_threshold_vector != amd_threshold_interrupt))
--		mce_threshold_vector = amd_threshold_interrupt;
-+	if (offset == new)
-+		thresholding_irq_en = true;
- 
- done:
- 	mce_threshold_block_init(&b, offset);
-@@ -1356,9 +1355,6 @@ int mce_threshold_remove_device(unsigned
- {
- 	unsigned int bank;
- 
--	if (!thresholding_en)
--		return 0;
--
- 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
- 		if (!(per_cpu(bank_map, cpu) & (1 << bank)))
- 			continue;
-@@ -1376,9 +1372,6 @@ int mce_threshold_create_device(unsigned
- 	struct threshold_bank **bp;
- 	int err = 0;
- 
--	if (!thresholding_en)
--		return 0;
--
- 	bp = per_cpu(threshold_banks, cpu);
- 	if (bp)
- 		return 0;
-@@ -1407,9 +1400,6 @@ static __init int threshold_init_device(
- {
- 	unsigned lcpu = 0;
- 
--	if (mce_threshold_vector == amd_threshold_interrupt)
--		thresholding_en = true;
--
- 	/* to hit CPUs online before the notifier is up */
- 	for_each_online_cpu(lcpu) {
- 		int err = mce_threshold_create_device(lcpu);
-@@ -1418,6 +1408,9 @@ static __init int threshold_init_device(
- 			return err;
- 	}
- 
-+	if (thresholding_irq_en)
-+		mce_threshold_vector = amd_threshold_interrupt;
-+
- 	return 0;
+ 	for (i = 0; i < PCIE_IATU_NUM; i++)
+-		dw_pcie_disable_atu(pcie->pci, DW_PCIE_REGION_OUTBOUND, i);
++		dw_pcie_disable_atu(pcie->pci, i, DW_PCIE_REGION_OUTBOUND);
  }
- /*
+ 
+ static int ls1021_pcie_link_up(struct dw_pcie *pci)
 
 
