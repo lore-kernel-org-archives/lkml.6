@@ -2,274 +2,192 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03A6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E33EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A99FD2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:28:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60D8D20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:29:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7BmqpHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A99FD2081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNO2qQaf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D8D20834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbeLDW2O (ORCPT
+        id S1726073AbeLDW35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 17:28:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54832 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 17:29:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725925AbeLDW2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:28:14 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725875AbeLDW35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 17:29:57 -0500
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE9D02081C;
-        Tue,  4 Dec 2018 22:28:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 259EF208E7;
+        Tue,  4 Dec 2018 22:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543962492;
-        bh=HqAZkScs+ZcMVzztqkHJGsxIZM9HgQ5Y1Eao1f5INAY=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=P7BmqpHdG/XX+wu2IFL6Xgx5XxkEkz95/xorIrOqvpL5tNKvMtmAe0cH9/YgCosH0
-         8eQYcoXaG6GuqE5k4xC4fZxFV+LqxygQuaAKyZoK9Gw93G/rCiyDVKqL0dAOQ5/ust
-         EJhXdeKvEVqEXJpKtjQV3qdepsHaeR9Z/zhmymyw=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1543962596;
+        bh=2AaQdhHE6a7RY8KWoJRauk2rhPHWBXN7bJX0ytebjiU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hNO2qQafxIJJ8aRADxW+nZeDVKyPmiCG4JUVAp/T9vkVU1BjGMFZQ2k65QdwYlzY2
+         gT1ummmcBqllvj78DgA7IDe5kQ1jjwGm0SKjtKd+4MertgHvanlwjFswbTuGUyBho9
+         Md/ay222IiAkRhuU7gWAUC+j0TZ3BUFzKEEtceMo=
+Received: by mail-qt1-f171.google.com with SMTP id n32so20070176qte.11;
+        Tue, 04 Dec 2018 14:29:56 -0800 (PST)
+X-Gm-Message-State: AA+aEWZA5UYxee8w0uQGxmDKukj/fwhda8kodibPrqB/nj5aETXEnOCr
+        QuuqwPwAEqjYrX6qTYAXmYFUVMUx93jITWWZxw==
+X-Google-Smtp-Source: AFSGD/U7CpwyGdv8rHIKI7u/8etxvdQGP0TL0644C5OSFv+wLiexG7OWGALhPbyTF4W4oaoAw9PYJrpTlH1t252lDSQ=
+X-Received: by 2002:ac8:6b18:: with SMTP id w24mr21550141qts.144.1543962595304;
+ Tue, 04 Dec 2018 14:29:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Taniya Das <tdas@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com
-References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
- <1543722903-10989-3-git-send-email-tdas@codeaurora.org>
- <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
-Message-ID: <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v11 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-Date:   Tue, 04 Dec 2018 14:28:11 -0800
+References: <20181201165348.24140-1-robdclark@gmail.com>
+In-Reply-To: <20181201165348.24140-1-robdclark@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 4 Dec 2018 16:29:43 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJmPqis46Un91QyhXgdrVtfATMP_hTp6wSeSAfc8MLFfw@mail.gmail.com>
+Message-ID: <CAL_JsqJmPqis46Un91QyhXgdrVtfATMP_hTp6wSeSAfc8MLFfw@mail.gmail.com>
+Subject: Re: [PATCH] of/device: add blacklist for iommu dma_ops
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Linux IOMMU <iommu@lists.linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Viresh Kumar (2018-12-03 21:12:31)
-> Hi Taniya,
-> =
+On Sat, Dec 1, 2018 at 10:54 AM Rob Clark <robdclark@gmail.com> wrote:
+>
+> This solves a problem we see with drm/msm, caused by getting
+> iommu_dma_ops while we attach our own domain and manage it directly at
+> the iommu API level:
+>
+>   [0000000000000038] user address but active_mm is swapper
+>   Internal error: Oops: 96000005 [#1] PREEMPT SMP
+>   Modules linked in:
+>   CPU: 7 PID: 70 Comm: kworker/7:1 Tainted: G        W         4.19.3 #90
+>   Hardware name: xxx (DT)
+>   Workqueue: events deferred_probe_work_func
+>   pstate: 80c00009 (Nzcv daif +PAN +UAO)
+>   pc : iommu_dma_map_sg+0x7c/0x2c8
+>   lr : iommu_dma_map_sg+0x40/0x2c8
+>   sp : ffffff80095eb4f0
+>   x29: ffffff80095eb4f0 x28: 0000000000000000
+>   x27: ffffffc0f9431578 x26: 0000000000000000
+>   x25: 00000000ffffffff x24: 0000000000000003
+>   x23: 0000000000000001 x22: ffffffc0fa9ac010
+>   x21: 0000000000000000 x20: ffffffc0fab40980
+>   x19: ffffffc0fab40980 x18: 0000000000000003
+>   x17: 00000000000001c4 x16: 0000000000000007
+>   x15: 000000000000000e x14: ffffffffffffffff
+>   x13: ffff000000000000 x12: 0000000000000028
+>   x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
+>   x9 : 0000000000000000 x8 : ffffffc0fab409a0
+>   x7 : 0000000000000000 x6 : 0000000000000002
+>   x5 : 0000000100000000 x4 : 0000000000000000
+>   x3 : 0000000000000001 x2 : 0000000000000002
+>   x1 : ffffffc0f9431578 x0 : 0000000000000000
+>   Process kworker/7:1 (pid: 70, stack limit = 0x0000000017d08ffb)
+>   Call trace:
+>    iommu_dma_map_sg+0x7c/0x2c8
+>    __iommu_map_sg_attrs+0x70/0x84
+>    get_pages+0x170/0x1e8
+>    msm_gem_get_iova+0x8c/0x128
+>    _msm_gem_kernel_new+0x6c/0xc8
+>    msm_gem_kernel_new+0x4c/0x58
+>    dsi_tx_buf_alloc_6g+0x4c/0x8c
+>    msm_dsi_host_modeset_init+0xc8/0x108
+>    msm_dsi_modeset_init+0x54/0x18c
+>    _dpu_kms_drm_obj_init+0x430/0x474
+>    dpu_kms_hw_init+0x5f8/0x6b4
+>    msm_drm_bind+0x360/0x6c8
+>    try_to_bring_up_master.part.7+0x28/0x70
+>    component_master_add_with_match+0xe8/0x124
+>    msm_pdev_probe+0x294/0x2b4
+>    platform_drv_probe+0x58/0xa4
+>    really_probe+0x150/0x294
+>    driver_probe_device+0xac/0xe8
+>    __device_attach_driver+0xa4/0xb4
+>    bus_for_each_drv+0x98/0xc8
+>    __device_attach+0xac/0x12c
+>    device_initial_probe+0x24/0x30
+>    bus_probe_device+0x38/0x98
+>    deferred_probe_work_func+0x78/0xa4
+>    process_one_work+0x24c/0x3dc
+>    worker_thread+0x280/0x360
+>    kthread+0x134/0x13c
+>    ret_from_fork+0x10/0x18
+>   Code: d2800004 91000725 6b17039f 5400048a (f9401f40)
+>   ---[ end trace f22dda57f3648e2c ]---
+>   Kernel panic - not syncing: Fatal exception
+>   SMP: stopping secondary CPUs
+>   Kernel Offset: disabled
+>   CPU features: 0x0,22802a18
+>   Memory Limit: none
+>
+> The problem is that when drm/msm does it's own iommu_attach_device(),
+> now the domain returned by iommu_get_domain_for_dev() is drm/msm's
+> domain, and it doesn't have domain->iova_cookie.
+>
+> We kind of avoided this problem prior to sdm845/dpu because the iommu
+> was attached to the mdp node in dt, which is a child of the toplevel
+> mdss node (which corresponds to the dev passed in dma_map_sg()).  But
+> with sdm845, now the iommu is attached at the mdss level so we hit the
+> iommu_dma_ops in dma_map_sg().
+>
+> But auto allocating/attaching a domain before the driver is probed was
+> already a blocking problem for enabling per-context pagetables for the
+> GPU.  This problem is also now solved with this patch.
+>
+> Fixes: 97890ba9289c dma-mapping: detect and configure IOMMU in of_dma_configure
+> Tested-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Rob Clark <robdclark@gmail.com>
+> ---
+> This is an alternative/replacement for [1].  What it lacks in elegance
+> it makes up for in practicality ;-)
+>
+> [1] https://patchwork.freedesktop.org/patch/264930/
+>
+>  drivers/of/device.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/drivers/of/device.c b/drivers/of/device.c
+> index 5957cd4fa262..15ffee00fb22 100644
+> --- a/drivers/of/device.c
+> +++ b/drivers/of/device.c
+> @@ -72,6 +72,14 @@ int of_device_add(struct platform_device *ofdev)
+>         return device_add(&ofdev->dev);
+>  }
+>
+> +static const struct of_device_id iommu_blacklist[] = {
+> +       { .compatible = "qcom,mdp4" },
+> +       { .compatible = "qcom,mdss" },
+> +       { .compatible = "qcom,sdm845-mdss" },
+> +       { .compatible = "qcom,adreno" },
+> +       {}
+> +};
 
-> Sorry that I haven't been reviewing it much from last few iterations as I=
- was
-> letting others get this into a better shape. Thanks for your efforts..
-> =
+Not completely clear to whether this is still needed or not, but this
+really won't scale. Why can't the driver for these devices override
+whatever has been setup by default?
 
-> On 02-12-18, 09:25, Taniya Das wrote:
-> > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> =
-
-> > +struct cpufreq_qcom {
-> > +     struct cpufreq_frequency_table *table;
-> > +     void __iomem *perf_state_reg;
-> > +     cpumask_t related_cpus;
-> > +};
-> > +
-> > +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> =
-
-> Now that the code is much more simplified, I am not sure if you need this
-> per-cpu structure at all. The only place where you are using it is in
-> qcom_cpufreq_hw_cpu_init() and probe(). Why not merge qcom_cpu_resources_=
-init()
-> completely into qcom_cpufreq_hw_cpu_init() and get rid of this structure
-> entirely ?
-> =
-
-
-Good point. Here's an untested patch to handle that. It removes the
-related functionality and makes an array of pointers to the domains that
-are created each time qcom_cpu_resources_init() is called.
-
----8<----
-
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufr=
-eq-hw.c
-index 8dc6b73c2f22..04e7cfd70316 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -23,14 +23,14 @@
- #define REG_LUT_TABLE			0x110
- #define REG_PERF_STATE			0x920
- =
-
-+#define MAX_FREQ_DOMAINS		2
-+
- struct cpufreq_qcom {
- 	struct cpufreq_frequency_table *table;
- 	void __iomem *perf_state_reg;
- 	cpumask_t related_cpus;
- };
- =
-
--static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
--
- static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
- 					unsigned int index)
- {
-@@ -76,9 +76,14 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct c=
-pufreq_policy *policy,
- =
-
- static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
- {
-+	struct cpufreq_qcom **freq_domain_map;
- 	struct cpufreq_qcom *c;
- =
-
--	c =3D qcom_freq_domain_map[policy->cpu];
-+	freq_domain_map =3D cpufreq_get_driver_data();
-+	if (!freq_domain_map)
-+		return -ENODEV;
-+
-+	c =3D freq_domain_map[policy->cpu];
- 	if (!c) {
- 		pr_err("No scaling support for CPU%d\n", policy->cpu);
- 		return -ENODEV;
-@@ -171,39 +176,17 @@ static int qcom_cpufreq_hw_read_lut(struct device *de=
-v, struct cpufreq_qcom *c,
- 	return 0;
- }
- =
-
--static void qcom_get_related_cpus(int index, struct cpumask *m)
--{
--	struct device_node *cpu_np;
--	struct of_phandle_args args;
--	int cpu, ret;
--
--	for_each_possible_cpu(cpu) {
--		cpu_np =3D of_cpu_device_node_get(cpu);
--		if (!cpu_np)
--			continue;
--
--		ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
--						 "#freq-domain-cells", 0,
--						  &args);
--		of_node_put(cpu_np);
--		if (ret < 0)
--			continue;
--
--		if (index =3D=3D args.args[0])
--			cpumask_set_cpu(cpu, m);
--	}
--}
--
- static int qcom_cpu_resources_init(struct platform_device *pdev,
- 				   unsigned int cpu, int index,
- 				   unsigned long xo_rate,
--				   unsigned long cpu_hw_rate)
-+				   unsigned long cpu_hw_rate,
-+				   struct cpufreq_qcom **freq_domain_map)
- {
- 	struct cpufreq_qcom *c;
- 	struct resource *res;
- 	struct device *dev =3D &pdev->dev;
- 	void __iomem *base;
--	int ret, cpu_r;
-+	int ret;
- =
-
- 	c =3D devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
- 	if (!c)
-@@ -220,12 +203,6 @@ static int qcom_cpu_resources_init(struct platform_dev=
-ice *pdev,
- 		return -ENODEV;
- 	}
- =
-
--	qcom_get_related_cpus(index, &c->related_cpus);
--	if (!cpumask_weight(&c->related_cpus)) {
--		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
--		return -ENOENT;
--	}
--
- 	c->perf_state_reg =3D base + REG_PERF_STATE;
- =
-
- 	ret =3D qcom_cpufreq_hw_read_lut(dev, c, base, xo_rate, cpu_hw_rate);
-@@ -234,8 +211,7 @@ static int qcom_cpu_resources_init(struct platform_devi=
-ce *pdev,
- 		return ret;
- 	}
- =
-
--	for_each_cpu(cpu_r, &c->related_cpus)
--		qcom_freq_domain_map[cpu_r] =3D c;
-+	freq_domain_map[index] =3D c;
- =
-
- 	return 0;
- }
-@@ -245,9 +221,16 @@ static int qcom_cpufreq_hw_driver_probe(struct platfor=
-m_device *pdev)
- 	struct device_node *cpu_np;
- 	struct of_phandle_args args;
- 	struct clk *clk;
--	unsigned int cpu;
-+	unsigned int cpu, domain;
- 	unsigned long xo_rate, cpu_hw_rate;
- 	int ret;
-+	struct cpufreq_qcom **freq_domain_map, *freq_domain;
-+
-+	freq_domain_map =3D devm_kcalloc(&pdev->dev, MAX_FREQ_DOMAINS,
-+				       sizeof(*freq_domain_map), GFP_KERNEL);
-+	cpufreq_qcom_hw_driver.driver_data =3D freq_domain_map;
-+	if (!freq_domain_map)
-+		return -ENOMEM;
- =
-
- 	clk =3D clk_get(&pdev->dev, "xo");
- 	if (IS_ERR(clk))
-@@ -273,16 +256,28 @@ static int qcom_cpufreq_hw_driver_probe(struct platfo=
-rm_device *pdev)
- =
-
- 		ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
- 						 "#freq-domain-cells", 0,
--						  &args);
-+						 &args);
- 		of_node_put(cpu_np);
- 		if (ret)
- 			return ret;
- =
-
--		if (qcom_freq_domain_map[cpu])
-+		domain =3D args.args[0];
-+		if (domain >=3D MAX_FREQ_DOMAINS)
- 			continue;
- =
-
--		ret =3D qcom_cpu_resources_init(pdev, cpu, args.args[0],
--					      xo_rate, cpu_hw_rate);
-+		/*
-+		 * If we've already populated the frequency table for this domain
-+		 * just mark it related and get out of here
-+		 */
-+		freq_domain =3D freq_domain_map[domain];
-+		if (freq_domain) {
-+			cpumask_set_cpu(cpu, &freq_domain->related_cpus);
-+			continue;
-+		}
-+
-+		ret =3D qcom_cpu_resources_init(pdev, cpu, domain,
-+					      xo_rate, cpu_hw_rate,
-+					      freq_domain_map);
- 		if (ret)
- 			return ret;
- 	}
+Rob
