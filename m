@@ -6,50 +6,51 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E80C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A949CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 425A8214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:30:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425A8214C1
+	by mail.kernel.org (Postfix) with ESMTP id 7A31C2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:30:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A31C2087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbeLDBaK (ORCPT
+        id S1726140AbeLDBaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:30:10 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:52070 "EHLO
+        Mon, 3 Dec 2018 20:30:20 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:52080 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbeLDBaI (ORCPT
+        with ESMTP id S1726005AbeLDBaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:30:08 -0500
+        Mon, 3 Dec 2018 20:30:15 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id BCFF6133FACA7;
-        Mon,  3 Dec 2018 17:30:07 -0800 (PST)
-Date:   Mon, 03 Dec 2018 17:30:07 -0800 (PST)
-Message-Id: <20181203.173007.1077715112709461361.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E1207133FACA4;
+        Mon,  3 Dec 2018 17:30:14 -0800 (PST)
+Date:   Mon, 03 Dec 2018 17:29:43 -0800 (PST)
+Message-Id: <20181203.172943.562053045077746573.davem@davemloft.net>
 To:     tiny.windzz@gmail.com
-Cc:     mlindner@marvell.com, stephen@networkplumber.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: marvell: convert to DEFINE_SHOW_ATTRIBUTE
+Cc:     jakub.kicinski@netronome.com, nick.viljoen@netronome.com,
+        joe@perches.com, oss-drivers@netronome.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nfp: convert to DEFINE_SHOW_ATTRIBUTE
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181203143411.13294-1-tiny.windzz@gmail.com>
-References: <20181203143411.13294-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181203141335.12928-1-tiny.windzz@gmail.com>
+References: <20181203141335.12928-1-tiny.windzz@gmail.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 03 Dec 2018 17:30:08 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 03 Dec 2018 17:30:15 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
-Date: Mon,  3 Dec 2018 09:34:11 -0500
+Date: Mon,  3 Dec 2018 09:13:35 -0500
 
 > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 > 
