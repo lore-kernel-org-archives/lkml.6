@@ -2,1335 +2,891 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C2BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D40EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE2B2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE2B2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+	by mail.kernel.org (Postfix) with ESMTP id A780F20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="Gu7MFIGv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A780F20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbeLDOPf convert rfc822-to-8bit (ORCPT
+        id S1726492AbeLDOPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:15:35 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:59710 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeLDOPc (ORCPT
+        Tue, 4 Dec 2018 09:15:42 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42033 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbeLDOPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:15:32 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 87E726797E1;
-        Tue,  4 Dec 2018 15:15:23 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 4 Dec 2018
- 15:15:23 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Tue, 4 Dec 2018 15:15:23 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
-        "han.xu@nxp.com" <han.xu@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 6/9] mtd: fsl-quadspi: Remove the driver as it was replaced
- by spi-fsl-qspi.c
-Thread-Topic: [PATCH v7 6/9] mtd: fsl-quadspi: Remove the driver as it was
- replaced by spi-fsl-qspi.c
-Thread-Index: AQHUi9vLKytvF73GTE2yrHpz6rQsog==
-Date:   Tue, 4 Dec 2018 14:15:22 +0000
-Message-ID: <1543932685-15011-7-git-send-email-frieder.schrempf@kontron.de>
-References: <1543932685-15011-1-git-send-email-frieder.schrempf@kontron.de>
-In-Reply-To: <1543932685-15011-1-git-send-email-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Tue, 4 Dec 2018 09:15:36 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 64so8268064pfr.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 06:15:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=g.ncu.edu.tw; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=q2ylLGh6Iq+PMgkhPzStCcFhPdE9msJgMttiTaylZ70=;
+        b=Gu7MFIGvTaYrfrkenXwy7xVKP9/qdLrVE9WD0EbvHbzMMBjs9YnFzLAUCNgk62FQ5D
+         23EKJWZ/pFS866IiltTZ6+1CAiOBrseUGxKFoLHpTia/BFSBNBfD2IaYkd2r2vdu47IM
+         rCbKtdAjvHNdluk9wq9QvgebNiyOvR0KM9B+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=q2ylLGh6Iq+PMgkhPzStCcFhPdE9msJgMttiTaylZ70=;
+        b=srdB0EfVeuXXKXnCCQ8uThXOK5y5UXAk0vAQEbW65uyWzk1NIPm26Vdr6QcheoqJlL
+         cdeRZBy7vsYwfxWqgN3wnykC1Nmb/EukLyBo1JL6f2MRF0mosJohScMM0skXPwbbyR/r
+         GIWrjdmwDQlQYCR10PHzrlFcl/YpvJwhhmvbRW0Or7CL+KtbRDES9VNDO4RfA6UwIy94
+         ATpufpugCNgCLTY9X27v5+X+2mpdYneauUePR4NsRqd63CVJSdng4GygfL8D+q7ouk87
+         mOqoxyK8Qun8VJU5nVKFwi7nqmo5D2lNN36EKRNXMzug7vohatsZXP3wWzrfj0oSynbF
+         Zstw==
+X-Gm-Message-State: AA+aEWZFbUM0gyhJBD2L1r50HEKH2HwOl6bC0/rJYgtK64k2nyhTKxBj
+        UhNvPRhn/pPKzzMi8orQj2rd8Q==
+X-Google-Smtp-Source: AFSGD/UhdL2mLZNhuMPwSiFSngnIPZVJTSIU5OaaFrN6NnPEyUb6NqkNTsJ6oKyodOhFcY35v5O6mg==
+X-Received: by 2002:a63:d208:: with SMTP id a8mr16632791pgg.77.1543932934038;
+        Tue, 04 Dec 2018 06:15:34 -0800 (PST)
+Received: from starnight.local ([150.116.248.145])
+        by smtp.gmail.com with ESMTPSA id n66sm36975863pfk.19.2018.12.04.06.15.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 06:15:33 -0800 (PST)
+From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
+To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Subject: [PATCH V4 1/6] net: lorawan: Add LoRaWAN socket module
+Date:   Tue,  4 Dec 2018 22:13:38 +0800
+Message-Id: <20181204141341.4353-2-starnight@g.ncu.edu.tw>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
+References: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 87E726797E1.A13C7
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
-        computersforpeace@gmail.com, david.wolfe@nxp.com,
-        dwmw2@infradead.org, fabio.estevam@nxp.com, han.xu@nxp.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
-        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+This patch adds a new address/protocol family for LoRaWAN network.
+It also implements the the functions and maps to Datagram socket for
+LoRaWAN unconfirmed data messages.
 
-There's a new driver using the SPI memory interface of the SPI framework
-at spi/spi-fsl-qspi.c, which can be used together with m25p80.c to
-replace the functionality of this SPI NOR driver.
-
-The new driver is already in use and this code is not compiled anymore,
-so let's remove it.
-
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
 ---
- drivers/mtd/spi-nor/fsl-quadspi.c | 1224 --------------------------------
- 1 file changed, 1224 deletions(-)
+V2:
+- Split the LoRaWAN class module patch in V1 into LoRaWAN socket and
+  LoRaWAN Soft MAC modules
+- Add lorawan_netdev.h header file for network address related
+  declaration
+- Use SPDX license identifiers
 
-diff --git a/drivers/mtd/spi-nor/fsl-quadspi.c b/drivers/mtd/spi-nor/fsl-quadspi.c
-deleted file mode 100644
-index 1ff3430..0000000
---- a/drivers/mtd/spi-nor/fsl-quadspi.c
-+++ /dev/null
-@@ -1,1224 +0,0 @@
--/*
-- * Freescale QuadSPI driver.
-- *
-- * Copyright (C) 2013 Freescale Semiconductor, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/interrupt.h>
--#include <linux/errno.h>
--#include <linux/platform_device.h>
--#include <linux/sched.h>
--#include <linux/delay.h>
--#include <linux/io.h>
--#include <linux/clk.h>
--#include <linux/err.h>
--#include <linux/of.h>
--#include <linux/of_device.h>
--#include <linux/timer.h>
--#include <linux/jiffies.h>
--#include <linux/completion.h>
--#include <linux/mtd/mtd.h>
--#include <linux/mtd/partitions.h>
--#include <linux/mtd/spi-nor.h>
--#include <linux/mutex.h>
--#include <linux/pm_qos.h>
--#include <linux/sizes.h>
--
--/* Controller needs driver to swap endian */
--#define QUADSPI_QUIRK_SWAP_ENDIAN	(1 << 0)
--/* Controller needs 4x internal clock */
--#define QUADSPI_QUIRK_4X_INT_CLK	(1 << 1)
--/*
-- * TKT253890, Controller needs driver to fill txfifo till 16 byte to
-- * trigger data transfer even though extern data will not transferred.
-- */
--#define QUADSPI_QUIRK_TKT253890		(1 << 2)
--/* Controller cannot wake up from wait mode, TKT245618 */
--#define QUADSPI_QUIRK_TKT245618         (1 << 3)
--
--/* The registers */
--#define QUADSPI_MCR			0x00
--#define QUADSPI_MCR_RESERVED_SHIFT	16
--#define QUADSPI_MCR_RESERVED_MASK	(0xF << QUADSPI_MCR_RESERVED_SHIFT)
--#define QUADSPI_MCR_MDIS_SHIFT		14
--#define QUADSPI_MCR_MDIS_MASK		(1 << QUADSPI_MCR_MDIS_SHIFT)
--#define QUADSPI_MCR_CLR_TXF_SHIFT	11
--#define QUADSPI_MCR_CLR_TXF_MASK	(1 << QUADSPI_MCR_CLR_TXF_SHIFT)
--#define QUADSPI_MCR_CLR_RXF_SHIFT	10
--#define QUADSPI_MCR_CLR_RXF_MASK	(1 << QUADSPI_MCR_CLR_RXF_SHIFT)
--#define QUADSPI_MCR_DDR_EN_SHIFT	7
--#define QUADSPI_MCR_DDR_EN_MASK		(1 << QUADSPI_MCR_DDR_EN_SHIFT)
--#define QUADSPI_MCR_END_CFG_SHIFT	2
--#define QUADSPI_MCR_END_CFG_MASK	(3 << QUADSPI_MCR_END_CFG_SHIFT)
--#define QUADSPI_MCR_SWRSTHD_SHIFT	1
--#define QUADSPI_MCR_SWRSTHD_MASK	(1 << QUADSPI_MCR_SWRSTHD_SHIFT)
--#define QUADSPI_MCR_SWRSTSD_SHIFT	0
--#define QUADSPI_MCR_SWRSTSD_MASK	(1 << QUADSPI_MCR_SWRSTSD_SHIFT)
--
--#define QUADSPI_IPCR			0x08
--#define QUADSPI_IPCR_SEQID_SHIFT	24
--#define QUADSPI_IPCR_SEQID_MASK		(0xF << QUADSPI_IPCR_SEQID_SHIFT)
--
--#define QUADSPI_BUF0CR			0x10
--#define QUADSPI_BUF1CR			0x14
--#define QUADSPI_BUF2CR			0x18
--#define QUADSPI_BUFXCR_INVALID_MSTRID	0xe
--
--#define QUADSPI_BUF3CR			0x1c
--#define QUADSPI_BUF3CR_ALLMST_SHIFT	31
--#define QUADSPI_BUF3CR_ALLMST_MASK	(1 << QUADSPI_BUF3CR_ALLMST_SHIFT)
--#define QUADSPI_BUF3CR_ADATSZ_SHIFT		8
--#define QUADSPI_BUF3CR_ADATSZ_MASK	(0xFF << QUADSPI_BUF3CR_ADATSZ_SHIFT)
--
--#define QUADSPI_BFGENCR			0x20
--#define QUADSPI_BFGENCR_PAR_EN_SHIFT	16
--#define QUADSPI_BFGENCR_PAR_EN_MASK	(1 << (QUADSPI_BFGENCR_PAR_EN_SHIFT))
--#define QUADSPI_BFGENCR_SEQID_SHIFT	12
--#define QUADSPI_BFGENCR_SEQID_MASK	(0xF << QUADSPI_BFGENCR_SEQID_SHIFT)
--
--#define QUADSPI_BUF0IND			0x30
--#define QUADSPI_BUF1IND			0x34
--#define QUADSPI_BUF2IND			0x38
--#define QUADSPI_SFAR			0x100
--
--#define QUADSPI_SMPR			0x108
--#define QUADSPI_SMPR_DDRSMP_SHIFT	16
--#define QUADSPI_SMPR_DDRSMP_MASK	(7 << QUADSPI_SMPR_DDRSMP_SHIFT)
--#define QUADSPI_SMPR_FSDLY_SHIFT	6
--#define QUADSPI_SMPR_FSDLY_MASK		(1 << QUADSPI_SMPR_FSDLY_SHIFT)
--#define QUADSPI_SMPR_FSPHS_SHIFT	5
--#define QUADSPI_SMPR_FSPHS_MASK		(1 << QUADSPI_SMPR_FSPHS_SHIFT)
--#define QUADSPI_SMPR_HSENA_SHIFT	0
--#define QUADSPI_SMPR_HSENA_MASK		(1 << QUADSPI_SMPR_HSENA_SHIFT)
--
--#define QUADSPI_RBSR			0x10c
--#define QUADSPI_RBSR_RDBFL_SHIFT	8
--#define QUADSPI_RBSR_RDBFL_MASK		(0x3F << QUADSPI_RBSR_RDBFL_SHIFT)
--
--#define QUADSPI_RBCT			0x110
--#define QUADSPI_RBCT_WMRK_MASK		0x1F
--#define QUADSPI_RBCT_RXBRD_SHIFT	8
--#define QUADSPI_RBCT_RXBRD_USEIPS	(0x1 << QUADSPI_RBCT_RXBRD_SHIFT)
--
--#define QUADSPI_TBSR			0x150
--#define QUADSPI_TBDR			0x154
--#define QUADSPI_SR			0x15c
--#define QUADSPI_SR_IP_ACC_SHIFT		1
--#define QUADSPI_SR_IP_ACC_MASK		(0x1 << QUADSPI_SR_IP_ACC_SHIFT)
--#define QUADSPI_SR_AHB_ACC_SHIFT	2
--#define QUADSPI_SR_AHB_ACC_MASK		(0x1 << QUADSPI_SR_AHB_ACC_SHIFT)
--
--#define QUADSPI_FR			0x160
--#define QUADSPI_FR_TFF_MASK		0x1
--
--#define QUADSPI_SFA1AD			0x180
--#define QUADSPI_SFA2AD			0x184
--#define QUADSPI_SFB1AD			0x188
--#define QUADSPI_SFB2AD			0x18c
--#define QUADSPI_RBDR			0x200
--
--#define QUADSPI_LUTKEY			0x300
--#define QUADSPI_LUTKEY_VALUE		0x5AF05AF0
--
--#define QUADSPI_LCKCR			0x304
--#define QUADSPI_LCKER_LOCK		0x1
--#define QUADSPI_LCKER_UNLOCK		0x2
--
--#define QUADSPI_RSER			0x164
--#define QUADSPI_RSER_TFIE		(0x1 << 0)
--
--#define QUADSPI_LUT_BASE		0x310
--
--/*
-- * The definition of the LUT register shows below:
-- *
-- *  ---------------------------------------------------
-- *  | INSTR1 | PAD1 | OPRND1 | INSTR0 | PAD0 | OPRND0 |
-- *  ---------------------------------------------------
-- */
--#define OPRND0_SHIFT		0
--#define PAD0_SHIFT		8
--#define INSTR0_SHIFT		10
--#define OPRND1_SHIFT		16
--
--/* Instruction set for the LUT register. */
--#define LUT_STOP		0
--#define LUT_CMD			1
--#define LUT_ADDR		2
--#define LUT_DUMMY		3
--#define LUT_MODE		4
--#define LUT_MODE2		5
--#define LUT_MODE4		6
--#define LUT_FSL_READ		7
--#define LUT_FSL_WRITE		8
--#define LUT_JMP_ON_CS		9
--#define LUT_ADDR_DDR		10
--#define LUT_MODE_DDR		11
--#define LUT_MODE2_DDR		12
--#define LUT_MODE4_DDR		13
--#define LUT_FSL_READ_DDR		14
--#define LUT_FSL_WRITE_DDR		15
--#define LUT_DATA_LEARN		16
--
--/*
-- * The PAD definitions for LUT register.
-- *
-- * The pad stands for the lines number of IO[0:3].
-- * For example, the Quad read need four IO lines, so you should
-- * set LUT_PAD4 which means we use four IO lines.
-- */
--#define LUT_PAD1		0
--#define LUT_PAD2		1
--#define LUT_PAD4		2
--
--/* Oprands for the LUT register. */
--#define ADDR24BIT		0x18
--#define ADDR32BIT		0x20
--
--/* Macros for constructing the LUT register. */
--#define LUT0(ins, pad, opr)						\
--		(((opr) << OPRND0_SHIFT) | ((LUT_##pad) << PAD0_SHIFT) | \
--		((LUT_##ins) << INSTR0_SHIFT))
--
--#define LUT1(ins, pad, opr)	(LUT0(ins, pad, opr) << OPRND1_SHIFT)
--
--/* other macros for LUT register. */
--#define QUADSPI_LUT(x)          (QUADSPI_LUT_BASE + (x) * 4)
--#define QUADSPI_LUT_NUM		64
--
--/* SEQID -- we can have 16 seqids at most. */
--#define SEQID_READ		0
--#define SEQID_WREN		1
--#define SEQID_WRDI		2
--#define SEQID_RDSR		3
--#define SEQID_SE		4
--#define SEQID_CHIP_ERASE	5
--#define SEQID_PP		6
--#define SEQID_RDID		7
--#define SEQID_WRSR		8
--#define SEQID_RDCR		9
--#define SEQID_EN4B		10
--#define SEQID_BRWR		11
--
--#define QUADSPI_MIN_IOMAP SZ_4M
--
--enum fsl_qspi_devtype {
--	FSL_QUADSPI_VYBRID,
--	FSL_QUADSPI_IMX6SX,
--	FSL_QUADSPI_IMX7D,
--	FSL_QUADSPI_IMX6UL,
--	FSL_QUADSPI_LS1021A,
--	FSL_QUADSPI_LS2080A,
--};
--
--struct fsl_qspi_devtype_data {
--	enum fsl_qspi_devtype devtype;
--	int rxfifo;
--	int txfifo;
--	int ahb_buf_size;
--	int driver_data;
--};
--
--static const struct fsl_qspi_devtype_data vybrid_data = {
--	.devtype = FSL_QUADSPI_VYBRID,
--	.rxfifo = 128,
--	.txfifo = 64,
--	.ahb_buf_size = 1024,
--	.driver_data = QUADSPI_QUIRK_SWAP_ENDIAN,
--};
--
--static const struct fsl_qspi_devtype_data imx6sx_data = {
--	.devtype = FSL_QUADSPI_IMX6SX,
--	.rxfifo = 128,
--	.txfifo = 512,
--	.ahb_buf_size = 1024,
--	.driver_data = QUADSPI_QUIRK_4X_INT_CLK
--		       | QUADSPI_QUIRK_TKT245618,
--};
--
--static const struct fsl_qspi_devtype_data imx7d_data = {
--	.devtype = FSL_QUADSPI_IMX7D,
--	.rxfifo = 512,
--	.txfifo = 512,
--	.ahb_buf_size = 1024,
--	.driver_data = QUADSPI_QUIRK_TKT253890
--		       | QUADSPI_QUIRK_4X_INT_CLK,
--};
--
--static const struct fsl_qspi_devtype_data imx6ul_data = {
--	.devtype = FSL_QUADSPI_IMX6UL,
--	.rxfifo = 128,
--	.txfifo = 512,
--	.ahb_buf_size = 1024,
--	.driver_data = QUADSPI_QUIRK_TKT253890
--		       | QUADSPI_QUIRK_4X_INT_CLK,
--};
--
--static struct fsl_qspi_devtype_data ls1021a_data = {
--	.devtype = FSL_QUADSPI_LS1021A,
--	.rxfifo = 128,
--	.txfifo = 64,
--	.ahb_buf_size = 1024,
--	.driver_data = 0,
--};
--
--static const struct fsl_qspi_devtype_data ls2080a_data = {
--	.devtype = FSL_QUADSPI_LS2080A,
--	.rxfifo = 128,
--	.txfifo = 64,
--	.ahb_buf_size = 1024,
--	.driver_data = QUADSPI_QUIRK_TKT253890,
--};
--
--
--#define FSL_QSPI_MAX_CHIP	4
--struct fsl_qspi {
--	struct spi_nor nor[FSL_QSPI_MAX_CHIP];
--	void __iomem *iobase;
--	void __iomem *ahb_addr;
--	u32 memmap_phy;
--	u32 memmap_offs;
--	u32 memmap_len;
--	struct clk *clk, *clk_en;
--	struct device *dev;
--	struct completion c;
--	const struct fsl_qspi_devtype_data *devtype_data;
--	u32 nor_size;
--	u32 nor_num;
--	u32 clk_rate;
--	unsigned int chip_base_addr; /* We may support two chips. */
--	bool has_second_chip;
--	bool big_endian;
--	struct mutex lock;
--	struct pm_qos_request pm_qos_req;
--};
--
--static inline int needs_swap_endian(struct fsl_qspi *q)
--{
--	return q->devtype_data->driver_data & QUADSPI_QUIRK_SWAP_ENDIAN;
--}
--
--static inline int needs_4x_clock(struct fsl_qspi *q)
--{
--	return q->devtype_data->driver_data & QUADSPI_QUIRK_4X_INT_CLK;
--}
--
--static inline int needs_fill_txfifo(struct fsl_qspi *q)
--{
--	return q->devtype_data->driver_data & QUADSPI_QUIRK_TKT253890;
--}
--
--static inline int needs_wakeup_wait_mode(struct fsl_qspi *q)
--{
--	return q->devtype_data->driver_data & QUADSPI_QUIRK_TKT245618;
--}
--
--/*
-- * R/W functions for big- or little-endian registers:
-- * The qSPI controller's endian is independent of the CPU core's endian.
-- * So far, although the CPU core is little-endian but the qSPI have two
-- * versions for big-endian and little-endian.
-- */
--static void qspi_writel(struct fsl_qspi *q, u32 val, void __iomem *addr)
--{
--	if (q->big_endian)
--		iowrite32be(val, addr);
--	else
--		iowrite32(val, addr);
--}
--
--static u32 qspi_readl(struct fsl_qspi *q, void __iomem *addr)
--{
--	if (q->big_endian)
--		return ioread32be(addr);
--	else
--		return ioread32(addr);
--}
--
--/*
-- * An IC bug makes us to re-arrange the 32-bit data.
-- * The following chips, such as IMX6SLX, have fixed this bug.
-- */
--static inline u32 fsl_qspi_endian_xchg(struct fsl_qspi *q, u32 a)
--{
--	return needs_swap_endian(q) ? __swab32(a) : a;
--}
--
--static inline void fsl_qspi_unlock_lut(struct fsl_qspi *q)
--{
--	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase + QUADSPI_LUTKEY);
--	qspi_writel(q, QUADSPI_LCKER_UNLOCK, q->iobase + QUADSPI_LCKCR);
--}
--
--static inline void fsl_qspi_lock_lut(struct fsl_qspi *q)
--{
--	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase + QUADSPI_LUTKEY);
--	qspi_writel(q, QUADSPI_LCKER_LOCK, q->iobase + QUADSPI_LCKCR);
--}
--
--static irqreturn_t fsl_qspi_irq_handler(int irq, void *dev_id)
--{
--	struct fsl_qspi *q = dev_id;
--	u32 reg;
--
--	/* clear interrupt */
--	reg = qspi_readl(q, q->iobase + QUADSPI_FR);
--	qspi_writel(q, reg, q->iobase + QUADSPI_FR);
--
--	if (reg & QUADSPI_FR_TFF_MASK)
--		complete(&q->c);
--
--	dev_dbg(q->dev, "QUADSPI_FR : 0x%.8x:0x%.8x\n", q->chip_base_addr, reg);
--	return IRQ_HANDLED;
--}
--
--static void fsl_qspi_init_lut(struct fsl_qspi *q)
--{
--	void __iomem *base = q->iobase;
--	int rxfifo = q->devtype_data->rxfifo;
--	u32 lut_base;
--	int i;
--
--	struct spi_nor *nor = &q->nor[0];
--	u8 addrlen = (nor->addr_width == 3) ? ADDR24BIT : ADDR32BIT;
--	u8 read_op = nor->read_opcode;
--	u8 read_dm = nor->read_dummy;
--
--	fsl_qspi_unlock_lut(q);
--
--	/* Clear all the LUT table */
--	for (i = 0; i < QUADSPI_LUT_NUM; i++)
--		qspi_writel(q, 0, base + QUADSPI_LUT_BASE + i * 4);
--
--	/* Read */
--	lut_base = SEQID_READ * 4;
--
--	qspi_writel(q, LUT0(CMD, PAD1, read_op) | LUT1(ADDR, PAD1, addrlen),
--			base + QUADSPI_LUT(lut_base));
--	qspi_writel(q, LUT0(DUMMY, PAD1, read_dm) |
--		    LUT1(FSL_READ, PAD4, rxfifo),
--			base + QUADSPI_LUT(lut_base + 1));
--
--	/* Write enable */
--	lut_base = SEQID_WREN * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_WREN),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Page Program */
--	lut_base = SEQID_PP * 4;
--
--	qspi_writel(q, LUT0(CMD, PAD1, nor->program_opcode) |
--		    LUT1(ADDR, PAD1, addrlen),
--			base + QUADSPI_LUT(lut_base));
--	qspi_writel(q, LUT0(FSL_WRITE, PAD1, 0),
--			base + QUADSPI_LUT(lut_base + 1));
--
--	/* Read Status */
--	lut_base = SEQID_RDSR * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_RDSR) |
--			LUT1(FSL_READ, PAD1, 0x1),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Erase a sector */
--	lut_base = SEQID_SE * 4;
--
--	qspi_writel(q, LUT0(CMD, PAD1, nor->erase_opcode) |
--		    LUT1(ADDR, PAD1, addrlen),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Erase the whole chip */
--	lut_base = SEQID_CHIP_ERASE * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_CHIP_ERASE),
--			base + QUADSPI_LUT(lut_base));
--
--	/* READ ID */
--	lut_base = SEQID_RDID * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_RDID) |
--			LUT1(FSL_READ, PAD1, 0x8),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Write Register */
--	lut_base = SEQID_WRSR * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_WRSR) |
--			LUT1(FSL_WRITE, PAD1, 0x2),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Read Configuration Register */
--	lut_base = SEQID_RDCR * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_RDCR) |
--			LUT1(FSL_READ, PAD1, 0x1),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Write disable */
--	lut_base = SEQID_WRDI * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_WRDI),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Enter 4 Byte Mode (Micron) */
--	lut_base = SEQID_EN4B * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_EN4B),
--			base + QUADSPI_LUT(lut_base));
--
--	/* Enter 4 Byte Mode (Spansion) */
--	lut_base = SEQID_BRWR * 4;
--	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_BRWR),
--			base + QUADSPI_LUT(lut_base));
--
--	fsl_qspi_lock_lut(q);
--}
--
--/* Get the SEQID for the command */
--static int fsl_qspi_get_seqid(struct fsl_qspi *q, u8 cmd)
--{
--	switch (cmd) {
--	case SPINOR_OP_READ_1_1_4:
--	case SPINOR_OP_READ_1_1_4_4B:
--		return SEQID_READ;
--	case SPINOR_OP_WREN:
--		return SEQID_WREN;
--	case SPINOR_OP_WRDI:
--		return SEQID_WRDI;
--	case SPINOR_OP_RDSR:
--		return SEQID_RDSR;
--	case SPINOR_OP_SE:
--		return SEQID_SE;
--	case SPINOR_OP_CHIP_ERASE:
--		return SEQID_CHIP_ERASE;
--	case SPINOR_OP_PP:
--		return SEQID_PP;
--	case SPINOR_OP_RDID:
--		return SEQID_RDID;
--	case SPINOR_OP_WRSR:
--		return SEQID_WRSR;
--	case SPINOR_OP_RDCR:
--		return SEQID_RDCR;
--	case SPINOR_OP_EN4B:
--		return SEQID_EN4B;
--	case SPINOR_OP_BRWR:
--		return SEQID_BRWR;
--	default:
--		if (cmd == q->nor[0].erase_opcode)
--			return SEQID_SE;
--		dev_err(q->dev, "Unsupported cmd 0x%.2x\n", cmd);
--		break;
--	}
--	return -EINVAL;
--}
--
--static int
--fsl_qspi_runcmd(struct fsl_qspi *q, u8 cmd, unsigned int addr, int len)
--{
--	void __iomem *base = q->iobase;
--	int seqid;
--	u32 reg, reg2;
--	int err;
--
--	init_completion(&q->c);
--	dev_dbg(q->dev, "to 0x%.8x:0x%.8x, len:%d, cmd:%.2x\n",
--			q->chip_base_addr, addr, len, cmd);
--
--	/* save the reg */
--	reg = qspi_readl(q, base + QUADSPI_MCR);
--
--	qspi_writel(q, q->memmap_phy + q->chip_base_addr + addr,
--			base + QUADSPI_SFAR);
--	qspi_writel(q, QUADSPI_RBCT_WMRK_MASK | QUADSPI_RBCT_RXBRD_USEIPS,
--			base + QUADSPI_RBCT);
--	qspi_writel(q, reg | QUADSPI_MCR_CLR_RXF_MASK, base + QUADSPI_MCR);
--
--	do {
--		reg2 = qspi_readl(q, base + QUADSPI_SR);
--		if (reg2 & (QUADSPI_SR_IP_ACC_MASK | QUADSPI_SR_AHB_ACC_MASK)) {
--			udelay(1);
--			dev_dbg(q->dev, "The controller is busy, 0x%x\n", reg2);
--			continue;
--		}
--		break;
--	} while (1);
--
--	/* trigger the LUT now */
--	seqid = fsl_qspi_get_seqid(q, cmd);
--	if (seqid < 0)
--		return seqid;
--
--	qspi_writel(q, (seqid << QUADSPI_IPCR_SEQID_SHIFT) | len,
--			base + QUADSPI_IPCR);
--
--	/* Wait for the interrupt. */
--	if (!wait_for_completion_timeout(&q->c, msecs_to_jiffies(1000))) {
--		dev_err(q->dev,
--			"cmd 0x%.2x timeout, addr@%.8x, FR:0x%.8x, SR:0x%.8x\n",
--			cmd, addr, qspi_readl(q, base + QUADSPI_FR),
--			qspi_readl(q, base + QUADSPI_SR));
--		err = -ETIMEDOUT;
--	} else {
--		err = 0;
--	}
--
--	/* restore the MCR */
--	qspi_writel(q, reg, base + QUADSPI_MCR);
--
--	return err;
--}
--
--/* Read out the data from the QUADSPI_RBDR buffer registers. */
--static void fsl_qspi_read_data(struct fsl_qspi *q, int len, u8 *rxbuf)
--{
--	u32 tmp;
--	int i = 0;
--
--	while (len > 0) {
--		tmp = qspi_readl(q, q->iobase + QUADSPI_RBDR + i * 4);
--		tmp = fsl_qspi_endian_xchg(q, tmp);
--		dev_dbg(q->dev, "chip addr:0x%.8x, rcv:0x%.8x\n",
--				q->chip_base_addr, tmp);
--
--		if (len >= 4) {
--			*((u32 *)rxbuf) = tmp;
--			rxbuf += 4;
--		} else {
--			memcpy(rxbuf, &tmp, len);
--			break;
--		}
--
--		len -= 4;
--		i++;
--	}
--}
--
--/*
-- * If we have changed the content of the flash by writing or erasing,
-- * we need to invalidate the AHB buffer. If we do not do so, we may read out
-- * the wrong data. The spec tells us reset the AHB domain and Serial Flash
-- * domain at the same time.
-- */
--static inline void fsl_qspi_invalid(struct fsl_qspi *q)
--{
--	u32 reg;
--
--	reg = qspi_readl(q, q->iobase + QUADSPI_MCR);
--	reg |= QUADSPI_MCR_SWRSTHD_MASK | QUADSPI_MCR_SWRSTSD_MASK;
--	qspi_writel(q, reg, q->iobase + QUADSPI_MCR);
--
--	/*
--	 * The minimum delay : 1 AHB + 2 SFCK clocks.
--	 * Delay 1 us is enough.
--	 */
--	udelay(1);
--
--	reg &= ~(QUADSPI_MCR_SWRSTHD_MASK | QUADSPI_MCR_SWRSTSD_MASK);
--	qspi_writel(q, reg, q->iobase + QUADSPI_MCR);
--}
--
--static ssize_t fsl_qspi_nor_write(struct fsl_qspi *q, struct spi_nor *nor,
--				u8 opcode, unsigned int to, u32 *txbuf,
--				unsigned count)
--{
--	int ret, i, j;
--	u32 tmp;
--
--	dev_dbg(q->dev, "to 0x%.8x:0x%.8x, len : %d\n",
--		q->chip_base_addr, to, count);
--
--	/* clear the TX FIFO. */
--	tmp = qspi_readl(q, q->iobase + QUADSPI_MCR);
--	qspi_writel(q, tmp | QUADSPI_MCR_CLR_TXF_MASK, q->iobase + QUADSPI_MCR);
--
--	/* fill the TX data to the FIFO */
--	for (j = 0, i = ((count + 3) / 4); j < i; j++) {
--		tmp = fsl_qspi_endian_xchg(q, *txbuf);
--		qspi_writel(q, tmp, q->iobase + QUADSPI_TBDR);
--		txbuf++;
--	}
--
--	/* fill the TXFIFO upto 16 bytes for i.MX7d */
--	if (needs_fill_txfifo(q))
--		for (; i < 4; i++)
--			qspi_writel(q, tmp, q->iobase + QUADSPI_TBDR);
--
--	/* Trigger it */
--	ret = fsl_qspi_runcmd(q, opcode, to, count);
--
--	if (ret == 0)
--		return count;
--
--	return ret;
--}
--
--static void fsl_qspi_set_map_addr(struct fsl_qspi *q)
--{
--	int nor_size = q->nor_size;
--	void __iomem *base = q->iobase;
--
--	qspi_writel(q, nor_size + q->memmap_phy, base + QUADSPI_SFA1AD);
--	qspi_writel(q, nor_size * 2 + q->memmap_phy, base + QUADSPI_SFA2AD);
--	qspi_writel(q, nor_size * 3 + q->memmap_phy, base + QUADSPI_SFB1AD);
--	qspi_writel(q, nor_size * 4 + q->memmap_phy, base + QUADSPI_SFB2AD);
--}
--
--/*
-- * There are two different ways to read out the data from the flash:
-- *  the "IP Command Read" and the "AHB Command Read".
-- *
-- * The IC guy suggests we use the "AHB Command Read" which is faster
-- * then the "IP Command Read". (What's more is that there is a bug in
-- * the "IP Command Read" in the Vybrid.)
-- *
-- * After we set up the registers for the "AHB Command Read", we can use
-- * the memcpy to read the data directly. A "missed" access to the buffer
-- * causes the controller to clear the buffer, and use the sequence pointed
-- * by the QUADSPI_BFGENCR[SEQID] to initiate a read from the flash.
-- */
--static int fsl_qspi_init_ahb_read(struct fsl_qspi *q)
--{
--	void __iomem *base = q->iobase;
--	int seqid;
--
--	/* AHB configuration for access buffer 0/1/2 .*/
--	qspi_writel(q, QUADSPI_BUFXCR_INVALID_MSTRID, base + QUADSPI_BUF0CR);
--	qspi_writel(q, QUADSPI_BUFXCR_INVALID_MSTRID, base + QUADSPI_BUF1CR);
--	qspi_writel(q, QUADSPI_BUFXCR_INVALID_MSTRID, base + QUADSPI_BUF2CR);
--	/*
--	 * Set ADATSZ with the maximum AHB buffer size to improve the
--	 * read performance.
--	 */
--	qspi_writel(q, QUADSPI_BUF3CR_ALLMST_MASK |
--			((q->devtype_data->ahb_buf_size / 8)
--			<< QUADSPI_BUF3CR_ADATSZ_SHIFT),
--			base + QUADSPI_BUF3CR);
--
--	/* We only use the buffer3 */
--	qspi_writel(q, 0, base + QUADSPI_BUF0IND);
--	qspi_writel(q, 0, base + QUADSPI_BUF1IND);
--	qspi_writel(q, 0, base + QUADSPI_BUF2IND);
--
--	/* Set the default lut sequence for AHB Read. */
--	seqid = fsl_qspi_get_seqid(q, q->nor[0].read_opcode);
--	if (seqid < 0)
--		return seqid;
--
--	qspi_writel(q, seqid << QUADSPI_BFGENCR_SEQID_SHIFT,
--		q->iobase + QUADSPI_BFGENCR);
--
--	return 0;
--}
--
--/* This function was used to prepare and enable QSPI clock */
--static int fsl_qspi_clk_prep_enable(struct fsl_qspi *q)
--{
--	int ret;
--
--	ret = clk_prepare_enable(q->clk_en);
--	if (ret)
--		return ret;
--
--	ret = clk_prepare_enable(q->clk);
--	if (ret) {
--		clk_disable_unprepare(q->clk_en);
--		return ret;
--	}
--
--	if (needs_wakeup_wait_mode(q))
--		pm_qos_add_request(&q->pm_qos_req, PM_QOS_CPU_DMA_LATENCY, 0);
--
--	return 0;
--}
--
--/* This function was used to disable and unprepare QSPI clock */
--static void fsl_qspi_clk_disable_unprep(struct fsl_qspi *q)
--{
--	if (needs_wakeup_wait_mode(q))
--		pm_qos_remove_request(&q->pm_qos_req);
--
--	clk_disable_unprepare(q->clk);
--	clk_disable_unprepare(q->clk_en);
--
--}
--
--/* We use this function to do some basic init for spi_nor_scan(). */
--static int fsl_qspi_nor_setup(struct fsl_qspi *q)
--{
--	void __iomem *base = q->iobase;
--	u32 reg;
--	int ret;
--
--	/* disable and unprepare clock to avoid glitch pass to controller */
--	fsl_qspi_clk_disable_unprep(q);
--
--	/* the default frequency, we will change it in the future. */
--	ret = clk_set_rate(q->clk, 66000000);
--	if (ret)
--		return ret;
--
--	ret = fsl_qspi_clk_prep_enable(q);
--	if (ret)
--		return ret;
--
--	/* Reset the module */
--	qspi_writel(q, QUADSPI_MCR_SWRSTSD_MASK | QUADSPI_MCR_SWRSTHD_MASK,
--		base + QUADSPI_MCR);
--	udelay(1);
--
--	/* Init the LUT table. */
--	fsl_qspi_init_lut(q);
--
--	/* Disable the module */
--	qspi_writel(q, QUADSPI_MCR_MDIS_MASK | QUADSPI_MCR_RESERVED_MASK,
--			base + QUADSPI_MCR);
--
--	reg = qspi_readl(q, base + QUADSPI_SMPR);
--	qspi_writel(q, reg & ~(QUADSPI_SMPR_FSDLY_MASK
--			| QUADSPI_SMPR_FSPHS_MASK
--			| QUADSPI_SMPR_HSENA_MASK
--			| QUADSPI_SMPR_DDRSMP_MASK), base + QUADSPI_SMPR);
--
--	/* Enable the module */
--	qspi_writel(q, QUADSPI_MCR_RESERVED_MASK | QUADSPI_MCR_END_CFG_MASK,
--			base + QUADSPI_MCR);
--
--	/* clear all interrupt status */
--	qspi_writel(q, 0xffffffff, q->iobase + QUADSPI_FR);
--
--	/* enable the interrupt */
--	qspi_writel(q, QUADSPI_RSER_TFIE, q->iobase + QUADSPI_RSER);
--
--	return 0;
--}
--
--static int fsl_qspi_nor_setup_last(struct fsl_qspi *q)
--{
--	unsigned long rate = q->clk_rate;
--	int ret;
--
--	if (needs_4x_clock(q))
--		rate *= 4;
--
--	/* disable and unprepare clock to avoid glitch pass to controller */
--	fsl_qspi_clk_disable_unprep(q);
--
--	ret = clk_set_rate(q->clk, rate);
--	if (ret)
--		return ret;
--
--	ret = fsl_qspi_clk_prep_enable(q);
--	if (ret)
--		return ret;
--
--	/* Init the LUT table again. */
--	fsl_qspi_init_lut(q);
--
--	/* Init for AHB read */
--	return fsl_qspi_init_ahb_read(q);
--}
--
--static const struct of_device_id fsl_qspi_dt_ids[] = {
--	{ .compatible = "fsl,vf610-qspi", .data = &vybrid_data, },
--	{ .compatible = "fsl,imx6sx-qspi", .data = &imx6sx_data, },
--	{ .compatible = "fsl,imx7d-qspi", .data = &imx7d_data, },
--	{ .compatible = "fsl,imx6ul-qspi", .data = &imx6ul_data, },
--	{ .compatible = "fsl,ls1021a-qspi", .data = (void *)&ls1021a_data, },
--	{ .compatible = "fsl,ls2080a-qspi", .data = &ls2080a_data, },
--	{ /* sentinel */ }
--};
--MODULE_DEVICE_TABLE(of, fsl_qspi_dt_ids);
--
--static void fsl_qspi_set_base_addr(struct fsl_qspi *q, struct spi_nor *nor)
--{
--	q->chip_base_addr = q->nor_size * (nor - q->nor);
--}
--
--static int fsl_qspi_read_reg(struct spi_nor *nor, u8 opcode, u8 *buf, int len)
--{
--	int ret;
--	struct fsl_qspi *q = nor->priv;
--
--	ret = fsl_qspi_runcmd(q, opcode, 0, len);
--	if (ret)
--		return ret;
--
--	fsl_qspi_read_data(q, len, buf);
--	return 0;
--}
--
--static int fsl_qspi_write_reg(struct spi_nor *nor, u8 opcode, u8 *buf, int len)
--{
--	struct fsl_qspi *q = nor->priv;
--	int ret;
--
--	if (!buf) {
--		ret = fsl_qspi_runcmd(q, opcode, 0, 1);
--		if (ret)
--			return ret;
--
--		if (opcode == SPINOR_OP_CHIP_ERASE)
--			fsl_qspi_invalid(q);
--
--	} else if (len > 0) {
--		ret = fsl_qspi_nor_write(q, nor, opcode, 0,
--					(u32 *)buf, len);
--		if (ret > 0)
--			return 0;
--	} else {
--		dev_err(q->dev, "invalid cmd %d\n", opcode);
--		ret = -EINVAL;
--	}
--
--	return ret;
--}
--
--static ssize_t fsl_qspi_write(struct spi_nor *nor, loff_t to,
--			      size_t len, const u_char *buf)
--{
--	struct fsl_qspi *q = nor->priv;
--	ssize_t ret = fsl_qspi_nor_write(q, nor, nor->program_opcode, to,
--					 (u32 *)buf, len);
--
--	/* invalid the data in the AHB buffer. */
--	fsl_qspi_invalid(q);
--	return ret;
--}
--
--static ssize_t fsl_qspi_read(struct spi_nor *nor, loff_t from,
--			     size_t len, u_char *buf)
--{
--	struct fsl_qspi *q = nor->priv;
--	u8 cmd = nor->read_opcode;
--
--	/* if necessary,ioremap buffer before AHB read, */
--	if (!q->ahb_addr) {
--		q->memmap_offs = q->chip_base_addr + from;
--		q->memmap_len = len > QUADSPI_MIN_IOMAP ? len : QUADSPI_MIN_IOMAP;
--
--		q->ahb_addr = ioremap_nocache(
--				q->memmap_phy + q->memmap_offs,
--				q->memmap_len);
--		if (!q->ahb_addr) {
--			dev_err(q->dev, "ioremap failed\n");
--			return -ENOMEM;
--		}
--	/* ioremap if the data requested is out of range */
--	} else if (q->chip_base_addr + from < q->memmap_offs
--			|| q->chip_base_addr + from + len >
--			q->memmap_offs + q->memmap_len) {
--		iounmap(q->ahb_addr);
--
--		q->memmap_offs = q->chip_base_addr + from;
--		q->memmap_len = len > QUADSPI_MIN_IOMAP ? len : QUADSPI_MIN_IOMAP;
--		q->ahb_addr = ioremap_nocache(
--				q->memmap_phy + q->memmap_offs,
--				q->memmap_len);
--		if (!q->ahb_addr) {
--			dev_err(q->dev, "ioremap failed\n");
--			return -ENOMEM;
--		}
--	}
--
--	dev_dbg(q->dev, "cmd [%x],read from %p, len:%zd\n",
--		cmd, q->ahb_addr + q->chip_base_addr + from - q->memmap_offs,
--		len);
--
--	/* Read out the data directly from the AHB buffer.*/
--	memcpy(buf, q->ahb_addr + q->chip_base_addr + from - q->memmap_offs,
--		len);
--
--	return len;
--}
--
--static int fsl_qspi_erase(struct spi_nor *nor, loff_t offs)
--{
--	struct fsl_qspi *q = nor->priv;
--	int ret;
--
--	dev_dbg(nor->dev, "%dKiB at 0x%08x:0x%08x\n",
--		nor->mtd.erasesize / 1024, q->chip_base_addr, (u32)offs);
--
--	ret = fsl_qspi_runcmd(q, nor->erase_opcode, offs, 0);
--	if (ret)
--		return ret;
--
--	fsl_qspi_invalid(q);
--	return 0;
--}
--
--static int fsl_qspi_prep(struct spi_nor *nor, enum spi_nor_ops ops)
--{
--	struct fsl_qspi *q = nor->priv;
--	int ret;
--
--	mutex_lock(&q->lock);
--
--	ret = fsl_qspi_clk_prep_enable(q);
--	if (ret)
--		goto err_mutex;
--
--	fsl_qspi_set_base_addr(q, nor);
--	return 0;
--
--err_mutex:
--	mutex_unlock(&q->lock);
--	return ret;
--}
--
--static void fsl_qspi_unprep(struct spi_nor *nor, enum spi_nor_ops ops)
--{
--	struct fsl_qspi *q = nor->priv;
--
--	fsl_qspi_clk_disable_unprep(q);
--	mutex_unlock(&q->lock);
--}
--
--static int fsl_qspi_probe(struct platform_device *pdev)
--{
--	const struct spi_nor_hwcaps hwcaps = {
--		.mask = SNOR_HWCAPS_READ_1_1_4 |
--			SNOR_HWCAPS_PP,
--	};
--	struct device_node *np = pdev->dev.of_node;
--	struct device *dev = &pdev->dev;
--	struct fsl_qspi *q;
--	struct resource *res;
--	struct spi_nor *nor;
--	struct mtd_info *mtd;
--	int ret, i = 0;
--
--	q = devm_kzalloc(dev, sizeof(*q), GFP_KERNEL);
--	if (!q)
--		return -ENOMEM;
--
--	q->nor_num = of_get_child_count(dev->of_node);
--	if (!q->nor_num || q->nor_num > FSL_QSPI_MAX_CHIP)
--		return -ENODEV;
--
--	q->dev = dev;
--	q->devtype_data = of_device_get_match_data(dev);
--	if (!q->devtype_data)
--		return -ENODEV;
--	platform_set_drvdata(pdev, q);
--
--	/* find the resources */
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "QuadSPI");
--	q->iobase = devm_ioremap_resource(dev, res);
--	if (IS_ERR(q->iobase))
--		return PTR_ERR(q->iobase);
--
--	q->big_endian = of_property_read_bool(np, "big-endian");
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
--					"QuadSPI-memory");
--	if (!devm_request_mem_region(dev, res->start, resource_size(res),
--				     res->name)) {
--		dev_err(dev, "can't request region for resource %pR\n", res);
--		return -EBUSY;
--	}
--
--	q->memmap_phy = res->start;
--
--	/* find the clocks */
--	q->clk_en = devm_clk_get(dev, "qspi_en");
--	if (IS_ERR(q->clk_en))
--		return PTR_ERR(q->clk_en);
--
--	q->clk = devm_clk_get(dev, "qspi");
--	if (IS_ERR(q->clk))
--		return PTR_ERR(q->clk);
--
--	ret = fsl_qspi_clk_prep_enable(q);
--	if (ret) {
--		dev_err(dev, "can not enable the clock\n");
--		goto clk_failed;
--	}
--
--	/* find the irq */
--	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(dev, "failed to get the irq: %d\n", ret);
--		goto irq_failed;
--	}
--
--	ret = devm_request_irq(dev, ret,
--			fsl_qspi_irq_handler, 0, pdev->name, q);
--	if (ret) {
--		dev_err(dev, "failed to request irq: %d\n", ret);
--		goto irq_failed;
--	}
--
--	ret = fsl_qspi_nor_setup(q);
--	if (ret)
--		goto irq_failed;
--
--	if (of_get_property(np, "fsl,qspi-has-second-chip", NULL))
--		q->has_second_chip = true;
--
--	mutex_init(&q->lock);
--
--	/* iterate the subnodes. */
--	for_each_available_child_of_node(dev->of_node, np) {
--		/* skip the holes */
--		if (!q->has_second_chip)
--			i *= 2;
--
--		nor = &q->nor[i];
--		mtd = &nor->mtd;
--
--		nor->dev = dev;
--		spi_nor_set_flash_node(nor, np);
--		nor->priv = q;
--
--		if (q->nor_num > 1 && !mtd->name) {
--			int spiflash_idx;
--
--			ret = of_property_read_u32(np, "reg", &spiflash_idx);
--			if (!ret) {
--				mtd->name = devm_kasprintf(dev, GFP_KERNEL,
--							   "%s-%d",
--							   dev_name(dev),
--							   spiflash_idx);
--				if (!mtd->name) {
--					ret = -ENOMEM;
--					goto mutex_failed;
--				}
--			} else {
--				dev_warn(dev, "reg property is missing\n");
--			}
--		}
--
--		/* fill the hooks */
--		nor->read_reg = fsl_qspi_read_reg;
--		nor->write_reg = fsl_qspi_write_reg;
--		nor->read = fsl_qspi_read;
--		nor->write = fsl_qspi_write;
--		nor->erase = fsl_qspi_erase;
--
--		nor->prepare = fsl_qspi_prep;
--		nor->unprepare = fsl_qspi_unprep;
--
--		ret = of_property_read_u32(np, "spi-max-frequency",
--				&q->clk_rate);
--		if (ret < 0)
--			goto mutex_failed;
--
--		/* set the chip address for READID */
--		fsl_qspi_set_base_addr(q, nor);
--
--		ret = spi_nor_scan(nor, NULL, &hwcaps);
--		if (ret)
--			goto mutex_failed;
--
--		ret = mtd_device_register(mtd, NULL, 0);
--		if (ret)
--			goto mutex_failed;
--
--		/* Set the correct NOR size now. */
--		if (q->nor_size == 0) {
--			q->nor_size = mtd->size;
--
--			/* Map the SPI NOR to accessiable address */
--			fsl_qspi_set_map_addr(q);
--		}
--
--		/*
--		 * The TX FIFO is 64 bytes in the Vybrid, but the Page Program
--		 * may writes 265 bytes per time. The write is working in the
--		 * unit of the TX FIFO, not in the unit of the SPI NOR's page
--		 * size.
--		 *
--		 * So shrink the spi_nor->page_size if it is larger then the
--		 * TX FIFO.
--		 */
--		if (nor->page_size > q->devtype_data->txfifo)
--			nor->page_size = q->devtype_data->txfifo;
--
--		i++;
--	}
--
--	/* finish the rest init. */
--	ret = fsl_qspi_nor_setup_last(q);
--	if (ret)
--		goto last_init_failed;
--
--	fsl_qspi_clk_disable_unprep(q);
--	return 0;
--
--last_init_failed:
--	for (i = 0; i < q->nor_num; i++) {
--		/* skip the holes */
--		if (!q->has_second_chip)
--			i *= 2;
--		mtd_device_unregister(&q->nor[i].mtd);
--	}
--mutex_failed:
--	mutex_destroy(&q->lock);
--irq_failed:
--	fsl_qspi_clk_disable_unprep(q);
--clk_failed:
--	dev_err(dev, "Freescale QuadSPI probe failed\n");
--	return ret;
--}
--
--static int fsl_qspi_remove(struct platform_device *pdev)
--{
--	struct fsl_qspi *q = platform_get_drvdata(pdev);
--	int i;
--
--	for (i = 0; i < q->nor_num; i++) {
--		/* skip the holes */
--		if (!q->has_second_chip)
--			i *= 2;
--		mtd_device_unregister(&q->nor[i].mtd);
--	}
--
--	/* disable the hardware */
--	qspi_writel(q, QUADSPI_MCR_MDIS_MASK, q->iobase + QUADSPI_MCR);
--	qspi_writel(q, 0x0, q->iobase + QUADSPI_RSER);
--
--	mutex_destroy(&q->lock);
--
--	if (q->ahb_addr)
--		iounmap(q->ahb_addr);
--
--	return 0;
--}
--
--static int fsl_qspi_suspend(struct platform_device *pdev, pm_message_t state)
--{
--	return 0;
--}
--
--static int fsl_qspi_resume(struct platform_device *pdev)
--{
--	int ret;
--	struct fsl_qspi *q = platform_get_drvdata(pdev);
--
--	ret = fsl_qspi_clk_prep_enable(q);
--	if (ret)
--		return ret;
--
--	fsl_qspi_nor_setup(q);
--	fsl_qspi_set_map_addr(q);
--	fsl_qspi_nor_setup_last(q);
--
--	fsl_qspi_clk_disable_unprep(q);
--
--	return 0;
--}
--
--static struct platform_driver fsl_qspi_driver = {
--	.driver = {
--		.name	= "fsl-quadspi",
--		.of_match_table = fsl_qspi_dt_ids,
--	},
--	.probe          = fsl_qspi_probe,
--	.remove		= fsl_qspi_remove,
--	.suspend	= fsl_qspi_suspend,
--	.resume		= fsl_qspi_resume,
--};
--module_platform_driver(fsl_qspi_driver);
--
--MODULE_DESCRIPTION("Freescale QuadSPI Controller Driver");
--MODULE_AUTHOR("Freescale Semiconductor Inc.");
--MODULE_LICENSE("GPL v2");
+V3:
+- Change the inline functions to a single line macro or just remove the
+  decoration word - inline
+- Order local variables from longest to shortest line in the functions
+- Change mac_cb inline function to lrw_get_mac_cb macro
+
+V4:
+- Change lrw_get_mac_cb macro to an inline function
+- Use pr_fmt() instead of defining new printing log macros
+- Fix by coding style report from scripts/checkpatch.pl
+
+ include/linux/lora/lorawan_netdev.h |  52 +++
+ net/lorawan/Kconfig                 |  10 +
+ net/lorawan/Makefile                |   2 +
+ net/lorawan/socket.c                | 686 ++++++++++++++++++++++++++++
+ 4 files changed, 750 insertions(+)
+ create mode 100644 include/linux/lora/lorawan_netdev.h
+ create mode 100644 net/lorawan/Kconfig
+ create mode 100644 net/lorawan/Makefile
+ create mode 100644 net/lorawan/socket.c
+
+diff --git a/include/linux/lora/lorawan_netdev.h b/include/linux/lora/lorawan_netdev.h
+new file mode 100644
+index 000000000000..5bffb5164f95
+--- /dev/null
++++ b/include/linux/lora/lorawan_netdev.h
+@@ -0,0 +1,52 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause */
++/*-
++ * LoRaWAN stack related definitions
++ *
++ * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
++ *
++ */
++
++#ifndef __LORAWAN_NET_DEVICE_H__
++#define __LORAWAN_NET_DEVICE_H__
++
++enum {
++	LRW_ADDR_APPEUI,
++	LRW_ADDR_DEVEUI,
++	LRW_ADDR_DEVADDR,
++};
++
++struct lrw_addr_in {
++	int addr_type;
++	union {
++		u64 app_eui;
++		u64 dev_eui;
++		u32 devaddr;
++	};
++};
++
++struct sockaddr_lorawan {
++	sa_family_t family; /* AF_LORAWAN */
++	struct lrw_addr_in addr_in;
++};
++
++/**
++ * lrw_mac_cb - This structure holds the control buffer (cb) of sk_buff
++ *
++ * @devaddr:	the LoRaWAN device address of this LoRaWAN hardware
++ */
++struct lrw_mac_cb {
++	u32 devaddr;
++};
++
++/**
++ * lrw_get_mac_cb - Get the LoRaWAN MAC control buffer of the sk_buff
++ * @skb:	the exchanging sk_buff
++ *
++ * Return:	the pointer of LoRaWAN MAC control buffer
++ */
++static inline struct lrw_mac_cb *lrw_get_mac_cb(struct sk_buff *skb)
++{
++	return (struct lrw_mac_cb *)skb->cb;
++}
++
++#endif
+diff --git a/net/lorawan/Kconfig b/net/lorawan/Kconfig
+new file mode 100644
+index 000000000000..bf6c9b77573b
+--- /dev/null
++++ b/net/lorawan/Kconfig
+@@ -0,0 +1,10 @@
++config LORAWAN
++	tristate "LoRaWAN Network support"
++	help
++	  LoRaWAN defines low data rate, low power and long range wireless
++	  wide area networks. It was designed to organize networks of automation
++	  devices, such as sensors, switches and actuators. It can operate
++	  multiple kilometers wide.
++
++	  Say Y here to compile LoRaWAN support into the kernel or say M to
++	  compile it as a module.
+diff --git a/net/lorawan/Makefile b/net/lorawan/Makefile
+new file mode 100644
+index 000000000000..8c923ca6541a
+--- /dev/null
++++ b/net/lorawan/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_LORAWAN)	+= lorawan.o
++lorawan-objs		:= socket.o
+diff --git a/net/lorawan/socket.c b/net/lorawan/socket.c
+new file mode 100644
+index 000000000000..c1981ef5b067
+--- /dev/null
++++ b/net/lorawan/socket.c
+@@ -0,0 +1,686 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause
++/*-
++ * LoRaWAN stack related definitions
++ *
++ * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
++ *
++ */
++
++#define	LORAWAN_MODULE_NAME	"lorawan"
++
++#define	pr_fmt(fmt)		LORAWAN_MODULE_NAME ": " fmt
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/list.h>
++#include <linux/net.h>
++#include <linux/if_arp.h>
++#include <linux/termios.h>		/* For TIOCOUTQ/INQ */
++#include <net/sock.h>
++#include <linux/lora/lorawan_netdev.h>
++
++/**
++ * dgram_sock - This structure holds the states of Datagram socket
++ *
++ * @sk:			network layer representation of the socket
++ *			sk must be the first member of dgram_sock
++ * @src_devaddr:	the LoRaWAN device address for this connection
++ * @bound:		this socket is bound or not
++ * @connected:		this socket is connected to the destination or not
++ * @want_ack:		this socket needs to ack for the connection or not
++ */
++struct dgram_sock {
++	struct sock sk;
++	u32 src_devaddr;
++
++	u8 bound:1;
++	u8 connected:1;
++};
++
++static HLIST_HEAD(dgram_head);
++static DEFINE_RWLOCK(dgram_lock);
++
++static struct dgram_sock *
++dgram_sk(const struct sock *sk)
++{
++	return container_of(sk, struct dgram_sock, sk);
++}
++
++static struct net_device *
++lrw_get_dev_by_addr(struct net *net, u32 devaddr)
++{
++	__be32 be_addr = cpu_to_be32(devaddr);
++	struct net_device *ndev = NULL;
++
++	rcu_read_lock();
++	ndev = dev_getbyhwaddr_rcu(net, ARPHRD_LORAWAN, (char *)&be_addr);
++	if (ndev)
++		dev_hold(ndev);
++	rcu_read_unlock();
++
++	return ndev;
++}
++
++static int
++dgram_init(struct sock *sk)
++{
++	return 0;
++}
++
++static void
++dgram_close(struct sock *sk, long timeout)
++{
++	sk_common_release(sk);
++}
++
++static int
++dgram_bind(struct sock *sk, struct sockaddr *uaddr, int len)
++{
++	struct sockaddr_lorawan *addr = (struct sockaddr_lorawan *)uaddr;
++	struct dgram_sock *ro = dgram_sk(sk);
++	struct net_device *ndev;
++	int ret;
++
++	lock_sock(sk);
++	ro->bound = 0;
++
++	ret = -EINVAL;
++	if (len < sizeof(*addr))
++		goto dgram_bind_end;
++
++	if (addr->family != AF_LORAWAN)
++		goto dgram_bind_end;
++
++	if (addr->addr_in.addr_type != LRW_ADDR_DEVADDR)
++		goto dgram_bind_end;
++
++	pr_debug("%s: bind address %X\n", __func__, addr->addr_in.devaddr);
++	ndev = lrw_get_dev_by_addr(sock_net(sk), addr->addr_in.devaddr);
++	if (!ndev) {
++		ret = -ENODEV;
++		goto dgram_bind_end;
++	}
++	netdev_dbg(ndev, "%s: get ndev\n", __func__);
++
++	if (ndev->type != ARPHRD_LORAWAN) {
++		ret = -ENODEV;
++		goto dgram_bind_end;
++	}
++
++	ro->src_devaddr = addr->addr_in.devaddr;
++	ro->bound = 1;
++	ret = 0;
++	dev_put(ndev);
++	pr_debug("%s: bound address %X\n", __func__, ro->src_devaddr);
++
++dgram_bind_end:
++	release_sock(sk);
++	return ret;
++}
++
++static int
++lrw_dev_hard_header(struct sk_buff *skb, struct net_device *ndev,
++		    const u32 src_devaddr, size_t len)
++{
++	/* TODO: Prepare the LoRaWAN sending header here */
++	return 0;
++}
++
++static int
++dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
++{
++	struct dgram_sock *ro = dgram_sk(sk);
++	struct net_device *ndev;
++	struct sk_buff *skb;
++	size_t hlen;
++	size_t tlen;
++	int ret;
++
++	pr_debug("%s: going to send %zu bytes", __func__, size);
++	if (msg->msg_flags & MSG_OOB) {
++		pr_debug("msg->msg_flags = 0x%x\n", msg->msg_flags);
++		return -EOPNOTSUPP;
++	}
++
++	pr_debug("%s: check msg_name\n", __func__);
++	if (!ro->connected && !msg->msg_name)
++		return -EDESTADDRREQ;
++	else if (ro->connected && msg->msg_name)
++		return -EISCONN;
++
++	pr_debug("%s: check bound\n", __func__);
++	if (!ro->bound)
++		ndev = dev_getfirstbyhwtype(sock_net(sk), ARPHRD_LORAWAN);
++	else
++		ndev = lrw_get_dev_by_addr(sock_net(sk), ro->src_devaddr);
++
++	if (!ndev) {
++		pr_debug("no dev\n");
++		ret = -ENXIO;
++		goto dgram_sendmsg_end;
++	}
++
++	if (size > ndev->mtu) {
++		netdev_dbg(ndev, "size = %zu, mtu = %u\n", size, ndev->mtu);
++		ret = -EMSGSIZE;
++		goto dgram_sendmsg_end;
++	}
++
++	netdev_dbg(ndev, "%s: create skb\n", __func__);
++	hlen = LL_RESERVED_SPACE(ndev);
++	tlen = ndev->needed_tailroom;
++	skb = sock_alloc_send_skb(sk, hlen + tlen + size,
++				  msg->msg_flags & MSG_DONTWAIT,
++				  &ret);
++
++	if (!skb)
++		goto dgram_sendmsg_no_skb;
++
++	skb_reserve(skb, hlen);
++	skb_reset_network_header(skb);
++
++	ret = lrw_dev_hard_header(skb, ndev, 0, size);
++	if (ret < 0)
++		goto dgram_sendmsg_no_skb;
++
++	ret = memcpy_from_msg(skb_put(skb, size), msg, size);
++	if (ret > 0)
++		goto dgram_sendmsg_err_skb;
++
++	skb->dev = ndev;
++	skb->protocol = htons(ETH_P_LORAWAN);
++
++	netdev_dbg(ndev, "%s: push skb to xmit queue\n", __func__);
++	ret = dev_queue_xmit(skb);
++	if (ret > 0)
++		ret = net_xmit_errno(ret);
++	netdev_dbg(ndev, "%s: pushed skb to xmit queue with ret=%d\n",
++		   __func__, ret);
++	dev_put(ndev);
++
++	return ret ?: size;
++
++dgram_sendmsg_err_skb:
++	kfree_skb(skb);
++dgram_sendmsg_no_skb:
++	dev_put(ndev);
++
++dgram_sendmsg_end:
++	return ret;
++}
++
++static int
++dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
++	      int noblock, int flags, int *addr_len)
++{
++	DECLARE_SOCKADDR(struct sockaddr_lorawan *, saddr, msg->msg_name);
++	struct sk_buff *skb;
++	size_t copied = 0;
++	int err;
++
++	skb = skb_recv_datagram(sk, flags, noblock, &err);
++	if (!skb)
++		goto dgram_recvmsg_end;
++
++	copied = skb->len;
++	if (len < copied) {
++		msg->msg_flags |= MSG_TRUNC;
++		copied = len;
++	}
++
++	err = skb_copy_datagram_msg(skb, 0, msg, copied);
++	if (err)
++		goto dgram_recvmsg_done;
++
++	sock_recv_ts_and_drops(msg, sk, skb);
++	if (saddr) {
++		memset(saddr, 0, sizeof(*saddr));
++		saddr->family = AF_LORAWAN;
++		saddr->addr_in.devaddr = lrw_get_mac_cb(skb)->devaddr;
++		*addr_len = sizeof(*saddr);
++	}
++
++	if (flags & MSG_TRUNC)
++		copied = skb->len;
++
++dgram_recvmsg_done:
++	skb_free_datagram(sk, skb);
++
++dgram_recvmsg_end:
++	if (err)
++		return err;
++	return copied;
++}
++
++static int
++dgram_hash(struct sock *sk)
++{
++	pr_debug("%s\n", __func__);
++	write_lock_bh(&dgram_lock);
++	sk_add_node(sk, &dgram_head);
++	sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
++	write_unlock_bh(&dgram_lock);
++
++	return 0;
++}
++
++static void
++dgram_unhash(struct sock *sk)
++{
++	pr_debug("%s\n", __func__);
++	write_lock_bh(&dgram_lock);
++	if (sk_del_node_init(sk))
++		sock_prot_inuse_add(sock_net(sk), sk->sk_prot, -1);
++	write_unlock_bh(&dgram_lock);
++}
++
++static int
++dgram_connect(struct sock *sk, struct sockaddr *uaddr, int len)
++{
++	struct dgram_sock *ro = dgram_sk(sk);
++
++	/* Nodes of LoRaWAN send data to a gateway only, then data is received
++	 * and transferred to servers with the gateway's policy.
++	 * So, the destination address is not used by nodes.
++	 */
++	lock_sock(sk);
++	ro->connected = 1;
++	release_sock(sk);
++
++	return 0;
++}
++
++static int
++dgram_disconnect(struct sock *sk, int flags)
++{
++	struct dgram_sock *ro = dgram_sk(sk);
++
++	lock_sock(sk);
++	ro->connected = 0;
++	release_sock(sk);
++
++	return 0;
++}
++
++static int
++dgram_ioctl(struct sock *sk, int cmd, unsigned long arg)
++{
++	struct net_device *ndev = sk->sk_dst_cache->dev;
++	struct sk_buff *skb;
++	int amount;
++	int err;
++
++	netdev_dbg(ndev, "%s: ioctl file (cmd=0x%X)\n", __func__, cmd);
++	switch (cmd) {
++	case SIOCOUTQ:
++		amount = sk_wmem_alloc_get(sk);
++		err = put_user(amount, (int __user *)arg);
++		break;
++	case SIOCINQ:
++		amount = 0;
++		spin_lock_bh(&sk->sk_receive_queue.lock);
++		skb = skb_peek(&sk->sk_receive_queue);
++		if (skb) {
++			/* We will only return the amount of this packet
++			 * since that is all that will be read.
++			 */
++			amount = skb->len;
++		}
++		spin_unlock_bh(&sk->sk_receive_queue.lock);
++		err = put_user(amount, (int __user *)arg);
++		break;
++	default:
++		err = -ENOIOCTLCMD;
++	}
++
++	return err;
++}
++
++static int
++dgram_getsockopt(struct sock *sk, int level, int optname,
++		 char __user *optval, int __user *optlen)
++{
++	int val, len;
++
++	if (level != SOL_LORAWAN)
++		return -EOPNOTSUPP;
++
++	if (get_user(len, optlen))
++		return -EFAULT;
++
++	len = min_t(unsigned int, len, sizeof(int));
++
++	switch (optname) {
++	default:
++		return -ENOPROTOOPT;
++	}
++
++	if (put_user(len, optlen))
++		return -EFAULT;
++
++	if (copy_to_user(optval, &val, len))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int
++dgram_setsockopt(struct sock *sk, int level, int optname,
++		 char __user *optval, unsigned int optlen)
++{
++	int val;
++	int err;
++
++	err = 0;
++
++	if (optlen < sizeof(int))
++		return -EINVAL;
++
++	if (get_user(val, (int __user *)optval))
++		return -EFAULT;
++
++	lock_sock(sk);
++
++	switch (optname) {
++	default:
++		err = -ENOPROTOOPT;
++		break;
++	}
++
++	release_sock(sk);
++
++	return err;
++}
++
++static struct proto lrw_dgram_prot = {
++	.name		= "LoRaWAN",
++	.owner		= THIS_MODULE,
++	.obj_size	= sizeof(struct dgram_sock),
++	.init		= dgram_init,
++	.close		= dgram_close,
++	.bind		= dgram_bind,
++	.sendmsg	= dgram_sendmsg,
++	.recvmsg	= dgram_recvmsg,
++	.hash		= dgram_hash,
++	.unhash		= dgram_unhash,
++	.connect	= dgram_connect,
++	.disconnect	= dgram_disconnect,
++	.ioctl		= dgram_ioctl,
++	.getsockopt	= dgram_getsockopt,
++	.setsockopt	= dgram_setsockopt,
++};
++
++static int
++lrw_sock_release(struct socket *sock)
++{
++	struct sock *sk = sock->sk;
++
++	if (sk) {
++		sock->sk = NULL;
++		sk->sk_prot->close(sk, 0);
++	}
++
++	return 0;
++}
++
++static int
++lrw_sock_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
++{
++	struct sockaddr_lorawan *addr = (struct sockaddr_lorawan *)uaddr;
++	struct sock *sk = sock->sk;
++
++	pr_debug("%s: bind address %X\n", __func__, addr->addr_in.devaddr);
++	if (sk->sk_prot->bind)
++		return sk->sk_prot->bind(sk, uaddr, addr_len);
++
++	return sock_no_bind(sock, uaddr, addr_len);
++}
++
++static int
++lrw_sock_connect(struct socket *sock, struct sockaddr *uaddr,
++		 int addr_len, int flags)
++{
++	struct sock *sk = sock->sk;
++
++	if (addr_len < sizeof(uaddr->sa_family))
++		return -EINVAL;
++
++	return sk->sk_prot->connect(sk, uaddr, addr_len);
++}
++
++static int
++lrw_ndev_ioctl(struct sock *sk, struct ifreq __user *arg, unsigned int cmd)
++{
++	struct net_device *ndev;
++	struct ifreq ifr;
++	int ret;
++
++	pr_debug("%s: cmd %ud\n", __func__, cmd);
++	ret = -ENOIOCTLCMD;
++
++	if (copy_from_user(&ifr, arg, sizeof(struct ifreq)))
++		return -EFAULT;
++
++	ifr.ifr_name[IFNAMSIZ - 1] = 0;
++
++	dev_load(sock_net(sk), ifr.ifr_name);
++	ndev = dev_get_by_name(sock_net(sk), ifr.ifr_name);
++
++	netdev_dbg(ndev, "%s: cmd %ud\n", __func__, cmd);
++	if (!ndev)
++		return -ENODEV;
++
++	if (ndev->type == ARPHRD_LORAWAN && ndev->netdev_ops->ndo_do_ioctl)
++		ret = ndev->netdev_ops->ndo_do_ioctl(ndev, &ifr, cmd);
++
++	if (!ret && copy_to_user(arg, &ifr, sizeof(struct ifreq)))
++		ret = -EFAULT;
++	dev_put(ndev);
++
++	return ret;
++}
++
++static int
++lrw_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
++{
++	struct sock *sk = sock->sk;
++
++	pr_debug("%s: cmd %ud\n", __func__, cmd);
++	switch (cmd) {
++	case SIOCGSTAMP:
++		return sock_get_timestamp(sk, (struct timeval __user *)arg);
++	case SIOCGSTAMPNS:
++		return sock_get_timestampns(sk, (struct timespec __user *)arg);
++	case SIOCOUTQ:
++	case SIOCINQ:
++		if (!sk->sk_prot->ioctl)
++			return -ENOIOCTLCMD;
++		return sk->sk_prot->ioctl(sk, cmd, arg);
++	default:
++		return lrw_ndev_ioctl(sk, (struct ifreq __user *)arg, cmd);
++	}
++}
++
++static int
++lrw_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
++{
++	struct sock *sk = sock->sk;
++
++	pr_debug("%s: going to send %zu bytes\n", __func__, len);
++	return sk->sk_prot->sendmsg(sk, msg, len);
++}
++
++static const struct proto_ops lrw_dgram_ops = {
++	.family		= PF_LORAWAN,
++	.owner		= THIS_MODULE,
++	.release	= lrw_sock_release,
++	.bind		= lrw_sock_bind,
++	.connect	= lrw_sock_connect,
++	.socketpair	= sock_no_socketpair,
++	.accept		= sock_no_accept,
++	.getname	= sock_no_getname,
++	.poll		= datagram_poll,
++	.ioctl		= lrw_sock_ioctl,
++	.listen		= sock_no_listen,
++	.shutdown	= sock_no_shutdown,
++	.setsockopt	= sock_common_setsockopt,
++	.getsockopt	= sock_common_getsockopt,
++	.sendmsg	= lrw_sock_sendmsg,
++	.recvmsg	= sock_common_recvmsg,
++	.mmap		= sock_no_mmap,
++	.sendpage	= sock_no_sendpage,
++};
++
++static int
++lorawan_creat(struct net *net, struct socket *sock, int protocol, int kern)
++{
++	struct sock *sk;
++	int ret;
++
++	if (!net_eq(net, &init_net))
++		return -EAFNOSUPPORT;
++
++	if (sock->type != SOCK_DGRAM)
++		return -EAFNOSUPPORT;
++
++	/* Allocates enough memory for dgram_sock whose first member is sk */
++	sk = sk_alloc(net, PF_LORAWAN, GFP_KERNEL, &lrw_dgram_prot, kern);
++	if (!sk)
++		return -ENOMEM;
++
++	sock->ops = &lrw_dgram_ops;
++	sock_init_data(sock, sk);
++	sk->sk_family = PF_LORAWAN;
++	sock_set_flag(sk, SOCK_ZAPPED);
++
++	if (sk->sk_prot->hash) {
++		ret = sk->sk_prot->hash(sk);
++		if (ret) {
++			sk_common_release(sk);
++			goto lorawan_creat_end;
++		}
++	}
++
++	if (sk->sk_prot->init) {
++		ret = sk->sk_prot->init(sk);
++		if (ret)
++			sk_common_release(sk);
++	}
++
++lorawan_creat_end:
++	return ret;
++}
++
++static const struct net_proto_family lorawan_family_ops = {
++	.owner		= THIS_MODULE,
++	.family		= PF_LORAWAN,
++	.create		= lorawan_creat,
++};
++
++static int
++lrw_dgram_deliver(struct net_device *ndev, struct sk_buff *skb)
++{
++	struct dgram_sock *ro;
++	struct sock *sk;
++	bool found;
++	int ret;
++
++	ret = NET_RX_SUCCESS;
++	found = false;
++
++	read_lock(&dgram_lock);
++	sk_for_each(sk, &dgram_head) {
++		ro = dgram_sk(sk);
++		if (cpu_to_le32(ro->src_devaddr) == *(__le32 *)ndev->dev_addr) {
++			found = true;
++			break;
++		}
++	}
++	read_unlock(&dgram_lock);
++
++	if (!found)
++		goto lrw_dgram_deliver_err;
++
++	skb = skb_share_check(skb, GFP_ATOMIC);
++	if (!skb)
++		return NET_RX_DROP;
++
++	if (sock_queue_rcv_skb(sk, skb) < 0)
++		goto lrw_dgram_deliver_err;
++
++	return ret;
++
++lrw_dgram_deliver_err:
++	kfree_skb(skb);
++	ret = NET_RX_DROP;
++	return ret;
++}
++
++static int
++lorawan_rcv(struct sk_buff *skb, struct net_device *ndev,
++	    struct packet_type *pt, struct net_device *orig_ndev)
++{
++	if (!netif_running(ndev))
++		goto lorawan_rcv_drop;
++
++	if (!net_eq(dev_net(ndev), &init_net))
++		goto lorawan_rcv_drop;
++
++	if (ndev->type != ARPHRD_LORAWAN)
++		goto lorawan_rcv_drop;
++
++	if (skb->pkt_type != PACKET_OTHERHOST)
++		return lrw_dgram_deliver(ndev, skb);
++
++lorawan_rcv_drop:
++	kfree_skb(skb);
++	return NET_RX_DROP;
++}
++
++static struct packet_type lorawan_packet_type = {
++	.type		= htons(ETH_P_LORAWAN),
++	.func		= lorawan_rcv,
++};
++
++static int __init
++lrw_sock_init(void)
++{
++	int ret;
++
++	pr_info("module inserted\n");
++	ret = proto_register(&lrw_dgram_prot, 1);
++	if (ret)
++		goto lrw_sock_init_end;
++
++	/* Tell SOCKET that we are alive */
++	ret = sock_register(&lorawan_family_ops);
++	if (ret)
++		goto lrw_sock_init_err;
++
++	dev_add_pack(&lorawan_packet_type);
++	ret = 0;
++	goto lrw_sock_init_end;
++
++lrw_sock_init_err:
++	proto_unregister(&lrw_dgram_prot);
++
++lrw_sock_init_end:
++	return 0;
++}
++
++static void __exit
++lrw_sock_exit(void)
++{
++	dev_remove_pack(&lorawan_packet_type);
++	sock_unregister(PF_LORAWAN);
++	proto_unregister(&lrw_dgram_prot);
++	pr_info("module removed\n");
++}
++
++module_init(lrw_sock_init);
++module_exit(lrw_sock_exit);
++
++MODULE_AUTHOR("Jian-Hong Pan, <starnight@g.ncu.edu.tw>");
++MODULE_DESCRIPTION("LoRaWAN socket kernel module");
++MODULE_LICENSE("Dual BSD/GPL");
++MODULE_ALIAS_NETPROTO(PF_LORAWAN);
 -- 
-2.7.4
+2.19.2
+
