@@ -2,99 +2,112 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC66C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EC5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBCFC20834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCFC20834
+	by mail.kernel.org (Postfix) with ESMTP id 33E282081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:48:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E282081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbeLDUrg (ORCPT
+        id S1726528AbeLDUsQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:47:36 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33739 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeLDUrf (ORCPT
+        Tue, 4 Dec 2018 15:48:16 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38517 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbeLDUsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:47:35 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i20so16536954otl.0;
-        Tue, 04 Dec 2018 12:47:35 -0800 (PST)
+        Tue, 4 Dec 2018 15:48:15 -0500
+Received: by mail-pg1-f194.google.com with SMTP id g189so7910255pgc.5;
+        Tue, 04 Dec 2018 12:48:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fSCTz2xKuBHtxh7ywbeEpAbuSj2luDE0z7e4Lo4D3oo=;
-        b=P591yKUfEBhPHdVQLMsiIapob2RKGFteF4yCY7hDX/IdeIIcwroC9B0uEyRF2clmR6
-         j0KLzia/IYVAI9pnCBnALKo/DOPWdmuLRtdvQwoaQI7en2RjJh+s3ryD3mT3twzmnxJV
-         9DmFpoP3KN3E1re62dhsK0QRibxrxapAUppDEc/yU2snY6luXELSby0oYqPhPQRg6UHL
-         EJbCmiYeIIaoWZygzMjicavHEs7FuNy4Bea5CEdSM1GnewZRaO/sE1nuF4BEXRTUFkXG
-         /Ujd4Z8ob86pS29VGfoeIZIzikd/4cdeO5sWexYntK8I3FM8H6uiOcVulPlrC6fiTuDR
-         Kpow==
-X-Gm-Message-State: AA+aEWYq6w6tKDhp9A0FYZiw/1+VoyPqsOFOzjqjpLQxJC2/sU+OaH53
-        GbYftsFkv15S5OMVewKFyg==
-X-Google-Smtp-Source: AFSGD/ULXByF7L8ViLYHXoCjDMyJiyl9bTEEBiVBiEtTVkmlYjUnQRw5l+SU5bILz2rpxfKNkuIefg==
-X-Received: by 2002:a9d:784a:: with SMTP id c10mr14300244otm.175.1543956455141;
-        Tue, 04 Dec 2018 12:47:35 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 52sm32258734oti.30.2018.12.04.12.47.34
+        bh=ATZABLl9Bqbp1x1mZMnGmiXL3gq2GOvFyXJbrsiveeI=;
+        b=UAobD5kCs4t6TsC6Ip4VXK53MkJ8pHBUrnuEQDzWH5h53tcF7KRWplFS0GbK+LSPQH
+         mxAXpXWzpKlQwK+5BwgDVimTGEINGV+HzazWsgOgSEpdSKoVhfinipl1lShVBirVED2m
+         Bv3SaDpcevMo4LYUHxxzbg1jrMD/BrCVQwgEMuVHnEjqGTC8hPqB2A/9aODKBcAuRETx
+         9Efib6MpRZXvVCRXSBBZPMfOD+McUGam5FIqKq7cgo0jb4fAlKAngNZlTFx3+d6CInbJ
+         9F0Pn9CuXDIv7/tY+U3OLRjIEwShJVSxzb436pdsm8wOmgAXUyMvFgQHjtvJ5+XP4CVH
+         4/Yw==
+X-Gm-Message-State: AA+aEWaXf3hLw4i6sjjiyrL5XBR6ucWis0puDPJbwxHuC7BgAOOW1pBj
+        UkRBfNzrVloWD1CObm+nEEQ=
+X-Google-Smtp-Source: AFSGD/Vdn1T0BG6alMhunJUXrxgIuveC+wGVaaou8MIb4wLy8h5txEMQsvEMhgnn13OZfYN/j/ELEA==
+X-Received: by 2002:a63:d40a:: with SMTP id a10mr17694223pgh.394.1543956494466;
+        Tue, 04 Dec 2018 12:48:14 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id q75sm35343000pfa.38.2018.12.04.12.48.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 12:47:34 -0800 (PST)
-Date:   Tue, 4 Dec 2018 14:47:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        mark.rutland@arm.com, alexandre.torgue@st.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH 1/3] dt-bindings: interrupt-controller: stm32: Document
- hwlock properties
-Message-ID: <20181204204733.GA14508@bogus>
-References: <20181113144805.1054-1-benjamin.gaignard@st.com>
- <20181113144805.1054-2-benjamin.gaignard@st.com>
+        Tue, 04 Dec 2018 12:48:13 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Tue, 04 Dec 2018 12:48:10 -0800
+Date:   Tue, 4 Dec 2018 12:48:10 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Felix Guo <felixguoxiuping@gmail.com>
+Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
+ config and kernel
+Message-ID: <20181204204810.GU28501@garbanzo.do-not-panic.com>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-12-brendanhiggins@google.com>
+ <20181130034425.GO18410@garbanzo.do-not-panic.com>
+ <CAFd5g44L1dV61CPm9GUvOgs-tH_urN-Twm-fj=Pw6h-kgfZ5rQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113144805.1054-2-benjamin.gaignard@st.com>
+In-Reply-To: <CAFd5g44L1dV61CPm9GUvOgs-tH_urN-Twm-fj=Pw6h-kgfZ5rQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 03:48:03PM +0100, Benjamin Gaignard wrote:
-> Add hwlocks as optional property
+On Mon, Dec 03, 2018 at 03:50:48PM -0800, Brendan Higgins wrote:
+> On Thu, Nov 29, 2018 at 7:44 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Wed, Nov 28, 2018 at 11:36:28AM -0800, Brendan Higgins wrote:
+> > > The ultimate goal is to create minimal isolated test binaries; in the
+> > > meantime we are using UML to provide the infrastructure to run tests, so
+> > > define an abstract way to configure and run tests that allow us to
+> > > change the context in which tests are built without affecting the user.
+> > > This also makes pretty and dynamic error reporting, and a lot of other
+> > > nice features easier.
+> > >
+> > > kunit_config.py:
+> > >   - parse .config and Kconfig files.
+> > >
+> > >
+> > > kunit_kernel.py: provides helper functions to:
+> > >   - configure the kernel using kunitconfig.
+> >
+> > We get the tools to run the config stuff, build, etc, but not a top
+> > level 'make kunitconfig' or whatever. We have things like 'make
+> > kvmconfig' and 'make xenconfig', I think it would be reasonable to
+> > add similar for this.
 > 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Are you just asking for a defconfig for KUnit, or are you asking for a
+> way to run KUnit from make?
 
-Should be linaro.org S-o-b?
+At least the first. The later seems intrusive as a top level Makefile
+thing.
 
-> ---
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt        | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
-> index 6a36bf66d932..cd01b2292ec6 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
-> @@ -14,6 +14,10 @@ Required properties:
->    (only needed for exti controller with multiple exti under
->    same parent interrupt: st,stm32-exti and st,stm32h7-exti)
->  
-> +Optional properties:
-> +
-> +- hwlocks: reference to a phandle of a hardware spinlock provider node.
-> +
->  Example:
->  
->  exti: interrupt-controller@40013c00 {
-> -- 
-> 2.15.0
-> 
+  Luis
