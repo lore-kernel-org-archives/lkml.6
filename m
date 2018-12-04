@@ -2,96 +2,179 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB13C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF763C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8F320666
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:08:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAHvstf5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8F320666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E6E82087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:10:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E6E82087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbeLDCIc (ORCPT
+        id S1726041AbeLDCKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 21:08:32 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45571 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLDCIb (ORCPT
+        Mon, 3 Dec 2018 21:10:03 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:60045 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbeLDCKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 21:08:31 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so7437621plm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 18:08:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WaMCluLNaIkK+r8dhO5tQmM/Rkwr/DfCvLUkKFPCcKI=;
-        b=fAHvstf5IhNB860jQc8W8qlF2SzjhzM4Sq8JVqO+ZsfvJNxh/UuPwZ45HNwYST588V
-         YHJ8K0RvTTfE9dQgAXrIAtLkXiASy6A/o5q0F1R1YQX9uIf9N8Zl/aEr4ADESQ+8NPFy
-         Et5RMMZvDnLUnqFuvwQBJtxYxkBhNbqmPMGEDq64vthm2HpKoYeayYhNGnNCEqI7B/ks
-         gN+V+rYXLcAoqI0JUC/zZ53ZUDIdXrQB7La+mOwZUwlnfX62dXGgSu+YhXL1yOvH1v1K
-         E1DV9HXY3klF2wPAqunHH/aTBi+1UYMuzOEi6Gktv5IjMsr+kXrOHWQN1w3j8jt8vSgM
-         7dJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WaMCluLNaIkK+r8dhO5tQmM/Rkwr/DfCvLUkKFPCcKI=;
-        b=HXhhuLmFyhQnHoy1nabwsTaUgQeat5rAB93yZGimM6QQx4bShgcZqKrDbh5+WIq72p
-         kkkBamcbldjfwtZ8JhXCPx2Ej22LLwe3iPHN4FsWCmcDegrsyNcYXciDbaU1cD4JmB8G
-         X2N8/QYl4Cvyrh5jNG9DcW9GvIMN8yMB7dkucvggtWbDCD7rKt9H3LGcO+NlJmb2junX
-         ldHqwCUxfkgXCQsVGGpyaoufPUCkVwMJ4iAGY37DalO3NxvpCI+0EJL+3VDkyX0jc2+G
-         cvo6sppdAIc4McSKsefQWYLlELFkz2RLv3eY7Ov3da0b5tHVygfdd4rispAhGhlTiDch
-         aHLg==
-X-Gm-Message-State: AA+aEWZJIYFYjAou6ueA2RRQNc3WEBkakPXYq5TQQsgfG1kCCRPFEag6
-        Au/fJ6wdfiKkYuk3YLfNdFc=
-X-Google-Smtp-Source: AFSGD/Udxy5eiCr2ZFRlS/w5JY9lNpyGKuWbAt0F7XpyrzmyTBsbtcNjeuTP+2QIzLEUCvDtLGrSfA==
-X-Received: by 2002:a17:902:bc43:: with SMTP id t3mr17059883plz.124.1543889311090;
-        Mon, 03 Dec 2018 18:08:31 -0800 (PST)
-Received: from localhost ([175.223.44.178])
-        by smtp.gmail.com with ESMTPSA id u6sm17842590pgr.79.2018.12.03.18.08.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 18:08:30 -0800 (PST)
-Date:   Tue, 4 Dec 2018 11:08:27 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: Re: [PATCH v4 0/7] zram idle page writeback
-Message-ID: <20181204020827.GB7580@jagdpanzerIV>
-References: <20181203024045.153534-1-minchan@kernel.org>
+        Mon, 3 Dec 2018 21:10:03 -0500
+X-Greylist: delayed 322 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Dec 2018 21:10:01 EST
+Received: from [10.28.18.81] (10.28.18.81) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 4 Dec 2018
+ 10:10:22 +0800
+Subject: Re: [PATCH] pinctrl: meson: fix G12A ao pull registers base address
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>
+CC:     <khilman@baylibre.com>, <carlo@caione.org>,
+        <martin.blumenstingl@googlemail.com>, <robh@kernel.org>,
+        <jianxin.pan@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+References: <20181203030533.10989-1-xingyu.chen@amlogic.com>
+ <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
+ <f2ceff1edcb2c103d0128a838ff630bb3c147bf5.camel@baylibre.com>
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+Message-ID: <e0fd351c-91ee-b662-80d6-ac4d2a8b6cb0@amlogic.com>
+Date:   Tue, 4 Dec 2018 10:10:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203024045.153534-1-minchan@kernel.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <f2ceff1edcb2c103d0128a838ff630bb3c147bf5.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.81]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/03/18 11:40), Minchan Kim wrote:
+
+
+On 2018/12/3 18:36, Jerome Brunet wrote:
+> On Mon, 2018-12-03 at 11:27 +0100, Neil Armstrong wrote:
+>> Hi Xingyu,
+>>
+>>
+>> On 03/12/2018 04:05, Xingyu Chen wrote:
+>>> Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
+>>> and AO_GPIO_O.
+>>>
+>>> These bits of controlling output level are remapped to the new register
+>>> AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
+>>>
+>>> These bits of controlling pull enable are remapped to the new register
+>>> AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
+>>> pull type(up/down).
+>>>
+>>> The new layout of ao gpio/pull registers is as follows:
+>>> - AO_GPIO_O_EN_N        [offset: 0x9 << 2]
+>>> - AO_GPIO_I             [offset: 0xa << 2]
+>>> - AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
+>>> - AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
+>>> - AO_GPIO_O             [offset: 0xd << 2]
+>>>
+>>>  From above, we can see ao GPIO registers region has been separated by the
+>>> ao pull registers. In order to ensure the continuity of the region on
+>>> software, the ao GPIO and ao pull registers use the same base address, but
+>>> can be identified by the offset.
+>>>
+>>> Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
+>>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>>> ---
+>>>   drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
+>>>   1 file changed, 12 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c
+>>> b/drivers/pinctrl/meson/pinctrl-meson.c
+>>> index 53d449076dee..7ff40cd7a0cb 100644
+>>> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+>>> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+>>> @@ -31,6 +31,9 @@
+>>>    * In some cases the register ranges for pull enable and pull
+>>>    * direction are the same and thus there are only 3 register ranges.
+>>>    *
+>>> + * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
+>>> + * and pull direction are the same, so there are only 2 register ranges.
+>>> + *
+>>>    * For the pull and GPIO configuration every bank uses a contiguous
+>>>    * set of bits in the register sets described above; the same register
+>>>    * can be shared by more banks with different offsets.
+>>> @@ -487,23 +490,22 @@ static int meson_pinctrl_parse_dt(struct
+>>> meson_pinctrl *pc,
+>>>   		return PTR_ERR(pc->reg_mux);
+>>>   	}
+>>>   
+>>> -	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+>>> -	if (IS_ERR(pc->reg_pull)) {
+>>> -		dev_err(pc->dev, "pull registers not found\n");
+>>> -		return PTR_ERR(pc->reg_pull);
+>>> +	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+>>> +	if (IS_ERR(pc->reg_gpio)) {
+>>> +		dev_err(pc->dev, "gpio registers not found\n");
+>>> +		return PTR_ERR(pc->reg_gpio);
+>>>   	}
+>>>   
+>>> +	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+>>> +	/* Use gpio region if pull one is not present */
+>>> +	if (IS_ERR(pc->reg_pull))
+>>> +		pc->reg_pull = pc->reg_gpio;
+>>> +
+>>>   	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
+>>>   	/* Use pull region if pull-enable one is not present */
+>>>   	if (IS_ERR(pc->reg_pullen))
+>>>   		pc->reg_pullen = pc->reg_pull;
+>>>   
+>>> -	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+>>> -	if (IS_ERR(pc->reg_gpio)) {
+>>> -		dev_err(pc->dev, "gpio registers not found\n");
+>>> -		return PTR_ERR(pc->reg_gpio);
+>>> -	}
+>>> -
+>>>   	return 0;
+>>>   }
+>>>   
+>>>
+>> Doesn't it need an update of the bindings ?
 > 
-> Minchan Kim (7):
->   zram: fix lockdep warning of free block handling
->   zram: fix double free backing device
->   zram: refactoring flags and writeback stuff
->   zram: introduce ZRAM_IDLE flag
->   zram: support idle/huge page writeback
->   zram: add bd_stat statistics
->   zram: writeback throttle
+> Going even further, shouldn't we stop trying make multiple regions out of
+> this, and have just one ?
+> 
+> On all the Amlogic SoC we have seen so far, all the regions a very (VERY)
+> close to each other. It seems very unlikely that there something unrelated to
+> GPIO in between.
+> 
+> It looks like everything is mostly there in the driver to deal with offset, so
+> change would be minimal.
+> 
+> Of course, for  DT stability we will need to carry the legacy, but for newer
+> SoC, such as the g12, does it really makes sense to have multiple regions ?
+> 
+Hi, Jerome
+the ee gpio, pull and pull-en register regions are discontinuous, some 
+addresses are reserved between them and maybe used for other module. For 
+example [G12A]:
+range of gpio register address offset:    (0x010 << 2) - (0x022 << 2)
+range of pull register address offset:    (0x03a << 2) - (0x03f << 2)
+range of pull-en register address offset: (0x048 << 2) - (0x04d << 2)
 
-Looks good to me.
+keeping the multiple register regions seems to be more flexible and 
+friendly for Meson Series SoCs at present.
 
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-
-	-ss
+>>
+>> Neil
+>>
+> 
+> 
+> .
+> 
