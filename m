@@ -2,114 +2,188 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEBEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2487FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7C3214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:33:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7C3214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=peterpall.de
+	by mail.kernel.org (Postfix) with ESMTP id C24BC2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:35:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="oE8BYLbv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C24BC2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbeLDHde convert rfc822-to-8bit (ORCPT
+        id S1726058AbeLDHf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:33:34 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:55703 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbeLDHde (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:33:34 -0500
-Received: from [192.168.44.140] ([2.247.255.74]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1Mj8Vx-1h70Kf3Twj-00fD0h for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018
- 08:33:33 +0100
-From:   =?UTF-8?Q?Gunter_K=c3=b6nigsmann?= <gunter@peterpall.de>
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-Openpgp: preference=signencrypt
-Autocrypt: addr=gunter@peterpall.de; keydata=
- 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
- QDeGlP63A66aPzIq5as4
-To:     linux-kernel@vger.kernel.org
-Message-ID: <90d3676e-09d5-9d09-50fc-9a2dc64c30a7@peterpall.de>
-Date:   Tue, 4 Dec 2018 08:33:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        Tue, 4 Dec 2018 02:35:28 -0500
+Received: from mail-eopbgr740058.outbound.protection.outlook.com ([40.107.74.58]:60092
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725994AbeLDHf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 02:35:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KBDP7Kk02NPeC92UqLiHPjNDe9HImNDn2BeTcXyJzQo=;
+ b=oE8BYLbvTq5b7ka4+NbWuKv4RZS4azWfIZXxEHmts0Wqs+kOXqIwMuaRD4ztrRwTG25PWgohUXBoOcSvyHWTWnBdxtt2Vu7CIa7nF+Xm+3RBF5bjr1spRELdvL0Fmw4f1Mn5JU++VTZdmdBmpfOYs+p9pGJ+DdysTcgqg9/Gk70=
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com (10.175.101.11) by
+ BN6PR12MB1474.namprd12.prod.outlook.com (10.172.24.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.22; Tue, 4 Dec 2018 07:35:22 +0000
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::f8a7:157:6224:34ee]) by BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::f8a7:157:6224:34ee%2]) with mapi id 15.20.1382.020; Tue, 4 Dec 2018
+ 07:35:22 +0000
+From:   "Koenig, Christian" <Christian.Koenig@amd.com>
+To:     "jglisse@redhat.com" <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH 0/3] mmu notifier contextual informations
+Thread-Topic: [PATCH 0/3] mmu notifier contextual informations
+Thread-Index: AQHUi0Vdc/+CEnIZ60uHmIm7nwnGRqVuMUCA
+Date:   Tue, 4 Dec 2018 07:35:22 +0000
+Message-ID: <2c0ed01b-50f9-961b-ff08-de494e00b1b4@amd.com>
+References: <20181203201817.10759-1-jglisse@redhat.com>
+In-Reply-To: <20181203201817.10759-1-jglisse@redhat.com>
+Accept-Language: de-DE, en-US
 Content-Language: en-US
-X-Provags-ID: V03:K1:S2yiYTDxjeOY93EuvtUuboJTeTZe+WOwaeKkVxIjyuTjahXfac3
- Pnb8tEdUJZYL4IBk0MqrqPc/QI+AopOct8eVGsRqTvlugcMCC44q1S14fjV2nu6WwDmAbaH
- GA/pq+kHmJi4N6gzA2nVKLHhb+0zIymcKISnA8k8gZqXRdQYC0dGXvJD44/B2sGBBzC/o4h
- UybE56iIaLPDsvQDT93Qg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fxKwtDNpflU=:4ei2TWZRefgkrlFGrtVI4X
- aO/rCQ9qqjyrf9XJfXNPp8pUZj6v1cVEV7z6DjrbE+UBSI/6iqtzObNVJAZ3McOLS0Kz+rw96
- bjratT2q0PQwhGcfQBsoFMnn9cNQtuW5lRXrAEu8u163uswBUunaEsPv5HYSpxZ1qCpygN+sh
- GWzkw5GpSpa+XDDCTVLXivw8lCme+16KhSiSMQ3/BohMJad5vhpSMxqu3nu6kweWCFNw8U3yV
- /wuKe29qqctON47AQKxDTo/ttYmuAP/DBAVSojfV/H8qt2TtIgOZc7xWs4TvtuMrZLyaJqvgs
- SJN+4DrabAcc6GwojKce/JO6uOXF5KebTcEBK/74aNLbfzVLWsb32N3cNP7sZJYSUDGF2LYpG
- wd+LYL6NzytjIAzXVixyOQspmNHZv8gJY2eNpuCkpo1FfuhC0UBgXSHNeIywxEcGdNRdrTpDv
- F+v9jDYxzHvOEVl2DzEd/5G8gs7MmMUWO64xEjkzwdtcfsDz7bscb/WuVW7fXTrt+4tlZLQv/
- 8adnfr7uiIBn/KVMe/xs0h5YJWDzmzNYBnOBJqd2MZrFd+64IlEbopNrphY0XR/p6AXjxwd7m
- hvl9cvFcXQauBdad1ZcHBqmGYmIG4q/dLF5lei+Mg8ajRLG3fNeNMQnI+Ie2ZS7gN3R5K2irH
- FURqaJNjixoyQMfGS8igfyh34X84rVhp+bPsFZTDtBuoshSI06jp4eIiszTY7V4IlncuAlO96
- SqMjCeQhdhcKnC6kQ+migwSEl/v/MNXAHEvW80Wo5HPtGsB/NqDvTRCxWNw=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-originating-ip: [2a02:908:125b:9a00:a142:2be6:b7be:5a3a]
+x-clientproxiedby: AM5PR0601CA0038.eurprd06.prod.outlook.com
+ (2603:10a6:203:68::24) To BN6PR12MB1714.namprd12.prod.outlook.com
+ (2603:10b6:404:106::11)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR12MB1474;20:92yLd+WTlweBHcW9jmquDibmB4HRIVXfzaMWDAA0AMZgEvWILwgjoJwfQYEVubfIwmiZ7rRYYveeH6H/Lihyq/OM1qoRflDufChN0YLl9rBUrcRkgjKuyaQbJ3flzgTShtmHNmjU5uyJyttLjP+vhtdcdJRinr1murCYyy4GAWQkI+Qf7kfzx2SCtbM0RuGrqz3+M9FnihpIdriatou57/0SJGKx+UeRklJNQpm+cp9WosA5KV0dg49ccsWgh9Kc
+x-ms-office365-filtering-correlation-id: 6fa6de39-a9a5-4a61-b353-08d659bb0c45
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1474;
+x-ms-traffictypediagnostic: BN6PR12MB1474:
+x-microsoft-antispam-prvs: <BN6PR12MB14740137572AE1C7BAF4F4DC83AF0@BN6PR12MB1474.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BN6PR12MB1474;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1474;
+x-forefront-prvs: 0876988AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(39860400002)(396003)(346002)(189003)(199004)(186003)(386003)(476003)(2616005)(11346002)(446003)(52116002)(65826007)(6506007)(102836004)(4326008)(64126003)(68736007)(486006)(7736002)(65806001)(65956001)(305945005)(6246003)(66574009)(6512007)(99286004)(76176011)(81156014)(81166006)(7416002)(5660300001)(71190400001)(46003)(71200400001)(256004)(8936002)(14444005)(53936002)(8676002)(229853002)(2906002)(36756003)(31696002)(6116002)(316002)(478600001)(6436002)(54906003)(110136005)(14454004)(72206003)(6486002)(58126008)(25786009)(106356001)(105586002)(2501003)(97736004)(31686004)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1474;H:BN6PR12MB1714.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: qNJ/4s3Q9ZUjpCThqknie00Q9w9eJnOcslsFDyfShEnJJmmYRlObFcAr27IsRpNqaIdvaG3OntUzRkOEXD554CCDw4GeJ64bMNA+b46DBOHpNjZZd9rNMLmpBqgfSuQxnFtp7EDqEDfNkYrdesD2OKG/vDywfbNNfKjoMrJ7pmxOWlrovzC8qr5VkKHKDVPO5HLLDUQvAtdpSRfINnmlI8dVdjUewDb2Nl8m0RGDl5MWQXHZV8jEnmrOdg8SSCISxoeKU1KCA/r6t3lpPUCLd2JP5dq0vZFbs8oMWBUGbR8tCRP/4QYpKl50XfZYH2Lz7sWHxtddgs8wcIZ8eiDqPO0r0KIUvZDC6SG/VDgp41M=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <26511A7B4182974B950897019B73A37F@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fa6de39-a9a5-4a61-b353-08d659bb0c45
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 07:35:22.5139
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1474
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After upgrading my kernel to 4.19 I got a corruption on nearly every
-reboot or resume from suspend on my Acer s7-391 [UEFI boot].
-
-Going to my UEFI setup and changing IDE mode from IDE to ATA seems to
-have resolved the issue for me.
-
-Don't know, though, if that is a valid data point or if it was a mere
-accident (tested only on one computer) or just avoids the Bad Timing by
-a few nanoseconds....
-
-
+QW0gMDMuMTIuMTggdW0gMjE6MTggc2NocmllYiBqZ2xpc3NlQHJlZGhhdC5jb206DQo+IEZyb206
+IErDqXLDtG1lIEdsaXNzZSA8amdsaXNzZUByZWRoYXQuY29tPg0KPg0KPiBUaGlzIHBhdGNoc2V0
+IGFkZCBjb250ZXh0dWFsIGluZm9ybWF0aW9uLCB3aHkgYW4gaW52YWxpZGF0aW9uIGlzDQo+IGhh
+cHBlbmluZywgdG8gbW11IG5vdGlmaWVyIGNhbGxiYWNrLiBUaGlzIGlzIG5lY2Vzc2FyeSBmb3Ig
+dXNlcg0KPiBvZiBtbXUgbm90aWZpZXIgdGhhdCB3aXNoIHRvIG1haW50YWlucyB0aGVpciBvd24g
+ZGF0YSBzdHJ1Y3R1cmUNCj4gd2l0aG91dCBoYXZpbmcgdG8gYWRkIG5ldyBmaWVsZHMgdG8gc3Ry
+dWN0IHZtX2FyZWFfc3RydWN0ICh2bWEpLg0KPg0KPiBGb3IgaW5zdGFuY2UgZGV2aWNlIGNhbiBo
+YXZlIHRoZXkgb3duIHBhZ2UgdGFibGUgdGhhdCBtaXJyb3IgdGhlDQo+IHByb2Nlc3MgYWRkcmVz
+cyBzcGFjZS4gV2hlbiBhIHZtYSBpcyB1bm1hcCAobXVubWFwKCkgc3lzY2FsbCkgdGhlDQo+IGRl
+dmljZSBkcml2ZXIgY2FuIGZyZWUgdGhlIGRldmljZSBwYWdlIHRhYmxlIGZvciB0aGUgcmFuZ2Uu
+DQo+DQo+IFRvZGF5IHdlIGRvIG5vdCBoYXZlIGFueSBpbmZvcm1hdGlvbiBvbiB3aHkgYSBtbXUg
+bm90aWZpZXIgY2FsbA0KPiBiYWNrIGlzIGhhcHBlbmluZyBhbmQgdGh1cyBkZXZpY2UgZHJpdmVy
+IGhhdmUgdG8gYXNzdW1lIHRoYXQgaXQNCj4gaXMgYWx3YXlzIGFuIG11bm1hcCgpLiBUaGlzIGlz
+IGluZWZmaWNpZW50IGF0IGl0IG1lYW5zIHRoYXQgaXQNCj4gbmVlZHMgdG8gcmUtYWxsb2NhdGUg
+ZGV2aWNlIHBhZ2UgdGFibGUgb24gbmV4dCBwYWdlIGZhdWx0IGFuZA0KPiByZWJ1aWxkIHRoZSB3
+aG9sZSBkZXZpY2UgZHJpdmVyIGRhdGEgc3RydWN0dXJlIGZvciB0aGUgcmFuZ2UuDQo+DQo+IE90
+aGVyIHVzZSBjYXNlIGJlc2lkZSBtdW5tYXAoKSBhbHNvIGV4aXN0LCBmb3IgaW5zdGFuY2UgaXQg
+aXMNCj4gcG9pbnRsZXNzIGZvciBkZXZpY2UgZHJpdmVyIHRvIGludmFsaWRhdGUgdGhlIGRldmlj
+ZSBwYWdlIHRhYmxlDQo+IHdoZW4gdGhlIGludmFsaWRhdGlvbiBpcyBmb3IgdGhlIHNvZnQgZGly
+dHluZXNzIHRyYWNraW5nLiBPcg0KPiBkZXZpY2UgZHJpdmVyIGNhbiBvcHRpbWl6ZSBhd2F5IG1w
+cm90ZWN0KCkgdGhhdCBjaGFuZ2UgdGhlIHBhZ2UNCj4gdGFibGUgcGVybWlzc2lvbiBhY2Nlc3Mg
+Zm9yIHRoZSByYW5nZS4NCj4NCj4gVGhpcyBwYXRjaHNldCBlbmFibGUgYWxsIHRoaXMgb3B0aW1p
+emF0aW9ucyBmb3IgZGV2aWNlIGRyaXZlci4NCj4gSSBkbyBub3QgaW5jbHVkZSBhbnkgb2YgdGhv
+c2UgaW4gdGhpcyBzZXJpZSBidXQgb3RoZXIgcGF0Y2hzZXQNCj4gaSBhbSBwb3N0aW5nIHdpbGwg
+bGV2ZXJhZ2UgdGhpcy4NCj4NCj4NCj4gIEZyb20gY29kZSBwb2ludCBvZiB2aWV3IHRoZSBwYXRj
+aHNldCBpcyBwcmV0dHkgc2ltcGxlLCB0aGUgZmlyc3QNCj4gdHdvIHBhdGNoZXMgY29uc29saWRh
+dGUgYWxsIG1tdSBub3RpZmllciBhcmd1bWVudHMgaW50byBhIHN0cnVjdA0KPiBzbyB0aGF0IGl0
+IGlzIGVhc2llciB0byBhZGQvY2hhbmdlIGFyZ3VtZW50cy4gVGhlIGxhc3QgcGF0Y2ggYWRkcw0K
+PiB0aGUgY29udGV4dHVhbCBpbmZvcm1hdGlvbiAobXVubWFwLCBwcm90ZWN0aW9uLCBzb2Z0IGRp
+cnR5LCBjbGVhciwNCj4gLi4uKS4NCg0KU2tpbW1pbmcgb3ZlciBpdCBhdCBsZWFzdCB0aGUgcGFy
+dHMgSSdtIGZhbWlsaWFyIHdpdGggbG9vayBjb21wbGV0ZWx5IA0Kc2FuZSB0byBtZS4NCg0KV2hv
+bGUgc2VyaWVzIGlzIEFja2VkLWJ5OiBDaHJpc3RpYW4gS8O2bmlnIDxjaHJpc3RpYW4ua29lbmln
+QGFtZC5jb20+Lg0KDQpSZWdhcmRzLA0KQ2hyaXN0aWFuLg0KDQo+DQo+IENoZWVycywNCj4gSsOp
+csO0bWUNCj4NCj4gQ2M6IEFuZHJldyBNb3J0b24gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+
+DQo+IENjOiBNYXR0aGV3IFdpbGNveCA8bWF3aWxjb3hAbWljcm9zb2Z0LmNvbT4NCj4gQ2M6IFJv
+c3MgWndpc2xlciA8endpc2xlckBrZXJuZWwub3JnPg0KPiBDYzogSmFuIEthcmEgPGphY2tAc3Vz
+ZS5jej4NCj4gQ2M6IERhbiBXaWxsaWFtcyA8ZGFuLmoud2lsbGlhbXNAaW50ZWwuY29tPg0KPiBD
+YzogUGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT4NCj4gQ2M6IFJhZGltIEtyxI1t
+w6HFmSA8cmtyY21hckByZWRoYXQuY29tPg0KPiBDYzogTWljaGFsIEhvY2tvIDxtaG9ja29Aa2Vy
+bmVsLm9yZz4NCj4gQ2M6IENocmlzdGlhbiBLb2VuaWcgPGNocmlzdGlhbi5rb2VuaWdAYW1kLmNv
+bT4NCj4gQ2M6IEZlbGl4IEt1ZWhsaW5nIDxmZWxpeC5rdWVobGluZ0BhbWQuY29tPg0KPiBDYzog
+UmFscGggQ2FtcGJlbGwgPHJjYW1wYmVsbEBudmlkaWEuY29tPg0KPiBDYzogSm9obiBIdWJiYXJk
+IDxqaHViYmFyZEBudmlkaWEuY29tPg0KPiBDYzoga3ZtQHZnZXIua2VybmVsLm9yZw0KPiBDYzog
+bGludXgtcmRtYUB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJu
+ZWwub3JnDQo+IENjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQo+DQo+IErDqXLD
+tG1lIEdsaXNzZSAoMyk6DQo+ICAgIG1tL21tdV9ub3RpZmllcjogdXNlIHN0cnVjdHVyZSBmb3Ig
+aW52YWxpZGF0ZV9yYW5nZV9zdGFydC9lbmQgY2FsbGJhY2sNCj4gICAgbW0vbW11X25vdGlmaWVy
+OiB1c2Ugc3RydWN0dXJlIGZvciBpbnZhbGlkYXRlX3JhbmdlX3N0YXJ0L2VuZCBjYWxscw0KPiAg
+ICBtbS9tbXVfbm90aWZpZXI6IGNvbnRleHR1YWwgaW5mb3JtYXRpb24gZm9yIGV2ZW50IHRyaWdn
+ZXJpbmcNCj4gICAgICBpbnZhbGlkYXRpb24NCj4NCj4gICBkcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
+ZGdwdS9hbWRncHVfbW4uYyAgfCAgNDMgKysrKy0tLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL2k5
+MTUvaTkxNV9nZW1fdXNlcnB0ci5jIHwgIDE0ICsrLQ0KPiAgIGRyaXZlcnMvZ3B1L2RybS9yYWRl
+b24vcmFkZW9uX21uLmMgICAgICB8ICAxNiArKy0tDQo+ICAgZHJpdmVycy9pbmZpbmliYW5kL2Nv
+cmUvdW1lbV9vZHAuYyAgICAgIHwgIDIwICsrLS0tDQo+ICAgZHJpdmVycy9pbmZpbmliYW5kL2h3
+L2hmaTEvbW11X3JiLmMgICAgIHwgIDEzICsrLQ0KPiAgIGRyaXZlcnMvbWlzYy9taWMvc2NpZi9z
+Y2lmX2RtYS5jICAgICAgICB8ICAxMSArLS0NCj4gICBkcml2ZXJzL21pc2Mvc2dpLWdydS9ncnV0
+bGJwdXJnZS5jICAgICAgfCAgMTQgKystDQo+ICAgZHJpdmVycy94ZW4vZ250ZGV2LmMgICAgICAg
+ICAgICAgICAgICAgIHwgIDEyICstLQ0KPiAgIGZzL2RheC5jICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICB8ICAxMSArKy0NCj4gICBmcy9wcm9jL3Rhc2tfbW11LmMgICAgICAgICAgICAg
+ICAgICAgICAgfCAgMTAgKystDQo+ICAgaW5jbHVkZS9saW51eC9tbS5oICAgICAgICAgICAgICAg
+ICAgICAgIHwgICA0ICstDQo+ICAgaW5jbHVkZS9saW51eC9tbXVfbm90aWZpZXIuaCAgICAgICAg
+ICAgIHwgMTA2ICsrKysrKysrKysrKysrKy0tLS0tLS0NCj4gICBrZXJuZWwvZXZlbnRzL3Vwcm9i
+ZXMuYyAgICAgICAgICAgICAgICAgfCAgMTMgKy0tDQo+ICAgbW0vaG1tLmMgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgIDIzICsrLS0tDQo+ICAgbW0vaHVnZV9tZW1vcnkuYyAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgIDU4ICsrKysrKy0tLS0tLQ0KPiAgIG1tL2h1Z2V0bGIuYyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA2MyArKysrKysrLS0tLS0tDQo+ICAgbW0va2h1
+Z2VwYWdlZC5jICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEzICstLQ0KPiAgIG1tL2tzbS5j
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAyNiArKystLS0NCj4gICBtbS9tYWR2
+aXNlLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMjIgKystLS0NCj4gICBtbS9tZW1v
+cnkuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAxMTIgKysrKysrKysrKysrKystLS0t
+LS0tLS0tDQo+ICAgbW0vbWlncmF0ZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDMw
+ICsrKystLS0NCj4gICBtbS9tbXVfbm90aWZpZXIuYyAgICAgICAgICAgICAgICAgICAgICAgfCAg
+MjIgKysrLS0NCj4gICBtbS9tcHJvdGVjdC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAg
+MTcgKystLQ0KPiAgIG1tL21yZW1hcC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAx
+NCArLS0NCj4gICBtbS9vb21fa2lsbC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMjAg
+KysrLS0NCj4gICBtbS9ybWFwLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMzQg
+KysrKy0tLQ0KPiAgIHZpcnQva3ZtL2t2bV9tYWluLmMgICAgICAgICAgICAgICAgICAgICB8ICAx
+NCArKy0NCj4gICAyNyBmaWxlcyBjaGFuZ2VkLCA0MjEgaW5zZXJ0aW9ucygrKSwgMzM0IGRlbGV0
+aW9ucygtKQ0KPg0KDQo=
