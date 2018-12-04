@@ -2,149 +2,243 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD8CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 03:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5745C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 03:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D49208A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 03:37:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNyOtlCt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D49208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BEC2208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 03:46:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BEC2208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbeLDDhv (ORCPT
+        id S1726017AbeLDDqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 22:37:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45569 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbeLDDhu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 22:37:50 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so7470062pfd.12;
-        Mon, 03 Dec 2018 19:37:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=dQ9p9xAvVskm4ZKhMM4JZxZVUBWrwmmYrogB2Q78QZA=;
-        b=bNyOtlCtWOMv2qmOF4ZVREhp5rauBo4TOsawu9knGDRvtTodPGN1m22BQTkewN1IMz
-         YaOL2cGNedfV6AFodz1ugo8T8x0wEVcNLDreyi90muaJB12gjgfyRWky0aCWrFTPbgzN
-         SUhb3riqeFTyktouud2CAhX3CN86sKhfTyomU10l88RV0Ieb0w+4pQDRrlhEC0DU3a/9
-         Npfdtpe6DzQd5To8ZSCPfl4Rt0RV2W6S5pzrKmztR+7om+7tdL3TfvQ+x0ut27nCdGvQ
-         aatmcCgFwJNx2sRDChqpqe7ihijUeKR7YQoS4lgJ7qMJWoerRGAC5EKeGH9HxqVH0YZv
-         Ayyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=dQ9p9xAvVskm4ZKhMM4JZxZVUBWrwmmYrogB2Q78QZA=;
-        b=E5iNGuNruAKapExt3n//sYnuVLQ8MJV2ubywSegHVv6/HGS4bNRb1ePL8kx4xpzoA3
-         KSMRm7/veOAO7ZWbZxfTct3dF4yI8zTnOCmIeJNl/SfoU7Uek/I2uqwL4nu8acclOYoG
-         ZOflAhT5cYGTrbGD/iSNtVA6W1m+VTepccQ5Eztg+uXLOS3nWQVjAuvrKe7INuMpiABY
-         DGjZnUTmDU3J+s9WH1+6+49VQ7H6XITgKz3DAm4WPT7dVzse+xlizliZtIZoYRs9hXgQ
-         IwgGMFDN+uIhfv9X6Jl4bJ5hde37DkoS0GbqXxhHC7zDwkrTQjSAF31n0RODH+DxIJfo
-         TpMA==
-X-Gm-Message-State: AA+aEWZkSn1alXbrPm/rDfcSwwM2NJppQDlmd0as9adKMf8//b91GTmm
-        NMjhMQ5Enp90LkHNtzY8GeY=
-X-Google-Smtp-Source: AFSGD/VmAWmAZzNbTAUXbQDfbzA4BaV53lrgDtWsHB5ObShXoCqZZIzi4rcoOW5tieKfnZylFjmzcg==
-X-Received: by 2002:a63:ec13:: with SMTP id j19mr15287091pgh.6.1543894669373;
-        Mon, 03 Dec 2018 19:37:49 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id r8sm16488321pgr.48.2018.12.03.19.37.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 19:37:48 -0800 (PST)
-Date:   Mon, 3 Dec 2018 19:37:46 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v4.20-rc5
-Message-ID: <20181204033746.GA235290@dtor-ws>
+        Mon, 3 Dec 2018 22:46:16 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50316 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725962AbeLDDqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 22:46:16 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D04EC3FB3595B;
+        Tue,  4 Dec 2018 11:46:08 +0800 (CST)
+Received: from [127.0.0.1] (10.57.77.109) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Tue, 4 Dec 2018
+ 11:46:06 +0800
+Subject: Re: [PATCH v4 0/8] vfio/mdev: IOMMU aware mediated device
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <20181105073408.21815-1-baolu.lu@linux.intel.com>
+CC:     <kevin.tian@intel.com>, <ashok.raj@intel.com>,
+        <tiwei.bie@intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <yi.y.sun@intel.com>,
+        <jacob.jun.pan@intel.com>, <kvm@vger.kernel.org>
+From:   Xu Zaibo <xuzaibo@huawei.com>
+Message-ID: <5C05F87D.4050206@huawei.com>
+Date:   Tue, 4 Dec 2018 11:46:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181105073408.21815-1-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.77.109]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Please pull from:
+Is this solution trying to support general user space processes who are 
+directly working on devices?
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+Thanks,
+Zaibo
 
-to receive updates for the input subsystem. Mostly new IDs for
-Elan/Synaptics touchpads, plus a few small fixups.
+.
 
-Changelog:
----------
+On 2018/11/5 15:34, Lu Baolu wrote:
+> Hi,
+>
+> The Mediate Device is a framework for fine-grained physical device
+> sharing across the isolated domains. Currently the mdev framework
+> is designed to be independent of the platform IOMMU support. As the
+> result, the DMA isolation relies on the mdev parent device in a
+> vendor specific way.
+>
+> There are several cases where a mediated device could be protected
+> and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
+> [1] introduces a new translation mode called 'scalable mode', which
+> enables PASID-granular translations. The vt-d scalable mode is the
+> key ingredient for Scalable I/O Virtualization [2] [3] which allows
+> sharing a device in minimal possible granularity (ADI - Assignable
+> Device Interface).
+>
+> A mediated device backed by an ADI could be protected and isolated
+> by the IOMMU since 1) the parent device supports tagging an unique
+> PASID to all DMA traffic out of the mediated device; and 2) the DMA
+> translation unit (IOMMU) supports the PASID granular translation.
+> We can apply IOMMU protection and isolation to this kind of devices
+> just as what we are doing with an assignable PCI device.
+>
+> In order to distinguish the IOMMU-capable mediated devices from those
+> which still need to rely on parent devices, this patch set adds two
+> new members in struct mdev_device.
+>
+> * iommu_device
+>    - This, if set, indicates that the mediated device could
+>      be fully isolated and protected by IOMMU via attaching
+>      an iommu domain to this device. If empty, it indicates
+>      using vendor defined isolation.
+>
+> * iommu_domain
+>    - This is a place holder for an iommu domain. A domain
+>      could be store here for later use once it has been
+>      attached to the iommu_device of this mdev.
+>
+> Below helpers are added to set and get above iommu device
+> and iommu domain pointers in mdev core implementation.
+>
+> * mdev_set/get_iommu_device(dev, iommu_device)
+>    - Set or get the iommu device which represents this mdev
+>      in IOMMU's device scope. Drivers don't need to set the
+>      iommu device if it uses vendor defined isolation.
+>
+> * mdev_set/get_iommu_domain(domain)
+>    - A iommu domain which has been attached to the iommu
+>      device in order to protect and isolate the mediated
+>      device will be kept in the mdev data structure and
+>      could be retrieved later.
+>
+> The mdev parent device driver could opt-in that the mdev could be
+> fully isolated and protected by the IOMMU when the mdev is being
+> created by invoking mdev_set_iommu_device() in its @create().
+>
+> In the vfio_iommu_type1_attach_group(), a domain allocated through
+> iommu_domain_alloc() will be attached to the mdev iommu device if
+> an iommu device has been set. Otherwise, the dummy external domain
+> will be used and all the DMA isolation and protection are routed to
+> parent driver as the result.
+>
+> On IOMMU side, a basic requirement is allowing to attach multiple
+> domains to a PCI device if the device advertises the capability
+> and the IOMMU hardware supports finer granularity translations than
+> the normal PCI Source ID based translation.
+>
+> As the result, a PCI device could work in two modes: normal mode
+> and auxiliary mode. In the normal mode, a pci device could be
+> isolated in the Source ID granularity; the pci device itself could
+> be assigned to a user application by attaching a single domain
+> to it. In the auxiliary mode, a pci device could be isolated in
+> finer granularity, hence subsets of the device could be assigned
+> to different user level application by attaching a different domain
+> to each subset.
+>
+> The device driver is able to switch between above two modes with
+> below interfaces:
+>
+> * iommu_get_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_CAPABILITY)
+>    - Represents the ability of supporting multiple domains
+>      per device.
+>
+> * iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_ENABLE)
+>    - Enable the multiple domains capability for the device
+>      referenced by @dev.
+>
+> * iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_DISABLE)
+>    - Disable the multiple domains capability for the device
+>      referenced by @dev.
+>
+> * iommu_domain_get_attr(domain, DOMAIN_ATTR_AUXD_ID)
+>    - Return ID used for finer-granularity DMA translation.
+>
+> * iommu_attach_device_aux(domain, dev)
+>    - Attach a domain to the device in the auxiliary mode.
+>
+> * iommu_detach_device_aux(domain, dev)
+>    - Detach the aux domain from device.
+>
+> In order for the ease of discussion, sometimes we call "a domain in
+> auxiliary mode' or simply 'an auxiliary domain' when a domain is
+> attached to a device for finer granularity translations. But we need
+> to keep in mind that this doesn't mean there is a differnt domain
+> type. A same domain could be bound to a device for Source ID based
+> translation, and bound to another device for finer granularity
+> translation at the same time.
+>
+> This patch series extends both IOMMU and vfio components to support
+> mdev device passing through when it could be isolated and protected
+> by the IOMMU units. The first part of this series (PATCH 1/08~5/08)
+> adds the interfaces and implementation of the multiple domains per
+> device. The second part (PATCH 6/08~8/08) adds the iommu device
+> attribute to each mdev, determines isolation type according to the
+> existence of an iommu device when attaching group in vfio type1 iommu
+> module, and attaches the domain to iommu aware mediated devices.
+>
+> This patch series depends on a patch set posted here [4] for discussion
+> which added scalable mode support in Intel IOMMU driver.
+>
+> References:
+> [1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
+> [2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
+> [3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+> [4] https://lkml.org/lkml/2018/11/5/136
+>
+> Best regards,
+> Lu Baolu
+>
+> Change log:
+>    v3->v4:
+>    - Use aux domain specific interfaces for domain attach and detach.
+>    - Rebase all patches to 4.20-rc1.
+>
+>    v2->v3:
+>    - Remove domain type enum and use a pointer on mdev_device instead.
+>    - Add a generic interface for getting/setting per device iommu
+>      attributions. And use it for query aux domain capability, enable
+>      aux domain and disable aux domain purpose.
+>    - Reuse iommu_domain_get_attr() to retrieve the id in a aux domain.
+>    - We discussed the impact of the default domain implementation
+>      on reusing iommu_at(de)tach_device() interfaces. We agreed
+>      that reusing iommu_at(de)tach_device() interfaces is the right
+>      direction and we could tweak the code to remove the impact.
+>      https://www.spinics.net/lists/kvm/msg175285.html
+>    - Removed the RFC tag since no objections received.
+>    - This patch has been submitted separately.
+>      https://www.spinics.net/lists/kvm/msg173936.html
+>
+>    v1->v2:
+>    - Rewrite the patches with the concept of auxiliary domains.
+>
+> Lu Baolu (8):
+>    iommu: Add APIs for multiple domains per device
+>    iommu/vt-d: Add multiple domains per device query
+>    iommu/vt-d: Enable/disable multiple domains per device
+>    iommu/vt-d: Attach/detach domains in auxiliary mode
+>    iommu/vt-d: Return ID associated with an auxiliary domain
+>    vfio/mdev: Add iommu place holders in mdev_device
+>    vfio/type1: Add domain at(de)taching group helpers
+>    vfio/type1: Handle different mdev isolation type
+>
+>   drivers/iommu/intel-iommu.c      | 315 ++++++++++++++++++++++++++++---
+>   drivers/iommu/iommu.c            |  52 +++++
+>   drivers/vfio/mdev/mdev_core.c    |  36 ++++
+>   drivers/vfio/mdev/mdev_private.h |   2 +
+>   drivers/vfio/vfio_iommu_type1.c  | 162 ++++++++++++++--
+>   include/linux/intel-iommu.h      |  11 ++
+>   include/linux/iommu.h            |  52 +++++
+>   include/linux/mdev.h             |  23 +++
+>   8 files changed, 618 insertions(+), 35 deletions(-)
+>
 
-Adam Wong (1):
-      Input: elan_i2c - add support for ELAN0621 touchpad
 
-Brian Norris (1):
-      Input: cros_ec_keyb - fix button/switch capability reports
-
-Cameron Gutman (1):
-      Input: xpad - quirk all PDP Xbox One gamepads
-
-Christian Hoff (1):
-      Input: matrix_keypad - check for errors from of_get_named_gpio()
-
-Colin Ian King (1):
-      Input: atkbd - clean up indentation issue
-
-Ding Tao (1):
-      Input: dt-bindings - fix a typo in file input-reset.txt
-
-Kuninori Morimoto (2):
-      Input: migor_ts - convert to SPDX identifiers
-      Input: st1232 - convert to SPDX identifiers
-
-Lyude Paul (1):
-      Input: synaptics - add PNP ID for ThinkPad P50 to SMBus
-
-Noah Westervelt (1):
-      Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15ARR
-
-Patrick Gaskin (1):
-      Input: elan_i2c - add ELAN0620 to the ACPI table
-
-Teika Kazura (1):
-      Input: synaptics - enable SMBus for HP 15-ay000
-
-Tony Lindgren (1):
-      Input: omap-keypad - fix keyboard debounce configuration
-
-Vitaly Kuznetsov (1):
-      Input: hyper-v - fix wakeup from suspend-to-idle
-
-Diffstat:
---------
-
- .../devicetree/bindings/input/input-reset.txt      |  2 +-
- drivers/hid/hid-hyperv.c                           |  2 +-
- drivers/input/joystick/xpad.c                      | 16 ++++++---------
- drivers/input/keyboard/atkbd.c                     |  2 +-
- drivers/input/keyboard/cros_ec_keyb.c              |  3 ++-
- drivers/input/keyboard/matrix_keypad.c             | 23 +++++++++++++---------
- drivers/input/keyboard/omap4-keypad.c              | 18 +++++++++++++----
- drivers/input/mouse/elan_i2c_core.c                |  3 +++
- drivers/input/mouse/synaptics.c                    |  2 ++
- drivers/input/serio/hyperv-keyboard.c              |  2 +-
- drivers/input/touchscreen/migor_ts.c               | 15 +-------------
- drivers/input/touchscreen/st1232.c                 | 12 ++---------
- 12 files changed, 48 insertions(+), 52 deletions(-)
-
-Thanks.
-
-
--- 
-Dmitry
