@@ -2,197 +2,174 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02877C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8105C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA1F92087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="146DKhzV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1F92087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B9E232082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E232082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeLDLMX (ORCPT
+        id S1728563AbeLDLM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:12:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:12:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:57534 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbeLDLIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:08:21 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 610B52082D;
-        Tue,  4 Dec 2018 11:08:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921700;
-        bh=snLAOq7VQpJ4+O0SVCyRqsne3iLAS2S6WoNJKUQwY6g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=146DKhzVGmlEeaJ6JXgTnCGumgKSundrR3MXDH24IY5C/RqoTp7FVun/OuMEqRKxw
-         0zJ8Ls4HxDT5Y8JHHfCe/giIyO/jeij7dv0ijbJxtUUO+SwoyCoE3oKnFktZsZn1Cw
-         yPvkILRBAIzwKeDYP+BjTeom+Hl3ySI+o1uTVVM4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 25/50] perf/x86/intel: Move branch tracing setup to the Intel-specific source file
-Date:   Tue,  4 Dec 2018 11:50:20 +0100
-Message-Id: <20181204103715.788186980@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
-References: <20181204103714.485546262@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1727977AbeLDLMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:12:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FF1AA78;
+        Tue,  4 Dec 2018 03:12:23 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D31DD3F59C;
+        Tue,  4 Dec 2018 03:12:22 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 288E31AE10A5; Tue,  4 Dec 2018 11:12:43 +0000 (GMT)
+Date:   Tue, 4 Dec 2018 11:12:43 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] arm64: ftrace: add cond_resched() to func
+ ftrace_make_(call|nop)
+Message-ID: <20181204111242.GA32596@arm.com>
+References: <20181130150956.27620-1-anders.roxell@linaro.org>
+ <20181203192228.GC29028@arm.com>
+ <CAK8P3a2gekEqUuvsC-_+ijhiqqff2bK-s2wQfkjn7z-HtNnMDQ@mail.gmail.com>
+ <20181204005012.11f73df9@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204005012.11f73df9@vmware.local.home>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Hi Steve, Arnd,
 
-------------------
+On Tue, Dec 04, 2018 at 12:50:12AM -0500, Steven Rostedt wrote:
+> On Mon, 3 Dec 2018 22:51:52 +0100
+> Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Mon, Dec 3, 2018 at 8:22 PM Will Deacon <will.deacon@arm.com> wrote:
+> > > On Fri, Nov 30, 2018 at 04:09:56PM +0100, Anders Roxell wrote:  
+> > > > Both of those functions end up calling ftrace_modify_code(), which is
+> > > > expensive because it changes the page tables and flush caches.
+> > > > Microseconds add up because this is called in a loop for each dyn_ftrace
+> > > > record, and this triggers the softlockup watchdog unless we let it sleep
+> > > > occasionally.
+> > > > Rework so that we call cond_resched() before going into the
+> > > > ftrace_modify_code() function.
+> > > >
+> > > > Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > > > ---
+> > > >  arch/arm64/kernel/ftrace.c | 10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)  
+> > >
+> > > It sounds like you're running into issues with the existing code, but I'd
+> > > like to understand a bit more about exactly what you're seeing. Which part
+> > > of the ftrace patching is proving to be expensive?
+> > >
+> > > The page table manipulation only happens once per module when using PLTs,
+> > > and the cache maintenance is just a single line per patch site without an
+> > > IPI.
+> > >
+> > > Is it the loop in ftrace_replace_code() that is causing the hassle?  
+> > 
+> > Yes: with an allmodconfig kernel, the ftrace selftest calls ftrace_replace_code
+> > to look >40000 through ftrace_make_call/ftrace_make_nop, and these
+> > end up calling
 
-From: Jiri Olsa <jolsa@kernel.org>
+Ok, 40000 invocations would do it!
 
-commit ed6101bbf6266ee83e620b19faa7c6ad56bb41ab upstream.
+> > static int __kprobes __aarch64_insn_write(void *addr, __le32 insn)
+> > {
+> >         void *waddr = addr;
+> >         unsigned long flags = 0;
+> >         int ret;
+> > 
+> >         raw_spin_lock_irqsave(&patch_lock, flags);
+> >         waddr = patch_map(addr, FIX_TEXT_POKE0);
+> > 
+> >         ret = probe_kernel_write(waddr, &insn, AARCH64_INSN_SIZE);
+> > 
+> >         patch_unmap(FIX_TEXT_POKE0);
+> >         raw_spin_unlock_irqrestore(&patch_lock, flags);
+> > 
+> >         return ret;
+> > }
+> > int __kprobes aarch64_insn_patch_text_nosync(void *addr, u32 insn)
+> > {
+> >         u32 *tp = addr;
+> >         int ret;
+> > 
+> >         /* A64 instructions must be word aligned */
+> >         if ((uintptr_t)tp & 0x3)
+> >                 return -EINVAL;
+> > 
+> >         ret = aarch64_insn_write(tp, insn);
+> >         if (ret == 0)
+> >                 __flush_icache_range((uintptr_t)tp,
+> >                                      (uintptr_t)tp + AARCH64_INSN_SIZE);
+> > 
+> >         return ret;
+> > }
+> > 
+> > which seems to be where the main cost is. This is with inside of
+> > qemu, and with lots of debugging options (in particular
+> > kcov and ubsan) enabled, that make each function call
+> > more expensive.
+> 
+> I was thinking more about this. Would something like this work?
+> 
+> -- Steve
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 8ef9fc226037..42e89397778b 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -2393,11 +2393,14 @@ void __weak ftrace_replace_code(int enable)
+>  {
+>  	struct dyn_ftrace *rec;
+>  	struct ftrace_page *pg;
+> +	bool schedulable;
+>  	int failed;
+>  
+>  	if (unlikely(ftrace_disabled))
+>  		return;
+>  
+> +	schedulable = !irqs_disabled() & !preempt_count();
 
-Moving branch tracing setup to Intel core object into separate
-intel_pmu_bts_config function, because it's Intel specific.
+Looks suspiciously like a bitwise preemptible() to me!
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20181121101612.16272-1-jolsa@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> +
+>  	do_for_each_ftrace_rec(pg, rec) {
+>  
+>  		if (rec->flags & FTRACE_FL_DISABLED)
+> @@ -2409,6 +2412,8 @@ void __weak ftrace_replace_code(int enable)
+>  			/* Stop processing */
+>  			return;
+>  		}
+> +		if (schedulable)
+> +			cond_resched();
+>  	} while_for_each_ftrace_rec();
+>  }
 
----
- arch/x86/events/core.c       |   20 --------------------
- arch/x86/events/intel/core.c |   41 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 40 insertions(+), 21 deletions(-)
+If this solves the problem in core code, them I'm all for it. Otherwise, I
+was thinking of rolling our own ftrace_replace_code() for arm64, but that's
+going to involve a fair amount of duplication.
 
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -437,26 +437,6 @@ int x86_setup_perfctr(struct perf_event
- 	if (config == -1LL)
- 		return -EINVAL;
- 
--	/*
--	 * Branch tracing:
--	 */
--	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
--	    !attr->freq && hwc->sample_period == 1) {
--		/* BTS is not supported by this architecture. */
--		if (!x86_pmu.bts_active)
--			return -EOPNOTSUPP;
--
--		/* BTS is currently only allowed for user-mode. */
--		if (!attr->exclude_kernel)
--			return -EOPNOTSUPP;
--
--		/* disallow bts if conflicting events are present */
--		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
--			return -EBUSY;
--
--		event->destroy = hw_perf_lbr_event_destroy;
--	}
--
- 	hwc->config |= config;
- 
- 	return 0;
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2822,6 +2822,41 @@ static unsigned long intel_pmu_free_runn
- 	return flags;
- }
- 
-+static int intel_pmu_bts_config(struct perf_event *event)
-+{
-+	struct perf_event_attr *attr = &event->attr;
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
-+	    !attr->freq && hwc->sample_period == 1) {
-+		/* BTS is not supported by this architecture. */
-+		if (!x86_pmu.bts_active)
-+			return -EOPNOTSUPP;
-+
-+		/* BTS is currently only allowed for user-mode. */
-+		if (!attr->exclude_kernel)
-+			return -EOPNOTSUPP;
-+
-+		/* disallow bts if conflicting events are present */
-+		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
-+			return -EBUSY;
-+
-+		event->destroy = hw_perf_lbr_event_destroy;
-+	}
-+
-+	return 0;
-+}
-+
-+static int core_pmu_hw_config(struct perf_event *event)
-+{
-+	int ret = x86_pmu_hw_config(event);
-+
-+	if (ret)
-+		return ret;
-+
-+	return intel_pmu_bts_config(event);
-+}
-+
- static int intel_pmu_hw_config(struct perf_event *event)
- {
- 	int ret = x86_pmu_hw_config(event);
-@@ -2829,6 +2864,10 @@ static int intel_pmu_hw_config(struct pe
- 	if (ret)
- 		return ret;
- 
-+	ret = intel_pmu_bts_config(event);
-+	if (ret)
-+		return ret;
-+
- 	if (event->attr.precise_ip) {
- 		if (!event->attr.freq) {
- 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
-@@ -3265,7 +3304,7 @@ static __initconst const struct x86_pmu
- 	.enable_all		= core_pmu_enable_all,
- 	.enable			= core_pmu_enable_event,
- 	.disable		= x86_pmu_disable_event,
--	.hw_config		= x86_pmu_hw_config,
-+	.hw_config		= core_pmu_hw_config,
- 	.schedule_events	= x86_schedule_events,
- 	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
- 	.perfctr		= MSR_ARCH_PERFMON_PERFCTR0,
-
-
+Will
