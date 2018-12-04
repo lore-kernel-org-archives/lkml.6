@@ -2,154 +2,207 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E6FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B61C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC202087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82C02208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:11:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dboaIDQp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC202087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRfFPlS2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C02208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726075AbeLDHAx (ORCPT
+        id S1726038AbeLDHLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:00:53 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59790 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbeLDHAw (ORCPT
+        Tue, 4 Dec 2018 02:11:53 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33761 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLDHLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:00:52 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB470jsn190362;
-        Tue, 4 Dec 2018 07:00:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=jQ4s3cEvEX0vkaUscyEl129CpxWqK9ErF2zF0DJSxRM=;
- b=dboaIDQpRgvuponOs9xS2w/HDzApxhKGJ+dj5LF99Bp/8e/COCcaDbswfgFPFtPW2po3
- Nabv73zxCAWUbbdl25lqYyl6M8gb2H6lKkNpLY5h0M9N170n5JYKkrXsDqP2Uy2J1DOg
- NmSx8cCJcw8BJFYW45aJlNRbOZWu+iuLSiRaRgt1vql4Ypt8eXc6gA+qzIoQNMON2a6c
- MXBySR7FjgnS+jutt3aAqQFTbNAPRab2u+23vSIznJqC9zHDqW3p0hjcimAB0QdcNkPZ
- D8RG1WAs9mk0eJBOZQN9FlW3mzP6Gf98eeYGei+bnUOqzsyhXmnN4JffG9WuXLNcTZVO 0A== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p3hqttjtm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Dec 2018 07:00:45 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB470i8P018614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 4 Dec 2018 07:00:44 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB470hNh020313;
-        Tue, 4 Dec 2018 07:00:43 GMT
-Received: from unbuntlaptop (/197.157.0.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 03 Dec 2018 23:00:43 -0800
-Date:   Tue, 4 Dec 2018 10:00:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Richard Cochran <richardcochran@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH v2] ptp: fix an IS_ERR() vs NULL check
-Message-ID: <20181204070033.GG3073@unbuntlaptop>
-References: <20181130163252.e6z33t23j3qud57z@localhost>
- <20181203105506.GA21127@unbuntlaptop>
- <20181204044257.grk3na2wyrx6nssg@localhost>
+        Tue, 4 Dec 2018 02:11:52 -0500
+Received: by mail-io1-f66.google.com with SMTP id t24so12762556ioi.0;
+        Mon, 03 Dec 2018 23:11:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LLMra+pQ24ZVHk1vbWB2C8i0hTV4jWLvatavtlSVr58=;
+        b=JRfFPlS2FScQFfXbockYeC0J3MlnnK9FW97HvhNdiKolzRkd/LodCNgJd6zn/S5vEu
+         +q3L7XaaQeBA1pXudG9lQaa8frMSCkCh8HDlMEIvzGh47JIJsvt+yvpWx6xxKuDJjGsx
+         pThyVDrbuEki6XHzgrB9CbostCvjYkpE6jc8oCKOom1N0j0X9zxnHPM7mPfwQD0BStlN
+         czU8JV0knbcKPOVfoy4SifSQ10XJlSsjHPIF6jkVKzcRwNNbAuV0lxMDRRpuiWkdD33Z
+         bZX4NAWOSvLbtJbbKTCvdN5oFjdHPi3PfmJIXGqNUJl4UB4SQlb2jujuVMzORoInJsYB
+         GE0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LLMra+pQ24ZVHk1vbWB2C8i0hTV4jWLvatavtlSVr58=;
+        b=APgDjRnvgE1lJauWiwj+n1GGzxyN2iyeAonLdl7+d9kAx+9a5W7kzEjqMa8eX6YN4P
+         14U9NPz47JMCN7QqWyJbUyxap7lFZpYYbv+KP73MWwBEtCHXonYao6rjgDanQfN5blO7
+         WlHg3dzi4Z8sZxVYFLP1mWFrbOEWHzci3U5JE/fONdRTHXHpmUS8i8dvBqWtrHzSr+Ea
+         WNpflp3YMBnNzqmByx71+FsUO8nCp1Ge6Gs/8rEpGcL0g3BshnMHKFgbpGaBG9nlRoUY
+         M+3XRvxfzoFrsVbL0RZhq+1pupo5cNnpaAfq+ZnPWnobtuPaHW37WHZ1kQpY/u7vsOkP
+         iH1g==
+X-Gm-Message-State: AA+aEWY8qM0/x1NC3pCrIWr0nnfnOoCahWIWsKJot2kO7QHT+40EYO4f
+        QM1PddLYyGZmFIrgx+hmaAvGp/KisVvyEoqNqF0=
+X-Google-Smtp-Source: AFSGD/VJ8wkkgkeej6jTMTs+MtPn3c2wN+K5gK9oeA3kqXfYLRPsNKJPT/ajIiUYouSTmFx2kuGBfvaqldivx8y6Bbk=
+X-Received: by 2002:a6b:8b0a:: with SMTP id n10mr15904302iod.2.1543907511420;
+ Mon, 03 Dec 2018 23:11:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181204044257.grk3na2wyrx6nssg@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812040063
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-5-git-send-email-pawell@cadence.com> <CAL411-rWbQ6yj1r_aaLP8UagVRJhsn7xdznQwXS9enkxXTs2LA@mail.gmail.com>
+ <BYAPR07MB4709A8E4B0B0CC05A842B708DDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
+In-Reply-To: <BYAPR07MB4709A8E4B0B0CC05A842B708DDAD0@BYAPR07MB4709.namprd07.prod.outlook.com>
+From:   Peter Chen <hzpeterchen@gmail.com>
+Date:   Tue, 4 Dec 2018 15:11:40 +0800
+Message-ID: <CAL411-rzhH+y-b0-xze4-WmeVtey4bXt4Jc6TWYyfw6E8x-5Eg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/15] usb:cdns3: Driver initialization code.
+To:     pawell@cadence.com
+Cc:     devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, rogerq@ti.com,
+        lkml <linux-kernel@vger.kernel.org>, adouglas@cadence.com,
+        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
+        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Mon, Dec 3, 2018 at 4:34 AM Pawel Laszczak <pawell@cadence.com> wrote:
+>
+> >>
+> >> Patch adds core.c and core.h file that implements initialization
+> >> of platform driver and adds function responsible for selecting,
+> >> switching and running appropriate Device/Host mode.
+> >>
+> >> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> >> ---
+> >>  drivers/usb/cdns3/Makefile |   2 +
+> >>  drivers/usb/cdns3/core.c   | 413 +++++++++++++++++++++++++++++++++++++
+> >>  drivers/usb/cdns3/core.h   | 100 +++++++++
+> >>  3 files changed, 515 insertions(+)
+> >>  create mode 100644 drivers/usb/cdns3/core.c
+> >>  create mode 100644 drivers/usb/cdns3/core.h
+> >>
+> >> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+> >> index dcdd62003c6a..02d25b23c5d3 100644
+> >> --- a/drivers/usb/cdns3/Makefile
+> >> +++ b/drivers/usb/cdns3/Makefile
+> >> @@ -1,3 +1,5 @@
+> >> +obj-$(CONFIG_USB_CDNS3)                        += cdns3.o
+> >>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)       += cdns3-pci.o
+> >>
+> >> +cdns3-y                                        := core.o
+> >>  cdns3-pci-y                            := cdns3-pci-wrap.o
+> >> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+> >> new file mode 100644
+> >> index 000000000000..f9055d4da67f
+> >> --- /dev/null
+> >> +++ b/drivers/usb/cdns3/core.c
+> >> @@ -0,0 +1,413 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Cadence USBSS DRD Driver.
+> >> + *
+> >> + * Copyright (C) 2018 Cadence.
+> >> + *
+> >
+> >Please add NXP copyright too.
+>
+> Ok, I don't know why I omitted this.
+> I know that you are the main author of this file
+> Sorry for that.
+>
+> One additional question. What year I should add in Copyright for NXP?.
+> The original year 2017 or I should modified all to 2018.
+>
+Please use below copyright, thanks.
 
-I meant to CC you but I screwed up and added you to the From header
-instead... :(
-
-Why did you commit 3b1ad360acad ("pps: using ERR_PTR instead of NULL
-while pps_register_source fails")?  You're not listed as a maintainer so
-I wouldn't have known to CC you.
-
-The back story is that the last chunk which changes drivers/ptp/ptp_clock.c
-was dropped by mistake and it's not there in linux-next.  I wrote a
-patch which adds it, but everyone is super confused now...  Here is
-YueHaibing's original patch btw, for reference.
-https://www.spinics.net/lists/netdev/msg535929.html
-
-regards,
-dan carpenter
+Copyright 2017-2018 NXP
 
 
-On Mon, Dec 03, 2018 at 08:42:57PM -0800, Richard Cochran wrote:
-> On Mon, Dec 03, 2018 at 01:55:06PM +0300, Dan Carpenter wrote:
-> > We recently modified pps_register_source() to return error pointers
-> > instead of NULL but this check wasn't updated.
-> 
-> But it *was* updated!
->  
-> > Fixes: 3b1ad360acad ("pps: using ERR_PTR instead of NULL while pps_register_source fails")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2:  Use the correct Fixes tag.  Add Greg to the CC list, because he
-> > is maintaining this driver.
-> 
-> What driver?  (I am maintaining drivers/ptp/ptp_clock.c)
->  
-> >  drivers/ptp/ptp_clock.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-> > index 8a81eecc0ecd..48f3594a7458 100644
-> > --- a/drivers/ptp/ptp_clock.c
-> > +++ b/drivers/ptp/ptp_clock.c
-> > @@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
-> >  		pps.mode = PTP_PPS_MODE;
-> >  		pps.owner = info->owner;
-> >  		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
-> > -		if (!ptp->pps_source) {
-> > -			err = -EINVAL;
-> > +		if (IS_ERR(ptp->pps_source)) {
-> > +			err = PTR_ERR(ptp->pps_source);
-> >  			pr_err("failed to register pps source\n");
-> >  			goto no_pps;
-> >  		}
-> 
-> YueHaibing's patch has the following hunk.  It really is already
-> there.  I don't see it yet on Linus' master branch, but the patch
-> should update drivers/pps/kapi.c and the callers all in one commit.
-> 
-> diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-> index 8a81eec..48f3594 100644
-> --- a/drivers/ptp/ptp_clock.c
-> +++ b/drivers/ptp/ptp_clock.c
-> @@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
->  		pps.mode = PTP_PPS_MODE;
->  		pps.owner = info->owner;
->  		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
-> -		if (!ptp->pps_source) {
-> -			err = -EINVAL;
-> +		if (IS_ERR(ptp->pps_source)) {
-> +			err = PTR_ERR(ptp->pps_source);
->  			pr_err("failed to register pps source\n");
->  			goto no_pps;
->  		}
-> 
-> Thanks,
-> Richard
+
+> >> +       mutex_init(&cdns->mutex);
+> >> +
+> >> +       cdns->phy = devm_phy_get(dev, "cdns3,usbphy");
+> >> +       if (IS_ERR(cdns->phy)) {
+> >> +               dev_info(dev, "no generic phy found\n");
+> >> +               cdns->phy = NULL;
+> >> +               /*
+> >> +                * fall through here!
+> >> +                * if no generic phy found, phy init
+> >> +                * should be done under boot!
+> >> +                */
+> >
+> >If the phy driver is defer-probed, it will be here, it is not an error.
+> >I think you could have a generic phy driver or usb generic phy driver
+> >(drivers/usb/phy/phy-generic.c) even you don't need any operations for
+> >PHY. It will be easy for other platforms.
+>
+> Yes, Roger ask me to modify this fragment. In next version it will look like:
+>         cdns->phy = devm_phy_get(dev, "cdns3,usbphy");
+>         if (IS_ERR(cdns->phy)) {
+>                 ret = PTR_ERR(cdns->phy);
+>                 if (ret == -ENOSYS || ret == -ENODEV) {
+>                         cdns->phy = NULL;
+>                 } else if (ret == -EPROBE_DEFER) {
+>                         return ret;
+>                 } else {
+>                         dev_err(dev, "no phy found\n");
+>                         goto err0;
+>                 }
+>         }
+>
+>         phy_init(cdns->phy);
+>
+> We are going to use phy driver. I don't know if it correct.
+> I don't have experience in this filed.
+> We need phy initialization but I don't have testing platform now.
+> In most usb drivers I see that there are used usb phy driverd instead phy dirverd.
+>
+
+At my CDNS3 platform, there are some USB PHY initialization for register setting
+and clock enable. You could add generic PHY driver under: drivers/phy/cadence/.
+
+Above PHY initialization code is OK for me.
+
+
+> >> +static void __exit cdns3_driver_platform_unregister(void)
+> >> +{
+> >> +       platform_driver_unregister(&cdns3_driver);
+> >> +}
+> >> +module_exit(cdns3_driver_platform_unregister);
+> >> +
+> >> +MODULE_ALIAS("platform:cdns3");
+> >> +MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
+> >> +MODULE_LICENSE("GPL v2");
+> >> +MODULE_DESCRIPTION("Cadence USB3 DRD Controller Driver");
+> >> diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
+> >> new file mode 100644
+> >> index 000000000000..7c8204fe4d3d
+> >> --- /dev/null
+> >> +++ b/drivers/usb/cdns3/core.h
+> >> @@ -0,0 +1,100 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0 */
+> >> +/*
+> >> + * Cadence USBSS DRD Driver.
+> >> + *
+> >
+> >Header file
+> I don't understand. What is wrong ?
+> >
+
+The comment for this file
+
+Cadence USBSS DRD Core Header File
+
+Peter
