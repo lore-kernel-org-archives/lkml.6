@@ -2,189 +2,163 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A536C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A2BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 245A92081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80E1720659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:13:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kr7Q9gvN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 245A92081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D2Hqchkb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E1720659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbeLDQNj (ORCPT
+        id S1727013AbeLDQNn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:13:39 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42268 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbeLDQNi (ORCPT
+        Tue, 4 Dec 2018 11:13:43 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:37787 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726226AbeLDQNl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:13:38 -0500
-Received: by mail-ed1-f66.google.com with SMTP id j6so14386022edp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 08:13:35 -0800 (PST)
+        Tue, 4 Dec 2018 11:13:41 -0500
+Received: by mail-yw1-f65.google.com with SMTP id h193so7183785ywc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 08:13:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cvH04Ps5Lg57metAv4huLwhA8TJUMhbN6M61VOMQrfU=;
-        b=kr7Q9gvNfbcezDaqjjnrDT/LnJds5yTVVfVr5//Pwu55Xavq8Rjja6NO4cnhCr65kB
-         NLlA5zFoqnCsPJzSa3rJpPv+P5j3F9frmdfvW5E6WRCqknJNbvdY6w43DstU4EH9krc4
-         8lmiZtrPRY78hROAHGFY5QYNnRQfWM6b1pZyrsv/xB2tNx8GmZ4ZDpi15rZcsRAN4kyS
-         25JNadKUyvO2FGVhKan2jGNvH7o1rmGueEyD12bscXQs915WFTKHPVGl24FS9sstS49m
-         ULlfftxdCv/PlN2ta54+cKXYpWNRZkaMVfLWQRYtnWToFuTb8gffdCzbUqRiI8Enhgzx
-         c2+Q==
+        bh=7ag8KJv7bMVAqppMOcWE9LI4B6h6caxZfAiz0kJLkjc=;
+        b=D2Hqchkbby/4h5s1voyI9zV4YiI4W0RFcnQktD6hhW843ZVhVvItjDUhfFvCaj/N+z
+         482tmUISjdPzjhMwyeF26mOpwook0YTx2D1qw/o45IODgKI1IPog0/tLRBq65L8EyXuX
+         5p4DY9YqSQN8TR/6JDs/nh4HpVeT5spnsOSoM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cvH04Ps5Lg57metAv4huLwhA8TJUMhbN6M61VOMQrfU=;
-        b=dNzHT4GMt1rcNNw/DPYx3qP3tvp/p02H/w9vrf6Srdq1gWjSPpctIFpQRmb1/MzXNX
-         oWSRQ4Wb8HUFcaysxTFwipdpYaYJ2Pq8bNiwJvMwE8j9/Y3FlsM3fzrJ7wOY8YG9NJXp
-         gIsZWJiUUD1s3CXXaxkFJS6+V1G1WorWl1Bhb51sBWXkk8IGbzoYg4Hq0SXLKlcgVkKi
-         d9iQNMisHAtH76xEeOiAqurBRfQ5osLgkhHDQNiKwzmZKOzWGZHQW+Rzm+ejUtt+4HZG
-         zdwky7QjDsdOPoqhMtRFtua8Gp8gt6NYHUgLkfO6oVzsA5z9lbJVK+jvbt2YxoPnGlWx
-         072w==
-X-Gm-Message-State: AA+aEWasZAUvN/5+PTtV5u5LHsqxEVpmIbpddGD7j1+eLNdJxCY6eCYC
-        rWjdQ/CSprmvNn61Eyhh7jSbW8dL3TuAOejuQdoiwA==
-X-Google-Smtp-Source: AFSGD/UThh6OJAPGTq0TcvLZ6HSM/WWz45izD6IKqnOYruQwzLiw+pkq2FWEBqdkO56vRvOsbCtgXmb1VaE08PdkChE=
-X-Received: by 2002:a17:906:d507:: with SMTP id ge7-v6mr16100494ejb.78.1543940014149;
- Tue, 04 Dec 2018 08:13:34 -0800 (PST)
+        bh=7ag8KJv7bMVAqppMOcWE9LI4B6h6caxZfAiz0kJLkjc=;
+        b=Xz0yagIWORxeSXl1IHhgUpWLNFBULze8q/nbxky3GikECZSlis+kGpo6qgaltcZo0W
+         hq/iExf3XkzPlPmX+mLsfdqha3wTAFIG3itRvQI4fWMPiRtdK++AXSuPSE0ufQStELlc
+         n2fFmYOluhnEayPU03zr8I7GlMW9UjUf0z1mS63kZgvdZR8ChtXiusX4OJr+Bfj6tuCD
+         7ZvW16cS2FdPR+JzJYDZfICckWWwbz9kCz2y5Zwi5CORUCP4+fbue299YM/MNHhD0zJ3
+         yEUThS11RzWLvKcyiiGCojR9S5JjBioOpkJcsBjWNXDwUFJbukfrW2QEwh32vu4SfjgO
+         Tlhg==
+X-Gm-Message-State: AA+aEWao/Ox94iyu/YTtIAPG2X03h3tVe8WgKGMgX5S1qCsB2sneEbr3
+        tV8rwYnrgA7536cZGFjnw3kG8RWOlXg=
+X-Google-Smtp-Source: AFSGD/Wn9B7v83p9uI++AduxE2JLiu1eBX/Zck1Jnqr0hiVvS58K2hxPOzZ4u+4uL2tw1mw2uAh4UA==
+X-Received: by 2002:a81:85c5:: with SMTP id v188mr20518845ywf.51.1543940018557;
+        Tue, 04 Dec 2018 08:13:38 -0800 (PST)
+Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
+        by smtp.gmail.com with ESMTPSA id l7sm6076384ywk.24.2018.12.04.08.13.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 08:13:37 -0800 (PST)
+Received: by mail-yw1-f50.google.com with SMTP id j6so7171059ywj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 08:13:36 -0800 (PST)
+X-Received: by 2002:a81:2890:: with SMTP id o138mr21327974ywo.168.1543940016102;
+ Tue, 04 Dec 2018 08:13:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20181204155843.11411-1-enric.balletbo@collabora.com> <CABXOdTeBL3n1BTToCv0BsAMZKan3RkOgqOG2cP7V8UyEPMup2g@mail.gmail.com>
-In-Reply-To: <CABXOdTeBL3n1BTToCv0BsAMZKan3RkOgqOG2cP7V8UyEPMup2g@mail.gmail.com>
-From:   Dmitry Torokhov <dtor@google.com>
-Date:   Tue, 4 Dec 2018 08:13:21 -0800
-Message-ID: <CAE_wzQ_d0YzYqkxhMGuVsMLu5LEv1BFUbV9LSejzXOvn2ghAVA@mail.gmail.com>
-Subject: Re: [PATCH] Revert "mfd: cros_ec: Use devm_kzalloc for private data"
-To:     Guenter Roeck <groeck@google.com>
-Cc:     enric.balletbo@collabora.com, Lee Jones <lee.jones@linaro.org>,
-        gwendal@chromium.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>, stable@vger.kernel.org
+References: <1543902228-23834-1-git-send-email-feng.tang@intel.com>
+In-Reply-To: <1543902228-23834-1-git-send-email-feng.tang@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 4 Dec 2018 08:13:24 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJzWSE+LsuwyctS2b0RsYMKcoURkJ_nWXEhBTAcnji_3g@mail.gmail.com>
+Message-ID: <CAGXu5jJzWSE+LsuwyctS2b0RsYMKcoURkJ_nWXEhBTAcnji_3g@mail.gmail.com>
+Subject: Re: [PATCH v3] panic: Avoid the extra noise dmesg
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, stable@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 8:07 AM Guenter Roeck <groeck@google.com> wrote:
+On Mon, Dec 3, 2018 at 9:42 PM Feng Tang <feng.tang@intel.com> wrote:
 >
-> On Tue, Dec 4, 2018 at 7:58 AM Enric Balletbo i Serra
-> <enric.balletbo@collabora.com> wrote:
-> >
-> > This reverts commit 3aa2177e47878f7e7616da8a2050c44f22301b6e.
-> >
-> > That commit triggered a new WARN when unloading the module (see at the
-> > end of the commit message). When a class_dev is embedded in a structure
-> > then that class_dev is the thing that controls the lifetime of that
-> > structure, for that reason device managed allocations can't be used here.
-> > See Documentation/kobject.txt.
-> >
-> > Revert the above patch, so the struct is allocated using kzalloc and we
-> > have a release function for it that frees the allocated memory, otherwise
-> > it is broken.
-> >
-> >  ------------[ cut here ]------------
-> >  Device 'cros_ec' does not have a release() function, it is broken and must be fixed.
-> >  WARNING: CPU: 3 PID: 3675 at drivers/base/core.c:895 device_release+0x80/0x90
-> >  Modules linked in: btusb btrtl btintel btbcm bluetooth ...
-> >  CPU: 3 PID: 3675 Comm: rmmod Not tainted 4.20.0-rc4 #76
-> >  Hardware name: Google Kevin (DT)
-> >  pstate: 40000005 (nZcv daif -PAN -UAO)
-> >  pc : device_release+0x80/0x90
-> >  lr : device_release+0x80/0x90
-> >  sp : ffff00000c47bc70
-> >  x29: ffff00000c47bc70 x28: ffff8000e86b0d40
-> >  x27: 0000000000000000 x26: 0000000000000000
-> >  x25: 0000000056000000 x24: 0000000000000015
-> >  x23: ffff8000f0bbf860 x22: ffff000000d320a0
-> >  x21: ffff8000ee93e100 x20: ffff8000ed931428
-> >  x19: ffff8000ed931418 x18: 0000000000000020
-> >  x17: 0000000000000000 x16: 0000000000000000
-> >  x15: 0000000000000400 x14: 0000000000000143
-> >  x13: 0000000000000000 x12: 0000000000000400
-> >  x11: 0000000000000157 x10: 0000000000000960
-> >  x9 : ffff00000c47b9b0 x8 : ffff8000e86b1700
-> >  x7 : 0000000000000000 x6 : ffff8000f7d520b8
-> >  x5 : ffff8000f7d520b8 x4 : 0000000000000000
-> >  x3 : ffff8000f7d58e68 x2 : ffff8000e86b0d40
-> >  x1 : 37d859939c964800 x0 : 0000000000000000
-> >  Call trace:
-> >   device_release+0x80/0x90
-> >   kobject_put+0x74/0xe8
-> >   device_unregister+0x20/0x30
-> >   ec_device_remove+0x34/0x48 [cros_ec_dev]
-> >   platform_drv_remove+0x28/0x48
-> >   device_release_driver_internal+0x1a8/0x240
-> >   driver_detach+0x40/0x80
-> >   bus_remove_driver+0x54/0xa8
-> >   driver_unregister+0x2c/0x58
-> >   platform_driver_unregister+0x10/0x18
-> >   cros_ec_dev_exit+0x1c/0x2d8 [cros_ec_dev]
-> >   __arm64_sys_delete_module+0x16c/0x1f8
-> >   el0_svc_common+0x84/0xd8
-> >   el0_svc_handler+0x2c/0x80
-> >   el0_svc+0x8/0xc
-> >  ---[ end trace a57c4625f3c60ae8 ]---
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 3aa2177e4787 ("mfd: cros_ec: Use devm_kzalloc for private data")
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> When kernel panic happens, it will first print the panic call stack,
+> then the ending msg like:
 >
-> Reviewed-by: Guenter Roeck <groeck@chromium.org>
-
-Indeed, we need to be mindful that refcounted objects should not be
-allocated with devm_kzalloc().
-
-Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
-
+> [   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
+> [   35.749975] ------------[ cut here ]------------
 >
-> > ---
-> >
-> >  drivers/mfd/cros_ec_dev.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > index 8f9d6964173e..b99a194ce5a4 100644
-> > --- a/drivers/mfd/cros_ec_dev.c
-> > +++ b/drivers/mfd/cros_ec_dev.c
-> > @@ -263,6 +263,11 @@ static const struct file_operations fops = {
-> >  #endif
-> >  };
-> >
-> > +static void cros_ec_class_release(struct device *dev)
-> > +{
-> > +       kfree(to_cros_ec_dev(dev));
-> > +}
-> > +
-> >  static void cros_ec_sensors_register(struct cros_ec_dev *ec)
-> >  {
-> >         /*
-> > @@ -395,7 +400,7 @@ static int ec_device_probe(struct platform_device *pdev)
-> >         int retval = -ENOMEM;
-> >         struct device *dev = &pdev->dev;
-> >         struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
-> > -       struct cros_ec_dev *ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
-> > +       struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
-> >
-> >         if (!ec)
-> >                 return retval;
-> > @@ -417,6 +422,7 @@ static int ec_device_probe(struct platform_device *pdev)
-> >         ec->class_dev.devt = MKDEV(ec_major, pdev->id);
-> >         ec->class_dev.class = &cros_class;
-> >         ec->class_dev.parent = dev;
-> > +       ec->class_dev.release = cros_ec_class_release;
-> >
-> >         retval = dev_set_name(&ec->class_dev, "%s", ec_platform->ec_name);
-> >         if (retval) {
-> > --
-> > 2.19.1
-> >
+> The above message are very useful for debugging.
+>
+> But if system is configured to not reboot on panic, say the "panic_timeout"
+> parameter equals 0, it will likely print out many noisy message like
+> WARN() call stack for each and every CPU except the panic one, messages
+> like below:
+>
+>         WARNING: CPU: 1 PID: 280 at kernel/sched/core.c:1198 set_task_cpu+0x183/0x190
+>         Call Trace:
+>         <IRQ>
+>         try_to_wake_up
+>         default_wake_function
+>         autoremove_wake_function
+>         __wake_up_common
+>         __wake_up_common_lock
+>         __wake_up
+>         wake_up_klogd_work_func
+>         irq_work_run_list
+>         irq_work_tick
+>         update_process_times
+>         tick_sched_timer
+>         __hrtimer_run_queues
+>         hrtimer_interrupt
+>         smp_apic_timer_interrupt
+>         apic_timer_interrupt
+>
+> For people working in console mode, the screen will first show the panic
+> call stack, but immediately overridded by these noisy extra messages, which
+> makes debugging much more difficult, as the original context gets lost on
+> screen.
+>
+> Also these noisy messages will confuse some users, as I have seen many bug
+> reporters posted the noisy message into bugzilla, instead of the real panic
+> call stack and context.
+>
+> Removing the "local_irq_enable" will avoid the noisy message.
+>
+> The justification for the removing is: when code runs to this point, it
+> means user has chosed to not reboot, or do any special handling by using
+> the panic notifier method, no much point in re-enabling the interrupt.
+>
+> Signed-off-by: Feng Tang <feng.tang@intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: stable@kernel.org
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  kernel/panic.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index f6d549a..a616e55 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -295,7 +295,6 @@ void panic(const char *fmt, ...)
+>         }
+>  #endif
+>         pr_emerg("---[ end Kernel panic - not syncing: %s ]---\n", buf);
+> -       local_irq_enable();
+>         for (i = 0; ; i += PANIC_TIMER_STEP) {
+>                 touch_softlockup_watchdog();
+>                 if (i >= i_next) {
+> --
+> 2.7.4
+>
+
+
+-- 
+Kees Cook
