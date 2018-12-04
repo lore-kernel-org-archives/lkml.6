@@ -2,196 +2,154 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E453AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D71A6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 940E12087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C4132081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:35:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="VRbcrFhu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940E12087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E/wBMkJj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4132081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbeLDAep (ORCPT
+        id S1726079AbeLDAfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:34:45 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:55626 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLDAeo (ORCPT
+        Mon, 3 Dec 2018 19:35:25 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34091 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLDAfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:34:44 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id D879410C0D9D;
-        Mon,  3 Dec 2018 16:34:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1543883683; bh=HxEWwKUr3cxjBM6M14wChG45B2lBPcmcP3Yu7mHlwyw=;
-        h=From:Subject:To:CC:References:Date:In-Reply-To:From;
-        b=VRbcrFhuQB23FQKRDLCQ0i8MilD7gN1xBoVGC3YnI1a879gJA1+eK1joBVwmtLijV
-         +m9MQKJC9gwl2oC2zYl+uWZb1rXyuK/5XQXhpkb3UKqNT0Q75j9CaBD/zAiQFkLvl+
-         uoCayvMOC6af13d3enj4fTUE9gE5sz/EY485W826bRNtnvUJ1VXYwD3O3QvYFZ+Muf
-         RCuibbBQa20adu+JnKLKOWu/MT8TnBWbhqTMvx5EQli09Qd06aFdZVTL8Nye8nEDQg
-         95lDM3R6gbwolVvzdPEEJnMtvo9CrVKUOGymSceakHK/6EHij8nH34laU0XMoL0JeZ
-         RAxLMmPBY4B+w==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id E78D73778;
-        Mon,  3 Dec 2018 16:34:39 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 3 Dec 2018 16:34:39 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 4 Dec 2018 01:34:37 +0100
-Received: from [10.0.2.15] (10.225.2.138) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 4 Dec
- 2018 01:34:36 +0100
-From:   vitor <vitor.soares@synopsys.com>
-Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
- bus specific parts
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        vitor <vitor.soares@synopsys.com>
-CC:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-        <arnd@arndb.de>, <psroka@cadence.com>, <agolec@cadence.com>,
-        <adouglas@cadence.com>, <bfolta@cadence.com>, <dkos@cadence.com>,
-        <alicja@cadence.com>, <cwronka@cadence.com>, <sureshp@cadence.com>,
-        <rafalc@cadence.com>, <thomas.petazzoni@bootlin.com>, <nm@ti.com>,
-        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <geert@linux-m68k.org>, <linus.walleij@linaro.org>,
-        <Xiang.Lin@synaptics.com>, <linux-gpio@vger.kernel.org>,
-        <nsekhar@ti.com>, <pgaj@cadence.com>, <peda@axentia.se>,
-        <mshettel@codeaurora.org>, <swboyd@chromium.org>,
-        <joao.pinto@synopsys.com>
-References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
- <20181122210202.6af50fcc@bbrezillon>
- <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
- <20181123135004.7fd1cd58@bbrezillon>
- <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
- <20181126133550.51469816@bbrezillon>
- <4e9c0461-02a3-80b2-c9b7-2e9ea9b38f8b@synopsys.com>
- <20181126195618.352eafb1@bbrezillon>
- <4c743a9a-d636-d34c-b7e3-913f18e6c754@synopsys.com>
- <20181126223334.08105d89@bbrezillon>
- <0912ea50-b365-d583-9d33-1dff236acbad@synopsys.com>
- <20181127133350.0361f998@bbrezillon>
-Message-ID: <623809f3-1d1f-a10c-783a-07b545c5955c@synopsys.com>
-Date:   Tue, 4 Dec 2018 00:34:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 3 Dec 2018 19:35:24 -0500
+Received: by mail-oi1-f193.google.com with SMTP id h25so12772968oig.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:35:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OctTzfGiKx9+SW307GLGZ4f1lZnGP2F7kKB6Nur7RAA=;
+        b=E/wBMkJjigcH7Rxq7ZQW0RsQay8T+t+NBXjok5bs1I6tpMH4rf2r4S6Cz+YjLGFxyg
+         FNphztIQi+sWkcTlJfPzV0aq9mYKdatlLJ5m8XrxHrJ+ZJtwDISc3EXlJC7cwAs0aLB5
+         mqdQzcZVH1uNiH7XJjXKrpWVJOR4zJMF3i09E0wGH5Zys9nBH8zZrC10E9T//eI6YYAR
+         aNp5YYHmBo0b0rWH4NqQrX4BPXxkE+bQxwNcuXzDzr0889sZirYPnMs4rkj2vMcfaNzq
+         FXXP06IFvXnTy6wFQHTVfCeT0x3BIgtXvIkBquMBs4MFLoL0BKfylqywnY3FXJEL07Sv
+         StLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OctTzfGiKx9+SW307GLGZ4f1lZnGP2F7kKB6Nur7RAA=;
+        b=pvEfPjj8B9YiI+hPQ75g9FsutsIDLerYfhpTZPAm9SBsQqCCJT/aF0UtsH/Kt2LZoM
+         dovzG1uvieO7/hTQonsorkqhrySEj+Ci1md1W/e89AXEwV6Vc1SZ/WE4lXZUVhT+hPPF
+         9T5SzufnKJ1MKm04tFcvbaB9Fh2IbEkdBt/nzBAyb8TEphfBxtVAz8goMyVAA7oMJMEA
+         WZFrGsTMxxzmBbE0cpK7Kds3QrBsHZvVx2eBe37sah6UFQ5mu7EMnpU06mX7gPdCLlTd
+         IoWIbXHOkusfUDeIiZFMw8/gcv1Q7JUdh5GvTxOynyGMLIKo8sHkfX85QyNY2pca1Vn6
+         iDVg==
+X-Gm-Message-State: AA+aEWYy2QwK/1FvR1VOPiTnEDU2VZzOlszFA9dSsL8PBKGwCeW+nDfn
+        cMSs5hc2roACKYJfholmtB/gz8yj664rg6I6WvZl2A==
+X-Google-Smtp-Source: AFSGD/XMrsuT5Fp9BHcb2mURjOehlLvR64WVwHYvMBPSZGrcn37H0A+sQ/nLH9YVSRy7bYGx59vNyqwt3/8F8mf9yRE=
+X-Received: by 2002:aca:bd41:: with SMTP id n62mr11688409oif.348.1543883723458;
+ Mon, 03 Dec 2018 16:35:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181127133350.0361f998@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.225.2.138]
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-4-brendanhiggins@google.com> <20181130032924.GH18410@garbanzo.do-not-panic.com>
+ <20181203105517.vbedwygttxxbdtan@pathway.suse.cz>
+In-Reply-To: <20181203105517.vbedwygttxxbdtan@pathway.suse.cz>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 3 Dec 2018 16:35:12 -0800
+Message-ID: <CAFd5g47pWbPso4LG93ffRUZjLhxnqws5VfYc5SfFf8FbuYCWvA@mail.gmail.com>
+Subject: Re: [RFC v3 03/19] kunit: test: add string_stream a std::stream like
+ string builder
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     mcgrof@kernel.org, Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-
-Sorry for the delayed response.
-
-
-On 27/11/18 12:33, Boris Brezillon wrote:
-> Hi Vitor,
+On Mon, Dec 3, 2018 at 2:55 AM Petr Mladek <pmladek@suse.com> wrote:
 >
-> On Tue, 27 Nov 2018 11:50:53 +0000
-> vitor<vitor.soares@synopsys.com>  wrote:
+> On Thu 2018-11-29 19:29:24, Luis Chamberlain wrote:
+> > On Wed, Nov 28, 2018 at 11:36:20AM -0800, Brendan Higgins wrote:
+> > > A number of test features need to do pretty complicated string printing
+> > > where it may not be possible to rely on a single preallocated string
+> > > with parameters.
+> > >
+> > > So provide a library for constructing the string as you go similar to
+> > > C++'s std::string.
+> >
+> > Hrm, what's the potential for such thing actually being eventually
+> > generically useful for printk folks, I wonder? Petr?
+>
+> printk() is a bit tricky:
+>
+>    + It should work in any context. Any additional lock adds risk of a
+>      deadlock. Especially the NMI and scheduler contexts are problematic.
+>      There are problems with any other code that might be called
+>      from console drivers and calls printk() under a lock.
+>
+>    + It should work also when the system is out of memory. Especially
+>      atomic context is problematic because we could not wait for
+>      memory reclaim or swap.
+>
+>    + We also do to the best effort to get the message out on the
+>      console. It is important when the system is about to die.
+>      Any extra buffering layer might cause delay and avoid seeing the
+>      message.
+>
+> From this point of views, this API is not generally usable with printk().
+
+Yeah, that makes sense. I wouldn't really expect this to work well in
+those cases.
+
+> Now, the question is how many of the above fits also for unit testing.
+> At least, you might need to be careful when allocating memory in
+> atomic context.
+
+True, but this is only supposed to be used for constructing
+expectation failure messages which should only happen from a
+non-atomic context.
+
+>
+> BTW: There are more existing printk APIs: Well, I admit the they are
+> not easily reusable in unit testing:
+>
+>    + printk() is old, crappy code, complicated with all the
+>      cornercases and consoles.
+>
+>    + include/linux/seq_buf.h is simple buffering. It is used primary
+>      for sysfs output. It might be usable if you add support for
+>      loglevel and use big enough buffer. I quess that you should
+>      flush the buffer regularly anyway.
+>
+>    + trace_printk() uses lockless per-CPU buffers. It currently does not
+>      support loglevels. But it might be pretty interesting choice as well.
 >
 >
->>>> Sorry for that and don't take me wrong... maybe I should rise this
->>>> question early but this only came up now when I started splitting and
->>>> thinking where to put what is for master for slave, what is common and
->>>> the thing of putting everything of controller in a folder.
->>> So you have such a dual-role controller?
->> Yes, we already talked about secondary master support.
-> There's a difference between a secondary master that waits for its time
-> to become the currrent master, and a secondary master that provides I3C
-> device features when it's acting as a slave (sensor, GPIO
-> controller, ...). So far we focused on supporting the former. If
-> there's a need for the latter, then we should start thinking about the
-> slave framework...
->
->>> What I call a slave controller would be something that lets you reply to
->>> SDR/DDR transactions or fill a generic regmap that would be exposed to
->>> other masters on the bus. This way we could implement generic slave
->>> drivers in Linux (the same way we have gadget drivers). Anything else
->>> is likely to be to specific to be exposed as a generic framework.
->> I would bet to do something like in i2c, we don't need the same level of
->> complexity found in USB.
-> Can you detail a bit more what you have in mind? I don't think we can
-> do like I2C, simply because we need to expose a valid DCR +
-> manuf-ID/PID so that other masters can bind the device to the
-> appropriate driver on their side. Plus, if we're about to expose
-> generic profiles, we likely don't want each I3C slave controller driver
-> to do that on its own.
+> I do not say that you have to use one of the existing API. But you
+> might consider them if you encouter any problems and maintaining
+> your variant gets complicated.
 
+Alright, I will take a look.
 
-I think this should be discuss in another thread. Do you agree?
-
-
->>>> Taking the USB as exemple do you prefer a dwc folder on i3c root?
->>> Hm, not sure I like this idea either. So I see 2 options:
->>>
->>> 1/ put all controller drivers (both master and slave ones) in a common
->>>      directory (drivers/i3c/controllers) as you suggest, and prefix them
->>>      correctly (i3c-master-<ip>.c, i3c-slave-<ip>.c and i3c-dual-<ip>.c)
->> I agree with the controller folder but not with prefix. Please check
->> what is already in the kernel.
-> If we mix everything in the same subdir, I'd like to have an easy way
-> to quickly identify those that are slave controllers and those that are
-> master controllers. For the dual-role thing, maybe we can consider them
-> as master (ones with advances slave features).
->
-> Would you be okay with drivers/i3c/controllers/{designware,dw}/..., so
-> that you can have all designware drivers (for both slave and master
-> blocks) in the same dir?
-
-
-Yes, that was what I trying to tell you. For me this might be the best 
-option.
-
-I would like to avoid having dual role i3c driver in a master folder.
-
-
-> For those that are placed directly under drivers/i3c/controllers/...
-> (because they only have one .c file), I'd like to keep a standard
-> prefix.
-
-
-I don't disagree, and for those that have more than one file they should 
-be in a folder, right?
-
-What prefix do you have in mind for those files inside a folder?
-
-
->> To be clear, the subsystem is nice and I working with daily. As I said
->> this is something that I dealing now and I'm telling what I think that
->> is not correct.
->>
-> Come on! All I've seen so far are complaints on tiny details, it
-> definitely doesn't prevent you from adding new features.
->
-> Regards,
->
-> Boris
-
-
-No, it's not. But as you can see to slipt the driver in parts this 
-subject has some relevance.
-
-
-Best regards,
-
-Vitor Soares
-
-
+Thanks!
