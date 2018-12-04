@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5487C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB47C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3E42081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:25:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3E42081C
+	by mail.kernel.org (Postfix) with ESMTP id 5B0D82081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:25:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0D82081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbeLDVZL (ORCPT
+        id S1726786AbeLDVZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:25:11 -0500
-Received: from mga06.intel.com ([134.134.136.31]:39595 "EHLO mga06.intel.com"
+        Tue, 4 Dec 2018 16:25:10 -0500
+Received: from mga12.intel.com ([192.55.52.136]:26808 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726276AbeLDVXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726273AbeLDVXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Dec 2018 16:23:40 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:23:40 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:23:40 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="301027982"
+   d="scan'208";a="299319456"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 04 Dec 2018 13:23:37 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 04 Dec 2018 13:23:36 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BC4A571B; Tue,  4 Dec 2018 23:23:31 +0200 (EET)
+        id 7EE844F9; Tue,  4 Dec 2018 23:23:31 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -44,9 +44,9 @@ To:     Alessandro Zummo <a.zummo@towertech.it>,
         Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v6 12/20] rtc: rk808: Switch to use %ptR
-Date:   Tue,  4 Dec 2018 23:23:22 +0200
-Message-Id: <20181204212330.69515-13-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v6 07/20] rtc: mcp795: Switch to use %ptR
+Date:   Tue,  4 Dec 2018 23:23:17 +0200
+Message-Id: <20181204212330.69515-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204212330.69515-1-andriy.shevchenko@linux.intel.com>
 References: <20181204212330.69515-1-andriy.shevchenko@linux.intel.com>
@@ -62,61 +62,59 @@ struct rtc_time in human readable format.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/rtc/rtc-rk808.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ drivers/rtc/rtc-mcp795.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
-index b2f9e45e0298..1fb864d4ef83 100644
---- a/drivers/rtc/rtc-rk808.c
-+++ b/drivers/rtc/rtc-rk808.c
-@@ -138,9 +138,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 	tm->tm_year = (bcd2bin(rtc_data[5] & YEARS_REG_MSK)) + 100;
- 	tm->tm_wday = bcd2bin(rtc_data[6] & WEEKS_REG_MSK);
- 	rockchip_to_gregorian(tm);
--	dev_dbg(dev, "RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
--		tm->tm_wday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "RTC date/time %ptRd(%d) %ptRt\n", tm, tm->tm_wday, tm);
+diff --git a/drivers/rtc/rtc-mcp795.c b/drivers/rtc/rtc-mcp795.c
+index 00e11c1b2186..f22a945a3794 100644
+--- a/drivers/rtc/rtc-mcp795.c
++++ b/drivers/rtc/rtc-mcp795.c
+@@ -233,9 +233,7 @@ static int mcp795_set_time(struct device *dev, struct rtc_time *tim)
+ 	if (ret)
+ 		return ret;
  
- 	return ret;
+-	dev_dbg(dev, "Set mcp795: %04d-%02d-%02d(%d) %02d:%02d:%02d\n",
+-			tim->tm_year + 1900, tim->tm_mon, tim->tm_mday,
+-			tim->tm_wday, tim->tm_hour, tim->tm_min, tim->tm_sec);
++	dev_dbg(dev, "Set mcp795: %ptR\n", tim);
+ 
+ 	return 0;
  }
-@@ -153,9 +151,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	u8 rtc_data[NUM_TIME_REGS];
- 	int ret;
+@@ -258,9 +256,7 @@ static int mcp795_read_time(struct device *dev, struct rtc_time *tim)
+ 	tim->tm_mon	= bcd2bin(data[5] & 0x1F) - 1;
+ 	tim->tm_year	= bcd2bin(data[6]) + 100; /* Assume we are in 20xx */
  
--	dev_dbg(dev, "set RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
--		tm->tm_wday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "set RTC date/time %ptRd(%d) %ptRt\n", tm, tm->tm_wday, tm);
- 	gregorian_to_rockchip(tm);
- 	rtc_data[0] = bin2bcd(tm->tm_sec);
- 	rtc_data[1] = bin2bcd(tm->tm_min);
-@@ -216,10 +212,8 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 		return ret;
+-	dev_dbg(dev, "Read from mcp795: %04d-%02d-%02d(%d) %02d:%02d:%02d\n",
+-			tim->tm_year + 1900, tim->tm_mon, tim->tm_mday,
+-			tim->tm_wday, tim->tm_hour, tim->tm_min, tim->tm_sec);
++	dev_dbg(dev, "Read from mcp795: %ptR\n", tim);
+ 
+ 	return 0;
+ }
+@@ -319,9 +315,8 @@ static int mcp795_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+ 			return ret;
+ 		dev_dbg(dev, "Alarm IRQ armed\n");
  	}
+-	dev_dbg(dev, "Set alarm: %02d-%02d(%d) %02d:%02d:%02d\n",
+-			alm->time.tm_mon, alm->time.tm_mday, alm->time.tm_wday,
+-			alm->time.tm_hour, alm->time.tm_min, alm->time.tm_sec);
++	dev_dbg(dev, "Set alarm: %ptRdr(%d) %ptRt\n",
++		&alm->time, alm->time.tm_wday, &alm->time);
+ 	return 0;
+ }
  
--	dev_dbg(dev, "alrm read RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + alrm->time.tm_year, alrm->time.tm_mon + 1,
--		alrm->time.tm_mday, alrm->time.tm_wday, alrm->time.tm_hour,
--		alrm->time.tm_min, alrm->time.tm_sec);
-+	dev_dbg(dev, "alrm read RTC date/time %ptRd(%d) %ptRt\n",
-+		&alrm->time, alrm->time.tm_wday, &alrm->time);
+@@ -345,9 +340,8 @@ static int mcp795_read_alarm(struct device *dev, struct rtc_wkalrm *alm)
+ 	alm->time.tm_isdst	= -1;
+ 	alm->time.tm_yday	= -1;
  
- 	alrm->enabled = (int_reg & BIT_RTC_INTERRUPTS_REG_IT_ALARM_M) ? 1 : 0;
+-	dev_dbg(dev, "Read alarm: %02d-%02d(%d) %02d:%02d:%02d\n",
+-			alm->time.tm_mon, alm->time.tm_mday, alm->time.tm_wday,
+-			alm->time.tm_hour, alm->time.tm_min, alm->time.tm_sec);
++	dev_dbg(dev, "Read alarm: %ptRdr(%d) %ptRt\n",
++		&alm->time, alm->time.tm_wday, &alm->time);
+ 	return 0;
+ }
  
-@@ -261,10 +255,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 		dev_err(dev, "Failed to stop alarm: %d\n", ret);
- 		return ret;
- 	}
--	dev_dbg(dev, "alrm set RTC date/time %4d-%02d-%02d(%d) %02d:%02d:%02d\n",
--		1900 + alrm->time.tm_year, alrm->time.tm_mon + 1,
--		alrm->time.tm_mday, alrm->time.tm_wday, alrm->time.tm_hour,
--		alrm->time.tm_min, alrm->time.tm_sec);
-+	dev_dbg(dev, "alrm set RTC date/time %ptRd(%d) %ptRt\n",
-+		&alrm->time, alrm->time.tm_wday, &alrm->time);
- 
- 	gregorian_to_rockchip(&alrm->time);
- 	alrm_data[0] = bin2bcd(alrm->time.tm_sec);
 -- 
 2.19.2
 
