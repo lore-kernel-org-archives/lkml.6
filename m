@@ -4,48 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70400C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D944C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23BED2151B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB0032087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K577R02U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23BED2151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8Q2W7jP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0032087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbeLDLFY (ORCPT
+        id S1728165AbeLDLFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53020 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:05:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726953AbeLDLFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:19 -0500
+        id S1728145AbeLDLF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C166A2087F;
-        Tue,  4 Dec 2018 11:05:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54882214DB;
+        Tue,  4 Dec 2018 11:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921518;
-        bh=qqb9ZoZDkszqq+JNM7BvuXlkdyrSuM2QrjFAmbLf3Yg=;
+        s=default; t=1543921526;
+        bh=bULqB4Az77MCpTT1fuxkxVAQnbbiaQ0rtt46X8Q1xzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K577R02URuiML24E9VHLAcpE03uoUNgLDK+XQ4diBpTs3wUlviTewbbk03SI6pXUN
-         AZzYVYLzwJwxYVR15A+UGnEntO4324nm4FsMU7zGpbeHwXw1nQ9PPkJTX7kqqBCNrF
-         MlpomW4eLlI6aueIQX3e7T2ZJpGW3kJywJ8gM2s0=
+        b=f8Q2W7jPOHFBHmTBj/ZVS+Xolji/AGI4i48Tw9i7egH5B+5bC+IAR3BsrYVD2ezWd
+         3fyASvOH9PojP4kzbTErVigE95rylW9T9ytF2+XUgZ5Ag/hqtcd1oA/pQdbKM+ew7O
+         4kyj93Wt8AOn6mTl5j8R3R69usUxzsqtRiFv2uNY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Zweigle <Oliver.Zweigle@faro.com>,
-        Bernd Eckstein <3ernd.Eckstein@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 067/146] usbnet: ipheth: fix potential recvmsg bug and recvmsg bug 2
-Date:   Tue,  4 Dec 2018 11:49:13 +0100
-Message-Id: <20181204103729.537660322@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        kvm@vger.kernel.org, KarimAllah Ahmed <karahmed@amazon.de>,
+        andrew.cooper3@citrix.com, Joerg Roedel <joro@8bytes.org>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.14 070/146] x86/bugs: Add AMDs SPEC_CTRL MSR usage
+Date:   Tue,  4 Dec 2018 11:49:16 +0100
+Message-Id: <20181204103729.655226778@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -64,168 +74,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bernd Eckstein <3erndeckstein@gmail.com>
+From: Konrad Rzeszutek Wilk konrad.wilk@oracle.com
 
-[ Upstream commit 45611c61dd503454b2edae00aabe1e429ec49ebe ]
+commit 6ac2f49edb1ef5446089c7c660017732886d62d6 upstream
 
-The bug is not easily reproducable, as it may occur very infrequently
-(we had machines with 20minutes heavy downloading before it occurred)
-However, on a virual machine (VMWare on Windows 10 host) it occurred
-pretty frequently (1-2 seconds after a speedtest was started)
+The AMD document outlining the SSBD handling
+124441_AMD64_SpeculativeStoreBypassDisable_Whitepaper_final.pdf
+mentions that if CPUID 8000_0008.EBX[24] is set we should be using
+the SPEC_CTRL MSR (0x48) over the VIRT SPEC_CTRL MSR (0xC001_011f)
+for speculative store bypass disable.
 
-dev->tx_skb mab be freed via dev_kfree_skb_irq on a callback
-before it is set.
+This in effect means we should clear the X86_FEATURE_VIRT_SSBD
+flag so that we would prefer the SPEC_CTRL MSR.
 
-This causes the following problems:
-- double free of the skb or potential memory leak
-- in dmesg: 'recvmsg bug' and 'recvmsg bug 2' and eventually
-  general protection fault
+See the document titled:
+   124441_AMD64_SpeculativeStoreBypassDisable_Whitepaper_final.pdf
 
-Example dmesg output:
-[  134.841986] ------------[ cut here ]------------
-[  134.841987] recvmsg bug: copied 9C24A555 seq 9C24B557 rcvnxt 9C25A6B3 fl 0
-[  134.841993] WARNING: CPU: 7 PID: 2629 at /build/linux-hwe-On9fm7/linux-hwe-4.15.0/net/ipv4/tcp.c:1865 tcp_recvmsg+0x44d/0xab0
-[  134.841994] Modules linked in: ipheth(OE) kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd glue_helper cryptd vmw_balloon intel_rapl_perf joydev input_leds serio_raw vmw_vsock_vmci_transport vsock shpchp i2c_piix4 mac_hid binfmt_misc vmw_vmci parport_pc ppdev lp parport autofs4 vmw_pvscsi vmxnet3 hid_generic usbhid hid vmwgfx ttm drm_kms_helper syscopyarea sysfillrect mptspi mptscsih sysimgblt ahci psmouse fb_sys_fops pata_acpi mptbase libahci e1000 drm scsi_transport_spi
-[  134.842046] CPU: 7 PID: 2629 Comm: python Tainted: G        W  OE    4.15.0-34-generic #37~16.04.1-Ubuntu
-[  134.842046] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[  134.842048] RIP: 0010:tcp_recvmsg+0x44d/0xab0
-[  134.842048] RSP: 0018:ffffa6630422bcc8 EFLAGS: 00010286
-[  134.842049] RAX: 0000000000000000 RBX: ffff997616f4f200 RCX: 0000000000000006
-[  134.842049] RDX: 0000000000000007 RSI: 0000000000000082 RDI: ffff9976257d6490
-[  134.842050] RBP: ffffa6630422bd98 R08: 0000000000000001 R09: 000000000004bba4
-[  134.842050] R10: 0000000001e00c6f R11: 000000000004bba4 R12: ffff99760dee3000
-[  134.842051] R13: 0000000000000000 R14: ffff99760dee3514 R15: 0000000000000000
-[  134.842051] FS:  00007fe332347700(0000) GS:ffff9976257c0000(0000) knlGS:0000000000000000
-[  134.842052] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  134.842053] CR2: 0000000001e41000 CR3: 000000020e9b4006 CR4: 00000000003606e0
-[  134.842055] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  134.842055] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  134.842057] Call Trace:
-[  134.842060]  ? aa_sk_perm+0x53/0x1a0
-[  134.842064]  inet_recvmsg+0x51/0xc0
-[  134.842066]  sock_recvmsg+0x43/0x50
-[  134.842070]  SYSC_recvfrom+0xe4/0x160
-[  134.842072]  ? __schedule+0x3de/0x8b0
-[  134.842075]  ? ktime_get_ts64+0x4c/0xf0
-[  134.842079]  SyS_recvfrom+0xe/0x10
-[  134.842082]  do_syscall_64+0x73/0x130
-[  134.842086]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-[  134.842086] RIP: 0033:0x7fe331f5a81d
-[  134.842088] RSP: 002b:00007ffe8da98398 EFLAGS: 00000246 ORIG_RAX: 000000000000002d
-[  134.842090] RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 00007fe331f5a81d
-[  134.842094] RDX: 00000000000003fb RSI: 0000000001e00874 RDI: 0000000000000003
-[  134.842095] RBP: 00007fe32f642c70 R08: 0000000000000000 R09: 0000000000000000
-[  134.842097] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe332347698
-[  134.842099] R13: 0000000001b7e0a0 R14: 0000000001e00874 R15: 0000000000000000
-[  134.842103] Code: 24 fd ff ff e9 cc fe ff ff 48 89 d8 41 8b 8c 24 10 05 00 00 44 8b 45 80 48 c7 c7 08 bd 59 8b 48 89 85 68 ff ff ff e8 b3 c4 7d ff <0f> 0b 48 8b 85 68 ff ff ff e9 e9 fe ff ff 41 8b 8c 24 10 05 00
-[  134.842126] ---[ end trace b7138fc08c83147f ]---
-[  134.842144] general protection fault: 0000 [#1] SMP PTI
-[  134.842145] Modules linked in: ipheth(OE) kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd glue_helper cryptd vmw_balloon intel_rapl_perf joydev input_leds serio_raw vmw_vsock_vmci_transport vsock shpchp i2c_piix4 mac_hid binfmt_misc vmw_vmci parport_pc ppdev lp parport autofs4 vmw_pvscsi vmxnet3 hid_generic usbhid hid vmwgfx ttm drm_kms_helper syscopyarea sysfillrect mptspi mptscsih sysimgblt ahci psmouse fb_sys_fops pata_acpi mptbase libahci e1000 drm scsi_transport_spi
-[  134.842161] CPU: 7 PID: 2629 Comm: python Tainted: G        W  OE    4.15.0-34-generic #37~16.04.1-Ubuntu
-[  134.842162] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[  134.842164] RIP: 0010:tcp_close+0x2c6/0x440
-[  134.842165] RSP: 0018:ffffa6630422bde8 EFLAGS: 00010202
-[  134.842167] RAX: 0000000000000000 RBX: ffff99760dee3000 RCX: 0000000180400034
-[  134.842168] RDX: 5c4afd407207a6c4 RSI: ffffe868495bd300 RDI: ffff997616f4f200
-[  134.842169] RBP: ffffa6630422be08 R08: 0000000016f4d401 R09: 0000000180400034
-[  134.842169] R10: ffffa6630422bd98 R11: 0000000000000000 R12: 000000000000600c
-[  134.842170] R13: 0000000000000000 R14: ffff99760dee30c8 R15: ffff9975bd44fe00
-[  134.842171] FS:  00007fe332347700(0000) GS:ffff9976257c0000(0000) knlGS:0000000000000000
-[  134.842173] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  134.842174] CR2: 0000000001e41000 CR3: 000000020e9b4006 CR4: 00000000003606e0
-[  134.842177] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  134.842178] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  134.842179] Call Trace:
-[  134.842181]  inet_release+0x42/0x70
-[  134.842183]  __sock_release+0x42/0xb0
-[  134.842184]  sock_close+0x15/0x20
-[  134.842187]  __fput+0xea/0x220
-[  134.842189]  ____fput+0xe/0x10
-[  134.842191]  task_work_run+0x8a/0xb0
-[  134.842193]  exit_to_usermode_loop+0xc4/0xd0
-[  134.842195]  do_syscall_64+0xf4/0x130
-[  134.842197]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-[  134.842197] RIP: 0033:0x7fe331f5a560
-[  134.842198] RSP: 002b:00007ffe8da982e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-[  134.842200] RAX: 0000000000000000 RBX: 00007fe32f642c70 RCX: 00007fe331f5a560
-[  134.842201] RDX: 00000000008f5320 RSI: 0000000001cd4b50 RDI: 0000000000000003
-[  134.842202] RBP: 00007fe32f6500f8 R08: 000000000000003c R09: 00000000009343c0
-[  134.842203] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe32f6500d0
-[  134.842204] R13: 00000000008f5320 R14: 00000000008f5320 R15: 0000000001cd4770
-[  134.842205] Code: c8 00 00 00 45 31 e4 49 39 fe 75 4d eb 50 83 ab d8 00 00 00 01 48 8b 17 48 8b 47 08 48 c7 07 00 00 00 00 48 c7 47 08 00 00 00 00 <48> 89 42 08 48 89 10 0f b6 57 34 8b 47 2c 2b 47 28 83 e2 01 80
-[  134.842226] RIP: tcp_close+0x2c6/0x440 RSP: ffffa6630422bde8
-[  134.842227] ---[ end trace b7138fc08c831480 ]---
+A copy of this document is available at
+   https://bugzilla.kernel.org/show_bug.cgi?id=199889
 
-The proposed patch eliminates a potential racing condition.
-Before, usb_submit_urb was called and _after_ that, the skb was attached
-(dev->tx_skb). So, on a callback it was possible, however unlikely that the
-skb was freed before it was set. That way (because dev->tx_skb was not set
-to NULL after it was freed), it could happen that a skb from a earlier
-transmission was freed a second time (and the skb we should have freed did
-not get freed at all)
-
-Now we free the skb directly in ipheth_tx(). It is not passed to the
-callback anymore, eliminating the posibility of a double free of the same
-skb. Depending on the retval of usb_submit_urb() we use dev_kfree_skb_any()
-respectively dev_consume_skb_any() to free the skb.
-
-Signed-off-by: Oliver Zweigle <Oliver.Zweigle@faro.com>
-Signed-off-by: Bernd Eckstein <3ernd.Eckstein@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Cc: kvm@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: andrew.cooper3@citrix.com
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Kees Cook <keescook@chromium.org>
+Link: https://lkml.kernel.org/r/20180601145921.9500-3-konrad.wilk@oracle.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/ipheth.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    1 +
+ arch/x86/kernel/cpu/bugs.c         |   12 +++++++-----
+ arch/x86/kernel/cpu/common.c       |    6 ++++++
+ arch/x86/kvm/cpuid.c               |   10 ++++++++--
+ arch/x86/kvm/svm.c                 |    8 +++++---
+ 5 files changed, 27 insertions(+), 10 deletions(-)
 
---- a/drivers/net/usb/ipheth.c
-+++ b/drivers/net/usb/ipheth.c
-@@ -140,7 +140,6 @@ struct ipheth_device {
- 	struct usb_device *udev;
- 	struct usb_interface *intf;
- 	struct net_device *net;
--	struct sk_buff *tx_skb;
- 	struct urb *tx_urb;
- 	struct urb *rx_urb;
- 	unsigned char *tx_buf;
-@@ -229,6 +228,7 @@ static void ipheth_rcvbulk_callback(stru
- 	case -ENOENT:
- 	case -ECONNRESET:
- 	case -ESHUTDOWN:
-+	case -EPROTO:
- 		return;
- 	case 0:
- 		break;
-@@ -280,7 +280,6 @@ static void ipheth_sndbulk_callback(stru
- 		dev_err(&dev->intf->dev, "%s: urb status: %d\n",
- 		__func__, status);
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -284,6 +284,7 @@
+ #define X86_FEATURE_AMD_IBPB		(13*32+12) /* "" Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
+ #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_AMD_SSBD		(13*32+24) /* "" Speculative Store Bypass Disable */
+ #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
+ #define X86_FEATURE_AMD_SSB_NO		(13*32+26) /* "" Speculative Store Bypass is fixed in hardware. */
  
--	dev_kfree_skb_irq(dev->tx_skb);
- 	netif_wake_queue(dev->net);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -532,18 +532,20 @@ static enum ssb_mitigation __init __ssb_
+ 	if (mode == SPEC_STORE_BYPASS_DISABLE) {
+ 		setup_force_cpu_cap(X86_FEATURE_SPEC_STORE_BYPASS_DISABLE);
+ 		/*
+-		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD uses
+-		 * a completely different MSR and bit dependent on family.
++		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD may
++		 * use a completely different MSR and bit dependent on family.
+ 		 */
+ 		switch (boot_cpu_data.x86_vendor) {
+ 		case X86_VENDOR_INTEL:
++		case X86_VENDOR_AMD:
++			if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL)) {
++				x86_amd_ssb_disable();
++				break;
++			}
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+ 			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+ 			break;
+-		case X86_VENDOR_AMD:
+-			x86_amd_ssb_disable();
+-			break;
+ 		}
+ 	}
+ 
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -760,6 +760,12 @@ static void init_speculation_control(str
+ 		set_cpu_cap(c, X86_FEATURE_STIBP);
+ 		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
+ 	}
++
++	if (cpu_has(c, X86_FEATURE_AMD_SSBD)) {
++		set_cpu_cap(c, X86_FEATURE_SSBD);
++		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
++		clear_cpu_cap(c, X86_FEATURE_VIRT_SSBD);
++	}
  }
  
-@@ -410,7 +409,7 @@ static int ipheth_tx(struct sk_buff *skb
- 	if (skb->len > IPHETH_BUF_SIZE) {
- 		WARN(1, "%s: skb too large: %d bytes\n", __func__, skb->len);
- 		dev->net->stats.tx_dropped++;
--		dev_kfree_skb_irq(skb);
-+		dev_kfree_skb_any(skb);
- 		return NETDEV_TX_OK;
- 	}
+ void get_cpu_cap(struct cpuinfo_x86 *c)
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -367,7 +367,8 @@ static inline int __do_cpuid_ent(struct
  
-@@ -430,12 +429,11 @@ static int ipheth_tx(struct sk_buff *skb
- 		dev_err(&dev->intf->dev, "%s: usb_submit_urb: %d\n",
- 			__func__, retval);
- 		dev->net->stats.tx_errors++;
--		dev_kfree_skb_irq(skb);
-+		dev_kfree_skb_any(skb);
- 	} else {
--		dev->tx_skb = skb;
--
- 		dev->net->stats.tx_packets++;
- 		dev->net->stats.tx_bytes += skb->len;
-+		dev_consume_skb_any(skb);
- 		netif_stop_queue(net);
- 	}
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD) | F(AMD_SSB_NO);
++		F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
++		F(AMD_SSB_NO);
  
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
+@@ -649,7 +650,12 @@ static inline int __do_cpuid_ent(struct
+ 			entry->ebx |= F(VIRT_SSBD);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
+-		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++		/*
++		 * The preference is to use SPEC CTRL MSR instead of the
++		 * VIRT_SPEC MSR.
++		 */
++		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD) &&
++		    !boot_cpu_has(X86_FEATURE_AMD_SSBD))
+ 			entry->ebx |= F(VIRT_SSBD);
+ 		break;
+ 	}
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3644,7 +3644,8 @@ static int svm_get_msr(struct kvm_vcpu *
+ 		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr_info->host_initiated &&
+-		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS))
++		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS) &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_SSBD))
+ 			return 1;
+ 
+ 		msr_info->data = svm->spec_ctrl;
+@@ -3749,11 +3750,12 @@ static int svm_set_msr(struct kvm_vcpu *
+ 		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr->host_initiated &&
+-		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS))
++		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS) &&
++		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_SSBD))
+ 			return 1;
+ 
+ 		/* The STIBP bit doesn't fault even if it's not advertised */
+-		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP | SPEC_CTRL_SSBD))
+ 			return 1;
+ 
+ 		svm->spec_ctrl = data;
 
 
