@@ -2,113 +2,96 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD481C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85DBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37CD2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6452B214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="f8c0h3rr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37CD2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="CE3eM1wH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6452B214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbeLDTy1 (ORCPT
+        id S1726472AbeLDTym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:54:27 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54166 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726406AbeLDTyX (ORCPT
+        Tue, 4 Dec 2018 14:54:42 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:34480 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbeLDTyl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:54:23 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wB4Jk80R032470
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 11:54:22 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=k3vhgKNIOUqfF+ezFVZGVZ19C29Fw21QnzWMIpL4hIA=;
- b=f8c0h3rrU+8u4JFg4DL2kEkAmqRSYAo2f01wfEp3d7IABPmxDSJwraUXSCAoA2P0GojO
- zOGL3vUpFPG/QeloPYns2f3368LbWIZowInbe3ActzTVF2F0ZmDf8Ct50T4bv52glNcg
- 4zk8kuPMMspmlU/5GyrvMCzw6B2TrYW7uK8= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0001303.ppops.net with ESMTP id 2p5xqu89s8-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:54:22 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Tue, 4 Dec 2018 11:54:09 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 74B1262E1546; Tue,  4 Dec 2018 11:54:02 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <acme@kernel.org>,
-        <ast@kernel.org>, <daniel@iogearbox.net>, <kernel-team@fb.com>,
-        <peterz@infradead.org>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v2 perf,bpf 0/3] reveal invisible bpf programs
-Date:   Tue, 4 Dec 2018 11:53:52 -0800
-Message-ID: <20181204195355.4079788-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Tue, 4 Dec 2018 14:54:41 -0500
+Received: by mail-yb1-f196.google.com with SMTP id a67-v6so7405654ybg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:54:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KEmiKoLuZH21McZzbS+ZG3EgftTYemLlSyZsFUMBzK0=;
+        b=CE3eM1wH8tK+rtHYU5qpr6P7pNFWJvVDn/n+QQY1lAYyhgD3pKLRyEjKULYFeTcCsa
+         02D3UKuzHpNL0z7Jtt1FjqUP+ATABkn2VVhdRD8KrH3LlIiRBfVs9vTZ9vhcKywL/ndM
+         9w0kvUmz4E9zJFkZM+N+dm3LWmAy1hd7+AK3rbGTGKPvEllgsE4IT6Bcg5OZxPzSGmFN
+         nmJOtFeR0d7FHMxdFi5bxYkVQ2IDe9kqAQ1hg55blK5+B67rLA68/vl57cT1sXW58cG6
+         lJYAPYKAor3GdHpwTzsD82EmhQb4edjuKY6o5YZOtb04dz4ArtbGxmy2zbUxtQLOgMhS
+         hJbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KEmiKoLuZH21McZzbS+ZG3EgftTYemLlSyZsFUMBzK0=;
+        b=C0uAhqye5GAZ15KaNAnBrLKrQ1tFOQVhmfaKA11XZxGaVIE8juZIjaHR984wEMFv8Z
+         x7wh0BnF178m77+BWEfeSzlr6Cp6Me/VnbZJoXE0WzQfm5Y5gi2eQAMKbkySwRYaVKgM
+         OtMPg33NitObu/jqJE84do3mSMk1gPMSnMqgd4vXb8Nn4Ke+b8vLWM0Fr6k72tzJ9o1f
+         bv1qQBUqwkC1YcWBYtwvGpln7aELtoMK4aP2XsbiBoEQhZfZOZOSGzN9UmFq9rHdj425
+         y0ykvFJrgbn4RiuevTsvSDXQ3RE1kGuSAOsl+sp/T6MDx53ZZ2LwOvOJ4kIplHHoLf1C
+         Be2g==
+X-Gm-Message-State: AA+aEWZzElZVtNXnuEu+pIdGJmQ3S/WCtw19c2GPq7wmo5D0HLq3ZekL
+        rdoxDY4MqK4NPrH1XxYlO60O9g==
+X-Google-Smtp-Source: AFSGD/U2cjYhFlXInnxI7qEMOWmmELH91uMHtImiK7MAZyWbSTrSJasgTruMiNcL1Y5wHB/VaDtTBg==
+X-Received: by 2002:a25:ca94:: with SMTP id a142mr14897560ybg.151.1543953280440;
+        Tue, 04 Dec 2018 11:54:40 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id x4sm20572269ywj.80.2018.12.04.11.54.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 11:54:39 -0800 (PST)
+Date:   Tue, 4 Dec 2018 14:54:38 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/14] blkcg: change blkg reference counting to use
+ percpu_ref
+Message-ID: <20181204195437.cqixsk265n6dyetv@MacBook-Pro-91.local>
+References: <20181204183600.99746-1-dennis@kernel.org>
+ <20181204183600.99746-14-dennis@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204183600.99746-14-dennis@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes v2 -> PATCH v1:
-1. Only 3 of the 5 patches in v1, to focus on ABI first;
-2. Generate PERF_RECORD_BPF_EVENT per bpf sub program instead of per prog;
-3. Modify PERF_RECORD_BPF_EVENT with more details (addr, len, name),
-   so that it can be used for basic profiling without calling sys_bpf.
+On Tue, Dec 04, 2018 at 01:35:59PM -0500, Dennis Zhou wrote:
+> Every bio is now associated with a blkg putting blkg_get, blkg_try_get,
+> and blkg_put on the hot path. Switch over the refcnt in blkg to use
+> percpu_ref.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> Acked-by: Tejun Heo <tj@kernel.org>
 
-Changes RFC -> PATCH v1:
-1. In perf-record, poll vip events in a separate thread;
-2. Add tag to bpf prog name;
-3. Small refactorings.
-
-This is to follow up Alexei's early effort to show bpf programs
-
-   https://www.spinics.net/lists/netdev/msg524232.html
-
-In this version, PERF_RECORD_BPF_EVENT is introduced to send real time BPF
-load/unload events to user space.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
 Thanks,
-Song
 
-Song Liu (3):
-  perf, bpf: Introduce PERF_RECORD_BPF_EVENT
-  perf: sync tools/include/uapi/linux/perf_event.h
-  perf util: basic handling of PERF_RECORD_BPF_EVENT
-
- include/linux/filter.h                |   1 +
- include/linux/perf_event.h            |  10 +++
- include/uapi/linux/perf_event.h       |  35 +++++++-
- kernel/bpf/core.c                     |   2 +-
- kernel/bpf/syscall.c                  |   3 +
- kernel/events/core.c                  | 123 +++++++++++++++++++++++++-
- tools/include/uapi/linux/perf_event.h |  35 +++++++-
- tools/perf/util/event.c               |  22 +++++
- tools/perf/util/event.h               |  26 ++++++
- tools/perf/util/evsel.c               |   1 +
- tools/perf/util/machine.c             |  10 +++
- tools/perf/util/machine.h             |   2 +
- tools/perf/util/session.c             |   4 +
- tools/perf/util/tool.h                |   4 +-
- 14 files changed, 273 insertions(+), 5 deletions(-)
-
---
-2.17.1
+Josef
