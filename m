@@ -2,312 +2,153 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC162C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6489C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C44020851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:23:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8322C2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MzmcWjcp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ylv5kElf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C44020851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mtwnro/8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8322C2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbeLDLXk (ORCPT
+        id S1727593AbeLDLYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:23:40 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38774 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbeLDLBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:01:38 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BDC9A60C48; Tue,  4 Dec 2018 11:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543921297;
-        bh=aG47hPrUtkIFO8UrwSawSQHFhcbfIBFOCLq2tXO9NV4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MzmcWjcpSZPlfZ9dIwWtHHrUED5jtUagijf0OxnPdn52WU2q8pQsxWyk/SqmXtqbi
-         AK9Hcq1XIHaETY0bev1OGaNPROTnBSXqBo06ppYw2MosnFF4vKXZeMrh0rKWN7fcCe
-         RJKwwr0enZ4LujZo55296pxYB7n/3L397K62NLXM=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Tue, 4 Dec 2018 06:24:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726367AbeLDLBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:01:20 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BC8976028B;
-        Tue,  4 Dec 2018 11:01:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543921293;
-        bh=aG47hPrUtkIFO8UrwSawSQHFhcbfIBFOCLq2tXO9NV4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ylv5kElf6q59YkyycLhlnssr+9x5W9Drsy0kZjnQnQMrcWxZuZ8yWo4hAaSYaD2vK
-         cJQyrcTz+p+VYtCkPwu5ceNR3u4/eUlj4SRs+FF57R5QJOYfFgcv+fcGdXSlDG9Pt2
-         WThIsBuKX5lJRXQlhcVT/A+KZbBwlJ62gFNJFoGg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC8976028B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     joro@8bytes.org, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org
-Cc:     robin.murphy@arm.com, robdclark@gmail.com,
-        linux-kernel@vger.kernel.org, tfiga@chromium.org,
-        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        pdaly@codeaurora.org, pratikp@codeaurora.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH 1/1] iommu/arm-smmu: Add support to use Last level cache
-Date:   Tue,  4 Dec 2018 16:31:22 +0530
-Message-Id: <20181204110122.12434-1-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+        by mail.kernel.org (Postfix) with ESMTPSA id C7F2E214D9;
+        Tue,  4 Dec 2018 11:01:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543921280;
+        bh=68RVGxzkgwNhoo5MhRoUBDZ/cKSkRvcynljj3ddewyc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mtwnro/8glvjQL7T/QfdQXJ1eNMh1r2b6QAwit5xiF+4cUTZLZ1k2k7rir3LvVI4R
+         PgSUs/72aRHez92MZ5m0K0h1M5d8ILYWtbDUW56tdzxDPsgZPGQ9rO9E3MsqBpd0mr
+         2IOmaQs1giRcHAuivxYSGIOkew1rfDWAlGP9SiQI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Matthias Schwarzott <zzam@gentoo.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 011/146] media: em28xx: Fix use-after-free when disconnecting
+Date:   Tue,  4 Dec 2018 11:48:17 +0100
+Message-Id: <20181204103727.247068592@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
+References: <20181204103726.750894136@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qualcomm SoCs have an additional level of cache called as
-System cache, aka. Last level cache (LLC). This cache sits right
-before the DDR, and is tightly coupled with the memory controller.
-The cache is available to all the clients present in the SoC system.
-The clients request their slices from this system cache, make it
-active, and can then start using it.
-For these clients with smmu, to start using the system cache for
-buffers and, related page tables [1], memory attributes need to be
-set accordingly.
-This change updates the MAIR and TCR configurations with correct
-attributes to use this system cache.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-To explain a little about memory attribute requirements here:
+------------------
 
-Non-coherent I/O devices can't look-up into inner caches. However,
-coherent I/O devices can. But both can allocate in the system cache
-based on system policy and configured memory attributes in page
-tables.
-CPUs can access both inner and outer caches (including system cache,
-aka. Last level cache), and can allocate into system cache too
-based on memory attributes, and system policy.
+[ Upstream commit 910b0797fa9e8af09c44a3fa36cb310ba7a7218d ]
 
-Further looking at memory types, we have following -
-a) Normal uncached :- MAIR 0x44, inner non-cacheable,
-                      outer non-cacheable;
-b) Normal cached :-   MAIR 0xff, inner read write-back non-transient,
-                      outer read write-back non-transient;
-                      attribute setting for coherenet I/O devices.
+Fix bug by moving the i2c_unregister_device calls after deregistration
+of dvb frontend.
 
-and, for non-coherent i/o devices that can allocate in system cache
-another type gets added -
-c) Normal sys-cached/non-inner-cached :-
-                      MAIR 0xf4, inner non-cacheable,
-                      outer read write-back non-transient
+The new style i2c drivers already destroys the frontend object at
+i2c_unregister_device time.
+When the dvb frontend is unregistered afterwards it leads to this oops:
 
-So, CPU will automatically use the system cache for memory marked as
-normal cached. The normal sys-cached is downgraded to normal non-cached
-memory for CPUs.
-Coherent I/O devices can use system cache by marking the memory as
-normal cached.
-Non-coherent I/O devices, to use system cache, should mark the memory as
-normal sys-cached in page tables.
+  [ 6058.866459] BUG: unable to handle kernel NULL pointer dereference at 00000000000001f8
+  [ 6058.866578] IP: dvb_frontend_stop+0x30/0xd0 [dvb_core]
+  [ 6058.866644] PGD 0
+  [ 6058.866646] P4D 0
 
-This change is a realisation of following changes
-from downstream msm-4.9:
-iommu: io-pgtable-arm: Support DOMAIN_ATTRIBUTE_USE_UPSTREAM_HINT[2]
-iommu: io-pgtable-arm: Implement IOMMU_USE_UPSTREAM_HINT[3]
+  [ 6058.866726] Oops: 0000 [#1] SMP
+  [ 6058.866768] Modules linked in: rc_pinnacle_pctv_hd(O) em28xx_rc(O) si2157(O) si2168(O) em28xx_dvb(O) em28xx(O) si2165(O) a8293(O) tda10071(O) tea5767(O) tuner(O) cx23885(O) tda18271(O) videobuf2_dvb(O) videobuf2_dma_sg(O) m88ds3103(O) tveeprom(O) cx2341x(O) v4l2_common(O) dvb_core(O) rc_core(O) videobuf2_memops(O) videobuf2_v4l2(O) videobuf2_core(O) videodev(O) media(O) bluetooth ecdh_generic ums_realtek uas rtl8192cu rtl_usb rtl8192c_common rtlwifi usb_storage snd_hda_codec_realtek snd_hda_codec_hdmi snd_hda_codec_generic i2c_mux snd_hda_intel snd_hda_codec snd_hwdep x86_pkg_temp_thermal snd_hda_core kvm_intel kvm irqbypass [last unloaded: videobuf2_memops]
+  [ 6058.867497] CPU: 2 PID: 7349 Comm: kworker/2:0 Tainted: G        W  O    4.13.9-gentoo #1
+  [ 6058.867595] Hardware name: MEDION E2050 2391/H81H3-EM2, BIOS H81EM2W08.308 08/25/2014
+  [ 6058.867692] Workqueue: usb_hub_wq hub_event
+  [ 6058.867746] task: ffff88011a15e040 task.stack: ffffc90003074000
+  [ 6058.867825] RIP: 0010:dvb_frontend_stop+0x30/0xd0 [dvb_core]
+  [ 6058.867896] RSP: 0018:ffffc90003077b58 EFLAGS: 00010293
+  [ 6058.867964] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000010040001f
+  [ 6058.868056] RDX: ffff88011a15e040 RSI: ffffea000464e400 RDI: ffff88001cbe3028
+  [ 6058.868150] RBP: ffffc90003077b68 R08: ffff880119390380 R09: 000000010040001f
+  [ 6058.868241] R10: ffffc90003077b18 R11: 000000000001e200 R12: ffff88001cbe3028
+  [ 6058.868330] R13: ffff88001cbe68d0 R14: ffff8800cf734000 R15: ffff8800cf734098
+  [ 6058.868419] FS:  0000000000000000(0000) GS:ffff88011fb00000(0000) knlGS:0000000000000000
+  [ 6058.868511] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [ 6058.868578] CR2: 00000000000001f8 CR3: 00000001113c5000 CR4: 00000000001406e0
+  [ 6058.868662] Call Trace:
+  [ 6058.868705]  dvb_unregister_frontend+0x2a/0x80 [dvb_core]
+  [ 6058.868774]  em28xx_dvb_fini+0x132/0x220 [em28xx_dvb]
+  [ 6058.868840]  em28xx_close_extension+0x34/0x90 [em28xx]
+  [ 6058.868902]  em28xx_usb_disconnect+0x4e/0x70 [em28xx]
+  [ 6058.868968]  usb_unbind_interface+0x6d/0x260
+  [ 6058.869025]  device_release_driver_internal+0x150/0x210
+  [ 6058.869094]  device_release_driver+0xd/0x10
+  [ 6058.869150]  bus_remove_device+0xe4/0x160
+  [ 6058.869204]  device_del+0x1ce/0x2f0
+  [ 6058.869253]  usb_disable_device+0x99/0x270
+  [ 6058.869306]  usb_disconnect+0x8d/0x260
+  [ 6058.869359]  hub_event+0x93d/0x1520
+  [ 6058.869408]  ? dequeue_task_fair+0xae5/0xd20
+  [ 6058.869467]  process_one_work+0x1d9/0x3e0
+  [ 6058.869522]  worker_thread+0x43/0x3e0
+  [ 6058.869576]  kthread+0x104/0x140
+  [ 6058.869602]  ? trace_event_raw_event_workqueue_work+0x80/0x80
+  [ 6058.869640]  ? kthread_create_on_node+0x40/0x40
+  [ 6058.869673]  ret_from_fork+0x22/0x30
+  [ 6058.869698] Code: 54 49 89 fc 53 48 8b 9f 18 03 00 00 0f 1f 44 00 00 41 83 bc 24 04 05 00 00 02 74 0c 41 c7 84 24 04 05 00 00 01 00 00 00 0f ae f0 <48> 8b bb f8 01 00 00 48 85 ff 74 5c e8 df 40 f0 e0 48 8b 93 f8
+  [ 6058.869850] RIP: dvb_frontend_stop+0x30/0xd0 [dvb_core] RSP: ffffc90003077b58
+  [ 6058.869894] CR2: 00000000000001f8
+  [ 6058.875880] ---[ end trace 717eecf7193b3fc6 ]---
 
-[1] https://patchwork.kernel.org/patch/10302791/
-[2] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=bf762276796e79ca90014992f4d9da5593fa7d51
-[3] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=d4c72c413ea27c43f60825193d4de9cb8ffd9602
-
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Signed-off-by: Matthias Schwarzott <zzam@gentoo.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ drivers/media/usb/em28xx/em28xx-dvb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes since v1:
- - Addressed Tomasz's comments for basing the change on
-   "NO_INNER_CACHE" concept for non-coherent I/O devices
-   rather than capturing "SYS_CACHE". This is to indicate
-   clearly the intent of non-coherent I/O devices that
-   can't access inner caches.
-
- drivers/iommu/arm-smmu.c       | 15 +++++++++++++++
- drivers/iommu/dma-iommu.c      |  3 +++
- drivers/iommu/io-pgtable-arm.c | 22 +++++++++++++++++-----
- drivers/iommu/io-pgtable.h     |  5 +++++
- include/linux/iommu.h          |  3 +++
- 5 files changed, 43 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index ba18d89d4732..047f7ff95b0d 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -255,6 +255,7 @@ struct arm_smmu_domain {
- 	struct mutex			init_mutex; /* Protects smmu pointer */
- 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
- 	struct iommu_domain		domain;
-+	bool				no_inner_cache;
- };
- 
- struct arm_smmu_option_prop {
-@@ -897,6 +898,9 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
- 	if (smmu_domain->non_strict)
- 		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
- 
-+	if (smmu_domain->no_inner_cache)
-+		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NO_IC;
-+
- 	smmu_domain->smmu = smmu;
- 	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
- 	if (!pgtbl_ops) {
-@@ -1579,6 +1583,9 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
- 		case DOMAIN_ATTR_NESTING:
- 			*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
- 			return 0;
-+		case DOMAIN_ATTR_NO_IC:
-+			*((int *)data) = smmu_domain->no_inner_cache;
-+			return 0;
- 		default:
- 			return -ENODEV;
+diff --git a/drivers/media/usb/em28xx/em28xx-dvb.c b/drivers/media/usb/em28xx/em28xx-dvb.c
+index 4a7db623fe29..29cdaaf1ed90 100644
+--- a/drivers/media/usb/em28xx/em28xx-dvb.c
++++ b/drivers/media/usb/em28xx/em28xx-dvb.c
+@@ -2105,6 +2105,8 @@ static int em28xx_dvb_fini(struct em28xx *dev)
  		}
-@@ -1619,6 +1626,14 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 			else
- 				smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
- 			break;
-+		case DOMAIN_ATTR_NO_IC:
-+			if (smmu_domain->smmu) {
-+				ret = -EPERM;
-+				goto out_unlock;
-+			}
-+			if (*((int *)data))
-+				smmu_domain->no_inner_cache = true;
-+			break;
- 		default:
- 			ret = -ENODEV;
- 		}
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index d1b04753b204..87c3d59c4a6c 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -354,6 +354,9 @@ int dma_info_to_prot(enum dma_data_direction dir, bool coherent,
- {
- 	int prot = coherent ? IOMMU_CACHE : 0;
+ 	}
  
-+	if (!coherent && (attrs & DOMAIN_ATTR_NO_IC))
-+		prot |= IOMMU_NO_IC;
++	em28xx_unregister_dvb(dvb);
 +
- 	if (attrs & DMA_ATTR_PRIVILEGED)
- 		prot |= IOMMU_PRIV;
+ 	/* remove I2C SEC */
+ 	client = dvb->i2c_client_sec;
+ 	if (client) {
+@@ -2126,7 +2128,6 @@ static int em28xx_dvb_fini(struct em28xx *dev)
+ 		i2c_unregister_device(client);
+ 	}
  
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 237cacd4a62b..815b86067bcc 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -168,10 +168,12 @@
- #define ARM_LPAE_MAIR_ATTR_MASK		0xff
- #define ARM_LPAE_MAIR_ATTR_DEVICE	0x04
- #define ARM_LPAE_MAIR_ATTR_NC		0x44
-+#define ARM_LPAE_MAIR_ATTR_NO_IC	0xf4
- #define ARM_LPAE_MAIR_ATTR_WBRWA	0xff
- #define ARM_LPAE_MAIR_ATTR_IDX_NC	0
- #define ARM_LPAE_MAIR_ATTR_IDX_CACHE	1
- #define ARM_LPAE_MAIR_ATTR_IDX_DEV	2
-+#define ARM_LPAE_MAIR_ATTR_IDX_NO_IC	3
- 
- /* IOPTE accessors */
- #define iopte_deref(pte,d) __va(iopte_to_paddr(pte, d))
-@@ -443,6 +445,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
- 		else if (prot & IOMMU_CACHE)
- 			pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
- 				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
-+		else if (prot & IOMMU_NO_IC)
-+			pte |= (ARM_LPAE_MAIR_ATTR_IDX_NO_IC
-+				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
- 	} else {
- 		pte = ARM_LPAE_PTE_HAP_FAULT;
- 		if (prot & IOMMU_READ)
-@@ -780,7 +785,8 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
- 	struct arm_lpae_io_pgtable *data;
- 
- 	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA |
--			    IO_PGTABLE_QUIRK_NON_STRICT))
-+			    IO_PGTABLE_QUIRK_NON_STRICT |
-+			    IO_PGTABLE_QUIRK_NO_IC))
- 		return NULL;
- 
- 	data = arm_lpae_alloc_pgtable(cfg);
-@@ -788,9 +794,13 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
- 		return NULL;
- 
- 	/* TCR */
--	reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
--	      (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT) |
--	      (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
-+	if (cfg->quirks & IO_PGTABLE_QUIRK_NO_IC)
-+		reg = ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_IRGN0_SHIFT;
-+	else
-+		reg = ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT;
-+
-+	reg |= (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
-+	       (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
- 
- 	switch (ARM_LPAE_GRANULE(data)) {
- 	case SZ_4K:
-@@ -842,7 +852,9 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
- 	      (ARM_LPAE_MAIR_ATTR_WBRWA
- 	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_CACHE)) |
- 	      (ARM_LPAE_MAIR_ATTR_DEVICE
--	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV));
-+	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_DEV)) |
-+	      (ARM_LPAE_MAIR_ATTR_NO_IC
-+	       << ARM_LPAE_MAIR_ATTR_SHIFT(ARM_LPAE_MAIR_ATTR_IDX_NO_IC));
- 
- 	cfg->arm_lpae_s1_cfg.mair[0] = reg;
- 	cfg->arm_lpae_s1_cfg.mair[1] = 0;
-diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
-index 47d5ae559329..450a4adf9052 100644
---- a/drivers/iommu/io-pgtable.h
-+++ b/drivers/iommu/io-pgtable.h
-@@ -75,6 +75,10 @@ struct io_pgtable_cfg {
- 	 * IO_PGTABLE_QUIRK_NON_STRICT: Skip issuing synchronous leaf TLBIs
- 	 *	on unmap, for DMA domains using the flush queue mechanism for
- 	 *	delayed invalidation.
-+	 *
-+	 * IO_PGTABLE_QUIRK_NO_IC: Override the attributes to use only the outer
-+	 *      cache, and not inner cache for non-coherent devices doing normal
-+	 *      sys-cached memory.
- 	 */
- 	#define IO_PGTABLE_QUIRK_ARM_NS		BIT(0)
- 	#define IO_PGTABLE_QUIRK_NO_PERMS	BIT(1)
-@@ -82,6 +86,7 @@ struct io_pgtable_cfg {
- 	#define IO_PGTABLE_QUIRK_ARM_MTK_4GB	BIT(3)
- 	#define IO_PGTABLE_QUIRK_NO_DMA		BIT(4)
- 	#define IO_PGTABLE_QUIRK_NON_STRICT	BIT(5)
-+	#define IO_PGTABLE_QUIRK_NO_IC		BIT(6)
- 	unsigned long			quirks;
- 	unsigned long			pgsize_bitmap;
- 	unsigned int			ias;
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index a1d28f42cb77..c30ee7f8d82d 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -41,6 +41,8 @@
-  * if the IOMMU page table format is equivalent.
-  */
- #define IOMMU_PRIV	(1 << 5)
-+/* Don't use inner caches */
-+#define IOMMU_NO_IC	(1 << 6)
- 
- struct iommu_ops;
- struct iommu_group;
-@@ -125,6 +127,7 @@ enum iommu_attr {
- 	DOMAIN_ATTR_FSL_PAMUV1,
- 	DOMAIN_ATTR_NESTING,	/* two stages of translation */
- 	DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
-+	DOMAIN_ATTR_NO_IC,
- 	DOMAIN_ATTR_MAX,
- };
- 
+-	em28xx_unregister_dvb(dvb);
+ 	kfree(dvb);
+ 	dev->dvb = NULL;
+ 	kref_put(&dev->ref, em28xx_free_device);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.17.1
+
+
 
