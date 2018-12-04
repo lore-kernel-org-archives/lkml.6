@@ -2,192 +2,217 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D5FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04772C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0B220834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:49:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/yjiSON"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0B220834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B502F20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B502F20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbeLDTth (ORCPT
+        id S1726254AbeLDTto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:49:37 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43158 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeLDTtg (ORCPT
+        Tue, 4 Dec 2018 14:49:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48460 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725874AbeLDTtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:49:36 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so8732425pfk.10;
-        Tue, 04 Dec 2018 11:49:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AYukJDlNUAL+GLJBpuiQp0mZcMh2C2I69MgWjZ0KKy0=;
-        b=g/yjiSONRqt3y95tf7t6DB8YTXxL4E7v5GEx5mhy2+TaScfqwJm4OFMVmbRcdASNF4
-         ziKbwoFECPfrSeGuPOfHjDT5u2hx2jXE1bdzsbChOhCqAQo45wltGFow7sHa6sNmJdzg
-         O3zfdztcR77AV9gxh9U7vvsnA21uNJTTraQOef1Rww9ZqmfkUTWqHAtkigVN4H9Mh+ca
-         omNKo2mxQdawhGV2Xluu19CioQch/bea9zCA1Fm2HGTtQHr+Pyhim9oAlj9s9bUmDghH
-         A1YvklxYLgSZ3pp92PK++obHE7HHyG4dZih8e5VLX7yaKfayErphkgLu7CxFJl48JSnI
-         r5Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=AYukJDlNUAL+GLJBpuiQp0mZcMh2C2I69MgWjZ0KKy0=;
-        b=VT0JWCyahZRKn/s+3Grh/bj/QTVzD6klFy1RJ8/BivcvptHSqgFtczQWFLLVs07HOr
-         v2NmNgIcliKGnhzGegg3HA/XC8tvxh4hZbPVMHeie3cPudA/at++5Pk89ZFVaqpMZynr
-         ey1hi+GN0HSTjpvS3JVLOLcFJW8I+EuM+sszXKllNP4Y+5swpC/Ykc+eR5oxU9I2lQH/
-         rW3VtJrdzeJ9oowIOJUS+rWARMC3rEnw7TQb9cNFQSic9GZZGd7lAmuHRLrmZ4wjLSZV
-         4V9U9cnj4valXtgPtLCQEvL6BXN/nlS/2J6JJtnl/jwI2jBaqgC1CjnrzUNXzBOUjbza
-         BM1A==
-X-Gm-Message-State: AA+aEWZwCnPgUx6lTeiIOYCI6aBuWPVK2YbJ14dCdH9j0m/GQUaiPRDj
-        7VJecAfhhAqF+9kOTO0z4Pw=
-X-Google-Smtp-Source: AFSGD/WJiYmFSRXkvSd427K7r6ij7o+z2v8A41Sl6cBr+Fv7BINQbTU0ux1ywEMHzvPdCFlFro+urg==
-X-Received: by 2002:a63:f710:: with SMTP id x16mr16737798pgh.322.1543952975356;
-        Tue, 04 Dec 2018 11:49:35 -0800 (PST)
-Received: from [10.67.49.9] (igp-prod-emp-gw.vpn.broadcom.com. [192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id 69sm16862650pgg.86.2018.12.04.11.49.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 11:49:34 -0800 (PST)
-Subject: Re: [RFC PATCH net-next 2/5] net: 8021q: vlan_dev: add vid tag for uc
- and mc address lists
-To:     davem@davemloft.net, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jiri@mellanox.com, andrew@lunn.ch
-References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
- <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
- <b2a7baa7-b334-0f6f-c119-a2f30ac68c7b@gmail.com>
- <20181203235119.GF23230@khorivan>
- <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
- <20181204185720.GI23230@khorivan>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <756cbb25-3062-91e8-0613-66bb887f937e@gmail.com>
-Date:   Tue, 4 Dec 2018 11:49:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 4 Dec 2018 14:49:42 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB4JnG7x116580
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 14:49:41 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p5yg29jrp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 14:49:41 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 4 Dec 2018 19:49:39 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Dec 2018 19:49:37 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB4Jnaa919792078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Dec 2018 19:49:36 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20E03B2068;
+        Tue,  4 Dec 2018 19:49:36 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC007B2064;
+        Tue,  4 Dec 2018 19:49:35 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  4 Dec 2018 19:49:35 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id AD37C16C60DE; Tue,  4 Dec 2018 11:49:36 -0800 (PST)
+Date:   Tue, 4 Dec 2018 11:49:36 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "He, Bo" <bo.he@intel.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "Zhang, Jun" <jun.zhang@intel.com>,
+        "Xiao, Jin" <jin.xiao@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
+        "Bai, Jie A" <jie.a.bai@intel.com>
+Subject: Re: rcu_preempt caused oom
+Reply-To: paulmck@linux.ibm.com
+References: <20181129130647.GG4170@linux.ibm.com>
+ <20181129142712.GA16607@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A1243D@SHSMSX104.ccr.corp.intel.com>
+ <20181130144317.GQ4170@linux.ibm.com>
+ <20181130101631.618d955f@gandalf.local.home>
+ <CD6925E8781EFD4D8E11882D20FC406D52A1263F@SHSMSX104.ccr.corp.intel.com>
+ <20181130164920.GR4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A14B74@SHSMSX104.ccr.corp.intel.com>
+ <20181203135638.GG4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A1509A@SHSMSX104.ccr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181204185720.GI23230@khorivan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A1509A@SHSMSX104.ccr.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18120419-0064-0000-0000-00000380108B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010171; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01126986; UDB=6.00585337; IPR=6.00907120;
+ MB=3.00024445; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-04 19:49:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120419-0065-0000-0000-00003B8F37CE
+Message-Id: <20181204194936.GD4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812040170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 10:57 AM, Ivan Khoronzhuk wrote:
-> On Mon, Dec 03, 2018 at 03:57:03PM -0800, Florian Fainelli wrote:
->> On 12/3/18 3:51 PM, Ivan Khoronzhuk wrote:
->>> On Mon, Dec 03, 2018 at 02:17:00PM -0800, Florian Fainelli wrote:
->>>> On 12/3/18 10:40 AM, Ivan Khoronzhuk wrote:
->>>>> Update vlan mc and uc addresses with VID tag while propagating address
->>>>> set to lower devices, do this only if address is not synched. It
->>>>> allows
->>>>> on end driver level to distinguish address belonging to vlans.
->>>>
->>>> Underlying driver for the real device would be able to properly
->>>> identify
->>>> that you are attempting to add an address to a virtual device, which
->>>> happens to be of VLAN kind so I am really not sure this is the right
->>>> approach here.
->>>>
->>>> From there, it seems to me that we have two situations:
->>>>
->>>> - each of your network devices expose VLAN devices directly on top of
->>>> the real device, in which case your driver should support
->>>> ndo_vlan_rx_add_vid and ndo_vlan_rx_kill_vid to know when VLAN devices
->>>> are create and maintain a VLAN device to VID correspondence if it needs
->>>> to when being called while setting the addresses
->>>>
->>>> - you are setting up a bridge that is VLAN aware on one of your bridge
->>>> ports, and there you can use switchdev to learn about such events and
->>>> know about both addresses as well as VIDs that must be programmed into
->>>> your real device
->>> No limits to have any "middle" device between real end device and
->>> virtual one, not only a bridge, but also other kind. And as it's generic
->>> change, it should cover all such cases, the simplest example is:
->>> real_dev/macvlan/vlan.
->>
->> It is not generic if the additional information is a VLAN ID, that
->> construct does not apply to all types of virtual devices, that is part
->> of my issue with the extra VID that is being added. If this was a void *
->> priv and any virtual device could pass up/down information that might be
->> more acceptable.
-> 
-> You mean to create smth like common struct pinned to "an address" and
-> pass information not only like vid, but in parallel what ever user wanted.
-> Even if pass vlan device pointer it still considered like an address
-> continuation and same sync method is used w/o modification. And here vid
-> is considered as part of address, by a big account address+vid it's a
-> separate address, same happens with the pointer, address+pointer it's
-> still separate address.
+On Tue, Dec 04, 2018 at 07:50:04AM +0000, He, Bo wrote:
+> Hi, Paul:
+> the enclosed is the log trigger the 120s hung_task_panic without other debug patches, the hung task is blocked at __wait_rcu_gp, it means the rcu_cpu_stall can't detect the scenario:
+> echo 1 > /proc/sys/kernel/panic_on_rcu_stall
+> echo 7 > /sys/module/rcupdate/parameters/rcu_cpu_stall_timeout
 
-That depends on the HW implementation, some switches do individual VLAN
-learning (IVL) and some do shared VLAN learning (SVL) so whether the VID
-becomes part of the address resolution logic is HW dependent, obviously
-the more capable, the better (IVL).
+Not necessarily.  If there is an RCU CPU stall warning, blocking within
+__wait_rcu_gp() is expected behavior.  It is possible that the problem is
+that although the grace period is completing as required, the callbacks
+are not being invoked in a timely fashion.  And that could happen if you
+had CONFIG_NO_HZ_FULL and a bunch of nohz_full CPUs, or, alternatively,
+callback offloading enabled.  But I don't see these in your previous
+emails.  Another possible cause is that the grace-period kthread is being
+delayed, so that the grace period never starts.  This seems unlikely,
+but it is the only thing thus far that matches the symptoms.
 
+CONFIG_RCU_BOOST=y has the side-effect of causing RCU's kthreads to
+be run at SCHED_FIFO priority 1, and that would help in the case where
+RCU's grace-period kthread (the rcu_preempt, rcu_sched, and rcu_bh tasks,
+all of which execute in the rcu_gp_kthread() function) was being starved
+of CPU time.
+
+Does that sound likely?
+
+							Thanx, Paul
+
+> -----Original Message-----
+> From: Paul E. McKenney <paulmck@linux.ibm.com> 
+> Sent: Monday, December 3, 2018 9:57 PM
+> To: He, Bo <bo.he@intel.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>
+> Subject: Re: rcu_preempt caused oom
 > 
-> I was thinking also about pinned list of vlans to the address, but in
-> this case this information also has to be synced by members of device
-> chain,
-> because it can be modified on any device level and it looks not very
-> friendly,
-> and at the end address space has addresses with pinned lists of vlans with
-> their pointers. But keeping this stuff in sync is not simplest decision.
+> On Mon, Dec 03, 2018 at 07:44:03AM +0000, He, Bo wrote:
+> > Thanks, we have run the test for the whole weekend and not reproduce the issue,  so we confirm the CONFIG_RCU_BOOST can fix the issue.
 > 
+> Very good, that is encouraging.  Perhaps I should think about making CONFIG_RCU_BOOST=y the default for CONFIG_PREEMPT in mainline, at least for architectures for which rt_mutexes are implemented.
+> 
+> > We have enabled the rcupdate.rcu_cpu_stall_timeout=7 and also set panic on rcu stall and will see if we can see the panic, will keep you posed with the test results.
+> > echo 1 > /proc/sys/kernel/panic_on_rcu_stall
+> 
+> Looking forward to seeing what is going on!  Of course, to reproduce, you will need to again build with CONFIG_RCU_BOOST=n.
+> 
+> 							Thanx, Paul
+> 
+> > -----Original Message-----
+> > From: Paul E. McKenney <paulmck@linux.ibm.com>
+> > Sent: Saturday, December 1, 2018 12:49 AM
+> > To: He, Bo <bo.he@intel.com>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>; 
+> > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
+> > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun 
+> > <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin 
+> > <yanmin.zhang@intel.com>
+> > Subject: Re: rcu_preempt caused oom
+> > 
+> > On Fri, Nov 30, 2018 at 03:18:58PM +0000, He, Bo wrote:
+> > > Here is the kernel cmdline:
+> > 
+> > Thank you!
+> > 
+> > > Kernel command line: androidboot.acpio_idx=0
+> > > androidboot.bootloader=efiwrapper-02_03-userdebug_kernelflinger-06_0
+> > > 3- userdebug androidboot.diskbus=00.0 
+> > > androidboot.verifiedbootstate=green
+> > > androidboot.bootreason=power-on androidboot.serialno=R1J56L6006a7bb
+> > > g_ffs.iSerialNumber=R1J56L6006a7bb no_timer_check noxsaves 
+> > > reboot_panic=p,w i915.hpd_sense_invert=0x7 mem=2G nokaslr nopti 
+> > > ftrace_dump_on_oops trace_buf_size=1024K intel_iommu=off gpt
+> > > loglevel=4 androidboot.hardware=gordon_peak 
+> > > firmware_class.path=/vendor/firmware relative_sleep_states=1
+> > > enforcing=0 androidboot.selinux=permissive cpu_init_udelay=10 
+> > > androidboot.android_dt_dir=/sys/bus/platform/devices/ANDR0001:00/pro
+> > > pe rties/android/ pstore.backend=ramoops memmap=0x1400000$0x50000000
+> > > ramoops.mem_address=0x50000000 ramoops.mem_size=0x1400000
+> > > ramoops.record_size=0x4000 ramoops.console_size=0x1000000
+> > > ramoops.ftrace_size=0x10000 ramoops.dump_oops=1 vga=current
+> > > i915.modeset=1 drm.atomic=1 i915.nuclear_pageflip=1 
+> > > drm.vblankoffdelay=
+> > 
+> > And no sign of any suppression of RCU CPU stall warnings.  Hmmm...
+> > It does take more than 21 seconds to OOM?  Or do things happen faster than that?  If they do happen faster than that, then on approach would be to add something like this to the kernel command line:
+> > 
+> > 	rcupdate.rcu_cpu_stall_timeout=7
+> > 
+> > This would set the stall timeout to seven seconds.  Note that timeouts less than three seconds are silently interpreted as three seconds.
+> > 
+> > 							Thanx, Paul
+> > 
+> > > -----Original Message-----
+> > > From: Steven Rostedt <rostedt@goodmis.org>
+> > > Sent: Friday, November 30, 2018 11:17 PM
+> > > To: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > Cc: He, Bo <bo.he@intel.com>; linux-kernel@vger.kernel.org; 
+> > > josh@joshtriplett.org; mathieu.desnoyers@efficios.com; 
+> > > jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin 
+> > > <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>
+> > > Subject: Re: rcu_preempt caused oom
+> > > 
+> > > On Fri, 30 Nov 2018 06:43:17 -0800
+> > > "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
+> > > 
+> > > > Could you please send me your list of kernel boot parameters?  
+> > > > They usually appear near the start of your console output.
+> > > 
+> > > Or just: cat /proc/cmdline
+> > > 
+> > > -- Steve
+> > > 
+> > 
 > 
 
-I really think we are not communicating properly, it really seems to me
-that if you had the information about the upper device trying to add an
-address to the lower device filter's either through notification or call
-to ndo_set_rxmode, you could be solving your problems. What are we
-missing here?
---
-Florian
+
