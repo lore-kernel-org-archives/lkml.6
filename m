@@ -2,344 +2,157 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD4BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D20FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0635D20834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:05:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hm/VM/zL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0635D20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 59D5620834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:06:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59D5620834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbeLDXF3 (ORCPT
+        id S1726454AbeLDXGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 18:05:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbeLDXF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 18:05:29 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9836720834;
-        Tue,  4 Dec 2018 23:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543964727;
-        bh=cx+H6R0aJ1y67dwG6bFJJlJ+V8msyo2pEQCIdGT22eE=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Hm/VM/zLi44EpKj9ASIMIvCX2W9cUqFwXYZnA5WbS+SHtRbeKOswt3LUmgWb7k3k7
-         PsWZoFe5N1NoZpsfmPzYpitmBpVKEVifx7jK+yf7ficaLRw3oAHBzqmYYDpZTtu093
-         C7fXxOm/U2fG1RJN6A2um0B+qPr1OfQQx/XA8E0A=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 4 Dec 2018 18:06:16 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:35931 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbeLDXGP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 18:06:15 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB4N5WR61044136
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 4 Dec 2018 15:05:32 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB4N5V5w1044132;
+        Tue, 4 Dec 2018 15:05:31 -0800
+Date:   Tue, 4 Dec 2018 15:05:31 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Masami Hiramatsu <tipbot@zytor.com>
+Message-ID: <tip-43a1b0cb4cd6dbfd3cd9c10da663368394d299d8@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, tglx@linutronix.de,
+        ravi.bangoria@linux.ibm.com, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org, acme@kernel.org, mhiramat@kernel.org,
+        hpa@zytor.com, peterz@infradead.org, michael@rodin.online,
+        mingo@kernel.org
+Reply-To: rostedt@goodmis.org, acme@kernel.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          michael@rodin.online, hpa@zytor.com, mingo@kernel.org,
+          mhiramat@kernel.org, tglx@linutronix.de,
+          torvalds@linux-foundation.org, ravi.bangoria@linux.ibm.com
+In-Reply-To: <153504457253.22602.1314289671019919596.stgit@devbox>
+References: <153504457253.22602.1314289671019919596.stgit@devbox>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] kprobes/x86: Fix instruction patching corruption
+ when copying more than one RIP-relative instruction
+Git-Commit-ID: 43a1b0cb4cd6dbfd3cd9c10da663368394d299d8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Taniya Das <tdas@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com
-References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
- <1543722903-10989-3-git-send-email-tdas@codeaurora.org>
- <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
- <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
-Message-ID: <154396472692.88331.13742924031474269133@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v11 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-Date:   Tue, 04 Dec 2018 15:05:26 -0800
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2018-12-04 14:28:11)
-> Quoting Viresh Kumar (2018-12-03 21:12:31)
-> > Hi Taniya,
-> > =
+Commit-ID:  43a1b0cb4cd6dbfd3cd9c10da663368394d299d8
+Gitweb:     https://git.kernel.org/tip/43a1b0cb4cd6dbfd3cd9c10da663368394d299d8
+Author:     Masami Hiramatsu <mhiramat@kernel.org>
+AuthorDate: Fri, 24 Aug 2018 02:16:12 +0900
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 4 Dec 2018 09:35:20 +0100
 
-> > Sorry that I haven't been reviewing it much from last few iterations as=
- I was
-> > letting others get this into a better shape. Thanks for your efforts..
-> > =
+kprobes/x86: Fix instruction patching corruption when copying more than one RIP-relative instruction
 
-> > On 02-12-18, 09:25, Taniya Das wrote:
-> > > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> > =
+After copy_optimized_instructions() copies several instructions
+to the working buffer it tries to fix up the real RIP address, but it
+adjusts the RIP-relative instruction with an incorrect RIP address
+for the 2nd and subsequent instructions due to a bug in the logic.
 
-> > > +struct cpufreq_qcom {
-> > > +     struct cpufreq_frequency_table *table;
-> > > +     void __iomem *perf_state_reg;
-> > > +     cpumask_t related_cpus;
-> > > +};
-> > > +
-> > > +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> > =
+This will break the kernel pretty badly (with likely outcomes such as
+a kernel freeze, a crash, or worse) because probed instructions can refer
+to the wrong data.
 
-> > Now that the code is much more simplified, I am not sure if you need th=
-is
-> > per-cpu structure at all. The only place where you are using it is in
-> > qcom_cpufreq_hw_cpu_init() and probe(). Why not merge qcom_cpu_resource=
-s_init()
-> > completely into qcom_cpufreq_hw_cpu_init() and get rid of this structure
-> > entirely ?
-> > =
+For example putting kprobes on cpumask_next() typically hits this bug.
 
-> =
+cpumask_next() is normally like below if CONFIG_CPUMASK_OFFSTACK=y
+(in this case nr_cpumask_bits is an alias of nr_cpu_ids):
 
-> Good point. Here's an untested patch to handle that. It removes the
-> related functionality and makes an array of pointers to the domains that
-> are created each time qcom_cpu_resources_init() is called.
-> =
+ <cpumask_next>:
+	48 89 f0		mov    %rsi,%rax
+	8b 35 7b fb e2 00	mov    0xe2fb7b(%rip),%esi # ffffffff82db9e64 <nr_cpu_ids>
+	55			push   %rbp
+...
 
-> ---8<----
-> =
+If we put a kprobe on it and it gets jump-optimized, it gets
+patched by the kprobes code like this:
 
-> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpu=
-freq-hw.c
-> index 8dc6b73c2f22..04e7cfd70316 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> @@ -23,14 +23,14 @@
->  #define REG_LUT_TABLE                  0x110
->  #define REG_PERF_STATE                 0x920
->  =
+ <cpumask_next>:
+	e9 95 7d 07 1e		jmpq   0xffffffffa000207a
+	7b fb			jnp    0xffffffff81f8a2e2 <cpumask_next+2>
+	e2 00			loop   0xffffffff81f8a2e9 <cpumask_next+9>
+	55			push   %rbp
 
-> +#define MAX_FREQ_DOMAINS               2
-> +
->  struct cpufreq_qcom {
->         struct cpufreq_frequency_table *table;
->         void __iomem *perf_state_reg;
->         cpumask_t related_cpus;
->  };
->  =
+This shows that the first two MOV instructions were copied to a
+trampoline buffer at 0xffffffffa000207a.
 
-> -static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> -
->  static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
->                                         unsigned int index)
->  {
-> @@ -76,9 +76,14 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct=
- cpufreq_policy *policy,
->  =
+Here is the disassembled result of the trampoline, skipping
+the optprobe template instructions:
 
->  static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->  {
-> +       struct cpufreq_qcom **freq_domain_map;
->         struct cpufreq_qcom *c;
->  =
+	# Dump of assembly code from 0xffffffffa000207a to 0xffffffffa00020ea:
 
-> -       c =3D qcom_freq_domain_map[policy->cpu];
-> +       freq_domain_map =3D cpufreq_get_driver_data();
-> +       if (!freq_domain_map)
-> +               return -ENODEV;
-> +
-> +       c =3D freq_domain_map[policy->cpu];
+	54			push   %rsp
+	...
+	48 83 c4 08		add    $0x8,%rsp
+	9d			popfq
+	48 89 f0		mov    %rsi,%rax
+	8b 35 82 7d db e2	mov    -0x1d24827e(%rip),%esi # 0xffffffff82db9e67 <nr_cpu_ids+3>
 
-And this fails now because it indexes based on cpu number. We have to
-parse the frequency domain out of the cpunode again to fix that.
+This dump shows that the second MOV accesses *(nr_cpu_ids+3) instead of
+the original *nr_cpu_ids. This leads to a kernel freeze because
+cpumask_next() always returns 0 and for_each_cpu() never ends.
 
-Here's the updated (still untested) patch and I also just allocated the
-freq domain array up front instead of in each domain init routine to
-simplify some more.
+Fix this by adding 'len' correctly to the real RIP address while
+copying.
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufr=
-eq-hw.c
-index 8dc6b73c2f22..bc0d734f7e3c 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -23,14 +23,14 @@
- #define REG_LUT_TABLE			0x110
- #define REG_PERF_STATE			0x920
- =
+[ mingo: Improved the changelog. ]
 
-+#define MAX_FREQ_DOMAINS		2
-+
- struct cpufreq_qcom {
- 	struct cpufreq_frequency_table *table;
- 	void __iomem *perf_state_reg;
- 	cpumask_t related_cpus;
- };
- =
+Reported-by: Michael Rodin <michael@rodin.online>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org # v4.15+
+Fixes: 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()")
+Link: http://lkml.kernel.org/r/153504457253.22602.1314289671019919596.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/kprobes/opt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
--
- static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
- 					unsigned int index)
- {
-@@ -76,9 +76,26 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct c=
-pufreq_policy *policy,
- =
-
- static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
- {
--	struct cpufreq_qcom *c;
-+	struct cpufreq_qcom *freq_domain_map, *c;
-+	struct device_node *cpu_np;
-+	struct of_phandle_args args;
-+	int ret;
-+
-+	freq_domain_map =3D cpufreq_get_driver_data();
-+	if (!freq_domain_map)
-+		return -ENODEV;
-+
-+	cpu_np =3D of_cpu_device_node_get(policy->cpu);
-+	if (!cpu_np)
-+		return -ENODEV;
-+
-+	ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+					 "#freq-domain-cells", 0, &args);
-+	of_node_put(cpu_np);
-+	if (ret)
-+		return ret;
- =
-
--	c =3D qcom_freq_domain_map[policy->cpu];
-+	c =3D &freq_domain_map[args.args[0]];
- 	if (!c) {
- 		pr_err("No scaling support for CPU%d\n", policy->cpu);
- 		return -ENODEV;
-@@ -171,43 +188,15 @@ static int qcom_cpufreq_hw_read_lut(struct device *de=
-v, struct cpufreq_qcom *c,
- 	return 0;
- }
- =
-
--static void qcom_get_related_cpus(int index, struct cpumask *m)
--{
--	struct device_node *cpu_np;
--	struct of_phandle_args args;
--	int cpu, ret;
--
--	for_each_possible_cpu(cpu) {
--		cpu_np =3D of_cpu_device_node_get(cpu);
--		if (!cpu_np)
--			continue;
--
--		ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
--						 "#freq-domain-cells", 0,
--						  &args);
--		of_node_put(cpu_np);
--		if (ret < 0)
--			continue;
--
--		if (index =3D=3D args.args[0])
--			cpumask_set_cpu(cpu, m);
--	}
--}
--
- static int qcom_cpu_resources_init(struct platform_device *pdev,
--				   unsigned int cpu, int index,
--				   unsigned long xo_rate,
--				   unsigned long cpu_hw_rate)
-+				   int index, unsigned long xo_rate,
-+				   unsigned long cpu_hw_rate,
-+				   struct cpufreq_qcom *c)
- {
--	struct cpufreq_qcom *c;
- 	struct resource *res;
- 	struct device *dev =3D &pdev->dev;
- 	void __iomem *base;
--	int ret, cpu_r;
--
--	c =3D devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
--	if (!c)
--		return -ENOMEM;
-+	int ret;
- =
-
- 	res =3D platform_get_resource(pdev, IORESOURCE_MEM, index);
- 	base =3D devm_ioremap_resource(dev, res);
-@@ -220,12 +209,6 @@ static int qcom_cpu_resources_init(struct platform_dev=
-ice *pdev,
- 		return -ENODEV;
- 	}
- =
-
--	qcom_get_related_cpus(index, &c->related_cpus);
--	if (!cpumask_weight(&c->related_cpus)) {
--		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
--		return -ENOENT;
--	}
--
- 	c->perf_state_reg =3D base + REG_PERF_STATE;
- =
-
- 	ret =3D qcom_cpufreq_hw_read_lut(dev, c, base, xo_rate, cpu_hw_rate);
-@@ -234,9 +217,6 @@ static int qcom_cpu_resources_init(struct platform_devi=
-ce *pdev,
- 		return ret;
- 	}
- =
-
--	for_each_cpu(cpu_r, &c->related_cpus)
--		qcom_freq_domain_map[cpu_r] =3D c;
--
- 	return 0;
- }
- =
-
-@@ -245,9 +225,16 @@ static int qcom_cpufreq_hw_driver_probe(struct platfor=
-m_device *pdev)
- 	struct device_node *cpu_np;
- 	struct of_phandle_args args;
- 	struct clk *clk;
--	unsigned int cpu;
-+	unsigned int cpu, domain;
- 	unsigned long xo_rate, cpu_hw_rate;
- 	int ret;
-+	struct cpufreq_qcom *freq_domain_map, *freq_domain;
-+
-+	freq_domain_map =3D devm_kcalloc(&pdev->dev, MAX_FREQ_DOMAINS,
-+				       sizeof(*freq_domain_map), GFP_KERNEL);
-+	cpufreq_qcom_hw_driver.driver_data =3D freq_domain_map;
-+	if (!freq_domain_map)
-+		return -ENOMEM;
- =
-
- 	clk =3D clk_get(&pdev->dev, "xo");
- 	if (IS_ERR(clk))
-@@ -273,16 +260,26 @@ static int qcom_cpufreq_hw_driver_probe(struct platfo=
-rm_device *pdev)
- =
-
- 		ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
- 						 "#freq-domain-cells", 0,
--						  &args);
-+						 &args);
- 		of_node_put(cpu_np);
- 		if (ret)
- 			return ret;
- =
-
--		if (qcom_freq_domain_map[cpu])
-+		domain =3D args.args[0];
-+		if (WARN_ON(domain >=3D MAX_FREQ_DOMAINS))
-+			continue;
-+
-+		freq_domain =3D &freq_domain_map[domain];
-+		cpumask_set_cpu(cpu, &freq_domain->related_cpus);
-+		/*
-+		 * If we've already populated the frequency table for this domain
-+		 * just mark it related and get out of here
-+		 */
-+		if (cpumask_weight(&freq_domain->related_cpus) > 1)
- 			continue;
- =
-
--		ret =3D qcom_cpu_resources_init(pdev, cpu, args.args[0],
--					      xo_rate, cpu_hw_rate);
-+		ret =3D qcom_cpu_resources_init(pdev, domain, xo_rate,
-+					      cpu_hw_rate, freq_domain);
- 		if (ret)
- 			return ret;
- 	}
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index 40b16b270656..6adf6e6c2933 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -189,7 +189,7 @@ static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
+ 	int len = 0, ret;
+ 
+ 	while (len < RELATIVEJUMP_SIZE) {
+-		ret = __copy_instruction(dest + len, src + len, real, &insn);
++		ret = __copy_instruction(dest + len, src + len, real + len, &insn);
+ 		if (!ret || !can_boost(&insn, src + len))
+ 			return -EINVAL;
+ 		len += ret;
