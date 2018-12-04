@@ -2,99 +2,190 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E17C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA85C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D193B2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6471B2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:48:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zT1jvbyd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D193B2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="TXuxE6OX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6471B2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726098AbeLDTrZ (ORCPT
+        id S1726131AbeLDTsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:47:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46400 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725859AbeLDTrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:47:25 -0500
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3860420850
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 19:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543952844;
-        bh=W6gez/Hs3OA9TbJaJpi8UNN02LY+OmYwMWwWxmASGbA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zT1jvbydiom//0k63c5OfTYefg5ok5pZJ2FGIYkGsA7UitpD2Yz4wyjxrvW3Brzzh
-         dni8a0p4l31VNSSTTYAuuiM7ax3dCJu8XWWI/UalGjKmDPmuYra/dLGjzcwi8sm3Hu
-         QyuwyCB1QE4cRUG12JtN2FlYOPPETAWLU6AtpJ9g=
-Received: by mail-wm1-f45.google.com with SMTP id s14so10916155wmh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:47:24 -0800 (PST)
-X-Gm-Message-State: AA+aEWb5hGglOEsEFwyzQa8J4i+8AdGs89YmWc/szvObrtllbUhf+5WR
-        BC/U6Aj+EDnHmi9tcsLTLhcMizgtwZSTD1kxDhuInQ==
-X-Google-Smtp-Source: AFSGD/VKkq6RUUXFPrUDzd71Wkb7ilKVyylTXaL7ySsyxLuL/bMPeZzNjn5UdYm2tetrk40mb6uO4PvWnB3/Z9y/vFI=
-X-Received: by 2002:a7b:ce17:: with SMTP id m23mr14445497wmc.74.1543952842744;
- Tue, 04 Dec 2018 11:47:22 -0800 (PST)
+        Tue, 4 Dec 2018 14:48:43 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:46106 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbeLDTsn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:48:43 -0500
+Received: by mail-yw1-f65.google.com with SMTP id t13so7475583ywe.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:48:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=s+VP0A474Tn5W27kbi2McsJ3o8jRy8Pe/xLsJObravE=;
+        b=TXuxE6OXamLMpftTaSywcaxH6buXuteXDw6YAvhwyWP5Ilhszc8nNplZozwycnERdt
+         K9wa6Z5NLf/T6bTOYzzx6TcBWmsZIiOw1anKCR4zK+38Kp2HZfHb8fSiBqrRlpqbk7Wh
+         NvvLyWWYzflnENQXLFCC/Zhz/NQ9LdvjDxdaf+P+sXS3wTDCGZYp5LVgys7slXZWF9Rt
+         AOAvS074N3tCvoR9yJNHjkgz8DeL6t29p1dj3hKDslsHQy8qn01MJxlDY/cmHOkUqdyE
+         XLY0MkGS+wKuajdXZ2G0IYPpmuTliseWMKwHRd8+V+YJfcoixFepVBEHMsT8w2wXt1qB
+         Oulw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s+VP0A474Tn5W27kbi2McsJ3o8jRy8Pe/xLsJObravE=;
+        b=oiewY7IoVyttT1kOTzMs4JO5zTYnJ3hYdGskYZGKjTLOmSZd7HpwyTQW4yw+NglXbF
+         tghQpLScwweqp8bv9Oo80NDW9nDLP6DLxM3nMO7G+vjMmMbU00EpMPax2aAgGO8Du8v4
+         xo9akqAXs9xBdII4Dd2A2qDXwQhdAhuKL11V0lTZLCfZCetc42BQCD20GItaQ68UprAQ
+         UKiddy5abKEm8L1pWa33+wEmL8PiSx3gkgCmr/57GoZtk2b3CpxczZ+Q55frt3TLpE1U
+         toTxSiWywldGWG3/ao+ogwG6jxmnHQVIEZgYLwNWMM0U5qugqYvjGc5wZQ9NZuwJYZOY
+         p1nw==
+X-Gm-Message-State: AA+aEWYrOTemvrNxhxCWCLRSx7Ae78z8ovSn1IqLRwjyxe0/ZS/8HvuJ
+        Z3X9vE/XYdTQF7I82j+BfBn7UQ==
+X-Google-Smtp-Source: AFSGD/V1pyirlPgNfZ6QTMnWBFYFfLd/Hi7fHd7X1n4rwLyPwK2klSsRbUMBfIQeKDv9HiO4t9aEug==
+X-Received: by 2002:a81:a4d1:: with SMTP id b200mr20349089ywh.316.1543952921817;
+        Tue, 04 Dec 2018 11:48:41 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id g70sm5827232ywe.105.2018.12.04.11.48.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 11:48:40 -0800 (PST)
+Date:   Tue, 4 Dec 2018 14:48:39 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/14] blkcg: associate blkg when associating a device
+Message-ID: <20181204194838.ylk546legwikfrik@MacBook-Pro-91.local>
+References: <20181204183600.99746-1-dennis@kernel.org>
+ <20181204183600.99746-7-dennis@kernel.org>
 MIME-Version: 1.0
-References: <cover.1542841400.git.luto@kernel.org> <11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org>
- <20181122084119.GA44720@gmail.com> <20181127153202.GA27075@linux.intel.com>
- <CALCETrW00oTpXOONwbONHHuiyqp9QbNMe0gvVgf8X3_X0fidqw@mail.gmail.com> <20181204193346.GD17374@linux.intel.com>
-In-Reply-To: <20181204193346.GD17374@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 4 Dec 2018 11:47:10 -0800
-X-Gmail-Original-Message-ID: <CALCETrU1LFNR+m_YmVDmGMMbNyf5A7AFjFsu9JiET0X8YRgeaQ@mail.gmail.com>
-Message-ID: <CALCETrU1LFNR+m_YmVDmGMMbNyf5A7AFjFsu9JiET0X8YRgeaQ@mail.gmail.com>
-Subject: Re: [PATCH 6/5] x86/fault: Clean up the page fault oops decoder a bit
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204183600.99746-7-dennis@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 11:34 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Tue, Dec 04, 2018 at 11:22:25AM -0800, Andy Lutomirski wrote:
-> > On Tue, Nov 27, 2018 at 7:32 AM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > > index 2ff25ad33233..510e263c256b 100644
-> > > --- a/arch/x86/mm/fault.c
-> > > +++ b/arch/x86/mm/fault.c
-> > > @@ -660,8 +660,10 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
-> > >         err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
-> > >         err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
-> > >         err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
-> > > -
-> > > -       pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
-> > > +       err_str_append(~error_code, err_txt, X86_PF_USER, "[KERNEL]");
-> > > +       err_str_append(~error_code, err_txt, X86_PF_WRITE | X86_PF_INSTR,
-> > > +                                                         "[READ]");
-> > > +       pr_alert("#PF error code: %s\n", err_txt);
-> > >
-> >
-> > Seems generally nice, but I would suggest making the bit-not-set name
-> > be another parameter to err_str_append().  I'm also slightly uneasy
-> > about making "KERNEL" look like a bit, but I guess it doesn't bother
-> > me too much.
->
-> What about "SUPERVISOR" instead of "KERNEL"?  It'd be consistent with
-> the SDM and hopefully less likely to be misconstrued as something else.
+On Tue, Dec 04, 2018 at 01:35:52PM -0500, Dennis Zhou wrote:
+> Previously, blkg association was handled by controller specific code in
+> blk-throttle and blk-iolatency. However, because a blkg represents a
+> relationship between a blkcg and a request_queue, it makes sense to keep
+> the blkg->q and bio->bi_disk->queue consistent.
+> 
+> This patch moves association into the bio_set_dev macro(). This should
+> cover the majority of cases where the device is set/changed keeping the
+> two pointers consistent. Fallback code is added to
+> blkcg_bio_issue_check() to catch any missing paths.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> ---
+>  block/bio.c                |  1 +
+>  block/blk-iolatency.c      |  4 +---
+>  block/blk-throttle.c       |  1 -
+>  include/linux/bio.h        |  2 ++
+>  include/linux/blk-cgroup.h | 11 +++--------
+>  5 files changed, 7 insertions(+), 12 deletions(-)
+> 
+> diff --git a/block/bio.c b/block/bio.c
+> index 41ebb3f8e2fc..1e852ab904aa 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -2074,6 +2074,7 @@ void bio_associate_blkg(struct bio *bio)
+>  
+>  	rcu_read_unlock();
+>  }
+> +EXPORT_SYMBOL_GPL(bio_associate_blkg);
+>  
+>  /**
+>   * bio_disassociate_task - undo bio_associate_current()
+> diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+> index cdbd10564e66..e6b47c255521 100644
+> --- a/block/blk-iolatency.c
+> +++ b/block/blk-iolatency.c
+> @@ -472,14 +472,12 @@ static void check_scale_change(struct iolatency_grp *iolat)
+>  static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
+>  {
+>  	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
+> -	struct blkcg_gq *blkg;
+> +	struct blkcg_gq *blkg = bio->bi_blkg;
+>  	bool issue_as_root = bio_issue_as_root_blkg(bio);
+>  
+>  	if (!blk_iolatency_enabled(blkiolat))
+>  		return;
+>  
+> -	bio_associate_blkg(bio);
+> -	blkg = bio->bi_blkg;
+>  	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
+>  
+>  	while (blkg && blkg->parent) {
+> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> index 228c3a007ebc..1c6529df2002 100644
+> --- a/block/blk-throttle.c
+> +++ b/block/blk-throttle.c
+> @@ -2118,7 +2118,6 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
+>  static void blk_throtl_assoc_bio(struct bio *bio)
+>  {
+>  #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
+> -	bio_associate_blkg(bio);
+>  	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
+>  #endif
+>  }
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 62715a5a4f32..6ee2ea8b378a 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -491,12 +491,14 @@ do {						\
+>  		bio_clear_flag(bio, BIO_THROTTLED);\
+>  	(bio)->bi_disk = (bdev)->bd_disk;	\
+>  	(bio)->bi_partno = (bdev)->bd_partno;	\
+> +	bio_associate_blkg(bio);		\
+>  } while (0)
+>  
+>  #define bio_copy_dev(dst, src)			\
+>  do {						\
+>  	(dst)->bi_disk = (src)->bi_disk;	\
+>  	(dst)->bi_partno = (src)->bi_partno;	\
+> +	bio_clone_blkcg_association(dst, src);	\
+>  } while (0)
+>  
+>  #define bio_dev(bio) \
+> diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+> index c08e96e521ed..3c87ae71156f 100644
+> --- a/include/linux/blk-cgroup.h
+> +++ b/include/linux/blk-cgroup.h
+> @@ -802,21 +802,17 @@ static inline bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg
+>  static inline bool blkcg_bio_issue_check(struct request_queue *q,
+>  					 struct bio *bio)
+>  {
+> -	struct blkcg *blkcg;
+>  	struct blkcg_gq *blkg;
+>  	bool throtl = false;
+>  
+> -	rcu_read_lock();
+> +	if (!bio->bi_blkg)
+> +		bio_associate_blkg(bio);
+>  
 
-Or even just [!USER], perhaps.
+Should we maybe WARN_ON_ONCE() here since this really shouldn't happen?
+Otherwise you can add
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+Thanks,
+
+Josef
