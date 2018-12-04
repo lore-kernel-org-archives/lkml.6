@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 880C6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CA1C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47C062087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FC7920851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="WSU1xHpU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C062087F
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="JhKZ8XBf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC7920851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726176AbeLDKpn (ORCPT
+        id S1726198AbeLDKpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:45:43 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43026 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbeLDKpl (ORCPT
+        Tue, 4 Dec 2018 05:45:49 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36376 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeLDKps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:45:41 -0500
-Received: by mail-pg1-f195.google.com with SMTP id v28so7187854pgk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 02:45:41 -0800 (PST)
+        Tue, 4 Dec 2018 05:45:48 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so8029040pfc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 02:45:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=j4avgKxJ7er1mkSgLv64vmGkmY63IGVLkeRJB+3yExU=;
-        b=WSU1xHpUmzmizOSvpN72KaeN2XZ8/7U+r8fWZAv3osZYg0oBPm9JBHzmo865sFHHo3
-         et6IlRcweK8Qru2TFutmmYeKd23IYfmk/lzVby6S1N4dBuK/XSwD84KF9Ui9UWxsagvU
-         TVWTDHSmXv3NrUqvFOpV88V8o0rB6pRbLUDkGFI2d/FsNc9zh/tDfPfUXuI3NINHjbEu
-         /HjjGJppSP6tA7zhwI0aHXUAQ6mfP4oX+D91BuH+BlkVccu8x/86dz4wDMR2aISYciDp
-         VBtghfj32yA9LTdBgGoIAfvS8egJFJLup65dRMx2ZcGBfIl2wmy07VI5GRMtsVfRvi7v
-         g6hg==
+        bh=L4yb/wtuagw+sPGtsZIsDQ9oRwj4098XHksxUaA5GSM=;
+        b=JhKZ8XBfpmf5oNPC5DsZRbP+06aecEB9EHz57ti9YKa8qDmAQnflfCNurq8ocVp3rk
+         BFT459NWwejSu/+jAz7hXqd5sX40tOt8yFvRsv3iymTKQNHleups1SYUemKZruBGck+K
+         fpxLKT3l9tdwmL6TiBfSR74ZmObeWavsE+OdLSeimwlbXiDwJE/LBNCn/n1Et8Z0nbdO
+         aLHCdHP5axFGcCOawzUBv/6DUOx9WdEf8xplqkrqumjnUOtUD90+f9djKcexijrkVBue
+         w7I5e/fVpFqlZrtNRbEWkR4p0+1exmaGrgihIGPI7yUIZvCNGhg7KldY532s3rxZeny/
+         Gf9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=j4avgKxJ7er1mkSgLv64vmGkmY63IGVLkeRJB+3yExU=;
-        b=qixwCrhWjqbzBo52WIsKX0U/MqLOfVe0M7y47QjjxjMqxqgf2D1pKkK6qy7eNAkIwW
-         VpWYOMBzDyjZ0bvv9JyXw9wnv0f/PVpYKbgBLu06h7R0NYlG13wDSnpdkC38EaPpH6Vg
-         8k7Y+1JB89D6g88/nVgUL4vu6+1qxO1tkNZpJwE8kC9ZekC4/19GW9RZjIObqiHWZRhk
-         QcqforGzrQDxbfH9pVybp+fVzKkJQlxIUDVFjtPJDLzPmIrfnhWyaLlYNPbvdyM/2kII
-         IeS4UxlG+Gis9zgr6DWKmGL8J69uDsMKimW1n6g2miJdzVQm3/jAgVNK+RGotevVfR3O
-         B2iw==
-X-Gm-Message-State: AA+aEWZRGARj+p/f6Ug7QWCIchbrtf6WE0xin4dLs4n+3yReUfWEdmo7
-        NJQrBT8L7s2p8mCu+E6heRhAvnH+UZ4=
-X-Google-Smtp-Source: AFSGD/Wtvji/X00CS395VNSz+1FZ95aC6LHfk23e/UOH/alPQ3I8LuRRnct+LM9YFxLP4/syqguAEA==
-X-Received: by 2002:a63:cd17:: with SMTP id i23mr16162337pgg.13.1543920340951;
-        Tue, 04 Dec 2018 02:45:40 -0800 (PST)
+        bh=L4yb/wtuagw+sPGtsZIsDQ9oRwj4098XHksxUaA5GSM=;
+        b=at3ORAImFGIKvQE/3fLlAnYCCBC1Wg81MawOo7SUxvlHiBoHhpfSJ1p8Ak/5g7t9/c
+         9Mk2pWX/PVyNV9CGoc9EykcowoJoVkDh2kzI3gdTJJXTjPukGdq9SNNkn4u5S4Nu5Xsh
+         1EtZrLo1t83TwwX/6HUGhRbB+DftXhleneHj7XaFFqJkbQtHKHVna7do+GE1w8SVciDL
+         pTYQBVdXS5N1qee+JJXhJNhfcSiE33gGC+CAtjLDFlhWnO3Yo0a6BRDFRZaLDztAjnpH
+         Ryr4hFlPRNPyUqN9m580jENtCegDgkjZT93pd/AdeX+Cjk07nqN0ElUhb2VgkngPkAUF
+         C0dA==
+X-Gm-Message-State: AA+aEWbwob4T1Zd/wFiwpyoH/q1sNNK1aCOfOxKDcexG2eCk6SCI86nd
+        DLghaVCwrllUcJabYSXCSmvGCg==
+X-Google-Smtp-Source: AFSGD/XCMx2RUewUEkFdQyd/qO+zjuxGBrfBuTBAky+CysatspDpy4r+JH7O71zM+WZ9lhK+SWBwcQ==
+X-Received: by 2002:a63:7556:: with SMTP id f22mr15040408pgn.231.1543920347035;
+        Tue, 04 Dec 2018 02:45:47 -0800 (PST)
 Received: from anup-ubuntu64.qualcomm.com ([106.51.23.39])
-        by smtp.googlemail.com with ESMTPSA id s37sm19034734pgm.19.2018.12.04.02.45.37
+        by smtp.googlemail.com with ESMTPSA id s37sm19034734pgm.19.2018.12.04.02.45.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 02:45:40 -0800 (PST)
+        Tue, 04 Dec 2018 02:45:46 -0800 (PST)
 From:   Anup Patel <anup@brainfault.org>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -67,9 +67,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Christoph Hellwig <hch@infradead.org>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2 1/2] RISC-V: Select GENERIC_SCHED_CLOCK for clocksource drivers
-Date:   Tue,  4 Dec 2018 15:59:51 +0530
-Message-Id: <20181204102952.21297-2-anup@brainfault.org>
+Subject: [PATCH v2 2/2] clocksource: riscv_timer: Provide sched_clock
+Date:   Tue,  4 Dec 2018 15:59:52 +0530
+Message-Id: <20181204102952.21297-3-anup@brainfault.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181204102952.21297-1-anup@brainfault.org>
 References: <20181204102952.21297-1-anup@brainfault.org>
@@ -78,27 +78,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The riscv_timer driver can provide sched_clock using "rdtime"
-instruction but to achieve this we require generic sched_clock
-framework hence this patch selects GENERIC_SCHED_CLOCK for RISCV.
+Currently, we don't have a sched_clock registered for RISC-V systems.
+This means Linux time keeping will use jiffies (running at HZ) as the
+default sched_clock.
+
+To avoid this, we explicity provide sched_clock using RISC-V rdtime
+instruction (similar to riscv_timer clocksource).
 
 Signed-off-by: Anup Patel <anup@brainfault.org>
 ---
- arch/riscv/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clocksource/Kconfig       | 2 +-
+ drivers/clocksource/riscv_timer.c | 9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 55da93f4e818..09a0f2582cad 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -24,6 +24,7 @@ config RISCV
- 	select GENERIC_CPU_DEVICES
- 	select GENERIC_IRQ_SHOW
- 	select GENERIC_PCI_IOMAP
-+	select GENERIC_SCHED_CLOCK
- 	select GENERIC_STRNCPY_FROM_USER
- 	select GENERIC_STRNLEN_USER
- 	select GENERIC_SMP_IDLE_THREAD
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 55c77e44bb2d..19649abd7c75 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -611,7 +611,7 @@ config ATCPIT100_TIMER
+ 
+ config RISCV_TIMER
+ 	bool "Timer for the RISC-V platform"
+-	depends on RISCV
++	depends on GENERIC_SCHED_CLOCK && RISCV
+ 	default y
+ 	select TIMER_PROBE
+ 	select TIMER_OF
+diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
+index 084e97dc10ed..431892200a08 100644
+--- a/drivers/clocksource/riscv_timer.c
++++ b/drivers/clocksource/riscv_timer.c
+@@ -8,6 +8,7 @@
+ #include <linux/cpu.h>
+ #include <linux/delay.h>
+ #include <linux/irq.h>
++#include <linux/sched_clock.h>
+ #include <asm/smp.h>
+ #include <asm/sbi.h>
+ 
+@@ -49,6 +50,11 @@ static unsigned long long riscv_clocksource_rdtime(struct clocksource *cs)
+ 	return get_cycles64();
+ }
+ 
++static u64 riscv_sched_clock(void)
++{
++	return get_cycles64();
++}
++
+ static DEFINE_PER_CPU(struct clocksource, riscv_clocksource) = {
+ 	.name		= "riscv_clocksource",
+ 	.rating		= 300,
+@@ -97,6 +103,9 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+ 	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
+ 	clocksource_register_hz(cs, riscv_timebase);
+ 
++	sched_clock_register(riscv_sched_clock,
++			BITS_PER_LONG, riscv_timebase);
++
+ 	error = cpuhp_setup_state(CPUHP_AP_RISCV_TIMER_STARTING,
+ 			 "clockevents/riscv/timer:starting",
+ 			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
 -- 
 2.17.1
 
