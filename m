@@ -2,120 +2,158 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AA2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35E0C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D3A5214DE
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A57A72082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:51:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="RLNOhbw/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3A5214DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="c+pdL9xs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57A72082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbeLDTu5 (ORCPT
+        id S1726197AbeLDTvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:50:57 -0500
-Received: from mail.efficios.com ([167.114.142.138]:46262 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbeLDTu4 (ORCPT
+        Tue, 4 Dec 2018 14:51:22 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45030 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDTvW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:50:56 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 7CE979EDB0;
-        Tue,  4 Dec 2018 14:50:55 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id iyU9d0poIRNX; Tue,  4 Dec 2018 14:50:55 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id DCC5A9EDAB;
-        Tue,  4 Dec 2018 14:50:54 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com DCC5A9EDAB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1543953054;
-        bh=+zVGABJb4waJEo0jE0aHRjh6BYIKymGmDY6lWxHg7fA=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=RLNOhbw/ZbfHsnwKT8Whsk+HTRQiz0d9XHbQjOMXXt7Xp2q3N+Y5Nltyy6aMYBdyv
-         VwkvqQ2qaQofzfYy6/dv4aX+AU6tv7Uvx5rdwbjnTXUUu35acNSSiHi8kJ0T0/OyT7
-         6Dh7qXy2BsOJWOJsL0QdqFbgkfns/XbT/U67vZLAFa159ZVxOjPh44doZmtdsCLoiO
-         yDO6ZjEanbAzyqc/qQl4HHyeHdhNDUiZoziijC5xToS5ElgGa/JY3/CUmIDOCCGuUS
-         NjJH97Se5hEcefSTujhPkcgz84vRRUkUAbLUQwo93nQyZI9lOIjINGfQR54uIEPHfW
-         Fjjv+pLoO/fMg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id e3LvpFVWiUgo; Tue,  4 Dec 2018 14:50:54 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id BF7F89ED9B;
-        Tue,  4 Dec 2018 14:50:54 -0500 (EST)
-Date:   Tue, 4 Dec 2018 14:50:54 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <2002498237.18908.1543953054629.JavaMail.zimbra@efficios.com>
-In-Reply-To: <8736rd13i7.fsf@oldenburg2.str.redhat.com>
-References: <20181204192141.4684-1-mathieu.desnoyers@efficios.com> <8736rd13i7.fsf@oldenburg2.str.redhat.com>
-Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at
- nptl init and thread creation (v4)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        Tue, 4 Dec 2018 14:51:22 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z5so17254469wrt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:51:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=5qjZ/kmbzHf7y987gu7eWk15FAWnG/grsI5l9lVQpJQ=;
+        b=c+pdL9xshdGTHH5KLO0CDytstujw5+P+jTX7TXx1eTw6tDGdb84dLB8Nz8bd6pNhq1
+         mewgF36KMwAt0js7y0zsPYxrQp6vnJW7J0MX0CdeqjLRLPpfC0+3I8POoPmOKjSDOwSj
+         ryKzrEH3ID1qhTPMxZUEx7JtPOQYAkIzCcl+xbJJiIcxAorOkj5FIpCprrF9yRZM9xC9
+         EmJ2351YM+iYMlrd1/9u7UTxm1JD5no/MfbvjS19EZaWgCqT5qkKjXWWm5oEoTh8WMjZ
+         IUY+z4u1S1yZZGGo0K/GXIrQCpvd1AV0IUAGRgiAHuD6PaXOX+pEf0Pa331FGmz+dh2N
+         ydNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=5qjZ/kmbzHf7y987gu7eWk15FAWnG/grsI5l9lVQpJQ=;
+        b=lcylggpo8KNqLHFpo19bXBB7mERyIx3YxgBZ3x7J9b9udhaUnuw2JN0CeMGM95wydN
+         2txeQNDHUM4hXoLKG0jIPkfyeaMr6nNSTf0qPCEyTXUTCoHIAZtbkgjw4iR1PqRl+TQr
+         JytNFVRF4H+/Jvcftgyfi+WT4VgXgrAMhAC6PrTTLztD2ILSZxmMa3Cs+cGWNIaZcVB8
+         hFTbq/D01VLHjC7+6v5s133ODZNjJP8TLEcnXOnwqPdDvpoYjV63j3sIx6GbcNyRWEYa
+         E3YwvFtwwXm5IiZ5MGM36L4MLkTZSD3zNQ87PzM7HhLDf1rIezwUiJiRA5cJvhWpkrvQ
+         FuaQ==
+X-Gm-Message-State: AA+aEWZSxaFPQTFGvz+2H0EQsYo+5T19B4i60z1AZtvToZR0IBTbVUk3
+        c6OMC08DMmCI+38t1Ny4/zvUsA==
+X-Google-Smtp-Source: AFSGD/WTtk05Pe/Hq0A5oQ06JeYUhmtTz9Knb8t3RC1nbNotMqdQioRkRqEKNskXleimzWQATX027g==
+X-Received: by 2002:a5d:6549:: with SMTP id z9mr18582849wrv.116.1543953080031;
+        Tue, 04 Dec 2018 11:51:20 -0800 (PST)
+Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id 125-v6sm14667527wmr.22.2018.12.04.11.51.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 11:51:19 -0800 (PST)
+Message-ID: <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com>
+Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent
+ clocks"
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 04 Dec 2018 20:51:17 +0100
+In-Reply-To: <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+         <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation (v4)
-Thread-Index: vbBiugdrML49y0rh0l25/HG+rBfz5A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Dec 4, 2018, at 2:44 PM, Florian Weimer fweimer@redhat.com wrote:
-
-> * Mathieu Desnoyers:
+On Tue, 2018-12-04 at 10:05 -0800, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-12-04 08:32:57)
+> > This reverts commit 2430a94d1e719b7b4af2a65b781a4c036eb22e64.
+> > 
+> > From the original commit message:
+> >   It turned out a problem because there are some single-parent clocks
+> >   that implement .get_parent() callback and return non-zero index.
+> >   The SOCFPGA clock is the case; the commit broke the SOCFPGA boards.
+> > 
+> > It is wrong for a clock to return an index >= num_parents. CCF checks
+> > for this condition in clk_core_get_parent_by_index(). This function sets
+> > the parent to NULL if index is incoherent, which seems like the only
+> > sane choice.
+> > 
+> > commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single parent
+> > clocks")
+> > appears to be a work around installed in the core framework for a problem
+> > that is platform specific, and should probably be fixed in the platform
+> > code.
 > 
->> diff --git a/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
->> b/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
->> index c370fda73d..9da78d59d2 100644
->> --- a/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
->> +++ b/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
->> @@ -235,3 +235,4 @@ GLIBC_2.28 tss_create F
->>  GLIBC_2.28 tss_delete F
->>  GLIBC_2.28 tss_get F
->>  GLIBC_2.28 tss_set F
->> +GLIBC_2.29 __rseq_refcount T 0x4
+> Ouch. I see that I even pointed that out in 2016 but never got a reply
+> or a fix patch[1].
 > 
-> This part looks buggy.
+> > Further more, it introduces a problem in a corner case of the mux clock.
+> > Take mux with multiple parents, but only one is known, the rest being
+> > undocumented. The register reset has one of unknown parent set.
+> > 
+> > Before commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single
+> > parent clocks"):
+> >  * get_parent() is called, register is read and give an unknown index.
+> >    -> the mux is orphaned.
+> >  * a call to set_rate() will reparent the mux to the only known parent.
+> > 
+> > With commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single parent
+> > clocks"):
+> >  * the register is never read.
+> >  * parent is wrongly assumed to be the only known one.
+> >    As a consequence, all the calculation deriving from the mux will be
+> >    wrong
+> >  * Since we believe the only know parent to be set, set_parent() won't
+> >    ever be called and the register won't be set with the correct value.
 > 
-> It's unclear based on this patch whether you actually want to get rid of
-> the __rseq_refcount symbol.
+> Isn't this the broken bad case all over again? Why register a clk as a
+> mux and then only say it has one parent?
 
-I want to keep the __rseq_refcount symbol so out-of-libc users can
-register rseq if they are linked against a pre-2.29 libc.
+I understand it is a bit odd but as I explained it is a corner case.
 
-Why does it look buggy ?
+We are really trying to drive a mux here, applying a values will change the
+clock signal we get. Documentation being what it is, we only know one the
+parent. The other parent could anything or maybe not connected at all, who
+know. That is not the important part actually
 
-Thanks,
+If such mux was already set to the known entry by default, it would be OK to
+ignore it. But if it is not, then we CCF to realise that and change the
+setting accordingly.
 
-Mathieu
+This the case of the 'ao_cts_cec' clock in the following patch:
+https://lore.kernel.org/patchwork/patch/1021028/
+
+by default the value in the register is 0, but the only one that makes sense
+for us is 1.
+
+> 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> 
+> Is this related to the other patch you sent? Can you send series for
+> related patches please?
+> 
+> [1] https://lkml.kernel.org/r/20160209181833.GA24167@codeaurora.org
+
+Actually I was intially doing a series, and stopped when my cover letter
+started with "those are two unrelated patches ..." ;)
+
+I found these things while debugging the same thing but there is no deps
+between them.
 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
