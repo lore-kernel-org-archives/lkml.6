@@ -2,151 +2,107 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA869C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDF9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7606020851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7606020851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A86FD20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:39:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A86FD20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbeLDVh6 (ORCPT
+        id S1726212AbeLDVjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:37:58 -0500
-Received: from mga04.intel.com ([192.55.52.120]:22876 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbeLDVh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:37:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:37:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="98653382"
-Received: from ray.jf.intel.com (HELO [10.7.201.141]) ([10.7.201.141])
-  by orsmga008.jf.intel.com with ESMTP; 04 Dec 2018 13:37:56 -0800
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 4 Dec 2018 16:39:18 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38757 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbeLDVjS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:39:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q1so8870438pfi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 13:39:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Uc1/0TDJORSzB8hIZZ+khrzCaKBg9pfjHabSJk5l1K8=;
+        b=JVGrM/p1aJUqln28dKEXLxYgqs2gLuU32vNXDpDhr39CY27UiLSB7hZaAko915/s5d
+         TyR7TZ1HNb8CL4CS5asID0nnb37oMkqdiShRJW2doyElckvdQS/4ItTli8VcHGClld6+
+         Qx5IK3rQQMhBqnkOUpwPKi6JLDsvway53qjjINJpOxqMM8uItqVgg7yMxxpFszxY5sm9
+         PCtKwTHKCtK3CaIg6FtgrGqGT8Fmk6XXnjhVkMjcZAbt7WKpXpodb/z5iJi+0gJ+5hXW
+         YuhEuUI0RfwtgPh97FjWnpcClpVKsli4U+y3zFmB1e5q6fxRVgSceyoqUvObA7jLiTz8
+         bTuw==
+X-Gm-Message-State: AA+aEWZKFd0VrFy4e0QONpLeRnq0f2DkmCDgIiDM4GNgZ0sfNj7IYbvl
+        ml2qsZMn3qqyFW4aAmhV9pw=
+X-Google-Smtp-Source: AFSGD/VQ+hjRQ3anujZWG0KSQLUr1jir9Kv1M54CaP7OXeqvoCpcZlwXCSznG6G3Jy2tO6ARPNs3zQ==
+X-Received: by 2002:a65:520a:: with SMTP id o10mr18774665pgp.276.1543959555798;
+        Tue, 04 Dec 2018 13:39:15 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id n21sm7249811pfg.84.2018.12.04.13.39.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 13:39:15 -0800 (PST)
+Message-ID: <1543959553.185366.213.camel@acm.org>
+Subject: Re: [PATCH v2 21/24] locking/lockdep: Verify whether lock objects
+ are small enough to be used as class keys
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Waiman Long <longman@redhat.com>, mingo@redhat.com
+Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
         linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
- <20181204184919.GD2937@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <20163c1e-00f1-7e02-82c0-7730ceabb9f2@intel.com>
-Date:   Tue, 4 Dec 2018 13:37:56 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181204184919.GD2937@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Johannes Berg <johannes@sipsolutions.net>
+Date:   Tue, 04 Dec 2018 13:39:13 -0800
+In-Reply-To: <8ae6bb3f-ab75-e6f2-adfa-8003366b7410@redhat.com>
+References: <20181204002833.55452-1-bvanassche@acm.org>
+         <20181204002833.55452-22-bvanassche@acm.org>
+         <8ae6bb3f-ab75-e6f2-adfa-8003366b7410@redhat.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 10:49 AM, Jerome Glisse wrote:
->> Also, could you add a simple, example program for how someone might use
->> this?  I got lost in all the new sysfs and ioctl gunk.  Can you
->> characterize how this would work with the *exiting* NUMA interfaces that
->> we have?
-> That is the issue i can not expose device memory as NUMA node as
-> device memory is not cache coherent on AMD and Intel platform today.
-> 
-> More over in some case that memory is not visible at all by the CPU
-> which is not something you can express in the current NUMA node.
+On Tue, 2018-12-04 at 16:08 -0500, Waiman Long wrote:
++AD4 On 12/03/2018 07:28 PM, Bart Van Assche wrote:
++AD4 +AD4 Cc: Peter Zijlstra +ADw-peterz+AEA-infradead.org+AD4
++AD4 +AD4 Cc: Waiman Long +ADw-longman+AEA-redhat.com+AD4
++AD4 +AD4 Cc: Johannes Berg +ADw-johannes+AEA-sipsolutions.net+AD4
++AD4 +AD4 Signed-off-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
++AD4 +AD4 ---
++AD4 +AD4  kernel/locking/lockdep.c +AHw 9 +-+-+-+-+-+-+-+-+-
++AD4 +AD4  1 file changed, 9 insertions(+-)
++AD4 +AD4 
++AD4 +AD4 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
++AD4 +AD4 index c936fce5b9d7..b4772e5fc176 100644
++AD4 +AD4 --- a/kernel/locking/lockdep.c
++AD4 +AD4 +-+-+- b/kernel/locking/lockdep.c
++AD4 +AD4 +AEAAQA -727,6 +-727,15 +AEAAQA static bool assign+AF8-lock+AF8-key(struct lockdep+AF8-map +ACo-lock)
++AD4 +AD4  +AHs
++AD4 +AD4  	unsigned long can+AF8-addr, addr +AD0 (unsigned long)lock+ADs
++AD4 +AD4  
++AD4 +AD4 +-	/+ACo
++AD4 +AD4 +-	 +ACo lockdep+AF8-free+AF8-key+AF8-range() assumes that struct lock+AF8-class+AF8-key
++AD4 +AD4 +-	 +ACo objects do not overlap. Since we use the address of lock
++AD4 +AD4 +-	 +ACo objects as class key for static objects, check whether the
++AD4 +AD4 +-	 +ACo size of lock+AF8-class+AF8-key objects does not exceed the size of
++AD4 +AD4 +-	 +ACo the smallest lock object.
++AD4 +AD4 +-	 +ACo-/
++AD4 +AD4 +-	BUILD+AF8-BUG+AF8-ON(sizeof(struct lock+AF8-class+AF8-key) +AD4 sizeof(raw+AF8-spinlock+AF8-t))+ADs
++AD4 +AD4 +-
++AD4 +AD4  	if (+AF8AXw-is+AF8-kernel+AF8-percpu+AF8-address(addr, +ACY-can+AF8-addr))
++AD4 +AD4  		lock-+AD4-key +AD0 (void +ACo)can+AF8-addr+ADs
++AD4 +AD4  	else if (+AF8AXw-is+AF8-module+AF8-percpu+AF8-address(addr, +ACY-can+AF8-addr))
++AD4 
++AD4 I don't understand what this check is for. lock+AF8-class+AF8-key and spinlock
++AD4 are different objects. Their relative size shouldn't matter.
 
-Yeah, our NUMA mechanisms are for managing memory that the kernel itself
-manages in the "normal" allocator and supports a full feature set on.
-That has a bunch of implications, like that the memory is cache coherent
-and accessible from everywhere.
+Hi Waiman,
 
-The HMAT patches only comprehend this "normal" memory, which is why
-we're extending the existing /sys/devices/system/node infrastructure.
+Peter asked me to add this check.
 
-This series has a much more aggressive goal, which is comprehending the
-connections of every memory-target to every memory-initiator, no matter
-who is managing the memory, who can access it, or what it can be used for.
-
-Theoretically, HMS could be used for everything that we're doing with
-/sys/devices/system/node, as long as it's tied back into the existing
-NUMA infrastructure _somehow_.
-
-Right?
+Bart.
