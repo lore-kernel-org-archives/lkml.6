@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208E7C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7B6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D51B7214ED
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E858214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vWgXS+F0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D51B7214ED
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wLE7rFvW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E858214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeLDLCJ (ORCPT
+        id S1726437AbeLDLCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:02:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47880 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727563AbeLDLCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:02:05 -0500
+        id S1727571AbeLDLCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 274E0214DA;
-        Tue,  4 Dec 2018 11:02:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BE932087F;
+        Tue,  4 Dec 2018 11:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921324;
-        bh=QwHZyuX1TCAuA89e1Vpb7/E4vv1lJ8rD8BGZSd7OYxk=;
+        s=default; t=1543921327;
+        bh=qH92Lf3K3eKbAHEiYfpXEcjtThGGKi8cCSZ0myyWSt4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vWgXS+F0m8H4Hiv70/alJ9dl4kLO3UaWYx8M2NzZlhZeFcFrAfjdQrxRZJrKr3drL
-         zXIGXIR6HevU5pJhPKl04hIyX4unrxeg+OtgMGoU0k/Q8dVpuAaRiqSokB6+ELfIJN
-         8f/AhDKLtEOCavLNEcBE6Z9UiLLEdMr0Lb4WqhUE=
+        b=wLE7rFvWp6xOVLlfAEJCTl9GJ2DGRQT7CXR1jd98I8FUC+ccEPhss/ZdoFLRC+HAu
+         SIPrDEY4RrZ/wwOeOQLCVU9OzUfcQNRkwN1f8MXAsK8H8Hq7lCy70NiEvMoz4u6SGQ
+         IFd30BjTG8sCNhIuUkVZWvsNjsA8pO4GZjGhbAd0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,9 +48,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 006/146] mm/khugepaged: fix crashes due to misaccounted holes
-Date:   Tue,  4 Dec 2018 11:48:12 +0100
-Message-Id: <20181204103727.031955979@linuxfoundation.org>
+Subject: [PATCH 4.14 007/146] mm/khugepaged: collapse_shmem() remember to clear holes
+Date:   Tue,  4 Dec 2018 11:48:13 +0100
+Message-Id: <20181204103727.074624233@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -69,30 +69,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit aaa52e340073b7f4593b3c4ddafcafa70cf838b5 upstream.
+commit 2af8ff291848cc4b1cce24b6c943394eb2c761e8 upstream.
 
-Huge tmpfs testing on a shortish file mapped into a pmd-rounded extent
-hit shmem_evict_inode()'s WARN_ON(inode->i_blocks) followed by
-clear_inode()'s BUG_ON(inode->i_data.nrpages) when the file was later
-closed and unlinked.
+Huge tmpfs testing reminds us that there is no __GFP_ZERO in the gfp
+flags khugepaged uses to allocate a huge page - in all common cases it
+would just be a waste of effort - so collapse_shmem() must remember to
+clear out any holes that it instantiates.
 
-khugepaged's collapse_shmem() was forgetting to update mapping->nrpages
-on the rollback path, after it had added but then needs to undo some
-holes.
+The obvious place to do so, where they are put into the page cache tree,
+is not a good choice: because interrupts are disabled there.  Leave it
+until further down, once success is assured, where the other pages are
+copied (before setting PageUptodate).
 
-There is indeed an irritating asymmetry between shmem_charge(), whose
-callers want it to increment nrpages after successfully accounting
-blocks, and shmem_uncharge(), when __delete_from_page_cache() already
-decremented nrpages itself: oh well, just add a comment on that to them
-both.
-
-And shmem_recalc_inode() is supposed to be called when the accounting is
-expected to be in balance (so it can deduce from imbalance that reclaim
-discarded some pages): so change shmem_charge() to update nrpages
-earlier (though it's rare for the difference to matter at all).
-
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261523450.2275@eggly.anvils
-Fixes: 800d8c63b2e98 ("shmem: add huge pages support")
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261525080.2275@eggly.anvils
 Fixes: f3f0e1d2150b2 ("khugepaged: add support of collapse for tmpfs/shmem pages")
 Signed-off-by: Hugh Dickins <hughd@google.com>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
@@ -104,55 +93,38 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/khugepaged.c | 4 +++-
- mm/shmem.c      | 6 +++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ mm/khugepaged.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index d4a06afbeda4..be7b0863e33c 100644
+index be7b0863e33c..f535dbe3f9f5 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -1539,8 +1539,10 @@ static void collapse_shmem(struct mm_struct *mm,
- 		*hpage = NULL;
- 	} else {
- 		/* Something went wrong: rollback changes to the radix-tree */
--		shmem_uncharge(mapping->host, nr_none);
- 		spin_lock_irq(&mapping->tree_lock);
-+		mapping->nrpages -= nr_none;
-+		shmem_uncharge(mapping->host, nr_none);
-+
- 		radix_tree_for_each_slot(slot, &mapping->page_tree, &iter,
- 				start) {
- 			if (iter.index >= end)
-diff --git a/mm/shmem.c b/mm/shmem.c
-index fa08f56fd5e5..177fef62cbbd 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -296,12 +296,14 @@ bool shmem_charge(struct inode *inode, long pages)
- 	if (!shmem_inode_acct_block(inode, pages))
- 		return false;
+@@ -1502,7 +1502,12 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		 * Replacing old pages with new one has succeed, now we need to
+ 		 * copy the content and free old pages.
+ 		 */
++		index = start;
+ 		list_for_each_entry_safe(page, tmp, &pagelist, lru) {
++			while (index < page->index) {
++				clear_highpage(new_page + (index % HPAGE_PMD_NR));
++				index++;
++			}
+ 			copy_highpage(new_page + (page->index % HPAGE_PMD_NR),
+ 					page);
+ 			list_del(&page->lru);
+@@ -1512,6 +1517,11 @@ static void collapse_shmem(struct mm_struct *mm,
+ 			ClearPageActive(page);
+ 			ClearPageUnevictable(page);
+ 			put_page(page);
++			index++;
++		}
++		while (index < end) {
++			clear_highpage(new_page + (index % HPAGE_PMD_NR));
++			index++;
+ 		}
  
-+	/* nrpages adjustment first, then shmem_recalc_inode() when balanced */
-+	inode->i_mapping->nrpages += pages;
-+
- 	spin_lock_irqsave(&info->lock, flags);
- 	info->alloced += pages;
- 	inode->i_blocks += pages * BLOCKS_PER_PAGE;
- 	shmem_recalc_inode(inode);
- 	spin_unlock_irqrestore(&info->lock, flags);
--	inode->i_mapping->nrpages += pages;
- 
- 	return true;
- }
-@@ -311,6 +313,8 @@ void shmem_uncharge(struct inode *inode, long pages)
- 	struct shmem_inode_info *info = SHMEM_I(inode);
- 	unsigned long flags;
- 
-+	/* nrpages adjustment done by __delete_from_page_cache() or caller */
-+
- 	spin_lock_irqsave(&info->lock, flags);
- 	info->alloced -= pages;
- 	inode->i_blocks -= pages * BLOCKS_PER_PAGE;
+ 		local_irq_save(flags);
 -- 
 2.17.1
 
