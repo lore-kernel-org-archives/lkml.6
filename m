@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334C0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE39DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE51F2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8408B206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKJEDFVO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE51F2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOteis7h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8408B206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeLDLSD (ORCPT
+        id S1727931AbeLDLSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:18:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52524 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:18:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727674AbeLDLFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:04 -0500
+        id S1727498AbeLDLFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 415642154B;
-        Tue,  4 Dec 2018 11:05:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB7E1214DE;
+        Tue,  4 Dec 2018 11:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921502;
-        bh=f2krCO6Bwl+jQxo6X75vj32nZy3FddXYIOkYkewyk3o=;
+        s=default; t=1543921500;
+        bh=r2n44vDXuK+OCgqdzVFCyD+kmnNaUtk1OsANnere2n8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mKJEDFVOQtLfx5SVX2Ix6qy5YIgtI8wL10OOdYAxERsUG6esuiDAC6WQ+cOstCNiV
-         Ot/TnHvPC5gHay/R/6MR720TtlXDLcLRCk0HAQqTRhhDspiC26WyXH2GzXUmNdus8+
-         +tMQ6YHh/KpgbpFhjIqiKor3CmVQ/OuGhXB4lcQo=
+        b=IOteis7htA8xBwf9ZWWxOxSl2ZKtE4JvVI9GalzwaQgqvNjGZxAWB4XEO1nvkp5GI
+         Eiw3r/56Ssf3K1vrN/aATqxvUszG9lm9jMTH+BxEvigMr7vY1YwcJuSpS8lg1kQicQ
+         WzUWoBDVtWSmrxjWSkqZvXsZVUVUqUtqj7kqUwC0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 095/146] x86/speculation: Unify conditional spectre v2 print functions
-Date:   Tue,  4 Dec 2018 11:49:41 +0100
-Message-Id: <20181204103730.646854830@linuxfoundation.org>
+Subject: [PATCH 4.14 094/146] x86/speculataion: Mark command line parser data __initdata
+Date:   Tue,  4 Dec 2018 11:49:40 +0100
+Message-Id: <20181204103730.608655742@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -83,10 +83,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 495d470e9828500e0155027f230449ac5e29c025 upstream
+commit 30ba72a990f5096ae08f284de17986461efcc408 upstream
 
-There is no point in having two functions and a conditional at the call
-site.
+No point to keep that around.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -110,45 +109,31 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.986890749@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185004.893886356@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -256,15 +256,9 @@ static const struct {
- 	{ "auto",		SPECTRE_V2_CMD_AUTO,		  false },
- };
- 
--static void __init spec2_print_if_insecure(const char *reason)
-+static void __init spec_v2_print_cond(const char *reason, bool secure)
- {
--	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s selected on command line.\n", reason);
--}
--
--static void __init spec2_print_if_secure(const char *reason)
--{
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
- 		pr_info("%s selected on command line.\n", reason);
- }
- 
-@@ -307,11 +301,8 @@ static enum spectre_v2_mitigation_cmd __
- 		return SPECTRE_V2_CMD_AUTO;
- 	}
- 
--	if (mitigation_options[i].secure)
--		spec2_print_if_secure(mitigation_options[i].option);
--	else
--		spec2_print_if_insecure(mitigation_options[i].option);
--
-+	spec_v2_print_cond(mitigation_options[i].option,
-+			   mitigation_options[i].secure);
- 	return cmd;
- }
- 
+@@ -247,7 +247,7 @@ static const struct {
+ 	const char *option;
+ 	enum spectre_v2_mitigation_cmd cmd;
+ 	bool secure;
+-} mitigation_options[] = {
++} mitigation_options[] __initdata = {
+ 	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
+ 	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
+ 	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
+@@ -483,7 +483,7 @@ static const char * const ssb_strings[]
+ static const struct {
+ 	const char *option;
+ 	enum ssb_mitigation_cmd cmd;
+-} ssb_mitigation_options[] = {
++} ssb_mitigation_options[]  __initdata = {
+ 	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
+ 	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
+ 	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
 
 
