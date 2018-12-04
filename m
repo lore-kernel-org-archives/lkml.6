@@ -7,62 +7,45 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C758DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A3CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F27720878
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 783182087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxE39Dze"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F27720878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcTlY8ZK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 783182087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeLDK5f (ORCPT
+        id S1726803AbeLDK5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:57:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41522 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:57:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeLDK5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:57:33 -0500
+        id S1726779AbeLDK5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:57:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CA82214DB;
-        Tue,  4 Dec 2018 10:57:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5539214ED;
+        Tue,  4 Dec 2018 10:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921052;
-        bh=CE432M/+bB/szH3mGJOkQu5VsyP44NiycQdN5IjBKT4=;
+        s=default; t=1543921057;
+        bh=PaA2CqYsNYaISFZSki5ZPqSEOt8LyVWDbxRA/A/3zrA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PxE39DzeoCofTYhxbnmiVABRs1Yw+7N21WmQXnUMr5WDw1TifFi12Xqz6tAySaQOW
-         RYr2g18YNftn6k2MrbwW4kkOO3cMsAUgyoOe+ZA+gzugmoggpfZSn0N+W/xpAGTwts
-         IGDw38uq3PkbM2Ym8HdQ+IQzUGfdnZ6X0fbVHumg=
+        b=pcTlY8ZKk3mCYQj+N6nMvcmGS6OjSzF4fuenmVW3SythGmem76nhjOnfntjt3vuKz
+         TF1Q9J4tlmbw4vm+c0qoykxgPMMpM6tdni6U+Fl5xg1LiFNCVDuSbezYeNTmOVhOZd
+         fhpxp0k1/YxEOdloYgYBF9pDRXHWN1GGmb4ZSkHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 061/139] x86/speculation: Provide IBPB always command line options
-Date:   Tue,  4 Dec 2018 11:49:02 +0100
-Message-Id: <20181204103652.508288746@linuxfoundation.org>
+        stable@vger.kernel.org, Junaid Shahid <junaids@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 063/139] kvm: mmu: Fix race in emulated page table writes
+Date:   Tue,  4 Dec 2018 11:49:04 +0100
+Message-Id: <20181204103652.612267666@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -81,161 +64,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner tglx@linutronix.de
+From: Junaid Shahid <junaids@google.com>
 
-commit 55a974021ec952ee460dc31ca08722158639de72 upstream
+commit 0e0fee5c539b61fdd098332e0e2cc375d9073706 upstream.
 
-Provide the possibility to enable IBPB always in combination with 'prctl'
-and 'seccomp'.
+When a guest page table is updated via an emulated write,
+kvm_mmu_pte_write() is called to update the shadow PTE using the just
+written guest PTE value. But if two emulated guest PTE writes happened
+concurrently, it is possible that the guest PTE and the shadow PTE end
+up being out of sync. Emulated writes do not mark the shadow page as
+unsync-ed, so this inconsistency will not be resolved even by a guest TLB
+flush (unless the page was marked as unsync-ed at some other point).
 
-Add the extra command line options and rework the IBPB selection to
-evaluate the command instead of the mode selected by the STIPB switch case.
+This is fixed by re-reading the current value of the guest PTE after the
+MMU lock has been acquired instead of just using the value that was
+written prior to calling kvm_mmu_pte_write().
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Junaid Shahid <junaids@google.com>
+Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185006.144047038@linutronix.de
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/admin-guide/kernel-parameters.txt |   12 ++++++++
- arch/x86/kernel/cpu/bugs.c                      |   34 ++++++++++++++++--------
- 2 files changed, 35 insertions(+), 11 deletions(-)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4216,11 +4216,23 @@
- 				  per thread.  The mitigation control state
- 				  is inherited on fork.
+---
+ arch/x86/kvm/mmu.c |   27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
+
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -5013,9 +5013,9 @@ static bool need_remote_flush(u64 old, u
+ }
  
-+			prctl,ibpb
-+				- Like "prctl" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different user
-+				  space processes.
-+
- 			seccomp
- 				- Same as "prctl" above, but all seccomp
- 				  threads will enable the mitigation unless
- 				  they explicitly opt out.
- 
-+			seccomp,ibpb
-+				- Like "seccomp" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different
-+				  user space processes.
-+
- 			auto    - Kernel selects the mitigation depending on
- 				  the available CPU features and vulnerability.
- 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -256,7 +256,9 @@ enum spectre_v2_user_cmd {
- 	SPECTRE_V2_USER_CMD_AUTO,
- 	SPECTRE_V2_USER_CMD_FORCE,
- 	SPECTRE_V2_USER_CMD_PRCTL,
-+	SPECTRE_V2_USER_CMD_PRCTL_IBPB,
- 	SPECTRE_V2_USER_CMD_SECCOMP,
-+	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,
- };
- 
- static const char * const spectre_v2_user_strings[] = {
-@@ -271,11 +273,13 @@ static const struct {
- 	enum spectre_v2_user_cmd	cmd;
- 	bool				secure;
- } v2_user_options[] __initdata = {
--	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
--	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
--	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
--	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
--	{ "seccomp",	SPECTRE_V2_USER_CMD_SECCOMP,	false },
-+	{ "auto",		SPECTRE_V2_USER_CMD_AUTO,		false },
-+	{ "off",		SPECTRE_V2_USER_CMD_NONE,		false },
-+	{ "on",			SPECTRE_V2_USER_CMD_FORCE,		true  },
-+	{ "prctl",		SPECTRE_V2_USER_CMD_PRCTL,		false },
-+	{ "prctl,ibpb",		SPECTRE_V2_USER_CMD_PRCTL_IBPB,		false },
-+	{ "seccomp",		SPECTRE_V2_USER_CMD_SECCOMP,		false },
-+	{ "seccomp,ibpb",	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,	false },
- };
- 
- static void __init spec_v2_user_print_cond(const char *reason, bool secure)
-@@ -321,6 +325,7 @@ spectre_v2_user_select_mitigation(enum s
+ static u64 mmu_pte_write_fetch_gpte(struct kvm_vcpu *vcpu, gpa_t *gpa,
+-				    const u8 *new, int *bytes)
++				    int *bytes)
  {
- 	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
- 	bool smt_possible = IS_ENABLED(CONFIG_SMP);
-+	enum spectre_v2_user_cmd cmd;
+-	u64 gentry;
++	u64 gentry = 0;
+ 	int r;
  
- 	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
- 		return;
-@@ -329,17 +334,20 @@ spectre_v2_user_select_mitigation(enum s
- 	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
- 		smt_possible = false;
- 
--	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
-+	cmd = spectre_v2_parse_user_cmdline(v2_cmd);
-+	switch (cmd) {
- 	case SPECTRE_V2_USER_CMD_NONE:
- 		goto set_mode;
- 	case SPECTRE_V2_USER_CMD_FORCE:
- 		mode = SPECTRE_V2_USER_STRICT;
- 		break;
- 	case SPECTRE_V2_USER_CMD_PRCTL:
-+	case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
- 		mode = SPECTRE_V2_USER_PRCTL;
- 		break;
- 	case SPECTRE_V2_USER_CMD_AUTO:
- 	case SPECTRE_V2_USER_CMD_SECCOMP:
-+	case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
- 		if (IS_ENABLED(CONFIG_SECCOMP))
- 			mode = SPECTRE_V2_USER_SECCOMP;
- 		else
-@@ -351,12 +359,15 @@ spectre_v2_user_select_mitigation(enum s
- 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 
--		switch (mode) {
--		case SPECTRE_V2_USER_STRICT:
-+		switch (cmd) {
-+		case SPECTRE_V2_USER_CMD_FORCE:
-+		case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
-+		case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
- 			static_branch_enable(&switch_mm_always_ibpb);
- 			break;
--		case SPECTRE_V2_USER_PRCTL:
--		case SPECTRE_V2_USER_SECCOMP:
-+		case SPECTRE_V2_USER_CMD_PRCTL:
-+		case SPECTRE_V2_USER_CMD_AUTO:
-+		case SPECTRE_V2_USER_CMD_SECCOMP:
- 			static_branch_enable(&switch_mm_cond_ibpb);
- 			break;
- 		default:
-@@ -364,7 +375,8 @@ spectre_v2_user_select_mitigation(enum s
- 		}
- 
- 		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
--			mode == SPECTRE_V2_USER_STRICT ? "always-on" : "conditional");
-+			static_key_enabled(&switch_mm_always_ibpb) ?
-+			"always-on" : "conditional");
+ 	/*
+@@ -5027,22 +5027,12 @@ static u64 mmu_pte_write_fetch_gpte(stru
+ 		/* Handle a 32-bit guest writing two halves of a 64-bit gpte */
+ 		*gpa &= ~(gpa_t)7;
+ 		*bytes = 8;
+-		r = kvm_vcpu_read_guest(vcpu, *gpa, &gentry, 8);
+-		if (r)
+-			gentry = 0;
+-		new = (const u8 *)&gentry;
  	}
  
- 	/* If enhanced IBRS is enabled no STIPB required */
+-	switch (*bytes) {
+-	case 4:
+-		gentry = *(const u32 *)new;
+-		break;
+-	case 8:
+-		gentry = *(const u64 *)new;
+-		break;
+-	default:
+-		gentry = 0;
+-		break;
++	if (*bytes == 4 || *bytes == 8) {
++		r = kvm_vcpu_read_guest_atomic(vcpu, *gpa, &gentry, *bytes);
++		if (r)
++			gentry = 0;
+ 	}
+ 
+ 	return gentry;
+@@ -5146,8 +5136,6 @@ static void kvm_mmu_pte_write(struct kvm
+ 
+ 	pgprintk("%s: gpa %llx bytes %d\n", __func__, gpa, bytes);
+ 
+-	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, new, &bytes);
+-
+ 	/*
+ 	 * No need to care whether allocation memory is successful
+ 	 * or not since pte prefetch is skiped if it does not have
+@@ -5156,6 +5144,9 @@ static void kvm_mmu_pte_write(struct kvm
+ 	mmu_topup_memory_caches(vcpu);
+ 
+ 	spin_lock(&vcpu->kvm->mmu_lock);
++
++	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, &bytes);
++
+ 	++vcpu->kvm->stat.mmu_pte_write;
+ 	kvm_mmu_audit(vcpu, AUDIT_PRE_PTE_WRITE);
+ 
 
 
