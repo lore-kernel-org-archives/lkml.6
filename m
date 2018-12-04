@@ -2,156 +2,127 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F69C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE25C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 069282081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:56:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YbBuOH9e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 069282081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id ED6EB20672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:57:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6EB20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbeLDV4j (ORCPT
+        id S1726400AbeLDV5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:56:39 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:18830 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeLDV4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:56:39 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c06f8160000>; Tue, 04 Dec 2018 13:56:38 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 04 Dec 2018 13:56:37 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 04 Dec 2018 13:56:37 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 21:56:36 +0000
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        <tom@talpey.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        <benve@cisco.com>, Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Tue, 4 Dec 2018 16:57:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37556 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725880AbeLDV5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:57:39 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8653580F82;
+        Tue,  4 Dec 2018 21:57:37 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 03E7D179CD;
+        Tue,  4 Dec 2018 21:57:13 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 16:57:12 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
-        <rcampbell@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20181204001720.26138-1-jhubbard@nvidia.com>
- <20181204001720.26138-2-jhubbard@nvidia.com>
- <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com>
-Date:   Tue, 4 Dec 2018 13:56:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+Message-ID: <20181204215711.GP2937@redhat.com>
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
+ <20181204184919.GD2937@redhat.com>
+ <20163c1e-00f1-7e02-82c0-7730ceabb9f2@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543960598; bh=7W2wfTpgdToO6GpOI/NSe9+5+c9YZgpSZTI6IpFX1Vo=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=YbBuOH9eie1gri8DKOFeUC4jDGkI5KLAADnmkOQo2/34Vgcoa+Oev4ouHVTeFTNma
-         Vyt628PcOHN5bE8bixBfJCNM75XeI20SbOEOVn1Kq6RTN3+ildVPrETzLzpk5G+PkO
-         fveqdO3dXySQnD9R74UdtRS2LDFU2/OqVTgzPmyi8YT3PUrv5mlNdCY73Q86Gwt4wA
-         GzFCt5+oc9PIyIVtkDAx0ldmFOgHXe8ZubOE4SiAz1743eLXOEMMh9jSrteWFBkQNM
-         RLFaDPFFGi86oBpJH74O6YxWZQgys58aHpA2CUj59wV2u2VVJ4AHY+pGi4TINyqX6G
-         QEkrGNicjHVtw==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20163c1e-00f1-7e02-82c0-7730ceabb9f2@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 04 Dec 2018 21:57:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 12:28 PM, Dan Williams wrote:
-> On Mon, Dec 3, 2018 at 4:17 PM <john.hubbard@gmail.com> wrote:
->>
->> From: John Hubbard <jhubbard@nvidia.com>
->>
->> Introduces put_user_page(), which simply calls put_page().
->> This provides a way to update all get_user_pages*() callers,
->> so that they call put_user_page(), instead of put_page().
->>
->> Also introduces put_user_pages(), and a few dirty/locked variations,
->> as a replacement for release_pages(), and also as a replacement
->> for open-coded loops that release multiple pages.
->> These may be used for subsequent performance improvements,
->> via batching of pages to be released.
->>
->> This is the first step of fixing the problem described in [1]. The steps
->> are:
->>
->> 1) (This patch): provide put_user_page*() routines, intended to be used
->>    for releasing pages that were pinned via get_user_pages*().
->>
->> 2) Convert all of the call sites for get_user_pages*(), to
->>    invoke put_user_page*(), instead of put_page(). This involves dozens of
->>    call sites, and will take some time.
->>
->> 3) After (2) is complete, use get_user_pages*() and put_user_page*() to
->>    implement tracking of these pages. This tracking will be separate from
->>    the existing struct page refcounting.
->>
->> 4) Use the tracking and identification of these pages, to implement
->>    special handling (especially in writeback paths) when the pages are
->>    backed by a filesystem. Again, [1] provides details as to why that is
->>    desirable.
+On Tue, Dec 04, 2018 at 01:37:56PM -0800, Dave Hansen wrote:
+> On 12/4/18 10:49 AM, Jerome Glisse wrote:
+> >> Also, could you add a simple, example program for how someone might use
+> >> this?  I got lost in all the new sysfs and ioctl gunk.  Can you
+> >> characterize how this would work with the *exiting* NUMA interfaces that
+> >> we have?
+> > That is the issue i can not expose device memory as NUMA node as
+> > device memory is not cache coherent on AMD and Intel platform today.
+> > 
+> > More over in some case that memory is not visible at all by the CPU
+> > which is not something you can express in the current NUMA node.
 > 
-> I thought at Plumbers we talked about using a page bit to tag pages
-> that have had their reference count elevated by get_user_pages()? That
-> way there is no need to distinguish put_page() from put_user_page() it
-> just happens internally to put_page(). At the conference Matthew was
-> offering to free up a page bit for this purpose.
+> Yeah, our NUMA mechanisms are for managing memory that the kernel itself
+> manages in the "normal" allocator and supports a full feature set on.
+> That has a bunch of implications, like that the memory is cache coherent
+> and accessible from everywhere.
 > 
-
-...but then, upon further discussion in that same session, we realized that
-that doesn't help. You need a reference count. Otherwise a random put_page
-could affect your dma-pinned pages, etc, etc.
-
-I was not able to actually find any place where a single additional page
-bit would help our situation, which is why this still uses LRU fields for
-both the two bits required (the RFC [1] still applies), and the dma_pinned_count.
-
-
-[1] https://lore.kernel.org/r/20181110085041.10071-7-jhubbard@nvidia.com
-
-
-
->> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
->>
->> Reviewed-by: Jan Kara <jack@suse.cz>
+> The HMAT patches only comprehend this "normal" memory, which is why
+> we're extending the existing /sys/devices/system/node infrastructure.
 > 
-> Wish, you could have been there Jan. I'm missing why it's safe to
-> assume that a single put_user_page() is paired with a get_user_page()?
+> This series has a much more aggressive goal, which is comprehending the
+> connections of every memory-target to every memory-initiator, no matter
+> who is managing the memory, who can access it, or what it can be used for.
 > 
+> Theoretically, HMS could be used for everything that we're doing with
+> /sys/devices/system/node, as long as it's tied back into the existing
+> NUMA infrastructure _somehow_.
+> 
+> Right?
 
-A put_user_page() per page, or a put_user_pages() for an array of pages. See
-patch 0002 for several examples.
+Fully correct mind if i steal that perfect summary description next time
+i post ? I am so bad at explaining thing :)
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Intention is to allow program to do everything they do with mbind() today
+and tomorrow with the HMAT patchset and on top of that to also be able to
+do what they do today through API like OpenCL, ROCm, CUDA ... So it is one
+kernel API to rule them all ;)
+
+Also at first i intend to special case vma alloc page when they are HMS
+policy, long term i would like to merge code path inside the kernel. But
+i do not want to disrupt existing code path today, i rather grow to that
+organicaly. Step by step. The mbind() would still work un-affected in
+the end just the plumbing would be slightly different.
+
+Cheers,
+Jérôme
