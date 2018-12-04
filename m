@@ -5,128 +5,128 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D341C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D9FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27752206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:45:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27752206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C85A206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:45:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C85A206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726071AbeLDSpJ (ORCPT
+        id S1726115AbeLDSpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:45:09 -0500
-Received: from mga04.intel.com ([192.55.52.120]:3821 "EHLO mga04.intel.com"
+        Tue, 4 Dec 2018 13:45:14 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18389 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbeLDSpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:45:09 -0500
+        id S1726075AbeLDSpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:45:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:45:09 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:45:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="280903225"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga005.jf.intel.com with ESMTP; 04 Dec 2018 10:45:08 -0800
-Message-ID: <b8841553115fb63b348e466995338a4d4b13b6f5.camel@linux.intel.com>
-Subject: Re: [PATCH RFC 0/3] Fix KVM misinterpreting Reserved page as an
- MMIO page
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Yi Zhang <yi.z.zhang@linux.intel.com>
-Cc:     dan.j.williams@intel.com, pbonzini@redhat.com, brho@google.com,
-        kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dave.jiang@intel.com, yu.c.zhang@intel.com, pagupta@redhat.com,
-        david@redhat.com, jack@suse.cz, hch@lst.de, rkrcmar@redhat.com,
-        jglisse@redhat.com
-Date:   Tue, 04 Dec 2018 10:45:08 -0800
-In-Reply-To: <20181204065914.GB73736@tiger-server>
-References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <20181204065914.GB73736@tiger-server>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="98613191"
+Received: from unknown (HELO [10.7.201.141]) ([10.7.201.141])
+  by orsmga008.jf.intel.com with ESMTP; 04 Dec 2018 10:45:12 -0800
+Subject: Re: [patch V2 27/28] x86/speculation: Add seccomp Spectre v2 user
+ space protection mode
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185006.051663132@linutronix.de>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <2272cd70-e7e7-871a-7579-208073b6ca85@intel.com>
+Date:   Tue, 4 Dec 2018 10:45:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181125185006.051663132@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-04 at 14:59 +0800, Yi Zhang wrote:
-> On 2018-12-03 at 11:25:20 -0800, Alexander Duyck wrote:
-> > I have loosely based this patch series off of the following patch series
-> > from Zhang Yi:
-> > https://lore.kernel.org/lkml/cover.1536342881.git.yi.z.zhang@linux.intel.com
-> > 
-> > The original set had attempted to address the fact that DAX pages were
-> > treated like MMIO pages which had resulted in reduced performance. It
-> > attempted to address this by ignoring the PageReserved flag if the page
-> > was either a DEV_DAX or FS_DAX page.
-> > 
-> > I am proposing this as an alternative to that set. The main reason for this
-> > is because I believe there are a few issues that were overlooked with that
-> > original set. Specifically KVM seems to have two different uses for the
-> > PageReserved flag. One being whether or not we can pin the memory, the other
-> > being if we should be marking the pages as dirty or accessed. I believe
-> > only the pinning really applies so I have split the uses of
-> > kvm_is_reserved_pfn and updated the function uses to determine support for
-> > page pinning to include a check of the pgmap to see if it supports pinning.
-> 
-> kvm is not the only one users of the dax page.
+>  static const char * const spectre_v2_user_strings[] = {
+>  	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
+>  	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
+>  	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
+> +	[SPECTRE_V2_USER_SECCOMP]	= "User space: Mitigation: STIBP via seccomp and prctl",
+>  };
 
-Yes, but KVM and virtualization in general seems to be the place where
-the code carrying the assumption that PageReserved == MMIO exists.
+Since there's some heartburn about the STIBP naming, should we make this
+more generic?  Maybe something like "SMT hardening", so it says:
 
-> A similar user of PageReserved to look at is:
->  drivers/vfio/vfio_iommu_type1.c:is_invalid_reserved_pfn(
-> vfio is also want to know the page is capable for pinning.
+	"User space: Mitigation: SMT hardening via prctl"
 
-I would lump vfio in with virtualization as I said above.
+or,
 
-A quick search also shows that there is also
-arch/x86/kvm/mmu.c:kvm_is_mmio_pfn() which had a similar assumption but
-is already carrying workarounds.
+ 	"User space: Mitigation: maybe go slow on indirect branches via prctl"
 
-> I throught that you have removed the reserved flag on the dax page
-> 
-> in https://patchwork.kernel.org/patch/10707267/
-> 
-> is something I missing here?
-
-That patch wasn't about DAX memory. That patch was about the fact that
-the reserved flag was expensive as a __set_bit operation. I was leaving
-the bit set for DAX and all other hot-plug memory and not setting it
-for deferred memory init.
-
-The reserved bit is essentially meant to flag everything that is not
-standard system RAM page. Historically speaking most of that was MMIO,
-now that isn't necessarily the case with the introduction of
-ZONE_DEVICE pages.
-
-The issue is DAX isn't necessarily system RAM either. So if we don't
-set the reserved bit for DAX then we have to go through and start
-adding exception cases to the paths that handle system RAM to split it
-off from DAX. Dan had pointed out one such example in
-kernel/power/snapshot.c:saveable_page() as I recall.
-
-> > 
-> > ---
-> > 
-> > Alexander Duyck (3):
-> >       kvm: Split use cases for kvm_is_reserved_pfn to kvm_is_refcounted_pfn
-> >       mm: Add support for exposing if dev_pagemap supports refcount pinning
-> >       kvm: Add additional check to determine if a page is refcounted
-> > 
-> > 
-> >  arch/x86/kvm/mmu.c        |    6 +++---
-> >  drivers/nvdimm/pfn_devs.c |    2 ++
-> >  include/linux/kvm_host.h  |    2 +-
-> >  include/linux/memremap.h  |    5 ++++-
-> >  include/linux/mm.h        |   11 +++++++++++
-> >  virt/kvm/kvm_main.c       |   34 +++++++++++++++++++++++++---------
-> >  6 files changed, 46 insertions(+), 14 deletions(-)
-> > 
-> > --
-
+if we're trying be more precise on the effects. :)
