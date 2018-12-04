@@ -2,151 +2,559 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBB8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9257CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91DC42082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:32:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91DC42082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D69920834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:34:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="HDbDQdlt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D69920834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbeLDUcB (ORCPT
+        id S1726269AbeLDUeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:32:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:32896 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbeLDUcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:32:00 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1A88130026BA;
-        Tue,  4 Dec 2018 20:32:00 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 491D85DD8A;
-        Tue,  4 Dec 2018 20:31:59 +0000 (UTC)
-Subject: Re: [PATCH v2 16/24] locking/lockdep: Retain the class key and name
- while freeing a lock class
-To:     Bart Van Assche <bvanassche@acm.org>, mingo@redhat.com
-Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>
-References: <20181204002833.55452-1-bvanassche@acm.org>
- <20181204002833.55452-17-bvanassche@acm.org>
- <4eb2d1ad-14ee-0080-7736-aefdf69b4f29@redhat.com>
- <1543950509.185366.197.camel@acm.org>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <adf9ddfe-d924-bc6c-dd62-ee3da83fb011@redhat.com>
-Date:   Tue, 4 Dec 2018 15:31:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Dec 2018 15:34:50 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:55520 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725867AbeLDUeu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:34:50 -0500
+Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB4KTY7r008370
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 12:34:47 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=siQQ7YwSSdkD9nVynmtgruTK2YKQ60VcjT5IoprngsU=;
+ b=HDbDQdltWGKnX30g7zAAy7AsqmIKE/DvvWdHr2SWSucgLks9Zpv42pzr/BSiCJ+ncevS
+ SZbK4zPDbYngI0B7b0zRktgMQOBEBOxIhQuoht/Enpw1GWmVpJhInuWOUpDE7YfaR3CW
+ /fJxadUoVyDzC72aeFEPQz+KKW3ZjnwW7ag= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2p5yvj861v-7
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 12:34:47 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Tue, 4 Dec 2018 12:34:45 -0800
+Received: by devvm5456.prn2.facebook.com (Postfix, from userid 3190)
+        id E1CAECCBACFF; Tue,  4 Dec 2018 12:34:43 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Mark Drayton <mbd@fb.com>
+Smtp-Origin-Hostname: devvm5456.prn2.facebook.com
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, Mark Drayton <mbd@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH] perf: allow specifying proc-map-timeout in config file
+Date:   Tue, 4 Dec 2018 12:34:20 -0800
+Message-ID: <20181204203420.1683114-1-mbd@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <1543950509.185366.197.camel@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 04 Dec 2018 20:32:00 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/04/2018 02:08 PM, Bart Van Assche wrote:
-> On Tue, 2018-12-04 at 13:57 -0500, Waiman Long wrote:
->> On 12/03/2018 07:28 PM, Bart Van Assche wrote:
->>> The next patch in this series uses the class name in code that
->>> detects lock class use-after-free. Hence retain the class name for
->>> lock classes that are being freed.
->>>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Waiman Long <longman@redhat.com>
->>> Cc: Johannes Berg <johannes@sipsolutions.net>
->>> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
->>> ---
->>>  kernel/locking/lockdep.c | 4 +---
->>>  1 file changed, 1 insertion(+), 3 deletions(-)
->>>
->>> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
->>> index ecd92969674c..92bdb187987f 100644
->>> --- a/kernel/locking/lockdep.c
->>> +++ b/kernel/locking/lockdep.c
->>> @@ -4147,10 +4147,8 @@ static void zap_class(struct lock_class *class)
->>>  	 * Unhash the class and remove it from the all_lock_classes list:
->>>  	 */
->>>  	hlist_del_rcu(&class->hash_entry);
->>> +	class->hash_entry.pprev = NULL;
->>>  	list_del(&class->lock_entry);
->>> -page 
->>> -	RCU_INIT_POINTER(class->key, NULL);
->>> -	RCU_INIT_POINTER(class->name, NULL);
->>>  }
->>>  
->>>  static inline int within(const void *addr, void *start, unsigned long size)
->> Using the name after module unload can be problematic if it points to
->> memory space occupied by the unloaded kernel module. The memory page may
->> be invalid with the potential of crashing the kernel. You may have to
->> duplicate the name if it is really from the module address space.
-> The class name shouldn't be used by any of the code I introduced in the
-> lockdep infrastructure after unloading a kernel module finished unless if
-> some of the kernel module code is still running after unloading the kernel
-> module finished. I think if that happens that the kernel module author is
-> to blame and not lockdep :-)
->
-> Bart.
+The default timeout of 500ms for parsing /proc/<pid>/maps files is too
+short for profiling many of our services. This can be overridden by
+passing --proc-map-timeout to the relevant command but it'd be nice to
+globally increase our default value. This patch permits setting a
+different default with the core.proc-map-timeout config file parameter.
 
-You do use the name once in a WARN_ON check in check_prev_add(). You
-commit log did say the class name will be used.
+Signed-off-by: Mark Drayton <mbd@fb.com>
+---
+ tools/perf/Documentation/perf-config.txt |  6 +++++
+ tools/perf/builtin-kvm.c                 |  6 ++---
+ tools/perf/builtin-record.c              |  8 +++---
+ tools/perf/builtin-top.c                 |  4 +--
+ tools/perf/builtin-trace.c               |  5 ++--
+ tools/perf/perf.h                        |  1 -
+ tools/perf/tests/code-reading.c          |  2 +-
+ tools/perf/tests/dwarf-unwind.c          |  2 +-
+ tools/perf/tests/mmap-thread-lookup.c    |  4 +--
+ tools/perf/util/config.c                 |  4 +++
+ tools/perf/util/event.c                  | 32 ++++++++++--------------
+ tools/perf/util/event.h                  |  8 +++---
+ tools/perf/util/machine.c                |  4 +--
+ tools/perf/util/machine.h                |  3 ---
+ 14 files changed, 39 insertions(+), 50 deletions(-)
 
--Longman
+diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
+index 32f4a898e3f2..661b1fb3f8ba 100644
+--- a/tools/perf/Documentation/perf-config.txt
++++ b/tools/perf/Documentation/perf-config.txt
+@@ -199,6 +199,12 @@ colors.*::
+ 		Colors for headers in the output of a sub-commands (top, report).
+ 		Default values are 'white', 'blue'.
+ 
++core.*::
++	core.proc-map-timeout::
++		Sets a timeout (in milliseconds) for parsing /proc/<pid>/maps files.
++		Can be overridden by the --proc-map-timeout option on supported
++		subcommands. The default timeout is 500ms.
++
+ tui.*, gtk.*::
+ 	Subcommands that can be configured here are 'top', 'report' and 'annotate'.
+ 	These values are booleans, for example:
+diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+index 2b1ef704169f..3d4cbc4e87c7 100644
+--- a/tools/perf/builtin-kvm.c
++++ b/tools/perf/builtin-kvm.c
+@@ -1364,7 +1364,7 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
+ 			"show events other than"
+ 			" HLT (x86 only) or Wait state (s390 only)"
+ 			" that take longer than duration usecs"),
+-		OPT_UINTEGER(0, "proc-map-timeout", &kvm->opts.proc_map_timeout,
++		OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 				"per thread proc mmap processing timeout in ms"),
+ 		OPT_END()
+ 	};
+@@ -1394,7 +1394,6 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
+ 	kvm->opts.target.uses_mmap = false;
+ 	kvm->opts.target.uid_str = NULL;
+ 	kvm->opts.target.uid = UINT_MAX;
+-	kvm->opts.proc_map_timeout = 500;
+ 
+ 	symbol__init(NULL);
+ 	disable_buildid_cache();
+@@ -1453,8 +1452,7 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
+ 	perf_session__set_id_hdr_size(kvm->session);
+ 	ordered_events__set_copy_on_queue(&kvm->session->ordered_events, true);
+ 	machine__synthesize_threads(&kvm->session->machines.host, &kvm->opts.target,
+-				    kvm->evlist->threads, false,
+-				    kvm->opts.proc_map_timeout, 1);
++				    kvm->evlist->threads, false, 1);
+ 	err = kvm_live_open_events(kvm);
+ 	if (err)
+ 		goto out;
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 488779bc4c8d..ebb8922d436b 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -641,8 +641,7 @@ static int record__synthesize_workload(struct record *rec, bool tail)
+ 	err = perf_event__synthesize_thread_map(&rec->tool, thread_map,
+ 						 process_synthesized_event,
+ 						 &rec->session->machines.host,
+-						 rec->opts.sample_address,
+-						 rec->opts.proc_map_timeout);
++						 rec->opts.sample_address);
+ 	thread_map__put(thread_map);
+ 	return err;
+ }
+@@ -857,7 +856,7 @@ static int record__synthesize(struct record *rec, bool tail)
+ 
+ 	err = __machine__synthesize_threads(machine, tool, &opts->target, rec->evlist->threads,
+ 					    process_synthesized_event, opts->sample_address,
+-					    opts->proc_map_timeout, 1);
++					    1);
+ out:
+ 	return err;
+ }
+@@ -1546,7 +1545,6 @@ static struct record record = {
+ 			.uses_mmap   = true,
+ 			.default_per_cpu = true,
+ 		},
+-		.proc_map_timeout     = 500,
+ 	},
+ 	.tool = {
+ 		.sample		= process_sample_event,
+@@ -1676,7 +1674,7 @@ static struct option __record_options[] = {
+ 	parse_clockid),
+ 	OPT_STRING_OPTARG('S', "snapshot", &record.opts.auxtrace_snapshot_opts,
+ 			  "opts", "AUX area tracing Snapshot Mode", ""),
+-	OPT_UINTEGER(0, "proc-map-timeout", &record.opts.proc_map_timeout,
++	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 			"per thread proc mmap processing timeout in ms"),
+ 	OPT_BOOLEAN(0, "namespaces", &record.opts.record_namespaces,
+ 		    "Record namespaces events"),
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index aa0c73e57924..a8e48dbd5b66 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1096,7 +1096,6 @@ static int __cmd_top(struct perf_top *top)
+ 
+ 	machine__synthesize_threads(&top->session->machines.host, &opts->target,
+ 				    top->evlist->threads, false,
+-				    opts->proc_map_timeout,
+ 				    top->nr_threads_synthesize);
+ 
+ 	if (top->nr_threads_synthesize > 1)
+@@ -1256,7 +1255,6 @@ int cmd_top(int argc, const char **argv)
+ 			.target		= {
+ 				.uses_mmap   = true,
+ 			},
+-			.proc_map_timeout    = 500,
+ 			/*
+ 			 * FIXME: This will lose PERF_RECORD_MMAP and other metadata
+ 			 * when we pause, fix that and reenable. Probably using a
+@@ -1367,7 +1365,7 @@ int cmd_top(int argc, const char **argv)
+ 	OPT_STRING('w', "column-widths", &symbol_conf.col_width_list_str,
+ 		   "width[,width...]",
+ 		   "don't try to adjust column width, use these fixed values"),
+-	OPT_UINTEGER(0, "proc-map-timeout", &opts->proc_map_timeout,
++	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 			"per thread proc mmap processing timeout in ms"),
+ 	OPT_CALLBACK_NOOPT('b', "branch-any", &opts->branch_stack,
+ 		     "branch any", "sample any taken branches",
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 8e3c3f74a3a4..414780649987 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1264,7 +1264,7 @@ static int trace__symbols_init(struct trace *trace, struct perf_evlist *evlist)
+ 
+ 	err = __machine__synthesize_threads(trace->host, &trace->tool, &trace->opts.target,
+ 					    evlist->threads, trace__tool_process, false,
+-					    trace->opts.proc_map_timeout, 1);
++					    1);
+ out:
+ 	if (err)
+ 		symbol__exit();
+@@ -3393,7 +3393,6 @@ int cmd_trace(int argc, const char **argv)
+ 			.user_interval = ULLONG_MAX,
+ 			.no_buffering  = true,
+ 			.mmap_pages    = UINT_MAX,
+-			.proc_map_timeout  = 500,
+ 		},
+ 		.output = stderr,
+ 		.show_comm = true,
+@@ -3464,7 +3463,7 @@ int cmd_trace(int argc, const char **argv)
+ 		     "Default: kernel.perf_event_max_stack or " __stringify(PERF_MAX_STACK_DEPTH)),
+ 	OPT_BOOLEAN(0, "print-sample", &trace.print_sample,
+ 			"print the PERF_RECORD_SAMPLE PERF_SAMPLE_ info, for debugging"),
+-	OPT_UINTEGER(0, "proc-map-timeout", &trace.opts.proc_map_timeout,
++	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 			"per thread proc mmap processing timeout in ms"),
+ 	OPT_CALLBACK('G', "cgroup", &trace, "name", "monitor event in cgroup name only",
+ 		     trace__parse_cgroups),
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 0ed4a34c74c4..3bac760fa872 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -82,7 +82,6 @@ struct record_opts {
+ 	bool         use_clockid;
+ 	clockid_t    clockid;
+ 	u64          clockid_res_ns;
+-	unsigned int proc_map_timeout;
+ };
+ 
+ struct option;
+diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+index 6b049f3f5cf4..dbf2c69944d2 100644
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -599,7 +599,7 @@ static int do_test_code_reading(bool try_kcore)
+ 	}
+ 
+ 	ret = perf_event__synthesize_thread_map(NULL, threads,
+-						perf_event__process, machine, false, 500);
++						perf_event__process, machine, false);
+ 	if (ret < 0) {
+ 		pr_debug("perf_event__synthesize_thread_map failed\n");
+ 		goto out_err;
+diff --git a/tools/perf/tests/dwarf-unwind.c b/tools/perf/tests/dwarf-unwind.c
+index 2f008067d989..7c8d2e422401 100644
+--- a/tools/perf/tests/dwarf-unwind.c
++++ b/tools/perf/tests/dwarf-unwind.c
+@@ -34,7 +34,7 @@ static int init_live_machine(struct machine *machine)
+ 	pid_t pid = getpid();
+ 
+ 	return perf_event__synthesize_mmap_events(NULL, &event, pid, pid,
+-						  mmap_handler, machine, true, 500);
++						  mmap_handler, machine, true);
+ }
+ 
+ /*
+diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+index b1af2499a3c9..5ede9b561d32 100644
+--- a/tools/perf/tests/mmap-thread-lookup.c
++++ b/tools/perf/tests/mmap-thread-lookup.c
+@@ -132,7 +132,7 @@ static int synth_all(struct machine *machine)
+ {
+ 	return perf_event__synthesize_threads(NULL,
+ 					      perf_event__process,
+-					      machine, 0, 500, 1);
++					      machine, 0, 1);
+ }
+ 
+ static int synth_process(struct machine *machine)
+@@ -144,7 +144,7 @@ static int synth_process(struct machine *machine)
+ 
+ 	err = perf_event__synthesize_thread_map(NULL, map,
+ 						perf_event__process,
+-						machine, 0, 500);
++						machine, 0);
+ 
+ 	thread_map__put(map);
+ 	return err;
+diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
+index 5ac157056cdf..3beb4cf44c31 100644
+--- a/tools/perf/util/config.c
++++ b/tools/perf/util/config.c
+@@ -14,6 +14,7 @@
+ #include "util.h"
+ #include "cache.h"
+ #include <subcmd/exec-cmd.h>
++#include "util/event.h"  /* proc_map_timeout */
+ #include "util/hist.h"  /* perf_hist_config */
+ #include "util/llvm-utils.h"   /* perf_llvm_config */
+ #include "config.h"
+@@ -419,6 +420,9 @@ static int perf_buildid_config(const char *var, const char *value)
+ static int perf_default_core_config(const char *var __maybe_unused,
+ 				    const char *value __maybe_unused)
+ {
++	if (!strcmp(var, "core.proc-map-timeout"))
++		proc_map_timeout = strtoul(value, NULL, 10);
++
+ 	/* Add other config variables here. */
+ 	return 0;
+ }
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index e9c108a6b1c3..552b4d127121 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -25,6 +25,8 @@
+ #include "asm/bug.h"
+ #include "stat.h"
+ 
++#define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
++
+ static const char *perf_event__names[] = {
+ 	[0]					= "TOTAL",
+ 	[PERF_RECORD_MMAP]			= "MMAP",
+@@ -72,6 +74,8 @@ static const char *perf_ns__names[] = {
+ 	[CGROUP_NS_INDEX]	= "cgroup",
+ };
+ 
++unsigned int proc_map_timeout = DEFAULT_PROC_MAP_PARSE_TIMEOUT;
++
+ const char *perf_event__name(unsigned int id)
+ {
+ 	if (id >= ARRAY_SIZE(perf_event__names))
+@@ -323,8 +327,7 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 				       pid_t pid, pid_t tgid,
+ 				       perf_event__handler_t process,
+ 				       struct machine *machine,
+-				       bool mmap_data,
+-				       unsigned int proc_map_timeout)
++				       bool mmap_data)
+ {
+ 	char filename[PATH_MAX];
+ 	FILE *fp;
+@@ -521,8 +524,7 @@ static int __event__synthesize_thread(union perf_event *comm_event,
+ 				      perf_event__handler_t process,
+ 				      struct perf_tool *tool,
+ 				      struct machine *machine,
+-				      bool mmap_data,
+-				      unsigned int proc_map_timeout)
++				      bool mmap_data)
+ {
+ 	char filename[PATH_MAX];
+ 	DIR *tasks;
+@@ -548,8 +550,7 @@ static int __event__synthesize_thread(union perf_event *comm_event,
+ 		 */
+ 		if (pid == tgid &&
+ 		    perf_event__synthesize_mmap_events(tool, mmap_event, pid, tgid,
+-						       process, machine, mmap_data,
+-						       proc_map_timeout))
++						       process, machine, mmap_data))
+ 			return -1;
+ 
+ 		return 0;
+@@ -598,7 +599,7 @@ static int __event__synthesize_thread(union perf_event *comm_event,
+ 		if (_pid == pid) {
+ 			/* process the parent's maps too */
+ 			rc = perf_event__synthesize_mmap_events(tool, mmap_event, pid, tgid,
+-						process, machine, mmap_data, proc_map_timeout);
++						process, machine, mmap_data);
+ 			if (rc)
+ 				break;
+ 		}
+@@ -612,8 +613,7 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 				      struct thread_map *threads,
+ 				      perf_event__handler_t process,
+ 				      struct machine *machine,
+-				      bool mmap_data,
+-				      unsigned int proc_map_timeout)
++				      bool mmap_data)
+ {
+ 	union perf_event *comm_event, *mmap_event, *fork_event;
+ 	union perf_event *namespaces_event;
+@@ -643,7 +643,7 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 					       fork_event, namespaces_event,
+ 					       thread_map__pid(threads, thread), 0,
+ 					       process, tool, machine,
+-					       mmap_data, proc_map_timeout)) {
++					       mmap_data)) {
+ 			err = -1;
+ 			break;
+ 		}
+@@ -669,7 +669,7 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 						       fork_event, namespaces_event,
+ 						       comm_event->comm.pid, 0,
+ 						       process, tool, machine,
+-						       mmap_data, proc_map_timeout)) {
++						       mmap_data)) {
+ 				err = -1;
+ 				break;
+ 			}
+@@ -690,7 +690,6 @@ static int __perf_event__synthesize_threads(struct perf_tool *tool,
+ 					    perf_event__handler_t process,
+ 					    struct machine *machine,
+ 					    bool mmap_data,
+-					    unsigned int proc_map_timeout,
+ 					    struct dirent **dirent,
+ 					    int start,
+ 					    int num)
+@@ -734,8 +733,7 @@ static int __perf_event__synthesize_threads(struct perf_tool *tool,
+ 		 */
+ 		__event__synthesize_thread(comm_event, mmap_event, fork_event,
+ 					   namespaces_event, pid, 1, process,
+-					   tool, machine, mmap_data,
+-					   proc_map_timeout);
++					   tool, machine, mmap_data);
+ 	}
+ 	err = 0;
+ 
+@@ -755,7 +753,6 @@ struct synthesize_threads_arg {
+ 	perf_event__handler_t process;
+ 	struct machine *machine;
+ 	bool mmap_data;
+-	unsigned int proc_map_timeout;
+ 	struct dirent **dirent;
+ 	int num;
+ 	int start;
+@@ -767,7 +764,7 @@ static void *synthesize_threads_worker(void *arg)
+ 
+ 	__perf_event__synthesize_threads(args->tool, args->process,
+ 					 args->machine, args->mmap_data,
+-					 args->proc_map_timeout, args->dirent,
++					 args->dirent,
+ 					 args->start, args->num);
+ 	return NULL;
+ }
+@@ -776,7 +773,6 @@ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 				   perf_event__handler_t process,
+ 				   struct machine *machine,
+ 				   bool mmap_data,
+-				   unsigned int proc_map_timeout,
+ 				   unsigned int nr_threads_synthesize)
+ {
+ 	struct synthesize_threads_arg *args = NULL;
+@@ -806,7 +802,6 @@ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 	if (thread_nr <= 1) {
+ 		err = __perf_event__synthesize_threads(tool, process,
+ 						       machine, mmap_data,
+-						       proc_map_timeout,
+ 						       dirent, base, n);
+ 		goto free_dirent;
+ 	}
+@@ -828,7 +823,6 @@ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 		args[i].process = process;
+ 		args[i].machine = machine;
+ 		args[i].mmap_data = mmap_data;
+-		args[i].proc_map_timeout = proc_map_timeout;
+ 		args[i].dirent = dirent;
+ 	}
+ 	for (i = 0; i < m; i++) {
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index bfa60bcafbde..eb95f3384958 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -669,8 +669,7 @@ typedef int (*perf_event__handler_t)(struct perf_tool *tool,
+ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 				      struct thread_map *threads,
+ 				      perf_event__handler_t process,
+-				      struct machine *machine, bool mmap_data,
+-				      unsigned int proc_map_timeout);
++				      struct machine *machine, bool mmap_data);
+ int perf_event__synthesize_thread_map2(struct perf_tool *tool,
+ 				      struct thread_map *threads,
+ 				      perf_event__handler_t process,
+@@ -682,7 +681,6 @@ int perf_event__synthesize_cpu_map(struct perf_tool *tool,
+ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 				   perf_event__handler_t process,
+ 				   struct machine *machine, bool mmap_data,
+-				   unsigned int proc_map_timeout,
+ 				   unsigned int nr_threads_synthesize);
+ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
+ 				       perf_event__handler_t process,
+@@ -797,8 +795,7 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 				       pid_t pid, pid_t tgid,
+ 				       perf_event__handler_t process,
+ 				       struct machine *machine,
+-				       bool mmap_data,
+-				       unsigned int proc_map_timeout);
++				       bool mmap_data);
+ 
+ int perf_event__synthesize_extra_kmaps(struct perf_tool *tool,
+ 				       perf_event__handler_t process,
+@@ -829,5 +826,6 @@ int perf_event_paranoid(void);
+ 
+ extern int sysctl_perf_event_max_stack;
+ extern int sysctl_perf_event_max_contexts_per_stack;
++extern unsigned int proc_map_timeout;
+ 
+ #endif /* __PERF_RECORD_H */
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 8f36ce813bc5..8551b3e75bb2 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2493,15 +2493,13 @@ int machines__for_each_thread(struct machines *machines,
+ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *tool,
+ 				  struct target *target, struct thread_map *threads,
+ 				  perf_event__handler_t process, bool data_mmap,
+-				  unsigned int proc_map_timeout,
+ 				  unsigned int nr_threads_synthesize)
+ {
+ 	if (target__has_task(target))
+-		return perf_event__synthesize_thread_map(tool, threads, process, machine, data_mmap, proc_map_timeout);
++		return perf_event__synthesize_thread_map(tool, threads, process, machine, data_mmap);
+ 	else if (target__has_cpu(target))
+ 		return perf_event__synthesize_threads(tool, process,
+ 						      machine, data_mmap,
+-						      proc_map_timeout,
+ 						      nr_threads_synthesize);
+ 	/* command specified */
+ 	return 0;
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index d856b85862e2..688d84ba823a 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -247,17 +247,14 @@ int machines__for_each_thread(struct machines *machines,
+ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *tool,
+ 				  struct target *target, struct thread_map *threads,
+ 				  perf_event__handler_t process, bool data_mmap,
+-				  unsigned int proc_map_timeout,
+ 				  unsigned int nr_threads_synthesize);
+ static inline
+ int machine__synthesize_threads(struct machine *machine, struct target *target,
+ 				struct thread_map *threads, bool data_mmap,
+-				unsigned int proc_map_timeout,
+ 				unsigned int nr_threads_synthesize)
+ {
+ 	return __machine__synthesize_threads(machine, NULL, target, threads,
+ 					     perf_event__process, data_mmap,
+-					     proc_map_timeout,
+ 					     nr_threads_synthesize);
+ }
+ 
+-- 
+2.17.1
 
