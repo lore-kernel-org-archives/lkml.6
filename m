@@ -2,188 +2,141 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CBDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD12BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3272082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:03:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="JoF//ver"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3272082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id 93BCE2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:04:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93BCE2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbeLDADU (ORCPT
+        id S1726186AbeLDAEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:03:20 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:47037 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbeLDADT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:03:19 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f23so10557182lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:03:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4K7yIBZFtcXnzyNWvJFcpBdx/s17elumaSwwTZXnU1Q=;
-        b=JoF//verM7fYMxKhJvqgOX7fBd4H9+PbZUHbmzjUBGDL8E7ucFgV1lEUPYZelIQ1xf
-         g4xuCd2x3opnVuSu/3vhVdE4ZMG3QUIC6L0KvvAaF9OKnEwadFCii10+IZpPW4m3cdEa
-         Qics7JZJF9KcKUN0HJwmRu+JRfyop3VOCnACKckBHRPjG4VFPqGKFjgiMiTfkxdblICR
-         kY6/0QVUzgVdUdZcOC2SNUBY4FwKf10AHOmrqBVLJuS4KKGa4g0f8h97XyswddgQGEzz
-         bc8es7XdqPJRvTIOGQ90ueJrPBBJxl7Ojtm2gN6Xx+iRqdsJFNkYA6EbtGCvmIk3/J8Y
-         tJdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4K7yIBZFtcXnzyNWvJFcpBdx/s17elumaSwwTZXnU1Q=;
-        b=GG651eaNUzjy8OJ8o5kTOcIjRtL+jWsNhD1X+3xpi6qMijcOJmXkBfn5RFZ7fXEQ5e
-         zIH6y07PUDe/vYqzzB2MckAd7LxMrPMJHp+QOZSo7VDIV0DQIMQmMJJ1h6E1q5ct65Qr
-         YvMfsSMwu3GTpaA7zzVaYTmQxK5FK435p9yPOJ+5ySpn5T/YyRvVxIj98xDMIKTBjLUX
-         2PbqzfOtqoXFtClFlnZdyLH3GcxdcfwmbNQXRwwRkCTKGHfS9YiJmYPbQIp7gFlW+/Xa
-         U0UVx9ofmMETDQBzRoLZY1UZE4/exT0rrmyFSnlQkgZIqUgguA59T8pqwBWo3WCHMBDo
-         n7oA==
-X-Gm-Message-State: AA+aEWbLvybIwgwv8nbSqZ5ezY7NmlMsAUBgZAcKqKq74bmh/elvEyVE
-        J+Cg7KbNTiMXJQSqmZnFwgJLMvAmbjKIaPljezAD
-X-Google-Smtp-Source: AFSGD/UJtAYMZRAvE0v8uG0QGntZniICdSLxWODrcPpwrTXC2UhYC0WXivTOng2eAw88GzftrcWA8IbnGCn8na8VAF4=
-X-Received: by 2002:a19:6719:: with SMTP id b25mr9647612lfc.38.1543881797125;
- Mon, 03 Dec 2018 16:03:17 -0800 (PST)
+        Mon, 3 Dec 2018 19:04:23 -0500
+Received: from mga11.intel.com ([192.55.52.93]:1266 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbeLDAEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 19:04:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 16:04:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,312,1539673200"; 
+   d="scan'208";a="115668126"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by orsmga001.jf.intel.com with ESMTP; 03 Dec 2018 16:04:21 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.8]) by
+ ORSMSX106.amr.corp.intel.com ([169.254.1.161]) with mapi id 14.03.0415.000;
+ Mon, 3 Dec 2018 16:04:21 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+Thread-Topic: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+Thread-Index: AQHUhrIVlTqKMmCRwUWBsYfr2au/NaVuQxqA
+Date:   Tue, 4 Dec 2018 00:04:21 +0000
+Message-ID: <f00a7c0b99cb3dae3f42e144c0532a6a299c06a0.camel@intel.com>
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+         <20181128000754.18056-2-rick.p.edgecombe@intel.com>
+In-Reply-To: <20181128000754.18056-2-rick.p.edgecombe@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.141]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DD455A0478EDF040A61027CE85944E93@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20181203032827.27978-1-tycho@tycho.ws> <20181203032827.27978-3-tycho@tycho.ws>
- <20181203050108.GB31406@mail.hallyn.com>
-In-Reply-To: <20181203050108.GB31406@mail.hallyn.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 3 Dec 2018 19:03:05 -0500
-Message-ID: <CAHC9VhRsgv0bceoqCZt00qMc-KvuOkKsF1xaoYdmxUt93kPWmw@mail.gmail.com>
-Subject: Re: [PATCH v9 2/4] seccomp: switch system call argument type to void *
-To:     Serge Hallyn <serge@hallyn.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>, mtk.manpages@gmail.com,
-        keescook@chromium.org, luto@amacapital.net, oleg@redhat.com,
-        ebiederm@xmission.com, christian@brauner.io, tyhicks@canonical.com,
-        suda.akihiro@lab.ntt.co.jp, asarai@suse.de, jannh@google.com,
-        linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 12:01 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> On Sun, Dec 02, 2018 at 08:28:25PM -0700, Tycho Andersen wrote:
-> > The const qualifier causes problems for any code that wants to write to the
-> > third argument of the seccomp syscall, as we will do in a future patch in
-> > this series.
-> >
-> > The third argument to the seccomp syscall is documented as void *, so
-> > rather than just dropping the const, let's switch everything to use void *
-> > as well.
-> >
-> > I believe this is safe because of 1. the documentation above, 2. there's no
-> > real type information exported about syscalls anywhere besides the man
-> > pages.
-> >
-> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> > CC: Kees Cook <keescook@chromium.org>
-> > CC: Andy Lutomirski <luto@amacapital.net>
-> > CC: Oleg Nesterov <oleg@redhat.com>
-> > CC: Eric W. Biederman <ebiederm@xmission.com>
-> > CC: "Serge E. Hallyn" <serge@hallyn.com>
->
-> Acked-by: Serge Hallyn <serge@hallyn.com>
->
-> Though I'm not entirely convinced there will be no ill effects of changing
-> the argument type.  I'll feel comfortable when Michael and Paul say it's
-> fine :)
-
-Well, looking at the seccomp(2) manpage on my system (dated
-2018-02-02) the third argument is already shown as a "void *args":
-
- SYNOPSIS
-      #include <linux/seccomp.h>
-      #include <linux/filter.h>
-      #include <linux/audit.h>
-      #include <linux/signal.h>
-      #include <sys/ptrace.h>
-
-      int seccomp(unsigned int operation, unsigned int flags, void *args);
-
-... so I think we're safe :)
-
-From a libseccomp perspective, we always call seccomp(2) via
-syscall(2) so it is unlikely we would ever run into problems, not too
-mention that we are just talking about the pointer type used in the
-kernel; from a syscall ABI perspective it is still a pointer value and
-that is the important part.
-
-> > CC: Christian Brauner <christian@brauner.io>
-> > CC: Tyler Hicks <tyhicks@canonical.com>
-> > CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-> > ---
-> >  include/linux/seccomp.h | 2 +-
-> >  kernel/seccomp.c        | 8 ++++----
-> >  2 files changed, 5 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-> > index e5320f6c8654..b5103c019cf4 100644
-> > --- a/include/linux/seccomp.h
-> > +++ b/include/linux/seccomp.h
-> > @@ -43,7 +43,7 @@ extern void secure_computing_strict(int this_syscall);
-> >  #endif
-> >
-> >  extern long prctl_get_seccomp(void);
-> > -extern long prctl_set_seccomp(unsigned long, char __user *);
-> > +extern long prctl_set_seccomp(unsigned long, void __user *);
-> >
-> >  static inline int seccomp_mode(struct seccomp *s)
-> >  {
-> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> > index 96afc32e041d..393e029f778a 100644
-> > --- a/kernel/seccomp.c
-> > +++ b/kernel/seccomp.c
-> > @@ -924,7 +924,7 @@ static long seccomp_get_action_avail(const char __user *uaction)
-> >
-> >  /* Common entry point for both prctl and syscall. */
-> >  static long do_seccomp(unsigned int op, unsigned int flags,
-> > -                    const char __user *uargs)
-> > +                    void __user *uargs)
-> >  {
-> >       switch (op) {
-> >       case SECCOMP_SET_MODE_STRICT:
-> > @@ -944,7 +944,7 @@ static long do_seccomp(unsigned int op, unsigned int flags,
-> >  }
-> >
-> >  SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
-> > -                      const char __user *, uargs)
-> > +                      void __user *, uargs)
-> >  {
-> >       return do_seccomp(op, flags, uargs);
-> >  }
-> > @@ -956,10 +956,10 @@ SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
-> >   *
-> >   * Returns 0 on success or -EINVAL on failure.
-> >   */
-> > -long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
-> > +long prctl_set_seccomp(unsigned long seccomp_mode, void __user *filter)
-> >  {
-> >       unsigned int op;
-> > -     char __user *uargs;
-> > +     void __user *uargs;
-> >
-> >       switch (seccomp_mode) {
-> >       case SECCOMP_MODE_STRICT:
-> > --
-> > 2.19.1
-
-
-
--- 
-paul moore
-www.paul-moore.com
+SXQgbG9va3MgbGlrZSB0aGlzIG5ldyBmbGFnIGlzIGluIGxpbnV4LW5leHQgbm93LiBBcyBJIGFt
+IHJlYWRpbmcgaXQsIHRoZXNlDQphcmNoaXRlY3R1cmVzIGhhdmUgYSBtb2R1bGVfYWxsb2MgdGhh
+dCB1c2VzIHNvbWUgc29ydCBvZiBleGVjdXRhYmxlIGZsYWcgYW5kDQphcmUgbm90IHVzaW5nIHRo
+ZSBkZWZhdWx0IG1vZHVsZV9hbGxvYyB3aGljaCBpcyBhbHJlYWR5IGNvdmVyZWQsIGFuZCBzbyBt
+YXkgbmVlZA0KaXQgcGx1Z2dlZCBpbjoNCmFybQ0KYXJtNjQNCnBhcmlzYw0KczM5MA0KdW5pY29y
+ZTMyDQoNClRoYW5rcywNCg0KUmljaw0KDQpPbiBUdWUsIDIwMTgtMTEtMjcgYXQgMTY6MDcgLTA4
+MDAsIFJpY2sgRWRnZWNvbWJlIHdyb3RlOg0KPiBTaW5jZSB2ZnJlZSB3aWxsIGxhemlseSBmbHVz
+aCB0aGUgVExCLCBidXQgbm90IGxhemlseSBmcmVlIHRoZSB1bmRlcmx5aW5nDQo+IHBhZ2VzLA0K
+PiBpdCBvZnRlbiBsZWF2ZXMgc3RhbGUgVExCIGVudHJpZXMgdG8gZnJlZWQgcGFnZXMgdGhhdCBj
+b3VsZCBnZXQgcmUtdXNlZC4gVGhpcw0KPiBpcw0KPiB1bmRlc2lyYWJsZSBmb3IgY2FzZXMgd2hl
+cmUgdGhlIG1lbW9yeSBiZWluZyBmcmVlZCBoYXMgc3BlY2lhbCBwZXJtaXNzaW9ucw0KPiBzdWNo
+DQo+IGFzIGV4ZWN1dGFibGUuDQo+IA0KPiBIYXZpbmcgY2FsbGVycyBmbHVzaCB0aGUgVExCIGFm
+dGVyIGNhbGxpbmcgdmZyZWUgc3RpbGwgbGVhdmVzIGEgd2luZG93IHdoZXJlDQo+IHRoZSBwYWdl
+cyBhcmUgZnJlZWQsIGJ1dCB0aGUgVExCIGVudHJ5IHJlbWFpbnMuIEFsc28gdGhlIGVudGlyZSBv
+cGVyYXRpb24gY2FuDQo+IGJlDQo+IGRlZmVycmVkIGlmIHRoZSB2ZnJlZSBpcyBjYWxsZWQgZnJv
+bSBhbiBpbnRlcnJ1cHQgYW5kIHNvIGEgVExCIGZsdXNoIGFmdGVyDQo+IGNhbGxpbmcgdmZyZWUg
+d291bGQgbWlzcyB0aGUgZW50aXJlIG9wZXJhdGlvbi4gU28gaW4gb3JkZXIgdG8gc3VwcG9ydCB0
+aGlzIHVzZQ0KPiBjYXNlLCBhIG5ldyBmbGFnIFZNX0lNTUVESUFURV9VTk1BUCBpcyBhZGRlZCwg
+dGhhdCB3aWxsIGNhdXNlIHRoZSBmcmVlDQo+IG9wZXJhdGlvbg0KPiB0byB0YWtlIHBsYWNlIGxp
+a2UgdGhpczoNCj4gICAgICAgICAxLiBVbm1hcA0KPiAgICAgICAgIDIuIEZsdXNoIFRMQi9Vbm1h
+cCBhbGlhc2VzDQo+ICAgICAgICAgMy4gRnJlZSBwYWdlcw0KPiBJbiB0aGUgZGVmZXJyZWQgY2Fz
+ZSB0aGVzZSBzdGVwcyBhcmUgYWxsIGRvbmUgYnkgdGhlIHdvcmsgcXVldWUuDQo+IA0KPiBUaGlz
+IGltcGxlbWVudGF0aW9uIGRlcml2ZXMgZnJvbSB0d28gc2tldGNoZXMgZnJvbSBEYXZlIEhhbnNl
+biBhbmQNCj4gQW5keSBMdXRvbWlyc2tpLg0KPiANCj4gU3VnZ2VzdGVkLWJ5OiBEYXZlIEhhbnNl
+biA8ZGF2ZS5oYW5zZW5AaW50ZWwuY29tPg0KPiBTdWdnZXN0ZWQtYnk6IEFuZHkgTHV0b21pcnNr
+aSA8bHV0b0BrZXJuZWwub3JnPg0KPiBTdWdnZXN0ZWQtYnk6IFdpbGwgRGVhY29uIDx3aWxsLmRl
+YWNvbkBhcm0uY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBSaWNrIEVkZ2Vjb21iZSA8cmljay5wLmVk
+Z2Vjb21iZUBpbnRlbC5jb20+DQo+IC0tLQ0KPiAgaW5jbHVkZS9saW51eC92bWFsbG9jLmggfCAg
+MSArDQo+ICBtbS92bWFsbG9jLmMgICAgICAgICAgICB8IDEzICsrKysrKysrKysrLS0NCj4gIDIg
+ZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3ZtYWxsb2MuaCBiL2luY2x1ZGUvbGludXgvdm1hbGxv
+Yy5oDQo+IGluZGV4IDM5OGU5Yzk1Y2Q2MS4uY2NhNmI2YjgzY2YwIDEwMDY0NA0KPiAtLS0gYS9p
+bmNsdWRlL2xpbnV4L3ZtYWxsb2MuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L3ZtYWxsb2MuaA0K
+PiBAQCAtMjEsNiArMjEsNyBAQCBzdHJ1Y3Qgbm90aWZpZXJfYmxvY2s7CQkvKiBpbiBub3RpZmll
+ci5oICovDQo+ICAjZGVmaW5lIFZNX1VOSU5JVElBTElaRUQJMHgwMDAwMDAyMAkvKiB2bV9zdHJ1
+Y3QgaXMgbm90IGZ1bGx5DQo+IGluaXRpYWxpemVkICovDQo+ICAjZGVmaW5lIFZNX05PX0dVQVJE
+CQkweDAwMDAwMDQwICAgICAgLyogZG9uJ3QgYWRkIGd1YXJkIHBhZ2UgKi8NCj4gICNkZWZpbmUg
+Vk1fS0FTQU4JCTB4MDAwMDAwODAgICAgICAvKiBoYXMgYWxsb2NhdGVkIGthc2FuIHNoYWRvdw0K
+PiBtZW1vcnkgKi8NCj4gKyNkZWZpbmUgVk1fSU1NRURJQVRFX1VOTUFQCTB4MDAwMDAyMDAJLyog
+Zmx1c2ggYmVmb3JlIHJlbGVhc2luZw0KPiBwYWdlcyAqLw0KPiAgLyogYml0cyBbMjAuLjMyXSBy
+ZXNlcnZlZCBmb3IgYXJjaCBzcGVjaWZpYyBpb3JlbWFwIGludGVybmFscyAqLw0KPiAgDQo+ICAv
+Kg0KPiBkaWZmIC0tZ2l0IGEvbW0vdm1hbGxvYy5jIGIvbW0vdm1hbGxvYy5jDQo+IGluZGV4IDk3
+ZDRiMjVkMDM3My4uNjg3NjY2NTFiNWE3IDEwMDY0NA0KPiAtLS0gYS9tbS92bWFsbG9jLmMNCj4g
+KysrIGIvbW0vdm1hbGxvYy5jDQo+IEBAIC0xNTE2LDYgKzE1MTYsMTQgQEAgc3RhdGljIHZvaWQg
+X192dW5tYXAoY29uc3Qgdm9pZCAqYWRkciwgaW50DQo+IGRlYWxsb2NhdGVfcGFnZXMpDQo+ICAJ
+ZGVidWdfY2hlY2tfbm9fb2JqX2ZyZWVkKGFyZWEtPmFkZHIsIGdldF92bV9hcmVhX3NpemUoYXJl
+YSkpOw0KPiAgDQo+ICAJcmVtb3ZlX3ZtX2FyZWEoYWRkcik7DQo+ICsNCj4gKwkvKg0KPiArCSAq
+IE5lZWQgdG8gZmx1c2ggdGhlIFRMQiBiZWZvcmUgZnJlZWluZyBwYWdlcyBpbiB0aGUgY2FzZSBv
+ZiB0aGlzIGZsYWcuDQo+ICsJICogQXMgbG9uZyBhcyB0aGF0J3MgaGFwcGVuaW5nLCB1bm1hcCBh
+bGlhc2VzLg0KPiArCSAqLw0KPiArCWlmIChhcmVhLT5mbGFncyAmIFZNX0lNTUVESUFURV9VTk1B
+UCkNCj4gKwkJdm1fdW5tYXBfYWxpYXNlcygpOw0KPiArDQo+ICAJaWYgKGRlYWxsb2NhdGVfcGFn
+ZXMpIHsNCj4gIAkJaW50IGk7DQo+ICANCj4gQEAgLTE5MjUsOCArMTkzMyw5IEBAIEVYUE9SVF9T
+WU1CT0wodnphbGxvY19ub2RlKTsNCj4gIA0KPiAgdm9pZCAqdm1hbGxvY19leGVjKHVuc2lnbmVk
+IGxvbmcgc2l6ZSkNCj4gIHsNCj4gLQlyZXR1cm4gX192bWFsbG9jX25vZGUoc2l6ZSwgMSwgR0ZQ
+X0tFUk5FTCwgUEFHRV9LRVJORUxfRVhFQywNCj4gLQkJCSAgICAgIE5VTUFfTk9fTk9ERSwgX19i
+dWlsdGluX3JldHVybl9hZGRyZXNzKDApKTsNCj4gKwlyZXR1cm4gX192bWFsbG9jX25vZGVfcmFu
+Z2Uoc2l6ZSwgMSwgVk1BTExPQ19TVEFSVCwgVk1BTExPQ19FTkQsDQo+ICsJCQlHRlBfS0VSTkVM
+LCBQQUdFX0tFUk5FTF9FWEVDLCBWTV9JTU1FRElBVEVfVU5NQVAsDQo+ICsJCQlOVU1BX05PX05P
+REUsIF9fYnVpbHRpbl9yZXR1cm5fYWRkcmVzcygwKSk7DQo+ICB9DQo+ICANCj4gICNpZiBkZWZp
+bmVkKENPTkZJR182NEJJVCkgJiYgZGVmaW5lZChDT05GSUdfWk9ORV9ETUEzMikNCg==
