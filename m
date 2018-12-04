@@ -2,376 +2,180 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC07BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9CAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F54E2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:42:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F54E2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1524920851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:43:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f975eRVT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1524920851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbeLDWmF (ORCPT
+        id S1726468AbeLDWnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 17:42:05 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47077 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbeLDWmC (ORCPT
+        Tue, 4 Dec 2018 17:43:01 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43103 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeLDWnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:42:02 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB4MfpOm1037516
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 4 Dec 2018 14:41:51 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB4MfpCb1037513;
-        Tue, 4 Dec 2018 14:41:51 -0800
-Date:   Tue, 4 Dec 2018 14:41:51 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
-Message-ID: <tip-7440172974e85b1828bdd84ac6b23b5bcad9c5eb@git.kernel.org>
-Cc:     rostedt@goodmis.org, paulmck@linux.ibm.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
-        tglx@linutronix.de, mingo@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          mingo@redhat.com, rostedt@goodmis.org,
-          linux-kernel@vger.kernel.org, paulmck@linux.ibm.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/rcu] tracing: Replace synchronize_sched() and
- call_rcu_sched()
-Git-Commit-ID: 7440172974e85b1828bdd84ac6b23b5bcad9c5eb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 4 Dec 2018 17:43:00 -0500
+Received: by mail-io1-f67.google.com with SMTP id f10so9251658iop.10
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 14:42:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9vknFr4Z42GGDO9i6nv+cy57/ZPFP0XYl61BZl2VGnU=;
+        b=f975eRVTK/er5fImh3jVwsM64EKlLASLdj1tZ8yG4XQUZO8vdVWQtHkrbYtkwpQ4cv
+         pKmXCQuh+FbwbDo3KzuBYxArASQQIhK+DfCyuW5KmoeYt1MHAGr4i+aOw5CnjqUpbRao
+         c9VVPxTEn8iP2HC9uZPys1JryooilQtDYmDl0ec2rjuhGbqgrssNPIi8HbJf6brjE4v9
+         mxlVCvOM3RomtXvVNzu8kl9HXJFubIaHka2IKPsoH9GJRMikrLFqAmm/UFo2Pnm+TdHH
+         ddCK4Pod4//BNEcTUcjNYy2NSmppPMDEUXBaSXs/bWM5yc6C17cswHAoBY9EcfTs7kW5
+         wA+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9vknFr4Z42GGDO9i6nv+cy57/ZPFP0XYl61BZl2VGnU=;
+        b=QT2ygonbpm17WDS49l82++sKYejXrIFIGiLprjJxhu82sXckEN4+PP/Nu3B1/xlxF1
+         ByXDJhCPgVkSO6FLd1JNi/LzeIS5lpJwEPHYIJ2dLClxbyon7F5AO0/LqwQ/irncpp07
+         bfT+sLwpCJkc1LAtYjsQsfiJmPDHFLOLHi9nThpMSFk/oiOMT7+4DcLPTAS2EoJQpCZj
+         Cii2oH/0YAi3y/Y6RM+Gc4bWCF2z281NpkymwSy+QfLcqdT6xamb6ANlVe6gpyl/Tekf
+         7Da0iwNgov35nhl5562hZsmaApjJU1pDyN9K519qpVOhwmfhJZjtt5JyPGlg4hdBMbJ9
+         +Vzg==
+X-Gm-Message-State: AA+aEWbLnhoc8PZSAC0BQMbsyL6fv1HIqDeoYXDFHi7/zr5Dbxilo857
+        0jPYYIZ5v/VS3d2f34kxP1wRNg==
+X-Google-Smtp-Source: AFSGD/WDUW52Bve9+0FM9athxP4TgXmSEaGe1HXS/daoHkTp4kqS41aIABVRnK+a7pUurYECrKFMnw==
+X-Received: by 2002:a6b:8d11:: with SMTP id p17mr19414921iod.74.1543963378610;
+        Tue, 04 Dec 2018 14:42:58 -0800 (PST)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id 196sm2985872itu.37.2018.12.04.14.42.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 14:42:57 -0800 (PST)
+From:   Yu Zhao <yuzhao@google.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        aroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     Daniel Kurtz <djkurtz@chromium.org>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Yu Zhao <yuzhao@google.com>
+Subject: [PATCH 1/2] ASoC: use DMA addr rather than CPU pa for acp_audio_dma
+Date:   Tue,  4 Dec 2018 15:42:52 -0700
+Message-Id: <20181204224253.216075-1-yuzhao@google.com>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7440172974e85b1828bdd84ac6b23b5bcad9c5eb
-Gitweb:     https://git.kernel.org/tip/7440172974e85b1828bdd84ac6b23b5bcad9c5eb
-Author:     Paul E. McKenney <paulmck@linux.ibm.com>
-AuthorDate: Tue, 6 Nov 2018 18:44:52 -0800
-Committer:  Paul E. McKenney <paulmck@linux.ibm.com>
-CommitDate: Tue, 27 Nov 2018 09:21:41 -0800
+We shouldn't assume CPU physical address we get from page_to_phys()
+is same as DMA address we get from dma_alloc_coherent(). On x86_64,
+we won't run into any problem with the assumption when dma_ops is
+nommu_dma_ops. However, DMA address is IOVA when IOMMU is enabled.
+And it's most likely different from CPU physical address when AMD
+IOMMU is not in passthrough mode.
 
-tracing: Replace synchronize_sched() and call_rcu_sched()
-
-Now that synchronize_rcu() waits for preempt-disable regions of code
-as well as RCU read-side critical sections, synchronize_sched() can
-be replaced by synchronize_rcu().  Similarly, call_rcu_sched() can be
-replaced by call_rcu().  This commit therefore makes these changes.
-
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: <linux-kernel@vger.kernel.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 ---
- include/linux/tracepoint.h         |  2 +-
- kernel/trace/ftrace.c              | 24 ++++++++++++------------
- kernel/trace/ring_buffer.c         | 12 ++++++------
- kernel/trace/trace.c               | 10 +++++-----
- kernel/trace/trace_events_filter.c |  4 ++--
- kernel/trace/trace_kprobe.c        |  2 +-
- kernel/tracepoint.c                |  4 ++--
- 7 files changed, 29 insertions(+), 29 deletions(-)
+ sound/soc/amd/acp-pcm-dma.c | 15 +++++----------
+ sound/soc/amd/acp.h         |  2 +-
+ 2 files changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 538ba1a58f5b..432080b59c26 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -82,7 +82,7 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
- static inline void tracepoint_synchronize_unregister(void)
- {
- 	synchronize_srcu(&tracepoint_srcu);
--	synchronize_sched();
-+	synchronize_rcu();
- }
- #else
- static inline void tracepoint_synchronize_unregister(void)
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index f536f601bd46..5b4f73e4fd56 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -173,7 +173,7 @@ static void ftrace_sync(struct work_struct *work)
- {
- 	/*
- 	 * This function is just a stub to implement a hard force
--	 * of synchronize_sched(). This requires synchronizing
-+	 * of synchronize_rcu(). This requires synchronizing
- 	 * tasks even in userspace and idle.
- 	 *
- 	 * Yes, function tracing is rude.
-@@ -934,7 +934,7 @@ ftrace_profile_write(struct file *filp, const char __user *ubuf,
- 			ftrace_profile_enabled = 0;
- 			/*
- 			 * unregister_ftrace_profiler calls stop_machine
--			 * so this acts like an synchronize_sched.
-+			 * so this acts like an synchronize_rcu.
- 			 */
- 			unregister_ftrace_profiler();
- 		}
-@@ -1086,7 +1086,7 @@ struct ftrace_ops *ftrace_ops_trampoline(unsigned long addr)
- 
- 	/*
- 	 * Some of the ops may be dynamically allocated,
--	 * they are freed after a synchronize_sched().
-+	 * they are freed after a synchronize_rcu().
- 	 */
- 	preempt_disable_notrace();
- 
-@@ -1286,7 +1286,7 @@ static void free_ftrace_hash_rcu(struct ftrace_hash *hash)
- {
- 	if (!hash || hash == EMPTY_HASH)
- 		return;
--	call_rcu_sched(&hash->rcu, __free_ftrace_hash_rcu);
-+	call_rcu(&hash->rcu, __free_ftrace_hash_rcu);
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index cdebab2f8ce5..fd3db4c37882 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -303,11 +303,10 @@ static void set_acp_to_i2s_dma_descriptors(void __iomem *acp_mmio, u32 size,
  }
  
- void ftrace_free_filter(struct ftrace_ops *ops)
-@@ -1501,7 +1501,7 @@ static bool hash_contains_ip(unsigned long ip,
-  * the ip is not in the ops->notrace_hash.
-  *
-  * This needs to be called with preemption disabled as
-- * the hashes are freed with call_rcu_sched().
-+ * the hashes are freed with call_rcu().
-  */
- static int
- ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs)
-@@ -4496,7 +4496,7 @@ unregister_ftrace_function_probe_func(char *glob, struct trace_array *tr,
- 	if (ftrace_enabled && !ftrace_hash_empty(hash))
- 		ftrace_run_modify_code(&probe->ops, FTRACE_UPDATE_CALLS,
- 				       &old_hash_ops);
--	synchronize_sched();
-+	synchronize_rcu();
- 
- 	hlist_for_each_entry_safe(entry, tmp, &hhd, hlist) {
- 		hlist_del(&entry->hlist);
-@@ -5314,7 +5314,7 @@ ftrace_graph_release(struct inode *inode, struct file *file)
- 		mutex_unlock(&graph_lock);
- 
- 		/* Wait till all users are no longer using the old hash */
--		synchronize_sched();
-+		synchronize_rcu();
- 
- 		free_ftrace_hash(old_hash);
- 	}
-@@ -5707,7 +5707,7 @@ void ftrace_release_mod(struct module *mod)
- 	list_for_each_entry_safe(mod_map, n, &ftrace_mod_maps, list) {
- 		if (mod_map->mod == mod) {
- 			list_del_rcu(&mod_map->list);
--			call_rcu_sched(&mod_map->rcu, ftrace_free_mod_map);
-+			call_rcu(&mod_map->rcu, ftrace_free_mod_map);
- 			break;
- 		}
- 	}
-@@ -5927,7 +5927,7 @@ ftrace_mod_address_lookup(unsigned long addr, unsigned long *size,
- 	struct ftrace_mod_map *mod_map;
- 	const char *ret = NULL;
- 
--	/* mod_map is freed via call_rcu_sched() */
-+	/* mod_map is freed via call_rcu() */
- 	preempt_disable();
- 	list_for_each_entry_rcu(mod_map, &ftrace_mod_maps, list) {
- 		ret = ftrace_func_address_lookup(mod_map, addr, size, off, sym);
-@@ -6262,7 +6262,7 @@ __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- 
- 	/*
- 	 * Some of the ops may be dynamically allocated,
--	 * they must be freed after a synchronize_sched().
-+	 * they must be freed after a synchronize_rcu().
- 	 */
- 	preempt_disable_notrace();
- 
-@@ -6433,7 +6433,7 @@ static void clear_ftrace_pids(struct trace_array *tr)
- 	rcu_assign_pointer(tr->function_pids, NULL);
- 
- 	/* Wait till all users are no longer using pid filtering */
--	synchronize_sched();
-+	synchronize_rcu();
- 
- 	trace_free_pid_list(pid_list);
- }
-@@ -6580,7 +6580,7 @@ ftrace_pid_write(struct file *filp, const char __user *ubuf,
- 	rcu_assign_pointer(tr->function_pids, pid_list);
- 
- 	if (filtered_pids) {
--		synchronize_sched();
-+		synchronize_rcu();
- 		trace_free_pid_list(filtered_pids);
- 	} else if (pid_list) {
- 		/* Register a probe to set whether to ignore the tracing of a task */
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 65bd4616220d..4f3247a53259 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1834,7 +1834,7 @@ int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size,
- 		 * There could have been a race between checking
- 		 * record_disable and incrementing it.
- 		 */
--		synchronize_sched();
-+		synchronize_rcu();
- 		for_each_buffer_cpu(buffer, cpu) {
- 			cpu_buffer = buffer->buffers[cpu];
- 			rb_check_pages(cpu_buffer);
-@@ -3151,7 +3151,7 @@ static bool rb_per_cpu_empty(struct ring_buffer_per_cpu *cpu_buffer)
-  * This prevents all writes to the buffer. Any attempt to write
-  * to the buffer after this will fail and return NULL.
-  *
-- * The caller should call synchronize_sched() after this.
-+ * The caller should call synchronize_rcu() after this.
-  */
- void ring_buffer_record_disable(struct ring_buffer *buffer)
+ /* Create page table entries in ACP SRAM for the allocated memory */
+-static void acp_pte_config(void __iomem *acp_mmio, struct page *pg,
++static void acp_pte_config(void __iomem *acp_mmio, dma_addr_t addr,
+ 			   u16 num_of_pages, u32 pte_offset)
  {
-@@ -3253,7 +3253,7 @@ bool ring_buffer_record_is_set_on(struct ring_buffer *buffer)
-  * This prevents all writes to the buffer. Any attempt to write
-  * to the buffer after this will fail and return NULL.
-  *
-- * The caller should call synchronize_sched() after this.
-+ * The caller should call synchronize_rcu() after this.
-  */
- void ring_buffer_record_disable_cpu(struct ring_buffer *buffer, int cpu)
- {
-@@ -4191,7 +4191,7 @@ EXPORT_SYMBOL_GPL(ring_buffer_read_prepare);
- void
- ring_buffer_read_prepare_sync(void)
- {
--	synchronize_sched();
-+	synchronize_rcu();
- }
- EXPORT_SYMBOL_GPL(ring_buffer_read_prepare_sync);
+ 	u16 page_idx;
+-	u64 addr;
+ 	u32 low;
+ 	u32 high;
+ 	u32 offset;
+@@ -317,7 +316,6 @@ static void acp_pte_config(void __iomem *acp_mmio, struct page *pg,
+ 		/* Load the low address of page int ACP SRAM through SRBM */
+ 		acp_reg_write((offset + (page_idx * 8)),
+ 			      acp_mmio, mmACP_SRBM_Targ_Idx_Addr);
+-		addr = page_to_phys(pg);
  
-@@ -4363,7 +4363,7 @@ void ring_buffer_reset_cpu(struct ring_buffer *buffer, int cpu)
- 	atomic_inc(&cpu_buffer->record_disabled);
+ 		low = lower_32_bits(addr);
+ 		high = upper_32_bits(addr);
+@@ -333,7 +331,7 @@ static void acp_pte_config(void __iomem *acp_mmio, struct page *pg,
+ 		acp_reg_write(high, acp_mmio, mmACP_SRBM_Targ_Idx_Data);
  
- 	/* Make sure all commits have finished */
--	synchronize_sched();
-+	synchronize_rcu();
- 
- 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
- 
-@@ -4496,7 +4496,7 @@ int ring_buffer_swap_cpu(struct ring_buffer *buffer_a,
- 		goto out;
- 
- 	/*
--	 * We can't do a synchronize_sched here because this
-+	 * We can't do a synchronize_rcu here because this
- 	 * function can be called in atomic context.
- 	 * Normally this will be called from the same CPU as cpu.
- 	 * If not it's up to the caller to protect this.
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index ff1c4b20cd0a..51612b4a603f 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1681,7 +1681,7 @@ void tracing_reset(struct trace_buffer *buf, int cpu)
- 	ring_buffer_record_disable(buffer);
- 
- 	/* Make sure all commits have finished */
--	synchronize_sched();
-+	synchronize_rcu();
- 	ring_buffer_reset_cpu(buffer, cpu);
- 
- 	ring_buffer_record_enable(buffer);
-@@ -1698,7 +1698,7 @@ void tracing_reset_online_cpus(struct trace_buffer *buf)
- 	ring_buffer_record_disable(buffer);
- 
- 	/* Make sure all commits have finished */
--	synchronize_sched();
-+	synchronize_rcu();
- 
- 	buf->time_start = buffer_ftrace_now(buf, buf->cpu);
- 
-@@ -2250,7 +2250,7 @@ void trace_buffered_event_disable(void)
- 	preempt_enable();
- 
- 	/* Wait for all current users to finish */
--	synchronize_sched();
-+	synchronize_rcu();
- 
- 	for_each_tracing_cpu(cpu) {
- 		free_page((unsigned long)per_cpu(trace_buffered_event, cpu));
-@@ -5398,7 +5398,7 @@ static int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 	if (tr->current_trace->reset)
- 		tr->current_trace->reset(tr);
- 
--	/* Current trace needs to be nop_trace before synchronize_sched */
-+	/* Current trace needs to be nop_trace before synchronize_rcu */
- 	tr->current_trace = &nop_trace;
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
-@@ -5412,7 +5412,7 @@ static int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 		 * The update_max_tr is called from interrupts disabled
- 		 * so a synchronized_sched() is sufficient.
- 		 */
--		synchronize_sched();
-+		synchronize_rcu();
- 		free_snapshot(tr);
- 	}
- #endif
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 84a65173b1e9..35f3aa55be85 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -1614,7 +1614,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
- 
- 	/*
- 	 * The calls can still be using the old filters.
--	 * Do a synchronize_sched() and to ensure all calls are
-+	 * Do a synchronize_rcu() and to ensure all calls are
- 	 * done with them before we free them.
- 	 */
- 	tracepoint_synchronize_unregister();
-@@ -1845,7 +1845,7 @@ int apply_subsystem_event_filter(struct trace_subsystem_dir *dir,
- 	if (filter) {
- 		/*
- 		 * No event actually uses the system filter
--		 * we can free it without synchronize_sched().
-+		 * we can free it without synchronize_rcu().
- 		 */
- 		__free_filter(system->filter);
- 		system->filter = filter;
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index fec67188c4d2..adc153ab51c0 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -333,7 +333,7 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
- 		 * event_call related objects, which will be accessed in
- 		 * the kprobe_trace_func/kretprobe_trace_func.
- 		 */
--		synchronize_sched();
-+		synchronize_rcu();
- 		kfree(link);	/* Ignored if link == NULL */
- 	}
- 
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index a3be42304485..46f2ab1e08a9 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -92,7 +92,7 @@ static __init int release_early_probes(void)
- 	while (early_probes) {
- 		tmp = early_probes;
- 		early_probes = tmp->next;
--		call_rcu_sched(tmp, rcu_free_old_probes);
-+		call_rcu(tmp, rcu_free_old_probes);
- 	}
- 
- 	return 0;
-@@ -123,7 +123,7 @@ static inline void release_probes(struct tracepoint_func *old)
- 		 * cover both cases. So let us chain the SRCU and sched RCU
- 		 * callbacks to wait for both grace periods.
- 		 */
--		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
-+		call_rcu(&tp_probes->rcu, rcu_free_old_probes);
+ 		/* Move to next physically contiguos page */
+-		pg++;
++		addr += PAGE_SIZE;
  	}
  }
  
+@@ -343,7 +341,7 @@ static void config_acp_dma(void __iomem *acp_mmio,
+ {
+ 	u16 ch_acp_sysmem, ch_acp_i2s;
+ 
+-	acp_pte_config(acp_mmio, rtd->pg, rtd->num_of_pages,
++	acp_pte_config(acp_mmio, rtd->dma_addr, rtd->num_of_pages,
+ 		       rtd->pte_offset);
+ 
+ 	if (rtd->direction == SNDRV_PCM_STREAM_PLAYBACK) {
+@@ -850,7 +848,6 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
+ 	int status;
+ 	uint64_t size;
+ 	u32 val = 0;
+-	struct page *pg;
+ 	struct snd_pcm_runtime *runtime;
+ 	struct audio_substream_data *rtd;
+ 	struct snd_soc_pcm_runtime *prtd = substream->private_data;
+@@ -986,16 +983,14 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
+ 		return status;
+ 
+ 	memset(substream->runtime->dma_area, 0, params_buffer_bytes(params));
+-	pg = virt_to_page(substream->dma_buffer.area);
+ 
+-	if (pg) {
++	if (substream->dma_buffer.area) {
+ 		acp_set_sram_bank_state(rtd->acp_mmio, 0, true);
+ 		/* Save for runtime private data */
+-		rtd->pg = pg;
++		rtd->dma_addr = substream->dma_buffer.addr;
+ 		rtd->order = get_order(size);
+ 
+ 		/* Fill the page table entries in ACP SRAM */
+-		rtd->pg = pg;
+ 		rtd->size = size;
+ 		rtd->num_of_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+ 		rtd->direction = substream->stream;
+diff --git a/sound/soc/amd/acp.h b/sound/soc/amd/acp.h
+index dbbb1a85638d..e5ab6c6040a6 100644
+--- a/sound/soc/amd/acp.h
++++ b/sound/soc/amd/acp.h
+@@ -123,7 +123,7 @@ enum acp_dma_priority_level {
+ };
+ 
+ struct audio_substream_data {
+-	struct page *pg;
++	dma_addr_t dma_addr;
+ 	unsigned int order;
+ 	u16 num_of_pages;
+ 	u16 i2s_instance;
+-- 
+2.20.0.rc1.387.gf8505762e3-goog
+
