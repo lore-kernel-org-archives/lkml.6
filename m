@@ -2,52 +2,50 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D200BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD61C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A3A20878
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DF2920878
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2PNnfzWP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A3A20878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLRKayGd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF2920878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbeLDLEA (ORCPT
+        id S1727967AbeLDLTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:04:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50572 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:19:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbeLDLDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:03:54 -0500
+        id S1725770AbeLDLD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:03:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93C722087F;
-        Tue,  4 Dec 2018 11:03:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 304242146D;
+        Tue,  4 Dec 2018 11:03:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921434;
-        bh=bCWT0n2b2z9MEkH+UhkaQcghnMN4SLily3ASRL4ZXPs=;
+        s=default; t=1543921436;
+        bh=dhnQIf4/Ncv13JEpqNESv2IFjgpkAuwUpTJihc60epQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2PNnfzWPUUqHaK+oamfyPtSwWsyLr1hjweS7VtXLHzeGqoa+MrVovp+kLyQ+JrJpy
-         tAU3RaIWVeASk2SROiyd3P1OsWm1n6mJSYWDLfCW/GjC9yisY686LBf7+dyb8pdcm4
-         Zya6m4z09DN2iCCmFA5D6sWn29VSdzfmv3udgsQk=
+        b=ZLRKayGdTjg3BWczCCgPHKEJXtjd+t/dHZzKRW8FwjpD6q7Il7c7Gkevo4UEkc40z
+         jUkupS0cxCq/9VZFyzm08Pl7Qhpk7ianB2w/kD8oMMnmWZWP4jr433L93mIiIhQYCw
+         hFd+B2vGiRRHsKgTgW/dE/Tv/BP3/20G3h40b7gA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Boris Pismenny <borisp@mellanox.com>,
-        Ilya Lesokhin <ilyal@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 024/146] tls: Use correct sk->sk_prot for IPV6
-Date:   Tue,  4 Dec 2018 11:48:30 +0100
-Message-Id: <20181204103727.796464549@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 063/146] net: thunderx: set tso_hdrs pointer to NULL in nicvf_free_snd_queue
+Date:   Tue,  4 Dec 2018 11:49:09 +0100
+Message-Id: <20181204103729.372006569@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -66,126 +64,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit c113187d38ff85dc302a1bb55864b203ebb2ba10 upstream.
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-The tls ulp overrides sk->prot with a new tls specific proto structs.
-The tls specific structs were previously based on the ipv4 specific
-tcp_prot sturct.
-As a result, attaching the tls ulp to an ipv6 tcp socket replaced
-some ipv6 callback with the ipv4 equivalents.
+[ Upstream commit ef2a7cf1d8831535b8991459567b385661eb4a36 ]
 
-This patch adds ipv6 tls proto structs and uses them when
-attached to ipv6 sockets.
+Reset snd_queue tso_hdrs pointer to NULL in nicvf_free_snd_queue routine
+since it is used to check if tso dma descriptor queue has been previously
+allocated. The issue can be triggered with the following reproducer:
 
-Fixes: 3c4d7559159b ('tls: kernel TLS support')
-Signed-off-by: Boris Pismenny <borisp@mellanox.com>
-Signed-off-by: Ilya Lesokhin <ilyal@mellanox.com>
+$ip link set dev enP2p1s0v0 xdpdrv obj xdp_dummy.o
+$ip link set dev enP2p1s0v0 xdpdrv off
+
+[  341.467649] WARNING: CPU: 74 PID: 2158 at mm/vmalloc.c:1511 __vunmap+0x98/0xe0
+[  341.515010] Hardware name: GIGABYTE H270-T70/MT70-HD0, BIOS T49 02/02/2018
+[  341.521874] pstate: 60400005 (nZCv daif +PAN -UAO)
+[  341.526654] pc : __vunmap+0x98/0xe0
+[  341.530132] lr : __vunmap+0x98/0xe0
+[  341.533609] sp : ffff00001c5db860
+[  341.536913] x29: ffff00001c5db860 x28: 0000000000020000
+[  341.542214] x27: ffff810feb5090b0 x26: ffff000017e57000
+[  341.547515] x25: 0000000000000000 x24: 00000000fbd00000
+[  341.552816] x23: 0000000000000000 x22: ffff810feb5090b0
+[  341.558117] x21: 0000000000000000 x20: 0000000000000000
+[  341.563418] x19: ffff000017e57000 x18: 0000000000000000
+[  341.568719] x17: 0000000000000000 x16: 0000000000000000
+[  341.574020] x15: 0000000000000010 x14: ffffffffffffffff
+[  341.579321] x13: ffff00008985eb27 x12: ffff00000985eb2f
+[  341.584622] x11: ffff0000096b3000 x10: ffff00001c5db510
+[  341.589923] x9 : 00000000ffffffd0 x8 : ffff0000086868e8
+[  341.595224] x7 : 3430303030303030 x6 : 00000000000006ef
+[  341.600525] x5 : 00000000003fffff x4 : 0000000000000000
+[  341.605825] x3 : 0000000000000000 x2 : ffffffffffffffff
+[  341.611126] x1 : ffff0000096b3728 x0 : 0000000000000038
+[  341.616428] Call trace:
+[  341.618866]  __vunmap+0x98/0xe0
+[  341.621997]  vunmap+0x3c/0x50
+[  341.624961]  arch_dma_free+0x68/0xa0
+[  341.628534]  dma_direct_free+0x50/0x80
+[  341.632285]  nicvf_free_resources+0x160/0x2d8 [nicvf]
+[  341.637327]  nicvf_config_data_transfer+0x174/0x5e8 [nicvf]
+[  341.642890]  nicvf_stop+0x298/0x340 [nicvf]
+[  341.647066]  __dev_close_many+0x9c/0x108
+[  341.650977]  dev_close_many+0xa4/0x158
+[  341.654720]  rollback_registered_many+0x140/0x530
+[  341.659414]  rollback_registered+0x54/0x80
+[  341.663499]  unregister_netdevice_queue+0x9c/0xe8
+[  341.668192]  unregister_netdev+0x28/0x38
+[  341.672106]  nicvf_remove+0xa4/0xa8 [nicvf]
+[  341.676280]  nicvf_shutdown+0x20/0x30 [nicvf]
+[  341.680630]  pci_device_shutdown+0x44/0x88
+[  341.684720]  device_shutdown+0x144/0x250
+[  341.688640]  kernel_restart_prepare+0x44/0x50
+[  341.692986]  kernel_restart+0x20/0x68
+[  341.696638]  __se_sys_reboot+0x210/0x238
+[  341.700550]  __arm64_sys_reboot+0x24/0x30
+[  341.704555]  el0_svc_handler+0x94/0x110
+[  341.708382]  el0_svc+0x8/0xc
+[  341.711252] ---[ end trace 3f4019c8439959c9 ]---
+[  341.715874] page:ffff7e0003ef4000 count:0 mapcount:0 mapping:0000000000000000 index:0x4
+[  341.723872] flags: 0x1fffe000000000()
+[  341.727527] raw: 001fffe000000000 ffff7e0003f1a008 ffff7e0003ef4048 0000000000000000
+[  341.735263] raw: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+[  341.742994] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+
+where xdp_dummy.c is a simple bpf program that forwards the incoming
+frames to the network stack (available here:
+https://github.com/altoor/xdp_walkthrough_examples/blob/master/sample_1/xdp_dummy.c)
+
+Fixes: 05c773f52b96 ("net: thunderx: Add basic XDP support")
+Fixes: 4863dea3fab0 ("net: Adding support for Cavium ThunderX network controller")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tls/tls_main.c | 52 +++++++++++++++++++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/cavium/thunder/nicvf_queues.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index 33187e34599b..e903bdd39b9f 100644
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -46,17 +46,27 @@ MODULE_DESCRIPTION("Transport Layer Security Support");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_ALIAS_TCP_ULP("tls");
+--- a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
++++ b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
+@@ -585,10 +585,12 @@ static void nicvf_free_snd_queue(struct
+ 	if (!sq->dmem.base)
+ 		return;
  
-+enum {
-+	TLSV4,
-+	TLSV6,
-+	TLS_NUM_PROTS,
-+};
-+
- enum {
- 	TLS_BASE_TX,
- 	TLS_SW_TX,
- 	TLS_NUM_CONFIG,
- };
- 
--static struct proto tls_prots[TLS_NUM_CONFIG];
-+static struct proto *saved_tcpv6_prot;
-+static DEFINE_MUTEX(tcpv6_prot_mutex);
-+static struct proto tls_prots[TLS_NUM_PROTS][TLS_NUM_CONFIG];
- 
- static inline void update_sk_prot(struct sock *sk, struct tls_context *ctx)
- {
--	sk->sk_prot = &tls_prots[ctx->tx_conf];
-+	int ip_ver = sk->sk_family == AF_INET6 ? TLSV6 : TLSV4;
-+
-+	sk->sk_prot = &tls_prots[ip_ver][ctx->tx_conf];
- }
- 
- int wait_on_pending_writer(struct sock *sk, long *timeo)
-@@ -476,8 +486,21 @@ static int tls_setsockopt(struct sock *sk, int level, int optname,
- 	return do_tls_setsockopt(sk, optname, optval, optlen);
- }
- 
-+static void build_protos(struct proto *prot, struct proto *base)
-+{
-+	prot[TLS_BASE_TX] = *base;
-+	prot[TLS_BASE_TX].setsockopt	= tls_setsockopt;
-+	prot[TLS_BASE_TX].getsockopt	= tls_getsockopt;
-+	prot[TLS_BASE_TX].close		= tls_sk_proto_close;
-+
-+	prot[TLS_SW_TX] = prot[TLS_BASE_TX];
-+	prot[TLS_SW_TX].sendmsg		= tls_sw_sendmsg;
-+	prot[TLS_SW_TX].sendpage	= tls_sw_sendpage;
-+}
-+
- static int tls_init(struct sock *sk)
- {
-+	int ip_ver = sk->sk_family == AF_INET6 ? TLSV6 : TLSV4;
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct tls_context *ctx;
- 	int rc = 0;
-@@ -502,6 +525,17 @@ static int tls_init(struct sock *sk)
- 	ctx->getsockopt = sk->sk_prot->getsockopt;
- 	ctx->sk_proto_close = sk->sk_prot->close;
- 
-+	/* Build IPv6 TLS whenever the address of tcpv6_prot changes */
-+	if (ip_ver == TLSV6 &&
-+	    unlikely(sk->sk_prot != smp_load_acquire(&saved_tcpv6_prot))) {
-+		mutex_lock(&tcpv6_prot_mutex);
-+		if (likely(sk->sk_prot != saved_tcpv6_prot)) {
-+			build_protos(tls_prots[TLSV6], sk->sk_prot);
-+			smp_store_release(&saved_tcpv6_prot, sk->sk_prot);
-+		}
-+		mutex_unlock(&tcpv6_prot_mutex);
+-	if (sq->tso_hdrs)
++	if (sq->tso_hdrs) {
+ 		dma_free_coherent(&nic->pdev->dev,
+ 				  sq->dmem.q_len * TSO_HEADER_SIZE,
+ 				  sq->tso_hdrs, sq->tso_hdrs_phys);
++		sq->tso_hdrs = NULL;
 +	}
-+
- 	ctx->tx_conf = TLS_BASE_TX;
- 	update_sk_prot(sk, ctx);
- out:
-@@ -514,21 +548,9 @@ static struct tcp_ulp_ops tcp_tls_ulp_ops __read_mostly = {
- 	.init			= tls_init,
- };
  
--static void build_protos(struct proto *prot, struct proto *base)
--{
--	prot[TLS_BASE_TX] = *base;
--	prot[TLS_BASE_TX].setsockopt	= tls_setsockopt;
--	prot[TLS_BASE_TX].getsockopt	= tls_getsockopt;
--	prot[TLS_BASE_TX].close		= tls_sk_proto_close;
--
--	prot[TLS_SW_TX] = prot[TLS_BASE_TX];
--	prot[TLS_SW_TX].sendmsg		= tls_sw_sendmsg;
--	prot[TLS_SW_TX].sendpage	= tls_sw_sendpage;
--}
--
- static int __init tls_register(void)
- {
--	build_protos(tls_prots, &tcp_prot);
-+	build_protos(tls_prots[TLSV4], &tcp_prot);
- 
- 	tcp_register_ulp(&tcp_tls_ulp_ops);
- 
--- 
-2.17.1
-
+ 	/* Free pending skbs in the queue */
+ 	smp_rmb();
 
 
