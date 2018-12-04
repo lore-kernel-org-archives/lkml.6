@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567EBC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B91BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1701A214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C76C32146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjRFaaZJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1701A214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="08V/3eWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76C32146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeLDKzY (ORCPT
+        id S1726249AbeLDKz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:55:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38152 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:55:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbeLDKzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:55:22 -0500
+        id S1725802AbeLDKzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:55:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44A672087F;
-        Tue,  4 Dec 2018 10:55:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E36C82146D;
+        Tue,  4 Dec 2018 10:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920921;
-        bh=DkAtdtudO0aa6Ma62keWaRPouU7AyQECizrjuVFiHX8=;
+        s=default; t=1543920924;
+        bh=jXUTERnY2tceFqicq0ziEg34xm8fPQoLcYpTfL7ezjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KjRFaaZJrYyP3CKGt7Km0MziPshgw+cCh6uccv4XY7EvaWubf9P7qtJAxbzVvuFO2
-         N42833ZRoGWoJIRYKG/UIC8v8I8At7475SpdoP/OvJKa6HPBiM2cRPofN+mECgrE+k
-         ZGT7TuYXAVV+6RusL4pej7JB8OSc68t/wFmsLIsA=
+        b=08V/3eWURJV2IsRsN1DPRKd+ZO3wruBfBpzl27F++JE2I3/PNqiNiTaCemjtSSgSO
+         3klxFicOXhVOxCrL1L+kdxFOnB5868YmijHdINTjBoLgHc2PjFsmuYcr2Jefj8oimD
+         NRrALqXiZztQRQvhtLIJNngSqdxkeNcdv1xLsQwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Andreas Fiedler <andreas.fiedler@gmx.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 012/139] net: dont keep lonely packets forever in the gro hash
-Date:   Tue,  4 Dec 2018 11:48:13 +0100
-Message-Id: <20181204103650.493272051@linuxfoundation.org>
+Subject: [PATCH 4.19 013/139] net: gemini: Fix copy/paste error
+Date:   Tue,  4 Dec 2018 11:48:14 +0100
+Message-Id: <20181204103650.532332859@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -66,55 +64,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Andreas Fiedler <andreas.fiedler@gmx.net>
 
-[ Upstream commit 605108acfe6233b72e2f803aa1cb59a2af3001ca ]
+[ Upstream commit 07093b76476903f820d83d56c3040e656fb4d9e3 ]
 
-Eric noted that with UDP GRO and NAPI timeout, we could keep a single
-UDP packet inside the GRO hash forever, if the related NAPI instance
-calls napi_gro_complete() at an higher frequency than the NAPI timeout.
-Willem noted that even TCP packets could be trapped there, till the
-next retransmission.
-This patch tries to address the issue, flushing the old packets -
-those with a NAPI_GRO_CB age before the current jiffy - before scheduling
-the NAPI timeout. The rationale is that such a timeout should be
-well below a jiffy and we are not flushing packets eligible for sane GRO.
+The TX stats should be started with the tx_stats_syncp,
+there seems to be a copy/paste error in the driver.
 
-v1  -> v2:
- - clarified the commit message and comment
-
-RFC -> v1:
- - added 'Fixes tags', cleaned-up the wording.
-
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Fixes: 3b47d30396ba ("net: gro: add a per device gro flush timer")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Andreas Fiedler <andreas.fiedler@gmx.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/cortina/gemini.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -5945,11 +5945,14 @@ bool napi_complete_done(struct napi_stru
- 		if (work_done)
- 			timeout = n->dev->gro_flush_timeout;
+--- a/drivers/net/ethernet/cortina/gemini.c
++++ b/drivers/net/ethernet/cortina/gemini.c
+@@ -661,7 +661,7 @@ static void gmac_clean_txq(struct net_de
  
-+		/* When the NAPI instance uses a timeout and keeps postponing
-+		 * it, we need to bound somehow the time packets are kept in
-+		 * the GRO layer
-+		 */
-+		napi_gro_flush(n, !!timeout);
- 		if (timeout)
- 			hrtimer_start(&n->timer, ns_to_ktime(timeout),
- 				      HRTIMER_MODE_REL_PINNED);
--		else
--			napi_gro_flush(n, false);
+ 			u64_stats_update_begin(&port->tx_stats_syncp);
+ 			port->tx_frag_stats[nfrags]++;
+-			u64_stats_update_end(&port->ir_stats_syncp);
++			u64_stats_update_end(&port->tx_stats_syncp);
+ 		}
  	}
- 	if (unlikely(!list_empty(&n->poll_list))) {
- 		/* If n->poll_list is not empty, we need to mask irqs */
+ 
 
 
