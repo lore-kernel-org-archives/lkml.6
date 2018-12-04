@@ -5,84 +5,187 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25019C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC897C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC162082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:46:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC162082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 933C92087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:47:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 933C92087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726060AbeLDJqi (ORCPT
+        id S1726032AbeLDJrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:46:38 -0500
-Received: from mga02.intel.com ([134.134.136.20]:39218 "EHLO mga02.intel.com"
+        Tue, 4 Dec 2018 04:47:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52682 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725613AbeLDJqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:46:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 01:46:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,313,1539673200"; 
-   d="scan'208";a="115808453"
-Received: from avandeve-mobl.amr.corp.intel.com (HELO [10.251.82.99]) ([10.251.82.99])
-  by orsmga001.jf.intel.com with ESMTP; 04 Dec 2018 01:46:32 -0800
-Subject: Re: [patch V2 27/28] x86/speculation: Add seccomp Spectre v2 user
- space protection mode
-To:     Jiri Kosina <jikos@kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>, thomas.lendacky@amd.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>, jcm@redhat.com,
-        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>,
-        Jason Brandt <jason.w.brandt@intel.com>
-References: <20181125183328.318175777@linutronix.de>
- <20181125185006.051663132@linutronix.de>
- <CAHk-=whtiX45YPjFPMFuktZ3WB23zqBZR-rL6RewrTyvrFj2Fw@mail.gmail.com>
- <f4b903ef-828c-0b05-29c6-6f71677d120d@linux.intel.com>
- <nycvar.YFH.7.76.1812040937440.17216@cbobk.fhfr.pm>
-From:   Arjan van de Ven <arjan@linux.intel.com>
-Message-ID: <dfcb5d36-0cd5-6212-fc52-d1d9e33c0cbf@linux.intel.com>
-Date:   Tue, 4 Dec 2018 10:46:31 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725613AbeLDJrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 04:47:47 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 189AE3082E70;
+        Tue,  4 Dec 2018 09:47:44 +0000 (UTC)
+Received: from [10.36.118.25] (unknown [10.36.118.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8612C60E3F;
+        Tue,  4 Dec 2018 09:47:34 +0000 (UTC)
+Subject: Re: [PATCH RFCv2 3/4] mm/memory_hotplug: Introduce and use more
+ memory types
+To:     =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-acpi@vger.kernel.org, devel@linuxdriverproject.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Arun KS <arunks@codeaurora.org>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181130175922.10425-1-david@redhat.com>
+ <20181130175922.10425-4-david@redhat.com>
+ <20181204104454.522a3ba2@naga.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <b8e03810-41d6-55cb-9546-62c73c7f4d7f@redhat.com>
+Date:   Tue, 4 Dec 2018 10:47:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1812040937440.17216@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181204104454.522a3ba2@naga.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 04 Dec 2018 09:47:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> On processors with enhanced IBRS support, we recommend setting IBRS to 1
->> and left set.
+On 04.12.18 10:44, Michal Suchánek wrote:
+> On Fri, 30 Nov 2018 18:59:21 +0100
+> David Hildenbrand <david@redhat.com> wrote:
 > 
-> Then why doesn't CPU with EIBRS support acutally *default* to '1', with
-> opt-out possibility for OS?
+>> Let's introduce new types for different kinds of memory blocks and use
+>> them in existing code. As I don't see an easy way to split this up,
+>> do it in one hunk for now.
+>>
+>> acpi:
+>>  Use DIMM or DIMM_UNREMOVABLE depending on hotremove support in the kernel.
+>>  Properly change the type when trying to add memory that was already
+>>  detected and used during boot (so this memory will correctly end up as
+>>  "acpi" in user space).
+>>
+>> pseries:
+>>  Use DIMM or DIMM_UNREMOVABLE depending on hotremove support in the kernel.
+>>  As far as I see, handling like in the acpi case for existing blocks is
+>>  not required.
+>>
+>> probed memory from user space:
+>>  Use DIMM_UNREMOVABLE as there is no interface to get rid of this code
+>>  again.
+>>
+>> hv_balloon,xen/balloon:
+>>  Use BALLOON. As simple as that :)
+>>
+>> s390x/sclp:
+>>  Use a dedicated type S390X_STANDBY as this type of memory and it's
+>>  semantics are very s390x specific.
+>>
+>> powernv/memtrace:
+>>  Only allow to use BOOT memory for memtrace. I consider this code in
+>>  general dangerous, but we have to keep it working ... most probably just
+>>  a debug feature.
+> 
+> I don't think it should be arbitrarily restricted like that.
+> 
 
-(slightly longer answer)
+Well code that "randomly" offlines/onlines/removes/adds memory blocks
+that it does not own (hint: nobody else in the kernel does that), should
+be restricted to types we can guarantee to work.
 
-you can pretty much assume that on these CPUs, IBRS doesn't actually do anything
-(e.g. just a scratch bit)
+> Thanks
+> 
+> Michal
+> 
 
-we could debate (and did :-)) for some time what the default value should be at boot,
-but it kind of is one of those minor issues that should not hold up getting things out.
 
-it could well be that the cpus that do this will ship with 1 as default, but it's hard to
-guarantee across many products and different CPU vendors when time was tight.
+-- 
 
+Thanks,
+
+David / dhildenb
