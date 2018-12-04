@@ -7,44 +7,61 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23029C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21BBC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB7DD2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 920542146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5wPeqMM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7DD2087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="krGKRDQ8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920542146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbeLDLGa (ORCPT
+        id S1728333AbeLDLGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:06:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54832 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:06:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727725AbeLDLGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:06:25 -0500
+        id S1728319AbeLDLGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 781882146D;
-        Tue,  4 Dec 2018 11:06:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7642D2082D;
+        Tue,  4 Dec 2018 11:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921584;
-        bh=keFjtEDnoUXurLg24Cc+X0jX0uPzXDZKQ1P+vifyw3Q=;
+        s=default; t=1543921590;
+        bh=eOoYKRK9Xs3UakODT1NpBfUAYIZ3Adq4pWrbhRd2Fa8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f5wPeqMMvFfCHYvUNqbHL6dsGiUsEgKCpsO9OcJYOhT3eLbc3FtDJh3uQ+XRrMpy1
-         Fc8obDbX7iz2oykM5W7lcXY9+XpHUMxLO+FMDk0GtDySeLeK9hy56l9XNyl6kvZNbf
-         aORZiKOjtg9O82M0Ex2LiA5tUlL2+aLrnUebJa3A=
+        b=krGKRDQ8agX9QYq3D90myMhyyibuHsgT8aJK2UAAvbLUO0snMZc7CPU0iUPQD+88d
+         xzWrnZqJSgC+ayuKES7V58x36m+JJjh8rByZl9r4NWxIbyQ5Ir1FFFuvXiIyf4pUKx
+         a/owa0lvVuFr7lOK91N29T3EhuYB7ALxJ01aMYZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 128/146] ALSA: sparc: Fix invalid snd_free_pages() at error path
-Date:   Tue,  4 Dec 2018 11:50:14 +0100
-Message-Id: <20181204103731.979794979@linuxfoundation.org>
+        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.14 103/146] x86/speculation: Prevent stale SPEC_CTRL msr content
+Date:   Tue,  4 Dec 2018 11:49:49 +0100
+Message-Id: <20181204103730.969795820@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -63,51 +80,222 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Thomas Gleixner tglx@linutronix.de
 
-commit 9a20332ab373b1f8f947e0a9c923652b32dab031 upstream.
+commit 6d991ba509ebcfcc908e009d1db51972a4f7a064 upstream
 
-Some spurious calls of snd_free_pages() have been overlooked and
-remain in the error paths of sparc cs4231 driver code.  Since
-runtime->dma_area is managed by the PCM core helper, we shouldn't
-release manually.
+The seccomp speculation control operates on all tasks of a process, but
+only the current task of a process can update the MSR immediately. For the
+other threads the update is deferred to the next context switch.
 
-Drop the superfluous calls.
+This creates the following situation with Process A and B:
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Process A task 2 and Process B task 1 are pinned on CPU1. Process A task 2
+does not have the speculation control TIF bit set. Process B task 1 has the
+speculation control TIF bit set.
+
+CPU0					CPU1
+					MSR bit is set
+					ProcB.T1 schedules out
+					ProcA.T2 schedules in
+					MSR bit is cleared
+ProcA.T1
+  seccomp_update()
+  set TIF bit on ProcA.T2
+					ProcB.T1 schedules in
+					MSR is not updated  <-- FAIL
+
+This happens because the context switch code tries to avoid the MSR update
+if the speculation control TIF bits of the incoming and the outgoing task
+are the same. In the worst case ProcB.T1 and ProcA.T2 are the only tasks
+scheduling back and forth on CPU1, which keeps the MSR stale forever.
+
+In theory this could be remedied by IPIs, but chasing the remote task which
+could be migrated is complex and full of races.
+
+The straight forward solution is to avoid the asychronous update of the TIF
+bit and defer it to the next context switch. The speculation control state
+is stored in task_struct::atomic_flags by the prctl and seccomp updates
+already.
+
+Add a new TIF_SPEC_FORCE_UPDATE bit and set this after updating the
+atomic_flags. Check the bit on context switch and force a synchronous
+update of the speculation control if set. Use the same mechanism for
+updating the current task.
+
+Reported-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811272247140.1875@nanos.tec.linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/sparc/cs4231.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/spec-ctrl.h   |    6 +-----
+ arch/x86/include/asm/thread_info.h |    4 +++-
+ arch/x86/kernel/cpu/bugs.c         |   18 +++++++-----------
+ arch/x86/kernel/process.c          |   30 +++++++++++++++++++++++++++++-
+ 4 files changed, 40 insertions(+), 18 deletions(-)
 
---- a/sound/sparc/cs4231.c
-+++ b/sound/sparc/cs4231.c
-@@ -1146,10 +1146,8 @@ static int snd_cs4231_playback_open(stru
- 	runtime->hw = snd_cs4231_playback;
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -83,10 +83,6 @@ static inline void speculative_store_byp
+ #endif
  
- 	err = snd_cs4231_open(chip, CS4231_MODE_PLAY);
--	if (err < 0) {
--		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
-+	if (err < 0)
- 		return err;
--	}
- 	chip->playback_substream = substream;
- 	chip->p_periods_sent = 0;
- 	snd_pcm_set_sync(substream);
-@@ -1167,10 +1165,8 @@ static int snd_cs4231_capture_open(struc
- 	runtime->hw = snd_cs4231_capture;
+ extern void speculation_ctrl_update(unsigned long tif);
+-
+-static inline void speculation_ctrl_update_current(void)
+-{
+-	speculation_ctrl_update(current_thread_info()->flags);
+-}
++extern void speculation_ctrl_update_current(void);
  
- 	err = snd_cs4231_open(chip, CS4231_MODE_RECORD);
--	if (err < 0) {
--		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
-+	if (err < 0)
- 		return err;
--	}
- 	chip->capture_substream = substream;
- 	chip->c_periods_sent = 0;
- 	snd_pcm_set_sync(substream);
+ #endif
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -86,6 +86,7 @@ struct thread_info {
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
+ #define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
++#define TIF_SPEC_FORCE_UPDATE	10	/* Force speculation MSR update in context switch */
+ #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+ #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+ #define TIF_PATCH_PENDING	13	/* pending live patching update */
+@@ -114,6 +115,7 @@ struct thread_info {
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+ #define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
++#define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+@@ -151,7 +153,7 @@ struct thread_info {
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW_BASE						\
+ 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
+-	 _TIF_SSBD)
++	 _TIF_SSBD | _TIF_SPEC_FORCE_UPDATE)
+ 
+ /*
+  * Avoid calls to __switch_to_xtra() on UP as STIBP is not evaluated.
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -699,14 +699,10 @@ static void ssb_select_mitigation(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Speculation prctl: " fmt
+ 
+-static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
++static void task_update_spec_tif(struct task_struct *tsk)
+ {
+-	bool update;
+-
+-	if (on)
+-		update = !test_and_set_tsk_thread_flag(tsk, tifbit);
+-	else
+-		update = test_and_clear_tsk_thread_flag(tsk, tifbit);
++	/* Force the update of the real TIF bits */
++	set_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE);
+ 
+ 	/*
+ 	 * Immediately update the speculation control MSRs for the current
+@@ -716,7 +712,7 @@ static void task_update_spec_tif(struct
+ 	 * This can only happen for SECCOMP mitigation. For PRCTL it's
+ 	 * always the current task.
+ 	 */
+-	if (tsk == current && update)
++	if (tsk == current)
+ 		speculation_ctrl_update_current();
+ }
+ 
+@@ -732,16 +728,16 @@ static int ssb_prctl_set(struct task_str
+ 		if (task_spec_ssb_force_disable(task))
+ 			return -EPERM;
+ 		task_clear_spec_ssb_disable(task);
+-		task_update_spec_tif(task, TIF_SSBD, false);
++		task_update_spec_tif(task);
+ 		break;
+ 	case PR_SPEC_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+-		task_update_spec_tif(task, TIF_SSBD, true);
++		task_update_spec_tif(task);
+ 		break;
+ 	case PR_SPEC_FORCE_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+ 		task_set_spec_ssb_force_disable(task);
+-		task_update_spec_tif(task, TIF_SSBD, true);
++		task_update_spec_tif(task);
+ 		break;
+ 	default:
+ 		return -ERANGE;
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -446,6 +446,18 @@ static __always_inline void __speculatio
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ }
+ 
++static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
++{
++	if (test_and_clear_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE)) {
++		if (task_spec_ssb_disable(tsk))
++			set_tsk_thread_flag(tsk, TIF_SSBD);
++		else
++			clear_tsk_thread_flag(tsk, TIF_SSBD);
++	}
++	/* Return the updated threadinfo flags*/
++	return task_thread_info(tsk)->flags;
++}
++
+ void speculation_ctrl_update(unsigned long tif)
+ {
+ 	/* Forced update. Make sure all relevant TIF flags are different */
+@@ -454,6 +466,14 @@ void speculation_ctrl_update(unsigned lo
+ 	preempt_enable();
+ }
+ 
++/* Called from seccomp/prctl update */
++void speculation_ctrl_update_current(void)
++{
++	preempt_disable();
++	speculation_ctrl_update(speculation_ctrl_update_tif(current));
++	preempt_enable();
++}
++
+ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
+ {
+ 	struct thread_struct *prev, *next;
+@@ -485,7 +505,15 @@ void __switch_to_xtra(struct task_struct
+ 	if ((tifp ^ tifn) & _TIF_NOCPUID)
+ 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
+ 
+-	__speculation_ctrl_update(tifp, tifn);
++	if (likely(!((tifp | tifn) & _TIF_SPEC_FORCE_UPDATE))) {
++		__speculation_ctrl_update(tifp, tifn);
++	} else {
++		speculation_ctrl_update_tif(prev_p);
++		tifn = speculation_ctrl_update_tif(next_p);
++
++		/* Enforce MSR update to ensure consistent state */
++		__speculation_ctrl_update(~tifn, tifn);
++	}
+ }
+ 
+ /*
 
 
