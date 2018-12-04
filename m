@@ -4,73 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089E0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFABAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBAD22087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 740C52146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:26:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dxO3AlJS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBAD22087F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gPfU2k/T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740C52146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbeLDFZ5 (ORCPT
+        id S1726077AbeLDF0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 00:25:57 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46527 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbeLDFZ5 (ORCPT
+        Tue, 4 Dec 2018 00:26:44 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43026 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbeLDF0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 00:25:57 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t13so7678886ply.13
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 21:25:57 -0800 (PST)
+        Tue, 4 Dec 2018 00:26:43 -0500
+Received: by mail-pl1-f193.google.com with SMTP id gn14so7687550plb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 21:26:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=zMjbNwai4X5aZOzNZudXvxQgZyFoEC0QJfTVp1MiBi8=;
-        b=dxO3AlJSUCM5dyyBrRVxh0UvSAOBd6M9NLvMDfJVPefxNjlxbaVjddUnA8zzgs69gs
-         PT1M5byVWdl0YW1UbOcm9cEeRRDVUr+PwqKeM6iLvRwagdc8tJIGO+0zvXSzAWRsZhL+
-         7PUCRfgpj9k3YSjM9W8FhW0uupdgx9TZUsYYM=
+        bh=/nTLIgGseWOiQFnfJ2urYFhfk+Cnu3uIXaabzTdR4g0=;
+        b=gPfU2k/T9XvE2bCzWh/EvSCqBUqc/RZAMXtLNvt+/eY1Q2Ju2Jhd4lTUugRp8VDLgm
+         f1b+x9ozhbIsOWu098aqk7ITH2vkKqxrBhL+bl0dZx7MwWm2l47tINLfmzhpx99X/1gX
+         PqCTtmRidntuQa2k3Fhq1x5zFZ3h8G6SK7bv4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zMjbNwai4X5aZOzNZudXvxQgZyFoEC0QJfTVp1MiBi8=;
-        b=YSuIU7vFqBC/O+FEnAGLZ44Ui4OzRRxsJvb8WfFp9y1uvN3zwCiBoMuCKPDhxJXWco
-         Ey2ziwmNAr+ZD0SmFJDXgaKtmn0Xt83RHliTQ9af5qGYt1je3E4/TcVR3uxGKD8A1zcV
-         rX87ZYU7IRMVKr76xqpz7JALz7uH/H4HLiLXacOBhjE3AYemj3tqcKhJzKBKf4mlmJR1
-         xejJ/zroXPwRBA3I33+p2FO11tFN9bs3tesU+RRuEJagbn+05JFLI0enHyphVEpSSbR8
-         +NaszeVWh36z4gOrbMl74bGLfl5TKQaNWatVfvFZWeBSHt0bjTl3Z9ulNSV1VXi/pyCX
-         lkmA==
-X-Gm-Message-State: AA+aEWb/O3FVfLr8VuDJxSIC7AAoclKrOwKMyEDL5AANi6l6rcc1zKKu
-        T7Lf2IVLMfSk9sa3zTbNX6U0zQ==
-X-Google-Smtp-Source: AFSGD/XsprKJmjqmezQSeRibNlhH6yj7jFt1YCKe37l96Jla0hz7OKwpdm9PaiVHCSLTFZ+KQ70+ng==
-X-Received: by 2002:a17:902:108a:: with SMTP id c10mr19032295pla.131.1543901156723;
-        Mon, 03 Dec 2018 21:25:56 -0800 (PST)
+        bh=/nTLIgGseWOiQFnfJ2urYFhfk+Cnu3uIXaabzTdR4g0=;
+        b=VlUEq0fc+KPxrHdrXERjb9wxQV6taGAoFQadLDe/kaeatACsZu2SjYX5aedxUC48tf
+         DU8MBTAzKodIbsxFSW52iXfK8s1ML5y2GNdIkBMze4ck88JXqAxEmU3i+WCLFyXeMRoX
+         3ouV45PunBfc2EjzlGrT/hHLi5En+YpvgN9+c1uBEcjo7CN1Mit9ypUxIp7IsEeLzDfH
+         aEgvx5W2aLsf5R0W4X1u+cHrO+a7q1+6mVrEuAGYVF+rEKaPdmnWY7QYWyYpB1s9/5dV
+         RdXkXa4JydjBOSt0gGnu/gtGACB4erijuZM6b1Sq/qZ7rHIpBFoZAzyVbQaY2ugPTSGm
+         rJnQ==
+X-Gm-Message-State: AA+aEWa91uucYEpspqcxwgBC7jyWJOIqPWA1aus/qWDIRR4bM7/AniTU
+        KTnrsPDlvZqj7ZT6NZAUAGB0rA==
+X-Google-Smtp-Source: AFSGD/USd2gi+wFlRoCufS6Pv5zNFyt8QgVHYDkuOvo7gqI+BL2XViE5YqDo/PMj3agyASisODeoQQ==
+X-Received: by 2002:a17:902:4c85:: with SMTP id b5mr17914640ple.226.1543901203288;
+        Mon, 03 Dec 2018 21:26:43 -0800 (PST)
 Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id k15sm23912701pfb.147.2018.12.03.21.25.55
+        by smtp.gmail.com with ESMTPSA id z62sm23509917pfi.4.2018.12.03.21.26.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Dec 2018 21:25:56 -0800 (PST)
-Date:   Tue, 4 Dec 2018 10:55:53 +0530
+        Mon, 03 Dec 2018 21:26:42 -0800 (PST)
+Date:   Tue, 4 Dec 2018 10:56:40 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Rajendra Nayak <rnayak@codeaurora.org>
 Cc:     robh@kernel.org, sboyd@kernel.org, andy.gross@linaro.org,
         ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 7/8] arm64: dts: sdm845: Add rpmh powercontroller node
-Message-ID: <20181204052553.shutq6azgl2bqc5v@vireshk-i7>
+Subject: Re: [PATCH v5 8/8] soc: qcom: rpmhpd: Mark mx as a parent for cx
+Message-ID: <20181204052640.ix2tschgffhy3tp7@vireshk-i7>
 References: <20181204052119.806-1-rnayak@codeaurora.org>
- <20181204052119.806-8-rnayak@codeaurora.org>
+ <20181204052119.806-9-rnayak@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181204052119.806-8-rnayak@codeaurora.org>
+In-Reply-To: <20181204052119.806-9-rnayak@codeaurora.org>
 User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -78,12 +77,25 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 04-12-18, 10:51, Rajendra Nayak wrote:
-> Add the DT node for the rpmhpd powercontroller.
+> Specify the active + sleep and active-only MX power domains as
+> the parents of the corresponding CX power domains. This will ensure that
+> performance state requests on CX automatically generate equivalent requests
+> on MX power domains.
+> 
+> This is used to enforce a requirement that exists for various
+> hardware blocks on SDM845 that MX performance state >= CX performance
+> state for a given operating frequency.
 > 
 > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 51 ++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
+> This patch is dependent on the series from
+> Viresh [1] which adds support to propogate performance states across the
+> power domain hierarchy which is still being reviewed.
+> 
+> [1] https://lkml.org/lkml/2018/11/26/333
+> 
+>  drivers/soc/qcom/rpmhpd.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
