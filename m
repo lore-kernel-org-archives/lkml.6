@@ -4,49 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BE2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952F7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6492B2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 584052087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUnwQGBK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6492B2087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOs3eJxV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584052087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbeLDLJv (ORCPT
+        id S1728226AbeLDLKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:09:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59636 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:10:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728846AbeLDLJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:09:43 -0500
+        id S1728835AbeLDLJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:09:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D7A82087F;
-        Tue,  4 Dec 2018 11:09:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C49C2082D;
+        Tue,  4 Dec 2018 11:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921783;
-        bh=H+hY3NS9MiYccex1e5HlBnjizWnrGCr7apg0iUxT3QY=;
+        s=default; t=1543921785;
+        bh=QBvMVvZrpB85GkgsTNxgdbQ0qEDWT69jMzDWAiSvSdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nUnwQGBK+7btAmvKDeTAAdkuqDpoj9T6l8dfkSC1x+WxaHGiBgb2Dwag72NmC6J8f
-         xGIZ+0k2Fb/hHtGFFfGPZf8W7r90pe704bIydPvSsVCP+9wUgkWmqdaBTxh7lTTyZ/
-         Ocj25c/t567PUU/T5mLEMeW/SDTou1Z8J1roHj5Q=
+        b=qOs3eJxVDxlL/acC8TowJMZgwcO+njUKr9m78SF/5VUE9vhQnYmww+iKlaBaLwz/w
+         1Uo7Mzl9SplPAjzQmyg2BENOzadyOOmyn+aLlqDQYDtpowyDgfHoq32Z5/X3q+rfEi
+         Wu32vvmbbM3NsOH4FntWFaDvBS37w5RgFxnYk+oI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 47/50] ARM: trusted_foundations: do not use naked function
-Date:   Tue,  4 Dec 2018 11:50:42 +0100
-Message-Id: <20181204103716.838713183@linuxfoundation.org>
+        stable@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.9 38/50] Revert "usb: dwc3: gadget: skip Set/Clear Halt when invalid"
+Date:   Tue,  4 Dec 2018 11:50:33 +0100
+Message-Id: <20181204103716.410608794@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -65,70 +62,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-(commit 4ea7bdc6b5b33427bbd3f41c333e21c1825462a3 upstream)
+commit 38317f5c0f2faae5110854f36edad810f841d62f upstream.
 
-As documented in GCC naked functions should only use basic ASM
-syntax. The extended ASM or mixture of basic ASM and "C" code is
-not guaranteed. Currently this works because it was hard coded
-to follow and check GCC behavior for arguments and register
-placement.
+This reverts commit ffb80fc672c3a7b6afd0cefcb1524fb99917b2f3.
 
-Furthermore with clang using parameters in Extended asm in a
-naked function is not supported:
-  arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
-          references not allowed in naked functions
-                : "r" (type), "r" (arg1), "r" (arg2)
-                       ^
+Turns out that commit is wrong. Host controllers are allowed to use
+Clear Feature HALT as means to sync data toggle between host and
+periperal.
 
-Use a regular function to be more portable. This aligns also with
-the other SMC call implementations e.g. in qcom_scm-32.c and
-bcm_kona_smc.c.
-
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Cc: Stephen Warren <swarren@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/firmware/trusted_foundations.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/arch/arm/firmware/trusted_foundations.c
-@@ -31,21 +31,25 @@
+---
+ drivers/usb/dwc3/gadget.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1280,9 +1280,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
+ 		unsigned transfer_in_flight;
+ 		unsigned started;
  
- static unsigned long cpu_boot_addr;
+-		if (dep->flags & DWC3_EP_STALL)
+-			return 0;
+-
+ 		if (dep->number > 1)
+ 			trb = dwc3_ep_prev_trb(dep, dep->trb_enqueue);
+ 		else
+@@ -1307,8 +1304,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
+ 		else
+ 			dep->flags |= DWC3_EP_STALL;
+ 	} else {
+-		if (!(dep->flags & DWC3_EP_STALL))
+-			return 0;
  
--static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
-+static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
- {
-+	register u32 r0 asm("r0") = type;
-+	register u32 r1 asm("r1") = arg1;
-+	register u32 r2 asm("r2") = arg2;
-+
- 	asm volatile(
- 		".arch_extension	sec\n\t"
--		"stmfd	sp!, {r4 - r11, lr}\n\t"
-+		"stmfd	sp!, {r4 - r11}\n\t"
- 		__asmeq("%0", "r0")
- 		__asmeq("%1", "r1")
- 		__asmeq("%2", "r2")
- 		"mov	r3, #0\n\t"
- 		"mov	r4, #0\n\t"
- 		"smc	#0\n\t"
--		"ldmfd	sp!, {r4 - r11, pc}"
-+		"ldmfd	sp!, {r4 - r11}\n\t"
- 		:
--		: "r" (type), "r" (arg1), "r" (arg2)
--		: "memory");
-+		: "r" (r0), "r" (r1), "r" (r2)
-+		: "memory", "r3", "r12", "lr");
- }
- 
- static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 		ret = dwc3_send_clear_stall_ep_cmd(dep);
+ 		if (ret)
 
 
