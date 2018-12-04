@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE39DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54923C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8408B206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BFA8206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:18:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOteis7h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8408B206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBJClcVS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BFA8206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbeLDLSQ (ORCPT
+        id S1728042AbeLDLSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:18:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52448 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:18:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727498AbeLDLFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:01 -0500
+        id S1727464AbeLDLEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:04:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB7E1214DE;
-        Tue,  4 Dec 2018 11:04:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8D8621536;
+        Tue,  4 Dec 2018 11:04:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921500;
-        bh=r2n44vDXuK+OCgqdzVFCyD+kmnNaUtk1OsANnere2n8=;
+        s=default; t=1543921490;
+        bh=P3DcsHh+YyfBB3j+NwBJeIBpvLF0z6l3doyafipu+BE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IOteis7htA8xBwf9ZWWxOxSl2ZKtE4JvVI9GalzwaQgqvNjGZxAWB4XEO1nvkp5GI
-         Eiw3r/56Ssf3K1vrN/aATqxvUszG9lm9jMTH+BxEvigMr7vY1YwcJuSpS8lg1kQicQ
-         WzUWoBDVtWSmrxjWSkqZvXsZVUVUqUtqj7kqUwC0=
+        b=nBJClcVSJqUf23cvDibzWUXYwUCK5MIli0EZRApCM+Z87e0DTVmjj4X8r+4zOKPPC
+         YC+88+UP7Ag5C0qf0zWSscgJBM77jIyStCB4AwLpMzqY3h5schfIapkQrc0LYA09eb
+         tVeCcDHD7HAq0/UliUn8IUB2naCqFLuWdINgV7YU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 094/146] x86/speculataion: Mark command line parser data __initdata
-Date:   Tue,  4 Dec 2018 11:49:40 +0100
-Message-Id: <20181204103730.608655742@linuxfoundation.org>
+Subject: [PATCH 4.14 091/146] x86/l1tf: Show actual SMT state
+Date:   Tue,  4 Dec 2018 11:49:37 +0100
+Message-Id: <20181204103730.492796584@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -83,9 +83,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 30ba72a990f5096ae08f284de17986461efcc408 upstream
+commit 130d6f946f6f2a972ee3ec8540b7243ab99abe97 upstream
 
-No point to keep that around.
+Use the now exposed real SMT state, not the SMT sysfs control knob
+state. This reflects the state of the system when the mitigation status is
+queried.
+
+This does not change the warning in the VMX launch code. There the
+dependency on the control knob makes sense because siblings could be
+brought online anytime after launching the VM.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -109,31 +115,30 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.893886356@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185004.613357354@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -247,7 +247,7 @@ static const struct {
- 	const char *option;
- 	enum spectre_v2_mitigation_cmd cmd;
- 	bool secure;
--} mitigation_options[] = {
-+} mitigation_options[] __initdata = {
- 	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
- 	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
- 	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
-@@ -483,7 +483,7 @@ static const char * const ssb_strings[]
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
--} ssb_mitigation_options[] = {
-+} ssb_mitigation_options[]  __initdata = {
- 	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
- 	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
- 	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
+@@ -829,13 +829,14 @@ static ssize_t l1tf_show_state(char *buf
+ 
+ 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
+ 	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
+-	     cpu_smt_control == CPU_SMT_ENABLED))
++	     sched_smt_active())) {
+ 		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
+ 			       l1tf_vmx_states[l1tf_vmx_mitigation]);
++	}
+ 
+ 	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
+ 		       l1tf_vmx_states[l1tf_vmx_mitigation],
+-		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
++		       sched_smt_active() ? "vulnerable" : "disabled");
+ }
+ #else
+ static ssize_t l1tf_show_state(char *buf)
 
 
