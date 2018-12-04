@@ -2,173 +2,150 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BB1C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB36C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91DF22082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:21:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91DF22082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id A790D20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:21:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oTXkq8vW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A790D20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbeLDUVE (ORCPT
+        id S1726186AbeLDUVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:21:04 -0500
-Received: from fieldses.org ([173.255.197.46]:49174 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbeLDUVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:21:04 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 446941C22; Tue,  4 Dec 2018 15:21:03 -0500 (EST)
-Date:   Tue, 4 Dec 2018 15:21:03 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/23 - V5] NFS: Remove generic RPC credentials.
-Message-ID: <20181204202103.GD3903@fieldses.org>
-References: <154379689752.28598.6750646657534626618.stgit@noble>
+        Tue, 4 Dec 2018 15:21:48 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52727 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDUVs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:21:48 -0500
+Received: by mail-it1-f196.google.com with SMTP id i7so17634620iti.2;
+        Tue, 04 Dec 2018 12:21:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sE5QIdCwlHZodoyWz/2AASxLZxGSkRr6fPg+cim71HY=;
+        b=oTXkq8vWtwVKp/2ca5frpM2+0Y2ThcUJnviM0V1cGM+68GZBmATKywfpydMXuVZ41O
+         bKPb+zBWpeo7yAgGe75M5MsPDO5omt/EwDc/LhKeQwknx+KlnfJ2N0dI0fuUvaZmggt/
+         aRpVio1G3i+Bix9v/+qtz1dGAuxT+T2cdigdiyljzhoVdctJjDgDj1rk4f8fj5IPMy0v
+         D+IPX6pSIz8f2YtugLDwdEIMq4rzXvZtRhMpTmaA8+kq7NC1lZe5v9B/8jtImUTpjDDG
+         knEjjiAgLEDMms5osX0uMne0r/4Tu6clxIzPY6ndyGb71M2i8904WwSYa5aXhFn/LxlT
+         bFNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sE5QIdCwlHZodoyWz/2AASxLZxGSkRr6fPg+cim71HY=;
+        b=UckbIUOTsjhNTOrZ6wiMee4moVK2UhlEHf5wXb8Xk52Z1ZjBzCrIMs3z1pEnSp8k4H
+         uimxBwLX56KLx6DLph9OrTzmMZ1QpDS6r5uirY6ptEa9d5WSEqJoncgURRO0u5AH/PBK
+         +Wk/uo9GDwDiI2rkEbncBjQh/jgAqjAj/WpYJ1Ref/h2f6wuq1/4OThoNxdtahPW9o+W
+         FJvnWHVMRrNKz/hmjDEuGYLjRz1Vc1PbVR5ti6PTY7Gp9QT4rV0bsfAZVgP0ODOOjGa7
+         ZpUUQtU1quqMcKy0KTwn1LEhha3c2obVXhJsIIBavXrZYBoknn1C1vkxWD55LJEa+j4m
+         zHTg==
+X-Gm-Message-State: AA+aEWZ4ZuRqNzGFk7chZ9EczBCQRjCxCQGTSM4Y17sr48BI3G8VliBl
+        3gBLC691lMszXNaAeBaUNRINEve02HikZyQroo8=
+X-Google-Smtp-Source: AFSGD/WXH8ujjh18r5cpBnhi+Tl9d8YtagAP6wp534BOYsVTeKHCAz0YkVVxvN03S371Y/XXCZMStk/U61r/huLA9Ss=
+X-Received: by 2002:a24:5314:: with SMTP id n20mr12051408itb.132.1543954907130;
+ Tue, 04 Dec 2018 12:21:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154379689752.28598.6750646657534626618.stgit@noble>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20181204165604.19462-1-robert.foss@collabora.com>
+In-Reply-To: <20181204165604.19462-1-robert.foss@collabora.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Tue, 4 Dec 2018 15:21:35 -0500
+Message-ID: <CAF6AEGt+SJPoTChr=zn+g8Vth_F_D39EmWGXpo3qbsUgL=638A@mail.gmail.com>
+Subject: Re: [RESEND PATCH v3] drm/msm: Move fence put to where failure occurs
+To:     Robert Foss <robert.foss@collabora.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 11:30:30AM +1100, NeilBrown wrote:
-> This is the same series as posted on 07 November, modified slightly
-> to match some recent code changes upstream - nothing substantial.
-> 
-> General description:
-> 
-> There doesn't seem to be a maintainer for the 'cred' code, so I don't
-> know who to ask to approve the first 4 patches.  Maybe if the NFS
-> team like them, they can just go to Linus with a note for him to look
-> at them if he wants to.
+On Tue, Dec 4, 2018 at 11:56 AM Robert Foss <robert.foss@collabora.com> wrote:
+>
+> If dma_fence_wait fails to wait for a supplied in-fence in
+> msm_ioctl_gem_submit, make sure we release that in-fence.
+>
+> Also remove this dma_fence_put() from the 'out' label.
+>
+> Signed-off-by: Robert Foss <robert.foss@collabora.com>
+> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: stable@vger.kernel.org
 
-For what it's worth: all my usual tests still pass with this series
-applied.  And the nfsd (and common) parts are unlikely to conflict with
-anything of mine.
+Fyi, this is queued up in msm-next/fixes
 
-Otherwise: sounds like a reasonable idea, but I haven't gotten a chance
-to review the patches in any detail.
+BR,
+-R
 
---b.
 
-> 
-> The original motivation for this was performance.  In some
-> circumstances the cred caches can get big and particularly can get
-> long chains.  The hash function has been changed at least once to
-> improve the hashing and it still isn't perfect.
-> Rather than improving pruning of the cache, or resizing the hashtable
-> etc, it is easiest to just get rid of it.
-> 
-> As well as discarding generic credentials completely (using 'struct
-> cred' instead), we also stop storing AUTH_UNIX credentials in a hash
-> table - that brings no value.  Just allocate as needed and discard
-> when finished with.
-> So the only hash table will still have is for AUTH_GSS.
-> One of the main triggers for hashtable problems was users changing
-> groups a lot, so there would be many entries for the one user, each
-> with a different set of groups.  That doesn't apply for
-> AUTH_GSS as the groupids on the client are ignored.
-> 
-> That was the original motivation, but as I worked on it, I realized
-> that it was making a log of code simpler.
-> 
->  44 files changed, 550 insertions(+), 925 deletions(-)
-> 
-> That is sufficient motivation in itself I think.
-> 
-> Thanks,
-> NeilBrown
-> 
-> 
 > ---
-> 
-> NeilBrown (23):
->       cred: add cred_fscmp() for comparing creds.
->       cred: add get_cred_rcu()
->       cred: export get_task_cred().
->       cred: allow get_cred() and put_cred() to be given NULL.
->       SUNRPC: add 'struct cred *' to auth_cred and rpc_cred
->       SUNRPC: remove groupinfo from struct auth_cred.
->       SUNRPC: remove uid and gid from struct auth_cred
->       SUNRPC: remove machine_cred field from struct auth_cred
->       NFSv4: add cl_root_cred for use when machine cred is not available.
->       NFSv4: don't require lock for get_renew_cred or get_machine_cred
->       SUNRPC: discard RPC_DO_ROOTOVERRIDE()
->       NFS/SUNRPC: don't lookup machine credential until rpcauth_bindcred().
->       SUNRPC: introduce RPC_TASK_NULLCREDS to request auth_none
->       SUNRPC: add side channel to use non-generic cred for rpc call.
->       NFS: move credential expiry tracking out of SUNRPC into NFS.
->       SUNRPC: remove RPCAUTH_AUTH_NO_CRKEY_TIMEOUT
->       NFS: change access cache to use 'struct cred'.
->       NFS: struct nfs_open_dir_context: convert rpc_cred pointer to cred.
->       NFS/NFSD/SUNRPC: replace generic creds with 'struct cred'.
->       SUNRPC: remove generic cred code.
->       SUNRPC: remove crbind rpc_cred operation
->       SUNRPC: simplify auth_unix.
->       SUNRPC discard cr_uid from struct rpc_cred.
-> 
-> 
->  fs/lockd/clntproc.c                       |    6 -
->  fs/nfs/blocklayout/blocklayout.c          |    2 
->  fs/nfs/client.c                           |    9 -
->  fs/nfs/delegation.c                       |   28 +--
->  fs/nfs/delegation.h                       |   10 -
->  fs/nfs/dir.c                              |   59 ++----
->  fs/nfs/flexfilelayout/flexfilelayout.c    |   64 +++---
->  fs/nfs/flexfilelayout/flexfilelayout.h    |    8 -
->  fs/nfs/flexfilelayout/flexfilelayoutdev.c |   16 +-
->  fs/nfs/inode.c                            |   13 +
->  fs/nfs/internal.h                         |    8 -
->  fs/nfs/nfs3proc.c                         |    4 
->  fs/nfs/nfs4_fs.h                          |   65 +++---
->  fs/nfs/nfs4client.c                       |    4 
->  fs/nfs/nfs4proc.c                         |  150 +++++++--------
->  fs/nfs/nfs4renewd.c                       |    9 -
->  fs/nfs/nfs4session.c                      |    5 
->  fs/nfs/nfs4state.c                        |  129 ++++++-------
->  fs/nfs/pagelist.c                         |    2 
->  fs/nfs/pnfs.c                             |   14 +
->  fs/nfs/pnfs.h                             |   10 -
->  fs/nfs/pnfs_dev.c                         |    4 
->  fs/nfs/pnfs_nfs.c                         |    2 
->  fs/nfs/proc.c                             |    2 
->  fs/nfs/unlink.c                           |   15 -
->  fs/nfs/write.c                            |   24 ++
->  fs/nfsd/nfs4callback.c                    |   31 +--
->  fs/nfsd/state.h                           |    2 
->  include/linux/cred.h                      |   26 ++-
->  include/linux/nfs_fs.h                    |   13 +
->  include/linux/nfs_fs_sb.h                 |    2 
->  include/linux/nfs_xdr.h                   |   16 +-
->  include/linux/sunrpc/auth.h               |   51 -----
->  include/linux/sunrpc/clnt.h               |    1 
->  include/linux/sunrpc/sched.h              |    6 -
->  kernel/cred.c                             |   58 ++++++
->  net/sunrpc/Makefile                       |    2 
->  net/sunrpc/auth.c                         |  116 ++++++-----
->  net/sunrpc/auth_generic.c                 |  293 -----------------------------
->  net/sunrpc/auth_gss/auth_gss.c            |   47 +----
->  net/sunrpc/auth_null.c                    |    4 
->  net/sunrpc/auth_unix.c                    |  110 +++--------
->  net/sunrpc/clnt.c                         |   26 +--
->  net/sunrpc/sched.c                        |    5 
->  44 files changed, 551 insertions(+), 920 deletions(-)
->  delete mode 100644 net/sunrpc/auth_generic.c
-> 
+>  drivers/gpu/drm/msm/msm_gem_submit.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
+> index a90aedd6883a..d5e6665a4c8f 100644
+> --- a/drivers/gpu/drm/msm/msm_gem_submit.c
+> +++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+> @@ -411,7 +411,6 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+>         struct msm_file_private *ctx = file->driver_priv;
+>         struct msm_gem_submit *submit;
+>         struct msm_gpu *gpu = priv->gpu;
+> -       struct dma_fence *in_fence = NULL;
+>         struct sync_file *sync_file = NULL;
+>         struct msm_gpu_submitqueue *queue;
+>         struct msm_ringbuffer *ring;
+> @@ -444,6 +443,8 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+>         ring = gpu->rb[queue->prio];
+>
+>         if (args->flags & MSM_SUBMIT_FENCE_FD_IN) {
+> +               struct dma_fence *in_fence;
+> +
+>                 in_fence = sync_file_get_fence(args->fence_fd);
+>
+>                 if (!in_fence)
+> @@ -453,11 +454,13 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+>                  * Wait if the fence is from a foreign context, or if the fence
+>                  * array contains any fence from a foreign context.
+>                  */
+> -               if (!dma_fence_match_context(in_fence, ring->fctx->context)) {
+> +               ret = 0;
+> +               if (!dma_fence_match_context(in_fence, ring->fctx->context))
+>                         ret = dma_fence_wait(in_fence, true);
+> -                       if (ret)
+> -                               return ret;
+> -               }
+> +
+> +               dma_fence_put(in_fence);
+> +               if (ret)
+> +                       return ret;
+>         }
+>
+>         ret = mutex_lock_interruptible(&dev->struct_mutex);
+> @@ -583,8 +586,6 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+>         }
+>
+>  out:
+> -       if (in_fence)
+> -               dma_fence_put(in_fence);
+>         submit_cleanup(submit);
+>         if (ret)
+>                 msm_gem_submit_free(submit);
 > --
-> Signature
+> 2.17.1
+>
