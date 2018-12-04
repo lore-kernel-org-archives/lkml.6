@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850ACC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DA5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4604C2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:23:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C44A620851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:23:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Enf95dN3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4604C2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDHH0NXy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44A620851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeLDLXW (ORCPT
+        id S1727699AbeLDLXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:23:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:23:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbeLDLBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:01:47 -0500
+        id S1726800AbeLDLBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:01:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FD422146D;
-        Tue,  4 Dec 2018 11:01:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E300B214DA;
+        Tue,  4 Dec 2018 11:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921306;
-        bh=yYQjijM7Ej61OxHyeUbINRz8g2bmcLkIzyUSSjNd+RA=;
+        s=default; t=1543921301;
+        bh=HWu89UGAFas5KYp3chri0s1MMfgiiecjE34/Dj4FKmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Enf95dN32nxLrhalFqGYWJu44ONYfO2pWyxDJj9hoowL5fgRkitLUdTU+ZRdfJRfy
-         ENh7hF9lazTL8IiTFwzJFHviFRUBEbDEgSBEayeHX/RkmhrvtdO+Fg4T25Yp4SZen2
-         owPqFbobyvuJgcsmFfa0GdpVTmUTPVP6lMjVyFRM=
+        b=UDHH0NXyDrtinZTmFk07DI/ck8GXC1Tc3kQschk4xORRdMwfPOrpDJ1fT61XbIkoN
+         ZOYXFdTa3APkrX80J4BmY0vQ0/bdorJG4Dn3ulevvao4AHFr5xZCCVA0S85sjDt/bs
+         JOZhOZMI/a5Ddk3GZjQj5Vpbqkr9atURfJYszQXg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Lesokhin <ilyal@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 020/146] tls: Add function to update the TLS socket configuration
-Date:   Tue,  4 Dec 2018 11:48:26 +0100
-Message-Id: <20181204103727.605356968@linuxfoundation.org>
+Subject: [PATCH 4.14 019/146] bpf: Prevent memory disambiguation attack
+Date:   Tue,  4 Dec 2018 11:48:25 +0100
+Message-Id: <20181204103727.568190251@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,126 +65,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 6d88207fcfddc002afe3e2e4a455e5201089d5d9 upstream.
+commit af86ca4e3088fe5eacf2f7e58c01fa68ca067672 upstream.
 
-The tx configuration is now stored in ctx->tx_conf.
-And sk->sk_prot is updated trough a function
-This will simplify things when we add rx
-and support for different possible
-tx and rx cross configurations.
+Detect code patterns where malicious 'speculative store bypass' can be used
+and sanitize such patterns.
 
-Signed-off-by: Ilya Lesokhin <ilyal@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ 39: (bf) r3 = r10
+ 40: (07) r3 += -216
+ 41: (79) r8 = *(u64 *)(r7 +0)   // slow read
+ 42: (7a) *(u64 *)(r10 -72) = 0  // verifier inserts this instruction
+ 43: (7b) *(u64 *)(r8 +0) = r3   // this store becomes slow due to r8
+ 44: (79) r1 = *(u64 *)(r6 +0)   // cpu speculatively executes this load
+ 45: (71) r2 = *(u8 *)(r1 +0)    // speculatively arbitrary 'load byte'
+                                 // is now sanitized
+
+Above code after x86 JIT becomes:
+ e5: mov    %rbp,%rdx
+ e8: add    $0xffffffffffffff28,%rdx
+ ef: mov    0x0(%r13),%r14
+ f3: movq   $0x0,-0x48(%rbp)
+ fb: mov    %rdx,0x0(%r14)
+ ff: mov    0x0(%rbx),%rdi
+103: movzbq 0x0(%rdi),%rsi
+
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bwh: Backported to 4.14:
+ - Add bpf_verifier_env parameter to check_stack_write()
+ - Look up stack slot_types with state->stack_slot_type[] rather than
+   state->stack[].slot_type[]
+ - Drop bpf_verifier_env argument to verbose()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/tls.h  |  2 ++
- net/tls/tls_main.c | 46 ++++++++++++++++++++++++++++++++--------------
- 2 files changed, 34 insertions(+), 14 deletions(-)
+ include/linux/bpf_verifier.h |  1 +
+ kernel/bpf/verifier.c        | 62 +++++++++++++++++++++++++++++++++---
+ 2 files changed, 59 insertions(+), 4 deletions(-)
 
-diff --git a/include/net/tls.h b/include/net/tls.h
-index 86ed3dd80fe7..0c3ab2af74d3 100644
---- a/include/net/tls.h
-+++ b/include/net/tls.h
-@@ -89,6 +89,8 @@ struct tls_context {
- 
- 	void *priv_ctx;
- 
-+	u8 tx_conf:2;
-+
- 	u16 prepend_size;
- 	u16 tag_size;
- 	u16 overhead_size;
-diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index 4f2971f528db..191a8adee3ea 100644
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -46,8 +46,18 @@ MODULE_DESCRIPTION("Transport Layer Security Support");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_ALIAS_TCP_ULP("tls");
- 
--static struct proto tls_base_prot;
--static struct proto tls_sw_prot;
-+enum {
-+	TLS_BASE_TX,
-+	TLS_SW_TX,
-+	TLS_NUM_CONFIG,
-+};
-+
-+static struct proto tls_prots[TLS_NUM_CONFIG];
-+
-+static inline void update_sk_prot(struct sock *sk, struct tls_context *ctx)
-+{
-+	sk->sk_prot = &tls_prots[ctx->tx_conf];
-+}
- 
- int wait_on_pending_writer(struct sock *sk, long *timeo)
- {
-@@ -364,8 +374,8 @@ static int do_tls_setsockopt_tx(struct sock *sk, char __user *optval,
- {
- 	struct tls_crypto_info *crypto_info, tmp_crypto_info;
- 	struct tls_context *ctx = tls_get_ctx(sk);
--	struct proto *prot = NULL;
- 	int rc = 0;
-+	int tx_conf;
- 
- 	if (!optval || (optlen < sizeof(*crypto_info))) {
- 		rc = -EINVAL;
-@@ -422,11 +432,12 @@ static int do_tls_setsockopt_tx(struct sock *sk, char __user *optval,
- 
- 	/* currently SW is default, we will have ethtool in future */
- 	rc = tls_set_sw_offload(sk, ctx);
--	prot = &tls_sw_prot;
-+	tx_conf = TLS_SW_TX;
- 	if (rc)
- 		goto err_crypto_info;
- 
--	sk->sk_prot = prot;
-+	ctx->tx_conf = tx_conf;
-+	update_sk_prot(sk, ctx);
- 	goto out;
- 
- err_crypto_info:
-@@ -488,7 +499,9 @@ static int tls_init(struct sock *sk)
- 	icsk->icsk_ulp_data = ctx;
- 	ctx->setsockopt = sk->sk_prot->setsockopt;
- 	ctx->getsockopt = sk->sk_prot->getsockopt;
--	sk->sk_prot = &tls_base_prot;
-+
-+	ctx->tx_conf = TLS_BASE_TX;
-+	update_sk_prot(sk, ctx);
- out:
- 	return rc;
- }
-@@ -499,16 +512,21 @@ static struct tcp_ulp_ops tcp_tls_ulp_ops __read_mostly = {
- 	.init			= tls_init,
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index a3333004fd2b..8458cc5fbce5 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -113,6 +113,7 @@ struct bpf_insn_aux_data {
+ 		struct bpf_map *map_ptr;	/* pointer for call insn into lookup_elem */
+ 	};
+ 	int ctx_field_size; /* the ctx field size for load insn, maybe 0 */
++	int sanitize_stack_off; /* stack slot to be cleared */
+ 	bool seen; /* this insn was processed by the verifier */
  };
  
-+static void build_protos(struct proto *prot, struct proto *base)
-+{
-+	prot[TLS_BASE_TX] = *base;
-+	prot[TLS_BASE_TX].setsockopt = tls_setsockopt;
-+	prot[TLS_BASE_TX].getsockopt = tls_getsockopt;
-+
-+	prot[TLS_SW_TX] = prot[TLS_BASE_TX];
-+	prot[TLS_SW_TX].close		= tls_sk_proto_close;
-+	prot[TLS_SW_TX].sendmsg		= tls_sw_sendmsg;
-+	prot[TLS_SW_TX].sendpage	= tls_sw_sendpage;
-+}
-+
- static int __init tls_register(void)
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 013b0cd1958e..f6755fd5bae2 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -717,8 +717,9 @@ static bool is_spillable_regtype(enum bpf_reg_type type)
+ /* check_stack_read/write functions track spill/fill of registers,
+  * stack boundary and alignment are checked in check_mem_access()
+  */
+-static int check_stack_write(struct bpf_verifier_state *state, int off,
+-			     int size, int value_regno)
++static int check_stack_write(struct bpf_verifier_env *env,
++			     struct bpf_verifier_state *state, int off,
++			     int size, int value_regno, int insn_idx)
  {
--	tls_base_prot			= tcp_prot;
--	tls_base_prot.setsockopt	= tls_setsockopt;
--	tls_base_prot.getsockopt	= tls_getsockopt;
--
--	tls_sw_prot			= tls_base_prot;
--	tls_sw_prot.sendmsg		= tls_sw_sendmsg;
--	tls_sw_prot.sendpage            = tls_sw_sendpage;
--	tls_sw_prot.close               = tls_sk_proto_close;
-+	build_protos(tls_prots, &tcp_prot);
+ 	int i, spi = (MAX_BPF_STACK + off) / BPF_REG_SIZE;
+ 	/* caller checked that off % size == 0 and -MAX_BPF_STACK <= off < 0,
+@@ -738,8 +739,32 @@ static int check_stack_write(struct bpf_verifier_state *state, int off,
+ 		state->spilled_regs[spi] = state->regs[value_regno];
+ 		state->spilled_regs[spi].live |= REG_LIVE_WRITTEN;
  
- 	tcp_register_ulp(&tcp_tls_ulp_ops);
+-		for (i = 0; i < BPF_REG_SIZE; i++)
++		for (i = 0; i < BPF_REG_SIZE; i++) {
++			if (state->stack_slot_type[MAX_BPF_STACK + off + i] == STACK_MISC &&
++			    !env->allow_ptr_leaks) {
++				int *poff = &env->insn_aux_data[insn_idx].sanitize_stack_off;
++				int soff = (-spi - 1) * BPF_REG_SIZE;
++
++				/* detected reuse of integer stack slot with a pointer
++				 * which means either llvm is reusing stack slot or
++				 * an attacker is trying to exploit CVE-2018-3639
++				 * (speculative store bypass)
++				 * Have to sanitize that slot with preemptive
++				 * store of zero.
++				 */
++				if (*poff && *poff != soff) {
++					/* disallow programs where single insn stores
++					 * into two different stack slots, since verifier
++					 * cannot sanitize them
++					 */
++					verbose("insn %d cannot access two stack slots fp%d and fp%d",
++						insn_idx, *poff, soff);
++					return -EINVAL;
++				}
++				*poff = soff;
++			}
+ 			state->stack_slot_type[MAX_BPF_STACK + off + i] = STACK_SPILL;
++		}
+ 	} else {
+ 		/* regular write of data into stack */
+ 		state->spilled_regs[spi] = (struct bpf_reg_state) {};
+@@ -1216,7 +1241,8 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
+ 				verbose("attempt to corrupt spilled pointer on stack\n");
+ 				return -EACCES;
+ 			}
+-			err = check_stack_write(state, off, size, value_regno);
++			err = check_stack_write(env, state, off, size,
++						value_regno, insn_idx);
+ 		} else {
+ 			err = check_stack_read(state, off, size, value_regno);
+ 		}
+@@ -4270,6 +4296,34 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 		else
+ 			continue;
+ 
++		if (type == BPF_WRITE &&
++		    env->insn_aux_data[i + delta].sanitize_stack_off) {
++			struct bpf_insn patch[] = {
++				/* Sanitize suspicious stack slot with zero.
++				 * There are no memory dependencies for this store,
++				 * since it's only using frame pointer and immediate
++				 * constant of zero
++				 */
++				BPF_ST_MEM(BPF_DW, BPF_REG_FP,
++					   env->insn_aux_data[i + delta].sanitize_stack_off,
++					   0),
++				/* the original STX instruction will immediately
++				 * overwrite the same stack slot with appropriate value
++				 */
++				*insn,
++			};
++
++			cnt = ARRAY_SIZE(patch);
++			new_prog = bpf_patch_insn_data(env, i + delta, patch, cnt);
++			if (!new_prog)
++				return -ENOMEM;
++
++			delta    += cnt - 1;
++			env->prog = new_prog;
++			insn      = new_prog->insnsi + i + delta;
++			continue;
++		}
++
+ 		if (env->insn_aux_data[i + delta].ptr_type != PTR_TO_CTX)
+ 			continue;
  
 -- 
 2.17.1
