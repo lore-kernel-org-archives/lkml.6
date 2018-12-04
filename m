@@ -2,50 +2,50 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B91BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6371CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76C32146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 292BD2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="08V/3eWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76C32146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/gAf2+U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292BD2087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbeLDKz2 (ORCPT
+        id S1726262AbeLDKz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:55:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38204 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:55:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbeLDKzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:55:24 -0500
+        id S1726235AbeLDKz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:55:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E36C82146D;
-        Tue,  4 Dec 2018 10:55:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F00B2087F;
+        Tue,  4 Dec 2018 10:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920924;
-        bh=jXUTERnY2tceFqicq0ziEg34xm8fPQoLcYpTfL7ezjo=;
+        s=default; t=1543920927;
+        bh=mHqSdb1sRaTSztctvQ6+kxA7XEI7sUxjb4lYWnmPJNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=08V/3eWURJV2IsRsN1DPRKd+ZO3wruBfBpzl27F++JE2I3/PNqiNiTaCemjtSSgSO
-         3klxFicOXhVOxCrL1L+kdxFOnB5868YmijHdINTjBoLgHc2PjFsmuYcr2Jefj8oimD
-         NRrALqXiZztQRQvhtLIJNngSqdxkeNcdv1xLsQwE=
+        b=Q/gAf2+USxCSDYsMoNIJjqDyp9wr815ktwhPmpK5VmcZQCo+WV12WN5yXO4fAqWXG
+         fMB6WkPZNnYYS1MQ0NbG5N4r/o4+SDpEfTHi4EqjuMOhmpkIokB5CNT9AOnlXZ6wTR
+         9Q0drkZ5SEyiSvu+aeL9+mW4yKeT96OziVOFMex0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Fiedler <andreas.fiedler@gmx.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 013/139] net: gemini: Fix copy/paste error
-Date:   Tue,  4 Dec 2018 11:48:14 +0100
-Message-Id: <20181204103650.532332859@linuxfoundation.org>
+Subject: [PATCH 4.19 014/139] net: thunderx: set tso_hdrs pointer to NULL in nicvf_free_snd_queue
+Date:   Tue,  4 Dec 2018 11:48:15 +0100
+Message-Id: <20181204103650.569624672@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -64,31 +64,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Fiedler <andreas.fiedler@gmx.net>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 07093b76476903f820d83d56c3040e656fb4d9e3 ]
+[ Upstream commit ef2a7cf1d8831535b8991459567b385661eb4a36 ]
 
-The TX stats should be started with the tx_stats_syncp,
-there seems to be a copy/paste error in the driver.
+Reset snd_queue tso_hdrs pointer to NULL in nicvf_free_snd_queue routine
+since it is used to check if tso dma descriptor queue has been previously
+allocated. The issue can be triggered with the following reproducer:
 
-Signed-off-by: Andreas Fiedler <andreas.fiedler@gmx.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+$ip link set dev enP2p1s0v0 xdpdrv obj xdp_dummy.o
+$ip link set dev enP2p1s0v0 xdpdrv off
+
+[  341.467649] WARNING: CPU: 74 PID: 2158 at mm/vmalloc.c:1511 __vunmap+0x98/0xe0
+[  341.515010] Hardware name: GIGABYTE H270-T70/MT70-HD0, BIOS T49 02/02/2018
+[  341.521874] pstate: 60400005 (nZCv daif +PAN -UAO)
+[  341.526654] pc : __vunmap+0x98/0xe0
+[  341.530132] lr : __vunmap+0x98/0xe0
+[  341.533609] sp : ffff00001c5db860
+[  341.536913] x29: ffff00001c5db860 x28: 0000000000020000
+[  341.542214] x27: ffff810feb5090b0 x26: ffff000017e57000
+[  341.547515] x25: 0000000000000000 x24: 00000000fbd00000
+[  341.552816] x23: 0000000000000000 x22: ffff810feb5090b0
+[  341.558117] x21: 0000000000000000 x20: 0000000000000000
+[  341.563418] x19: ffff000017e57000 x18: 0000000000000000
+[  341.568719] x17: 0000000000000000 x16: 0000000000000000
+[  341.574020] x15: 0000000000000010 x14: ffffffffffffffff
+[  341.579321] x13: ffff00008985eb27 x12: ffff00000985eb2f
+[  341.584622] x11: ffff0000096b3000 x10: ffff00001c5db510
+[  341.589923] x9 : 00000000ffffffd0 x8 : ffff0000086868e8
+[  341.595224] x7 : 3430303030303030 x6 : 00000000000006ef
+[  341.600525] x5 : 00000000003fffff x4 : 0000000000000000
+[  341.605825] x3 : 0000000000000000 x2 : ffffffffffffffff
+[  341.611126] x1 : ffff0000096b3728 x0 : 0000000000000038
+[  341.616428] Call trace:
+[  341.618866]  __vunmap+0x98/0xe0
+[  341.621997]  vunmap+0x3c/0x50
+[  341.624961]  arch_dma_free+0x68/0xa0
+[  341.628534]  dma_direct_free+0x50/0x80
+[  341.632285]  nicvf_free_resources+0x160/0x2d8 [nicvf]
+[  341.637327]  nicvf_config_data_transfer+0x174/0x5e8 [nicvf]
+[  341.642890]  nicvf_stop+0x298/0x340 [nicvf]
+[  341.647066]  __dev_close_many+0x9c/0x108
+[  341.650977]  dev_close_many+0xa4/0x158
+[  341.654720]  rollback_registered_many+0x140/0x530
+[  341.659414]  rollback_registered+0x54/0x80
+[  341.663499]  unregister_netdevice_queue+0x9c/0xe8
+[  341.668192]  unregister_netdev+0x28/0x38
+[  341.672106]  nicvf_remove+0xa4/0xa8 [nicvf]
+[  341.676280]  nicvf_shutdown+0x20/0x30 [nicvf]
+[  341.680630]  pci_device_shutdown+0x44/0x88
+[  341.684720]  device_shutdown+0x144/0x250
+[  341.688640]  kernel_restart_prepare+0x44/0x50
+[  341.692986]  kernel_restart+0x20/0x68
+[  341.696638]  __se_sys_reboot+0x210/0x238
+[  341.700550]  __arm64_sys_reboot+0x24/0x30
+[  341.704555]  el0_svc_handler+0x94/0x110
+[  341.708382]  el0_svc+0x8/0xc
+[  341.711252] ---[ end trace 3f4019c8439959c9 ]---
+[  341.715874] page:ffff7e0003ef4000 count:0 mapcount:0 mapping:0000000000000000 index:0x4
+[  341.723872] flags: 0x1fffe000000000()
+[  341.727527] raw: 001fffe000000000 ffff7e0003f1a008 ffff7e0003ef4048 0000000000000000
+[  341.735263] raw: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+[  341.742994] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+
+where xdp_dummy.c is a simple bpf program that forwards the incoming
+frames to the network stack (available here:
+https://github.com/altoor/xdp_walkthrough_examples/blob/master/sample_1/xdp_dummy.c)
+
+Fixes: 05c773f52b96 ("net: thunderx: Add basic XDP support")
+Fixes: 4863dea3fab0 ("net: Adding support for Cavium ThunderX network controller")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cortina/gemini.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/cavium/thunder/nicvf_queues.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/cortina/gemini.c
-+++ b/drivers/net/ethernet/cortina/gemini.c
-@@ -661,7 +661,7 @@ static void gmac_clean_txq(struct net_de
+--- a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
++++ b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
+@@ -585,10 +585,12 @@ static void nicvf_free_snd_queue(struct
+ 	if (!sq->dmem.base)
+ 		return;
  
- 			u64_stats_update_begin(&port->tx_stats_syncp);
- 			port->tx_frag_stats[nfrags]++;
--			u64_stats_update_end(&port->ir_stats_syncp);
-+			u64_stats_update_end(&port->tx_stats_syncp);
- 		}
- 	}
+-	if (sq->tso_hdrs)
++	if (sq->tso_hdrs) {
+ 		dma_free_coherent(&nic->pdev->dev,
+ 				  sq->dmem.q_len * TSO_HEADER_SIZE,
+ 				  sq->tso_hdrs, sq->tso_hdrs_phys);
++		sq->tso_hdrs = NULL;
++	}
  
+ 	/* Free pending skbs in the queue */
+ 	smp_rmb();
 
 
