@@ -2,119 +2,123 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A1EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFADC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7903214DB
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:13:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="CBpAX5YT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7903214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 4DC9D20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:13:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC9D20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hofr.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbeLDMN2 (ORCPT
+        id S1726237AbeLDMN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:13:28 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38285 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeLDMN2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:13:28 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h50so13733473ede.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 04:13:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cjSBotlwPXIdOSz3cx3MyeIiqni03SjzQng+PW93z8I=;
-        b=CBpAX5YTOicQ88aIzbVM3Ros8aZ1Ipeu1CwRf/ejI1jnaP9ABzZ6HPpAxsVLrro8yz
-         ihvm4KwEuH4OoqM6VEnh+Egb19kD/j93N83lxdKzhlPeBB30qVKBMhY1LSbkBHTzyBx6
-         I0TsHqPTsWN2FNMbte56NqDhGCPQGiUBw0A+A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=cjSBotlwPXIdOSz3cx3MyeIiqni03SjzQng+PW93z8I=;
-        b=O8Pj0WblTE1nu1x6ydoAx1g4XbbAF0M2zGHKa6MOtsi3AcpzIR8UKyyC7gAKQQydNE
-         cawiPyMp6hYJApmOvcg5PuZ5dLDw9zlBaNPBXpYwrd1gaJLYYEcrbxJNw74Lg1RWbhDS
-         IHGy4Qw38U3DCg1kvAupJu8kJ+5l1K9aciOuB3IoNtwDf93oOVceMooHdKBwM89DcXRY
-         pXe3W1VCJNSwDMe11R0xP40a80778znlE0Cv1Km9MI9BX8YC1qdhScfXkfx5tL6g9NDl
-         D+TFD+W0VIwAuIJvtMzd/PVT2XRHn9TLy4rd7EaqDCSxUVRoWyk6gJCMF76QIL0HUdBW
-         oyvw==
-X-Gm-Message-State: AA+aEWZFPz5RoYvw7p8diTQ8KF1SIpqw6BmeSeyqAsY35x83WJAfjpAl
-        PwPoFnKAGrDuNiGEje3S/ED5Jw==
-X-Google-Smtp-Source: AFSGD/WCFH5i7k5FCv+tA2CISlpSzFnZwA2qLN47NhIs/VaC+l648DHQzc8rh8ADOQ7V9z9hNbgFxw==
-X-Received: by 2002:a17:906:655:: with SMTP id t21-v6mr15057458ejb.81.1543925606253;
-        Tue, 04 Dec 2018 04:13:26 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id a38sm4802328edd.44.2018.12.04.04.13.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 04:13:25 -0800 (PST)
-Date:   Tue, 4 Dec 2018 13:13:23 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Bobroff <sbobroff@linux.ibm.com>
-Cc:     daniel@ffwll.ch, airlied@redhat.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] drm/ast: Fix connector leak during driver unload
-Message-ID: <20181204121323.GC21184@phenom.ffwll.local>
-Mail-Followup-To: Sam Bobroff <sbobroff@linux.ibm.com>, airlied@redhat.com,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1543798395.git.sbobroff@linux.ibm.com>
- <1e613f3c630c7bbc72e04a44b178259b9164d2f6.1543798395.git.sbobroff@linux.ibm.com>
+        Tue, 4 Dec 2018 07:13:58 -0500
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:37813 "EHLO
+        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726143AbeLDMN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 07:13:57 -0500
+Received: by mail.osadl.at (Postfix, from userid 1001)
+        id 768415C0FF8; Tue,  4 Dec 2018 12:13:18 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 13:13:18 +0100
+From:   Nicholas Mc Guire <der.herr@hofr.at>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] i2c: mux: demux-pinctrl: handle failure case of
+ devm_kstrdup()
+Message-ID: <20181204121318.GB28201@osadl.at>
+References: <1543658470-20887-1-git-send-email-hofrat@osadl.org>
+ <549eba3a-28b9-e4b0-f680-8fb51b160879@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e613f3c630c7bbc72e04a44b178259b9164d2f6.1543798395.git.sbobroff@linux.ibm.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <549eba3a-28b9-e4b0-f680-8fb51b160879@axentia.se>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 11:53:21AM +1100, Sam Bobroff wrote:
-> When unloading the ast driver, a warning message is printed by
-> drm_mode_config_cleanup() because a reference is still held to one of
-> the drm_connector structs.
+On Tue, Dec 04, 2018 at 11:16:59AM +0000, Peter Rosin wrote:
+> Hi!
 > 
-> Correct this by calling drm_crtc_force_disable_all() in
-> ast_fbdev_destroy().
+> This patch looks like a good idea. However, a nitpick below.
 > 
-> Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-> ---
-> v2 * Changed to use drm_crtc_force_disable_all().
+> On 2018-12-01 11:01, Nicholas Mc Guire wrote:
+> > devm_kstrdup() may return NULL if internal allocation failed.
+> > Thus using  name, value  is unsafe without being checked. As
+> > i2c_demux_pinctrl_probe() can return -ENOMEM in other cases
+> > a dev_err() message is included to make the failure location
+> > clear.
+> > 
+> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> > Fixes: e35478eac030 ("i2c: mux: demux-pinctrl: run properly with multiple instances")
+> > ---
+> > 
+> > Problem located with experimental coccinelle script
+> > 
+> > Q: The use of devm_kstrdup() seems a bit odd while technically not wrong,
+> >    personally I think devm_kasprintf() would be more suitable here.
+> > 
+> > Patch was compile tested with: multi_v7_defconfig 
+> > (implies I2C_DEMUX_PINCTRL=y)
+> > 
+> > Patch is against 4.20-rc4 (localversion-next is next-20181130)
+> > 
+> >  drivers/i2c/muxes/i2c-demux-pinctrl.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+> > index 035032e..c466999 100644
+> > --- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
+> > +++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+> > @@ -244,6 +244,12 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
+> >  
+> >  		props[i].name = devm_kstrdup(&pdev->dev, "status", GFP_KERNEL);
+> >  		props[i].value = devm_kstrdup(&pdev->dev, "ok", GFP_KERNEL);
+> > +		if (!props[i].name || !props[i].value) {
+> > +			dev_err(&pdev->dev,
+> > +				"chan %d name, value allocation failed\n", i);
+> 
+> Please drop this memory allocation failure message. You should get such a
+> message from devm_kstrdup.
+>
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+hm...tried to figure out where that message would be comming
+from - but I could not find any point in the call tree that
+would issue such a message ?
 
-> 
->  drivers/gpu/drm/ast/ast_fb.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
-> index 0cd827e11fa2..de26df0c6044 100644
-> --- a/drivers/gpu/drm/ast/ast_fb.c
-> +++ b/drivers/gpu/drm/ast/ast_fb.c
-> @@ -263,6 +263,7 @@ static void ast_fbdev_destroy(struct drm_device *dev,
->  {
->  	struct ast_framebuffer *afb = &afbdev->afb;
->  
-> +	drm_crtc_force_disable_all(dev);
->  	drm_fb_helper_unregister_fbi(&afbdev->helper);
->  
->  	if (afb->obj) {
-> -- 
-> 2.19.0.2.gcad72f5712
-> 
+ devm_kstrdup() 
+   -> devm_kmalloc()
+        -> alloc_dr()
+             --> kmalloc_track_caller() (non-NUMA)
+             |     -> __kmalloc_node()
+             |        -> __do_kmalloc_node()
+             `-> __kmalloc_node_track_caller() (NUMA)
+                   -> __do_kmalloc_node()
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+ __do_kmalloc_node() seems like it simply returns NULL but
+ issues no failure message.
+ Am I overlooking something ? 
+
+thx!
+hofrat 
+ 
+> Cheers,
+> Peter
+> 
+> > +			err = -ENOMEM;
+> > +			goto err_rollback;
+> > +		}
+> >  		props[i].length = 3;
+> >  
+> >  		of_changeset_init(&priv->chan[i].chgset);
+> > 
+> 
