@@ -2,90 +2,107 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF395C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A6BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD6BF20659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:17:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6BF20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9565520659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:17:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9565520659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbeLDQRt (ORCPT
+        id S1727217AbeLDQRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:17:49 -0500
-Received: from mga12.intel.com ([192.55.52.136]:54397 "EHLO mga12.intel.com"
+        Tue, 4 Dec 2018 11:17:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48730 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbeLDQRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:17:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 08:17:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,314,1539673200"; 
-   d="scan'208";a="122855727"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Dec 2018 08:17:44 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: [PATCH 2/2] x86/vdso: Remove a stale/misleading comment from the linker script
-Date:   Tue,  4 Dec 2018 08:17:41 -0800
-Message-Id: <20181204161741.12292-3-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181204161741.12292-1-sean.j.christopherson@intel.com>
-References: <20181204161741.12292-1-sean.j.christopherson@intel.com>
+        id S1726674AbeLDQRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:17:54 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 50F973082143;
+        Tue,  4 Dec 2018 16:17:53 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2918B1054FC9;
+        Tue,  4 Dec 2018 16:17:53 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 1E80A2208FC; Tue,  4 Dec 2018 11:17:47 -0500 (EST)
+Date:   Tue, 4 Dec 2018 11:17:47 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: overlayfs access checks on underlying layers
+Message-ID: <20181204161747.GC16818@redhat.com>
+References: <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+ <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
+ <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
+ <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
+ <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
+ <20181204151549.GA21509@redhat.com>
+ <20181204152248.GB21509@redhat.com>
+ <CAJfpegtFVvq286HAorGLg6ywMsfs51KqaQwFkcuV7Dtu8TLaLg@mail.gmail.com>
+ <20181204154243.GA16818@redhat.com>
+ <665ec6f3-f16d-681f-30d5-eface14c9808@tycho.nsa.gov>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <665ec6f3-f16d-681f-30d5-eface14c9808@tycho.nsa.gov>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 04 Dec 2018 16:17:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Once upon a time, vdso2c aggressively stripped data from the vDSO
-image when generating the final userspace image.  This included
-stripping the .altinstructions and .altinstr_replacement sections.
-Eventually, the stripping process reverted to "objdump -S" and no
-longer removed the aforementioned sections, but the comment remained.
+On Tue, Dec 04, 2018 at 11:05:46AM -0500, Stephen Smalley wrote:
+> On 12/4/18 10:42 AM, Vivek Goyal wrote:
+> > On Tue, Dec 04, 2018 at 04:31:09PM +0100, Miklos Szeredi wrote:
+> > > On Tue, Dec 4, 2018 at 4:22 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > 
+> > > > Having said that, this still create little anomaly when mknod to client
+> > > > is not allowed on context label. So a device file, which is on lower
+> > > > and client can not open it for read/write on host, it can now be opened
+> > > > for read/write because mounter will allow access. So why it is different
+> > > > that regular copy up. Well, in regular copy up, we created a copy of
+> > > > the original object and allowed writing to that object (cp --preserve=all)
+> > > > model. But in case of device file, writes will go to same original
+> > > > object. (And not a separate copy).
+> > > 
+> > > That's true.
+> > > 
+> > > In that sense copy up of special file should result in upper having
+> > > the same label as of lower, right?
+> > 
+> > I guess that might be reasonable (if this behavior is a concern). So even
+> > after copy up, client will not be able to read/write a device if it was
+> > not allowed on lower.
+> > 
+> > Stephen, what do you think about retaining label of lower for device
+> > files during copy up. What about socket/fifo.
+> 
+> We don't check client task access to the upper inode label, only to the
+> overlay, right?  So the client is still free to access the device through
+> the overlay even if we preserve the lower inode label on the upper inode?
+> What do we gain?
 
-Keeping the .alt* sections at the end of the PT_LOAD segment is no
-longer necessary, but there's no harm in doing so and it's a helpful
-reminder that they don't need to be included in the final vDSO image,
-i.e. someone may want to take another stab at zapping/stripping the
-unneeded sections.
+That's only with latest code and Miklos said he will revert it for 4.20.
 
-Fixes: da861e18eccc ("x86, vdso: Get rid of the fake section mechanism")
-Cc: Andy Lutomirski <luto@amacapital.net>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/entry/vdso/vdso-layout.lds.S | 5 -----
- 1 file changed, 5 deletions(-)
+IOW, I am assuming that we will continue to check access to a file
+on upper in the context of mounter. Otherwise, client will be able to access
+files on upper/ which even mounter can't access.
 
-diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
-index 0cedc905c8d6..93c6dc7812d0 100644
---- a/arch/x86/entry/vdso/vdso-layout.lds.S
-+++ b/arch/x86/entry/vdso/vdso-layout.lds.S
-@@ -65,11 +65,6 @@ SECTIONS
- 
- 	.text		: { *(.text*) }			:text	=0x90909090,
- 
--	/*
--	 * At the end so that eu-elflint stays happy when vdso2c strips
--	 * these.  A better implementation would avoid allocating space
--	 * for these.
--	 */
- 	.altinstructions	: { *(.altinstructions) }	:text
- 	.altinstr_replacement	: { *(.altinstr_replacement) }	:text
- 
--- 
-2.19.2
-
+Thanks
+Vivek
