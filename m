@@ -2,343 +2,105 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E6DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4518C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 560D52082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFFEE2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:53:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F2aR87bY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 560D52082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="ZZwnSbNG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFEE2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbeLDJxc (ORCPT
+        id S1726167AbeLDJxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:53:32 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39906 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeLDJxb (ORCPT
+        Tue, 4 Dec 2018 04:53:44 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:27753 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbeLDJxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:53:31 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181204095329euoutp01abe2a665752bc129bc0c86e6eb86f7df~tGIWenLhd2886828868euoutp01d
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 09:53:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181204095329euoutp01abe2a665752bc129bc0c86e6eb86f7df~tGIWenLhd2886828868euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1543917209;
-        bh=X11KD8/OnWuY3VZejmzvr+fMzr/vWkgerT/hAHvNABw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=F2aR87bYpgIqDcs5+cDUiMHybE987tRyM6wbNh6nHnIw/WoSzJwttr0wQzaoj3CIR
-         j7+O/MSa8LzfomFyVigI5rlrdB5CqXcsnfsYhTTFhvNI1M4YRCYTzuiVb7KB+UVv0F
-         11neoeepScZ3rnznYp0xtotnB11T/knm0hbS3mls=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181204095328eucas1p151fbacdbf340b22cb385b040b95167e4~tGIVgARhs0348503485eucas1p1a;
-        Tue,  4 Dec 2018 09:53:28 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 97.32.04294.89E460C5; Tue,  4
-        Dec 2018 09:53:28 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181204095327eucas1p2d50b5ff6000b959fbd6929ed26369292~tGIUxV0E92231822318eucas1p2F;
-        Tue,  4 Dec 2018 09:53:27 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181204095327eusmtrp1ea6b7ce8ef01de4e8eeecd1bc6ada374~tGIUhpg5f1349913499eusmtrp1g;
-        Tue,  4 Dec 2018 09:53:27 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-d6-5c064e98d9c7
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2B.53.04128.79E460C5; Tue,  4
-        Dec 2018 09:53:27 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181204095326eusmtip239a607085920ad679072e052515b4644~tGITn1MwD2938229382eusmtip2a;
-        Tue,  4 Dec 2018 09:53:26 +0000 (GMT)
-Subject: Re: [PATCH v2 2/5] devfreq: add support for suspend/resume of a
- devfreq device
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <7662d626-5c3e-aec5-05e4-c6cd2e56ef49@partner.samsung.com>
-Date:   Tue, 4 Dec 2018 10:53:25 +0100
+        Tue, 4 Dec 2018 04:53:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1543917222;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=fV6Oq88QW84WgDR4XQNS7Mjr7KzgOPfnxos1rNZEUog=;
+        b=ZZwnSbNG/yYFEpVCab8W9hB69MOwJ0QNbpI3XqyTRT2j0Jr4sc3lwn/xcT9broOB0Q
+        JJFwXLxuH3T/u4I0FM+AbcQVJ7TVf9nnv3NdbWexyFA5S9DRspBQDZ/eqHElDmqSqym3
+        vWdXM134e17EksgimHPKZw8DHsfoTHqRQKYzR9IWvR/7tl1BoRGtx2qaMAnDqIWeLlop
+        orpnX8gNv5H53sW+08FrYN9lDzPO4DTWfUW8t83YcRyF0ueN/e/yAjF6lvGipRzlErJ9
+        hJUuOiEjMUKSCc/n/LUuhNe6Tt7aHrJYxF0VXSIwsgtfAflQFeJGdfke8rpWjWDiCL1r
+        xAEQ==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkOjkRqsj0YvdYw8SBQvk+g3Fshzw=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:1027:9d07:f327:cfc7]
+        by smtp.strato.de (RZmta 44.6 AUTH)
+        with ESMTPSA id 404b20uB49reYRW
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 4 Dec 2018 10:53:40 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20181114082314.8965-1-hch@lst.de> <20181127074253.GB30186@lst.de>
+ <87zhttfonk.fsf@concordia.ellerman.id.au>
+ <4d4e3cdd-d1a9-affe-0f63-45b8c342bbd6@xenosoft.de>
+ <20181129170351.GC27951@lst.de>
+ <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
+ <20181130105346.GB26765@lst.de>
+ <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
+ <20181130131056.GA5211@lst.de>
+ <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
+ <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
+Message-ID: <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
+Date:   Tue, 4 Dec 2018 10:53:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <5C061A57.7040002@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa2yLYRj1fveN8iqzJ+aS1AjDXCNvQsRE5IuE+GcYU/YZsXb02zAkakZr
-        bBMTqi4bI53uUpuulrLNahSd3dwvYzOXMENscYss1n4T+3fO85zznvMkr0Crz3DDhY36JMmg
-        1yZouGDGdetX3WTLEi5mamUmR6rLJpASi4MlV0q+s+Rx13uW5NTUsWRvnoMjtQd1JKutnSb1
-        9Zd4ci/1E0+sRysoUtr2iCX33ac40plRg4ilvpIiRTXNPLnwuJEiz/fkc6T57s0ev6+JJfsq
-        aniyv+ArSz41vGTmhYquqy5WLDxTiMSTxkZGPJz1DYl51z5QYqn9ACdWnS7kxcvnd4vdt3jR
-        +dDEiJlOOxLzC37wYmfpqKWqFcFz4qSEjVslw5S5a4I3vDTnUpufz9x+sCjMiK5HpKMgAfBM
-        OP9uD0pHwYIa5yOoTL3AKKQLgb21iVNIJ4Ly9GL0z9Le9YRWFjYEv80NvEI6evxnjYxfNQQv
-        h7t5bwOqodiHoKrKE3iLxvto6P7q7CGCwOFIKLdv8RtUeCHUZXQEIhgcDrcz2lg/DsHRYH5V
-        wCmawXDnxJtAQBCeCPdzn1F+TONQePYmpxePhr1lJwPBgFsE+GJLZZTeC+DAWQ+r4CHw0evk
-        FTwCfNmHejUy3DPbOQXvAtOd8l7NbLjhbWT9nWk8ARzuKco4ChznfJR/DHggPOkYrFQYCEdc
-        x2llrALzfrWiHg/OQw2UgoeBrfAYfxhprH0Os/Y5xtrnGOv/3FzE2FGolCzr4iV5ul7aFilr
-        dXKyPj5yXaKuFPX8Wl+3t6scuf+s9SAsIM0AlWU+G6NmtVvlFJ0HgUBrhqpejONi1Ko4bcoO
-        yZAYa0hOkGQPChMYTahqZ7+WlWocr02SNknSZsnwb0sJQcONyLY6z3Qz+u10i61fRIz24qDY
-        B1xxSqslCYccmZNarE+rfTqtaIZ6WVgc425t8S7eXp2VnRYdFbVi9tPasTn0ukfVsQtHjslQ
-        y4n15oo04rpd1t9s1YV7Jy0CMDUvDTc9jMz+8tlUETL2xCq3Y1YHMf5c357dVP06GX8vycQr
-        czWMvEE7LYI2yNq/0P2lJLEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsVy+t/xe7rT/dhiDH418Foc3KppsXHGelaL
-        7Ru/sVpc//Kc1WL+kXOsFs2L17NZnOnOteh//JrZ4vz5DewWZ5vesFvMmrKXyWLT42usFpd3
-        zWGz+Nx7hNFixvl9TBZrj9xlt1h6/SKTxe3GFWwWd08dBeo/fYnVonXvEXaLttUfWC3eXLjH
-        4iDusW33NlaPNfPWMHrMbrjI4jGh/xOjx+I9L5k8Nq3qZPPYP3cNu8fmJfUe/46xe2y52s7i
-        0bdlFaPHitXf2T0+b5IL4I3SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3
-        s0lJzcksSy3St0vQy7jXsYCp4LZJRfda6QbGA1pdjJwcEgImEq+/3GDuYuTiEBJYyijRN38e
-        C0RCTGLSvu3sELawxJ9rXWwQRa8ZJbrnzmcESQgLREqcWvwUrFtE4DSjxJTzp5hAHGaBVmaJ
-        l28XMUK07GOSuLLyMVCGg4NNQE9ix6pCkG5eATeJc71vwSaxCKhInOh9zApiiwpESJx9uY4R
-        okZQ4uTMJ2AncQpoS1xecIsJxGYWMJOYt/khM4QtLnHryXyouLxE89bZzBMYhWYhaZ+FpGUW
-        kpZZSFoWMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECEwv24793LKDsetd8CFGAQ5GJR7e
-        GU6sMUKsiWXFlbmHGCU4mJVEeO+oscUI8aYkVlalFuXHF5XmpBYfYjQFem4is5Rocj4w9eWV
-        xBuaGppbWBqaG5sbm1koifOeN6iMEhJITyxJzU5NLUgtgulj4uCUamDs3stlJXP4z/nL3yt3
-        zov9fX+/Y0Tdlgj9SB/lh1sNZ3s+mJZzRO2R2OFZ01bdEr2UmXvvoRrHo15btYApqnFBpRrX
-        ZtaXpUkanYzUVFnKt1z3t0yi8+s/6xx60pyqCjVeLClxWaG5KsbhscBiDuNgH8/Q1t3qv0oi
-        m0uUmf/PaMpLfXmmL1eJpTgj0VCLuag4EQAnXwwhRQMAAA==
-X-CMS-MailID: 20181204095327eucas1p2d50b5ff6000b959fbd6929ed26369292
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181203143131eucas1p217f22ac6d19682a54a57658a06980914
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181203143131eucas1p217f22ac6d19682a54a57658a06980914
-References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181203143131eucas1p217f22ac6d19682a54a57658a06980914@eucas1p2.samsung.com>
-        <1543847475-7600-3-git-send-email-l.luba@partner.samsung.com>
-        <5C06124B.5030409@samsung.com> <5C06140E.7010603@samsung.com>
-        <5C061A57.7040002@samsung.com>
+In-Reply-To: <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+On 04 December 2018 at 08:31AM, Christian Zigotzky wrote:
+> Hi All,
+>
+> Could you please test Christoph's kernel on your PASEMI and NXP 
+> boards? Download:
+>
+> 'git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.5 a'
+>
+> Thanks,
+> Christian
+>
+I successfully tested this kernel on a virtual e5500 QEMU machine today.
 
-On 12/4/18 7:10 AM, Chanwoo Choi wrote:
-> Hi Lukasz,
-> 
-> I add the comment about 'suspend_count'.
-> 
-> On 2018년 12월 04일 14:43, Chanwoo Choi wrote:
->> Hi,
->>
->> On 2018년 12월 04일 14:36, Chanwoo Choi wrote:
->>> Hi Lukasz,
->>>
->>> Looks good to me. But, I add the some comments.
->>> If you will fix it, feel free to add my tag:
->>> Reviewed-by: Chanwoo choi <cw00.choi@samsung.com>
->>
->> Sorry. Fix typo 'choi' to 'Choi' as following.
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>
->>>
->>> On 2018년 12월 03일 23:31, Lukasz Luba wrote:
->>>> The patch prepares devfreq device for handling suspend/resume
->>>> functionality.  The new fields will store needed information during this
->>>
->>> nitpick. Remove unneeded space. There are two spaces between '.' and 'The new'.
->>>
->>>> process.  Devfreq framework handles opp-suspend DT entry and there is no
->>>
->>> ditto.
->>>
->>>> need of modyfications in the drivers code.  It uses atomic variables to
->>>
->>> ditto.
->>>
->>>> make sure no race condition affects the process.
->>>>
->>>> The patch is based on earlier work by Tobias Jakobi.
->>>
->>> Please remove it from each patch description.
->>>
->>>>
->>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>> ---
->>>>   drivers/devfreq/devfreq.c | 51 +++++++++++++++++++++++++++++++++++++++--------
->>>>   include/linux/devfreq.h   |  7 +++++++
->>>>   2 files changed, 50 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>>> index a9fd61b..36bed24 100644
->>>> --- a/drivers/devfreq/devfreq.c
->>>> +++ b/drivers/devfreq/devfreq.c
->>>> @@ -316,6 +316,10 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
->>>>   			"Couldn't update frequency transition information.\n");
->>>>   
->>>>   	devfreq->previous_freq = new_freq;
->>>> +
->>>> +	if (devfreq->suspend_freq)
->>>> +		devfreq->resume_freq = cur_freq;
->>>> +
->>>>   	return err;
->>>>   }
->>>>   
->>>> @@ -667,6 +671,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>>>   	}
->>>>   	devfreq->max_freq = devfreq->scaling_max_freq;
->>>>   
->>>> +	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
->>>> +	atomic_set(&devfreq->suspend_count, 0);
->>>> +
->>>>   	dev_set_name(&devfreq->dev, "devfreq%d",
->>>>   				atomic_inc_return(&devfreq_no));
->>>>   	err = device_register(&devfreq->dev);
->>>> @@ -867,14 +874,28 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
->>>>    */
->>>>   int devfreq_suspend_device(struct devfreq *devfreq)
->>>>   {
->>>> +	int ret;
->>>> +
->>>>   	if (!devfreq)
->>>>   		return -EINVAL;
->>>>   
->>>> -	if (!devfreq->governor)
->>>> -		return 0;
->>>> +	if (devfreq->governor) {
->>>> +		ret = devfreq->governor->event_handler(devfreq,
->>>> +					DEVFREQ_GOV_SUSPEND, NULL);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
->>>> +
->>>> +	if (devfreq->suspend_freq) {
->>>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
->>>> +			return 0;
->>>> +
->>>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
-> 
-> In this patch, if some users call 'devfreq_suspend_device' twice,
-> 'devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_SUSPEND, NULL)'
-> is called twice but devfreq_set_target() is called only one.
-> I knew that it is no problem for operation.
-> 
-> But,
-> I think that you better to use 'suspend_count' as the reference count
-> of devfreq_suspend/resume_device(). But, if you use 'suspend_count'
-> in order to check whether this devfreq is suspended or not,
-> we can reduce the unneeded redundant call when calling it twice.
-> 
-> clock and regulator used the 'reference count' method in order to
-> remove the redundant call.
+Command: ./qemu-system-ppc64 -M ppce500 -cpu e5500 -m 2048 -kernel 
+uImage-dma -drive 
+format=raw,file=MATE_PowerPC_Remix_2017_0.9.img,index=0,if=virtio -nic 
+user,model=e1000 -append "rw root=/dev/vda" -device virtio-vga -device 
+virtio-mouse-pci -device virtio-keyboard-pci -usb -soundhw es1370 -smp 4
 
-I think I've got the point. I will move the atomic check just
-after the !devfreq check. Something like the code bellow is what you
-would like to see?
----8<-----
-if (!devfreq)
-	return -EINVAL;
-if (atomic_inc_return(&devfreq->suspend_count) > 1)
-	return0;
+QEMU version 3.1.0.
 
----->8-------
-> 
-> 
->>>>   
->>>> -	return devfreq->governor->event_handler(devfreq,
->>>> -				DEVFREQ_GOV_SUSPEND, NULL);
->>>> +	return 0;
->>>>   }
->>>>   EXPORT_SYMBOL(devfreq_suspend_device);
->>>>   
->>>> @@ -888,14 +909,28 @@ EXPORT_SYMBOL(devfreq_suspend_device);
->>>>    */
->>>>   int devfreq_resume_device(struct devfreq *devfreq)
->>>>   {
->>>> +	int ret;
->>>> +
->>>>   	if (!devfreq)
->>>>   		return -EINVAL;
->>>>   
->>>> -	if (!devfreq->governor)
->>>> -		return 0;
->>>> +	if (devfreq->resume_freq) {
->>>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
->>>> +			return 0;
-> 
-> ditto.
-Same approach here:
----8<-----
-if (!devfreq)
-	return -EINVAL;
-if (atomic_dec_return(&devfreq->suspend_count) >= 1)
-	return 0;
----->8-------
+I don't know why this kernel doesn't recognize the hard disks connected 
+to my physical P5020 board and why the onboard ethernet on my PASEMI 
+board doesn't work. (dma_direct_map_page: overflow)
 
-Regards,
-Lukasz
-> 
->>>>   
->>>> -	return devfreq->governor->event_handler(devfreq,
->>>> -				DEVFREQ_GOV_RESUME, NULL);
->>>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
->>>> +
->>>> +	if (devfreq->governor) {
->>>> +		ret = devfreq->governor->event_handler(devfreq,
->>>> +					DEVFREQ_GOV_RESUME, NULL);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
->>>> +
->>>> +	return 0;
->>>>   }
->>>>   EXPORT_SYMBOL(devfreq_resume_device);
->>>>   
->>>> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
->>>> index e4963b0..d985199 100644
->>>> --- a/include/linux/devfreq.h
->>>> +++ b/include/linux/devfreq.h
->>>> @@ -131,6 +131,9 @@ struct devfreq_dev_profile {
->>>>    * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
->>>>    * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
->>>>    * @stop_polling:	 devfreq polling status of a device.
->>>> + * @suspend_freq:	 frequency of a device set during suspend phase.
->>>> + * @resume_freq:	 frequency of a device set in resume phase.
->>>> + * @suspend_count:	 suspend requests counter for a device.
->>>>    * @total_trans:	Number of devfreq transitions
->>>>    * @trans_table:	Statistics of devfreq transitions
->>>>    * @time_in_state:	Statistics of devfreq states
->>>> @@ -167,6 +170,10 @@ struct devfreq {
->>>>   	unsigned long scaling_max_freq;
->>>>   	bool stop_polling;
->>>>   
->>>> +	unsigned long suspend_freq;
->>>> +	unsigned long resume_freq;
->>>> +	atomic_t suspend_count;
->>>> +
->>>>   	/* information for device frequency transition */
->>>>   	unsigned int total_trans;
->>>>   	unsigned int *trans_table;
->>>>
->>>
->>>
->>
->>
-> 
-> 
+-- Christian
+
