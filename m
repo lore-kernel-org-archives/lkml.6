@@ -2,109 +2,120 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF760C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC25AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99BE1206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:38:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BE1206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8CE2D2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE2D2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbeLDWiE (ORCPT
+        id S1726276AbeLDWmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 17:38:04 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46350 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbeLDWiD (ORCPT
+        Tue, 4 Dec 2018 17:42:02 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42814 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeLDWmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:38:03 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 925FE9FA;
-        Tue,  4 Dec 2018 22:38:01 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 14:37:59 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Enke Chen <enkechen@cisco.com>
-Cc:     Dave Martin <Dave.Martin@arm.com>, Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
-        Stefan Strogin <sstrogin@cisco.com>
-Subject: Re: [PATCH v5 1/2] kernel/signal: Signal-based pre-coredump
- notification
-Message-Id: <20181204143759.fe24ee036a33000193339561@linux-foundation.org>
-In-Reply-To: <ad461da7-f0a6-7912-3201-e440dc372f89@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-        <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
-        <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
-        <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
-        <20181026082812.GA10581@redhat.com>
-        <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
-        <20181029111804.GA24820@redhat.com>
-        <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
-        <80e96710-f424-9b39-72ee-9cc7cbe7a5f7@cisco.com>
-        <20181128151911.GN3505@e103592.cambridge.arm.com>
-        <ad461da7-f0a6-7912-3201-e440dc372f89@cisco.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Dec 2018 17:42:01 -0500
+Received: by mail-oi1-f196.google.com with SMTP id w13so15806050oiw.9;
+        Tue, 04 Dec 2018 14:42:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Sfr36HrxhHVw9f8HvrebOpbNQ52taodGbinnnAtmJUI=;
+        b=SNYqcksd0ZU8izHk02r6pJUu/GaeubhIAWHzXpkGMmpMtQCgm184sxIZiQS9NQi3m1
+         l3J5SENp78hwsUaRm10ZjZkGncvs3sQxCRiWXuWltIpiXp0nl1+3485TjeXFMBqZIwAg
+         AEheBkyHbytL1KfZ9Fo+nCshJ3x5+tDwLA97Ms+LofUuYlAipPfz6zShqy77kYgIfA2U
+         VYUcERLumHoH4xB9PRXjXORvvUJZ4cZfGgRJhN7m31Oj+67SHaEsrnkRMlQx0//VOITQ
+         U6DfzTTzKc67oqoww8AtJUTz7I5jLJw3bbGlQHF1/dNnP+pSlyr2Lm+k0X9H83NOmyko
+         Rl0w==
+X-Gm-Message-State: AA+aEWYJVRqMo2hO5Kti/UQi7foC/7B+EFmD6FBYK7KgaQ7Lgui8E3lj
+        9pAUxBYL1Hb1dZAznvCd8g==
+X-Google-Smtp-Source: AFSGD/X1aFmNWQzmSBKfnDIbXg4mx+s6HHC1Zrh+lcuXc2nLmhy+b8TgkZVMjErkES5y2pMk9FPxsw==
+X-Received: by 2002:aca:1e17:: with SMTP id m23mr14119496oic.332.1543963320303;
+        Tue, 04 Dec 2018 14:42:00 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j33sm14907502ota.32.2018.12.04.14.41.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 14:41:59 -0800 (PST)
+Date:   Tue, 4 Dec 2018 16:41:58 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, rogerq@ti.com,
+        linux-kernel@vger.kernel.org, adouglas@cadence.com,
+        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
+        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com
+Subject: Re: [RFC PATCH v2 03/15] dt-bindings: add binding for USBSS-DRD
+ controller.
+Message-ID: <20181204224158.GA29726@bogus>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-4-git-send-email-pawell@cadence.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542535751-16079-4-git-send-email-pawell@cadence.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 16:15:35 -0800 Enke Chen <enkechen@cisco.com> wrote:
+On Sun, Nov 18, 2018 at 10:08:59AM +0000, Pawel Laszczak wrote:
+> Thsi patch aim at documenting USB related dt-bindings for the
 
-> Thanks for your comments. You have indeed missed some of the prior reviews
-> and discussions. But that is OK.
+typo
 
-This is why it is best to update the changelog in response to the
-review discussion - if person A was wondering about something then it
-is likely that person B will wonder about the same thing.  Take a
-reviewer's questioning as an indication that the changelog was lacking.
+> Cadence USBSS-DRD controller.
+> 
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  .../devicetree/bindings/usb/cdns3-usb.txt       | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/cdns3-usb.txt b/Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> new file mode 100644
+> index 000000000000..f9e953f32d47
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> @@ -0,0 +1,17 @@
+> +Binding for the Cadence USBSS-DRD controller
+> +
+> +Required properties:
+> +  - reg: Physical base address and size of the controller's register area.
 
-I'm not sure what to make of this patchset, really.  Oleg sounds
-unhappy and that's always a bad sign.  And signals are rather ugly
-things.  Oleg, can you please expand on your concerns?
+1 or 3 regions? If 3, what is each one and the order?
 
-The arguments against using connector aren't very compelling.  Sure,
-connector is hard to use from shell scripts but so are signals?  And is
-there much of a usecase for managing these things with shell scripts
-anyway?
+> +  - compatible: Should contain: "cdns,usb3"
 
-Has an eventfd implementation been considered?
+Only one version and one set of bugs?
 
-I'm sure we've added other kernel->userspace comminication schemes, but
-I can't immediately recall them all :(
+> +  - interrupts: Interrupt specifier. Refer to interrupt bindings.
 
+How many interrupts?
+
+> +
+> +
+> +Example:
+> +	cdns3@f3000000 {
+
+usb@...
+
+> +		compatible = "cdns,usb3";
+> +		interrupts = <USB_IRQ  7 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg = <0xf3000000 0x10000	//memory area for OTG/DRD registers
+> +			0xf3010000 0x10000	//memory area for HOST registers
+> +			0xf3020000 0x10000>;	//memory area for Device registers
+> +	};
+> +
+> -- 
+> 2.17.1
+> 
