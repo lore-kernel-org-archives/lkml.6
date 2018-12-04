@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A22C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA805C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF640214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CEA6214D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2csGMd/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF640214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2PDtq6oH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEA6214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeLDK7v (ORCPT
+        id S1727231AbeLDLAB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:59:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44820 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:00:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbeLDK7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:59:47 -0500
+        id S1727216AbeLDK76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:59:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9511214D9;
-        Tue,  4 Dec 2018 10:59:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E035E2087F;
+        Tue,  4 Dec 2018 10:59:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921187;
-        bh=+qon3sDx99rrMXoRx29FA0e69KBurroIWmKuiJ4bmy8=;
+        s=default; t=1543921197;
+        bh=qp3BCyQlgl/YmA1x5cli6I1ivIES6uDmxX0AXC047pQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C2csGMd/2vRz7Tyj3t4lP1eGLMbSD4UokTM6Y7y5/it2Klr7WiV0Aeljbe6eai6t3
-         kQoLSNurvPVsBXqjzGEngyhEEQpXcztJw4XJBapxohf34w9nLP0dopvMTNu7cVG1Vs
-         IpYTwuNtoOKWXs5Jn5QCcRs88WJLZXeC9Cx1/Eqo=
+        b=2PDtq6oHe2Be27Nykigro6KT//hLnyUhkBcCO4uKr70t91GRCA9SvbXdlkoRzTMES
+         pQBWfgEt4IVvbdf2s6DuD5vekg/g1d3dDP8Oabxr7Cxn1q1zn5hMJfopjFU2fYVDZN
+         trJKslt4gaOQt8nuD9bf8Rxkqg8Zpzi7b32iO/mA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.19 079/139] PCI: layerscape: Fix wrong invocation of outbound window disable accessor
-Date:   Tue,  4 Dec 2018 11:49:20 +0100
-Message-Id: <20181204103653.414387867@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.19 073/139] udf: Allow mounting volumes with incorrect identification strings
+Date:   Tue,  4 Dec 2018 11:49:14 +0100
+Message-Id: <20181204103653.085710497@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -63,34 +62,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+From: Jan Kara <jack@suse.cz>
 
-commit c6fd6fe9dea44732cdcd970f1130b8cc50ad685a upstream.
+commit b54e41f5efcb4316b2f30b30c2535cc194270373 upstream.
 
-The order of parameters is not correct when invoking the outbound
-window disable routine. Fix it.
+Commit c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+started to be more strict when checking whether converted strings are
+properly formatted. Sudip reports that there are DVDs where the volume
+identification string is actually too long - UDF reports:
 
-Fixes: 4a2745d760fa ("PCI: layerscape: Disable outbound windows configured by bootloader")
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-[lorenzo.pieralisi@arm.com: commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: stable@vger.kernel.org
+[  632.309320] UDF-fs: incorrect dstring lengths (32/32)
+
+during mount and fails the mount. This is mostly harmless failure as we
+don't need volume identification (and even less volume set
+identification) for anything. So just truncate the volume identification
+string if it is too long and replace it with 'Invalid' if we just cannot
+convert it for other reasons. This keeps slightly incorrect media still
+mountable.
+
+CC: stable@vger.kernel.org
+Fixes: c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+Reported-and-tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/dwc/pci-layerscape.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/udf/super.c   |   16 ++++++++++------
+ fs/udf/unicode.c |   14 +++++++++++---
+ 2 files changed, 21 insertions(+), 9 deletions(-)
 
---- a/drivers/pci/controller/dwc/pci-layerscape.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape.c
-@@ -88,7 +88,7 @@ static void ls_pcie_disable_outbound_atu
- 	int i;
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -831,16 +831,20 @@ static int udf_load_pvoldesc(struct supe
  
- 	for (i = 0; i < PCIE_IATU_NUM; i++)
--		dw_pcie_disable_atu(pcie->pci, DW_PCIE_REGION_OUTBOUND, i);
-+		dw_pcie_disable_atu(pcie->pci, i, DW_PCIE_REGION_OUTBOUND);
+ 
+ 	ret = udf_dstrCS0toChar(sb, outstr, 31, pvoldesc->volIdent, 32);
+-	if (ret < 0)
+-		goto out_bh;
+-
+-	strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
++	if (ret < 0) {
++		strcpy(UDF_SB(sb)->s_volume_ident, "InvalidName");
++		pr_warn("incorrect volume identification, setting to "
++			"'InvalidName'\n");
++	} else {
++		strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
++	}
+ 	udf_debug("volIdent[] = '%s'\n", UDF_SB(sb)->s_volume_ident);
+ 
+ 	ret = udf_dstrCS0toChar(sb, outstr, 127, pvoldesc->volSetIdent, 128);
+-	if (ret < 0)
++	if (ret < 0) {
++		ret = 0;
+ 		goto out_bh;
+-
++	}
+ 	outstr[ret] = 0;
+ 	udf_debug("volSetIdent[] = '%s'\n", outstr);
+ 
+--- a/fs/udf/unicode.c
++++ b/fs/udf/unicode.c
+@@ -351,6 +351,11 @@ try_again:
+ 	return u_len;
  }
  
- static int ls1021_pcie_link_up(struct dw_pcie *pci)
++/*
++ * Convert CS0 dstring to output charset. Warning: This function may truncate
++ * input string if it is too long as it is used for informational strings only
++ * and it is better to truncate the string than to refuse mounting a media.
++ */
+ int udf_dstrCS0toChar(struct super_block *sb, uint8_t *utf_o, int o_len,
+ 		      const uint8_t *ocu_i, int i_len)
+ {
+@@ -359,9 +364,12 @@ int udf_dstrCS0toChar(struct super_block
+ 	if (i_len > 0) {
+ 		s_len = ocu_i[i_len - 1];
+ 		if (s_len >= i_len) {
+-			pr_err("incorrect dstring lengths (%d/%d)\n",
+-			       s_len, i_len);
+-			return -EINVAL;
++			pr_warn("incorrect dstring lengths (%d/%d),"
++				" truncating\n", s_len, i_len);
++			s_len = i_len - 1;
++			/* 2-byte encoding? Need to round properly... */
++			if (ocu_i[0] == 16)
++				s_len -= (s_len - 1) & 2;
+ 		}
+ 	}
+ 
 
 
