@@ -5,100 +5,87 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB62C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F12FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE30F20672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:40:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE30F20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
+	by mail.kernel.org (Postfix) with ESMTP id 0B7A82082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:42:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B7A82082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbeLDOki (ORCPT
+        id S1726521AbeLDOmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:40:38 -0500
-Received: from ucol19pa09.eemsg.mail.mil ([214.24.24.82]:58287 "EHLO
-        ucol19pa09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbeLDOki (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:40:38 -0500
-X-EEMSG-check-008: 799472757|UCOL19PA09_EEMSG_MP7.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.56,314,1539648000"; 
-   d="scan'208";a="799472757"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by ucol19pa09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Dec 2018 14:40:36 +0000
-X-IronPort-AV: E=Sophos;i="5.56,314,1539648000"; 
-   d="scan'208";a="18399374"
-IronPort-PHdr: =?us-ascii?q?9a23=3AJwfqFBSU+UKq518HsGjQJ3y+rdpsv+yvbD5Q0Y?=
- =?us-ascii?q?Iujvd0So/mwa67YBWFt8tkgFKBZ4jH8fUM07OQ7/iwHzRYqb+681k6OKRWUB?=
- =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
- =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba9xIRmssQndqtQdjJd/JKo21h?=
- =?us-ascii?q?bHuGZDdf5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2?=
- =?us-ascii?q?Ao/8LrrgXMTRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VD?=
- =?us-ascii?q?K/5KpwVhTmlDkIOCI48GHPi8x/kqRboA66pxdix4LYeZyZOOZicq/Ye94VS3?=
- =?us-ascii?q?BBXsJMXCJfBI2yYZYEA+4YMepGs4Xxol0Dpga8CwaxHuPi0iJGiGH43aM60O?=
- =?us-ascii?q?ovHw/J0wMiEN0Sv3rZt8n1OaUIXOyp0KXFwzfOYvVL0jn98ojIdRUhrOmRU7?=
- =?us-ascii?q?Jsb8XR0UkvGB3Djl6NtILlOima1uAJs2eF7+trSOWii3U6pAFquTWv2scthZ?=
- =?us-ascii?q?XJhoIS0FzE8z55z5wvKd23T057f8epHZ1NvC+ZL4t7Wt4uTm5ntSogyrAKpI?=
- =?us-ascii?q?S3cDYFxZg53RLTdvqKeJWS7B35TuaeOzJ4iWpgeLK4mhm971Ctyvb5VsmoyF?=
- =?us-ascii?q?ZKqTdFksXUunANyRPT7s+HR+Nh/ki7wzaP1h3T6vpeLUAolavUN54hwrkqmp?=
- =?us-ascii?q?oVrUvDBTP5lF/zjK+XckUo4umo6+L5bbX6vpKQKoB5hw7kPqkuh8CzG/o0Pw?=
- =?us-ascii?q?cQU2SB5OiwzLjj8lf4QLVOgP02iK7ZsJXCKMQAu6G5GBRY0poj6hmjDzem18?=
- =?us-ascii?q?4UnX8cLF1fYh6HgI/pO0/WLPDiEfi/m0iskCtsx/3eJr3uGIjNLnzYnbf5Z7?=
- =?us-ascii?q?l99kpcxBM2zdBY4JJUEK8OLOjvVU/2sdzSFgU5PBCsw+b7FNV90ZsTVn+BA6?=
- =?us-ascii?q?CDNKPSql+I6/k1I+aSeYAVuCzyK+Q/6/Hyin85nEcXfbO10psPdHC4AvNmLl?=
- =?us-ascii?q?2cYXrtgdcBFWAKvhElQezxiVyNTyRTaGivUKI9/D07CJ+mB5/ZRo+xmLyBwD?=
- =?us-ascii?q?u7HppOa2BYBVCMFnfpeJ+AW/oXciKdPNJukjweWri9UYMuyRautAriwbp9Mu?=
- =?us-ascii?q?XU4jEYtY7k1NVt4O3TkBYy9SdyD8uHz26CUXp5nnkWSDAr3KBwu1B9xk2f3q?=
- =?us-ascii?q?h/hvxSDcZT6O9RUgcmKZ7cyPR3BMv8WgLAYNiJTEupQs69DDE/T9I+3dsObF?=
- =?us-ascii?q?tmG9q8lRDPxS2qA6Ual7aTHpw77rrc32TtJ8Z603vGz7Muj10mQ8pONWymgL?=
- =?us-ascii?q?Vy+BLVB4HUiUWZkKeqerkG0CHR82eDyHKEvFtEXw5oTaXFQXcfa1PSrdT44E?=
- =?us-ascii?q?PCUrCvBa0kMgRf086CLLVFatnygFVYS/fsJs7eb3iym2iuHxaIwK2DbI7wd2?=
- =?us-ascii?q?UaxiXdB1AOkxoP8naeKQg+GiChrnraDDxvE1Lvfkzt/fBjqHO9T080yAeKb0?=
- =?us-ascii?q?N617eu5B4ViuKTS+kJ0rIHpighsTN0E0i5397MDNqAvQVhdr1GYdwh+FdHyX?=
- =?us-ascii?q?7ZtwtlM5ykLqBigEMecgtus0PgzBV4F5tPkdY0o3Mu1wdyN62Y301bdz+C3p?=
- =?us-ascii?q?D/JKfXKm/s8xCrcaLW3Uve0NmO8KcV9Ps4s0njvB2uFkc66HVozd1V03qa5p?=
- =?us-ascii?q?XXAwsfSozxUkkp+Bhgvb3aYTcy55nS1XJyNam4qDjC28gmBLht9hH1R95CNO?=
- =?us-ascii?q?uhEwjoHoVOH8GzLMQykkWtKxcDO/pfsqUzOpXiP9eP3uaUNeJ7nHrygXtO5J?=
- =?us-ascii?q?t9+liB+yp1VqjD2JNTkN+C2Q7SbCvxlFestIjMnIlAYTwDVj6kxTPMGJ9aZq?=
- =?us-ascii?q?o0e50CT2ipPZvklZ1Fm5fxVisApxaYDFQc1ZrsIEDKYg=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BZAAD4kAZc/wHyM5BjGgEBAQEBAgEBAQEHAgEBAQGBZ?=
- =?us-ascii?q?YFbKYFoJ4N5lHMBAQEBAQEGgQgtiR+OPoFmOAGEQAKDTyI4EgEDAQEBAQEBA?=
- =?us-ascii?q?gFsKII2JAGCYgEFIwQRQRALGAICJgICVwYBDAYCAQGCXj+BdQ2kYnwzhUCEc?=
- =?us-ascii?q?4ELixMXeIEHgREngmuEagGDGoJXAokcEYZLN1CPSgmROwYYgVuINocViQaRT?=
- =?us-ascii?q?iGBVSsIAhgIIQ+DJ5B5IQMwgQUBAYpiAQE?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 04 Dec 2018 14:40:35 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wB4EeXvn019258;
-        Tue, 4 Dec 2018 09:40:34 -0500
-Subject: Re: overlayfs access checks on underlying layers
-To:     Paul Moore <paul@paul-moore.com>, Dan Walsh <dwalsh@redhat.com>
-Cc:     miklos@szeredi.hu, vgoyal@redhat.com, omosnace@redhat.com,
-        bfields@fieldses.org, salyzyn@android.com,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
- <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
- <20181127210542.GA2599@redhat.com>
- <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
- <20181128170302.GA12405@redhat.com>
- <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
- <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
- <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
- <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
- <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
- <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
- <f3a911a7-47eb-9922-a4be-25a834250e92@redhat.com>
- <CAHC9VhRcQdLRZoYi9g-MZzG8xPaNyFFX1nPppo7D93BTFQ6BZg@mail.gmail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <5b52869e-b979-dcf6-becf-a97b8ed33909@tycho.nsa.gov>
-Date:   Tue, 4 Dec 2018 09:43:15 -0500
+        Tue, 4 Dec 2018 09:42:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54352 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726042AbeLDOmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:42:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6073BAD52;
+        Tue,  4 Dec 2018 14:42:09 +0000 (UTC)
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
+ offline
+To:     Michal Hocko <mhocko@kernel.org>,
+        Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <1543892757-4323-1-git-send-email-kernelfans@gmail.com>
+ <20181204072251.GT31738@dhcp22.suse.cz>
+ <CAFgQCTv56drDBx-sTr6KdeQNKJnojG3g_a-k8wKe_q2y9w9NtA@mail.gmail.com>
+ <20181204085601.GC1286@dhcp22.suse.cz>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <ffd7160c-b5dc-364f-a5cd-ac3f16181ced@suse.cz>
+Date:   Tue, 4 Dec 2018 15:42:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRcQdLRZoYi9g-MZzG8xPaNyFFX1nPppo7D93BTFQ6BZg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181204085601.GC1286@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -106,142 +93,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/18 6:27 PM, Paul Moore wrote:
-> On Thu, Nov 29, 2018 at 5:22 PM Daniel Walsh <dwalsh@redhat.com> wrote:
->> On 11/29/18 2:47 PM, Miklos Szeredi wrote:
->>> On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
->>>
->>>> Possibly I misunderstood you, but I don't think we want to copy-up on
->>>> permission denial, as that would still allow the mounter to read/write
->>>> special files or execute regular files to which it would normally be
->>>> denied access, because the copy would inherit the context specified by
->>>> the mounter in the context mount case.  It still represents an
->>>> escalation of privilege for the mounter.  In contrast, the copy-up on
->>>> write behavior does not allow the mounter to do anything it could not do
->>>> already (i.e. read from the lower, write to the upper).
->>> Let's get this straight:  when file is copied up, it inherits label
->>> from context=, not from label of lower file?
->>
->> Yes, in the case of context mount, it will get the context mount directory.
->>
->> In the case of not context mount, it should maintain the label of  the
->> lower.
->>
->>> Next question: permission to change metadata is tied to permission to
->>> open?  Is it possible that open is denied, but metadata can be
->>> changed?
->>
->> Yes, SElinux handles open differently then setattr.  Although I am not
->> sure if any tools handle this.
->>
->>> DAC model allows this: metadata change is tied to ownership, not mode
->>> bits.   And different capability flag.
->>>
->>> If the same is true for MAC, then the pre-v4.20-rc1 is already
->>> susceptible to the privilege escalation you describe, right?
->>
->> After talking to Vivek, I am not sure their is a privilege escallation.
-> 
-> More on this below, but this thread doesn't have me convinced, and we
-> are at -rc5 right now.  We need to come to some decision on this soon
-> because we are running out of time before v4.20 is released with this
-> code.
-> 
->> For device nodes, the mounter has to have the ability to create the
->> devicenode with the context mount, if he can do this, then he can do it
->> with or without Overlay.  This might lead to users making mistakes on
->> security, but the model is sound. And I think this stands even in the
->> case of the lower is mounted NODEV and the upper is not.  If the mounter
->> can create a device on the upper with a particular label, then he does
->> not need the lower.
-> 
-> The problem I have when looking at the current code is that permission
-> is given, regardless of what is requested, for any special_file() on
-> an overlayfs mount.
-> 
-> It also looks like the mounter's creds are used when checking
-> permissions regardless of the file has been copied up or not; I would
-> expect that the mounter's permissions would only used when checking
-> permissions against the lower inode, no?
+On 12/4/18 9:56 AM, Michal Hocko wrote:
+>> The device's node num is 2. And in my case, I used nr_cpus param. Due
+>> to init_cpu_to_node() initialize all the possible node.  It is hard
+>> for me to figure out without this param, how zonelists is accessed
+>> before page allocator works.
+> I believe we should focus on this. Why does the node have no zonelist
+> even though all zonelists should be initialized already? Maybe this is
+> nr_cpus pecularity and we do not initialize all the existing numa nodes.
+> Or maybe the device is associated to a non-existing node with that
+> setup. A full dmesg might help us here.
 
-No, that's never been the model as far as I know.  mounter's permissions 
-are checked to the underlying inode, whether upper or lower.  client's 
-permissions are only checked to the overlay inode.  upper and lower are 
-logically backing store - upper for writes and lower for reads from 
-unmodified files.  Now, in theory, upper should always be labeled the 
-same as overlay, so client check against overlay should already imply 
-client access to upper, unless someone has manually relabeled upper 
-outside of the overlay.
+Yes, a full dmesg should contain line such as this one:
 
-   I think there is also some
-> weird behavior if the underlying inode only allows the mounter to
-> write (no read) and a write is requested at the overlayfs layer.  I'm
-> sure I'm missing some subtle thing with overlayfs, but why aren't we
-> doing something like the following:
-> 
->    int ovl_permission(...) {
-> 
->      if (!realinode) {
->        ...
->      }
-> 
->      err = generic_permission(inode, mask);
->      if (err)
->        return err;
-> 
->      if (upperinode) {
->        err = inode_permission(upperinode, mask);
->      } else {
->        // on the lower inode, always use the mounter's creds
->        old_cred = ovl_override_creds(...);
-> 
->        // check to see if we have the right perms first, if
->        // that fails switch to a read/copy-up check if we
->        // are doing a write (note: we are not bypassing the
->        // exec check, the task can change the metadata like
->        // every other fs)
->        err = inode_permission(lowerinode, mask);
->        if (err && (mask & (MAY_EXEC | MAY_APPEND))) {
->          // PM: my guess is that we also need to add a
->          // "&& !special_file(lowerinode)" to the conditional
->          // above because you can't copy-up a dev node in the
->          // normal sense, but we'll leave that as a discussion
->          // point for now...
->          // turn the write into a read (copy-up)
->          mask &= ~(MAY_WRITE | MAY_APPEND);
->          mask |= MAY_READ;
->          err = inode_permission(lowerinode, mask);
->        }
-> 
->        // reset the creds
->        revert_creds(old_cred);
->      }
-> 
->      return err;
->    }
-> 
->> For sockets, I see the case where a process is listening on the lower
->> level socket, the mounter mounts the overlay over the directory with the
->> socket.  Then the mounter changes the attributes of the socket,
->> performing a copy up.  If the mounter can not talk to the socket and the
->> other end is still listening, then this could be an issue.  If the
->> socket is no longer connected to the listener on the lower, then this is
->> not an issue.
->>
->> Similar for a FIFO.
-> 
-> See my comment "// PM: my guess ..." in the pseudo code above.  I
-> think the write->read permission mask conversion really should only
-> apply to normal files where you can do a copy-up.
-> 
->> With SELinux we are also always checking not only the file access to the
->> socker, but also checking whether the label of the client is able to
->> talk to the label of the server daemon.  So we are protected by a
->> secondary check.
-> 
-> That's making some assumptions on the LSM and the LSM's loaded policy
-> and is not something I would want to rely on.
+[    0.137407] Built 1 zonelists, mobility grouping on.  Total pages:
+6181664
 
-If you copy a socket or fifo and try to connect or open the copy, you 
-aren't going to get the same result as if you accessed the original. 
-Copy-up really makes no sense for those AFAICT.
+That should at least tell us if nr_cpus=X resulted in some node's
+zonelists not being built.
