@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28CBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F635C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8AD2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0244420851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:37:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ErFn7Utm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8AD2146D
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JBYGuptg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0244420851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbeLDBhA (ORCPT
+        id S1726118AbeLDBhE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:37:00 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17625 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbeLDBg6 (ORCPT
+        Mon, 3 Dec 2018 20:37:04 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14288 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeLDBhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:36:58 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c05da380000>; Mon, 03 Dec 2018 17:36:56 -0800
+        Mon, 3 Dec 2018 20:37:01 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c05da000001>; Mon, 03 Dec 2018 17:36:00 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 03 Dec 2018 17:36:56 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Dec 2018 17:37:00 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 03 Dec 2018 17:36:56 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 01:36:56 +0000
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 01:36:56 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 4 Dec 2018 01:36:56 +0000
+        by hqpgpgate101.nvidia.com on Mon, 03 Dec 2018 17:37:00 -0800
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 01:37:00 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 01:37:00 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 4 Dec 2018 01:37:00 +0000
 Received: from vdumpa-ubuntu.nvidia.com (Not Verified[172.17.173.140]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c05da380000>; Mon, 03 Dec 2018 17:36:56 -0800
+        id <B5c05da3b0003>; Mon, 03 Dec 2018 17:36:59 -0800
 From:   Krishna Reddy <vdumpa@nvidia.com>
 To:     <will.deacon@arm.com>, <robin.murphy@arm.com>, <joro@8bytes.org>
 CC:     <linux-arm-kernel@lists.infradead.org>,
@@ -53,9 +53,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <talho@nvidia.com>, <avanbrunt@nvidia.com>, <thomasz@nvidia.com>,
         <olof@lixom.net>, <jtukkinen@nvidia.com>, <mperttunen@nvidia.com>,
         Krishna Reddy <vdumpa@nvidia.com>
-Subject: [PATCH v3 2/6] iommu/arm-smmu: Add support to program multiple ARM SMMU's identically
-Date:   Mon, 3 Dec 2018 17:36:50 -0800
-Message-ID: <1543887414-18209-3-git-send-email-vdumpa@nvidia.com>
+Subject: [PATCH v3 4/6] iommu/tegra194_smmu: Add Tegra194 SMMU driver
+Date:   Mon, 3 Dec 2018 17:36:52 -0800
+Message-ID: <1543887414-18209-5-git-send-email-vdumpa@nvidia.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1543887414-18209-1-git-send-email-vdumpa@nvidia.com>
 References: <1543887414-18209-1-git-send-email-vdumpa@nvidia.com>
@@ -63,456 +63,468 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543887416; bh=s8JdRXlCfFf/VUjvXGNSRSzU2Q30F9CtI7YcJoh1QzI=;
+        t=1543887360; bh=rIZvAC1sl9qfrXg9Xiu6e6JAvlphVijY7Nwk+BRd0cA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=ErFn7UtmclIt02KWXZu69bBLvpQ0cpBH4GnIbyYcQGWPmdHIt/VnQQjjEsXjJP1fq
-         Bsb9Tn2Z5ZdceBZOlZYqPmIosUmCs1Tq8383DF2ZKzdjzlsnaaIs3TNztF6fp1Lnnl
-         eq5wbfCZQdtq8ieRyBR+ksVC1nfXt0SsVe/m8A0PvDe3FZ1d/G9qLpezA3a3tj1U55
-         f91b/ji3SaagDyaOCSjtfHkXJvcSr2pbfE2GVTdbdT2cE2oqPpMvOZl+pYfbO3cBwy
-         IFfXWzxgQ43RnAKr65VGmSE98HCqOQqHuAxcvSk0bfRUYlTy16iQEzkzGxdRqQyN9c
-         iG8Zh5JI9L8Ew==
+        b=JBYGuptg9aBwS6vOXWfLxcM3t7GpcIwtHYj+PQMRVks2joMZIhscJohjpgWdU7++Z
+         94kFeLOHl6ARLqrWALRzVVL+Ry3N22GSydniL73+53YP/3OyoOC4japrORrOmLeHi6
+         2rtOsiafHrn8wNSi/DgtLKkHVbnLRpiKj7MogHu4Di3I50LevW6CBRJVpI2kcV5cQY
+         d6TntCBeoFL+rJJ/ONyCflLTDGWYKSejdNJW2gHIGiTJ5LNcKj7OVsc9F/b2YFdfyk
+         dFsbZ+YG7xbpJwk28LX573t2w6YBfjwCxLn1YbEZByjZE2QEbwOKCI6s+lWW7rTCYT
+         6DmzbxOSN/C1Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to program multiple ARM SMMU's identically as one SMMU device.
-Tegra194 uses Two ARM SMMU's as one SMMU device and both ARM SMMU's need
-to be programmed identically.
+Tegra194 SMMU driver supports Dual ARM SMMU configuration
+necessary for Tegra194 SOC.
+The IOVA accesses from HW devices are interleaved across two
+ARM SMMU devices transparently.
 
 Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
 ---
- drivers/iommu/lib-arm-smmu.c | 191 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 144 insertions(+), 47 deletions(-)
+ drivers/iommu/Kconfig         |  11 ++
+ drivers/iommu/Makefile        |   1 +
+ drivers/iommu/tegra194-smmu.c | 394 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 406 insertions(+)
+ create mode 100644 drivers/iommu/tegra194-smmu.c
 
-diff --git a/drivers/iommu/lib-arm-smmu.c b/drivers/iommu/lib-arm-smmu.c
-index 6aba5db..7036763 100644
---- a/drivers/iommu/lib-arm-smmu.c
-+++ b/drivers/iommu/lib-arm-smmu.c
-@@ -69,9 +69,9 @@
-  * therefore this actually makes more sense than it might first appear.
-  */
- #ifdef CONFIG_64BIT
--#define smmu_write_atomic_lq		writeq_relaxed
-+#define smmu_write_atomic_lq		writeq_all_relaxed
- #else
--#define smmu_write_atomic_lq		writel_relaxed
-+#define smmu_write_atomic_lq		writel_all_relaxed
- #endif
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index d9a2571..2dc08c7 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -357,6 +357,17 @@ config ARM_SMMU
+ 	  Say Y here if your SoC includes an IOMMU device implementing
+ 	  the ARM SMMU architecture.
  
- /* Translation context bank */
-@@ -135,6 +135,48 @@ struct arm_smmu_domain {
- 	struct iommu_domain		domain;
- };
- 
-+#define to_smmu_intance(smmu, inst, addr) \
-+	(addr - smmu->bases[0] + smmu->bases[inst])
++config ARM_SMMU_TEGRA
++	bool "Dual ARM SMMU(MMU-500) support on Tegra"
++	depends on ARM64 && MMU && ARCH_TEGRA
++	select IOMMU_API
++	select IOMMU_IO_PGTABLE_LPAE
++	help
++	  Support for implementation of Dual ARM SMMU Instances as single
++	  SMMU Device on Tegra194. IOVA accesses from devices are interleaved
++	  across these two ARM SMMU Instances. Number of ARM SMMU Instances used
++	  in the SMMU device is not known to HW devices.
 +
-+static void writel_all(struct arm_smmu_device *smmu,
-+		       u32 value, void __iomem *addr)
+ config ARM_SMMU_V3
+ 	bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+ 	depends on ARM64
+diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+index ea87cae..f1587bb 100644
+--- a/drivers/iommu/Makefile
++++ b/drivers/iommu/Makefile
+@@ -15,6 +15,7 @@ obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += amd_iommu_debugfs.o
+ obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
+ obj-$(CONFIG_ARM_SMMU) += arm-smmu.o
+ obj-$(CONFIG_ARM_SMMU) += lib-arm-smmu.o
++obj-$(CONFIG_ARM_SMMU_TEGRA) += tegra194-smmu.o
+ obj-$(CONFIG_ARM_SMMU_V3) += arm-smmu-v3.o
+ obj-$(CONFIG_DMAR_TABLE) += dmar.o
+ obj-$(CONFIG_INTEL_IOMMU) += intel-iommu.o intel-pasid.o
+diff --git a/drivers/iommu/tegra194-smmu.c b/drivers/iommu/tegra194-smmu.c
+new file mode 100644
+index 0000000..7b21670
+--- /dev/null
++++ b/drivers/iommu/tegra194-smmu.c
+@@ -0,0 +1,394 @@
++/*
++ * Copyright (c) 2018, NVIDIA Corporation
++ * Author: Krishna Reddy <vdumpa@nvidia.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#define pr_fmt(fmt) "tegra194-smmu: " fmt
++
++#include <linux/acpi.h>
++#include <linux/acpi_iort.h>
++#include <linux/atomic.h>
++#include <linux/delay.h>
++#include <linux/dma-iommu.h>
++#include <linux/dma-mapping.h>
++#include <linux/err.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/io-64-nonatomic-hi-lo.h>
++#include <linux/iopoll.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/of_iommu.h>
++#include <linux/pci.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#include <linux/amba/bus.h>
++#include <linux/fsl/mc.h>
++
++#include "io-pgtable.h"
++#include "arm-smmu-regs.h"
++#include "lib-arm-smmu.h"
++
++static int force_stage;
++module_param(force_stage, int, S_IRUGO);
++MODULE_PARM_DESC(force_stage,
++	"Force SMMU mappings to be installed at a particular stage of translation. A value of '1' or '2' forces the corresponding stage. All other values are ignored (i.e. no stage is forced). Note that selecting a specific stage will disable support for nested translation.");
++static bool disable_bypass;
++module_param(disable_bypass, bool, S_IRUGO);
++MODULE_PARM_DESC(disable_bypass,
++	"Disable bypass streams such that incoming transactions from devices that are not attached to an iommu domain will report an abort back to the device and will not be allowed to pass through the SMMU.");
++
++static struct platform_driver tegra194_smmu_driver;
++static struct iommu_ops tegra194_smmu_ops;
++
++static struct iommu_domain *tegra194_smmu_domain_alloc(unsigned int type)
 +{
-+	int i;
-+
-+	writel(value, addr);
-+	for (i = 1; i < smmu->num_smmus; i++) {
-+		void __iomem *reg_addr = to_smmu_intance(smmu, i, addr);
-+
-+		writel(value, reg_addr);
-+	}
++	return arm_smmu_domain_alloc_common(type, true);
 +}
 +
-+static void writel_all_relaxed(struct arm_smmu_device *smmu,
-+			       u32 value, void __iomem *addr)
++static int tegra194_smmu_attach_dev(struct iommu_domain *domain,
++				    struct device *dev)
 +{
-+	int i;
-+
-+	writel_relaxed(value, addr);
-+	for (i = 1; i < smmu->num_smmus; i++) {
-+		void __iomem *reg_addr = to_smmu_intance(smmu, i, addr);
-+
-+		writel_relaxed(value, reg_addr);
-+	}
++	return arm_smmu_attach_dev_common(domain, dev, &tegra194_smmu_ops);
 +}
 +
-+static void writeq_all_relaxed(struct arm_smmu_device *smmu,
-+			       u64 value, void __iomem *addr)
++static int tegra194_smmu_match_node(struct device *dev, void *data)
 +{
-+	int i;
-+
-+	writeq_relaxed(value, addr);
-+	for (i = 1; i < smmu->num_smmus; i++) {
-+		void __iomem *reg_addr = to_smmu_intance(smmu, i, addr);
-+
-+		writeq_relaxed(value, reg_addr);
-+	}
++	return dev->fwnode == data;
 +}
 +
- static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
- {
- 	return container_of(dom, struct arm_smmu_domain, domain);
-@@ -179,25 +221,37 @@ static void __arm_smmu_tlb_sync(struct arm_smmu_device *smmu,
- 
- static void arm_smmu_tlb_sync_global(struct arm_smmu_device *smmu)
- {
--	void __iomem *base = ARM_SMMU_GR0(smmu);
-+	int i;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&smmu->global_sync_lock, flags);
--	__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_GR0_sTLBGSYNC,
--			    base + ARM_SMMU_GR0_sTLBGSTATUS);
++static
++struct arm_smmu_device *tegra194_smmu_get_by_fwnode(struct fwnode_handle *fwnode)
++{
++	struct device *dev = driver_find_device(&tegra194_smmu_driver.driver,
++					NULL, fwnode, tegra194_smmu_match_node);
++	put_device(dev);
++	return dev ? dev_get_drvdata(dev) : NULL;
++}
++
++static int tegra194_smmu_add_device(struct device *dev)
++{
++	struct arm_smmu_device *smmu;
++	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++
++	if (fwspec && fwspec->ops == &tegra194_smmu_ops)
++		smmu = tegra194_smmu_get_by_fwnode(fwspec->iommu_fwnode);
++	else
++		return -ENODEV;
++
++	return arm_smmu_add_device_common(dev, smmu);
++}
++
++static void tegra194_smmu_remove_device(struct device *dev)
++{
++	return arm_smmu_remove_device_common(dev, &tegra194_smmu_ops);
++}
++
++static struct iommu_ops tegra194_smmu_ops = {
++	.capable		= arm_smmu_capable,
++	.domain_alloc		= tegra194_smmu_domain_alloc,
++	.domain_free		= arm_smmu_domain_free,
++	.attach_dev		= tegra194_smmu_attach_dev,
++	.map			= arm_smmu_map,
++	.unmap			= arm_smmu_unmap,
++	.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
++	.iotlb_sync		= arm_smmu_iotlb_sync,
++	.iova_to_phys		= arm_smmu_iova_to_phys,
++	.add_device		= tegra194_smmu_add_device,
++	.remove_device		= tegra194_smmu_remove_device,
++	.device_group		= arm_smmu_device_group,
++	.domain_get_attr	= arm_smmu_domain_get_attr,
++	.domain_set_attr	= arm_smmu_domain_set_attr,
++	.of_xlate		= arm_smmu_of_xlate,
++	.get_resv_regions	= arm_smmu_get_resv_regions,
++	.put_resv_regions	= arm_smmu_put_resv_regions,
++	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
++};
++
++static int tegra194_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
++{
++	return arm_smmu_device_cfg_probe_common(smmu,
++		&tegra194_smmu_ops, NULL, force_stage);
++}
++
++struct tegra194_smmu_match_data {
++	enum arm_smmu_arch_version version;
++	enum arm_smmu_implementation model;
++};
++
++#define TEGRA194_SMMU_MATCH_DATA(name, ver, imp)	\
++static struct tegra194_smmu_match_data name = { .version = ver, .model = imp }
++
++TEGRA194_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
++
++static const struct of_device_id tegra194_smmu_of_match[] = {
++	{ .compatible = "tegra194,arm,mmu-500", .data = &arm_mmu500 },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tegra194_smmu_of_match);
++
++#ifdef CONFIG_ACPI
++static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
++{
++	int ret = 0;
++
++	switch (model) {
++	case ACPI_IORT_SMMU_CORELINK_MMU500:
++		smmu->version = ARM_SMMU_V2;
++		smmu->model = ARM_MMU500;
++		break;
++	default:
++		ret = -ENODEV;
++	}
++
++	return ret;
++}
++
++static int tegra194_smmu_device_acpi_probe(struct platform_device *pdev,
++				      struct arm_smmu_device *smmu)
++{
++	struct device *dev = smmu->dev;
++	struct acpi_iort_node *node =
++		*(struct acpi_iort_node **)dev_get_platdata(dev);
++	struct acpi_iort_smmu *iort_smmu;
++	int ret;
++
++	/* Retrieve SMMU1/2 specific data */
++	iort_smmu = (struct acpi_iort_smmu *)node->node_data;
++
++	ret = acpi_smmu_get_data(iort_smmu->model, smmu);
++	if (ret < 0)
++		return ret;
++
++	/* Ignore the configuration access interrupt */
++	smmu->num_global_irqs = 1;
++
++	if (iort_smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK)
++		smmu->features |= ARM_SMMU_FEAT_COHERENT_WALK;
++
++	return 0;
++}
++#else
++static inline int tegra194_smmu_device_acpi_probe(struct platform_device *pdev,
++					     struct arm_smmu_device *smmu)
++{
++	return -ENODEV;
++}
++#endif
++
++static int tegra194_smmu_device_dt_probe(struct platform_device *pdev,
++				    struct arm_smmu_device *smmu)
++{
++	const struct tegra194_smmu_match_data *data;
++	struct device *dev = &pdev->dev;
++
++	if (of_property_read_u32(dev->of_node, "#global-interrupts",
++				 &smmu->num_global_irqs)) {
++		dev_err(dev, "missing #global-interrupts property\n");
++		return -ENODEV;
++	}
++
++	data = of_device_get_match_data(dev);
++	smmu->version = data->version;
++	smmu->model = data->model;
++
++	if (of_dma_is_coherent(dev->of_node))
++		smmu->features |= ARM_SMMU_FEAT_COHERENT_WALK;
++
++	return 0;
++}
++
++static void tegra194_smmu_bus_init(void)
++{
++	/* Oh, for a proper bus abstraction */
++	if (!iommu_present(&platform_bus_type))
++		bus_set_iommu(&platform_bus_type, &tegra194_smmu_ops);
++#ifdef CONFIG_ARM_AMBA
++	if (!iommu_present(&amba_bustype))
++		bus_set_iommu(&amba_bustype, &tegra194_smmu_ops);
++#endif
++#ifdef CONFIG_PCI
++	if (!iommu_present(&pci_bus_type)) {
++		pci_request_acs();
++		bus_set_iommu(&pci_bus_type, &tegra194_smmu_ops);
++	}
++#endif
++#ifdef CONFIG_FSL_MC_BUS
++	if (!iommu_present(&fsl_mc_bus_type))
++		bus_set_iommu(&fsl_mc_bus_type, &tegra194_smmu_ops);
++#endif
++}
++
++static int tegra194_smmu_device_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	resource_size_t ioaddr;
++	struct arm_smmu_device *smmu;
++	struct device *dev = &pdev->dev;
++	int num_irqs, i, err;
++
++	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
++	if (!smmu) {
++		dev_err(dev, "failed to allocate arm_smmu_device\n");
++		return -ENOMEM;
++	}
++	smmu->dev = dev;
++	smmu->num_smmus = 2;
++	smmu->bases = devm_kzalloc(dev, sizeof(*smmu->bases) * smmu->num_smmus,
++				   GFP_KERNEL);
++	if (!smmu->bases)
++		return -ENOMEM;
++
++	if (dev->of_node)
++		err = tegra194_smmu_device_dt_probe(pdev, smmu);
++	else
++		err = tegra194_smmu_device_acpi_probe(pdev, smmu);
++
++	if (err)
++		return err;
++
 +	for (i = 0; i < smmu->num_smmus; i++) {
-+		void __iomem *base = ARM_SMMU_GR0(smmu);
-+
-+		if (i > 0)
-+			base = to_smmu_intance(smmu, i, base);
-+		__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_GR0_sTLBGSYNC,
-+				    base + ARM_SMMU_GR0_sTLBGSTATUS);
-+	}
- 	spin_unlock_irqrestore(&smmu->global_sync_lock, flags);
- }
- 
- static void arm_smmu_tlb_sync_context(void *cookie)
- {
-+	int i;
- 	struct arm_smmu_domain *smmu_domain = cookie;
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
--	void __iomem *base = ARM_SMMU_CB(smmu, smmu_domain->cfg.cbndx);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&smmu_domain->cb_lock, flags);
--	__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_CB_TLBSYNC,
--			    base + ARM_SMMU_CB_TLBSTATUS);
-+	for (i = 0; i < smmu->num_smmus; i++) {
-+		void __iomem *base = ARM_SMMU_CB(smmu, smmu_domain->cfg.cbndx);
-+
-+		if (i > 0)
-+			base = to_smmu_intance(smmu, i, base);
-+		__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_CB_TLBSYNC,
-+				    base + ARM_SMMU_CB_TLBSTATUS);
-+	}
- 	spin_unlock_irqrestore(&smmu_domain->cb_lock, flags);
- }
- 
-@@ -212,13 +266,14 @@ static void arm_smmu_tlb_inv_context_s1(void *cookie)
- {
- 	struct arm_smmu_domain *smmu_domain = cookie;
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
--	void __iomem *base = ARM_SMMU_CB(smmu_domain->smmu, cfg->cbndx);
-+	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+	void __iomem *base = ARM_SMMU_CB(smmu, cfg->cbndx);
- 
- 	/*
- 	 * NOTE: this is not a relaxed write; it needs to guarantee that PTEs
- 	 * cleared by the current CPU are visible to the SMMU before the TLBI.
- 	 */
--	writel(cfg->asid, base + ARM_SMMU_CB_S1_TLBIASID);
-+	writel_all(smmu, cfg->asid, base + ARM_SMMU_CB_S1_TLBIASID);
- 	arm_smmu_tlb_sync_context(cookie);
- }
- 
-@@ -229,7 +284,7 @@ static void arm_smmu_tlb_inv_context_s2(void *cookie)
- 	void __iomem *base = ARM_SMMU_GR0(smmu);
- 
- 	/* NOTE: see above */
--	writel(smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
-+	writel_all(smmu, smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
- 	arm_smmu_tlb_sync_global(smmu);
- }
- 
-@@ -237,11 +292,12 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
- 				size_t granule, bool leaf, void *cookie)
- {
- 	struct arm_smmu_domain *smmu_domain = cookie;
-+	struct arm_smmu_device *smmu = smmu_domain->smmu;
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
- 	bool stage1 = cfg->cbar != CBAR_TYPE_S2_TRANS;
--	void __iomem *reg = ARM_SMMU_CB(smmu_domain->smmu, cfg->cbndx);
-+	void __iomem *reg = ARM_SMMU_CB(smmu, cfg->cbndx);
- 
--	if (smmu_domain->smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
-+	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
- 		wmb();
- 
- 	if (stage1) {
-@@ -251,7 +307,7 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
- 			iova &= ~12UL;
- 			iova |= cfg->asid;
- 			do {
--				writel_relaxed(iova, reg);
-+				writel_all_relaxed(smmu, iova, reg);
- 				iova += granule;
- 			} while (size -= granule);
- 		} else {
-@@ -267,7 +323,7 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
- 			      ARM_SMMU_CB_S2_TLBIIPAS2;
- 		iova >>= 12;
- 		do {
--			smmu_write_atomic_lq(iova, reg);
-+			smmu_write_atomic_lq(smmu, iova, reg);
- 			iova += granule >> 12;
- 		} while (size -= granule);
- 	}
-@@ -283,12 +339,13 @@ static void arm_smmu_tlb_inv_vmid_nosync(unsigned long iova, size_t size,
- 				size_t granule, bool leaf, void *cookie)
- {
- 	struct arm_smmu_domain *smmu_domain = cookie;
--	void __iomem *base = ARM_SMMU_GR0(smmu_domain->smmu);
-+	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+	void __iomem *base = ARM_SMMU_GR0(smmu);
- 
--	if (smmu_domain->smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
-+	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
- 		wmb();
- 
--	writel_relaxed(smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
-+	writel_all_relaxed(smmu, smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
- }
- 
- static const struct iommu_gather_ops arm_smmu_s1_tlb_ops = {
-@@ -309,7 +366,8 @@ static const struct iommu_gather_ops arm_smmu_s2_tlb_ops_v1 = {
- 	.tlb_sync	= arm_smmu_tlb_sync_vmid,
- };
- 
--irqreturn_t arm_smmu_context_fault(int irq, void *dev)
-+static irqreturn_t __arm_smmu_context_fault(int irq, void *dev,
-+					    void __iomem *cb_base)
- {
- 	u32 fsr, fsynr;
- 	unsigned long iova;
-@@ -317,9 +375,7 @@ irqreturn_t arm_smmu_context_fault(int irq, void *dev)
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
--	void __iomem *cb_base;
- 
--	cb_base = ARM_SMMU_CB(smmu, cfg->cbndx);
- 	fsr = readl_relaxed(cb_base + ARM_SMMU_CB_FSR);
- 
- 	if (!(fsr & FSR_FAULT))
-@@ -336,11 +392,33 @@ irqreturn_t arm_smmu_context_fault(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
--irqreturn_t arm_smmu_global_fault(int irq, void *dev)
-+static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
-+{
-+	int i;
-+	irqreturn_t irq_ret = IRQ_NONE;
-+	struct iommu_domain *domain = dev;
-+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-+	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
-+	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+
-+	for (i = 0; i < smmu->num_smmus; i++) {
-+		void __iomem *cb_base = ARM_SMMU_CB(smmu, cfg->cbndx);
-+
-+		if (i > 0)
-+			cb_base = to_smmu_intance(smmu, i, cb_base);
-+		irq_ret = __arm_smmu_context_fault(irq, dev, cb_base);
-+		if (irq_ret == IRQ_HANDLED)
-+			break;
++		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
++		ioaddr = res->start;
++		smmu->bases[i] = devm_ioremap_resource(dev, res);
++		if (IS_ERR(smmu->bases[i]))
++			return PTR_ERR(smmu->bases[i]);
++		if (i == 0) {
++			smmu->base = smmu->bases[i];
++			smmu->cb_base = smmu->base + resource_size(res) / 2;
++		}
 +	}
 +
-+	return irq_ret;
++	num_irqs = 0;
++	while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, num_irqs))) {
++		num_irqs++;
++		if (num_irqs > smmu->num_global_irqs)
++			smmu->num_context_irqs++;
++	}
++
++	if (!smmu->num_context_irqs) {
++		dev_err(dev, "found %d interrupts but expected at least %d\n",
++			num_irqs, smmu->num_global_irqs + 1);
++		return -ENODEV;
++	}
++
++	smmu->irqs = devm_kcalloc(dev, num_irqs, sizeof(*smmu->irqs),
++				  GFP_KERNEL);
++	if (!smmu->irqs) {
++		dev_err(dev, "failed to allocate %d irqs\n", num_irqs);
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < num_irqs; ++i) {
++		int irq = platform_get_irq(pdev, i);
++
++		if (irq < 0) {
++			dev_err(dev, "failed to get irq index %d\n", i);
++			return -ENODEV;
++		}
++		smmu->irqs[i] = irq;
++	}
++
++	err = tegra194_smmu_device_cfg_probe(smmu);
++	if (err)
++		return err;
++
++	if (smmu->version == ARM_SMMU_V2) {
++		if (smmu->num_context_banks > smmu->num_context_irqs) {
++			dev_err(dev,
++			      "found only %d context irq(s) but %d required\n",
++			      smmu->num_context_irqs, smmu->num_context_banks);
++			return -ENODEV;
++		}
++
++		/* Ignore superfluous interrupts */
++		smmu->num_context_irqs = smmu->num_context_banks;
++	}
++
++	for (i = 0; i < smmu->num_global_irqs; ++i) {
++		err = devm_request_irq(smmu->dev, smmu->irqs[i],
++				       arm_smmu_global_fault,
++				       IRQF_SHARED,
++				       "arm-smmu global fault",
++				       smmu);
++		if (err) {
++			dev_err(dev, "failed to request global IRQ %d (%u)\n",
++				i, smmu->irqs[i]);
++			return err;
++		}
++	}
++
++	err = iommu_device_sysfs_add(&smmu->iommu, smmu->dev, NULL,
++				     "smmu.%pa", &ioaddr);
++	if (err) {
++		dev_err(dev, "Failed to register iommu in sysfs\n");
++		return err;
++	}
++
++	iommu_device_set_ops(&smmu->iommu, &tegra194_smmu_ops);
++	iommu_device_set_fwnode(&smmu->iommu, dev->fwnode);
++
++	err = iommu_device_register(&smmu->iommu);
++	if (err) {
++		dev_err(dev, "Failed to register iommu\n");
++		return err;
++	}
++
++	platform_set_drvdata(pdev, smmu);
++	arm_smmu_device_reset(smmu);
++	arm_smmu_test_smr_masks(smmu);
++
++	/*
++	 * For ACPI and generic DT bindings, an SMMU will be probed before
++	 * any device which might need it, so we want the bus ops in place
++	 * ready to handle default domain setup as soon as any SMMU exists.
++	 */
++	tegra194_smmu_bus_init();
++
++	return 0;
 +}
 +
-+static irqreturn_t __arm_smmu_global_fault(int irq, void *dev,
-+					   void __iomem *gr0_base)
- {
--	u32 gfsr, gfsynr0, gfsynr1, gfsynr2;
- 	struct arm_smmu_device *smmu = dev;
--	void __iomem *gr0_base = ARM_SMMU_GR0_NS(smmu);
-+	u32 gfsr, gfsynr0, gfsynr1, gfsynr2;
- 
- 	gfsr = readl_relaxed(gr0_base + ARM_SMMU_GR0_sGFSR);
- 	gfsynr0 = readl_relaxed(gr0_base + ARM_SMMU_GR0_sGFSYNR0);
-@@ -360,6 +438,25 @@ irqreturn_t arm_smmu_global_fault(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
-+irqreturn_t arm_smmu_global_fault(int irq, void *dev)
++static void tegra194_smmu_device_shutdown(struct platform_device *pdev)
 +{
-+	int i;
-+	irqreturn_t irq_ret = IRQ_NONE;
-+	struct arm_smmu_device *smmu = dev;
-+
-+	for (i = 0; i < smmu->num_smmus; i++) {
-+		void __iomem *gr0_base = ARM_SMMU_GR0_NS(smmu);
-+
-+		if (i > 0)
-+			gr0_base = to_smmu_intance(smmu, i, gr0_base);
-+		irq_ret = __arm_smmu_global_fault(irq, dev, gr0_base);
-+		if (irq_ret == IRQ_HANDLED)
-+			break;
-+	}
-+
-+	return irq_ret;
++	arm_smmu_device_remove(pdev);
 +}
 +
- static void arm_smmu_init_context_bank(struct arm_smmu_domain *smmu_domain,
- 				       struct io_pgtable_cfg *pgtbl_cfg)
- {
-@@ -423,7 +520,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
- 
- 	/* Unassigned context banks only need disabling */
- 	if (!cfg) {
--		writel_relaxed(0, cb_base + ARM_SMMU_CB_SCTLR);
-+		writel_all_relaxed(smmu, 0, cb_base + ARM_SMMU_CB_SCTLR);
- 		return;
- 	}
- 
-@@ -440,7 +537,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
- 		if (smmu->features & ARM_SMMU_FEAT_VMID16)
- 			reg |= cfg->vmid << CBA2R_VMID_SHIFT;
- 
--		writel_relaxed(reg, gr1_base + ARM_SMMU_GR1_CBA2R(idx));
-+		writel_all_relaxed(smmu, reg, gr1_base + ARM_SMMU_GR1_CBA2R(idx));
- 	}
- 
- 	/* CBAR */
-@@ -459,7 +556,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
- 		/* 8-bit VMIDs live in CBAR */
- 		reg |= cfg->vmid << CBAR_VMID_SHIFT;
- 	}
--	writel_relaxed(reg, gr1_base + ARM_SMMU_GR1_CBAR(idx));
-+	writel_all_relaxed(smmu, reg, gr1_base + ARM_SMMU_GR1_CBAR(idx));
- 
- 	/*
- 	 * TTBCR
-@@ -467,14 +564,14 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
- 	 * access behaviour of some fields (in particular, ASID[15:8]).
- 	 */
- 	if (stage1 && smmu->version > ARM_SMMU_V1)
--		writel_relaxed(cb->tcr[1], cb_base + ARM_SMMU_CB_TTBCR2);
--	writel_relaxed(cb->tcr[0], cb_base + ARM_SMMU_CB_TTBCR);
-+		writel_all_relaxed(smmu, cb->tcr[1], cb_base + ARM_SMMU_CB_TTBCR2);
-+	writel_all_relaxed(smmu, cb->tcr[0], cb_base + ARM_SMMU_CB_TTBCR);
- 
- 	/* TTBRs */
- 	if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH32_S) {
--		writel_relaxed(cfg->asid, cb_base + ARM_SMMU_CB_CONTEXTIDR);
--		writel_relaxed(cb->ttbr[0], cb_base + ARM_SMMU_CB_TTBR0);
--		writel_relaxed(cb->ttbr[1], cb_base + ARM_SMMU_CB_TTBR1);
-+		writel_all_relaxed(smmu, cfg->asid, cb_base + ARM_SMMU_CB_CONTEXTIDR);
-+		writel_all_relaxed(smmu, cb->ttbr[0], cb_base + ARM_SMMU_CB_TTBR0);
-+		writel_all_relaxed(smmu, cb->ttbr[1], cb_base + ARM_SMMU_CB_TTBR1);
- 	} else {
- 		writeq_relaxed(cb->ttbr[0], cb_base + ARM_SMMU_CB_TTBR0);
- 		if (stage1)
-@@ -484,8 +581,8 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
- 
- 	/* MAIRs (stage-1 only) */
- 	if (stage1) {
--		writel_relaxed(cb->mair[0], cb_base + ARM_SMMU_CB_S1_MAIR0);
--		writel_relaxed(cb->mair[1], cb_base + ARM_SMMU_CB_S1_MAIR1);
-+		writel_all_relaxed(smmu, cb->mair[0], cb_base + ARM_SMMU_CB_S1_MAIR0);
-+		writel_all_relaxed(smmu, cb->mair[1], cb_base + ARM_SMMU_CB_S1_MAIR1);
- 	}
- 
- 	/* SCTLR */
-@@ -495,7 +592,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
- 	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
- 		reg |= SCTLR_E;
- 
--	writel_relaxed(reg, cb_base + ARM_SMMU_CB_SCTLR);
-+	writel_all_relaxed(smmu, reg, cb_base + ARM_SMMU_CB_SCTLR);
- }
- 
- static int arm_smmu_init_domain_context(struct iommu_domain *domain,
-@@ -763,7 +860,7 @@ static void arm_smmu_write_smr(struct arm_smmu_device *smmu, int idx)
- 
- 	if (!(smmu->features & ARM_SMMU_FEAT_EXIDS) && smr->valid)
- 		reg |= SMR_VALID;
--	writel_relaxed(reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_SMR(idx));
-+	writel_all_relaxed(smmu, reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_SMR(idx));
- }
- 
- static void arm_smmu_write_s2cr(struct arm_smmu_device *smmu, int idx)
-@@ -776,7 +873,7 @@ static void arm_smmu_write_s2cr(struct arm_smmu_device *smmu, int idx)
- 	if (smmu->features & ARM_SMMU_FEAT_EXIDS && smmu->smrs &&
- 	    smmu->smrs[idx].valid)
- 		reg |= S2CR_EXIDVALID;
--	writel_relaxed(reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_S2CR(idx));
-+	writel_all_relaxed(smmu, reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_S2CR(idx));
- }
- 
- static void arm_smmu_write_sme(struct arm_smmu_device *smmu, int idx)
-@@ -1071,9 +1168,9 @@ static phys_addr_t arm_smmu_iova_to_phys_hard(struct iommu_domain *domain,
- 	/* ATS1 registers can only be written atomically */
- 	va = iova & ~0xfffUL;
- 	if (smmu->version == ARM_SMMU_V2)
--		smmu_write_atomic_lq(va, cb_base + ARM_SMMU_CB_ATS1PR);
-+		smmu_write_atomic_lq(smmu, va, cb_base + ARM_SMMU_CB_ATS1PR);
- 	else /* Register is only 32-bit in v1 */
--		writel_relaxed(va, cb_base + ARM_SMMU_CB_ATS1PR);
-+		writel_all_relaxed(smmu, va, cb_base + ARM_SMMU_CB_ATS1PR);
- 
- 	if (readl_poll_timeout_atomic(cb_base + ARM_SMMU_CB_ATSR, tmp,
- 				      !(tmp & ATSR_ACTIVE), 5, 50)) {
-@@ -1346,7 +1443,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 
- 	/* clear global FSR */
- 	reg = readl_relaxed(ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sGFSR);
--	writel(reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sGFSR);
-+	writel_all(smmu, reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sGFSR);
- 
- 	/*
- 	 * Reset stream mapping groups: Initial values mark all SMRn as
-@@ -1371,7 +1468,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 		 * TLB entries for reduced latency.
- 		 */
- 		reg |= ARM_MMU500_ACR_SMTNMB_TLBEN | ARM_MMU500_ACR_S2CRB_TLBEN;
--		writel_relaxed(reg, gr0_base + ARM_SMMU_GR0_sACR);
-+		writel_all_relaxed(smmu, reg, gr0_base + ARM_SMMU_GR0_sACR);
- 	}
- 
- 	/* Make sure all context banks are disabled and clear CB_FSR  */
-@@ -1379,7 +1476,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 		void __iomem *cb_base = ARM_SMMU_CB(smmu, i);
- 
- 		arm_smmu_write_context_bank(smmu, i);
--		writel_relaxed(FSR_FAULT, cb_base + ARM_SMMU_CB_FSR);
-+		writel_all_relaxed(smmu, FSR_FAULT, cb_base + ARM_SMMU_CB_FSR);
- 		/*
- 		 * Disable MMU-500's not-particularly-beneficial next-page
- 		 * prefetcher for the sake of errata #841119 and #826419.
-@@ -1387,13 +1484,13 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 		if (smmu->model == ARM_MMU500) {
- 			reg = readl_relaxed(cb_base + ARM_SMMU_CB_ACTLR);
- 			reg &= ~ARM_MMU500_ACTLR_CPRE;
--			writel_relaxed(reg, cb_base + ARM_SMMU_CB_ACTLR);
-+			writel_all_relaxed(smmu, reg, cb_base + ARM_SMMU_CB_ACTLR);
- 		}
- 	}
- 
- 	/* Invalidate the TLB, just in case */
--	writel_relaxed(0, gr0_base + ARM_SMMU_GR0_TLBIALLH);
--	writel_relaxed(0, gr0_base + ARM_SMMU_GR0_TLBIALLNSNH);
-+	writel_all_relaxed(smmu, 0, gr0_base + ARM_SMMU_GR0_TLBIALLH);
-+	writel_all_relaxed(smmu, 0, gr0_base + ARM_SMMU_GR0_TLBIALLNSNH);
- 
- 	reg = readl_relaxed(ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
- 
-@@ -1424,7 +1521,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 
- 	/* Push the button */
- 	arm_smmu_tlb_sync_global(smmu);
--	writel(reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-+	writel_all(smmu, reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
- }
- 
- static int arm_smmu_id_size_to_bits(int size)
-@@ -1666,6 +1763,6 @@ int arm_smmu_device_remove(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "removing device with active domains!\n");
- 
- 	/* Turn the thing off */
--	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-+	writel_all(smmu, sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
- 	return 0;
- }
++static int __maybe_unused tegra194_smmu_pm_resume(struct device *dev)
++{
++	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
++
++	arm_smmu_device_reset(smmu);
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tegra194_smmu_pm_ops, NULL, tegra194_smmu_pm_resume);
++
++static struct platform_driver tegra194_smmu_driver = {
++	.driver	= {
++		.name		= "tegra194-smmu",
++		.of_match_table	= of_match_ptr(tegra194_smmu_of_match),
++		.pm		= &tegra194_smmu_pm_ops,
++	},
++	.probe	= tegra194_smmu_device_probe,
++	.remove	= arm_smmu_device_remove,
++	.shutdown = tegra194_smmu_device_shutdown,
++};
++module_platform_driver(tegra194_smmu_driver);
++
++MODULE_DESCRIPTION("Tegra194 SMMU Driver");
++MODULE_AUTHOR("Krishna Reddy <vdumpa@nvidia.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.1.4
 
