@@ -2,78 +2,98 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002D8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A889C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E9B20834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E9B20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 2228B2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:39:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQTiXPyH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2228B2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbeLDTie (ORCPT
+        id S1726108AbeLDTjK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:38:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbeLDTie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:38:34 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53F222081C;
-        Tue,  4 Dec 2018 19:38:33 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 14:38:30 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: Strange hang with gcc 8 of kprobe multiple_kprobes test
-Message-ID: <20181204143830.6c7f8910@vmware.local.home>
-In-Reply-To: <20181204081506.GA73770@gmail.com>
-References: <20181203211807.17e03384@vmware.local.home>
-        <20181204164007.956a3458c9fd301b3d173eba@kernel.org>
-        <20181204170229.4442d43ce956d48619c1d232@kernel.org>
-        <20181204081506.GA73770@gmail.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 4 Dec 2018 14:39:10 -0500
+Received: from mail-wm1-f49.google.com ([209.85.128.49]:39153 "EHLO
+        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeLDTjJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:39:09 -0500
+Received: by mail-wm1-f49.google.com with SMTP id f81so8115855wmd.4;
+        Tue, 04 Dec 2018 11:39:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:references:user-agent:in-reply-to:date
+         :message-id:mime-version;
+        bh=iQwytpxIBcHHKVFu2QLF4iY+Mv1AFxWbqR3YYwAHeXw=;
+        b=UQTiXPyHek7sm0ubUN3JzYhwpasskZeBGhPpdrJZzi0gsPoyMA02DBEy1MH/TvdVjY
+         ATV1hc0L7wm5zP0wZfVXB2CFUHu1sOuGXfF3NiPzDZmlmZieeuQuVHDYldWAoH6kqONk
+         VYZOw4+nkncUomoW7Sv35a/mXfz7bWsmzMLHwAVfOIejloakEmMz+Q4zILgq41MzZhfy
+         KVg5tFSdGe2BXGjQmr7xH4fmCoMNqnb5ZM1UC27NNVGzBxdNZf37SiVJahNxAJHCgqHg
+         oq/KSFLdh/KHcVcnyErHYlGTQaeq/LkyvONEMKG9A0Uz5DN4FCLQ8FrlEFfxJAShd+Ei
+         StiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:user-agent
+         :in-reply-to:date:message-id:mime-version;
+        bh=iQwytpxIBcHHKVFu2QLF4iY+Mv1AFxWbqR3YYwAHeXw=;
+        b=A5VP+xNIrlc/RdCuuXdnPH4ec/sbT77Czl97AO2cT01UwKhN3fzGO78f3Z530GzWhp
+         5tdUDp3bFYhvsQhqVVPliWhE8IJS2mzxb15aJakGC5fl8tnG+aLtd3YN1w1KUlPmGvij
+         XJkOO6xMsJweYEDR1ASPFhngeHGmek7e89tbePVfN0s4mFCCT6YiE08vhCzW8mwvdSEq
+         9ZInh+k+PjSb0z4HPQz6a8LG4M5USPsZ1kwulOV7KU0UJoDZjWgHF4XKd8Y1BDxfq3g6
+         RVweGIQWXVxABXkmoK6jP8/T2Qyd2DIBOYyPygwyVhKGkZ7YnE3hON/QDmFLdVdBIX9w
+         jV+g==
+X-Gm-Message-State: AA+aEWa9elI16n4EuBuGzQTDjvk9lD66ZGm2GjYNv2uozjoDS02KJo7f
+        P7ml2L7vVRWoC2Wd99NWl/CCcHTh
+X-Google-Smtp-Source: AFSGD/V5BGFIklEw+LjuOX84Jkv7sse5eU1+QSRpbbZkSZfbyuucytNKz0aa3lGmQ+Qa/iHr8VsCdg==
+X-Received: by 2002:a1c:f112:: with SMTP id p18mr12676162wmh.83.1543952348138;
+        Tue, 04 Dec 2018 11:39:08 -0800 (PST)
+Received: from evledraar (ip545586d2.adsl-surfen.hetnet.nl. [84.85.134.210])
+        by smtp.gmail.com with ESMTPSA id 5sm13089590wmr.37.2018.12.04.11.39.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 11:39:07 -0800 (PST)
+From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+To:     Junio C Hamano <gitster@pobox.com>
+Cc:     git@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com, Stefan Beller <sbeller@google.com>,
+        Jeff King <peff@peff.net>
+Subject: Re: [ANNOUNCE] Git v2.20.0-rc2
+References: <xmqq36rhjnts.fsf@gitster-ct.c.googlers.com>
+User-agent: Debian GNU/Linux buster/sid; Emacs 25.2.2; mu4e 1.1.0
+In-reply-to: <xmqq36rhjnts.fsf@gitster-ct.c.googlers.com>
+Date:   Tue, 04 Dec 2018 20:39:05 +0100
+Message-ID: <87in09ytd2.fsf@evledraar.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 09:15:06 +0100
-Ingo Molnar <mingo@kernel.org> wrote:
 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > I remember I have fixed this, and actually WE did it :-D
-> > 
-> > https://lkml.org/lkml/2018/8/23/1203
-> > 
-> > Ah, we hit a same bug...
-> > 
-> > Ingo, could you pick the patch? Should I resend it?  
-> 
-> Indeed: I just picked it up into tip:perf/urgent.
-> 
-> It's my bad: I missed the original submission due to Steve's feedback 
-> which I mistook as a request for another iteration, while he only 
-> commented on the reason for the original breakage and gave his 
-> Reviewed-by ...
-> 
+On Sat, Dec 01 2018, Junio C Hamano wrote:
 
-Sorry for the confusion. The patch and code was quite complex, and I
-was documenting what I thought of the patch (and the bug), so that my
-Reviewed-by had a bit more meaning.
+>  * "git ls-remote $there foo" was broken by recent update for the
+>    protocol v2 and stopped showing refs that match 'foo' that are not
+>    refs/{heads,tags}/foo, which has been fixed.
+>    (merge 6a139cdd74 jk/proto-v2-ref-prefix-fix later to maint).
 
--- Steve
+I started bisecting this thinking it was a regression, but found that
+the reason the instructions in the protocol v2 announcement[1] don't
+work anymore is because of it was due to 631f0f8c4b ("ls-remote: do not
+send ref prefixes for patterns", 2018-10-31).
+
+Perhaps we should note this more prominently, and since Brandon isn't at
+Google anymore can some of you working there edit this post? It's the
+first Google result for "git protocol v2", so it's going to be quite
+confusing for people if after 2.20 the instructions in it no longer
+work.
+
+1. https://opensource.googleblog.com/2018/05/introducing-git-protocol-version-2.html
