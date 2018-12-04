@@ -2,51 +2,48 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD88C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8A8C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5CF2214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EB252146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmKNaZ8W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5CF2214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1eFOcNiX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB252146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbeLDKzd (ORCPT
+        id S1726291AbeLDKzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:55:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38306 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:55:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726235AbeLDKzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:55:31 -0500
+        id S1726265AbeLDKzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:55:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C80F20878;
-        Tue,  4 Dec 2018 10:55:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE72B2087F;
+        Tue,  4 Dec 2018 10:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920929;
-        bh=qYukaaorMET7l6JQ8n7UjIE+kZVsqmcCersgSlMDZZI=;
+        s=default; t=1543920932;
+        bh=2odqX/Zfd2n40SIgcoNH6WIL6pAfw0PvBQOZpTpz4gM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HmKNaZ8WBxtfJ1tvKBLo2Dc6MZtuIMM0NZewwUUGBBsZI+41ecvXRBHDT/MmKGliB
-         +bdVfDFJtDtF5u8eVDr3TTRu0zOvurbDzMlXsvqIiXrCNkrTIbIEoLuwjNAcoV15gM
-         iU6zwqiV1PDFbjKz2NUOz9s7z5x1zRv/5trSZKh4=
+        b=1eFOcNiXSrD1yl5tCGxD8cgpZnhNegLH4qG8lktgNbr+30F5qiSPT2xBvf5dbydaY
+         Ll0edHk9TKDJbmRsNbkUoGqZ5EneMJ37KeuL1qM2jbEquzxMjtX9sj8AO0uoIy93uO
+         P3iVlznBPI8qfHVUx+UE2cDtHIly7fVG5zeT0Vuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Anand H. Krishnan" <anandhkrishnan@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 015/139] packet: copy user buffers before orphan or clone
-Date:   Tue,  4 Dec 2018 11:48:16 +0100
-Message-Id: <20181204103650.606695502@linuxfoundation.org>
+Subject: [PATCH 4.19 016/139] rapidio/rionet: do not free skb before reading its length
+Date:   Tue,  4 Dec 2018 11:48:17 +0100
+Message-Id: <20181204103650.647309143@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -65,100 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 5cd8d46ea1562be80063f53c7c6a5f40224de623 ]
+[ Upstream commit cfc435198f53a6fa1f656d98466b24967ff457d0 ]
 
-tpacket_snd sends packets with user pages linked into skb frags. It
-notifies that pages can be reused when the skb is released by setting
-skb->destructor to tpacket_destruct_skb.
+skb is freed via dev_kfree_skb_any, however, skb->len is read then. This
+may result in a use-after-free bug.
 
-This can cause data corruption if the skb is orphaned (e.g., on
-transmit through veth) or cloned (e.g., on mirror to another psock).
-
-Create a kernel-private copy of data in these cases, same as tun/tap
-zerocopy transmission. Reuse that infrastructure: mark the skb as
-SKBTX_ZEROCOPY_FRAG, which will trigger copy in skb_orphan_frags(_rx).
-
-Unlike other zerocopy packets, do not set shinfo destructor_arg to
-struct ubuf_info. tpacket_destruct_skb already uses that ptr to notify
-when the original skb is released and a timestamp is recorded. Do not
-change this timestamp behavior. The ubuf_info->callback is not needed
-anyway, as no zerocopy notification is expected.
-
-Mark destructor_arg as not-a-uarg by setting the lower bit to 1. The
-resulting value is not a valid ubuf_info pointer, nor a valid
-tpacket_snd frame address. Add skb_zcopy_.._nouarg helpers for this.
-
-The fix relies on features introduced in commit 52267790ef52 ("sock:
-add MSG_ZEROCOPY"), so can be backported as is only to 4.14.
-
-Tested with from `./in_netns.sh ./txring_overwrite` from
-http://github.com/wdebruij/kerneltools/tests
-
-Fixes: 69e3c75f4d54 ("net: TX_RING and packet mmap")
-Reported-by: Anand H. Krishnan <anandhkrishnan@gmail.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Fixes: e6161d64263 ("rapidio/rionet: rework driver initialization and removal")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/skbuff.h |   18 +++++++++++++++++-
- net/packet/af_packet.c |    4 ++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ drivers/net/rionet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -1311,6 +1311,22 @@ static inline void skb_zcopy_set(struct
- 	}
- }
- 
-+static inline void skb_zcopy_set_nouarg(struct sk_buff *skb, void *val)
-+{
-+	skb_shinfo(skb)->destructor_arg = (void *)((uintptr_t) val | 0x1UL);
-+	skb_shinfo(skb)->tx_flags |= SKBTX_ZEROCOPY_FRAG;
-+}
-+
-+static inline bool skb_zcopy_is_nouarg(struct sk_buff *skb)
-+{
-+	return (uintptr_t) skb_shinfo(skb)->destructor_arg & 0x1UL;
-+}
-+
-+static inline void *skb_zcopy_get_nouarg(struct sk_buff *skb)
-+{
-+	return (void *)((uintptr_t) skb_shinfo(skb)->destructor_arg & ~0x1UL);
-+}
-+
- /* Release a reference on a zerocopy structure */
- static inline void skb_zcopy_clear(struct sk_buff *skb, bool zerocopy)
- {
-@@ -1320,7 +1336,7 @@ static inline void skb_zcopy_clear(struc
- 		if (uarg->callback == sock_zerocopy_callback) {
- 			uarg->zerocopy = uarg->zerocopy && zerocopy;
- 			sock_zerocopy_put(uarg);
--		} else {
-+		} else if (!skb_zcopy_is_nouarg(skb)) {
- 			uarg->callback(uarg, zerocopy);
+--- a/drivers/net/rionet.c
++++ b/drivers/net/rionet.c
+@@ -216,9 +216,9 @@ static int rionet_start_xmit(struct sk_b
+ 			 * it just report sending a packet to the target
+ 			 * (without actual packet transfer).
+ 			 */
+-			dev_kfree_skb_any(skb);
+ 			ndev->stats.tx_packets++;
+ 			ndev->stats.tx_bytes += skb->len;
++			dev_kfree_skb_any(skb);
  		}
+ 	}
  
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2394,7 +2394,7 @@ static void tpacket_destruct_skb(struct
- 		void *ph;
- 		__u32 ts;
- 
--		ph = skb_shinfo(skb)->destructor_arg;
-+		ph = skb_zcopy_get_nouarg(skb);
- 		packet_dec_pending(&po->tx_ring);
- 
- 		ts = __packet_set_timestamp(po, ph, skb);
-@@ -2461,7 +2461,7 @@ static int tpacket_fill_skb(struct packe
- 	skb->mark = po->sk.sk_mark;
- 	skb->tstamp = sockc->transmit_time;
- 	sock_tx_timestamp(&po->sk, sockc->tsflags, &skb_shinfo(skb)->tx_flags);
--	skb_shinfo(skb)->destructor_arg = ph.raw;
-+	skb_zcopy_set_nouarg(skb, ph.raw);
- 
- 	skb_reserve(skb, hlen);
- 	skb_reset_network_header(skb);
 
 
