@@ -2,64 +2,64 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43133C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6266EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFDCA2081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1789B2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:58:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eu94uCA1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDCA2081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1AF/1g4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1789B2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLDU6N (ORCPT
+        id S1726154AbeLDU6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:58:13 -0500
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:44032 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbeLDU6M (ORCPT
+        Tue, 4 Dec 2018 15:58:19 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35818 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbeLDU6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:58:12 -0500
-Received: by mail-wr1-f46.google.com with SMTP id z5so17428829wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 12:58:11 -0800 (PST)
+        Tue, 4 Dec 2018 15:58:19 -0500
+Received: by mail-wm1-f65.google.com with SMTP id c126so10742434wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 12:58:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=I3l1+ACt6/GhNj+Jlr5UHf5ETVSIQkk4e+NrHiufLi0=;
-        b=Eu94uCA1z8o+lW1wtgwzqUNvnTd51tmfYqt5UJaXYjpPCpLEUPdZ3E8DuSiduwIekC
-         MjyOAaHbC+yF3DiSF7Qbr7O4gkxY8lgcJljh1gIVKYtGnbw9vu2Hw2Jle4d2564h3JgR
-         N7xxbyRQgzr3HPvA05uVvNXGH8vgOBQiHQvOcoOB0uJMUpCozA5e+JD6YfWYgZQNO3Mw
-         wtYLgpkCmx9xh6npdlmHNSiQm5mZkstcAuwkJKmeXfWJmqrC4BIJrgOfaZwyTxZPO1t8
-         VLA3JsffD+NPmM0xDS516+EcQONq1JSTeTipAjlNIF54gTlcYi0GZD/lC6PFuOLkmvhS
-         mM5Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uQ+eg6BkKvzr2ExA2DzdSn26LXGL1h5zerB1aicDLUI=;
+        b=J1AF/1g4W+pclzeBr/oPaPZk59tWvE+a93rOc2Bi4R1yZQ/f0Q0KCDY3OPZ4TtcP8d
+         X+TiP4BPbb1zZZTA/tgmIyZzcNa7XrQBWHNzz05IjfbuJQBMCgS/UTNN/9dsu4Hh22c3
+         WgNqWeqKjkpW17O69AQDb/J3WAF0Z78rxAT5XsxDA/E9BVyJUhxc0o+Z1hN3QXKCU2FG
+         g2RJFTOasewHofz4Ymko9IYmxq/w9zRgqFtKT9fTeLNA1dkTRC6C7FM6U2KT741iQM6o
+         JEXtIktXO46fMG64OqmwVWE4vJ2J4RI47tNqU15DU8RFPD0CiiVpugp1Z5YaUWJBEdIZ
+         WSkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=I3l1+ACt6/GhNj+Jlr5UHf5ETVSIQkk4e+NrHiufLi0=;
-        b=jg7zrCHBBnU9hAhR9psei2Fw9J8JQfO0REfTdNbkzZh3ygd+VW5BhOOOvRkRUGg336
-         YiAywDAXHBXZ61KPcfbMK1I5UrjPaXs+mspXV2Hzy0Qs7z2pknC4wnrEfI1NZ8xy8c5p
-         h2MHqJDr0Azl+EOJsnJym8yR1kRFoC5ac9SNL7cLNU0HOeGELAm1bqaQfYM5kTKu4BER
-         +Ux43kxhinKKOM+dblsB6pr8ucgKJ+2mujOGirywTEIB0LTuaNS2Is15QF8EoKqJkFYA
-         wd2tMF0wrLIuE2zJ7UktZwHYW89ZWPmlA5QECi1Bvikzjb8NqztTHzUj7nUeYCxgOWHd
-         gkpw==
-X-Gm-Message-State: AA+aEWbaAAu7t4vtr6KzYDEIOe6E1pKVXl2ilkGo66j572p+zp4E2rCS
-        /UHdKguKbveXnzIrd4g0P8s=
-X-Google-Smtp-Source: AFSGD/V9lUGgw90402OVDkCZ7bYEyg6RroYj4WScXO7j9c34m0x95Ur8fMCMgaJ0Ftb8WiNVEhj3sA==
-X-Received: by 2002:adf:e383:: with SMTP id e3mr19074567wrm.31.1543957090754;
-        Tue, 04 Dec 2018 12:58:10 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uQ+eg6BkKvzr2ExA2DzdSn26LXGL1h5zerB1aicDLUI=;
+        b=hZidUzTgunQWtCkdkjf6mE9T8h4C3JoHSMpbrKOqG7LETzmi8l0QdxGJx4myT7hC7N
+         OoxZY3/k7q7ykLmWAmT47iKFAZL0LvgIJFf4Pcfkid5GoHRjxTMNAMt51SOdcSndPzZS
+         Y6/K692wwRjoNOFuz34WA2pawhJcC9NgNtGY2VaDYMm7alxqhdJ3cy65Dz7BNs4F/Itr
+         63B4I1xue8ndTl+KP+U2gGMHe+Y1he1zrUZorvJ0Yj8wdq8aFBzaD/CvJ7HBWoUYSxhY
+         xrN0OWUwqgU3yp2J+ZKhVmd2akEwq8VwSCA4dYA6b3WAwp8llY/m8JrgUM+LEpK3o21r
+         TN5g==
+X-Gm-Message-State: AA+aEWbKEFsKjccGXtinliSIXwR4QQDbSehUjEyiwJL9pJjhO8MADs9L
+        H6KvWOHvFHE+NSCx4GdJTHc=
+X-Google-Smtp-Source: AFSGD/VXq2PFncIO7gysdFt/pVyF/yR6rzAr+FWsiNC/bH6uh3FkEv309lLyX7l2hKTgrNJZgothkg==
+X-Received: by 2002:a1c:709:: with SMTP id 9mr12730650wmh.39.1543957097402;
+        Tue, 04 Dec 2018 12:58:17 -0800 (PST)
 Received: from peano (host93-127-dynamic.50-79-r.retail.telecomitalia.it. [79.50.127.93])
-        by smtp.gmail.com with ESMTPSA id d5sm15651149wrx.22.2018.12.04.12.58.09
+        by smtp.gmail.com with ESMTPSA id r69sm4791660wmd.4.2018.12.04.12.58.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 12:58:10 -0800 (PST)
-Date:   Tue, 4 Dec 2018 21:58:07 +0100
+        Tue, 04 Dec 2018 12:58:16 -0800 (PST)
+Date:   Tue, 4 Dec 2018 21:58:14 +0100
 From:   Cristian Sicilia <sicilia.cristian@gmail.com>
 To:     Bryan O Donoghue <pure.logic@nexus-software.ie>,
         Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
@@ -69,13 +69,15 @@ Cc:     Bryan O Donoghue <pure.logic@nexus-software.ie>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] staging: greybus: Fix parameters alignment and strings
- concatenation
-Message-ID: <cover.1543956271.git.sicilia.cristian@gmail.com>
+Subject: [PATCH 1/2] staging: greybus: Align function call parameters to
+ parenthesis
+Message-ID: <6087f45a8a4544fa6c671d8b42928fb48194e66e.1543956271.git.sicilia.cristian@gmail.com>
+References: <cover.1543956271.git.sicilia.cristian@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
 Content-Disposition: inline
+In-Reply-To: <cover.1543956271.git.sicilia.cristian@gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -83,44 +85,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---yrj/dFKFPuw6o+aM
+--C7zPtVaVf+AK4Oqc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-First patch align some parameters with parenthesis.
-Second patch will add some spaces between string.
+Aligned some parameters to the previous parenthesis.
 
-Cristian Sicilia (2):
-  staging: greybus: Align function call parameters to parenthesis
-  staging: greybus: Added space between string concatenated
+Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
+---
+ drivers/staging/greybus/loopback.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
- drivers/staging/greybus/loopback.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greybus/l=
+oopback.c
+index e4d42c1..1085e06 100644
+--- a/drivers/staging/greybus/loopback.c
++++ b/drivers/staging/greybus/loopback.c
+@@ -638,7 +638,8 @@ static int gb_loopback_async_transfer(struct gb_loopbac=
+k *gb, u32 len)
+ 	retval =3D gb_loopback_async_operation(gb, GB_LOOPBACK_TYPE_TRANSFER,
+ 					     request, len + sizeof(*request),
+ 					     len + response_len,
+-					     gb_loopback_async_transfer_complete);
++					     gb_loopback_async_transfer_complete
++					     );
+ 	if (retval)
+ 		goto gb_error;
+=20
+@@ -682,7 +683,8 @@ static int gb_loopback_request_handler(struct gb_operat=
+ion *operation)
+ 		}
+=20
+ 		if (!gb_operation_response_alloc(operation,
+-				len + sizeof(*response), GFP_KERNEL)) {
++						 len + sizeof(*response),
++						 GFP_KERNEL)) {
+ 			dev_err(dev, "error allocating response\n");
+ 			return -ENOMEM;
+ 		}
+@@ -882,7 +884,7 @@ static int gb_loopback_fn(void *data)
+ 				gb->type =3D 0;
+ 				gb->send_count =3D 0;
+ 				sysfs_notify(&gb->dev->kobj,  NULL,
+-						"iteration_count");
++					     "iteration_count");
+ 				dev_dbg(&bundle->dev, "load test complete\n");
+ 			} else {
+ 				dev_dbg(&bundle->dev,
+@@ -1066,7 +1068,7 @@ static int gb_loopback_probe(struct gb_bundle *bundle,
+=20
+ 	/* Allocate kfifo */
+ 	if (kfifo_alloc(&gb->kfifo_lat, kfifo_depth * sizeof(u32),
+-			  GFP_KERNEL)) {
++			GFP_KERNEL)) {
+ 		retval =3D -ENOMEM;
+ 		goto out_conn;
+ 	}
 --=20
 2.7.4
 
 
---yrj/dFKFPuw6o+aM
+--C7zPtVaVf+AK4Oqc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJcBupeAAoJEAnJ2Lo5pAXyTN4P/iXVunhp8c/FwsYvblKGjOE8
-ETAoU8ZYn+pvjimWIiLmKjGLXFV45kPv4th4koE9gOdwhpsvcpn2H/OhrsOeueNC
-P48UpdjNmFC0jX+jJ8WtuLIbVwHbBZeyLnZ94Nl/p0wsBuYZEFQE3/W1uwKjtQbF
-us0kslxuzsO1svuNIaRHYbKDgAnwdpjn+l7AsYQa1vpVNVd69HRl+hiK2x4x/wTt
-MPY6Ri52f6TgG/2/qMx0Kgmm3cANzcTxlinjppxm+yeEPxN3XUSMjGOys+p8mq8W
-zxAoeJc7g066Y0N4W/EGvA/tXCs8/TGCOjFIDu9VPwI8a2NDZZCy23U8j9vPMyup
-UuX9Z3lHHVs9bmHQE7RC+HpQYvn3Bag+QD3SeKE6+m4lbbTNfvGH75PaWVyQ3/ZH
-hZDeMAgvcv/wVyJK895lu5TV/r+xk72utVmBgf+hGEN/4+iOHo3iDoYsRQxFMclx
-ZIUBn8TPE4g8JJbvtV8G+EsebvF/9W10NhDKrF+0bItCHMVmRkEpmIAbEmmiEecx
-HX5ULxgNA5IzKQ5QDWwbo60g9/wb4oORBawuoD+kfeR3fNSR/4dRNmCbekkeAk87
-RRwdCb/ZTjrJY5pB7EN1TZ/eMDUxB+sKFXTg49IgH7WFRb6Q5ZzrC1Pg+qMgj2ZX
-5ouypAD/LWuhqrXINnhb
-=/4oE
+iQIcBAABCAAGBQJcBuplAAoJEAnJ2Lo5pAXyiGYP/0nS3+OrBl56PVrAecBb0XI9
+vREZVJAwxGgPKLl98eYnDpQk0DJMKHH7uU/LOcQkSrlcT3es0eL9O5aksT3eBel2
+SUpzdUN1PhY+4Am5rpmQtMGrZr3UOHbUKeuMzN4ae3hd5DCBQlM9wFO9039BHd5M
+8DBV0wDgDBbYYl6Bs2i+SgXSVlSKmeSqIhnGYwVYaR1SWEme00Cvmt4uzRtrtuB/
+5AeoSiYV/49oYonuExTVF7j2dbVeyWBeZFoierQyTIsrDNg/MZx4yk4TEFBsOpKP
+NoBG/lgcXqFFpy1SGlKgyHybNnSEQSwCkc7PbwYFduJfPH+aTWQNWA/cnOmFoqV6
+OJoh4Wi9iCdvNQQP1l2ipTTLDj5tiwHFCaIdzQqHYQIM4dh9LdJCYTlw/oWecKnw
+D4mXb2sVLVy5uiC0FMN7vvK9DC2tiEJp/w+KgvnJtsWeO/OLkpnjomlmMIevUP+a
+ljatEqkHEXWLwuBaPsSmhL6F8UKRAI0x6Cn0UImG4gHEm8pFdZMeBi/RTdVAopxN
+UlC5pJX8zz7aFwAkAXnJ/Nt6DU5jCFjiMLDa7ze3XQuXXLr4fJDTDFVp28i9wr67
+BFTe1fZ4HTssmz9TQZhVt5Uo2iHFu7fSSuemF6PVuPIMWNZ30SskDSuuDFv2VVTL
+gJPYONeA9RUWUjxqHqoW
+=LevI
 -----END PGP SIGNATURE-----
 
---yrj/dFKFPuw6o+aM--
+--C7zPtVaVf+AK4Oqc--
