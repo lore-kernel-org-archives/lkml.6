@@ -7,54 +7,62 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBB3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9F1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D45214DE
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2F6A214F1
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H00PwhP7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D45214DE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1rAP51nr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F6A214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbeLDK4U (ORCPT
+        id S1726480AbeLDK4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:56:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39432 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:56:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbeLDK4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:56:17 -0500
+        id S1726440AbeLDK4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:56:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 126FA2146D;
-        Tue,  4 Dec 2018 10:56:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D885214DA;
+        Tue,  4 Dec 2018 10:56:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920975;
-        bh=2pyVjl05kj8qShDhe+i54CHApb52RhFWD1nnXTFGa94=;
+        s=default; t=1543920980;
+        bh=nYkmcnIdu0LCSRn6fWKScW9uynkSKVeutkfO5hr4xFs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H00PwhP7ux5c8Ur28xpaG5bOObUUXoJ0r2/diC1WMiq1UWLUR7aDF6cb8tIPFi6yv
-         NiDgfkO9ic1q7DbP+0HkMF8QYXoEsJ9hme1eIKqXKfcVBfATeL1gbGJH1gvGPtGxVX
-         AOI5fNGTEQOWgGwmiE9JqemQy9LOPHazLhsAasS8=
+        b=1rAP51nrMfPr1J2FavW4zeNlIzjEDByZ2SDnwqpyFAL3zSpRmyoDW1LaK7WdTQlzm
+         Q01D0+gvZ2kFsUQOR9z6mbwJPwjFbHQEmlkwXOVdxS53SAz9QEVH8ytsIZ76+F9Hdd
+         wMjYXfpxICBDM+RaZrJ1BvBemkQPSY+S8vzPtGoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Borislav Petkov <bp@suse.de>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        srinivas.eeda@oracle.com
-Subject: [PATCH 4.19 031/139] x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support
-Date:   Tue,  4 Dec 2018 11:48:32 +0100
-Message-Id: <20181204103651.263926410@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.19 033/139] x86/speculation: Update the TIF_SSBD comment
+Date:   Tue,  4 Dec 2018 11:48:34 +0100
+Message-Id: <20181204103651.345588286@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -73,130 +81,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhenzhong Duan zhenzhong.duan@oracle.com
+From: Tim Chen tim.c.chen@linux.intel.com
 
-commit 4cd24de3a0980bf3100c9dcb08ef65ca7c31af48 upstream
+commit 8eb729b77faf83ac4c1f363a9ad68d042415f24c upstream
 
-Since retpoline capable compilers are widely available, make
-CONFIG_RETPOLINE hard depend on the compiler capability.
+"Reduced Data Speculation" is an obsolete term. The correct new name is
+"Speculative store bypass disable" - which is abbreviated into SSBD.
 
-Break the build when CONFIG_RETPOLINE is enabled and the compiler does not
-support it. Emit an error message in that case:
-
- "arch/x86/Makefile:226: *** You are building kernel with non-retpoline
-  compiler, please update your compiler..  Stop."
-
-[dwmw: Fail the build with non-retpoline compiler]
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: <srinivas.eeda@oracle.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/cca0cb20-f9e2-4094-840b-fb0f8810cd34@default
+Link: https://lkml.kernel.org/r/20181125185003.593893901@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/Kconfig                     |    4 ----
- arch/x86/Makefile                    |    5 +++--
- arch/x86/include/asm/nospec-branch.h |   10 ++++++----
- arch/x86/kernel/cpu/bugs.c           |    2 +-
- scripts/Makefile.build               |    2 --
- 5 files changed, 10 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/thread_info.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -441,10 +441,6 @@ config RETPOLINE
- 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
- 	  support for full protection. The kernel may run slower.
- 
--	  Without compiler support, at least indirect branches in assembler
--	  code are eliminated. Since this includes the syscall entry path,
--	  it is not entirely pointless.
--
- config INTEL_RDT
- 	bool "Intel Resource Director Technology support"
- 	default n
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -223,9 +223,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwin
- 
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--ifneq ($(RETPOLINE_CFLAGS),)
--  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-+ifeq ($(RETPOLINE_CFLAGS),)
-+  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
- endif
-+  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
- endif
- 
- archscripts: scripts_basic
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -162,11 +162,12 @@
- 	_ASM_PTR " 999b\n\t"					\
- 	".popsection\n\t"
- 
--#if defined(CONFIG_X86_64) && defined(RETPOLINE)
-+#ifdef CONFIG_RETPOLINE
-+#ifdef CONFIG_X86_64
- 
- /*
-- * Since the inline asm uses the %V modifier which is only in newer GCC,
-- * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
-+ * Inline asm uses the %V modifier which is only in newer GCC
-+ * which is ensured when CONFIG_RETPOLINE is defined.
-  */
- # define CALL_NOSPEC						\
- 	ANNOTATE_NOSPEC_ALTERNATIVE				\
-@@ -181,7 +182,7 @@
- 	X86_FEATURE_RETPOLINE_AMD)
- # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
- 
--#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
-+#else /* CONFIG_X86_32 */
- /*
-  * For i386 we use the original ret-equivalent retpoline, because
-  * otherwise we'll run out of registers. We don't care about CET
-@@ -211,6 +212,7 @@
- 	X86_FEATURE_RETPOLINE_AMD)
- 
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
-+#endif
- #else /* No retpoline for C / inline asm */
- # define CALL_NOSPEC "call *%[thunk_target]\n"
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -252,7 +252,7 @@ static void __init spec2_print_if_secure
- 
- static inline bool retp_compiler(void)
- {
--	return __is_defined(RETPOLINE);
-+	return __is_defined(CONFIG_RETPOLINE);
- }
- 
- static inline bool match_option(const char *arg, int arglen, const char *opt)
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -248,10 +248,8 @@ ifdef CONFIG_GCOV_KERNEL
- objtool_args += --no-unreachable
- endif
- ifdef CONFIG_RETPOLINE
--ifneq ($(RETPOLINE_CFLAGS),)
-   objtool_args += --retpoline
- endif
--endif
- 
- 
- ifdef CONFIG_MODVERSIONS
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -79,7 +79,7 @@ struct thread_info {
+ #define TIF_SIGPENDING		2	/* signal pending */
+ #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+ #define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
+-#define TIF_SSBD			5	/* Reduced data speculation */
++#define TIF_SSBD		5	/* Speculative store bypass disable */
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
 
 
