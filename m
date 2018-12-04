@@ -2,83 +2,80 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFADC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5786CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB2F214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:16:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcjdSKaj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB2F214DA
+	by mail.kernel.org (Postfix) with ESMTP id 253F320879
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:16:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253F320879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbeLDXQF (ORCPT
+        id S1726566AbeLDXQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 18:16:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbeLDXQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 18:16:04 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFA9F20879;
-        Tue,  4 Dec 2018 23:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543965364;
-        bh=GoqsxmlGrXzCU+dKPz7GO6DbC1GjrXIeWZxZuViDcOU=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=kcjdSKajaR0+jH9NAD8DVeW/rDf268KurfJ2Mt4VzcRGNWrOuLwFewyhiEI9Fkat5
-         cuP3wC7GsiJu8QiniWN54n0l3vCcylnaKVqXnF1xwK/01s47K/wQ+pc6L+ua3LLQp7
-         Ly+yRSJ2D5+mhKARw3s6JgFBXw2gsZqsnH6+BEbs=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 4 Dec 2018 18:16:10 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42319 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbeLDXQJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 18:16:09 -0500
+Received: by mail-ot1-f65.google.com with SMTP id v23so16878633otk.9;
+        Tue, 04 Dec 2018 15:16:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UL2J76qJXqjw7YRqc6/qr2U0W/xJv06W6yFunJq1Grc=;
+        b=Vw95DO9gm8Gzly4zCvrM7Bh/cqg7sQyQasxKUI6DQH+RqfKsEUfsM1tk4cUXp8Ac8d
+         ro16bafq6IkKxWOtM7Lnp3xL/fE/UtN3wNDUcjwqwdZvTwPtSkWRnz4jC9ztLiiDiWey
+         2BP6QH2k1gSroYXTIIAT422HAO+FrG8e6L4tYeJlVJwWAxPjMhkJCiLub4kktadzAyPt
+         DQoR3JY7QtVMitoE02NcdlyAm2nZmiOqB90b3P0ExxfrlSfzxTwK2iovN0ptpngn7W0L
+         muYpA58B0YAi0fB1pj+B7Zr/Mq9nfboklOaQgZOLA4IdbV/3z/ar7l1x7wZR0O5g0sbg
+         lXsg==
+X-Gm-Message-State: AA+aEWaOJc6uVxS6g+BQQaatueKOl+wBSpeks2SrNWjmC5K7bAiQGdCN
+        r9BiXxM/BDvmhzyJWoWP0A==
+X-Google-Smtp-Source: AFSGD/VpRmhh+vxY50JdGT/Q1NfUo7kQI2w3ZkKcxcBqQfNwblpjgzSoWZLGOAlGofEowQ0Uajhpww==
+X-Received: by 2002:a05:6830:1005:: with SMTP id a5mr13249227otp.113.1543965368506;
+        Tue, 04 Dec 2018 15:16:08 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v1sm6881315otq.80.2018.12.04.15.16.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 15:16:07 -0800 (PST)
+Date:   Tue, 4 Dec 2018 17:16:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, Vignesh R <vigneshr@ti.com>,
+        linux-input@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: ti-tsc-adc: Add new compatible for AM654
+ SoCs
+Message-ID: <20181204231607.GA16737@bogus>
+References: <20181119094509.22542-1-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Rajendra Nayak <rnayak@codeaurora.org>, andy.gross@linaro.org,
-        collinsd@codeaurora.org, mka@chromium.org, robh@kernel.org,
-        ulf.hansson@linaro.org, viresh.kumar@linaro.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181204052119.806-8-rnayak@codeaurora.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-References: <20181204052119.806-1-rnayak@codeaurora.org>
- <20181204052119.806-8-rnayak@codeaurora.org>
-Message-ID: <154396536335.88331.9265777410326926096@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 7/8] arm64: dts: sdm845: Add rpmh powercontroller node
-Date:   Tue, 04 Dec 2018 15:16:03 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119094509.22542-1-vigneshr@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajendra Nayak (2018-12-03 21:21:18)
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/q=
-com/sdm845.dtsi
-> index b72bdb0a31a5..a6d0cd8d17b0 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1324,6 +1325,56 @@
->                                 compatible =3D "qcom,sdm845-rpmh-clk";
->                                 #clock-cells =3D <1>;
->                         };
-> +
-> +                       rpmhpd: power-controller {
-> +                               compatible =3D "qcom,sdm845-rpmhpd";
-> +                               #power-domain-cells =3D <1>;
-> +                               operating-points-v2 =3D <&rpmhpd_opp_tabl=
-e>;
-> +                       };
-> +
-> +                       rpmhpd_opp_table: opp-table {
+On Mon, 19 Nov 2018 15:15:09 +0530, Vignesh R wrote:
+> AM654 SoCs has ADC IP which is similar to AM335x. Add new compatible to
+> handle AM654 SoCs. Also, it seems that existing compatible strings used
+> in the kernel DTs were never documented. So, document them now.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>  .../devicetree/bindings/input/touchscreen/ti-tsc-adc.txt  | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
 
-This table should go somewhere else? I don't understand why it's in the
-rpmh node because it's not an rpmh device. Does it go to the root? Or
-does it go under rpmhpd itself? I'm not sure.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
