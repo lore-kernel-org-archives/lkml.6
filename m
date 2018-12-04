@@ -2,120 +2,181 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9380C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B847C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95EB62087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:26:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="grGsq47V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95EB62087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C3A12087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:26:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C3A12087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbeLDM0Y (ORCPT
+        id S1726280AbeLDM0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:26:24 -0500
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:37509 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeLDM0Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:26:24 -0500
-Received: by mail-lj1-f181.google.com with SMTP id e5-v6so14736999lja.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 04:26:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Dda4lOs2zW4dx5jVqQc/qfmj9NTXLLKeS8NtINDVmnA=;
-        b=grGsq47V9Jfg/ahynXX/Sw9iC2s3/CL+HjmpZtRg/qwSSMRi0db+UmclMmzLKcTzMk
-         s5p0KxqOsZlg2jDCIimvnmcKYOrQeMYT7i5hHDkYqJListxIGwhaa6Mtl+XaRNXQmwCf
-         faYrYjHLnrbZ1e1WGfFv40U+vnTH/NM6FVOxs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Dda4lOs2zW4dx5jVqQc/qfmj9NTXLLKeS8NtINDVmnA=;
-        b=sgCRCsHzaqELOeTnZylpBDcxzxFSn0caYd6P8OeMXWD1BRL2ETcdWJ/Jm6fETI0+sF
-         bddHN+hu5VsNIwn5ipJTpXIcMn/WOqlle0GDmXVmzljXm6O9wey9nuMoXnn3yf2hJ72H
-         ApizXzahZUPVM3SuAwzw3o7isN3qEZhnm/vWKUXWxDnjcqe3drpOk8EEIhM7GYN9q1Ft
-         Sbn4VMLnj8s0edZGGotd9ERhBlUqIwghZyi/eubfvAgkeMnRFgswDFTh35+nge1Zsuob
-         MwDPnmT1aP+uQQSvZyHHZt8YLmY+44tynPMBzh7e50Rts492DTcQlMUTcBNTDxbZT+Up
-         YuaQ==
-X-Gm-Message-State: AA+aEWYrnH4IjslsuPQ1x2OpQrABHSPuC2oKvqYb5HrMmxGVCVlLpc3m
-        t3HGzmfQptOcK/sO2sDG6EEwgIJxhxBJiYInyLaViA==
-X-Google-Smtp-Source: AFSGD/USqL74wVSCxY7vU1LOS34PGG2ZWxMVTIZWi1T4QYsmeeMuaNDnL/bMgIpYmvnOe602O7QMd/A1hwzxc3vSLqc=
-X-Received: by 2002:a2e:92:: with SMTP id e18-v6mr13660079lji.130.1543926380409;
- Tue, 04 Dec 2018 04:26:20 -0800 (PST)
+        Tue, 4 Dec 2018 07:26:38 -0500
+Received: from mga01.intel.com ([192.55.52.88]:57213 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbeLDM0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 07:26:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 04:26:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,314,1539673200"; 
+   d="scan'208";a="97924067"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by orsmga006.jf.intel.com with ESMTP; 04 Dec 2018 04:26:20 -0800
+Subject: Re: [PATCH V2] sdhci: fix the timeout check window for clock and
+ reset
+To:     "Du, Alek" <alek.du@intel.com>
+Cc:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+        linux-kernel@vger.kernel.org
+References: <20181130150028.732896d8@xdu1-mobl>
+ <81ba3745-8277-d16e-3aad-48324f51dc8a@intel.com>
+ <20181130221300.4ef2956c@xdu1-mobl>
+ <c580be57-8a49-59f3-791e-c605d892266b@intel.com>
+ <20181201134251.26573207@xdu1-mobl> <20181204090120.63b5f0a4@xdu1-mobl>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <229dc468-1155-b81f-9fda-b71402387e3f@intel.com>
+Date:   Tue, 4 Dec 2018 14:24:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 4 Dec 2018 17:56:09 +0530
-Message-ID: <CA+G9fYsvJkW5_hruVYzLX3g9_5scj9nnL240rOMQ+DSz70dqqQ@mail.gmail.com>
-Subject: Linux-next: Build failed
-To:     Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181204090120.63b5f0a4@xdu1-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FYI,
+On 4/12/18 3:01 AM, Du, Alek wrote:
+>>From 87692fc090978bde8fe872f02d0023a57af6b492 Mon Sep 17 00:00:00 2001
+> From: Alek Du <alek.du@intel.com>
+> Date: Fri, 30 Nov 2018 14:02:28 +0800
+> Subject: [PATCH] sdhci: fix the timeout check window for clock and reset
+> 
+> We observed some fake timeouts on some devices, the log is like this:
 
-The Linux -next build failed due to below warnings/errors.
+Please change "fake timeouts" to "premature timeouts".  Also I think it is
+worth mentioning that this was with a virtualized environment.
 
-include/asm-generic/bitops/atomic.h: In function 'set_bit':
-include/asm-generic/bitops/atomic.h:17:2: error: implicit declaration
-of function 'atomic_long_or'; did you mean '__atomic_load_n'?
-[-Werror=implicit-function-declaration]
-  atomic_long_or(BIT_MASK(nr), (atomic_long_t *)p);
-  ^~~~~~~~~~~~~~
-  __atomic_load_n
-include/asm-generic/bitops/atomic.h: In function 'clear_bit':
-include/asm-generic/bitops/atomic.h:23:2: error: implicit declaration
-of function 'atomic_long_andnot'; did you mean
-'__atomic_test_and_set'? [-Werror=implicit-function-declaration]
-  atomic_long_andnot(BIT_MASK(nr), (atomic_long_t *)p);
-  ^~~~~~~~~~~~~~~~~~
-  __atomic_test_and_set
-include/asm-generic/bitops/atomic.h: In function 'change_bit':
-include/asm-generic/bitops/atomic.h:29:2: error: implicit declaration
-of function 'atomic_long_xor'; did you mean '__atomic_load_n'?
-[-Werror=implicit-function-declaration]
-  atomic_long_xor(BIT_MASK(nr), (atomic_long_t *)p);
-  ^~~~~~~~~~~~~~~
-  __atomic_load_n
-include/asm-generic/bitops/atomic.h: In function 'test_and_set_bit':
-include/asm-generic/bitops/atomic.h:41:8: error: implicit declaration
-of function 'atomic_long_fetch_or'; did you mean
-'__atomic_and_fetch_1'? [-Werror=implicit-function-declaration]
-  old = atomic_long_fetch_or(mask, (atomic_long_t *)p);
-        ^~~~~~~~~~~~~~~~~~~~
-        __atomic_and_fetch_1
-include/asm-generic/bitops/atomic.h: In function 'test_and_clear_bit':
-include/asm-generic/bitops/atomic.h:54:8: error: implicit declaration
-of function 'atomic_long_fetch_andnot'; did you mean
-'arch_atomic64_fetch_andnot'? [-Werror=implicit-function-declaration]
-  old = atomic_long_fetch_andnot(mask, (atomic_long_t *)p);
-        ^~~~~~~~~~~~~~~~~~~~~~~~
-        arch_atomic64_fetch_andnot
-include/asm-generic/bitops/atomic.h: In function 'test_and_change_bit':
-include/asm-generic/bitops/atomic.h:64:8: error: implicit declaration
-of function 'atomic_long_fetch_xor'; did you mean
-'__atomic_fetch_xor'? [-Werror=implicit-function-declaration]
-  old = atomic_long_fetch_xor(mask, (atomic_long_t *)p);
-        ^~~~~~~~~~~~~~~~~~~~~
-        __atomic_fetch_xor
+> 
+> case 1:
+> [159525.255629] mmc1: Internal clock never stabilised.
+> [159525.255818] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+> [159525.256049] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00001002
+> [159525.256277] mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+> [159525.256523] mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+> [159525.256752] mmc1: sdhci: Present:   0x1fff0000 | Host ctl: 0x00000000
+> [159525.256979] mmc1: sdhci: Power:     0x0000000b | Blk gap:  0x00000080
+> [159525.257205] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
+>>From the clock control register dump, we are pretty sure the clock was
+> stablized.
+> 
+> case 2:
+> [  914.550127] mmc1: Reset 0x2 never completed.
+> [  914.550321] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+> [  914.550608] mmc1: sdhci: Sys addr:  0x00000010 | Version:  0x00001002
+> 
+> After checking the sdhci code, we found the timeout check actually has a
+> little window that the CPU can be scheduled out and when it comes back,
+> the original time set or check is not valid.
+> 
+> Signed-off-by: Alek Du <alek.du@intel.com>
 
-cc1: some warnings being treated as errors
+Please add fixes tag:
 
-full log details,
-https://ci.linaro.org/job/openembedded-lkft-linux-next/DISTRO=rpb,MACHINE=juno,label=docker-stretch-amd64/407/consoleText
+Fixes: 5a436cc0af62 ("mmc: sdhci: Optimize delay loops")
 
-Best regards
-Naresh Kamboju
+And also a stable tag:
+
+Cc: stable@vger.kernel.org      # v4.12+
+
+> ---
+>  drivers/mmc/host/sdhci.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae53fa2e..af01f7d16eae 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -218,12 +218,17 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
+>  	/* hw clears the bit when it's done */
+>  	while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
+>  		if (ktime_after(ktime_get(), timeout)) {
+> +			/* check it again, since there is a window between
+> +			   bit check and time check */
+> +			if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
+> +				break;
+
+It would be neater like:
+
+	while (1) {
+		bool timedout = ktime_after(ktime_get(), timeout);
+
+		if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
+			break;
+		if (timedout) {
+
+
+>  			pr_err("%s: Reset 0x%x never completed.\n",
+>  				mmc_hostname(host->mmc), (int)mask);
+>  			sdhci_dumpregs(host);
+>  			return;
+> +		} else {
+
+The if-clause does a 'return', so the 'else' is not needed
+
+> +			udelay(10);
+>  		}
+> -		udelay(10);
+>  	}
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_reset);
+> @@ -1611,12 +1616,19 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
+>  	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+>  		& SDHCI_CLOCK_INT_STABLE)) {
+>  		if (ktime_after(ktime_get(), timeout)) {
+> +			/* check it again since there is a window between
+> +			   status check and time check */
+> +			if ((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+> +					& SDHCI_CLOCK_INT_STABLE)
+> +				break;
+
+Similarly:
+
+	while (1) {
+		bool timedout = ktime_after(ktime_get(), timeout);
+
+		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+		if (clk & SDHCI_CLOCK_INT_STABLE)
+			break;
+		if (timedout) {
+
+
+>  			pr_err("%s: Internal clock never stabilised.\n",
+>  			       mmc_hostname(host->mmc));
+>  			sdhci_dumpregs(host);
+>  			return;
+>  		}
+> -		udelay(10);
+> +		else {
+
+The if-clause does a 'return', so the 'else' is not needed
+
+> +			udelay(10);
+> +		}
+>  	}
+>  
+>  	clk |= SDHCI_CLOCK_CARD_EN;
+> 
+
