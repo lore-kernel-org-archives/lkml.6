@@ -2,95 +2,174 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFCEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04492C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5100E20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:15:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5100E20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 947DC20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:17:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 947DC20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbeLDMPs (ORCPT
+        id S1726266AbeLDMRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:15:48 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44691 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeLDMPr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:15:47 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gU9ba-0005AU-If; Tue, 04 Dec 2018 13:15:10 +0100
-Date:   Tue, 4 Dec 2018 13:15:10 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        the arch/x86 maintainers <x86@kernel.org>, nstange@suse.de,
-        Rik van Riel <riel@surriel.com>,
-        KVM devel mailing list <kvm@vger.kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/fpu] x86/fpu: Don't export __kernel_fpu_{begin,end}()
-Message-ID: <20181204121510.ebw4vb265lcepa2m@linutronix.de>
-References: <20181129150210.2k4mawt37ow6c2vq@linutronix.de>
- <tip-7d79adb87fa79e4a4c59424fd5b5a922861fc5f6@git.kernel.org>
- <CAKv+Gu-s59fSWrMevmbJWyBtNVYLkF7FATALGBD470CWsN9C1Q@mail.gmail.com>
- <20181203220841.GB4794@zn.tnic>
+        Tue, 4 Dec 2018 07:17:12 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15637 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725767AbeLDMRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 07:17:11 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8FDCE94B1310C;
+        Tue,  4 Dec 2018 20:17:07 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Tue, 4 Dec 2018
+ 20:16:59 +0800
+From:   John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH v3 4/4] scsi: hisi_sas: Add support for DIF feature for v3
+ hw
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <1543838994-30028-1-git-send-email-john.garry@huawei.com>
+ <1543838994-30028-5-git-send-email-john.garry@huawei.com>
+ <yq1ftveszew.fsf@oracle.com>
+CC:     <jejb@linux.vnet.ibm.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>
+Message-ID: <358aae82-394e-9df2-6b05-5af8e0f196b3@huawei.com>
+Date:   Tue, 4 Dec 2018 12:16:54 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181203220841.GB4794@zn.tnic>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <yq1ftveszew.fsf@oracle.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-03 23:08:41 [+0100], Borislav Petkov wrote:
-> On Mon, Dec 03, 2018 at 10:12:19PM +0100, Ard Biesheuvel wrote:
-> > > + * Using the FPU in hardirq is not allowed.
-> > 
-> > According to the documentation in x86/kernel/fpu/core.c, this is not
-> > true. So which one is accurate?
-> 
-> I think you mean the irq from user mode... Yap, we do allow that.
-> 
-> Sebastian?
+On 04/12/2018 04:12, Martin K. Petersen wrote:
+>
+> John,
+>
 
-Do you refer to
-| *   - by IRQ context code to potentially use the FPU
-| *     if it's unused.
-  
-? It is possible to use the FPU in IRQ context.
-The FPU could be used in user-context surrounded by kernel_fpu_begin().
-This only disables preemption so an IRQ could interrupt it. This IRQ
-could then use the FPU or raise a SoftIRQ which would use it.
-Therefore on x86 it is required to check with irq_fpu_usable() if the
-FPU can be used. If the FPU can not be used, you have to implement
-fallback code.
+Hi Martin,
 
-With the "restore FPU on return to userland" series we need to modify
-the FPU in a few places. The softirq and preemption is disabled. I
-didn't find any in-IRQ users.
-Going forward I would like to remove the in-IRQ part and
-irq_fpu_usable() and disable softirq as part of kernel_fpu_begin().
+Thanks for checking.
 
-> Thx.
+>> +static int hisi_sas_dif_dma_map(struct hisi_hba *hisi_hba,
+>> +				int *n_elem_dif, struct sas_task *task)
+>> +{
+>> +	struct device *dev = hisi_hba->dev;
+>> +	struct sas_ssp_task *ssp_task;
+>> +	struct scsi_cmnd *scsi_cmnd;
+>> +	int rc;
+>> +
+>> +	if (task->num_scatter) {
+>> +		ssp_task = &task->ssp_task;
+>> +		scsi_cmnd = ssp_task->cmd;
+>> +
+>> +		if (scsi_prot_sg_count(scsi_cmnd)) {
+>> +			*n_elem_dif = dma_map_sg(dev,
+>> +						 scsi_prot_sglist(scsi_cmnd),
+>> +						 scsi_prot_sg_count(scsi_cmnd),
+>> +						 task->data_dir);
+>> +
+>
+> If you're only supporting DIF there is no DMA mapping or unmapping since
+> the PI is generated by or verified by the HBA. No additional data is
+> transferred to/from host memory. The protection scatterlist will be
+> NULL.
 
-Sebastian
+So I was bit rushed in dropping DIX support...
+
+>
+>> +	switch (prot_op) {
+>> +	case SCSI_PROT_READ_INSERT:
+>> +		prot->dw0 |= T10_INSRT_EN_MSK;
+>> +		prot->lbrtgv = lbrt_chk_val;
+>> +		break;
+>> +	case SCSI_PROT_READ_STRIP:
+>> +		prot->dw0 |= (T10_RMV_EN_MSK | T10_CHK_EN_MSK);
+>> +		prot->lbrtcv = lbrt_chk_val;
+>> +		if (prot_type == SCSI_PROT_DIF_TYPE1)
+>> +			prot->dw4 |= (0xc << 16);
+>> +		else if (prot_type == SCSI_PROT_DIF_TYPE3)
+>> +			prot->dw4 |= (0xfc << 16);
+>> +		break;
+>> +	case SCSI_PROT_READ_PASS:
+>> +		prot->dw0 |= T10_CHK_EN_MSK;
+>> +		prot->lbrtcv = lbrt_chk_val;
+>> +		if (prot_type == SCSI_PROT_DIF_TYPE1)
+>> +			prot->dw4 |= (0xc << 16);
+>> +		else if (prot_type == SCSI_PROT_DIF_TYPE3)
+>> +			prot->dw4 |= (0xfc << 16);
+>> +		break;
+>> +	case SCSI_PROT_WRITE_INSERT:
+>> +		prot->dw0 |= T10_INSRT_EN_MSK;
+>> +		prot->lbrtgv = lbrt_chk_val;
+>> +		break;
+>> +	case SCSI_PROT_WRITE_STRIP:
+>> +		prot->dw0 |= (T10_RMV_EN_MSK | T10_CHK_EN_MSK);
+>> +		prot->lbrtcv = lbrt_chk_val;
+>> +		break;
+>> +	case SCSI_PROT_WRITE_PASS:
+>> +		prot->dw0 |= T10_CHK_EN_MSK;
+>> +		prot->lbrtcv = lbrt_chk_val;
+>> +		if (prot_type == SCSI_PROT_DIF_TYPE1)
+>> +			prot->dw4 |= (0xc << 16);
+>> +		else if (prot_type == SCSI_PROT_DIF_TYPE3)
+>> +			prot->dw4 |= (0xfc << 16);
+>> +		break;
+>> +	default:
+>> +		WARN(1, "prot_op(0x%x) is not valid\n", prot_op);
+>> +		break;
+>> +	}
+>
+> DIF is WRITE_INSERT/READ_STRIP operations only.
+>
+
+as above
+
+>> +		if ((prot_op == SCSI_PROT_READ_INSERT) ||
+>> +		    (prot_op == SCSI_PROT_WRITE_INSERT) ||
+>> +		    (prot_op == SCSI_PROT_WRITE_PASS) ||
+>> +		    (prot_op == SCSI_PROT_READ_PASS)) {
+>> +			unsigned int interval = scsi_prot_interval(scsi_cmnd);
+>> +			unsigned int ilog2_interval = ilog2(interval);
+>> +
+>> +			len = (task->total_xfer_len >> ilog2_interval) * 8;
+>> +		}
+>
+> if (scmd->prot_flags & SCSI_PROT_TRANSFER_PI) {
+>
+>> +	.sg_prot_tablesize	= HISI_SAS_SGE_PAGE_CNT,
+>
+> Also not required if you're only doing DIF. There is no protection
+> scatterlist.
+
+and again.
+
+>
+> Anyway. Instead of throwing the DIX stuff away, let's figure out what
+> the problem is.
+>
+
+So I just did not want to upstream support for a feature which seems to 
+not be working.
+
+Are you happy for us to make DIX support in this driver "hisi_sas DIX 
+experimental" short term?
+
+Regardless, we can discuss figuring out any SCSI MQ vs DIX issue in 
+"DIF/DIX issue related to config CONFIG_SCSI_MQ_DEFAULT".
+
+Cheers,
+John
+
+
+
