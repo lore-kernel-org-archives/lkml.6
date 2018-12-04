@@ -2,61 +2,128 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7FEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604E6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107D32082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:16:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="D7rMKtfH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107D32082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by mail.kernel.org (Postfix) with ESMTP id 2853320672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:19:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2853320672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeLDRQf (ORCPT
+        id S1726925AbeLDRTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 12:16:35 -0500
-Received: from one.firstfloor.org ([193.170.194.197]:47298 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeLDRQe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 12:16:34 -0500
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id C1027868D9; Tue,  4 Dec 2018 18:16:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1543943792;
-        bh=OTxkiUYkk+dbVlylcFXlcYJgitqx6Vt7IWTLa60K/U8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D7rMKtfHm2v4248JxjTFfNpInvtNi/sHVemLJBkU63r93sOWYzWhfGFkIeqcoPTiT
-         ki7cvbqC9JI8//V4ko2AF94ntf8sSCAV5t4XzTnBQ29vK5pH+ONd1aRtKq/h8ydeUY
-         kteSvQgI9ybtLL8Qy/2pCpiVcu2M0BDSJYXNCT54=
-Date:   Tue, 4 Dec 2018 09:16:32 -0800
-From:   Andi Kleen <andi@firstfloor.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH] tools: Fix diverse typos
-Message-ID: <20181204171632.42jhm25oimlvac3c@two.firstfloor.org>
-References: <20181203102200.GA104797@gmail.com>
- <20181203103107.GC11573@hirez.programming.kicks-ass.net>
- <20181203105219.GA104329@gmail.com>
+        Tue, 4 Dec 2018 12:19:41 -0500
+Received: from foss.arm.com ([217.140.101.70]:37556 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbeLDRTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 12:19:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E36C7A78;
+        Tue,  4 Dec 2018 09:19:39 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC3163F59C;
+        Tue,  4 Dec 2018 09:19:38 -0800 (PST)
+Subject: Re: [PATCH 3/4] dma-debug: Dynamically expand the dma_debug_entry
+ pool
+To:     John Garry <john.garry@huawei.com>, hch@lst.de
+Cc:     m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, cai@gmx.us, salil.mehta@huawei.com
+References: <cover.1543856576.git.robin.murphy@arm.com>
+ <f99ea022be92a99339404867bc925f4fbd2ee6c4.1543856576.git.robin.murphy@arm.com>
+ <a45fce07-3663-2a55-5b97-336002f21cdb@huawei.com>
+ <70336fdc-abe8-2cea-8d8c-170b4863d884@arm.com>
+ <58fb3579-d101-db2b-c63a-609ddd651932@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <eccb5b60-b831-c4bd-6c61-4867296e1232@arm.com>
+Date:   Tue, 4 Dec 2018 17:19:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203105219.GA104329@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <58fb3579-d101-db2b-c63a-609ddd651932@huawei.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/12/2018 16:30, John Garry wrote:
+> On 04/12/2018 13:11, Robin Murphy wrote:
+>> Hi John,
+>>
+>> On 03/12/2018 18:23, John Garry wrote:
+>>> On 03/12/2018 17:28, Robin Murphy wrote:
+>>>> Certain drivers such as large multi-queue network adapters can use 
+>>>> pools
+>>>> of mapped DMA buffers larger than the default dma_debug_entry pool of
+>>>> 65536 entries, with the result that merely probing such a device can
+>>>> cause DMA debug to disable itself during boot unless explicitly 
+>>>> given an
+>>>> appropriate "dma_debug_entries=..." option.
+>>>>
+>>>> Developers trying to debug some other driver on such a system may 
+>>>> not be
+>>>> immediately aware of this, and at worst it can hide bugs if they 
+>>>> fail to
+>>>> realise that dma-debug has already disabled itself unexpectedly by the
+>>>> time the code of interest gets to run. Even once they do realise, it 
+>>>> can
+>>>> be a bit of a pain to emprirically determine a suitable number of
+>>>> preallocated entries to configure without massively over-allocating.
+>>>>
+>>>> There's really no need for such a static limit, though, since we can
+>>>> quite easily expand the pool at runtime in those rare cases that the
+>>>> preallocated entries are insufficient, which is arguably the least
+>>>> surprising and most useful behaviour.
+>>>
+>>> Hi Robin,
+>>>
+>>> Do you have an idea on shrinking the pool again when the culprit
+>>> driver is removed, i.e. we have so many unused debug entries now
+>>> available?
+>>
+>> I honestly don't believe it's worth the complication. This is a
+>> development feature with significant overheads already, so there's not
+>> an awful lot to gain by trying to optimise memory usage. If a system can
+>> ever load a driver that makes hundreds of thousands of simultaneous
+>> mappings, it can almost certainly spare 20-odd megabytes of RAM for the
+>> corresponding debug entries in perpetuity. Sure, it does mean you'd need
+>> to reboot to recover memory from a major leak, but that's mostly true of
+>> the current behaviour too, and rebooting during driver development is
+>> hardly an unacceptable inconvenience.
+>>
+> 
+> ok, I just thought that it would not be too difficult to implement this 
+> on the dma entry free path.
 
-I've let the JSON maintainers know.
+True, in the current code it wouldn't be all that hard, but it feels 
+more worthwhile to optimise for allocation rather than freeing, and as 
+soon as we start allocating memory for multiple entries at once, trying 
+to free anything becomes extremely challenging.
 
--Andi
+>> In fact, having got this far in, what I'd quite like to do is to get rid
+>> of dma_debug_resize_entries() such that we never need to free things at
+>> all, since then we could allocate whole pages as blocks of entries to
+>> save on masses of individual slab allocations.
+>>
+> 
+> On a related topic, is it possible for the user to learn the total 
+> entries created at a given point in time? If not, could we add a file in 
+> the debugfs folder for this?
+
+I did get as far as pondering that you effectively lose track of 
+utilisation once the low-water-mark of min_free_entries hits 0 and stays 
+there - AFAICS it should be sufficient to just expose nr_total_entries 
+as-is, since users can then calculate current and maximum occupancy 
+based on *_free_entries. Does that sound reasonable to you?
+
+That also indirectly reminds me that this lot is documented in 
+DMA_API.txt, so I should be good and update that too...
+
+Cheers,
+Robin.
