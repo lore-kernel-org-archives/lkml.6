@@ -2,171 +2,259 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD46FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B597FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F7F020851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:27:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DE702081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:29:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Ci0lrkr4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7F020851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ivhm9rrK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE702081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbeLDN1k (ORCPT
+        id S1726222AbeLDN3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:27:40 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:33648 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbeLDN1j (ORCPT
+        Tue, 4 Dec 2018 08:29:52 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:35994 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbeLDN3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:27:39 -0500
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id D19835C07AA;
-        Tue,  4 Dec 2018 14:27:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1543930057;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FZDGS75OY2CnEYwbJ8d7y7z0pz7Qa2SwVyeltfytdi8=;
-        b=Ci0lrkr4aqCtef7L1CtxiosDjlYrUy0H51byEx/rOkxq1VwGHJ6bzhKWtOzUTXy6yHErtJ
-        80oh/dKBlJ6xJJmX34bD3C7z4ygG3saA5susUUjyTF+KEks0lTDPWpjTUiX+NVeMXG7GtL
-        tRVfNilHAztXOFC4ljlYOLjroUnzLbg=
-From:   Stefan Agner <stefan@agner.ch>
-To:     hongxing.zhu@nxp.com, l.stach@pengutronix.de
-Cc:     robin.murphy@arm.com, tpiepho@impinj.com, linux@armlinux.org.uk,
-        leonard.crestez@nxp.com, andrew.smirnov@gmail.com,
-        festevam@gmail.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        stefan@agner.ch, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] pci: imx6: support kernels built in Thumb-2 mode
-Date:   Tue,  4 Dec 2018 14:27:33 +0100
-Message-Id: <20181204132733.14422-2-stefan@agner.ch>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181204132733.14422-1-stefan@agner.ch>
-References: <20181204132733.14422-1-stefan@agner.ch>
+        Tue, 4 Dec 2018 08:29:51 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB4DONs2107950;
+        Tue, 4 Dec 2018 13:29:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=IPu+wwHJvl3k3X5rKszooL4xtCWBdfNWweEjy8FgbxA=;
+ b=Ivhm9rrKdd6btRfHjhXgUQcf5SBrMv+MVnkWlMXSYYEe4rEXmESvM4r6WwxPbvssQP0c
+ Vl/3rX9QScaHHL8qj2VqBcBw7sq3S9cqnZdiZfc82vXCbs1RQ8wHZhdTrpMKbbdKzQ55
+ 6U+itThXqlDdOgraWoS6AnSi9g5YqLu1yxFdroWLhHVJTRkS9x518x7FrlxrNf4S/NlD
+ UVLZsqD/itbg0yOznZsLuY2TlVMfrOgKHNwMHk02nU4wob8EFdl7yH2C7u9Jmo1rQ939
+ /uKV1SoYpz/TZkhqWBHazctBU+sT+cO0eB6+49KLoARKcNMW68YWXXs1s/GziTZ9yvWf eA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2p3hqtvd2y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Dec 2018 13:29:34 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB4DTRu8030418
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Dec 2018 13:29:28 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB4DTQZx032696;
+        Tue, 4 Dec 2018 13:29:26 GMT
+Received: from unbuntlaptop (/197.157.0.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Dec 2018 05:29:25 -0800
+Date:   Tue, 4 Dec 2018 16:29:13 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maynard CABIENTE <maynard.cabiente@raritan.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] usb: dwc2: Revert "usb: dwc2: Disable all EP's on
+ disconnect"
+Message-ID: <20181204132913.GH3073@unbuntlaptop>
+References: <CGME20181121154518eucas1p2cc7ffd4d071ff420c747e1d0c387ee5d@eucas1p2.samsung.com>
+ <20181121154504.13052-1-m.szyprowski@samsung.com>
+ <410670D7E743164D87FA6160E7907A56013A7AA1EE@am04wembxa.internal.synopsys.com>
+ <20181123144307.GC2970@unbuntlaptop>
+ <410670D7E743164D87FA6160E7907A56013A7B19C2@am04wembxa.internal.synopsys.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <410670D7E743164D87FA6160E7907A56013A7B19C2@am04wembxa.internal.synopsys.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812040115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a fault handler which handles immediate reads in Thumb-2
-mode. Install the appropriate handler depending on which mode
-the kernel has been built. This avoids an "Unhandled fault:
-external abort on non-linefetch (0x1008) at 0xf0a80000"
-during boot on a device with a PCIe switch connected.
+On Tue, Dec 04, 2018 at 12:34:08PM +0000, Minas Harutyunyan wrote:
+> @@ -3185,12 +3183,13 @@ void dwc2_hsotg_disconnect(struct dwc2_hsotg *hsotg)
+>          hsotg->connected = 0;
+>          hsotg->test_mode = 0;
+> 
+> -       /* all endpoints should be shutdown */
+>          for (ep = 0; ep < hsotg->num_of_eps; ep++) {
+>                  if (hsotg->eps_in[ep])
+> -                       dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
+> +                       kill_all_requests(hsotg, hsotg->eps_in[ep],
+> +                                                         -ESHUTDOWN);
+>                  if (hsotg->eps_out[ep])
+> -                       dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
+> +                       kill_all_requests(hsotg, hsotg->eps_out[ep],
+> +                                                         -ESHUTDOWN);
 
-Link: https://lore.kernel.org/linux-pci/20181126161645.8177-1-stefan@agner.ch/
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
-Changes since v1:
-- Added Thumb-2 32-bit instruction support (tested by inserting .w
-  instructions in arch/arm/include/asm/io.h)
-- Avoid dereferencing if fault happened in user mode
 
- drivers/pci/controller/dwc/pci-imx6.c | 59 ++++++++++++++++++++++++++-
- 1 file changed, 58 insertions(+), 1 deletion(-)
+Should this part be in a separate patch?
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 54a29e441303..a9bbbf176c4a 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -29,6 +29,7 @@
- #include <linux/reset.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-+#include <asm/opcodes.h>
- 
- #include "pcie-designware.h"
- 
-@@ -305,6 +306,59 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
- 	return 1;
+I'm not trying to be rhetorical at all.  I literally don't know the
+code very well.  Hopefully the full commit message will explain it.
+
+>          }
+> 
+>          call_gadget(hsotg, disconnect);
+> @@ -3234,6 +3233,8 @@ static void dwc2_hsotg_irq_fifoempty(struct 
+> dwc2_hsotg *hsotg, bool periodic)
+>                          GINTSTS_PTXFEMP |  \
+>                          GINTSTS_RXFLVL)
+> 
+> +static int dwc2_hsotg_ep_disable(struct usb_ep *ep);
+> +
+>   /**
+>    * dwc2_hsotg_core_init - issue softreset to the core
+>    * @hsotg: The device state
+> @@ -3258,12 +3259,14 @@ void dwc2_hsotg_core_init_disconnected(struct 
+> dwc2_hsotg *hsotg,
+>                          return;
+>          } else {
+>                  /* all endpoints should be shutdown */
+> +               spin_unlock(&hsotg->lock);
+>                  for (ep = 1; ep < hsotg->num_of_eps; ep++) {
+>                          if (hsotg->eps_in[ep])
+>  
+> dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
+>                          if (hsotg->eps_out[ep])
+>  
+> dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
+>                  }
+> +               spin_lock(&hsotg->lock);
+>          }
+> 
+>          /*
+
+The idea here is that this is the only caller which is holding the
+lock and we drop it here and take it again inside dwc2_hsotg_ep_disable().
+I don't know the code very well and can't totally swear that this
+doesn't introduce a small race condition...
+
+Another option would be to introduce a new function which takes the lock
+and change all the other callers instead.  To me that would be easier to
+review...  See below for how it might look:
+
+regards,
+dan carpenter
+
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 94f3ba995580..b17a5dbefd5f 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -3166,6 +3166,7 @@ static void kill_all_requests(struct dwc2_hsotg *hsotg,
  }
  
-+static int imx6q_pcie_abort_handler_thumb2(unsigned long addr,
-+		unsigned int fsr, struct pt_regs *regs)
+ static int dwc2_hsotg_ep_disable(struct usb_ep *ep);
++static int dwc2_hsotg_ep_disable_lock(struct usb_ep *ep);
+ 
+ /**
+  * dwc2_hsotg_disconnect - disconnect service
+@@ -3188,9 +3189,9 @@ void dwc2_hsotg_disconnect(struct dwc2_hsotg *hsotg)
+ 	/* all endpoints should be shutdown */
+ 	for (ep = 0; ep < hsotg->num_of_eps; ep++) {
+ 		if (hsotg->eps_in[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
++			dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);
+ 		if (hsotg->eps_out[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
++			dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);
+ 	}
+ 
+ 	call_gadget(hsotg, disconnect);
+@@ -4069,10 +4070,8 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
+ 	struct dwc2_hsotg *hsotg = hs_ep->parent;
+ 	int dir_in = hs_ep->dir_in;
+ 	int index = hs_ep->index;
+-	unsigned long flags;
+ 	u32 epctrl_reg;
+ 	u32 ctrl;
+-	int locked;
+ 
+ 	dev_dbg(hsotg->dev, "%s(ep %p)\n", __func__, ep);
+ 
+@@ -4088,10 +4087,6 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
+ 
+ 	epctrl_reg = dir_in ? DIEPCTL(index) : DOEPCTL(index);
+ 
+-	locked = spin_is_locked(&hsotg->lock);
+-	if (!locked)
+-		spin_lock_irqsave(&hsotg->lock, flags);
+-
+ 	ctrl = dwc2_readl(hsotg, epctrl_reg);
+ 
+ 	if (ctrl & DXEPCTL_EPENA)
+@@ -4114,12 +4109,23 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
+ 	hs_ep->fifo_index = 0;
+ 	hs_ep->fifo_size = 0;
+ 
+-	if (!locked)
+-		spin_unlock_irqrestore(&hsotg->lock, flags);
+-
+ 	return 0;
+ }
+ 
++static int dwc2_hsotg_ep_disable_lock(struct usb_ep *ep)
 +{
-+	unsigned long pc = instruction_pointer(regs);
-+	unsigned long instr;
++	struct dwc2_hsotg_ep *hs_ep = our_ep(ep);
++	struct dwc2_hsotg *hsotg = hs_ep->parent;
++	unsigned long flags;
++	int ret;
 +
-+	if (user_mode(regs))
-+		return 1;
++	spin_lock_irqsave(&hsotg->lock, flags);
++	ret = dwc2_hsotg_ep_disable(ep);
++	spin_unlock_irqrestore(&hsotg->lock, flags);
 +
-+	instr = __mem_to_opcode_thumb32(*(unsigned long *)pc);
-+
-+	if (__opcode_is_thumb32(instr)) {
-+		/* Load word/byte and halfword immediate offset */
-+		if ((instr & 0xff100000UL) == 0xf8100000UL) {
-+			int reg = (instr >> 12) & 0xf;
-+			unsigned long val;
-+
-+			if ((instr & 0x00700000UL) == 0x00100000UL)
-+				val = 0xff;
-+			else if ((instr & 0x00700000UL) == 0x00300000UL)
-+				val = 0xffff;
-+			else
-+				val = 0xffffffffUL;
-+
-+			regs->uregs[reg] = val;
-+			regs->ARM_pc += 4;
-+			return 0;
-+		}
-+	} else {
-+		instr = __mem_to_opcode_thumb16(*(unsigned long *)pc);
-+
-+		/* Load word/byte and halfword immediate offset */
-+		if (((instr & 0xe800) == 0x6800) ||
-+		    ((instr & 0xf800) == 0x8800)) {
-+			int reg = instr & 0x7;
-+			unsigned long val;
-+
-+			if (instr & 0x1000)
-+				val = 0xff;
-+			else if (instr & 0x8000)
-+				val = 0xffff;
-+			else
-+				val = 0xffffffffUL;
-+
-+			regs->uregs[reg] = val;
-+			regs->ARM_pc += 2;
-+			return 0;
-+		}
-+	}
-+
-+	return 1;
++	return ret;
 +}
 +
- static int imx6_pcie_attach_pd(struct device *dev)
- {
- 	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-@@ -1075,6 +1129,8 @@ static struct platform_driver imx6_pcie_driver = {
+ /**
+  * on_list - check request is on the given endpoint
+  * @ep: The endpoint to check.
+@@ -4267,7 +4273,7 @@ static int dwc2_hsotg_ep_sethalt_lock(struct usb_ep *ep, int value)
  
- static int __init imx6_pcie_init(void)
- {
-+	bool thumb2 = IS_ENABLED(CONFIG_THUMB2_KERNEL);
-+
- 	/*
- 	 * Since probe() can be deferred we need to make sure that
- 	 * hook_fault_code is not called after __init memory is freed
-@@ -1082,7 +1138,8 @@ static int __init imx6_pcie_init(void)
- 	 * we can install the handler here without risking it
- 	 * accessing some uninitialized driver state.
- 	 */
--	hook_fault_code(8, imx6q_pcie_abort_handler, SIGBUS, 0,
-+	hook_fault_code(8, thumb2 ? imx6q_pcie_abort_handler_thumb2 :
-+			imx6q_pcie_abort_handler, SIGBUS, 0,
- 			"external abort on non-linefetch");
+ static const struct usb_ep_ops dwc2_hsotg_ep_ops = {
+ 	.enable		= dwc2_hsotg_ep_enable,
+-	.disable	= dwc2_hsotg_ep_disable,
++	.disable	= dwc2_hsotg_ep_disable_lock,
+ 	.alloc_request	= dwc2_hsotg_ep_alloc_request,
+ 	.free_request	= dwc2_hsotg_ep_free_request,
+ 	.queue		= dwc2_hsotg_ep_queue_lock,
+@@ -4407,9 +4413,9 @@ static int dwc2_hsotg_udc_stop(struct usb_gadget *gadget)
+ 	/* all endpoints should be shutdown */
+ 	for (ep = 1; ep < hsotg->num_of_eps; ep++) {
+ 		if (hsotg->eps_in[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
++			dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);
+ 		if (hsotg->eps_out[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
++			dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);
+ 	}
  
- 	return platform_driver_register(&imx6_pcie_driver);
--- 
-2.19.1
-
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+@@ -4857,9 +4863,9 @@ int dwc2_hsotg_suspend(struct dwc2_hsotg *hsotg)
+ 
+ 		for (ep = 0; ep < hsotg->num_of_eps; ep++) {
+ 			if (hsotg->eps_in[ep])
+-				dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
++				dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);
+ 			if (hsotg->eps_out[ep])
+-				dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
++				dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);
+ 		}
+ 	}
+ 
