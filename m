@@ -2,138 +2,159 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84897C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FC1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4699920851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:30:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNvrum9o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4699920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B4C0920851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4C0920851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeLDK45 (ORCPT
+        id S1726858AbeLDLa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:56:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40422 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:30:59 -0500
+Received: from mx.socionext.com ([202.248.49.38]:7851 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726603AbeLDK4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:56:55 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72555214D9;
-        Tue,  4 Dec 2018 10:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921014;
-        bh=8Llu2J3pRczP6n1OUxtxtyA6N3BWy2VL5jz5pvao0uE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VNvrum9oz4Dh+C4JDsvo07jWLSsRDWnLfsNDnt0Fyx58xyc3Of0XG6Gmq/cM8/XgR
-         UlV31LKjV+a32FnatbDWQZ17tmBGxuEEhMNgMgF2E3/wQm7COInMLEQtAEWKrYWILZ
-         FzloYn1unSW7hsCZ7pwT1lS3jF1hss9ePS++OXKY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 047/139] x86/speculataion: Mark command line parser data __initdata
-Date:   Tue,  4 Dec 2018 11:48:48 +0100
-Message-Id: <20181204103651.919576819@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
-References: <20181204103649.950154335@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1726289AbeLDLa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:30:57 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 04 Dec 2018 20:30:55 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 70D3460062;
+        Tue,  4 Dec 2018 20:30:55 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 4 Dec 2018 20:30:55 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id B8C3A4036C;
+        Tue,  4 Dec 2018 20:30:54 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 9156B120304;
+        Tue,  4 Dec 2018 20:30:54 +0900 (JST)
+Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
+ description
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
+ <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
+ <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
+ <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+ <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
+ <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
+Date:   Tue, 4 Dec 2018 20:30:53 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+Hi
 
-------------------
+On 2018/12/04 0:49, Rob Herring wrote:
+> On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
+> <sugaya.taichi@socionext.com> wrote:
+>>
+>> Hi,
+>>
+>> On 2018/11/30 17:16, Stephen Boyd wrote:
+>>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
+>>>> On 2018/11/28 11:01, Stephen Boyd wrote:
+>>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
+>>>>>>     create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>> new file mode 100644
+>>>>>> index 0000000..f5d906c
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>> @@ -0,0 +1,12 @@
+>>>>>> +Socionext M10V SMP trampoline driver binding
+>>>>>> +
+>>>>>> +This is a driver to wait for sub-cores while boot process.
+>>>>>> +
+>>>>>> +- compatible: should be "socionext,smp-trampoline"
+>>>>>> +- reg: should be <0x4C000100 0x100>
+>>>>>> +
+>>>>>> +EXAMPLE
+>>>>>> +       trampoline: trampoline@0x4C000100 {
+>>>>> Drop the 0x part of unit addresses.
+>>>>
+>>>> Okay.
+>>>>
+>>>>
+>>>>>> +               compatible = "socionext,smp-trampoline";
+>>>>>> +               reg = <0x4C000100 0x100>;
+>>>>> Looks like a software construct, which we wouldn't want to put into DT
+>>>>> this way. DT doesn't describe drivers.
+>>>> We would like to use this node only getting the address of the
+>>>> trampoline area
+>>>> in which sub-cores wait.  (They have finished to go to this area in previous
+>>>> bootloader process.)
+>>>
+>>> Is this area part of memory, or a special SRAM? If it's part of memory,
+>>> I would expect this node to be under the reserved-memory node and
+>>> pointed to by some other node that uses this region. Could even be the
+>>> CPU nodes.
+>>
+>> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
+>> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
+>> BTW, sorry, the trampoline address of this example is simply wrong.  We
+>> were going to use a part of the SRAM from the beginning.
+>>
+>>>
+>>>>
+>>>> So should we embed the constant value in source codes instead of getting
+>>>> from
+>>>> DT because the address is constant at the moment? Or is there other
+>>>> approach?
+>>>>
+>>>
+>>> If it's constant then that also works. Why does it need to come from DT
+>>> at all then?
+>>
+>> We think it is not good to embed constant value in driver codes and do
+>> not have another way...
+>> Are there better ways?
+> 
+> If this is just memory, can you use the standard spin-table binding in
+> the DT spec? There are some requirements like 64-bit values even on
+> 32-bit machines (though this gets violated).
 
-From: Thomas Gleixner tglx@linutronix.de
+The spin-table seems to be used on only 64-bit arch. Have it ever worked 
+on 32-bit machine?
+And I would like not to use it because avoid violation.
 
-commit 30ba72a990f5096ae08f284de17986461efcc408 upstream
+Thanks
+Sugaya Taichi
 
-No point to keep that around.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.893886356@linutronix.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/bugs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -248,7 +248,7 @@ static const struct {
- 	const char *option;
- 	enum spectre_v2_mitigation_cmd cmd;
- 	bool secure;
--} mitigation_options[] = {
-+} mitigation_options[] __initdata = {
- 	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
- 	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
- 	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
-@@ -484,7 +484,7 @@ static const char * const ssb_strings[]
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
--} ssb_mitigation_options[] = {
-+} ssb_mitigation_options[]  __initdata = {
- 	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
- 	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
- 	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
-
+> 
+> Rob
+> 
 
