@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2C7C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82AFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 340AC2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7092087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:10:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9oblOeq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 340AC2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkaHll6f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E7092087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbeLDLJj (ORCPT
+        id S1728342AbeLDLK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:09:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59474 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:10:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728609AbeLDLJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:09:35 -0500
+        id S1727774AbeLDLJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:09:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9303F2087F;
-        Tue,  4 Dec 2018 11:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7C1C2146D;
+        Tue,  4 Dec 2018 11:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921775;
-        bh=63mrr/R8stqD0aPdOMNnv3re9oXut9jiu0KG/qUNdqU=;
+        s=default; t=1543921772;
+        bh=GYj5TomYszyqPvo9DjJKUhHthdEskvscHjAC0/27suo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s9oblOeqhVVA3afbnB5xFnKB+WLTT3Ff8knRWvT3BPgI1CBF8YD7wn97IiEdpQEy5
-         N41Bq5bmLlzfX2hyJTvJnL7QC728N5A7zh+DwLhXiQll5Vi1xbjp/OZYAEdzNoblgs
-         CYc3be2G4HLj5qslPPclarY0s3GQ7LNmsNPPo8qE=
+        b=IkaHll6f/Hw9R4IInaML7uPSN5gQZfUljPAtU4Kc6CB0l0XpAHNIM4nNvjLAM1Bpk
+         Ek7iuHZkwwIk3kAuZdQKoQkoq7Hb+uLfzjAMZppe48ZJfW67XjVyLALP25AoF+wHU3
+         iixFcRjYcaR97if6jLFr3zu4ic1/+6JNhNrmtOhY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Alistair Strachan <astrachan@google.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 44/50] ARM: 8766/1: drop no-thumb-interwork in EABI mode
-Date:   Tue,  4 Dec 2018 11:50:39 +0100
-Message-Id: <20181204103716.702210472@linuxfoundation.org>
+Subject: [PATCH 4.9 43/50] efi/libstub: arm: support building with clang
+Date:   Tue,  4 Dec 2018 11:50:38 +0100
+Message-Id: <20181204103716.659675370@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -64,35 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Alistair Strachan <astrachan@google.com>
 
-(commit 22905a24306c8c312c2d66da9f90d09af0414f81 upstream)
+(commit 41f1c48420709470c51ee0e54b6fb28b956bb4e0 upstream)
 
-According to GCC documentation -m(no-)thumb-interwork is
-meaningless in AAPCS configurations. Also clang does not
-support the flag:
-  clang-5.0: error: unknown argument: '-mno-thumb-interwork'
+When building with CONFIG_EFI and CONFIG_EFI_STUB on ARM, the libstub
+Makefile would use -mno-single-pic-base without checking it was
+supported by the compiler. As the ARM (32-bit) clang backend does not
+support this flag, the build would fail.
 
-Just drop -mno-thumb-interwork in AEABI configuration.
+This changes the Makefile to check the compiler's support for
+-mno-single-pic-base before using it, similar to c1c386681bd7 ("ARM:
+8767/1: add support for building ARM kernel with clang").
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[ND: adjusted due to missing commit ce279d374ff3 ("efi/libstub:
+ Only disable stackleak plugin for arm64")]
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/libstub/Makefile |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -104,7 +104,7 @@ tune-$(CONFIG_CPU_V6K)		=$(call cc-optio
- tune-y := $(tune-y)
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -12,7 +12,8 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__K
  
- ifeq ($(CONFIG_AEABI),y)
--CFLAGS_ABI	:=-mabi=aapcs-linux -mno-thumb-interwork -mfpu=vfp
-+CFLAGS_ABI	:=-mabi=aapcs-linux -mfpu=vfp
- else
- CFLAGS_ABI	:=$(call cc-option,-mapcs-32,-mabi=apcs-gnu) $(call cc-option,-mno-thumb-interwork,)
- endif
+ cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
+ cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
+-				   -fno-builtin -fpic -mno-single-pic-base
++				   -fno-builtin -fpic \
++				   $(call cc-option,-mno-single-pic-base)
+ 
+ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+ 
 
 
