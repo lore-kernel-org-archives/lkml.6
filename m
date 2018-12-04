@@ -2,74 +2,79 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDA6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2059AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F276206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F276206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id E63B920851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:23:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63B920851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbeLDOXI (ORCPT
+        id S1726588AbeLDOXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:23:08 -0500
-Received: from verein.lst.de ([213.95.11.211]:44022 "EHLO newverein.lst.de"
+        Tue, 4 Dec 2018 09:23:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33237 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeLDOXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:23:06 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id E943368BDF; Tue,  4 Dec 2018 15:23:04 +0100 (CET)
-Date:   Tue, 4 Dec 2018 15:23:04 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        iommu@lists.linux-foundation.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/9] dma-mapping: support highmem in the generic remap
- allocator
-Message-ID: <20181204142304.GC2618@lst.de>
-References: <20181105121931.13481-1-hch@lst.de> <20181105121931.13481-6-hch@lst.de> <CGME20181130190639epcas3p2c9a23f5788b7f8eea26ce8d305b5e6f7@epcas3p2.samsung.com> <449e0631-aa32-d4a8-9fa9-07234ae1e533@arm.com> <e1567e0d-4724-fb6b-cc22-3a723eec5e0f@samsung.com>
+        id S1726536AbeLDOXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:23:09 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BC4F120E42; Tue,  4 Dec 2018 15:23:05 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 79A1120A5A;
+        Tue,  4 Dec 2018 15:22:39 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 03/21] drm/sun4i: backend: Use explicit fourcc helpers for packed YUV422 check
+Date:   Tue,  4 Dec 2018 15:22:00 +0100
+Message-Id: <20181204142218.16284-4-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
+References: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1567e0d-4724-fb6b-cc22-3a723eec5e0f@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 09:38:02AM +0100, Marek Szyprowski wrote:
-> Hi All,
-> 
-> On 2018-11-30 20:05, Robin Murphy wrote:
-> > On 05/11/2018 12:19, Christoph Hellwig wrote:
-> >> By using __dma_direct_alloc_pages we can deal entirely with struct page
-> >> instead of having to derive a kernel virtual address.
-> >
-> > Simple enough :)
-> >
-> > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> 
-> This patch has landed linux-next yesterday and I've noticed that it
-> breaks operation of many drivers. The change looked simple, but a stupid
-> bug managed to slip into the code. After a short investigation I've
-> noticed that __dma_direct_alloc_pages() doesn't set dma_handle and zero
-> allocated memory, while dma_direct_alloc_pages() did. The other
-> difference is the lack of set_memory_decrypted() handling.
-> 
-> Following patch fixes the issue, but maybe it would be better to fix it
-> in kernel/dma/direct.c:
+Checking for the number of planes is not sufficient to en ensure that
+the format is a packed YUV422.
 
-Thanks for spotting this Marek.  Can you send the patch below with a
-signoff and a changelog so that I can queue it up?
+Use explicit fourcc helpers for the check instead.
+
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_backend.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index 9e9255ee59cd..bbadc2ab9f4d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -245,7 +245,8 @@ static int sun4i_backend_update_yuv_format(struct sun4i_backend *backend,
+ 			   SUN4I_BACKEND_ATTCTL_REG0_LAY_YUVEN);
+ 
+ 	/* TODO: Add support for the multi-planar YUV formats */
+-	if (format->num_planes == 1)
++	if (drm_format_info_is_yuv_packed(format) &&
++	    drm_format_info_is_yuv_sampling_422(format))
+ 		val |= SUN4I_BACKEND_IYUVCTL_FBFMT_PACKED_YUV422;
+ 	else
+ 		DRM_DEBUG_DRIVER("Unsupported YUV format (0x%x)\n", fmt);
+-- 
+2.19.2
+
