@@ -2,239 +2,134 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52651C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B1EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B3C20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 753352146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:43:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B59GUeRj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B3C20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euO5tJf4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753352146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbeLDEj4 (ORCPT
+        id S1726031AbeLDEnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 23:39:56 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:21087 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbeLDEj4 (ORCPT
+        Mon, 3 Dec 2018 23:43:02 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45006 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbeLDEnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 23:39:56 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181204043950epoutp01606f64eac8b6135d5033c0840b1f6a79~tB2gI20eR1222212222epoutp01I;
-        Tue,  4 Dec 2018 04:39:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181204043950epoutp01606f64eac8b6135d5033c0840b1f6a79~tB2gI20eR1222212222epoutp01I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1543898390;
-        bh=FStVKS8Y+vrU/6MdfWAaEVGW8zwAeikhlhRYJ4rjjaY=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=B59GUeRjjCYK5G+AsiVnVIvwkekWxQLaIUIyJawPxPuuZqM8zw3lxruPR3t9mZdxh
-         hMqZSD9ooSURPjuewEUm2ZUPDkY6aj92YvtGiR6A4zfFKizFuXs2QB26wF3f+B4pSh
-         Tyf9ITmGtnjf+iz1+KgZX3PIUpzx1g7qWudQHwt8=
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.156]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181204043947epcas1p28327d1824343c3b03104d1b55ec51907~tB2cwdzjz2636026360epcas1p2J;
-        Tue,  4 Dec 2018 04:39:47 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AA.9C.04146.215060C5; Tue,  4 Dec 2018 13:39:46 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181204043946epcas1p130439f684c1137c352588bff19927815~tB2cDgM1A2960229602epcas1p17;
-        Tue,  4 Dec 2018 04:39:46 +0000 (GMT)
-X-AuditID: b6c32a38-177ff70000001032-50-5c060512249b
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id B4.EF.03601.115060C5; Tue,  4 Dec
-        2018 13:39:46 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PJ700CC03M96J10@mmp2.samsung.com>; Tue, 04 Dec 2018 13:39:45 +0900 (KST)
-Message-id: <5C060511.8020802@samsung.com>
-Date:   Tue, 04 Dec 2018 13:39:45 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v2 1/5] devfreq: refactor set_target frequency function
-In-reply-to: <1543847475-7600-2-git-send-email-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPJsWRmVeSWpSXmKPExsWy7bCmga4QK1uMwefVehYHt2pabJyxntVi
-        +8ZvrBbzj5xjtWhevJ7N4kx3rkX/49fMFufPb2C3ONv0ht3iVoOMxawpe5ksNj2+xmpxedcc
-        NovPvUcYLWac38dksfbIXXaLpdcvMlncblzBZnH31FGgGacvsVq07j3CbtG2+gOrxZsL91gc
-        xD227d7G6rFm3hpGj9kNF1k8JvR/YvRYvOclk8emVZ1sHvvnrmH32Lyk3uPfMXaPg+/2MHls
-        udrO4tG3ZRWjx4rV39k9Pm+SC+CLyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQw
-        V1LIS8xNtVVy8QnQdcvMAXpfSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgWaBX
-        nJhbXJqXrpecn2tlaGBgZApUmJCdMWfvHLaCFTIV3Vfa2BoYO8S7GDk5JARMJPr372bsYuTi
-        EBLYwSgx7/oCZgjnO6PE/y07mWCqOqY8g0psYJR4/HgVI0iCV0BQ4sfkeyxdjBwczALyEkcu
-        ZYOEmQU0JV58mcQCUX+XUWJV32uoei2J84dXsIPYLAKqEl8nHWIBsdmA4vtf3GADsfkFFCWu
-        /ngMVi8qECGxc/43dpBBIgLnGSXW7NzDBOIwC7QyS/z7sAWsQ1jAW2JJy1uwSZwCXhK7H58D
-        Wy0h8JNd4vW9B6wQP7hI7D60gR3CFpZ4dXwLO8jZEgLSEpeO2kLUtzNKfHnRzArhTGCU+HBq
-        MzQAjCWeLexigniOT+Ld1x5WiGZeiY42IYgSD4mrX3eCHQT28+XtFRMYZWchhdIsRCjNQgql
-        BYzMqxjFUguKc9NTiw0LTJDjbxMjOLFrWexg3HPO5xCjAAejEg/vDCfWGCHWxLLiytxDjBIc
-        zEoivAWFLDFCvCmJlVWpRfnxRaU5qcWHGE2BgTyRWUo0OR+YdfJK4g1NjYyNjS1MDM1MDQ2V
-        xHmfSM2NFhJITyxJzU5NLUgtgulj4uCUamA8JnZsO6NrlZmH1yLLZRw79ukd/SLxwDjjTvYM
-        mWW5ovlTb71/n+WvxfCrtyHR78vKhBKG9g4u8Xs597dYhx+dbytZeLA/RvbZiln3a5/vKGdX
-        yn9f2f1rz/+zbu+/VDucFs+0exKVveTphS/C53ZuyXQyET474+Aex4IwuaRIKQk99cCZZWlK
-        LMUZiYZazEXFiQAEweNLAgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02RXUhTYRzGe3c+Xa6Oy/B1mdUgRCPN6OIlpKSbjvMm6KIswUY7qOnm3HGm
-        Xugsv8WvGiHLL3DVUtP8mqFOcy6NLJerZSQqOKgkk1AqE7Q8jbC7H//n4Xke+NOY1I3L6GRN
-        BqfTKFPlpBif2PT4HZUSZPyxIasYjfSGos7aDgL1df4gUKNjkkA3mztI9LJcjao8XzDkdD6m
-        0KsbSxT6YAhCJqNNhLo87wj0pr+ORKsVDoBqnUMi9MgxS6F701MiNJNvIdHsi2dbGRMuAhXa
-        HBQqav1GoKXXc3h0AGsdsBJsW0MbYO8apnC2umoFsM2DiyK2q6WUZIfr2yi225zHbo5R7Mjy
-        oIjtcRfjbGVPC2AtrT8pdrUr+NyuS+IoFZeanMnpIk5dESfV2epIrSUoq/xtEWkAJQFlwIeG
-        zAlYYvyIlQExLWXaAaxxLQNBkDB+cO32HF4GaBpjDkCHK8WLIdBoVHvt8wAujv/GvPYw6By1
-        UALjzGH4/ZYdF5jcug9/fk8KvJs5BN1rHiDk7GUuwvLn2UKOP+MEcKSylBA8GFOIwYWiawLv
-        YWKhueAr7i2bBbChuONvmQ+jgAOeSbwaMKb/ppq2p5q2pzYBrAUEclpenajmj2sjNdz1cF6p
-        5vWaxPCraeousPVs62hY5RMwb06wA4YGcl9J7RkiXkooM/lstR1AGpP7S7TpeLxUolJm53C6
-        tASdPpXj7WAfjcsDJDOasTgpk6jM4FI4Tsvp/qki2kdmAEzauPnB6U+2et61f+dIY57ePzNi
-        5sjw5Zrc/BiV2WqdLihdcc/FaUP6fdnlUHGCgj9voZ8qotp/pVfMy2wPF7JimlRuzf2N4Bz7
-        2Y2JOtednhBFp7n7YP14kL4wcAclqemW95FUoYTrHY0PUdkq12M5GdmUe+GkrH49WifH+SRl
-        ZBim45V/ACZ7Na3oAgAA
-X-CMS-MailID: 20181204043946epcas1p130439f684c1137c352588bff19927815
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181203143129eucas1p2955b6becc60ee57110cbc52f6e4f60c5
-References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181203143129eucas1p2955b6becc60ee57110cbc52f6e4f60c5@eucas1p2.samsung.com>
-        <1543847475-7600-2-git-send-email-l.luba@partner.samsung.com>
+        Mon, 3 Dec 2018 23:43:01 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k8so7628490pls.11;
+        Mon, 03 Dec 2018 20:43:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lJZgGw6jy/GVagLjewYzoiq6g1ydiIvAwKzOsUbz0iU=;
+        b=euO5tJf45nr/IUy5ukSp17SJrFJfh/JFyVoAzQ5H250v46YlvnpgdvorSM+KE3Wu08
+         Tzl329V0IgZuWaoiVpO7U54o/Qr5Q/NZbdaRz2yOjKy5gl4jD0WrRd1ORG3SX7RhPn6Z
+         /4PihCGgPvnRkGhxVa46XGRWOH9HJNJtUWMZOVNSWx/ioxZ6eFTdh71wtR0wYddAec+4
+         wqDwF3asu2/xMvfNjE8X3ZAV//gtrfOj+PSFIBfgcD1LOTf+dZJgtqX6h2/CIaR72Uho
+         7idbuTTcBqTvG7YRg2jvKDcfC+xDKTa5BeK9JmhN8FgvcrXzWpPlkGxiwuDNafWEcZ9X
+         uPhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lJZgGw6jy/GVagLjewYzoiq6g1ydiIvAwKzOsUbz0iU=;
+        b=sw+QwHiYcZGiBW9uBd/+Df82UTLlM2g/JVmf4zPz2k9a3Q6iPdceKAotWhB5JcGrOl
+         kxpnvGnsBMF5Xi2bRUCbReVPE+/5LuLK4cnkOnHFPeTZ2RV6/pwqKQAVPusQSASZjutP
+         TUO48cRy3c2sQ3sUJrXpYtie47C0Euv3GouYogGGobWbOEbvSGsbVOdAskNf9t6+D+Mj
+         UMZq92phv7TQBcicrXRf52rHfUED5z2xtmW5qI4LaGAuyo7MRbTpjh6TUAUtTuXv1Wmg
+         tIoIBNXzAf7ljdwHwPyEHUJP+d7e3pbCt80PpBnS89u4Sapw11weQp7zndeEURuwsPjc
+         wbHw==
+X-Gm-Message-State: AA+aEWYe6kqOw1QwWTwmw7slNFoF7TvMN49lbs+MnfTcfHlaIXI+ml1d
+        uRLIoBrGvh+M4MBjWah6uGE=
+X-Google-Smtp-Source: AFSGD/Usv05EGMlCuZ9CjosnWUgUymNUGYzzptdLeuVcxGWaMnOGgkeJKpYtMNBX7XpUu7T9+u71bw==
+X-Received: by 2002:a17:902:8f83:: with SMTP id z3mr18202126plo.328.1543898580845;
+        Mon, 03 Dec 2018 20:43:00 -0800 (PST)
+Received: from localhost (c-24-4-239-105.hsd1.ca.comcast.net. [24.4.239.105])
+        by smtp.gmail.com with ESMTPSA id z127sm24754180pfb.80.2018.12.03.20.42.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 20:42:59 -0800 (PST)
+Date:   Mon, 3 Dec 2018 20:42:57 -0800
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] ptp: fix an IS_ERR() vs NULL check
+Message-ID: <20181204044257.grk3na2wyrx6nssg@localhost>
+References: <20181130163252.e6z33t23j3qud57z@localhost>
+ <20181203105506.GA21127@unbuntlaptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203105506.GA21127@unbuntlaptop>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
+On Mon, Dec 03, 2018 at 01:55:06PM +0300, Dan Carpenter wrote:
+> We recently modified pps_register_source() to return error pointers
+> instead of NULL but this check wasn't updated.
 
-On 2018년 12월 03일 23:31, Lukasz Luba wrote:
-> The refactoring is needed for the new client in devfreq: suspend.
-> To avoid code duplication, move it to the new local function
-> devfreq_set_target.
-> 
-> The patch is based on earlier work by Tobias Jakobi.
-
-As I already commented, Please remove it. You already mentioned it on cover-letter.
-If you want to contain the contribution history of Tobias, you might better
-to add 'Signed-off-by' or others.
-
-> 
-> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+But it *was* updated!
+ 
+> Fixes: 3b1ad360acad ("pps: using ERR_PTR instead of NULL while pps_register_source fails")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/devfreq/devfreq.c | 62 +++++++++++++++++++++++++++--------------------
->  1 file changed, 36 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 1414130..a9fd61b 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -285,6 +285,40 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
->  	return 0;
->  }
->  
-> +static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
-> +			      u32 flags)
-> +{
-> +	struct devfreq_freqs freqs;
-> +	unsigned long cur_freq;
-> +	int err = 0;
-> +
-> +	if (devfreq->profile->get_cur_freq)
-> +		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
-> +	else
-> +		cur_freq = devfreq->previous_freq;
-> +
-> +	freqs.old = cur_freq;
-> +	freqs.new = new_freq;
-> +	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
-> +
-> +	err = devfreq->profile->target(devfreq->dev.parent, &new_freq, flags);
-> +	if (err) {
-> +		freqs.new = cur_freq;
-> +		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
-> +		return err;
-> +	}
-> +
-> +	freqs.new = new_freq;
-> +	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
-> +
-> +	if (devfreq_update_status(devfreq, new_freq))
-> +		dev_err(&devfreq->dev,
-> +			"Couldn't update frequency transition information.\n");
-> +
-> +	devfreq->previous_freq = new_freq;
-> +	return err;
-> +}
-> +
->  /* Load monitoring helper functions for governors use */
->  
->  /**
-> @@ -296,8 +330,7 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
->   */
->  int update_devfreq(struct devfreq *devfreq)
->  {
-> -	struct devfreq_freqs freqs;
-> -	unsigned long freq, cur_freq, min_freq, max_freq;
-> +	unsigned long freq, min_freq, max_freq;
->  	int err = 0;
->  	u32 flags = 0;
->  
-> @@ -333,31 +366,8 @@ int update_devfreq(struct devfreq *devfreq)
->  		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
->  	}
->  
-> -	if (devfreq->profile->get_cur_freq)
-> -		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
-> -	else
-> -		cur_freq = devfreq->previous_freq;
-> -
-> -	freqs.old = cur_freq;
-> -	freqs.new = freq;
-> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
-> +	return devfreq_set_target(devfreq, freq, flags);
->  
-> -	err = devfreq->profile->target(devfreq->dev.parent, &freq, flags);
-> -	if (err) {
-> -		freqs.new = cur_freq;
-> -		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
-> -		return err;
-> -	}
-> -
-> -	freqs.new = freq;
-> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
-> -
-> -	if (devfreq_update_status(devfreq, freq))
-> -		dev_err(&devfreq->dev,
-> -			"Couldn't update frequency transition information.\n");
-> -
-> -	devfreq->previous_freq = freq;
-> -	return err;
->  }
->  EXPORT_SYMBOL(update_devfreq);
->  
-> 
+> v2:  Use the correct Fixes tag.  Add Greg to the CC list, because he
+> is maintaining this driver.
 
+What driver?  (I am maintaining drivers/ptp/ptp_clock.c)
+ 
+>  drivers/ptp/ptp_clock.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+> index 8a81eecc0ecd..48f3594a7458 100644
+> --- a/drivers/ptp/ptp_clock.c
+> +++ b/drivers/ptp/ptp_clock.c
+> @@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+>  		pps.mode = PTP_PPS_MODE;
+>  		pps.owner = info->owner;
+>  		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
+> -		if (!ptp->pps_source) {
+> -			err = -EINVAL;
+> +		if (IS_ERR(ptp->pps_source)) {
+> +			err = PTR_ERR(ptp->pps_source);
+>  			pr_err("failed to register pps source\n");
+>  			goto no_pps;
+>  		}
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+YueHaibing's patch has the following hunk.  It really is already
+there.  I don't see it yet on Linus' master branch, but the patch
+should update drivers/pps/kapi.c and the callers all in one commit.
+
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index 8a81eec..48f3594 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -265,8 +265,8 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 		pps.mode = PTP_PPS_MODE;
+ 		pps.owner = info->owner;
+ 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
+-		if (!ptp->pps_source) {
+-			err = -EINVAL;
++		if (IS_ERR(ptp->pps_source)) {
++			err = PTR_ERR(ptp->pps_source);
+ 			pr_err("failed to register pps source\n");
+ 			goto no_pps;
+ 		}
+
+Thanks,
+Richard
