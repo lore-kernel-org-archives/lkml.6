@@ -2,246 +2,411 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B01C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE143C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0EB12081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:43:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0EB12081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 96D4C2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:45:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wn/ZzqXQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D4C2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbeLDUnU (ORCPT
+        id S1726388AbeLDUph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:43:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42582 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725866AbeLDUnU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:43:20 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB4Kcc3C141002
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 15:43:18 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p5ygskq3r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 15:43:18 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 4 Dec 2018 20:43:17 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 4 Dec 2018 20:43:13 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB4KhCFd19071152
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Dec 2018 20:43:12 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 440CFB2073;
-        Tue,  4 Dec 2018 20:43:12 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0849BB2067;
-        Tue,  4 Dec 2018 20:43:11 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  4 Dec 2018 20:43:11 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D5CDC16C19ED; Tue,  4 Dec 2018 12:43:12 -0800 (PST)
-Date:   Tue, 4 Dec 2018 12:43:12 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        danymadden@us.ibm.com, Dennis.Krein@netapp.com, joe@perches.com,
-        joel@joelfernandes.org, ldr709@gmail.com,
-        pierceagriffiths@gmail.com, rdunlap@infradead.org,
-        zhouzhouyi@gmail.com, connor.shu@gmail.com
-Subject: Re: [GIT PULL rcu/next] RCU commits for 4.21/5.0
-Reply-To: paulmck@linux.ibm.com
-References: <20181203225405.GA21856@linux.ibm.com>
- <20181204080837.GA67285@gmail.com>
- <20181204133817.GB8714@1wt.eu>
+        Tue, 4 Dec 2018 15:45:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725874AbeLDUph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:45:37 -0500
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BE0820834;
+        Tue,  4 Dec 2018 20:45:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543956335;
+        bh=HmjuJHkDrYNR8NPIHtzxbmWq9hBB6THigmUOeQ0PSJc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Wn/ZzqXQRqKtJeADQZ1t4WulJ+MjXHJO2nYJ/kLhGP2O4MWHy0WHB2bHvxLjBhBFv
+         aURpYLun+5VafKAHePojUm/hv4JbjpXllm0+LFZYIzBsOCKxeSySOQxcMdutbLW9QM
+         vM/GqGcRGVOyKWZJdZAkjlO6AdRGvsbHyko6ahrg=
+Received: by mail-wr1-f52.google.com with SMTP id z5so17398442wrt.11;
+        Tue, 04 Dec 2018 12:45:34 -0800 (PST)
+X-Gm-Message-State: AA+aEWaNLzRzS1UWmqBbUIPFWmBX2D+7P5huIKzpEyf4YCuwse6aieli
+        UpvJxdmrG8A8fZ7xmRN7RX5t6vL8hSC+4KxJ1Kg=
+X-Google-Smtp-Source: AFSGD/V6bVA4gf7RKzW/jP3CW5k0DEj4H2UHgDWAg0ccYLKzj6SiUVs2GunoGiI4H3h861KuYwCl4y/z291xIDHcaFA=
+X-Received: by 2002:adf:b243:: with SMTP id y3mr4839148wra.184.1543956333467;
+ Tue, 04 Dec 2018 12:45:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181204133817.GB8714@1wt.eu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18120420-0064-0000-0000-000003801694
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010171; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01127004; UDB=6.00585347; IPR=6.00907138;
- MB=3.00024447; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-04 20:43:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120420-0065-0000-0000-00003B8F53A0
-Message-Id: <20181204204312.GF4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812040177
+References: <1543843974-4054-1-git-send-email-qii.wang@mediatek.com> <1543843974-4054-4-git-send-email-qii.wang@mediatek.com>
+In-Reply-To: <1543843974-4054-4-git-send-email-qii.wang@mediatek.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Tue, 4 Dec 2018 12:45:22 -0800
+X-Gmail-Original-Message-ID: <CAGp9LzoAtTR8q2pgYtQO9uru5YewKBGBSR5Cg03TU+qJD3=o-g@mail.gmail.com>
+Message-ID: <CAGp9LzoAtTR8q2pgYtQO9uru5YewKBGBSR5Cg03TU+qJD3=o-g@mail.gmail.com>
+Subject: Re: [PATCH 3/5] i2c: mediatek: Add offsets array for new i2c registers
+To:     qii.wang@mediatek.com
+Cc:     wsa@the-dreams.de, devicetree@vger.kernel.org,
+        ryder.lee@mediatek.com, srv_heupstream@mediatek.com,
+        leilk.liu@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 02:38:17PM +0100, Willy Tarreau wrote:
-> Hi Ingo,
-> 
-> On Tue, Dec 04, 2018 at 09:08:37AM +0100, Ingo Molnar wrote:
-> > I noticed this bit from Willy:
-> > 
-> > >  tools/testing/selftests/rcutorture/bin/nolibc.h    | 2197 ++++++++++++++++++++
-> > 
-> > So <nolibc.h> is a rather large header and it comes with very little 
-> > documentation - but once you read through the header it's obvious what it 
-> > does, the code is clean and it's pretty cool all around, and in hindsight 
-> > the name is a strong hint about what the header does as well. ;)
-> 
-> Thanks for the positive comment, as it was initially not designed to be
-> merged into the kernel and was just a local home project. I figured it
-> could be a perfect solution to Paul's executable size issues and offered
-> some help to get it in relatively quickly, but surely we can do much better!
-> 
-> > Still it would be nice to at least add a top level description to the 
-> > header to make people (like me) who are reading the code before the 
-> > changelogs wonder less. For tooling headers we require a similar 
-> > self-explanatory, feel-fuzzy structure as for kernel headers.
-> 
-> I'm fine with doing this. I even wrote the very small header at the last
-> minute, without knowing if there was any chance it survives a review :-)
-> 
-> > Beyond adding a bit more documentation it would also be useful to factor 
-> > nolibc.h out into tools/include/nolibc/ or so, no reason to hide it in 
-> > rcutorture, I bet there's a number of other testcases and smaller 
-> > utilities in tools/ that could make good use of it.
-> 
-> Fine as well. It's important however to keep in mind that I only covered
-> the few architectures I could test (i386/x86_64/arm/arm64/mips), and even
-> there the coverage is still limited. I don't want it to become too much of
-> a pain to use for other utilities just by lack of initial coverage. However
-> I agree that better exposure will help contributions come in.
-> 
-> > My long term hope would be that eventually we could even create a minimal 
-> > klibc from it (a minimal libc provided by the kernel itself), giving 
-> > minimalist binaries a mechanism to link against klibc.so:
-> > 
-> > - klibc would be an explicit opt-in mechanism, i.e. binaries that are 
-> >   coupled with the kernel anyway (and initrd executables certainly are) 
-> >   could use this.
-> 
-> In fact it's very similar to my goal. I'm using it in initramfs and initrds
-> that do very little stuff and where it's acceptable to have a few #ifdef to
-> adapt to this or that libc. However I found it extremely convenient *not* to
-> require any external symbol, thus not to have to link against anything. But
-> I'm well aware that this position cannot last forever and that at some
-> point if we want to go further we'll possibly have a few layers (naked
-> syscalls returning -errno, decorated syscalls making use of an explicit
-> errno, libc-specific stuff like string functions). Possibly that in this
-> case only the naked version would remain in the .h and that the rest will
-> require linking with the .so/.a.
-> 
-> > - We could also add a way for the kernel to provide (non-swappable) 
-> >   binaries via an automatic /klib/ mount point or so. This would allow 
-> >   features like a minimal, console based rescue/debug shell that doesn't 
-> >   rely on any filesystem state or external library dependencies, other 
-> >   than the initial kernel+initrd image.
-> 
-> This could be convenient indeed, I never thought about this. I'm currently
-> doing something comparable using initramfs, so maybe in the end we don't
-> need the kernel to create anything beyond this, but instead just let the
-> user choose in the configuration what utilities should be added to the
-> initramfs sources.
-> 
-> (...)
-> > - klibc would also eventually allow deeper integration with the vDSO 
-> >   proper: for example on klibc based embedded systems we could link klibc
-> >   and the vDSO into a single vDSO library, further simplifying and 
-> >   optimizing it.
-> 
-> I already looked how to implement vDSO. I figured it was not very difficult
-> but will require that I maintain variables with the AUXV, then I thought
-> that it went beyond the scope of this minimalist implementaiton and
-> postponed this.
-> 
-> > - klibc would also allow faster feature propagation from kernel to libc 
-> >   as well, as we could prototype, test and benchmark new system calls and 
-> >   new features on klibc - i.e. klibc integration and testcases could be a
-> >   requirement for new system calls.
-> 
-> This actually is a good idea. There was already a discussion in another
-> thread about exposing syscalls better in the kernel for better interactions
-> with the libc, but it could start this way with test cases. It also increases
-> the likeliness that an awkward API is detected early when the person starts
-> to write his/her own part of the libc side.
-> 
-> > - There's no upper limit to how such a minimal kernel-shell (root only) 
-> >   environment would look like, beyond a minimal shell in principle it 
-> >   could include bits like:
-> (...)
-> 
-> That's more or less what the preinit present in my initramfs provides. I
-> just need a kernel and nothing else to start to manually find and mount
-> my rootfs while debugging, it's quite convenient. It's very limited
-> though. But I 100% agree with the benefits of such basic recovery
-> utilities shipped with the kernel images!
-> 
-> (...)
-> >     - a minimal version of 3D Tetris (just kidding)
-> 
-> I thought you were already kidding when talking about 3D in fact but
-> apparently not! I think you really mean GPU-based acceleration rather
-> than 3D since I hardly see how 3D stuff may improve my debugging
-> abilities :-)
-> 
-> > - ... all of which would allow a fully integrated, self-contained (!) 
-> >   solution with no external dependencies other than the build environment 
-> >   to build the binaries, that allows the debugging of a system and the 
-> >   eventual extraction of debug information, without having to interact 
-> >   with the local filesystem or even the local X-window state for these 
-> >   apps to run.
-> 
-> In my case I also ship the modules within the kernel image. It's extremely
-> convenient to have the choice of a number of kernels for a given rootfs.
-> You never have to wonder if the modules are present on the roofs or not,
-> you never have to prepare any initrd, you just select the kernel you want
-> and you're done. For development, when combined with the preinit I'm
-> talking about, it's awesome, because you just want something which barely
-> boots to the preinit prompt, then you can start to investigate.
-> 
-> > - I.e. a minimal Linux distribution done right, optimized for kernel 
-> >   development, system bootstrap, rescue enviroment, etc. - far more 
-> >   usable than a kdb session.
-> 
-> The distro I'm using was initially not made for this but to design
-> reliable minimalist systems, and it turned out extremely effective for
-> kernel development for these reasons. The whole rootfs is an initrd
-> which contains all the tools I need, so I can only confirm the comfort
-> it brings!
-> 
-> > Anyway, back to <nolibc.h>: wanted to ask Linus's and Arnaldo's opinion 
-> > about the merge of it, we can still re-base and re-try if there's any 
-> > objections.
-> 
-> I'm fine with this as well. I just want to be sure we don't postpone the
-> coverage of Paul's rcutorture needs because it started for this initially.
-> If we see the discussion going too far, we could also at least cover just
-> rcutorture first which would buy us time to decide how it should be done
-> better, then remove it once we can port rcutorture to the newly designed
-> solution.
+<qii.wang@mediatek.com> =E6=96=BC 2018=E5=B9=B412=E6=9C=883=E6=97=A5 =E9=80=
+=B1=E4=B8=80 =E4=B8=8A=E5=8D=885:35=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> From: qii wang <qii.wang@mediatek.com>
+>
+> New i2c registers would have different offsets, so we use different
+> offsets array to distinguish different i2c registers version.
+>
+> Signed-off-by: qii wang <qii.wang@mediatek.com>
 
-I of course prefer starting with what I have, but it would not be at
-all difficult for me to rebase if that is what needs to happen.
+They are almost 1 to 1 function translation being taken here, so
+Reviewed-by: Sean Wang <sean.wang@kernel.org>
 
-							Thanx, Paul
-
+> ---
+>  drivers/i2c/busses/i2c-mt65xx.c |  163 +++++++++++++++++++++++++--------=
+------
+>  1 file changed, 104 insertions(+), 59 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt6=
+5xx.c
+> index 660de1e..428ac99 100644
+> --- a/drivers/i2c/busses/i2c-mt65xx.c
+> +++ b/drivers/i2c/busses/i2c-mt65xx.c
+> @@ -106,34 +106,62 @@ enum mtk_trans_op {
+>  };
+>
+>  enum I2C_REGS_OFFSET {
+> -       OFFSET_DATA_PORT =3D 0x0,
+> -       OFFSET_SLAVE_ADDR =3D 0x04,
+> -       OFFSET_INTR_MASK =3D 0x08,
+> -       OFFSET_INTR_STAT =3D 0x0c,
+> -       OFFSET_CONTROL =3D 0x10,
+> -       OFFSET_TRANSFER_LEN =3D 0x14,
+> -       OFFSET_TRANSAC_LEN =3D 0x18,
+> -       OFFSET_DELAY_LEN =3D 0x1c,
+> -       OFFSET_TIMING =3D 0x20,
+> -       OFFSET_START =3D 0x24,
+> -       OFFSET_EXT_CONF =3D 0x28,
+> -       OFFSET_FIFO_STAT =3D 0x30,
+> -       OFFSET_FIFO_THRESH =3D 0x34,
+> -       OFFSET_FIFO_ADDR_CLR =3D 0x38,
+> -       OFFSET_IO_CONFIG =3D 0x40,
+> -       OFFSET_RSV_DEBUG =3D 0x44,
+> -       OFFSET_HS =3D 0x48,
+> -       OFFSET_SOFTRESET =3D 0x50,
+> -       OFFSET_DCM_EN =3D 0x54,
+> -       OFFSET_PATH_DIR =3D 0x60,
+> -       OFFSET_DEBUGSTAT =3D 0x64,
+> -       OFFSET_DEBUGCTRL =3D 0x68,
+> -       OFFSET_TRANSFER_LEN_AUX =3D 0x6c,
+> -       OFFSET_CLOCK_DIV =3D 0x70,
+> +       OFFSET_DATA_PORT,
+> +       OFFSET_SLAVE_ADDR,
+> +       OFFSET_INTR_MASK,
+> +       OFFSET_INTR_STAT,
+> +       OFFSET_CONTROL,
+> +       OFFSET_TRANSFER_LEN,
+> +       OFFSET_TRANSAC_LEN,
+> +       OFFSET_DELAY_LEN,
+> +       OFFSET_TIMING,
+> +       OFFSET_START,
+> +       OFFSET_EXT_CONF,
+> +       OFFSET_FIFO_STAT,
+> +       OFFSET_FIFO_THRESH,
+> +       OFFSET_FIFO_ADDR_CLR,
+> +       OFFSET_IO_CONFIG,
+> +       OFFSET_RSV_DEBUG,
+> +       OFFSET_HS,
+> +       OFFSET_SOFTRESET,
+> +       OFFSET_DCM_EN,
+> +       OFFSET_PATH_DIR,
+> +       OFFSET_DEBUGSTAT,
+> +       OFFSET_DEBUGCTRL,
+> +       OFFSET_TRANSFER_LEN_AUX,
+> +       OFFSET_CLOCK_DIV,
+> +};
+> +
+> +static const u16 mt_i2c_regs_v1[] =3D {
+> +       [OFFSET_DATA_PORT] =3D 0x0,
+> +       [OFFSET_SLAVE_ADDR] =3D 0x4,
+> +       [OFFSET_INTR_MASK] =3D 0x8,
+> +       [OFFSET_INTR_STAT] =3D 0xc,
+> +       [OFFSET_CONTROL] =3D 0x10,
+> +       [OFFSET_TRANSFER_LEN] =3D 0x14,
+> +       [OFFSET_TRANSAC_LEN] =3D 0x18,
+> +       [OFFSET_DELAY_LEN] =3D 0x1c,
+> +       [OFFSET_TIMING] =3D 0x20,
+> +       [OFFSET_START] =3D 0x24,
+> +       [OFFSET_EXT_CONF] =3D 0x28,
+> +       [OFFSET_FIFO_STAT] =3D 0x30,
+> +       [OFFSET_FIFO_THRESH] =3D 0x34,
+> +       [OFFSET_FIFO_ADDR_CLR] =3D 0x38,
+> +       [OFFSET_IO_CONFIG] =3D 0x40,
+> +       [OFFSET_RSV_DEBUG] =3D 0x44,
+> +       [OFFSET_HS] =3D 0x48,
+> +       [OFFSET_SOFTRESET] =3D 0x50,
+> +       [OFFSET_DCM_EN] =3D 0x54,
+> +       [OFFSET_PATH_DIR] =3D 0x60,
+> +       [OFFSET_DEBUGSTAT] =3D 0x64,
+> +       [OFFSET_DEBUGCTRL] =3D 0x68,
+> +       [OFFSET_TRANSFER_LEN_AUX] =3D 0x6c,
+> +       [OFFSET_CLOCK_DIV] =3D 0x70,
+>  };
+>
+>  struct mtk_i2c_compatible {
+>         const struct i2c_adapter_quirks *quirks;
+> +       const u16 *regs;
+>         unsigned char pmic_i2c: 1;
+>         unsigned char dcm: 1;
+>         unsigned char auto_restart: 1;
+> @@ -181,6 +209,7 @@ struct mtk_i2c {
+>  };
+>
+>  static const struct mtk_i2c_compatible mt2712_compat =3D {
+> +       .regs =3D mt_i2c_regs_v1,
+>         .pmic_i2c =3D 0,
+>         .dcm =3D 1,
+>         .auto_restart =3D 1,
+> @@ -191,6 +220,7 @@ struct mtk_i2c {
+>
+>  static const struct mtk_i2c_compatible mt6577_compat =3D {
+>         .quirks =3D &mt6577_i2c_quirks,
+> +       .regs =3D mt_i2c_regs_v1,
+>         .pmic_i2c =3D 0,
+>         .dcm =3D 1,
+>         .auto_restart =3D 0,
+> @@ -201,6 +231,7 @@ struct mtk_i2c {
+>
+>  static const struct mtk_i2c_compatible mt6589_compat =3D {
+>         .quirks =3D &mt6577_i2c_quirks,
+> +       .regs =3D mt_i2c_regs_v1,
+>         .pmic_i2c =3D 1,
+>         .dcm =3D 0,
+>         .auto_restart =3D 0,
+> @@ -211,6 +242,7 @@ struct mtk_i2c {
+>
+>  static const struct mtk_i2c_compatible mt7622_compat =3D {
+>         .quirks =3D &mt7622_i2c_quirks,
+> +       .regs =3D mt_i2c_regs_v1,
+>         .pmic_i2c =3D 0,
+>         .dcm =3D 1,
+>         .auto_restart =3D 1,
+> @@ -220,6 +252,7 @@ struct mtk_i2c {
+>  };
+>
+>  static const struct mtk_i2c_compatible mt8173_compat =3D {
+> +       .regs =3D mt_i2c_regs_v1,
+>         .pmic_i2c =3D 0,
+>         .dcm =3D 1,
+>         .auto_restart =3D 1,
+> @@ -238,6 +271,17 @@ struct mtk_i2c {
+>  };
+>  MODULE_DEVICE_TABLE(of, mtk_i2c_of_match);
+>
+> +static u16 mtk_i2c_readw(struct mtk_i2c *i2c, enum I2C_REGS_OFFSET reg)
+> +{
+> +       return readw(i2c->base + i2c->dev_comp->regs[reg]);
+> +}
+> +
+> +static void mtk_i2c_writew(struct mtk_i2c *i2c, u16 val,
+> +                          enum I2C_REGS_OFFSET reg)
+> +{
+> +       writew(val, i2c->base + i2c->dev_comp->regs[reg]);
+> +}
+> +
+>  static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
+>  {
+>         int ret;
+> @@ -278,31 +322,31 @@ static void mtk_i2c_init_hw(struct mtk_i2c *i2c)
+>  {
+>         u16 control_reg;
+>
+> -       writew(I2C_SOFT_RST, i2c->base + OFFSET_SOFTRESET);
+> +       mtk_i2c_writew(i2c, I2C_SOFT_RST, OFFSET_SOFTRESET);
+>
+>         /* Set ioconfig */
+>         if (i2c->use_push_pull)
+> -               writew(I2C_IO_CONFIG_PUSH_PULL, i2c->base + OFFSET_IO_CON=
+FIG);
+> +               mtk_i2c_writew(i2c, I2C_IO_CONFIG_PUSH_PULL, OFFSET_IO_CO=
+NFIG);
+>         else
+> -               writew(I2C_IO_CONFIG_OPEN_DRAIN, i2c->base + OFFSET_IO_CO=
+NFIG);
+> +               mtk_i2c_writew(i2c, I2C_IO_CONFIG_OPEN_DRAIN, OFFSET_IO_C=
+ONFIG);
+>
+>         if (i2c->dev_comp->dcm)
+> -               writew(I2C_DCM_DISABLE, i2c->base + OFFSET_DCM_EN);
+> +               mtk_i2c_writew(i2c, I2C_DCM_DISABLE, OFFSET_DCM_EN);
+>
+>         if (i2c->dev_comp->timing_adjust)
+> -               writew(I2C_DEFAULT_CLK_DIV - 1, i2c->base + OFFSET_CLOCK_=
+DIV);
+> +               mtk_i2c_writew(i2c, I2C_DEFAULT_CLK_DIV - 1, OFFSET_CLOCK=
+_DIV);
+>
+> -       writew(i2c->timing_reg, i2c->base + OFFSET_TIMING);
+> -       writew(i2c->high_speed_reg, i2c->base + OFFSET_HS);
+> +       mtk_i2c_writew(i2c, i2c->timing_reg, OFFSET_TIMING);
+> +       mtk_i2c_writew(i2c, i2c->high_speed_reg, OFFSET_HS);
+>
+>         /* If use i2c pin from PMIC mt6397 side, need set PATH_DIR first =
+*/
+>         if (i2c->have_pmic)
+> -               writew(I2C_CONTROL_WRAPPER, i2c->base + OFFSET_PATH_DIR);
+> +               mtk_i2c_writew(i2c, I2C_CONTROL_WRAPPER, OFFSET_PATH_DIR)=
+;
+>
+>         control_reg =3D I2C_CONTROL_ACKERR_DET_EN |
+>                       I2C_CONTROL_CLK_EXT_EN | I2C_CONTROL_DMA_EN;
+> -       writew(control_reg, i2c->base + OFFSET_CONTROL);
+> -       writew(I2C_DELAY_LEN, i2c->base + OFFSET_DELAY_LEN);
+> +       mtk_i2c_writew(i2c, control_reg, OFFSET_CONTROL);
+> +       mtk_i2c_writew(i2c, I2C_DELAY_LEN, OFFSET_DELAY_LEN);
+>
+>         writel(I2C_DMA_HARD_RST, i2c->pdmabase + OFFSET_RST);
+>         udelay(50);
+> @@ -454,7 +498,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, s=
+truct i2c_msg *msgs,
+>
+>         reinit_completion(&i2c->msg_complete);
+>
+> -       control_reg =3D readw(i2c->base + OFFSET_CONTROL) &
+> +       control_reg =3D mtk_i2c_readw(i2c, OFFSET_CONTROL) &
+>                         ~(I2C_CONTROL_DIR_CHANGE | I2C_CONTROL_RS);
+>         if ((i2c->speed_hz > MAX_FS_MODE_SPEED) || (left_num >=3D 1))
+>                 control_reg |=3D I2C_CONTROL_RS;
+> @@ -462,40 +506,41 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c,=
+ struct i2c_msg *msgs,
+>         if (i2c->op =3D=3D I2C_MASTER_WRRD)
+>                 control_reg |=3D I2C_CONTROL_DIR_CHANGE | I2C_CONTROL_RS;
+>
+> -       writew(control_reg, i2c->base + OFFSET_CONTROL);
+> +       mtk_i2c_writew(i2c, control_reg, OFFSET_CONTROL);
+>
+>         /* set start condition */
+>         if (i2c->speed_hz <=3D I2C_DEFAULT_SPEED)
+> -               writew(I2C_ST_START_CON, i2c->base + OFFSET_EXT_CONF);
+> +               mtk_i2c_writew(i2c, I2C_ST_START_CON, OFFSET_EXT_CONF);
+>         else
+> -               writew(I2C_FS_START_CON, i2c->base + OFFSET_EXT_CONF);
+> +               mtk_i2c_writew(i2c, I2C_FS_START_CON, OFFSET_EXT_CONF);
+>
+>         addr_reg =3D i2c_8bit_addr_from_msg(msgs);
+> -       writew(addr_reg, i2c->base + OFFSET_SLAVE_ADDR);
+> +       mtk_i2c_writew(i2c, addr_reg, OFFSET_SLAVE_ADDR);
+>
+>         /* Clear interrupt status */
+> -       writew(restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
+> -              I2C_TRANSAC_COMP, i2c->base + OFFSET_INTR_STAT);
+> -       writew(I2C_FIFO_ADDR_CLR, i2c->base + OFFSET_FIFO_ADDR_CLR);
+> +       mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
+> +              I2C_TRANSAC_COMP, OFFSET_INTR_STAT);
+> +
+> +       mtk_i2c_writew(i2c, I2C_FIFO_ADDR_CLR, OFFSET_FIFO_ADDR_CLR);
+>
+>         /* Enable interrupt */
+> -       writew(restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
+> -              I2C_TRANSAC_COMP, i2c->base + OFFSET_INTR_MASK);
+> +       mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
+> +              I2C_TRANSAC_COMP, OFFSET_INTR_MASK);
+>
+>         /* Set transfer and transaction len */
+>         if (i2c->op =3D=3D I2C_MASTER_WRRD) {
+>                 if (i2c->dev_comp->aux_len_reg) {
+> -                       writew(msgs->len, i2c->base + OFFSET_TRANSFER_LEN=
+);
+> -                       writew((msgs + 1)->len, i2c->base +
+> -                              OFFSET_TRANSFER_LEN_AUX);
+> +                       mtk_i2c_writew(i2c, msgs->len, OFFSET_TRANSFER_LE=
+N);
+> +                       mtk_i2c_writew(i2c, (msgs + 1)->len,
+> +                                           OFFSET_TRANSFER_LEN_AUX);
+>                 } else {
+> -                       writew(msgs->len | ((msgs + 1)->len) << 8,
+> -                              i2c->base + OFFSET_TRANSFER_LEN);
+> +                       mtk_i2c_writew(i2c, msgs->len | ((msgs + 1)->len)=
+ << 8,
+> +                                           OFFSET_TRANSFER_LEN);
+>                 }
+> -               writew(I2C_WRRD_TRANAC_VALUE, i2c->base + OFFSET_TRANSAC_=
+LEN);
+> +               mtk_i2c_writew(i2c, I2C_WRRD_TRANAC_VALUE, OFFSET_TRANSAC=
+_LEN);
+>         } else {
+> -               writew(msgs->len, i2c->base + OFFSET_TRANSFER_LEN);
+> -               writew(num, i2c->base + OFFSET_TRANSAC_LEN);
+> +               mtk_i2c_writew(i2c, msgs->len, OFFSET_TRANSFER_LEN);
+> +               mtk_i2c_writew(i2c, num, OFFSET_TRANSAC_LEN);
+>         }
+>
+>         /* Prepare buffer data to start transfer */
+> @@ -607,14 +652,14 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c,=
+ struct i2c_msg *msgs,
+>                 if (left_num >=3D 1)
+>                         start_reg |=3D I2C_RS_MUL_CNFG;
+>         }
+> -       writew(start_reg, i2c->base + OFFSET_START);
+> +       mtk_i2c_writew(i2c, start_reg, OFFSET_START);
+>
+>         ret =3D wait_for_completion_timeout(&i2c->msg_complete,
+>                                           i2c->adap.timeout);
+>
+>         /* Clear interrupt mask */
+> -       writew(~(restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
+> -              I2C_TRANSAC_COMP), i2c->base + OFFSET_INTR_MASK);
+> +       mtk_i2c_writew(i2c, ~(restart_flag | I2C_HS_NACKERR | I2C_ACKERR =
+|
+> +              I2C_TRANSAC_COMP), OFFSET_INTR_MASK);
+>
+>         if (i2c->op =3D=3D I2C_MASTER_WR) {
+>                 dma_unmap_single(i2c->dev, wpaddr,
+> @@ -724,8 +769,8 @@ static irqreturn_t mtk_i2c_irq(int irqno, void *dev_i=
+d)
+>         if (i2c->auto_restart)
+>                 restart_flag =3D I2C_RS_TRANSFER;
+>
+> -       intr_stat =3D readw(i2c->base + OFFSET_INTR_STAT);
+> -       writew(intr_stat, i2c->base + OFFSET_INTR_STAT);
+> +       intr_stat =3D mtk_i2c_readw(i2c, OFFSET_INTR_STAT);
+> +       mtk_i2c_writew(i2c, intr_stat, OFFSET_INTR_STAT);
+>
+>         /*
+>          * when occurs ack error, i2c controller generate two interrupts
+> @@ -737,8 +782,8 @@ static irqreturn_t mtk_i2c_irq(int irqno, void *dev_i=
+d)
+>         if (i2c->ignore_restart_irq && (i2c->irq_stat & restart_flag)) {
+>                 i2c->ignore_restart_irq =3D false;
+>                 i2c->irq_stat =3D 0;
+> -               writew(I2C_RS_MUL_CNFG | I2C_RS_MUL_TRIG | I2C_TRANSAC_ST=
+ART,
+> -                      i2c->base + OFFSET_START);
+> +               mtk_i2c_writew(i2c, I2C_RS_MUL_CNFG | I2C_RS_MUL_TRIG |
+> +                                   I2C_TRANSAC_START, OFFSET_START);
+>         } else {
+>                 if (i2c->irq_stat & (I2C_TRANSAC_COMP | restart_flag))
+>                         complete(&i2c->msg_complete);
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
