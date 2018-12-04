@@ -2,98 +2,78 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE1EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40E8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CF2220659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF2220659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C35C20659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:16:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JK+Qa3Mt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C35C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbeLDQPa (ORCPT
+        id S1726959AbeLDQQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:15:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35366 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726226AbeLDQP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:15:28 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B465787629;
-        Tue,  4 Dec 2018 16:15:28 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A170A1057079;
-        Tue,  4 Dec 2018 16:15:06 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 3B5A42208FC; Tue,  4 Dec 2018 11:15:06 -0500 (EST)
-Date:   Tue, 4 Dec 2018 11:15:06 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-Subject: Re: overlayfs access checks on underlying layers
-Message-ID: <20181204161506.GB16818@redhat.com>
-References: <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
- <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
- <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
- <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
- <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
- <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
- <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
- <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
- <20181204151549.GA21509@redhat.com>
- <311721a0-26d4-3cf6-1628-acb2c2b1478b@tycho.nsa.gov>
+        Tue, 4 Dec 2018 11:16:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51244 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbeLDQQv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:16:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VuXgj2q6T4O9DRNiIHKF3iFHNwohjTrYKeE3vl3CmiI=; b=JK+Qa3MtdBlJeXA5cgLd47Rbq
+        k7OwJZeG6A+fy1TcI5SIc+yhEMSNV+TyhXNlhjEnKmU4my9xDbJnZPqjgU08Kl/ZUyIm6+O1QljOu
+        IlmHNPcksf8sJ0Y6RU3GxpDPWoVZ18Y8YGvbpM1EfqDQ/eaAY0yVs7IwptgUvO/p0hEz84qgtgz/5
+        8zS0NSCPgahj5MnlHMT8ULxgv3klF6oGHLfoqPjR09owpnFjR4TFclo9VGydpOqYzJdEI2VXBmagB
+        9U97DsM25x/NFPRBABhhrGqoPT0MNYZJ+A3fBgMl9IWOyp5SO7w7YclRpMC1SolBFxPPCkQURMwz9
+        bke3pfpDw==;
+Received: from [38.126.112.138] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUDNN-0002EU-Eo; Tue, 04 Dec 2018 16:16:45 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tony Luck <tony.luck@intel.com>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-ia64@vger.kernel.org, iommu@lists.linux-foundation.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: merge swiotlb support into dma_direct_ops
+Date:   Tue,  4 Dec 2018 08:16:40 -0800
+Message-Id: <20181204161645.8038-1-hch@lst.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <311721a0-26d4-3cf6-1628-acb2c2b1478b@tycho.nsa.gov>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 04 Dec 2018 16:15:28 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 10:42:35AM -0500, Stephen Smalley wrote:
+Hi Konrad and others,
 
-[..]
-> > > Yes, in that case there isn't an escalation of privilege for the mounter (I
-> > > acknowledged that above).  I'm still not sure copy-up of special files is a
-> > > good idea though:
-> > > 
-> > > - In the case of device files, there is the potential for mischief by the
-> > > client task in misusing the mounter's privileges to gain access to otherwise
-> > > unusable device node (nodev lower vs upper?),
-> > 
-> > I was thinking about it as well. But client can always bypass permissions
-> > of lower device inode by first removing device file and then by doing
-> > a mknod. And that will be equivalent of copy up. IOW, IIUC, we do not deny
-> > mknod to client and that always creates a way for it to write to device
-> > file (and it does not matter what are permissions on lower?)
-> 
-> I'm not sure what you mean by "we do not deny mknod to client".  Depends on
-> your policy and what context the client is running in.  Plenty of situations
-> where the client is not allowed to create device files directly, and the
-> mounter is.
-> 
+can you review this series?  It merges the swiotlb support into the
+DMA direct ops so that we don't have to duplicate the dma mapping logic
+in multiple places.
 
-Oh, I meant for the cases where policy allows client to mknod with context
-label. In that case, it does not matter what's the label on lower. Client
-can always bypass it by first removing device node and creating a new
-device node.
+Note that this is based on the dma_mapping_error series for which I'd
+still like to collect a few more reviews, so pulling the git tree might
+be easiest for testing.
 
-Thanks
-Vivek
+The git tree is available here:
+
+    git://git.infradead.org/users/hch/misc.git swiotlb-merge
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/swiotlb-merge
