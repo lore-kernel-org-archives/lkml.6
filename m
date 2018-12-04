@@ -2,89 +2,94 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC37CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A610CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7137E2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yf+J9fHK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7137E2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 743202081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743202081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726471AbeLDUrU (ORCPT
+        id S1726488AbeLDUrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:47:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39114 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 15:47:31 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:54352 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbeLDUrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:47:19 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEF4E20851;
-        Tue,  4 Dec 2018 20:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543956438;
-        bh=zW2Y815AcZCf0dgxrKDpK82uj+u2eUm7+taADcR4F3g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Yf+J9fHKQNJIzKa+yJgOcllqPKrKvbcWv1eDibC9JJhJbRYjnxEF+U7y5S+quThyo
-         qwA52cmoNPrk0nyzKPGt4ErP5dPvVymrOEyzoa3XTNx7Z678P0CyZAFb57TLXJmVTc
-         9qVh2UWs2DsnbqtJnB+/smDFq5PtQ5v54SR9Znl4=
-Received: by mail-qt1-f172.google.com with SMTP id y20so19740274qtm.13;
-        Tue, 04 Dec 2018 12:47:18 -0800 (PST)
-X-Gm-Message-State: AA+aEWZTyLG/W9VE8HyqqGeqOq1pbsBlx8oZezUmAiE3S1cyetQla1r2
-        fSJ/0ZJVsBXmYS7o/9iCjf/QmY5i62RkrqBpRA==
-X-Google-Smtp-Source: AFSGD/U0v5VvRDsJZq3H0UgVtV9j/5z3guMvn0taHNIw1h5mWpwY6201yjtXxc4p2L+Rpns8t0VbXdVR62ttHa6k9jk=
-X-Received: by 2002:aed:29a6:: with SMTP id o35mr20489067qtd.257.1543956437975;
- Tue, 04 Dec 2018 12:47:17 -0800 (PST)
+        id S1725867AbeLDUra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:47:30 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gUHbE-0000I1-08; Tue, 04 Dec 2018 13:47:20 -0700
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <20181203233509.20671-3-jglisse@redhat.com> <875zw98bm4.fsf@linux.intel.com>
+ <20181204182421.GC2937@redhat.com>
+ <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
+ <20181204185725.GE2937@redhat.com>
+ <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
+ <20181204201432.GH18167@tassilo.jf.intel.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <8ed92aba-a129-144f-34ab-f77102d54cfc@deltatee.com>
+Date:   Tue, 4 Dec 2018 13:47:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181114090027.7580-1-benjamin.gaignard@linaro.org> <CA+M3ks5m1=gsGqB55T4xSGtAQW9Ct3Fxqx-gbYg=GoNwoX6B-w@mail.gmail.com>
-In-Reply-To: <CA+M3ks5m1=gsGqB55T4xSGtAQW9Ct3Fxqx-gbYg=GoNwoX6B-w@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 4 Dec 2018 14:47:06 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+Em=7NeBCwkZyzmAfG8po-2E9SfO_Ukf0+h1CqH_3vxQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+Em=7NeBCwkZyzmAfG8po-2E9SfO_Ukf0+h1CqH_3vxQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] Add support of STM32 hwspinlock
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181204201432.GH18167@tassilo.jf.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, ross.zwisler@linux.intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, dan.j.williams@intel.com, jglisse@redhat.com, ak@linux.intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 8:45 AM Benjamin Gaignard
-<benjamin.gaignard@linaro.org> wrote:
->
-> Le mer. 14 nov. 2018 =C3=A0 10:00, Benjamin Gaignard
-> <benjamin.gaignard@linaro.org> a =C3=A9crit :
-> >
-> > This serie adds the support of the hardware semaphore block for stm32mp=
-1 SoC.
-> >
-> > version 4:
-> > - add Linaro SoB
->
-> Gentle ping on this series
 
-Maybe you want to fix the 0-day error and resend.
 
-Does adding the hwlock to the interrupt controller depend on this series?
+On 2018-12-04 1:14 p.m., Andi Kleen wrote:
+>> Also, in the same vein, I think it's wrong to have the API enumerate all
+>> the different memory available in the system. The API should simply
 
-Rob
+> We need an enumeration API too, just to display to the user what they
+> have, and possibly for applications to size their buffers 
+> (all we do with existing NUMA nodes)
+
+Yes, but I think my main concern is the conflation of the enumeration
+API and the binding API. An application doesn't want to walk through all
+the possible memory and types in the system just to get some memory that
+will work with a couple initiators (which it somehow has to map to
+actual resources, like fds). We also don't want userspace to police
+itself on which memory works with which initiator.
+
+Enumeration is definitely not the common use case. And if we create a
+new enumeration API now, it may make it difficult or impossible to unify
+these types of memory with the existing NUMA node hierarchies if/when
+this gets more integrated with the mm core.
+
+Logan
