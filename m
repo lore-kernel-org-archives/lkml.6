@@ -2,264 +2,525 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF14C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D51C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A092087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:46:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A092087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id A38372087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:46:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ocdt+uBN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38372087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbeLDKqD (ORCPT
+        id S1726231AbeLDKqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:46:03 -0500
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:37351 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725764AbeLDKqC (ORCPT
+        Tue, 4 Dec 2018 05:46:19 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:49656 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeLDKqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:46:02 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp27.blacknight.com (Postfix) with ESMTPS id ED504B83A8
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 10:45:59 +0000 (GMT)
-Received: (qmail 5318 invoked from network); 4 Dec 2018 10:45:59 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.245.71])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 4 Dec 2018 10:45:59 -0000
-Date:   Tue, 4 Dec 2018 10:45:58 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, mhocko@kernel.org,
-        ying.huang@intel.com, s.priebe@profihost.ag,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org,
-        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-Message-ID: <20181204104558.GV23260@techsingularity.net>
-References: <20181203181456.GK31738@dhcp22.suse.cz>
- <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
- <20181203183050.GL31738@dhcp22.suse.cz>
- <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
- <20181203185954.GM31738@dhcp22.suse.cz>
- <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
- <20181203201214.GB3540@redhat.com>
- <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
- <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
- <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz>
+        Tue, 4 Dec 2018 05:46:18 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB4AkCw8028646;
+        Tue, 4 Dec 2018 04:46:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543920372;
+        bh=R1yKLBmdJys6hh7yvq8gRSTq+QAAxvCGv1gm9K0j4wc=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=ocdt+uBNeLdoeIOAllzY4rB2fgpKX77gQB/UCc60g6kUjkNnvGxc9Z7YUPEq0D2wC
+         Six+TammpY15nXyRA9RwVYDtFWoBbf1S/kMOQGeC8A7Nyg4j0C+ibjeBVbp9I+3qr/
+         uZl/Stjdy2oDKXw7xHmnnKAv9byK4QACTADHpeY4=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB4AkCGI120835
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Dec 2018 04:46:12 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 4
+ Dec 2018 04:46:10 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 4 Dec 2018 04:46:10 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB4Ak73w009716;
+        Tue, 4 Dec 2018 04:46:07 -0600
+Subject: Re: [RFC PATCH v2 04/15] usb:cdns3: Driver initialization code.
+To:     Peter Chen <hzpeterchen@gmail.com>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-5-git-send-email-pawell@cadence.com>
+ <5BF7E5E8.3090406@ti.com>
+ <CAL411-rWc23fbP0Ny9Kfdpe9ESUSVt5X00G1uFjJf+rj-2jWzg@mail.gmail.com>
+CC:     <pawell@cadence.com>, <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        <adouglas@cadence.com>, <jbergsagel@ti.com>, <nsekhar@ti.com>,
+        <nm@ti.com>, <sureshp@cadence.com>, <peter.chen@nxp.com>,
+        <pjez@cadence.com>, <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C065AEE.4010205@ti.com>
+Date:   Tue, 4 Dec 2018 12:46:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAL411-rWc23fbP0Ny9Kfdpe9ESUSVt5X00G1uFjJf+rj-2jWzg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Much of this thread is a rehash of previous discussions so as a result,
-I glossed over parts of it so there will be a degree of error. Very
-preliminary results from David's approach are below and the bottom line
-is that it might fix some latency issues and locality issues at the cost
-of a high degree of THP allocation failure.
 
-On Tue, Dec 04, 2018 at 10:22:26AM +0100, Vlastimil Babka wrote:
-> > +                       if (order == pageblock_order &&
-> > +                                       !(current->flags & PF_KTHREAD))
-> > +                               goto nopage;
-> > 
-> > and just goes "Eww".
-> > 
-> > But I think the real problem is that it's the "goto nopage" thing that
-> > makes _sense_, and the current cases for "let's try compaction" that
+
+On 04/12/18 10:50, Peter Chen wrote:
+>>> + * Cadence USBSS DRD Driver.
+>>> + *
+>>> + * Copyright (C) 2018 Cadence.
+>>> + *
+>>> + * Author: Peter Chen <peter.chen@nxp.com>
+>>> + *         Pawel Laszczak <pawell@cadence.com>
+>>> + */
+>>> +
+>>> +#include <linux/module.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/interrupt.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/pm_runtime.h>
+>>> +
+>>> +#include "gadget.h"
+>>> +#include "core.h"
+>>> +
+>>> +static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
+>>> +{
+>>> +     WARN_ON(cdns->role >= CDNS3_ROLE_END || !cdns->roles[cdns->role]);
+>>> +     return cdns->roles[cdns->role];
+>>> +}
+>>> +
+>>> +static inline int cdns3_role_start(struct cdns3 *cdns, enum cdns3_roles role)
+>>> +{
+>>> +     int ret;
+>>> +
+>>> +     if (role >= CDNS3_ROLE_END)
+>>
+>> WARN_ON()?
+>>
+>>> +             return 0;
+>>> +
+>>> +     if (!cdns->roles[role])
+>>> +             return -ENXIO;
+>>> +
+>>> +     mutex_lock(&cdns->mutex);
+>>> +     cdns->role = role;
+>>> +     ret = cdns->roles[role]->start(cdns);
+>>> +     mutex_unlock(&cdns->mutex);
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +static inline void cdns3_role_stop(struct cdns3 *cdns)
+>>> +{
+>>> +     enum cdns3_roles role = cdns->role;
+>>> +
+>>> +     if (role == CDNS3_ROLE_END)
+>>
+>> WARN_ON(role >= CNDS3_ROLE_END) ?
+>>
+>>> +             return;
+>>> +
+>>> +     mutex_lock(&cdns->mutex);
+>>> +     cdns->roles[role]->stop(cdns);
+>>> +     cdns->role = CDNS3_ROLE_END;
+>>
+>> Why change the role here? You are just stopping the role not changing it.
+>> I think cdns->role should remain unchanged, so we can call cdns3_role_start()
+>> if required without error.
+>>
 > 
-> More precisely it's "let's try reclaim + compaction".
+> The current version of this IP has some issues to detect vbus status correctly,
+> we have to force vbus status accordingly, so we need a status to indicate
+> vbus disconnection, and add some code to let controller know vbus
+> removal, in that case, the controller's state machine can be correct.
+> So, we increase one role 'CDNS3_ROLE_END' to for this purpose.
 > 
-
-The original intent has been muddied and special cased but the general idea
-was that compaction needs space to work with to both succeed and avoid
-excessive scanning -- particularly in direct context that is visible to
-the application. Before compaction, linear-reclaim (aka lumpy reclaim)
-was used but this caused both page age inversion issues and excessive
-thrasing. In Andrew's tree, there are patches that also do small amounts
-of reclaim in response to fragmentation which in some cases alleviates
-the need for the reclaim + compaction step as the reclaim has sometimes
-already happened.  This has reduced latencies and increased THP allocation
-success rates but not by enough which needs further work.
-
-Parts of compaction are in need of a revisit. I'm in the process of doing
-but it's time consuming to do this because of the level of testing required
-at every step. The prototype currently is 12 patches and growing and I'm
-not sure what the final series will look like or how far it'll go.
-
-At this point, I believe that even when it's finished that the concept of
-"do some reclaim and try compaction" will remain. I'm focused primarily
-on the compaction core at the moment rather than the outer part in the
-page allocator.
-
-> > are the odd ones, and then David adds one new special case for the
-> > sensible behavior.
-> > 
-> > For example, why would COMPACT_DEFERRED mean "don't bother", but not
-> > all the other reasons it didn't really make sense?
+> CDNS3_ROLE_GADGET: gadget mode and VBUS on
+> CDNS3_ROLE_HOST: host mode and VBUS on
+> CDNS3_ROLE_END: VBUS off, eg either host or device cable on the port.
 > 
-> COMPACT_DEFERRED means that compaction was failing recently, even with
-> sufficient free pages (e.g. freed by direct reclaim), so it doesn't make
-> sense to continue.
+> So, we may start role from CDNS3_ROLE_END at probe when nothing is connected,
+> and need to set role as CDNS3_ROLE_END at ->stop for further handling at
+> role switch routine.
 
-Yes, the intent is that recent failures should not incur more useless
-scanning and stalls. As it is, the latencies are too high and too often
-it's useless work. Historically, this was put into place as the time
-spent in compaction was too high and the THP allocation latencies were so
-bad that it was preferred to disable THP entirely. This has improved in
-recent years with general improvements and changes to defaults but there
-is room to improve. Again, it's something I'm looking into but it's slow.
+OK. but still this (changing to ROLE_END) must be moved to the role switch routine
+and the explanation you just mentioned must be added there.
 
-> > <SNIP>
-> > So does it really make sense to fall through AT ALL to that "retry"
-> > case, when we explicitly already had (gfp_mask & __GFP_NORETRY)?
 > 
-> Well if there was no free memory to begin with, and thus compaction
-> returned COMPACT_SKIPPED, then we didn't really "try" anything yet, so
-> there's nothing to "not retry".
+>>> +     mutex_unlock(&cdns->mutex);
+>>> +}
+>>> +
+>>> +static enum cdns3_roles cdns3_get_role(struct cdns3 *cdns)
+>>> +{
+>>> +     if (cdns->roles[CDNS3_ROLE_HOST] && cdns->roles[CDNS3_ROLE_GADGET]) {
+>>> +             //TODO: implements selecting device/host mode
+>>> +             return CDNS3_ROLE_HOST;
+>>> +     }
+>>> +     return cdns->roles[CDNS3_ROLE_HOST]
+>>> +             ? CDNS3_ROLE_HOST
+>>> +             : CDNS3_ROLE_GADGET;
+>>
+>> Why not just
+>>         return cdns->role;
+>>
+>> I'm wondering if we really need this function.
 > 
-
-What should also be kept in mind is that we should avoid conflating
-locality preferences with THP preferences which is separate from THP
-allocation latencies. The whole __GFP_THISNODE approach is pushing too
-hard on locality versus huge pages when MADV_HUGEPAGE or always-defrag
-are used which is very unfortunate given that MADV_HUGEPAGE in itself says
-nothing about locality -- that is the business of other madvise flags or
-a specific policy.  Using remote nodes is bad but reclaiming excessively
-and pushing data out of memory is worse as the latency to fault data back
-from disk is higher than a remote access.
-
-Andrea already pointed it out -- workloads that fit within a node are happy
-to reclaim local memory, particularly in the case where the existing data
-is old which is the ideal for David. Workloads that do not fit within a
-node will often prefer using remote memory -- either THP or base pages
-in the general case and THP for definite in the KVM case. While KVM
-might not like remote memory, using THP at least reduces the page table
-access overhead even if the access is remote and eventually automatic
-NUMA balancing might intervene.
-
-> > Maybe the real fix is to instead of adding yet another special case
-> > for "goto nopage", it should just be unconditional: simply don't try
-> > to compact large-pages if __GFP_NORETRY was set.
-> 
-> I think that would destroy THP success rates too much, in situations
-> where reclaim and compaction would succeed, because there's enough
-> easily reclaimable and migratable memory.
-> 
-
-Tests are in progress but yes, this is the primary risk of abandoning
-the allocation request too early. I've already found during developing
-the prototype series that it's very easy to "fix" latencies by simply
-failing THP allocation very quickly. This is not the desired outcome and
-has occupied the bulk of my attention.
-
-I have *one* result of the series on a 1-socket machine running
-"thpscale". It creates a file, punches holes in it to create a
-very light form of fragmentation and then tries THP allocations
-using madvise measuring latency and success rates. It's the
-global-dhp__workload_thpscale-madvhugepage in mmtests using XFS as the
-filesystem.
-
-thpscale Fault Latencies
-                                    4.20.0-rc4             4.20.0-rc4
-                                mmots-20181130       gfpthisnode-v1r1
-Amean     fault-base-3      5358.54 (   0.00%)     2408.93 *  55.04%*
-Amean     fault-base-5      9742.30 (   0.00%)     3035.25 *  68.84%*
-Amean     fault-base-7     13069.18 (   0.00%)     4362.22 *  66.62%*
-Amean     fault-base-12    14882.53 (   0.00%)     9424.38 *  36.67%*
-Amean     fault-base-18    15692.75 (   0.00%)    16280.03 (  -3.74%)
-Amean     fault-base-24    28775.11 (   0.00%)    18374.84 *  36.14%*
-Amean     fault-base-30    42056.32 (   0.00%)    21984.55 *  47.73%*
-Amean     fault-base-32    38634.26 (   0.00%)    22199.49 *  42.54%*
-Amean     fault-huge-1         0.00 (   0.00%)        0.00 (   0.00%)
-Amean     fault-huge-3      3628.86 (   0.00%)      963.45 *  73.45%*
-Amean     fault-huge-5      4926.42 (   0.00%)     2959.85 *  39.92%*
-Amean     fault-huge-7      6717.15 (   0.00%)     3828.68 *  43.00%*
-Amean     fault-huge-12    11393.47 (   0.00%)     5772.92 *  49.33%*
-Amean     fault-huge-18    16979.38 (   0.00%)     4435.95 *  73.87%*
-Amean     fault-huge-24    16558.00 (   0.00%)     4416.46 *  73.33%*
-Amean     fault-huge-30    20351.46 (   0.00%)     5099.73 *  74.94%*
-Amean     fault-huge-32    23332.54 (   0.00%)     6524.73 *  72.04%*
-
-So, looks like massive latency improvements but then the THP allocation
-success rates
-
-thpscale Percentage Faults Huge
-                               4.20.0-rc4             4.20.0-rc4
-                           mmots-20181130       gfpthisnode-v1r1
-Percentage huge-3        95.14 (   0.00%)        7.94 ( -91.65%)
-Percentage huge-5        91.28 (   0.00%)        5.00 ( -94.52%)
-Percentage huge-7        86.87 (   0.00%)        9.36 ( -89.22%)
-Percentage huge-12       83.36 (   0.00%)       21.03 ( -74.78%)
-Percentage huge-18       83.04 (   0.00%)       30.73 ( -63.00%)
-Percentage huge-24       83.74 (   0.00%)       27.47 ( -67.20%)
-Percentage huge-30       83.66 (   0.00%)       31.85 ( -61.93%)
-Percentage huge-32       83.89 (   0.00%)       29.09 ( -65.32%)
-
-They're down the toilet. 3 threads are able to get 95% of the requested
-THP pages with Andrews tree as of Nov 30th. David's patch drops that to
-8% success rate.
-
-"Compaction efficiency" which takes success vs failure rate into account
-goes from 45% to 1%. Compaction scan efficiency, which is how many pages
-for migration are scanned vs how many are scanned as free targets goes
-from 21% to 1%.
-
-I do not consider this to be a good outcome and hence will not be acking
-the patches.
-
-I would also re-emphasise that a major problem with addressing this
-problem is that we do not have a general reproducible test case for
-David's scenario where as we do have reproduction cases for the others.
-They're not related to KVM but that doesn't matter because it's enough
-to have a memory hog try allocating more memory than fits on a single node.
-
-Remember too that while the headline regression reported by LKP looks
-bad, they have mentioned themselves that the different threads in the
-workload are being treated fairly. We've seen "regressions" like this in
-the past. For example, way back we had a problem with a dbench regression
-that was due to IO fairness giving each thread time to issue IO which
-slowed overall throughput that benefitted from few threads making progress
-while others starved.
-
-> > Hmm? I dunno. Right now - for 4.20, I'd obviously want to keep changes
-> > smallish, so a hacky added special case might be the right thing to
-> > do. But the code does look odd, doesn't it?
-> > 
-> > I think part of it comes from the fact that we *used* to do the
-> > compaction first, and then we did the reclaim, and then it was
-> > re-orghanized to do reclaim first, but it tried to keep semantic
-> > changes minimal and some of the above comes from that re-org.
-> 
-> IIRC the point of reorg was that in typical case we actually do want to
-> try the reclaim first (or only), and the exception are those THP-ish
-> allocations where typically the problem is fragmentation, and not number
-> of free pages, so we check first if we can defragment the memory or
-> whether it makes sense to free pages in case the defragmentation is
-> expected to help afterwards. It seemed better to put this special case
-> out of the main reclaim/compaction retry-with-increasing-priority loop
-> for non-costly-order allocations that in general can't fail.
+> cdns->role gets from cdns3_get_role, and this API tells role at the runtime.
+> If both roles are supported, the role is decided by external
+> conditions, eg, vbus/id
+> or external connector. If only single role is supported, only one role structure
+> is allocated, cdns->roles[CDNS3_ROLE_HOST] or cdns->roles[CDNS3_ROLE_GADGET]
 > 
 
-Again, this is accurate. Scanning/compaction costs a lot. This has improved
-over time, but minimally it's unmapping pages, copying data and a bunch
-of TLB flushes. During migration, any access to the data being migrated
-stalls. The harm of reclaiming a little first so that the compaction is
-more likely to succeed incurred fewer stalls of small magnitude in
-general -- or at least it was the case when that behaviour was
-developed.
+How about adding this description in function documentation.
+
+>>> +}
+>>
+>>> +
+>>> +/**
+>>> + * cdns3_core_init_role - initialize role of operation
+>>> + * @cdns: Pointer to cdns3 structure
+>>> + *
+>>> + * Returns 0 on success otherwise negative errno
+>>> + */
+>>> +static int cdns3_core_init_role(struct cdns3 *cdns)
+>>> +{
+>>> +     struct device *dev = cdns->dev;
+>>> +     enum usb_dr_mode dr_mode;
+>>> +
+>>> +     dr_mode = usb_get_dr_mode(dev);
+>>> +     cdns->role = CDNS3_ROLE_END;
+>>> +
+>>> +     /*
+>>> +      * If driver can't read mode by means of usb_get_dr_mdoe function then
+>>> +      * chooses mode according with Kernel configuration. This setting
+>>> +      * can be restricted later depending on strap pin configuration.
+>>> +      */
+>>> +     if (dr_mode == USB_DR_MODE_UNKNOWN) {
+>>> +             if (IS_ENABLED(CONFIG_USB_CDNS3_HOST) &&
+>>> +                 IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+>>> +                     dr_mode = USB_DR_MODE_OTG;
+>>> +             else if (IS_ENABLED(CONFIG_USB_CDNS3_HOST))
+>>> +                     dr_mode = USB_DR_MODE_HOST;
+>>> +             else if (IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+>>> +                     dr_mode = USB_DR_MODE_PERIPHERAL;
+>>> +     }
+>>> +
+>>> +     if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
+>>> +             //TODO: implements host initialization
+>>
+>>                 /* TODO: Add host role */ ?
+>>
+>>> +     }
+>>> +
+>>> +     if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
+>>> +             //TODO: implements device initialization
+>>
+>>                 /* TODO: Add device role */ ?
+>>
+> 
+> Yes, it needs to allocate cdns->roles[CDNS3_ROLE_HOST] and
+> cdns->roles[CDNS3_ROLE_GADGET].
+> 
+>>> +     }
+>>> +
+>>> +     if (!cdns->roles[CDNS3_ROLE_HOST] && !cdns->roles[CDNS3_ROLE_GADGET]) {
+>>> +             dev_err(dev, "no supported roles\n");
+>>> +             return -ENODEV;
+>>> +     }
+>>> +
+>>> +     cdns->dr_mode = dr_mode;
+> 
+> Pawel, why dr_mode needs to be introduced?
+> 
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +/**
+>>> + * cdns3_irq - interrupt handler for cdns3 core device
+>>> + *
+>>> + * @irq: irq number for cdns3 core device
+>>> + * @data: structure of cdns3
+>>> + *
+>>> + * Returns IRQ_HANDLED or IRQ_NONE
+>>> + */
+>>> +static irqreturn_t cdns3_irq(int irq, void *data)
+>>> +{
+>>> +     struct cdns3 *cdns = data;
+>>> +     irqreturn_t ret = IRQ_NONE;
+>>> +
+>>> +     /* Handle device/host interrupt */
+>>> +     if (cdns->role != CDNS3_ROLE_END)
+>>
+>> Is it because of this that you need to set role to END at role_stop?
+>> I think it is better to add a state variable to struct cdns3_role_driver, so we can
+>> check if it is active or stopped.
+>>
+>> e.g.
+>>         if (cdns3_get_current_role_driver(cdns)->state == CDNS3_ROLE_STATE_ACTIVE)
+>>
+>>> +             ret = cdns3_get_current_role_driver(cdns)->irq(cdns);
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+> 
+>  CDNS3_ROLE_END is introduced from above comments, we don't
+> need another flag for it.
+> If cdns->role == CDNS3_ROLE_END, it handles VBUS and ID interrupt.
+> 
+>>> +static void cdns3_remove_roles(struct cdns3 *cdns)
+>>
+>> Should this be called cdns3_exit_roles() to be opposite of cdns3_init_roles()?
+>>
+> 
+> It is planed to called when at ->remove.
+>>> +{
+>>> +     //TODO: implements this function
+>>> +}
+>>
+>>> +
+>>> +static int cdns3_do_role_switch(struct cdns3 *cdns, enum cdns3_roles role)
+>>> +{
+>>> +     enum cdns3_roles current_role;
+>>> +     int ret = 0;
+>>> +
+>>> +     current_role = cdns->role;
+>>> +
+>>> +     if (role == CDNS3_ROLE_END)
+>>> +             return 0;
+>>
+>> role == END looks like error state. and it should never happen.
+>> WARN here?
+>>
+> 
+> See my comments above.
+> 
+>>> +
+>>> +     dev_dbg(cdns->dev, "Switching role");
+>>> +
+>>
+>> Don't you have to stop the previous role before starting the new role?
+>>
+> 
+> Yes, it is needed. Pawel may simply some flows to suit his platform.
+> 
+>>> +     ret = cdns3_role_start(cdns, role);
+>>> +     if (ret) {
+>>> +             /* Back to current role */
+>>> +             dev_err(cdns->dev, "set %d has failed, back to %d\n",
+>>> +                     role, current_role);
+>>> +             ret = cdns3_role_start(cdns, current_role);
+>>> +     }
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +/**
+>>> + * cdns3_role_switch - work queue handler for role switch
+>>> + *
+>>> + * @work: work queue item structure
+>>> + *
+>>> + * Handles below events:
+>>> + * - Role switch for dual-role devices
+>>> + * - CDNS3_ROLE_GADGET <--> CDNS3_ROLE_END for peripheral-only devices
+>>> + */
+>>> +static void cdns3_role_switch(struct work_struct *work)
+>>> +{
+>>> +     enum cdns3_roles role = CDNS3_ROLE_END;
+>>> +     struct cdns3 *cdns;
+>>> +     bool device, host;
+>>> +
+>>> +     cdns = container_of(work, struct cdns3, role_switch_wq);
+>>> +
+>>> +     //TODO: implements this functions.
+>>> +     //host = cdns3_is_host(cdns);
+>>> +     //device = cdns3_is_device(cdns);
+>>> +     host = 1;
+>>> +     device = 0;
+>>> +
+>>> +     if (host)
+>>> +             role = CDNS3_ROLE_HOST;
+>>> +     else if (device)
+>>> +             role = CDNS3_ROLE_GADGET;
+>>> +
+>>> +     if (cdns->desired_dr_mode == cdns->current_dr_mode &&
+>>> +         cdns->role == role)
+>>> +             return;
+>>> +
+>>
+>> I think all the below code can be moved to cdns3_do_role_switch().
+>>
+>>> +     pm_runtime_get_sync(cdns->dev);
+>>> +     cdns3_role_stop(cdns);
+>>> +
+>>> +     if (host) {
+>>> +             if (cdns->roles[CDNS3_ROLE_HOST])
+>>> +                     cdns3_do_role_switch(cdns, CDNS3_ROLE_HOST);
+>>> +             pm_runtime_put_sync(cdns->dev);
+>>> +             return;
+>>> +     }
+>>> +
+>>> +     if (device)
+>>> +             cdns3_do_role_switch(cdns, CDNS3_ROLE_GADGET);
+>>> +     else
+>>> +             cdns3_do_role_switch(cdns, CDNS3_ROLE_END);
+>>> +
+>>> +     pm_runtime_put_sync(cdns->dev);
+>>> +}
+>>> +
+>>> +/**
+>>> + * cdns3_probe - probe for cdns3 core device
+>>> + * @pdev: Pointer to cdns3 core platform device
+>>> + *
+>>> + * Returns 0 on success otherwise negative errno
+>>> + */
+>>> +static int cdns3_probe(struct platform_device *pdev)
+>>> +{
+>>> +     struct device *dev = &pdev->dev;
+>>> +     struct resource *res;
+>>> +     struct cdns3 *cdns;
+>>> +     void __iomem *regs;
+>>> +     int ret;
+>>> +
+>>> +     cdns = devm_kzalloc(dev, sizeof(*cdns), GFP_KERNEL);
+>>> +     if (!cdns)
+>>> +             return -ENOMEM;
+>>> +
+>>> +     cdns->dev = dev;
+>>> +
+>>> +     platform_set_drvdata(pdev, cdns);
+>>> +
+>>> +     res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+>>> +     if (!res) {
+>>> +             dev_err(dev, "missing IRQ\n");
+>>> +             return -ENODEV;
+>>> +     }
+>>> +     cdns->irq = res->start;
+>>> +
+>>> +     /*
+>>> +      * Request memory region
+>>> +      * region-0: xHCI
+>>> +      * region-1: Peripheral
+>>> +      * region-2: OTG registers
+>>> +      */
+>>
+>> The memory region order is different from the dt-binding.
+>> There it is OTG, host(xhci), device (peripheral).
+>>
+>>> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>> +     regs = devm_ioremap_resource(dev, res);
+>>> +
+>>> +     if (IS_ERR(regs))
+>>> +             return PTR_ERR(regs);
+>>> +     cdns->xhci_regs = regs;
+>>> +     cdns->xhci_res = res;
+>>> +
+>>> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>>> +     regs = devm_ioremap_resource(dev, res);
+>>> +     if (IS_ERR(regs))
+>>> +             return PTR_ERR(regs);
+>>> +     cdns->dev_regs  = regs;
+>>> +
+>>> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+>>> +     regs = devm_ioremap_resource(dev, res);
+>>> +     if (IS_ERR(regs))
+>>> +             return PTR_ERR(regs);
+>>> +     cdns->otg_regs = regs;
+>>> +
+>>> +     mutex_init(&cdns->mutex);
+>>> +
+>>> +     cdns->phy = devm_phy_get(dev, "cdns3,usbphy");
+>>
+>> "cdns3,usbphy" is not documented in dt-binding.
+>>
+>>> +     if (IS_ERR(cdns->phy)) {
+>>> +             dev_info(dev, "no generic phy found\n");
+>>> +             cdns->phy = NULL;
+>>> +             /*
+>>> +              * fall through here!
+>>> +              * if no generic phy found, phy init
+>>> +              * should be done under boot!
+>>> +              */
+>>
+>> No you shouldn't fall through always if it is an error condition.
+>> Something like this should work better.
+>>
+>>         if (IS_ERR(cnds->phy)) {
+>>                 ret = PTR_ERR(cdns->phy);
+>>                 if (ret == -ENOSYS || ret == -ENODEV) {
+>>                         cdns->phy = NULL;
+>>                 } else if (ret == -EPROBE_DEFER) {
+>>                         return ret;
+>>                 } else {
+>>                         dev_err(dev, "no phy found\n");
+>>                         goto err0;
+>>                 }
+>>         }
+>>
+>> So if PHY was provided in DT, and PHY support/drivers is present
+>> and error condition means something is wrong and we have to error out.
+>>
+>>> +     } else {
+>>> +             phy_init(cdns->phy);
+>>> +     }
+>>
+>> You can do phy_init() outside the else.
+>>
+>>> +
+>>> +     ret = cdns3_core_init_role(cdns);
+>>> +     if (ret)
+>>> +             goto err1;
+>>> +
+>>> +     INIT_WORK(&cdns->role_switch_wq, cdns3_role_switch);
+>>> +     if (ret)
+>>> +             goto err2;
+>>> +
+>>> +     if (ret)
+>>> +             goto err2;
+>>> +
+>>> +     cdns->role = cdns3_get_role(cdns);
+>>
+>> I think this should move to cdns3_core_init_role().
+>>
+> 
+> I agree.
+> 
+>>> +
+>>> +     ret = devm_request_irq(dev, cdns->irq, cdns3_irq, IRQF_SHARED,
+>>> +                            dev_name(dev), cdns);
+>>> +
+>>> +     if (ret)
+>>> +             goto err2;
+>>
+>> How about moving request_irq to before cdsn3_core_init_role()?
+>>
+>> Then you can move cdns3_role_start() as well to core_init_role().
+>>
+> 
+> Usually, we request irq after hardware initialization has finished, if not,
+> there may unexpected interrupt.
+
+Doesn't kernel warn if interrupt happens and there is no handler?
+To avoid that I was suggesting to request_irq first.
+
+cheers,
+-roger
 
 -- 
-Mel Gorman
-SUSE Labs
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
