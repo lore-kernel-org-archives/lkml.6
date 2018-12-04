@@ -2,94 +2,99 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A610CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC66C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743202081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743202081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id EBCFC20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:47:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCFC20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbeLDUrb (ORCPT
+        id S1726508AbeLDUrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:47:31 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:54352 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbeLDUra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:47:30 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gUHbE-0000I1-08; Tue, 04 Dec 2018 13:47:20 -0700
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <20181203233509.20671-3-jglisse@redhat.com> <875zw98bm4.fsf@linux.intel.com>
- <20181204182421.GC2937@redhat.com>
- <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
- <20181204185725.GE2937@redhat.com>
- <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
- <20181204201432.GH18167@tassilo.jf.intel.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8ed92aba-a129-144f-34ab-f77102d54cfc@deltatee.com>
-Date:   Tue, 4 Dec 2018 13:47:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 4 Dec 2018 15:47:36 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33739 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbeLDUrf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:47:35 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i20so16536954otl.0;
+        Tue, 04 Dec 2018 12:47:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fSCTz2xKuBHtxh7ywbeEpAbuSj2luDE0z7e4Lo4D3oo=;
+        b=P591yKUfEBhPHdVQLMsiIapob2RKGFteF4yCY7hDX/IdeIIcwroC9B0uEyRF2clmR6
+         j0KLzia/IYVAI9pnCBnALKo/DOPWdmuLRtdvQwoaQI7en2RjJh+s3ryD3mT3twzmnxJV
+         9DmFpoP3KN3E1re62dhsK0QRibxrxapAUppDEc/yU2snY6luXELSby0oYqPhPQRg6UHL
+         EJbCmiYeIIaoWZygzMjicavHEs7FuNy4Bea5CEdSM1GnewZRaO/sE1nuF4BEXRTUFkXG
+         /Ujd4Z8ob86pS29VGfoeIZIzikd/4cdeO5sWexYntK8I3FM8H6uiOcVulPlrC6fiTuDR
+         Kpow==
+X-Gm-Message-State: AA+aEWYq6w6tKDhp9A0FYZiw/1+VoyPqsOFOzjqjpLQxJC2/sU+OaH53
+        GbYftsFkv15S5OMVewKFyg==
+X-Google-Smtp-Source: AFSGD/ULXByF7L8ViLYHXoCjDMyJiyl9bTEEBiVBiEtTVkmlYjUnQRw5l+SU5bILz2rpxfKNkuIefg==
+X-Received: by 2002:a9d:784a:: with SMTP id c10mr14300244otm.175.1543956455141;
+        Tue, 04 Dec 2018 12:47:35 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 52sm32258734oti.30.2018.12.04.12.47.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 12:47:34 -0800 (PST)
+Date:   Tue, 4 Dec 2018 14:47:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        mark.rutland@arm.com, alexandre.torgue@st.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH 1/3] dt-bindings: interrupt-controller: stm32: Document
+ hwlock properties
+Message-ID: <20181204204733.GA14508@bogus>
+References: <20181113144805.1054-1-benjamin.gaignard@st.com>
+ <20181113144805.1054-2-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20181204201432.GH18167@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, ross.zwisler@linux.intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, dan.j.williams@intel.com, jglisse@redhat.com, ak@linux.intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113144805.1054-2-benjamin.gaignard@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 13, 2018 at 03:48:03PM +0100, Benjamin Gaignard wrote:
+> Add hwlocks as optional property
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 
+Should be linaro.org S-o-b?
 
-On 2018-12-04 1:14 p.m., Andi Kleen wrote:
->> Also, in the same vein, I think it's wrong to have the API enumerate all
->> the different memory available in the system. The API should simply
-
-> We need an enumeration API too, just to display to the user what they
-> have, and possibly for applications to size their buffers 
-> (all we do with existing NUMA nodes)
-
-Yes, but I think my main concern is the conflation of the enumeration
-API and the binding API. An application doesn't want to walk through all
-the possible memory and types in the system just to get some memory that
-will work with a couple initiators (which it somehow has to map to
-actual resources, like fds). We also don't want userspace to police
-itself on which memory works with which initiator.
-
-Enumeration is definitely not the common use case. And if we create a
-new enumeration API now, it may make it difficult or impossible to unify
-these types of memory with the existing NUMA node hierarchies if/when
-this gets more integrated with the mm core.
-
-Logan
+> ---
+>  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt        | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+> index 6a36bf66d932..cd01b2292ec6 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+> @@ -14,6 +14,10 @@ Required properties:
+>    (only needed for exti controller with multiple exti under
+>    same parent interrupt: st,stm32-exti and st,stm32h7-exti)
+>  
+> +Optional properties:
+> +
+> +- hwlocks: reference to a phandle of a hardware spinlock provider node.
+> +
+>  Example:
+>  
+>  exti: interrupt-controller@40013c00 {
+> -- 
+> 2.15.0
+> 
