@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB21C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A131C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4189B2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D07A120851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnMefrXH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4189B2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsUrc95y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D07A120851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbeLDLCx (ORCPT
+        id S1727665AbeLDLCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:02:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49010 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727332AbeLDLCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:02:50 -0500
+        id S1726596AbeLDLCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5659214DE;
-        Tue,  4 Dec 2018 11:02:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60CA92087F;
+        Tue,  4 Dec 2018 11:02:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921369;
-        bh=CwV9Ebrwd9WaJWd10ROva2jQyBq24CZzoWAwIWtYTR0=;
+        s=default; t=1543921358;
+        bh=TjzVIOUuR3gAOeYdcvxJ5fICl9hAizOKd99TGtnor1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bnMefrXH09aTQz4xAYKub6KdQbIyDSUB9LRWK2NchanD5D3lz2EF7Nsufi+qidcaT
-         KR2/HfWvXCQ3xy/ic9gz71arAQUZ65YnFEjzN2hEyAuVE1s1nZhFIsOK/6KVKNfGfi
-         GiM8IK1h+JABHO4jx+/ob/Kv3EOg5rdSQTriTXjg=
+        b=BsUrc95yZf1EV0fWePI3oq7UErATRH3aN16CwS7XqsCvQTcHBjYmWnjGI1AlzmCFX
+         m4q8UQGkQunykzJ/dzhuLQgHAFQomhImgcnyOr2KN7UJykT50JDD93qiJQD0HG0tKn
+         auca65O0+UDB32VaGTEaUQm5XMrDb2MgWhVimROM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, Su Yue <suy.fnst@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 044/146] f2fs: check blkaddr more accuratly before issue a bio
-Date:   Tue,  4 Dec 2018 11:48:50 +0100
-Message-Id: <20181204103728.635385561@linuxfoundation.org>
+Subject: [PATCH 4.14 041/146] btrfs: Check that each block group has corresponding chunk at mount time
+Date:   Tue,  4 Dec 2018 11:48:47 +0100
+Message-Id: <20181204103728.515606170@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,126 +66,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 0833721ec3658a4e9d5e58b6fa82cf9edc431e59 upstream.
+commit 514c7dca85a0bf40be984dab0b477403a6db901f upstream.
 
-This patch check blkaddr more accuratly before issue a
-write or read bio.
+A crafted btrfs image with incorrect chunk<->block group mapping will
+trigger a lot of unexpected things as the mapping is essential.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Although the problem can be caught by block group item checker
+added in "btrfs: tree-checker: Verify block_group_item", it's still not
+sufficient.  A sufficiently valid block group item can pass the check
+added by the mentioned patch but could fail to match the existing chunk.
+
+This patch will add extra block group -> chunk mapping check, to ensure
+we have a completely matching (start, len, flags) chunk for each block
+group at mount time.
+
+Here we reuse the original helper find_first_block_group(), which is
+already doing the basic bg -> chunk checks, adding further checks of the
+start/len and type flags.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199837
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/checkpoint.c |  2 ++
- fs/f2fs/data.c       |  5 +++--
- fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/segment.h    | 25 +++++++++++++++++++------
- 4 files changed, 25 insertions(+), 8 deletions(-)
+ fs/btrfs/extent-tree.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 41fce930f44c..1bd4cd8c79c6 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -69,6 +69,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 		.old_blkaddr = index,
- 		.new_blkaddr = index,
- 		.encrypted_page = NULL,
-+		.is_meta = is_meta,
- 	};
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index fdc42eddccc2..83791d13c204 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9828,6 +9828,8 @@ static int find_first_block_group(struct btrfs_fs_info *fs_info,
+ 	int ret = 0;
+ 	struct btrfs_key found_key;
+ 	struct extent_buffer *leaf;
++	struct btrfs_block_group_item bg;
++	u64 flags;
+ 	int slot;
  
- 	if (unlikely(!is_meta))
-@@ -163,6 +164,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
- 		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
- 		.encrypted_page = NULL,
- 		.in_list = false,
-+		.is_meta = (type != META_POR),
- 	};
- 	struct blk_plug plug;
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6fbb6d75318a..5913de3f661d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -369,6 +369,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	struct page *page = fio->encrypted_page ?
- 			fio->encrypted_page : fio->page;
- 
-+	verify_block_addr(fio, fio->new_blkaddr);
- 	trace_f2fs_submit_page_bio(page, fio);
- 	f2fs_trace_ios(fio, 0);
- 
-@@ -413,8 +414,8 @@ next:
- 	}
- 
- 	if (fio->old_blkaddr != NEW_ADDR)
--		verify_block_addr(sbi, fio->old_blkaddr);
--	verify_block_addr(sbi, fio->new_blkaddr);
-+		verify_block_addr(fio, fio->old_blkaddr);
-+	verify_block_addr(fio, fio->new_blkaddr);
- 
- 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 54f8520ad7a2..aa7b033af1b0 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -910,6 +910,7 @@ struct f2fs_io_info {
- 	bool submitted;		/* indicate IO submission */
- 	int need_lock;		/* indicate we need to lock cp_rwsem */
- 	bool in_list;		/* indicate fio is in io_list */
-+	bool is_meta;		/* indicate borrow meta inode mapping or not */
- 	enum iostat_type io_type;	/* io type */
- };
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 4dfb5080098f..4b635e8c91b0 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -53,13 +53,19 @@
- 	 ((secno) == CURSEG_I(sbi, CURSEG_COLD_NODE)->segno /		\
- 	  (sbi)->segs_per_sec))	\
- 
--#define MAIN_BLKADDR(sbi)	(SM_I(sbi)->main_blkaddr)
--#define SEG0_BLKADDR(sbi)	(SM_I(sbi)->seg0_blkaddr)
-+#define MAIN_BLKADDR(sbi)						\
-+	(SM_I(sbi) ? SM_I(sbi)->main_blkaddr : 				\
-+		le32_to_cpu(F2FS_RAW_SUPER(sbi)->main_blkaddr))
-+#define SEG0_BLKADDR(sbi)						\
-+	(SM_I(sbi) ? SM_I(sbi)->seg0_blkaddr : 				\
-+		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment0_blkaddr))
- 
- #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
- #define MAIN_SECS(sbi)	((sbi)->total_sections)
- 
--#define TOTAL_SEGS(sbi)	(SM_I(sbi)->segment_count)
-+#define TOTAL_SEGS(sbi)							\
-+	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
-+		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment_count))
- #define TOTAL_BLKS(sbi)	(TOTAL_SEGS(sbi) << (sbi)->log_blocks_per_seg)
- 
- #define MAX_BLKADDR(sbi)	(SEG0_BLKADDR(sbi) + TOTAL_BLKS(sbi))
-@@ -619,10 +625,17 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
- 	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
- }
- 
--static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
-+static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
- {
--	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
--			|| blk_addr >= MAX_BLKADDR(sbi));
-+	struct f2fs_sb_info *sbi = fio->sbi;
+ 	ret = btrfs_search_slot(NULL, root, key, path, 0, 0);
+@@ -9862,8 +9864,32 @@ static int find_first_block_group(struct btrfs_fs_info *fs_info,
+ 			"logical %llu len %llu found bg but no related chunk",
+ 					  found_key.objectid, found_key.offset);
+ 				ret = -ENOENT;
++			} else if (em->start != found_key.objectid ||
++				   em->len != found_key.offset) {
++				btrfs_err(fs_info,
++		"block group %llu len %llu mismatch with chunk %llu len %llu",
++					  found_key.objectid, found_key.offset,
++					  em->start, em->len);
++				ret = -EUCLEAN;
+ 			} else {
+-				ret = 0;
++				read_extent_buffer(leaf, &bg,
++					btrfs_item_ptr_offset(leaf, slot),
++					sizeof(bg));
++				flags = btrfs_block_group_flags(&bg) &
++					BTRFS_BLOCK_GROUP_TYPE_MASK;
 +
-+	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
-+				(!is_read_io(fio->op) || fio->is_meta))
-+		BUG_ON(blk_addr < SEG0_BLKADDR(sbi) ||
-+				blk_addr >= MAIN_BLKADDR(sbi));
-+	else
-+		BUG_ON(blk_addr < MAIN_BLKADDR(sbi) ||
-+				blk_addr >= MAX_BLKADDR(sbi));
- }
- 
- /*
++				if (flags != (em->map_lookup->type &
++					      BTRFS_BLOCK_GROUP_TYPE_MASK)) {
++					btrfs_err(fs_info,
++"block group %llu len %llu type flags 0x%llx mismatch with chunk type flags 0x%llx",
++						found_key.objectid,
++						found_key.offset, flags,
++						(BTRFS_BLOCK_GROUP_TYPE_MASK &
++						 em->map_lookup->type));
++					ret = -EUCLEAN;
++				} else {
++					ret = 0;
++				}
+ 			}
+ 			free_extent_map(em);
+ 			goto out;
 -- 
 2.17.1
 
