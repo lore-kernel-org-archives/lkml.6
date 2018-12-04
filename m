@@ -2,186 +2,114 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2475C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826FDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9010F20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:03:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQRMF4Wq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9010F20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3B0E8208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:11:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B0E8208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbeLDEDW (ORCPT
+        id S1726013AbeLDELf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 23:03:22 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54267 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbeLDEDW (ORCPT
+        Mon, 3 Dec 2018 23:11:35 -0500
+Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:24796 "EHLO
+        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeLDELf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 23:03:22 -0500
-Received: by mail-it1-f196.google.com with SMTP id g85so13205348ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 20:03:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qroefZPXRpjHXeZ1MWPkLJnGC8cM1b7MrudBMkXXqaY=;
-        b=XQRMF4WqahBHXDcZx1QOG0Ye46zlKPd9MAFi7L2aZiidzCmydbbJEeeko8eMiu7BDk
-         yezyU9aC61AwW9AQ0ECKSdp+gj/zWPkQwwUpEXDXEZgdF4s/WVLRXcjWOdQFTWqKDThY
-         4GrCGL5ERHSVKKMzBs7hUg7dZQPKnidbGBX5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qroefZPXRpjHXeZ1MWPkLJnGC8cM1b7MrudBMkXXqaY=;
-        b=snrPBV0Xe+WltjvQcJgyS/0RH9uwDeN0GOcmM5Dn0fR1SQbhDM6xx+AFXtbW/q6dXK
-         ZLPtxIjBoX9XCb1pIGAy6GB5PdxfAQD5EifM1bpuB4xYuawGGCR+3KBS1E88Ir74CvKS
-         T48/gfwxN2T8oZsFYW0bBD0gDWqyMRAmwkxm2CJXceq5+i0RGrF0VSd0pe7108InZqym
-         eQW2ddW4UwZKNJD0cd4Whk3HL1EBItzPEKQPBtubNbRiGPMAQy2G5JtWFm3mjINu0VRF
-         UU5eTxnPSjT5wyvXlzMdJ5hRS9cH3J/rqFDZvMkO3EoMotkZy2Oqi1TPrr6J8Ehds1HU
-         vuRg==
-X-Gm-Message-State: AA+aEWZgrvQDmlpLclsQqLblbA/s37BB0JmpiLGIFxtyOOzFrDMn5X5u
-        6Lre288J/TzjpGO+t0wm7wPDDiWwM98MyjaKOUruEw==
-X-Google-Smtp-Source: AFSGD/W9GSbc3xdV1Sx/HoKv7istyAwREdnFCJTplrijaNR/WV0p5M7+c9LbOf5rPIVd0ECMlFv4Xx6Xfs7q3xJ2QTY=
-X-Received: by 2002:a05:660c:a45:: with SMTP id j5mr10222610itl.83.1543896199759;
- Mon, 03 Dec 2018 20:03:19 -0800 (PST)
+        Mon, 3 Dec 2018 23:11:35 -0500
+Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id A40D423B4
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 04:11:33 +0000 (UTC)
+Received: from G1W8108.americas.hpqcorp.net (g1w8108.austin.hp.com [16.193.72.60])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g4t3425.houston.hpe.com (Postfix) with ESMTPS id 92EDE92
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 04:11:33 +0000 (UTC)
+Received: from G4W9120.americas.hpqcorp.net (2002:10d2:150f::10d2:150f) by
+ G1W8108.americas.hpqcorp.net (2002:10c1:483c::10c1:483c) with Microsoft SMTP
+ Server (TLS) id 15.0.1367.3; Tue, 4 Dec 2018 04:11:33 +0000
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (15.241.52.12) by
+ G4W9120.americas.hpqcorp.net (16.210.21.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Tue, 4 Dec 2018 04:11:33 +0000
+Received: from AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.138) by
+ AT5PR8401MB0612.NAMPRD84.PROD.OUTLOOK.COM (10.169.4.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.17; Tue, 4 Dec 2018 04:11:31 +0000
+Received: from AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51f2:e4cd:af67:5d5b]) by AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51f2:e4cd:af67:5d5b%9]) with mapi id 15.20.1382.023; Tue, 4 Dec 2018
+ 04:11:31 +0000
+From:   "Arackal, Paulose Kuriakose (STSD)" 
+        <paulose.kuriakose.arackal@hpe.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Query regarding Spectre fixes for qemu-kvm...4.4 LTS Kernel.
+Thread-Topic: Query regarding Spectre fixes for qemu-kvm...4.4 LTS Kernel.
+Thread-Index: AdSLhV9I1vEX+F6FR36M0R/JnUUKHw==
+Date:   Tue, 4 Dec 2018 04:11:31 +0000
+Message-ID: <AT5PR8401MB1138DE66FC69195F3F2A9886B8AF0@AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=paulose.kuriakose.arackal@hpe.com; 
+x-originating-ip: [16.242.235.132]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0612;6:VEGAF7Y4WCnpcZlVFb8HgAaznXiIiMJg83F1i6Hcn94+6fTu+W0E0S1weJ0KyxYd+HO8M+Tm/TGMocAay/VEc09nE4mZZpEKQUwqIKqRD+0z7sMNPWKNZ9kDk9KSOHoTCKoqR0KpUtZ5aTH08HoeUzrT9ekXpPXKzc+QEa7sCRLknpraikVrponullMBSfkF876H3/1oW0gJ9vROKBKH0pbVIOTy8cfOH+KQOa26W0i2FYLi+GyCqWp/gMqkHmLEO7WKo4RqiYdtxGVUG0+f3f/agPchHZNIUEi5Em9p/SmOcODSX5ietuHHa6hldxtsRWyBoZL8AgSsXPD6IT4sV2xkS0BH+6mwTJo6sEJ8dVHGGp2EgHTrpSHcXMyudjwxRFIdjaIHXZ7g6khWdPfpdPf6Xv8sI7E13DEL72Liu/tCWsyXbtmfGTnN8tD+Gn1ZUqYdiW4c5tOxbzhG0K5Dyw==;5:a8QHPLm0bbpqFUPkWEyhagGq2hXgHjtnvQPgu+b13DndfmDwUgjhEBD7BOpi+3MYwA1+BZG6z6ChYsapXG17eFOaVV34SQamAZMOEALaSpQNSRoHN4D+ijI0r+mxjca9T52L3Lo3vCm3MjVL62okE3+VJ+JjJn5tbv7viuafX+s=;7:qnjXOcz4A1Z6XzrTek7CupDC8n5GxunPam1pBIDjY+vXE74EKuHiyN652oWVj3fQkDl7kUq0mNsSkc15N7bn5ESLjdHshhwn7zoAIv16xg/5IhxJ/+zO5UAS+GFpsk/dECoZqbAT8HyEovnSCeqN7g==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 901fe1d9-a106-4151-3824-08d6599e9237
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0612;
+x-ms-traffictypediagnostic: AT5PR8401MB0612:
+x-microsoft-antispam-prvs: <AT5PR8401MB0612A37369FCDCED9CE262C1B8AF0@AT5PR8401MB0612.NAMPRD84.PROD.OUTLOOK.COM>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AT5PR8401MB0612;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0612;
+x-forefront-prvs: 0876988AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(136003)(366004)(39860400002)(396003)(346002)(376002)(189003)(199004)(5640700003)(2501003)(305945005)(7736002)(25786009)(6436002)(66066001)(105586002)(106356001)(71200400001)(71190400001)(8936002)(81156014)(81166006)(8676002)(486006)(2351001)(476003)(86362001)(575784001)(6916009)(478600001)(256004)(14444005)(68736007)(14454004)(97736004)(7696005)(55016002)(6116002)(3846002)(74316002)(53936002)(316002)(5660300001)(9686003)(102836004)(2906002)(99286004)(6506007)(186003)(26005)(33656002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0612;H:AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: tZl4V1lqbfgCEsgfIHggia2i0YKwqYxPPydVu9+uwmFdNWsFAq3AMk/uoIE7FSXNROYGTnz2yeFXYRfFIfiGr7av6FiIzwuIBW+TyJSnSKtXr5AX8qKLo6IeqKnGVc/iVizsVtz7oJL9L6tLrQ1HB5Qb0+cea9Zn9k/7xvjMrn6i50v2fKf+AQxbLboB/+FEVcl6dMf+yFFIix5Hc5Z28bESRXOcBGiZe+8SuI/ALdLlgFXzoe0PT2hsWlQFXA0WotAes5ruZXmFx9/YLFoiuD+t06uFaGurlbxaF2Cnf0pJRuRFEiGD87ytRfK2BX/qftaI8YQ/Xq6vT6oTQr2f8zyrgoLwtwyujwrkVTExUNo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 4 Dec 2018 09:33:08 +0530
-Message-ID: <CALxhOnjSEp++W5T3Sf0eX+8hPt08ER22M817M-Vhd24_96a_EQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] mips: system call table generation support
-To:     "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 901fe1d9-a106-4151-3824-08d6599e9237
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 04:11:31.1190
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0612
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Hi,
 
-On Thu, 29 Nov 2018 at 14:14, Firoz Khan <firoz.khan@linaro.org> wrote:
->
-> The purpose of this patch series is, we can easily
-> add/modify/delete system call table support by cha-
-> nging entry in syscall.tbl file instead of manually
-> changing many files. The other goal is to unify the
-> system call table generation support implementation
-> across all the architectures.
->
-> The system call tables are in different format in
-> all architecture. It will be difficult to manually
-> add, modify or delete the system calls in the resp-
-> ective files manually. To make it easy by keeping a
-> script and which'll generate uapi header file and
-> syscall table file.
->
-> syscall.tbl contains the list of available system
-> calls along with system call number and correspond-
-> ing entry point. Add a new system call in this arch-
-> itecture will be possible by adding new entry in
-> the syscall.tbl file.
->
-> Adding a new table entry consisting of:
->         - System call number.
->         - ABI.
->         - System call name.
->         - Entry point name.
->         - Compat entry name, if required.
->
-> ARM, s390 and x86 architecuture does exist the sim-
-> ilar support. I leverage their implementation to
-> come up with a generic solution.
->
-> I have done the same support for work for alpha,
-> ia64, m68k, microblaze, parisc, powerpc, sh, sparc,
-> and xtensa. Below mentioned git repository contains
-> more details about the workflow.
->
-> https://github.com/frzkhn/system_call_table_generator/
->
-> Finally, this is the ground work to solve the Y2038
-> issue. We need to add two dozen of system calls to
-> solve Y2038 issue. So this patch series will help to
-> add new system calls easily by adding new entry in
-> the syscall.tbl.
->
-> Changes since v2:
->  - fixed __NR_syscalls assign issue.
->
-> Changes since v1:
->  - optimized/updated the syscall table generation
->    scripts.
->  - fixed all mixed indentation issues in syscall.tbl.
->  - added "comments" in syscall_*.tbl.
->  - changed from generic-y to generated-y in Kbuild.
->
-> Firoz Khan (6):
->   mips: add __NR_syscalls along with __NR_Linux_syscalls
->   mips: remove unused macros
->   mips: add +1 to __NR_syscalls in uapi header
->   mips: remove syscall table entries
->   mips: add system call table generation support
->   mips: generate uapi header and system call table files
+I have few queries regarding qemu-kvm support of Spectre related fixes at 4.4.* LTS Kernel.
 
-Could you review this patch series. I would appreciate if you can
-perform the boot test on the actual platform.
+I see that in upstream kernels, svm_vcpu_run() calls  x86_spec_ctrl_set_guest() and  x86_spec_ctrl_restore_host().
+And calling into x86_virt_spec_ctrl(), that sets IBRS/IBPB/SSBD bits accordingly for guest context.
 
-Thanks
-Firoz
+Related commit IDs below:
+commit 5cf687548705412da47c9cec342fd952d71ed3d5
+commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24
 
->
->  arch/mips/Makefile                        |    3 +
->  arch/mips/include/asm/Kbuild              |    4 +
->  arch/mips/include/asm/unistd.h            |    8 -
->  arch/mips/include/uapi/asm/Kbuild         |    6 +
->  arch/mips/include/uapi/asm/unistd.h       | 1065 +----------------------------
->  arch/mips/kernel/Makefile                 |    2 +-
->  arch/mips/kernel/ftrace.c                 |    8 +-
->  arch/mips/kernel/scall32-o32.S            |  391 +----------
->  arch/mips/kernel/scall64-64.S             |  444 ------------
->  arch/mips/kernel/scall64-n32.S            |  341 +--------
->  arch/mips/kernel/scall64-n64.S            |  117 ++++
->  arch/mips/kernel/scall64-o32.S            |  379 +---------
->  arch/mips/kernel/syscalls/Makefile        |   96 +++
->  arch/mips/kernel/syscalls/syscall_n32.tbl |  343 ++++++++++
->  arch/mips/kernel/syscalls/syscall_n64.tbl |  339 +++++++++
->  arch/mips/kernel/syscalls/syscall_o32.tbl |  382 +++++++++++
->  arch/mips/kernel/syscalls/syscallhdr.sh   |   36 +
->  arch/mips/kernel/syscalls/syscallnr.sh    |   30 +
->  arch/mips/kernel/syscalls/syscalltbl.sh   |   36 +
->  19 files changed, 1430 insertions(+), 2600 deletions(-)
->  delete mode 100644 arch/mips/kernel/scall64-64.S
->  create mode 100644 arch/mips/kernel/scall64-n64.S
->  create mode 100644 arch/mips/kernel/syscalls/Makefile
->  create mode 100644 arch/mips/kernel/syscalls/syscall_n32.tbl
->  create mode 100644 arch/mips/kernel/syscalls/syscall_n64.tbl
->  create mode 100644 arch/mips/kernel/syscalls/syscall_o32.tbl
->  create mode 100644 arch/mips/kernel/syscalls/syscallhdr.sh
->  create mode 100644 arch/mips/kernel/syscalls/syscallnr.sh
->  create mode 100644 arch/mips/kernel/syscalls/syscalltbl.sh
->
-> --
-> 1.9.1
->
+Looks like this change is not fully ported to 4.4 LTS yet. 
+x86_spec_ctrl_set_guest() and  x86_spec_ctrl_restore_host() interfaces are available, however looks like  svm_vcpu_run() is not calling them.  
+So qemu-kvm running on 4.4 kernels may not have SPEC_CTRL set properly in guest context.
+
+Is there a plan to backport above changes fully into 4.4 LTS kernel?.
+
+Thanks,
+Paulose. 
+
