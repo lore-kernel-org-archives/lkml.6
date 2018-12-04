@@ -2,125 +2,197 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CA2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1522CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A606206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:39:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tseYKfu7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A606206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D0B97206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:39:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B97206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbeLDNjl (ORCPT
+        id S1726434AbeLDNj6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:39:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44192 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 08:39:58 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:52671 "EHLO 1wt.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbeLDNjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:39:41 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C525206B6;
-        Tue,  4 Dec 2018 13:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543930780;
-        bh=AUOps6vsAp5H0ofVvGFUrs0Z8qFuqwt5MJBumjVMxeI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tseYKfu7/ndCoXZzIcgEeXSgIOV6HepMyUwv6D6fuIS3luU9f1EmZUAOFqHcBy+UR
-         bOULq9G+2WNnESpg97DsT5OCQu+a8iX+WhO4R31eVQeyVg0HPcRCu/U8HHrlmPEDeT
-         0RzAHAx0Q+ojkIRGGKjfKTJDoy/eZmihKVu81bPw=
-Date:   Tue, 4 Dec 2018 14:39:38 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
+        id S1725770AbeLDNj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 08:39:58 -0500
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id wB4DcHoR008733;
+        Tue, 4 Dec 2018 14:38:17 +0100
+Date:   Tue, 4 Dec 2018 14:38:17 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 4.14 098/146] x86/process: Consolidate and simplify
- switch_to_xtra() code
-Message-ID: <20181204133938.GA4749@kroah.com>
-References: <20181204103726.750894136@linuxfoundation.org>
- <20181204103730.767674414@linuxfoundation.org>
- <alpine.DEB.2.21.1812041213140.8181@nanos.tec.linutronix.de>
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        danymadden@us.ibm.com, Dennis.Krein@netapp.com, joe@perches.com,
+        joel@joelfernandes.org, ldr709@gmail.com,
+        pierceagriffiths@gmail.com, rdunlap@infradead.org,
+        zhouzhouyi@gmail.com, connor.shu@gmail.com
+Subject: Re: [GIT PULL rcu/next] RCU commits for 4.21/5.0
+Message-ID: <20181204133817.GB8714@1wt.eu>
+References: <20181203225405.GA21856@linux.ibm.com>
+ <20181204080837.GA67285@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812041213140.8181@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <20181204080837.GA67285@gmail.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 12:14:13PM +0100, Thomas Gleixner wrote:
-> On Tue, 4 Dec 2018, Greg Kroah-Hartman wrote:
-> > --- a/arch/x86/kernel/process_32.c
-> > +++ b/arch/x86/kernel/process_32.c
-> > @@ -234,7 +234,6 @@ __switch_to(struct task_struct *prev_p,
-> >  	struct fpu *prev_fpu = &prev->fpu;
-> >  	struct fpu *next_fpu = &next->fpu;
-> >  	int cpu = smp_processor_id();
-> > -	struct tss_struct *tss = &per_cpu(cpu_tss_rw, cpu);
-> >  
-> >  	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
-> >  
-> > @@ -266,12 +265,7 @@ __switch_to(struct task_struct *prev_p,
-> >  	if (get_kernel_rpl() && unlikely(prev->iopl != next->iopl))
-> >  		set_iopl_mask(next->iopl);
-> >  
-> > -	/*
-> > -	 * Now maybe handle debug registers and/or IO bitmaps
-> > -	 */
-> > -	if (unlikely(task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV ||
-> > -		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
-> > -		__switch_to_xtra(prev_p, next_p, tss);
-> > +	switch_to_extra(prev_p, next_p);
-> 
-> This is missing the hunk below.
-> 
-> Thanks,
-> 
-> 	tglx
-> 
-> 8<------------------
-> 
-> diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-> index 67cecc9a2b6f..c2df91eab573 100644
-> --- a/arch/x86/kernel/process_32.c
-> +++ b/arch/x86/kernel/process_32.c
-> @@ -59,6 +59,8 @@
->  #include <asm/intel_rdt_sched.h>
->  #include <asm/proto.h>
->  
-> +#include "process.h"
-> +
->  void __show_regs(struct pt_regs *regs, int all)
->  {
->  	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
+Hi Ingo,
 
-Thanks, now updated.
+On Tue, Dec 04, 2018 at 09:08:37AM +0100, Ingo Molnar wrote:
+> I noticed this bit from Willy:
+> 
+> >  tools/testing/selftests/rcutorture/bin/nolibc.h    | 2197 ++++++++++++++++++++
+> 
+> So <nolibc.h> is a rather large header and it comes with very little 
+> documentation - but once you read through the header it's obvious what it 
+> does, the code is clean and it's pretty cool all around, and in hindsight 
+> the name is a strong hint about what the header does as well. ;)
 
-greg k-h
+Thanks for the positive comment, as it was initially not designed to be
+merged into the kernel and was just a local home project. I figured it
+could be a perfect solution to Paul's executable size issues and offered
+some help to get it in relatively quickly, but surely we can do much better!
+
+> Still it would be nice to at least add a top level description to the 
+> header to make people (like me) who are reading the code before the 
+> changelogs wonder less. For tooling headers we require a similar 
+> self-explanatory, feel-fuzzy structure as for kernel headers.
+
+I'm fine with doing this. I even wrote the very small header at the last
+minute, without knowing if there was any chance it survives a review :-)
+
+> Beyond adding a bit more documentation it would also be useful to factor 
+> nolibc.h out into tools/include/nolibc/ or so, no reason to hide it in 
+> rcutorture, I bet there's a number of other testcases and smaller 
+> utilities in tools/ that could make good use of it.
+
+Fine as well. It's important however to keep in mind that I only covered
+the few architectures I could test (i386/x86_64/arm/arm64/mips), and even
+there the coverage is still limited. I don't want it to become too much of
+a pain to use for other utilities just by lack of initial coverage. However
+I agree that better exposure will help contributions come in.
+
+> My long term hope would be that eventually we could even create a minimal 
+> klibc from it (a minimal libc provided by the kernel itself), giving 
+> minimalist binaries a mechanism to link against klibc.so:
+> 
+> - klibc would be an explicit opt-in mechanism, i.e. binaries that are 
+>   coupled with the kernel anyway (and initrd executables certainly are) 
+>   could use this.
+
+In fact it's very similar to my goal. I'm using it in initramfs and initrds
+that do very little stuff and where it's acceptable to have a few #ifdef to
+adapt to this or that libc. However I found it extremely convenient *not* to
+require any external symbol, thus not to have to link against anything. But
+I'm well aware that this position cannot last forever and that at some
+point if we want to go further we'll possibly have a few layers (naked
+syscalls returning -errno, decorated syscalls making use of an explicit
+errno, libc-specific stuff like string functions). Possibly that in this
+case only the naked version would remain in the .h and that the rest will
+require linking with the .so/.a.
+
+> - We could also add a way for the kernel to provide (non-swappable) 
+>   binaries via an automatic /klib/ mount point or so. This would allow 
+>   features like a minimal, console based rescue/debug shell that doesn't 
+>   rely on any filesystem state or external library dependencies, other 
+>   than the initial kernel+initrd image.
+
+This could be convenient indeed, I never thought about this. I'm currently
+doing something comparable using initramfs, so maybe in the end we don't
+need the kernel to create anything beyond this, but instead just let the
+user choose in the configuration what utilities should be added to the
+initramfs sources.
+
+(...)
+> - klibc would also eventually allow deeper integration with the vDSO 
+>   proper: for example on klibc based embedded systems we could link klibc
+>   and the vDSO into a single vDSO library, further simplifying and 
+>   optimizing it.
+
+I already looked how to implement vDSO. I figured it was not very difficult
+but will require that I maintain variables with the AUXV, then I thought
+that it went beyond the scope of this minimalist implementaiton and
+postponed this.
+
+> - klibc would also allow faster feature propagation from kernel to libc 
+>   as well, as we could prototype, test and benchmark new system calls and 
+>   new features on klibc - i.e. klibc integration and testcases could be a
+>   requirement for new system calls.
+
+This actually is a good idea. There was already a discussion in another
+thread about exposing syscalls better in the kernel for better interactions
+with the libc, but it could start this way with test cases. It also increases
+the likeliness that an awkward API is detected early when the person starts
+to write his/her own part of the libc side.
+
+> - There's no upper limit to how such a minimal kernel-shell (root only) 
+>   environment would look like, beyond a minimal shell in principle it 
+>   could include bits like:
+(...)
+
+That's more or less what the preinit present in my initramfs provides. I
+just need a kernel and nothing else to start to manually find and mount
+my rootfs while debugging, it's quite convenient. It's very limited
+though. But I 100% agree with the benefits of such basic recovery
+utilities shipped with the kernel images!
+
+(...)
+>     - a minimal version of 3D Tetris (just kidding)
+
+I thought you were already kidding when talking about 3D in fact but
+apparently not! I think you really mean GPU-based acceleration rather
+than 3D since I hardly see how 3D stuff may improve my debugging
+abilities :-)
+
+> - ... all of which would allow a fully integrated, self-contained (!) 
+>   solution with no external dependencies other than the build environment 
+>   to build the binaries, that allows the debugging of a system and the 
+>   eventual extraction of debug information, without having to interact 
+>   with the local filesystem or even the local X-window state for these 
+>   apps to run.
+
+In my case I also ship the modules within the kernel image. It's extremely
+convenient to have the choice of a number of kernels for a given rootfs.
+You never have to wonder if the modules are present on the roofs or not,
+you never have to prepare any initrd, you just select the kernel you want
+and you're done. For development, when combined with the preinit I'm
+talking about, it's awesome, because you just want something which barely
+boots to the preinit prompt, then you can start to investigate.
+
+> - I.e. a minimal Linux distribution done right, optimized for kernel 
+>   development, system bootstrap, rescue enviroment, etc. - far more 
+>   usable than a kdb session.
+
+The distro I'm using was initially not made for this but to design
+reliable minimalist systems, and it turned out extremely effective for
+kernel development for these reasons. The whole rootfs is an initrd
+which contains all the tools I need, so I can only confirm the comfort
+it brings!
+
+> Anyway, back to <nolibc.h>: wanted to ask Linus's and Arnaldo's opinion 
+> about the merge of it, we can still re-base and re-try if there's any 
+> objections.
+
+I'm fine with this as well. I just want to be sure we don't postpone the
+coverage of Paul's rcutorture needs because it started for this initially.
+If we see the discussion going too far, we could also at least cover just
+rcutorture first which would buy us time to decide how it should be done
+better, then remove it once we can port rcutorture to the newly designed
+solution.
+
+Thanks,
+Willy
