@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23755C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CCDC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFACF214DB
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB136214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2ujFRLI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFACF214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXUglza/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB136214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbeLDLFq (ORCPT
+        id S1728218AbeLDLFv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53648 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:05:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728192AbeLDLFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:42 -0500
+        id S1728202AbeLDLFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF71E2146D;
-        Tue,  4 Dec 2018 11:05:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77DB32082D;
+        Tue,  4 Dec 2018 11:05:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921541;
-        bh=48X0RNKScEUrjBytRv5TK12l1DeWzbGaxUq9bufez6U=;
+        s=default; t=1543921549;
+        bh=2agyAhRmHKsiJpkIzmNMpk7j834hygIHbsIlJmYkooQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J2ujFRLIwBeQ5G6DWFyLYd2XpmEanJRwAaEiOYLWolPwZ2xXRJ9G5fydGSywx7+Wn
-         Q026O0wZzXWezbnJqrSVP3Uh9ZpzeqKYjKSmcz3cmN2ZdcNA8IXWttH8Hhmqv7XlDx
-         CKAZIj69orGKsrt7OVZS5ZUdsiNEd9ucVbd7OsLw=
+        b=lXUglza/iNimkadHauQNV1KtuV6AoMsP+j2WE7ib0mubVRiVNnvJgR5hCfC/Id7Bb
+         i04feTzzWDUVwMkCO6kqO0m4Q8WgCvILjQ5iCfIvrhDxwvi0DJev3Uyk8fcG+I0Ee0
+         a5vqwq9kZ684Q97RT4WrFRovr6iu+6/xN+NVjTn8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Wu <ww9210@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 4.14 112/146] KVM: X86: Fix scan ioapic use-before-initialization
-Date:   Tue,  4 Dec 2018 11:49:58 +0100
-Message-Id: <20181204103731.329046549@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.14 115/146] xtensa: fix coprocessor part of ptrace_{get,set}xregs
+Date:   Tue,  4 Dec 2018 11:50:01 +0100
+Message-Id: <20181204103731.453084448@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,104 +62,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wanpeng Li <wanpengli@tencent.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit e97f852fd4561e77721bb9a4e0ea9d98305b1e93 upstream.
+commit 38a35a78c5e270cbe53c4fef6b0d3c2da90dd849 upstream.
 
-Reported by syzkaller:
+Layout of coprocessor registers in the elf_xtregs_t and
+xtregs_coprocessor_t may be different due to alignment. Thus it is not
+always possible to copy data between the xtregs_coprocessor_t structure
+and the elf_xtregs_t and get correct values for all registers.
+Use a table of offsets and sizes of individual coprocessor register
+groups to do coprocessor context copying in the ptrace_getxregs and
+ptrace_setxregs.
+This fixes incorrect coprocessor register values reading from the user
+process by the native gdb on an xtensa core with multiple coprocessors
+and registers with high alignment requirements.
 
- BUG: unable to handle kernel NULL pointer dereference at 00000000000001c8
- PGD 80000003ec4da067 P4D 80000003ec4da067 PUD 3f7bfa067 PMD 0
- Oops: 0000 [#1] PREEMPT SMP PTI
- CPU: 7 PID: 5059 Comm: debug Tainted: G           OE     4.19.0-rc5 #16
- RIP: 0010:__lock_acquire+0x1a6/0x1990
- Call Trace:
-  lock_acquire+0xdb/0x210
-  _raw_spin_lock+0x38/0x70
-  kvm_ioapic_scan_entry+0x3e/0x110 [kvm]
-  vcpu_enter_guest+0x167e/0x1910 [kvm]
-  kvm_arch_vcpu_ioctl_run+0x35c/0x610 [kvm]
-  kvm_vcpu_ioctl+0x3e9/0x6d0 [kvm]
-  do_vfs_ioctl+0xa5/0x690
-  ksys_ioctl+0x6d/0x80
-  __x64_sys_ioctl+0x1a/0x20
-  do_syscall_64+0x83/0x6e0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The reason is that the testcase writes hyperv synic HV_X64_MSR_SINT6 msr
-and triggers scan ioapic logic to load synic vectors into EOI exit bitmap.
-However, irqchip is not initialized by this simple testcase, ioapic/apic
-objects should not be accessed.
-This can be triggered by the following program:
-
-    #define _GNU_SOURCE
-
-    #include <endian.h>
-    #include <stdint.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <sys/syscall.h>
-    #include <sys/types.h>
-    #include <unistd.h>
-
-    uint64_t r[3] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
-
-    int main(void)
-    {
-    	syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
-    	long res = 0;
-    	memcpy((void*)0x20000040, "/dev/kvm", 9);
-    	res = syscall(__NR_openat, 0xffffffffffffff9c, 0x20000040, 0, 0);
-    	if (res != -1)
-    		r[0] = res;
-    	res = syscall(__NR_ioctl, r[0], 0xae01, 0);
-    	if (res != -1)
-    		r[1] = res;
-    	res = syscall(__NR_ioctl, r[1], 0xae41, 0);
-    	if (res != -1)
-    		r[2] = res;
-    	memcpy(
-    			(void*)0x20000080,
-    			"\x01\x00\x00\x00\x00\x5b\x61\xbb\x96\x00\x00\x40\x00\x00\x00\x00\x01\x00"
-    			"\x08\x00\x00\x00\x00\x00\x0b\x77\xd1\x78\x4d\xd8\x3a\xed\xb1\x5c\x2e\x43"
-    			"\xaa\x43\x39\xd6\xff\xf5\xf0\xa8\x98\xf2\x3e\x37\x29\x89\xde\x88\xc6\x33"
-    			"\xfc\x2a\xdb\xb7\xe1\x4c\xac\x28\x61\x7b\x9c\xa9\xbc\x0d\xa0\x63\xfe\xfe"
-    			"\xe8\x75\xde\xdd\x19\x38\xdc\x34\xf5\xec\x05\xfd\xeb\x5d\xed\x2e\xaf\x22"
-    			"\xfa\xab\xb7\xe4\x42\x67\xd0\xaf\x06\x1c\x6a\x35\x67\x10\x55\xcb",
-    			106);
-    	syscall(__NR_ioctl, r[2], 0x4008ae89, 0x20000080);
-    	syscall(__NR_ioctl, r[2], 0xae80, 0);
-    	return 0;
-    }
-
-This patch fixes it by bailing out scan ioapic if ioapic is not initialized in
-kernel.
-
-Reported-by: Wei Wu <ww9210@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Wei Wu <ww9210@gmail.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/xtensa/kernel/ptrace.c |   42 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 38 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6885,7 +6885,8 @@ static void vcpu_scan_ioapic(struct kvm_
- 	else {
- 		if (kvm_x86_ops->sync_pir_to_irr && vcpu->arch.apicv_active)
- 			kvm_x86_ops->sync_pir_to_irr(vcpu);
--		kvm_ioapic_scan_entry(vcpu, vcpu->arch.ioapic_handled_vectors);
-+		if (ioapic_in_kernel(vcpu->kvm))
-+			kvm_ioapic_scan_entry(vcpu, vcpu->arch.ioapic_handled_vectors);
- 	}
- 	bitmap_or((ulong *)eoi_exit_bitmap, vcpu->arch.ioapic_handled_vectors,
- 		  vcpu_to_synic(vcpu)->vec_bitmap, 256);
+--- a/arch/xtensa/kernel/ptrace.c
++++ b/arch/xtensa/kernel/ptrace.c
+@@ -127,12 +127,37 @@ static int ptrace_setregs(struct task_st
+ }
+ 
+ 
++#if XTENSA_HAVE_COPROCESSORS
++#define CP_OFFSETS(cp) \
++	{ \
++		.elf_xtregs_offset = offsetof(elf_xtregs_t, cp), \
++		.ti_offset = offsetof(struct thread_info, xtregs_cp.cp), \
++		.sz = sizeof(xtregs_ ## cp ## _t), \
++	}
++
++static const struct {
++	size_t elf_xtregs_offset;
++	size_t ti_offset;
++	size_t sz;
++} cp_offsets[] = {
++	CP_OFFSETS(cp0),
++	CP_OFFSETS(cp1),
++	CP_OFFSETS(cp2),
++	CP_OFFSETS(cp3),
++	CP_OFFSETS(cp4),
++	CP_OFFSETS(cp5),
++	CP_OFFSETS(cp6),
++	CP_OFFSETS(cp7),
++};
++#endif
++
+ static int ptrace_getxregs(struct task_struct *child, void __user *uregs)
+ {
+ 	struct pt_regs *regs = task_pt_regs(child);
+ 	struct thread_info *ti = task_thread_info(child);
+ 	elf_xtregs_t __user *xtregs = uregs;
+ 	int ret = 0;
++	int i __maybe_unused;
+ 
+ 	if (!access_ok(VERIFY_WRITE, uregs, sizeof(elf_xtregs_t)))
+ 		return -EIO;
+@@ -140,8 +165,13 @@ static int ptrace_getxregs(struct task_s
+ #if XTENSA_HAVE_COPROCESSORS
+ 	/* Flush all coprocessor registers to memory. */
+ 	coprocessor_flush_all(ti);
+-	ret |= __copy_to_user(&xtregs->cp0, &ti->xtregs_cp,
+-			      sizeof(xtregs_coprocessor_t));
++
++	for (i = 0; i < ARRAY_SIZE(cp_offsets); ++i)
++		ret |= __copy_to_user((char __user *)xtregs +
++				      cp_offsets[i].elf_xtregs_offset,
++				      (const char *)ti +
++				      cp_offsets[i].ti_offset,
++				      cp_offsets[i].sz);
+ #endif
+ 	ret |= __copy_to_user(&xtregs->opt, &regs->xtregs_opt,
+ 			      sizeof(xtregs->opt));
+@@ -157,6 +187,7 @@ static int ptrace_setxregs(struct task_s
+ 	struct pt_regs *regs = task_pt_regs(child);
+ 	elf_xtregs_t *xtregs = uregs;
+ 	int ret = 0;
++	int i __maybe_unused;
+ 
+ 	if (!access_ok(VERIFY_READ, uregs, sizeof(elf_xtregs_t)))
+ 		return -EFAULT;
+@@ -166,8 +197,11 @@ static int ptrace_setxregs(struct task_s
+ 	coprocessor_flush_all(ti);
+ 	coprocessor_release_all(ti);
+ 
+-	ret |= __copy_from_user(&ti->xtregs_cp, &xtregs->cp0,
+-				sizeof(xtregs_coprocessor_t));
++	for (i = 0; i < ARRAY_SIZE(cp_offsets); ++i)
++		ret |= __copy_from_user((char *)ti + cp_offsets[i].ti_offset,
++					(const char __user *)xtregs +
++					cp_offsets[i].elf_xtregs_offset,
++					cp_offsets[i].sz);
+ #endif
+ 	ret |= __copy_from_user(&regs->xtregs_opt, &xtregs->opt,
+ 				sizeof(xtregs->opt));
 
 
