@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6489C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7481C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8322C2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7845820851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mtwnro/8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8322C2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0rHjzJ1I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7845820851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeLDLYE (ORCPT
+        id S1727370AbeLDLYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:24:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:24:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726367AbeLDLBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:01:20 -0500
+        id S1726869AbeLDLBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:01:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7F2E214D9;
-        Tue,  4 Dec 2018 11:01:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86B60214DA;
+        Tue,  4 Dec 2018 11:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921280;
-        bh=68RVGxzkgwNhoo5MhRoUBDZ/cKSkRvcynljj3ddewyc=;
+        s=default; t=1543921283;
+        bh=6pkergr0Rc2GlUNKETl0mMF3CTcN8ft94xSI0RWeG4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mtwnro/8glvjQL7T/QfdQXJ1eNMh1r2b6QAwit5xiF+4cUTZLZ1k2k7rir3LvVI4R
-         PgSUs/72aRHez92MZ5m0K0h1M5d8ILYWtbDUW56tdzxDPsgZPGQ9rO9E3MsqBpd0mr
-         2IOmaQs1giRcHAuivxYSGIOkew1rfDWAlGP9SiQI=
+        b=0rHjzJ1INKLYmjVFKrF3p3OGCgFsv8NDc51JAEPiMVVOb+RM7yi6Gals/kKIcy81X
+         MbTH+XVCYcyyI8MJbJUKElJYVazySMn7Gzh1NOGvhQbcweLpNJodbvX4p9lmzwGWo2
+         heyHKy+Y4Cdbd0JwxCHYU/oh3pMEcBkeLP7QQ+n0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Schwarzott <zzam@gentoo.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org,
+        "Lachmann, Juergen" <juergen.lachmann@harman.com>,
+        Richard Weinberger <richard@nod.at>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 011/146] media: em28xx: Fix use-after-free when disconnecting
-Date:   Tue,  4 Dec 2018 11:48:17 +0100
-Message-Id: <20181204103727.247068592@linuxfoundation.org>
+Subject: [PATCH 4.14 012/146] ubi: Initialize Fastmap checkmapping correctly
+Date:   Tue,  4 Dec 2018 11:48:18 +0100
+Message-Id: <20181204103727.292000416@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -64,89 +66,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 910b0797fa9e8af09c44a3fa36cb310ba7a7218d ]
+commit 25677478474a91fa1b46f19a4a591a9848bca6fb upstream
 
-Fix bug by moving the i2c_unregister_device calls after deregistration
-of dvb frontend.
+We cannot do it last, otherwithse it will be skipped for dynamic
+volumes.
 
-The new style i2c drivers already destroys the frontend object at
-i2c_unregister_device time.
-When the dvb frontend is unregistered afterwards it leads to this oops:
-
-  [ 6058.866459] BUG: unable to handle kernel NULL pointer dereference at 00000000000001f8
-  [ 6058.866578] IP: dvb_frontend_stop+0x30/0xd0 [dvb_core]
-  [ 6058.866644] PGD 0
-  [ 6058.866646] P4D 0
-
-  [ 6058.866726] Oops: 0000 [#1] SMP
-  [ 6058.866768] Modules linked in: rc_pinnacle_pctv_hd(O) em28xx_rc(O) si2157(O) si2168(O) em28xx_dvb(O) em28xx(O) si2165(O) a8293(O) tda10071(O) tea5767(O) tuner(O) cx23885(O) tda18271(O) videobuf2_dvb(O) videobuf2_dma_sg(O) m88ds3103(O) tveeprom(O) cx2341x(O) v4l2_common(O) dvb_core(O) rc_core(O) videobuf2_memops(O) videobuf2_v4l2(O) videobuf2_core(O) videodev(O) media(O) bluetooth ecdh_generic ums_realtek uas rtl8192cu rtl_usb rtl8192c_common rtlwifi usb_storage snd_hda_codec_realtek snd_hda_codec_hdmi snd_hda_codec_generic i2c_mux snd_hda_intel snd_hda_codec snd_hwdep x86_pkg_temp_thermal snd_hda_core kvm_intel kvm irqbypass [last unloaded: videobuf2_memops]
-  [ 6058.867497] CPU: 2 PID: 7349 Comm: kworker/2:0 Tainted: G        W  O    4.13.9-gentoo #1
-  [ 6058.867595] Hardware name: MEDION E2050 2391/H81H3-EM2, BIOS H81EM2W08.308 08/25/2014
-  [ 6058.867692] Workqueue: usb_hub_wq hub_event
-  [ 6058.867746] task: ffff88011a15e040 task.stack: ffffc90003074000
-  [ 6058.867825] RIP: 0010:dvb_frontend_stop+0x30/0xd0 [dvb_core]
-  [ 6058.867896] RSP: 0018:ffffc90003077b58 EFLAGS: 00010293
-  [ 6058.867964] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000010040001f
-  [ 6058.868056] RDX: ffff88011a15e040 RSI: ffffea000464e400 RDI: ffff88001cbe3028
-  [ 6058.868150] RBP: ffffc90003077b68 R08: ffff880119390380 R09: 000000010040001f
-  [ 6058.868241] R10: ffffc90003077b18 R11: 000000000001e200 R12: ffff88001cbe3028
-  [ 6058.868330] R13: ffff88001cbe68d0 R14: ffff8800cf734000 R15: ffff8800cf734098
-  [ 6058.868419] FS:  0000000000000000(0000) GS:ffff88011fb00000(0000) knlGS:0000000000000000
-  [ 6058.868511] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [ 6058.868578] CR2: 00000000000001f8 CR3: 00000001113c5000 CR4: 00000000001406e0
-  [ 6058.868662] Call Trace:
-  [ 6058.868705]  dvb_unregister_frontend+0x2a/0x80 [dvb_core]
-  [ 6058.868774]  em28xx_dvb_fini+0x132/0x220 [em28xx_dvb]
-  [ 6058.868840]  em28xx_close_extension+0x34/0x90 [em28xx]
-  [ 6058.868902]  em28xx_usb_disconnect+0x4e/0x70 [em28xx]
-  [ 6058.868968]  usb_unbind_interface+0x6d/0x260
-  [ 6058.869025]  device_release_driver_internal+0x150/0x210
-  [ 6058.869094]  device_release_driver+0xd/0x10
-  [ 6058.869150]  bus_remove_device+0xe4/0x160
-  [ 6058.869204]  device_del+0x1ce/0x2f0
-  [ 6058.869253]  usb_disable_device+0x99/0x270
-  [ 6058.869306]  usb_disconnect+0x8d/0x260
-  [ 6058.869359]  hub_event+0x93d/0x1520
-  [ 6058.869408]  ? dequeue_task_fair+0xae5/0xd20
-  [ 6058.869467]  process_one_work+0x1d9/0x3e0
-  [ 6058.869522]  worker_thread+0x43/0x3e0
-  [ 6058.869576]  kthread+0x104/0x140
-  [ 6058.869602]  ? trace_event_raw_event_workqueue_work+0x80/0x80
-  [ 6058.869640]  ? kthread_create_on_node+0x40/0x40
-  [ 6058.869673]  ret_from_fork+0x22/0x30
-  [ 6058.869698] Code: 54 49 89 fc 53 48 8b 9f 18 03 00 00 0f 1f 44 00 00 41 83 bc 24 04 05 00 00 02 74 0c 41 c7 84 24 04 05 00 00 01 00 00 00 0f ae f0 <48> 8b bb f8 01 00 00 48 85 ff 74 5c e8 df 40 f0 e0 48 8b 93 f8
-  [ 6058.869850] RIP: dvb_frontend_stop+0x30/0xd0 [dvb_core] RSP: ffffc90003077b58
-  [ 6058.869894] CR2: 00000000000001f8
-  [ 6058.875880] ---[ end trace 717eecf7193b3fc6 ]---
-
-Signed-off-by: Matthias Schwarzott <zzam@gentoo.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Reported-by: Lachmann, Juergen <juergen.lachmann@harman.com>
+Fixes: 34653fd8c46e ("ubi: fastmap: Check each mapping only once")
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/em28xx/em28xx-dvb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mtd/ubi/vtbl.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/media/usb/em28xx/em28xx-dvb.c b/drivers/media/usb/em28xx/em28xx-dvb.c
-index 4a7db623fe29..29cdaaf1ed90 100644
---- a/drivers/media/usb/em28xx/em28xx-dvb.c
-+++ b/drivers/media/usb/em28xx/em28xx-dvb.c
-@@ -2105,6 +2105,8 @@ static int em28xx_dvb_fini(struct em28xx *dev)
- 		}
- 	}
+diff --git a/drivers/mtd/ubi/vtbl.c b/drivers/mtd/ubi/vtbl.c
+index 94d7a865b135..7504f430c011 100644
+--- a/drivers/mtd/ubi/vtbl.c
++++ b/drivers/mtd/ubi/vtbl.c
+@@ -578,6 +578,16 @@ static int init_volumes(struct ubi_device *ubi,
+ 		vol->ubi = ubi;
+ 		reserved_pebs += vol->reserved_pebs;
  
-+	em28xx_unregister_dvb(dvb);
++		/*
++		 * We use ubi->peb_count and not vol->reserved_pebs because
++		 * we want to keep the code simple. Otherwise we'd have to
++		 * resize/check the bitmap upon volume resize too.
++		 * Allocating a few bytes more does not hurt.
++		 */
++		err = ubi_fastmap_init_checkmap(vol, ubi->peb_count);
++		if (err)
++			return err;
 +
- 	/* remove I2C SEC */
- 	client = dvb->i2c_client_sec;
- 	if (client) {
-@@ -2126,7 +2128,6 @@ static int em28xx_dvb_fini(struct em28xx *dev)
- 		i2c_unregister_device(client);
+ 		/*
+ 		 * In case of dynamic volume UBI knows nothing about how many
+ 		 * data is stored there. So assume the whole volume is used.
+@@ -620,16 +630,6 @@ static int init_volumes(struct ubi_device *ubi,
+ 			(long long)(vol->used_ebs - 1) * vol->usable_leb_size;
+ 		vol->used_bytes += av->last_data_size;
+ 		vol->last_eb_bytes = av->last_data_size;
+-
+-		/*
+-		 * We use ubi->peb_count and not vol->reserved_pebs because
+-		 * we want to keep the code simple. Otherwise we'd have to
+-		 * resize/check the bitmap upon volume resize too.
+-		 * Allocating a few bytes more does not hurt.
+-		 */
+-		err = ubi_fastmap_init_checkmap(vol, ubi->peb_count);
+-		if (err)
+-			return err;
  	}
  
--	em28xx_unregister_dvb(dvb);
- 	kfree(dvb);
- 	dev->dvb = NULL;
- 	kref_put(&dev->ref, em28xx_free_device);
+ 	/* And add the layout volume */
 -- 
 2.17.1
 
