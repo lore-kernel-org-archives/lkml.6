@@ -2,174 +2,179 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14EFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5ACC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992B32081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:45:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VqAv5J1o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992B32081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C99F206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:47:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C99F206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbeLDPp1 (ORCPT
+        id S1726685AbeLDPrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:45:27 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33342 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbeLDPp0 (ORCPT
+        Tue, 4 Dec 2018 10:47:55 -0500
+Received: from uhil19pa14.eemsg.mail.mil ([214.24.21.87]:13167 "EHLO
+        UHIL19PA14.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726226AbeLDPry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:45:26 -0500
-Received: by mail-io1-f68.google.com with SMTP id t24so13995628ioi.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 07:45:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cOUYmVqM7lapaZ9KA66jWsVgjD9fs0gfbIMTvRz2Wtc=;
-        b=VqAv5J1oNCU7hCx5278Rvv/rjhF7ijV8zXoB/+x9AFzlxvXqJBQzO5ICnPdtXAQbAT
-         Ee3tx8ksKeKTR679KkStO8htgP+3aSwTqUmO7Y+XTllRvjFRBFAIngJEUXSwQEUtAcKH
-         8IfLsSsfScnyu13QZvguqr/d/q3X9OXBcMmic=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cOUYmVqM7lapaZ9KA66jWsVgjD9fs0gfbIMTvRz2Wtc=;
-        b=SkFl2aPdZJB49NGXmUoTzIXxfkTZDeBFDmni/IfOdHiC0E5QTL5G34ib2xSXOAo2/q
-         8tg1ufbyk5Vw+BLFdSDDmWJ/YedNda+3BIcUWs+5g+3QXakCJkzpVAnSEgpJpu36VUmT
-         IamG1jtAugsjNbHfTyL6g7G0uiL+1/DkO8nSw4CxZIkFTPfEwiobdPydcSfA/zlIBW77
-         u9xU3iCXZ0VUfmnrv+lo2SGRUWd1m/TQdV8dJYn+W87FKAZKIPTNFteEMU1l9ZJgR6Vs
-         Q5A6QKMtcZRjyLJC7O5D6F8WLBfVmLezndvVUgw6m/GnijLXHVZeXVBo+0I6hGQaQXsO
-         i3Jg==
-X-Gm-Message-State: AA+aEWaZrwZ/DE1OW2uN8QmyVMaFHP6b/0u1aGdWzN0Dk37kPjnON7bX
-        kyOi4EfVr08qBr0ngBZjoq3BwG16oWfBULiRgTyrAw==
-X-Google-Smtp-Source: AFSGD/X413EQanwgeVJ4brZdBjy1F6YIHN6DWkMLxbz+kURI00M88Nur9yMRbmGWo4706uj8Uw2huWi9JSyLvGhjrn4=
-X-Received: by 2002:a6b:5d01:: with SMTP id r1mr16939660iob.170.1543938325552;
- Tue, 04 Dec 2018 07:45:25 -0800 (PST)
+        Tue, 4 Dec 2018 10:47:54 -0500
+X-Greylist: delayed 883 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Dec 2018 10:47:53 EST
+X-EEMSG-check-008: 4290828|UHIL19PA14_EEMSG_MP12.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by UHIL19PA14.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Dec 2018 15:32:40 +0000
+X-IronPort-AV: E=Sophos;i="5.56,314,1539648000"; 
+   d="scan'208";a="21310492"
+IronPort-PHdr: =?us-ascii?q?9a23=3AZT6fIx84Ntd9j/9uRHKM819IXTAuvvDOBiVQ1K?=
+ =?us-ascii?q?B+0OIVIJqq85mqBkHD//Il1AaPAd2Lraocw8Pt8InYEVQa5piAtH1QOLdtbD?=
+ =?us-ascii?q?Qizfssogo7HcSeAlf6JvO5JwYzHcBFSUM3tyrjaRsdF8nxfUDdrWOv5jAOBB?=
+ =?us-ascii?q?r/KRB1JuPoEYLOksi7ze+/94HQbglSmDaxfa55IQmrownWqsQYm5ZpJLwryh?=
+ =?us-ascii?q?vOrHtIeuBWyn1tKFmOgRvy5dq+8YB6/ShItP0v68BPUaPhf6QlVrNYFygpM3?=
+ =?us-ascii?q?o05MLwqxbOSxaE62YGXWUXlhpIBBXF7A3/U5zsvCb2qvZx1S+HNsDtU7s6RS?=
+ =?us-ascii?q?qt4LtqSB/wiScIKTg58H3MisdtiK5XuQ+tqwBjz4LRZoyaOuB+fqfAdt0EQ2?=
+ =?us-ascii?q?RPUNtaWyhYDo+ic4cDCuwMNvtaoYbgvVsDtQawCxeiBO3vyTFGiHH50qI43O?=
+ =?us-ascii?q?s9Hg/LxxAgEtAUvXjIsNn4OqUfXOaox6fI1zXDaPZW1C/g5ojUbB8hufGMUq?=
+ =?us-ascii?q?x2ccHM1EcvEhnKjlGUqYP7PzKey+MAs3OG4Op7Tu+vl24mpB1xojio3MssjJ?=
+ =?us-ascii?q?LJiZgPxlDL8iV53p84KNulQ0B4ed6pCIZcui6VOodsQs4uXntktDg1x7EYo5?=
+ =?us-ascii?q?K3YS4Hw4k9yRHFcfyIaY2I7wrmVOaWPDh3mmpoeKm6hxau6UigzfD8VtWs3F?=
+ =?us-ascii?q?ZKsCVFlt7Mu2gR1xPJ8MiHS+Z9/ly71TaT1wHc9uFEIUcumardN5Eh2aI/mo?=
+ =?us-ascii?q?AWsUTCGi/6gET2jKmIeUU44uWk9uvqb7r8qpKcKoN4kB/yP6swlsClHOg0Kg?=
+ =?us-ascii?q?0OUHKa+eS42r3j50r5QLBSg/0tj6bZq4vXJdgbp6GlAw9V1Zwv6xCkDzi8yt?=
+ =?us-ascii?q?gYkn4HLExddBKdk4fpI03OIOz/DfqnhlSskTRrx/TBPr36GZjNNXnCn6n7fb?=
+ =?us-ascii?q?lj9kFcyRA/zdBC55hMELEOPOrzWlPttNzfFhI5LQO0w+HnCdpn0oMTQniPDb?=
+ =?us-ascii?q?GEP6PSq1CI+vgjLPWLZI8QoDz9MeQq5+byjX8lnl8QZa6p3Z4QaHCjGPRpOV?=
+ =?us-ascii?q?mWbmT3j9cbD2gFowo+Q/b2iFGYTTFTYHOyVbom5j4nEIKmEZvDRoe1jbOa0i?=
+ =?us-ascii?q?e7H4NZZmRbBVCXCnroeYSEVOkIaC2POc9ujCcEWaKmS4872hGkrBX6xKZ/Lu?=
+ =?us-ascii?q?rI5i0Ysoru1MNv6O3XlRAz9Dx1D8KG3m6XSWF7g3kIRzg33K9iu0By1lCD0a?=
+ =?us-ascii?q?1gifxCCdNT/+9JUhs9NZPE1+x1Ec3yWgbac9eRUlmmX9GmDSg0TtI2xN8OeV?=
+ =?us-ascii?q?hyF8++gRDE2iqgG6UVmKCTBJwo7qLc2GD8J8J8y3bAyakggEAqQshROm28gK?=
+ =?us-ascii?q?5w6QzTCpXXk0WWiamqb74Q3C3T+2eZy2qBokVYXBR3UaXfUnAVflHWosjh5k?=
+ =?us-ascii?q?PeU7+uDqwqMg9Ayc6EN6tLZcTljUhARPfiP9TeZWyxm3yrCBaWybODcpDqd3?=
+ =?us-ascii?q?8e3CrDEkgElR4c/XKcOQg5HCehrHrUDCZyGlL3f0Ps7e5+pWu/Tk81yQGKck?=
+ =?us-ascii?q?Jg26O7+h4OmPOTVe0T0awAuCo6tTV0E0iy38jMB9qDuQVhZqNcbs054Ftd0m?=
+ =?us-ascii?q?LZrQN9NIS6L69+nl4ebxh3v0T22hVsFIpAlckqrHU3zAt9Mq+YzlxBeC2C3Z?=
+ =?us-ascii?q?zqOb3YNHPy/BaxZK7SwF3e18yW+qgX4vQit1rjpB2pFlYl83h/ztZU3WGT5p?=
+ =?us-ascii?q?HRDAoSSp/xSFg4+AV6p77Afikx/Z/b1XppMfr8jjiX/tMqAOw+gi2ycs1SPK?=
+ =?us-ascii?q?LMQArzEMkdHOC1OuEwllSoKBIZarN87qkxavi6euOG1ajjB+NpmDarnCwT+4?=
+ =?us-ascii?q?xm+l6d/Cp7DOjT1tAKxO/OjVjPbCv1kFr06pO/ootDfzxHWzPlkSU=3D?=
+X-IPAS-Result: =?us-ascii?q?A2DjAgD4nAZc/wHyM5BjHAEBAQQBAQcEAQGBZYFbKYFoJ?=
+ =?us-ascii?q?4N5lHMBAQEBAQEGgQgIJYkfkCQ4AYRAAoNPIjgSAQMBAQEBAQECAWwogjYkA?=
+ =?us-ascii?q?YJiAQUjBBE0CgMQCxgCAiYCAlcGDQYCAQGCXj+BdQ2lCnwzhUCEcoELixMXe?=
+ =?us-ascii?q?IEHgREnDIJfhDswgxqCVwKJHIIEhBJGN1CPSgmKNocFBhiRJppUIYFVKwgCG?=
+ =?us-ascii?q?AghD4MnkHkhAzCBBQEBiCSCPgEB?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 04 Dec 2018 15:32:37 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wB4FWZVU027013;
+        Tue, 4 Dec 2018 10:32:35 -0500
+Subject: Re: overlayfs access checks on underlying layers
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com>
+ <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+ <20181128170302.GA12405@redhat.com>
+ <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
+ <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
+ <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
+ <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+ <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
+ <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
+ <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
+ <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
+ <CAJfpegujwNpWL5Eujrb+=EQF8OMOkO03yq8ZZSkfhFfwQvhGKQ@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <6feb656e-b1e3-5839-ce5f-669ae5a55b7f@tycho.nsa.gov>
+Date:   Tue, 4 Dec 2018 10:35:17 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181123221804.440-1-ard.biesheuvel@linaro.org>
- <20181123221804.440-3-ard.biesheuvel@linaro.org> <20181130182629.GA16085@arm.com>
- <CAKv+Gu9QVHLWu5H3Ok1Kbm=vtzd1KaHUn2VEij6oToW5aPR9uA@mail.gmail.com> <20181203124930.GB25097@arm.com>
-In-Reply-To: <20181203124930.GB25097@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 4 Dec 2018 16:45:12 +0100
-Message-ID: <CAKv+Gu8svuTSOzg7wmmK70tRPgFqGvBh5BZR-V+43dMLvT1bJg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] arm64/bpf: don't allocate BPF JIT programs in
- module memory
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJfpegujwNpWL5Eujrb+=EQF8OMOkO03yq8ZZSkfhFfwQvhGKQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Dec 2018 at 13:49, Will Deacon <will.deacon@arm.com> wrote:
->
-> On Fri, Nov 30, 2018 at 08:20:06PM +0100, Ard Biesheuvel wrote:
-> > On Fri, 30 Nov 2018 at 19:26, Will Deacon <will.deacon@arm.com> wrote:
-> > >
-> > > On Fri, Nov 23, 2018 at 11:18:04PM +0100, Ard Biesheuvel wrote:
-> > > > The arm64 module region is a 128 MB region that is kept close to
-> > > > the core kernel, in order to ensure that relative branches are
-> > > > always in range. So using the same region for programs that do
-> > > > not have this restriction is wasteful, and preferably avoided.
-> > > >
-> > > > Now that the core BPF JIT code permits the alloc/free routines to
-> > > > be overridden, implement them by vmalloc()/vfree() calls from a
-> > > > dedicated 128 MB region set aside for BPF programs. This ensures
-> > > > that BPF programs are still in branching range of each other, which
-> > > > is something the JIT currently depends upon (and is not guaranteed
-> > > > when using module_alloc() on KASLR kernels like we do currently).
-> > > > It also ensures that placement of BPF programs does not correlate
-> > > > with the placement of the core kernel or modules, making it less
-> > > > likely that leaking the former will reveal the latter.
-> > > >
-> > > > This also solves an issue under KASAN, where shadow memory is
-> > > > needlessly allocated for all BPF programs (which don't require KASAN
-> > > > shadow pages since they are not KASAN instrumented)
-> > > >
-> > > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > > ---
-> > > >  arch/arm64/include/asm/memory.h |  5 ++++-
-> > > >  arch/arm64/net/bpf_jit_comp.c   | 13 +++++++++++++
-> > > >  2 files changed, 17 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> > > > index b96442960aea..ee20fc63899c 100644
-> > > > --- a/arch/arm64/include/asm/memory.h
-> > > > +++ b/arch/arm64/include/asm/memory.h
-> > > > @@ -62,8 +62,11 @@
-> > > >  #define PAGE_OFFSET          (UL(0xffffffffffffffff) - \
-> > > >       (UL(1) << (VA_BITS - 1)) + 1)
-> > > >  #define KIMAGE_VADDR         (MODULES_END)
-> > > > +#define BPF_JIT_REGION_START (VA_START + KASAN_SHADOW_SIZE)
-> > > > +#define BPF_JIT_REGION_SIZE  (SZ_128M)
-> > > > +#define BPF_JIT_REGION_END   (BPF_JIT_REGION_START + BPF_JIT_REGION_SIZE)
-> > > >  #define MODULES_END          (MODULES_VADDR + MODULES_VSIZE)
-> > > > -#define MODULES_VADDR                (VA_START + KASAN_SHADOW_SIZE)
-> > > > +#define MODULES_VADDR                (BPF_JIT_REGION_END)
-> > > >  #define MODULES_VSIZE                (SZ_128M)
-> > > >  #define VMEMMAP_START                (PAGE_OFFSET - VMEMMAP_SIZE)
-> > > >  #define PCI_IO_END           (VMEMMAP_START - SZ_2M)
-> > > > diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-> > > > index a6fdaea07c63..76c2ab40c02d 100644
-> > > > --- a/arch/arm64/net/bpf_jit_comp.c
-> > > > +++ b/arch/arm64/net/bpf_jit_comp.c
-> > > > @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
-> > > >                                          tmp : orig_prog);
-> > > >       return prog;
-> > > >  }
-> > > > +
-> > > > +void *bpf_jit_alloc_exec(unsigned long size)
-> > > > +{
-> > > > +     return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_START,
-> > > > +                                 BPF_JIT_REGION_END, GFP_KERNEL,
-> > > > +                                 PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
-> > > > +                                 __builtin_return_address(0));
-> > >
-> > > I guess we'll want VM_IMMEDIATE_UNMAP here if Rich gets that merged.
-> >
-> > I think akpm already queued up that patch.
-> >
-> > > In the
-> > > meantime, I wonder if it's worth zeroing the region in bpf_jit_free_exec()?
-> > > (although we'd need the size information...).
-> > >
-> >
-> > Not sure. What exactly would that achieve?
->
-> I think the zero encoding is guaranteed to be undefined, so it would limit
-> the usefulness of any stale, executable TLB entries. However, we'd also need
-> cache maintenance to make that stuff visible to the I side, so it's probably
-> not worth it, especially if akpm has queued the stuff from Rich.
->
-> Maybe just add an:
->
-> /* FIXME: Remove this when VM_IMMEDIATE_UNMAP is supported */
-> #ifndef VM_IMMEDIATE_UNMAP
-> #define VM_IMMEDIATE_UNMAP      0
-> #endif
->
-> so we remember to come back and sort this out? Up to you.
->
+On 12/4/18 9:45 AM, Miklos Szeredi wrote:
+> On Tue, Dec 4, 2018 at 3:28 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>>
+>> On 12/4/18 8:32 AM, Miklos Szeredi wrote:
+> 
+>>> My proposed sequence would be
+>>>
+>>> a) check task's creds against overlay inode, fail -> return fail, otherwise:
+>>> b) check mounter's creds against lower inode, success -> return
+>>> success, otherwise:
+>>> c) copy up inode, fail -> return fail, otherwise
+>>> d) check mounter's creds against upper inode, return result.
+>>>
+>>> So, unlike write access to regular files, write access to special
+>>> files don't necessarily result in copy-up.
+>>>
+>>> You say this is an escalation of privilege, but I don't get it how.
+>>> As DWalsh points out downthread, if mounter cannot create device
+>>> files, then the copy-up will simply fail.  If mounter can create
+>>> device files, then this is not an escalation of privilege for the
+>>> mounter.
+>>
+>> Yes, in that case there isn't an escalation of privilege for the mounter
+>> (I acknowledged that above).  I'm still not sure copy-up of special
+>> files is a good idea though:
+>>
+>> - In the case of device files, there is the potential for mischief by
+>> the client task in misusing the mounter's privileges to gain access to
+>> otherwise unusable device node (nodev lower vs upper?),
+> 
+> The mount flag "nodev" on lower or upper has no effect on the overlay,
+> and never had.
+> 
+>> - In the case of sockets or fifos, what useful result do you get from a
+>> copy-up? Accessing the copy isn't going to yield the same result as
+>> accessing the original.
+> 
+> This is a misconception.  Overlayfs is a filesystem (that uses other
+> filesystems as backing store), but it's more a filesystem and less a
+> vfs hack (and trying to completely get out of the vfs hack business),
+> and copy up has no effect on I/O being performed on a socket or FIFO:
+> it's the same object before and after the copy up, and it's a
+> different object from either the lower or upper nodes.   Same as NFS:
+> fifo on server is logically different object than fifo having the same
+> name on any number of clients.
+> 
+>> For executables, this copy-up behavior might trigger a lot of undesired
+>> copies of non-executable files from the lower dir into the upper, even
+>> if we ultimately end up denying the execute.
+> 
+> That would only happen if
+> 
+>    - task is allowed exec on overlay
+>    - mounter is denied exec on lower
+>    - copy up is allowed
+>    - mounter is denied exec on upper
+> 
+> In fact in the model where upper object inherits context from overlay
+> this is pretty much impossible, AFAICT.
 
-I'll just make a note to send out that patch once the definition lands via -akpm
+I think the above is the situation in Android (mounter is denied exec to 
+lower and upper to prevent unauthorized code execution, but is allowed 
+to copy-up in order to support writes by the client).  However, since 
+they need override_creds=off or similar anyway, I guess it doesn't matter.
+
+Ok, I concede the point.  Not sure what that means though for v4.20.
