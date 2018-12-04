@@ -2,166 +2,477 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FEDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 405F1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2993F20672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:54:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2993F20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E399A2082F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:56:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sgGti8cb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E399A2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbeLDRyZ (ORCPT
+        id S1726915AbeLDR46 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 12:54:25 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38242 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbeLDRyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 12:54:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD952A78;
-        Tue,  4 Dec 2018 09:54:23 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F4A13F59C;
-        Tue,  4 Dec 2018 09:54:23 -0800 (PST)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id CC65A6801C3; Tue,  4 Dec 2018 17:54:21 +0000 (GMT)
-Date:   Tue, 4 Dec 2018 17:54:21 +0000
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Ayan Halder <Ayan.Halder@arm.com>
-Cc:     Brian Starkey <Brian.Starkey@arm.com>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [RFC v3 AFBC 12/12] drm/arm/malidp: Added support for AFBC
- modifiers for all layers except DE_SMART
-Message-ID: <20181204175421.GT988@e110455-lin.cambridge.arm.com>
-References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
- <1543836703-8491-13-git-send-email-ayan.halder@arm.com>
+        Tue, 4 Dec 2018 12:56:58 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46641 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbeLDR44 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 12:56:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so7700907pgp.13;
+        Tue, 04 Dec 2018 09:56:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L/Q2FoO4NJX9Nnv6gNBOMwHlycx0kXs8UeN7ZnLhINI=;
+        b=sgGti8cbmxtjY2UhmfjPNNa0H/T1U/r5gEgAL9vQkDnrdOxRKU3d6lu9aIyLfylcdh
+         WPYeud/5FYUDNHryYt2XCjYFqm5iqI7iLtRFZbHEnSYrcow8AWa+L36M0AGZUYuK8AyL
+         F6OknkINHD88JNW1/1KsSRKzcBw+aCK+Jlv0XCVJieIihcreyU3FkCr+NaxxhmVeePKt
+         nMc78H1Ac699Vy5bpbI57Di6xfOJr9RJplGB9qzB0XWJCkqYd3khME/sIA4GntRlLWJl
+         tV528ufQDVA0h8KQXtAt807APnDAKsEmn1Ofm7eXIAzSFNQv+vPKAXqQ1Q/9d4gcsMTj
+         fB9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L/Q2FoO4NJX9Nnv6gNBOMwHlycx0kXs8UeN7ZnLhINI=;
+        b=ILWXqvj0N2fUI8Hy0zBYTjZim8xsHtob/Vhbm3mR/AsHHPNFNSAnR0p6RuDJx4x1LZ
+         ePS82ccO1hS5zYgk3vLCKppOu0cYVAGQ/1op8YArjS4XenDXsPC/Bowcccwrl5soog0T
+         Be5Pyn1yosay9PAxOYxHPi8o+YoAdbc6kzWVeis8de40aFs38FwrLZfdpH5J1thxUa+e
+         N1zYZYN5s7eDE+OYRkBRDvno9/O/tnCEGfy5fXDHnuQQEKHWdrvhSJqCkxzI5UW490Gx
+         EJ3s1TTf/dRn/z9lNOrEFqjlcHp6VHR+2oOoLhUYXUrjS74dUc2hUz+bV9hpPWqKSceH
+         e5nA==
+X-Gm-Message-State: AA+aEWZlMfyiSKDUYISjLLuD6jqjrdXvwvOp9mkYO8t9KZp8leYKoMqh
+        74Bwh5FMC44N0fC+q6zFNsxIu8pDg4DgpQQulW9CY2qg
+X-Google-Smtp-Source: AFSGD/W9q8Ov6AUZUjmzm2M333cQ1tb3jFNH9nSIHyfF7tBisBwz0LLHCJGe1EWMJsRiWQDpTJ5b67rKiX0msuSDg5I=
+X-Received: by 2002:a63:2ac9:: with SMTP id q192mr17480439pgq.58.1543946215586;
+ Tue, 04 Dec 2018 09:56:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1543836703-8491-13-git-send-email-ayan.halder@arm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-13-git-send-email-loic.pallardy@st.com> <59fad1e3-11a2-939e-c47e-4351fb636e2d@ti.com>
+ <c21433c8034a438d8d7c5044c181c2e0@SFHDAG7NODE2.st.com> <edff6a62-5b4c-433b-d824-51143b83ad93@ti.com>
+In-Reply-To: <edff6a62-5b4c-433b-d824-51143b83ad93@ti.com>
+From:   Wendy Liang <sunnyliangjy@gmail.com>
+Date:   Tue, 4 Dec 2018 09:56:44 -0800
+Message-ID: <CAA07jV8vmVF0rwYHK86dxe3=8fSEsm5wEcZZeC7ws=JdqW1VWg@mail.gmail.com>
+Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+ centralized carveout allocator
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Loic Pallardy <loic.pallardy@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arnaud pouliquen <arnaud.pouliquen@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 11:32:06AM +0000, Ayan Halder wrote:
-> The list of modifiers to be supported for each plane has been dynamically generated
-> from 'malidp_format_modifiers[]' and 'malidp_hw_regmap->features'.
-> 
-> Changes from v1:-
-> 1. Replaced DRM_ERROR() with DRM_DEBUG_KMS() in malidp_format_mod_supported()
-> to report unsupported modifiers.
-> 
-> Changes from v2:-
-> 1. Removed malidp_format_mod_supported() from the current patch. This has been added
-> in "PATCH 7/12"
-> 2. Dynamically generate the list of modifiers (to be supported for each plane) from
-> 'malidp_format_modifiers' and features.
-> 
-> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+On Mon, Oct 29, 2018 at 1:19 PM Suman Anna <s-anna@ti.com> wrote:
+>
+> Hi Loic,
+>
+> On 10/24/18 10:14 AM, Loic PALLARDY wrote:
+> > Hi Suman,
+> >
+> >> -----Original Message-----
+> >> From: Suman Anna <s-anna@ti.com>
+> >> Sent: mercredi 24 octobre 2018 02:14
+> >> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.org;
+> >> ohad@wizery.com
+> >> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> >> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> >> benjamin.gaignard@linaro.org
+> >> Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+> >> centralized carveout allocator
+> >>
+> >> On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> >>> Current version of rproc_alloc_vring function supports only dynamic vring
+> >>> allocation.
+> >>>
+> >>> This patch allows to allocate vrings based on memory region declatation.
+> >>> Vrings are now manage like memory carveouts, to communize memory
+> >> management
+> >>> code in rproc_alloc_registered_carveouts().
+> >>>
+> >>> Allocated buffer is retrieved in rp_find_vq() thanks to
+> >>> rproc_find_carveout_by_name() functions for.
+> >>>
+> >>> This patch sets vrings names to vdev"x"vring"y" with x vdev index in
+> >>> resource table and y vring index in vdev. This will be updated when
+> >>> name will be associated to vdev in firmware resource table.
+> >>>
+> >>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> >>> ---
+> >>>  drivers/remoteproc/remoteproc_core.c     | 61 +++++++++++++++++------
+> >> ---------
+> >>>  drivers/remoteproc/remoteproc_internal.h |  2 ++
+> >>>  drivers/remoteproc/remoteproc_virtio.c   | 14 +++++++-
+> >>>  include/linux/remoteproc.h               |  6 ++--
+> >>>  4 files changed, 51 insertions(+), 32 deletions(-)
+> >>>
+> >>> diff --git a/drivers/remoteproc/remoteproc_core.c
+> >> b/drivers/remoteproc/remoteproc_core.c
+> >>> index c543d04..4edc6f0 100644
+> >>> --- a/drivers/remoteproc/remoteproc_core.c
+> >>> +++ b/drivers/remoteproc/remoteproc_core.c
+> >>> @@ -53,6 +53,11 @@ typedef int (*rproc_handle_resources_t)(struct
+> >> rproc *rproc,
+> >>>  typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
+> >>>                              void *, int offset, int avail);
+> >>>
+> >>> +static int rproc_alloc_carveout(struct rproc *rproc,
+> >>> +                           struct rproc_mem_entry *mem);
+> >>> +static int rproc_release_carveout(struct rproc *rproc,
+> >>> +                             struct rproc_mem_entry *mem);
+> >>> +
+> >>>  /* Unique indices for remoteproc devices */
+> >>>  static DEFINE_IDA(rproc_dev_index);
+> >>>
+> >>> @@ -312,21 +317,33 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev,
+> >> int i)
+> >>>     struct device *dev = &rproc->dev;
+> >>>     struct rproc_vring *rvring = &rvdev->vring[i];
+> >>>     struct fw_rsc_vdev *rsc;
+> >>> -   dma_addr_t dma;
+> >>> -   void *va;
+> >>>     int ret, size, notifyid;
+> >>> +   struct rproc_mem_entry *mem;
+> >>>
+> >>>     /* actual size of vring (in bytes) */
+> >>>     size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
+> >>>
+> >>> -   /*
+> >>> -    * Allocate non-cacheable memory for the vring. In the future
+> >>> -    * this call will also configure the IOMMU for us
+> >>> -    */
+> >>> -   va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
+> >>> -   if (!va) {
+> >>> -           dev_err(dev->parent, "dma_alloc_coherent failed\n");
+> >>> -           return -EINVAL;
+> >>> +   rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
+> >>> +
+> >>> +   /* Search for pre-registered carveout */
+> >>> +   mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d",
+> >> rvdev->index,
+> >>> +                                     i);
+> >>> +   if (mem) {
+> >>> +           if (rproc_check_carveout_da(rproc, mem, rsc->vring[i].da,
+> >> size))
+> >>> +                   return -ENOMEM;
+> >>> +   } else {
+> >>> +           /* Register carveout in in list */
+> >>> +           mem = rproc_mem_entry_init(dev, 0, 0, size, rsc-
+> >>> vring[i].da,
+> >>> +                                      rproc_alloc_carveout,
+> >>> +                                      rproc_release_carveout,
+> >>> +                                      "vdev%dvring%d",
+> >>> +                                      rvdev->index, i);
+> >>> +           if (!mem) {
+> >>> +                   dev_err(dev, "Can't allocate memory entry
+> >> structure\n");
+> >>> +                   return -ENOMEM;
+> >>> +           }
+> >>> +
+> >>> +           rproc_add_carveout(rproc, mem);
+> >>>     }
+> >>>
+> >>>     /*
+> >>> @@ -337,7 +354,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+> >>>     ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
+> >>>     if (ret < 0) {
+> >>>             dev_err(dev, "idr_alloc failed: %d\n", ret);
+> >>> -           dma_free_coherent(dev->parent, size, va, dma);
+> >>>             return ret;
+> >>>     }
+> >>>     notifyid = ret;
+> >>> @@ -346,21 +362,9 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int
+> >> i)
+> >>>     if (notifyid > rproc->max_notifyid)
+> >>>             rproc->max_notifyid = notifyid;
+> >>>
+> >>> -   dev_dbg(dev, "vring%d: va %pK dma %pad size 0x%x idr %d\n",
+> >>> -           i, va, &dma, size, notifyid);
+> >>> -
+> >>> -   rvring->va = va;
+> >>> -   rvring->dma = dma;
+> >>>     rvring->notifyid = notifyid;
+> >>>
+> >>> -   /*
+> >>> -    * Let the rproc know the notifyid and da of this vring.
+> >>> -    * Not all platforms use dma_alloc_coherent to automatically
+> >>> -    * set up the iommu. In this case the device address (da) will
+> >>> -    * hold the physical address and not the device address.
+> >>> -    */
+> >>> -   rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
+> >>> -   rsc->vring[i].da = dma;
+> >>> +   /* Let the rproc know the notifyid of this vring.*/
+> >>>     rsc->vring[i].notifyid = notifyid;
+> >>>     return 0;
+> >>>  }
+> >>> @@ -392,12 +396,10 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev,
+> >> int i)
+> >>>
+> >>>  void rproc_free_vring(struct rproc_vring *rvring)
+> >>>  {
+> >>> -   int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
+> >>>     struct rproc *rproc = rvring->rvdev->rproc;
+> >>>     int idx = rvring->rvdev->vring - rvring;
+> >>>     struct fw_rsc_vdev *rsc;
+> >>>
+> >>> -   dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring-
+> >>> dma);
+> >>>     idr_remove(&rproc->notifyids, rvring->notifyid);
+> >>
+> >> Also, I am not sure if FW_RSC_ADDR_ANY semantics were enforced
+> >> previously on the vring da. It was simply overwritten irrespective of
+> >> the value. Now, I am running again into the "bad carveout rsc
+> >> configuration value" due to the iommu_domain_check if
+> >> !FW_RSC_ADDR_ANY.
+> >
+>
+> Just realized that I missed responding on this thread last week.
+>
+> > When are you running into the "bad carveout rsc configuration value" ?
+> > This patch is creating one carveout per vring to rely on generic carveout allocator.
+> > Then carveout is retrieved from carveout  list and vring resource table information updated.
+> >
+> > If the da of the carveout was fixed in the resource table, it is normal you have this error.
+>
+> Yes, and if the vring da value is FW_RSC_ADDR_ANY, then I don't run into
+> this particular error. It's just that the semantics of vring da is open
+> previously, and my above comment being 0 was being used as a reset value
+> as well.
+>
+> > To solve that ST driver is registering one fixed carveout per vring (with the right name today)
+>
+> Yeah, we still expect to allocate these dynamically, so there won't be
+> any registration needed.
+>
+> > It is the same discussion as with Patch 1.
+>
+> Right, except that we have a da from RSC_CARVEOUT and a da from vring,
+> and the previous code had some slight differences between the two. The
+> vring da semantics were never set before (value was always being
+> overwritten, also it didn't have a pa field), whereas the remoteproc.h
+> documentation did mention about FW_RSC_ADDR_ANY (without any backing
+> implementation previously) for the RSC_CARVEOUT da, with the entry also
+> having a field for pa.
+>
+> If we consider we can't change fixed coprocessor address requests, rproc
+> core should stop its execution.
+> > It is the responsibility of platform driver to register the right memory regions.
+> > That's what we discussed with you and Bill in OpenAMP forum.
+> > TI usecase was to have the same DSP firmware with the same resource table being able to run on any DSP.
+>
+> Yeah, it only covers one of the usecases/platforms (Keystone 2 DSP
+> platforms). And this only worked on these platforms so far because we
+> only were using internal memories - so there were no RSC_CARVEOUT
+> entries with valid da. Our Davinci DSP is a single instance and we do
+> have a RSC_CARVEOUT there, which fails due to the same Patch 1 logic
+> here as well.
+>
+> > In that case each DSP platform driver has to provide the right memory region configuration with the correct pa to da.
+> >
+> >>
+> >> FWIW, the rproc_free_vring was actually using the value 0 when resetting.
+> >
+> > It is no more needed as the carveout list is cleared at each stop and recreated at each start.
+> > Moreover resource table (and firmware) is reloaded at each coprocessor start.
+>
+> Yes, agreed. This is about the semantics of vring da from before (no
+> enforcement to strict enforcement of FW_RSC_ADDR_ANY). The overwriting
+> on da field on vrings with the dma address is actually a mistake, which
+> we are trying to proliferate more now. It all comes down to the fact of
+> treating da as dma address when it is not going to be the case on all
+> remoteprocs.
+[Wendy] Are we assuming that the vring da is always predefined.
+But in the Linux kernel side, without IOMMU case, we use dma_alloc_coherent() to
+allocate for vring address. In this case, there is no gurantee the
+allocated vrings
+address matches the predefined value.
+Or we assume that only vdev devices of the remoteproc can use
+dma_alloc_coherent()
+but not subdevices?
+Or we can still store the rsc table da pointer. And instead of always
+set da with dma address
+we can pass the dma address to remoteproc and let remoteproc to do the
+pa to da conversion if
+required.
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-> ---
->  drivers/gpu/drm/arm/malidp_drv.c    |  1 +
->  drivers/gpu/drm/arm/malidp_planes.c | 28 ++++++++++++++++++++++++++--
->  2 files changed, 27 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> index b2b97db..be45703 100644
-> --- a/drivers/gpu/drm/arm/malidp_drv.c
-> +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> @@ -388,6 +388,7 @@ static int malidp_init(struct drm_device *drm)
->  	drm->mode_config.max_height = hwdev->max_line_size;
->  	drm->mode_config.funcs = &malidp_mode_config_funcs;
->  	drm->mode_config.helper_private = &malidp_mode_config_helpers;
-> +	drm->mode_config.allow_fb_modifiers = true;
->  
->  	ret = malidp_crtc_init(drm);
->  	if (ret)
-> diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-> index eec0442..01037d0 100644
-> --- a/drivers/gpu/drm/arm/malidp_planes.c
-> +++ b/drivers/gpu/drm/arm/malidp_planes.c
-> @@ -934,6 +934,25 @@ int malidp_de_planes_init(struct drm_device *drm)
->  				  BIT(DRM_MODE_BLEND_COVERAGE);
->  	u32 *formats;
->  	int ret, i, j, n;
-> +	u64 supported_modifiers[MODIFIERS_COUNT_MAX];
-> +	const u64 *modifiers;
-> +
-> +	modifiers = malidp_format_modifiers;
-> +
-> +	if (!(map->features & MALIDP_DEVICE_AFBC_SUPPORT_SPLIT)) {
-> +		/*
-> +		 * Since our hardware does not support SPLIT, so build the list of
-> +		 * supported modifiers excluding SPLIT ones.
-> +		 */
-> +		while (*modifiers != DRM_FORMAT_MOD_INVALID) {
-> +			if (!(*modifiers & AFBC_SPLIT))
-> +				supported_modifiers[j++] = *modifiers;
-> +
-> +			modifiers++;
-> +		}
-> +		supported_modifiers[j++] = DRM_FORMAT_MOD_INVALID;
-> +		modifiers = supported_modifiers;
-> +	}
->  
->  	formats = kcalloc(map->n_pixel_formats, sizeof(*formats), GFP_KERNEL);
->  	if (!formats) {
-> @@ -958,9 +977,14 @@ int malidp_de_planes_init(struct drm_device *drm)
->  
->  		plane_type = (i == 0) ? DRM_PLANE_TYPE_PRIMARY :
->  					DRM_PLANE_TYPE_OVERLAY;
-> +
-> +		/*
-> +		 * All the layers except smart layer supports AFBC modifiers.
-> +		 */
->  		ret = drm_universal_plane_init(drm, &plane->base, crtcs,
-> -					       &malidp_de_plane_funcs, formats,
-> -					       n, NULL, plane_type, NULL);
-> +				&malidp_de_plane_funcs, formats, n,
-> +				(id == DE_SMART) ? NULL : modifiers, plane_type, NULL);
-> +
->  		if (ret < 0)
->  			goto cleanup;
->  
-> -- 
-> 2.7.4
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Thanks,
+Wendy
+>
+> regards
+> Suman
+>
+> >
+> > Regards,
+> > Loic
+> >>
+> >> regards
+> >> Suman
+> >>
+> >>>
+> >>>     /* reset resource entry info */
+> >>> @@ -484,6 +486,7 @@ static int rproc_handle_vdev(struct rproc *rproc,
+> >> struct fw_rsc_vdev *rsc,
+> >>>
+> >>>     rvdev->id = rsc->id;
+> >>>     rvdev->rproc = rproc;
+> >>> +   rvdev->index = rproc->nb_vdev++;
+> >>>
+> >>>     /* parse the vrings */
+> >>>     for (i = 0; i < rsc->num_of_vrings; i++) {
+> >>> @@ -528,9 +531,6 @@ void rproc_vdev_release(struct kref *ref)
+> >>>
+> >>>     for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
+> >>>             rvring = &rvdev->vring[id];
+> >>> -           if (!rvring->va)
+> >>> -                   continue;
+> >>> -
+> >>>             rproc_free_vring(rvring);
+> >>>     }
+> >>>
+> >>> @@ -1322,6 +1322,9 @@ static int rproc_fw_boot(struct rproc *rproc,
+> >> const struct firmware *fw)
+> >>>     /* reset max_notifyid */
+> >>>     rproc->max_notifyid = -1;
+> >>>
+> >>> +   /* reset handled vdev */
+> >>> +   rproc->nb_vdev = 0;
+> >>> +
+> >>>     /* handle fw resources which are required to boot rproc */
+> >>>     ret = rproc_handle_resources(rproc, rproc_loading_handlers);
+> >>>     if (ret) {
+> >>> diff --git a/drivers/remoteproc/remoteproc_internal.h
+> >> b/drivers/remoteproc/remoteproc_internal.h
+> >>> index 7570beb..f6cad24 100644
+> >>> --- a/drivers/remoteproc/remoteproc_internal.h
+> >>> +++ b/drivers/remoteproc/remoteproc_internal.h
+> >>> @@ -60,6 +60,8 @@ struct dentry *rproc_create_trace_file(const char
+> >> *name, struct rproc *rproc,
+> >>>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware
+> >> *fw);
+> >>>  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc
+> >> *rproc,
+> >>>                                                    const struct firmware
+> >> *fw);
+> >>> +struct rproc_mem_entry *
+> >>> +rproc_find_carveout_by_name(struct rproc *rproc, const char *name,
+> >> ...);
+> >>>
+> >>>  static inline
+> >>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+> >>> diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> >> b/drivers/remoteproc/remoteproc_virtio.c
+> >>> index bbecd44..de21f62 100644
+> >>> --- a/drivers/remoteproc/remoteproc_virtio.c
+> >>> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> >>> @@ -76,7 +76,9 @@ static struct virtqueue *rp_find_vq(struct
+> >> virtio_device *vdev,
+> >>>     struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
+> >>>     struct rproc *rproc = vdev_to_rproc(vdev);
+> >>>     struct device *dev = &rproc->dev;
+> >>> +   struct rproc_mem_entry *mem;
+> >>>     struct rproc_vring *rvring;
+> >>> +   struct fw_rsc_vdev *rsc;
+> >>>     struct virtqueue *vq;
+> >>>     void *addr;
+> >>>     int len, size;
+> >>> @@ -88,8 +90,14 @@ static struct virtqueue *rp_find_vq(struct
+> >> virtio_device *vdev,
+> >>>     if (!name)
+> >>>             return NULL;
+> >>>
+> >>> +   /* Search allocated memory region by name */
+> >>> +   mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d",
+> >> rvdev->index,
+> >>> +                                     id);
+> >>> +   if (!mem || !mem->va)
+> >>> +           return ERR_PTR(-ENOMEM);
+> >>> +
+> >>>     rvring = &rvdev->vring[id];
+> >>> -   addr = rvring->va;
+> >>> +   addr = mem->va;
+> >>>     len = rvring->len;
+> >>>
+> >>>     /* zero vring */
+> >>> @@ -114,6 +122,10 @@ static struct virtqueue *rp_find_vq(struct
+> >> virtio_device *vdev,
+> >>>     rvring->vq = vq;
+> >>>     vq->priv = rvring;
+> >>>
+> >>> +   /* Update vring in resource table */
+> >>> +   rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
+> >>> +   rsc->vring[id].da = mem->da;
+> >>> +
+> >>>     return vq;
+> >>>  }
+> >>>
+> >>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >>> index 4cdd0c6..6b3a234 100644
+> >>> --- a/include/linux/remoteproc.h
+> >>> +++ b/include/linux/remoteproc.h
+> >>> @@ -453,6 +453,7 @@ struct rproc_dump_segment {
+> >>>   * @table_sz: size of @cached_table
+> >>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> >>>   * @dump_segments: list of segments in the firmware
+> >>> + * @nb_vdev: number of vdev currently handled by rproc
+> >>>   */
+> >>>  struct rproc {
+> >>>     struct list_head node;
+> >>> @@ -485,6 +486,7 @@ struct rproc {
+> >>>     bool has_iommu;
+> >>>     bool auto_boot;
+> >>>     struct list_head dump_segments;
+> >>> +   int nb_vdev;
+> >>>  };
+> >>>
+> >>>  /**
+> >>> @@ -512,7 +514,6 @@ struct rproc_subdev {
+> >>>  /**
+> >>>   * struct rproc_vring - remoteproc vring state
+> >>>   * @va:    virtual address
+> >>> - * @dma: dma address
+> >>>   * @len: length, in bytes
+> >>>   * @da: device address
+> >>>   * @align: vring alignment
+> >>> @@ -522,7 +523,6 @@ struct rproc_subdev {
+> >>>   */
+> >>>  struct rproc_vring {
+> >>>     void *va;
+> >>> -   dma_addr_t dma;
+> >>>     int len;
+> >>>     u32 da;
+> >>>     u32 align;
+> >>> @@ -541,6 +541,7 @@ struct rproc_vring {
+> >>>   * @vdev: the virio device
+> >>>   * @vring: the vrings for this vdev
+> >>>   * @rsc_offset: offset of the vdev's resource entry
+> >>> + * @index: vdev position versus other vdev declared in resource table
+> >>>   */
+> >>>  struct rproc_vdev {
+> >>>     struct kref refcount;
+> >>> @@ -553,6 +554,7 @@ struct rproc_vdev {
+> >>>     struct virtio_device vdev;
+> >>>     struct rproc_vring vring[RVDEV_NUM_VRINGS];
+> >>>     u32 rsc_offset;
+> >>> +   u32 index;
+> >>>  };
+> >>>
+> >>>  struct rproc *rproc_get_by_phandle(phandle phandle);
+> >>>
+> >
+>
