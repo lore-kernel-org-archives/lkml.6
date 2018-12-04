@@ -2,243 +2,154 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6433C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFF9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00EA2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D3F20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyKsGRau"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00EA2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E25lljyF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D3F20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbeLDA2D (ORCPT
+        id S1726071AbeLDA2a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:28:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbeLDA2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:28:03 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 788DA20850;
-        Tue,  4 Dec 2018 00:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543883281;
-        bh=hmFd44V+iLq7r1ovpLWlDTEa6/4ZNjIQ2Fg/VrIPzLo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WyKsGRauayhcFP0ZY4FfD2z3v5/QuEIStmBHPFvAf/ZEHgg0dJKokhMXY49zlyMv7
-         n7pZgkyhupNf4EVAL79d3W8MxsgklToW3sAaDrrDit6j+n1JC5tuagfrkuVGHijGC5
-         7P/dC5Ja2liwPgO95hVV1I6y3/HDE1oR4U9dcAUw=
-Date:   Mon, 3 Dec 2018 18:28:00 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Jacob jun Pan <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Christian Kellner <ckellner@redhat.com>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] PCI / ACPI: Identify untrusted PCI devices
-Message-ID: <20181204002800.GB85090@google.com>
-References: <20181129155153.35840-1-mika.westerberg@linux.intel.com>
- <20181129155153.35840-2-mika.westerberg@linux.intel.com>
+        Mon, 3 Dec 2018 19:28:30 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41843 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbeLDA2a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 19:28:30 -0500
+Received: by mail-yw1-f65.google.com with SMTP id f65so6224168ywc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:28:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=moRncWufPBgqABFZ/05wxku2nHCWZ/KVBe0JG4XLLu4=;
+        b=E25lljyFzKLO4sn7UiH3Q3FjXgimpe0HyexphNyuU342LqfI5SfHLSlL4hqEotheoV
+         PVMS0AVQtLdhYBZBNaxr99YQynTHEC5WFNdTFa8n+e9es+IEcBfuOv6oPktfsCNOZ1Wv
+         XD9EV+yUy37w4LpOpQchk5TuBc1WN5eKrvddw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=moRncWufPBgqABFZ/05wxku2nHCWZ/KVBe0JG4XLLu4=;
+        b=dnN9QU1MUPZR1Y9l/K5Ic92kXnBxC7pHzAWTa+23y70FacPu/9UmF9kfCeHc58x0QJ
+         BCHgIJY3rAORm5lW7Cjoa4wmVnuQpc7jy6iqzFvxDHkJpH+1InGL/blzLMaaG+MNNn+4
+         0L/al7kc0Z3z6Ax/AXtR6QqRQxv3m5ioe2vcFRAK14OdxxQgK83nKE2/rL5dqbRor2u/
+         HlncxFSIGNMKQw112PA14jVkjB96xhVxOWaUAgpLVR1+WjEfoGWXmlBem6JN5jRBuWUA
+         mJjQaBjF9jAHTBtASZfOwW6d0PcEp3uXeuvophDwHEiIMhcvfvVGbhYNZV+uwg7ozs/o
+         q1LA==
+X-Gm-Message-State: AA+aEWa2LFVG/yYqg4jNpMKkmve/ahBcmuaiB10Dq/c0RKg045Zt90Ie
+        zOLM5U2EwF1NE94bJSYM82aMBZjQ9Es=
+X-Google-Smtp-Source: AFSGD/U+iC2cUSl9o05NmhYvYWzwhqu67d+QEA5qHIn8O1g9CG+v7WILfGmvkhFdTjiPPQHiMwHX5Q==
+X-Received: by 2002:a81:3217:: with SMTP id y23mr18067415ywy.275.1543883308612;
+        Mon, 03 Dec 2018 16:28:28 -0800 (PST)
+Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
+        by smtp.gmail.com with ESMTPSA id x4sm18542474ywj.80.2018.12.03.16.28.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 16:28:27 -0800 (PST)
+Received: by mail-yw1-f53.google.com with SMTP id d190so6215243ywd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:28:26 -0800 (PST)
+X-Received: by 2002:a81:c446:: with SMTP id s6mr18736891ywj.237.1543883306505;
+ Mon, 03 Dec 2018 16:28:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129155153.35840-2-mika.westerberg@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181130224736.GA38485@beast> <CAK8P3a0YGyKf_0wg_sNhN2z-zVvv1N1_Yc=+2AL=8FZT+CRLxQ@mail.gmail.com>
+ <CAGXu5jKXEEHbxdG2VzYhUWEPEEJYdCLEY1oF+zm8wOUfdS0v+A@mail.gmail.com>
+ <CAK8P3a3xUMnWrSsW6gNwc5y0z-wR23v8Q6TGH+yNpDJq65FeMw@mail.gmail.com>
+ <20181203111826.ri2csbxs33j34dvo@linutronix.de> <CAK8P3a1mAg-XDie7ekN36WQGwVLoPW_nYCkcGmCDMmscCSRFNA@mail.gmail.com>
+In-Reply-To: <CAK8P3a1mAg-XDie7ekN36WQGwVLoPW_nYCkcGmCDMmscCSRFNA@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 3 Dec 2018 16:28:15 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLsHU0sRsnoynt==bZuagvohfAOGUu_i54Jy8BCFTvitQ@mail.gmail.com>
+Message-ID: <CAGXu5jLsHU0sRsnoynt==bZuagvohfAOGUu_i54Jy8BCFTvitQ@mail.gmail.com>
+Subject: Re: [PATCH] pstore: Convert buf_lock to semaphore
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 06:51:50PM +0300, Mika Westerberg wrote:
-> A malicious PCI device may use DMA to attack the system. An external
-> Thunderbolt port is a convenient point to attach such a device. The OS
-> may use IOMMU to defend against DMA attacks.
-> 
-> Recent BIOSes with Thunderbolt ports mark these externally facing root
-> ports with this ACPI _DSD [1]:
+On Mon, Dec 3, 2018 at 8:26 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Dec 3, 2018 at 12:18 PM Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
+> >
+> > On 2018-12-01 09:42:38 [+0100], Arnd Bergmann wrote:
+> > > You are right that you can't take (or release) a mutex from interrupt
+> > > context. However, I don't think converting a spinlock to a semaphore
+> > > is going to help here either.
+> >
+> > you can acquire a semaphore with a try_lock from interrupts context but
+> > you can't do that with a mutex. You can also a acquire a semaphore in
+> > one context and release in another.
+>
+> Right, that is the obvious part.
+>
+> > I haven't looked a general picture yet, will try to do so later today or
+> > tomorrow.
+>
+> To speed this up, the problem I'm referring to is in
+> virt_efi_query_variable_info() and efi_queue_work(),
+> as in the original BUG_ON() that Kees quoted:
+>
+> > BUG: sleeping function called from invalid context at kernel/sched/completion.c:99
+> > |in_atomic(): 1, irqs_disabled(): 1, pid: 2236, name: sig-xstate-bum
+> > |Preemption disabled at:
+> > |[<ffffffff99d60512>] pstore_dump+0x72/0x330
+> > |CPU: 26 PID: 2236 Comm: sig-xstate-bum Tainted: G      D           4.20.0-rc3 #45
+> > |Call Trace:
+> > | dump_stack+0x4f/0x6a
+> > | ___might_sleep.cold.91+0xd3/0xe4
+> > | __might_sleep+0x50/0x90
+> > | wait_for_completion+0x32/0x130
+> > | virt_efi_query_variable_info+0x14e/0x160
+> > | efi_query_variable_store+0x51/0x1a0
+> > | efivar_entry_set_safe+0xa3/0x1b0
+> > | efi_pstore_write+0x109/0x140
+> > | pstore_dump+0x11c/0x330
+> > | kmsg_dump+0xa4/0xd0
+> > | oops_exit+0x22/0x30
+>
+> This will no longer happen when pstore is called from process
+> context with his patch, but we still get the same thing if we call
+> pstore from interrupt context, unless both the down_interruptible
+> and wait_for_completion in there are also changed to
+> nonblocking calls. However, once they are no longer blocking,
+> we don't need the outer lock to be changed from spinlock
+> to semaphore any more either.
 
-I'm not 100% comfortable with the "Recent BIOSes" wording because that
-suggests that we can rely on the fact that *all* BIOSes newer than
-some date X mark these ports.
+My proposed patch was trying to do two things:
 
-Since this _DSD usage is Microsoft-specific and not required by either
-PCIe or ACPI specs, we can't rely on it.  A BIOS that doesn't
-implement it may not be Windows-certified, but it's perfectly
-spec-compliant otherwise and we have to keep in mind the possibility
-that ports without this _DSD may still be externally visible and may
-still be attack vectors.
+- have pstore not make things _worse_ (do not hold a spin lock)
+- use preemptible() in efi pstore backend to get it right:
 
->   Name (_DSD, Package () {
->       ToUUID ("efcc06cc-73ac-4bc3-bff0-76143807c389"),
->       Package () {
->           Package () {"ExternalFacingPort", 1},
-> 	  Package () {"UID", 0 }
->       }
->   })
-> 
-> If we find such a root port, mark it and all its children as untrusted.
-> The rest of the OS may use this information to enable DMA protection
-> against malicious devices. For instance the device may be put behind an
-> IOMMU to keep it from accessing memory outside of what the driver has
-> allocated for it.
-> 
-> While at it, add a comment on top of prp_guids array explaining the
-> possible caveat resulting when these GUIDs are treated equivalent.
-> 
-> [1] https://docs.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+        ret = efivar_entry_set_safe(efi_name, vendor, PSTORE_EFI_ATTRIBUTES,
+-                             !pstore_cannot_block_path(record->reason),
+-                             record->size, record->psi->buf);
++                             preemptible(), record->size, record->psi->buf);
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+IIUC, that would make efi-vars take the nonblocking path so we don't
+trip over the might_sleep().
 
-> ---
->  drivers/acpi/property.c | 11 +++++++++++
->  drivers/pci/pci-acpi.c  | 19 +++++++++++++++++++
->  drivers/pci/probe.c     | 15 +++++++++++++++
->  include/linux/pci.h     |  8 ++++++++
->  4 files changed, 53 insertions(+)
-> 
-> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> index 8c7c4583b52d..77abe0ec4043 100644
-> --- a/drivers/acpi/property.c
-> +++ b/drivers/acpi/property.c
-> @@ -24,6 +24,14 @@ static int acpi_data_get_property_array(const struct acpi_device_data *data,
->  					acpi_object_type type,
->  					const union acpi_object **obj);
->  
-> +/*
-> + * The GUIDs here are made equivalent to each other in order to avoid extra
-> + * complexity in the properties handling code, with the caveat that the
-> + * kernel will accept certain combinations of GUID and properties that are
-> + * not defined without a warning. For instance if any of the properties
-> + * from different GUID appear in a property list of another, it will be
-> + * accepted by the kernel. Firmware validation tools should catch these.
-> + */
->  static const guid_t prp_guids[] = {
->  	/* ACPI _DSD device properties GUID: daffd814-6eba-4d8c-8a91-bc9bbf4aa301 */
->  	GUID_INIT(0xdaffd814, 0x6eba, 0x4d8c,
-> @@ -31,6 +39,9 @@ static const guid_t prp_guids[] = {
->  	/* Hotplug in D3 GUID: 6211e2c0-58a3-4af3-90e1-927a4e0c55a4 */
->  	GUID_INIT(0x6211e2c0, 0x58a3, 0x4af3,
->  		  0x90, 0xe1, 0x92, 0x7a, 0x4e, 0x0c, 0x55, 0xa4),
-> +	/* External facing port GUID: efcc06cc-73ac-4bc3-bff0-76143807c389 */
-> +	GUID_INIT(0xefcc06cc, 0x73ac, 0x4bc3,
-> +		  0xbf, 0xf0, 0x76, 0x14, 0x38, 0x07, 0xc3, 0x89),
->  };
->  
->  static const guid_t ads_guid =
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index 921db6f80340..e1949f7efd9c 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -789,6 +789,24 @@ static void pci_acpi_optimize_delay(struct pci_dev *pdev,
->  	ACPI_FREE(obj);
->  }
->  
-> +static void pci_acpi_set_untrusted(struct pci_dev *dev)
-> +{
-> +	u8 val;
-> +
-> +	if (pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
-> +		return;
-> +	if (device_property_read_u8(&dev->dev, "ExternalFacingPort", &val))
-> +		return;
-> +
-> +	/*
-> +	 * These root ports expose PCIe (including DMA) outside of the
-> +	 * system so make sure we treat them and everything behind as
-> +	 * untrusted.
-> +	 */
-> +	if (val)
-> +		dev->untrusted = 1;
-> +}
-> +
->  static void pci_acpi_setup(struct device *dev)
->  {
->  	struct pci_dev *pci_dev = to_pci_dev(dev);
-> @@ -798,6 +816,7 @@ static void pci_acpi_setup(struct device *dev)
->  		return;
->  
->  	pci_acpi_optimize_delay(pci_dev, adev->handle);
-> +	pci_acpi_set_untrusted(pci_dev);
->  
->  	pci_acpi_add_pm_notifier(adev, pci_dev);
->  	if (!adev->wakeup.flags.valid)
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index b1c05b5054a0..257b9f6f2ebb 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1378,6 +1378,19 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
->  	}
->  }
->  
-> +static void set_pcie_untrusted(struct pci_dev *dev)
-> +{
-> +	struct pci_dev *parent;
-> +
-> +	/*
-> +	 * If the upstream bridge is untrusted we treat this device
-> +	 * untrusted as well.
-> +	 */
-> +	parent = pci_upstream_bridge(dev);
-> +	if (parent && parent->untrusted)
-> +		dev->untrusted = true;
-> +}
-> +
->  /**
->   * pci_ext_cfg_is_aliased - Is ext config space just an alias of std config?
->   * @dev: PCI device
-> @@ -1638,6 +1651,8 @@ int pci_setup_device(struct pci_dev *dev)
->  	/* Need to have dev->cfg_size ready */
->  	set_pcie_thunderbolt(dev);
->  
-> +	set_pcie_untrusted(dev);
-> +
->  	/* "Unknown power state" */
->  	dev->current_state = PCI_UNKNOWN;
->  
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 11c71c4ecf75..c786a2f27bee 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -396,6 +396,14 @@ struct pci_dev {
->  	unsigned int	is_hotplug_bridge:1;
->  	unsigned int	shpc_managed:1;		/* SHPC owned by shpchp */
->  	unsigned int	is_thunderbolt:1;	/* Thunderbolt controller */
-> +	/*
-> +	 * Devices marked being untrusted are the ones that can potentially
-> +	 * execute DMA attacks and similar. They are typically connected
-> +	 * through external ports such as Thunderbolt but not limited to
-> +	 * that. When an IOMMU is enabled they should be getting full
-> +	 * mappings to make sure they cannot access arbitrary memory.
-> +	 */
-> +	unsigned int	untrusted:1;
->  	unsigned int	__aer_firmware_first_valid:1;
->  	unsigned int	__aer_firmware_first:1;
->  	unsigned int	broken_intx_masking:1;	/* INTx masking can't be used */
-> -- 
-> 2.19.2
-> 
+-Kees
+
+-- 
+Kees Cook
