@@ -2,144 +2,119 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D3FC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A0CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65AFA20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18A5320878
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:21:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WEf9yEUp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65AFA20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0PdD/IT3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A5320878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725939AbeLDJV0 (ORCPT
+        id S1726014AbeLDJVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:21:26 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40444 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbeLDJVZ (ORCPT
+        Tue, 4 Dec 2018 04:21:30 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50780 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbeLDJV2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:21:25 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q26so8457291wmf.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 01:21:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ZRSlY/mKwY7K9Dn7frNi1hQy6fHKFtSbQIraMA6on8M=;
-        b=WEf9yEUpDD3oW3grLEUxRjaF670GLO4Vk+Q4CbH+W5U7Cud2qLT0oM+unfRSCw8Ozv
-         tww3FuIO7Nf+ZUZxIEcHjIzs3xvBNnwObXBw7sTLnuPtIyFCv3xA8qe4OAyU7l4F2DfJ
-         0DuqCkYzJj8QejG9r9i9tFIRU1GSYCvKzXirI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ZRSlY/mKwY7K9Dn7frNi1hQy6fHKFtSbQIraMA6on8M=;
-        b=sKkgTfJwh50QOWRygnXhvKelBBMsL7szg8eGgGKo3gZ8Sy/ShnZAXlN6SLmsrP78oF
-         Ubuqh6AxGYaGq3WMOLOJX/BsntBYTa92Zmoz7KSLLFuS3Im7u+uhDPIjgqIIw6WOSAxl
-         qc7c5rL8BbxGhtTF6AxIe8xqnIDJABY9siSX8Pft0Azhh4ibt6crRtMXedm7GQn+LUj2
-         dWNU0Kti8jhGFv2LeHxcQYt05mVvRpykNIjgpMO8pmpl/1fCPclvOStRMJQoEmCKSokV
-         5BeoysCF5of0PO4zw5Tp7A8A+tIIAo/hawBFtq+4nQ+mGp0DeQfcz9v3Ic/4GtaKn0+F
-         5OLA==
-X-Gm-Message-State: AA+aEWb31+8TFJyHWCqTtDtRaJJ0JXpRNEP4gT+dZ2s0ha+/lmEBwaav
-        qyvjpcoaxSUVOQfNCNZbXecUiQ==
-X-Google-Smtp-Source: AFSGD/XShMnJsci+7IZL4kDSAkejsDB+dYQtypxdsRAXECcN2JpUTs6DF84bz8FmF38HSB4ceOvdkQ==
-X-Received: by 2002:a1c:c545:: with SMTP id v66mr11192173wmf.132.1543915283710;
-        Tue, 04 Dec 2018 01:21:23 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id m4sm5788563wmc.3.2018.12.04.01.21.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 01:21:22 -0800 (PST)
-Date:   Tue, 4 Dec 2018 09:21:21 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 2/8] mfd / platform: cros_ec: move lightbar attributes
- to its own driver.
-Message-ID: <20181204092121.GR26661@dell>
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-3-enric.balletbo@collabora.com>
- <20181203103619.GD26661@dell>
- <59c6fa0a-e5d5-0e4a-9393-0c9a8b26332d@collabora.com>
+        Tue, 4 Dec 2018 04:21:28 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB49J3aH100707;
+        Tue, 4 Dec 2018 09:21:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=bByOGUD+Vx0sbKYxDqhb5PoOLsg3yFzFSNLF3IJHqg4=;
+ b=0PdD/IT3hQdil+80sqQyfvyLaE/MrSUAXCkBjlBnkj1RSxJSSXSL0FAE/qBmyGCN4bSg
+ jA6hKBuaZX/Kg+WEdjW7LI9hzE3Cds7HXvlPAibxZo5TPSYDTDLvncDAqvwIPgZMPlGz
+ KMOT0KY8Q0d+Rrw+HeWMl5h/QUei4dU0hFULDGDLgyQmUOlvbL2g44pQQ/Sfr50AvGqw
+ CU4Cj/aa4wK/r2lLTq4jb0YN3di9HNBYKwGFApagINYdgZhhqUwu8SHVNM1Oc0MvGEWb
+ ffCcdkQaz8U8rKl1lKl+EHeZFQtRO/aG9QicZiaK/ySNkU4aIzfQsr5kN8bYgLfUj154 iw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2p3hqtu5jt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Dec 2018 09:21:17 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB49LBxD003190
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Dec 2018 09:21:12 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB49LBSs020938;
+        Tue, 4 Dec 2018 09:21:11 GMT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Message-ID: <723e6e0b-9469-4b11-9571-a65ef4f830f0@default>
+Date:   Tue, 4 Dec 2018 09:21:11 +0000 (UTC)
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     <tglx@linutronix.de>, <mingo@kernel.org>, <fweisbec@gmail.com>
+Cc:     <srinivas.eeda@oracle.com>, <joe.jin@oracle.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tick/broadcast: Remove redundant code in
+ tick_check_new_device()
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <59c6fa0a-e5d5-0e4a-9393-0c9a8b26332d@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812040083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 03 Dec 2018, Enric Balletbo i Serra wrote:
-> On 3/12/18 11:36, Lee Jones wrote:
-> > On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
-> > 
-> >> The entire way how cros sysfs attibutes are created is broken.
-> >> cros_ec_lightbar should be its own driver and its attributes should be
-> >> associated with a lightbar driver not the mfd driver. In order to retain
-> >> the path, the lightbar attributes are attached to the cros_class.
-> > 
-> > I'm not exactly clear on what a lightbar is, but shouldn't it live in
-> > the appropriate subsystem.  Like LED for example?
-> > 
-> 
-> The lightbar is a four-color indicator available on some Chromebook, but the
-> fact that can you can program this lightbar with different sequences, including
-> user defined sequences makes the device a bit special and very chrome platform
-> specific. The same happens with the VBC driver.
+Hi Maintainers,
 
-Being Chrome specific doesn't necessarily mean that these drivers
-shouldn't reside in a proper subsystem.  A lot of drivers in the
-kernel are only relevant to very specific hardware/platforms.
+When cleanup my mailbox for free space, I see this patch is missed in upstr=
+eam.
+Checked code again, I think that code indeed could be removed safely.
 
-IMHO code in drivers/platform should pertain only to the core platform
-itself.  Any drivers for leaf hardware/functionality should be split
-out into the subsystems, however niche you think they are.
+So could anyone Ack or NAK it? Thanks very much.
 
-I also understand the convenience factor of not having to go through
-a !Google Maintainer, but this is not a loophole I'm prepared to
-support. ;)
+Regards
+Zhenzhong
 
-> Other subdevices like, rtc, keyboard, usbpd charger,etc. are already in their
-> subsystems.
-> 
-> >> The patch also adds the sysfs documentation.
-> >>
-> >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >> ---
-> >>
-> >> Changes in v3:
-> >> - Removed unneded check for ec_dev.
-> >>
-> >> Changes in v2:
-> >> - Removed the two exported functions to attach/detach to the cros_class.
-> >> - Use dev_warn instead of dev_err when adding the lightbar.
-> >>
-> >>  ...sfs-class-chromeos-driver-cros-ec-lightbar | 74 +++++++++++++++
-> >>  drivers/mfd/cros_ec_dev.c                     | 24 ++---
-> >>  drivers/mfd/cros_ec_dev.h                     |  6 --
-> >>  drivers/platform/chrome/Kconfig               | 10 ++
-> >>  drivers/platform/chrome/Makefile              |  3 +-
-> >>  drivers/platform/chrome/cros_ec_lightbar.c    | 95 ++++++++++++++-----
-> >>  include/linux/mfd/cros_ec.h                   |  1 -
-> >>  7 files changed, 172 insertions(+), 41 deletions(-)
-> >>  create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
-> > 
+----- zhenzhong.duan@oracle.com wrote:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> There is no way a timer used as broadcast clockevent device is also
+> used as
+> percpu tick clockevent device currently.
+>=20
+> -v2: remove meaningless description suggested by tglx
+>=20
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> ---
+>  kernel/time/tick-common.c |    7 +------
+>  1 files changed, 1 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+> index 49edc1c..9bcc866 100644
+> --- a/kernel/time/tick-common.c
+> +++ b/kernel/time/tick-common.c
+> @@ -320,13 +320,8 @@ void tick_check_new_device(struct
+> clock_event_device *newdev)
+> =20
+>  =09/*
+>  =09 * Replace the eventually existing device by the new
+> -=09 * device. If the current device is the broadcast device, do
+> -=09 * not give it back to the clockevents layer !
+> +=09 * device.
+>  =09 */
+> -=09if (tick_is_broadcast_device(curdev)) {
+> -=09=09clockevents_shutdown(curdev);
+> -=09=09curdev =3D NULL;
+> -=09}
+>  =09clockevents_exchange_device(curdev, newdev);
+>  =09tick_setup_device(td, newdev, cpu, cpumask_of(cpu));
+>  =09if (newdev->features & CLOCK_EVT_FEAT_ONESHOT)
+> --=20
+> 1.7.3
