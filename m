@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A86C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C63C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A18820851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE74120851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8af4505"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A18820851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUWmor6B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE74120851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbeLDK6s (ORCPT
+        id S1727252AbeLDL2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:58:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43290 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:28:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727003AbeLDK6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:43 -0500
+        id S1727023AbeLDK6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6BEE214DB;
-        Tue,  4 Dec 2018 10:58:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0E612087F;
+        Tue,  4 Dec 2018 10:58:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921122;
-        bh=tRcto52dn5Sr+E7ceFzICBGwvl3M/6YTIpVod1+AOZo=;
+        s=default; t=1543921127;
+        bh=c80V6tU5ZR4PQQCfVJEwHpCppJdzGxBNXZOVa2Rek4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d8af4505EXfVfuaDhjGJc9lBXSb0WEXq2IdtHunQ9zeOWfYDslg21/wsd8HJ3mAaG
-         ZJmwjFPtztlD2abY0J7WSNgZOjbHZ19KJ6/2K7AnffWHiQnKEXAVWJbdfhfDXMY+GB
-         ZdaNuMT3PdKrAsskTnRftpuSzdVoWBCXEq3bM4XA=
+        b=gUWmor6BHGKPSIoLgrMoZFBm2vAbWlS1oR1M9aOdOH0v/Nkv3E/j26XA4fV1H5vjl
+         bzSy1boS84WzG/h8SWZYJnNWQzOue1pWR4UgT0BvE8VuODMwm7F4uF6/M3byNmSm5W
+         eN4OleZH74tL3Q53YeHw/CkoPabxWvmdzzcWXG0w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 090/139] ALSA: ac97: Fix incorrect bit shift at AC97-SPSA control write
-Date:   Tue,  4 Dec 2018 11:49:31 +0100
-Message-Id: <20181204103654.040088878@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 092/139] ALSA: sparc: Fix invalid snd_free_pages() at error path
+Date:   Tue,  4 Dec 2018 11:49:33 +0100
+Message-Id: <20181204103654.137118166@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -64,39 +65,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 7194eda1ba0872d917faf3b322540b4f57f11ba5 upstream.
+commit 9a20332ab373b1f8f947e0a9c923652b32dab031 upstream.
 
-The function snd_ac97_put_spsa() gets the bit shift value from the
-associated private_value, but it extracts too much; the current code
-extracts 8 bit values in bits 8-15, but this is a combination of two
-nibbles (bits 8-11 and bits 12-15) for left and right shifts.
-Due to the incorrect bits extraction, the actual shift may go beyond
-the 32bit value, as spotted recently by UBSAN check:
- UBSAN: Undefined behaviour in sound/pci/ac97/ac97_codec.c:836:7
- shift exponent 68 is too large for 32-bit type 'int'
+Some spurious calls of snd_free_pages() have been overlooked and
+remain in the error paths of sparc cs4231 driver code.  Since
+runtime->dma_area is managed by the PCM core helper, we shouldn't
+release manually.
 
-This patch fixes the shift value extraction by masking the properly
-with 0x0f instead of 0xff.
+Drop the superfluous calls.
 
-Reported-and-tested-by: Meelis Roos <mroos@linux.ee>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/ac97/ac97_codec.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/sparc/cs4231.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/sound/pci/ac97/ac97_codec.c
-+++ b/sound/pci/ac97/ac97_codec.c
-@@ -824,7 +824,7 @@ static int snd_ac97_put_spsa(struct snd_
- {
- 	struct snd_ac97 *ac97 = snd_kcontrol_chip(kcontrol);
- 	int reg = kcontrol->private_value & 0xff;
--	int shift = (kcontrol->private_value >> 8) & 0xff;
-+	int shift = (kcontrol->private_value >> 8) & 0x0f;
- 	int mask = (kcontrol->private_value >> 16) & 0xff;
- 	// int invert = (kcontrol->private_value >> 24) & 0xff;
- 	unsigned short value, old, new;
+--- a/sound/sparc/cs4231.c
++++ b/sound/sparc/cs4231.c
+@@ -1146,10 +1146,8 @@ static int snd_cs4231_playback_open(stru
+ 	runtime->hw = snd_cs4231_playback;
+ 
+ 	err = snd_cs4231_open(chip, CS4231_MODE_PLAY);
+-	if (err < 0) {
+-		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
++	if (err < 0)
+ 		return err;
+-	}
+ 	chip->playback_substream = substream;
+ 	chip->p_periods_sent = 0;
+ 	snd_pcm_set_sync(substream);
+@@ -1167,10 +1165,8 @@ static int snd_cs4231_capture_open(struc
+ 	runtime->hw = snd_cs4231_capture;
+ 
+ 	err = snd_cs4231_open(chip, CS4231_MODE_RECORD);
+-	if (err < 0) {
+-		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
++	if (err < 0)
+ 		return err;
+-	}
+ 	chip->capture_substream = substream;
+ 	chip->c_periods_sent = 0;
+ 	snd_pcm_set_sync(substream);
 
 
