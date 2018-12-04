@@ -2,75 +2,69 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D53FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A69EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 339E620834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E762081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:40:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5XIAotS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339E620834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjEOaGAO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E762081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbeLDTkg (ORCPT
+        id S1726166AbeLDTky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:40:36 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34097 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbeLDTkf (ORCPT
+        Tue, 4 Dec 2018 14:40:54 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43856 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbeLDTky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:40:35 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w4so8809635plz.1;
-        Tue, 04 Dec 2018 11:40:34 -0800 (PST)
+        Tue, 4 Dec 2018 14:40:54 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u18so12881244lff.10
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:40:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=LD9RiW/w/AsFU5z2eVVV/9ELhBDspcusWDXKoRIDE+8=;
-        b=C5XIAotSFsUpeFjn0oACPmsEbp51GG/lP+lorXbEurmk7KRpgRIC2LWPV/+BuHytFV
-         whvhOjSiEdR3MmlvI7LILK/jlNO0V0FKp6Ju8u2wwZJwJ7bNP+jrjGYoXrZ5Df+b94w3
-         IjrwBltbuXpOs7j+3RoES5390kUp7BapHDjCwm/CjUM1cPndhPv97mL/lKkRknaOHCRX
-         kOrYLZYU5v+TWowwy9+2nvzcHcKtr5K+3r3X+26QF+Q5zR29PJCRZDJ1nR/jnReX1hwK
-         EyVgOuN563m11r+t21dSbpRDNtt6Gz7DocgmDm7LujA6OtvGcK/iLKgM5Y7I4cyJJHFA
-         E+JA==
+        bh=MJ2RoHnxkmKN1SVC9aFtGcbGzzZFAKHvy0LyoUhWX9E=;
+        b=OjEOaGAOFkvDZNcY6d+glGYmOCDflfGVTlcSq7GeLuHN2n3uCFPDwIGkWqVm/tIcfP
+         cQMhbLZcN/CQuT1vVh4F7zR+wNgo5NYyZyk+tf48SggDyKpRpD9wHEjVaKvtM7rm7Vig
+         Wig9sYqCOseL68ELNr7naLr3FBy4R59c70Rnw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=LD9RiW/w/AsFU5z2eVVV/9ELhBDspcusWDXKoRIDE+8=;
-        b=d2Wu4n/2aW70B+EoUxP2kjVJDQ/xK+G0LrTaNJ0MsHjH9aT1zIyh7pMuxo0UWKYM7B
-         Ci/QF9ZvMem07+SpPFZErcNH6aodRf7JlFH1cUcRWo83CxNCDbh4jHr+0VWB0BdMvgJn
-         yRSMMzghfV2nwQ8iRoAwT85fZ6kHgDa0V2heBkPPKEb9MS9jexDxBtcw/+rqu7Bg4Rpj
-         MewlMtzJzH2b8aubrmu/SXiTZ8Vr6klpfcUow/IaN8cVsjWy++nFnUbKmeORAI+ADoGl
-         jhciW5dDqgJFUmGBRY6i0WEsStVD8WSsLFU8iawG0MTIepOFDPMv/UiuLazuy7bx+s9B
-         TF+A==
-X-Gm-Message-State: AA+aEWYe9ZJteV5QqJOOUzvoiy42mPtQiHim0t5a1iBchBxx9OWMScNI
-        6Ien3W3YLLz6Bfwo9YynRiz0SOg8
-X-Google-Smtp-Source: AFSGD/U9j/H3zTbdJWvfJwZ8vKn8aNPLVBAttjL6pyHgJqY975wBKlpoxF7fJvi/Ds2I3MDDs2HnDw==
-X-Received: by 2002:a17:902:8e8a:: with SMTP id bg10mr21398195plb.192.1543952434181;
-        Tue, 04 Dec 2018 11:40:34 -0800 (PST)
-Received: from localhost.localdomain ([103.51.74.91])
-        by smtp.gmail.com with ESMTPSA id u137sm36108381pfc.140.2018.12.04.11.40.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 11:40:33 -0800 (PST)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Add proper regulator states for suspend-to-mem for odroid-u3
-Date:   Tue,  4 Dec 2018 19:40:25 +0000
-Message-Id: <20181204194025.2719-1-linux.amoon@gmail.com>
+        bh=MJ2RoHnxkmKN1SVC9aFtGcbGzzZFAKHvy0LyoUhWX9E=;
+        b=b23ML0AEoIzuQXfrY3LjcrDnXhIrWwiJDJ0v+DOsjPmIBigU/SG+hhvVDaIXAAUGgh
+         +L/L1g49gJb0nlirm8PUMyUzJAkQx4Jbtm8XHY7bVbtxmV1QglauqW/qjKaHFZ80AJqw
+         9CPpYwzxIbP+ej173T9+REg93APYshPNwf6sY7CbxtyG03ZxvLvllvwoYPnnEQPay4Up
+         Q7jzL4nrilvtf1kP0B/3LA3O0TsRiLoqtNbtLUOINGw+m5yE8iRmfzxewrzJjQ4A4oku
+         ad4x+JzC6Vtun7+vwlC3QR10w8k0Vxcm99OO7kWv/McZTk4wYriTNBqppgzcXJ7ZQMJ1
+         e+kw==
+X-Gm-Message-State: AA+aEWb1r/6iBrPFtZDJSzTFTHM5iw+6WBSXZmdyf90f/L/B9swjotXK
+        2Rz4lYMWunI5Lk3UD2wpOuAVew==
+X-Google-Smtp-Source: AFSGD/Xx4VXmGc945omBmedemBhF6sDuPq8xHe5Usk1n+/+ssWVExT4AWpb5pXG2Ewp55V4iZUuZvA==
+X-Received: by 2002:a19:c413:: with SMTP id u19mr12341607lff.100.1543952452174;
+        Tue, 04 Dec 2018 11:40:52 -0800 (PST)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id i75sm3187945lfb.58.2018.12.04.11.40.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 11:40:51 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     rostedt@goodmis.org, mingo@redhat.com, catalin.marinas@arm.com,
+        will.deacon@arm.com
+Cc:     keescook@chromium.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v3] tracing: add cond_resched to ftrace_replace_code()
+Date:   Tue,  4 Dec 2018 20:40:44 +0100
+Message-Id: <20181204194044.9506-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -79,259 +73,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suspend-to-mem node to regulator core to be enabled or disabled
-during system suspend and also support changing the regulator operating
-mode during runtime and when the system enter sleep mode.
+When running in qemu on an kernel built with allmodconfig and debug
+options (in particular kcov and ubsan) enabled, ftrace_replace_code
+function call take minutes. The ftrace selftest calls
+ftrace_replace_code to look >40000 through
+ftrace_make_call/ftrace_make_nop, and these end up calling
+__aarch64_insn_write/aarch64_insn_patch_text_nosync.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Tested on Odroid U3+
----
- .../boot/dts/exynos4412-odroid-common.dtsi    | 72 +++++++++++++++++++
- 1 file changed, 72 insertions(+)
+Microseconds add up because this is called in a loop for each dyn_ftrace
+record, and this triggers the softlockup watchdog unless we let it sleep
+occasionally.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 2caa3132f34e..837713a2ec3b 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -285,6 +285,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
+Rework so that we call cond_resched() if !irqs_disabled() && !preempt_count().
+
+Suggested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ kernel/trace/ftrace.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index c375e33239f7..7c9f49a5a1ab 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -2419,11 +2419,19 @@ void __weak ftrace_replace_code(int enable)
+ {
+ 	struct dyn_ftrace *rec;
+ 	struct ftrace_page *pg;
++	bool schedulable;
+ 	int failed;
  
- 			ldo3_reg: LDO3 {
-@@ -292,6 +295,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+ 	if (unlikely(ftrace_disabled))
+ 		return;
  
- 			ldo4_reg: LDO4 {
-@@ -299,6 +305,9 @@
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
++	/*
++	 * Some archs call this function with interrupts or preemption
++	 * disabled. However, for other archs that can preempt, this can cause
++	 * an tremendous unneeded latency.
++	 */
++	schedulable = !irqs_disabled() && !preempt_count();
++
+ 	do_for_each_ftrace_rec(pg, rec) {
  
- 			ldo5_reg: LDO5 {
-@@ -307,6 +316,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
+ 		if (rec->flags & FTRACE_FL_DISABLED)
+@@ -2435,6 +2443,8 @@ void __weak ftrace_replace_code(int enable)
+ 			/* Stop processing */
+ 			return;
+ 		}
++		if (schedulable)
++			cond_resched();
+ 	} while_for_each_ftrace_rec();
+ }
  
- 			ldo6_reg: LDO6 {
-@@ -314,6 +326,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo7_reg: LDO7 {
-@@ -321,18 +336,27 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo8_reg: LDO8 {
- 				regulator-name = "VDD10_HDMI_1.0V";
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo10_reg: LDO10 {
- 				regulator-name = "VDDQ_MIPIHSI_1.8V";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo11_reg: LDO11 {
-@@ -340,6 +364,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo12_reg: LDO12 {
-@@ -348,6 +375,9 @@
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo13_reg: LDO13 {
-@@ -356,6 +386,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo14_reg: LDO14 {
-@@ -364,6 +397,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo15_reg: LDO15 {
-@@ -372,6 +408,9 @@
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo16_reg: LDO16 {
-@@ -380,6 +419,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo20_reg: LDO20 {
-@@ -387,6 +429,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo21_reg: LDO21 {
-@@ -394,6 +439,9 @@
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo22_reg: LDO22 {
-@@ -411,6 +459,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck1_reg: BUCK1 {
-@@ -419,6 +470,9 @@
- 				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck2_reg: BUCK2 {
-@@ -427,6 +481,9 @@
- 				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			buck3_reg: BUCK3 {
-@@ -435,6 +492,9 @@
- 				regulator-max-microvolt = <1050000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck4_reg: BUCK4 {
-@@ -442,6 +502,9 @@
- 				regulator-min-microvolt = <900000>;
- 				regulator-max-microvolt = <1100000>;
- 				regulator-microvolt-offset = <50000>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck5_reg: BUCK5 {
-@@ -450,6 +513,9 @@
- 				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck6_reg: BUCK6 {
-@@ -458,6 +524,9 @@
- 				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck7_reg: BUCK7 {
-@@ -465,6 +534,9 @@
- 				regulator-min-microvolt = <2000000>;
- 				regulator-max-microvolt = <2000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck8_reg: BUCK8 {
 -- 
 2.19.2
 
