@@ -2,87 +2,103 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9A8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9912CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D036F20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:47:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D036F20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4C25320850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:48:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kae8pN6q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C25320850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbeLDVri (ORCPT
+        id S1726431AbeLDVsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:47:38 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35255 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbeLDVrh (ORCPT
+        Tue, 4 Dec 2018 16:48:32 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42469 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbeLDVsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:47:37 -0500
-Received: by mail-oi1-f195.google.com with SMTP id v6so15703527oif.2;
-        Tue, 04 Dec 2018 13:47:35 -0800 (PST)
+        Tue, 4 Dec 2018 16:48:31 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l10so13124806lfh.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 13:48:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vj6GT3eveI27j/Bj9yewPJUZgNmPQCpJLb+Kzh1op4M=;
+        b=kae8pN6qIQf7+C8xB1YKuHzOVRK0ji3JfwVU2JHASb/GJHSYGOMBTaJdpmGqxnOb+s
+         7+hXv2+fanc40KJrN2oniSVCIcj7S5pGsuPXWO5vNiOLVKaQXbb3iv7o9qbeqz+gjx7o
+         FVqq+Rk+J3s1qf9LubyutMW+ui1sZm7ZaUPXA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h4IfCXMBhmfDml/xc3p3lpzvdTs3Mo2ee3ruNM29h5I=;
-        b=nazxe/C/CXw8BUo+RSie13X63HoiDF7w2jM9gNvTTDGq7gSAFrmvUxD00XKGY6mTCW
-         lktgFnt/njTPVDx1MrUOW4/e7Z8QKqIFQY08VGxkmv7raNiEdA8FIIcB4awMd6+lU5pX
-         4729mX5KH62rwPvRMmZlKlMviFRovW2RdwQf1F9CRvh9SsuTqdflYO/UNZJ+RSqbs3b2
-         /MXcpckw00z7LqeFMHgqCR6HDWTf3gReCABYVVlqt9Aaj3KNxvByZmeOt8FpCNl2Deeo
-         6uVw/APxyvCZSimy3bttfTAYoZ9qhTgdQlFZMsgQICvmZjM0FhaCC2DYo+TrDQeKGYQY
-         +5PA==
-X-Gm-Message-State: AA+aEWYLk5VaYV3C6zZ0yPRU+nU/E2+DUkjhRxAGC2gNnrHFWTwb3QkO
-        MVyp7zcd8yg8YnZeziOcyA==
-X-Google-Smtp-Source: AFSGD/Vg6ShvAjfY/VQ25n/XOjRR/3J2ssxWm80K8x5Ckr0APduYY0hD2SecbtSEiYDw+yWKayl1zQ==
-X-Received: by 2002:aca:f306:: with SMTP id r6mr14195069oih.230.1543960055384;
-        Tue, 04 Dec 2018 13:47:35 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t8sm7316697otp.69.2018.12.04.13.47.34
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vj6GT3eveI27j/Bj9yewPJUZgNmPQCpJLb+Kzh1op4M=;
+        b=ktnQQgf9+NPGqYva9iOoxgEuqs+pDn1qwnMDFYHtJ2/7vD4BT9SMX888IWxlJMPTJ6
+         BzsUkrUyd6yUB5uP7Jx+qjtDKO4tAEhzNtcnbHDMeBGZxjG/7GbmqzCz2E5y+jOcyKaF
+         IHmYTyJHb9H+HVijIhBjvBTRFTjiba0MTU6tsXnK6uL+50kT0A6aWdJWin8yeIac+Zlm
+         dcFzISazlevJjuAr8kFFLVuWA85UyWgRkD5P53rC28rTYQbTn/q90fQ5fL6lOeCf9A/t
+         NdvCTx8jbs9B/6y+yc3OzQdknVyDab0fPQI9VsWwcY+58omOWyCOpkIIF09F+Q7RHYrZ
+         R+yQ==
+X-Gm-Message-State: AA+aEWaoHK8X5LPPiHBJHsg1nRCKIYavWkCLM+uokPmrDSmfLhxGIJUr
+        2aoZ26lwfX4EsEySXtXHsKwowA==
+X-Google-Smtp-Source: AFSGD/WhXuusn9Nmd/jf2kT6fJya2Cd9tSpVPZWBzgKj4rVw2bnAw4dmUc3wLlM03+M7KjpCn+BfbQ==
+X-Received: by 2002:a19:f89:: with SMTP id 9mr12577610lfp.10.1543960109427;
+        Tue, 04 Dec 2018 13:48:29 -0800 (PST)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id f20-v6sm3393640ljk.33.2018.12.04.13.48.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 13:47:34 -0800 (PST)
-Date:   Tue, 4 Dec 2018 15:47:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 11/15] dt-bindings: media: cedrus: Add compatibles for
- the A64 and H5
-Message-ID: <20181204214733.GA14148@bogus>
-References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
- <20181115145013.3378-12-paul.kocialkowski@bootlin.com>
+        Tue, 04 Dec 2018 13:48:28 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     will.deacon@arm.com, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] scripts/atomic: change 'fold' to 'grep'
+Date:   Tue,  4 Dec 2018 22:47:13 +0100
+Message-Id: <20181204214713.5812-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115145013.3378-12-paul.kocialkowski@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 15:50:09 +0100, Paul Kocialkowski wrote:
-> This introduces two new compatibles for the cedrus driver, for the
-> A64 and H5 platforms.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/media/cedrus.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Some distibutions and build systems doesn't include 'fold' from
+coreutils default.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+.../scripts/atomic/atomic-tbl.sh: line 183: fold: command not found
+
+Rework to use 'grep' instead of 'fold' to use a dependency that is
+already used a lot in the kernel.
+
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Suggested-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ scripts/atomic/atomic-tbl.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/atomic/atomic-tbl.sh b/scripts/atomic/atomic-tbl.sh
+index 9d6be538a987..81d5c32039dd 100755
+--- a/scripts/atomic/atomic-tbl.sh
++++ b/scripts/atomic/atomic-tbl.sh
+@@ -180,7 +180,7 @@ gen_proto_variants()
+ #gen_proto(meta, ...)
+ gen_proto() {
+ 	local meta="$1"; shift
+-	for m in $(echo "${meta}" | fold -w1); do
++	for m in $(echo "${meta}" | grep -o .); do
+ 		gen_proto_variants "${m}" "$@"
+ 	done
+ }
+-- 
+2.19.2
+
