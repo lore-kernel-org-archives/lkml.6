@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD8FC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9F7C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0970214DE
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFF0A214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvPqf/Yn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0970214DE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCRPeeA1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF0A214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbeLDLBh (ORCPT
+        id S1727503AbeLDLBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:01:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47116 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:01:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727140AbeLDLBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:01:34 -0500
+        id S1727485AbeLDLBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:01:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFE65214C1;
-        Tue,  4 Dec 2018 11:01:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84F27214ED;
+        Tue,  4 Dec 2018 11:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921293;
-        bh=5tSxK3yTi8cJsGYkS0UmopvBpsEDfCufT+Hb9PaBH9U=;
+        s=default; t=1543921296;
+        bh=6lsClUHwrvrihYEgIG8+gUNwAWqOAwoHhXEzzJPW/hQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pvPqf/YnWXzcLrtjtyoV6o0dtr4FI3secY45Ud31WvOD6NSFA5+j7ScjRSsFqK8Tc
-         EEv3oefsujPWCTHv08AWYiLf2/b47V9vWybv1+yzvybNw2NahbXOq4rFEvui3S4B1A
-         FkBF38+Nq2GNUfGyVNL3JPpg7LUl6kvJiYikolaU=
+        b=lCRPeeA1rQN94paEE5glMRSmbRltqI86nGU0HAafwOBYhgwvJ5eT34YBeL8DnsWu8
+         QvCD8cBRsFJFN/aZY/7FMzHhSbIJP5GtlkLCQN2tdAp/zAI+aCXHkd/2AiLaVXiVku
+         OtGgv3A5rNQda1fV3fR8l8PLVfBPtU+VcLdBM3mg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sage Weil <sage@redhat.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 016/146] libceph: factor out encrypt_authorizer()
-Date:   Tue,  4 Dec 2018 11:48:22 +0100
-Message-Id: <20181204103727.454906774@linuxfoundation.org>
+Subject: [PATCH 4.14 017/146] libceph: add authorizer challenge
+Date:   Tue,  4 Dec 2018 11:48:23 +0100
+Message-Id: <20181204103727.492194188@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,95 +65,347 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 149cac4a50b0b4081b38b2f38de6ef71c27eaa85 upstream.
+commit 6daca13d2e72bedaaacfc08f873114c9307d5aea upstream.
 
-Will be used for encrypting both the initial and updated authorizers.
+When a client authenticates with a service, an authorizer is sent with
+a nonce to the service (ceph_x_authorize_[ab]) and the service responds
+with a mutation of that nonce (ceph_x_authorize_reply).  This lets the
+client verify the service is who it says it is but it doesn't protect
+against a replay: someone can trivially capture the exchange and reuse
+the same authorizer to authenticate themselves.
 
+Allow the service to reject an initial authorizer with a random
+challenge (ceph_x_authorize_challenge).  The client then has to respond
+with an updated authorizer proving they are able to decrypt the
+service's challenge and that the new authorizer was produced for this
+specific connection instance.
+
+The accepting side requires this challenge and response unconditionally
+if the client side advertises they have CEPHX_V2 feature bit.
+
+This addresses CVE-2018-1128.
+
+Link: http://tracker.ceph.com/issues/24836
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Reviewed-by: Sage Weil <sage@redhat.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ceph/auth_x.c | 49 ++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 36 insertions(+), 13 deletions(-)
+ fs/ceph/mds_client.c           | 11 ++++++
+ include/linux/ceph/auth.h      |  8 ++++
+ include/linux/ceph/messenger.h |  3 ++
+ include/linux/ceph/msgr.h      |  2 +-
+ net/ceph/auth.c                | 16 ++++++++
+ net/ceph/auth_x.c              | 72 +++++++++++++++++++++++++++++++---
+ net/ceph/auth_x_protocol.h     |  7 ++++
+ net/ceph/messenger.c           | 17 +++++++-
+ net/ceph/osd_client.c          | 11 ++++++
+ 9 files changed, 140 insertions(+), 7 deletions(-)
 
-diff --git a/net/ceph/auth_x.c b/net/ceph/auth_x.c
-index 9cac05239346..722791f45b2a 100644
---- a/net/ceph/auth_x.c
-+++ b/net/ceph/auth_x.c
-@@ -290,6 +290,38 @@ bad:
- 	return -EINVAL;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index bf378ddca4db..a48984dd6426 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4079,6 +4079,16 @@ static struct ceph_auth_handshake *get_authorizer(struct ceph_connection *con,
+ 	return auth;
  }
  
-+/*
-+ * Encode and encrypt the second part (ceph_x_authorize_b) of the
-+ * authorizer.  The first part (ceph_x_authorize_a) should already be
-+ * encoded.
-+ */
-+static int encrypt_authorizer(struct ceph_x_authorizer *au)
++static int add_authorizer_challenge(struct ceph_connection *con,
++				    void *challenge_buf, int challenge_buf_len)
 +{
-+	struct ceph_x_authorize_a *msg_a;
-+	struct ceph_x_authorize_b *msg_b;
-+	void *p, *end;
++	struct ceph_mds_session *s = con->private;
++	struct ceph_mds_client *mdsc = s->s_mdsc;
++	struct ceph_auth_client *ac = mdsc->fsc->client->monc.auth;
++
++	return ceph_auth_add_authorizer_challenge(ac, s->s_auth.authorizer,
++					    challenge_buf, challenge_buf_len);
++}
+ 
+ static int verify_authorizer_reply(struct ceph_connection *con)
+ {
+@@ -4142,6 +4152,7 @@ static const struct ceph_connection_operations mds_con_ops = {
+ 	.put = con_put,
+ 	.dispatch = dispatch,
+ 	.get_authorizer = get_authorizer,
++	.add_authorizer_challenge = add_authorizer_challenge,
+ 	.verify_authorizer_reply = verify_authorizer_reply,
+ 	.invalidate_authorizer = invalidate_authorizer,
+ 	.peer_reset = peer_reset,
+diff --git a/include/linux/ceph/auth.h b/include/linux/ceph/auth.h
+index e931da8424a4..6728c2ee0205 100644
+--- a/include/linux/ceph/auth.h
++++ b/include/linux/ceph/auth.h
+@@ -64,6 +64,10 @@ struct ceph_auth_client_ops {
+ 	/* ensure that an existing authorizer is up to date */
+ 	int (*update_authorizer)(struct ceph_auth_client *ac, int peer_type,
+ 				 struct ceph_auth_handshake *auth);
++	int (*add_authorizer_challenge)(struct ceph_auth_client *ac,
++					struct ceph_authorizer *a,
++					void *challenge_buf,
++					int challenge_buf_len);
+ 	int (*verify_authorizer_reply)(struct ceph_auth_client *ac,
+ 				       struct ceph_authorizer *a);
+ 	void (*invalidate_authorizer)(struct ceph_auth_client *ac,
+@@ -118,6 +122,10 @@ void ceph_auth_destroy_authorizer(struct ceph_authorizer *a);
+ extern int ceph_auth_update_authorizer(struct ceph_auth_client *ac,
+ 				       int peer_type,
+ 				       struct ceph_auth_handshake *a);
++int ceph_auth_add_authorizer_challenge(struct ceph_auth_client *ac,
++				       struct ceph_authorizer *a,
++				       void *challenge_buf,
++				       int challenge_buf_len);
+ extern int ceph_auth_verify_authorizer_reply(struct ceph_auth_client *ac,
+ 					     struct ceph_authorizer *a);
+ extern void ceph_auth_invalidate_authorizer(struct ceph_auth_client *ac,
+diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
+index 9056077c023f..18fbe910ed55 100644
+--- a/include/linux/ceph/messenger.h
++++ b/include/linux/ceph/messenger.h
+@@ -31,6 +31,9 @@ struct ceph_connection_operations {
+ 	struct ceph_auth_handshake *(*get_authorizer) (
+ 				struct ceph_connection *con,
+ 			       int *proto, int force_new);
++	int (*add_authorizer_challenge)(struct ceph_connection *con,
++					void *challenge_buf,
++					int challenge_buf_len);
+ 	int (*verify_authorizer_reply) (struct ceph_connection *con);
+ 	int (*invalidate_authorizer)(struct ceph_connection *con);
+ 
+diff --git a/include/linux/ceph/msgr.h b/include/linux/ceph/msgr.h
+index 73ae2a926548..9e50aede46c8 100644
+--- a/include/linux/ceph/msgr.h
++++ b/include/linux/ceph/msgr.h
+@@ -91,7 +91,7 @@ struct ceph_entity_inst {
+ #define CEPH_MSGR_TAG_SEQ           13 /* 64-bit int follows with seen seq number */
+ #define CEPH_MSGR_TAG_KEEPALIVE2    14 /* keepalive2 byte + ceph_timespec */
+ #define CEPH_MSGR_TAG_KEEPALIVE2_ACK 15 /* keepalive2 reply */
+-
++#define CEPH_MSGR_TAG_CHALLENGE_AUTHORIZER 16  /* cephx v2 doing server challenge */
+ 
+ /*
+  * connection negotiation
+diff --git a/net/ceph/auth.c b/net/ceph/auth.c
+index dbde2b3c3c15..fbeee068ea14 100644
+--- a/net/ceph/auth.c
++++ b/net/ceph/auth.c
+@@ -315,6 +315,22 @@ int ceph_auth_update_authorizer(struct ceph_auth_client *ac,
+ }
+ EXPORT_SYMBOL(ceph_auth_update_authorizer);
+ 
++int ceph_auth_add_authorizer_challenge(struct ceph_auth_client *ac,
++				       struct ceph_authorizer *a,
++				       void *challenge_buf,
++				       int challenge_buf_len)
++{
++	int ret = 0;
++
++	mutex_lock(&ac->mutex);
++	if (ac->ops && ac->ops->add_authorizer_challenge)
++		ret = ac->ops->add_authorizer_challenge(ac, a, challenge_buf,
++							challenge_buf_len);
++	mutex_unlock(&ac->mutex);
++	return ret;
++}
++EXPORT_SYMBOL(ceph_auth_add_authorizer_challenge);
++
+ int ceph_auth_verify_authorizer_reply(struct ceph_auth_client *ac,
+ 				      struct ceph_authorizer *a)
+ {
+diff --git a/net/ceph/auth_x.c b/net/ceph/auth_x.c
+index 722791f45b2a..ce28bb07d8fd 100644
+--- a/net/ceph/auth_x.c
++++ b/net/ceph/auth_x.c
+@@ -295,7 +295,8 @@ bad:
+  * authorizer.  The first part (ceph_x_authorize_a) should already be
+  * encoded.
+  */
+-static int encrypt_authorizer(struct ceph_x_authorizer *au)
++static int encrypt_authorizer(struct ceph_x_authorizer *au,
++			      u64 *server_challenge)
+ {
+ 	struct ceph_x_authorize_a *msg_a;
+ 	struct ceph_x_authorize_b *msg_b;
+@@ -308,16 +309,28 @@ static int encrypt_authorizer(struct ceph_x_authorizer *au)
+ 	end = au->buf->vec.iov_base + au->buf->vec.iov_len;
+ 
+ 	msg_b = p + ceph_x_encrypt_offset();
+-	msg_b->struct_v = 1;
++	msg_b->struct_v = 2;
+ 	msg_b->nonce = cpu_to_le64(au->nonce);
++	if (server_challenge) {
++		msg_b->have_challenge = 1;
++		msg_b->server_challenge_plus_one =
++		    cpu_to_le64(*server_challenge + 1);
++	} else {
++		msg_b->have_challenge = 0;
++		msg_b->server_challenge_plus_one = 0;
++	}
+ 
+ 	ret = ceph_x_encrypt(&au->session_key, p, end - p, sizeof(*msg_b));
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	p += ret;
+-	WARN_ON(p > end);
+-	au->buf->vec.iov_len = p - au->buf->vec.iov_base;
++	if (server_challenge) {
++		WARN_ON(p != end);
++	} else {
++		WARN_ON(p > end);
++		au->buf->vec.iov_len = p - au->buf->vec.iov_base;
++	}
+ 
+ 	return 0;
+ }
+@@ -382,7 +395,7 @@ static int ceph_x_build_authorizer(struct ceph_auth_client *ac,
+ 	     le64_to_cpu(msg_a->ticket_blob.secret_id));
+ 
+ 	get_random_bytes(&au->nonce, sizeof(au->nonce));
+-	ret = encrypt_authorizer(au);
++	ret = encrypt_authorizer(au, NULL);
+ 	if (ret) {
+ 		pr_err("failed to encrypt authorizer: %d", ret);
+ 		goto out_au;
+@@ -664,6 +677,54 @@ static int ceph_x_update_authorizer(
+ 	return 0;
+ }
+ 
++static int decrypt_authorize_challenge(struct ceph_x_authorizer *au,
++				       void *challenge_buf,
++				       int challenge_buf_len,
++				       u64 *server_challenge)
++{
++	struct ceph_x_authorize_challenge *ch =
++	    challenge_buf + sizeof(struct ceph_x_encrypt_header);
 +	int ret;
 +
-+	msg_a = au->buf->vec.iov_base;
-+	WARN_ON(msg_a->ticket_blob.secret_id != cpu_to_le64(au->secret_id));
-+	p = (void *)(msg_a + 1) + le32_to_cpu(msg_a->ticket_blob.blob_len);
-+	end = au->buf->vec.iov_base + au->buf->vec.iov_len;
-+
-+	msg_b = p + ceph_x_encrypt_offset();
-+	msg_b->struct_v = 1;
-+	msg_b->nonce = cpu_to_le64(au->nonce);
-+
-+	ret = ceph_x_encrypt(&au->session_key, p, end - p, sizeof(*msg_b));
++	/* no leading len */
++	ret = __ceph_x_decrypt(&au->session_key, challenge_buf,
++			       challenge_buf_len);
 +	if (ret < 0)
 +		return ret;
++	if (ret < sizeof(*ch)) {
++		pr_err("bad size %d for ceph_x_authorize_challenge\n", ret);
++		return -EINVAL;
++	}
 +
-+	p += ret;
-+	WARN_ON(p > end);
-+	au->buf->vec.iov_len = p - au->buf->vec.iov_base;
++	*server_challenge = le64_to_cpu(ch->server_challenge);
++	return 0;
++}
++
++static int ceph_x_add_authorizer_challenge(struct ceph_auth_client *ac,
++					   struct ceph_authorizer *a,
++					   void *challenge_buf,
++					   int challenge_buf_len)
++{
++	struct ceph_x_authorizer *au = (void *)a;
++	u64 server_challenge;
++	int ret;
++
++	ret = decrypt_authorize_challenge(au, challenge_buf, challenge_buf_len,
++					  &server_challenge);
++	if (ret) {
++		pr_err("failed to decrypt authorize challenge: %d", ret);
++		return ret;
++	}
++
++	ret = encrypt_authorizer(au, &server_challenge);
++	if (ret) {
++		pr_err("failed to encrypt authorizer w/ challenge: %d", ret);
++		return ret;
++	}
 +
 +	return 0;
 +}
 +
- static void ceph_x_authorizer_cleanup(struct ceph_x_authorizer *au)
+ static int ceph_x_verify_authorizer_reply(struct ceph_auth_client *ac,
+ 					  struct ceph_authorizer *a)
  {
- 	ceph_crypto_key_destroy(&au->session_key);
-@@ -306,7 +338,6 @@ static int ceph_x_build_authorizer(struct ceph_auth_client *ac,
- 	int maxlen;
- 	struct ceph_x_authorize_a *msg_a;
- 	struct ceph_x_authorize_b *msg_b;
--	void *p, *end;
- 	int ret;
- 	int ticket_blob_len =
- 		(th->ticket_blob ? th->ticket_blob->vec.iov_len : 0);
-@@ -350,21 +381,13 @@ static int ceph_x_build_authorizer(struct ceph_auth_client *ac,
- 	dout(" th %p secret_id %lld %lld\n", th, th->secret_id,
- 	     le64_to_cpu(msg_a->ticket_blob.secret_id));
+@@ -816,6 +877,7 @@ static const struct ceph_auth_client_ops ceph_x_ops = {
+ 	.handle_reply = ceph_x_handle_reply,
+ 	.create_authorizer = ceph_x_create_authorizer,
+ 	.update_authorizer = ceph_x_update_authorizer,
++	.add_authorizer_challenge = ceph_x_add_authorizer_challenge,
+ 	.verify_authorizer_reply = ceph_x_verify_authorizer_reply,
+ 	.invalidate_authorizer = ceph_x_invalidate_authorizer,
+ 	.reset =  ceph_x_reset,
+diff --git a/net/ceph/auth_x_protocol.h b/net/ceph/auth_x_protocol.h
+index 32c13d763b9a..24b0b74564d0 100644
+--- a/net/ceph/auth_x_protocol.h
++++ b/net/ceph/auth_x_protocol.h
+@@ -70,6 +70,13 @@ struct ceph_x_authorize_a {
+ struct ceph_x_authorize_b {
+ 	__u8 struct_v;
+ 	__le64 nonce;
++	__u8 have_challenge;
++	__le64 server_challenge_plus_one;
++} __attribute__ ((packed));
++
++struct ceph_x_authorize_challenge {
++	__u8 struct_v;
++	__le64 server_challenge;
+ } __attribute__ ((packed));
  
--	p = msg_a + 1;
--	p += ticket_blob_len;
--	end = au->buf->vec.iov_base + au->buf->vec.iov_len;
--
--	msg_b = p + ceph_x_encrypt_offset();
--	msg_b->struct_v = 1;
- 	get_random_bytes(&au->nonce, sizeof(au->nonce));
--	msg_b->nonce = cpu_to_le64(au->nonce);
--	ret = ceph_x_encrypt(&au->session_key, p, end - p, sizeof(*msg_b));
--	if (ret < 0)
-+	ret = encrypt_authorizer(au);
-+	if (ret) {
-+		pr_err("failed to encrypt authorizer: %d", ret);
- 		goto out_au;
-+	}
+ struct ceph_x_authorize_reply {
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index 0b121327d32f..ad33baa2008d 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -2052,9 +2052,24 @@ static int process_connect(struct ceph_connection *con)
+ 	if (con->auth) {
+ 		/*
+ 		 * Any connection that defines ->get_authorizer()
+-		 * should also define ->verify_authorizer_reply().
++		 * should also define ->add_authorizer_challenge() and
++		 * ->verify_authorizer_reply().
++		 *
+ 		 * See get_connect_authorizer().
+ 		 */
++		if (con->in_reply.tag == CEPH_MSGR_TAG_CHALLENGE_AUTHORIZER) {
++			ret = con->ops->add_authorizer_challenge(
++				    con, con->auth->authorizer_reply_buf,
++				    le32_to_cpu(con->in_reply.authorizer_len));
++			if (ret < 0)
++				return ret;
++
++			con_out_kvec_reset(con);
++			__prepare_write_connect(con);
++			prepare_read_connect(con);
++			return 0;
++		}
++
+ 		ret = con->ops->verify_authorizer_reply(con);
+ 		if (ret < 0) {
+ 			con->error_msg = "bad authorize reply";
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 2814dba5902d..53ea2d48896c 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -5292,6 +5292,16 @@ static struct ceph_auth_handshake *get_authorizer(struct ceph_connection *con,
+ 	return auth;
+ }
  
--	p += ret;
--	WARN_ON(p > end);
--	au->buf->vec.iov_len = p - au->buf->vec.iov_base;
- 	dout(" built authorizer nonce %llx len %d\n", au->nonce,
- 	     (int)au->buf->vec.iov_len);
- 	return 0;
++static int add_authorizer_challenge(struct ceph_connection *con,
++				    void *challenge_buf, int challenge_buf_len)
++{
++	struct ceph_osd *o = con->private;
++	struct ceph_osd_client *osdc = o->o_osdc;
++	struct ceph_auth_client *ac = osdc->client->monc.auth;
++
++	return ceph_auth_add_authorizer_challenge(ac, o->o_auth.authorizer,
++					    challenge_buf, challenge_buf_len);
++}
+ 
+ static int verify_authorizer_reply(struct ceph_connection *con)
+ {
+@@ -5341,6 +5351,7 @@ static const struct ceph_connection_operations osd_con_ops = {
+ 	.put = put_osd_con,
+ 	.dispatch = dispatch,
+ 	.get_authorizer = get_authorizer,
++	.add_authorizer_challenge = add_authorizer_challenge,
+ 	.verify_authorizer_reply = verify_authorizer_reply,
+ 	.invalidate_authorizer = invalidate_authorizer,
+ 	.alloc_msg = alloc_msg,
 -- 
 2.17.1
 
