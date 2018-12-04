@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 935B5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB21C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB3D20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4189B2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:21:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mns7qrmm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CB3D20851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnMefrXH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4189B2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbeLDLC7 (ORCPT
+        id S1727705AbeLDLCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:02:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbeLDLCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:02:55 -0500
+        id S1727332AbeLDLCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D19142146D;
-        Tue,  4 Dec 2018 11:02:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5659214DE;
+        Tue,  4 Dec 2018 11:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921374;
-        bh=gZHJgQJw/Fz7T/8iXjhjZdm4DCrpmeZXSJR0gxlLBME=;
+        s=default; t=1543921369;
+        bh=CwV9Ebrwd9WaJWd10ROva2jQyBq24CZzoWAwIWtYTR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mns7qrmmZgXGRKdSE1vaCLmCRxoGmQeWGv8nPjt9fKLjbcvN3eAtKo80FDobN/Iji
-         U1ukYG8WxNSQmX9Zey3N0QsAd3MKqjoovOmR3prGvc6bHcW8l9vbhEMLHUVkSGhWUA
-         LaMvXp7ZxUsUSO9XqJWSJpqACkSh7g+6D0ZKbsLA=
+        b=bnMefrXH09aTQz4xAYKub6KdQbIyDSUB9LRWK2NchanD5D3lz2EF7Nsufi+qidcaT
+         KR2/HfWvXCQ3xy/ic9gz71arAQUZ65YnFEjzN2hEyAuVE1s1nZhFIsOK/6KVKNfGfi
+         GiM8IK1h+JABHO4jx+/ob/Kv3EOg5rdSQTriTXjg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg KH <greg@kroah.com>,
-        Silvio Cesare <silvio.cesare@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
         Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 046/146] f2fs: enhance sanity_check_raw_super() to avoid potential overflow
-Date:   Tue,  4 Dec 2018 11:48:52 +0100
-Message-Id: <20181204103728.711411606@linuxfoundation.org>
+Subject: [PATCH 4.14 044/146] f2fs: check blkaddr more accuratly before issue a bio
+Date:   Tue,  4 Dec 2018 11:48:50 +0100
+Message-Id: <20181204103728.635385561@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -67,180 +65,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 0cfe75c5b011994651a4ca6d74f20aa997bfc69a upstream.
+commit 0833721ec3658a4e9d5e58b6fa82cf9edc431e59 upstream.
 
-In order to avoid the below overflow issue, we should have checked the
-boundaries in superblock before reaching out to allocation. As Linus suggested,
-the right place should be sanity_check_raw_super().
+This patch check blkaddr more accuratly before issue a
+write or read bio.
 
-Dr Silvio Cesare of InfoSect reported:
-
-There are integer overflows with using the cp_payload superblock field in the
-f2fs filesystem potentially leading to memory corruption.
-
-include/linux/f2fs_fs.h
-
-struct f2fs_super_block {
-...
-        __le32 cp_payload;
-
-fs/f2fs/f2fs.h
-
-typedef u32 block_t;    /*
-                         * should not change u32, since it is the on-disk block
-                         * address format, __le32.
-                         */
-...
-
-static inline block_t __cp_payload(struct f2fs_sb_info *sbi)
-{
-        return le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
-}
-
-fs/f2fs/checkpoint.c
-
-        block_t start_blk, orphan_blocks, i, j;
-...
-        start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
-        orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
-
-+++ integer overflows
-
-...
-        unsigned int cp_blks = 1 + __cp_payload(sbi);
-...
-        sbi->ckpt = kzalloc(cp_blks * blk_size, GFP_KERNEL);
-
-+++ integer overflow leading to incorrect heap allocation.
-
-        int cp_payload_blks = __cp_payload(sbi);
-...
-        ckpt->cp_pack_start_sum = cpu_to_le32(1 + cp_payload_blks +
-                        orphan_blocks);
-
-+++ sign bug and integer overflow
-
-...
-        for (i = 1; i < 1 + cp_payload_blks; i++)
-
-+++ integer overflow
-
-...
-
-      sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
-                        NR_CURSEG_TYPE - __cp_payload(sbi)) *
-                                F2FS_ORPHANS_PER_BLOCK;
-
-+++ integer overflow
-
-Reported-by: Greg KH <greg@kroah.com>
-Reported-by: Silvio Cesare <silvio.cesare@gmail.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[bwh: Backported to 4.14: No hot file extension support]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 71 ++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 64 insertions(+), 7 deletions(-)
+ fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/data.c       |  5 +++--
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/segment.h    | 25 +++++++++++++++++++------
+ 4 files changed, 25 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7cda685296b2..c3e1090e7c0a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1807,6 +1807,8 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
- static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 				struct buffer_head *bh)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 41fce930f44c..1bd4cd8c79c6 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -69,6 +69,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
+ 		.old_blkaddr = index,
+ 		.new_blkaddr = index,
+ 		.encrypted_page = NULL,
++		.is_meta = is_meta,
+ 	};
+ 
+ 	if (unlikely(!is_meta))
+@@ -163,6 +164,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
+ 		.encrypted_page = NULL,
+ 		.in_list = false,
++		.is_meta = (type != META_POR),
+ 	};
+ 	struct blk_plug plug;
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6fbb6d75318a..5913de3f661d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -369,6 +369,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	struct page *page = fio->encrypted_page ?
+ 			fio->encrypted_page : fio->page;
+ 
++	verify_block_addr(fio, fio->new_blkaddr);
+ 	trace_f2fs_submit_page_bio(page, fio);
+ 	f2fs_trace_ios(fio, 0);
+ 
+@@ -413,8 +414,8 @@ next:
+ 	}
+ 
+ 	if (fio->old_blkaddr != NEW_ADDR)
+-		verify_block_addr(sbi, fio->old_blkaddr);
+-	verify_block_addr(sbi, fio->new_blkaddr);
++		verify_block_addr(fio, fio->old_blkaddr);
++	verify_block_addr(fio, fio->new_blkaddr);
+ 
+ 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 54f8520ad7a2..aa7b033af1b0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -910,6 +910,7 @@ struct f2fs_io_info {
+ 	bool submitted;		/* indicate IO submission */
+ 	int need_lock;		/* indicate we need to lock cp_rwsem */
+ 	bool in_list;		/* indicate fio is in io_list */
++	bool is_meta;		/* indicate borrow meta inode mapping or not */
+ 	enum iostat_type io_type;	/* io type */
+ };
+ 
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 4dfb5080098f..4b635e8c91b0 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -53,13 +53,19 @@
+ 	 ((secno) == CURSEG_I(sbi, CURSEG_COLD_NODE)->segno /		\
+ 	  (sbi)->segs_per_sec))	\
+ 
+-#define MAIN_BLKADDR(sbi)	(SM_I(sbi)->main_blkaddr)
+-#define SEG0_BLKADDR(sbi)	(SM_I(sbi)->seg0_blkaddr)
++#define MAIN_BLKADDR(sbi)						\
++	(SM_I(sbi) ? SM_I(sbi)->main_blkaddr : 				\
++		le32_to_cpu(F2FS_RAW_SUPER(sbi)->main_blkaddr))
++#define SEG0_BLKADDR(sbi)						\
++	(SM_I(sbi) ? SM_I(sbi)->seg0_blkaddr : 				\
++		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment0_blkaddr))
+ 
+ #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+ #define MAIN_SECS(sbi)	((sbi)->total_sections)
+ 
+-#define TOTAL_SEGS(sbi)	(SM_I(sbi)->segment_count)
++#define TOTAL_SEGS(sbi)							\
++	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
++		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment_count))
+ #define TOTAL_BLKS(sbi)	(TOTAL_SEGS(sbi) << (sbi)->log_blocks_per_seg)
+ 
+ #define MAX_BLKADDR(sbi)	(SEG0_BLKADDR(sbi) + TOTAL_BLKS(sbi))
+@@ -619,10 +625,17 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
+ }
+ 
+-static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
++static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
  {
-+	block_t segment_count, segs_per_sec, secs_per_zone;
-+	block_t total_sections, blocks_per_seg;
- 	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
- 					(bh->b_data + F2FS_SUPER_OFFSET);
- 	struct super_block *sb = sbi->sb;
-@@ -1863,6 +1865,68 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return 1;
- 	}
+-	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
+-			|| blk_addr >= MAX_BLKADDR(sbi));
++	struct f2fs_sb_info *sbi = fio->sbi;
++
++	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
++				(!is_read_io(fio->op) || fio->is_meta))
++		BUG_ON(blk_addr < SEG0_BLKADDR(sbi) ||
++				blk_addr >= MAIN_BLKADDR(sbi));
++	else
++		BUG_ON(blk_addr < MAIN_BLKADDR(sbi) ||
++				blk_addr >= MAX_BLKADDR(sbi));
+ }
  
-+	segment_count = le32_to_cpu(raw_super->segment_count);
-+	segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
-+	secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
-+	total_sections = le32_to_cpu(raw_super->section_count);
-+
-+	/* blocks_per_seg should be 512, given the above check */
-+	blocks_per_seg = 1 << le32_to_cpu(raw_super->log_blocks_per_seg);
-+
-+	if (segment_count > F2FS_MAX_SEGMENT ||
-+				segment_count < F2FS_MIN_SEGMENTS) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Invalid segment count (%u)",
-+			segment_count);
-+		return 1;
-+	}
-+
-+	if (total_sections > segment_count ||
-+			total_sections < F2FS_MIN_SEGMENTS ||
-+			segs_per_sec > segment_count || !segs_per_sec) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Invalid segment/section count (%u, %u x %u)",
-+			segment_count, total_sections, segs_per_sec);
-+		return 1;
-+	}
-+
-+	if ((segment_count / segs_per_sec) < total_sections) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Small segment_count (%u < %u * %u)",
-+			segment_count, segs_per_sec, total_sections);
-+		return 1;
-+	}
-+
-+	if (segment_count > (le32_to_cpu(raw_super->block_count) >> 9)) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong segment_count / block_count (%u > %u)",
-+			segment_count, le32_to_cpu(raw_super->block_count));
-+		return 1;
-+	}
-+
-+	if (secs_per_zone > total_sections) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong secs_per_zone (%u > %u)",
-+			secs_per_zone, total_sections);
-+		return 1;
-+	}
-+	if (le32_to_cpu(raw_super->extension_count) > F2FS_MAX_EXTENSION) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Corrupted extension count (%u > %u)",
-+			le32_to_cpu(raw_super->extension_count),
-+			F2FS_MAX_EXTENSION);
-+		return 1;
-+	}
-+
-+	if (le32_to_cpu(raw_super->cp_payload) >
-+				(blocks_per_seg - F2FS_CP_PACKS)) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Insane cp_payload (%u > %u)",
-+			le32_to_cpu(raw_super->cp_payload),
-+			blocks_per_seg - F2FS_CP_PACKS);
-+		return 1;
-+	}
-+
- 	/* check reserved ino info */
- 	if (le32_to_cpu(raw_super->node_ino) != 1 ||
- 		le32_to_cpu(raw_super->meta_ino) != 2 ||
-@@ -1875,13 +1939,6 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return 1;
- 	}
- 
--	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
--		f2fs_msg(sb, KERN_INFO,
--			"Invalid segment count (%u)",
--			le32_to_cpu(raw_super->segment_count));
--		return 1;
--	}
--
- 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
- 	if (sanity_check_area_boundary(sbi, bh))
- 		return 1;
+ /*
 -- 
 2.17.1
 
