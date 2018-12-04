@@ -2,94 +2,99 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A4DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF44C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714F22082F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:16:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="l7/NU7gJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714F22082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id E2DD22082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:17:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DD22082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbeLDSQp (ORCPT
+        id S1726079AbeLDSRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:16:45 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42146 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbeLDSQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:16:45 -0500
-Received: from zn.tnic (p200300EC2BC7BF005D01DF6409406D0C.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:bf00:5d01:df64:940:6d0c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 91A401EC0503;
-        Tue,  4 Dec 2018 19:16:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1543947402;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=597Ut/nMMpYvAjAkkCleisg9v4nyonsqUnciIJavCAU=;
-        b=l7/NU7gJK9vsmwi9rP39X1S6rRpbb9k86b+S6CwO/0ZwASyMnPeF584KPelA5fVINL4l5R
-        92shdKZlOvqvlVglZ6AJFlgHl4RD8UhvUHfJyjFIc0UQ4wyzJZmJ1ocbtSxj9TGUQJf3XL
-        JKI5ICeJdhH1V+v2e9Z8hGUW828dmBs=
-Date:   Tue, 4 Dec 2018 19:16:41 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Tue, 4 Dec 2018 13:17:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33090 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725855AbeLDSRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:17:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0D600B160;
+        Tue,  4 Dec 2018 18:17:18 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 19:17:14 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, pavel@ucw.cz,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        rafael.j.wysocki@intel.com, chanho.min@lge.com,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v6 04/26] x86/fpu/xstate: Introduce XSAVES system
- states
-Message-ID: <20181204181641.GA16705@zn.tnic>
-References: <20181119214809.6086-1-yu-cheng.yu@intel.com>
- <20181119214809.6086-5-yu-cheng.yu@intel.com>
- <20181204160144.GG11803@zn.tnic>
- <752c38422a6536d8df99b619214f935e4bc882ad.camel@intel.com>
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux
+ 4.20-rc4)
+Message-ID: <20181204181714.GR1286@dhcp22.suse.cz>
+References: <20181203123857.GS31738@dhcp22.suse.cz>
+ <20181203131006.GA10054@amd>
+ <20181203135351.GU31738@dhcp22.suse.cz>
+ <20181203141459.GA14789@amd>
+ <20181203141737.GY31738@dhcp22.suse.cz>
+ <20181204090228.GC73770@gmail.com>
+ <20181204091020.GD1286@dhcp22.suse.cz>
+ <20181204093310.GE73770@gmail.com>
+ <20181204095802.GF1286@dhcp22.suse.cz>
+ <CAHk-=wgaEw566btStrWE+NOgPJLn1whS-Yw1-=K2Qr6MDvSZ+A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <752c38422a6536d8df99b619214f935e4bc882ad.camel@intel.com>
+In-Reply-To: <CAHk-=wgaEw566btStrWE+NOgPJLn1whS-Yw1-=K2Qr6MDvSZ+A@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 09:08:11AM -0800, Yu-cheng Yu wrote:
-> Then we will do this very often.  Why don't we create all three in the
-> beginning: xfeatures_mask_all, xfeatures_mask_user, and xfeatures_mask_system?
+On Tue 04-12-18 09:31:11, Linus Torvalds wrote:
+> On Tue, Dec 4, 2018 at 1:58 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > AFAIU both suspend and hibernation require the system to enter quiescent
+> > state with no task potentially interfering with suspended devices. And
+> > in this particular case those de-thread-ed threads will certainly not
+> > interfere so silencing the lockdep sounds like a reasonable workaround.
+> 
+> I still think it would be better to simply not freeze killed user processes.
+> 
+> We already  have things like
+> 
+>         if (test_tsk_thread_flag(p, TIF_MEMDIE))
+>                 return false;
+> 
+> exactly because we do not want to freeze processes that are about to
+> die due to being killed. Very similar situation: we don't want to
+> freeze those processes, because doing so would halt them from freeing
+> the resources that may be needed for suspend or hibernate.
 
-Because the _all thing is the OR-ed product of the two and then you
-don't have to update it when the _user and the _system ones change
-because you'll be creating it on the fly each time.
+Yeah, we do not freeze oom victims but that is really far from trivial
+to achieve. In order to do so we post-pone quiescent state until we know
+all the TIF_MEMDIE threads are gone. See oom_killer_disable. In short it
+is a painfull code.
 
+> How about something like we set PF_NOFREEZE when we set PF_EXITING? At
+> that point we've pretty much turned into a kernel thread, no?
+
+Hmm, that doesn't sound like a bad idea but I am not sure it will
+help because those threads we are waiting for might be block way before
+they reached PF_EXITING. I would expect that threads that actually reach
+that state usually die shortly. Unless I am missing something we are
+talking about basically two cases here. Those threads are frozen while
+de_thread waits for them because zap_other_threads cannot wake them from
+the fridge or they are blocked in uninterruptible sleep somewhere in the
+kernel. The later is the fundamental problem. The former could be hacked
+around (check PF_FROZEN and use uninterruptible wake), I guess but I
+haven't thought that through yet.
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Michal Hocko
+SUSE Labs
