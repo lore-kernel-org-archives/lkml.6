@@ -2,104 +2,89 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80093C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DE6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE1C214DE
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:47:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bFmQb4Jw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE1C214DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id CF12F20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:54:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF12F20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbeLDArn (ORCPT
+        id S1726018AbeLDAyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:47:43 -0500
-Received: from ozlabs.org ([203.11.71.1]:49989 "EHLO ozlabs.org"
+        Mon, 3 Dec 2018 19:54:46 -0500
+Received: from mga11.intel.com ([192.55.52.93]:6889 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeLDArm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:47:42 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43839l5wBjz9s9h;
-        Tue,  4 Dec 2018 11:47:39 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543884459;
-        bh=UQ4WRufUzZ+0V6Q4DunWt0RB3iWmH5wTcRL/bEJE6BA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bFmQb4JwsM6Vcw6NuGzQThOARif9SR86WWYAZhRPifZHapdmXU0GG7H37x6zENDAy
-         Ee4riHDg/zeE21K4cjAOJyckmjuJxligPn+zrc3ztHRhWwWkTdGIBludAQIpzRZdol
-         WtaiG8Q5Ay5MQp9Mz46vCSxRwjqXRsxNldrMUpgSX4uWEPfSKaFM46ESRkRH6ZaoeG
-         oBpLzFWruLIGsHSsrhysyMHZplU6649fIeUVdiWOYIPok1REg1+n/oKg6TYekYPkbM
-         Qm+7jhvavlUoStogTv1wUG2StbJI6VNY13jI6ofFJu7FRzL5p9ZR7jeD8PY4QuLKb7
-         EIRO2RkCe64Hw==
-Date:   Tue, 4 Dec 2018 11:47:31 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guy Levi <guyle@mellanox.com>,
-        Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: linux-next: build failure after merge of the rdma tree
-Message-ID: <20181204114731.48b18bfc@canb.auug.org.au>
+        id S1725976AbeLDAyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 19:54:46 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 16:54:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,312,1539673200"; 
+   d="scan'208";a="107028735"
+Received: from awsossav-mobl.amr.corp.intel.com (HELO localhost) ([10.254.201.151])
+  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2018 16:54:44 -0800
+Date:   Mon, 3 Dec 2018 16:54:43 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, luto@kernel.org,
+        peterz@infradead.org
+Subject: Re: [PATCH] x86/mpx: pass 'mm' to kernel_managing_mpx_tables() in
+ mpx_notify_unmap()
+Message-ID: <20181204005443.GA5164@linux.intel.com>
+References: <20181203204357.26209-1-jarkko.sakkinen@linux.intel.com>
+ <933b60c9-ad26-a377-f4e2-a7dca4fdae30@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xT9q_Q6rWNleqRZwtBWTjr5"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <933b60c9-ad26-a377-f4e2-a7dca4fdae30@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xT9q_Q6rWNleqRZwtBWTjr5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 03, 2018 at 12:49:44PM -0800, Dave Hansen wrote:
+> On 12/3/18 12:43 PM, Jarkko Sakkinen wrote:
+> > If mm is not the same as current->mm, mpx_notify_unmap() will yield
+> > invalid results and at worst will lead to a crash if it gets called by
+> > a kthread.
+> 
+> It's also worth noting that this does not fix any actual,
+> end-user-visible bug today.  It really only prepares the code for the
+> case where it is called for a different mm than current->mm.
+> 
+> > --- a/arch/x86/mm/mpx.c
+> > +++ b/arch/x86/mm/mpx.c
+> > @@ -882,7 +882,7 @@ static int mpx_unmap_tables(struct mm_struct *mm,
+> >   * necessary, and the 'vma' is the first vma in this range (start -> end).
+> >   */
+> >  void mpx_notify_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
+> > -		unsigned long start, unsigned long end)
+> > +		      unsigned long start, unsigned long end)
+> >  {
+> >  	int ret;
+> 
+> Please leave superfluous whitespace changes out of these things.
+> 
+> But, otherwise, this looks fine.
+> 
+> > Fixes: 1de4fa14ee25 ("x86, mpx: Cleanup unused bound tables")
+> 
+> FWIW, I'm not sure you should be submitting this separately from your
+> SGX series.  The deferred unmapping is really the thing that requires
+> the code to be changed.
 
-Hi all,
+Thank you for the feedback. I'll include this to the next revision of the
+SGX patch set and explain why the change is needed.
 
-After merging the rdma tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-ERROR: "mlx5_get_send_wqe" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefine=
-d!
-
-Caused by commit
-
-  34f4c9554d8b ("IB/mlx5: Use fragmented QP's buffer for in-kernel users")
-
-mlx5_get_send_wqe() is still used in drivers/infiniband/hw/mlx5/cq.c
-and declared in drivers/infiniband/hw/mlx5/mlx5_ib.h ...
-
-I have used the version of the rdma tree from next-20181203 for today.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xT9q_Q6rWNleqRZwtBWTjr5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwFzqMACgkQAVBC80lX
-0Gx1hQf9HxgOjGsua2OpeJXMq7Ksh2/X+0k8wmmpTwilR8xwTB3cPEJrD38oeIwW
-V71K2jiHKOj5manN+S7SJbqJuOyP0pXMg3MzNlrBa69TElsV2cmvJCJrHBpEsZN7
-P3HJgiC5ql+vhQ5w9TpzkjwdMo1DG4Qgo7ctMF3wnioCFz3CpGdTo83qDkG2JtUZ
-lHReeLBlsMPXDh5mrrHMwaBOylMJbc1zvORK5yTQz+9jxZi701MQNOXSZaGbTxdD
-c/1fVGIgis41TO8SC/f1WyPG3VGilGK2GIjS/I0OGDeOSX/xBr4SPsHYCftWkVSN
-aPCfUPnt5TJcK6RwlSbIm2HbBIpRAg==
-=TjaF
------END PGP SIGNATURE-----
-
---Sig_/xT9q_Q6rWNleqRZwtBWTjr5--
+/Jarkko
