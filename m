@@ -2,83 +2,111 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5826C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6220C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749592082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1D22146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:35:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="eZeEYYwC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749592082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PAsyYYkA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F1D22146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbeLDEdY (ORCPT
+        id S1726042AbeLDEfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 23:33:24 -0500
-Received: from imap.thunk.org ([74.207.234.97]:38872 "EHLO imap.thunk.org"
+        Mon, 3 Dec 2018 23:35:17 -0500
+Received: from ozlabs.org ([203.11.71.1]:51365 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725977AbeLDEdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 23:33:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=U0hf+QFwQWhecs7cFf6uPgdOiQD/L6O4HpP1VpkadQA=; b=eZeEYYwCTOD1j6Z/V9mbwQne+c
-        wFkhAvSaBwTRumURj7KvlNMfCdr22W7eh9ez7+Tja1PD4+ONRxOlj1e6geZe96vwDssb2ro7l0SRp
-        Bjk39zr7akb8/Is4j0wsxRifaZ4A085tOSk/OyIjVPhp/tTNHXd1zKlRk9xwWKQSo20A=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gU2Oc-0007tq-91; Tue, 04 Dec 2018 04:33:18 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A009C7A47B7; Mon,  3 Dec 2018 23:33:16 -0500 (EST)
-Date:   Mon, 3 Dec 2018 23:33:16 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Pan Bian <bianpan2016@163.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: fix possible use after free in ext4_quota_enable
-Message-ID: <20181204043316.GC4981@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Pan Bian <bianpan2016@163.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1543202466-68277-1-git-send-email-bianpan2016@163.com>
- <20181127091453.GA16301@quack2.suse.cz>
+        id S1725962AbeLDEfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 23:35:17 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4388DL0wQwz9s6w;
+        Tue,  4 Dec 2018 15:35:13 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543898114;
+        bh=+xIeqUIOrAz2nzFT2hKzgFtOg7FqMR4l8AQ+SrGnCmk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PAsyYYkAHaplLWGiKn+PG5yEe5b2IFSygvvRjSrUBqkjMKi20Z8rMTJT1LUCyrB8a
+         MOtyf+gSFeIeFPOGYS0/utv3Zkb9+dIOKQOvPXF+YcX8AtB1IAm8bog6/dXtHxnPjg
+         nigwxE7kb6biBU5mvHfH6fGOPchcw/KEkEApZ6bBhWQJ8bILpbs2X/gw5Nf7EI1Vqh
+         u9kqcA+GZCku/n+Nav6DZwqreaQkjRE2u9HxmjwKw8GDe80C+5HJlz635AwyfrOMsZ
+         UaejXYBdtnGHnkqCOgo6BYTgwxXuQDR8QYT/MVNQG1jYvxlmTuERbFUh0RLBZvTiWH
+         CD2NDo43CkyaQ==
+Date:   Tue, 4 Dec 2018 15:35:13 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: linux-next: manual merge of the char-misc tree with the
+ char-misc.current tree
+Message-ID: <20181204153513.1e799336@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127091453.GA16301@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/F2a2ZLdv1BQwUDiogvsvK2o"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:14:53AM +0100, Jan Kara wrote:
-> On Mon 26-11-18 11:21:06, Pan Bian wrote:
-> > The function frees qf_inode via iput but then pass qf_inode to
-> > lockdep_set_quota_inode on the failure path. This may result in a
-> > use-after-free bug. The patch frees df_inode only when it is never used.
-> > 
-> > Signed-off-by: Pan Bian <bianpan2016@163.com>
-> > Fixes: daf647d2dd5("ext4: add lockdep annotations for i_data_sem")
-> 
-> Thanks for the fix! The patch looks good. You can add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+--Sig_/F2a2ZLdv1BQwUDiogvsvK2o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied.
+Hi all,
 
-						- Ted
+Today's linux-next merge of the char-misc tree got a conflict in:
+
+  drivers/hv/channel_mgmt.c
+
+between commit:
+
+  37c2578c0c40 ("Drivers: hv: vmbus: Offload the handling of channels to tw=
+o workqueues")
+
+from the char-misc.current tree and commit:
+
+  4d3c5c69191f ("Drivers: hv: vmbus: Remove the useless API vmbus_get_outgo=
+ing_channel()")
+
+from the char-misc tree.
+
+I fixed it up (I used the former version where they conflicted) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/F2a2ZLdv1BQwUDiogvsvK2o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwGBAEACgkQAVBC80lX
+0GyNTwf+Lms5sKywsYFNlg0hXRdSPdBjsz4pfJzqbzjUdzg2DpqkwurYBKTgfYvb
+LmRTBu3Oeb6dL8K3kuM+wGPvbakkug2JFhE0vf3e7uMlPqTEdPBIZ/+37n9A0ikk
+P8L9sgneUo05K0VWq+/Xd22AnP0Nk+Ly6m5vZFnmlS3hpurJ+gnw+9LulGNRtM2C
+kg4ItWUw1dcPt4MFJwrD1fufIZ+aQ/5blDq+nruiChzFLwy6mhUBH8aeZYV/NdGf
+0Cf19ddVX64gwkVb3bv4XtpT1jCf8c1oJ92U2BWPKeHM8k1OIgEfbiXcpe2eBGDp
+aJjd7Iqr9OM6hJD+p+ht/eVgMswp+w==
+=KXbh
+-----END PGP SIGNATURE-----
+
+--Sig_/F2a2ZLdv1BQwUDiogvsvK2o--
