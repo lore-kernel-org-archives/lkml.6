@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85572C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E23C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C7AC214F1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EA31214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:09:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5RFquyQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C7AC214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzuXqTEy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA31214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbeLDLJb (ORCPT
+        id S1728337AbeLDLJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:09:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59322 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728329AbeLDLJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:09:27 -0500
+        id S1727746AbeLDLJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:09:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4ABE2087F;
-        Tue,  4 Dec 2018 11:09:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F8562087F;
+        Tue,  4 Dec 2018 11:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921767;
-        bh=YgjEj8LemSMdF8ckA8TeZTm8mGN3hnysnoblhA5H4oI=;
+        s=default; t=1543921769;
+        bh=uyruuTKF1wYvieG0+Si3vwu4nhpDlw4/gxhn2hTFnyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X5RFquyQeY95bwMrZtn6CUv13n03AhchMEfeg4ZPVk3cXqWoSZ1DBghlh2XEpxjSw
-         LdeNg/pZlXR3Wwb0GImvosAcDJYXh/pxp5lMi8q34BVldC5rXkaC6smhCkTUkbC9bU
-         OQcFePXfE9NCQjLRuiPMyBu+W9cMxnx9zLXyNbbk=
+        b=QzuXqTEyZyxHnJj0MAASWduEyuQCj2SmxzEZBrgXBiiJPeW/hdr957BGN1YFlD1RR
+         8nZoGLB0/Y8UdU1rSPnyKHoDXIO57SSXPhCJsa0RS5LfaqH50HFEYl0QicozQuealX
+         psDnilw9MUDkfuVindap6WY3nK0mE4YZwyDpTu6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH 4.9 41/50] Drivers: hv: vmbus: check the creation_status in vmbus_establish_gpadl()
-Date:   Tue,  4 Dec 2018 11:50:36 +0100
-Message-Id: <20181204103716.554356260@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH 4.9 42/50] misc: mic/scif: fix copy-paste error in scif_create_remote_lookup
+Date:   Tue,  4 Dec 2018 11:50:37 +0100
+Message-Id: <20181204103716.612418564@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -65,48 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit eceb05965489784f24bbf4d61ba60e475a983016 upstream.
+commit 6484a677294aa5d08c0210f2f387ebb9be646115 upstream.
 
-This is a longstanding issue: if the vmbus upper-layer drivers try to
-consume too many GPADLs, the host may return with an error
-0xC0000044 (STATUS_QUOTA_EXCEEDED), but currently we forget to check
-the creation_status, and hence we can pass an invalid GPADL handle
-into the OPEN_CHANNEL message, and get an error code 0xc0000225 in
-open_info->response.open_result.status, and finally we hang in
-vmbus_open() -> "goto error_free_info" -> vmbus_teardown_gpadl().
+gcc '-Wunused-but-set-variable' warning:
 
-With this patch, we can exit gracefully on STATUS_QUOTA_EXCEEDED.
+drivers/misc/mic/scif/scif_rma.c: In function 'scif_create_remote_lookup':
+drivers/misc/mic/scif/scif_rma.c:373:25: warning:
+ variable 'vmalloc_num_pages' set but not used [-Wunused-but-set-variable]
 
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+'vmalloc_num_pages' should be used to determine if the address is
+within the vmalloc range.
+
+Fixes: ba612aa8b487 ("misc: mic: SCIF memory registration and unregistration")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/channel.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/misc/mic/scif/scif_rma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -448,6 +448,14 @@ int vmbus_establish_gpadl(struct vmbus_c
- 	}
- 	wait_for_completion(&msginfo->waitevent);
- 
-+	if (msginfo->response.gpadl_created.creation_status != 0) {
-+		pr_err("Failed to establish GPADL: err = 0x%x\n",
-+		       msginfo->response.gpadl_created.creation_status);
-+
-+		ret = -EDQUOT;
-+		goto cleanup;
-+	}
-+
- 	if (channel->rescind) {
- 		ret = -ENODEV;
- 		goto cleanup;
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -414,7 +414,7 @@ static int scif_create_remote_lookup(str
+ 		if (err)
+ 			goto error_window;
+ 		err = scif_map_page(&window->num_pages_lookup.lookup[j],
+-				    vmalloc_dma_phys ?
++				    vmalloc_num_pages ?
+ 				    vmalloc_to_page(&window->num_pages[i]) :
+ 				    virt_to_page(&window->num_pages[i]),
+ 				    remote_dev);
 
 
