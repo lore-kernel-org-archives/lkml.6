@@ -4,51 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA374C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E59BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9E72154B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53EDB2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2HMkJTNU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9E72154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABj2rXyD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53EDB2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbeLDLGQ (ORCPT
+        id S1728309AbeLDLGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:06:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54576 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:06:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727909AbeLDLGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:06:15 -0500
+        id S1727735AbeLDLGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0F8B214DB;
-        Tue,  4 Dec 2018 11:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 141632154B;
+        Tue,  4 Dec 2018 11:06:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921574;
-        bh=LdHx4pJdyjBCKhLAe2UxM8XgIY32Qu2O530Bf9TEm+c=;
+        s=default; t=1543921579;
+        bh=OKxQ5oel9e75hBT5NvymS2EHCA6KEi7lo4l4IgEJSXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2HMkJTNUZaQfu8vkbHPESzx4YY2pPQkmtCBKEpEWQVgJpqQD0UYcQnY0yHp870YMY
-         agCblffmeaLhCOJa7mBUBAfIzX6jKRJnHSUwxFB03YuW3A+nfqHwTYXKNwIKQStH2Y
-         HKagFMALbQX30tyohb2vyHcSIhg0XmfxuEcRM/tg=
+        b=ABj2rXyDQraMWqVXPAdk0ybXqyPDmUq7nfD7ssrVZVIhQN8xxhodbjFDdWBc/CYqd
+         LePHdOpQWw+ZFH4nxAj8CG8lnoS+frkHFkp9/xWZJ8jUOzeXrQDM8ewi+MZV0uNELS
+         /FW++pu24pz5Dj7dEbjO8ltnob/yn8bkeEcwj/fs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ravi Nankani <rnankani@amazon.com>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Torsten Mehlan <tomeh@amazon.de>,
-        Uwe Dannowski <uwed@amazon.de>, Amit Shah <aams@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 124/146] fs: fix lost error code in dio_complete
-Date:   Tue,  4 Dec 2018 11:50:10 +0100
-Message-Id: <20181204103731.825562140@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 126/146] ALSA: ac97: Fix incorrect bit shift at AC97-SPSA control write
+Date:   Tue,  4 Dec 2018 11:50:12 +0100
+Message-Id: <20181204103731.904026630@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -67,56 +62,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maximilian Heyne <mheyne@amazon.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 41e817bca3acd3980efe5dd7d28af0e6f4ab9247 upstream.
+commit 7194eda1ba0872d917faf3b322540b4f57f11ba5 upstream.
 
-commit e259221763a40403d5bb232209998e8c45804ab8 ("fs: simplify the
-generic_write_sync prototype") reworked callers of generic_write_sync(),
-and ended up dropping the error return for the directio path. Prior to
-that commit, in dio_complete(), an error would be bubbled up the stack,
-but after that commit, errors passed on to dio_complete were eaten up.
+The function snd_ac97_put_spsa() gets the bit shift value from the
+associated private_value, but it extracts too much; the current code
+extracts 8 bit values in bits 8-15, but this is a combination of two
+nibbles (bits 8-11 and bits 12-15) for left and right shifts.
+Due to the incorrect bits extraction, the actual shift may go beyond
+the 32bit value, as spotted recently by UBSAN check:
+ UBSAN: Undefined behaviour in sound/pci/ac97/ac97_codec.c:836:7
+ shift exponent 68 is too large for 32-bit type 'int'
 
-This was reported on the list earlier, and a fix was proposed in
-https://lore.kernel.org/lkml/20160921141539.GA17898@infradead.org/, but
-never followed up with.  We recently hit this bug in our testing where
-fencing io errors, which were previously erroring out with EIO, were
-being returned as success operations after this commit.
+This patch fixes the shift value extraction by masking the properly
+with 0x0f instead of 0xff.
 
-The fix proposed on the list earlier was a little short -- it would have
-still called generic_write_sync() in case `ret` already contained an
-error. This fix ensures generic_write_sync() is only called when there's
-no pending error in the write. Additionally, transferred is replaced
-with ret to bring this code in line with other callers.
-
-Fixes: e259221763a4 ("fs: simplify the generic_write_sync prototype")
-Reported-by: Ravi Nankani <rnankani@amazon.com>
-Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-CC: Torsten Mehlan <tomeh@amazon.de>
-CC: Uwe Dannowski <uwed@amazon.de>
-CC: Amit Shah <aams@amazon.de>
-CC: David Woodhouse <dwmw@amazon.co.uk>
-CC: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-and-tested-by: Meelis Roos <mroos@linux.ee>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/direct-io.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/ac97/ac97_codec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -304,8 +304,8 @@ static ssize_t dio_complete(struct dio *
- 		 */
- 		dio->iocb->ki_pos += transferred;
- 
--		if (dio->op == REQ_OP_WRITE)
--			ret = generic_write_sync(dio->iocb,  transferred);
-+		if (ret > 0 && dio->op == REQ_OP_WRITE)
-+			ret = generic_write_sync(dio->iocb, ret);
- 		dio->iocb->ki_complete(dio->iocb, ret, 0);
- 	}
- 
+--- a/sound/pci/ac97/ac97_codec.c
++++ b/sound/pci/ac97/ac97_codec.c
+@@ -824,7 +824,7 @@ static int snd_ac97_put_spsa(struct snd_
+ {
+ 	struct snd_ac97 *ac97 = snd_kcontrol_chip(kcontrol);
+ 	int reg = kcontrol->private_value & 0xff;
+-	int shift = (kcontrol->private_value >> 8) & 0xff;
++	int shift = (kcontrol->private_value >> 8) & 0x0f;
+ 	int mask = (kcontrol->private_value >> 16) & 0xff;
+ 	// int invert = (kcontrol->private_value >> 24) & 0xff;
+ 	unsigned short value, old, new;
 
 
