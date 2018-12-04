@@ -2,137 +2,113 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52783C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D757C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12DD620878
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:53:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12DD620878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E4B52146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:54:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Yr+JSd/9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4B52146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbeLDLw6 (ORCPT
+        id S1726260AbeLDLx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:52:58 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45354 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbeLDLw6 (ORCPT
+        Tue, 4 Dec 2018 06:53:59 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34298 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbeLDLx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:52:58 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 047FD26396C
-Subject: Re: [PATCH v3 2/8] mfd / platform: cros_ec: move lightbar attributes
- to its own driver.
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-3-enric.balletbo@collabora.com>
- <20181203103619.GD26661@dell>
- <59c6fa0a-e5d5-0e4a-9393-0c9a8b26332d@collabora.com>
- <20181204092121.GR26661@dell>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <8dcf0fb8-697f-8443-68c3-0faae6fe412e@collabora.com>
-Date:   Tue, 4 Dec 2018 12:52:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 4 Dec 2018 06:53:59 -0500
+Received: by mail-io1-f65.google.com with SMTP id r9so5912391ioa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 03:53:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=11zYls2YFOKJJrykkBynHm3qlAQiGahfjD0of+KF8mU=;
+        b=Yr+JSd/990S1gBhnUJ7aTyyxsdT+5zRRTn4z2ER4xOK9GLuEWVLVBCz93mbC7+xKAJ
+         t7h85fDprRBfoGh2sq6u/2t7c2WYQT9pi9zpi/wy8p7zsDJBts9lbgQLecAuZJcoNxSE
+         3aZ/u3fkPuiUdiDilmPIsi3xtZcXQFUurA1us=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=11zYls2YFOKJJrykkBynHm3qlAQiGahfjD0of+KF8mU=;
+        b=pK81tfXNMgmjjEV2vSb3rZofWMH3uyc7TUTGWCYUEwEXAF/Dx1jtvidfpSVgtQtQG3
+         Yp30MmaFUAjcQIaKTk2hHUgxWTHh4K3+1riVPDtCy8+NK3Ng6Zq+PXq6IQqNtHnVmytE
+         NtULnT/0jvXjy2eIOgq4xOr6r7RnL7pNyECLFygMoayKm+5ueM5AMUlD4KqUUJJFaCMJ
+         ZbNbfSpUcRarpyBpjqYdfztXlkd5UI6kPuz/xMhELcX6rTTaCZ5lKVmOU/7ttzE+QWi8
+         U8KpXQAQ9w8LC6Rb6KV79wT3R7/NYqIEXIi/QDgNnxbu7uygEzULQlKf0nZkpGbV6VLZ
+         MDoQ==
+X-Gm-Message-State: AA+aEWb5GiHbyn1DKf9cSD8GybPRNM4HI0f4fJ7MbA0EJfzKniwXe3YK
+        C6284Q/lw4lV705KJgd2pd6+ESkvX2bNE6thcPkdrg==
+X-Google-Smtp-Source: AFSGD/X1WuzBpwzjnXH9NIlSfgwgycfowFp5ExWdq2thg0DLsTdOjdoBVs4hoCfGmvKbSr7uh1qD7ymdkV1Z3r5YWXk=
+X-Received: by 2002:a6b:8e16:: with SMTP id q22mr16706662iod.84.1543924438266;
+ Tue, 04 Dec 2018 03:53:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181204092121.GR26661@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20181203222438.25417-1-eric@anholt.net> <20181203222438.25417-4-eric@anholt.net>
+In-Reply-To: <20181203222438.25417-4-eric@anholt.net>
+From:   Dave Emett <david.emett@broadcom.com>
+Date:   Tue, 4 Dec 2018 11:53:47 +0000
+Message-ID: <CAApk1dV+AhYZ2vf+thJ9ZghGA8VNg-wc=490dpngRu5PS8Ev4w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] drm/v3d: Drop the wait for L2T flush to complete.
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Thomas Spurden <thomas.spurden@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+On Mon, 3 Dec 2018 at 22:24, Eric Anholt <eric@anholt.net> wrote:
+>
+> According to Dave, once you've started an L2T flush, all L2T accesses
+> will be blocked until the flush completes.  This fixes a consistent
+> 3-4ms stall between the ioctl and running the job, and 3DMMES Taiji
+> goes from 27fps to 110fps.
+>
+> v2: Leave a note about why we don't need to wait for completion.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-On 4/12/18 10:21, Lee Jones wrote:
-> On Mon, 03 Dec 2018, Enric Balletbo i Serra wrote:
->> On 3/12/18 11:36, Lee Jones wrote:
->>> On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
->>>
->>>> The entire way how cros sysfs attibutes are created is broken.
->>>> cros_ec_lightbar should be its own driver and its attributes should be
->>>> associated with a lightbar driver not the mfd driver. In order to retain
->>>> the path, the lightbar attributes are attached to the cros_class.
->>>
->>> I'm not exactly clear on what a lightbar is, but shouldn't it live in
->>> the appropriate subsystem.  Like LED for example?
->>>
->>
->> The lightbar is a four-color indicator available on some Chromebook, but the
->> fact that can you can program this lightbar with different sequences, including
->> user defined sequences makes the device a bit special and very chrome platform
->> specific. The same happens with the VBC driver.
-> 
-> Being Chrome specific doesn't necessarily mean that these drivers
-> shouldn't reside in a proper subsystem.  A lot of drivers in the
-> kernel are only relevant to very specific hardware/platforms.
-> 
+Reviewed-by: Dave Emett <david.emett@broadcom.com>
 
-Agree, and we try to put these drivers in their subsystem when we think it is
-appropriate (we have in rtc, power, iio, keyboard, etc.)
-
-> IMHO code in drivers/platform should pertain only to the core platform
-> itself.  Any drivers for leaf hardware/functionality should be split
-> out into the subsystems, however niche you think they are.
-> 
-
-To be honest, I don't have a hard opinion yet on if the drivers/platform should
-pertain only to the core platform itself.
-
-The cros_ec_lightbar.c file already exists in drivers/platform, the patch just
-converts it to a kernel module (only adds few lines). The main purpose of the se
-patches was have cros-ec mfd code and their subdrivers separated instead of
-having crossed calls.
-
-I don't mind to move to another subsystem (I need to discuss with the chromium
-guys and I am still not sure if LED fits very well in this case, I can look in
-more detail) but shouldn't be this a follow up patch?
-
-I am also worried on how this could affect the current user interface. Well,
-something to look, right.
-
-Thanks,
- Enric
-
-
-> I also understand the convenience factor of not having to go through
-> a !Google Maintainer, but this is not a loophole I'm prepared to
-> support. ;)
-> 
->> Other subdevices like, rtc, keyboard, usbpd charger,etc. are already in their
->> subsystems.
->>
->>>> The patch also adds the sysfs documentation.
->>>>
->>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>> ---
->>>>
->>>> Changes in v3:
->>>> - Removed unneded check for ec_dev.
->>>>
->>>> Changes in v2:
->>>> - Removed the two exported functions to attach/detach to the cros_class.
->>>> - Use dev_warn instead of dev_err when adding the lightbar.
->>>>
->>>>  ...sfs-class-chromeos-driver-cros-ec-lightbar | 74 +++++++++++++++
->>>>  drivers/mfd/cros_ec_dev.c                     | 24 ++---
->>>>  drivers/mfd/cros_ec_dev.h                     |  6 --
->>>>  drivers/platform/chrome/Kconfig               | 10 ++
->>>>  drivers/platform/chrome/Makefile              |  3 +-
->>>>  drivers/platform/chrome/cros_ec_lightbar.c    | 95 ++++++++++++++-----
->>>>  include/linux/mfd/cros_ec.h                   |  1 -
->>>>  7 files changed, 172 insertions(+), 41 deletions(-)
->>>>  create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
->>>
-> 
+> Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+> Reviewed-by: Dave Emett <david.emett@broadcom.com> (v1, comment requested)
+> ---
+>  drivers/gpu/drm/v3d/v3d_gem.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index 01e879c71cad..c268c7c79566 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -143,13 +143,13 @@ v3d_invalidate_l2(struct v3d_dev *v3d, int core)
+>  static void
+>  v3d_flush_l2t(struct v3d_dev *v3d, int core)
+>  {
+> +       /* While there is a busy bit (V3D_L2TCACTL_L2TFLS), we don't
+> +        * need to wait for completion before dispatching the job --
+> +        * L2T accesses will be stalled until the flush has completed.
+> +        */
+>         V3D_CORE_WRITE(core, V3D_CTL_L2TCACTL,
+>                        V3D_L2TCACTL_L2TFLS |
+>                        V3D_SET_FIELD(V3D_L2TCACTL_FLM_FLUSH, V3D_L2TCACTL_FLM));
+> -       if (wait_for(!(V3D_CORE_READ(core, V3D_CTL_L2TCACTL) &
+> -                      V3D_L2TCACTL_L2TFLS), 100)) {
+> -               DRM_ERROR("Timeout waiting for L2T flush\n");
+> -       }
+>  }
+>
+>  /* Invalidates the slice caches.  These are read-only caches. */
+> --
+> 2.20.0.rc1
+>
