@@ -4,46 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F67C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BA4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2816B2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB2942087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNbmPS2P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2816B2087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2orirVmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB2942087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbeLDLGU (ORCPT
+        id S1728278AbeLDLGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:06:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54634 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:06:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727909AbeLDLGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:06:17 -0500
+        id S1727465AbeLDLGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89465214DB;
-        Tue,  4 Dec 2018 11:06:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 699062082D;
+        Tue,  4 Dec 2018 11:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921577;
-        bh=v+E1mLIL6NOxv5K1/ToSxlj0P3UY/ru/KajIqiqOg7w=;
+        s=default; t=1543921571;
+        bh=GEd6INmw8Elld2f5nvL21cV58gX79W8J7ueg3LmotCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sNbmPS2PLqahty6YuAihXD/EweWdrP2G7PdBJw7Zvzh923esNplToXWlAsn2a+MaL
-         vDAYAv19KYSUiSa726wChsailydLq0rZ526FL+Wox7wP6vzs0erkKd2jt9HKy9W75p
-         Q3GzqJ6L8zNlx5MAHJPg/X78VG81Gm+HNSBZxpBw=
+        b=2orirVmHauAIfWrSJrcKVCXbGYoRty/mRhZImUZhASrGCHq7B7lBXRCV5YTUP3mqR
+         Ot68CKuX8jsXyAs+3+ZQFY7iuxJi7EkqbjSCY9knfkT+jgtVPVd30/HhjDOPrOB2zE
+         YfwtVHboqCO9WWNxy3OvLO9yKm8U5Z+xAj82KxMc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 125/146] ALSA: wss: Fix invalid snd_free_pages() at error path
-Date:   Tue,  4 Dec 2018 11:50:11 +0100
-Message-Id: <20181204103731.862572982@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 123/146] perf/x86/intel: Add generic branch tracing check to intel_pmu_has_bts()
+Date:   Tue,  4 Dec 2018 11:50:09 +0100
+Message-Id: <20181204103731.780278339@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -62,42 +73,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 7b69154171b407844c273ab4c10b5f0ddcd6aa29 upstream.
+commit 67266c1080ad56c31af72b9c18355fde8ccc124a upstream.
 
-Some spurious calls of snd_free_pages() have been overlooked and
-remain in the error paths of wss driver code.  Since runtime->dma_area
-is managed by the PCM core helper, we shouldn't release manually.
+Currently we check the branch tracing only by checking for the
+PERF_COUNT_HW_BRANCH_INSTRUCTIONS event of PERF_TYPE_HARDWARE
+type. But we can define the same event with the PERF_TYPE_RAW
+type.
 
-Drop the superfluous calls.
+Changing the intel_pmu_has_bts() code to check on event's final
+hw config value, so both HW types are covered.
 
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Adding unlikely to intel_pmu_has_bts() condition calls, because
+it was used in the original code in intel_bts_constraints.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/20181121101612.16272-2-jolsa@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/isa/wss/wss_lib.c |    2 --
- 1 file changed, 2 deletions(-)
+ arch/x86/events/intel/core.c |   17 +++--------------
+ arch/x86/events/perf_event.h |   13 +++++++++----
+ 2 files changed, 12 insertions(+), 18 deletions(-)
 
---- a/sound/isa/wss/wss_lib.c
-+++ b/sound/isa/wss/wss_lib.c
-@@ -1531,7 +1531,6 @@ static int snd_wss_playback_open(struct
- 	if (err < 0) {
- 		if (chip->release_dma)
- 			chip->release_dma(chip, chip->dma_private_data, chip->dma1);
--		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
- 		return err;
- 	}
- 	chip->playback_substream = substream;
-@@ -1572,7 +1571,6 @@ static int snd_wss_capture_open(struct s
- 	if (err < 0) {
- 		if (chip->release_dma)
- 			chip->release_dma(chip, chip->dma_private_data, chip->dma2);
--		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
- 		return err;
- 	}
- 	chip->capture_substream = substream;
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2345,16 +2345,7 @@ done:
+ static struct event_constraint *
+ intel_bts_constraints(struct perf_event *event)
+ {
+-	struct hw_perf_event *hwc = &event->hw;
+-	unsigned int hw_event, bts_event;
+-
+-	if (event->attr.freq)
+-		return NULL;
+-
+-	hw_event = hwc->config & INTEL_ARCH_EVENT_MASK;
+-	bts_event = x86_pmu.event_map(PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
+-
+-	if (unlikely(hw_event == bts_event && hwc->sample_period == 1))
++	if (unlikely(intel_pmu_has_bts(event)))
+ 		return &bts_constraint;
+ 
+ 	return NULL;
+@@ -2976,10 +2967,8 @@ static unsigned long intel_pmu_free_runn
+ static int intel_pmu_bts_config(struct perf_event *event)
+ {
+ 	struct perf_event_attr *attr = &event->attr;
+-	struct hw_perf_event *hwc = &event->hw;
+ 
+-	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
+-	    !attr->freq && hwc->sample_period == 1) {
++	if (unlikely(intel_pmu_has_bts(event))) {
+ 		/* BTS is not supported by this architecture. */
+ 		if (!x86_pmu.bts_active)
+ 			return -EOPNOTSUPP;
+@@ -3038,7 +3027,7 @@ static int intel_pmu_hw_config(struct pe
+ 		/*
+ 		 * BTS is set up earlier in this path, so don't account twice
+ 		 */
+-		if (!intel_pmu_has_bts(event)) {
++		if (!unlikely(intel_pmu_has_bts(event))) {
+ 			/* disallow lbr if conflicting events are present */
+ 			if (x86_add_exclusive(x86_lbr_exclusive_lbr))
+ 				return -EBUSY;
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -850,11 +850,16 @@ static inline int amd_pmu_init(void)
+ 
+ static inline bool intel_pmu_has_bts(struct perf_event *event)
+ {
+-	if (event->attr.config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
+-	    !event->attr.freq && event->hw.sample_period == 1)
+-		return true;
++	struct hw_perf_event *hwc = &event->hw;
++	unsigned int hw_event, bts_event;
+ 
+-	return false;
++	if (event->attr.freq)
++		return false;
++
++	hw_event = hwc->config & INTEL_ARCH_EVENT_MASK;
++	bts_event = x86_pmu.event_map(PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
++
++	return hw_event == bts_event && hwc->sample_period == 1;
+ }
+ 
+ int intel_pmu_save_and_restart(struct perf_event *event);
 
 
