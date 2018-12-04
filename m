@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4349C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFC5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B03B2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EE4C2082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrViTuBI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B03B2087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0yoVw8y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE4C2082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeLDLFR (ORCPT
+        id S1728085AbeLDLFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52880 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:05:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728107AbeLDLFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:14 -0500
+        id S1728072AbeLDLFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A5982082D;
-        Tue,  4 Dec 2018 11:05:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7D5121508;
+        Tue,  4 Dec 2018 11:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921513;
-        bh=atjPi4muYx0r6ilAxc+HXs1xrqkbboT1FBYFty1c184=;
+        s=default; t=1543921505;
+        bh=I8rmTHt47UvUXXOXpA0Cxo+8t2ED5dmX/lLFjnP86vY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OrViTuBIIk4NTwUDCGZYTL0rhi+iVu9H0XisYXVREsmBUiUdQtzvyvyS+ZYxRmnsN
-         bWFkKVlSArbY+H3rh7BiPA65bz3XiICbA3eNDjZxwKSco3xxQQPTO0FApJkBHFcxul
-         MCpqhqY7b/NKJzAOmA7EJMjqhyBiDCzR5YgDbbsQ=
+        b=J0yoVw8yvdfUJe2/IkmtMN8fWkfdgCs2boAP5mF9XDpF3wgNb6Y3f9tF7yLfklN4K
+         M/9KvE1YJv4uhI2BvRnGuMvJTI6iD/f0UjMafUDHgFYBrUUINRCBQFYb8UFH0kenjx
+         jWzYtWTtYRS9G+beiaLYJ2i90Pr6IIe48UQu9ZhE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,7 +50,6 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Casey Schaufler <casey.schaufler@intel.com>,
@@ -60,9 +59,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 099/146] x86/speculation: Avoid __switch_to_xtra() calls
-Date:   Tue,  4 Dec 2018 11:49:45 +0100
-Message-Id: <20181204103730.806945168@linuxfoundation.org>
+Subject: [PATCH 4.14 096/146] x86/speculation: Add command line control for indirect branch speculation
+Date:   Tue,  4 Dec 2018 11:49:42 +0100
+Message-Id: <20181204103730.689785907@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -83,23 +82,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 5635d99953f04b550738f6f4c1c532667c3fd872 upstream
+commit fa1202ef224391b6f5b26cdd44cc50495e8fab54 upstream
 
-The TIF_SPEC_IB bit does not need to be evaluated in the decision to invoke
-__switch_to_xtra() when:
+Add command line control for user space indirect branch speculation
+mitigations. The new option is: spectre_v2_user=
 
- - CONFIG_SMP is disabled
+The initial options are:
 
- - The conditional STIPB mode is disabled
+    -  on:   Unconditionally enabled
+    - off:   Unconditionally disabled
+    -auto:   Kernel selects mitigation (default off for now)
 
-The TIF_SPEC_IB bit still controls IBPB in both cases so the TIF work mask
-checks might invoke __switch_to_xtra() for nothing if TIF_SPEC_IB is the
-only set bit in the work masks.
+When the spectre_v2= command line argument is either 'on' or 'off' this
+implies that the application to application control follows that state even
+if a contradicting spectre_v2_user= argument is supplied.
 
-Optimize it out by masking the bit at compile time for CONFIG_SMP=n and at
-run time when the static key controlling the conditional STIBP mode is
-disabled.
-
+Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -110,7 +108,6 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Casey Schaufler <casey.schaufler@intel.com>
@@ -122,66 +119,289 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185005.374062201@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185005.082720373@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/thread_info.h |   13 +++++++++++--
- arch/x86/kernel/process.h          |   15 +++++++++++++++
- 2 files changed, 26 insertions(+), 2 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |   32 +++++
+ arch/x86/include/asm/nospec-branch.h            |   10 +
+ arch/x86/kernel/cpu/bugs.c                      |  133 ++++++++++++++++++++----
+ 3 files changed, 156 insertions(+), 19 deletions(-)
 
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -149,9 +149,18 @@ struct thread_info {
- 	 _TIF_FSCHECK)
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3994,9 +3994,13 @@
  
- /* flags to check in __switch_to() */
--#define _TIF_WORK_CTXSW							\
-+#define _TIF_WORK_CTXSW_BASE						\
- 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
--	 _TIF_SSBD|_TIF_SPEC_IB)
-+	 _TIF_SSBD)
+ 	spectre_v2=	[X86] Control mitigation of Spectre variant 2
+ 			(indirect branch speculation) vulnerability.
++			The default operation protects the kernel from
++			user space attacks.
+ 
+-			on   - unconditionally enable
+-			off  - unconditionally disable
++			on   - unconditionally enable, implies
++			       spectre_v2_user=on
++			off  - unconditionally disable, implies
++			       spectre_v2_user=off
+ 			auto - kernel detects whether your CPU model is
+ 			       vulnerable
+ 
+@@ -4006,6 +4010,12 @@
+ 			CONFIG_RETPOLINE configuration option, and the
+ 			compiler with which the kernel was built.
+ 
++			Selecting 'on' will also enable the mitigation
++			against user space to user space task attacks.
 +
-+/*
-+ * Avoid calls to __switch_to_xtra() on UP as STIBP is not evaluated.
-+ */
-+#ifdef CONFIG_SMP
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE | _TIF_SPEC_IB)
-+#else
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE)
-+#endif
- 
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
---- a/arch/x86/kernel/process.h
-+++ b/arch/x86/kernel/process.h
-@@ -2,6 +2,8 @@
- //
- // Code shared between 32 and 64 bit
- 
-+#include <asm/spec-ctrl.h>
++			Selecting 'off' will disable both the kernel and
++			the user space protections.
 +
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p);
+ 			Specific mitigations can also be selected manually:
+ 
+ 			retpoline	  - replace indirect branches
+@@ -4015,6 +4025,24 @@
+ 			Not specifying this option is equivalent to
+ 			spectre_v2=auto.
+ 
++	spectre_v2_user=
++			[X86] Control mitigation of Spectre variant 2
++		        (indirect branch speculation) vulnerability between
++		        user space tasks
++
++			on	- Unconditionally enable mitigations. Is
++				  enforced by spectre_v2=on
++
++			off     - Unconditionally disable mitigations. Is
++				  enforced by spectre_v2=off
++
++			auto    - Kernel selects the mitigation depending on
++				  the available CPU features and vulnerability.
++				  Default is off.
++
++			Not specifying this option is equivalent to
++			spectre_v2_user=auto.
++
+ 	spec_store_bypass_disable=
+ 			[HW] Control Speculative Store Bypass (SSB) Disable mitigation
+ 			(Speculative Store Bypass vulnerability)
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -3,6 +3,8 @@
+ #ifndef _ASM_X86_NOSPEC_BRANCH_H_
+ #define _ASM_X86_NOSPEC_BRANCH_H_
+ 
++#include <linux/static_key.h>
++
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeatures.h>
+@@ -226,6 +228,12 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_IBRS_ENHANCED,
+ };
+ 
++/* The indirect branch speculation control variants */
++enum spectre_v2_user_mitigation {
++	SPECTRE_V2_USER_NONE,
++	SPECTRE_V2_USER_STRICT,
++};
++
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
+@@ -303,6 +311,8 @@ do {									\
+ 	preempt_enable();						\
+ } while (0)
+ 
++DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++
+ #endif /* __ASSEMBLY__ */
  
  /*
-@@ -14,6 +16,19 @@ static inline void switch_to_extra(struc
- 	unsigned long next_tif = task_thread_info(next)->flags;
- 	unsigned long prev_tif = task_thread_info(prev)->flags;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -53,6 +53,9 @@ static u64 __ro_after_init x86_spec_ctrl
+ u64 __ro_after_init x86_amd_ls_cfg_base;
+ u64 __ro_after_init x86_amd_ls_cfg_ssbd_mask;
  
-+	if (IS_ENABLED(CONFIG_SMP)) {
-+		/*
-+		 * Avoid __switch_to_xtra() invocation when conditional
-+		 * STIPB is disabled and the only different bit is
-+		 * TIF_SPEC_IB. For CONFIG_SMP=n TIF_SPEC_IB is not
-+		 * in the TIF_WORK_CTXSW masks.
-+		 */
-+		if (!static_branch_likely(&switch_to_cond_stibp)) {
-+			prev_tif &= ~_TIF_SPEC_IB;
-+			next_tif &= ~_TIF_SPEC_IB;
++/* Control conditional STIPB in switch_to() */
++DEFINE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++
+ void __init check_bugs(void)
+ {
+ 	identify_boot_cpu();
+@@ -198,6 +201,9 @@ static void x86_amd_ssb_disable(void)
+ static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
+ 	SPECTRE_V2_NONE;
+ 
++static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
++	SPECTRE_V2_USER_NONE;
++
+ #ifdef RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+@@ -236,6 +242,104 @@ enum spectre_v2_mitigation_cmd {
+ 	SPECTRE_V2_CMD_RETPOLINE_AMD,
+ };
+ 
++enum spectre_v2_user_cmd {
++	SPECTRE_V2_USER_CMD_NONE,
++	SPECTRE_V2_USER_CMD_AUTO,
++	SPECTRE_V2_USER_CMD_FORCE,
++};
++
++static const char * const spectre_v2_user_strings[] = {
++	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
++	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
++};
++
++static const struct {
++	const char			*option;
++	enum spectre_v2_user_cmd	cmd;
++	bool				secure;
++} v2_user_options[] __initdata = {
++	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
++	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
++	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
++};
++
++static void __init spec_v2_user_print_cond(const char *reason, bool secure)
++{
++	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
++		pr_info("spectre_v2_user=%s forced on command line.\n", reason);
++}
++
++static enum spectre_v2_user_cmd __init
++spectre_v2_parse_user_cmdline(enum spectre_v2_mitigation_cmd v2_cmd)
++{
++	char arg[20];
++	int ret, i;
++
++	switch (v2_cmd) {
++	case SPECTRE_V2_CMD_NONE:
++		return SPECTRE_V2_USER_CMD_NONE;
++	case SPECTRE_V2_CMD_FORCE:
++		return SPECTRE_V2_USER_CMD_FORCE;
++	default:
++		break;
++	}
++
++	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
++				  arg, sizeof(arg));
++	if (ret < 0)
++		return SPECTRE_V2_USER_CMD_AUTO;
++
++	for (i = 0; i < ARRAY_SIZE(v2_user_options); i++) {
++		if (match_option(arg, ret, v2_user_options[i].option)) {
++			spec_v2_user_print_cond(v2_user_options[i].option,
++						v2_user_options[i].secure);
++			return v2_user_options[i].cmd;
 +		}
 +	}
 +
++	pr_err("Unknown user space protection option (%s). Switching to AUTO select\n", arg);
++	return SPECTRE_V2_USER_CMD_AUTO;
++}
++
++static void __init
++spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
++{
++	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
++	bool smt_possible = IS_ENABLED(CONFIG_SMP);
++
++	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
++		return;
++
++	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
++	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
++		smt_possible = false;
++
++	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
++	case SPECTRE_V2_USER_CMD_AUTO:
++	case SPECTRE_V2_USER_CMD_NONE:
++		goto set_mode;
++	case SPECTRE_V2_USER_CMD_FORCE:
++		mode = SPECTRE_V2_USER_STRICT;
++		break;
++	}
++
++	/* Initialize Indirect Branch Prediction Barrier */
++	if (boot_cpu_has(X86_FEATURE_IBPB)) {
++		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
++		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
++	}
++
++	/* If enhanced IBRS is enabled no STIPB required */
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++		return;
++
++set_mode:
++	spectre_v2_user = mode;
++	/* Only print the STIBP mode when SMT possible */
++	if (smt_possible)
++		pr_info("%s\n", spectre_v2_user_strings[mode]);
++}
++
+ static const char * const spectre_v2_strings[] = {
+ 	[SPECTRE_V2_NONE]			= "Vulnerable",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+@@ -382,12 +486,6 @@ specv2_set_mode:
+ 	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+ 	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
+ 
+-	/* Initialize Indirect Branch Prediction Barrier if supported */
+-	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+-		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+-		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+-	}
+-
  	/*
- 	 * __switch_to_xtra() handles debug registers, i/o bitmaps,
- 	 * speculation mitigations etc.
+ 	 * Retpoline means the kernel is safe because it has no indirect
+ 	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
+@@ -404,23 +502,21 @@ specv2_set_mode:
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+ 
++	/* Set up IBPB and STIBP depending on the general spectre V2 command */
++	spectre_v2_user_select_mitigation(cmd);
++
+ 	/* Enable STIBP if appropriate */
+ 	arch_smt_update();
+ }
+ 
+ static bool stibp_needed(void)
+ {
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+-		return false;
+-
+ 	/* Enhanced IBRS makes using STIBP unnecessary. */
+ 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+ 		return false;
+ 
+-	if (!boot_cpu_has(X86_FEATURE_STIBP))
+-		return false;
+-
+-	return true;
++	/* Check for strict user mitigation mode */
++	return spectre_v2_user == SPECTRE_V2_USER_STRICT;
+ }
+ 
+ static void update_stibp_msr(void *info)
+@@ -841,10 +937,13 @@ static char *stibp_state(void)
+ 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+ 		return "";
+ 
+-	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
+-		return ", STIBP";
+-	else
+-		return "";
++	switch (spectre_v2_user) {
++	case SPECTRE_V2_USER_NONE:
++		return ", STIBP: disabled";
++	case SPECTRE_V2_USER_STRICT:
++		return ", STIBP: forced";
++	}
++	return "";
+ }
+ 
+ static char *ibpb_state(void)
 
 
