@@ -2,144 +2,147 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1A6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B1FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7083E20878
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:59:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqiJxuEb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7083E20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E49D62082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:02:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49D62082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeLDT7Y (ORCPT
+        id S1726090AbeLDUCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:59:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52330 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 15:02:06 -0500
+Received: from mga18.intel.com ([134.134.136.126]:47612 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbeLDT7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:59:23 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F389B20834;
-        Tue,  4 Dec 2018 19:59:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543953562;
-        bh=1vmp2ToQyahIGEvTswIegzsyCqoix5IjMu/aDtQxNWk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YqiJxuEbKJWBtccZGdI+DW+uJDLulA6puniZVMjTqEsE96KwPNIvn9mPJoh3pALAS
-         pl8DExX33RqcoQehLqFx2JoCnBzAHT6OfElZgFtThOpaIoObBqZHXbDmsOIn+1dqUJ
-         XzmmW8bV/6IQplYFQfz6tg5CijkcCLwBRnRlf2rE=
-Message-ID: <1543953560.2790.18.camel@kernel.org>
-Subject: Re: [PATCH v7 09/16] tracing: Add hist trigger snapshot() action
- test case
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date:   Tue, 04 Dec 2018 13:59:20 -0600
-In-Reply-To: <20181126220332.215b461779d1d57f37b46e20@kernel.org>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-         <a40dadf6ffa267a1a573b62bb1c9b4db9d91f744.1542221863.git.tom.zanussi@linux.intel.com>
-         <20181126220332.215b461779d1d57f37b46e20@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1725859AbeLDUCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:02:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 12:02:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="96110213"
+Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
+  by orsmga007.jf.intel.com with ESMTP; 04 Dec 2018 12:02:05 -0800
+Received: from orsmsx153.amr.corp.intel.com (10.22.226.247) by
+ ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 4 Dec 2018 12:02:05 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.8]) by
+ ORSMSX153.amr.corp.intel.com ([169.254.12.54]) with mapi id 14.03.0415.000;
+ Tue, 4 Dec 2018 12:02:04 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "will.deacon@arm.com" <will.deacon@arm.com>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+Thread-Topic: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+Thread-Index: AQHUhrIVlTqKMmCRwUWBsYfr2au/NaVuXiWAgADwQACAAENYAA==
+Date:   Tue, 4 Dec 2018 20:02:03 +0000
+Message-ID: <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+         <20181128000754.18056-2-rick.p.edgecombe@intel.com>
+         <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+         <20181204160304.GB7195@arm.com>
+In-Reply-To: <20181204160304.GB7195@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.141]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A505089424EB70449A3E55198D49D917@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
-
-On Mon, 2018-11-26 at 22:03 +0900, Masami Hiramatsu wrote:
-> On Wed, 14 Nov 2018 14:18:06 -0600
-> Tom Zanussi <zanussi@kernel.org> wrote:
-> 
-> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> > 
-> > Add a test case verifying the basic functionality of the
-> > hist:snapshot() action.
-> > 
-> > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> > ---
-> >  .../inter-event/trigger-snapshot-action-hist.tc    | 43
-> > ++++++++++++++++++++++
-> >  1 file changed, 43 insertions(+)
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
-> > snapshot-action-hist.tc
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-
-> > event/trigger-snapshot-action-hist.tc
-> > b/tools/testing/selftests/ftrace/test.d/trigger/inter-
-> > event/trigger-snapshot-action-hist.tc
-> > new file mode 100644
-> > index 000000000000..a0a51e6a6a0c
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-
-> > event/trigger-snapshot-action-hist.tc
-> > @@ -0,0 +1,43 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# description: event trigger - test inter-event histogram trigger
-> > snapshot action
-> > +
-> > +fail() { #msg
-> > +    echo $1
-> > +    exit_fail
-> > +}
-> > +
-> > +if [ ! -f set_event ]; then
-> > +    echo "event tracing is not supported"
-> > +    exit_unsupported
-> > +fi
-> > +
-> > +if [ ! -f snapshot ]; then
-> > +    echo "snapshot is not supported"
-> > +    exit_unsupported
-> > +fi
-> > +
-> > +grep -q "onchange(var)" README > /dev/null || exit_unsupported #
-> > version issue
-> > +
-> > +grep -q "snapshot()" README > /dev/null || exit_unsupported #
-> > version issue
-> 
-> "grep -q ... > /dev/null" is redundant, since -q doesn't show
-> anything.
-> please drop "> /dev/null" redirection.
-> 
-> > +
-> > +echo "Test snapshot action"
-> > +
-> > +echo 1 > /sys/kernel/debug/tracing/events/sched/enable
-> > +
-> > +echo
-> > 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio):onc
-> > hange($newprio).snapshot() if comm=="ping"' >>
-> > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
-> 
-> This tests onchange().snapshot(), but document change only describes
-> onmax().snapshot().
-> Maybe we should improve document too.
-> 
-
-Actually, onchange().snapshot() is documented in '[PATCH v7 11/16]
-tracing: Add hist trigger onchange() handler Documentation'.  I can
-change the order of the patches if it matters.
-
-Thanks,
-
-Tom
-
+T24gVHVlLCAyMDE4LTEyLTA0IGF0IDE2OjAzICswMDAwLCBXaWxsIERlYWNvbiB3cm90ZToNCj4g
+T24gTW9uLCBEZWMgMDMsIDIwMTggYXQgMDU6NDM6MTFQTSAtMDgwMCwgTmFkYXYgQW1pdCB3cm90
+ZToNCj4gPiA+IE9uIE5vdiAyNywgMjAxOCwgYXQgNDowNyBQTSwgUmljayBFZGdlY29tYmUgPHJp
+Y2sucC5lZGdlY29tYmVAaW50ZWwuY29tPg0KPiA+ID4gd3JvdGU6DQo+ID4gPiANCj4gPiA+IFNp
+bmNlIHZmcmVlIHdpbGwgbGF6aWx5IGZsdXNoIHRoZSBUTEIsIGJ1dCBub3QgbGF6aWx5IGZyZWUg
+dGhlIHVuZGVybHlpbmcNCj4gPiA+IHBhZ2VzLA0KPiA+ID4gaXQgb2Z0ZW4gbGVhdmVzIHN0YWxl
+IFRMQiBlbnRyaWVzIHRvIGZyZWVkIHBhZ2VzIHRoYXQgY291bGQgZ2V0IHJlLXVzZWQuDQo+ID4g
+PiBUaGlzIGlzDQo+ID4gPiB1bmRlc2lyYWJsZSBmb3IgY2FzZXMgd2hlcmUgdGhlIG1lbW9yeSBi
+ZWluZyBmcmVlZCBoYXMgc3BlY2lhbCBwZXJtaXNzaW9ucw0KPiA+ID4gc3VjaA0KPiA+ID4gYXMg
+ZXhlY3V0YWJsZS4NCj4gPiANCj4gPiBTbyBJIGFtIHRyeWluZyB0byBmaW5pc2ggbXkgcGF0Y2gt
+c2V0IGZvciBwcmV2ZW50aW5nIHRyYW5zaWVudCBXK1ggbWFwcGluZ3MNCj4gPiBmcm9tIHRha2lu
+ZyBzcGFjZSwgYnkgaGFuZGxpbmcga3Byb2JlcyAmIGZ0cmFjZSB0aGF0IEkgbWlzc2VkICh0aGFu
+a3MgYWdhaW4NCj4gPiBmb3INCj4gPiBwb2ludGluZyBpdCBvdXQpLg0KPiA+IA0KPiA+IEJ1dCBh
+bGwgb2YgdGhlIHN1ZGRlbiwgSSBkb27igJl0IHVuZGVyc3RhbmQgd2h5IHdlIGhhdmUgdGhlIHBy
+b2JsZW0gdGhhdCB0aGlzDQo+ID4gKHlvdXIpIHBhdGNoLXNldCBkZWFscyB3aXRoIGF0IGFsbC4g
+V2UgYWxyZWFkeSBjaGFuZ2UgdGhlIG1hcHBpbmdzIHRvIG1ha2UNCj4gPiB0aGUgbWVtb3J5IHdy
+aXRhYmxlIGJlZm9yZSBmcmVlaW5nIHRoZSBtZW1vcnksIHNvIHdoeSBjYW7igJl0IHdlIG1ha2Ug
+aXQNCj4gPiBub24tZXhlY3V0YWJsZSBhdCB0aGUgc2FtZSB0aW1lPyBBY3R1YWxseSwgd2h5IGRv
+IHdlIG1ha2UgdGhlIG1vZHVsZSBtZW1vcnksDQo+ID4gaW5jbHVkaW5nIGl0cyBkYXRhIGV4ZWN1
+dGFibGUgYmVmb3JlIGZyZWVpbmcgaXQ/Pz8NCj4gDQo+IFllYWgsIHRoaXMgaXMgcmVhbGx5IGNv
+bmZ1c2luZywgYnV0IEkgaGF2ZSBhIHN1c3BpY2lvbiBpdCdzIGEgY29tYmluYXRpb24NCj4gb2Yg
+dGhlIHZhcmlvdXMgZGlmZmVyZW50IGNvbmZpZ3VyYXRpb25zIGFuZCBoeXN0ZXJpY2FsIHJhaXNp
+bnMuIFdlIGNhbid0DQo+IHJlbHkgb24gbW9kdWxlX2FsbG9jKCkgYWxsb2NhdGluZyBmcm9tIHRo
+ZSB2bWFsbG9jIGFyZWEgKHNlZSBuaW9zMikgbm9yDQo+IGNhbiB3ZSByZWx5IG9uIGRpc2FibGVf
+cm9fbngoKSBiZWluZyBhdmFpbGFibGUgYXQgYnVpbGQgdGltZS4NCj4gDQo+IElmIHdlICpjb3Vs
+ZCogcmVseSBvbiBtb2R1bGUgYWxsb2NhdGlvbnMgYWx3YXlzIHVzaW5nIHZtYWxsb2MoKSwgdGhl
+bg0KPiB3ZSBjb3VsZCBwYXNzIGluIFJpY2sncyBuZXcgZmxhZyBhbmQgZHJvcCBkaXNhYmxlX3Jv
+X254KCkgYWx0b2dldGhlcg0KPiBhZmFpY3QgLS0gd2hvIGNhcmVzIGFib3V0IHRoZSBtZW1vcnkg
+YXR0cmlidXRlcyBvZiBhIG1hcHBpbmcgdGhhdCdzIGFib3V0DQo+IHRvIGRpc2FwcGVhciBhbnl3
+YXk/DQo+IA0KPiBJcyBpdCBqdXN0IG5pb3MyIHRoYXQgZG9lcyBzb21ldGhpbmcgZGlmZmVyZW50
+Pw0KPiANCj4gV2lsbA0KDQpZZWEgaXQgaXMgcmVhbGx5IGludGVydHdpbmVkLiBJIHRoaW5rIGZv
+ciB4ODYsIHNldF9tZW1vcnlfbnggZXZlcnl3aGVyZSB3b3VsZA0Kc29sdmUgaXQgYXMgd2VsbCwg
+aW4gZmFjdCB0aGF0IHdhcyB3aGF0IEkgZmlyc3QgdGhvdWdodCB0aGUgc29sdXRpb24gc2hvdWxk
+IGJlDQp1bnRpbCB0aGlzIHdhcyBzdWdnZXN0ZWQuIEl0J3MgaW50ZXJlc3RpbmcgdGhhdCBmcm9t
+IHRoZSBvdGhlciB0aHJlYWQgTWFzYW1pDQpIaXJhbWF0c3UgcmVmZXJlbmNlZCwgc2V0X21lbW9y
+eV9ueCB3YXMgc3VnZ2VzdGVkIGxhc3QgeWVhciBhbmQgd291bGQgaGF2ZQ0KaW5hZHZlcnRlbnRs
+eSBibG9ja2VkIHRoaXMgb24geDg2LiBCdXQsIG9uIHRoZSBvdGhlciBhcmNoaXRlY3R1cmVzIEkg
+aGF2ZSBzaW5jZQ0KbGVhcm5lZCBpdCBpcyBhIGJpdCBkaWZmZXJlbnQuDQoNCkl0IGxvb2tzIGxp
+a2UgYWN0dWFsbHkgbW9zdCBhcmNoJ3MgZG9uJ3QgcmUtZGVmaW5lIHNldF9tZW1vcnlfKiwgYW5k
+IHNvIGFsbCBvZg0KdGhlIGZyb2JfKiBmdW5jdGlvbnMgYXJlIGFjdHVhbGx5IGp1c3Qgbm9vcHMu
+IEluIHdoaWNoIGNhc2UgYWxsb2NhdGluZyBSV1ggaXMNCm5lZWRlZCB0byBtYWtlIGl0IHdvcmsg
+YXQgYWxsLCBiZWNhdXNlIHRoYXQgaXMgd2hhdCB0aGUgYWxsb2NhdGlvbiBpcyBnb2luZyB0bw0K
+c3RheSBhdC4gU28gaW4gdGhlc2UgYXJjaHMsIHNldF9tZW1vcnlfbnggd29uJ3Qgc29sdmUgaXQg
+YmVjYXVzZSBpdCB3aWxsIGRvDQpub3RoaW5nLg0KDQpPbiB4ODYgSSB0aGluayB5b3UgY2Fubm90
+IGdldCByaWQgb2YgZGlzYWJsZV9yb19ueCBmdWxseSBiZWNhdXNlIHRoZXJlIGlzIHRoZQ0KY2hh
+bmdpbmcgb2YgdGhlIHBlcm1pc3Npb25zIG9uIHRoZSBkaXJlY3RtYXAgYXMgd2VsbC4gWW91IGRv
+bid0IHdhbnQgc29tZSBvdGhlcg0KY2FsbGVyIGdldHRpbmcgYSBwYWdlIHRoYXQgd2FzIGxlZnQg
+Uk8gd2hlbiBmcmVlZCBhbmQgdGhlbiB0cnlpbmcgdG8gd3JpdGUgdG8NCml0LCBpZiBJIHVuZGVy
+c3RhbmQgdGhpcy4NCg0KVGhlIG90aGVyIHJlYXNvbmluZyB3YXMgdGhhdCBjYWxsaW5nIHNldF9t
+ZW1vcnlfbnggaXNuJ3QgZG9pbmcgd2hhdCB3ZSBhcmUNCmFjdHVhbGx5IHRyeWluZyB0byBkbyB3
+aGljaCBpcyBwcmV2ZW50IHRoZSBwYWdlcyBmcm9tIGdldHRpbmcgcmVsZWFzZWQgdG9vDQplYXJs
+eS4NCg0KQSBtb3JlIGNsZWFyIHNvbHV0aW9uIGZvciBhbGwgb2YgdGhpcyBtaWdodCBpbnZvbHZl
+IHJlZmFjdG9yaW5nIHNvbWUgb2YgdGhlDQpzZXRfbWVtb3J5XyBkZS1hbGxvY2F0aW9uIGxvZ2lj
+IG91dCBpbnRvIF9fd2VhayBmdW5jdGlvbnMgaW4gZWl0aGVyIG1vZHVsZXMgb3INCnZtYWxsb2Mu
+IEFzIEplc3NpY2EgcG9pbnRzIG91dCBpbiB0aGUgb3RoZXIgdGhyZWFkIHRob3VnaCwgbW9kdWxl
+cyBkb2VzIGEgbG90DQptb3JlIHN0dWZmIHRoZXJlIHRoYW4gdGhlIG90aGVyIG1vZHVsZV9hbGxv
+YyBjYWxsZXJzLiBJIHRoaW5rIGl0IG1heSB0YWtlIHNvbWUNCnRob3VnaHQgdG8gY2VudHJhbGl6
+ZSBBTkQgbWFrZSBpdCBvcHRpbWFsIGZvciBldmVyeSBtb2R1bGVfYWxsb2Mvdm1hbGxvY19leGVj
+DQp1c2VyIGFuZCBhcmNoLg0KDQpCdXQgZm9yIG5vdyB3aXRoIHRoZSBjaGFuZ2UgaW4gdm1hbGxv
+Yywgd2UgY2FuIGJsb2NrIHRoZSBleGVjdXRhYmxlIG1hcHBpbmcNCmZyZWVkIHBhZ2UgcmUtdXNl
+IGlzc3VlIGluIGEgY3Jvc3MgcGxhdGZvcm0gd2F5Lg0KDQpUaGFua3MsDQoNClJpY2sNCg0K
