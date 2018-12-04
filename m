@@ -2,176 +2,344 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C37DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD4BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F31D2206B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:04:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F31D2206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0635D20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:05:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hm/VM/zL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0635D20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbeLDXEb (ORCPT
+        id S1726410AbeLDXF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 18:04:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52364 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725875AbeLDXEb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 18:04:31 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB4N3fUO127165
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 18:04:29 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p5yh4reee-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:04:27 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 4 Dec 2018 23:04:27 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 4 Dec 2018 23:04:24 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB4N4N9j17825978
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Dec 2018 23:04:23 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0BE82B2067;
-        Tue,  4 Dec 2018 23:04:23 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D60E3B2066;
-        Tue,  4 Dec 2018 23:04:22 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  4 Dec 2018 23:04:22 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C8EF716C1DFC; Tue,  4 Dec 2018 15:04:23 -0800 (PST)
-Date:   Tue, 4 Dec 2018 15:04:23 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:core/rcu] rcutorture: Make initrd/init execute in userspace
-Reply-To: paulmck@linux.ibm.com
-References: <tip-229ab0cb5be3bfbac5947df7240f6905470ca413@git.kernel.org>
- <20181204222412.GA6874@localhost>
+        Tue, 4 Dec 2018 18:05:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbeLDXF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 18:05:29 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9836720834;
+        Tue,  4 Dec 2018 23:05:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543964727;
+        bh=cx+H6R0aJ1y67dwG6bFJJlJ+V8msyo2pEQCIdGT22eE=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=Hm/VM/zLi44EpKj9ASIMIvCX2W9cUqFwXYZnA5WbS+SHtRbeKOswt3LUmgWb7k3k7
+         PsWZoFe5N1NoZpsfmPzYpitmBpVKEVifx7jK+yf7ficaLRw3oAHBzqmYYDpZTtu093
+         C7fXxOm/U2fG1RJN6A2um0B+qPr1OfQQx/XA8E0A=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181204222412.GA6874@localhost>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18120423-0068-0000-0000-0000036C159D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010172; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01127051; UDB=6.00585376; IPR=6.00907185;
- MB=3.00024448; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-04 23:04:26
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120423-0069-0000-0000-000046A75993
-Message-Id: <20181204230423.GP4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812040198
+Content-Transfer-Encoding: quoted-printable
+To:     Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        evgreen@google.com
+References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
+ <1543722903-10989-3-git-send-email-tdas@codeaurora.org>
+ <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
+ <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
+Message-ID: <154396472692.88331.13742924031474269133@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v11 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+Date:   Tue, 04 Dec 2018 15:05:26 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 02:24:13PM -0800, Josh Triplett wrote:
-> On Tue, Dec 04, 2018 at 02:09:42PM -0800, tip-bot for Paul E. McKenney wrote:
-> > --- a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-> > +++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-> > @@ -39,9 +39,22 @@ mkdir $T
-> >  
-> >  cat > $T/init << '__EOF___'
-> >  #!/bin/sh
-> > +# Run in userspace a few milliseconds every second.  This helps to
-> > +# exercise the NO_HZ_FULL portions of RCU.
-> >  while :
-> >  do
-> > -	sleep 1000000
-> > +	q=
-> > +	for i in \
-> > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
-> 
-> Ow. If there's no better way to do this, please do at least comment how many 'a's
-> this is. (And why 186, exactly?)
+Quoting Stephen Boyd (2018-12-04 14:28:11)
+> Quoting Viresh Kumar (2018-12-03 21:12:31)
+> > Hi Taniya,
+> > =
 
-Yeah, that is admittedly a bit strange.  The reason for 186 occurrences of
-"a" to one-time calibration, measuring a few millisecond's worth of delay.
+> > Sorry that I haven't been reviewing it much from last few iterations as=
+ I was
+> > letting others get this into a better shape. Thanks for your efforts..
+> > =
 
-> Please also consider calibrating the delay loop as you do in the C code.
+> > On 02-12-18, 09:25, Taniya Das wrote:
+> > > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> > =
 
-Good point.  And a quick web search finds me "date '+%s%N'", which gives
-me nanoseconds since the epoch.  I probably don't want to do a 2038 to
-myself (after all, I might still be alive then), so I should probably try
-to make something work with "date '+%N'".  Or use something like this:
+> > > +struct cpufreq_qcom {
+> > > +     struct cpufreq_frequency_table *table;
+> > > +     void __iomem *perf_state_reg;
+> > > +     cpumask_t related_cpus;
+> > > +};
+> > > +
+> > > +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+> > =
 
-	$ date '+%4N'; date '+%4N';date '+%4N'; date '+%4N'
-	6660
-	6685
-	6697
-	6710
+> > Now that the code is much more simplified, I am not sure if you need th=
+is
+> > per-cpu structure at all. The only place where you are using it is in
+> > qcom_cpufreq_hw_cpu_init() and probe(). Why not merge qcom_cpu_resource=
+s_init()
+> > completely into qcom_cpufreq_hw_cpu_init() and get rid of this structure
+> > entirely ?
+> > =
 
-Ah, but that means I need to add the "date" command to my initrd, doesn't
-it?  And calculation requires either bash or the "test" command.  And it
-would be quite good to restrict this to what can be done with Bourne shell
-built-in commands, since a big point of this is to maintain a small-sized
-initrd.  :-/
+> =
 
-So how about the following patch, which attempts to explain the situation?
+> Good point. Here's an untested patch to handle that. It removes the
+> related functionality and makes an array of pointers to the domains that
+> are created each time qcom_cpu_resources_init() is called.
+> =
 
-							Thanx, Paul
+> ---8<----
+> =
 
-------------------------------------------------------------------------
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpu=
+freq-hw.c
+> index 8dc6b73c2f22..04e7cfd70316 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -23,14 +23,14 @@
+>  #define REG_LUT_TABLE                  0x110
+>  #define REG_PERF_STATE                 0x920
+>  =
 
-commit 23c304cbeda435acd4096ab3213502d6ae9720f3
-Author: Paul E. McKenney <paulmck@linux.ibm.com>
-Date:   Tue Dec 4 14:59:12 2018 -0800
+> +#define MAX_FREQ_DOMAINS               2
+> +
+>  struct cpufreq_qcom {
+>         struct cpufreq_frequency_table *table;
+>         void __iomem *perf_state_reg;
+>         cpumask_t related_cpus;
+>  };
+>  =
 
-    torture: Explain odd "for" loop in mkinitrd.sh
-    
-    Why a Bourne-shell "for" loop?  And why 186 instances of "a"?  This commit
-    adds a shell comment to present the answer to these mysteries.
-    
-    Reported-by: Josh Triplett <josh@joshtriplett.org>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> -static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+> -
+>  static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+>                                         unsigned int index)
+>  {
+> @@ -76,9 +76,14 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct=
+ cpufreq_policy *policy,
+>  =
 
-diff --git a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-index da298394daa2..1df0bbbfde7c 100755
---- a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-+++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-@@ -40,7 +40,15 @@ mkdir $T
- cat > $T/init << '__EOF___'
- #!/bin/sh
- # Run in userspace a few milliseconds every second.  This helps to
--# exercise the NO_HZ_FULL portions of RCU.
-+# exercise the NO_HZ_FULL portions of RCU.  Yes, there are 186 instances
-+# of "a", which was empirically shown to give a nice multi-millisecond
-+# burst of user-mode execution on a 2GHz CPU, as desired.  Modern CPUs
-+# will vary from a couple of milliseconds up to perhaps 100 milliseconds,
-+# which is an acceptable range.
-+#
-+# Why not calibrate an exact delay?  Because within this initrd, we
-+# are restricted to Bourne-shell builtins, which as far as I know do not
-+# provide any means of obtaining a fine-grained timestamp.
- while :
- do
- 	q=
+>  static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+>  {
+> +       struct cpufreq_qcom **freq_domain_map;
+>         struct cpufreq_qcom *c;
+>  =
 
+> -       c =3D qcom_freq_domain_map[policy->cpu];
+> +       freq_domain_map =3D cpufreq_get_driver_data();
+> +       if (!freq_domain_map)
+> +               return -ENODEV;
+> +
+> +       c =3D freq_domain_map[policy->cpu];
+
+And this fails now because it indexes based on cpu number. We have to
+parse the frequency domain out of the cpunode again to fix that.
+
+Here's the updated (still untested) patch and I also just allocated the
+freq domain array up front instead of in each domain init routine to
+simplify some more.
+
+diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufr=
+eq-hw.c
+index 8dc6b73c2f22..bc0d734f7e3c 100644
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@ -23,14 +23,14 @@
+ #define REG_LUT_TABLE			0x110
+ #define REG_PERF_STATE			0x920
+ =
+
++#define MAX_FREQ_DOMAINS		2
++
+ struct cpufreq_qcom {
+ 	struct cpufreq_frequency_table *table;
+ 	void __iomem *perf_state_reg;
+ 	cpumask_t related_cpus;
+ };
+ =
+
+-static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+-
+ static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+ 					unsigned int index)
+ {
+@@ -76,9 +76,26 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct c=
+pufreq_policy *policy,
+ =
+
+ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+ {
+-	struct cpufreq_qcom *c;
++	struct cpufreq_qcom *freq_domain_map, *c;
++	struct device_node *cpu_np;
++	struct of_phandle_args args;
++	int ret;
++
++	freq_domain_map =3D cpufreq_get_driver_data();
++	if (!freq_domain_map)
++		return -ENODEV;
++
++	cpu_np =3D of_cpu_device_node_get(policy->cpu);
++	if (!cpu_np)
++		return -ENODEV;
++
++	ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
++					 "#freq-domain-cells", 0, &args);
++	of_node_put(cpu_np);
++	if (ret)
++		return ret;
+ =
+
+-	c =3D qcom_freq_domain_map[policy->cpu];
++	c =3D &freq_domain_map[args.args[0]];
+ 	if (!c) {
+ 		pr_err("No scaling support for CPU%d\n", policy->cpu);
+ 		return -ENODEV;
+@@ -171,43 +188,15 @@ static int qcom_cpufreq_hw_read_lut(struct device *de=
+v, struct cpufreq_qcom *c,
+ 	return 0;
+ }
+ =
+
+-static void qcom_get_related_cpus(int index, struct cpumask *m)
+-{
+-	struct device_node *cpu_np;
+-	struct of_phandle_args args;
+-	int cpu, ret;
+-
+-	for_each_possible_cpu(cpu) {
+-		cpu_np =3D of_cpu_device_node_get(cpu);
+-		if (!cpu_np)
+-			continue;
+-
+-		ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+-						 "#freq-domain-cells", 0,
+-						  &args);
+-		of_node_put(cpu_np);
+-		if (ret < 0)
+-			continue;
+-
+-		if (index =3D=3D args.args[0])
+-			cpumask_set_cpu(cpu, m);
+-	}
+-}
+-
+ static int qcom_cpu_resources_init(struct platform_device *pdev,
+-				   unsigned int cpu, int index,
+-				   unsigned long xo_rate,
+-				   unsigned long cpu_hw_rate)
++				   int index, unsigned long xo_rate,
++				   unsigned long cpu_hw_rate,
++				   struct cpufreq_qcom *c)
+ {
+-	struct cpufreq_qcom *c;
+ 	struct resource *res;
+ 	struct device *dev =3D &pdev->dev;
+ 	void __iomem *base;
+-	int ret, cpu_r;
+-
+-	c =3D devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+-	if (!c)
+-		return -ENOMEM;
++	int ret;
+ =
+
+ 	res =3D platform_get_resource(pdev, IORESOURCE_MEM, index);
+ 	base =3D devm_ioremap_resource(dev, res);
+@@ -220,12 +209,6 @@ static int qcom_cpu_resources_init(struct platform_dev=
+ice *pdev,
+ 		return -ENODEV;
+ 	}
+ =
+
+-	qcom_get_related_cpus(index, &c->related_cpus);
+-	if (!cpumask_weight(&c->related_cpus)) {
+-		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
+-		return -ENOENT;
+-	}
+-
+ 	c->perf_state_reg =3D base + REG_PERF_STATE;
+ =
+
+ 	ret =3D qcom_cpufreq_hw_read_lut(dev, c, base, xo_rate, cpu_hw_rate);
+@@ -234,9 +217,6 @@ static int qcom_cpu_resources_init(struct platform_devi=
+ce *pdev,
+ 		return ret;
+ 	}
+ =
+
+-	for_each_cpu(cpu_r, &c->related_cpus)
+-		qcom_freq_domain_map[cpu_r] =3D c;
+-
+ 	return 0;
+ }
+ =
+
+@@ -245,9 +225,16 @@ static int qcom_cpufreq_hw_driver_probe(struct platfor=
+m_device *pdev)
+ 	struct device_node *cpu_np;
+ 	struct of_phandle_args args;
+ 	struct clk *clk;
+-	unsigned int cpu;
++	unsigned int cpu, domain;
+ 	unsigned long xo_rate, cpu_hw_rate;
+ 	int ret;
++	struct cpufreq_qcom *freq_domain_map, *freq_domain;
++
++	freq_domain_map =3D devm_kcalloc(&pdev->dev, MAX_FREQ_DOMAINS,
++				       sizeof(*freq_domain_map), GFP_KERNEL);
++	cpufreq_qcom_hw_driver.driver_data =3D freq_domain_map;
++	if (!freq_domain_map)
++		return -ENOMEM;
+ =
+
+ 	clk =3D clk_get(&pdev->dev, "xo");
+ 	if (IS_ERR(clk))
+@@ -273,16 +260,26 @@ static int qcom_cpufreq_hw_driver_probe(struct platfo=
+rm_device *pdev)
+ =
+
+ 		ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+ 						 "#freq-domain-cells", 0,
+-						  &args);
++						 &args);
+ 		of_node_put(cpu_np);
+ 		if (ret)
+ 			return ret;
+ =
+
+-		if (qcom_freq_domain_map[cpu])
++		domain =3D args.args[0];
++		if (WARN_ON(domain >=3D MAX_FREQ_DOMAINS))
++			continue;
++
++		freq_domain =3D &freq_domain_map[domain];
++		cpumask_set_cpu(cpu, &freq_domain->related_cpus);
++		/*
++		 * If we've already populated the frequency table for this domain
++		 * just mark it related and get out of here
++		 */
++		if (cpumask_weight(&freq_domain->related_cpus) > 1)
+ 			continue;
+ =
+
+-		ret =3D qcom_cpu_resources_init(pdev, cpu, args.args[0],
+-					      xo_rate, cpu_hw_rate);
++		ret =3D qcom_cpu_resources_init(pdev, domain, xo_rate,
++					      cpu_hw_rate, freq_domain);
+ 		if (ret)
+ 			return ret;
+ 	}
