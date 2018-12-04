@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92592C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C641DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531B02082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86A76214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:08:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgS8HfLK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531B02082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w+c4ttmk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A76214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbeLDLIn (ORCPT
+        id S1728684AbeLDLIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:08:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58168 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:08:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728415AbeLDLIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:08:41 -0500
+        id S1728668AbeLDLIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:08:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A1102082D;
-        Tue,  4 Dec 2018 11:08:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34F2D2082D;
+        Tue,  4 Dec 2018 11:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921720;
-        bh=DbLAPjueEZ6uX7ZwMkiObgVczmxV1AW4YyHAN4G46Cc=;
+        s=default; t=1543921725;
+        bh=bOIao+olYLYyABmYqJc8tV4+ouINfHkSwEBYK/FNU1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GgS8HfLKyNT1x9Li9ftTGxkj6QCQxhPRh4JxSDl3h0tv4u4giGM8zqFV9mUmus8zQ
-         MaQNgcyOC2NDIg1PUQ3dUF/rk6oiUCOccaZsI2xvQkjxfOjSBnHNOkZP3UBcuAbano
-         A0PezX9qEuj9qf+M5v32kODHYGysLI6dHC7wC9vk=
+        b=w+c4ttmkEDzqZ/ZuQYQOWJdiSzmehq/alYFiFuidb/Q1/v5ceqxBRNF7LBWnK4m6B
+         j6kyXRbnR5McOeDysP2lEbLl61liKj8dibFIhSW13R4zOMibXc8J3umFiPI5hazPtR
+         BVU3pH+e5AVPPfvct8WZuOVojVdJ1meE1It4gF9A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.9 32/50] ext2: fix potential use after free
-Date:   Tue,  4 Dec 2018 11:50:27 +0100
-Message-Id: <20181204103716.113989440@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.9 34/50] dmaengine: at_hdmac: fix module unloading
+Date:   Tue,  4 Dec 2018 11:50:29 +0100
+Message-Id: <20181204103716.206082359@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -63,36 +64,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Richard Genoud <richard.genoud@gmail.com>
 
-commit ecebf55d27a11538ea84aee0be643dd953f830d5 upstream.
+commit 77e75fda94d2ebb86aa9d35fb1860f6395bf95de upstream.
 
-The function ext2_xattr_set calls brelse(bh) to drop the reference count
-of bh. After that, bh may be freed. However, following brelse(bh),
-it reads bh->b_data via macro HDR(bh). This may result in a
-use-after-free bug. This patch moves brelse(bh) after reading field.
+of_dma_controller_free() was not called on module onloading.
+This lead to a soft lockup:
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s!
+Modules linked in: at_hdmac [last unloaded: at_hdmac]
+when of_dma_request_slave_channel() tried to call ofdma->of_dma_xlate().
 
-CC: stable@vger.kernel.org
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Cc: stable@vger.kernel.org
+Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext2/xattr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/at_hdmac.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/ext2/xattr.c
-+++ b/fs/ext2/xattr.c
-@@ -609,9 +609,9 @@ skip_replace:
- 	}
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -2145,6 +2145,8 @@ static int at_dma_remove(struct platform
+ 	struct resource		*io;
  
- cleanup:
--	brelse(bh);
- 	if (!(bh && header == HDR(bh)))
- 		kfree(header);
-+	brelse(bh);
- 	up_write(&EXT2_I(inode)->xattr_sem);
+ 	at_dma_off(atdma);
++	if (pdev->dev.of_node)
++		of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&atdma->dma_common);
  
- 	return error;
+ 	dma_pool_destroy(atdma->memset_pool);
 
 
