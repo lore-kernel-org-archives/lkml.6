@@ -2,306 +2,176 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A2BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26236C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7062082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:16:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="eck9SQUY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7062082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
+	by mail.kernel.org (Postfix) with ESMTP id E4BF420834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:16:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4BF420834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeLDOQZ (ORCPT
+        id S1726885AbeLDOQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:16:25 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45593 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbeLDOPj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:15:39 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so7414263pgc.12
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 06:15:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=g.ncu.edu.tw; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QT/jwpU9ivKbEFe6HNlLtAKOm/2gOedicUVpenMpNWY=;
-        b=eck9SQUYRqWwcMG4f3ZkERiQhM1+bbdR5dLK/Kn6uTChNAQDbmOUD1V9MrkXIlDM/Q
-         kpDcS94Pl2Ups0YlXtwGUSwYcnN41sZp/Cx7RbJkYeBXNxhW7hfrVILQjKlXW1FUsrFf
-         V2OuhFAdQ6DQzVnKZ0F1TEy2fXXi/TJpRwUEQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QT/jwpU9ivKbEFe6HNlLtAKOm/2gOedicUVpenMpNWY=;
-        b=sQ6C1RdJvJ97u6Q4KwQDBLOEMetffOWuPySVivB8dGznf4iMEv7HmORZyiygZCZE3d
-         cJwaKluma1GGFW0qOTQw0AThsO6gHKzQ+hWETr5UEvRPa7FFed0eg/IiwldNlhg+GZoV
-         zW/ZFskTakPJ9nZWwLximUyuJdS3WWPECZJkyE8iyrTU4hCTZmfG+IzR5yR93oCjEnB8
-         AqMsiBhwaifDZrlGY8H7h8AzocwHBfIBDiz0KUOUWllK50PXaEv4V9C/g8GKGF/QHl1X
-         Mv5u8a99QGgpC27vJkpXXQFTF7lnub5MylXJGEaKOOZ6zty9TLgUKVfzopKuZzLXB7+7
-         rE6g==
-X-Gm-Message-State: AA+aEWYUDr2fXOER5pmD83HfFj2ga3+g2pXksrU0eXfs3M90RBsW1EnQ
-        iToHjx7rtgknM4j1NrvSpVzBeA==
-X-Google-Smtp-Source: AFSGD/V4gYHI9BZv96TnW3s4KyhpGGmdE6ZqrgX3h+wHapy2NxajIkXX/3EYORxfIQI96wZWvR4i+g==
-X-Received: by 2002:a63:6c48:: with SMTP id h69mr16052195pgc.139.1543932938838;
-        Tue, 04 Dec 2018 06:15:38 -0800 (PST)
-Received: from starnight.local ([150.116.248.145])
-        by smtp.gmail.com with ESMTPSA id n66sm36975863pfk.19.2018.12.04.06.15.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 06:15:38 -0800 (PST)
-From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
-To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [PATCH V4 3/6] net: maclorawan: Add maclorawan module declaration
-Date:   Tue,  4 Dec 2018 22:13:40 +0800
-Message-Id: <20181204141341.4353-4-starnight@g.ncu.edu.tw>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
-References: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
+        Tue, 4 Dec 2018 09:16:34 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:55404 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725955AbeLDOQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:16:32 -0500
+Received: from we0660.dip.tu-dresden.de ([141.76.178.148] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gUBUx-0001AO-R7; Tue, 04 Dec 2018 15:16:27 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Rob Herring <robh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 24/34] dt-bindings: arm: Convert Rockchip board/soc bindings to json-schema
+Date:   Tue, 04 Dec 2018 15:16:27 +0100
+Message-ID: <3170130.k0DT9deCHj@phil>
+In-Reply-To: <20181203213223.16986-25-robh@kernel.org>
+References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-25-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the maclorawan header file for common APIs in the module.
+Am Montag, 3. Dezember 2018, 22:32:13 CET schrieb Rob Herring:
+> Convert Rockchip SoC bindings to DT schema format using json-schema.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
----
-V2:
-- Split the LoRaWAN class module patch in V1 into LoRaWAN socket and
-  LoRaWAN Soft MAC modules
-- Use SPDX license identifiers
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> new file mode 100644
+> index 000000000000..3d30ec9adcd3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> @@ -0,0 +1,251 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/rockchip.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip platforms device tree bindings
+> +
+> +maintainers:
+> +  - Beniamino Galvani <b.galvani@gmail.com>
 
-V4:
-- Fix typo in comments
-- Fix by coding style report from scripts/checkpatch.pl
+# scripts/get_maintainer.pl -f Documentation/devicetree/bindings/arm/rockchip.txt
 
- net/maclorawan/maclorawan.h | 200 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 200 insertions(+)
- create mode 100644 net/maclorawan/maclorawan.h
+doesn't list Beniamino at all and he hasn't been active on Rockchip stuff
+for a number of years, so I'm not really sure where this mention as
+maintainer comes from.
 
-diff --git a/net/maclorawan/maclorawan.h b/net/maclorawan/maclorawan.h
-new file mode 100644
-index 000000000000..572c26c7cf40
---- /dev/null
-+++ b/net/maclorawan/maclorawan.h
-@@ -0,0 +1,200 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause */
-+/*-
-+ * LoRaWAN soft MAC
-+ *
-+ * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
-+ *
-+ */
-+
-+#ifndef __MAC_LORAWAN_H__
-+#define __MAC_LORAWAN_H__
-+
-+#include <linux/mutex.h>
-+#include <linux/spinlock.h>
-+#include <linux/skbuff.h>
-+#include <linux/workqueue.h>
-+#include <linux/netdevice.h>
-+#include <uapi/linux/if_arp.h>
-+#include <crypto/hash.h>
-+#include <crypto/skcipher.h>
-+#include <linux/lora/lorawan.h>
-+
-+#define	LORAWAN_MODULE_NAME	"maclorawan"
-+
-+/* List the message types of LoRaWAN */
-+enum {
-+	LRW_JOIN_REQUEST,
-+	LRW_JOIN_ACCEPT,
-+	LRW_UNCONFIRMED_DATA_UP,
-+	LRW_UNCONFIRMED_DATA_DOWN,
-+	LRW_CONFIRMED_DATA_UP,
-+	LRW_CONFIRMED_DATA_DOWN,
-+	LRW_RFU,
-+	LRW_PROPRIETARY,
-+};
-+
-+/* List the communication directions */
-+enum {
-+	LRW_UPLINK,
-+	LRW_DOWNLINK,
-+};
-+
-+/* States of LoRaWAN slot timing */
-+enum {
-+	LRW_INIT_SS,
-+	LRW_XMITTING_SS,
-+	LRW_XMITTED,
-+	LRW_RX1_SS,
-+	LRW_RX2_SS,
-+	LRW_RXTIMEOUT_SS,
-+	LRW_RXRECEIVED_SS,
-+	LRW_RETRANSMIT_SS,
-+};
-+
-+#define	LRW_MHDR_LEN		1
-+#define	LRW_FHDR_MAX_LEN	22
-+#define	LRW_FOPS_MAX_LEN	15
-+#define	LRW_FPORT_LEN		1
-+#define	LRW_MIC_LEN		4
-+
-+/**
-+ * lrw_fhdr - Hold the message's basic information of the frame
-+ *
-+ * @mtype:		this message's type
-+ * @fctrl:		the frame control byte
-+ * @fcnt:		this message's frame counter value
-+ * @fopts:		this frame's options field
-+ * @fopts_len:		the length of the fopts
-+ */
-+struct lrw_fhdr {
-+	u8 mtype;
-+	u8 fctrl;
-+	u16 fcnt;
-+	u8 fopts[LRW_FPORT_LEN];
-+	u8 fopts_len;
-+};
-+
-+/**
-+ * lrw_session - LoRaWAN session for Class A end device
-+ *
-+ * @lrw_st:		points to the belonging lrw_st
-+ * @entry:		the entry of the ss_list in lrw_struct
-+ * @devaddr:		the LoRaWAN device address of this LoRaWAN hardware
-+ * @fcnt_up:		uplink frame counter
-+ * @fcnt_down:		downlink frame counter
-+ * @fport:		the LoRaWAN data message's port field
-+ * @tx_skb:		points to the TX skb, the frame
-+ * @rx_skb:		points to the RX skb, the frame
-+ * @tx_fhdr:		hold the message's basic information of the TX frame
-+ * @rx_fhdr:		hold the message's basic information of the RX frame
-+ * @tx_should_ack:	flag for determining the TX which should be acked or not
-+ * @retry:		retry times for xmitting failed
-+ * @state:		this session's current state
-+ * @state_lock:		lock of the session's state
-+ * @timer:		timing for this session and the state transition
-+ * @timeout_work:	work if waiting acknowledge time out
-+ * @rx_delay1:		RX1 delay time in seconds
-+ * @rx_delay2:		RX2 delay time in seconds
-+ * @rx1_window:		RX1 window opening time in milliseconds
-+ * @rx2_window:		RX2 window opening time in milliseconds
-+ * @ack_timeout:	time out time for waiting acknowledge in seconds
-+ */
-+struct lrw_session {
-+	struct lrw_struct *lrw_st;
-+	struct list_head entry;
-+
-+	u32 devaddr;
-+	u16 fcnt_up;
-+	u16 fcnt_down;
-+	u8 fport;
-+	struct sk_buff *tx_skb;
-+	struct sk_buff *rx_skb;
-+	struct lrw_fhdr tx_fhdr;
-+	struct lrw_fhdr rx_fhdr;
-+
-+	u8 tx_should_ack;
-+	u8 retry;
-+	u8 state;
-+	spinlock_t state_lock; /* lock of the session's state */
-+
-+	struct timer_list timer;
-+	struct work_struct timeout_work;
-+	unsigned long rx_delay1;
-+	unsigned long rx_delay2;
-+	unsigned long rx1_window;
-+	unsigned long rx2_window;
-+	unsigned long ack_timeout;
-+};
-+
-+/**
-+ * lrw_struct - The full LoRaWAN hardware to the LoRa device.
-+ *
-+ * @dev:		this LoRa device registed in system
-+ * @hw:			the LoRa device of this LoRaWAN hardware
-+ * @ops:		handle of LoRa operations interfaces
-+ * @rx_skb_list:	the list of received frames
-+ * @ss_list:		LoRaWAN session list of this LoRaWAN hardware
-+ * @ss_list_lock:	lock of the session list
-+ * @_cur_ss:		pointer of the current processing session
-+ * @rx_should_ack:	represent the current session should be acked or not
-+ * @state:		the state of this LoRaWAN hardware
-+ * @app_eui:		the LoRaWAN application EUI
-+ * @dev_eui:		the LoRaWAN device EUI
-+ * @devaddr:		the LoRaWAN device address of this LoRaWAN hardware
-+ * @appky:		the Application key
-+ * @nwkskey:		the Network session key
-+ * @appskey:		the Application session key
-+ * @nwks_shash_tfm:	the hash handler for LoRaWAN network session
-+ * @nwks_skc_tfm:	the crypto handler for LoRaWAN network session
-+ * @apps_skc_tfm:	the crypto handler for LoRaWAN application session
-+ * @fcnt_up:		the counter of this LoRaWAN hardware's up frame
-+ * @fcnt_down:		the counter of this LoRaWAN hardware's down frame
-+ * @xmit_task:		the xmit task for the current LoRaWAN session
-+ * @rx_work:		the RX work in workqueue for the current LoRaWAN session
-+ * @ndev:		points to the emulating network device
-+ * @_net:		the current network namespace of this LoRaWAN hardware
-+ */
-+struct lrw_struct {
-+	struct device dev;
-+	struct lrw_hw hw;
-+	struct lrw_operations *ops;
-+
-+	struct sk_buff_head rx_skb_list;
-+	struct list_head ss_list;
-+	struct mutex ss_list_lock; /* lock of the session list */
-+	struct lrw_session *_cur_ss;
-+	u8 rx_should_ack;
-+	u8 state;
-+
-+	u64 app_eui;
-+	u64 dev_eui;
-+	u32 devaddr;
-+	u8 appkey[LRW_KEY_LEN];
-+	u8 nwkskey[LRW_KEY_LEN];
-+	u8 appskey[LRW_KEY_LEN];
-+	struct crypto_shash *nwks_shash_tfm;
-+	struct crypto_sync_skcipher *nwks_skc_tfm;
-+	struct crypto_sync_skcipher *apps_skc_tfm;
-+
-+	u16 fcnt_up;
-+	u16 fcnt_down;
-+
-+	struct tasklet_struct xmit_task;
-+	struct work_struct rx_work;
-+
-+	struct net_device *ndev;
-+	possible_net_t _net;
-+};
-+
-+#define	NETDEV_2_LRW(ndev)	((struct lrw_struct *)netdev_priv(ndev))
-+
-+struct lrw_session *lrw_alloc_ss(struct lrw_struct *lrw_st);
-+void lrw_free_ss(struct lrw_session *ss);
-+void lrw_del_ss(struct lrw_session *ss);
-+int lrw_start_hw(struct lrw_struct *lrw_st);
-+void lrw_stop_hw(struct lrw_struct *lrw_st);
-+void lrw_prepare_tx_frame(struct lrw_session *ss);
-+void lrw_xmit(unsigned long data);
-+void lrw_rx_work(struct work_struct *work);
-+
-+#endif
--- 
-2.19.2
+
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - amarula,vyasa-rk3288
+> +              - asus,rk3288-tinker
+> +              - asus,rk3288-tinker-s
+> +              - radxa,rock2-square
+> +              - chipspark,popmetal-rk3288
+> +              - netxeon,r89
+> +              - firefly,firefly-rk3288
+> +              - firefly,firefly-rk3288-beta
+> +              - firefly,firefly-rk3288-reload
+> +              - mqmaker,miqi
+> +              - rockchip,rk3288-fennec
+> +          - const: rockchip,rk3288
+
+[...]
+
+> +      - items:
+> +          - enum:
+> +              - firefly,firefly-rk3399
+> +              - firefly,roc-rk3399-pc
+> +              - pine64,rockpro64
+> +              - rockchip,rk3399-evb
+> +              - rockchip,rk3399-sapphire
+> +              - rockchip,rk3399-sapphire-excavator
+> +              - tsd,rk3399-q7-haikou
+> +              - vamrs,ficus
+> +              - vamrs,rock960 # 96boards RK3399 Rock960 (ROCK960 Consumer Edition)
+> +          - const: rockchip,rk3399
+
+
+as said before, loosing the description of the boards that get thrown 
+into one listing really decreases the usability a lot.
+
+Best example is maybe the rk3399 rock960, where the consumer-edition
+board is actually named "ficus" and the description actually brings the
+connection to the product-name.
+
+So here it may increase the machine-readability but definitly descreases
+the human readability of the file itself.
+
+I guess just using the format that all the Google-boards got for all boards
+would just be easiest, so for example the rock960 also would just become:
+
+      - description: 96boards RK3399 Ficus (ROCK960 Enterprise Edition)
+        items:
+          - const: vamrs,ficus
+          - const: rockchip,rk3399
+
+      - description: 96boards RK3399 Ficus (ROCK960 Consumer Edition)
+        items:
+          - const: vamrs,rock960
+          - const: rockchip,rk3399
+
+
+Looking at other socs, this is likely similar there. Like on Mediatek
+all the MT67xx eval boards loose the mapping to the
+socs marketing name "Helio Foobar" when the description is gone,
+which could've been helpful for people reading the binding.
+
+
+Heiko
+
+
+> +      - description: Google Bob (Asus Chromebook Flip C101PA)
+> +        items:
+> +          - const: google,bob-rev13
+> +          - const: google,bob-rev12
+> +          - const: google,bob-rev11
+> +          - const: google,bob-rev10
+> +          - const: google,bob-rev9
+> +          - const: google,bob-rev8
+> +          - const: google,bob-rev7
+> +          - const: google,bob-rev6
+> +          - const: google,bob-rev5
+> +          - const: google,bob-rev4
+> +          - const: google,bob
+> +          - const: google,gru
+> +          - const: rockchip,rk3399
+
+
+
 
