@@ -2,145 +2,120 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66251C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AA2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 339DD2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339DD2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D3A5214DE
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:50:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="RLNOhbw/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3A5214DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbeLDTuT (ORCPT
+        id S1726357AbeLDTu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:50:19 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:55534 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbeLDTuS (ORCPT
+        Tue, 4 Dec 2018 14:50:57 -0500
+Received: from mail.efficios.com ([167.114.142.138]:46262 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeLDTu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:50:18 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id 7vqF1z00G3XaVaC01vqFXa; Tue, 04 Dec 2018 20:50:15 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gUGhz-0001td-5z; Tue, 04 Dec 2018 20:50:15 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gUGhz-0005as-4l; Tue, 04 Dec 2018 20:50:15 +0100
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Andreas Schwab <schwab@linux-m68k.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Schmitz <schmitzmic@gmail.com>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2] m68k: Fix crash in free_all_bootmem()
-Date:   Tue,  4 Dec 2018 20:50:14 +0100
-Message-Id: <20181204195014.21461-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 4 Dec 2018 14:50:56 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 7CE979EDB0;
+        Tue,  4 Dec 2018 14:50:55 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id iyU9d0poIRNX; Tue,  4 Dec 2018 14:50:55 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id DCC5A9EDAB;
+        Tue,  4 Dec 2018 14:50:54 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com DCC5A9EDAB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1543953054;
+        bh=+zVGABJb4waJEo0jE0aHRjh6BYIKymGmDY6lWxHg7fA=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=RLNOhbw/ZbfHsnwKT8Whsk+HTRQiz0d9XHbQjOMXXt7Xp2q3N+Y5Nltyy6aMYBdyv
+         VwkvqQ2qaQofzfYy6/dv4aX+AU6tv7Uvx5rdwbjnTXUUu35acNSSiHi8kJ0T0/OyT7
+         6Dh7qXy2BsOJWOJsL0QdqFbgkfns/XbT/U67vZLAFa159ZVxOjPh44doZmtdsCLoiO
+         yDO6ZjEanbAzyqc/qQl4HHyeHdhNDUiZoziijC5xToS5ElgGa/JY3/CUmIDOCCGuUS
+         NjJH97Se5hEcefSTujhPkcgz84vRRUkUAbLUQwo93nQyZI9lOIjINGfQR54uIEPHfW
+         Fjjv+pLoO/fMg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id e3LvpFVWiUgo; Tue,  4 Dec 2018 14:50:54 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id BF7F89ED9B;
+        Tue,  4 Dec 2018 14:50:54 -0500 (EST)
+Date:   Tue, 4 Dec 2018 14:50:54 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Message-ID: <2002498237.18908.1543953054629.JavaMail.zimbra@efficios.com>
+In-Reply-To: <8736rd13i7.fsf@oldenburg2.str.redhat.com>
+References: <20181204192141.4684-1-mathieu.desnoyers@efficios.com> <8736rd13i7.fsf@oldenburg2.str.redhat.com>
+Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at
+ nptl init and thread creation (v4)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation (v4)
+Thread-Index: vbBiugdrML49y0rh0l25/HG+rBfz5A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running the kernel in Fast RAM on Atari:
+----- On Dec 4, 2018, at 2:44 PM, Florian Weimer fweimer@redhat.com wrote:
 
-    Ignoring memory chunk at 0x0:0xe00000 before the first chunk
-    ...
-    Unable to handle kernel NULL pointer dereference at virtual address (ptrval)
-    Oops: 00000000
-    Modules linked in:
-    PC: [<0069dbac>] free_all_bootmem+0x12c/0x186
-    SR: 2714  SP: (ptrval)  a2: 005e3314
-    d0: 00000000    d1: 0000000a    d2: 00000e00    d3: 00000000
-    d4: 005e1fc0    d5: 0000001a    a0: 01000000    a1: 00000000
-    Process swapper (pid: 0, task=(ptrval))
-    Frame format=7 eff addr=00000736 ssw=0505 faddr=00000736
-    wb 1 stat/addr/data: 0000 00000000 00000000
-    wb 2 stat/addr/data: 0000 00000000 00000000
-    wb 3 stat/addr/data: 0000 00000736 00000000
-    push data: 00000000 00000000 00000000 00000000
-    Stack from 005e1f84:
-            00000000 0000000a 027d3260 006b5006 00000000 00000000 00000000 00000000
-            0004f062 0003a220 0069e272 005e1ff8 0000054c 00000000 00e00000 00000000
-            00000001 00693cd8 027d3260 0004f062 0003a220 00691be6 00000000 00000000
-            00000000 00000000 00000000 00000000 006b5006 00000000 00690872
-    Call Trace: [<0004f062>] printk+0x0/0x18
-     [<0003a220>] parse_args+0x0/0x2d4
-     [<0069e272>] memblock_virt_alloc_try_nid+0x0/0xa4
-     [<00693cd8>] mem_init+0xa/0x5c
-     [<0004f062>] printk+0x0/0x18
-     [<0003a220>] parse_args+0x0/0x2d4
-     [<00691be6>] start_kernel+0x1ca/0x462
-     [<00690872>] _sinittext+0x872/0x11f8
-    Code: 7a1a eaae 2270 6db0 0061 ef14 2f01 2f03 <96a9> 0736 2203 e589 d681 e78b d6a9 0732 2f03 2f40 0034 4eb9 0069 b8d0 260e 4fef
-    Disabling lock debugging due to kernel taint
-    Kernel panic - not syncing: Attempted to kill the idle task!
+> * Mathieu Desnoyers:
+> 
+>> diff --git a/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
+>> b/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
+>> index c370fda73d..9da78d59d2 100644
+>> --- a/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
+>> +++ b/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
+>> @@ -235,3 +235,4 @@ GLIBC_2.28 tss_create F
+>>  GLIBC_2.28 tss_delete F
+>>  GLIBC_2.28 tss_get F
+>>  GLIBC_2.28 tss_set F
+>> +GLIBC_2.29 __rseq_refcount T 0x4
+> 
+> This part looks buggy.
+> 
+> It's unclear based on this patch whether you actually want to get rid of
+> the __rseq_refcount symbol.
 
-As the kernel must run in the memory chunk with the lowest address,
-ST-RAM is ignored, and removed from the m68k_memory[] array.
-However, it is not removed from memblock, causing a crash later.
+I want to keep the __rseq_refcount symbol so out-of-libc users can
+register rseq if they are linked against a pre-2.29 libc.
 
-Fix this by removing ignored memory chunks from memblock.
+Why does it look buggy ?
 
-Amigas with both Zorro II and Zorro III RAM have a similar issue, as on
-such systems, Zorro II RAM is ignored, and removed from the
-m68k_memory[] array.  Fix this as well.
+Thanks,
 
-Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Fixes: 1008a11590b966b4 ("m68k: switch to MEMBLOCK + NO_BOOTMEM")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-The Amiga part is untested.
+Mathieu
 
-v2:
-  - Add missing #include <linux/memblock.h>.
----
- arch/m68k/amiga/config.c | 3 +++
- arch/m68k/mm/motorola.c  | 2 ++
- 2 files changed, 5 insertions(+)
 
-diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
-index 65f63a4571300085..068f9b6bb4bc3722 100644
---- a/arch/m68k/amiga/config.c
-+++ b/arch/m68k/amiga/config.c
-@@ -20,6 +20,7 @@
- #include <linux/console.h>
- #include <linux/rtc.h>
- #include <linux/init.h>
-+#include <linux/memblock.h>
- #include <linux/vt_kern.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-@@ -427,6 +428,8 @@ void __init config_amiga(void)
- 					continue;
- 				}
- 				disabled_z2mem += m68k_memory[i].size;
-+				memblock_remove(m68k_memory[i].addr,
-+						m68k_memory[i].size);
- 				m68k_num_memory--;
- 				for (j = i; j < m68k_num_memory; j++)
- 					m68k_memory[j] = m68k_memory[j+1];
-diff --git a/arch/m68k/mm/motorola.c b/arch/m68k/mm/motorola.c
-index 7497cf30bf1cd41b..7cf0d57fa5c7e75e 100644
---- a/arch/m68k/mm/motorola.c
-+++ b/arch/m68k/mm/motorola.c
-@@ -233,6 +233,8 @@ void __init paging_init(void)
- 			printk("Ignoring memory chunk at 0x%lx:0x%lx before the first chunk\n",
- 				m68k_memory[i].addr, m68k_memory[i].size);
- 			printk("Fix your bootloader or use a memfile to make use of this area!\n");
-+			memblock_remove(m68k_memory[i].addr,
-+					m68k_memory[i].size);
- 			m68k_num_memory--;
- 			memmove(m68k_memory + i, m68k_memory + i + 1,
- 				(m68k_num_memory - i) * sizeof(struct m68k_mem_info));
 -- 
-2.17.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
