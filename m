@@ -2,162 +2,121 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C8DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDB7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E88E214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71547214C1
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:14:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfiVfxmA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E88E214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="loFnscbP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71547214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbeLDINm (ORCPT
+        id S1726079AbeLDIOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 03:13:42 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37135 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbeLDINl (ORCPT
+        Tue, 4 Dec 2018 03:14:50 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:47738 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbeLDIOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 03:13:41 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j10so14849290wru.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 00:13:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=x9IjF5zEI3lcr5nKh24AlJ08SKJH2eZhyljTxQ0YBAc=;
-        b=mfiVfxmA+Dgmd3B88d29MrTnTn2RteiiSdTSpIYVCcpVCXDDCnQDlH0uhKNc8E/5td
-         dYCdjM2Oha04H58VsfbMKBRz4PyaWK7SvpQkD5CNSMXPU5SgwsG1mEVR4H8F74pg/6sf
-         facu3Fc4JRvJyyHtkKkFNMIkq4E5rd8nMhT5a8+LjcdWQJRhU16MqOpX7Chd/576f7Fe
-         ajrY+qd+yM/RydCOFkdEmUXEpYmzl0u0N3wJjJtQgGRq+nI8BUwIWLtwTHaDVnB32nGh
-         ThQa+d71ir1qoUGtK1vW+bWTDU0pNpQqoXD05gUb/clIEMekXlEfuoyZzCc8e/1ShIQO
-         ulVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x9IjF5zEI3lcr5nKh24AlJ08SKJH2eZhyljTxQ0YBAc=;
-        b=Lwd/svA/NDWr1TYn20wfANLyGy5EbTTc98I7git33jR4FwvMDDtoD8QuTvPsalzctV
-         zNSB5lPylgAXM7SGyWN8sZwGZT9/9RGOIgxCXCocDWG5M3rLuHTxHeDzMP2W5pp1oc7p
-         y8XxqKNoTZ9qI7muFLrCN53ck2BMiDzekm2I5zNw/j4YYQRKp4CdsfcHfjc4+zG1z1LW
-         8H6hAeBm8BdnjSLiA3JKcBpi6ooJuBT8XDpOl7NZw4bpIXouGFQ4uKkjzrV6mzE6tQ/2
-         tUon7iWLiMn8SRqbJvjnREa8MYVbTV6Ddnr0IwQr1YR/bfWx7MnuIJvfuwWdLtMvIoLH
-         NQ3A==
-X-Gm-Message-State: AA+aEWa0raw5uL1FwW9jf4uh3dbKINatJdBZodl+f7cEScYwsIs5ONnO
-        KAu6F90CgceIA2XUe/me98dIFnf4
-X-Google-Smtp-Source: AFSGD/UTaPZQWWJblB0hHHeVFSScEdYhcXMTySlWbxwiwR+EgJ0/sj3eFoJqmRU3XUfUgf4oRhIECA==
-X-Received: by 2002:a5d:5089:: with SMTP id a9mr17577049wrt.327.1543911218752;
-        Tue, 04 Dec 2018 00:13:38 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id b7sm12742448wrs.47.2018.12.04.00.13.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 00:13:37 -0800 (PST)
-Date:   Tue, 4 Dec 2018 09:13:35 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Michael Rodin <michael@rodin.online>,
+        Tue, 4 Dec 2018 03:14:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Wt6Qcr0MFiw9wJQCE6DeZZsX1mzPNojAtPSbLz3FeLA=; b=loFnscbPHHJK0R3dsXYcsPkRb
+        kY+gPlUlyB+UgjYtLkkKOj+Ksv6lCqiZk2zV8JlssrbZGt8IE9mV28OF/8i0lMXAxJt709pv+JymA
+        ljt52UFkpODvJkmsdSJjZTcs+Twjo1hbD5pQU8LxxAhiM6adnrHzieKVJuptAvzsaIQlahOkI8bi8
+        jtK/Dw5ajuSLWmoXR00IAz2Nu51uOlLnMoLz9+eNRUU7sDWq9Nr3Ehw1x4sAcyQW0yr9McvDV373J
+        jcbsDNf66h7v2h4L6t65saEBxJfII1dII2ADuz1IEP/cJguw06ZhiUDxHuOE7ibXSUaC3zcJV2+Ly
+        sXhi/c0BQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gU5qo-00083n-S1; Tue, 04 Dec 2018 08:14:39 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2B85A2029FD58; Tue,  4 Dec 2018 09:14:36 +0100 (CET)
+Date:   Tue, 4 Dec 2018 09:14:36 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [BUGFIX PATCH -tip] kprobes/x86: Fix to copy RIP relative
- instruction correctly
-Message-ID: <20181204081335.GB67285@gmail.com>
-References: <153504457253.22602.1314289671019919596.stgit@devbox>
+Subject: Re: [PATCH 22/27] locking/lockdep: Reuse list entries that are no
+ longer in use
+Message-ID: <20181204081436.GL11614@hirez.programming.kicks-ass.net>
+References: <20181128234325.110011-1-bvanassche@acm.org>
+ <20181128234325.110011-23-bvanassche@acm.org>
+ <20181129104902.GH2131@hirez.programming.kicks-ass.net>
+ <20181129120143.GG2149@hirez.programming.kicks-ass.net>
+ <1543510130.185366.139.camel@acm.org>
+ <20181201202446.GA19706@hirez.programming.kicks-ass.net>
+ <1543855248.185366.158.camel@acm.org>
+ <20181203173258.GK11614@hirez.programming.kicks-ass.net>
+ <1543861019.185366.167.camel@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <153504457253.22602.1314289671019919596.stgit@devbox>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1543861019.185366.167.camel@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 03, 2018 at 10:16:59AM -0800, Bart Van Assche wrote:
+> On Mon, 2018-12-03 at 18:32 +0100, Peter Zijlstra wrote:
+> > On Mon, Dec 03, 2018 at 08:40:48AM -0800, Bart Van Assche wrote:
+> > 
+> > > > I think we can do this with a free bitmap and an array of 2 pending
+> > > > bitmaps and an index. Add newly freed entries to the pending bitmap
+> > > > indicated by the current index, when complete flip the index -- such
+> > > > that further new bits go to the other pending bitmap -- and call_rcu().
+> > > > 
+> > > > Then, on the call_rcu() callback, ie. after a GP has happened, OR our
+> > > > pending bitmap into the free bitmap, and when the other pending bitmap
+> > > > isn't empty, flip the index again and start it all again.
+> > > > 
+> > > > This ensures there is at least one full GP between setting a bit and it
+> > > > landing in the free mask.
+> > > 
+> > > Hi Peter,
+> > > 
+> > > How about the following alternative which requires only two bitmaps instead
+> > > of three:
+> > > - Maintain two bitmaps, one for the free entries and one for the entries
+> > >   that are being freed.
+> > > - Protect all accesses to both bitmaps with the graph lock.
+> > > - zap_class() sets a bit in the "being freed" bitmap for the entries that
+> > >   should be freed after a GP.
+> > > - Instead of making free_zapped_classes() wait for a grace period by calling
+> > >   synchronize_sched(), use call_rcu() and do the freeing work from inside the
+> > >   RCU callback.
+> > > - From inside the RCU callback, set a bit in the "free" bitmap for all entries
+> > >   that have a bit set in the "being freed" bitmap and clears the "being freed"
+> > >   bitmap.
+> > 
+> > What happens when another unreg happens while the rcu_call thing is
+> > still pending?
+> 
+> A new flag will have to keep track of whether or not an RCU callback has
+> already been scheduled via rcu_call() but not yet executed to avoid double
+> RCU call complaints.
 
-* Masami Hiramatsu <mhiramat@kernel.org> wrote:
+That's not the only problem there. You either then have to synchronously
+wait for that flag / rcu_call to complete, or, if you modify the bitmap,
+ensure it re-queues itself for another GP before committing, which is
+starvation prone.
 
-> Since copy_optimized_instructions() misses to update real RIP
-> address while copying several instructions to working buffer,
-> it adjusts RIP-relative instruction with wrong RIP address for
-> the 2nd and subsequent instructions.
-> 
-> This may break the kernel (like kernel freeze) because
-> probed instruction can refer a wrong data. For example,
-> putting kprobes on cpumask_next hit this bug.
-> 
-> cpumask_next is normally like below if CONFIG_CPUMASK_OFFSTACK=y
-> (in this case nr_cpumask_bits is an alias of nr_cpu_ids)
-> 
->  <cpumask_next>:
->        48 89 f0                mov    %rsi,%rax
->        8b 35 7b fb e2 00       mov    0xe2fb7b(%rip),%esi
->         # ffffffff82db9e64 <nr_cpu_ids>
->        55                      push   %rbp
-> ...
-> 
-> If we put a kprobe on it and optimized with jump, it becomes
-> like this.
-> 
-> 	e9 95 7d 07 1e	jmpq   0xffffffffa000207a
-> 	7b fb	jnp    0xffffffff81f8a2e2 <cpumask_next+2>
-> 	e2 00	loop   0xffffffff81f8a2e9 <cpumask_next+9>
-> 	55	push   %rbp
-> 
-> This shows first 2 "mov" instructions are copied to trampoline
-> buffer at 0xffffffffa000207a. Here is the disassembled result.
-> (skipped optprobe template instructions)
-> 
-> Dump of assembler code from 0xffffffffa000207a to 0xffffffffa00020ea:
-> 	54	push   %rsp
-> ...
-> 	48 83 c4 08	add    $0x8,%rsp
-> 	9d	popfq
-> 	48 89 f0	mov    %rsi,%rax
-> 	8b 35 82 7d db e2	mov    -0x1d24827e(%rip),%esi
->         # 0xffffffff82db9e67 <nr_cpu_ids+3>
-> 
-> As it shows, the 2nd mov accesses *(nr_cpu_ids+3) instead of
-> *nr_cpu_ids. This leads a kernel freeze because cpumask_next()
-> always returns 0 and for_each_cpu() never ended.
-> 
-> Fixing this by adding len correctly to real RIP address while
-> copying.
-> 
-> Fixes: 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()")
-> Reported-by: Michael Rodin <michael@rodin.online>
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: stable@vger.kernel.org
-> ---
->  arch/x86/kernel/kprobes/opt.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-> index eaf02f2e7300..e92672b8b490 100644
-> --- a/arch/x86/kernel/kprobes/opt.c
-> +++ b/arch/x86/kernel/kprobes/opt.c
-> @@ -189,7 +189,8 @@ static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
->  	int len = 0, ret;
->  
->  	while (len < RELATIVEJUMP_SIZE) {
-> -		ret = __copy_instruction(dest + len, src + len, real, &insn);
-> +		ret = __copy_instruction(dest + len, src + len, real + len,
-> +			&insn);
+> In other code a possible alternative would be to
+> allocate the RCU head data structure dynamically. However, I don't think
+> that alternative is appropriate inside the lockdep code - I don't want to
+> introduce a circular dependency between the lockdep code and the memory
+> allocator.
 
-I applied this, except that I unbroke the line: please ignore checkpatch 
-in such cases where the cure is worse than the disease ...
-
-I.e. even if slightly over 80 cols, this is more readable:
-
-		ret = __copy_instruction(dest + len, src + len, real + len, &insn);
-
-Thanks,
-
-	Ingo
+Yes, that's a trainwreck waiting to happen ;-)
