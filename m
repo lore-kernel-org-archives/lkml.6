@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E9DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 382D9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B019206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B019206B7
+	by mail.kernel.org (Postfix) with ESMTP id 0325D206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0325D206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbeLDOYQ (ORCPT
+        id S1726668AbeLDOXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:24:16 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33369 "EHLO mail.bootlin.com"
+        Tue, 4 Dec 2018 09:23:22 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33303 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbeLDOXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:23:23 -0500
+        id S1726609AbeLDOXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:23:19 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8433420E0C; Tue,  4 Dec 2018 15:23:18 +0100 (CET)
+        id DC71F20E54; Tue,  4 Dec 2018 15:23:15 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C1EC320E0C;
-        Tue,  4 Dec 2018 15:22:41 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7C5BC20A66;
+        Tue,  4 Dec 2018 15:22:40 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v3 12/21] drm/sun4i: Add buffer stride and offset configuration for tiling mode
-Date:   Tue,  4 Dec 2018 15:22:09 +0100
-Message-Id: <20181204142218.16284-13-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 07/21] drm/sun4i: frontend: Add support for packed YUV422 input formats
+Date:   Tue,  4 Dec 2018 15:22:04 +0100
+Message-Id: <20181204142218.16284-8-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
 References: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
@@ -50,121 +50,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces stride and offset configuration for the VPU tiling mode.
-Stride is calculated differently than it is for linear formats and an
-offset is calculated, for which new register definitions are introduced.
+This introduces support for packed YUV formats with 4:2:2 sampling using
+the frontend. Definitions are introduced for the data format and pixel
+sequence input format register values.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 60 ++++++++++++++++++++++++--
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  8 ++++
- 2 files changed, 65 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 22 ++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  5 +++++
+ 2 files changed, 27 insertions(+)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 3dcb05147e41..151b78d3c02e 100644
+index 1737a4394401..ff34ac9bcf05 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -125,21 +125,75 @@ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
+@@ -132,6 +132,8 @@ sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
  {
- 	struct drm_plane_state *state = plane->state;
- 	struct drm_framebuffer *fb = state->fb;
-+	unsigned int strides[3] = {};
-+
- 	dma_addr_t paddr;
- 	bool swap;
+ 	if (!format->is_yuv)
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
++	else if (drm_format_info_is_yuv_sampling_422(format))
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422;
+ 	else
+ 		return -EINVAL;
  
-+	if (fb->modifier == DRM_FORMAT_MOD_ALLWINNER_TILED) {
-+		unsigned int width = state->src_w >> 16;
-+		unsigned int offset;
-+
-+		/*
-+		 * In MB32 tiled mode, the stride is defined as the distance
-+		 * between the start of the end line of the current tile and
-+		 * the start of the first line in the next vertical tile.
-+		 *
-+		 * Tiles are represented in row-major order, thus the end line
-+		 * of current tile starts at: 31 * 32 (31 lines of 32 cols),
-+		 * the next vertical tile starts at: 32-bit-aligned-width * 32
-+		 * and the distance is: 32 * (32-bit-aligned-width - 31).
-+		 */
-+
-+		strides[0] = SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[0]);
-+
-+		/*
-+		 * The X1 offset is the offset to the bottom-right point in the
-+		 * end tile, which is the final pixel (at offset width - 1)
-+		 * within the end tile (with a 32-byte mask).
-+		 */
-+		offset = (width - 1) & (32 - 1);
-+
-+		regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF0_REG,
-+			     SUN4I_FRONTEND_TB_OFF_X1(offset));
-+
-+		if (fb->format->num_planes > 1) {
-+			strides[1] =
-+				SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[1]);
-+
-+			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF1_REG,
-+				     SUN4I_FRONTEND_TB_OFF_X1(offset));
-+		}
-+
-+		if (fb->format->num_planes > 2) {
-+			strides[2] =
-+				SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[2]);
-+
-+			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF2_REG,
-+				     SUN4I_FRONTEND_TB_OFF_X1(offset));
-+		}
-+	} else {
-+		strides[0] = fb->pitches[0];
-+
-+		if (fb->format->num_planes > 1)
-+			strides[1] = fb->pitches[1];
-+
-+		if (fb->format->num_planes > 2)
-+			strides[2] = fb->pitches[2];
-+	}
-+
- 	/* Set the line width */
- 	DRM_DEBUG_DRIVER("Frontend stride: %d bytes\n", fb->pitches[0]);
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD0_REG,
--		     fb->pitches[0]);
-+		     strides[0]);
+@@ -157,10 +159,26 @@ static int sun4i_frontend_drm_format_to_input_sequence(uint32_t fmt, u32 *val)
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX;
+ 		return 0;
  
- 	if (fb->format->num_planes > 1)
- 		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD1_REG,
--			     fb->pitches[1]);
-+			     strides[1]);
++	case DRM_FORMAT_UYVY:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY;
++		return 0;
++
++	case DRM_FORMAT_VYUY:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY;
++		return 0;
++
+ 	case DRM_FORMAT_XRGB8888:
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB;
+ 		return 0;
  
- 	if (fb->format->num_planes > 2)
- 		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD2_REG,
--			     fb->pitches[2]);
-+			     strides[2]);
++	case DRM_FORMAT_YUYV:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV;
++		return 0;
++
++	case DRM_FORMAT_YVYU:
++		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU;
++		return 0;
++
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -184,7 +202,11 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
  
- 	/* Some planar formats require chroma channel swapping by hand. */
- 	swap = sun4i_frontend_format_chroma_requires_swap(fb->format->format);
+ static const uint32_t sun4i_frontend_formats[] = {
+ 	DRM_FORMAT_BGRX8888,
++	DRM_FORMAT_UYVY,
++	DRM_FORMAT_VYUY,
+ 	DRM_FORMAT_XRGB8888,
++	DRM_FORMAT_YUYV,
++	DRM_FORMAT_YVYU,
+ };
+ 
+ bool sun4i_frontend_format_is_supported(uint32_t fmt, uint64_t modifier)
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index ae53ee644694..9434407ea40d 100644
+index 326cd5607efa..750dda9352fc 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -25,9 +25,17 @@
- #define SUN4I_FRONTEND_BUF_ADDR1_REG		0x024
- #define SUN4I_FRONTEND_BUF_ADDR2_REG		0x028
- 
-+#define SUN4I_FRONTEND_TB_OFF0_REG		0x030
-+#define SUN4I_FRONTEND_TB_OFF1_REG		0x034
-+#define SUN4I_FRONTEND_TB_OFF2_REG		0x038
-+#define SUN4I_FRONTEND_TB_OFF_X1(x1)			((x1) << 16)
-+#define SUN4I_FRONTEND_TB_OFF_Y0(y0)			((y0) << 8)
-+#define SUN4I_FRONTEND_TB_OFF_X0(x0)			(x0)
-+
- #define SUN4I_FRONTEND_LINESTRD0_REG		0x040
- #define SUN4I_FRONTEND_LINESTRD1_REG		0x044
- #define SUN4I_FRONTEND_LINESTRD2_REG		0x048
-+#define SUN4I_FRONTEND_LINESTRD_TILED(stride)		(((stride) - 31) * 32)
+@@ -27,7 +27,12 @@
  
  #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR	(0 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422	(1 << 4)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB		(5 << 4)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY		0
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV		1
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY		2
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU		3
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX		0
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB		1
+ 
 -- 
 2.19.2
 
