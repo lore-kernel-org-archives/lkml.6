@@ -2,108 +2,371 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD6EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF49C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 127352082F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:11:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W5IAPz5d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 127352082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A416206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:12:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A416206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbeLDPLO (ORCPT
+        id S1726733AbeLDPMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:11:14 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:45846 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbeLDPLN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:11:13 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB4F4ivv003202;
-        Tue, 4 Dec 2018 15:11:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=2aarRQK15wjSwi3CjU9H10FDAlFxIePaV+maM8hnSqA=;
- b=W5IAPz5dddprUeiZ9fjWqgyi57qg5lGC60ZxTUmOVvZzV/DTMBWOixHeDHWxyaW8LQwc
- 0nLMRJDGAfCMbWB1VRzjebuBo6XMIuTDpeP+isYs9Pwt3u0nEbEqyaCC05PYKFCKX2z2
- rUh09ALmInwXuAokZ2/IPPCZlpt3+ZfeySoCwzu68NaBNdk80CXOq/dL6tUE6lYxaKbn
- D6yukpjW7lwj6Z2xIB/lyk1IvmVlY5HvITiTL+LOhDFLoNQzYR2W5LpIw2qT35h+YJry
- M6yWRZn16QsltTBXfhA5CQ6mm/ie71/2FmM8CvRO9geGa9awbhIfpbr6a5GrZMHc+KCm Eg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2p3hqtw0u8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Dec 2018 15:11:02 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB4FB1Tp012718
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 4 Dec 2018 15:11:01 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB4FB1uQ009882;
-        Tue, 4 Dec 2018 15:11:01 GMT
-Received: from unbuntlaptop (/197.157.0.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Dec 2018 07:11:00 -0800
-Date:   Tue, 4 Dec 2018 18:10:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH v2] ptp: fix an IS_ERR() vs NULL check
-Message-ID: <20181204151049.GK3073@unbuntlaptop>
-References: <20181130163252.e6z33t23j3qud57z@localhost>
- <20181203105506.GA21127@unbuntlaptop>
- <20181204044257.grk3na2wyrx6nssg@localhost>
- <20181204070033.GG3073@unbuntlaptop>
- <20181204145538.dnyqlfspnpqmojop@localhost>
+        Tue, 4 Dec 2018 10:12:35 -0500
+Received: from foss.arm.com ([217.140.101.70]:34672 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726042AbeLDPMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 10:12:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D42C80D;
+        Tue,  4 Dec 2018 07:12:34 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18F763F614;
+        Tue,  4 Dec 2018 07:12:31 -0800 (PST)
+Date:   Tue, 4 Dec 2018 15:12:27 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: Re: [PATCH v4 2/2] PCI: uniphier: Add UniPhier PCIe host controller
+ support
+Message-ID: <20181204151227.GA29926@e107981-ln.cambridge.arm.com>
+References: <1543377866-16634-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <1543377866-16634-3-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181204145538.dnyqlfspnpqmojop@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9097 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=836
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812040129
+In-Reply-To: <1543377866-16634-3-git-send-email-hayashi.kunihiko@socionext.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 06:55:38AM -0800, Richard Cochran wrote:
-> On Tue, Dec 04, 2018 at 10:00:33AM +0300, Dan Carpenter wrote:
-> > 
-> > Why did you commit 3b1ad360acad ("pps: using ERR_PTR instead of NULL
-> > while pps_register_source fails")?  You're not listed as a maintainer so
-> > I wouldn't have known to CC you.
-> 
-> I'm confused.  Where is that commit?
-> 
->    $ git show 3b1ad360acad
->    fatal: ambiguous argument '3b1ad360acad': unknown revision or path not in the working tree.
-> 
-> I'm pulling from:
-> 
->    torvalds git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git (fetch)
->    stable   git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git (fetch)
-> 
-> (and also from net and net-next)
-> 
+On Wed, Nov 28, 2018 at 01:04:26PM +0900, Kunihiko Hayashi wrote:
 
-I'm on linux-next but originally it came from the char-misc-next tree.
+[...]
 
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git char-misc-next
+> +static void uniphier_pcie_irq_ack(struct irq_data *d)
+> +{
+> +	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> +	u32 val;
+> +
+> +	val = readl(priv->base + PCL_RCV_INTX);
+> +	val &= ~PCL_RCV_INTX_ALL_STATUS;
+> +	val |= BIT(irqd_to_hwirq(d) + PCL_RCV_INTX_STATUS_SHIFT);
+> +	writel(val, priv->base + PCL_RCV_INTX);
+> +}
+> +
+> +static void uniphier_pcie_irq_mask(struct irq_data *d)
+> +{
+> +	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> +	u32 val;
+> +
+> +	val = readl(priv->base + PCL_RCV_INTX);
+> +	val &= ~PCL_RCV_INTX_ALL_STATUS;
+> +	val |= BIT(irqd_to_hwirq(d) + PCL_RCV_INTX_MASK_SHIFT);
+> +	writel(val, priv->base + PCL_RCV_INTX);
+> +}
+> +
+> +static void uniphier_pcie_irq_unmask(struct irq_data *d)
+> +{
+> +	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> +	u32 val;
+> +
+> +	val = readl(priv->base + PCL_RCV_INTX);
+> +	val &= ~PCL_RCV_INTX_ALL_STATUS;
 
-regards,
-dan carpenter
+I have noticed this operation is carried out on ACK/MASK/UNMASK,
+what's its purpose ?
 
+Lorenzo
+
+> +	val &= ~BIT(irqd_to_hwirq(d) + PCL_RCV_INTX_MASK_SHIFT);
+> +	writel(val, priv->base + PCL_RCV_INTX);
+> +}
+> +
+> +static struct irq_chip uniphier_pcie_irq_chip = {
+> +	.name = "PCI",
+> +	.irq_ack = uniphier_pcie_irq_ack,
+> +	.irq_mask = uniphier_pcie_irq_mask,
+> +	.irq_unmask = uniphier_pcie_irq_unmask,
+> +};
+> +
+> +static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
+> +				  irq_hw_number_t hwirq)
+> +{
+> +	irq_set_chip_and_handler(irq, &uniphier_pcie_irq_chip,
+> +				 handle_level_irq);
+> +	irq_set_chip_data(irq, domain->host_data);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops uniphier_intx_domain_ops = {
+> +	.map = uniphier_pcie_intx_map,
+> +};
+> +
+> +static void uniphier_pcie_irq_handler(struct irq_desc *desc)
+> +{
+> +	struct pcie_port *pp = irq_desc_get_handler_data(desc);
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	unsigned long reg;
+> +	u32 val, bit, virq;
+> +
+> +	/* INT for debug */
+> +	val = readl(priv->base + PCL_RCV_INT);
+> +
+> +	if (val & PCL_CFG_BW_MGT_STATUS)
+> +		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
+> +	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
+> +		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
+> +	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
+> +		dev_dbg(pci->dev, "Root Error\n");
+> +	if (val & PCL_CFG_PME_MSI_STATUS)
+> +		dev_dbg(pci->dev, "PME Interrupt\n");
+> +
+> +	writel(val, priv->base + PCL_RCV_INT);
+> +
+> +	/* INTx */
+> +	chained_irq_enter(chip, desc);
+> +
+> +	val = readl(priv->base + PCL_RCV_INTX);
+> +	reg = FIELD_GET(PCL_RCV_INTX_ALL_STATUS, val);
+> +
+> +	for_each_set_bit(bit, &reg, PCI_NUM_INTX) {
+> +		virq = irq_linear_revmap(priv->legacy_irq_domain, bit);
+> +		generic_handle_irq(virq);
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+> +static int uniphier_pcie_config_legacy_irq(struct pcie_port *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> +	struct device_node *np = pci->dev->of_node;
+> +	struct device_node *np_intc;
+> +
+> +	np_intc = of_get_child_by_name(np, "legacy-interrupt-controller");
+> +	if (!np_intc) {
+> +		dev_err(pci->dev, "Failed to get legacy-interrupt-controller node\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	pp->irq = irq_of_parse_and_map(np_intc, 0);
+> +	if (!pp->irq) {
+> +		dev_err(pci->dev, "Failed to get an IRQ entry in legacy-interrupt-controller\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	priv->legacy_irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
+> +						&uniphier_intx_domain_ops, pp);
+> +	if (!priv->legacy_irq_domain) {
+> +		dev_err(pci->dev, "Failed to get INTx domain\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	irq_set_chained_handler_and_data(pp->irq, uniphier_pcie_irq_handler,
+> +					 pp);
+> +
+> +	return 0;
+> +}
+> +
+> +static int uniphier_pcie_host_init(struct pcie_port *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> +	int ret;
+> +
+> +	ret = uniphier_pcie_config_legacy_irq(pp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	uniphier_pcie_irq_enable(priv);
+> +
+> +	dw_pcie_setup_rc(pp);
+> +	ret = uniphier_pcie_establish_link(pci);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (IS_ENABLED(CONFIG_PCI_MSI))
+> +		dw_pcie_msi_init(pp);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dw_pcie_host_ops uniphier_pcie_host_ops = {
+> +	.host_init = uniphier_pcie_host_init,
+> +};
+> +
+> +static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
+> +				  struct platform_device *pdev)
+> +{
+> +	struct dw_pcie *pci = &priv->pci;
+> +	struct pcie_port *pp = &pci->pp;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	pp->ops = &uniphier_pcie_host_ops;
+> +
+> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+> +		if (pp->msi_irq < 0)
+> +			return pp->msi_irq;
+> +	}
+> +
+> +	ret = dw_pcie_host_init(pp);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to initialize host (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int uniphier_pcie_host_enable(struct uniphier_pcie_priv *priv)
+> +{
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(priv->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = reset_control_deassert(priv->rst);
+> +	if (ret)
+> +		goto out_clk_disable;
+> +
+> +	uniphier_pcie_init_rc(priv);
+> +
+> +	ret = phy_init(priv->phy);
+> +	if (ret)
+> +		goto out_rst_assert;
+> +
+> +	ret = uniphier_pcie_wait_rc(priv);
+> +	if (ret)
+> +		goto out_phy_exit;
+> +
+> +	return 0;
+> +
+> +out_phy_exit:
+> +	phy_exit(priv->phy);
+> +out_rst_assert:
+> +	reset_control_assert(priv->rst);
+> +out_clk_disable:
+> +	clk_disable_unprepare(priv->clk);
+> +
+> +	return ret;
+> +}
+> +
+> +static void uniphier_pcie_host_disable(struct uniphier_pcie_priv *priv)
+> +{
+> +	uniphier_pcie_irq_disable(priv);
+> +	phy_exit(priv->phy);
+> +	reset_control_assert(priv->rst);
+> +	clk_disable_unprepare(priv->clk);
+> +}
+> +
+> +static const struct dw_pcie_ops dw_pcie_ops = {
+> +	.start_link = uniphier_pcie_establish_link,
+> +	.stop_link = uniphier_pcie_stop_link,
+> +	.link_up = uniphier_pcie_link_up,
+> +};
+> +
+> +static int uniphier_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct uniphier_pcie_priv *priv;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->pci.dev = dev;
+> +	priv->pci.ops = &dw_pcie_ops;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+> +	priv->pci.dbi_base = devm_pci_remap_cfg_resource(dev, res);
+> +	if (IS_ERR(priv->pci.dbi_base))
+> +		return PTR_ERR(priv->pci.dbi_base);
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link");
+> +	priv->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(priv->base))
+> +		return PTR_ERR(priv->base);
+> +
+> +	priv->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(priv->clk))
+> +		return PTR_ERR(priv->clk);
+> +
+> +	priv->rst = devm_reset_control_get_shared(dev, NULL);
+> +	if (IS_ERR(priv->rst))
+> +		return PTR_ERR(priv->rst);
+> +
+> +	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
+> +	if (IS_ERR(priv->phy))
+> +		return PTR_ERR(priv->phy);
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	ret = uniphier_pcie_host_enable(priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return uniphier_add_pcie_port(priv, pdev);
+> +}
+> +
+> +static int uniphier_pcie_remove(struct platform_device *pdev)
+> +{
+> +	struct uniphier_pcie_priv *priv = platform_get_drvdata(pdev);
+> +
+> +	uniphier_pcie_host_disable(priv);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id uniphier_pcie_match[] = {
+> +	{ .compatible = "socionext,uniphier-pcie", },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, uniphier_pcie_match);
+> +
+> +static struct platform_driver uniphier_pcie_driver = {
+> +	.probe  = uniphier_pcie_probe,
+> +	.remove = uniphier_pcie_remove,
+> +	.driver = {
+> +		.name = "uniphier-pcie",
+> +		.of_match_table = uniphier_pcie_match,
+> +	},
+> +};
+> +builtin_platform_driver(uniphier_pcie_driver);
+> +
+> +MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
+> +MODULE_DESCRIPTION("UniPhier PCIe host controller driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.7.4
+> 
