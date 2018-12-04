@@ -2,132 +2,277 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F932C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3451EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07692087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE89D2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:32:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lHJu06y4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F07692087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvtoZhOw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE89D2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbeLDBaZ (ORCPT
+        id S1726089AbeLDBcO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:30:25 -0500
-Received: from mail-eopbgr70052.outbound.protection.outlook.com ([40.107.7.52]:31184
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725943AbeLDBaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:30:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GIuF8spFsMvJiPqd5S2k0AfyI1XX7tQaWL7yynqph6w=;
- b=lHJu06y4mChyMaTUJEiLNjgnSFh1iYvhGNGJHYwm7kYDEp+46QTxJzvuAA4iD/98v4SPif1gW6Pmi9rwejbdE/m5ADbHkwlPILvl2IKVlJHEMllS+b/DzUPy+pG+Q9FPQYHfEjFLfXeh4EZN1wuRbGXzpkvAjOcCWBi3Thbpix4=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5281.eurprd04.prod.outlook.com (20.177.42.78) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18; Tue, 4 Dec 2018 01:29:29 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1382.020; Tue, 4 Dec 2018
- 01:29:29 +0000
-From:   Aisheng DONG <aisheng.dong@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V6 0/9] clk: add imx7ulp clk support
-Thread-Topic: [PATCH V6 0/9] clk: add imx7ulp clk support
-Thread-Index: AQHUfBop1Xq5Us4kAEeJejcBpfY7TqVthW+AgABjuOA=
-Date:   Tue, 4 Dec 2018 01:29:29 +0000
-Message-ID: <AM0PR04MB42111FFF525D6EC5D785692380AF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
- <154386550302.88331.785218354920872757@swboyd.mtv.corp.google.com>
-In-Reply-To: <154386550302.88331.785218354920872757@swboyd.mtv.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [101.93.238.110]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5281;6:pVyt9fnd7lBGoIIrTaXetOHt6h4cXxaxhD5tHe1cSc2wu7VUKSopUxhRcy+nfpSFOJtGMBW6eRRG55/P2jNZtZqpr0psMD3jBskxPbfC6Mrw5w5i40yYqurTvtQCkuwIsY+yaCLtFvGfToiBxDC1loiXsxHNdrY5MMOC3U5s7+QFQd1zpWJg18jwZlZMCKm/KnO4RofFsXmMcxCnIn2ThTI4jVn6ovK5IL4xl8wdusxgLWYnZtSb2fNGF3DsAqS6ayKevNMIbq2RI1jmtdf6eISuIkTSMZzUmUrfH3D9Ti+/x8LVRR+xM5tLx2K4dTj+qz0xm1tZDt+wKEjQRvOOiqwMJWakXCRaOcmZSQoeB3Q40LV+vCrbrCZzS1PJbabF72aTUtGutCrufeNDI9MGIQNnLjN0eU+jblMRDZ+GWp2hmr/fEcAzc9NQf+HcNyr9ym80jy/JWOeW1yh5L6jR5w==;5:SXmhNaQgXMxcf7mS6g7jxbyg+KUfzoAWHMSIyQaw/HiOT2fRJDeBeBBIor0se04jnmK3zc7aLkmOqUydgAGt2znngp8NWRJ1zdsCjrmT25A5ILi3tRYZKzvJG+yrtzUe0vzFRc/R/9dEswvU6aGivRwWI9Y8XQQtzz3NllpfRCI=;7:uN3cDRitl2I8MR5q8n34Q7VKMH9mGDn+TR65xTlaqYljkLxI6e3/TqJiaPQ0fb4vYqZwzvvgDcEODIKWF+CtQklBMsb1kyX5klZlopjnSSl4bUJFjU6bQloKRkJ39oaVZHy0YTs8Ncz+SRY+ne4/3A==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 405910cf-df7e-4754-2dd7-08d65987efcb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5281;
-x-ms-traffictypediagnostic: AM0PR04MB5281:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-microsoft-antispam-prvs: <AM0PR04MB52813980F3C8F8D93C54CE0680AF0@AM0PR04MB5281.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231455)(999002)(944501493)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5281;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5281;
-x-forefront-prvs: 0876988AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39860400002)(136003)(366004)(199004)(189003)(13464003)(14454004)(2906002)(5660300001)(81166006)(8676002)(3846002)(6116002)(7696005)(68736007)(81156014)(54906003)(486006)(110136005)(99286004)(26005)(33656002)(8936002)(229853002)(4326008)(71200400001)(305945005)(7736002)(97736004)(71190400001)(53936002)(476003)(11346002)(14444005)(6436002)(256004)(66066001)(106356001)(6506007)(9686003)(74316002)(6246003)(25786009)(4001150100001)(478600001)(55016002)(105586002)(53546011)(2501003)(86362001)(76176011)(316002)(446003)(186003)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5281;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 98uTPsk7lCpVbGecP7D88OvTOZPJbVuConUIs0qPDu6/2W/WEfR5HKdg7HYihIFgxVA1xxhx1J7Z1VETR0y/0BOCDZINia26JRAfatULpwdBCDMRqczlhVVhYiGwtH8djHLv50AL4+YmpcBxT7yRHseRbev9Y4qc7C+GxIOZ1i8ixOCRjCWToKKhBNCzTs+XX10RP6Z4F1nCOyDOh2hgV13bq9sTtXUcMvp6Zs1G7/42EoTjlvl7+21qH4+w7vQIfn2VyArVuTWlKEnFsBaPJTd+X8oIdYOvEgqlrciBHfHKJybWc8H9WMfmm6QfJkWTWSsOisLBnzuB42WWGN5PWh8kYGeA20hk0AAjQ7lTsWM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 3 Dec 2018 20:32:14 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34237 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbeLDBcO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 20:32:14 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u6-v6so13304812ljd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 17:32:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=jJtEICfLEofftzZtzHi7uQoDuwsy/YSlDonL+0HdVgY=;
+        b=dvtoZhOwNncq4gqehGLJdAr0Qkw/MIHqDr1PGOVTOl54QSd7OTPD9xTDdjsTaSwqfB
+         rHq0FWE0Wr6JOCWcf6YKcKdHuaw21ncKmyi6ZaKau4bBqiHGhrpnsIldk5iA7OjTGWy5
+         odDHs/QUM5hnKgF1iovfvt3CMxu0fMcYsyVCQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=jJtEICfLEofftzZtzHi7uQoDuwsy/YSlDonL+0HdVgY=;
+        b=eP5VR/ZLyhu79sPUKzq2YdcM9I9ByE6DDgd7hm0GXXaDsiJ6BJst6eyqup5wrtguQv
+         ojush7pNYrT+V/day/bM6uQ7CVR1mvCzPHe/RhT76cDEDJ+18zoRhWZDhjStlHAZhqas
+         gEK0qi0Do6MymI1YisskLT1M+vTxFSlm2wLWJkCDI85KTwsfb7FcV2vxWP6tOrkoxm73
+         f8rqoIHk3Nk2BKGMlEi6vngobZV4g6sEXndgpmfBu4wakrEd8gjjvU/0kRhjlk2oJcyK
+         4NhcF5x0+WOoVmoHfwMflzbSH0SdG1cKia7U4SWU9l9pK8UCNeFa2sarbBSnalWYhqu5
+         n6YQ==
+X-Gm-Message-State: AA+aEWZCCfc+4ig7fHwEJupAcza0Pzv1WMdg1aiOVW+TcYFvFL65OTBj
+        3bXno7qgir+JF6+kl5n6utPQiw==
+X-Google-Smtp-Source: AFSGD/WHsXaY79cu18ha/uDiOk4VPCT5N47+iRszsA2Kyt1zk0gz1cvdJlBKavfjxhFDy+LizoP4eA==
+X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr11066824lje.117.1543887130961;
+        Mon, 03 Dec 2018 17:32:10 -0800 (PST)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id f20-v6sm2839632ljk.33.2018.12.03.17.32.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 17:32:10 -0800 (PST)
+Date:   Tue, 4 Dec 2018 03:32:08 +0200
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     davem@davemloft.net, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiri@mellanox.com, andrew@lunn.ch
+Subject: Re: [RFC PATCH net-next 2/5] net: 8021q: vlan_dev: add vid tag for
+ uc and mc address lists
+Message-ID: <20181204013207.GH23230@khorivan>
+Mail-Followup-To: Florian Fainelli <f.fainelli@gmail.com>,
+        davem@davemloft.net, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiri@mellanox.com, andrew@lunn.ch
+References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
+ <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
+ <b2a7baa7-b334-0f6f-c119-a2f30ac68c7b@gmail.com>
+ <20181203235119.GF23230@khorivan>
+ <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 405910cf-df7e-4754-2dd7-08d65987efcb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 01:29:29.7330
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5281
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
-bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBUdWVzZGF5LCBEZWNlbWJlciA0LCAyMDE4IDM6
-MzIgQU0NCj4gVG86IEFpc2hlbmcgRE9ORyA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBsaW51eC1j
-bGtAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IG10dXJxdWV0dGVAYmF5bGli
-cmUuY29tOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBBbnNvbiBIdWFuZw0KPiA8YW5zb24uaHVhbmdA
-bnhwLmNvbT47IEphY2t5IEJhaSA8cGluZy5iYWlAbnhwLmNvbT47IGRsLWxpbnV4LWlteA0KPiA8
-bGludXgtaW14QG54cC5jb20+OyBBaXNoZW5nIERPTkcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0K
-PiBTdWJqZWN0OiBSZTogW1BBVENIIFY2IDAvOV0gY2xrOiBhZGQgaW14N3VscCBjbGsgc3VwcG9y
-dA0KPiANCj4gUXVvdGluZyBBLnMuIERvbmcgKDIwMTgtMTEtMTQgMDU6MDE6MzEpDQo+ID4gVGhp
-cyBwYXRjaCBzZXJpZXMgaW50ZW5kcyB0byBhZGQgaW14N3VscCBjbGsgc3VwcG9ydC4NCj4gPg0K
-PiA+IGkuTVg3VUxQIENsb2NrIGZ1bmN0aW9ucyBhcmUgdW5kZXIgam9pbnQgY29udHJvbCBvZiB0
-aGUgU3lzdGVtIENsb2NrDQo+ID4gR2VuZXJhdGlvbiAoU0NHKSBtb2R1bGVzLCBQZXJpcGhlcmFs
-IENsb2NrIENvbnRyb2wgKFBDQykgbW9kdWxlcywgYW5kDQo+ID4gQ29yZSBNb2RlIENvbnRyb2xs
-ZXIgKENNQykxIGJsb2Nrcw0KPiA+DQo+ID4gVGhlIGNsb2NraW5nIHNjaGVtZSBwcm92aWRlcyBj
-bGVhciBzZXBhcmF0aW9uIGJldHdlZW4gTTQgZG9tYWluIGFuZCBBNw0KPiA+IGRvbWFpbi4gRXhj
-ZXB0IGZvciBhIGZldyBjbG9jayBzb3VyY2VzIHNoYXJlZCBiZXR3ZWVuIHR3byBkb21haW5zLA0K
-PiA+IHN1Y2ggYXMgdGhlIFN5c3RlbSBPc2NpbGxhdG9yIGNsb2NrLCB0aGUgU2xvdyBJUkMgKFNJ
-UkMpLCBhbmQgYW5kIHRoZQ0KPiA+IEZhc3QgSVJDIGNsb2NrIChGSVJDTEspLCBjbG9jayBzb3Vy
-Y2VzIGFuZCBjbG9jayBtYW5hZ2VtZW50IGFyZQ0KPiA+IHNlcGFyYXRlZCBhbmQgY29udGFpbmVk
-IHdpdGhpbiBlYWNoIGRvbWFpbi4NCj4gPg0KPiA+IE00IGNsb2NrIG1hbmFnZW1lbnQgY29uc2lz
-dHMgb2YgU0NHMCwgUENDMCwgUENDMSwgYW5kIENNQzAgbW9kdWxlcy4NCj4gPiBBNyBjbG9jayBt
-YW5hZ2VtZW50IGNvbnNpc3RzIG9mIFNDRzEsIFBDQzIsIFBDQzMsIGFuZCBDTUMxIG1vZHVsZXMu
-DQo+ID4NCj4gPiBOb3RlOiB0aGlzIHNlcmllcyBvbmx5IGFkZHMgQTcgY2xvY2sgZG9tYWluIHN1
-cHBvcnQgYXMgTTQgY2xvY2sgZG9tYWluDQo+ID4gd2lsbCBiZSBoYW5kbGVkIGJ5IE00IHNlcGVy
-YXRlbHkuDQo+ID4NCj4gDQo+IEkgZ290Og0KPiANCj4gZHJpdmVycy9jbGsvaW14L2Nsay1wbGx2
-NC5jOjE1MjoxNTogd2FybmluZzogc3ltYm9sICdpbXhfY2xrX3BsbHY0JyB3YXMgbm90DQo+IGRl
-Y2xhcmVkLiBTaG91bGQgaXQgYmUgc3RhdGljPw0KPiBkcml2ZXJzL2Nsay9pbXgvY2xrLXBmZHYy
-LmM6MTY2OjE1OiB3YXJuaW5nOiBzeW1ib2wgJ2lteF9jbGtfcGZkdjInIHdhcyBub3QNCj4gZGVj
-bGFyZWQuIFNob3VsZCBpdCBiZSBzdGF0aWM/DQo+IGRyaXZlcnMvY2xrL2lteC9jbGstZGl2aWRl
-ci1nYXRlLmM6MTc0OjE1OiB3YXJuaW5nOiBzeW1ib2wNCj4gJ2lteF9jbGtfZGl2aWRlcl9nYXRl
-JyB3YXMgbm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUgc3RhdGljPw0KPiBkcml2ZXJzL2Nsay9p
-bXgvY2xrLWNvbXBvc2l0ZS03dWxwLmM6MjI6MTU6IHdhcm5pbmc6IHN5bWJvbA0KPiAnaW14N3Vs
-cF9jbGtfY29tcG9zaXRlJyB3YXMgbm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUgc3RhdGljPw0K
-PiANCj4gd2hpY2ggSSBjYW4gZml4IGVhc2lseSBieSB0aHJvd2luZyBpbiBjbGsuaCBpbnRvIGVh
-Y2ggZmlsZS4NCg0KVGhhbmtzLCBJIHdpbGwgZG91YmxlIGNoZWNrIGl0IHdoZW4gSSBiYWNrIHRv
-IG9mZmljZS4NCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQoNCg==
+On Mon, Dec 03, 2018 at 03:57:03PM -0800, Florian Fainelli wrote:
+>On 12/3/18 3:51 PM, Ivan Khoronzhuk wrote:
+>> On Mon, Dec 03, 2018 at 02:17:00PM -0800, Florian Fainelli wrote:
+>>> On 12/3/18 10:40 AM, Ivan Khoronzhuk wrote:
+>>>> Update vlan mc and uc addresses with VID tag while propagating address
+>>>> set to lower devices, do this only if address is not synched. It allows
+>>>> on end driver level to distinguish address belonging to vlans.
+>>>
+>>> Underlying driver for the real device would be able to properly identify
+>>> that you are attempting to add an address to a virtual device, which
+>>> happens to be of VLAN kind so I am really not sure this is the right
+>>> approach here.
+>>>
+>>> From there, it seems to me that we have two situations:
+>>>
+>>> - each of your network devices expose VLAN devices directly on top of
+>>> the real device, in which case your driver should support
+>>> ndo_vlan_rx_add_vid and ndo_vlan_rx_kill_vid to know when VLAN devices
+>>> are create and maintain a VLAN device to VID correspondence if it needs
+>>> to when being called while setting the addresses
+>>>
+>>> - you are setting up a bridge that is VLAN aware on one of your bridge
+>>> ports, and there you can use switchdev to learn about such events and
+>>> know about both addresses as well as VIDs that must be programmed into
+>>> your real device
+>> No limits to have any "middle" device between real end device and
+>> virtual one, not only a bridge, but also other kind. And as it's generic
+>> change, it should cover all such cases, the simplest example is:
+>> real_dev/macvlan/vlan.
+>
+>It is not generic if the additional information is a VLAN ID, that
+>construct does not apply to all types of virtual devices, that is part
+>of my issue with the extra VID that is being added. If this was a void *
+>priv and any virtual device could pass up/down information that might be
+>more acceptable.
+I tractate it as virtual identification not relating it to vlans only.
+VID just uses for eth devices part of already reserved address.
+I was also thinking about passing smth like pointer on vlan device,
+frankly even don't remember what stopped me, probably size of pointer or
+so, maybe it looked harder... but it still seems possible and at least for
+ethernet address is enough space: 32 - 6 = 26, 26 > 8.
+
+Despite it only combines methods with extended address space and passing
+link to vlan device, it adds ability to apply allmulti and promisc modes
+per vlans.
+
+
+>
+>>
+>>>
+>>> It seems to me that what you need may be something like either:
+>>>
+>>> - notifications on slave devices when addresses are added via
+>>> ndo_set_rxmode()
+>>>
+>>> or
+>>>
+>>> - dev_{uc,mc}_sync() should be augmented with a "source net_device"
+>>> argument which allows you to differentiate which network device is the
+>>> source of the address programming. That way, no need to "hash" the MAC
+>>> address with a VID, any network device specific information can be
+>>> provided and in the real device driver you can do: if
+>>> (netif_is_vlan()... etc.)
+>> No issue to retrieve vlan dev if it's directly on top of real dev.
+>> Issue is to get it when it's not directly connected as it's not in
+>> vlan_info group list. Who knows what else can be "structed" on top of
+>> real dev till the vlan device. Please look on reply for cover letter,
+>> as it seems requires similar response.
+>
+>In that case, there are notifications generated that you must be
+>listening to determine whether you have something like a VLAN device on
+>top of a bond, which is a port member of a bridge, on which one of your
+>real device port is enslaved (yes, it can be that type of stacking).
+
+It becomes even harder, traversing all structure of devices, seems not very
+simple task.
+
+>
+>>
+>>>
+>>> Hopefully someone else will chime in.
+>>>
+>>>>
+>>>> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+>>>> ---
+>>>>  include/linux/if_vlan.h |  1 +
+>>>>  net/8021q/vlan_core.c   | 10 ++++++++++
+>>>>  net/8021q/vlan_dev.c    | 26 ++++++++++++++++++++++++++
+>>>>  3 files changed, 37 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
+>>>> index 4cca4da7a6de..94657f3c483a 100644
+>>>> --- a/include/linux/if_vlan.h
+>>>> +++ b/include/linux/if_vlan.h
+>>>> @@ -136,6 +136,7 @@ extern struct net_device
+>>>> *__vlan_find_dev_deep_rcu(struct net_device *real_dev,
+>>>>  extern int vlan_for_each(struct net_device *dev,
+>>>>               int (*action)(struct net_device *dev, int vid,
+>>>>                         void *arg), void *arg);
+>>>> +extern u16 vlan_dev_get_addr_vid(struct net_device *dev, const u8
+>>>> *addr);
+>>>>  extern struct net_device *vlan_dev_real_dev(const struct net_device
+>>>> *dev);
+>>>>  extern u16 vlan_dev_vlan_id(const struct net_device *dev);
+>>>>  extern __be16 vlan_dev_vlan_proto(const struct net_device *dev);
+>>>> diff --git a/net/8021q/vlan_core.c b/net/8021q/vlan_core.c
+>>>> index a313165e7a67..5d17947d6988 100644
+>>>> --- a/net/8021q/vlan_core.c
+>>>> +++ b/net/8021q/vlan_core.c
+>>>> @@ -454,6 +454,16 @@ bool vlan_uses_dev(const struct net_device *dev)
+>>>>  }
+>>>>  EXPORT_SYMBOL(vlan_uses_dev);
+>>>>
+>>>> +u16 vlan_dev_get_addr_vid(struct net_device *dev, const u8 *addr)
+>>>> +{
+>>>> +    u16 vid = 0;
+>>>> +
+>>>> +    vid = addr[dev->addr_len];
+>>>> +    vid |= (addr[dev->addr_len + 1] & 0xf) << 8;
+>>>> +    return vid;
+>>>> +}
+>>>> +EXPORT_SYMBOL(vlan_dev_get_addr_vid);
+>>>> +
+>>>>  static struct sk_buff *vlan_gro_receive(struct list_head *head,
+>>>>                      struct sk_buff *skb)
+>>>>  {
+>>>> diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
+>>>> index b2d9c8f27cd7..c05b313314b7 100644
+>>>> --- a/net/8021q/vlan_dev.c
+>>>> +++ b/net/8021q/vlan_dev.c
+>>>> @@ -250,6 +250,14 @@ void vlan_dev_get_realdev_name(const struct
+>>>> net_device *dev, char *result)
+>>>>      strncpy(result, vlan_dev_priv(dev)->real_dev->name, 23);
+>>>>  }
+>>>>
+>>>> +static void vlan_dev_set_addr_vid(struct net_device *vlan_dev, u8
+>>>> *addr)
+>>>> +{
+>>>> +    u16 vid = vlan_dev_vlan_id(vlan_dev);
+>>>> +
+>>>> +    addr[vlan_dev->addr_len] = vid & 0xff;
+>>>> +    addr[vlan_dev->addr_len + 1] = (vid >> 8) & 0xf;
+>>>> +}
+>>>> +
+>>>>  bool vlan_dev_inherit_address(struct net_device *dev,
+>>>>                    struct net_device *real_dev)
+>>>>  {
+>>>> @@ -481,8 +489,26 @@ static void vlan_dev_change_rx_flags(struct
+>>>> net_device *dev, int change)
+>>>>      }
+>>>>  }
+>>>>
+>>>> +static void vlan_dev_align_addr_vid(struct net_device *vlan_dev)
+>>>> +{
+>>>> +    struct net_device *real_dev = vlan_dev_real_dev(vlan_dev);
+>>>> +    struct netdev_hw_addr *ha;
+>>>> +
+>>>> +    if (!real_dev->vid_len)
+>>>> +        return;
+>>>> +
+>>>> +    netdev_for_each_mc_addr(ha, vlan_dev)
+>>>> +        if (!ha->sync_cnt)
+>>>> +            vlan_dev_set_addr_vid(vlan_dev, ha->addr);
+>>>> +
+>>>> +    netdev_for_each_uc_addr(ha, vlan_dev)
+>>>> +        if (!ha->sync_cnt)
+>>>> +            vlan_dev_set_addr_vid(vlan_dev, ha->addr);
+>>>> +}
+>>>> +
+>>>>  static void vlan_dev_set_rx_mode(struct net_device *vlan_dev)
+>>>>  {
+>>>> +    vlan_dev_align_addr_vid(vlan_dev);
+>>>>      dev_mc_sync(vlan_dev_priv(vlan_dev)->real_dev, vlan_dev);
+>>>>      dev_uc_sync(vlan_dev_priv(vlan_dev)->real_dev, vlan_dev);
+>>>>  }
+>>>>
+>>>
+>>>
+>>> -- 
+>>> Florian
+>>
+>
+>
+>-- 
+>Florian
+
+-- 
+Regards,
+Ivan Khoronzhuk
