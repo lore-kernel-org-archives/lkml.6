@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E55C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E9DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D668B206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D668B206B7
+	by mail.kernel.org (Postfix) with ESMTP id 9B019206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B019206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbeLDOYH (ORCPT
+        id S1726901AbeLDOYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:24:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33414 "EHLO mail.bootlin.com"
+        Tue, 4 Dec 2018 09:24:16 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33369 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726676AbeLDOXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:23:24 -0500
+        id S1726652AbeLDOXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:23:23 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 22E2C20EA7; Tue,  4 Dec 2018 15:23:20 +0100 (CET)
+        id 8433420E0C; Tue,  4 Dec 2018 15:23:18 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0FE3B20E22;
-        Tue,  4 Dec 2018 15:22:43 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id C1EC320E0C;
+        Tue,  4 Dec 2018 15:22:41 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v3 17/21] drm/sun4i: frontend: Add a quirk structure
-Date:   Tue,  4 Dec 2018 15:22:14 +0100
-Message-Id: <20181204142218.16284-18-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 12/21] drm/sun4i: Add buffer stride and offset configuration for tiling mode
+Date:   Tue,  4 Dec 2018 15:22:09 +0100
+Message-Id: <20181204142218.16284-13-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
 References: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
@@ -50,99 +50,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+This introduces stride and offset configuration for the VPU tiling mode.
+Stride is calculated differently than it is for linear formats and an
+offset is calculated, for which new register definitions are introduced.
 
-The ACCESS_CTRL bit is not found on all the variants of the frontend, so
-let's introduce a structure that will hold whether or not we need to set
-it, and associate it with the compatible.
-
-This will be extended for further similar quirks later on.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 21 +++++++++++++++++----
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  6 ++++++
- 2 files changed, 23 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 60 ++++++++++++++++++++++++--
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  8 ++++
+ 2 files changed, 65 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index c80338368992..5a2e2057fe6c 100644
+index 3dcb05147e41..151b78d3c02e 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -10,6 +10,7 @@
- #include <linux/clk.h>
- #include <linux/component.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-@@ -74,9 +75,10 @@ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
+@@ -125,21 +125,75 @@ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
  {
- 	int i;
- 
--	regmap_write_bits(frontend->regs, SUN4I_FRONTEND_FRM_CTRL_REG,
--			  SUN4I_FRONTEND_FRM_CTRL_COEF_ACCESS_CTRL,
--			  SUN4I_FRONTEND_FRM_CTRL_COEF_ACCESS_CTRL);
-+	if (frontend->data->has_coef_access_ctrl)
-+		regmap_write_bits(frontend->regs, SUN4I_FRONTEND_FRM_CTRL_REG,
-+				  SUN4I_FRONTEND_FRM_CTRL_COEF_ACCESS_CTRL,
-+				  SUN4I_FRONTEND_FRM_CTRL_COEF_ACCESS_CTRL);
- 
- 	for (i = 0; i < 32; i++) {
- 		regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_HORZCOEF0_REG(i),
-@@ -563,6 +565,10 @@ static int sun4i_frontend_bind(struct device *dev, struct device *master,
- 	frontend->dev = dev;
- 	frontend->node = dev->of_node;
- 
-+	frontend->data = of_device_get_match_data(dev);
-+	if (!frontend->data)
-+		return -ENODEV;
+ 	struct drm_plane_state *state = plane->state;
+ 	struct drm_framebuffer *fb = state->fb;
++	unsigned int strides[3] = {};
 +
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(regs))
-@@ -675,8 +681,15 @@ static const struct dev_pm_ops sun4i_frontend_pm_ops = {
- 	.runtime_suspend	= sun4i_frontend_runtime_suspend,
- };
+ 	dma_addr_t paddr;
+ 	bool swap;
  
-+static const struct sun4i_frontend_data sun8i_a33_frontend = {
-+	.has_coef_access_ctrl	= true,
-+};
++	if (fb->modifier == DRM_FORMAT_MOD_ALLWINNER_TILED) {
++		unsigned int width = state->src_w >> 16;
++		unsigned int offset;
 +
- const struct of_device_id sun4i_frontend_of_table[] = {
--	{ .compatible = "allwinner,sun8i-a33-display-frontend" },
-+	{
-+		.compatible = "allwinner,sun8i-a33-display-frontend",
-+		.data = &sun8i_a33_frontend
-+	},
- 	{ }
- };
- EXPORT_SYMBOL(sun4i_frontend_of_table);
++		/*
++		 * In MB32 tiled mode, the stride is defined as the distance
++		 * between the start of the end line of the current tile and
++		 * the start of the first line in the next vertical tile.
++		 *
++		 * Tiles are represented in row-major order, thus the end line
++		 * of current tile starts at: 31 * 32 (31 lines of 32 cols),
++		 * the next vertical tile starts at: 32-bit-aligned-width * 32
++		 * and the distance is: 32 * (32-bit-aligned-width - 31).
++		 */
++
++		strides[0] = SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[0]);
++
++		/*
++		 * The X1 offset is the offset to the bottom-right point in the
++		 * end tile, which is the final pixel (at offset width - 1)
++		 * within the end tile (with a 32-byte mask).
++		 */
++		offset = (width - 1) & (32 - 1);
++
++		regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF0_REG,
++			     SUN4I_FRONTEND_TB_OFF_X1(offset));
++
++		if (fb->format->num_planes > 1) {
++			strides[1] =
++				SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[1]);
++
++			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF1_REG,
++				     SUN4I_FRONTEND_TB_OFF_X1(offset));
++		}
++
++		if (fb->format->num_planes > 2) {
++			strides[2] =
++				SUN4I_FRONTEND_LINESTRD_TILED(fb->pitches[2]);
++
++			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF2_REG,
++				     SUN4I_FRONTEND_TB_OFF_X1(offset));
++		}
++	} else {
++		strides[0] = fb->pitches[0];
++
++		if (fb->format->num_planes > 1)
++			strides[1] = fb->pitches[1];
++
++		if (fb->format->num_planes > 2)
++			strides[2] = fb->pitches[2];
++	}
++
+ 	/* Set the line width */
+ 	DRM_DEBUG_DRIVER("Frontend stride: %d bytes\n", fb->pitches[0]);
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD0_REG,
+-		     fb->pitches[0]);
++		     strides[0]);
+ 
+ 	if (fb->format->num_planes > 1)
+ 		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD1_REG,
+-			     fb->pitches[1]);
++			     strides[1]);
+ 
+ 	if (fb->format->num_planes > 2)
+ 		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD2_REG,
+-			     fb->pitches[2]);
++			     strides[2]);
+ 
+ 	/* Some planar formats require chroma channel swapping by hand. */
+ 	swap = sun4i_frontend_format_chroma_requires_swap(fb->format->format);
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index 9434407ea40d..22b8afa3795e 100644
+index ae53ee644694..9434407ea40d 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -101,6 +101,10 @@ struct drm_plane;
- struct regmap;
- struct reset_control;
+@@ -25,9 +25,17 @@
+ #define SUN4I_FRONTEND_BUF_ADDR1_REG		0x024
+ #define SUN4I_FRONTEND_BUF_ADDR2_REG		0x028
  
-+struct sun4i_frontend_data {
-+	bool	has_coef_access_ctrl;
-+};
++#define SUN4I_FRONTEND_TB_OFF0_REG		0x030
++#define SUN4I_FRONTEND_TB_OFF1_REG		0x034
++#define SUN4I_FRONTEND_TB_OFF2_REG		0x038
++#define SUN4I_FRONTEND_TB_OFF_X1(x1)			((x1) << 16)
++#define SUN4I_FRONTEND_TB_OFF_Y0(y0)			((y0) << 8)
++#define SUN4I_FRONTEND_TB_OFF_X0(x0)			(x0)
 +
- struct sun4i_frontend {
- 	struct list_head	list;
- 	struct device		*dev;
-@@ -111,6 +115,8 @@ struct sun4i_frontend {
- 	struct clk		*ram_clk;
- 	struct regmap		*regs;
- 	struct reset_control	*reset;
-+
-+	const struct sun4i_frontend_data	*data;
- };
+ #define SUN4I_FRONTEND_LINESTRD0_REG		0x040
+ #define SUN4I_FRONTEND_LINESTRD1_REG		0x044
+ #define SUN4I_FRONTEND_LINESTRD2_REG		0x048
++#define SUN4I_FRONTEND_LINESTRD_TILED(stride)		(((stride) - 31) * 32)
  
- extern const struct of_device_id sun4i_frontend_of_table[];
+ #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR	(0 << 8)
 -- 
 2.19.2
 
