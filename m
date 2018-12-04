@@ -2,55 +2,49 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DE8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB98C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D502087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 110A52082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v1Bz5xVD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D502087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMzEhYP3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110A52082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbeLDLII (ORCPT
+        id S1728572AbeLDLIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:08:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57328 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:08:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728562AbeLDLIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:08:05 -0500
+        id S1728549AbeLDLIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:08:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D36DC214DB;
-        Tue,  4 Dec 2018 11:08:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 577922151B;
+        Tue,  4 Dec 2018 11:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921684;
-        bh=9CKDm/TquTPeAeSkOVwUKMF79Ns72oXHekuyDb1M+WI=;
+        s=default; t=1543921681;
+        bh=nkcHH/Rk4Xw3Qc5yXz7X8r4aAO1nOiYQK/Y15zle+ow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v1Bz5xVDJF21giOG1CZ0IQVxDqPupnGrFs9jOkVDGcjaOrhU2cpYKNCZhuesF1PCQ
-         r4I5x4EjqB4913V3I1aAmUrmLXnHQ5BULlYSXeinZw+wHllRi2a18xHNVOZ7uex15f
-         qoNjoV+xAsrWsn0jIcXU4IoHeV3DtpFPn2zzaiY4=
+        b=aMzEhYP3b71fYs9A3Z8PsJxZQMUrvnKO/zfVevsLu2/rDWcJD/APnGnXV8sbnGace
+         D5uHYzXzraPXoykeGx2brEn+3VpVxGIG1p5uos4EnffIppCB5X2ZL88nM5Qwj1iAm2
+         AUoFF9CLhQSfypi0yDVHb2QgxnYgtg2CHpyZgWWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 02/50] mm/huge_memory.c: reorder operations in __split_huge_page_tail()
-Date:   Tue,  4 Dec 2018 11:49:57 +0100
-Message-Id: <20181204103714.604521350@linuxfoundation.org>
+        stable@vger.kernel.org, Junaid Shahid <junaids@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 19/50] kvm: mmu: Fix race in emulated page table writes
+Date:   Tue,  4 Dec 2018 11:50:14 +0100
+Message-Id: <20181204103715.498761676@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -69,105 +63,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 605ca5ede7643a01f4c4a15913f9714ac297f8a6 upstream.
+From: Junaid Shahid <junaids@google.com>
 
-THP split makes non-atomic change of tail page flags.  This is almost ok
-because tail pages are locked and isolated but this breaks recent
-changes in page locking: non-atomic operation could clear bit
-PG_waiters.
+commit 0e0fee5c539b61fdd098332e0e2cc375d9073706 upstream.
 
-As a result concurrent sequence get_page_unless_zero() -> lock_page()
-might block forever.  Especially if this page was truncated later.
+When a guest page table is updated via an emulated write,
+kvm_mmu_pte_write() is called to update the shadow PTE using the just
+written guest PTE value. But if two emulated guest PTE writes happened
+concurrently, it is possible that the guest PTE and the shadow PTE end
+up being out of sync. Emulated writes do not mark the shadow page as
+unsync-ed, so this inconsistency will not be resolved even by a guest TLB
+flush (unless the page was marked as unsync-ed at some other point).
 
-Fix is trivial: clone flags before unfreezing page reference counter.
+This is fixed by re-reading the current value of the guest PTE after the
+MMU lock has been acquired instead of just using the value that was
+written prior to calling kvm_mmu_pte_write().
 
-This race exists since commit 62906027091f ("mm: add PageWaiters
-indicating tasks are waiting for a page bit") while unsave unfreeze
-itself was added in commit 8df651c7059e ("thp: cleanup
-split_huge_page()").
+Signed-off-by: Junaid Shahid <junaids@google.com>
+Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-clear_compound_head() also must be called before unfreezing page
-reference because after successful get_page_unless_zero() might follow
-put_page() which needs correct compound_head().
-
-And replace page_ref_inc()/page_ref_add() with page_ref_unfreeze() which
-is made especially for that and has semantic of smp_store_release().
-
-Link: http://lkml.kernel.org/r/151844393341.210639.13162088407980624477.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/huge_memory.c | 36 +++++++++++++++---------------------
- 1 file changed, 15 insertions(+), 21 deletions(-)
+ arch/x86/kvm/mmu.c |   27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 583ad61cc2f1..c14aec110e90 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1876,26 +1876,13 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 	struct page *page_tail = head + tail;
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -4297,9 +4297,9 @@ static bool need_remote_flush(u64 old, u
+ }
  
- 	VM_BUG_ON_PAGE(atomic_read(&page_tail->_mapcount) != -1, page_tail);
--	VM_BUG_ON_PAGE(page_ref_count(page_tail) != 0, page_tail);
+ static u64 mmu_pte_write_fetch_gpte(struct kvm_vcpu *vcpu, gpa_t *gpa,
+-				    const u8 *new, int *bytes)
++				    int *bytes)
+ {
+-	u64 gentry;
++	u64 gentry = 0;
+ 	int r;
  
  	/*
--	 * tail_page->_refcount is zero and not changing from under us. But
--	 * get_page_unless_zero() may be running from under us on the
--	 * tail_page. If we used atomic_set() below instead of atomic_inc() or
--	 * atomic_add(), we would then run atomic_set() concurrently with
--	 * get_page_unless_zero(), and atomic_set() is implemented in C not
--	 * using locked ops. spin_unlock on x86 sometime uses locked ops
--	 * because of PPro errata 66, 92, so unless somebody can guarantee
--	 * atomic_set() here would be safe on all archs (and not only on x86),
--	 * it's safer to use atomic_inc()/atomic_add().
-+	 * Clone page flags before unfreezing refcount.
-+	 *
-+	 * After successful get_page_unless_zero() might follow flags change,
-+	 * for exmaple lock_page() which set PG_waiters.
- 	 */
--	if (PageAnon(head)) {
--		page_ref_inc(page_tail);
--	} else {
--		/* Additional pin to radix tree */
--		page_ref_add(page_tail, 2);
--	}
+@@ -4311,22 +4311,12 @@ static u64 mmu_pte_write_fetch_gpte(stru
+ 		/* Handle a 32-bit guest writing two halves of a 64-bit gpte */
+ 		*gpa &= ~(gpa_t)7;
+ 		*bytes = 8;
+-		r = kvm_vcpu_read_guest(vcpu, *gpa, &gentry, 8);
+-		if (r)
+-			gentry = 0;
+-		new = (const u8 *)&gentry;
+ 	}
+ 
+-	switch (*bytes) {
+-	case 4:
+-		gentry = *(const u32 *)new;
+-		break;
+-	case 8:
+-		gentry = *(const u64 *)new;
+-		break;
+-	default:
+-		gentry = 0;
+-		break;
++	if (*bytes == 4 || *bytes == 8) {
++		r = kvm_vcpu_read_guest_atomic(vcpu, *gpa, &gentry, *bytes);
++		if (r)
++			gentry = 0;
+ 	}
+ 
+ 	return gentry;
+@@ -4437,8 +4427,6 @@ static void kvm_mmu_pte_write(struct kvm
+ 
+ 	pgprintk("%s: gpa %llx bytes %d\n", __func__, gpa, bytes);
+ 
+-	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, new, &bytes);
 -
- 	page_tail->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
- 	page_tail->flags |= (head->flags &
- 			((1L << PG_referenced) |
-@@ -1907,14 +1894,21 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 			 (1L << PG_unevictable) |
- 			 (1L << PG_dirty)));
+ 	/*
+ 	 * No need to care whether allocation memory is successful
+ 	 * or not since pte prefetch is skiped if it does not have
+@@ -4447,6 +4435,9 @@ static void kvm_mmu_pte_write(struct kvm
+ 	mmu_topup_memory_caches(vcpu);
  
--	/*
--	 * After clearing PageTail the gup refcount can be released.
--	 * Page flags also must be visible before we make the page non-compound.
--	 */
-+	/* Page flags must be visible before we make the page non-compound. */
- 	smp_wmb();
- 
-+	/*
-+	 * Clear PageTail before unfreezing page refcount.
-+	 *
-+	 * After successful get_page_unless_zero() might follow put_page()
-+	 * which needs correct compound_head().
-+	 */
- 	clear_compound_head(page_tail);
- 
-+	/* Finally unfreeze refcount. Additional reference from page cache. */
-+	page_ref_unfreeze(page_tail, 1 + (!PageAnon(head) ||
-+					  PageSwapCache(head)));
+ 	spin_lock(&vcpu->kvm->mmu_lock);
 +
- 	if (page_is_young(head))
- 		set_page_young(page_tail);
- 	if (page_is_idle(head))
--- 
-2.17.1
-
++	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, &bytes);
++
+ 	++vcpu->kvm->stat.mmu_pte_write;
+ 	kvm_mmu_audit(vcpu, AUDIT_PRE_PTE_WRITE);
+ 
 
 
