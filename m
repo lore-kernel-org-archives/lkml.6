@@ -4,57 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C57CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA374C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C01A1215E5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C9E72154B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:06:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjjmJ379"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01A1215E5
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2HMkJTNU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9E72154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbeLDLGL (ORCPT
+        id S1728289AbeLDLGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:06:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54430 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:06:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727465AbeLDLGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:06:10 -0500
+        id S1727909AbeLDLGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E740121536;
-        Tue,  4 Dec 2018 11:06:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0F8B214DB;
+        Tue,  4 Dec 2018 11:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921569;
-        bh=pvW/hSvSokd6vVuf1CZ/Y17UKGvGmAw/as4YAcuaNPc=;
+        s=default; t=1543921574;
+        bh=LdHx4pJdyjBCKhLAe2UxM8XgIY32Qu2O530Bf9TEm+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qjjmJ379FXx2ad4lXS9WzJ3MCyScIyoovIXXeiSqT8/iG0Q+BHFeB5UxHOvoAtL44
-         u4ehjcIi+IcqGySlc16BTT41x1NSQtD1K6mH7wXkia22UjB+g9OKSbKLzBHqKqy1jc
-         tJAqGr1EX2MbLNam9mtEfmBgdN82/QPReWSusGn8=
+        b=2HMkJTNUZaQfu8vkbHPESzx4YY2pPQkmtCBKEpEWQVgJpqQD0UYcQnY0yHp870YMY
+         agCblffmeaLhCOJa7mBUBAfIzX6jKRJnHSUwxFB03YuW3A+nfqHwTYXKNwIKQStH2Y
+         HKagFMALbQX30tyohb2vyHcSIhg0XmfxuEcRM/tg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 122/146] perf/x86/intel: Move branch tracing setup to the Intel-specific source file
-Date:   Tue,  4 Dec 2018 11:50:08 +0100
-Message-Id: <20181204103731.740114948@linuxfoundation.org>
+        stable@vger.kernel.org, Ravi Nankani <rnankani@amazon.com>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Torsten Mehlan <tomeh@amazon.de>,
+        Uwe Dannowski <uwed@amazon.de>, Amit Shah <aams@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 124/146] fs: fix lost error code in dio_complete
+Date:   Tue,  4 Dec 2018 11:50:10 +0100
+Message-Id: <20181204103731.825562140@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -73,126 +67,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Maximilian Heyne <mheyne@amazon.de>
 
-commit ed6101bbf6266ee83e620b19faa7c6ad56bb41ab upstream.
+commit 41e817bca3acd3980efe5dd7d28af0e6f4ab9247 upstream.
 
-Moving branch tracing setup to Intel core object into separate
-intel_pmu_bts_config function, because it's Intel specific.
+commit e259221763a40403d5bb232209998e8c45804ab8 ("fs: simplify the
+generic_write_sync prototype") reworked callers of generic_write_sync(),
+and ended up dropping the error return for the directio path. Prior to
+that commit, in dio_complete(), an error would be bubbled up the stack,
+but after that commit, errors passed on to dio_complete were eaten up.
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20181121101612.16272-1-jolsa@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This was reported on the list earlier, and a fix was proposed in
+https://lore.kernel.org/lkml/20160921141539.GA17898@infradead.org/, but
+never followed up with.  We recently hit this bug in our testing where
+fencing io errors, which were previously erroring out with EIO, were
+being returned as success operations after this commit.
+
+The fix proposed on the list earlier was a little short -- it would have
+still called generic_write_sync() in case `ret` already contained an
+error. This fix ensures generic_write_sync() is only called when there's
+no pending error in the write. Additionally, transferred is replaced
+with ret to bring this code in line with other callers.
+
+Fixes: e259221763a4 ("fs: simplify the generic_write_sync prototype")
+Reported-by: Ravi Nankani <rnankani@amazon.com>
+Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+CC: Torsten Mehlan <tomeh@amazon.de>
+CC: Uwe Dannowski <uwed@amazon.de>
+CC: Amit Shah <aams@amazon.de>
+CC: David Woodhouse <dwmw@amazon.co.uk>
+CC: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/core.c       |   20 --------------------
- arch/x86/events/intel/core.c |   41 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 40 insertions(+), 21 deletions(-)
+ fs/direct-io.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -438,26 +438,6 @@ int x86_setup_perfctr(struct perf_event
- 	if (config == -1LL)
- 		return -EINVAL;
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -304,8 +304,8 @@ static ssize_t dio_complete(struct dio *
+ 		 */
+ 		dio->iocb->ki_pos += transferred;
  
--	/*
--	 * Branch tracing:
--	 */
--	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
--	    !attr->freq && hwc->sample_period == 1) {
--		/* BTS is not supported by this architecture. */
--		if (!x86_pmu.bts_active)
--			return -EOPNOTSUPP;
--
--		/* BTS is currently only allowed for user-mode. */
--		if (!attr->exclude_kernel)
--			return -EOPNOTSUPP;
--
--		/* disallow bts if conflicting events are present */
--		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
--			return -EBUSY;
--
--		event->destroy = hw_perf_lbr_event_destroy;
--	}
--
- 	hwc->config |= config;
+-		if (dio->op == REQ_OP_WRITE)
+-			ret = generic_write_sync(dio->iocb,  transferred);
++		if (ret > 0 && dio->op == REQ_OP_WRITE)
++			ret = generic_write_sync(dio->iocb, ret);
+ 		dio->iocb->ki_complete(dio->iocb, ret, 0);
+ 	}
  
- 	return 0;
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2973,6 +2973,41 @@ static unsigned long intel_pmu_free_runn
- 	return flags;
- }
- 
-+static int intel_pmu_bts_config(struct perf_event *event)
-+{
-+	struct perf_event_attr *attr = &event->attr;
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
-+	    !attr->freq && hwc->sample_period == 1) {
-+		/* BTS is not supported by this architecture. */
-+		if (!x86_pmu.bts_active)
-+			return -EOPNOTSUPP;
-+
-+		/* BTS is currently only allowed for user-mode. */
-+		if (!attr->exclude_kernel)
-+			return -EOPNOTSUPP;
-+
-+		/* disallow bts if conflicting events are present */
-+		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
-+			return -EBUSY;
-+
-+		event->destroy = hw_perf_lbr_event_destroy;
-+	}
-+
-+	return 0;
-+}
-+
-+static int core_pmu_hw_config(struct perf_event *event)
-+{
-+	int ret = x86_pmu_hw_config(event);
-+
-+	if (ret)
-+		return ret;
-+
-+	return intel_pmu_bts_config(event);
-+}
-+
- static int intel_pmu_hw_config(struct perf_event *event)
- {
- 	int ret = x86_pmu_hw_config(event);
-@@ -2980,6 +3015,10 @@ static int intel_pmu_hw_config(struct pe
- 	if (ret)
- 		return ret;
- 
-+	ret = intel_pmu_bts_config(event);
-+	if (ret)
-+		return ret;
-+
- 	if (event->attr.precise_ip) {
- 		if (!event->attr.freq) {
- 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
-@@ -3462,7 +3501,7 @@ static __initconst const struct x86_pmu
- 	.enable_all		= core_pmu_enable_all,
- 	.enable			= core_pmu_enable_event,
- 	.disable		= x86_pmu_disable_event,
--	.hw_config		= x86_pmu_hw_config,
-+	.hw_config		= core_pmu_hw_config,
- 	.schedule_events	= x86_schedule_events,
- 	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
- 	.perfctr		= MSR_ARCH_PERFMON_PERFCTR0,
 
 
